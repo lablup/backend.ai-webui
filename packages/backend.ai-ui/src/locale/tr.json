@@ -622,6 +622,7 @@
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
   "form": {
+    "Optional": "(opsiyonel)",
     "validateMessages": {
       "Default": "Alan doğrulama hatası ${label}",
       "Required": "${label} gerekli bir alan",

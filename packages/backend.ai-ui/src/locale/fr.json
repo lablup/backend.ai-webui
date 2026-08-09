@@ -622,6 +622,7 @@
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },
   "form": {
+    "Optional": "(optionnel)",
     "validateMessages": {
       "Default": "Erreur de validation pour le champ ${label}",
       "Required": "Le champ ${label} est obligatoire",

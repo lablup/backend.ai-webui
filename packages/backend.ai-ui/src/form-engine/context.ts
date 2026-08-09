@@ -105,6 +105,12 @@ export interface FormConfig {
    */
   validateMessages?: ValidateMessages;
   requiredMark?: RequiredMark;
+  /**
+   * The suffix `requiredMark="optional"` appends (5 call sites). antd read it
+   * from `locale.Form.optional`; `FormConfigProvider` defaults it to BUI's own
+   * `form.Optional` catalog entry, ported from the same antd strings.
+   */
+  optionalLabel?: React.ReactNode;
 }
 
 /** What antd sourced from `<ConfigProvider form={{...}}>`. */
@@ -117,17 +123,45 @@ export const FormConfigContext = React.createContext<FormConfig>({});
 
 // ============================ Per-form UI context ===========================
 
+/**
+ * What antd carries on its own `FormContext` — the per-form visual settings a
+ * `Form.Item` inherits unless it states its own. Everything here is a real
+ * `<Form>` prop with a call site in this repo (see
+ * `.scratch/astryx-migration/form-prop-census.txt`); the ones with none
+ * (`feedbackIcons`, `classNames`, `styles`, `variant`) are deliberately absent.
+ */
 export interface FormItemLayoutContextValue {
   form?: FormInstance;
-  layout: 'vertical' | 'horizontal';
+  layout: FormLayout;
   requiredMark?: RequiredMark;
   disabled?: boolean;
   name?: string;
+  size?: FormSize;
+  colon?: boolean;
+  labelAlign?: 'left' | 'right';
+  labelCol?: FormItemCol;
+  wrapperCol?: FormItemCol;
+  labelWrap?: boolean;
+}
+
+export type FormLayout = 'vertical' | 'horizontal' | 'inline';
+export type FormSize = 'small' | 'middle' | 'large';
+
+/** antd `Col` props, reduced to the shapes this repo's call sites use. */
+export interface FormItemCol {
+  span?: number;
+  offset?: number;
+  flex?: string | number;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export const FormItemLayoutContext =
   React.createContext<FormItemLayoutContextValue>({
-    layout: 'vertical',
+    // antd's default, and now the engine's: 29 `<Form>` call sites declare no
+    // `layout` at all, and the three that pair that with `labelCol` only make
+    // sense horizontally. Defaulting to vertical silently re-laid all of them.
+    layout: 'horizontal',
   });
 
 // ========================== Item status / bubbling ===========================

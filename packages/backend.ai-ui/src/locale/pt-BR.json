@@ -628,6 +628,7 @@
     "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
   },
   "form": {
+    "Optional": "(opcional)",
     "validateMessages": {
       "Default": "Erro ${label} na validação de campo",
       "Required": "Por favor, insira ${label}",

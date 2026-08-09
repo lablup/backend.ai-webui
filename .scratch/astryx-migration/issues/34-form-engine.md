@@ -4,6 +4,8 @@
 **Blocked by:** 31, 32, 33
 **Status:** **LIVE** — unparked, localized and switched on 2026-08-09 (see
 "UNPARKED" below). Parked 2026-08-08 → 2026-08-09 only.
+Visual-parity hardening pass 2026-08-09: see "시각 동등성 하드닝 패스" below —
+the two known gaps are closed and the residual set is 3 documented items.
 
 **Principles:** MIGRATION-SPEC §0 정책 준수 — 래퍼(Astryx 직사용)·시각값(기본값, 변경은 theme)·**단순성(antd 동등성 강박 금지: 외관·기능 모두 — 복잡해지면 드롭+PILOT-DECISION)**·원본 레이아웃 충실도·번역 프런티어. 시작 전 `assets/antd-astryx-mapping/`의 SKILL.md+MAPPING.md 로드, ASTRYX 블록의 discover-don't-guess 워크플로(`astryx build/template/component`) 사용. MCP search 단독 신뢰 금지.
 
@@ -93,19 +95,13 @@ MERGE-CHECKLIST가 언파킹의 선결 조건으로 지목했던 항목이다. �
    `data-status`를 키로 한 CSS 브리지**를 넣었다. antd 임포트 0, 마지막 antd
    컨트롤이 마이그레이션되면 규칙도 같이 사라진다.
 
-### 남은 차이 2건 (의도적, 측정됨)
+### 남은 차이 2건 (의도적, 측정됨) — **둘 다 아래 하드닝 패스에서 해소됨**
 
 1. **다크 모드 에러 빨강의 색조.** antd `rgb(220,68,70)` vs 엔진
-   `rgb(190,61,63)`. 엔진은 `var(--color-error)`(Astryx 토큰)를 쓴다 — 이건
-   티켓 05가 **에러 메시지 텍스트**에 대해 이미 내린 선택이고, 새 테두리
-   규칙이 같은 토큰을 따라간 것이다. 결과적으로 엔진 안에서는 테두리와
-   텍스트가 일치한다. 라이트 모드에서는 양쪽 다 `rgb(255,77,79)`로 완전히
-   같다. "시각값은 테마가 소유한다"는 MIGRATION-SPEC §0 정책 그대로.
-2. **`layout="horizontal"`에서 라벨이 길면 줄바꿈된다.** 시각 셸의
-   `--bai-form-item-label-width`가 120px 고정이라(티켓 05 결정), 9개 아이템
-   중 1개("Cooldown (seconds)")가 antd보다 12px 높다. 저장소의
-   `<Form layout>` 66건 중 65건이 vertical이고, `<BAIFormItem layout>` 11건은
-   이 120px를 전제로 디자인됐다. 그 11건을 흔들 이유가 없어 그대로 둔다.
+   `rgb(190,61,63)`. → **하네스 결함이었다.** 프로브가 antd에 `theme.json`
+   시드가 아니라 antd 기본 시드를 먹이고 있었다. 아래 "갭 1" 참조.
+2. **`layout="horizontal"`에서 라벨이 길면 줄바꿈된다.** 120px 고정 라벨 열.
+   → **제거됐다.** 아래 "갭 2" 참조.
 
 ### 라이브 검증 (dev 서버 5980 → 10.82.0.130:8090)
 
@@ -136,6 +132,178 @@ files**, BUI vitest **471 passed / 1 skipped**, 수용 스위트 **59 passed**
 스위트가 **배선까지** 고정한다. 별칭이 다시 antd로 향하면 두 행이 똑같아져
 29건이 아무것도 단언하지 않게 되므로, `EngineForm !== AntdForm`을 검사하는
 가드 테스트 1건을 추가했다.
+
+---
+
+## 시각 동등성 하드닝 패스 (2026-08-09)
+
+**기준(사용자):** Form과 Form.Item은 antd와 **완전히 동일하게 동작하고 동일하게
+보여야** 하며, 값은 Astryx 테마 토큰을 통해 흘러 테마 변경을 따라야 한다.
+
+이 패스는 시각 셸을 "근사한 재구현"에서 **antd 원본 소스의 전사(轉寫)**로
+바꿨다. 근거 파일은 추측이 아니라 실제 antd 6.5.0 소스다:
+`antd/es/form/style/index.js`(토큰 기반 스타일시트), `FormItemLabel.js`,
+`FormItemInput.js`, `FormItem/ItemHolder.js`, `FormItem/StatusProvider.js`,
+`ErrorList.js`. DOM 구조도 요소 단위로 antd와 1:1 대응시켰다 —
+`-row` / `-label`(Col) / `-control`(Col) / `-control-input` /
+`-control-input-content` / `-additional` / `-explain` / `-extra` /
+`-margin-offset`. 박스 모델이 같아야 기하가 저절로 같아진다.
+
+### 측정 하네스 — 전면 매트릭스
+
+`react/theme-probe/formmatrix.{html,tsx}` + `.scratch/astryx-migration/probe-form-matrix.mjs`.
+
+기존 `form.html`이 **한 개의 대표 폼**을 두 스택에 렌더해 비교했다면, 이쪽은
+**38개 소형 케이스**를 하나의 props 테이블에서 antd 셀과 엔진 셀로 각각 렌더한다
+(같은 props가 양쪽에 간다는 것이 테이블 하나로 보장된다). 케이스는 센서스
+(`.scratch/astryx-migration/form-prop-census.txt`)가 실제 호출부에서 찾은 prop과,
+그 호출부가 암묵적으로 의존하는 레이아웃/검증 표면이다. 측정 대상은 셀별로
+기하(모든 요소의 rect), 색(라벨/설명/에러/경고/피드백/컨트롤 테두리),
+타이포(폰트 크기·행간·정렬·줄바꿈), 그리고 DOM 역할의 존재 여부다.
+
+라이트/다크 양쪽에서 돌린다. **두 모드의 델타 집합이 같아야** 값이 테마를
+따라간다는 증거가 된다.
+
+| | 델타(라이트+다크 합) | 차이 나는 케이스 |
+|---|---:|---:|
+| 하드닝 전 | **864** | 38 중 34 |
+| 하드닝 후 | **28** | 38 중 6 |
+
+산출물: `.scratch/astryx-migration/shots/form-parity/{before,after}/matrix.json`
++ `summary.txt` + 케이스별 PNG, `.../live/` 라이브 스크린샷.
+
+### 갭 1 — 다크 모드 에러 색: **엔진이 아니라 하네스가 틀렸다**
+
+측정하고 나니 토큰 매핑 문제가 아니었다.
+
+antd의 역할별 토큰을 `theme.getDesignToken()`로 뽑아 보면
+(`.scratch/astryx-migration/measure-antd-form-tokens.mjs`), 폼이 에러에 쓰는
+토큰은 **`colorError` 하나**다 — `labelRequiredMarkColor: token.colorError`,
+`-explain-error { color: token.colorError }`, Input의 error 테두리도
+`colorError`. `colorErrorText`/`colorErrorBorder`는 폼이 쓰지 않는다
+(`colorErrorBorder`는 Alert/Tag 계열의 배경 테두리다). 그래서 엔진이 테두리와
+텍스트에 같은 `--color-error`를 쓰는 것은 **antd와 같은 역할 매핑**이다.
+
+진짜 원인은 `.scratch/astryx-migration/measure-antd-dark-seeds.mjs`가 보여준다:
+
+| 시드 | theme.json 라이트 | theme.json 다크 | darkAlgorithm(라이트 시드) |
+|---|---|---|---|
+| colorError | `#FF4D4F` | `#DC4446` | **`#dc4446`** |
+
+즉 `theme.json`의 다크 `colorError`는 **이미 darkAlgorithm의 출력**이다. 앱은
+그 다크 시드를 다시 `darkAlgorithm`에 넣으므로 antd가 실제로 그리는 값은
+`#be3d3f` = `rgb(190,61,63)` — **엔진이 그리던 바로 그 값**이다. 이전 프로브가
+`rgb(220,68,70)`을 "antd 값"으로 보고한 것은, 프로브의 `BAIConfigProvider`가
+`algorithm`만 넘기고 `theme.json`의 `token` 블록을 넘기지 않아 antd **기본
+시드**(`#ff4d4f`)를 어둡게 만든 값이었기 때문이다.
+
+새 매트릭스 하네스는 `DefaultProviders`와 똑같이 `theme.json`의 `token` 블록을
+antd에 먹인다. 그 상태에서 **다크 모드 에러 색 델타는 0**이다(에러 텍스트,
+필수 표시 asterisk, 컨트롤 테두리 전부). 경고(`#d89614`)도 0.
+
+→ **토큰 매핑 변경 없음. 고친 것은 하네스의 충실도다.** 테마에 새 역할 토큰을
+추가할 이유도 없었다.
+
+### 갭 2 — `layout="horizontal"`: 120px 고정 열 제거
+
+antd의 수평 라벨 열은 `labelCol`이 없으면 **콘텐츠 폭**이고
+(`.ant-form-item-label { flex-grow: 0; overflow: hidden; white-space: nowrap;
+text-align: end }`), `labelCol.span`이 있으면 24분율 폭이다. 시각 셸은 이제
+그것을 그대로 한다:
+
+- `labelCol` / `wrapperCol`을 **실제로 소비**한다(span → flex-basis/max-width,
+  offset → margin-inline-start). `<Form labelCol>`은 컨텍스트로 내려가고
+  아이템의 `labelCol`이 그것을 이긴다.
+- `wrapperCol.span`은 **max-width로만** 반영한다. antd에서
+  `.ant-form-item-horizontal .ant-form-item-control { flex: 1 1 0 }`가
+  `.ant-col-N`의 `flex: 0 0 N/24`를 특이도로 이기기 때문이다
+  (측정: `labelCol 6 + wrapperCol 20`은 105+**315**이지 105+350이 아니다).
+- 라벨 없는 아이템은 antd처럼 폼의 `labelCol.span`만큼 **wrapper offset**을
+  받는다(`FormItemInput.mergedWrapperCol`).
+- **콜론**(`::after`, `marginXXS/2` + `marginXS`)을 그린다. 세로 레이아웃에서는
+  antd와 동일하게 `visibility: hidden`으로 **자리는 유지**한다 — 그래야 세로
+  라벨의 측정 폭까지 antd와 일치한다.
+- `labelAlign`, `labelWrap`도 antd 규칙 그대로.
+
+`--bai-form-item-label-width`(120px)는 사라졌다.
+
+### 갭 3(하드닝 중 발견) — `<Form>` 기본 layout이 antd와 반대였다
+
+원래 근거는 "`layout` 선언 66건 중 65건이 vertical"이었는데, 그건 **prop을 쓴
+폼만** 센 것이다. `layout`을 아예 안 쓰는 `<Form>`이 **28곳**(앱 소스 14,
+BUI/스토리 14) 있고, antd는 그것들을 **horizontal**로 그렸다. 엔진이 vertical로
+그리면서 조용히 재배치된 것이다. 그중 셋(`FolderCreateModal`,
+`FolderCreateModalV2`, `QuotaSettingModal`)은 그 침묵과 함께 `labelCol` span을
+쓴다 — 세로 폼에서는 의미가 없는 prop이다.
+
+기본값을 antd의 `horizontal`로 되돌렸다. 실제로 눈에 띄게 바뀌는 것은
+**라벨이 있는** 아이템을 가진 폼뿐이고(나머지는 인라인 편집기라 라벨이 없어
+두 레이아웃의 출력이 같다), 그 변화는 티켓 34 이전 antd가 그리던 모습으로의
+**복귀**다. 센서스: `.scratch/astryx-migration/census-form-layout.py`.
+
+### 그 외 고친 편차 (전부 매트릭스에서 측정)
+
+| # | 편차 | antd 근거 | 처리 |
+|---|---|---|---|
+| 1 | `-explain`/`-extra` 색이 한 단계 진했다 (0.65 vs 0.45) | `-explain, -extra { color: colorTextDescription }` | Astryx 텍스트 램프에 없는 계층. `--bai-color-text-description`를 `light-dark()` 쌍으로 **한 곳에** 선언(`FormItemVisual.css`), `theme-shim/selfTokens.ts#colorTextDescription`과 같은 측정값. 모드 전환을 따라간다 |
+| 2 | `help`가 상태 색을 못 받았다 | `ErrorList`가 `help`를 `errorStatus = 항목 상태`로 감싼다 | `validateStatus="error" help="…"`가 이제 빨갛다 |
+| 3 | `validateStatus` prop이 시각에 안 닿았다 (4곳) | `getStatus(...)`가 `validateStatus`를 최우선으로 본다 | `data-status`가 errors.length가 아니라 **병합 상태**에서 나온다. 컨트롤 테두리까지 반응 |
+| 4 | 예약 공간을 explain/extra가 각각 24px씩 잡았다 | `ItemHolder`가 항목의 **computed** margin-bottom을 읽어 `-additional`에 `minHeight: marginBottom + extraHeight` | 같은 방식으로 재현(레이아웃 이펙트 2개). 에러 등장/소멸 시 레이아웃 점프 0, `dependencies` 재검증 케이스 델타 0 |
+| 5 | asterisk가 텍스트 노드였다 (`label.textContent === "*Name"`) | `-required::before { content: '*'; margin-inline-end: marginXXS; font-family: sans-serif; line-height: 1 }` | 의사요소로 이동. 접근 가능한 이름·측정 폭·글리프 메트릭이 전부 일치. 앵커 `[data-bai-form-item-required]`는 antd가 클래스를 두는 자리(=`<label>`)로 옮겨 유지 |
+| 6 | v4 글꼴 `SimSun` | v6는 `sans-serif` | 교체 |
+| 7 | `requiredMark="optional"` 접미사가 하드코딩 영어 `" (optional)"` | antd는 `locale.Form.optional`, 간격은 `margin-inline-start` | 21개 언어를 antd 로케일에서 포팅(`form.Optional`), `FormConfigProvider`가 기본 제공. 앞 공백 제거 + CSS 간격 |
+| 8 | `<label title>` 없음 | `FormItemLabel`이 문자열 label을 `title`로 준다 | 추가. `requiredMark` **함수**가 label을 엘리먼트로 바꿔도 원본 문자열에서 뽑도록 별도 prop |
+| 9 | `InputNumber`/`DatePicker`가 100%로 늘어났다 | antd는 **Select만** `-in-form-item { width: 100% }` | 스트레치 규칙을 `.ant-select`로 한정. 나란히 놓인 InputNumber 2개가 antd처럼 한 줄(32px)로 돌아왔다 |
+| 10 | 에러/경고 테두리가 hover/focus에서 중립으로 돌아갔다 | antd status 스타일이 hover/focus까지 덮는다 | 전환용 CSS 브리지에 `:hover, :focus, :focus-within` 추가 |
+| 11 | 세로 아이템이 antd보다 2px 높았다 (16개 케이스 전부) | `.ant-form-item`의 `resetComponent`가 `font-size`/`line-height`를 고정 | 항목 루트에 같은 타입 리셋. 라벨은 블록 열 안의 `inline-flex`라 **열의 line box**가 높이를 정한다 |
+| 12 | `role="alert"`를 explain에 달고 있었다 | antd는 안 단다 | 제거(`getByRole('alert')` 오탐도 같이 사라진다). `id={fieldId}_help` + `aria-describedby`는 유지 |
+| 13 | `layout="inline"` 미구현 | `-inline { display: flex; flex-wrap: wrap }` + 항목 `flex: none; margin-inline-end: margin; margin-bottom: 0` | 구현. 폼 루트에 `data-bai-form` / `data-layout` 훅 |
+| 14 | `size` 미구현 | `genFormSize`: 라벨 높이 + `-control-input` min-height | 구현(small 24 / large 40) |
+| 15 | `hasFeedback` 아이콘 없음 (4곳) | `StatusProvider`가 아이콘 노드를 **컨텍스트로 컨트롤에** 준다 | 셸이 직접 그린다. antd 아이콘 4종의 path 데이터를 `@ant-design/icons-svg`(MIT)에서 인라인 복사(`feedbackIcons.tsx`, `theme-shim/vendor/antdColors.ts`와 같은 벤더링 전례). 위치는 antd suffix와 같은 지점 |
+
+### 남은 차이 3건 — 근거와 함께 수용
+
+측정된 잔여 델타는 라이트·다크 각각 14개, 케이스 3종이다. **양쪽 모드의 델타
+집합이 동일**하므로 색/토큰 문제는 하나도 남아 있지 않다.
+
+1. **`tooltip`** (`vertical-tooltip`, 델타 2). 셸은 힌트를 라벨 옆에
+   **인라인**으로 그리고, antd는 `?` 아이콘 + hover `Tooltip`을 그린다. 티켓
+   05의 PILOT-DECISION을 그대로 계승 — 진짜 툴팁을 그리려면 의도적으로
+   무의존성인 시각 셸에 antd `Tooltip`을 끌어와야 한다. 툴팁 표현 방식 자체가
+   시각 레이어 과제이므로 티켓 35 이후.
+2. **`<Form size>`가 중첩된 antd 컨트롤을 줄이지 못한다** (`size-small` 델타 5,
+   `size-large` 1). 항목 자신의 기하(라벨 높이, 컨트롤 행 min-height)는 antd와
+   같아졌지만, antd는 크기를 **자기 SizeContext + `.ant-input-sm` 클래스**로
+   전달한다(측정: 클래스가 붙고 padding 11→7, radius 6→4가 따라온다). CSS로
+   흉내내려면 antd의 사이즈 시스템을 컨트롤 종류마다 재구현해야 하고, React로
+   고치려면 엔진이 antd `ConfigProvider`를 다시 임포트해야 한다. **실제 영향은
+   0**: `size`를 쓰는 유일한 호출부(`Chat/CustomModelForm`, `size="small"`)는
+   이미 Astryx 컨트롤(`AstryxFormTextInput` 등)을 쓰고, 그 컨트롤들은 애초에
+   antd의 사이즈 컨텍스트를 읽지 않는다.
+3. **`hasFeedback`의 DOM 모양** (델타 2×3). antd는 아이콘을 넣으려고 Input을
+   `.ant-input-affix-wrapper`로 감싸 안쪽 `<input>`을 줄인다. 셸은 오버레이 +
+   전환용 padding 규칙으로 같은 자리에 그린다. **바깥 상자·아이콘 위치·색은
+   일치**하고, 다른 것은 DOM 계층뿐이다. 컨트롤이 마이그레이션되면 사라진다.
+
+**미사용 표면(문서화된 수용 갭, 픽셀 패리티 대상 아님)** — 센서스 결과 호출부 0:
+`labelAlign`/`labelWrap`(구현은 했고 매트릭스에서 델타 0), `hasFeedback` 객체형
+(`{icons}`), `feedbackIcons`, `Form classNames`/`styles`/`variant`,
+`Col`의 반응형 브레이크포인트 객체형(`{xs,sm,md,…}`), `Form.Item _internalItemRender`.
+
+### 검증 (하드닝 시점)
+
+- `bash scripts/verify.sh` → **ALL PASS**
+- 수용 스위트 **59 passed** (antd 오라클 행 포함 — 즉 antd가 하던 일을 계속 한다)
+- react vitest **1171 passed / 64 files**, BUI vitest **546 passed / 1 skipped**
+- `pnpm --filter backend.ai-ui build` 성공
+- 매트릭스 **864 → 28 델타**, pageErrors 0, 라이트/다크 델타 집합 동일
+- 라이브(dev :4920 → 10.82.0.130:8090, 라이트/다크): 세션 런처(28 아이템),
+  배포 프리셋 생성(18 아이템 + `Form.List`), 챗 파라미터(6 아이템) —
+  `.ant-form-item` 0, 그려진 asterisk 0, **pageErrors 0**. explain 색이
+  라이트 `rgba(0,0,0,0.45)` / 다크 `rgba(255,255,255,0.45)`로 모드를 따라간다
+  (= antd `colorTextDescription`). `/data`와 `/admin/project`는 백엔드가
+  `Group`/`UserGroup` 타입 충돌 + 404를 내며 에러 바운더리에 걸린다 — 폼과
+  무관한 환경 문제로, 그 화면에는 폼 아이템이 0개다.
 
 ---
 

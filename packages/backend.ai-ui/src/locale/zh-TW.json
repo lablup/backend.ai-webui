@@ -622,6 +622,7 @@
     "UnknownError": "發生了未知錯誤。請重試。"
   },
   "form": {
+    "Optional": "（可選）",
     "validateMessages": {
       "Default": "字段驗證錯誤${label}",
       "Required": "請輸入${label}",

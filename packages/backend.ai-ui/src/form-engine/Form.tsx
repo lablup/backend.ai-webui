@@ -9,10 +9,14 @@
  `disabled`, `scrollToFirstError`). Measured prop usage lives in answers/08
  §1.5; every prop with a call site is here and nothing else is.
 
- `layout` defaults to `'vertical'` rather than antd's `'horizontal'`: 65 of the
- 66 `layout` declarations in this repo are `vertical` and the 66th is explicit,
- so the default that matches the codebase is vertical. Call sites that state
- `layout="vertical"` keep working unchanged.
+ `layout` defaults to antd's `'horizontal'`. An earlier revision defaulted to
+ `'vertical'` on the grounds that 65 of the 66 `layout` DECLARATIONS in this
+ repo are vertical — but that counted only the forms that state the prop. The
+ 29 `<Form>` call sites that state nothing were laid out horizontally by antd
+ and vertically by the engine, silently, and three of them
+ (`FolderCreateModal`, `FolderCreateModalV2`, `QuotaSettingModal`) pair that
+ silence with a `labelCol` span, which has no meaning in a vertical form. The
+ census is in `.scratch/astryx-migration/form-prop-census.txt`.
  */
 import useForm, { FormStore } from './FormStore';
 import {
@@ -22,7 +26,10 @@ import {
   FormProviderContext,
   HOOK_MARK,
   ListContext,
+  type FormItemCol,
+  type FormLayout,
   type FormProviderContextValue,
+  type FormSize,
   type RequiredMark,
 } from './context';
 import type {
@@ -46,13 +53,15 @@ export interface FormProps<Values = any> extends Omit<
   initialValues?: Store;
   /** `false` drops unmounted fields' values; the default `true` keeps them. */
   preserve?: boolean;
-  layout?: 'vertical' | 'horizontal';
+  layout?: FormLayout;
   requiredMark?: RequiredMark;
   disabled?: boolean;
-  size?: 'small' | 'middle' | 'large';
-  labelCol?: unknown;
-  wrapperCol?: unknown;
+  size?: FormSize;
+  labelCol?: FormItemCol;
+  wrapperCol?: FormItemCol;
   colon?: boolean;
+  labelAlign?: 'left' | 'right';
+  labelWrap?: boolean;
   validateMessages?: ValidateMessages;
   validateTrigger?: string | string[] | false;
   scrollToFirstError?: boolean | Record<string, unknown>;
@@ -93,17 +102,19 @@ const InternalForm = <Values,>(
     onFinish,
     onFinishFailed,
     clearOnDestroy,
-    layout = 'vertical',
+    layout = 'horizontal',
     requiredMark,
     disabled,
     scrollToFirstError,
-    // Visual-only props antd consumed through its stylesheet. BAIFormItem
-    // renders labels itself, so they are accepted and ignored rather than
-    // forwarded onto the DOM node (where React would warn).
-    size: _size,
-    labelCol: _labelCol,
-    wrapperCol: _wrapperCol,
-    colon: _colon,
+    // Visual props antd consumed through its stylesheet + `FormContext`. They
+    // are published on the layout context (never forwarded onto the DOM node,
+    // where React would warn) and the visual shell lays out from them.
+    size,
+    labelCol,
+    wrapperCol,
+    colon,
+    labelAlign,
+    labelWrap,
     ...restProps
   } = props;
 
@@ -202,6 +213,12 @@ const InternalForm = <Values,>(
       requiredMark: requiredMark ?? formConfig.requiredMark,
       disabled,
       name,
+      size,
+      colon,
+      labelAlign,
+      labelCol,
+      wrapperCol,
+      labelWrap,
     }),
     [
       formInstance,
@@ -210,6 +227,12 @@ const InternalForm = <Values,>(
       formConfig.requiredMark,
       disabled,
       name,
+      size,
+      colon,
+      labelAlign,
+      labelCol,
+      wrapperCol,
+      labelWrap,
     ],
   );
 
@@ -231,6 +254,13 @@ const InternalForm = <Values,>(
   return (
     <Wrapper
       {...restProps}
+      // The form root's own layout hooks — antd carries them as
+      // `.ant-form-inline` / `.ant-form-small`, and `FormItemVisual.css` reads
+      // them the same way (an inline form is `display: flex; flex-wrap: wrap`
+      // on the FORM, which no per-item style can express).
+      data-bai-form=""
+      data-layout={layout}
+      data-size={size}
       ref={nativeElementRef}
       onSubmit={(event: React.FormEvent) => {
         event.preventDefault();

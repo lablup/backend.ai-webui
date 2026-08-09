@@ -128,11 +128,33 @@ export function useFormValidateMessages(): ValidateMessages {
  * passing anything. An explicit prop still wins, and `<Form validateMessages>`
  * still wins over that (`Form.tsx` merges app config < Form.Provider < form).
  */
+/**
+ * The `requiredMark="optional"` suffix for the current language. antd read the
+ * same string from `locale.Form.optional`; the catalog entry was ported from
+ * antd by `.scratch/astryx-migration/extract-optional-label.mjs`.
+ */
+export function useFormOptionalLabel(): string {
+  'use memo';
+  const { t, i18n } = useBAIi18n();
+  const language = i18n.language;
+  return React.useMemo(
+    () => {
+      const value = t('form.Optional');
+      return value === 'form.Optional' || typeof value !== 'string'
+        ? '(optional)'
+        : value;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, language],
+  );
+}
+
 export const FormConfigProvider: React.FC<
   FormConfig & { children?: React.ReactNode }
 > = ({ children, ...config }) => {
   const parent = React.useContext(FormConfigContext);
   const localized = useFormValidateMessages();
+  const optionalLabel = useFormOptionalLabel();
 
   const value = React.useMemo(
     () => ({
@@ -140,11 +162,20 @@ export const FormConfigProvider: React.FC<
       ...config,
       validateMessages:
         config.validateMessages ?? parent.validateMessages ?? localized,
+      optionalLabel:
+        config.optionalLabel ?? parent.optionalLabel ?? optionalLabel,
     }),
     // Spread config members explicitly so a fresh object literal at the call
     // site does not re-provide (and re-render every form) on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parent, config.validateMessages, config.requiredMark, localized],
+    [
+      parent,
+      config.validateMessages,
+      config.requiredMark,
+      config.optionalLabel,
+      localized,
+      optionalLabel,
+    ],
   );
 
   return React.createElement(FormConfigContext.Provider, { value }, children);

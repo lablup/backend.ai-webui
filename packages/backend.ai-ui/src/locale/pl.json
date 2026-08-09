@@ -622,6 +622,7 @@
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
   },
   "form": {
+    "Optional": "(opcjonalne)",
     "validateMessages": {
       "Default": "Błąd walidacji dla pola ${label}",
       "Required": "Pole ${label} jest wymagane",

@@ -622,6 +622,7 @@
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
   "form": {
+    "Optional": "(ไม่จำเป็น)",
     "validateMessages": {
       "Default": "ฟิลด์ ${label} ไม่ผ่านเงื่อนไขการตรวจสอบ",
       "Required": "กรุณากรอก ${label}",

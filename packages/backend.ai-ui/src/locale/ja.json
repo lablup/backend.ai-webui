@@ -622,6 +622,7 @@
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
   "form": {
+    "Optional": "(オプション)",
     "validateMessages": {
       "Default": "${label}のフィールド検証エラー",
       "Required": "${label}を入力してください",

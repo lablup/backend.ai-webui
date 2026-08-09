@@ -622,6 +622,7 @@
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
   "form": {
+    "Optional": "(сонголттой)",
     "validateMessages": {
       "Default": "${label}-ийн талбарын баталгаажуулалтын алдаа",
       "Required": "${label} оруулна уу",

@@ -32,11 +32,14 @@ import Field, { type FieldProps } from './Field';
 import BAIFormItemVisual from './FormItemVisual';
 import {
   FieldContext,
+  FormConfigContext,
   FormItemInputContext,
   FormItemLayoutContext,
   ListContext,
   NoStyleItemContext,
+  type FormItemCol,
   type FormItemStatusContextValue,
+  type FormLayout,
   type RequiredMark,
 } from './context';
 import type {
@@ -111,16 +114,15 @@ export interface FormItemProps<Values = any> extends Omit<
   /** Render no wrapper; bubble this field's meta to the nearest ancestor item. */
   noStyle?: boolean;
   hidden?: boolean;
-  layout?: 'vertical' | 'horizontal';
+  layout?: FormLayout;
   className?: string;
   style?: React.CSSProperties;
   hasFeedback?: boolean;
   validateStatus?: FormItemStatusContextValue['status'];
-  /** Accepted for source compatibility; the visual shell owns its own layout. */
   colon?: boolean;
   labelAlign?: 'left' | 'right';
-  labelCol?: unknown;
-  wrapperCol?: unknown;
+  labelCol?: FormItemCol;
+  wrapperCol?: FormItemCol;
   labelWrap?: boolean;
   htmlFor?: string;
   id?: string;
@@ -181,14 +183,12 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     messageVariables,
     trigger = 'onChange',
     validateTrigger,
-    // Accepted and intentionally not forwarded: the visual shell replaces
-    // antd's grid-based label/control split.
-    colon: _colon,
-    labelAlign: _labelAlign,
-    labelCol: _labelCol,
-    wrapperCol: _wrapperCol,
-    labelWrap: _labelWrap,
-    htmlFor: _htmlFor,
+    colon,
+    labelAlign,
+    labelCol,
+    wrapperCol,
+    labelWrap,
+    htmlFor,
     fieldKey: _fieldKey,
     id: _id,
     __values: _values,
@@ -196,16 +196,38 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
   } = props;
 
   const fieldContext = React.useContext(FieldContext);
+  const { optionalLabel } = React.useContext(FormConfigContext);
   const {
     layout: formLayout,
     requiredMark,
     name: formName,
     disabled: formDisabled,
+    size: formSize,
+    colon: formColon,
+    labelAlign: formLabelAlign,
+    labelCol: formLabelCol,
+    wrapperCol: formWrapperCol,
+    labelWrap: formLabelWrap,
   } = React.useContext(FormItemLayoutContext);
   const notifyParentMetaChange = React.useContext(NoStyleItemContext);
   const listContext = React.useContext(ListContext);
 
   const layout = propsLayout || formLayout;
+  const mergedLabelCol = labelCol ?? formLabelCol;
+  const mergedWrapperColProp = wrapperCol ?? formWrapperCol;
+  /**
+   * antd's `FormItemInput`: a LABEL-LESS item in a form that declares a
+   * `labelCol` gets that span as a wrapper OFFSET, so its control still lines
+   * up with the labelled rows above it.
+   */
+  const mergedWrapperCol =
+    label === null &&
+    !labelCol &&
+    !wrapperCol &&
+    formLabelCol?.span !== undefined &&
+    formLabelCol.span < 24
+      ? { ...mergedWrapperColProp, offset: formLabelCol.span }
+      : mergedWrapperColProp;
   const mergedValidateTrigger =
     validateTrigger !== undefined
       ? validateTrigger
@@ -294,30 +316,52 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
       );
     }
 
-    const showRequiredMark =
-      requiredMark !== false &&
-      requiredMark !== 'optional' &&
-      typeof requiredMark !== 'function';
+    // antd keeps `-required` on the label in every case and hides the GLYPH
+    // for `false` / `'optional'` / a function mark, because the label itself
+    // then carries the hint. Mirrored so `[data-bai-form-item-required]` stays
+    // a stable anchor while the asterisk obeys the same rule antd applies.
+    const requiredMarkType =
+      requiredMark === false
+        ? ('hidden' as const)
+        : requiredMark === 'optional' || typeof requiredMark === 'function'
+          ? ('optional' as const)
+          : undefined;
     // An explicit `required` wins over the rules-derived value, and it is the
     // ONLY source on a layout-only item (no `name`, so no rules to derive
     // from). `BAIBulkEditFormItem` renders exactly that shape — it drops
     // `name` from the item and drives the marker by hand.
     const mergedRequired = required !== undefined ? required : !!isRequired;
-    const mergedLabel = applyRequiredMark(label, mergedRequired, requiredMark);
+    const mergedLabel = applyRequiredMark(
+      label,
+      mergedRequired,
+      requiredMark,
+      optionalLabel ?? '(optional)',
+    );
 
     return (
       <FormItemInputContext.Provider value={status}>
         <BAIFormItemVisual
           label={mergedLabel}
+          labelTitle={typeof label === 'string' ? label : undefined}
           tooltip={normalizeTooltip(tooltip)}
           extra={extra}
           help={help}
-          required={showRequiredMark && mergedRequired}
+          required={mergedRequired}
+          requiredMarkType={requiredMarkType}
           layout={layout}
+          size={formSize}
+          colon={colon ?? formColon}
+          labelAlign={labelAlign ?? formLabelAlign}
+          labelCol={mergedLabelCol}
+          wrapperCol={mergedWrapperCol}
+          labelWrap={labelWrap ?? formLabelWrap}
+          status={status.status}
+          hasFeedback={hasFeedback}
           className={className}
           style={style}
           hidden={hidden}
           fieldId={fieldId}
+          htmlFor={htmlFor}
           errors={mergedErrors}
           warnings={mergedWarnings}
         >
@@ -456,16 +500,22 @@ function applyRequiredMark(
   label: React.ReactNode,
   required: boolean,
   requiredMark: RequiredMark | undefined,
+  optionalLabel: React.ReactNode,
 ): React.ReactNode {
   if (label === undefined || label === null) return label;
   if (typeof requiredMark === 'function') {
     return requiredMark(label, { required });
   }
   if (requiredMark === 'optional' && !required) {
+    // antd renders the bare locale string and spaces it with
+    // `margin-inline-start: marginXXS`, so the gap survives text selection and
+    // copy. The engine had baked a literal leading space into the string,
+    // which put " (optional)" in `label.textContent` where antd has
+    // "(optional)".
     return (
       <>
         {label}
-        <span data-bai-form-item-optional=""> (optional)</span>
+        <span data-bai-form-item-optional="">{optionalLabel}</span>
       </>
     );
   }

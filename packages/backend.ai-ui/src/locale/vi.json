@@ -622,6 +622,7 @@
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
   "form": {
+    "Optional": "(Tùy chọn)",
     "validateMessages": {
       "Default": "${label} không đáp ứng điều kiện quy định",
       "Required": "Hãy nhập thông tin cho trường ${label}",

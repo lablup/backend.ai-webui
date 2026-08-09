@@ -622,6 +622,7 @@
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },
   "form": {
+    "Optional": "(opzionale)",
     "validateMessages": {
       "Default": "Errore di convalida del campo ${label}",
       "Required": "Si prega di inserire ${label}",

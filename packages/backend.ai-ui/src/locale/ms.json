@@ -622,6 +622,7 @@
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },
   "form": {
+    "Optional": "(Opsional)",
     "validateMessages": {
       "Default": "Ralat pengesahan untuk ${label}",
       "Required": "Isi ${label}",

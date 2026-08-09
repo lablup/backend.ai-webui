@@ -622,6 +622,7 @@
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
   "form": {
+    "Optional": "(optional)",
     "validateMessages": {
       "Default": "Kesalahan validasi untuk ${label}",
       "Required": "Tolong masukkan ${label}",

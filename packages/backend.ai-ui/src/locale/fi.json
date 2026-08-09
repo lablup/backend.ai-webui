@@ -622,6 +622,7 @@
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },
   "form": {
+    "Optional": "(optional)",
     "validateMessages": {
       "Default": "Kentän ${label} vahvistus epäonnistui",
       "Required": "Syötä ${label}",

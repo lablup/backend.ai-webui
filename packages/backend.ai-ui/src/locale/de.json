@@ -622,6 +622,7 @@
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
   "form": {
+    "Optional": "(optional)",
     "validateMessages": {
       "Default": "Feld-Validierungsfehler: ${label}",
       "Required": "Bitte geben Sie ${label} an",

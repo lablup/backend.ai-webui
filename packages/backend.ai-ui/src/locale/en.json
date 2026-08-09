@@ -640,6 +640,7 @@
     "UnknownError": "An unknown error occurred. Please try again."
   },
   "form": {
+    "Optional": "(optional)",
     "validateMessages": {
       "Default": "Field validation error for ${label}",
       "Required": "Please enter ${label}",

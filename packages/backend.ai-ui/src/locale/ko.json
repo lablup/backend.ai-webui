@@ -622,6 +622,7 @@
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
   "form": {
+    "Optional": "(선택사항)",
     "validateMessages": {
       "Default": "필드 유효성 검사 오류 ${label}",
       "Required": "${label} 값을 입력해 주세요",
