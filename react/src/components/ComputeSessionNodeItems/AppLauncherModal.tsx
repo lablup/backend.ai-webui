@@ -31,10 +31,10 @@ import { Grid } from '@astryxdesign/core/Grid';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import * as stylex from '@stylexjs/stylex';
 import { TextInput } from '@astryxdesign/core/TextInput';
-// FRONTIER (ticket 17): the Form ENGINE stays antd's (ticket 34's self-hosted
-// replacement is parked). The CONTROLS inside the items are Astryx now — the
+import * as stylex from '@stylexjs/stylex';
+// FRONTIER (ticket 17): the Form ENGINE is self-hosted since ticket 34 (live
+// again since ticket 35). The CONTROLS inside the items are Astryx now — the
 // `astryxFormControls` adapters where a `Form.Item` injects `value`/`onChange`,
 // raw Astryx components where it does not.
 import {

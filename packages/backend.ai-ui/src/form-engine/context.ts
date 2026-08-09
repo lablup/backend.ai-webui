@@ -98,9 +98,10 @@ export type RequiredMark =
 
 export interface FormConfig {
   /**
-   * Locale-aware message templates. The app injects antd-shaped `${label}`
-   * templates here (`DefaultProviders.tsx`); the engine's own defaults use
-   * `${name}` and only apply when nothing is provided.
+   * Locale-aware message templates, `${label}`-based. `FormConfigProvider`
+   * defaults them to BUI's own localized table (ticket 35); the engine's
+   * built-in defaults use `${name}` and only apply when nothing is provided
+   * at all (tests, Storybook, a `<Form>` with no provider above it).
    */
   validateMessages?: ValidateMessages;
   requiredMark?: RequiredMark;
@@ -109,19 +110,10 @@ export interface FormConfig {
 /** What antd sourced from `<ConfigProvider form={{...}}>`. */
 export const FormConfigContext = React.createContext<FormConfig>({});
 
-export const FormConfigProvider: React.FC<
-  FormConfig & { children?: React.ReactNode }
-> = ({ children, ...config }) => {
-  const parent = React.useContext(FormConfigContext);
-  const value = React.useMemo(
-    () => ({ ...parent, ...config }),
-    // Spread config members explicitly so a fresh object literal at the call
-    // site does not re-provide (and re-render every form) on every render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [parent, config.validateMessages, config.requiredMark],
-  );
-  return React.createElement(FormConfigContext.Provider, { value }, children);
-};
+// The PROVIDER lives in `./FormConfigProvider.tsx`, not here. It is the one
+// piece of the engine that reads BUI's i18next instance, and this module is
+// engine core (`Field`, `FormStore`, `FormItem` all import it) — keeping the
+// i18n import out of the core is why the two are split.
 
 // ============================ Per-form UI context ===========================
 

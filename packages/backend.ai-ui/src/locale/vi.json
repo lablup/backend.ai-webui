@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "${label} không đáp ứng điều kiện quy định",
+      "Required": "Hãy nhập thông tin cho trường ${label}",
+      "Whitespace": "${label} không được chứa khoảng trắng",
+      "array": {
+        "Len": "Mảng ${label} phải có ${len} phần tử ",
+        "Max": "Mảng ${label} phải chứa tối đa ${max} phần tử ",
+        "Min": "Mảng ${label} phải chứa tối thiểu ${min} phần tử ",
+        "Range": "Mảng ${label} phải chứa từ ${min}-${max} phần tử"
+      },
+      "number": {
+        "Len": "${label} phải bằng ${len}",
+        "Max": "${label} phải nhỏ hơn hoặc bằng ${max}",
+        "Min": "${label} phải lớn hơn hoặc bằng ${min}",
+        "Range": "${label} phải nằm trong khoảng ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} không thỏa mãn mẫu kiểm tra ${pattern}"
+      },
+      "string": {
+        "Len": "${label} phải dài đúng ${len} ký tự",
+        "Max": "Độ dài tối đa trường ${label} là ${max} ký tự",
+        "Min": "Độ dài tối thiểu trường ${label} là ${min} ký tự",
+        "Range": "Độ dài trường ${label} phải từ ${min} đến ${max} ký tự"
+      },
+      "types": {
+        "Email": "${label} không phải kiểu ${type} hợp lệ",
+        "Number": "${label} không phải kiểu ${type} hợp lệ",
+        "Object": "${label} không phải kiểu ${type} hợp lệ",
+        "String": "${label} không phải kiểu ${type} hợp lệ",
+        "Url": "${label} không phải kiểu ${type} hợp lệ"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Bỏ chọn tất cả",

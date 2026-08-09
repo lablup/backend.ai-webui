@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Erreur de validation pour le champ ${label}",
+      "Required": "Le champ ${label} est obligatoire",
+      "Whitespace": "La valeur du champ ${label} ne peut pas être vide",
+      "array": {
+        "Len": "La taille du tableau ${label} doit être de ${len}",
+        "Max": "La taille du tableau ${label} doit être au maximum de ${max}",
+        "Min": "La taille du tableau ${label} doit être au minimum de ${min}",
+        "Range": "La taille du tableau ${label} doit être entre ${min}-${max}"
+      },
+      "number": {
+        "Len": "La valeur du champ ${label} doit être égale à ${len}",
+        "Max": "La valeur du champ ${label} doit être plus petit que ${max}",
+        "Min": "La valeur du champ ${label} doit être plus grande que ${min}",
+        "Range": "La valeur du champ ${label} doit être entre ${min} et ${max}"
+      },
+      "pattern": {
+        "Mismatch": "La valeur du champ ${label} ne correspond pas au modèle ${pattern}"
+      },
+      "string": {
+        "Len": "La taille du champ ${label} doit être de ${len} caractères",
+        "Max": "La taille du champ ${label} doit être au maximum de ${max} caractères",
+        "Min": "La taille du champ ${label} doit être au minimum de ${min} caractères",
+        "Range": "La taille du champ ${label} doit être entre ${min} et ${max} caractères"
+      },
+      "types": {
+        "Email": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "Number": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "Object": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "String": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "Url": "La valeur du champ ${label} n'est pas valide pour le type ${type}"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Tout désélectionner",

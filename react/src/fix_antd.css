@@ -57,7 +57,10 @@
    rendered anywhere in the app any more (BAITableAstryx is the only table
    engine), so the rule is dead and has been removed. */
 
-/* fix: the tooltip does not appear in the `<Form.Item tooltip={'something'}` when the popup container is a parent node of the trigger node. */
-.ant-form-item-label {
-  overflow: unset !important;
-}
+/* to-astryx ticket 35: the `.ant-form-item-label { overflow: unset }` rule
+   that lived here worked around antd clipping a `<Form.Item tooltip>` popup
+   when the popup container was a parent of the trigger. The form engine is
+   self-hosted now — no `.ant-form-item-label` is rendered anywhere, so the
+   selector matched nothing (P6) — and the BAI visual shell renders the
+   tooltip hint INLINE next to the label (ticket 05 PILOT-DECISION), so there
+   is no popup to clip. Rule removed. */

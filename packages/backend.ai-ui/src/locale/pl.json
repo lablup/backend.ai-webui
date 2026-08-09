@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Błąd walidacji dla pola ${label}",
+      "Required": "Pole ${label} jest wymagane",
+      "Whitespace": "Pole ${label} nie może być puste",
+      "array": {
+        "Len": "${label} musi posiadać ${len} elementów",
+        "Max": "${label} musi posiadać maksymalnie ${max} elementów",
+        "Min": "${label} musi posiadać co najmniej ${min} elementów",
+        "Range": "${label} musi posiadać między ${min} a ${max} elementów"
+      },
+      "number": {
+        "Len": "${label} musi mieć wartość o długości ${len}",
+        "Max": "${label} musi mieć wartość mniejszą lub równą ${max}",
+        "Min": "${label} musi mieć wartość większą lub równą ${min}",
+        "Range": "${label} musi mieć wartość pomiędzy ${min} a ${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} nie posiada wartości zgodnej ze wzorem ${pattern}"
+      },
+      "string": {
+        "Len": "${label} musi posiadać ${len} znaków",
+        "Max": "${label} musi posiadać maksymalnie ${max} znaków",
+        "Min": "${label} musi posiadać co namniej ${min} znaków",
+        "Range": "${label} musi posiadać między ${min} a ${max} znaków"
+      },
+      "types": {
+        "Email": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "Number": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "Object": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "String": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "Url": "${label} nie posiada poprawnej wartości dla typu ${type}"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Odznacz wszystko",

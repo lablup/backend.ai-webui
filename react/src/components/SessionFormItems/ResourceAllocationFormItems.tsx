@@ -32,9 +32,8 @@ import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
-// `Form.Item` are still antd's — ticket 34's self-hosted engine is parked (see
-// form-engine/engine.ts) — but every control and every piece of chrome below
-// is Astryx now.
+// `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
+// and every control and every piece of chrome below is Astryx now.
 import { Card } from '@astryxdesign/core/Card';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {

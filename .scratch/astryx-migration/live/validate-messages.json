@@ -1,0 +1,47 @@
+{
+  "en": {
+    "url": "/admin/deployments/deployment-presets/new",
+    "items": 18,
+    "antdItems": 0,
+    "errors": [],
+    "labels": [
+      "Name",
+      "Description(optional)",
+      "RuntimeThe inference runtime (e.g., vLLM, SGLang) this preset targets. Selecting one reveals its configurable runtime parameters, whose values are saved with the preset and applied to deployments created from it.",
+      "Image",
+      "Resource Slots",
+      "Resource Options(optional)"
+    ],
+    "pageErrors": []
+  },
+  "ko": {
+    "url": "/admin/deployments/deployment-presets/new",
+    "items": 18,
+    "antdItems": 0,
+    "errors": [],
+    "labels": [
+      "이름",
+      "설명(선택)",
+      "런타임이 프리셋이 대상으로 하는 인퍼런스 런타임(예: vLLM, SGLang)입니다. 런타임을 선택하면 구성 가능한 런타임 파라미터가 표시되며, 해당 값은 프리셋과 함께 저장되어 이 프리셋으로 생성된 배포에 적용됩니다.",
+      "이미지",
+      "리소스 슬롯",
+      "리소스 옵션(선택)"
+    ],
+    "pageErrors": []
+  },
+  "ja": {
+    "url": "/admin/deployments/deployment-presets/new",
+    "items": 18,
+    "antdItems": 0,
+    "errors": [],
+    "labels": [
+      "名前",
+      "説明(任意)",
+      "ランタイムこのプリセットが対象とする推論ランタイム（例：vLLM、SGLang）です。選択すると、設定可能なランタイムパラメータが表示され、その値はプリセットとともに保存され、このプリセットから作成されたデプロイメントに適用されます。",
+      "イメージ",
+      "リソーススロット",
+      "リソースオプション(任意)"
+    ],
+    "pageErrors": []
+  }
+}

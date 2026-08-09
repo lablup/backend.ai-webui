@@ -11,8 +11,13 @@
  is re-pointed at the button's own class rather than left silently matching
  nothing (P6).
 
- The `.ant-form-item*` rules are UNCHANGED and still live: the rename field
- sits inside the PARKED antd form engine, which still renders antd's item DOM.
+ Ticket 35 re-pointed the margin rule the same way. The rename field sits in
+ the self-hosted form engine now, so its item root is `[data-bai-form-item]`
+ and the old `.ant-form-item*` selectors had stopped matching anything —
+ which would have left this field with the shell's default 24px bottom margin
+ inside a single-line inline editor. `!important` still wins over the shell's
+ inline `marginBottom` (author `!important` beats a non-important inline
+ style), so the collapse-to-zero behaviour is unchanged.
 */
 .bai-editable-file-name-hover-edit .bai-editable-file-name-edit-button {
   opacity: 0;
@@ -25,7 +30,6 @@
   opacity: 1;
 }
 
-.bai-editable-file-name-form .ant-form-item,
-.bai-editable-file-name-form .ant-form-item-has-success {
+.bai-editable-file-name-form [data-bai-form-item] {
   margin-bottom: 0px !important;
 }

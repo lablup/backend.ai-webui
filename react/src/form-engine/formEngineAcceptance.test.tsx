@@ -13,11 +13,11 @@
  at which point the `antd` row is dropped and the `engine` row becomes a plain
  regression suite.
 
- STATUS (2026-08-08): the engine is PARKED — the `form-engine` alias forwards
- to antd, so the app runs antd's engine and antd's `Form.Item` visuals. The
- `antd` row is therefore the row that describes production. The `engine` row
- stays green so the parked implementation does not rot, and so re-enabling it
- later is a one-line alias flip rather than an archaeology exercise.
+ STATUS (2026-08-09, ticket 35): the engine is LIVE — the `form-engine` alias
+ resolves to it, so the `engine` row is the row that describes production and
+ the `antd` row is the reference oracle. (It was parked for one day between
+ 2026-08-08 and 2026-08-09; the row split is what made re-enabling it a
+ one-line alias flip rather than an archaeology exercise.)
 
  Rules for editing this file:
    - Assert through the FormInstance API and rendered TEXT only. Any assertion
@@ -27,13 +27,12 @@
      two implementations agree on the default templates, but pinning generated
      English here would make the suite a locale test.
  */
-// The engine is reached DIRECTLY, not through `../form-engine`. That alias
-// forwards to antd since the 2026-08-08 revert (see the banner in
-// `packages/backend.ai-ui/src/form-engine/engine.ts`); importing the engine
-// through it would silently run the suite against antd twice. The relative
-// path across the workspace boundary is deliberate — BUI's public index does
-// not re-export the parked engine, and this is its only consumer.
-import { Form as EngineForm } from '../../../packages/backend.ai-ui/src/form-engine/engine';
+// Through the ALIAS on purpose (ticket 35): this is the module every one of
+// the 115 form call sites resolves, so the suite pins the wiring as well as
+// the engine. If the alias ever forwarded to antd again, the two rows would
+// become identical and 29 of the 58 assertions would stop meaning anything —
+// which is precisely the regression this import is positioned to catch.
+import { Form as EngineForm } from '../form-engine';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form as AntdForm } from 'antd';
@@ -52,6 +51,13 @@ const IMPLEMENTATIONS: [name: string, Form: AnyForm][] = [
   ['antd', AntdForm],
   ['engine', EngineForm],
 ];
+
+// The alias is what the app resolves; if it ever forwarded back to antd, both
+// rows below would run antd and stay green while asserting nothing. Pin it.
+it('the `form-engine` alias resolves to the self-hosted engine, not antd', () => {
+  expect(EngineForm).not.toBe(AntdForm);
+  expect(EngineForm.Item).not.toBe(AntdForm.Item);
+});
 
 /** Plain controlled input, so no antd/Astryx control is in the test path. */
 const Input: React.FC<any> = ({ value = '', onChange, ...rest }) => (

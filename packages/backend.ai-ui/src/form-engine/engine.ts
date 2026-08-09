@@ -2,38 +2,32 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Public surface of the self-hosted form engine (to-astryx ticket 34).
+ Public surface of the self-hosted form engine (to-astryx tickets 34 + 35).
 
  ┌───────────────────────────────────────────────────────────────────────┐
- │ PARKED — NOT WIRED INTO THE RUNNING APP (user decision, 2026-08-08).  │
+ │ LIVE. `./index.ts` re-exports this module, so every                   │
+ │ `import { Form } from '../form-engine'` in the repository — 115 files │
+ │ — resolves here. The app runs this engine and this `Form.Item`.       │
  │                                                                       │
- │ Ticket 34 pointed `form-engine/index.ts` at this module, so every     │
- │ `import { Form } from '../form-engine'` resolved here and every       │
- │ `<Form.Item>` in the repo rendered the BAI visual shell over this     │
- │ engine. That flip is reverted: `./index.ts` is now a thin re-export    │
- │ of **antd's** form surface, so the app runs antd's engine AND antd's  │
- │ `Form.Item` visuals again while the UI-component migration continues. │
+ │ It was parked between 2026-08-08 and 2026-08-09 (runtime temporarily  │
+ │ pointed back at antd while the UI-component migration ran). Ticket 35 │
+ │ unparked it, localized `validateMessages` out of antd's locale bundle │
+ │ into BUI's own catalogs, and moved `DefaultProviders` onto            │
+ │ `<FormConfigProvider>`. There is NO antd left on the form surface:    │
+ │ no module under `form-engine/` imports antd, rc-field-form or         │
+ │ @ant-design/*.                                                        │
  │                                                                       │
- │ Nothing here was deleted. The engine still compiles, still lints, and │
- │ is still exercised by the 29-case acceptance suite                    │
- │ (`react/src/form-engine/formEngineAcceptance.test.tsx`), which imports│
- │ this module directly rather than through the alias.                   │
- │                                                                       │
- │ RE-ENABLING is a one-file edit: make `./index.ts` `export * from      │
- │ './engine'` (plus the two named/`default` lines below), restore       │
- │ `<FormConfigProvider>` in `react/src/components/DefaultProviders.tsx` │
- │ in place of `<ConfigProvider form={{…}}>`, point                      │
- │ `react/src/form-engine/index.ts` back at `backend.ai-ui`, and swap    │
- │ the alias-driven `.ant-form-*` e2e selectors back to the             │
- │ `[data-bai-form-item*]` anchors. See                                  │
- │ `.scratch/astryx-migration/issues/34-form-engine.md`.                 │
+ │ The 29-case acceptance suite                                          │
+ │ (`react/src/form-engine/formEngineAcceptance.test.tsx`) runs every    │
+ │ case against BOTH antd and this engine and keeps the antd row green,  │
+ │ so "behaves like the thing it replaces" stays asserted until antd is  │
+ │ uninstalled. See `.scratch/astryx-migration/issues/34-form-engine.md`.│
  └───────────────────────────────────────────────────────────────────────┘
 
  A DROP-IN replacement for the slice of antd's form API this repository uses.
- Migrating a call site is an import rewrite and nothing else:
-
-   - import { Form } from 'antd';
-   + import { Form } from '../form-engine';
+ Migrating a call site is an import rewrite and nothing else — the module
+ specifier changes from the antd package to `'../form-engine'`, and the
+ imported names do not change at all.
 
  `scripts/codemods/antd-form-to-engine.mjs` performs that rewrite; the
  resulting diff touches import statements only.
@@ -95,16 +89,20 @@ export {
   type BAIFormItemVisualProps,
 } from './FormItemVisual';
 export {
-  FormConfigProvider,
   // Consumed outside the engine: BAICheckbox reads the item's validation
   // status, and a custom item shell can publish sub-item metas. These were
   // deep imports out of `antd/es/form/context` before ticket 34.
   FormItemInputContext,
   NoStyleItemContext,
+  FormConfigContext,
   type FormConfig,
   type FormItemStatusContextValue,
   type RequiredMark,
 } from './context';
+export {
+  FormConfigProvider,
+  useFormValidateMessages,
+} from './FormConfigProvider';
 export { FormStore } from './FormStore';
 export { defaultValidateMessages } from './messages';
 

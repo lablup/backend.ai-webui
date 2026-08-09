@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
+  "form": {
+    "validateMessages": {
+      "Default": "ฟิลด์ ${label} ไม่ผ่านเงื่อนไขการตรวจสอบ",
+      "Required": "กรุณากรอก ${label}",
+      "Whitespace": "${label} ไม่สามารถเป็นช่องว่างได้",
+      "array": {
+        "Len": "ต้องมี ${len} ${label}",
+        "Max": "มีได้สูงสุด ${max} ${label}",
+        "Min": "ต้องมีอย่างน้อย ${min} ${label}",
+        "Range": "จำนวน ${label} ต้องอยู่ในช่วง ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} ต้องมี ${len} ตัว",
+        "Max": "ค่าสูงสุด ${label} คือ ${max}",
+        "Min": "ค่าต่ำสุด ${label} คือ ${min}",
+        "Range": "${label} ต้องมีค่า ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} ไม่ตรงกับรูปแบบ ${pattern}"
+      },
+      "string": {
+        "Len": "${label} ต้องมี ${len} ตัวอักษร",
+        "Max": "${label} มีได้สูงสุด ${max} ตัวอักษร",
+        "Min": "${label} ต้องมีอย่างน้อย ${min} ตัวอักษร",
+        "Range": "${label} ต้องมี ${min}-${max} ตัวอักษร"
+      },
+      "types": {
+        "Email": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Number": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Object": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "String": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Url": "${label} ไม่ใช่ ${type} ที่ถูกต้อง"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",

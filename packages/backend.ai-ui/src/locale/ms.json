@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Ralat pengesahan untuk ${label}",
+      "Required": "Isi ${label}",
+      "Whitespace": "${label} tidak boleh kosong",
+      "array": {
+        "Len": "${len} ${label}",
+        "Max": "Max ${max} ${label}",
+        "Min": "Min ${min} ${label}",
+        "Range": "${label} antara ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} sama dengan ${len}",
+        "Max": "Max ${max}",
+        "Min": "Min ${min}",
+        "Range": "${label} antara ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} tidak sesuai ${pattern}"
+      },
+      "string": {
+        "Len": "${label} mesti ${len} aksara",
+        "Max": "Max ${max} aksara",
+        "Min": "Min ${min} aksara",
+        "Range": "${label} antara ${min}-${max} aksara"
+      },
+      "types": {
+        "Email": "${label} bukan ${type} jenis yang sah",
+        "Number": "${label} bukan ${type} jenis yang sah",
+        "Object": "${label} bukan ${type} jenis yang sah",
+        "String": "${label} bukan ${type} jenis yang sah",
+        "Url": "${label} bukan ${type} jenis yang sah"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Nyahpilih semua",

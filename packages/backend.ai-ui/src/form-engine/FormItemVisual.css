@@ -20,3 +20,65 @@
 [data-bai-form-item-control-input] > * > .ant-picker {
   width: 100%;
 }
+
+/*
+ TRANSITIONAL (ticket 35) — validation status for the antd controls that are
+ still nested inside form items.
+
+ antd's Input / InputNumber / Select / DatePicker colour their own border by
+ reading `FormItemInputContext` out of `antd/es/form/context`. The engine
+ publishes its OWN context object (`form-engine/context.ts`), deliberately: the
+ whole point of ticket 34 was to drop that deep import into antd internals. So
+ an antd control inside an engine item never learns it is in an error state and
+ renders a neutral border where antd painted a red one.
+
+ The React fix would be to also provide antd's context — i.e. re-import antd
+ into the engine. This CSS reaches the same pixels without it, keyed on the
+ `data-status` the visual shell already publishes on the item root. It is
+ scoped to `.ant-*` class names on purpose: it applies to exactly the controls
+ that have not migrated yet, and it deletes itself when the last one does.
+
+ Colours resolve through the same custom-property chain as the rest of the
+ shell, so a theme override moves the control border and the message text
+ together.
+*/
+[data-bai-form-item][data-status='error']
+  [data-bai-form-item-control-input]
+  :is(
+    .ant-input,
+    .ant-input-affix-wrapper,
+    .ant-input-number,
+    .ant-input-number-affix-wrapper,
+    .ant-picker,
+    .ant-mentions
+  ),
+[data-bai-form-item][data-status='error']
+  [data-bai-form-item-control-input]
+  .ant-select-outlined:not(.ant-select-disabled):not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  border-color: var(--bai-form-item-error-color, var(--color-error, #ff4d4f));
+}
+
+[data-bai-form-item][data-status='warning']
+  [data-bai-form-item-control-input]
+  :is(
+    .ant-input,
+    .ant-input-affix-wrapper,
+    .ant-input-number,
+    .ant-input-number-affix-wrapper,
+    .ant-picker,
+    .ant-mentions
+  ),
+[data-bai-form-item][data-status='warning']
+  [data-bai-form-item-control-input]
+  .ant-select-outlined:not(.ant-select-disabled):not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  border-color: var(
+    --bai-form-item-warning-color,
+    var(--color-warning, #faad14)
+  );
+}

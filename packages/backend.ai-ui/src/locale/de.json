@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Feld-Validierungsfehler: ${label}",
+      "Required": "Bitte geben Sie ${label} an",
+      "Whitespace": "${label} darf kein Leerzeichen sein",
+      "array": {
+        "Len": "Es müssen ${len} ${label} sein",
+        "Max": "Es dürfen maximal ${max} ${label} sein",
+        "Min": "Es müssen mindestens ${min} ${label} sein",
+        "Range": "Die Anzahl an ${label} muss zwischen ${min} und ${max} liegen"
+      },
+      "number": {
+        "Len": "${label} muss gleich ${len} sein",
+        "Max": "${label} darf maximal ${max} sein",
+        "Min": "${label} muss mindestens ${min} sein",
+        "Range": "${label} muss zwischen ${min} und ${max} liegen"
+      },
+      "pattern": {
+        "Mismatch": "${label} entspricht nicht dem ${pattern} Muster"
+      },
+      "string": {
+        "Len": "${label} muss genau ${len} Zeichen lang sein",
+        "Max": "${label} darf höchstens ${max} Zeichen lang sein",
+        "Min": "${label} muss mindestens ${min} Zeichen lang sein",
+        "Range": "${label} muss zwischen ${min} und ${max} Zeichen lang sein"
+      },
+      "types": {
+        "Email": "${label} ist nicht gültig. ${type} erwartet",
+        "Number": "${label} ist nicht gültig. ${type} erwartet",
+        "Object": "${label} ist nicht gültig. ${type} erwartet",
+        "String": "${label} ist nicht gültig. ${type} erwartet",
+        "Url": "${label} ist nicht gültig. ${type} erwartet"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Alle abwählen",

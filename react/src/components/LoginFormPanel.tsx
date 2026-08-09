@@ -12,10 +12,9 @@
 // to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
 // app-shim (message → Toast) instead of antd.
 import { App } from '../app-shim';
-// SHIM (MAPPING §2): the antd Form ENGINE stays (ticket 34's replacement is
-// parked — see form-engine/engine.ts); only its
-// visual layer moves (`Form.Item` -> `BAIFormItem`, antd controls -> the
-// Astryx form-control adapters).
+// The Form ENGINE is self-hosted since ticket 34 (live again since ticket 35),
+// and its visual layer is BAI's (`Form.Item` IS `BAIFormItem`); the controls
+// are the Astryx form-control adapters.
 import { Form, type FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';

@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
   },
+  "form": {
+    "validateMessages": {
+      "Default": "字段驗證錯誤${label}",
+      "Required": "請輸入${label}",
+      "Whitespace": "${label}不能為空字符",
+      "array": {
+        "Len": "須為${len}個${label}",
+        "Max": "最多${max}個${label}",
+        "Min": "最少${min}個${label}",
+        "Range": "${label}數量須在${min}-${max}之間"
+      },
+      "number": {
+        "Len": "${label}必須等於${len}",
+        "Max": "${label}最大值為${max}",
+        "Min": "${label}最小值為${min}",
+        "Range": "${label}須在${min}-${max}之間"
+      },
+      "pattern": {
+        "Mismatch": "${label}與模式不匹配${pattern}"
+      },
+      "string": {
+        "Len": "${label}須為${len}個字符",
+        "Max": "${label}最多${max}個字符",
+        "Min": "${label}最少${min}個字符",
+        "Range": "${label}須在${min}-${max}字符之間"
+      },
+      "types": {
+        "Email": "${label}不是一個有效的${type}",
+        "Number": "${label}不是一個有效的${type}",
+        "Object": "${label}不是一個有效的${type}",
+        "String": "${label}不是一個有效的${type}",
+        "Url": "${label}不是一個有效的${type}"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "取消全選",

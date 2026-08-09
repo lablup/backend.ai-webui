@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Σφάλμα επικύρωσης πεδίου για ${label}",
+      "Required": "Παρακαλώ εισάγετε ${label}",
+      "Whitespace": "Το ${label} δεν μπορεί να είναι κενός χαρακτήρας",
+      "array": {
+        "Len": "Πρέπει να είναι ${len} ${label}",
+        "Max": "Το πολύ ${max} ${label}",
+        "Min": "Τουλάχιστον ${min} ${label}",
+        "Range": "Το ποσό του ${label} πρέπει να είναι μεταξύ ${min}-${max}"
+      },
+      "number": {
+        "Len": "Το ${label} πρέπει να είναι ίσο με ${len}",
+        "Max": "Το ${label} πρέπει να είναι το πολύ ${max}",
+        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min}",
+        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "Το ${label} δεν ταιριάζει με το μοτίβο ${pattern}"
+      },
+      "string": {
+        "Len": "Το ${label} πρέπει να είναι ${len} χαρακτήρες",
+        "Max": "Το ${label} πρέπει να είναι το πολύ ${max} χαρακτήρες",
+        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min} χαρακτήρες",
+        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max} χαρακτήρων"
+      },
+      "types": {
+        "Email": "Το ${label} δεν είναι έγκυρο ${type}",
+        "Number": "Το ${label} δεν είναι έγκυρο ${type}",
+        "Object": "Το ${label} δεν είναι έγκυρο ${type}",
+        "String": "Το ${label} δεν είναι έγκυρο ${type}",
+        "Url": "Το ${label} δεν είναι έγκυρο ${type}"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Αποεπιλογή όλων",

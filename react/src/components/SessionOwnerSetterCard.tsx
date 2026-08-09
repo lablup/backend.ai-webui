@@ -9,7 +9,7 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import HiddenFormItem from './HiddenFormItem';
 import { AstryxFormSwitch } from './astryxFormControls';
 // FRONTIER (ticket 17): form-heavy card. `Form.useWatch` / `Form.Item` are
-// still antd's (ticket 34's self-hosted engine is parked); every control and
+// self-hosted since ticket 34 (live again since ticket 35); every control and
 // every piece of chrome below is Astryx now.
 import { Card } from '@astryxdesign/core/Card';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';

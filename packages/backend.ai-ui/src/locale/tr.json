@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Alan doğrulama hatası ${label}",
+      "Required": "${label} gerekli bir alan",
+      "Whitespace": "${label} sadece boşluk olamaz",
+      "array": {
+        "Len": "${label} sayısı ${len} olmalı",
+        "Max": "${label} sayısı en çok ${max} olmalı",
+        "Min": "${label} sayısı en az ${min} olmalı",
+        "Range": "${label} sayısı ${min}-${max} arası olmalı"
+      },
+      "number": {
+        "Len": "${label} ${len} olmalı",
+        "Max": "${label} en çok ${max} olmalı",
+        "Min": "${label} en az ${min} olmalı",
+        "Range": "${label} ${min}-${max} arası olmalı"
+      },
+      "pattern": {
+        "Mismatch": "${label} şu kalıpla eşleşmeli: ${pattern}"
+      },
+      "string": {
+        "Len": "${label} ${len} karakter olmalı",
+        "Max": "${label} en çok ${max} karakter olmalı",
+        "Min": "${label} en az ${min} karakter olmalı",
+        "Range": "${label} ${min}-${max} karakter arası olmalı"
+      },
+      "types": {
+        "Email": "${label} geçerli bir ${type} değil",
+        "Number": "${label} geçerli bir ${type} değil",
+        "Object": "${label} geçerli bir ${type} değil",
+        "String": "${label} geçerli bir ${type} değil",
+        "Url": "${label} geçerli bir ${type} değil"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Tüm seçimi kaldır",

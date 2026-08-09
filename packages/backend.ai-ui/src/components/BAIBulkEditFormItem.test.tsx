@@ -454,9 +454,12 @@ describe('BAIBulkEditFormItem', () => {
         </FormWrapper>,
       );
 
-      // Required marker should be present (BAIBulkEditFormItem always sets required=true internally)
+      // Required marker should be present (BAIBulkEditFormItem always sets
+      // required=true internally). The anchor is `[data-bai-form-item-required]`
+      // since ticket 34 — the form item's visual shell is BAI's, not antd's;
+      // see the DOM-attribute mapping in the ticket-31 selector migration.
       expect(
-        document.querySelector('.ant-form-item-required'),
+        document.querySelector('[data-bai-form-item-required]'),
       ).toBeInTheDocument();
     });
 

@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIFormItem measurement harness (to-astryx ticket 05, adapted from
- spike/astryx-form-split's `react/spike-probe/`).
+ Form parity harness (to-astryx ticket 05, re-aimed by ticket 35).
 
  Serves at `/theme-probe/form.html` under the standalone theme-probe Vite
  config (same reason as brand.html: the app dev server always re-renders the
@@ -12,52 +11,81 @@
    cd react && pnpm exec vite --config theme-probe/vite.config.mts
    -> http://127.0.0.1:9198/theme-probe/form.html
 
- Renders the SAME representative form twice: once with antd `Form.Item`
- (baseline), once with `BAIFormItem` (own visual layer + `<Form.Item noStyle>`
- state engine). The form body is lifted from the real
+ Renders the SAME representative form twice, from the SAME source body:
+ once on antd's whole form stack (antd `<Form>` + antd `<Form.Item>`), once
+ on the self-hosted engine (`../src/form-engine`, whose `Form.Item` IS
+ `BAIFormItem`). Ticket 05 compared two ITEM renderers over one engine;
+ ticket 34 replaced the engine, so the meaningful comparison is now stack vs
+ stack — same props in, same pixels and same validation text out.
+
+ The form body is lifted from the real
  `react/src/components/AutoScalingRuleEditorModal.tsx` (mid complexity:
  cross-field validation via `dependencies` + `getFieldValue`, nested
  `noStyle` items inside a layout item, declarative + custom + async
  validators, conditional field mounting via `shouldUpdate`, `valuePropName`,
  `Form.List`). Relay/i18n/BAI deps stubbed.
 
- Mounted inside the ticket-02 brand `Theme` with `../src/index.css`, so
- BAIFormItem resolves the same Astryx tokens the migrated app will provide.
+ Both columns get the app's `requiredMark` FUNCTION — antd's through
+ `<ConfigProvider form>`, the engine's through `<FormConfigProvider>` — so
+ the probe exercises the real product contract (no asterisks; "(Optional)"
+ appended to non-required labels) rather than the library defaults.
+
+ Mounted inside the ticket-02 brand `Theme` with `../src/index.css`, so the
+ engine's visual shell resolves the same Astryx tokens the migrated app
+ provides.
 
  URL params:
    ?variant=antd|bai|both   which column(s) to render (default both)
-   ?mode=light|dark         Astryx theme mode (default light). NOTE: the
-                            antd column has no ConfigProvider darkAlgorithm
-                            here, so in dark mode it stays light — the
-                            "independent dark-mode switches" frontier hazard,
-                            on purpose (visual-compare.mjs reports it via
-                            token compliance).
+   ?mode=light|dark         theme mode (default light). Applied to BOTH
+                            switches: Astryx `Theme mode` and antd's
+                            `ConfigProvider theme.algorithm`, so the two
+                            columns are comparable in dark.
+   ?layout=vertical|horizontal  `<Form layout>` for both columns.
    ?strip=form|all          drop antd's injected CSS after mount, simulating
                             the post-theme-removal world where antd's
                             cssinjs layer is gone. `form` drops only rules
-                            mentioning `.ant-form`.
+                            mentioning `.ant-form`. The engine column must be
+                            pixel-unchanged by this; the antd column collapses.
    ?state=pristine|error    error = run validateFields() on mount
+   ?lang=en|ko|ja|…         switches BOTH message tables: antd's via
+                            `ConfigProvider locale`, the engine's via BUI's
+                            i18next (which `FormConfigProvider` reads). The
+                            `{ required: true }` rules below carry no explicit
+                            `message`, so their text comes from those tables
+                            and nowhere else — which is what makes this probe
+                            a check on ticket 35's ported catalogs.
 
  Exposed handles (read by measure-05-form-item.mjs):
    window.form_antd / form_bai / validate_antd / validate_bai
    window.stripAntdStyles(mode) / window.__stripped
  */
 import { backendAiBrandTheme } from '../src/astryx-theme/backendAiTheme';
-import BAIFormItem from '../src/components/BAIFormItem';
+import { Form as EngineForm, FormConfigProvider } from '../src/form-engine';
+import { buiLanguages } from '../src/helper/bui-language';
 import '../src/index.css';
+// The probe resolves `backend.ai-ui` to its BUILT package (unlike the app dev
+// server, which aliases it to source and therefore processes each component's
+// own `import './x.css'`). Pull the built stylesheet in explicitly, or the
+// engine's `FormItemVisual.css` — the one rule that stretches block controls
+// to the full control width — never reaches the page and the engine column
+// mis-measures.
+import 'backend.ai-ui/styles.css';
 import { Theme } from '@astryxdesign/core/theme';
 import {
   Button,
+  ConfigProvider,
   Divider,
-  Form,
+  Form as AntdForm,
   Input,
   InputNumber,
   Radio,
   Select,
   Switch,
   Typography,
+  theme as antdTheme,
 } from 'antd';
 import type { FormInstance } from 'antd';
+import { BAIConfigProvider } from 'backend.ai-ui';
 import { CircleMinus, Info, Plus } from 'lucide-react';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -67,8 +95,28 @@ const VARIANT = params.get('variant') ?? 'both';
 const MODE = params.get('mode') === 'dark' ? 'dark' : 'light';
 const STRIP = params.get('strip');
 const STATE = params.get('state') ?? 'pristine';
+const LAYOUT = params.get('layout') === 'horizontal' ? 'horizontal' : 'vertical';
+const LANG = (params.get('lang') ?? 'en') as keyof typeof buiLanguages;
 
-type ItemComponent = typeof Form.Item;
+/**
+ * The app's product contract (`react/src/components/DefaultProviders.tsx`):
+ * a FUNCTION `requiredMark` suppresses the asterisk everywhere and appends
+ * "(Optional)" to non-required labels instead.
+ */
+const requiredMark = (label: React.ReactNode, { required }: { required: boolean }) => (
+  <>
+    {label}
+    {!required && (
+      <span style={{ marginLeft: 4, opacity: 0.45, wordBreak: 'keep-all' }}>
+        (Optional)
+      </span>
+    )}
+  </>
+);
+
+/** Either whole form stack; `any` because the two prop types are separate. */
+type FormComponent = any;
+type ItemComponent = any;
 
 const SIGNED_32BIT_MAX_INT = 2147483647;
 
@@ -104,13 +152,15 @@ const Row: React.FC<{
 );
 
 interface BodyProps {
-  Item: ItemComponent;
+  /** The stack under test — `Form.Item` / `Form.List` come off this. */
+  Form: FormComponent;
   form: FormInstance;
 }
 
 /** Lifted from AutoScalingRuleEditorModal.tsx (props preserved verbatim). */
-const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Item, form }) => {
+const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Form, form }) => {
   'use memo';
+  const Item: ItemComponent = Form.Item;
   const [conditionMode, setConditionMode] = React.useState<
     'scale_in' | 'scale_out' | 'scale_in_out'
   >('scale_in_out');
@@ -349,9 +399,9 @@ const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Item, form }) => {
   );
 };
 
-const Column: React.FC<{ title: string; Item: ItemComponent; id: string }> = ({
+const Column: React.FC<{ title: string; Form: FormComponent; id: string }> = ({
   title,
-  Item,
+  Form,
   id,
 }) => {
   'use memo';
@@ -393,7 +443,7 @@ const Column: React.FC<{ title: string; Item: ItemComponent; id: string }> = ({
       <h3 style={{ marginTop: 0 }}>{title}</h3>
       <Form
         form={form}
-        layout="vertical"
+        layout={LAYOUT}
         preserve={false}
         initialValues={{
           metricSource: 'kernel',
@@ -403,7 +453,7 @@ const Column: React.FC<{ title: string; Item: ItemComponent; id: string }> = ({
         }}
         onFinish={() => {}}
       >
-        <AutoScalingRuleFormBody Item={Item} form={form} />
+        <AutoScalingRuleFormBody Form={Form} form={form} />
       </Form>
       <Button onClick={validate}>Validate</Button>
       <pre
@@ -459,14 +509,22 @@ const Probe: React.FC = () => {
       }}
     >
       {VARIANT !== 'bai' && (
-        <Column id="antd" title="antd Form.Item (baseline)" Item={Form.Item} />
+        <ConfigProvider form={{ requiredMark }}>
+          <Column
+            id="antd"
+            title="antd stack (Form + Form.Item) — reference"
+            Form={AntdForm}
+          />
+        </ConfigProvider>
       )}
       {VARIANT !== 'antd' && (
-        <Column
-          id="bai"
-          title="BAIFormItem (own visual + Form.Item noStyle engine)"
-          Item={BAIFormItem as unknown as ItemComponent}
-        />
+        <FormConfigProvider requiredMark={requiredMark}>
+          <Column
+            id="bai"
+            title="self-hosted engine (Form + Form.Item = BAIFormItem)"
+            Form={EngineForm}
+          />
+        </FormConfigProvider>
       )}
     </div>
   );
@@ -474,6 +532,28 @@ const Probe: React.FC = () => {
 
 createRoot(document.getElementById('root')!).render(
   <Theme theme={backendAiBrandTheme} mode={MODE}>
-    <Probe />
+    {/* ONE `BAIConfigProvider` for BOTH columns, exactly as `DefaultProviders`
+        mounts it in the app. It is doing two jobs here:
+
+        - theme: every antd control on the page reads this algorithm, including
+          the ones nested inside engine form items. Scoping it to the antd
+          column would leave the engine column light-themed in dark mode and
+          report a difference the app cannot produce.
+        - language: it drives BOTH message tables from one `locale` prop —
+          antd's through its own `ConfigProvider locale`, and the engine's
+          because it calls `buiI18n.changeLanguage`, which is what
+          `FormConfigProvider` reads. That is what makes `?lang=` a real
+          comparison of antd's locale bundle against BUI's ported catalogs. */}
+    <BAIConfigProvider
+      locale={buiLanguages[LANG]}
+      theme={{
+        algorithm:
+          MODE === 'dark'
+            ? antdTheme.darkAlgorithm
+            : antdTheme.defaultAlgorithm,
+      }}
+    >
+      <Probe />
+    </BAIConfigProvider>
   </Theme>,
 );

@@ -10,9 +10,9 @@ import {
   FolderCreateModalV2ProjectMutation,
   FolderCreateModalV2ProjectMutation$data,
 } from '../__generated__/FolderCreateModalV2ProjectMutation.graphql';
-// `Form` and `Form.Item` are antd's — ticket 34's self-hosted engine is
-// parked (see form-engine/engine.ts). Items that want the BAI label/error
-// shell import `BAIFormItem` explicitly.
+// `Form` and `Form.Item` both come from the self-hosted engine (ticket 34,
+// re-enabled by ticket 35); `Form.Item` IS `BAIFormItem` — the visual shell
+// plus the engine binding.
 import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';

@@ -2,13 +2,144 @@
 
 **Target:** to-astryx
 **Blocked by:** 31, 32, 33
-**Status:** parked (engine kept, runtime reverted to antd by user decision 2026-08-08)
+**Status:** **LIVE** — unparked, localized and switched on 2026-08-09 (see
+"UNPARKED" below). Parked 2026-08-08 → 2026-08-09 only.
 
 **Principles:** MIGRATION-SPEC §0 정책 준수 — 래퍼(Astryx 직사용)·시각값(기본값, 변경은 theme)·**단순성(antd 동등성 강박 금지: 외관·기능 모두 — 복잡해지면 드롭+PILOT-DECISION)**·원본 레이아웃 충실도·번역 프런티어. 시작 전 `assets/antd-astryx-mapping/`의 SKILL.md+MAPPING.md 로드, ASTRYX 블록의 discover-don't-guess 워크플로(`astryx build/template/component`) 사용. MCP search 단독 신뢰 금지.
 
 **What to build:** 수용 테스트 29건(Session Launcher, answers/08의 file:line)을 antd 기준으로 먼저 그린 확인 → 자체 엔진(1,320–1,720 LOC, 실사용 13메서드+rule 9종만) 구현 → Form/Form.Item/FormInstance 드롭인 교체. 호출부 109파일 불변이 검증 기준.
 
-## PARKED — 런타임을 antd로 되돌림 (2026-08-08, 사용자 결정)
+## UNPARKED — 자체 엔진으로 전환 완료 (2026-08-09)
+
+아래 "PARKED" 절은 **2026-08-08~09 하루 동안의 상태**를 기록한 것이다. 그
+파킹은 해제됐다. 지금 앱은 자체 엔진 위에서 돈다.
+
+### 무엇을 뒤집었나 — 다시 별칭 한 겹
+
+리버트가 별칭 한 겹이었던 것과 정확히 대칭으로, 복구도 별칭 한 겹이다. 115개
+파일의 `from '../form-engine'` 임포트는 **또 한 줄도 바뀌지 않았다.**
+
+| 파일 | 파킹 중 | 지금 |
+|---|---|---|
+| `packages/backend.ai-ui/src/form-engine/index.ts` | antd 재수출 | `export * from './engine'` (+ default) |
+| `react/src/form-engine/index.ts` | antd 직접 재수출 | `backend.ai-ui` 재수출, 34가 수출하던 이름 전부 복원 |
+| `packages/backend.ai-ui/src/index.ts` | 제거 | `export * from './form-engine'` 복귀 |
+| `react/src/components/BAIFormItem.tsx` | 티켓 05 원본(antd 바인딩) | **엔진 재수출**. `BAIFormItem.css` 삭제(엔진의 `FormItemVisual.css`가 동일 파일) |
+| `react/src/components/DefaultProviders.tsx` | `<ConfigProvider form={{…}}>` | **`<FormConfigProvider requiredMark={…}>`** |
+| e2e 셀렉터 8파일 | `.ant-form-*` | `[data-bai-form-item*]` (34가 만든 버전 그대로 복원) |
+| `BAIBulkEditFormItem.test.tsx` | `.ant-form-item-required` | `[data-bai-form-item-required]` |
+
+`requiredMark` **함수**는 antd provider에서 엔진 provider로 그대로 옮겼다.
+`validateMessages`는 **이제 안 넘긴다** — provider가 기본값으로 채운다(아래).
+
+### validateMessages 로컬라이제이션 — antd 로케일 번들 제거
+
+MERGE-CHECKLIST가 언파킹의 선결 조건으로 지목했던 항목이다. 유일한 로컬라이즈
+소스가 `antdLocale.Form.defaultValidateMessages`였고, 엔진의
+`messages.ts`는 영어 `${name}` 폴백뿐이었다.
+
+- **템플릿 21종 × 21개 언어**를 antd 자체 로케일 파일(MIT)에서 그대로 포팅해
+  각 `packages/backend.ai-ui/src/locale/*.json`의 `form.validateMessages`
+  아래에 넣었다. 추출 스크립트는
+  `.scratch/astryx-migration/extract-validate-messages.mjs`(출처 주석 포함).
+  키 모양은 BUI 스키마(`i18n.schema.json`)를 따른다 — 소문자 키는 중첩
+  객체, 대문자 키는 문자열 리프. 그래서 `types.String`, `string.Max`다.
+- **`FormConfigProvider`를 `context.ts`에서 분리**해
+  `form-engine/FormConfigProvider.tsx`로 옮겼다. `context.ts`는 엔진 코어라
+  (`Field`/`FormStore`/`FormItem`이 전부 임포트한다) i18next를 끌어들이면 안
+  된다. provider를 **마운트하는** 쪽만 그 비용을 낸다.
+- provider가 `validateMessages`를 **기본값으로** 채운다. 호출부는 아무것도
+  넘기지 않고, 언어가 바뀌면 테이블이 다시 계산된다. 명시적 prop과
+  `<Form validateMessages>`는 여전히 우선한다.
+- `${label}`/`${max}`/`${type}`는 **엔진의** 템플릿 문법이고 i18next의 것이
+  아니다. BUI i18next는 `prefix: '{{'`라 그대로 통과시킨다.
+
+**동등성 증거 2종:**
+
+1. **브라우저(7개 언어)** — `/theme-probe/form.html?state=error&lang=<x>`가
+   같은 폼을 antd 스택과 엔진 스택에 나란히 렌더한다. `message` 없는
+   `{ required: true }` 규칙이 만드는 텍스트가 en/ko/ja/de/zh-CN/ru/th
+   **전부 바이트 동일**. 즉 사용자에게 보이는 문자열이 하나도 안 바뀌었다.
+2. **CI** — `packages/backend.ai-ui/src/form-engine/FormConfigProvider.test.tsx`
+   8건: 4개 언어, 번역된 템플릿 안에서의 `${max}`/`${type}` 보간,
+   명시적 prop 우선순위, 그리고 `cimode`에서 점 찍힌 i18n 키가 절대
+   새어나오지 않는다는 폴백.
+
+### 시각 동등성 재검증 (티켓 05 하네스 재조준)
+
+`react/theme-probe/form.tsx`는 05 시점엔 **한 엔진 위의 두 아이템 렌더러**를
+비교했다(antd `Form.Item` vs `BAIFormItem`). 34가 엔진을 갈아치웠으므로 이제
+의미 있는 비교는 **스택 대 스택**이다 — 같은 폼 본문, 한쪽은 antd `<Form>` +
+`<Form.Item>`, 다른 쪽은 엔진. 양쪽 모두 앱의 `requiredMark` 함수를 받는다.
+
+`light|dark × pristine|error × vertical|horizontal` 8조합에서
+**아이템 수 · 라벨 텍스트 · 에러 텍스트 · extra 텍스트 · 그려진 asterisk 수 ·
+아이템 높이/컨트롤 오프셋 · `validateFields` reject 모양**이 전부 일치했고
+페이지 에러 0. (`.scratch/astryx-migration/probe-form-parity.mjs`)
+
+측정 도중 실제 결함 2건을 찾아 고쳤다:
+
+1. **`.ant-select`가 100% 폭으로 늘어나지 않았다.** antd Select는 자기
+   `FormItemInputContext`를 읽어 `ant-select-in-form-item` 클래스를 붙이고,
+   그 클래스가 폭을 만든다. 엔진 아이템 안에서는 그 클래스가 안 붙는다.
+   `FormItemVisual.css`에 이미 있던 stretch 규칙이 정답인데, **프로브가 BUI
+   빌드 CSS를 임포트하지 않아 페이지에 도달하지 못하고 있었다**(앱 dev
+   서버는 `backend.ai-ui`를 소스로 aliasing하므로 영향 없음). 프로브에
+   `import 'backend.ai-ui/styles.css'` 추가로 해결, 폭 742/742 일치.
+2. **에러 상태에서 antd 컨트롤의 테두리가 빨개지지 않았다.** 같은 원인 —
+   antd `Input`/`InputNumber`는 `antd/es/form/context`의
+   `FormItemInputContext`에서 status를 읽는다. React로 고치려면 엔진이 antd를
+   다시 임포트해야 하므로, `FormItemVisual.css`에 **시각 셸이 이미 발행하는
+   `data-status`를 키로 한 CSS 브리지**를 넣었다. antd 임포트 0, 마지막 antd
+   컨트롤이 마이그레이션되면 규칙도 같이 사라진다.
+
+### 남은 차이 2건 (의도적, 측정됨)
+
+1. **다크 모드 에러 빨강의 색조.** antd `rgb(220,68,70)` vs 엔진
+   `rgb(190,61,63)`. 엔진은 `var(--color-error)`(Astryx 토큰)를 쓴다 — 이건
+   티켓 05가 **에러 메시지 텍스트**에 대해 이미 내린 선택이고, 새 테두리
+   규칙이 같은 토큰을 따라간 것이다. 결과적으로 엔진 안에서는 테두리와
+   텍스트가 일치한다. 라이트 모드에서는 양쪽 다 `rgb(255,77,79)`로 완전히
+   같다. "시각값은 테마가 소유한다"는 MIGRATION-SPEC §0 정책 그대로.
+2. **`layout="horizontal"`에서 라벨이 길면 줄바꿈된다.** 시각 셸의
+   `--bai-form-item-label-width`가 120px 고정이라(티켓 05 결정), 9개 아이템
+   중 1개("Cooldown (seconds)")가 antd보다 12px 높다. 저장소의
+   `<Form layout>` 66건 중 65건이 vertical이고, `<BAIFormItem layout>` 11건은
+   이 120px를 전제로 디자인됐다. 그 11건을 흔들 이유가 없어 그대로 둔다.
+
+### 라이브 검증 (dev 서버 5980 → 10.82.0.130:8090)
+
+실제 폼 5개를 en/ko 양쪽에서 왕복했다 — 세션 런처(아이템 28), 폴더 생성
+모달(6), 리소스 정책 생성 모달(21), 사용자 생성 모달(17), 프로젝트 설정
+모달(10). 전부:
+
+- `[data-bai-form-item]`만, `.ant-form-item` **0**, `form.ant-form` **0**;
+- 그려진 asterisk **0**, 비필수 라벨에 `(optional)`/`(선택)`/`(任意)` —
+  `requiredMark` 함수 계약 유지 (`general.Optional`이 en에서 소문자
+  "optional"인 것은 원래 그렇다);
+- 폴더 생성 모달 빈 제출 → 엔진의 explain 슬롯에 검증 에러 표시, 제출 차단;
+- `/admin/deployments/deployment-presets/new`를 en/ko/ja로 열어 라벨·설명·
+  requiredMark 접미사까지 전부 로컬라이즈되는 것 확인;
+- **pageErrors 0** (모든 화면, 모든 언어).
+
+스크립트: `.scratch/astryx-migration/live-form-smoke.mjs`,
+`live-validate-messages.mjs`. 스크린샷: `.scratch/astryx-migration/live/`.
+
+### 검증 (언파킹 시점)
+
+`bash scripts/verify.sh` → **ALL PASS**. react vitest **1171 passed / 64
+files**, BUI vitest **471 passed / 1 skipped**, 수용 스위트 **59 passed**
+(antd 29 + 엔진 29 + 별칭 가드 1). `pnpm --filter backend.ai-ui build` 성공,
+`pnpm run build:react-only` 성공.
+
+수용 스위트의 `engine` 행 임포트를 `../form-engine`(별칭)로 되돌려, 이제
+스위트가 **배선까지** 고정한다. 별칭이 다시 antd로 향하면 두 행이 똑같아져
+29건이 아무것도 단언하지 않게 되므로, `EngineForm !== AntdForm`을 검사하는
+가드 테스트 1건을 추가했다.
+
+---
+
+## PARKED — 런타임을 antd로 되돌림 (2026-08-08, 사용자 결정) — *해제됨, 위 참조*
 
 아래 "Implementation notes"는 **티켓 34가 무엇을 만들었는지**에 대한 기록이며,
 그대로 유효하다. 다만 **앱은 더 이상 그 엔진 위에서 돌지 않는다.** UI 컴포넌트

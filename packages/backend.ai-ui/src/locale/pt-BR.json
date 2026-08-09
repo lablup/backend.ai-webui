@@ -627,6 +627,41 @@
   "error": {
     "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Erro ${label} na validação de campo",
+      "Required": "Por favor, insira ${label}",
+      "Whitespace": "${label} não pode ser um carácter vazio",
+      "array": {
+        "Len": "Deve ser ${len} ${label}",
+        "Max": "No máximo ${max} ${label}",
+        "Min": "No mínimo ${min} ${label}",
+        "Range": "A quantidade de ${label} deve estar entre ${min} e ${max}"
+      },
+      "number": {
+        "Len": "${label} deve ser igual à ${len}",
+        "Max": "O valor máximo de ${label} é ${max}",
+        "Min": "O valor mínimo de ${label} é ${min}",
+        "Range": "${label} deve estar entre ${min} e ${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} não se encaixa no padrão ${pattern}"
+      },
+      "string": {
+        "Len": "${label} deve possuir ${len} caracteres",
+        "Max": "${label} deve possuir no máximo ${max} caracteres",
+        "Min": "${label} deve possuir ao menos ${min} caracteres",
+        "Range": "${label} deve possuir entre ${min} e ${max} caracteres"
+      },
+      "types": {
+        "Email": "${label} não é um ${type} válido",
+        "Number": "${label} não é um ${type} válido",
+        "Object": "${label} não é um ${type} válido",
+        "String": "${label} não é um ${type} válido",
+        "Url": "${label} não é um ${type} válido"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Desmarcar tudo",

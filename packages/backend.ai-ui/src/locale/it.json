@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Errore di convalida del campo ${label}",
+      "Required": "Si prega di inserire ${label}",
+      "Whitespace": "${label} non può essere un carattere vuoto",
+      "array": {
+        "Len": "Deve essere ${len} ${label}",
+        "Max": "Massimo ${max} ${label}",
+        "Min": "Almeno ${min} ${label}",
+        "Range": "Il totale di ${label} deve essere compreso tra ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} deve essere uguale a ${len}",
+        "Max": "${label} valor e massimo è ${max}",
+        "Min": "${label} valore minimo è ${min}",
+        "Range": "${label} deve essere compreso tra ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} non corrisponde al modello ${pattern}"
+      },
+      "string": {
+        "Len": "${label} deve avere ${len} caratteri",
+        "Max": "${label} deve contenere fino a ${max} caratteri",
+        "Min": "${label} deve contenere almeno ${min} caratteri",
+        "Range": "${label} deve contenere tra ${min}-${max} caratteri"
+      },
+      "types": {
+        "Email": " ${label} non è un ${type} valido",
+        "Number": " ${label} non è un ${type} valido",
+        "Object": " ${label} non è un ${type} valido",
+        "String": " ${label} non è un ${type} valido",
+        "Url": " ${label} non è un ${type} valido"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Deseleziona tutto",

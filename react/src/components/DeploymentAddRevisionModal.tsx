@@ -1076,20 +1076,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // `.ant-form-item-has-error` class (gone with the antd visual layer) but
   // BAIFormItem's own `data-status="error"` attribute (see BAIFormItem.tsx,
   // which also aggregates nested noStyle children's errors into the wrapper).
-  // The legacy `.ant-form-item-has-error` selector is kept ONLY as a
-  // transitional fallback for the embedded, not-yet-converted form sections
-  // (ImageEnvironmentSelectFormItems / ResourceAllocationFormItems /
-  // EnvVarFormList / VFolderTableFormItem) that still render antd Form.Items;
-  // drop it when those files migrate to BAIFormItem. `.ant-modal-body` is
-  // BAIModal's DOM — BAIModal is frontier (still antd-based) and scopes the
-  // query to the open modal.
+  //
+  // Ticket 35 dropped the `.ant-form-item-has-error` fallback that used to sit
+  // beside it. It was there for the embedded sections that still rendered raw
+  // antd Form.Items (ImageEnvironmentSelectFormItems /
+  // ResourceAllocationFormItems / EnvVarFormList / VFolderTableFormItem); with
+  // the alias pointed at the self-hosted engine those sections render the BAI
+  // shell too, so the antd branch can no longer match anything (P6).
+  // `.ant-modal-body` is BAIModal's DOM — BAIModal is frontier (still
+  // antd-based) and scopes the query to the open modal.
   const handleFinishFailed = () => {
     requestAnimationFrame(() => {
       // querySelector over a compound selector returns the first match in
       // document order, i.e. the errored item highest on screen.
       const firstErrorEl = document.querySelector<HTMLElement>(
-        '.ant-modal-body [data-bai-form-item][data-status="error"], ' +
-          '.ant-modal-body .ant-form-item-has-error',
+        '.ant-modal-body [data-bai-form-item][data-status="error"]',
       );
       if (firstErrorEl) {
         firstErrorEl.scrollIntoView({

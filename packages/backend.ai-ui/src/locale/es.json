@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Ocurrió un error desconocido. \nPor favor intente de nuevo."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Error de validación del campo ${label}",
+      "Required": "Por favor, rellena ${label}",
+      "Whitespace": "${label} no puede ser un carácter en blanco",
+      "array": {
+        "Len": "Debe ser ${len} ${label}",
+        "Max": "Como máximo ${max} ${label}",
+        "Min": "Al menos ${min} ${label}",
+        "Range": "El valor de ${label} debe estar entre ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} debe ser igual a ${len}",
+        "Max": "${label} valor máximo es ${max}",
+        "Min": "${label} valor mínimo es ${min}",
+        "Range": "${label} debe ser entre ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} no coincide con el patrón ${pattern}"
+      },
+      "string": {
+        "Len": "${label} debe tener ${len} caracteres",
+        "Max": "${label} debe tener hasta ${max} caracteres",
+        "Min": "${label} debe tener al menos ${min} caracteres",
+        "Range": "${label} debe tener entre ${min}-${max} caracteres"
+      },
+      "types": {
+        "Email": "${label} no es un ${type} válido",
+        "Number": "${label} no es un ${type} válido",
+        "Object": "${label} no es un ${type} válido",
+        "String": "${label} no es un ${type} válido",
+        "Url": "${label} no es un ${type} válido"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Deseleccionar todo",

@@ -5,11 +5,14 @@
  Default validate-message templates (to-astryx ticket 34).
 
  Same strings as `@rc-component/form`'s `utils/messages`, restricted to the
- rule keys this repository uses. They are only the LAST-RESORT fallback: the
- app injects antd-locale-shaped, `${label}`-based templates through
- `FormConfigProvider` (`react/src/components/DefaultProviders.tsx`), which is
- what users actually see. Keeping the `${name}` defaults means a Form rendered
- with no provider at all (tests, Storybook) still produces readable text.
+ rule keys this repository uses. They are only the LAST-RESORT fallback: under
+ `<FormConfigProvider>` (mounted app-wide in
+ `react/src/components/DefaultProviders.tsx`) the `${label}`-based, LOCALIZED
+ templates from BUI's own catalogs win, and those are what users actually see
+ — see `./FormConfigProvider.tsx`. Keeping the `${name}` defaults means a Form
+ rendered with no provider at all (tests, Storybook) still produces readable
+ text, and that a locale missing one key falls back to English rather than to
+ a dotted i18n key.
  */
 import type { ValidateMessages } from './interface';
 

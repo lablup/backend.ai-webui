@@ -78,7 +78,7 @@ infrastructure still sits at the top. That ranking is *not* a work queue:
 |---|---:|---|
 | `locale/index.ts` | 658 | No — `import type { Locale }`, erased at build |
 | `theme-shim/index.tsx` | 619 | No — `import type { GlobalToken }`, the token-shape contract ~600 call sites are typed against |
-| `form-engine/index.ts` | 562 | No — this IS the park switch (item 5) |
+| `form-engine/index.ts` | 562 | **Closed** — unparked 2026-08-09; it re-exports `./engine`, not antd (item 4) |
 | `useSchedulingHistoryExpandable.tsx` | 549 | **Yes** — the only genuinely convertible BUI-infra file left |
 | `BAIConfigProvider.tsx` | 547 | No — item 3 |
 
@@ -136,27 +136,45 @@ The `App` half is already solved and just needs repointing:
 `App.useApp()` / `message` / `modal` replacement (Layer + Toast), and most call
 sites import from it today.
 
-### 4. The form engine is PARKED, and unparking has a hidden prerequisite
+### 4. ~~The form engine is PARKED~~ — DONE (2026-08-09)
 
-`packages/backend.ai-ui/src/form-engine/engine.ts` is a **self-hosted,
-antd-free** form engine. It is not wired up: `form-engine/index.ts` (BUI, 562
-taint) and `react/src/form-engine/index.ts` (405 taint) both re-export antd's
-`Form`. Ticket 34 pointed them at `./engine` and then reverted.
+**Both blockers are closed. The form engine is LIVE and the localized
+`validateMessages` prerequisite is satisfied.**
 
-Unparking is a small edit — repoint both index files, restore
-`<FormConfigProvider>` in `DefaultProviders.tsx` in place of
-`<ConfigProvider form={{…}}>`, and swap the `.ant-form-*` e2e selectors back to
-`[data-bai-form-item*]`. It is pinned by the 29-case acceptance suite
-(`react/src/form-engine/formEngineAcceptance.test.tsx`).
+`packages/backend.ai-ui/src/form-engine/index.ts` and
+`react/src/form-engine/index.ts` now resolve to the self-hosted engine, so all
+115 `from '../form-engine'` call sites run it — unedited, which is what the
+alias was built for. `Form.Item` IS `BAIFormItem`, so 277 plain `<Form.Item>`
+sites render `[data-bai-form-item]` instead of `.ant-form-item*`, and
+`BAIFormItem.tsx` is a re-export again (its `antd/es/form/context` deep import
+and its duplicate CSS are both gone). `DefaultProviders` mounts
+`<FormConfigProvider>`; the antd `ConfigProvider` keeps only its non-form legs.
+`git grep "from 'antd" -- packages/backend.ai-ui/src/form-engine
+react/src/form-engine react/src/components/BAIFormItem.tsx` returns nothing but
+the acceptance suite's deliberate antd reference row.
 
-**The prerequisite is localized validation messages.** Today the only source of
-localized `${label}`-style validation templates is
-`antdLocale.Form.defaultValidateMessages`, consumed in `DefaultProviders.tsx`.
-`form-engine/messages.ts` ships English `${name}` fallbacks only, and BUI's own
-`locale/*.json` has no generic validation templates. That is ~25 templates ×
-21 languages — either translated, or vendored the way
-`theme-shim/vendor/antdColors.ts` vendored antd's palette. Do this **before**
-touching the locale bundles, not after.
+**Localized validation messages: done, and provably byte-identical.** The ~25
+templates × 21 languages were ported out of antd's own MIT locale files by
+`.scratch/astryx-migration/extract-validate-messages.mjs` into
+`form.validateMessages` in each `packages/backend.ai-ui/src/locale/*.json`
+(key shape follows `i18n.schema.json`: lowercase = group, uppercase = leaf).
+`form-engine/FormConfigProvider.tsx` reads them through BUI's i18next and
+supplies them as the default `validateMessages`, so no call site passes
+anything and a language change re-resolves the table.
+
+Proof: `/theme-probe/form.html?state=error&lang=<x>` renders the SAME form on
+both stacks side by side and the message-less `{ required: true }` rules come
+out **identical in all 7 languages spot-checked** (en/ko/ja/de/zh-CN/ru/th) —
+antd's locale bundle vs BUI's ported catalogs, same strings.
+`packages/backend.ai-ui/src/form-engine/FormConfigProvider.test.tsx` pins the
+same behaviour in CI (8 cases: 4 languages, `${max}`/`${type}` interpolation
+through a translated template, explicit-prop precedence, and a `cimode`
+fallback that must never leak a dotted i18n key).
+
+**So step 3 of the plan below is done, and step 4's first half is done.** What
+remains of step 4 is only the locale-bridge deletion: `antdLocale` is still on
+`BAILocale` and still feeds antd's OWN component strings (table pagination,
+date picker). Nothing in the form path reads it any more.
 
 ### 5. Gates must actually be green
 
@@ -205,8 +223,9 @@ Measured, not estimated. Steps 1–2 are independent; 3 gates 4; 5 must be last.
    app · components, `BAIRuntimeVariantPresetSettingModal`, and the single BUI
    hook `useSchedulingHistoryExpandable`. Provider files are excluded here;
    they are step 5.
-3. **Author first-party localized `validateMessages`** (item 4's prerequisite).
-4. **Unpark the form engine** (item 4), then **delete the locale bridge
+3. ~~**Author first-party localized `validateMessages`**~~ — **DONE** (item 4).
+4. ~~**Unpark the form engine**~~ — **DONE** (item 4). Still open: **delete the
+   locale bridge
    atomically**: drop `antdLocale` from `BAILocale` (`locale/index.ts`), strip
    `import xx_XX from 'antd/es/locale/xx_XX'` from all 21 published
    `locale/*_*.ts` entries, and update `react/src/helper/bui-language.ts`, the

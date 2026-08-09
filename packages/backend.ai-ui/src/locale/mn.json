@@ -621,6 +621,41 @@
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "${label}-ийн талбарын баталгаажуулалтын алдаа",
+      "Required": "${label} оруулна уу",
+      "Whitespace": "${label} нь хоосон тэмдэгт байж болохгүй",
+      "array": {
+        "Len": "${len} ${label} байх ёстой",
+        "Max": "Хамгийн ихдээ ${max} ${label}",
+        "Min": "Дор хаяж ${мин} ${label}",
+        "Range": "${label}-н хэмжээ ${min}-${max} хооронд байх ёстой"
+      },
+      "number": {
+        "Len": "${label} нь ${len}-тэй тэнцүү байх ёстой",
+        "Max": "${label} дээд тал нь ${max} байх ёстой",
+        "Min": "${label} хамгийн багадаа ${min} байх ёстой",
+        "Range": "${label} ${min}-${max} хооронд байх ёстой"
+      },
+      "pattern": {
+        "Mismatch": "${label} нь ${pattern} загвартай тохирохгүй байна"
+      },
+      "string": {
+        "Len": "${label} ${len} тэмдэгттэй байх ёстой",
+        "Max": "${label} нь ${max} хүртэлх тэмдэгттэй байх ёстой",
+        "Min": "${label} хамгийн багадаа ${min} тэмдэгттэй байх ёстой",
+        "Range": "${label} ${min}-${max} тэмдэгтийн хооронд байх ёстой"
+      },
+      "types": {
+        "Email": "${label} нь хүчинтэй ${type} биш",
+        "Number": "${label} нь хүчинтэй ${type} биш",
+        "Object": "${label} нь хүчинтэй ${type} биш",
+        "String": "${label} нь хүчинтэй ${type} биш",
+        "Url": "${label} нь хүчинтэй ${type} биш"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Бүгдийг сонголтоос хасах",

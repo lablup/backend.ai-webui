@@ -16,10 +16,9 @@
 // to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
 // app-shim (message → Toast, modal.confirm → AlertDialog) instead of antd.
 import { App } from '../app-shim';
-// SHIM (MAPPING §2): the antd Form ENGINE stays. (Ticket 34 replaced it with a
-// self-hosted engine; that engine is parked as of 2026-08-08 — see
-// form-engine/engine.ts — so antd owns the form runtime again.) Everything
-// else antd used to supply here is gone:
+// The Form ENGINE is self-hosted (ticket 34, live again since ticket 35), so
+// nothing on this screen touches antd's form runtime. Everything else antd
+// used to supply here is gone:
 //   - `App as AntdApp` — the ticket-11 survivor, kept because SignupModal
 //     still read antd's App context. SignupModal is Astryx now (its
 //     `App.useApp()` is the app-shim), so the nested provider goes.

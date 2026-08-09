@@ -639,6 +639,41 @@
   "error": {
     "UnknownError": "An unknown error occurred. Please try again."
   },
+  "form": {
+    "validateMessages": {
+      "Default": "Field validation error for ${label}",
+      "Required": "Please enter ${label}",
+      "Whitespace": "${label} cannot be a blank character",
+      "array": {
+        "Len": "Must be ${len} ${label}",
+        "Max": "At most ${max} ${label}",
+        "Min": "At least ${min} ${label}",
+        "Range": "The amount of ${label} must be between ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} must be equal to ${len}",
+        "Max": "${label} must be maximum ${max}",
+        "Min": "${label} must be minimum ${min}",
+        "Range": "${label} must be between ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} does not match the pattern ${pattern}"
+      },
+      "string": {
+        "Len": "${label} must be ${len} characters",
+        "Max": "${label} must be up to ${max} characters",
+        "Min": "${label} must be at least ${min} characters",
+        "Range": "${label} must be between ${min}-${max} characters"
+      },
+      "types": {
+        "Email": "${label} is not a valid ${type}",
+        "Number": "${label} is not a valid ${type}",
+        "Object": "${label} is not a valid ${type}",
+        "String": "${label} is not a valid ${type}",
+        "Url": "${label} is not a valid ${type}"
+      }
+    }
+  },
   "general": {
     "Decrease": "Decrease",
     "DeselectAll": "Deselect all",

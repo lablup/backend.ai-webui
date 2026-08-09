@@ -9,8 +9,8 @@ import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksU
 import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
-// FRONTIER (ticket 17): the form ENGINE is still antd's (ticket 34's
-// self-hosted engine is parked). The CONTROLS are Astryx now.
+// FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
+// again since ticket 35). The CONTROLS are Astryx now.
 import {
   SegmentedControl,
   SegmentedControlItem,
