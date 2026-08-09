@@ -430,13 +430,13 @@ For detailed patterns, examples, and architecture guides, use the `relay-pattern
 
 ### Prefer BAI Components
 
-- **Always prefer `backend.ai-ui` package components** over Ant Design equivalents
-- Use `BAIFlex`, `BAIModal`, `BAIButton`, etc. instead of Ant Design components
-- These components are custom-designed for Backend.AI WebUI
+- **Always reach for a `backend.ai-ui` component first** — `BAIFlex`, `BAIModal`, `BAIButton`, etc.
+- When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. antd is not an option: it is not a dependency of this project — see [antd Is Gone](#antd-is-gone--its-prop-vocabulary-is-not)
+- BAI components are custom-designed for Backend.AI WebUI; they own the project's defaults and wrap Astryx internals
 
 ```typescript
 // ✅ Good: Use BAI components
-import { BAIModal, BAIFlex } from '@backend.ai/backend.ai-ui';
+import { BAIModal, BAIFlex } from 'backend.ai-ui';
 
 <BAIModal open={open} onOk={handleOk}>
   <BAIFlex direction="column" gap="md">
@@ -504,15 +504,17 @@ const [isLoading, setIsLoading] = useState(false);
 - Prevents double clicks during execution
 - Consistent UX across the application
 
-### When to Use Ant Design
+### Imperative Modals and Messages (`App.useApp()`)
 
-- Simple confirmation modals using App context
-- When BAI component equivalent doesn't exist
-- Temporary solutions while waiting for BAI component development
+- Simple confirmations that do not deserve a mounted `BAIModal` go through `modal.confirm()`
+- Toasts go through `message.*`
+- Both come from the **app shim**, not from a component: `App` / `useApp` / `message` / `modal` are defined in `packages/backend.ai-ui/src/app-shim/` and re-exported by `backend.ai-ui`. Files under `react/src` import them from the local re-export `react/src/app-shim` (`'../app-shim'`), which is what `scripts/codemods/antd-app-to-shim.mjs` pointed every call site at
+- The call shape is deliberately identical to antd's `App.useApp()` — only the import changed. `notification` is **not** part of the shim; it is owned by the Jotai store in `react/src/hooks/useBAINotification.tsx`
+- Mount `<BAIAppProvider>` once at the app root (`DefaultProviders`) — it owns the toast viewport and the imperative-modal host
 
 ```typescript
-// ✅ Good: Use App.useModal() for simple confirmations
-import { App } from 'antd';
+// ✅ Good: Use modal.confirm() from the app shim for simple confirmations
+import { App } from '../app-shim';
 
 const MyComponent = () => {
   const { modal } = App.useApp();
@@ -754,47 +756,37 @@ logger.warn("Deprecated feature used");
 - Use Suspense boundaries where appropriate
 - Provide skeleton loaders for better UX
 
-## Ant Design (Secondary Usage)
+## Astryx, Shims, and the antd-Shaped Prop Surface
 
-### Ant Design 6 Deprecated Props
+### antd Is Gone — Its Prop Vocabulary Is Not
 
-This project uses **Ant Design 6** (antd v6). Several props have been renamed or deprecated compared to antd v4/v5. **Always use the latest prop names:**
+antd is **not a dependency of this project**. `import ... from 'antd'` will not resolve, and `scripts/antd-zero-gate.sh` fails the build if antd re-enters through the dependency graph, the bundle, or the source import graph. **Never add an antd import.**
 
-| Component | Deprecated Prop | Use Instead |
-|-----------|----------------|-------------|
-| `Alert` | `message` | `title` |
-| `Collapse` | `direction` | `orientation` |
-| `Space` | `direction` | Use `Flex` or `BAIFlex` instead (Space is deprecated for layout) |
-| `Steps` | `direction` | `orientation` |
+What survived the removal is the prop *vocabulary*: many BAI wrappers (`BAIAlert`, `BAICard`, `BAITable`, `BAIModal`, `BAISelect`, …) were deliberately given an antd-v6-**shaped** prop surface so the call sites carried over from the antd era needed no edit when the internals were rebuilt on Astryx. That is why `BAIAlert` takes `title` rather than `message`.
 
-**General rules for antd 6:**
-
-- **`title` instead of `message`**: `Alert`, `Notification`, and similar components now use `title` for the heading text.
-- **`orientation` instead of `direction`**: Layout-related props on `Collapse` and `Steps` use `orientation`.
-- **Prefer `Flex` / `BAIFlex` over `Space`**: The `Space` component's `direction` prop is deprecated. Use `Flex` (from antd) or `BAIFlex` (from backend.ai-ui) with `direction="column"` or `direction="row"` instead.
-- **Always check for TypeScript deprecation warnings** (`[6385]` ts errors) and fix them immediately.
+- **Canonical record: `.claude/rules/antd-v6-props.md`** — the v5→v6 rename table, the reason the v6 names specifically were frozen, and the accepted-and-ignored prop cases. Read it there; do not duplicate the table.
+- **Prefer `BAIFlex` over `Space`**: use `BAIFlex` (from `backend.ai-ui`) with `direction="column"` / `direction="row"` for layout.
+- **Verification is `bash scripts/antd-zero-gate.sh`**, not TypeScript deprecation warnings. The old advice to hunt `ts(6385)` (`is deprecated`) diagnostics has no subject any more — there is no antd type left to deprecate anything.
 
 ```typescript
-// ❌ Bad: antd v4/v5 props
-<Alert message="Title" description="Description" />
-<Space direction="vertical">...</Space>
-<Steps direction="vertical">...</Steps>
+// ❌ Bad: an antd import — will not resolve, and the zero-gate fails
+import { Alert, Flex, Space } from 'antd';
 
-// ✅ Good: antd v6 props
-<Alert title="Title" description="Description" />
+// ✅ Good: BAI wrappers, antd-v6-shaped props, Astryx internals
+<BAIAlert type="error" title="Title" description="Description" />
 <BAIFlex direction="column">...</BAIFlex>
-<Steps orientation="vertical">...</Steps>
 ```
 
 ### When BAI Components Are Not Available
 
-- Use Ant Design components when no BAI equivalent exists
-- Prefer using App context (`App.useApp()`) for modals, messages, notifications
-- Access theme tokens via `theme.useToken()`
+- Use **Astryx** (`@astryxdesign/core`) directly when no BAI equivalent exists — never antd. Discover the component first (`pnpm exec astryx search "<thing>"` / `pnpm exec astryx component <Name>`); see the `ASTRYX` block in `react/AGENTS.md`.
+- Imperative modals and messages come from the **app shim** (`App.useApp()`), see [Imperative Modals and Messages](#imperative-modals-and-messages-appuseapp) above.
+- Theme tokens come from the **theme shim**: `theme.useToken()` from `react/src/theme-shim` (`'../theme-shim'`), a re-export of `packages/backend.ai-ui/src/theme-shim/`. It is a drop-in for antd's — same `{ token, hashId, theme }` shape, same JS types (numbers for dimensions, hex strings for colours) — backed by Astryx tokens. `scripts/codemods/antd-theme-to-shim.mjs` is what repointed the call sites.
 - Styling that tokens/props cannot express goes in a **co-located `.css` file** the component imports (P17), written with `var(--…)` Astryx custom properties. `antd-style` (`createStyles` / `createGlobalStyle`) was removed in to-astryx ticket 33 — do not reintroduce it.
 
 ```typescript
-import { theme, App } from 'antd';
+import { App } from '../app-shim';
+import { theme } from '../theme-shim';
 
 const MyComponent = () => {
   const { token } = theme.useToken();
@@ -850,7 +842,7 @@ const HandleSubmit = () => { /* ... */ };
 ### Type Safety
 
 - Always define prop interfaces
-- Extend BAI/Ant Design's prop types when wrapping components
+- When wrapping a component, extend the wrapped thing's props type — the Astryx component's props, a DOM props type (`React.HTMLAttributes<…>`), or another BUI wrapper's props. See `.claude/rules/component-props-extension.md` for the `Omit<>` and `...rest` conventions
 - Use discriminated unions for variant props
 - Use `interface` for props instead of `type` when possible
 
@@ -917,7 +909,7 @@ interface OldProps {
   onAfterChange?: (v: string) => void;
 }
 
-// ✅ Good: Consistent with Ant Design patterns
+// ✅ Good: one standard `onChange`
 interface NewProps {
   onChange?: (value: string) => void;
 }
@@ -1099,10 +1091,11 @@ When reviewing React code, check for:
 
 ### UI Components
 
-- [ ] **BAI components are used instead of Ant Design equivalents**
+- [ ] **BAI components are used first; Astryx (`@astryxdesign/core`) only where no BAI equivalent exists**
+- [ ] No `antd` import anywhere (it will not resolve; `bash scripts/antd-zero-gate.sh` gates it)
 - [ ] `BAIText` used for text rendering (theme management)
 - [ ] CSS inheritance (`fontSize: 'inherit'`) preferred over hard-coded values
-- [ ] Ant Design modals use `App.useApp()` context instead of direct Modal import
+- [ ] Imperative modals/messages go through `App.useApp()` from the app shim (`'../app-shim'`), not a hand-rolled modal host
 - [ ] `useFetchKey` is used where data refetching is needed
 - [ ] `BAIUnmountAfterClose` wraps modal/drawer content with forms
 

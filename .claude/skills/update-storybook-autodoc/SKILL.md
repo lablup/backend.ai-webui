@@ -64,9 +64,16 @@ Key documentation patterns:
 
 ### 2. Update Storybook Configuration
 
-**Important**: Due to version compatibility issues between Storybook versions, use this simplified approach:
+> **These two files already exist and are already configured.** In
+> `packages/backend.ai-ui/.storybook/` the real `main.ts` also registers
+> `@vueless/storybook-dark-mode`, a `staticDirs` list (fonts, icons) and an
+> `Introduction.mdx` entry, and the real `preview.tsx` carries the theme
+> objects, `DocsContainer`, `./astryx.css` and the `locale` / `themeStyle`
+> toolbar globals. **Do not paste these snippets over them.** Read the files
+> first and add only the key you actually need — the snippets below show the
+> autodoc-relevant keys in isolation, not a file to write.
 
-Update `.storybook/main.ts`:
+`.storybook/main.ts` — the autodoc-relevant keys:
 ```typescript
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -87,21 +94,26 @@ const config: StorybookConfig = {
 };
 ```
 
-Update `.storybook/preview.tsx` (note .tsx extension for JSX support):
+`.storybook/preview.tsx` (note .tsx extension for JSX support) — the decorator
+is `withGlobalProvider` from `./decorators`, which mounts `StorybookProvider`
+(theme + locale + dark mode) around every story. There is **no**
+`ConfigProvider`; antd is not a dependency of this project:
+
 ```typescript
 import type { Preview } from '@storybook/react-vite';
-import { ConfigProvider } from 'antd';
+import { withGlobalProvider } from './decorators';
 import React from 'react';
 
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
+    withGlobalProvider,
     (Story) => (
-      <ConfigProvider>
+      <>
         <div style={{ padding: '16px' }}>
           <Story />
         </div>
-      </ConfigProvider>
+      </>
     ),
   ],
   parameters: {

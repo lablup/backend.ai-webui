@@ -72,8 +72,8 @@ const loadNext = () => {
   });
 };
 
-// BAISelect gets new loadNext every render → potential issues
-<BAISelect endReached={loadNext} />
+// BAIComplexSelect gets new loadNext every render → potential issues
+<BAIComplexSelect endReached={loadNext} />
 ```
 
 ### Solution: Stable Reference
@@ -88,8 +88,8 @@ const loadNext = useEventNotStable(() => {
   });
 });
 
-// BAISelect always gets same loadNext reference
-<BAISelect endReached={loadNext} />
+// BAIComplexSelect always gets same loadNext reference
+<BAIComplexSelect endReached={loadNext} />
 ```
 
 ## Usage in useLazyPaginatedQuery
@@ -143,8 +143,8 @@ const loadNext = useCallback(() => {
   });
 }, [isLoadingNext, hasNext, data, offset, limit]); // Many deps!
 
-// Causes BAISelect to re-evaluate endReached frequently
-<BAISelect endReached={loadNext} />
+// Causes BAIComplexSelect to re-evaluate endReached frequently
+<BAIComplexSelect endReached={loadNext} />
 ```
 
 ### With useEventNotStable
@@ -159,8 +159,8 @@ const loadNext = useEventNotStable(() => {
   });
 }); // No deps needed
 
-// BAISelect only evaluates endReached when actually called
-<BAISelect endReached={loadNext} />
+// BAIComplexSelect only evaluates endReached when actually called
+<BAIComplexSelect endReached={loadNext} />
 ```
 
 ## Best Practices

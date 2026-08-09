@@ -345,10 +345,12 @@ export const BatchType: Story = {
 
 ### Pattern E: Form Integration
 
-Use for components that work with Ant Design Form:
+Use for components that work with `Form` / `Form.Item`.
+
+The form engine is **self-hosted** at `packages/backend.ai-ui/src/form-engine/`, with a deliberately antd-identical API — `Form.Item`, `Form.List`, `Form.useForm()`, `Form.useWatch()` and `Form.Item.useStatus()` all resolve to the engine. `Form.Item` **is** `BAIFormItem`, so it renders `[data-bai-form-item]` attributes rather than `.ant-form-item*` classes; assert on those if a story test inspects the DOM. Import from `backend.ai-ui` (the package re-exports it), or from `'../form-engine'` inside `packages/backend.ai-ui/src` — never from `antd`, which is not a dependency.
 
 ```typescript
-import { Form } from 'antd';
+import { Form } from '../form-engine';
 
 const renderWithFormItem = ({ value, ...args }: ComponentProps) => {
   return (
@@ -562,8 +564,9 @@ From `BAIText.stories.tsx`:
 
 ```typescript
 /**
- * BAIText extends Ant Design's Typography.Text with additional features
- * for better text handling and customization.
+ * BAIText keeps an Ant Design Typography.Text-shaped prop surface (`type`,
+ * `strong`, `ellipsis`, `copyable`, `code`, `keyboard`, ...) for call-site
+ * compatibility, but renders through Astryx's `Text` primitive internally.
  *
  * Key features:
  * - Monospace font support via `monospace` prop
@@ -580,6 +583,8 @@ const meta: Meta<typeof BAIText> = {
   // ...
 };
 ```
+
+Note the framing. antd is not a dependency — `BAITextProps` extends `Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'children'>` and the component renders `@astryxdesign/core/Text`. The antd names in the description are **history**: the prop surface was deliberately kept antd-shaped so the several hundred existing call sites needed no edit. When a story description touches that vocabulary, describe it as a shape that was kept and point at `.claude/rules/antd-v6-props.md` — never as a library the component is built on.
 
 ### Best Practices
 

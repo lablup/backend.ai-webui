@@ -16,7 +16,7 @@ Reaching for Astryx `Card` directly loses all three and produces visibly inconsi
 
 This rule used to require that prop at every call site without `tabList`. It existed because `BAICard` wrapped **antd's** `Card`, whose `body.paddingTop` (≈24px) left a gap the Backend.AI design does not want, and baking the override into the component would have silently changed every existing call site.
 
-`BAICard` renders Astryx `Card` now (to-astryx W2-D). Astryx has ONE `padding` step for the whole surface — header and body live inside the same padded box — so the flush-body look is **structural**, and the override has nothing to remove. `BAICardProps` still accepts `styles` for source compatibility with the ~34 call sites that pass it, and **ignores it** (see the PILOT-DECISION in `BAICard.tsx`).
+`BAICard` renders Astryx `Card` now (to-astryx W2-D). Astryx has ONE `padding` step for the whole surface — header and body live inside the same padded box — so the flush-body look is **structural**, and the override has nothing to remove. `BAICardProps` still accepts `styles` for source compatibility with the **subset of call sites that pass it** — a few dozen of the ~200 `<BAICard>` call sites in the app — and **ignores it** (see the PILOT-DECISION in `BAICard.tsx`, which records the count measured at migration time).
 
 So: do not add `styles={{ body: { paddingTop: 0 } }}` to new call sites, and drop it from files you are editing anyway. Do not go on a dedicated sweep for it — it is inert, not wrong. If you need a per-card inset, use `padding` or `size="small"`, which are the supported knobs.
 
@@ -25,8 +25,8 @@ So: do not add `styles={{ body: { paddingTop: 0 } }}` to new call sites, and dro
 1. **Always import and use `BAICard`** from `backend.ai-ui` for card containers. Do not reach for Astryx `Card` directly.
 2. **Do not pass `styles={{ body: { paddingTop: 0 } }}`** — see above. It is accepted and ignored.
 3. **Do not add `marginTop` to the first child to "create breathing room"**. The flush-to-header look is intentional. If a layout genuinely needs vertical separation between the header and content, place that spacing **outside** the card (typically via the parent `BAIFlex` `gap`).
-5. **Prefer BAICard's status / extra APIs over custom styling.** Use `status="error" | "warning" | "success"` instead of hand-rolling `style={{ borderColor }}`. Use the `extra` (any `ReactNode`) or `extraButtonTitle` + `onClickExtraButton` props for header actions instead of building a parallel header row above the card.
-6. **Card-scoped actions go in `extra`, not in the body.** Any action that operates on the card as a whole — the orange primary "create / add" button, the refresh button (`BAIFetchKeyButton`), an "edit configuration" button, a section-level export — belongs in the card's header `extra` slot. Use a `BAIFlex gap="xs" align="center"` to group multiple actions, with the primary button rightmost.
+4. **Prefer BAICard's status / extra APIs over custom styling.** Use `status="error" | "warning" | "success"` instead of hand-rolling `style={{ borderColor }}`. Use the `extra` (any `ReactNode`) or `extraButtonTitle` + `onClickExtraButton` props for header actions instead of building a parallel header row above the card.
+5. **Card-scoped actions go in `extra`, not in the body.** Any action that operates on the card as a whole — the orange primary "create / add" button, the refresh button (`BAIFetchKeyButton`), an "edit configuration" button, a section-level export — belongs in the card's header `extra` slot. Use a `BAIFlex gap="xs" align="center"` to group multiple actions, with the primary button rightmost.
 
    Only **content-scoped** controls stay in the body — i.e., things that filter, sort, or page through what is displayed (`BAIGraphQLPropertyFilter`, search inputs, view-mode toggles when they reshape the body content, sort selectors). If you find yourself duplicating a refresh button in the body when the card already has one in `extra`, remove the body one.
 
@@ -71,7 +71,7 @@ import { BAICard } from 'backend.ai-ui';
 >
   <BAIFlex direction="column" align="stretch" gap="sm">
     <BAIGraphQLPropertyFilter style={{ flex: 1 }} {...filterProps} />
-    <BAITable {...tableProps} />
+    <BAITableAstryx {...tableProps} />
   </BAIFlex>
 </BAICard>
 ```
@@ -125,5 +125,5 @@ After editing a file that touches card containers, confirm:
 
 ## Related
 
-- `component-props-extension.md` — the wrapper-component prop-extension pattern. `BAICardProps` is a partial exception: it keeps an antd-`Card`-SHAPED surface (so the ~200 call sites carried over from the antd era need no edit) while rendering Astryx, and documents each accepted-and-ignored prop as a PILOT-DECISION in `BAICard.tsx`.
+- `component-props-extension.md` — the wrapper-component prop-extension pattern. `BAICard` is that rule's documented **escape hatch**, not an exception to it: because it composes several Astryx primitives rather than wrapping one, `BAICardProps` extends no library props type at all — only `Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'color' | 'children'>` — and hand-restates the antd-`Card`-SHAPED surface inline, so the ~200 `<BAICard>` call sites carried over from the antd era need no edit and the module stays out of the antd import graph. Each accepted-and-ignored prop is documented as a PILOT-DECISION in `BAICard.tsx`.
 - `BAICard` source: `packages/backend.ai-ui/src/components/BAICard.tsx`

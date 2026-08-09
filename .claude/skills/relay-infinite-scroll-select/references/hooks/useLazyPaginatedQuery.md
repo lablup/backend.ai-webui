@@ -295,21 +295,18 @@ const { paginationData, result, loadNext, isLoadingNext } =
     },
   );
 
-// Use in BAISelect
-<BAISelect
-  options={_.map(paginationData, (item) => ({
-    label: item?.name,
-    value: item?.id,
-  }))}
-  endReached={() => loadNext()}
-  footer={
-    _.isNumber(result.vfolder_nodes?.count) ? (
-      <TotalFooter
-        loading={isLoadingNext}
-        total={result.vfolder_nodes.count}
-      />
-    ) : undefined
-  }
+// Use in BAIComplexSelect — `total` + `isLoadingNext` render the count row;
+// do not hand-build a TotalFooter.
+<BAIComplexSelect
+  label={t('general.Folder')}
+  options={_.compact(
+    _.map(paginationData, (item) =>
+      item?.id ? { label: item?.name ?? item.id, value: item.id } : null,
+    ),
+  )}
+  endReached={loadNext}
+  isLoadingNext={isLoadingNext}
+  total={result.vfolder_nodes?.count ?? undefined}
 />
 ```
 

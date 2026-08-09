@@ -1,10 +1,11 @@
 ---
 name: relay-infinite-scroll-select
 description: >
-  Create Relay-based infinite scroll select components extending BAISelect.
-  Supports name-based values (usePaginationFragment) and id-based values
-  (useLazyLoadQuery + useLazyPaginatedQuery) with search, optimistic updates,
-  and multiple selection modes.
+  Create Relay-based infinite scroll select components on BAIComplexSelect
+  (Astryx ComplexSelector), named *SelectAstryx. Covers offset pagination
+  (useLazyLoadQuery + useLazyPaginatedQuery) and cursor pagination
+  (usePaginationFragment), with server-side search, selected-value label
+  resolution, and single/multiple modes.
 ---
 
 # Relay Infinite Scroll Select Component Creator
@@ -16,890 +17,558 @@ description: >
 - "Add [Entity]Select component with infinite scroll"
 - "Create a select component that fetches from GraphQL"
 
+## Read this first
+
+**The base component is `BAIComplexSelect`, not `BAISelect`.**
+
+antd is gone from this repo. `BAISelect` still exists and is still exported,
+but it is now built on Astryx `Selector` / `MultiSelector`, where the
+pagination props are **accepted and inert**:
+
+- `endReached`, `atBottomStateChange`, `bottomLoading` — `Selector` owns its
+  popup and emits no scroll event
+- `searchAction` — `Selector` filters its own options client-side and exposes
+  no `onSearch`
+
+They survive in the signature only so the 12 components that declare
+`interface XProps extends BAISelectProps` keep compiling. **A new Relay
+infinite-scroll select built on `BAISelect` will compile, render, and silently
+never paginate.** Use `BAISelect` only for a static, in-memory option list; for
+its antd-shaped prop surface see `.claude/rules/antd-v6-props.md`.
+
+`BAIComplexSelect` is built on Astryx's `ComplexSelector` — the only Astryx
+select that hands the popup body back as a **render prop**. That is what keeps
+`onPopupScroll → loadNext` alive. Full API: `references/base/BAIComplexSelect.md`.
+
+**Naming**: new components go in
+`packages/backend.ai-ui/src/components/fragments/` as `*SelectAstryx.tsx`,
+alongside the ~18 siblings already there.
+
 ## Quick Start Decision Tree
 
 ```
-START: Does your select need dynamic query parameters?
+START: where does the option data come from?
 
-┌─────────────────────────────────────────────────────────────┐
-│ Q: Do you need dynamic control over query parameters?      │
-│    (filter, limit, first, order, etc.)                     │
-│    OR need external refetch capability?                    │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│ Q: Does the parent already own a query you can hang a        │
+│    @connection fragment on (a `queryRef` prop)?              │
+└──────────────────────────────────────────────────────────────┘
                          │
           ┌──────────────┴──────────────┐
-          │                             │
          NO                            YES
           │                             │
           ▼                             ▼
-   ┌─────────────┐             ┌─────────────┐
-   │  Pattern A  │             │  Pattern B  │
-   │  (Simple)   │             │ (Dynamic)   │
-   └─────────────┘             └─────────────┘
+  offset pagination              cursor pagination
+  useLazyPaginatedQuery          usePaginationFragment
           │                             │
           ▼                             ▼
-Reference:                    References:
-BAIAdminResourceGroupSelect   BAIUserSelect (email-based)
-                              BAIVFolderSelect (id-based)
+┌─────────────────────────┐      ┌──────────────┐
+│ Q: is the key also a    │      │   CLASS C    │
+│    displayable label?   │      └──────────────┘
+└─────────────────────────┘             │
+     YES │        │ NO                  ▼
+         ▼        ▼             BAIAdminResourceGroupSelectAstryx
+     CLASS A   CLASS B
+         │        │
+         ▼        ▼
+  BAIUserSelectAstryx   BAIVFolderSelectAstryx
+  BAIKeypairSelectAstryx  BAIProjectSelectAstryx
 ```
 
-## Pattern Comparison
+**Start from offset pagination unless the `queryRef` already exists.** It needs
+no plumbing through the parent, supports the open/closed `fetchPolicy` switch,
+and is what ~17 of the ~18 wrappers do.
 
-| Criteria | Pattern A (Simple) | Pattern B (Dynamic) |
-|----------|-------------------|-------------------|
-| **Value Type** | String (name) | Any (name, email, id, row_id, etc.) |
-| **Relay Hook** | usePaginationFragment | useLazyLoadQuery + useLazyPaginatedQuery |
-| **Queries** | 1 fragment | 2 queries |
-| **Dynamic First** | ❌ Not needed | ✅ **Default** (fetches all selected values) |
-| **Dynamic Parameters** | ❌ Limited | ✅ Full control (filter, first, limit, order, etc.) |
-| **Multiple Mode** | Single only | Full support |
-| **Global ID** | Not needed | Can handle (if needed) |
-| **Optimistic UI** | Not needed | Required |
-| **State Management** | Simple | Complex |
-| **Ref Export** | No | Yes (refetch support) |
-| **Complexity** | 🟢 ~100 lines | 🟡 ~300-350 lines |
-| **Use Case** | Simple, static requirements | Dynamic filters, external refetch, multiple props control |
+## Class Comparison
 
-### Pattern B Examples by Value Type
+The Astryx siblings label themselves in their file headers (ticket-27
+CONVERSION-BRIEF). These are the real classes, not invented categories.
 
-| Example | Value Type | Special Features |
-|---------|-----------|------------------|
-| **BAIUserSelect** | Email | Dynamic `first`, email filtering |
-| **BAIVFolderSelect** | ID / row_id | Dynamic `first`, Global ID conversion, scope filtering |
-| **Custom Select** | Name | Can use Pattern B even with name if dynamic control needed |
+| | **Class A** (name-valued) | **Class B** (id-valued) | **Class C** (cursor fragment) |
+|---|---|---|---|
+| **Key is** | a display value in its own right (`email`, `access_key`) | the raw GraphQL `id` / `row_id` | usually the `name` |
+| **Pagination** | offset (`limit`/`offset`) | offset (`limit`/`offset`) | cursor (`first`/`after`/`@connection`) |
+| **Hooks** | `useLazyLoadQuery` + `useLazyPaginatedQuery` | same | `usePaginationFragment` |
+| **Queries** | 2 | 2 | 1 fragment |
+| **Value-resolution query** | ✅ required | ✅ required | ❌ none (label === key) |
+| **`queryRef` prop** | ❌ | ❌ | ✅ |
+| **`fetchPolicy` open/closed switch** | ✅ | ✅ | ❌ n/a |
+| **`useFetchKey` + ref refetch** | ✅ | ✅ | ❌ (fragment's own `refetch`) |
+| **`endReached`** | `loadNext` | `loadNext` | `() => hasNext && loadNext(10)` |
+| **Examples** | `BAIUserSelectAstryx`, `BAIKeypairSelectAstryx` | `BAIVFolderSelectAstryx`, `BAIProjectSelectAstryx`, `BAIDeploymentSelectAstryx`, `BAIObjectStorageSelectAstryx` | `BAIAdminResourceGroupSelectAstryx` (the only one) |
 
-## Implementation Checklists
+A and B share the same file shape exactly — only `keyOfNode` and the filter
+predicate differ.
 
-### Pattern A Checklist (Name-Based Value)
+## Why the value-resolution query is now mandatory (A and B)
 
-**Component Setup:**
-- [ ] Import `usePaginationFragment` from 'react-relay'
-- [ ] Import BAISelect, TotalFooter, Skeleton
-- [ ] Create props interface extending `Omit<BAISelectProps, 'options' | 'labelInValue'>`
-- [ ] Add `queryRef` prop for fragment key
+In antd this was a nicety: rc-select rendered the raw value when no option
+matched. On Astryx **the trigger reads its text from the value**, and a value
+chosen on page 1 is no longer in `options` after `loadNext` has paged past it.
+Without the resolution query the trigger shows a raw UUID.
 
-**GraphQL Fragment:**
+Class C escapes this only because label and value are definitionally identical
+for resource groups.
+
+## Implementation Checklist (Class A / B — the default)
+
+Copy `BAIUserSelectAstryx.tsx`. It is the ticket-26 worked example and the
+template the other wrappers followed.
+
+**Component setup**
+
+- [ ] File is `*SelectAstryx.tsx` under `packages/backend.ai-ui/src/components/fragments/`
+- [ ] `'use memo'` as the first statement in the component body
+- [ ] `useBAIi18n` from `../../hooks/useBAIi18n` — **never** `useTranslation`
+      from `react-i18next` (ESLint blocks it under `packages/backend.ai-ui/src/**`, FR-2986)
+- [ ] Props `extends Omit<BAIComplexSelectProps, 'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'>`
+- [ ] Outer value typed as plain `string | Array<string> | null` — the
+      `labelInValue` shape stays *inside* the wrapper
+- [ ] Export a `*Ref` interface if exposing `refetch`
+
+**Imports (from `BAIUserSelectAstryx.tsx`, verbatim paths)**
+
 ```typescript
-graphql\`
-  fragment YourComponent_fragment on Query
-  @argumentDefinitions(
-    first: { type: "Int", defaultValue: 10 }
-    after: { type: "String" }
-    filter: { type: "YourFilterType" }
-  )
-  @refetchable(queryName: "YourComponentPaginationQuery") {
-    yourEntities(first: $first, after: $after, filter: $filter)
-      @connection(key: "YourComponent_yourEntities") {
-      count
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-\`
+import { toLocalId } from '../../helper';
+import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
+import { mergeFilterValues } from '../BAIPropertyFilter';
 ```
 
-**Required Checklist:**
-- [ ] @argumentDefinitions (first, after, filter)
-- [ ] @refetchable with unique queryName
-- [ ] @connection with unique key
-- [ ] count field for total
-- [ ] Required fields (id, name)
+**State**
 
-**BAISelect Integration:**
-- [ ] `ref={selectRef}` with useRef
-- [ ] `options` from mapped edges
-- [ ] `searchAction` with `refetch()` and `scrollTo(0)`
-- [ ] `showSearch` with conditional handling (see showSearch Configuration section)
-- [ ] `endReached={() => hasNext && loadNext(10)}`
-- [ ] `notFoundContent` with Skeleton
-- [ ] `footer` with TotalFooter
-
-### Pattern B Checklist (ID-Based Value)
-
-**Component Setup:**
-- [ ] Import `useLazyLoadQuery`, `useDeferredValue`, `useTransition`, `useOptimistic`
-- [ ] Import `useLazyPaginatedQuery`, `useFetchKey`, `useDebouncedDeferredValue` custom hooks
-- [ ] Import `useControllableValue` from `backend.ai-ui` (BUI hooks; inside BUI itself use `../../hooks`)
-- [ ] Import `toLocalId`, `mergeFilterValues` helpers
-- [ ] Add 'use memo' directive
-
-**State Management:**
-- [ ] `useControllableValue` for value and open
-- [ ] `useDeferredValue` for controllableValue, open, and fetchKey
-- [ ] `useState` for searchStr and optimisticValueWithLabel
-- [ ] `useDebouncedDeferredValue` for searchStr (debounce + defer query execution)
-- [ ] `useOptimistic` for optimisticSearchStr (immediate UI feedback) - simple pattern without dispatcher
-- [ ] `useTransition` for refetch
+- [ ] `useControllableValue` for `value` (`trigger: 'onChange'`) and for `open`
+      (`valuePropName: 'open'`, `trigger: 'onOpenChange'`,
+      `defaultValuePropName: 'defaultOpen'`) — pass `selectProps as Record<string, unknown>`
+- [ ] `useDeferredValue` on the controllable value, on open, and on the fetch key
+- [ ] `useState<string>('')` for `searchStr` (empty string, not `undefined` —
+      `searchValue` is a controlled `string`)
+- [ ] `useDebouncedDeferredValue(searchStr)` for the query filter
+- [ ] `useTransition` for the ref-driven refetch
 - [ ] `useFetchKey` for cache invalidation
+- [ ] `const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []))`
 
-**GraphQL Queries:**
+**Query 1 — value resolution**
 
-Query 1 - Selected Values (with Dynamic First):
-```typescript
-graphql\`
-  query YourComponentValueQuery(
-    $selectedFilter: String
-    $first: Int!
-    $skipSelected: Boolean!
-  ) {
-    yourEntities(filter: $selectedFilter, first: $first)
-      @skip(if: $skipSelected) {
-      edges {
-        node {
-          id
-          row_id
-          name
-        }
-      }
-    }
+```graphql
+query YourComponentAstryxValueQuery(
+  $selectedFilter: String
+  $first: Int!
+  $skipSelected: Boolean!
+) {
+  your_nodes(filter: $selectedFilter, first: $first)
+    @skip(if: $skipSelected) {
+    edges { node { id name } }
   }
-\`
-
-// Variables
-{
-  selectedFilter: /* filter based on selected values */,
-  first: _.castArray(deferredControllableValue).length, // 🔑 Dynamic
-  skipSelected: _.isEmpty(deferredControllableValue),
 }
 ```
 
-Query 2 - Paginated Options:
 ```typescript
-graphql\`
-  query YourComponentPaginatedQuery(
-    $offset: Int!
-    $limit: Int!
-    $filter: String
-  ) {
-    yourEntities(
-      offset: $offset
-      first: $limit
-      filter: $filter
-      order: "-created_at"
-    ) {
-      count
-      edges {
-        node {
-          id
-          row_id
-          name
-        }
-      }
-    }
-  }
-\`
+{
+  selectedFilter: mergeFilterValues(
+    [
+      selectedKeys.length
+        ? mergeFilterValues(
+            _.map(selectedKeys, (value) => `name == "${value}"`),
+            '|',
+          )
+        : null,
+      mergedFilter,
+    ],
+    '&',
+  ),
+  first: Math.max(selectedKeys.length, 1),
+  skipSelected: selectedKeys.length === 0,
+},
+{
+  fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
+  fetchKey: deferredFetchKey,
+}
 ```
 
-**Query Checklist:**
-- [ ] ValueQuery with @skip directive
-- [ ] **ValueQuery with dynamic `$first` parameter (REQUIRED for Pattern B)**
-- [ ] PaginatedQuery with offset/limit
-- [ ] selectedFilter uses toLocalId() for Global IDs (if using Global IDs)
-- [ ] Both queries have required fields (id, name, or email)
-- [ ] count field in PaginatedQuery
-- [ ] **Variables include `first: _.castArray(value).length` (REQUIRED for Pattern B)**
+- [ ] `@skip(if: $skipSelected)` so nothing is fetched for an empty selection
+- [ ] `first: Math.max(selectedKeys.length, 1)` — dynamic, with a floor of 1
+      (`first: 0` is invalid for an `Int!` variable even on the render where
+      the field is skipped)
+- [ ] `fetchPolicy` falls back to `'store-only'` in the same condition
+- [ ] `toLocalId(value)` on the filter value when the outer key is a global id
+      but the backend filters on local UUIDs
 
-**Value-to-Label Mapping:**
-- [ ] Build `controllableValueWithLabel` from selected query
-- [ ] Maintain selection order with _.castArray
-- [ ] Filter out null edges
-- [ ] Fallback to value as label when no data
+**Query 2 — paginated options**
 
-**Optimistic Updates:**
-- [ ] `useOptimistic` for optimisticSearchStr (search input feedback)
-- [ ] `useState` for optimisticValueWithLabel (selection feedback)
-- [ ] Switch between optimistic and real value based on deferred comparison
-- [ ] Preserve labels in onChange (handle React element labels)
+```typescript
+useLazyPaginatedQuery<YourPaginatedQuery, YourNode>(
+  query,
+  { limit: 10 },
+  { filter: mergeFilterValues([mergedFilter, searchPredicate]), order: 'name' },
+  {
+    fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
+    fetchKey: deferredFetchKey,
+  },
+  {
+    getTotal: (r) => r.your_nodes?.count ?? undefined,
+    getItem: (r) => r.your_nodes?.edges?.map((edge) => edge?.node),
+    getId: (item) => item?.id,
+  },
+);
+```
 
-**BAISelect Integration:**
-- [ ] `labelInValue` prop
-- [ ] `value` with optimistic switching
-- [ ] `onChange` with label preservation
-- [ ] `searchAction` with `setOptimisticSearchStr` then `setSearchStr` (no transition wrapper needed)
-- [ ] `showSearch` with conditional handling (see showSearch Configuration section)
-- [ ] `showSearch.searchValue` set to `optimisticSearchStr` for immediate feedback
-- [ ] `endReached={() => loadNext()}`
-- [ ] `labelRender`/`optionRender` for custom display
-- [ ] `loading` with four conditions: loading, value comparison, `searchStr !== debouncedDeferredValue`, isPendingRefetch
+- [ ] `count` selected on the connection — it feeds `total`
+- [ ] `fetchPolicy: deferredOpen ? 'network-only' : 'store-only'` (P26-6)
+- [ ] Search predicate built from the **debounced deferred** value, not `searchStr`
+- [ ] Pagination arguments follow `.claude/rules/graphql-pagination.md` — one
+      mode only. `*_nodes` legacy connections use `first` + `offset` as their
+      offset mode; Strawberry `*V2` connections must use `limit` + `offset`.
 
-**Ref Export:**
-- [ ] `useImperativeHandle` for refetch
-- [ ] `startRefetchTransition` wrapper
-- [ ] Export ref interface type
+**Options and value mapping**
+
+- [ ] One `keyOfNode` helper, shared by `options` and `labeledValue`, so the
+      two can never disagree about what a key is
+- [ ] `label` is a **plain string** (P26-3); secondary text goes in
+      `description`, trailing content in `extra`
+- [ ] `labeledValue` maps over `selectedKeys` (preserving selection order) and
+      looks up the edge — never the reverse
+- [ ] Echo the key as its own label when the resolution query has not landed
+- [ ] Return `labeled` in `multiple` mode, `labeled[0] ?? null` otherwise
+
+**Render**
+
+- [ ] `placeholder` **before** `{...selectProps}`; everything the wrapper owns **after**
+- [ ] `isLoading` with all four conditions
+- [ ] `total` + `isLoadingNext` — **no hand-built `TotalFooter`**
+- [ ] `value={labeledValue}`, `onChange` unwraps back to plain keys
+- [ ] `searchValue={searchStr}`, `onSearch={setSearchStr}`
+- [ ] `onOpenChange={setControllableOpen}`
+- [ ] `endReached={loadNext}`
+- [ ] No `emptyContent` (see below)
+
+## Class C differences (cursor fragment)
+
+- [ ] `queryRef` prop typed with the **Astryx** `$key`, matching the `graphql`
+      tag's own fragment name (P3C-6 — the legacy and Astryx `$key` types are
+      structurally identical, so `tsc` will not catch a mismatch, but the
+      component will find no data at runtime)
+- [ ] `@argumentDefinitions(first, after, filter)` + `@refetchable(queryName:)`
+      + `@connection(key:)`, all named after the Astryx file
+- [ ] Search calls the fragment's `refetch({ filter })` — a structured filter
+      object, not the `mergeFilterValues` string DSL
+- [ ] `endReached={() => { hasNext && loadNext(10); }}`
+- [ ] No value query, no `onOpenChange`, no `useFetchKey`, no debounce hook
+
+## What changed from the antd era
+
+Every item below is a **deliberate** decision (to-astryx tickets 26/27). Do not
+"restore" any of them.
+
+| antd `BAISelect` | Now on `BAIComplexSelect` |
+|---|---|
+| `showSearch` (bool \| object) | `hasSearch` (bool, default `true`) + `searchValue` / `onSearch` |
+| `searchAction` (transition-wrapped) | `onSearch` fires per keystroke; **you** debounce upstream |
+| `useOptimistic` for the search box | gone — the search box is a controlled `TextInput` we own, so `searchStr` is already synchronous |
+| `selectRef.current?.scrollTo(0)` on search | gone — the component resets the highlight to index 0 per keystroke and scrolls it into view |
+| `labelInValue` prop | implicit; the value **is** `{label, value}` |
+| `optimisticValueWithLabel` state | gone — `labeledValue` is rebuilt from `selectedKeys` each render |
+| `labelRender` / `optionRender` (ReactNode) | **P26-3**: `label` is a `string`; use `description` / `extra` |
+| React-element labels in `onChange` | gone — labels are always strings, so no "recover the original label" dance |
+| `tagRender`, removable chips | **P26-4**: trigger chips are display-only; deselect by clicking the row again |
+| `mode="multiple"` | `multiple` |
+| `loading` / `disabled` | `isLoading` / `isDisabled` |
+| `notFoundContent={<Skeleton.Input/>}` | **P26-7**: dropped. Shared "No results" text |
+| `footer={<TotalFooter …/>}` | `total` + `isLoadingNext` — the component renders the count row |
+| `<Select>` needs no label | **`label` is required** (accessible name); pass `isLabelHidden` inside a form item |
+
+### Empty state — no Skeleton (P26-7)
+
+antd's `notFoundContent={<Skeleton.Input active size="small" block />}`
+first-load placeholder was **deliberately dropped**. `emptyContent` does accept
+a `ReactNode`, but a skeleton row inside an Astryx popup drags an antd
+dependency back into a migrated surface.
+
+`BAIComplexSelect` renders `t('comp:BAIComplexSelect.NoResults')` — "No results"
+— whenever `options` is empty. **Pass nothing.** Only supply `emptyContent` for
+a domain-specific empty message, and never a skeleton.
 
 ## Common Patterns
 
-### showSearch Configuration
+### Search: debounce upstream, surface the lag as `isLoading`
 
-Both patterns should implement flexible `showSearch` handling to support:
-1. Disabling search completely with `showSearch={false}`
-2. Merging user-provided `showSearch` configurations
-3. Using optimistic search strings for immediate feedback
-
-**Pattern A: Basic showSearch**
 ```typescript
-// State (if not already present)
-const [searchStr, setSearchStr] = useState<string>();
-const [optimisticSearchStr, setOptimisticSearchStr] =
-  useOptimistic(searchStr);
-
-// In searchAction
-searchAction={async (value) => {
-  setOptimisticSearchStr(value);  // Immediate UI feedback
-  setSearchStr(value);             // Actual state for query
-  selectRef.current?.scrollTo(0);
-  refetch({ filter: value ? { name: { contains: value } } : null });
-  await selectProps.searchAction?.(value);
-}}
-
-// In BAISelect
-showSearch={
-  selectProps.showSearch === false
-    ? false
-    : {
-        searchValue: optimisticSearchStr,
-        autoClearSearchValue: true,
-        filterOption: false,
-        ...(_.isObject(selectProps.showSearch)
-          ? _.omit(selectProps.showSearch, ['searchValue'])
-          : {}),
-      }
-}
-```
-
-**Pattern B: Advanced showSearch with debouncing**
-```typescript
-// State (already present in Pattern B)
-const [searchStr, setSearchStr] = useState<string>();
+const [searchStr, setSearchStr] = useState<string>('');
 const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-const [optimisticSearchStr, setOptimisticSearchStr] =
-  useOptimistic(searchStr);
 
-// In searchAction
-searchAction={async (value) => {
-  setOptimisticSearchStr(value);  // Immediate UI feedback
-  setSearchStr(value);             // Actual state (will be debounced + deferred)
-  await selectProps.searchAction?.(value);
-}}
-
-// In BAISelect
-showSearch={
-  selectProps.showSearch === false
-    ? false
-    : {
-        searchValue: optimisticSearchStr,
-        autoClearSearchValue: true,
-        filterOption: false,
-        ...(_.isObject(selectProps.showSearch)
-          ? _.omit(selectProps.showSearch, ['searchValue'])
-          : {}),
-      }
-}
-```
-
-**Why this pattern?**
-- ✅ **Flexibility**: Parent can disable search with `showSearch={false}`
-- ✅ **Extensibility**: Parent can provide custom `showSearch` config (except `searchValue`)
-- ✅ **Consistency**: All relay select components follow the same pattern
-- ✅ **Optimistic UI**: Uses `optimisticSearchStr` for immediate feedback
-- ✅ **Type Safety**: TypeScript catches invalid configurations
-
-**Usage Examples:**
-```typescript
-// Disable search completely
-<BAIUserSelect showSearch={false} />
-
-// Custom showSearch configuration
-<BAIUserSelect
-  showSearch={{
-    placeholder: "Search by email...",
-    maxLength: 50,
-  }}
-/>
-
-// Default behavior (search enabled)
-<BAIUserSelect />
-```
-
-**Common Pitfalls:**
-```typescript
-// ❌ Bad: Hardcoded showSearch object (not flexible)
-showSearch={{
-  autoClearSearchValue: true,
-  filterOption: false,
-}}
-
-// ❌ Bad: No optimistic search (delayed feedback)
-showSearch={{
-  searchValue: searchStr,  // Use optimisticSearchStr instead
-  autoClearSearchValue: true,
-  filterOption: false,
-}}
-
-// ❌ Bad: Not checking showSearch === false
-showSearch={{
-  // Always shows search, can't be disabled
-}}
-
-// ✅ Good: Conditional with optimistic + merge
-showSearch={
-  selectProps.showSearch === false
-    ? false
-    : {
-        searchValue: optimisticSearchStr,
-        autoClearSearchValue: true,
-        filterOption: false,
-        ...(_.isObject(selectProps.showSearch)
-          ? _.omit(selectProps.showSearch, ['searchValue'])
-          : {}),
-      }
-}
-```
-
-### Dynamic First Parameter (Default in Pattern B)
-
-**Pattern B always uses dynamic `first` parameter** to ensure all selected values are fetched:
-
-```typescript
-const { entity_nodes: selectedNodes } =
-  useLazyLoadQuery<YourComponentValueQuery>(
-    graphql`
-      query YourComponentValueQuery(
-        $selectedFilter: String
-        $first: Int!
-        $skipSelected: Boolean!
-      ) {
-        entity_nodes(filter: $selectedFilter, first: $first)
-          @skip(if: $skipSelected) {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
-      }
-    `,
-    {
-      selectedFilter: /* ... */,
-      first: _.castArray(deferredControllableValue).length, // 🔑 Dynamic
-      skipSelected: _.isEmpty(deferredControllableValue),
-    },
-  );
-```
-
-**Why this is the default in Pattern B:**
-- ✅ Fetch exactly the number of selected items
-- ✅ No over-fetching (performance)
-- ✅ No under-fetching (data completeness)
-- ✅ Works with any selection count (1, 10, 100, etc.)
-- ✅ Essential for multiple selection mode
-- ✅ Prevents data loss when users select many items
-
-**Without dynamic first (NOT Pattern B):**
-```typescript
-// ❌ Bad: Hardcoded limit (Pattern A approach, not suitable for Pattern B)
-first: 10  // Fails if user selects 50 items
-
-// ❌ Bad: No first parameter
-// May return only default number of results (usually 10)
-
-// ✅ Good: Pattern B always uses dynamic first
-first: _.castArray(deferredControllableValue).length
-```
-
-### Multiple Mode Support
-
-```typescript
-// Check for empty value before casting to avoid issues with empty arrays
-const valueArray = _.isEmpty(value) ? [] : _.castArray(value);
-
-// Process each value uniformly
-valueArray.map((value) => {
-  // Process each value
-});
-```
-
-**Key Points:**
-- Use `_.isEmpty()` to check for empty value before casting
-- `_.castArray()` ensures uniform handling of single and multiple modes
-- Prevents issues when value is undefined or empty array
-
-### Search with Transitions
-
-```typescript
-// Pattern A: Refetch with transition and optimistic search
-const [searchStr, setSearchStr] = useState<string>();
-const [optimisticSearchStr, setOptimisticSearchStr] =
-  useOptimistic(searchStr);
-
-searchAction={async (value) => {
-  setOptimisticSearchStr(value);  // Immediate UI feedback
-  setSearchStr(value);             // Actual state for query
-  selectRef.current?.scrollTo(0);
-  refetch({ filter: value ? { name: { contains: value } } : null });
-  await selectProps.searchAction?.(value);
-}}
-
-// Conditional showSearch with user config merge
-showSearch={
-  selectProps.showSearch === false
-    ? false
-    : {
-        searchValue: optimisticSearchStr,
-        autoClearSearchValue: true,
-        filterOption: false,
-        ...(_.isObject(selectProps.showSearch)
-          ? _.omit(selectProps.showSearch, ['searchValue'])
-          : {}),
-      }
-}
-
-// Pattern B: Optimistic search with useDebouncedDeferredValue
-import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-
-const [searchStr, setSearchStr] = useState<string>();
-const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-const [optimisticSearchStr, setOptimisticSearchStr] =
-  useOptimistic(searchStr);
-
-// Use debouncedDeferredValue (debounced + deferred) in query filter
+// query filter uses the debounced deferred value
 filter: mergeFilterValues([
   mergedFilter,
   debouncedDeferredValue ? `email ilike "%${debouncedDeferredValue}%"` : null,
-])
+]),
 
-// searchAction sets optimistic value immediately, then actual value
-searchAction={async (value) => {
-  setOptimisticSearchStr(value);  // Optimistic update for immediate UI feedback
-  setSearchStr(value);             // Actual state (will be debounced + deferred)
-  await selectProps.searchAction?.(value);
-}}
-
-// Conditional showSearch with user config merge
-showSearch={
-  selectProps.showSearch === false
-    ? false
-    : {
-        searchValue: optimisticSearchStr,
-        autoClearSearchValue: true,
-        filterOption: false,
-        ...(_.isObject(selectProps.showSearch)
-          ? _.omit(selectProps.showSearch, ['searchValue'])
-          : {}),
-      }
-}
-
-// Show loading when search query is executing
-loading={
-  loading ||
-  controllableValue !== deferredControllableValue ||
-  searchStr !== debouncedDeferredValue ||  // Loading during debounce + defer
-  isPendingRefetch
-}
+// the input stays on raw state, so typing is never laggy
+<BAIComplexSelect searchValue={searchStr} onSearch={setSearchStr} />
 ```
 
-**Why useDebouncedDeferredValue + useOptimistic for search?**
-- ✅ Input field shows optimistic value immediately (best UX)
-- ✅ Debounce reduces query frequency during fast typing (200ms default)
-- ✅ `useDeferredValue` prevents UI blocking during query execution
-- ✅ Query uses `debouncedDeferredValue` (debounced + deferred state)
-- ✅ Works seamlessly with BAISelect's built-in startTransition wrapper
-- ✅ React automatically manages the complete state transition flow
-- ✅ Loading indicator shows during debounce + defer period
-- ✅ Best balance between responsiveness and performance
-- ✅ Prevents excessive GraphQL queries during fast typing
+`useDebouncedDeferredValue` combines `useDebounce` (default 200 ms) with
+`useDeferredValue`: fewer GraphQL round-trips during fast typing, and no UI
+blocking while the query runs.
 
-### Global ID Conversion
+### Loading state — four conditions
 
 ```typescript
-import { toLocalId, toGlobalId } from '../../helper';
-
-// When filtering (valuePropName === 'id')
-const filterValue = valuePropName === 'id' ? toLocalId(value) : value;
+isLoading={
+  isLoading ||                                       // caller's own flag
+  controllableValue !== deferredControllableValue || // a selection is settling
+  searchStr !== debouncedDeferredValue ||            // debounce/defer window
+  isPendingRefetch                                   // ref.refetch() in flight
+}
 ```
 
-### Filter Merging
+Class C uses `isLoading` alone — it has no value query, no debounce window and
+no ref refetch.
+
+### fetchPolicy (P26-6)
+
+```typescript
+// value resolution: never hit the network for an empty selection
+fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only'
+
+// options: refetch on open, stay quiet while closed
+fetchPolicy: deferredOpen ? 'network-only' : 'store-only'
+```
+
+The second one only works because `BAIComplexSelect.onOpenChange` re-exposes
+the open state that `ComplexSelector` otherwise keeps private.
+
+### Ref-exposed refetch
+
+```typescript
+const [isPendingRefetch, startRefetchTransition] = useTransition();
+const [fetchKey, updateFetchKey] = useFetchKey();
+const deferredFetchKey = useDeferredValue(fetchKey);
+
+useImperativeHandle(
+  ref,
+  () => ({
+    refetch: () => {
+      startRefetchTransition(() => {
+        updateFetchKey();
+      });
+    },
+  }),
+  [updateFetchKey, startRefetchTransition],
+);
+```
+
+### Filter merging
 
 ```typescript
 import { mergeFilterValues } from '../BAIPropertyFilter';
 
-const filter = mergeFilterValues([
-  baseFilter,
-  searchStr ? \`name ilike "%\${searchStr}%"\` : null,
-  externalFilter,
-], '&'); // Default operator
+const mergedFilter = mergeFilterValues([
+  excludeInactive ? defaultActiveUserFilter : null,
+  filter,          // caller's filter
+]);               // default operator is '&'
+
+// OR the per-key predicates, then AND with the caller's filter
+mergeFilterValues(
+  [
+    selectedKeys.length
+      ? mergeFilterValues(_.map(selectedKeys, (v) => `email == "${v}"`), '|')
+      : null,
+    mergedFilter,
+  ],
+  '&',
+);
 ```
 
-### Controllable Props
+`null` entries are dropped. See `references/helpers/mergeFilterValues.md`.
+
+### Global ID handling
+
+There is no single rule — the two live wrappers genuinely differ, and both are
+correct for their domain:
+
+- `BAIUserSelectAstryx` in `'id'` mode: outer key is `toLocalId(node.id)`
+- `BAIVFolderSelectAstryx` in `'id'` mode: outer key is the **raw global**
+  `node.id` (`VFolderMountFormItem` stores global IDs), and `toLocalId` is used
+  only for the display text and the filter value
+
+**Match whatever the antd predecessor exposed.** Changing the outer key shape
+silently breaks every call site and every mutation payload.
+
+### Controllable props
 
 ```typescript
-const [value, setValue] = useControllableValue(props);
-const [open, setOpen] = useControllableValue(props, {
-  valuePropName: 'open',
-  trigger: 'onOpenChange',
+const [controllableValue, setControllableValue] = useControllableValue<
+  string | Array<string> | null | undefined
+>(selectProps as Record<string, unknown>, {
+  valuePropName: 'value',
+  trigger: 'onChange',
 });
+const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
+  selectProps as Record<string, unknown>,
+  {
+    valuePropName: 'open',
+    trigger: 'onOpenChange',
+    defaultValuePropName: 'defaultOpen',
+  },
+);
 ```
 
-## Pattern B: Dynamic Query Parameters
-
-### Core Capabilities
-
-Pattern B (Dynamic) provides full control over GraphQL query parameters through props:
-
-**1. Dynamic First Parameter (Default Behavior)**
-```typescript
-// ALWAYS fetch all selected values in Pattern B
-first: _.castArray(deferredControllableValue).length
-```
-This is **not optional** - it's the defining characteristic of Pattern B that ensures data completeness.
-
-**2. Dynamic Filter**
-```typescript
-// Combine multiple filters dynamically
-filter={mergeFilterValues([
-  'status == "ACTIVE"',
-  searchStr ? `name ilike "%${searchStr}%"` : null,
-  props.filter,  // External filter from props
-])}
-```
-
-**3. Dynamic Limit**
-```typescript
-// Control pagination size via props
-{ limit: props.pageSize || 10 }
-```
-
-**4. Dynamic Order**
-```typescript
-// Control sort order via props
-order: props.sortBy || '-created_at'
-```
-
-**5. External Refetch**
-```typescript
-// Expose refetch via ref
-const selectRef = useRef<YourSelectRef>(null);
-selectRef.current?.refetch();
-```
-
-### When Pattern B is Essential
-
-Even if your value is a simple name (not ID), use Pattern B when you need:
-
-- ✅ Dynamic filter from parent component
-- ✅ External refetch capability
-- ✅ Control over fetchPolicy
-- ✅ Multiple selection with optimistic updates
-- ✅ Dynamic pagination size
-- ✅ Custom sort order
-
-**Example: Name-based but needs Pattern B**
-```typescript
-// Even though value is 'name', we need Pattern B for dynamic features
-<YourEntitySelect
-  value={selectedNames}           // Name-based value
-  filter={externalFilter}         // 🔑 Dynamic filter
-  pageSize={20}                   // 🔑 Dynamic limit
-  sortBy="name"                   // 🔑 Dynamic order
-  ref={selectRef}                 // 🔑 Refetch capability
-/>
-```
-
-## Best Practices
-
-### Performance
-
-1. **Use 'use memo' directive (Pattern B)**
-   ```typescript
-   const YourSelect: React.FC<Props> = (props) => {
-     'use memo';
-     // Component logic
-   };
-   ```
-
-2. **Defer values to prevent Suspense flicker**
-   ```typescript
-   const deferredOpen = useDeferredValue(open);
-   const deferredValue = useDeferredValue(value);
-   const deferredFetchKey = useDeferredValue(fetchKey);
-   ```
-
-   **Search optimization with useDebouncedDeferredValue (Recommended):**
-   ```typescript
-   import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-
-   const [searchStr, setSearchStr] = useState<string>();
-   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr, {
-     wait: 200, // default
-   });
-   const [optimisticSearchStr, setOptimisticSearchStr] =
-     useOptimistic(searchStr);
-   ```
-
-   **Why useDebouncedDeferredValue?**
-   - ✅ Combines `useDebounce` + `useDeferredValue` for optimal search performance
-   - ✅ Debounces user input to reduce query frequency (default 200ms)
-   - ✅ Defers query execution to prevent UI blocking
-   - ✅ Use `optimisticSearchStr` for immediate input feedback
-   - ✅ Use `debouncedDeferredValue` in query filters
-   - ✅ Better performance than debounce or defer alone
-   - ✅ Prevents excessive GraphQL queries during fast typing
-
-   **Pattern comparison:**
-   ```typescript
-   // ❌ Old: Only useDeferredValue (too many queries)
-   const deferredSearchStr = useDeferredValue(searchStr);
-
-   // ❌ Old: Only useDebounce (can still block UI)
-   const debouncedSearchStr = useDebounce(searchStr);
-
-   // ✅ New: Combined approach (optimal)
-   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-   ```
-
-3. **Optimize fetchPolicy**
-   ```typescript
-   // Selected values
-   fetchPolicy: !_.isEmpty(value) ? 'store-or-network' : 'store-only'
-
-   // Paginated options
-   fetchPolicy: deferredOpen ? 'network-only' : 'store-only'
-   ```
-
-4. **Skip unnecessary queries**
-   ```graphql
-   @skip(if: $skipSelected)
-   ```
-
-### UX
-
-1. **Always scroll to top on search**
-   ```typescript
-   selectRef.current?.scrollTo(0);
-   ```
-
-2. **Maintain selection order**
-   ```typescript
-   _.castArray(deferredValue)
-     .map((v) => findEdge(v))
-     .filter(Boolean);
-   ```
-
-3. **Handle React element labels**
-   ```typescript
-   const label = _.isString(v.label)
-     ? v.label
-     : (options.find((opt) => opt.value === v.value)?.label ?? v.value);
-   ```
-
-4. **Custom label rendering for IDs**
-   ```typescript
-   import { toLocalId } from '../../helper';
-   import BAIText from '../BAIText';
-
-   labelRender={({ label }) => {
-     return valuePropName === 'id' && _.isString(label) ? (
-       <BAIText monospace>{toLocalId(label)}</BAIText>
-     ) : (
-       label
-     );
-   }}
-   optionRender={({ label }) => {
-     return valuePropName === 'id' && _.isString(label) ? (
-       <BAIText monospace>{toLocalId(label)}</BAIText>
-     ) : (
-       label
-     );
-   }}
-   ```
-   **Benefits:**
-   - Convert Global IDs to local IDs for better readability
-   - Consistent monospace rendering for ID values
-   - Conditional rendering based on `valuePropName`
-
-5. **Loading state priorities**
-   ```typescript
-   loading={
-     loading ||
-     controllableValue !== deferredControllableValue ||
-     searchStr !== debouncedDeferredValue ||  // Show loading during debounce + defer
-     isPendingRefetch
-   }
-   // Note: searchStr comparison is needed to show loading during debounce + defer period
-   // useOptimistic handles immediate input feedback
-   ```
+`BAIComplexSelectProps` has no `open` / `defaultOpen` — re-declare them in your
+own props interface so `useControllableValue` can read them (P26-5).
 
 ## Common Pitfalls & Solutions
 
 | Pitfall | Impact | Solution |
-|---------|--------|----------|
-| Missing `first` parameter | Incomplete selected values | **REQUIRED in Pattern B**: Add `$first: Int!` parameter |
-| Hardcoded `first: 10` | Missing data for >10 selections | **Pattern B always uses**: `_.castArray(value).length` |
-| Not checking `_.isEmpty()` before `_.castArray()` | Potential issues with empty values | Use `_.isEmpty(value) ? [] : _.castArray(value)` |
-| Missing `_.castArray` | Single mode breaks | Always normalize values |
-| Not using `deferredValue` | Suspense flicker | Defer controllable values (value, open, fetchKey) |
-| Not using `useOptimistic` for search | Poor search UX | Use `useOptimistic` for immediate feedback |
-| Not using `useDebouncedDeferredValue` | Too many queries | Use `useDebouncedDeferredValue` for search |
-| Missing loading condition | No loading feedback | Add `searchStr !== debouncedDeferredValue` |
-| Missing `@skip` directive | Unnecessary queries | Add skip when empty |
-| Not preserving labels | Lost labels on tag removal | Check if label is string or element |
-| Hardcoded valuePropName | Inflexible component | Use prop: `'id' \| 'row_id'` |
-| Direct option mutation | Stale data | Rebuild from query results |
-| No scroll on search | Poor UX | Call `selectRef.current?.scrollTo(0)` |
-| Wrong fetchPolicy | Performance issues | Use appropriate policy per query |
-| **Hardcoded `showSearch` object** | **Can't disable search** | **Use conditional pattern with `showSearch === false` check** |
-| **Not using `optimisticSearchStr`** | **Delayed search feedback** | **Use `useOptimistic` for `searchValue`** |
-| **Not merging user `showSearch`** | **Inflexible configuration** | **Merge with `_.omit(selectProps.showSearch, ['searchValue'])`** |
+|---|---|---|
+| Extending `BAISelect` | compiles, renders, **never paginates** | extend `BAIComplexSelect` |
+| Passing a ReactNode as `label` | `[object Object]` in the trigger / accessible name | `label` is a `string`; use `description` / `extra` |
+| Omitting the value-resolution query | trigger shows a raw UUID once the value pages out of `options` | add Query 1 (Class A/B) |
+| `first: selectedKeys.length` with no floor | invalid `Int!` variable at 0 | `Math.max(selectedKeys.length, 1)` |
+| Hardcoded `first: 10` in the value query | selections past 10 lose their labels | dynamic `first` |
+| Missing `@skip(if:)` | needless query for an empty select | add it, and pair with `'store-only'` |
+| Filtering options by `searchStr` instead of the debounced value | a query per keystroke | use `useDebouncedDeferredValue` output |
+| `searchStr` initialised to `undefined` | uncontrolled→controlled input warning | `useState<string>('')` |
+| Reintroducing `Skeleton.Input` as `emptyContent` | pulls antd back into a migrated surface | shared "No results" (P26-7) |
+| Hand-building a `TotalFooter` | duplicate count rows | pass `total` + `isLoadingNext` |
+| Forgetting `label` | Astryx field has no accessible name | always pass `label`; add `isLabelHidden` inside a form item |
+| Two divergent key derivations | options and selection disagree | one shared `keyOfNode` |
+| Ordering `labeledValue` by query result | selection order scrambles in multiple mode | map over `selectedKeys` |
+| Not deferring value/open/fetchKey | Suspense flicker | `useDeferredValue` on all three |
+| Legacy `first`+`offset` copied onto a `*V2` connection | runtime "Only one pagination mode allowed" | `.claude/rules/graphql-pagination.md` |
+| `useTranslation` from `react-i18next` inside BUI | ESLint error (FR-2986) | `useBAIi18n` |
+| Class C: legacy `$key` type on `queryRef` | type-checks, finds no data at runtime | use the Astryx `$key` (P3C-6) |
+| Class C: `endReached={loadNext}` without `hasNext` | over-fetch past the end | `() => hasNext && loadNext(10)` |
 
 ## TypeScript Patterns
 
-### Props Interface
+### Props interface
 
 ```typescript
-export interface YourComponentSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue'> {
-  // Pattern A
-  queryRef?: YourFragment$key;
-
-  // Pattern B
-  valuePropName?: 'id' | 'row_id';
+export interface YourSelectAstryxProps extends Omit<
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
+> {
+  /** Plain key(s), as the antd predecessor exposes. */
+  value?: string | Array<string> | null;
+  onChange?: (value: string | Array<string> | undefined) => void;
   filter?: string;
-  ref?: React.Ref<YourComponentRef>;
+  valuePropName?: 'id' | 'row_id';
+  open?: boolean;
+  defaultOpen?: boolean;
+  ref?: React.Ref<YourSelectAstryxRef>;
+  // Class C only:
+  // queryRef: YourSelectAstryx_yourFragment$key;
 }
 ```
 
-### Ref Interface (Pattern B)
+The `Omit` list is exactly those six. Everything else — `label`, `multiple`,
+`placeholder`, `isLoading`, `isDisabled`, `emptyContent`, `listMaxHeight`,
+`triggerDisplay`, `header`, `footer` … — passes through untouched. This follows
+`.claude/rules/component-props-extension.md`.
+
+`onChange` takes **one** argument. The second `option` argument exists only on
+`BAIUserSelectAstryx` (P3C-1), because `BAIGraphQLPropertyFilter.renderInput`
+needs the label for its filter chip and cannot derive it. Do not add it
+speculatively.
+
+### Ref interface
 
 ```typescript
-export interface YourComponentRef {
+export interface YourSelectAstryxRef {
   refetch: () => void;
 }
 ```
 
-### Type Extraction (Pattern B)
+### Node type extraction
 
 ```typescript
-export type YourEntityNode = NonNullable<
+export type YourNode = NonNullable<
   NonNullable<
-    YourPaginatedQuery['response']['yourEntities']
+    YourSelectAstryxPaginatedQuery['response']['your_nodes']
   >['edges'][number]
 >['node'];
 ```
 
-## Real-World Examples
-
-### Example 1: Simple Entity Selection (Pattern A)
+### Value builder
 
 ```typescript
-// Scenario: Select resource group by name
-<BAIAdminResourceGroupSelect
-  queryRef={queryRef}
-  placeholder="Select resource group"
-  onChange={(name) => setSelectedGroup(name)}
-/>
-```
-
-### Example 2: Multiple Selection with ID (Pattern B)
-
-```typescript
-const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
-
-<BAIVFolderSelect
-  ref={vfolderSelectRef}
-  valuePropName="id"
-  mode="multiple"
-  value={selectedFolderIds}
-  onChange={setSelectedFolderIds}
-  onClickVFolder={(id) => navigate(\`/folders/\${id}\`)}
-/>
-
-<Button onClick={() => vfolderSelectRef.current?.refetch()}>
-  Refresh
-</Button>
-```
-
-### Example 3: With External Filters (Pattern B)
-
-```typescript
-<BAIVFolderSelect
-  filter={mergeFilterValues([
-    'status != "DELETE_COMPLETE"',
-    ownershipFilter ? \`ownership_type == "\${ownershipFilter}"\` : null,
-  ])}
-  excludeDeleted
-  onChange={(ids) => handleSelection(ids)}
-/>
-```
-
-## Quick Reference
-
-### When to Use Which Pattern
-
-**Pattern A (Simple)** when:
-- ✅ Simple, static requirements
-- ✅ Single selection sufficient
-- ✅ No need for dynamic query parameters
-- ✅ Minimal code preferred
-- ✅ No external refetch needed
-
-**Pattern B (Dynamic)** when:
-- ✅ Need dynamic query parameters (filter, first, limit, order, etc.)
-- ✅ Multiple selection required
-- ✅ Need external refetch capability via ref
-- ✅ Need to control fetchPolicy dynamically
-- ✅ Optimistic UI updates important
-- ✅ Complex filter combinations needed
-- ✅ Value different from display name (or needs special handling)
-- ✅ Even name-based values if dynamic control needed
-
-**Key insight:** Pattern B is not about the value type (email vs ID vs name), but about **dynamic control** over query parameters and component behavior.
-
-### Reference Files
-
-- **Pattern A (Simple)**: `references/patterns/BAIAdminResourceGroupSelect.md`
-- **Pattern B (Dynamic)**:
-  - Email-based with Dynamic First: `references/patterns/BAIUserSelect.md`
-  - ID-based with Dynamic First & Global ID Conversion: `references/patterns/BAIVFolderSelect.md`
-- **Base Component**: `references/base/BAISelect.md`
-- **Hooks**: `references/hooks/` (useFetchKey, useLazyPaginatedQuery, useDebouncedDeferredValue, useEventNotStable)
-- **Helpers**: `references/helpers/` (relay-helpers, mergeFilterValues)
-
-### File Structure
-
-```
-YourEntitySelect.tsx
-├── Imports (React, Relay, hooks, helpers)
-├── Type definitions (Props, Ref, Node extraction)
-├── Component with 'use memo'
-│   ├── State management
-│   ├── GraphQL queries
-│   ├── Value-to-label mapping (Pattern B)
-│   ├── useImperativeHandle (Pattern B)
-│   ├── Options building
-│   └── BAISelect integration
-└── Export
+const labeledValue: BAIComplexSelectValue = (() => {
+  const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
+    const edge = _.find(selectedNodes?.edges, (e) => keyOfNode(e?.node) === key);
+    return { label: edge?.node?.name ?? key, value: key };
+  });
+  if (multiple) return labeled;
+  return labeled[0] ?? null;
+})();
 ```
 
 ## Internationalization
 
-Use `comp:` prefix for component translations:
+Use the `comp:` prefix for component strings, and `useBAIi18n`:
 
 ```typescript
-t('comp:YourComponentSelect.PlaceHolder')
-t('comp:YourComponentSelect.SelectEntity')
-t('comp:YourComponentSelect.NoEntityFound')
+const { t } = useBAIi18n();
+t('comp:YourSelect.PlaceHolder')
 ```
 
-## Additional Resources
+`BAIComplexSelect` supplies its own chrome strings —
+`comp:BAIComplexSelect.Search`, `comp:BAIComplexSelect.NoResults`, and
+`general.TotalItems` for the count row. Do not duplicate them.
 
-For comprehensive examples and detailed implementation, refer to:
-- `references/README.md` - File overview and usage notes
-- Full pattern implementations in `references/patterns/`
-- Base component API in `references/base/`
-- Hook documentation in `references/hooks/`
-- Helper utilities in `references/helpers/`
+Locale files live in `packages/backend.ai-ui/src/locale/`. See the
+`i18n-patterns` skill for key naming and casing rules.
+
+## Reference Files
+
+- **Base component**: `references/base/BAIComplexSelect.md`
+- **Class A / canonical template**: `references/patterns/BAIUserSelectAstryx.md`
+- **Class B (id-valued)**: `references/patterns/BAIVFolderSelectAstryx.md`
+- **Class C (cursor fragment)**: `references/patterns/BAIAdminResourceGroupSelectAstryx.md`
+- **Hooks**: `references/hooks/` — `useFetchKey`, `useLazyPaginatedQuery`,
+  `useEventNotStable`
+- **Helpers**: `references/helpers/` — `relay-helpers` (`toLocalId`),
+  `mergeFilterValues`
+
+> **Terminology note.** The hook and helper references predate the Class A/B/C
+> naming and still say "Pattern A" / "Pattern B". Read **Pattern A** as
+> **Class C** (`usePaginationFragment`, name-valued) and **Pattern B** as
+> **Classes A and B** (`useLazyLoadQuery` + `useLazyPaginatedQuery`). The hooks
+> and helpers they document — `useEventNotStable`, `useFetchKey`,
+> `useLazyPaginatedQuery`, `mergeFilterValues`, `toLocalId` — all still exist
+> and are still exported unchanged.
+
+Related project rules:
+
+- `.claude/rules/graphql-pagination.md` — never mix pagination modes
+- `.claude/rules/component-props-extension.md` — the `Omit<…Props, …>` pattern
+- `.claude/rules/antd-v6-props.md` — the antd-shaped surface `BAISelect` still carries
+
+## File Structure
+
+```
+YourSelectAstryx.tsx
+├── File header comment (why it exists, class, PILOT-DECISIONs it inherits)
+├── Imports (generated query types, helpers, hooks, BAIComplexSelect)
+├── Type definitions (Node extraction, Ref, Props)
+├── Module-level filter constants
+├── Component with 'use memo'
+│   ├── useBAIi18n + useControllableValue (value, open)
+│   ├── Deferred / debounced state, useFetchKey, useTransition
+│   ├── Query 1 — value resolution      (Class A/B)
+│   ├── Query 2 — paginated options     (or the fragment, Class C)
+│   ├── useImperativeHandle (refetch)   (Class A/B)
+│   ├── keyOfNode → options → labeledValue
+│   └── <BAIComplexSelect />
+└── export default
+```
+
+Keep the file-header comment convention: every `*SelectAstryx.tsx` opens with a
+short note on what it replaced, which class it is, and which PILOT-DECISIONs
+shaped it. That is where the "why" lives.

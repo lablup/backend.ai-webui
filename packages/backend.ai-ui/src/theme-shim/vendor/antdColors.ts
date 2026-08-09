@@ -9,11 +9,12 @@
  (`colorPrimaryHover`, `colorErrorBg`, …). This file makes that derivation
  self-contained so the shim survives `@ant-design/colors` removal.
 
- Parity contract: output is bit-identical to `@ant-design/colors` — the same
- stepping constants, the same rounding points, the same hex formatting. This
- is asserted against the still-installed package in `../antdColors.test.ts`;
- keep that test green until the npm package is dropped, then the test flips to
- fixed expected values.
+ Parity contract: output is bit-identical to `@ant-design/colors@7.2.1` — the
+ same stepping constants, the same rounding points, the same hex formatting.
+ This was originally asserted against the still-installed package; the package
+ has since been dropped, so `../themeShim.test.ts` now asserts it against
+ `../antdColorsFixture.ts`, the frozen capture of that version's real output.
+ The contract is unchanged — this port targets 7.2.1, not "latest".
  */
 
 interface Rgb {

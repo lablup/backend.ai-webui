@@ -98,7 +98,7 @@ const UserNodes: React.FC<UserNodesProps> = ({
     usersFrgmt,
   );
 
-  return <BAITable dataSource={data.users} loading={loading} />;
+  return <BAITableAstryx dataSource={data.users} loading={loading} />;
 };
 ```
 

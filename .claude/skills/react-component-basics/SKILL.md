@@ -33,7 +33,8 @@ guidance see the sibling skills: `react-form`, `react-modal-drawer`, `react-layo
 - **`console.*` passes TypeScript** but is flagged by ESLint and swept by cleanups (FR-1749 #4802). Always `useBAILogger`.
 - **Empty `catch {}` blocks** trip the security scanner (FR-1748 #4740). For intentional ignore write `catch { return undefined; }` explicitly.
 - **"Memoized fn" helpers** (the old ahooks `useMemoizedFn` pattern) are deprecated in favor of `useEffectEvent` (React 19.2+). See `.claude/rules/use-effect-event.md`. `ahooks` is no longer a dependency; don't reintroduce the pattern.
-- **`extends Omit<ParentProps, 'key'>` with the wrong Omit list** silently drops props. Mirror antd v6 names — `<Alert title>` not `<Alert message>`. See `.claude/rules/antd-v6-props.md`.
+- **`extends Omit<ParentProps, 'key'>` with the wrong Omit list** silently drops props. BAI wrappers keep antd-**shaped** v6 prop names even though antd itself is gone — `<BAIAlert title>` not `<BAIAlert message>`. See `.claude/rules/antd-v6-props.md` for why the vocabulary outlived the library.
+- **`import … from 'antd'` will not resolve.** antd is not a dependency; `scripts/antd-zero-gate.sh` fails the build if it reappears. Use the shims (`../app-shim`, `../theme-shim`, `../form-engine`), `backend.ai-ui`, or `@astryxdesign/core/*`.
 - **`React.FC<Props>` and `(props: Props) =>` both work**; the project mixes them. Don't introduce a `React.FC` → arrow migration in a scoped PR.
 
 ## 1. File Skeleton
@@ -67,18 +68,15 @@ ESLint inside BUI rejects direct `react-i18next` i18n primitives (see
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// 1. Generated types (Relay artifacts)
 import {
   MyComponentFragment$data,
   MyComponentFragment$key,
 } from '../__generated__/MyComponentFragment.graphql';
-
-// 2. Local (same-package) imports — components, hooks, helpers
+import { App } from '../app-shim';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
-
-// 3. External imports — antd / BUI / lodash / relay / react
-import { App, theme } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
 import {
   BAIButton,
   BAIFlex,
@@ -126,13 +124,33 @@ const MyComponent: React.FC<MyComponentProps> = ({
 export default MyComponent;
 ```
 
-### Import Order (enforced by review)
+### Import Order (enforced by Prettier, not by hand)
 
-1. Generated GraphQL types from `../__generated__/`
-2. Local project imports (components, hooks, helpers — same package)
-3. External packages: `antd` → `backend.ai-ui` → `lodash-es`/utility → `react`/`react-*`/`relay`
+`@trivago/prettier-plugin-sort-imports` runs with no `importOrder` groups
+configured, so it emits **one block sorted by module specifier (ASCII)**. Don't
+insert blank lines or group comments between imports — `pnpm format-fix`
+removes them. The resulting shape is predictable:
 
-Within each group, sort alphabetically. Don't use `lodash`; use `lodash-es`.
+1. `'../__generated__/…'` — Relay artifacts (`_` sorts before letters)
+2. Other relative imports — the shims (`'../app-shim'`, `'../form-engine'`,
+   `'../theme-shim'`), then hooks/helpers, then `'./Sibling'`
+3. Bare packages: `@astryxdesign/core/*` → `backend.ai-ui` → `lodash-es` →
+   `lucide-react` → `react` / `react-*` / `relay-runtime`
+
+Don't use `lodash`; use `lodash-es`.
+
+**Where the antd imports went.** There is no `'antd'` line any more. Its three
+surfaces were replaced by shims that keep the same call shape:
+
+| Was | Now (host `react/src/**`) | Now (BUI `packages/backend.ai-ui/src/**`) |
+|---|---|---|
+| `import { App } from 'antd'` | `import { App } from '../app-shim'` | `import { App } from '../app-shim'` |
+| `import { theme } from 'antd'` | `import { theme } from '../theme-shim'` | `import { theme } from '../theme-shim'` |
+| `import { Form } from 'antd'` | `import { Form } from '../form-engine'` | `import { Form } from '../form-engine'` |
+
+Adjust the `../` depth to the file. Everything else that used to come from
+`antd` is now either a `BAI*` wrapper from `backend.ai-ui` or an Astryx
+primitive from `@astryxdesign/core/<Name>`.
 
 ## 2. `'use memo'` Directive
 
@@ -189,7 +207,8 @@ Manual `useMemo` / `useCallback` should be reserved for profiled bottlenecks. Un
 
 Keep hooks in this order so readers can scan a component's dependencies at a glance:
 
-1. `useTranslation()` / `theme.useToken()` / `App.useApp()`
+1. `useTranslation()` (or `useBAIi18n()` in BUI) / `theme.useToken()` (from
+   `../theme-shim`) / `App.useApp()` (from `../app-shim`)
 2. Context hooks (`useCurrentProjectValue`, `useCurrentUserRole`, …)
 3. Router / URL state (`useQueryStates`, `useLocation`, `useWebUINavigate`)
 4. Relay hooks (`useLazyLoadQuery`, `useFragment`, `useMutation`)
@@ -205,8 +224,9 @@ or after an early return.
 
 ### 4.1 Always extend the underlying component
 
-When wrapping antd or a BUI component, extend its props via `Omit<>` so
-consumers keep access to `className`, `style`, event handlers, etc. See
+When wrapping a BUI component (`BAIModal`, `BAICard`, `BAITableAstryx`, …) or
+an Astryx primitive, extend its props via `Omit<>` so consumers keep access to
+`className`, `style`, event handlers, etc. See
 `.claude/rules/component-props-extension.md`.
 
 ```tsx
@@ -216,7 +236,7 @@ interface FolderCreateModalProps extends BAIModalProps {
   initialValues?: Partial<FolderCreateFormItemsType>;
 }
 
-// ❌ Drops every antd Modal prop
+// ❌ Drops every `BAIModalProps` key (title, okText, confirmLoading, …)
 interface FolderCreateModalProps {
   open: boolean;
   onRequestClose: () => void;
@@ -247,17 +267,27 @@ mutually exclusive fields.
 type CheckboxSettingItemProps = BaseProps & {
   type: 'checkbox';
   onChange?: (v?: boolean) => void;
-  checkboxProps?: Omit<CheckboxProps, 'value' | 'onChange'>;
+  checkboxProps?: { disabled?: boolean };
   selectProps?: never;
 };
 type SelectSettingItemProps = BaseProps & {
   type: 'select';
   onChange?: (v?: string) => void;
-  selectProps?: Omit<SelectProps, 'value' | 'onChange'>;
+  selectProps?: {
+    options: SettingSelectOption[];
+    hasSearch?: boolean;
+    disabled?: boolean;
+  };
   checkboxProps?: never;
 };
 type SettingItemProps = CheckboxSettingItemProps | SelectSettingItemProps;
 ```
+
+`SettingItem.tsx` (the source of this example) deliberately narrows the
+`*Props` bags to the handful of fields its call sites actually pass instead of
+re-exporting a whole upstream props type. That is the preferred shape for a
+variant bag: it keeps the union readable and it doesn't leak an implementation
+detail of whichever primitive renders the variant today.
 
 ## 5. Naming
 
@@ -318,11 +348,23 @@ synchronization key, wrap the helper in `useEffectEvent`. See
 React Compiler handles it. Only add manual memoization when profiling proves
 it's needed — reviewers will push back otherwise.
 
-## 7. Ant Design v6 Props
+## 7. antd-Shaped Prop Names on BAI Wrappers
 
-This project runs antd v6. Always use v6 prop names (`title` instead of
-`message` on `Alert`, `orientation` instead of `direction` on `Steps`, etc.).
-See `.claude/rules/antd-v6-props.md`.
+**antd is not a dependency of this project.** The UI runs on Astryx plus the
+`BAI*` wrappers in `packages/backend.ai-ui/`, and `scripts/antd-zero-gate.sh`
+fails the build if an `antd` import reappears.
+
+What survived the removal is the prop **vocabulary**. Several wrappers
+(`BAIAlert`, `BAICard`, `BAIModal`, `BAISelect`, the table types, …) were
+deliberately given an antd-v6-shaped surface so the hundreds of call sites
+carried over from the antd era needed no edit when their internals were rebuilt.
+So when you add a prop to one of those wrappers, use the v6 spelling —
+`title` not `message` on `BAIAlert`, `orientation` not `direction` on steps —
+rather than inventing a third one.
+
+`.claude/rules/antd-v6-props.md` is the canonical explainer and holds the
+full rename table plus the list of props that are accepted-and-ignored. Read it
+there; don't re-derive it.
 
 ## 8. Logging
 

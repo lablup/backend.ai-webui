@@ -71,7 +71,6 @@
     "react-i18next": "catalog:"
   },
   "devDependencies": {
-    "@ant-design/colors": "^7.2.1",
     "@astryxdesign/core": "0.3.0",
     "@astryxdesign/theme-neutral": "0.3.0",
     "@eslint/js": "catalog:",

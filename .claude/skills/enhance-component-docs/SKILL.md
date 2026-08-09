@@ -142,18 +142,19 @@ export default config;
 Update `.storybook/preview.tsx` (note .tsx extension):
 ```typescript
 import type { Preview } from '@storybook/react-vite';
-import { ConfigProvider } from 'antd';
+import { withGlobalProvider } from './decorators';
 import React from 'react';
 
 const preview: Preview = {
   tags: ['autodocs'],
   decorators: [
+    withGlobalProvider,
     (Story) => (
-      <ConfigProvider>
+      <>
         <div style={{ padding: '16px' }}>
           <Story />
         </div>
-      </ConfigProvider>
+      </>
     ),
   ],
   parameters: {

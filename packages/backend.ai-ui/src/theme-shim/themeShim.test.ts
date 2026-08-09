@@ -6,8 +6,10 @@
 
  1. The vendored palette code (vendor/antdColors.ts) must be bit-identical to
     `@ant-design/colors` — that is the whole point of the vendor step. That
-    package is still installed, dev-only, precisely to serve as this
-    reference implementation.
+    package used to be installed, dev-only, purely to serve as this reference
+    implementation; the expected values are now the frozen capture in
+    `antdColorsFixture.ts`, taken from a clean 7.2.1 install immediately
+    before the uninstall, exactly as the vendored file's header instructed.
  2. The dark seed transform must reproduce ticket 02's MEASURED
     ANTD_DARK_ALGORITHM_OUTPUT table (the settled dark-mode decision).
  3. buildTokens' non-probed verdicts (brand/derive/aligned/self) must match
@@ -20,6 +22,14 @@
     frozen capture in `antdDesignTokenFixture.ts` — taken from antd 6.5.0
     immediately before the uninstall, exactly as this header instructed.
  */
+import {
+  ANTD_COLORS_DARK_ON_BLACK_RAMPS,
+  ANTD_COLORS_DARK_RAMPS,
+  ANTD_COLORS_LIGHT_RAMPS,
+  ANTD_COLORS_PRESET_DARK_PALETTES,
+  ANTD_COLORS_PRESET_PALETTES,
+  ANTD_COLORS_REFERENCE_SEEDS,
+} from './antdColorsFixture';
 import { ANTD_DESIGN_TOKEN_REFERENCE } from './antdDesignTokenFixture';
 import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
 import { resolveLightDark } from './astryxVars';
@@ -31,14 +41,15 @@ import {
   presetDarkPalettes as vendoredDarkPalettes,
   presetPalettes as vendoredPalettes,
 } from './vendor/antdColors';
-import {
-  generate as upstreamGenerate,
-  presetDarkPalettes as upstreamDarkPalettes,
-  presetPalettes as upstreamPalettes,
-} from '@ant-design/colors';
 import { describe, expect, it } from 'vitest';
 
-/** Every brand seed this repo ships (theme.json light + dark declarations). */
+/**
+ * Every brand seed this repo ships (theme.json light + dark declarations),
+ * plus `#1677ff` / greys to exercise the hue<60 branch and the achromatic
+ * path. MUST stay in sync with the seeds `antdColorsFixture.ts` was captured
+ * under — the fixture cannot be regenerated in-tree, so the assertion below
+ * fails loudly if this list drifts.
+ */
 const REPO_SEEDS = [
   '#FF7A00',
   '#DC6B03',
@@ -57,29 +68,45 @@ const REPO_SEEDS = [
 ];
 
 describe('vendored @ant-design/colors parity', () => {
+  it('covers exactly the seeds the frozen reference was captured for', () => {
+    // Guards the frozen fixture: a seed present here but missing from the
+    // capture would otherwise compare against `undefined` and pass vacuously.
+    expect(REPO_SEEDS).toEqual([...ANTD_COLORS_REFERENCE_SEEDS]);
+  });
+
   it('generate() matches upstream for light ramps', () => {
     for (const seed of REPO_SEEDS) {
-      expect(vendoredGenerate(seed)).toEqual(upstreamGenerate(seed));
+      expect(ANTD_COLORS_LIGHT_RAMPS[seed]).toHaveLength(10);
+      expect(vendoredGenerate(seed)).toEqual(ANTD_COLORS_LIGHT_RAMPS[seed]);
     }
   });
 
   it('generate() matches upstream for dark ramps (default + explicit bg)', () => {
     for (const seed of REPO_SEEDS) {
+      expect(ANTD_COLORS_DARK_RAMPS[seed]).toHaveLength(10);
+      expect(ANTD_COLORS_DARK_ON_BLACK_RAMPS[seed]).toHaveLength(10);
       expect(vendoredGenerate(seed, { theme: 'dark' })).toEqual(
-        upstreamGenerate(seed, { theme: 'dark' }),
+        ANTD_COLORS_DARK_RAMPS[seed],
       );
       expect(
         vendoredGenerate(seed, { theme: 'dark', backgroundColor: '#000' }),
-      ).toEqual(
-        upstreamGenerate(seed, { theme: 'dark', backgroundColor: '#000' }),
-      );
+      ).toEqual(ANTD_COLORS_DARK_ON_BLACK_RAMPS[seed]);
     }
   });
 
   it('preset palettes match upstream tables', () => {
+    // Both directions, so a hue dropped from either side is caught.
+    expect(Object.keys(vendoredPalettes).sort()).toEqual(
+      Object.keys(ANTD_COLORS_PRESET_PALETTES).sort(),
+    );
+    expect(Object.keys(vendoredDarkPalettes).sort()).toEqual(
+      Object.keys(ANTD_COLORS_PRESET_DARK_PALETTES).sort(),
+    );
     for (const hue of Object.keys(vendoredPalettes)) {
-      expect(vendoredPalettes[hue]).toEqual([...upstreamPalettes[hue]]);
-      expect(vendoredDarkPalettes[hue]).toEqual([...upstreamDarkPalettes[hue]]);
+      expect(vendoredPalettes[hue]).toEqual(ANTD_COLORS_PRESET_PALETTES[hue]);
+      expect(vendoredDarkPalettes[hue]).toEqual(
+        ANTD_COLORS_PRESET_DARK_PALETTES[hue],
+      );
     }
   });
 });

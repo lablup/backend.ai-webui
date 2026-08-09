@@ -25,8 +25,9 @@
  3. **`value` is required and non-nullable on text controls.** A field that has
     never been touched arrives as `undefined`, hence `value ?? ''`.
 
- The antd form ENGINE is unchanged and stays PARKED (`../form-engine`); these
- adapters are only the control layer.
+ The form ENGINE is the self-hosted one (`../form-engine`, ticket 35) — an
+ antd-identical API, which is why the reconciliations above still read against
+ antd's semantics. These adapters are only the control layer.
 */
 import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { Switch } from '@astryxdesign/core/Switch';
