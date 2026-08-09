@@ -84,6 +84,17 @@
  are deleted and the ghost treatment is expressed against the wrapper class
  alone.
 
+ PILOT-DECISION (QA2-B-1) — **the multiple-mode trigger shows LABELS, not a
+ count.** Astryx `MultiSelector` defaults `triggerDisplay` to `'count'`, which
+ renders "3 selected" where antd rendered the selected tags. That is a
+ regression the call sites cannot see (they never passed the prop), so the
+ default is flipped here, in the wrapper, and every `mode="multiple"` /
+ `mode="tags"` call site inherits it untouched. Overflow policy comes from
+ Astryx: the first THREE labels, comma-joined, then `, +N` — the count is
+ hardcoded in `MultiSelector`, so antd's `maxTagCount` stays inert. `'badges'`
+ (Astryx `Badge` chips, `maxBadges` deep) remains available per call site for
+ anywhere the tag-pill look is worth the extra trigger height.
+
  PILOT-DECISION — **`label` is required by Astryx and defaults to hidden.**
  No antd call site passes one. The wrapper accepts `label` and otherwise
  derives an accessible name from `placeholder` (which every call site does
@@ -180,6 +191,15 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   labelRender?: (props: any) => ReactNode;
   maxTagCount?: number | 'responsive';
   maxTagPlaceholder?: ReactNode | ((omitted: Array<any>) => ReactNode);
+  /**
+   * `mode="multiple"` / `mode="tags"` trigger rendering. Defaults to
+   * `'labels'` (QA2-B-1) — Astryx's own default is `'count'` ("3 selected"),
+   * which drops the information antd showed. `'badges'` renders `Badge` chips,
+   * capped by {@link maxBadges}.
+   */
+  triggerDisplay?: 'count' | 'labels' | 'badges';
+  /** Badges shown before "+N". Only meaningful with `triggerDisplay="badges"`. */
+  maxBadges?: number;
   optionLabelProp?: string;
   filterOption?: boolean | ((input: string, option?: any) => boolean);
   defaultActiveFirstOption?: boolean;
@@ -241,6 +261,8 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   status,
   size,
   optionRender,
+  triggerDisplay = 'labels',
+  maxBadges,
   children,
   className,
   style,
@@ -464,6 +486,9 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         {...shared}
         options={optionsWithSlots}
         value={selected}
+        // QA2-B-1: labels, not "N selected". See the PILOT-DECISION above.
+        triggerDisplay={triggerDisplay}
+        maxBadges={maxBadges}
         hasClear={allowClear}
         onChange={(next) => {
           const originals = next.map(

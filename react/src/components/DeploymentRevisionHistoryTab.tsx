@@ -16,13 +16,13 @@ import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
 import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import {
   type BAIColumnType,
-  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -632,6 +632,15 @@ const DeploymentRevisionHistoryTab: React.FC<
           extra={
             drawerRevision ? (
               <ButtonGroup label={t('general.Control')}>
+                {/* QA2-B-2: the RENDER-PROP form of the popconfirm, not the
+                    element form. Astryx welds a ButtonGroup's members with
+                    `:first-child` / `IS_LAST_ITEM` CSS on the button element,
+                    so a member must be a DIRECT child of the group — and
+                    `Popover`'s element form wraps its trigger in an
+                    `inline-flex` anchor div, which made Apply `:first-child`
+                    of the WRAPPER and left it with a full pill next to the
+                    menu's `0 8px 8px 0`. The render prop hands the trigger
+                    wiring to the button itself and emits no wrapper. */}
                 <BAIPopconfirmAstryx
                   title={t('deployment.ApplyRevision')}
                   description={t('deployment.ApplyConfirm', {
@@ -645,18 +654,20 @@ const DeploymentRevisionHistoryTab: React.FC<
                     if (success) setDrawerRevision(null);
                   }}
                 >
-                  <BAIButton
-                    type="primary"
-                    icon={<CirclePlay size="1em" />}
-                    disabled={
-                      drawerRevision.status === 'current' ||
-                      drawerRevision.status === 'deploying' ||
-                      isDeploymentInStoppedCategory(deploymentStatus) ||
-                      !!rollingBackRevisionId
-                    }
-                  >
-                    {t('deployment.Apply')}
-                  </BAIButton>
+                  {(triggerProps) => (
+                    <Button
+                      {...triggerProps}
+                      variant="primary"
+                      icon={<CirclePlay size="1em" />}
+                      label={t('deployment.Apply')}
+                      isDisabled={
+                        drawerRevision.status === 'current' ||
+                        drawerRevision.status === 'deploying' ||
+                        isDeploymentInStoppedCategory(deploymentStatus) ||
+                        !!rollingBackRevisionId
+                      }
+                    />
+                  )}
                 </BAIPopconfirmAstryx>
                 {/* TODO: "AddNewRevisionFromThis" is the only menu item.
                     Disable the entire button when stopped. When more items

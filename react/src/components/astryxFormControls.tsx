@@ -593,6 +593,11 @@ export interface AstryxFormMultiSelectorProps {
   hasSearch?: boolean;
   isLoading?: boolean;
   width?: SizeValue;
+  /**
+   * Trigger rendering. Defaults to `'labels'` (QA2-B-1) — Astryx's own default
+   * is `'count'` ("3 selected"), which hides the selection antd showed inline.
+   */
+  triggerDisplay?: 'count' | 'labels' | 'badges';
   'data-testid'?: string;
 }
 
@@ -600,6 +605,11 @@ export interface AstryxFormMultiSelectorProps {
  * Static-options multi-select (MAPPING §3.1 `mode="multiple"` branch).
  * Relay / infinite-scroll multi-selects are NOT this — those stay on the BUI
  * frontier until the ComplexSelector rebuild (tickets 26/27).
+ *
+ * PILOT-DECISION (QA2-B-1): `triggerDisplay` defaults to `'labels'`, matching
+ * `BAISelect`'s multiple branch and `BAIComplexSelect`, so every multi-select
+ * in the app names its selection in the trigger instead of counting it. Astryx
+ * caps the labels list at three and appends `, +N`.
  */
 export const AstryxFormMultiSelector: React.FC<
   AstryxFormMultiSelectorProps
@@ -613,6 +623,7 @@ export const AstryxFormMultiSelector: React.FC<
   hasSearch,
   isLoading,
   width = '100%',
+  triggerDisplay = 'labels',
   ...rest
 }) => {
   'use memo';
@@ -628,6 +639,7 @@ export const AstryxFormMultiSelector: React.FC<
       hasSearch={hasSearch}
       isLoading={isLoading}
       width={width}
+      triggerDisplay={triggerDisplay}
       {...(rest as object)}
     />
   );

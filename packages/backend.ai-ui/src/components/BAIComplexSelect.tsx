@@ -60,6 +60,17 @@
     `ComplexSelector` renders `triggerLabel` inside its own `<button>`, so a
     removable Token nests a button in a button. Deselecting is a second click
     on the option row (antd's chip "x" is dropped).
+  - QA2-B-1 `triggerDisplay` DEFAULTS TO `'labels'`, matching Astryx
+    `MultiSelector`'s vocabulary so every multi-select in the app reads the
+    same way. The trigger shows the first `maxTriggerTokens` (3) selected
+    LABELS comma-joined, then `, +N` — byte-identical to what
+    `MultiSelector triggerDisplay="labels"` renders, so a user cannot tell
+    which of the two engines is behind a given field. `'badges'` keeps the
+    former `Token` chips (P26-4) for call sites that want them. The chips were
+    visually closer to antd's tag pills, but they wrap and grow the trigger's
+    height, which is exactly what Astryx's own guidance warns against for
+    fields sitting in toolbars and form rows; a single-line label list is the
+    closest thing to legacy that keeps the control one row tall.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { ComplexSelector } from '@astryxdesign/core/ComplexSelector';
@@ -97,6 +108,13 @@ export interface BAILabeledValue {
 
 export type BAIComplexSelectValue =
   BAILabeledValue | Array<BAILabeledValue> | null;
+
+/**
+ * How the trigger renders the selection in `multiple` mode. Mirrors Astryx
+ * `MultiSelector`'s prop of the same name, minus `'count'` — "N selected"
+ * hides the very information the trigger exists to show (QA2-B-1).
+ */
+export type BAIComplexSelectTriggerDisplay = 'labels' | 'badges';
 
 export interface BAIComplexSelectOption {
   value: string;
@@ -163,7 +181,12 @@ export interface BAIComplexSelectProps {
   onOpenChange?: (open: boolean) => void;
   /** Scroll-viewport height of the option list. */
   listMaxHeight?: number;
-  /** Chips shown in the trigger before collapsing to "+N" (P26-4). */
+  /**
+   * Multiple-mode trigger rendering. Defaults to `'labels'` — the selected
+   * labels, comma-joined (QA2-B-1). `'badges'` renders them as `Token` chips.
+   */
+  triggerDisplay?: BAIComplexSelectTriggerDisplay;
+  /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
   maxTriggerTokens?: number;
   'data-testid'?: string;
 }
@@ -217,6 +240,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   emptyContent,
   onOpenChange,
   listMaxHeight = 260,
+  triggerDisplay = 'labels',
   maxTriggerTokens = 3,
   'data-testid': testId,
 }) => {
@@ -334,21 +358,29 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   const triggerLabel = (() => {
     if (selected.length === 0) return undefined;
     if (!multiple) return selected[0].label;
-    return (
-      <HStack gap={0.5} vAlign="center" wrap="wrap">
-        {_.map(_.take(selected, maxTriggerTokens), (s) => (
-          // P26-4: display-only. `ComplexSelector` renders `triggerLabel`
-          // INSIDE its own `<button>`, so a Token with `onRemove` nests a
-          // button in a button — invalid HTML, and React says so at runtime
-          // (measured in the ticket-26 probe). Deselection is a second click
-          // on the row instead.
-          <Token key={s.value} label={s.label} size="sm" />
-        ))}
-        {selected.length > maxTriggerTokens ? (
-          <Text color="secondary">{`+${selected.length - maxTriggerTokens}`}</Text>
-        ) : null}
-      </HStack>
-    );
+    const shown = _.take(selected, maxTriggerTokens);
+    const remaining = selected.length - shown.length;
+    if (triggerDisplay === 'badges') {
+      return (
+        <HStack gap={0.5} vAlign="center" wrap="wrap">
+          {_.map(shown, (s) => (
+            // P26-4: display-only. `ComplexSelector` renders `triggerLabel`
+            // INSIDE its own `<button>`, so a Token with `onRemove` nests a
+            // button in a button — invalid HTML, and React says so at runtime
+            // (measured in the ticket-26 probe). Deselection is a second click
+            // on the row instead.
+            <Token key={s.value} label={s.label} size="sm" />
+          ))}
+          {remaining > 0 ? (
+            <Text color="secondary">{`+${remaining}`}</Text>
+          ) : null}
+        </HStack>
+      );
+    }
+    // QA2-B-1 default: the same string `MultiSelector triggerDisplay="labels"`
+    // builds, so the two select engines are indistinguishable in the trigger.
+    const joined = _.map(shown, 'label').join(', ');
+    return remaining > 0 ? `${joined}, +${remaining}` : joined;
   })();
 
   return (

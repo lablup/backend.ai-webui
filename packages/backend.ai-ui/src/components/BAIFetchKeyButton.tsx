@@ -277,9 +277,28 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
 
   // Icon-only refresh button. When the interval dropdown is shown, the selected
   // interval label ("Ns") lives on the dropdown trigger, not here.
-  const refreshButton = (
+  //
+  // `ownTooltip` decides WHO renders the hover text. Astryx joins a
+  // `ButtonGroup`'s members through context + `:first-child` / `IS_LAST_ITEM`
+  // CSS on the button ELEMENT, so a member has to be a DIRECT child of the
+  // group. Astryx's `Tooltip` wraps its child in a `display: contents` div —
+  // invisible to layout, but a real element to the selector engine, which made
+  // the refresh button `:first-child` of the WRAPPER instead of the group and
+  // left it with a full `8px` pill against the dropdown's `0 8px 8px 0`: a
+  // visible notch, measured on /deployments and /data (QA2-B-2). Astryx
+  // `Button` renders its own `tooltip` as a `[popover]` SIBLING inside a
+  // fragment (which is exactly why `IS_LAST_ITEM` skips `[popover]`), so
+  // routing the same text through `title` keeps the button a direct child and
+  // the group welded.
+  const refreshButton = (ownTooltip: boolean) => (
     <BAIButton
-      title={tooltipTitle ? undefined : t('comp:BAIFetchKeyButton.Refresh')}
+      title={
+        ownTooltip
+          ? tooltipTitle || t('comp:BAIFetchKeyButton.Refresh')
+          : tooltipTitle
+            ? undefined
+            : t('comp:BAIFetchKeyButton.Refresh')
+      }
       aria-label={t('comp:BAIFetchKeyButton.Refresh')}
       loading={displayLoading}
       size={size}
@@ -326,7 +345,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
         alignment="start"
         isEnabled={!!tooltipTitle}
       >
-        {refreshButton}
+        {refreshButton(false)}
       </Tooltip>,
     );
   }
@@ -377,14 +396,8 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
       label={t('comp:BAIFetchKeyButton.AutoRefresh')}
       size={size ? ASTRYX_SIZE[size] : undefined}
     >
-      <Tooltip
-        content={tooltipTitle}
-        placement="above"
-        alignment="start"
-        isEnabled={!!tooltipTitle}
-      >
-        {refreshButton}
-      </Tooltip>
+      {/* Direct child on purpose — see `refreshButton`'s note (QA2-B-2). */}
+      {refreshButton(true)}
       <DropdownMenu
         isMenuOpen={isDropdownOpen}
         onOpenChange={setIsDropdownOpen}
