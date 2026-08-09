@@ -203,8 +203,18 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
+      // `row` IS the record: a `dataIndex`-less column's cell value is the
+      // whole row (rc-table's `getPathValue`), which is why this reads a
+      // record off `render`'s first argument. `BAITableAstryx` used to hand
+      // `undefined` here, which is what blanked this cell down to its lone
+      // copy button — fixed in `readDataIndex`, not worked around here.
       render: (row) => (
-        <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
+        // `maxLines={1}` for the same reason as the Digest column below:
+        // Astryx's table cell is `white-space: nowrap; overflow: hidden`, so an
+        // untruncated path is CLIPPED rather than wrapped as it was under antd.
+        // One line plus Astryx's built-in truncation tooltip keeps the whole
+        // value reachable and keeps the copy control inside the cell.
+        <BAICopyableText maxLines={1} copyLabel={t('sourceCodeViewer.Copy')}>
           {getImageFullName(row) || ''}
         </BAICopyableText>
       ),

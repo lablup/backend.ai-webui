@@ -279,8 +279,36 @@ const columnKeyOf = (column: BAIColumnType<any>, index: number) =>
   column.key?.toString() ??
   (column.dataIndex ? String(column.dataIndex) : `index_${index}`);
 
+/**
+ * True when a column declares no `dataIndex` at all. rc-table treats such a
+ * column as "the whole row is the cell value" (see `hasDataIndex` below).
+ */
+const isMissingDataIndex = (dataIndex: unknown): boolean =>
+  dataIndex == null ||
+  dataIndex === '' ||
+  (Array.isArray(dataIndex) && dataIndex.length === 0);
+
+/**
+ * BUG FOUND WHILE CONVERTING (to-astryx approved-2), not a policy choice —
+ * recorded so it is not re-introduced. rc-table's `getPathValue` returns the
+ * RECORD ITSELF when a column has no `dataIndex`:
+ *
+ * ```js
+ * function getPathValue(record, path) {
+ *   if (!path && typeof path !== 'number') return record;  // <- the whole row
+ *   ...
+ * }
+ * ```
+ *
+ * so under antd `render: (row) => …` on a `dataIndex`-less column is a
+ * *correct and widespread* idiom, not a mistake. This table originally
+ * returned `undefined` there, silently blanking every such cell (the
+ * Environments image-list full-path column rendered as a lone copy button)
+ * and throwing outright where the render body dereferenced the row
+ * (`BAIArtifactTable`'s controls column). Match rc-table.
+ */
 const readDataIndex = (record: AnyRow, dataIndex: unknown): unknown => {
-  if (dataIndex == null) return undefined;
+  if (isMissingDataIndex(dataIndex)) return record;
   return Array.isArray(dataIndex)
     ? _.get(record, dataIndex as Array<string>)
     : (record as AnyRow)[String(dataIndex)];
@@ -658,6 +686,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
             const index = rowIndexByKey.get(getRowKey(record)) ?? 0;
             return column.render(value, record, index) as ReactNode;
           }
+          // Without a `render`, a `dataIndex`-less column has nothing to print
+          // — `value` is the record, and `String(record)` would emit
+          // "[object Object]". antd would throw on the same input.
+          if (isMissingDataIndex(column.dataIndex)) return null;
           return value == null || value === '' ? null : String(value);
         },
       });

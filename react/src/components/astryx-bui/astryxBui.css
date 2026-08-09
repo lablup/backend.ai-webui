@@ -274,3 +274,32 @@
   background: var(--color-text-secondary);
   border-radius: var(--radius-full);
 }
+
+/* approved-2 — BAICopyableText overflow.
+
+   The legacy `Typography.Text copyable` was an inline `<span>`, so a long
+   value (an image's full path, an endpoint URL) simply WRAPPED inside its
+   container. `BAICopyableText` lays the value and the copy control out as an
+   `HStack`, and a flex item's `min-width` defaults to `auto` — it refuses to
+   shrink below its content, so the same string now pushes out of a fixed
+   table cell and takes the copy button with it, out of the clip.
+
+   `min-width: 0` is the standard release valve, and `overflow-wrap: anywhere`
+   lets a path with no spaces break at all (`break-word` only breaks BETWEEN
+   words, which a registry path does not have). Both are inert when the
+   container is wide enough, so no call site with room changes.
+
+   BUI's `BAIText` already carries exactly this pair on `.bai-text-row`
+   (`BAIText.css`) for its own copy-control row; this is the same fix on the
+   `react/` side of the same problem. Inside an Astryx TABLE the cell is
+   `white-space: nowrap`, so wrapping is off the table there by construction —
+   a cell that needs the full value reachable pairs this with `maxLines={1}`
+   and Astryx's truncation tooltip (see `ImageList`'s full-image-path column). */
+.bai-copyable-text {
+  min-width: 0;
+}
+
+.bai-copyable-text > .astryx-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

@@ -19,7 +19,14 @@
  control from the tab order. PILOT-DECISION: this grows the hit box from the
  bare 14px glyph to the `sm` control box — accepted; the a11y affordance is
  the point, and pixel equality with the old render is a non-goal.
+
+ APPROVED-2 FOLLOW-UP: the value can now shrink and wrap inside a constrained
+ container (`.bai-copyable-text` in `astryxBui.css`). Laying the value and the
+ control out as a flex row made the value refuse to shrink below its content —
+ a long image path pushed out of its table cell and dragged the copy control
+ past the clip with it, where the legacy inline `<span>` would have wrapped.
 */
+import './astryxBui.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -49,7 +56,7 @@ const BAICopyableText: React.FC<BAICopyableTextProps> = ({
   'use memo';
   const [copied, setCopied] = useState(false);
   return (
-    <HStack gap={1} align="center">
+    <HStack gap={1} align="center" className="bai-copyable-text">
       <Text {...textProps}>{children}</Text>
       <IconButton
         variant="ghost"

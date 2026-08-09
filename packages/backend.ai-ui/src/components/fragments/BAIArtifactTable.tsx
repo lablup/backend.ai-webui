@@ -168,14 +168,15 @@ const BAIArtifactTable = ({
     {
       title: t('comp:BAIArtifactTable.Controls'),
       key: 'controls',
-      // BUG FOUND WHILE CONVERTING (to-astryx W2-D), not a policy choice —
-      // recorded so it is not re-introduced: the column declared
-      // `render: (record) => …` but `render`'s FIRST argument is the cell
-      // VALUE, and this column has no `dataIndex`, so `record` was always
-      // `undefined` and every row threw
-      // `Cannot read properties of undefined (reading 'availability')`.
-      // The five `BAIArtifactTable` Storybook stories were failing on this
-      // before this ticket; the signature is now `(value, record)`.
+      // HISTORY (to-astryx W2-D, amended in approved-2): this column declared
+      // `render: (record) => …` and every row threw
+      // `Cannot read properties of undefined (reading 'availability')`, so the
+      // signature was widened to `(value, record)` here. W2-D read that as an
+      // authoring mistake; it was not. Under rc-table a `dataIndex`-less
+      // column receives the RECORD as its first argument, so the original
+      // code was correct antd and `BAITableAstryx` was the thing diverging —
+      // fixed at the source in `readDataIndex`. This explicit `(_value,
+      // record)` form is kept because it reads unambiguously either way.
       render: (_value, record: Artifact) => {
         const availability = record.availability;
         // PILOT-DECISION (to-astryx W2-D): antd v6's `color` + `variant`
