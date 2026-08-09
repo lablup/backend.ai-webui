@@ -29,14 +29,13 @@ Use this pattern when:
 import { BAIVFolderSelectPaginatedQuery } from '../../__generated__/BAIVFolderSelectPaginatedQuery.graphql';
 import { BAIVFolderSelectValueQuery } from '../../__generated__/BAIVFolderSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAILink from '../BAILink';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import BAIText from '../BAIText';
 import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
 import { GetRef, Skeleton } from 'antd';
 import * as _ from 'lodash-es';
 import {
@@ -513,7 +512,7 @@ const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
 );
 ```
 
-- Use `useControllableValue` from ahooks for controlled/uncontrolled support
+- Use `useControllableValue` from BUI's hooks for controlled/uncontrolled support
 - Handle both `value` and `open` props
 
 **Deferred Values**

@@ -20,9 +20,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { theme } from '../theme-shim';
-import { useToggle } from 'ahooks';
 import {
-  availableProjectSorterValues,
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
@@ -35,13 +33,15 @@ import {
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIUnmountAfterClose,
-  filterOutEmpty,
   INITIAL_FETCH_KEY,
+  availableProjectSorterValues,
+  filterOutEmpty,
   isValidUUID,
   mergeFilterValues,
   type ProjectInList,
   useBAILogger,
   useErrorMessageResolver,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

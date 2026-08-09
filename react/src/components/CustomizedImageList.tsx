@@ -23,17 +23,17 @@ import TextHighlighter from './TextHighlighter';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
-import { useToggle } from 'ahooks';
 import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  BAIFlex,
   BAIDeleteConfirmModal,
+  BAIFlex,
   BAITableAstryx,
   BAIText,
-  useUpdatableState,
-  type BAIColumnsType,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   type BAIColumnType,
+  type BAIColumnsType,
+  useToggle,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, RotateCw, Search, Settings } from 'lucide-react';

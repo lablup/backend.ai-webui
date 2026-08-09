@@ -18,11 +18,11 @@ import {
   type DropdownMenuOption,
 } from '@astryxdesign/core/DropdownMenu';
 import { MediaTheme } from '@astryxdesign/core/theme';
-import { useToggle } from 'ahooks';
 import {
   BAIUnmountAfterClose,
   filterOutEmpty,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

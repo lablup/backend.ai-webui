@@ -25,7 +25,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
   BAICard,
   BAIDeleteConfirmModal,
@@ -44,6 +43,7 @@ import {
   toLocalId,
   useBAILogger,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';

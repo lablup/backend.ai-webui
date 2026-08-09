@@ -29,9 +29,9 @@
     `dayjs` before the consumer's predicate sees it. antd's semantics ("return
     true to DISABLE") are identical to Astryx's, so the predicate ports as-is.
 */
-import { useControllableValue } from 'ahooks';
 import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
 import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
+import { useControllableValue } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';

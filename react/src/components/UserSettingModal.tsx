@@ -42,10 +42,9 @@ import type {
   SearchableItem,
   SearchSource,
 } from '@astryxdesign/core/Typeahead';
-import { useToggle } from 'ahooks';
 import {
-  BAIDomainSelect,
   BAIAlert,
+  BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
@@ -53,6 +52,7 @@ import {
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

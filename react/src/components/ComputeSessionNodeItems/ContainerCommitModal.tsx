@@ -6,18 +6,18 @@ import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerC
 import { Form, FormInstance } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
-import { Divider } from '@astryxdesign/core/Divider';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
 // FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
 // form engine (locked SHIM decision); the CONTROL inside the item is Astryx,
 // through the `astryxFormControls` adapter that reconciles the three deltas
 // (required non-null `value`, self-rendered `label`, value-not-event
 // `onChange`).
 import { AstryxFormTextInput } from '../astryxFormControls';
+import { Divider } from '@astryxdesign/core/Divider';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

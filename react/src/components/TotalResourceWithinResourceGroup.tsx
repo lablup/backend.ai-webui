@@ -16,18 +16,18 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
-import { useControllableValue } from 'ahooks';
 import {
-  filterOutNullAndUndefined,
-  BAIFlex,
-  subNumberWithUnits,
-  addNumberWithUnits,
   BAIBoardItemTitle,
-  ResourceStatistics,
-  convertToNumber,
-  processMemoryValue,
-  BAIFlexProps,
   BAIFetchKeyButton,
+  BAIFlex,
+  BAIFlexProps,
+  ResourceStatistics,
+  addNumberWithUnits,
+  convertToNumber,
+  filterOutNullAndUndefined,
+  processMemoryValue,
+  subNumberWithUnits,
+  useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

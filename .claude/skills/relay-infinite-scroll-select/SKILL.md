@@ -123,7 +123,7 @@ graphql\`
 **Component Setup:**
 - [ ] Import `useLazyLoadQuery`, `useDeferredValue`, `useTransition`, `useOptimistic`
 - [ ] Import `useLazyPaginatedQuery`, `useFetchKey`, `useDebouncedDeferredValue` custom hooks
-- [ ] Import `useControllableValue` from 'ahooks'
+- [ ] Import `useControllableValue` from `backend.ai-ui` (BUI hooks; inside BUI itself use `../../hooks`)
 - [ ] Import `toLocalId`, `mergeFilterValues` helpers
 - [ ] Add 'use memo' directive
 

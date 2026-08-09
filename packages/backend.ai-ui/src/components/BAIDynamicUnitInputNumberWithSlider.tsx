@@ -34,14 +34,13 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
-import { useUpdatableState } from '../hooks';
+import { useControllableValue, useUpdatableState } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIDynamicUnitInputNumber, {
   BAIDynamicUnitInputNumberProps,
 } from './BAIDynamicUnitInputNumber';
 import BAIFlex from './BAIFlex';
 import { Slider } from '@astryxdesign/core/Slider';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';
 

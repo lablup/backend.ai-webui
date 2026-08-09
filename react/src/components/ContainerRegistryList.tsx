@@ -20,20 +20,20 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Switch } from '@astryxdesign/core/Switch';
-import { useToggle } from 'ahooks';
 import {
-  filterOutNullAndUndefined,
-  BAITableAstryx,
-  BAIFlex,
-  BAIPropertyFilter,
   BAIDeleteConfirmModal,
+  BAIFlex,
   BAINameActionCell,
+  BAIPropertyFilter,
+  BAITableAstryx,
+  INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
+  filterOutNullAndUndefined,
+  type BAIColumnType,
+  type BAIColumnsType,
   useBAILogger,
   useFetchKey,
-  INITIAL_FETCH_KEY,
-  type BAIColumnsType,
-  type BAIColumnType,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

@@ -16,15 +16,15 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
-import { useControllableValue } from 'ahooks';
 import {
-  BAIFlex,
   BAIBoardItemTitle,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIFlexProps,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
-  BAIFetchKeyButton,
-  BAIFlexProps,
+  useControllableValue,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

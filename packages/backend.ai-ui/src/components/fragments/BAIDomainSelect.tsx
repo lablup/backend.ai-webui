@@ -5,9 +5,9 @@
  module carries no antd specifier (P15). The prop surface is unchanged.
 */
 import { BAIDomainSelectQuery } from '../../__generated__/BAIDomainSelectQuery.graphql';
+import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISelect, { type BAISelectProps } from '../BAISelect';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';

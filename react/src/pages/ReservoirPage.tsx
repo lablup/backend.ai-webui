@@ -24,8 +24,9 @@ import { Grid } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Stat } from '@astryxdesign/lab';
-import { useToggle } from 'ahooks';
 import {
+  // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
+  BAIImportArtifactModal,
   BAIActivateArtifactsModal,
   BAIActivateArtifactsModalArtifactsFragmentKey,
   BAIArtifactTable,
@@ -35,14 +36,13 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIHuggingFaceIcon,
-  // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
-  BAIImportArtifactModal,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   toLocalId,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

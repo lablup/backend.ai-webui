@@ -16,7 +16,6 @@ import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
 import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useControllableValue } from 'ahooks';
 import {
   BAIButton,
   BAICard,
@@ -32,6 +31,7 @@ import {
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
+  useControllableValue,
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';

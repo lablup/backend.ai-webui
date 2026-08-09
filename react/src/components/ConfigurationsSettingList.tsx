@@ -9,7 +9,7 @@ import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import { useToggle } from 'ahooks';
+import { useToggle } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

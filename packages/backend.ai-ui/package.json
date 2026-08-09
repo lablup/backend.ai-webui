@@ -52,7 +52,6 @@
     "@astryxdesign/core": "0.3.0",
     "@astryxdesign/theme-neutral": "0.3.0",
     "@tanstack/react-query": "catalog:",
-    "ahooks": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

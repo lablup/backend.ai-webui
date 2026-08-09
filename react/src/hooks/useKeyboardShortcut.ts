@@ -1,8 +1,9 @@
+import { useEventListener } from 'backend.ai-ui';
+
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useEventListener } from 'ahooks';
 
 /**
  * useKeyboardShortcut
@@ -78,7 +79,7 @@ const useKeyboardShortcut = (
     handler(event);
   };
 
-  // Use ahooks' useEventListener for global keyboard event management
+  // BUI's `useEventListener` handles the global keydown subscription.
   useEventListener('keydown', handleKeyDown);
 };
 

@@ -22,13 +22,13 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   toLocalId,
+  useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

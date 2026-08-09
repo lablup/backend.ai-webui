@@ -2,8 +2,10 @@ import useKeyboardShortcut from './useKeyboardShortcut';
 import { renderHook } from '@testing-library/react';
 import type { Mock } from 'vitest';
 
-// Mock ahooks useEventListener
-vi.mock('ahooks', () => ({
+// Mock BUI's `useEventListener` (the ahooks replacement). `useKeyboardShortcut`
+// imports nothing else from `backend.ai-ui`, so a factory mock is enough and
+// keeps the whole component library out of this hook's test graph.
+vi.mock('backend.ai-ui', () => ({
   useEventListener: vi.fn((event, handler) => {
     // Store handler for testing
     (global as any).__eventListeners = (global as any).__eventListeners || {};

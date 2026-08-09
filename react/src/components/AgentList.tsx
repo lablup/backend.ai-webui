@@ -14,21 +14,21 @@ import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import { Badge } from '@astryxdesign/core/Badge';
-import { useControllableValue } from 'ahooks';
 import {
-  BAIFlex,
-  BAIPropertyFilter,
-  BAIFlexProps,
-  BAITableProps,
-  INITIAL_FETCH_KEY,
-  mergeFilterValues,
-  BAIColumnType,
-  BAIDoubleTag,
-  badgeVariantForStatus,
-  filterOutEmpty,
   AgentNodeInList,
   BAIAgentTable,
+  BAIColumnType,
+  BAIDoubleTag,
+  BAIFlex,
+  BAIFlexProps,
+  BAIPropertyFilter,
+  BAITableProps,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
+  badgeVariantForStatus,
+  filterOutEmpty,
+  mergeFilterValues,
+  useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';

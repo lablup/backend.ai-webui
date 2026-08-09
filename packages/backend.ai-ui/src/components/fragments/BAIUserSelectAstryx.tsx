@@ -20,7 +20,7 @@
  `BAIUserSelect` and `BAISelect` today.
 
  PILOT-DECISIONs:
-  - P26-5 `useControllableValue` (ahooks) is kept for the value/open pair, so
+  - P26-5 `useControllableValue` (BUI) is kept for the value/open pair, so
     the wrapper stays drop-in for both controlled and uncontrolled callers.
   - P26-6 The `open ? 'network-only' : 'store-only'` fetchPolicy switch
     survives — `BAIComplexSelect.onOpenChange` re-exposes the open state that
@@ -34,7 +34,7 @@ import { BAIUserSelectAstryxPaginatedQuery } from '../../__generated__/BAIUserSe
 import { BAIUserSelectAstryxValueQuery } from '../../__generated__/BAIUserSelectAstryxValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
@@ -43,7 +43,6 @@ import BAIComplexSelect, {
   type BAILabeledValue,
 } from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,

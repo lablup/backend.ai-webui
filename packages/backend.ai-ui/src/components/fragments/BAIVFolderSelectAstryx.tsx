@@ -41,7 +41,7 @@ import { BAIVFolderSelectAstryxPaginatedQuery } from '../../__generated__/BAIVFo
 import { BAIVFolderSelectAstryxValueQuery } from '../../__generated__/BAIVFolderSelectAstryxValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
@@ -50,7 +50,6 @@ import BAIComplexSelect, {
   type BAILabeledValue,
 } from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,

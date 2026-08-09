@@ -32,7 +32,7 @@ guidance see the sibling skills: `react-form`, `react-modal-drawer`, `react-layo
 - **Variable names starting with uppercase** compile fine but violate project convention. Exceptions: component names, types/interfaces, enum members only.
 - **`console.*` passes TypeScript** but is flagged by ESLint and swept by cleanups (FR-1749 #4802). Always `useBAILogger`.
 - **Empty `catch {}` blocks** trip the security scanner (FR-1748 #4740). For intentional ignore write `catch { return undefined; }` explicitly.
-- **`useMemoizedFn` from ahooks** is deprecated in favor of `useEffectEvent` (React 19.2+). See `.claude/rules/use-effect-event.md`. Don't introduce new usages.
+- **"Memoized fn" helpers** (the old ahooks `useMemoizedFn` pattern) are deprecated in favor of `useEffectEvent` (React 19.2+). See `.claude/rules/use-effect-event.md`. `ahooks` is no longer a dependency; don't reintroduce the pattern.
 - **`extends Omit<ParentProps, 'key'>` with the wrong Omit list** silently drops props. Mirror antd v6 names — `<Alert title>` not `<Alert message>`. See `.claude/rules/antd-v6-props.md`.
 - **`React.FC<Props>` and `(props: Props) =>` both work**; the project mixes them. Don't introduce a `React.FC` → arrow migration in a scoped PR.
 

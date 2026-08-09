@@ -41,15 +41,15 @@ import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useControllableValue } from 'ahooks';
 import {
   BAIComplexSelect,
-  type BAIComplexSelectProps,
-  type BAIComplexSelectValue,
-  type BAILabeledValue,
   BAIFlex,
   toGlobalId,
   toLocalId,
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+  useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { InfoIcon } from 'lucide-react';

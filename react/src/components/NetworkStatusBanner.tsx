@@ -4,7 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
-import { useDebounce, useNetwork } from 'ahooks';
+import { useDebounce, useNetwork } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';

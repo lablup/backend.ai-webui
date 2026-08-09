@@ -182,7 +182,7 @@ describe('HuggingFaceModelPreview debouncing', () => {
 
   // The other half of the argument: a *fresh mount* skips the debounce
   // entirely, which is exactly why ImportHuggingFaceModelForm hides the
-  // preview's form item instead of unmounting it. If ahooks ever debounces
+  // preview's form item instead of unmounting it. If `useDebounce` ever debounces
   // the initial value too, this fails and the form can be simplified.
   it('issues its request immediately on mount, without waiting for the debounce', async () => {
     const spy = respondWith(200, { id: 'openai/gpt-oss-20b' });

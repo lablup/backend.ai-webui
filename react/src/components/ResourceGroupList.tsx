@@ -19,21 +19,21 @@ import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { useToggle } from 'ahooks';
 import {
-  useUpdatableState,
-  filterOutEmpty,
-  filterOutNullAndUndefined,
   BAIButton,
   BAIColumnsType,
-  BAITableAstryx,
-  BAIFlex,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
+  BAIFlex,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAISelectionLabel,
+  BAITableAstryx,
   BAIUnmountAfterClose,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  useToggle,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

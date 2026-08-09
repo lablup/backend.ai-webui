@@ -14,13 +14,13 @@ import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import { useUpdateEffect } from 'ahooks';
 import {
   BAIFlex,
   BAILink,
   BAINotificationItem,
   BAIText,
   toLocalId,
+  useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';

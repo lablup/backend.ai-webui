@@ -38,16 +38,16 @@ import type { BadgeVariant } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
-  filterOutNullAndUndefined,
-  BAIUnmountAfterClose,
   BAITableAstryx,
   BAITableProps,
+  BAIUnmountAfterClose,
+  badgeVariantForStatus,
+  bytesToGB,
+  filterOutNullAndUndefined,
   toLocalId,
   useErrorMessageResolver,
-  bytesToGB,
-  badgeVariantForStatus,
+  useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

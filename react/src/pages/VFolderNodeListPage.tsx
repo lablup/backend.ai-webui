@@ -29,12 +29,12 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useToggle } from 'ahooks';
 import {
   BAIPropertyFilter,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

@@ -32,7 +32,7 @@ custom hooks, and `use-effect-event.md` rule.
 - **`useSuspendedBackendaiClient()` suspends the caller.** Wrap the caller in `<Suspense>` or accept that the first render shows fallback.
 - **i18n inside the hook** — call `useTranslation()` internally (or `useBAIi18n()` if the hook lives in `packages/backend.ai-ui/src/**` — see FR-2986 / `.github/instructions/i18n.instructions.md`). Don't make callers pass `t` (project convention from lead coding style).
 - **Parametrize per-call inputs on the returned function**, not on the hook argument. `const { startSession } = useStartSession(); startSession(values)` — not `useStartSession(values)`.
-- **New `useMemoizedFn` usage from ahooks is forbidden** (`.claude/rules/use-effect-event.md`). Remove existing occurrences when you touch nearby code.
+- **`useMemoizedFn`-style stable-callback helpers are forbidden in app code** (`.claude/rules/use-effect-event.md`). `ahooks` is no longer a dependency; use `useEffectEvent` instead.
 
 ## 1. When to extract — decision rules
 
@@ -186,7 +186,7 @@ Rules (from `.claude/rules/use-effect-event.md`):
 - Don't pass to JSX as `onClick` etc.
 - Don't use to bypass legitimate dependencies — only for
   closures-the-effect-calls-but-doesn't-sync-on.
-- Don't introduce new `ahooks` `useMemoizedFn`. Remove it when you see it
+- Don't introduce a `useMemoizedFn`-style helper. Remove it when you see it
   nearby — `useEffectEvent` is the modern replacement.
 
 ## 6. Move-don't-abstract
@@ -256,6 +256,6 @@ to be a component, not a hook.
 - [ ] Returns a named object (not a tuple, unless mimicking `useState`).
 - [ ] Effect dependencies are only values the effect truly syncs on; callbacks closed over via `useEffectEvent`.
 - [ ] No `// eslint-disable-next-line react-hooks/exhaustive-deps`.
-- [ ] No new `ahooks` `useMemoizedFn` introduced.
+- [ ] No new `useMemoizedFn`-style stable-callback helper introduced.
 - [ ] Colocated with feature if feature-specific; under `react/src/hooks/` if cross-cutting.
 - [ ] Has a Jest test when it owns non-trivial state or side-effects.

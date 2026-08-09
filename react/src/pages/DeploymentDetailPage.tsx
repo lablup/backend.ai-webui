@@ -27,7 +27,6 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Heading } from '@astryxdesign/core/Heading';
-import { useToggle } from 'ahooks';
 import {
   BAIButton,
   BAIDeploymentStatus,
@@ -38,6 +37,7 @@ import {
   isDeploymentInStoppedCategory,
   toGlobalId,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon, PlusIcon, TriangleAlert } from 'lucide-react';

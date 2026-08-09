@@ -32,16 +32,16 @@
 */
 import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useControllableValue } from 'ahooks';
 import {
-  filterOutEmpty,
   BAIComplexSelect,
+  BAIFlex,
+  BAIResourceNumberWithIcon,
+  filterOutEmpty,
+  mergeFilterValues,
   type BAIComplexSelectOption,
   type BAIComplexSelectValue,
   type BAILabeledValue,
-  BAIFlex,
-  mergeFilterValues,
-  BAIResourceNumberWithIcon,
+  useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {

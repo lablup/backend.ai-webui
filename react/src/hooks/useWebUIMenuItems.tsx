@@ -21,7 +21,6 @@ import {
   useWebUIPluginLoadedValue,
   useWebUIPluginValue,
 } from './useWebUIPluginState';
-import { useSessionStorageState } from 'ahooks';
 import {
   BAIEndpointsIcon,
   BAIModelStoreIcon,
@@ -29,6 +28,7 @@ import {
   BAIPipelinesIcon,
   BAISessionsIcon,
   filterOutEmpty,
+  useSessionStorageState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

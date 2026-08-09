@@ -46,6 +46,7 @@
  - The bespoke "reset filters" button is gone; PowerSearch ships `hasClear`.
 */
 import { filterOutEmpty } from '../helper';
+import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
   toEnumItems,
@@ -62,7 +63,6 @@ import type {
   PowerSearchField,
   PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
-import { useControllableValue } from 'ahooks';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';

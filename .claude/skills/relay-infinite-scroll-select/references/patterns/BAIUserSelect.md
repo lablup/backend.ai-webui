@@ -92,13 +92,12 @@ import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPa
 import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import BAIText from '../BAIText';
 import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
 import { GetRef, Skeleton } from 'antd';
 import * as _ from 'lodash-es';
 import {

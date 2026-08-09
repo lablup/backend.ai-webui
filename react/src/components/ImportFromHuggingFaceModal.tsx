@@ -17,14 +17,14 @@ import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { InputGroup } from '@astryxdesign/core/InputGroup';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
   BAICard,
+  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
   BAIText,
   useErrorMessageResolver,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

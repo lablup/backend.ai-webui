@@ -126,6 +126,47 @@ export {
 } from './useBAILogger';
 export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
+
+// ── ahooks replacements ────────────────────────────────────────────────────
+// BUI-native ports of the `ahooks` hooks this repo used, so the dependency
+// could be dropped. Each module documents which ahooks hook it mirrors and
+// which parts of the option surface were kept. See
+// `.scratch/astryx-migration/issues/ahooks-removal.md`.
+export { default as useControllableValue } from './useControllableValue';
+export type {
+  UseControllableValueOptions,
+  ControllableProps,
+  StandardControllableProps,
+} from './useControllableValue';
+export { default as useDebounce } from './useDebounce';
+export { default as useDebounceFn } from './useDebounceFn';
+export type { DebounceOptions } from './useDebounceFn';
+export { default as useEventListener } from './useEventListener';
+export type {
+  UseEventListenerOptions,
+  UseEventListenerTarget,
+} from './useEventListener';
+export { default as useHover } from './useHover';
+export type { UseHoverOptions } from './useHover';
+export { default as useNetwork } from './useNetwork';
+export type { NetworkState } from './useNetwork';
+export { default as usePrevious } from './usePrevious';
+export type { ShouldUpdateFunc } from './usePrevious';
+export {
+  createUseStorageState,
+  useLocalStorageState,
+  useSessionStorageState,
+  SYNC_STORAGE_EVENT_NAME,
+} from './useStorageState';
+export type {
+  SetStorageState,
+  UseStorageStateOptions,
+} from './useStorageState';
+export { default as useThrottleFn } from './useThrottleFn';
+export type { ThrottleOptions } from './useThrottleFn';
+export { default as useToggle } from './useToggle';
+export type { UseToggleActions } from './useToggle';
+export { default as useUpdateEffect } from './useUpdateEffect';
 // `useBAIi18n` is intentionally NOT re-exported from the package's public
 // surface — it is an internal implementation detail of how BUI components
 // bind to BUI's own i18next instance (see ../hooks/useBAIi18n.ts and the

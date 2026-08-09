@@ -26,25 +26,25 @@ import UserSettingModal from './UserSettingModal';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { useToggle } from 'ahooks';
 import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  toLocalId,
+  BAIAdminUserV2Table,
+  BAIButton,
+  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
-  useBAILogger,
-  BAIFetchKeyButton,
-  BAIAdminUserV2Table,
-  UserV2InList,
-  availableUserV2SorterValues,
-  BAIButton,
-  BAISelectionLabel,
   BAINameActionCell,
+  BAISelectionLabel,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  UserV2InList,
+  availableUserV2SorterValues,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  toLocalId,
+  useBAILogger,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

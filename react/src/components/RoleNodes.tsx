@@ -12,7 +12,6 @@ import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
   BAIColumnType,
   BAIDoubleTag,
@@ -23,6 +22,7 @@ import {
   badgeVariantForStatus,
   badgeVariantForTagColor,
   filterOutEmpty,
+  useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';

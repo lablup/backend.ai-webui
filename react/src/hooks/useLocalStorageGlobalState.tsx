@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useLocalStorageState } from 'ahooks';
+import { useLocalStorageState } from 'backend.ai-ui';
 import { useCallback, useEffect } from 'react';
 
 export const useLocalStorageGlobalState = <T,>(

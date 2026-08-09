@@ -42,6 +42,7 @@
  affordance that actually works.
 */
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
+import { useControllableValue, usePrevious } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
   AstryxNumberStepper,
@@ -52,7 +53,6 @@ import { InputGroup } from '@astryxdesign/core/InputGroup';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack } from '@astryxdesign/core/Stack';
-import { useControllableValue, usePrevious } from 'ahooks';
 import * as _ from 'lodash-es';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';

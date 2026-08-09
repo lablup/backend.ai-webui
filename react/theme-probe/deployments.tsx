@@ -50,7 +50,7 @@ const which = params.get('case') ?? 'revision';
 const mode = params.get('theme') === 'dark' ? 'dark' : 'light';
 
 // `useThemeMode` (consumed by e.g. SourceCodeView for its syntax theme) reads
-// this ahooks-serialized localStorage key; align it with the probe's mode
+// this JSON-serialized localStorage key; align it with the probe's mode
 // BEFORE mounting so both theme layers agree.
 window.localStorage.setItem(
   'backendaiwebui.settings.themeMode',

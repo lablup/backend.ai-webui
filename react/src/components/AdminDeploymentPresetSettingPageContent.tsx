@@ -44,13 +44,13 @@ import {
 import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Step, Stepper } from '@astryxdesign/lab';
-import { useDebounceFn } from 'ahooks';
 import {
   BAIAdminImageSelectAstryx,
   BAIButton,
   BAICard,
   BAIFlex,
   toLocalId,
+  useDebounceFn,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

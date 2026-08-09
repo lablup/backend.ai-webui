@@ -13,14 +13,14 @@ import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
-import { useToggle } from 'ahooks';
 import {
   BAIFlex,
   BAIModal,
   BAITableAstryx,
-  useUpdatableState,
   BAIUnmountAfterClose,
   type BAIColumnsType,
+  useToggle,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

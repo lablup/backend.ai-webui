@@ -10,11 +10,11 @@ import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
+  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import { Copy } from 'lucide-react';

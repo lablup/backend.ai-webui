@@ -25,18 +25,18 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
   BAIFlex,
   BAIPropertyFilter,
-  BAITableAstryx,
   BAIResourceNumberWithIcon,
-  badgeVariantForTagColor,
-  useFetchKey,
+  BAITableAstryx,
   INITIAL_FETCH_KEY,
+  badgeVariantForTagColor,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
   type BAIColumnType,
+  useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

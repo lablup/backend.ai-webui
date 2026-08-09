@@ -41,13 +41,13 @@
 */
 import { BAIBucketSelectAstryxQuery } from '../../__generated__/BAIBucketSelectAstryxQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
+import { useControllableValue } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useState } from 'react';
 import { graphql } from 'react-relay';

@@ -16,11 +16,11 @@ import type {
 } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useThrottleFn } from 'ahooks';
 import {
-  useUpdatableState,
   BAIFlex,
   BAIResourceNumberWithIcon,
+  useThrottleFn,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen, Info } from 'lucide-react';

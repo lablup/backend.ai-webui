@@ -7,8 +7,7 @@ import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement'
 import AnnouncementEditModal from './AnnouncementEditModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import { useToggle } from 'ahooks';
-import { BAIUnmountAfterClose } from 'backend.ai-ui';
+import { BAIUnmountAfterClose, useToggle } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';

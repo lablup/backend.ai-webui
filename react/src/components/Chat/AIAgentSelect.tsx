@@ -6,8 +6,7 @@ import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { theme } from '../../theme-shim';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
 import { Selector } from '@astryxdesign/core/Selector';
-import { useControllableValue } from 'ahooks';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, useControllableValue } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 

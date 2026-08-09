@@ -12,12 +12,12 @@ import BAIPanelItem from './BAIPanelItem';
 import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useUpdateEffect } from 'ahooks';
 import {
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,
   BAIRowWrapWithDividers,
+  useUpdateEffect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useDeferredValue } from 'react';

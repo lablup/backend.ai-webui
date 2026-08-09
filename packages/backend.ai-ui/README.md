@@ -11,16 +11,15 @@ section was (re)defined by the Astryx migration, ticket 30.
 
 The design-system contract is **Astryx**:
 
-| Peer                           | Required? | Why                                                                  |
-| ------------------------------ | --------- | -------------------------------------------------------------------- |
-| `@astryxdesign/core`           | yes       | Every component BUI renders. Must be a **single** copy — see below.  |
-| `@astryxdesign/theme-neutral`  | yes       | The token set `theme-shim` resolves `useToken()` against.            |
-| `react` / `react-dom`          | yes       | —                                                                     |
-| `react-relay` / `relay-runtime` / `graphql` | yes | The `fragments/` components are Relay-bound.                    |
-| `@tanstack/react-query`        | yes       | `BAIConfigProvider` owns the QueryClient.                            |
-| `react-router-dom`             | yes       | `BAILink` and friends.                                               |
-| `ahooks`                       | yes       | —                                                                     |
-| `antd`, `@ant-design/icons`   | **optional — legacy** | See "The residual antd surface".                       |
+| Peer                                        | Required?             | Why                                                                 |
+| ------------------------------------------- | --------------------- | ------------------------------------------------------------------- |
+| `@astryxdesign/core`                        | yes                   | Every component BUI renders. Must be a **single** copy — see below. |
+| `@astryxdesign/theme-neutral`               | yes                   | The token set `theme-shim` resolves `useToken()` against.           |
+| `react` / `react-dom`                       | yes                   | —                                                                   |
+| `react-relay` / `relay-runtime` / `graphql` | yes                   | The `fragments/` components are Relay-bound.                        |
+| `@tanstack/react-query`                     | yes                   | `BAIConfigProvider` owns the QueryClient.                           |
+| `react-router-dom`                          | yes                   | `BAILink` and friends.                                              |
+| `antd`, `@ant-design/icons`                 | **optional — legacy** | See "The residual antd surface".                                    |
 
 `@astryxdesign/core` and `@astryxdesign/theme-neutral` are peers, **not**
 dependencies and **not** bundled. They were `devDependencies` until ticket 30,
@@ -37,7 +36,7 @@ BUI is **not yet antd-free in its source** — the antd `Form` engine, the legac
 `BAITable` and `BAIModal`/`BAICard` internals still import it. `antd-style` is
 gone as of ticket 33: every `createStyles` block became a co-located `.css`
 file next to its component (P17), so the styling engine no longer participates
-in the peer contract at all. What ticket 30 changed is the *contract*: `antd`
+in the peer contract at all. What ticket 30 changed is the _contract_: `antd`
 and `@ant-design/icons` are declared `optional` in `peerDependenciesMeta`, so
 
 - a consumer that only touches the Astryx-native surface (`BAITableAstryx`,
@@ -90,7 +89,7 @@ with the full order statement:
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 ```
 
-Astryx ships its component CSS in `@layer astryx-base`, and an *unlayered* rule
+Astryx ships its component CSS in `@layer astryx-base`, and an _unlayered_ rule
 outranks every named layer regardless of specificity. `components` sits above
 `astryx-base` (a BUI rule may deliberately override an Astryx default) and
 below `utilities` (an app-level utility still wins).

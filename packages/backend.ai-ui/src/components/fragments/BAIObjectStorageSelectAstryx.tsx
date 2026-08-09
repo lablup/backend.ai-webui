@@ -42,12 +42,12 @@
 import { BAIObjectStorageSelectAstryxQuery } from '../../__generated__/BAIObjectStorageSelectAstryxQuery.graphql';
 import { BAIObjectStorageSelectAstryxValueQuery } from '../../__generated__/BAIObjectStorageSelectAstryxValueQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
+import { useControllableValue } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
 } from '../BAIComplexSelect';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';

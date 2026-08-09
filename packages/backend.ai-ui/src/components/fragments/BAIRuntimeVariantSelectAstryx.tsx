@@ -24,14 +24,13 @@ import { BAIRuntimeVariantSelectAstryxPaginatedQuery } from '../../__generated__
 import { BAIRuntimeVariantSelectAstryxValueQuery } from '../../__generated__/BAIRuntimeVariantSelectAstryxValueQuery.graphql';
 import { convertToUUID, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
 } from '../BAIComplexSelect';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,

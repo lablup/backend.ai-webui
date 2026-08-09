@@ -36,7 +36,7 @@ import { BAIAvailablePresetSelectAstryxPaginatedQuery } from '../../__generated_
 import { BAIAvailablePresetSelectAstryxValueQuery } from '../../__generated__/BAIAvailablePresetSelectAstryxValueQuery.graphql';
 import { convertToUUID, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
@@ -44,7 +44,6 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,

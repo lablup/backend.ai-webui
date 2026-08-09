@@ -40,6 +40,7 @@
  - `renderInput` controls stage their value and are committed by the popover's
    Apply button (see `BAIPowerSearchAdapters`).
 */
+import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
   toEnumItems,
@@ -57,7 +58,6 @@ import type {
   PowerSearchField,
   PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
-import { useControllableValue } from 'ahooks';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';

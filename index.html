@@ -84,7 +84,7 @@
     //To avoid flickering when first loading the page, we add a class to the body to indicate the theme.
     const storedThemeMode = localStorage.getItem('backendaiwebui.settings.themeMode');
     const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    // ahooks stores JSON-serialized values, so parse the stored themeMode
+    // The storage-state hook stores JSON-serialized values, so parse the stored themeMode
     let parsedThemeMode;
     try { parsedThemeMode = storedThemeMode ? JSON.parse(storedThemeMode) : null; } catch(e) { parsedThemeMode = null; }
     if (parsedThemeMode === 'dark') {

@@ -35,16 +35,16 @@ import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useToggle } from 'ahooks';
 import {
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
   // here until the PowerSearch generalization covers the object-filter DSL.
   BAIGraphQLPropertyFilter,
+  INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  INITIAL_FETCH_KEY,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';

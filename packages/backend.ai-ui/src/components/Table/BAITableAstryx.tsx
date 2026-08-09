@@ -74,6 +74,7 @@
  - **Virtualization is DEFERRED** by an explicit product decision (2026-08-07).
    Do not add it here without re-opening that decision.
 */
+import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
@@ -110,7 +111,6 @@ import type {
   TableSortState,
 } from '@astryxdesign/core/Table';
 import { Text } from '@astryxdesign/core/Text';
-import { useControllableValue } from 'ahooks';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { ChevronDown, ChevronRight, FileDown, Settings } from 'lucide-react';

@@ -30,6 +30,7 @@
  `addonAfter` sites pass a plain unit string.
 */
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
+import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
   AstryxNumberStepper,
@@ -38,7 +39,6 @@ import {
 } from './astryxNumberStepper';
 import { InputGroup } from '@astryxdesign/core/InputGroup';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { useControllableValue } from 'ahooks';
 import * as _ from 'lodash-es';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';

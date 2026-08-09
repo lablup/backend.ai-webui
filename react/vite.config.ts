@@ -837,7 +837,6 @@ export default defineConfig(({ command, mode }) => {
         'nuqs/adapters/react-router/v6',
         'dayjs',
         'lodash',
-        'ahooks',
       ],
       exclude: [
         'backend.ai-ui',

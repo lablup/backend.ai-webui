@@ -28,9 +28,13 @@ import '../index.css';
 import { ThemeShimProvider } from '../theme-shim';
 import NotificationHost from './NotificationHost';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUpdateEffect } from 'ahooks';
 import { App, type AppProps, theme } from 'antd';
-import { BAIConfigProvider, BAIText, BAIMetaDataProvider } from 'backend.ai-ui';
+import {
+  BAIConfigProvider,
+  BAIMetaDataProvider,
+  BAIText,
+  useUpdateEffect,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';

@@ -21,20 +21,20 @@ import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import { useToggle } from 'ahooks';
 import {
-  filterOutNullAndUndefined,
-  BAITableAstryx,
   BAIFlex,
-  BAIPropertyFilter,
-  mergeFilterValues,
-  ResourceTypeIcon,
   BAIProgressWithLabel,
-  useFetchKey,
+  BAIPropertyFilter,
+  BAITableAstryx,
   INITIAL_FETCH_KEY,
-  type BAITableProps,
-  type BAIColumnsType,
+  ResourceTypeIcon,
+  filterOutNullAndUndefined,
+  mergeFilterValues,
   type BAIColumnType,
+  type BAIColumnsType,
+  type BAITableProps,
+  useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus, RotateCw } from 'lucide-react';
