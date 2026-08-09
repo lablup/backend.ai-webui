@@ -168,15 +168,13 @@ const BAIArtifactTable = ({
     {
       title: t('comp:BAIArtifactTable.Controls'),
       key: 'controls',
-      // HISTORY (to-astryx W2-D, amended in approved-2): this column declared
-      // `render: (record) => …` and every row threw
-      // `Cannot read properties of undefined (reading 'availability')`, so the
-      // signature was widened to `(value, record)` here. W2-D read that as an
-      // authoring mistake; it was not. Under rc-table a `dataIndex`-less
-      // column receives the RECORD as its first argument, so the original
-      // code was correct antd and `BAITableAstryx` was the thing diverging —
-      // fixed at the source in `readDataIndex`. This explicit `(_value,
-      // record)` form is kept because it reads unambiguously either way.
+      // HISTORY (to-astryx W2-D): this column declared `render: (record) => …`
+      // and every row threw `Cannot read properties of undefined (reading
+      // 'availability')`. Under rc-table a `dataIndex`-less column happens to
+      // receive the RECORD as `render`'s first argument; `BAITableAstryx` does
+      // not reproduce that quirk, so the record must be taken from the SECOND
+      // argument — the Astryx/antd `(value, record, index)` contract. This is
+      // the canonical form for every computed column in this codebase.
       render: (_value, record: Artifact) => {
         const availability = record.availability;
         // PILOT-DECISION (to-astryx W2-D): antd v6's `color` + `variant`

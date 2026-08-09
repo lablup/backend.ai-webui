@@ -203,12 +203,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
-      // `row` IS the record: a `dataIndex`-less column's cell value is the
-      // whole row (rc-table's `getPathValue`), which is why this reads a
-      // record off `render`'s first argument. `BAITableAstryx` used to hand
-      // `undefined` here, which is what blanked this cell down to its lone
-      // copy button — fixed in `readDataIndex`, not worked around here.
-      render: (row) => (
+      // The record arrives as `render`'s SECOND argument — this column is
+      // computed and has no `dataIndex`, so the first argument (the cell
+      // value) is `undefined`. Reading the row off the first argument is an
+      // rc-table quirk that `BAITableAstryx` does not reproduce; taking it
+      // from the second is the Astryx/antd `(value, record, index)` contract.
+      render: (_value, row) => (
         // `maxLines={1}` for the same reason as the Digest column below:
         // Astryx's table cell is `white-space: nowrap; overflow: hidden`, so an
         // untruncated path is CLIPPED rather than wrapped as it was under antd.

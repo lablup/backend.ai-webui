@@ -225,7 +225,9 @@ const CustomizedImageList: React.FC = () => {
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
-      render: (row) => (
+      // Computed column (no `dataIndex`), so the record comes from `render`'s
+      // SECOND argument — see `ImageList`'s matching column.
+      render: (_value, row) => (
         <BAIText
           monospace
           copyable={{

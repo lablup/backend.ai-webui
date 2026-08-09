@@ -596,7 +596,9 @@ const AdminUserCredentialList: React.FC = () => {
           {
             key: 'allocation',
             title: t('credential.Allocation'),
-            render: (record: Keypair) => {
+            // No `dataIndex` on this column, so the record comes from
+            // `render`'s SECOND argument (Astryx/antd `(value, record)`).
+            render: (_value, record: Keypair) => {
               // PILOT-DECISION: antd rendered these as one Typography.Text
               // with a nested secondary-colored/smaller-font unit label,
               // spaced via inline `marginLeft`. Astryx `Text` has no `style`

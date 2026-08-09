@@ -1,15 +1,18 @@
 /*
  approved-2: the value `BAITableAstryx` hands to a column's `render`.
 
- rc-table's `getPathValue` returns the RECORD ITSELF when a column has no
- `dataIndex`, so `render: (row) => …` on a computed column is correct antd and
- the app is full of it. `BAITableAstryx` passed `undefined` there instead,
- which silently blanked every such cell — the Environments image list rendered
- its full-image-path column as a lone copy button with no path beside it — and
- threw outright wherever the render body dereferenced the row.
+ The contract is Astryx/antd's `render(value, record, index)`, nothing more.
+ A column with no `dataIndex` has NO cell value, so `value` is `undefined` and
+ the record is reached through the second argument.
 
- These tests pin the antd contract at the seam. They are structural, not
- visual, so jsdom's lack of layout does not matter.
+ rc-table has a quirk here — its `getPathValue` returns the whole RECORD when
+ the path is empty, which is why `render: (row) => …` works under antd. That
+ quirk is deliberately NOT re-implemented in this engine (user direction on
+ the to-astryx migration): call sites use `render: (_value, row) => …`
+ instead. These tests pin the contract in BOTH directions so the emulation
+ cannot creep back in and the native form cannot regress.
+
+ They are structural, not visual, so jsdom's lack of layout does not matter.
 */
 import BAITableAstryx from './BAITableAstryx';
 import type { BAIColumnsType } from './tableTypes';
@@ -35,13 +38,12 @@ const renderTable = (columns: BAIColumnsType<Row>) =>
   );
 
 describe('BAITableAstryx cell values', () => {
-  it('should pass the whole record to `render` when the column has no dataIndex', () => {
+  it('should reach the record through `render`s SECOND argument on a column with no dataIndex', () => {
     renderTable([
       {
         title: 'Full path',
         key: 'fullPath',
-        // The antd idiom this table used to break.
-        render: (row: Row) => <span data-testid="path">{fullPath(row)}</span>,
+        render: (_value, row) => <span>{fullPath(row)}</span>,
       },
     ]);
 
@@ -51,19 +53,21 @@ describe('BAITableAstryx cell values', () => {
     expect(screen.getByText('index.docker.io/base:1.0')).toBeInTheDocument();
   });
 
-  it('should treat an empty dataIndex the same as a missing one, as rc-table does', () => {
+  it('should pass `undefined` as the cell value when the column has no dataIndex, NOT the record', () => {
+    const seen: Array<unknown> = [];
     renderTable([
       {
         title: 'Full path',
         key: 'fullPath',
-        dataIndex: [],
-        render: (row: Row) => fullPath(row),
+        render: (value, row) => {
+          seen.push(value);
+          return fullPath(row);
+        },
       },
     ]);
 
-    expect(
-      screen.getByText('cr.backend.ai/python-ff:24.03-py310'),
-    ).toBeInTheDocument();
+    expect(seen).toHaveLength(ROWS.length);
+    seen.forEach((value) => expect(value).toBeUndefined());
   });
 
   it('should still pass the field value when the column HAS a dataIndex', () => {
@@ -80,16 +84,21 @@ describe('BAITableAstryx cell values', () => {
     expect(screen.getByText('index.docker.io|2')).toBeInTheDocument();
   });
 
-  it('should pass the record as the first argument AND the second, so both signatures work', () => {
+  it('should pass the row itself as the second argument, identical to the dataSource entry', () => {
+    const seen: Array<Row> = [];
     renderTable([
       {
         title: 'Same',
         key: 'same',
-        render: (value: Row, record: Row) => String(value === record),
+        render: (_value, record: Row) => {
+          seen.push(record);
+          return record.id;
+        },
       },
     ]);
 
-    expect(screen.getAllByText('true')).toHaveLength(ROWS.length);
+    expect(seen).toEqual(ROWS);
+    seen.forEach((record, index) => expect(record).toBe(ROWS[index]));
   });
 
   it('should render nothing for a column with neither dataIndex nor render, not "[object Object]"', () => {

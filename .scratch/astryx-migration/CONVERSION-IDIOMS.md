@@ -111,3 +111,52 @@ not this idiom. Nothing is queued for REMAINDER.md on account of vertical tabs.
 A genuine tab bar (peer views of one subject, 2–5 of them, no hierarchy) stays
 `BAITabs`/`TabList`. This idiom is for the **navigation rail** shape: a list of
 sections that select what fills the pane beside it.
+
+---
+
+## 2. antd computed column (`render: (row) => …` with no `dataIndex`) → `render: (_value, row) => …`, **not** an engine that hands back the record
+
+**Status:** ratified 2026-08-09 (user direction, amends `approved-2`).
+**Applied in:** `ImageList.tsx`, `CustomizedImageList.tsx`,
+`AdminUserCredentialList.tsx`; `BAIArtifactTable.tsx` already had it.
+**Notes:** `.scratch/astryx-migration/issues/approved-2-render-contract.md`.
+
+### The trap
+
+A column with no `dataIndex` renders blank (or throws) after the flip. rc-table's
+`getPathValue` returns the **whole record** when the path is empty, so under antd
+`render: (row) => …` on a computed column works and the app is full of it. The
+tempting fix is to teach `BAITableAstryx.readDataIndex` the same trick, so every
+call site recovers untouched.
+
+Don't. Reproducing a quirk of the engine being retired inside the engine
+replacing it carries the old engine's accidents forward permanently, and makes
+`render`'s declared signature lie about its own first argument.
+
+### The contract
+
+`render(value, record, index)`, and nothing more. `value` is what `dataIndex`
+points at; no `dataIndex` means no value, so `value` is `undefined` and the
+record comes from the **second** argument.
+
+```tsx
+// ❌ antd/rc-table idiom — `row` is undefined under BAITableAstryx
+{ key: 'fullImagePath', render: (row) => <Foo>{compute(row)}</Foo> }
+
+// ✅ Astryx-native
+{ key: 'fullImagePath', render: (_value, row) => <Foo>{compute(row)}</Foo> }
+```
+
+### Finding the call sites
+
+Grepping for the `(row)` spelling misses the ones that named the parameter
+`record` / `item` / anything else — that is how the Credentials `Allocation`
+column was missed on the first pass. Scan structurally instead: a
+**single-parameter `render` on a column object literal with no `dataIndex`**
+(`.scratch/astryx-migration/scan-render.py` does exactly this over `react/src` +
+`packages/backend.ai-ui/src`).
+
+### When it does *not* apply
+
+A column that *has* a `dataIndex` is already correct — its `render` receives the
+field value first, as it always did. Nothing to change.
