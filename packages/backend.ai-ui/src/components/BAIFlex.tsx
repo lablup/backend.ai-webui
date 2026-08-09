@@ -133,7 +133,15 @@ const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
           minWidth: 0,
           padding: 0,
           position: 'relative',
-          textDecoration: 'none',
+          // `inherit`, not `none` (QA3). Outside a decorated ancestor the two
+          // are identical, because `text-decoration-line` is `none` by default
+          // anyway — so this reset only ever *did* anything in the one case
+          // where it was wrong: a `BAIFlex` laid out inside a link. There it
+          // silently cancelled the link's hover underline, and being an inline
+          // style no stylesheet could win it back. Mirroring the ancestor keeps
+          // link-shaped cells (e.g. the allowed-storage-host cells) underlining
+          // with the link they belong to.
+          textDecoration: 'inherit',
           gap: gapStyle,
           ...flexStyle,
         }}

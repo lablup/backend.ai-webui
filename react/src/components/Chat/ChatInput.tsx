@@ -48,6 +48,14 @@ const ChatInput: React.FC<ChatInputProps> = ({
     borderTop: `1px solid ${token.colorBorderSecondary}`,
     paddingBlock: token.paddingContentVertical,
     paddingInline: token.paddingContentHorizontal,
+    // The composer is the one row that must never be compressed — it is the
+    // page's primary control. Every other row in the chat column (the message
+    // list) is scrollable, so it absorbs the shrink instead. `maxHeight` caps
+    // the attachment drawer so a large attachment set scrolls rather than
+    // starving the transcript on a short viewport.
+    flexShrink: 0,
+    maxHeight: '60%',
+    overflowY: 'auto',
   };
 
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);

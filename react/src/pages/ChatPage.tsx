@@ -342,7 +342,7 @@ const PureChatPage = ({ id }: { id: string }) => {
           <VStack
             gap={4}
             align="stretch"
-            style={{ overflow: 'hidden', minHeight: 0, height: '100%' }}
+            style={{ overflow: 'hidden', minHeight: 0, flex: 1 }}
           >
             <HStack justify="between" align="center" wrap="wrap" gap={2}>
               <EditableChatTitle
@@ -376,13 +376,21 @@ const PureChatPage = ({ id }: { id: string }) => {
                 </Tooltip>
               </BAIFlex>
             </HStack>
+            {/* `flex: 1` + `minHeight: 0`, never `height: 100%`. This column is
+                a flex child of the `VStack` above, which also holds the title
+                row. `height: 100%` resolves against the VStack's *full* height
+                and so ignores that sibling — the column then overflows the
+                VStack by exactly the title row's height, and the VStack's
+                `overflow: hidden` eats that much off the bottom, which is
+                where the composer lives. Growing into the leftover space
+                instead keeps the whole height budget honest. */}
             <BAIFlex
               direction="column"
               align="stretch"
               style={{
                 overflow: 'hidden',
                 minHeight: 0,
-                height: '100%',
+                flex: 1,
               }}
             >
               {id && (

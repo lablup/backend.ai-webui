@@ -342,6 +342,12 @@ const BAINameActionCellAstryx: React.FC<BAINameActionCellAstryxProps> = ({
     if (isLinked) {
       return (
         <Link
+          // QA3: same `bai-link-hover` contract as BUI's `BAINameActionCell`,
+          // so a folder name hovers identically to a session name. Astryx's own
+          // hover underline is gated behind `@media (hover: hover)` AND stops
+          // at the `display: block` `Text` below, so relying on it left this
+          // cell as the one name link with no hover feedback.
+          className="bai-link-hover"
           href={to ?? '#'}
           style={{ minWidth: 0, display: 'block' }}
           onClick={

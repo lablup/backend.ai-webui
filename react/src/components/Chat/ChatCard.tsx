@@ -576,7 +576,11 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           backgroundColor: token.colorFillQuaternary,
           flex: 1,
           padding: 0,
-          height: '50%',
+          // `minHeight: 0` (not the old `height: '50%'`): this column owns the
+          // messages/composer height budget. Without it the message list's
+          // automatic minimum size is its min-content height, which lets the
+          // list push the composer past the card's `overflow: hidden` edge.
+          minHeight: 0,
           position: 'relative',
         }}
       >

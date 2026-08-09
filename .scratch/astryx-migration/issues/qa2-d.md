@@ -215,3 +215,62 @@ pre-existing and unrelated (Google Fonts CSP, Relay `Group`/`UserGroup`
 
 `qa2-d-measure.mjs` is the DOM measurement that produced the two layout facts
 in PILOT-DECISION 5.
+
+---
+
+## QA3 follow-up — the composer was clipped by its card
+
+User report after QA2 merged: on the Chat page the composer is cut off at the
+bottom of the card. Reproduced at 1440x900 (`shots/qa3/chat-before-default.png`)
+— the send button is sliced in half by the card edge.
+
+### Root cause: `height: 100%` on a flex sibling
+
+Measured chain (`shots/qa3-chat-probe.mjs`, viewport 900):
+
+```
+astryx-stack (VStack, overflow:hidden)  top=220 bottom=864  clientH=644 scrollH=692
+  HStack (title row)                    top=220             h=48
+  BAIFlex (chat column, height:100%)    top=268 bottom=912  h=644
+    astryx-card (ChatCard)              top=268 bottom=912
+      astryx-chat-composer              top=825 bottom=899   <- past 864
+```
+
+`scrollH - clientH = 48px`, exactly the title row's height. The chat column is
+a flex child of the `VStack` and asked for `height: 100%`. A percentage height
+resolves against the *container*, not against what is left after the siblings,
+so the column claimed the VStack's full 644px on top of the 48px title row and
+overflowed by precisely that much. The VStack's `overflow: hidden` then ate the
+bottom 48px — which is where the composer lives.
+
+This is not new to the Astryx composer; the old `@ant-design/x` `Sender` was
+short enough that the 48px it lost fell in its own bottom padding. The taller
+composer just made a long-standing budget error visible.
+
+### Fix — at the layout-composition level, three files
+
+- `ChatPage.tsx` — the chat column and the `VStack` itself go from
+  `height: '100%'` to `flex: 1` + `minHeight: 0`. Growing into the space that
+  is actually left is the only sizing that stays correct when a sibling exists.
+- `ChatCard.tsx` — the messages/composer column drops the vestigial
+  `height: '50%'` for `minHeight: 0`, so the virtualized list's min-content
+  height cannot push the composer through the card's `overflow: hidden`.
+- `ChatMessages.tsx` — `minHeight: 0` on the transcript pane, so it is the pane
+  that absorbs shrink.
+- `ChatInput.tsx` — `flexShrink: 0` on the composer row (the one control that
+  must never be compressed), plus `maxHeight: 60%` + `overflowY: auto` so a
+  large attachment set scrolls instead of starving the transcript.
+
+The composer itself is untouched — no shrinking, no density change.
+
+### Verification
+
+`node .scratch/astryx-migration/shots/qa3-chat-measure.mjs` — **8/8 states fit,
+0 pageerrors**: {900, 700} x {light, dark} x {plain, attachment drawer open}.
+In every state `stackOverflow = 0px` and the composer's bottom edge sits 11px
+*above* the card's clipping edge.
+
+`shots/qa3/chat-after-attached-700-light.png` is the tight case: 700px viewport
+with the attachment drawer open — the drawer, the input, the attach button and
+the send button are all fully inside the card, and the transcript pane gave up
+the height.

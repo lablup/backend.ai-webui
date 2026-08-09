@@ -30,7 +30,14 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
 }) => {
   const { token } = theme.useToken();
   return (
-    <BAIFlex direction="column" align="stretch" style={{ flex: 1 }}>
+    // `minHeight: 0` lets this pane absorb the shrink when the composer grows
+    // (attachment drawer open, multi-line input) instead of the composer being
+    // clipped: the virtualized list already scrolls internally.
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{ flex: 1, minHeight: 0 }}
+    >
       <ChatMessageList messages={messages} isStreaming={isStreaming} />
       <BAIFlex
         direction="column"

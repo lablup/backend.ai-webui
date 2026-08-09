@@ -33,6 +33,15 @@ const LINK_TYPE_CLASS = {
 } as const;
 
 export interface BAILinkProps extends Omit<LinkProps, 'to'> {
+  /**
+   * Defaults to `'hover'`. A link that does not look and behave like a link is
+   * a bug, so the accent colour + hover underline are the baseline rather than
+   * something each call site has to remember to ask for — before QA3, the
+   * ~10 `to`-only sites (artifact/model names, `FolderLink`, …) fell through to
+   * a class-less react-router `<a>`, which Astryx's reset
+   * (`:where(a){color:inherit;text-decoration:inherit}`) flattened into plain
+   * body text. Pass `'disabled'` for the non-interactive state.
+   */
   type?: 'hover' | 'disabled' | undefined;
   icon?: React.ReactNode;
   to?: LinkProps['to'];
@@ -41,7 +50,7 @@ export interface BAILinkProps extends Omit<LinkProps, 'to'> {
 }
 
 const BAILink: React.FC<BAILinkProps> = ({
-  type,
+  type = 'hover',
   icon,
   to,
   ellipsis,
@@ -50,11 +59,7 @@ const BAILink: React.FC<BAILinkProps> = ({
 }) => {
   if (type !== 'disabled' && to) {
     return (
-      <Link
-        className={type ? LINK_TYPE_CLASS[type] : undefined}
-        to={to}
-        {...linkProps}
-      >
+      <Link className={LINK_TYPE_CLASS[type]} to={to} {...linkProps}>
         {children}
         {icon}
       </Link>
@@ -82,11 +87,7 @@ const BAILink: React.FC<BAILinkProps> = ({
   const link = (
     <AstryxLink
       {...restProps}
-      className={
-        type
-          ? `${LINK_TYPE_CLASS[type]}${className ? ` ${className}` : ''}`
-          : className
-      }
+      className={`${LINK_TYPE_CLASS[type]}${className ? ` ${className}` : ''}`}
       style={style}
       target={target}
       isDisabled={type === 'disabled'}
