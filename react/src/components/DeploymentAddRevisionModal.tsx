@@ -1083,14 +1083,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // ResourceAllocationFormItems / EnvVarFormList / VFolderTableFormItem); with
   // the alias pointed at the self-hosted engine those sections render the BAI
   // shell too, so the antd branch can no longer match anything (P6).
-  // `.ant-modal-body` is BAIModal's DOM — BAIModal is frontier (still
-  // antd-based) and scopes the query to the open modal.
+  //
+  // The SCOPE moved for the same reason. It was `.ant-modal-body`, BAIModal's
+  // DOM back when BAIModal was still antd-based; BAIModal renders an Astryx
+  // `Dialog` now, so that prefix matches nothing and the whole query silently
+  // returned null — the form would submit-fail with no scroll. `dialog[open]`
+  // is the equivalent and is stable: every modal in the app is a native
+  // `<dialog>` opened with `showModal()` (the same anchor
+  // `useKeyboardShortcut` uses to detect an open modal).
   const handleFinishFailed = () => {
     requestAnimationFrame(() => {
       // querySelector over a compound selector returns the first match in
       // document order, i.e. the errored item highest on screen.
       const firstErrorEl = document.querySelector<HTMLElement>(
-        '.ant-modal-body [data-bai-form-item][data-status="error"]',
+        'dialog[open] [data-bai-form-item][data-status="error"]',
       );
       if (firstErrorEl) {
         firstErrorEl.scrollIntoView({

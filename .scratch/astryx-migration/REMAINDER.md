@@ -8,39 +8,36 @@
 
 What is still antd on `to-astryx`, bucketed by root cause. The pass/fail
 authority is `scripts/antd-zero-gate.sh`; this file is the actionable view
-of *why* it is not green yet.
+of *why* it is or is not green.
+
+**ZERO — the migration is complete.** No shipping file imports antd,
+directly or transitively. Every bucket below is empty. They are kept
+rather than deleted so that a regression shows up as a bucket refilling
+rather than as a new document.
 
 ## Totals
 
 | Metric | Files |
 |---|---:|
-| Scanned (shipping source) | 972 |
-| Import antd directly | 49 |
-| Reach antd transitively | 641 |
-| antd-free | 282 |
+| Scanned (shipping source) | 966 |
+| Import antd directly | 0 |
+| Reach antd transitively | 0 |
+| antd-free | 966 |
 
 ## Bucket 1 — RENDER (real conversion work)
 
-44 files import antd **values**. Each needs an Astryx
+0 files import antd **values**. Each needs an Astryx
 equivalent and a visual check — this is the number to plan against.
 
 | Owner | Files |
 |---|---:|
-| BUI · infrastructure (shims, hooks, helper) | 23 |
-| app · components | 18 |
-| BUI · fragments | 1 |
-| BUI · components | 1 |
-| app · other | 1 |
 
 ## Bucket 2 — TYPE-ONLY (cheap, ships nothing)
 
-3 files import only antd **types**. Erased at build
+0 files import only antd **types**. Erased at build
 time, so they add nothing to the bundle; they only keep antd required for
 `tsc`. Closing them does not move the bundle scan.
 
-- `packages/backend.ai-ui/src/locale/index.ts`
-- `packages/backend.ai-ui/src/theme-shim/index.tsx`
-- `react/src/hooks/reactPaginationQueryOptions.tsx`
 
 ## Bucket 3 — CARRIER PACKAGES (not closable by conversion)
 
@@ -48,11 +45,6 @@ Dependencies that drag the antd family in through their own trees. No
 amount of first-party conversion removes these.
 
 **None.** The last carrier (`@ant-design/x`) was removed in qa2-d — the Chat composer surfaces it provided are now built on Astryx's own chat family. Every remaining antd edge is a first-party direct dependency.
-
-### Live production-graph roots (`pnpm -r list --prod --depth 1`)
-
-- `backend-ai-webui-react → antd`
-- `backend.ai-ui → antd`
 
 ## Gate caveats — where the gate and reality disagree
 
@@ -64,10 +56,20 @@ recorded, not patched away: each is a known way the verdict can mislead.
 - **Risk**: false PASS (fixed in ticket 35)
 - `pnpm run build` creates build/web and copies index.html / resources / manifest into it BEFORE compiling the app. Ticket 35 hit a build that aborted at `copyconfig` (missing root `config.toml`, which is gitignored — copy it from config.toml.sample): the directory existed, held ~6 static files, and part (b) scanned them and reported PASS. A compliance gate whose green light can mean 'nothing was scanned' is worse than no gate. Part (b) now asserts a minimum asset count before trusting a clean scan. If you see that assertion fire, fix the build — do not lower the bound.
 
-### `anticon` is now OUR class name, not antd's.
+### `anticon` used to be OUR class name too, which made part (b) lie.
 
-- **Risk**: false FAIL (active)
-- `packages/backend.ai-ui/src/icons/iconShim.tsx` deliberately renders `class="anticon"`, and BUI ships the matching reset — measured: `packages/backend.ai-ui/dist/backend.ai-ui.css` contains `anticon` and `anticon-spin` as first-party rules. Two e2e locators still use the class — `e2e/user-profile/user-profile.spec.ts` (`.anticon-close`) and `e2e/auto-scaling-rule-preset/preset-table-settings.spec.ts` (`.anticon-check`); every other `.anticon-*` hit under `e2e/` is a comment recording that the class is GONE. So part (b)'s `anticon` signature will keep firing after antd is entirely gone. The fix is to rename the shim's class and repoint the e2e locators — NOT to drop the signature, which would also stop catching real @ant-design/icons reintroduction.
+- **Risk**: false FAIL (RESOLVED — to-astryx final-B)
+- `packages/backend.ai-ui/src/icons/iconShim.tsx` used to render `class="anticon"` (+ `anticon-spin`) with BUI shipping the matching reset, so part (b)'s HIGH-confidence `anticon` bundle signature fired on our OWN output and would have kept firing after antd was entirely gone — a permanently red gate that could no longer distinguish us from a real @ant-design/icons reintroduction. RESOLVED by renaming the first-party class to `bai-icon` / `bai-icon-spin` across the shim, BUI's `src/styles/backend.ai-ui.css`, the ~15 app/BUI components that spin a bare lucide glyph, and the two e2e locators that still named antd glyph classes.
+
+### A BPE vocabulary token kept part (b)'s icon signature red forever.
+
+- **Risk**: false FAIL (RESOLVED - to-astryx final switch)
+- `build/web/assets/main-*.js` bundles the Chat token counter's `cl100k_base` / `o200k` vocabularies, and a quote-SPACE-anticon-quote sequence is one of their ~200k merge tokens. It sits in a run of unrelated multilingual tokens and is third-party data we cannot change, so the bare-word signature fired on a completely clean build. The signature was NARROWED, not dropped: it now requires the dotted CSS-reset form or the glyph-suffixed form (`anticon-<letter>`), which covers the icon package's own stylesheet, every rendered glyph, and the minified class concatenation in the icon component. A real reintroduction emits both; the BPE token emits neither. Measured on the final-switch build: bare word 1 hit, anchored 0. Do not widen it back, and do not delete it.
+
+### Our own comments about antd were shipping into the bundle.
+
+- **Risk**: false FAIL (RESOLVED - to-astryx final switch)
+- CSS comments always survive minification, and terser preserves JS comment blocks containing `@license` - which every file in this repo opens with. First-party prose quoting an antd class name or an antd-family package specifier therefore landed verbatim in `build/web` and tripped part (b) signatures on a clean build. Resolved by phrasing that prose without the literal tokens: antd class names lose their leading dot, package names lose their scope prefix. See the SPELLING NOTE in `packages/backend.ai-ui/src/form-engine/engine.ts`. Keep new comments that way rather than weakening the signatures.
 
 ## Top taint hubs
 
@@ -76,24 +78,4 @@ Converting a hub clears its whole dependent set at once.
 
 | File | Taints |
 |---|---:|
-| `packages/backend.ai-ui/src/locale/index.ts` | 658 |
-| `packages/backend.ai-ui/src/theme-shim/index.tsx` | 619 |
-| `packages/backend.ai-ui/src/form-engine/index.ts` | 562 |
-| `packages/backend.ai-ui/src/hooks/useSchedulingHistoryExpandable.tsx` | 549 |
-| `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 547 |
-| `packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx` | 545 |
-| `react/src/form-engine/index.ts` | 405 |
-| `react/src/components/BAIFormItem.tsx` | 390 |
-| `react/src/hooks/reactPaginationQueryOptions.tsx` | 388 |
-| `packages/backend.ai-ui/src/locale/de_DE.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/el_GR.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/en_US.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/es_ES.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/fi_FI.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/fr_FR.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/id_ID.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/it_IT.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/ja_JP.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/ko_KR.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/mn_MN.ts` | 385 |
 

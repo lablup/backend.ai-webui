@@ -34,7 +34,6 @@
     "ai": "^5.0.210",
     "ajv": "^8.20.0",
     "ansi_up": "^6.0.6",
-    "antd": "catalog:",
     "backend.ai-client": "workspace:*",
     "backend.ai-ui": "workspace:*",
     "big.js": "catalog:",

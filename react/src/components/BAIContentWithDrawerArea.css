@@ -26,7 +26,7 @@
  Chromium.
 
  to-astryx phase 3 wave 2 (partition C): the drawer target moved from
- `.ant-drawer-content-wrapper` to `.astryx-drawer`. `WEBUINotificationDrawer`
+ `ant-drawer-content-wrapper` to `.astryx-drawer`. `WEBUINotificationDrawer`
  — the drawer whose open state drives `margin-style` in the first place — is
  now the lab `Drawer`, so the antd selector became DEAD (P6: it still
  compiles and silently stops applying). The scope is unchanged: the rule fires

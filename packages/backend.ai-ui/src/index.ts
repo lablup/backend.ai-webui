@@ -19,3 +19,10 @@ export * from './app-shim';
 // republish now that the alias resolves to BUI's OWN engine rather than
 // forwarding to antd: there is only one `Form`/`FormInstance` in the graph.
 export * from './form-engine';
+// The `locale` prop shape for `<BAIConfigProvider>`. Hosts used to reach the
+// per-language modules under `backend.ai-ui/dist/locale/*` for this; that
+// package export existed only to ship antd `Locale` bundles and went away with
+// the ConfigProvider layer (to-astryx final switch), so the type is published
+// from the main entry instead. The i18next INSTANCE stays unexported on
+// purpose — BUI components bind to it explicitly via `useBAIi18n()`.
+export type { BAILocale } from './locale';

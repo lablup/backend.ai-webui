@@ -4,7 +4,7 @@
  * covered by `style-src 'self'` and needs no nonce.
  *
  * to-astryx phase 3 wave 2 (partition C): the drawer moved from antd `Drawer`
- * to the lab `Drawer`, so the old `.ant-drawer-*` selectors are gone (P6 —
+ * to the lab `Drawer`, so the old `ant-drawer-*` selectors are gone (P6 —
  * they would still compile and silently stop applying).
  *
  * What survives is the ELECTRON affordance, which is the only reason this

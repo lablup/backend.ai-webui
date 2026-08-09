@@ -1,7 +1,7 @@
+import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAINumberWithUnit from './BAINumberWithUnit';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Card } from 'antd';
 
 const meta: Meta<typeof BAINumberWithUnit> = {
   title: 'Statistic/BAINumberWithUnit',
@@ -84,7 +84,11 @@ export const Default: Story = {
 export const BinaryVsDecimal: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
-      <Card size="small" title="1024 units: Binary vs Decimal">
+      <BAICard
+        size="small"
+        title="1024 units: Binary vs Decimal"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap="sm">
           <div>
             <strong>1024m (Binary → GiB):</strong>{' '}
@@ -103,8 +107,12 @@ export const BinaryVsDecimal: Story = {
             />
           </div>
         </BAIFlex>
-      </Card>
-      <Card size="small" title="2048 units: Binary vs Decimal">
+      </BAICard>
+      <BAICard
+        size="small"
+        title="2048 units: Binary vs Decimal"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap="sm">
           <div>
             <strong>2048g (Binary → TiB):</strong>{' '}
@@ -123,8 +131,12 @@ export const BinaryVsDecimal: Story = {
             />
           </div>
         </BAIFlex>
-      </Card>
-      <Card size="small" title="Various conversions">
+      </BAICard>
+      <BAICard
+        size="small"
+        title="Various conversions"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap="sm">
           <div>
             <strong>1024 bytes → KiB:</strong>{' '}
@@ -151,7 +163,7 @@ export const BinaryVsDecimal: Story = {
             />
           </div>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -167,7 +179,11 @@ export const BinaryVsDecimal: Story = {
 export const AutoUnitFallback: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
-      <Card size="small" title="Automatic unit display when target rounds to 0">
+      <BAICard
+        size="small"
+        title="Automatic unit display when target rounds to 0"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap="sm">
           <div>
             <strong>100 bytes → GiB (shows auto):</strong>{' '}
@@ -194,7 +210,7 @@ export const AutoUnitFallback: Story = {
             />
           </div>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -210,7 +226,11 @@ export const AutoUnitFallback: Story = {
 export const WithPostfix: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
-      <Card size="small" title="Using postfix">
+      <BAICard
+        size="small"
+        title="Using postfix"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap="sm">
           <div>
             <strong>Memory usage:</strong>{' '}
@@ -240,7 +260,7 @@ export const WithPostfix: Story = {
             />
           </div>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {

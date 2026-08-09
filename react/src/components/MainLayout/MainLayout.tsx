@@ -8,14 +8,12 @@ import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
-import usePrimaryColors from '../../hooks/usePrimaryColors';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import { theme } from '../../theme-shim';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
-import { commonAppProps } from '../DefaultProviders';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
@@ -30,7 +28,6 @@ import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, ConfigProvider } from 'antd';
 import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -323,7 +320,6 @@ const AutoAdminPrimaryColorProvider = ({
 }) => {
   'use memo';
 
-  const primaryColors = usePrimaryColors();
   // Apply the admin primary color on any non-project scope (global `admin` and
   // `projectAdmin`). Derived from the matched route handle via `useRouteScope`
   // rather than the role-filtered `isSelectedAdminCategoryMenu`, so the admin
@@ -333,27 +329,17 @@ const AutoAdminPrimaryColorProvider = ({
   const isAdminScope = useRouteScope() !== 'project';
   if (isAdminScope) {
     return (
-      // `AstryxAdminTheme` is the Astryx half of this accent swap (ticket 02);
-      // the antd `ConfigProvider` + `App` pair below is the antd half and
-      // STAYS until the Form engine and the remaining antd surfaces go
-      // (ticket 35) — the two switches are independent (MAPPING §5), so both
-      // must be driven for an admin page to look right in either library.
-      <AstryxAdminTheme>
-        <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: primaryColors.admin,
-            },
-          }}
-        >
-          {/* `display: contents` removes App's structural div from layout so
-              admin-scope Outlet content participates in the same flex context
-              as the other scopes (keeps route-error screens centered). */}
-          <App {...commonAppProps} style={{ display: 'contents' }}>
-            {children}
-          </App>
-        </ConfigProvider>
-      </AstryxAdminTheme>
+      // `AstryxAdminTheme` is now the WHOLE accent swap. It used to be paired
+      // with an antd `ConfigProvider` (`colorPrimary: primaryColors.admin`)
+      // plus an antd `<App>` for the message/modal/notification holders,
+      // because the two libraries' theme switches were independent (MAPPING
+      // §5) and both had to be driven. The final switch removed the antd side
+      // entirely: no antd component is left to theme, and the `App` holders
+      // were replaced by `BAIAppProvider` (app-shim, ticket 04), which is
+      // mounted once app-wide in `DefaultProviders`. Dropping the `App`
+      // wrapper also drops the `display: contents` workaround its structural
+      // div needed.
+      <AstryxAdminTheme>{children}</AstryxAdminTheme>
     );
   }
 

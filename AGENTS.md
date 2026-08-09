@@ -39,11 +39,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **React web application** using React 19 + Astryx (`@astryxdesign/core`) + Relay 20 (GraphQL).
 
-**Astryx is the component system.** New UI is written against Astryx directly (see the
-`ASTRYX` block below for the discover-don't-guess workflow). Ant Design is being removed
-on the `to-astryx` branch and survives only on the not-yet-migrated surface — treat every
-remaining `from 'antd'` import as migration debt, never as a pattern to copy. Current
-remainder and the plan to close it: `.scratch/astryx-migration/REMAINDER.md`.
+**Astryx is the component system, and the only one.** New UI is written against Astryx
+directly (see the `ASTRYX` block below for the discover-don't-guess workflow). Ant Design
+is **gone** — removed on the `to-astryx` branch, down to the dependency itself: no
+`package.json` declares it, no source file imports it, and there is no antd
+`ConfigProvider` in the tree. `scripts/antd-zero-gate.sh` asserts all three (production
+dependency graph / built bundle / source import graph) and must stay green. A `from
+'antd'` import is not migration debt any more; it is a regression that will not install.
 
 ### Key Technologies
 
@@ -51,7 +53,7 @@ remainder and the plan to close it: `.scratch/astryx-migration/REMAINDER.md`.
 - **Component Library Build**: Vite (`packages/backend.ai-ui/`)
 - **Service Worker**: `vite-plugin-pwa` (Workbox under the hood), integrated into the Vite build
 - **Package Manager**: pnpm with workspace monorepo
-- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Ant Design remains on the un-migrated surface; `antd-style` was removed in to-astryx ticket 33, and `@ant-design/icons` / `@ant-design/cssinjs` / `@ant-design/colors` in ticket 35.
+- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Nothing injects `<style>` at runtime any more — `antd-style` went in to-astryx ticket 33, `@ant-design/icons` / `@ant-design/cssinjs` / `@ant-design/colors` in ticket 35, and antd's own cssinjs with the final switch.
 - **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
 - **GraphQL**: Relay compiler with projects for both `react/` and `packages/backend.ai-ui/`
 - **React Compiler**: babel-plugin-react-compiler in annotation mode (`'use memo'` directive)
@@ -143,7 +145,6 @@ Production build (`pnpm run build`) runs these steps sequentially:
 
 - **react** 19, **react-dom** 19 - UI framework
 - **@astryxdesign/core** 0.3 (+ `@astryxdesign/lab`, `@astryxdesign/theme-neutral`) - component system
-- **antd** 6 - legacy component library, migration debt only (see Architecture above)
 - **react-relay** 20, **relay-runtime** 20 - GraphQL client
 - **jotai** - Atomic state management
 - **i18next**, **react-i18next** - Internationalization
@@ -248,7 +249,7 @@ RULES:
 - Custom styling: component props first; else the xstyle prop / StyleX tokens (@astryxdesign/core/theme/tokens.stylex). No raw hex/px.
 - Tokens for every value (`astryx docs tokens`). Brand/accent via `astryx theme` — never override --color-* in :root.
 - SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `astryx component <Name>` / `astryx search "<thing>"`; don't hand-roll CSS.
-- MIGRATION RELAXATION (antd → Astryx, branch to-astryx): the className=/style={{…}} part of the SELF-CHECK applies ONLY to Astryx-native code. Frontier components and un-migrated antd files keep their antd idioms (className, style) — do not rewrite them to xstyle until the file itself is migrated. `antd-style` is NOT among those idioms any more: ticket 33 removed the dependency, and a style that cannot be expressed with props/xstyle goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens.
+- MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `theme.useToken()` reads. Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine.
 
 MORE CLI:
   search "<query>"   find any component / hook / doc / template / block

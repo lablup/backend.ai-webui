@@ -19,7 +19,6 @@ The design-system contract is **Astryx**:
 | `react-relay` / `relay-runtime` / `graphql` | yes                   | The `fragments/` components are Relay-bound.                        |
 | `@tanstack/react-query`                     | yes                   | `BAIConfigProvider` owns the QueryClient.                           |
 | `react-router-dom`                          | yes                   | `BAILink` and friends.                                              |
-| `antd`, `@ant-design/icons`                 | **optional — legacy** | See "The residual antd surface".                                    |
 
 `@astryxdesign/core` and `@astryxdesign/theme-neutral` are peers, **not**
 dependencies and **not** bundled. They were `devDependencies` until ticket 30,
@@ -30,35 +29,38 @@ app would not be seen by BUI's components, and vice versa. If you ever see
 theme values diverge between app-level and BUI-level components, check for a
 duplicated `@astryxdesign/core` first.
 
-### The residual antd surface
+### There is no antd surface any more
 
-BUI is **not yet antd-free in its source** — the antd `Form` engine, the legacy
-`BAITable` and `BAIModal`/`BAICard` internals still import it. `antd-style` is
-gone as of ticket 33: every `createStyles` block became a co-located `.css`
-file next to its component (P17), so the styling engine no longer participates
-in the peer contract at all. What ticket 30 changed is the _contract_: `antd`
-and `@ant-design/icons` are declared `optional` in `peerDependenciesMeta`, so
+BUI has **no antd in its source, its peers, or its types**. The last of it went
+in the to-astryx final switch, which removed the antd `ConfigProvider` leg of
+`BAIConfigProvider` and, with it, the 21 `src/locale/*_*.ts` modules that
+existed only to hand antd's `Locale` bundles to that provider (they were also
+the `backend.ai-ui/dist/locale/*` package export — that export is gone too, see
+"Localization" below).
 
-- a consumer that only touches the Astryx-native surface (`BAITableAstryx`,
-  `BAIComplexSelect`, `BAIPropertyFilter`, the `*SelectAstryx` wrappers, the
-  `theme-shim` / `app-shim` / `iconShim` modules) **installs and runs with no
-  antd in its dependency tree** — nothing it imports pulls antd in, and pnpm no
-  longer warns about the missing peer, and
-- a consumer that reaches the legacy surface must supply antd itself.
+The path here is worth knowing, because the intermediate states are still
+visible in comments across the package:
 
-One honest caveat: this is a **runtime/install** guarantee, not yet a
-type-level one. `dist/index.d.ts` re-exports the whole surface, and the legacy
-wrappers still describe themselves in antd's types (`BAICardProps extends
-Omit<CardProps, 'extra'>`, and so on), so `tsc` against the barrel still wants
-antd's declarations present. Emptying that out is the job of the tickets that
-retire the remaining antd components, not of the peer contract.
+- `antd-style` went in ticket 33 — every `createStyles` block became a
+  co-located `.css` file next to its component (P17), so no styling engine
+  injects `<style>` at runtime.
+- Ticket 30 demoted `antd` / `@ant-design/icons` to **optional** peers, which
+  made the install-time guarantee ("a consumer touching only the Astryx-native
+  surface needs no antd") true while the legacy components still imported it.
+  That ticket's own honest caveat was that the guarantee was runtime-only:
+  `dist/index.d.ts` still described wrappers in antd's types, so `tsc` against
+  the barrel still wanted antd's declarations.
+- The final switch closed the type-level hole as well. The two type imports
+  that survived every render conversion — `GlobalToken` (the shape
+  `theme.useToken()` returns) and `antd/es/locale`'s `Locale` — are now
+  `src/theme-shim/tokenType.ts`, a frozen capture of antd 6.5.0's token shape,
+  and a `BAILocale` that carries only `lang`.
 
-The alternative designs were considered and rejected: moving the antd files to
-a `backend.ai-ui/legacy` entrypoint would have split `BAITableProps` and the
-column helpers away from their Astryx successor mid-migration (every remaining
-call site imports both), and dropping antd from the peer list entirely would
-have made a real runtime requirement invisible. Optional-peer is the honest
-description of "some of this package needs antd, most of it no longer does".
+One antd-family package remains, in `devDependencies` only:
+`@ant-design/colors`, which `src/theme-shim/themeShim.test.ts` uses as the
+reference implementation its vendored port (`theme-shim/vendor/antdColors.ts`)
+is asserted bit-identical to. It ships in nothing and is invisible to the
+production dependency graph. `scripts/antd-zero-gate.sh` is the authority.
 
 ### CSS
 
@@ -254,18 +256,27 @@ Components that are not related to Relay can be tested using Storybook.
 
 ## Localization
 
-We provide locale options for `backend.ai-ui`. Locale files are located in `src/locale`, and you can use them with `BAIConfigProvider` as follows:
+BUI's own catalogs live in `src/locale/*.json` and are bundled into the
+package's single entry. A host selects the language by handing
+`BAIConfigProvider` a `BAILocale` — which is just the language code:
 
 ```tsx
-import { BAIConfigProvider } from 'backend.ai-ui';
-// select your language
-import en_US from 'backend.ai-ui/dist/locale/en_US';
+import { BAIConfigProvider, type BAILocale } from 'backend.ai-ui';
+
+const locale: BAILocale = { lang: 'en' };
 
 const App = ({ children }) => {
   // please use BAIConfigProvider at the top-level root
-  return <BAIConfigProvider locale={en_US}>{children}</BAIConfigProvider>;
+  return <BAIConfigProvider locale={locale}>{children}</BAIConfigProvider>;
 };
 ```
+
+> Until the to-astryx final switch this was `import en_US from
+> 'backend.ai-ui/dist/locale/en_US'`, one of 21 published per-language modules.
+> Each carried an `antd/es/locale/*` bundle in `BAILocale.antdLocale`, whose
+> only consumer was antd `ConfigProvider`'s `locale` prop. With that provider
+> gone the modules, the `./dist/locale/*` package export and the field were all
+> removed rather than left as dead surface.
 
 ### How many i18n runtimes are there? (P13)
 

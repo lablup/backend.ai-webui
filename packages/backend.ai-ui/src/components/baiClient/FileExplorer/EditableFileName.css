@@ -5,7 +5,7 @@
  Co-located styles for <EditableFileName>, imported by the component itself
  (P17). No theme token is involved.
 
- to-astryx W2-D: the hover-reveal rules were keyed on `.ant-typography-edit`,
+ to-astryx W2-D: the hover-reveal rules were keyed on `ant-typography-edit`,
  the anchor antd injected for `Typography.Text editable`. That element no
  longer exists (the affordance is an Astryx `IconButton` now), so the selector
  is re-pointed at the button's own class rather than left silently matching
@@ -13,7 +13,7 @@
 
  Ticket 35 re-pointed the margin rule the same way. The rename field sits in
  the self-hosted form engine now, so its item root is `[data-bai-form-item]`
- and the old `.ant-form-item*` selectors had stopped matching anything —
+ and the old `ant-form-item*` selectors had stopped matching anything —
  which would have left this field with the shell's default 24px bottom margin
  inside a single-line inline editor. `!important` still wins over the shell's
  inline `marginBottom` (author `!important` beats a non-important inline

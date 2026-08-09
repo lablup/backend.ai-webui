@@ -53,7 +53,7 @@
 /*
  The strip. `hasDivider` gives the rail; the card style only recolours it and
  removes the reserved gap, because boxed tabs sit ON the rail rather than above
- it (antd: the tab's own bottom border coincides with `.ant-tabs-nav::before`).
+ it (antd: the tab's own bottom border coincides with `ant-tabs-nav::before`).
 */
 .bai-tab-list--card {
   align-items: flex-end;
@@ -75,7 +75,7 @@
   margin-block-end: calc(-1 * var(--border-width));
   /* The line style's hover pill is a rounded overlay sized to the tab; on a
      boxed tab it would round the wrong corners. Card tabs signal hover with the
-     accent text colour, as antd did (`.ant-tabs-tab:hover { color: … }`). */
+     accent text colour, as antd did (`ant-tabs-tab:hover { color: … }`). */
   --color-overlay-hover: transparent;
 }
 

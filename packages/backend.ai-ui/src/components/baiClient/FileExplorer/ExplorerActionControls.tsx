@@ -15,7 +15,6 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
-import './ExplorerActionControls.css';
 import { useUploadVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';

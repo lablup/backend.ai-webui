@@ -1,271 +1,199 @@
 # `to-astryx` → `main` merge checklist
 
-**Status as of phase 3 wave 3: NOT merge-ready.** This document exists so the
-decision is made on measurements rather than on a ticket count. Read
-"Blocking" first; the rest only matters once those are closed.
+**Status: the migration's compliance goal is MET.** `antd` is not a dependency
+of any workspace, no shipping file imports it, and `scripts/antd-zero-gate.sh`
+is green on all three parts. What is left before merge is *verification*, not
+migration work — and one of those steps (the live e2e suite) cannot run in an
+agent session at all. Read "Blocking" for what that means.
 
-The branch is *healthy* — `verify.sh` passes, both unit suites pass, the
-production build succeeds. It is not *done*: the compliance goal of this
-migration is the removal of the antd family, and **58 shipping files still
-render antd**. See `REMAINDER.md` (generated, re-runnable) for the inventory.
-
-> **The counts below moved twice, and only once because work landed.**
-> The old figure in this file was 285. Waves 1–3 genuinely closed three whole
-> owner buckets (BUI · fragments, BUI · components, BUI · Table). But the
-> report itself was also *lying in both directions* until p3-w3b fixed two
-> parser bugs in `scripts/migration-gates/`:
->
-> - **Comments counted as imports.** Migration comments here quote the antd
->   line they replaced (`// -import { Form } from 'antd';`). Three files —
->   `app-shim/bridge.ts`, `app-shim/index.tsx`, `form-engine/engine.ts` — were
->   ranked as the top antd hubs, at 577–579 taint each, while containing no
->   antd import at all. They are the *replacements*.
-> - **Render files were being reported as type-only.** `classifyAntdImports`
->   matched with `[\s\S]*?` between `import` and `from 'antd'`, so a match
->   could begin at any earlier `import` keyword and swallow the statements
->   between. Nearly every file here opens with
->   `import type { …Fragment$key } from '…'`, so the captured clause began
->   with `type ` and the antd import was skipped.
->
-> Both are fixed; treat any planning done against a pre-p3-w3b report as
-> suspect. In particular, **do not plan off the hub ranking alone** — see
-> "Work the hubs" below for why its top entries carry no convertible antd.
+Everything above the divider in `REMAINDER.md` is regenerated from
+`scripts/migration-gates/antd-remainder-report.mjs`; this file is the human
+decision record.
 
 ---
 
-## Why this is binary
+## Why this was binary
 
-MIGRATION-SPEC §1 fixes the compliance model: because antd's `Form` was kept
-until last, **there is no partial-compliance milestone.** Compliance is
-achieved at one instant — when the last antd render disappears and
-`antd-zero-gate.sh` turns green — and not before. A merge that lands 90% of
-the migration delivers 0% of the compliance benefit while paying 100% of the
-UX cost (§2.5: mixed antd/Astryx design surfaces shipping side by side).
+MIGRATION-SPEC §1 fixes the compliance model: because antd's `Form` and its
+`ConfigProvider` were kept until last, **there was no partial-compliance
+milestone.** Compliance is achieved at one instant — when the last antd render
+disappears and `antd-zero-gate.sh` turns green — and not before. A merge that
+landed 90% of the migration would have delivered 0% of the compliance benefit
+while paying 100% of the UX cost (§2.5: mixed antd/Astryx design surfaces
+shipping side by side).
 
-That is the whole argument for the single-switch strategy, and it is the
-reason this checklist does not offer a "merge the good parts" option.
+That is the whole argument for the single-switch strategy, and it is why this
+checklist never offered a "merge the good parts" option.
+
+---
+
+## What the final switch removed
+
+The five items this file listed as blocking are all closed. For the record, in
+the order they came out:
+
+1. **The 21 antd locale bundles.** `packages/backend.ai-ui/src/locale/*_*.ts`
+   re-exported `antd/es/locale/*` into `BAILocale.antdLocale`, and were
+   published as the `backend.ai-ui/dist/locale/*` package export (globbed into
+   `vite.config.ts`'s lib entries). Their only consumer was antd's
+   `ConfigProvider locale` prop. Deleted with the export, the vite glob, the
+   `react/tsconfig.json` path alias, and the `Locale` type import in
+   `locale/index.ts` — the single biggest transitive drop, since that barrel
+   tainted 681 files. `BAILocale` is now `{ lang: string }`, published from
+   BUI's main entry, and `react/src/helper/bui-language.ts` derives its map
+   from `SUPPORTED_LANGUAGES` instead of restating 21 imports.
+
+2. **The theme producers.** `ReverseThemeProvider`, `ThemeAdminProvider` and
+   `ThemeSecondaryProvider` each built an antd `ThemeConfig` and installed it
+   through a nested `ConfigProvider`, reading `ConfigProvider.ConfigContext` to
+   inherit the parent's algorithm. All three are deleted. Their Astryx
+   counterparts (`react/src/astryx-theme/AstryxAdminTheme` /
+   `AstryxSecondaryTheme` / `AstryxReverseTheme`, ticket 02, mode re-passed
+   explicitly because a nested `<Theme>` falls back to `system`) were already
+   built and, for `AstryxAdminTheme`, already mounted alongside the antd half.
+
+   Two call sites needed a decision rather than a rename, because by the final
+   switch **neither antd provider was affecting anything** — every descendant
+   had already converted, so each was re-theming an empty set:
+   - `StartPage`'s deployment card → `AstryxSecondaryTheme`. This restores the
+     secondary accent on the card's action button, which had silently reverted
+     to the brand accent when `ActionItemContent` converted. See "Known
+     partial fidelity" below for what it does *not* restore.
+   - `BAINotificationButton` → `MediaTheme mode="dark"`, wrapping only the
+     trigger. That is the same primitive `WebUIHeader` wraps the sibling band
+     controls in, so the bell's tooltip now matches theirs. The notification
+     drawer stays outside it: Astryx renders overlays as inline siblings, not
+     portals, so a drawer inside an on-dark context paints as a dark surface in
+     light mode.
+
+3. **The provider stack.** `DefaultProviders` no longer mounts `ConfigProvider`
+   or antd's `<App>`; `MainLayout`'s admin scope is `AstryxAdminTheme` alone;
+   `react/src/index.tsx` no longer installs a `holderRender` for antd's static
+   methods. `BAIConfigProvider` keeps its Astryx
+   `InternationalizationProvider` + BUI locale wiring (ticket 30) and lost its
+   antd leg, along with the `theme` / `csp` / `modal` / `drawer` / `tag`
+   pass-through props that only that leg could consume.
+
+   `globalThis.baiNonce` now has **no consumer in the React tree**: antd's
+   cssinjs was the last runtime `<style>` injector, and Astryx injects none.
+   The nonce is still emitted for `index.html`'s inline scripts.
+
+4. **The two surviving type imports**, which shipped nothing but kept antd
+   required for `tsc` and kept ~640 files inside the import-graph gate:
+   - `GlobalToken` (`theme-shim/index.tsx`) → `theme-shim/tokenType.ts`, a
+     generated-then-frozen capture of antd 6.5.0's token shape produced with
+     the TypeScript checker at removal time. ~494 alias tokens with their exact
+     `string` / `number` types, so none of the ~500 `token.*` reads across the
+     app lost a type. Per-component token blocks are typed openly (only
+     `token.Layout?.{headerBg,headerHeight}` is ever read).
+   - `SorterResult` (`hooks/reactPaginationQueryOptions.tsx`) → the two picked
+     members restated inline.
+
+5. **The dependency.** `antd` is out of `react/package.json`, out of BUI's
+   `peerDependencies` + `peerDependenciesMeta`, and out of the
+   `pnpm-workspace.yaml` catalog (along with the already-unused
+   `@ant-design/icons` catalog entry). `react/src/fix_antd.css` is deleted
+   (nothing imported it). `react/vite.config.ts` drops `antd` /
+   `@ant-design/icons` / `@ant-design/colors` from `optimizeDeps.include`.
+
+   **One antd-family package remains and should:** `@ant-design/colors`, a
+   `devDependency` of `packages/backend.ai-ui`, is the reference implementation
+   that `theme-shim/themeShim.test.ts` asserts the vendored
+   `theme-shim/vendor/antdColors.ts` is bit-identical to. It ships in nothing
+   and is invisible to gate part (a), which walks production dependencies only.
+
+### Things that had to be frozen rather than deleted
+
+Three artifacts were computed *from* antd and are now constants. Each says so
+in its own header, including how to regenerate deliberately:
+
+| Artifact | Was | Why frozen |
+|---|---|---|
+| `theme-shim/tokenType.ts` | `import type { GlobalToken } from 'antd'` | ~500 call sites are typed against this shape |
+| `theme-shim/antdDesignTokenFixture.ts` | `antdTheme.getDesignToken()` computed live in `themeShim.test.ts` | the parity test's expected values; the file's own header always said "when the npm package is removed, freeze these" |
+| `resources/antdThemeConfig.schema.json` | generated by `scripts/gen-theme-schema.cjs` from antd's `.d.ts` | `resources/theme.json` is still authored in antd token names — that vocabulary is what the theme-shim reads |
+
+The form-engine acceptance suite
+(`react/src/form-engine/formEngineAcceptance.test.tsx`) is the fourth case and
+was handled differently: it ran `describe.each` over `[['antd', AntdForm],
+['engine', EngineForm]]` so the antd row acted as a live oracle. Its header
+planned for this exact moment — the antd row is dropped and the engine row
+becomes a plain regression suite. The 29 assertions are unchanged and carry the
+oracle's verdict forward because they passed against real antd on every run up
+to this commit.
+
+### Migration scaffolding that was removed with its subject
+
+- **`react/theme-probe/` (55 files)** — the A/B harness that rendered the same
+  screen on both stacks side by side (`form.html?variant=antd|bai` and 20 more
+  pages). Its "before" side no longer exists. It was never part of the app
+  build, tsconfig, lint or prettier scope, so it would have sat there importing
+  an uninstalled package indefinitely.
+- **the `visual-harness` job** in `.github/workflows/astryx-migration-gates.yml`,
+  which drove that harness. `scripts/migration-gates/visual-compare.mjs`
+  **stays** — it compares two arbitrary URLs and is the tool for any future
+  before/after.
+- **the `@rc-component/motion` `transitionend` auto-completer** in
+  `packages/backend.ai-ui/setupTests.ts`, a MutationObserver on every class
+  mutation in every BUI test, for animations nothing produces any more.
+- **`react/src/pages/SessionLauncherPage.css`**, whose single rule targeted
+  `.ant-radio`.
+
+### Dead `.ant-*` selectors that were still being queried
+
+The `.ant-*` gate surfaced four live queries — not comments — that had stopped
+matching anything when their components converted. Each failed *silently*,
+which is why they survived:
+
+- `SessionLauncherErrorTourProps` (`.ant-card-head`) and
+  `AdminDeploymentPresetValidationTour` (`.ant-card-extra`) — both anchor a
+  product-tour step to part of `BAICard`'s header. `BAICard` was rebuilt on
+  Astryx in W2-D and stopped emitting those classes; a null tour anchor
+  degrades to an unanchored step rather than throwing. `BAICard` now emits
+  `bai-card__head` / `bai-card__extra` **as anchors**, both tours point at
+  them, and `BAICard.test.tsx` has two assertions so this cannot recur
+  silently.
+- `DeploymentAddRevisionModal`'s scroll-to-first-error scoped its query with
+  `.ant-modal-body`, dead since `BAIModal` became an Astryx `Dialog` — so the
+  whole selector returned null and a failed submit scrolled nowhere. Now
+  `dialog[open]`.
+- `useKeyboardShortcut`'s `'.ant-modal, dialog[open]'` — the first alternative
+  is dead; the second already covered every modal.
 
 ---
 
 ## Blocking — must be closed before merge
 
-### 1. 58 files still render antd
+### 1. The live e2e suite has not been run
 
-`node scripts/migration-gates/antd-remainder-report.mjs` — current split:
-
-| Owner | Files | What it really is |
-|---|---:|---|
-| BUI · infrastructure (shims, hooks, helper) | 23 | 21 locale bundles + 1 test helper + **1** real conversion |
-| app · components | 22 | the provider stack (item 3) + `@ant-design/x` (item 2) + genuine work |
-| app · pages | 9 | genuine work |
-| app · other | 2 | `react/src/index.tsx` (provider mount) + `helper/index.tsx` (see item 2) |
-| BUI · fragments | 1 | `BAIRuntimeVariantPresetSettingModal` |
-| BUI · components | 1 | `BAIConfigProvider` (item 3) |
-
-Plus 4 **type-only** importers, which ship nothing and are erased by `tsc`:
-`locale/index.ts`, `theme-shim/index.tsx`, `Chat/ChatInput.tsx`,
-`hooks/reactPaginationQueryOptions.tsx`.
-
-This is MIGRATION-SPEC Phase 3 ("재구축 버킷"). Three owner buckets that used to
-be on this list — BUI · fragments (46), BUI · components (45), BUI · Table (4)
-— are now closed.
-
-**Work the hubs, but read the hub list correctly.** The report ranks
-direct-antd files by how many other files they make antd-reachable, and BUI
-infrastructure still sits at the top. That ranking is *not* a work queue:
-
-| Hub | Taints | Convertible now? |
-|---|---:|---|
-| `locale/index.ts` | 658 | No — `import type { Locale }`, erased at build |
-| `theme-shim/index.tsx` | 619 | No — `import type { GlobalToken }`, the token-shape contract ~600 call sites are typed against |
-| `form-engine/index.ts` | 562 | **Closed** — unparked 2026-08-09; it re-exports `./engine`, not antd (item 4) |
-| `useSchedulingHistoryExpandable.tsx` | 549 | **Yes** — the only genuinely convertible BUI-infra file left |
-| `BAIConfigProvider.tsx` | 547 | No — item 3 |
-
-So the actionable BUI-infrastructure item is exactly one file:
-`packages/backend.ai-ui/src/hooks/useSchedulingHistoryExpandable.tsx` renders
-an antd `Dropdown` + `Tooltip` kebab as the scheduling-history table's
-`expandColumnTitle`. `DropdownMenu` + Astryx `Tooltip`, ~30 lines; the
-precedent is `packages/backend.ai-ui/src/components/Table/BAINameActionCell.tsx`,
-which builds the same overflow pattern.
-
-`packages/backend.ai-ui/src/tests/storybook-mock-utils.ts` is a **scoping
-artifact, not work**: it is test-only, absent from `src/index.ts` and from the
-vite lib entries, imported only by four `*.stories.tsx` files that the scanner
-itself excludes, and it taints 0 files. `EXCLUDE_DIR` covers `__tests__` but
-not `tests/`. Fix the exclude list rather than converting it.
-
-### 2. `@ant-design/x` cannot be converted away — it must be removed
-
-`@ant-design/x` declares `peerDependencies { antd: ^6.1.1 }` and hard-depends
-on `@ant-design/icons`, `@ant-design/cssinjs`, `@ant-design/colors` and
-`@rc-component/*`. With `autoInstallPeers: true` that peer resolves into the
-production graph, so **this one package keeps gate part (a) red no matter how
-much first-party code is converted.**
-
-Four call sites, kept as frontier by ticket 23:
-
-- `react/src/components/Chat/ChatMessage.tsx` — `FileCard` (render)
-- `react/src/components/Chat/ChatSender.tsx` — `Attachments`, `Attachment`,
-  `Sender` (render), plus a deep `@ant-design/x/es/attachments` import
-- `react/src/components/Chat/ChatInput.tsx` — `AttachmentsProps`, genuinely
-  `import type`
-- `react/src/helper/index.tsx` — `import { AttachmentsProps }`, **no `type`
-  keyword**. This file was previously listed here as "(type)"; it is not. A
-  type imported in value position keeps a 388-taint entry in the RENDER
-  bucket. Adding `type` is a one-word change and should be done before any of
-  the real work below.
-
-Needs a self-hosted attachment/file-card surface, per the spec's simplicity
-policy (implement what the call sites actually use, drop the rest and record a
-`PILOT-DECISION`).
-
-### 3. The antd `ConfigProvider` / `App` stack is still load-bearing
-
-`DefaultProviders.tsx`, `MainLayout.tsx`, `ThemeAdminProvider.tsx`,
-`ThemeSecondaryProvider.tsx`, `ReverseThemeProvider.tsx`, `index.tsx` **and
-`packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx`**
-(the BUI-side mount, 547 taint — previously missing from this list) still mount
-antd's providers. **This is correct right now** and must not be removed early:
-those providers are what style the 58 unconverted files. They come out *last*,
-after item 1 — removing them first would leave the remaining antd components
-unstyled rather than migrated.
-
-The `App` half is already solved and just needs repointing:
-`packages/backend.ai-ui/src/app-shim/` is a complete Astryx-backed
-`App.useApp()` / `message` / `modal` replacement (Layer + Toast), and most call
-sites import from it today.
-
-### 4. ~~The form engine is PARKED~~ — DONE (2026-08-09)
-
-**Both blockers are closed. The form engine is LIVE and the localized
-`validateMessages` prerequisite is satisfied.**
-
-`packages/backend.ai-ui/src/form-engine/index.ts` and
-`react/src/form-engine/index.ts` now resolve to the self-hosted engine, so all
-115 `from '../form-engine'` call sites run it — unedited, which is what the
-alias was built for. `Form.Item` IS `BAIFormItem`, so 277 plain `<Form.Item>`
-sites render `[data-bai-form-item]` instead of `.ant-form-item*`, and
-`BAIFormItem.tsx` is a re-export again (its `antd/es/form/context` deep import
-and its duplicate CSS are both gone). `DefaultProviders` mounts
-`<FormConfigProvider>`; the antd `ConfigProvider` keeps only its non-form legs.
-`git grep "from 'antd" -- packages/backend.ai-ui/src/form-engine
-react/src/form-engine react/src/components/BAIFormItem.tsx` returns nothing but
-the acceptance suite's deliberate antd reference row.
-
-**Localized validation messages: done, and provably byte-identical.** The ~25
-templates × 21 languages were ported out of antd's own MIT locale files by
-`.scratch/astryx-migration/extract-validate-messages.mjs` into
-`form.validateMessages` in each `packages/backend.ai-ui/src/locale/*.json`
-(key shape follows `i18n.schema.json`: lowercase = group, uppercase = leaf).
-`form-engine/FormConfigProvider.tsx` reads them through BUI's i18next and
-supplies them as the default `validateMessages`, so no call site passes
-anything and a language change re-resolves the table.
-
-Proof: `/theme-probe/form.html?state=error&lang=<x>` renders the SAME form on
-both stacks side by side and the message-less `{ required: true }` rules come
-out **identical in all 7 languages spot-checked** (en/ko/ja/de/zh-CN/ru/th) —
-antd's locale bundle vs BUI's ported catalogs, same strings.
-`packages/backend.ai-ui/src/form-engine/FormConfigProvider.test.tsx` pins the
-same behaviour in CI (8 cases: 4 languages, `${max}`/`${type}` interpolation
-through a translated template, explicit-prop precedence, and a `cimode`
-fallback that must never leak a dotted i18n key).
-
-**So step 3 of the plan below is done, and step 4's first half is done.** What
-remains of step 4 is only the locale-bridge deletion: `antdLocale` is still on
-`BAILocale` and still feeds antd's OWN component strings (table pagination,
-date picker). Nothing in the form path reads it any more.
-
-### 5. Gates must actually be green
-
-```bash
-bash scripts/antd-zero-gate.sh          # parts (a) prod graph, (b) bundle, (c) import graph
-node scripts/migration-gates/ant-selector-gate.mjs
-node scripts/migration-gates/astryx-token-gate.mjs
-```
-
-Part (b) only runs after `pnpm run build`, so build first — and the build
-needs a root `config.toml` (gitignored; `cp config.toml.sample config.toml`).
-Without it the build aborts early, and before ticket 35 the gate would scan
-the half-populated `build/web` and report **PASS**. That is fixed; part (b)
-now refuses to trust a build that produced too few assets.
-
-Do not add allowlist entries to make these pass — the gate's value is that it
-cannot be negotiated with. **Read the "Gate caveats" section of
-`REMAINDER.md` first**: `anticon` is a first-party class name now, so part (b)
-will keep firing on it after antd is gone. `iconShim.tsx` emits `anticon`
-(:118) and `anticon-spin` (:84), BUI ships the matching CSS in
-`dist/backend.ai-ui.css`, and **two** live e2e locators still use it —
-`e2e/user-profile/user-profile.spec.ts:250` (`.anticon-close`) and
-`e2e/auto-scaling-rule-preset/preset-table-settings.spec.ts:298`
-(`.anticon-check, [aria-label="check"]`). Every other `.anticon-*` hit under
-`e2e/` is a comment recording that the class is gone. The fix is to rename the
-shim's class to a BAI-namespaced one and repoint those two locators — **not**
-to delete the signature, which is what would catch a real `@ant-design/icons`
-reintroduction.
-
-Also stale: `scripts/antd-zero-gate.sh` (lines 28–35) still carries a "KNOWN
-CAVEAT" saying part (a) cannot go green while `@lobehub/fluent-emoji` /
-`@lobehub/icons` are installed. Ticket 30 removed both — neither appears in any
-`package.json`, and `react/src/components/brandIcons/generated/*` is the
-replacement. Delete that caveat or it will send someone chasing a dependency
-that no longer exists.
-
----
-
-## The ordered path to antd-zero
-
-Measured, not estimated. Steps 1–2 are independent; 3 gates 4; 5 must be last.
-
-1. **`react/src/helper/index.tsx`: add the missing `type` keyword** (item 2).
-   One word, −1 RENDER file, −388 taint.
-2. **Convert the remaining real files** — 9 pages, the non-provider half of
-   app · components, `BAIRuntimeVariantPresetSettingModal`, and the single BUI
-   hook `useSchedulingHistoryExpandable`. Provider files are excluded here;
-   they are step 5.
-3. ~~**Author first-party localized `validateMessages`**~~ — **DONE** (item 4).
-4. ~~**Unpark the form engine**~~ — **DONE** (item 4). Still open: **delete the
-   locale bridge
-   atomically**: drop `antdLocale` from `BAILocale` (`locale/index.ts`), strip
-   `import xx_XX from 'antd/es/locale/xx_XX'` from all 21 published
-   `locale/*_*.ts` entries, and update `react/src/helper/bui-language.ts`, the
-   four stories, `.storybook/localeConfig.ts` + `decorators.tsx`, and
-   `src/tests/storybook-mock-utils.ts` in the same change. Astryx's
-   `InternationalizationProvider` — already mounted inside `BAIConfigProvider`
-   — becomes the only locale runtime. These 21 files are published build
-   entries (`vite.config.ts` globs `src/locale/*_*.ts` → `dist/locale/*`), so
-   this is one atomic edit, not 21 independent ones.
-5. **The final provider switch** (item 3), then drop the two remaining
-   `import type`s: `GlobalToken` from `theme-shim/index.tsx` and `Locale` from
-   `locale/index.ts`.
-6. **Remove `@ant-design/x`** (item 2) — self-hosted attachment/file-card
-   surface. Not closable by conversion; the peer dep alone keeps part (a) red.
-7. **Rename the `anticon` class and repoint the two e2e locators** (item 5).
-8. **Build, then run the gates.** `cp config.toml.sample config.toml` →
-   `pnpm run build` → all three gate scripts.
-
----
-
-## Pre-merge steps for the user (once the above are closed)
-
-### Live E2E — cannot run in an agent session
-
-The Playwright suite needs a running Backend.AI cluster, which is not
-available in the dev container. Static checks (lint over `e2e/`) run as part
-of `verify.sh`; **they prove nothing about behaviour.**
+This is the one genuine blocker and it **cannot be closed in an agent
+session**: the Playwright suite needs a running Backend.AI cluster.
 
 ```bash
 pnpm run e2e            # requires a live cluster
 ```
 
-Ticket 31 migrated e2e locators off `.ant-*` selectors onto `data-*` / BAI
-anchors, so a selector-level failure after merge most likely means a component
-lost its anchor attribute, not that the test is stale.
+Two things make this higher-risk than a normal pre-merge e2e run:
 
-### Visual QA — priority screens
+- **846 `.ant-*` references remain under `e2e/`** —
+  `node scripts/migration-gates/ant-selector-gate.mjs` for the list. Ticket 31
+  moved the bulk of the locators onto `data-*` / BAI anchors, but the
+  `e2e/visual_regression/**` suites and a handful of functional specs
+  (`e2e/serving/endpoint-route-table.spec.ts`, `e2e/auth/password-expiry.spec.ts`
+  among them) still select antd DOM that no longer exists. **Expect these to
+  fail, and read a failure as a stale locator, not a broken feature**, unless
+  the same screen also fails a `data-*`-anchored assertion. Re-anchoring them
+  is follow-up work sized off the actual failure list rather than off the grep.
+- The visual-regression baselines were captured against antd rendering. They
+  will not match and need re-baselining as a deliberate step.
 
-Ticket 33 flagged these as the screens where the styling-engine change is most
-likely to surface. Check each in **both light and dark**:
+### 2. Visual QA — priority screens, both modes
+
+The final switch removed the app's entire theming layer in one commit, so a
+theming regression would be global rather than local. The agent sweep covered
+this (see "Live verification performed" below), but a human pass on these is
+still worth it — ticket 33 flagged them as where the styling-engine change is
+most likely to surface:
 
 1. Frameless header drag region (Electron)
 2. `BAIModal` — maximized / minimized / fullscreen states
@@ -273,34 +201,133 @@ likely to surface. Check each in **both light and dark**:
 4. Chat markdown rendering
 5. Session Launcher (the form engine's acceptance surface, ticket 34)
 
-The harness for a mechanical before/after check:
-
-```bash
-node scripts/migration-gates/visual-compare.mjs capture --url <url> --out <dir>
-node scripts/migration-gates/visual-compare.mjs compare --before <a> --after <b> --out <c>
-```
-
-It judges layout anatomy and token compliance, **not pixel equality** — pixel
-differences are expected and policy-sanctioned (component visuals follow
-Astryx defaults; changes belong in the theme layer).
-
-### Electron smoke
+### 3. Electron smoke
 
 `make clean && make dep && pnpm run electron:d`. Ticket 33 verified the
-pipeline; re-verify after the remaining conversions land.
+pipeline; it has not been re-verified since the provider stack came out.
 
-### Push auth
+---
 
-The push needs the `workflow` scope if any `.github/workflows/` file changed:
+## Known partial fidelity (accepted, recorded)
+
+**`StartPage`'s deployment card is only partly on the secondary accent.**
+`AstryxSecondaryTheme` re-themes the Astryx CSS cascade, so the card's action
+button takes the secondary accent again. Its title and icon colours come from
+`theme.useToken().colorPrimary` — and `ThemeShimProvider` is mounted **once**
+at the app root, not per subtree, so the shim hands out the brand accent
+regardless of nested Astryx themes. Before the migration antd's
+`theme.useToken()` *was* per-subtree, so those two elements were teal.
+
+Fixing it properly means either making the shim probe the live cascade per
+consumer (it deliberately does not — `useToken()` is called per table cell and
+a per-call subscription would cost thousands) or converting
+`ActionItemContent`'s three token reads to Astryx custom properties. The second
+is the right answer and is a small, self-contained follow-up; it is not the
+final switch's job.
+
+**`BAIBulkEditFormItem` + `BAISelect` reverts to "Keep as is" on selection.**
+Found while converting `BAIBulkEditFormItem.test.tsx` off antd's `Select`.
+Picking an option blurs the Astryx `Selector` trigger *before* the form value
+commits, so `handleControlBlur` reads `undefined` and resets the mode. Not a
+regression this commit introduces and not reachable in the app — both call
+sites pair the form item with `AstryxFormNumberInput` and `BAICheckbox`, never
+a select — so the test uses a local `<select>` double (documented in the file)
+rather than turning four mode-machine tests into tests of Astryx's popup-blur
+ordering. Worth a follow-up before anyone pairs the two.
+
+---
+
+## Verification performed
+
+### Gates
 
 ```bash
-gh auth refresh -s workflow
+bash scripts/antd-zero-gate.sh          # (a) prod graph, (b) build output, (c) import graph
+node scripts/migration-gates/ant-selector-gate.mjs
+node scripts/migration-gates/astryx-token-gate.mjs
+node scripts/migration-gates/antd-remainder-report.mjs
 ```
 
-### Merge
+Part (b) only runs after `pnpm run build`, and the build needs a root
+`config.toml` (gitignored; `cp config.toml.sample config.toml`). Without it the
+build aborts early and part (b) refuses to trust the half-populated
+`build/web` — it asserts a minimum asset count rather than reporting PASS over
+six static files.
 
-Single merge, no squash — the per-ticket history is the migration's audit
-trail and the rollback granularity (§2.5).
+**Do not add allowlist entries to make these pass.** The gate's value is that
+it cannot be negotiated with. Part (b)'s `anticon` signature in particular must
+stay: final-B renamed the first-party icon class to `bai-icon` precisely so
+that a match there means a real `@ant-design/icons` reintroduction. One
+documented false positive remains and is not fixable from our side —
+`build/web/assets/main-*.js` bundles the Chat token counter's `cl100k_base` /
+`o200k` BPE vocabularies, and `" anticon"` is one of their ~200k merge tokens.
+If that chunk is the *only* hit, the build is clean.
+
+Measured on the final-switch commit, before → after:
+
+| Surface | Before (`3e0f432bd`) | After |
+|---|---|---|
+| Gate (a) production graph | 2 roots: `backend-ai-webui-react → antd`, `backend.ai-ui → antd` | clean |
+| Gate (b) bundle scan | not runnable (antd shipped) | PASS, 607 js/css files scanned |
+| Gate (c) import graph | 966 scanned · 31 direct · 695 antd-reachable · 293 free (29.7%) | 966 scanned · **0 direct · 0 reachable · 966 free (100%)** |
+| `.ant-*` refs in app source | 155 in 47 files | 69 in 35 files, all prose |
+| `pnpm why antd` | 2 workspaces | empty |
+
+### Static
+
+- `bash scripts/verify.sh` → `=== ALL PASS ===` (Relay / Lint / Format /
+  TypeScript / warmup / StyleX / Astryx theme build / Terminology)
+- react vitest: 65 files, 1148 passed. BUI vitest: 37 files + 1 skipped,
+  548 passed.
+- `pnpm run build` — full production build green.
+- `pnpm why antd` → empty.
+
+### Live verification performed
+
+Dev server on 6020 against the shared test cluster, Playwright, both modes,
+dark entered through the HEADER BUTTON (the `useThemeMode` path, not
+`colorScheme`) so the flip exercises the same source of truth the removed
+`ConfigProvider` used to be driven from in parallel.
+
+**17 routes × 2 modes + 5 overlay surfaces × 2 modes. 0 pageErrors anywhere.**
+
+- Routes: start / dashboard / data / session / session-start / deployments /
+  chat / model-store / statistics / my-environment, admin users / settings /
+  information / environment / agent / storage-settings, and usersettings.
+- Overlays — the families that used to render OUTSIDE the themed subtree and
+  were the entire reason for `ConfigProvider.config({ holderRender })`: the
+  folder-create modal, the notification drawer, the user-dropdown panel, an
+  app-shim toast, and the project selector's popup.
+- Every route reported `data-theme` = the expected mode and
+  `data-astryx-theme` = `bai-r8-default-brand-h48p6jt`, i.e. the brand theme
+  actually mounted rather than falling back to theme-neutral.
+- Header band follows the mode through the theme-shim's component tokens:
+  `rgb(255,151,41)` light → `rgb(232,138,40)` dark, matching `theme.json`'s
+  `Layout.headerBg` per mode.
+- Overlays in dark: modal `rgb(31,31,31)`, drawer `rgb(20,20,20)`, both with
+  white text. The user-dropdown panel is on-dark in BOTH modes, which is its
+  own `MediaTheme` and the behaviour to preserve.
+- **Zero antd DOM nodes** on every route and every overlay. (The probe matches
+  on a class-token boundary; `[class*="ant-"]` reports 55–99 phantom hits per
+  page because Cloudscape's `awsui_variant-default_…` contains the substring.)
+- Admin scope renders the admin accent with no antd half present — verified
+  visually on `admin/users` in dark (blue create button, tab underline, icons).
+- The notification bell's tooltip and glyph now measure **identical** to its
+  sibling band controls (`button-theme`, `button-help`) in both modes, which is
+  the point of the `MediaTheme` swap.
+
+Scripts and evidence: `final-switch-login.mjs`, `final-switch-sweep.mjs`,
+`final-switch-belltip.mjs`, `final-switch-sweep-{light,dark}.json`, and
+`shots/final-switch/`. The Playwright storage state is deliberately NOT
+committed — it holds a live `backendaiwebui.sessionid` (`.gitignore` entry
+added).
+
+---
+
+## Merge
+
+Single merge, no squash — the per-ticket history is the migration's audit trail
+and the rollback granularity (§2.5).
 
 ```bash
 git checkout main && git pull
@@ -314,20 +341,17 @@ per `.claude/rules/pnpm-lockfile-conflicts.md`:
 git restore --source=main pnpm-lock.yaml && pnpm install
 ```
 
----
+The push needs the `workflow` scope, because
+`.github/workflows/astryx-migration-gates.yml` changed:
 
-## What ticket 35 did land
+```bash
+gh auth refresh -s workflow
+```
 
-- Removed three dead production dependencies: `@ant-design/icons` (zero real
-  imports remained), `@ant-design/cssinjs` (zero), and `@ant-design/colors`
-  (two call sites repointed at the already-vendored, parity-tested port in
-  `packages/backend.ai-ui/src/theme-shim/vendor/antdColors.ts`). Also dropped
-  `@ant-design/icons` from BUI's optional peers. The antd-family production
-  roots are now exactly three: `react → antd`, `react → @ant-design/x`,
-  `backend.ai-ui → antd`.
-- Added `scripts/migration-gates/antd-remainder-report.mjs` and the generated
-  `REMAINDER.md`, so the remaining work is measured and re-measurable rather
-  than estimated.
-- Corrected the docs that had drifted: `AGENTS.md` (Astryx named as the
-  component system; Electron 35 → 39), `README.md` (stale
-  "webpack via Craco" → Vite; antd → Astryx).
+### After merge
+
+`astryx-migration-gates.yml` is still marked INFORMATIONAL and still only
+triggers on `to-astryx`. Now that the gate is green, the follow-up is to make
+`scripts/antd-zero-gate.sh` a **blocking** check on `main` — that is what turns
+"antd is gone" into "antd cannot come back", and it is the only thing standing
+between this migration and a slow reintroduction.

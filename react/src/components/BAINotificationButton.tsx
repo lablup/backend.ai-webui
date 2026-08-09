@@ -4,10 +4,10 @@
  */
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
-import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { MediaTheme } from '@astryxdesign/core/theme';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
@@ -65,11 +65,23 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   // Naming that directly (`--color-on-dark`, `#ffffff` in both modes) drops two
   // of the three providers and the `Typography.Text` whose only job was to
   // supply a colour, and matches what `WebUIHeader` now does for the rest of
-  // the band. The remaining provider still carries the antd `Tooltip`, whose
-  // inverted surface is a separate concern.
+  // the band.
+  //
+  // The last provider is gone too (final switch). It was still an antd
+  // `ConfigProvider`, and by then nothing under it was an antd component —
+  // the tooltip, the button and the badge are all Astryx — so it re-themed
+  // exactly nothing. `MediaTheme mode="dark"` is the live replacement and the
+  // same primitive `WebUIHeader` wraps the sibling band controls
+  // (`WebUIThemeToggleButton`, `WEBUIHelpButton`) in, so the tooltip panel now
+  // matches theirs instead of following the page polarity.
+  //
+  // It wraps ONLY the trigger. `WEBUINotificationDrawer` stays outside on
+  // purpose: Astryx renders overlays as inline siblings rather than through a
+  // portal (measured — see `UserDropdownMenu.tsx`), so a drawer inside this
+  // context would paint as a dark surface in light mode.
   return (
     <>
-      <ReverseThemeProvider>
+      <MediaTheme mode="dark">
         {/* antd `Tooltip title` -> `content`; `placement="left"` -> `"start"`
             (Astryx uses logical placements — MAPPING §4). */}
         <Tooltip
@@ -108,7 +120,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
             style={{ color: 'var(--color-on-dark)', ...props.style }}
           />
         </Tooltip>
-      </ReverseThemeProvider>
+      </MediaTheme>
       <WEBUINotificationDrawer
         open={isOpenDrawer}
         onClose={() => setIsOpenDrawer((v) => !v)}

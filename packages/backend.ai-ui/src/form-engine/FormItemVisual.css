@@ -40,7 +40,7 @@
 
 /* ================================= form ================================= */
 
-/* antd `.ant-form-inline { display: flex; flex-wrap: wrap }` + the per-item
+/* antd `ant-form-inline { display: flex; flex-wrap: wrap }` + the per-item
    `flex: none; margin-inline-end: token.margin; margin-bottom: 0`. */
 [data-bai-form][data-layout='inline'] {
   display: flex;
@@ -57,7 +57,7 @@
 /* ============================== item + row ============================== */
 
 /*
- antd `.ant-form-item { ...resetComponent(token); vertical-align: top }` +
+ antd `ant-form-item { ...resetComponent(token); vertical-align: top }` +
  `-hidden { display: none }`.
 
  The type reset is load-bearing, not decoration: the label is an `inline-flex`
@@ -77,7 +77,7 @@
   display: none;
 }
 
-/* antd `.ant-row { display: flex; flex-flow: row wrap; min-width: 0 }` */
+/* antd `ant-row { display: flex; flex-flow: row wrap; min-width: 0 }` */
 [data-bai-form-item-row] {
   display: flex;
   flex-flow: row wrap;
@@ -96,7 +96,7 @@
 /* ================================= label ================================= */
 
 /*
- antd `.ant-form-item-label`: a grid Col that does not grow, clips its text and
+ antd `ant-form-item-label`: a grid Col that does not grow, clips its text and
  aligns it to the end. The width therefore comes from the CONTENT unless a
  `labelCol` span is supplied — which is the behaviour the 120px fixed column
  replaced before this pass.
@@ -265,15 +265,6 @@
   max-width: 100%;
 }
 
-/* antd's fix for stray whitespace around a lone Switch / Rate */
-[data-bai-form-item-control-input-content]:has(
-  > .ant-switch:only-child,
-  > .ant-rate:only-child
-) {
-  display: flex;
-  align-items: center;
-}
-
 /* ========================== explain / extra ========================== */
 
 /* antd `-additional { display: flex; flex-direction: column }` */
@@ -328,133 +319,25 @@
 }
 
 /* ======================================================================== */
-/* TRANSITIONAL (ticket 35) — the antd controls still nested inside items.  */
+/* The TRANSITIONAL block that used to end this file is GONE (final switch). */
 /* ======================================================================== */
 
 /*
- antd's Select reads `FormItemInputContext` to tag itself
- `.ant-select-in-form-item`, and THAT class is what stretches it to the control
- width (`select/style`: `&-in-form-item { width: 100% }`). Inside an engine item
- the class is never added, so the rule is reproduced here.
+ It existed for the Ant Design controls that were still nested inside engine
+ form items after ticket 35, and it said so: "it deletes itself when the last
+ one does". Three groups of rules, all keyed on antd control classes:
 
- Scoped to `.ant-select` ONLY, on purpose. An earlier version also stretched
- `.ant-input-number` and `.ant-picker`; antd does NOT — an `InputNumber` in a
- form item keeps its intrinsic 90px width, and stretching it silently widened
- every numeric field and stacked side-by-side ones onto separate lines
- (measured: `nostyle-aggregation`, two InputNumbers, 32px tall in antd and 64px
- in the engine).
+   - stretching a Select to the control width, reproducing the
+     `-in-form-item { width: 100% }` rule antd applied through a context the
+     engine does not provide;
+   - painting the error / warning border on Input / InputNumber / Select /
+     DatePicker / Mentions, for the same context reason;
+   - reserving inline-end padding for the shell-drawn feedback glyph.
+
+ Every one of those controls is Astryx now, and Astryx controls read the
+ engine's own context, so all three groups matched nothing. Keeping them would
+ also have kept `.ant-*` literals in the shipped stylesheet, which
+ `scripts/antd-zero-gate.sh` part (b) correctly reads as antd evidence — CSS,
+ unlike JS, carries its text into the minified bundle.
 */
-[data-bai-form-item-control-input] .ant-select:not(.ant-select-in-form-item) {
-  width: 100%;
-}
 
-/*
- Validation status for those same controls. antd's Input / InputNumber / Select
- / DatePicker colour their own border from `FormItemInputContext`; the engine's
- context is a different object, so an antd control inside an engine item never
- learns it is in an error state and renders a neutral border where antd painted
- a red one.
-
- The React fix would be to also provide antd's context — i.e. re-import antd
- into the engine. This CSS reaches the same pixels without it, keyed on the
- `data-status` the shell already publishes on the item root. It is scoped to
- `.ant-*` class names on purpose: it applies to exactly the controls that have
- not migrated yet, and it deletes itself when the last one does.
-
- Hover and focus are included because antd's status styles cover them too
- (`colorErrorBorderHover` + `colorErrorOutline`); without them an errored input
- reverted to a neutral border the moment the pointer entered it.
-*/
-[data-bai-form-item][data-status='error']
-  [data-bai-form-item-control-input]
-  :is(
-    .ant-input,
-    .ant-input-affix-wrapper,
-    .ant-input-number,
-    .ant-input-number-affix-wrapper,
-    .ant-picker,
-    .ant-mentions
-  ),
-[data-bai-form-item][data-status='error']
-  [data-bai-form-item-control-input]
-  .ant-select-outlined:not(.ant-select-disabled):not(
-    .ant-select-customize-input
-  )
-  .ant-select-selector {
-  border-color: var(--bai-form-item-error-color, var(--color-error, #ff4d4f));
-}
-
-[data-bai-form-item][data-status='error']
-  [data-bai-form-item-control-input]
-  :is(
-    .ant-input,
-    .ant-input-affix-wrapper,
-    .ant-input-number,
-    .ant-input-number-affix-wrapper,
-    .ant-picker,
-    .ant-mentions
-  ):is(:hover, :focus, :focus-within),
-[data-bai-form-item][data-status='error']
-  [data-bai-form-item-control-input]
-  .ant-select-outlined:not(.ant-select-disabled):not(
-    .ant-select-customize-input
-  ):is(:hover, .ant-select-focused)
-  .ant-select-selector {
-  border-color: var(--bai-form-item-error-color, var(--color-error, #ff4d4f));
-}
-
-[data-bai-form-item][data-status='warning']
-  [data-bai-form-item-control-input]
-  :is(
-    .ant-input,
-    .ant-input-affix-wrapper,
-    .ant-input-number,
-    .ant-input-number-affix-wrapper,
-    .ant-picker,
-    .ant-mentions
-  ),
-[data-bai-form-item][data-status='warning']
-  [data-bai-form-item-control-input]
-  .ant-select-outlined:not(.ant-select-disabled):not(
-    .ant-select-customize-input
-  )
-  .ant-select-selector {
-  border-color: var(
-    --bai-form-item-warning-color,
-    var(--color-warning, #faad14)
-  );
-}
-
-[data-bai-form-item][data-status='warning']
-  [data-bai-form-item-control-input]
-  :is(
-    .ant-input,
-    .ant-input-affix-wrapper,
-    .ant-input-number,
-    .ant-input-number-affix-wrapper,
-    .ant-picker,
-    .ant-mentions
-  ):is(:hover, :focus, :focus-within),
-[data-bai-form-item][data-status='warning']
-  [data-bai-form-item-control-input]
-  .ant-select-outlined:not(.ant-select-disabled):not(
-    .ant-select-customize-input
-  ):is(:hover, .ant-select-focused)
-  .ant-select-selector {
-  border-color: var(
-    --bai-form-item-warning-color,
-    var(--color-warning, #faad14)
-  );
-}
-
-/*
- Room for the shell-drawn feedback glyph. antd's affix wrapper reserves it by
- shrinking the inner `<input>`; the shell overlays instead, so the control
- needs the padding itself or typed text runs underneath. Same transitional
- scope as the border rules above.
-*/
-[data-bai-form-item][data-feedback]
-  [data-bai-form-item-control-input]
-  :is(.ant-input, .ant-input-affix-wrapper, .ant-input-number-input) {
-  padding-inline-end: 30px;
-}

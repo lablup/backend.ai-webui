@@ -3,10 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
-// antd `App.useApp()` drop-in backed by Astryx (to-astryx ticket 04). Sits
-// INSIDE antd's providers so a partially-migrated tree keeps working — antd's
-// own <App> stays mounted for every file not yet converted, while converted
-// files (import { App } from '../app-shim') read this instead.
+// antd `App.useApp()` drop-in backed by Astryx (to-astryx ticket 04). It used
+// to sit INSIDE antd's own <App> so a partially-migrated tree kept working;
+// with the final switch it is the ONLY message/modal/notification host left.
 import { BAIAppProvider } from '../app-shim';
 import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import { FormConfigProvider } from '../form-engine';
@@ -26,10 +25,9 @@ import '../index.css';
 // 03). Renders no DOM and touches no document attributes — mounting it is
 // visually inert; only files that import `theme` from '../theme-shim'
 // (rewritten by scripts/codemods/antd-theme-to-shim.mjs) consume it.
-import { ThemeShimProvider } from '../theme-shim';
+import { ThemeShimProvider, theme } from '../theme-shim';
 import NotificationHost from './NotificationHost';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { App, type AppProps, theme } from 'antd';
 import {
   BAIConfigProvider,
   BAIMetaDataProvider,
@@ -259,11 +257,14 @@ export const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
-export const commonAppProps: AppProps = {
-  message: {
-    duration: 4,
-  },
-};
+/**
+ * Global message config for the app-shim's toast leg. Was `commonAppProps:
+ * AppProps` and was spread onto BOTH antd's `<App>` and `<BAIAppProvider>`
+ * while the two hosts coexisted; the antd half is gone (final switch), so
+ * this is now just the shim's own `message` prop value. `duration` is in
+ * SECONDS, matching antd's semantics, which `app-shim/bridge.ts` reproduces.
+ */
+const messageConfig = { duration: 4 };
 
 const BAIMetaDataProviderWrapper = ({ children }: { children: ReactNode }) => {
   const { data: deviceMetaData } = useDeviceMetaData();
@@ -324,20 +325,19 @@ export const DefaultProvidersForReactRoot: React.FC<{
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
-            {/* to-astryx ticket 24 — the app-wide Astryx `<Theme>`.
-                Until now `AstryxBrandTheme` was only mounted by the probe
-                page, so every migrated surface rendered against Astryx's
-                default theme with `mode: 'system'`: with OS=light and the
-                app switched to dark, converted regions painted light inside
-                a dark page (the exact hazard SKILL.md flags — antd's
-                `ConfigProvider` algorithm and Astryx's `data-astryx-theme`
-                are INDEPENDENT switches). It wraps the antd providers rather
-                than replacing them: the antd `ConfigProvider` stays for the
-                unmigrated antd surfaces (the FORM leg left it in ticket 35 —
-                see `<FormConfigProvider>` below), and `AstryxBrandTheme`
-                passes `mode` explicitly from
-                `useThemeMode`, so both switches now follow one source of
-                truth. */}
+            {/* to-astryx ticket 24 — the app-wide Astryx `<Theme>`, and
+                since the final switch the app's ONLY theme provider.
+
+                It was introduced wrapping an antd `ConfigProvider` because
+                the two libraries' dark switches were independent (MAPPING §5:
+                antd's `algorithm` vs Astryx's `data-astryx-theme` /
+                `data-theme`), so both had to be driven from one source of
+                truth or converted regions painted light inside a dark page.
+                The antd half is now gone — `ConfigProvider`'s `theme`,
+                `algorithm`, `csp`, `modal`, `drawer` and `tag` props all
+                configured antd components that no longer exist. `mode` still
+                comes from `useThemeMode`, which remains the source of truth
+                and is what `<Theme>` syncs onto `<html>`. */}
             <AstryxBrandTheme>
               <ThemeShimProvider
                 mode={isDarkMode ? 'dark' : 'light'}
@@ -351,38 +351,20 @@ export const DefaultProvidersForReactRoot: React.FC<{
                     : themeConfig?.light?.components) as never,
                 }}
               >
+                {/* Now a pure locale + client provider: Astryx's
+                    `InternationalizationProvider`, BUI's i18next instance,
+                    dayjs's locale and the Backend.AI client context. Its antd
+                    `ConfigProvider` leg — and with it the `theme`, `csp`,
+                    `modal`, `drawer` and `tag` props this call site used to
+                    pass through — went away with the final switch. */}
                 <BAIConfigProvider
                   locale={currentLocale}
-                  theme={{
-                    ...(isDarkMode
-                      ? { ...themeConfig?.dark }
-                      : { ...themeConfig?.light }),
-                    algorithm: isDarkMode
-                      ? theme.darkAlgorithm
-                      : theme.defaultAlgorithm,
-                  }}
-                  csp={{ nonce: globalThis.baiNonce }}
                   clientPromise={backendaiClientPromise}
                   anonymousClientFactory={createAnonymousBackendaiClient}
-                  modal={{
-                    mask: {
-                      blur: false,
-                    },
-                  }}
-                  drawer={{
-                    mask: {
-                      blur: false,
-                    },
-                  }}
-                  tag={{
-                    variant: 'outlined',
-                  }}
                 >
                   {/* to-astryx tickets 34 + 35 — form configuration lives on
-                      the self-hosted engine's own provider, not on
-                      `<ConfigProvider form={{…}}>`. The antd ConfigProvider
-                      above stays for every OTHER antd surface; only the form
-                      leg moved, because only the form runtime changed hands.
+                      the self-hosted engine's own provider, which is now the
+                      only form runtime in the tree.
 
                       - `validateMessages` is NOT passed. FormConfigProvider
                         defaults it to BUI's own localized table, read from
@@ -424,35 +406,36 @@ export const DefaultProvidersForReactRoot: React.FC<{
                      * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
                      * useBAIi18n.ts.
                      */}
-                    <BAIAppProvider message={commonAppProps.message}>
+                    <BAIAppProvider message={messageConfig}>
                       <BAIMetaDataProviderWrapper>
-                        <App {...commonAppProps}>
-                          {/* Single app-wide notification renderer. Lives outside
-                        the Suspense below so toasts work on every route and
-                        in both anonymous and authenticated states. */}
-                          <NotificationHost />
-                          {/*
-                           * to-astryx ticket 33 removed the emotion plumbing that
-                           * used to wrap this Suspense: an @emotion/react
-                           * <CacheProvider> (nonce for `createGlobalStyle`) inside
-                           * antd-style's <StyleProvider nonce> (nonce for
-                           * `createStyles`). With the last antd-style call site
-                           * gone, no style engine injects <style> at runtime on
-                           * our behalf — the replacement rules ship as bundled
-                           * same-origin stylesheets, which `style-src 'self'`
-                           * already covers.
-                           *
-                           * antd's OWN cssinjs output still needs a nonce; that
-                           * one comes from `<ConfigProvider csp={{ nonce }}>`
-                           * above and is untouched.
-                           */}
-                          <Suspense>
-                            {/* <BrowserRouter> */}
-                            {/* <RoutingEventHandler /> */}
-                            {children}
-                            {/* </BrowserRouter> */}
-                          </Suspense>
-                        </App>
+                        {/* Single app-wide notification renderer. Lives outside
+                            the Suspense below so toasts work on every route and
+                            in both anonymous and authenticated states. */}
+                        <NotificationHost />
+                        {/*
+                         * to-astryx ticket 33 removed the emotion plumbing that
+                         * used to wrap this Suspense: an @emotion/react
+                         * <CacheProvider> (nonce for `createGlobalStyle`) inside
+                         * antd-style's <StyleProvider nonce> (nonce for
+                         * `createStyles`). With the last antd-style call site
+                         * gone, no style engine injects <style> at runtime on
+                         * our behalf — the replacement rules ship as bundled
+                         * same-origin stylesheets, which `style-src 'self'`
+                         * already covers.
+                         *
+                         * The final switch closed the last gap in that story:
+                         * antd's cssinjs — the one runtime style injector left,
+                         * fed the nonce via `<ConfigProvider csp>` — is gone
+                         * too, so NOTHING injects <style> at runtime any more
+                         * and `globalThis.baiNonce` has no remaining consumer
+                         * in the React tree.
+                         */}
+                        <Suspense>
+                          {/* <BrowserRouter> */}
+                          {/* <RoutingEventHandler /> */}
+                          {children}
+                          {/* </BrowserRouter> */}
+                        </Suspense>
                       </BAIMetaDataProviderWrapper>
                     </BAIAppProvider>
                   </FormConfigProvider>

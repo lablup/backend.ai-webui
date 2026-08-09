@@ -42,9 +42,11 @@ export const REPO_ROOT = resolve(
   "../..",
 );
 
+// `react/theme-probe` used to be a third root. That directory was the
+// migration's antd-vs-Astryx A/B harness and went away with antd itself (final
+// switch); the two roots below are the shipping source.
 export const DEFAULT_SCAN_ROOTS = [
   "react/src",
-  "react/theme-probe",
   "packages/backend.ai-ui/src",
 ];
 

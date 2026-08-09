@@ -15,24 +15,34 @@
 #   - rc-*                 (legacy dash-namespace, transitive from antd < 6)
 #   - @rc-component/*      (antd 6's namespace for the same components)
 #
-# This is a GATE, not a ratchet: it only asserts the current state. While the
-# migration is in progress it is expected to FAIL — run it through
-# scripts/migration-gates/report.sh (or the astryx-migration-gates.yml
-# workflow) for informational reporting that never blocks.
+# This is a GATE, not a ratchet: it only asserts the current state.
+#
+# STATUS: GREEN as of the to-astryx final switch — `antd` is not a dependency
+# of any workspace, no source file imports it, and the production bundle
+# carries none of its signatures. Treat a failure as a REGRESSION, not as
+# expected migration residue.
 #
 # Usage:
 #   bash scripts/antd-zero-gate.sh
 #
 # Exit code: 0 if clean, 1 if any violation found (with a listing).
 #
-# KNOWN CAVEAT: part (a) fails even with zero first-party antd usage as long
-# as `@lobehub/fluent-emoji` / `@lobehub/icons` are installed: both resolve a
-# peer dependency on `@lobehub/ui`, which hard-depends (real "dependencies",
-# not peer) on `antd`, `antd-style`, `@ant-design/cssinjs`, and five rc-*
-# packages (rc-collapse, rc-footer, rc-image, rc-input-number, rc-menu).
-# Going green on (a) therefore also requires replacing those two packages'
-# in-use surface — planned as part of this migration. Flagged here so a
-# failing run isn't mistaken for a bug in the script itself.
+# HISTORICAL CAVEATS, both resolved — recorded so a future reader does not go
+# looking for a dependency that is gone:
+#   - `@lobehub/fluent-emoji` / `@lobehub/icons` used to pull `@lobehub/ui`,
+#     which hard-depends on antd / antd-style / @ant-design/cssinjs and five
+#     rc-* packages, keeping part (a) red regardless of first-party code.
+#     Ticket 30 removed both; `react/src/components/brandIcons/generated/*` is
+#     the replacement.
+#   - `@ant-design/x` (the Chat composer surface) declared a `peerDependencies
+#     { antd }` that `autoInstallPeers: true` resolved into the production
+#     graph, with the same effect. Removed in qa2-d.
+#
+# One antd-family package is still installed and is EXPECTED to be:
+# `@ant-design/colors`, a devDependency of `packages/backend.ai-ui`, used by
+# `src/theme-shim/themeShim.test.ts` as the reference implementation its
+# vendored port is asserted bit-identical to. Part (a) walks production
+# dependencies only, so it is correctly invisible here.
 
 set -euo pipefail
 
@@ -139,29 +149,44 @@ echo ""
 #      sequence ".ant-" essentially never occurs by coincidence in other CSS
 #      (no common English word/other framework produces "ant-" prefixed
 #      classes at a `.` boundary). HIGH confidence.
-#   2. `anticon` — the class antd's icon component renders
-#      (`<span class="anticon anticon-xxx">`). Also used verbatim by
-#      @ant-design/icons independent of antd. HIGH confidence, no known
-#      collisions.
-#      NOTE (to-astryx final-B): until this ticket our OWN icon shim
-#      (`packages/backend.ai-ui/src/icons/iconShim.tsx`) also rendered
-#      `class="anticon"`, with BUI shipping the matching reset — so this
-#      signature fired on first-party output and would have stayed red
-#      forever, indistinguishable from a real reintroduction. The shim and
-#      every first-party rule/selector now use `bai-icon` / `bai-icon-spin`.
-#      Do NOT "fix" a future failure here by weakening or deleting this
-#      pattern: a match now means someone genuinely pulled
-#      @ant-design/icons back in.
-#      ONE KNOWN FALSE POSITIVE remains, and it is not fixable from our side:
+#   2. `\.anticon` or `anticon-<letter>` — the class antd's icon component
+#      renders (`<span class="anticon anticon-xxx">`), matched either as a CSS
+#      selector or as the glyph-suffixed form. Also used verbatim by
+#      @ant-design/icons independent of antd. HIGH confidence.
+#
+#      WHY THE PATTERN IS ANCHORED and not the bare word `anticon`:
 #      `build/web/assets/main-*.js` bundles the Chat token counter's BPE
-#      vocabularies (`cl100k_base` / `o200k`), and `" anticon"` happens to be
-#      one of their ~200k merge tokens. Verified by hand: the match sits in a
-#      run of unrelated multilingual tokens, not in any class name. If this
-#      signature ever lists ONLY that chunk, the build is clean.
-#      Also note that CSS comments — unlike JS ones — can survive minification
-#      into `build/web/assets/*.css`. Two first-party comments quoting antd's
-#      icon class used to land in the bundle and trip this check; they are now
-#      phrased without the literal token. Keep new comments that way.
+#      vocabularies (`cl100k_base` / `o200k`), and `" anticon"` — quote, SPACE,
+#      anticon, quote — happens to be one of their ~200k merge tokens. That is
+#      not fixable from our side: it is third-party vocabulary data, it sits in
+#      a run of unrelated multilingual tokens (`," Können"," činjen",
+#      " anticon","'ọ"`, verified by hand), and it made this signature fire on
+#      a clean build. A permanently red check cannot distinguish us from a real
+#      reintroduction, which is the only thing it exists to catch.
+#      So the pattern is NARROWED, not disabled — both anchors are things antd
+#      always emits and the BPE token never is:
+#        - `.anticon`     — the reset in @ant-design/icons' own stylesheet
+#        - `anticon-<x>`  — every rendered glyph (`anticon-close`, …), and the
+#                           minified `"anticon-"+type` concatenation in the
+#                           icon component itself
+#      A real reintroduction produces BOTH. The BPE token produces NEITHER
+#      (no preceding dot, no following hyphen). Measured on the final-switch
+#      build: bare `anticon` → 1 hit (the BPE token); anchored → 0 hits.
+#      Do NOT widen this back to the bare word, and do NOT delete it.
+#
+#      NOTE (to-astryx final-B): until that ticket our OWN icon shim
+#      (`packages/backend.ai-ui/src/icons/iconShim.tsx`) also rendered
+#      `class="anticon"`, with BUI shipping the matching reset — a second way
+#      this signature fired on first-party output. The shim and every
+#      first-party rule/selector now use `bai-icon` / `bai-icon-spin`.
+#      Also note that CSS comments — unlike JS ones — survive minification into
+#      `build/web/assets/*.css`, and so do JS header comments carrying
+#      `@license` (terser preserves those). First-party comments quoting antd
+#      class names or antd-family package specifiers land in the bundle
+#      verbatim and trip checks 1/2/5. They are phrased without the literal
+#      tokens (no leading dot on a class, no `@scope/` on a package). Keep new
+#      comments that way — see the SPELLING NOTE in
+#      `packages/backend.ai-ui/src/form-engine/engine.ts`.
 #   3. `data-ant-cssinjs-cache-path` — DOM attribute @ant-design/cssinjs
 #      writes to manage its style cache. Fully qualified, unique string.
 #      HIGH confidence.
@@ -201,7 +226,7 @@ scan_build_dir() {
   # High-confidence signatures (checked with word/context anchoring where possible)
   local -a HIGH_CONF_PATTERNS=(
     '\.ant-[a-zA-Z]'
-    'anticon'
+    '\.anticon|anticon-[a-zA-Z]'
     'data-ant-cssinjs-cache-path'
     'css-dev-only-do-not-override'
   )

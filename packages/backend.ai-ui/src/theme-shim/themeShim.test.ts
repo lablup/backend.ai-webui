@@ -5,16 +5,22 @@
  Theme-shim parity tests (to-astryx ticket 03).
 
  1. The vendored palette code (vendor/antdColors.ts) must be bit-identical to
-    the still-installed `@ant-design/colors` — that is the whole point of the
-    vendor step. When the npm package is removed, freeze these as fixed
-    expected values.
+    `@ant-design/colors` — that is the whole point of the vendor step. That
+    package is still installed, dev-only, precisely to serve as this
+    reference implementation.
  2. The dark seed transform must reproduce ticket 02's MEASURED
     ANTD_DARK_ALGORITHM_OUTPUT table (the settled dark-mode decision).
  3. buildTokens' non-probed verdicts (brand/derive/aligned/self) must match
     antd's own `theme.getDesignToken()` for this repo's seeds. Probed
     ('astryx') values need a real browser cascade and are covered by the
     ticket's pixel A/B instead.
+
+    (3) used to import `theme` from `antd` and compute that side live. The
+    final switch removed the antd package, so the expected values are now the
+    frozen capture in `antdDesignTokenFixture.ts` — taken from antd 6.5.0
+    immediately before the uninstall, exactly as this header instructed.
  */
+import { ANTD_DESIGN_TOKEN_REFERENCE } from './antdDesignTokenFixture';
 import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
 import { resolveLightDark } from './astryxVars';
 import { buildTokens } from './index';
@@ -30,7 +36,6 @@ import {
   presetDarkPalettes as upstreamDarkPalettes,
   presetPalettes as upstreamPalettes,
 } from '@ant-design/colors';
-import { theme as antdTheme } from 'antd';
 import { describe, expect, it } from 'vitest';
 
 /** Every brand seed this repo ships (theme.json light + dark declarations). */
@@ -108,8 +113,10 @@ describe('resolveLightDark', () => {
   });
 });
 
-describe('buildTokens vs antd getDesignToken (non-probed verdicts)', () => {
-  // The exact seeds resources/theme.json declares per mode.
+describe('buildTokens vs frozen antd getDesignToken (non-probed verdicts)', () => {
+  // The exact seeds resources/theme.json declares per mode. They MUST stay in
+  // sync with the seeds `antdDesignTokenFixture.ts` was captured under — the
+  // fixture cannot be regenerated, so changing these invalidates it.
   const seedsFor = (mode: 'light' | 'dark') =>
     mode === 'light'
       ? {
@@ -131,13 +138,14 @@ describe('buildTokens vs antd getDesignToken (non-probed verdicts)', () => {
 
   for (const mode of ['light', 'dark'] as const) {
     it(`matches antd for every brand/derive token (${mode})`, () => {
-      const antdTokens = antdTheme.getDesignToken({
-        token: seedsFor(mode),
-        algorithm:
-          mode === 'dark'
-            ? antdTheme.darkAlgorithm
-            : antdTheme.defaultAlgorithm,
-      }) as unknown as Record<string, string | number>;
+      const antdTokens = ANTD_DESIGN_TOKEN_REFERENCE[mode] as unknown as Record<
+        string,
+        string | number
+      >;
+      // Guard the fixture itself: an empty/short table would make the loop
+      // below vacuously pass, which is the failure mode a frozen reference is
+      // most exposed to.
+      expect(Object.keys(antdTokens).length).toBeGreaterThan(20);
       const shimTokens = buildTokens(mode, seedsFor(mode)) as unknown as Record<
         string,
         string | number

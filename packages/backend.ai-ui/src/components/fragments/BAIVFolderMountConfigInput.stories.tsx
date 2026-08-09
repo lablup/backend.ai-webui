@@ -1,12 +1,13 @@
 import { Form } from '../../form-engine';
 import { RelayResolverProps } from '../../tests/RelayResolver';
+import BAIButton from '../BAIButton';
+import BAIText from '../BAIText';
 import BAIVFolderMountConfigInput, {
   BAIVFolderMountConfigInputProps,
   VFolderMountConfigValue,
   isVFolderMountConfigValid,
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Typography } from 'antd';
 import { Suspense, useMemo, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -82,8 +83,10 @@ const ControlledDemo = ({
         value={value}
         onChange={setValue}
       />
-      <Typography.Paragraph style={{ marginTop: 24 }}>
-        <Typography.Text strong>Form value (onChange result)</Typography.Text>
+      {/* antd Typography.Paragraph has no direct Astryx equivalent; BAIText
+          wrapped in a block element reproduces the same paragraph layout. */}
+      <div style={{ marginTop: 24 }}>
+        <BAIText strong>Form value (onChange result)</BAIText>
         <pre
           style={{
             marginTop: 8,
@@ -95,7 +98,7 @@ const ControlledDemo = ({
         >
           {JSON.stringify(value, null, 2)}
         </pre>
-      </Typography.Paragraph>
+      </div>
     </div>
   );
 };
@@ -370,7 +373,7 @@ export const WithFormValidation: Story = {
           >
             <BAIVFolderMountConfigInput {...args} />
           </Form.Item>
-          <Button
+          <BAIButton
             type="primary"
             onClick={() => {
               form
@@ -380,11 +383,11 @@ export const WithFormValidation: Story = {
             }}
           >
             Validate &amp; submit
-          </Button>
+          </BAIButton>
           {result ? (
-            <Typography.Paragraph style={{ marginTop: 16 }}>
-              {result}
-            </Typography.Paragraph>
+            <div style={{ marginTop: 16 }}>
+              <BAIText>{result}</BAIText>
+            </div>
           ) : null}
         </Form>
       );

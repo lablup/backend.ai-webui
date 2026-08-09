@@ -54,7 +54,6 @@ import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
 import { theme, useBAIBreakpoint } from '../theme-shim';
-import './SessionLauncherPage.css';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { Card } from '@astryxdesign/core/Card';

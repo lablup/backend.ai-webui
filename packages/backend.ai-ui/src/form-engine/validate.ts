@@ -4,8 +4,8 @@
 
  Rule engine for the self-hosted form engine (to-astryx ticket 34).
 
- A behavioural port of the slice of `@rc-component/async-validator` that
- `@rc-component/form` reaches for the NINE rule keys this repository actually
+ A behavioural port of the slice of rc-component's `async-validator` that
+ rc-component's `form` reaches for the NINE rule keys this repository actually
  uses (`required`, `message`, `validator`, `type`, `max`, `min`, `pattern`,
  `warningOnly`, `whitespace`) and the FIVE `type` values it actually passes
  (`number`, `string`, `email`, `url`, `object`) — measured over 237 `rules`
@@ -329,7 +329,7 @@ function runDeclarative(method: string, ctx: RuleCtx) {
 // ============================= Custom validators ============================
 
 /**
- * Collapse the promise/callback bridge `@rc-component/form` builds around a
+ * Collapse the promise/callback bridge rc-component's `form` builds around a
  * user `validator` into a single promise for the raw "callback argument".
  *
  * Net semantics preserved from the two-layer upstream wrapping:

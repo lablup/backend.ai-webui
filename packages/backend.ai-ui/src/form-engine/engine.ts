@@ -13,16 +13,27 @@
  │ pointed back at antd while the UI-component migration ran). Ticket 35 │
  │ unparked it, localized `validateMessages` out of antd's locale bundle │
  │ into BUI's own catalogs, and moved `DefaultProviders` onto            │
- │ `<FormConfigProvider>`. There is NO antd left on the form surface:    │
- │ no module under `form-engine/` imports antd, rc-field-form or         │
- │ @ant-design/*.                                                        │
+ │ `<FormConfigProvider>`. antd is now UNINSTALLED repo-wide, so there   │
+ │ is nothing left for a form module to import even by accident.         │
  │                                                                       │
  │ The 29-case acceptance suite                                          │
- │ (`react/src/form-engine/formEngineAcceptance.test.tsx`) runs every    │
- │ case against BOTH antd and this engine and keeps the antd row green,  │
- │ so "behaves like the thing it replaces" stays asserted until antd is  │
- │ uninstalled. See `.scratch/astryx-migration/issues/34-form-engine.md`.│
+ │ (`react/src/form-engine/formEngineAcceptance.test.tsx`) used to run   │
+ │ every case against BOTH antd and this engine, keeping the antd row    │
+ │ green as a live oracle. With antd gone the antd row is dropped and    │
+ │ the engine row is a plain regression suite — the assertions are       │
+ │ unchanged and carry the oracle's verdict forward.                     │
+ │ See `.scratch/astryx-migration/issues/34-form-engine.md`.             │
  └───────────────────────────────────────────────────────────────────────┘
+
+ SPELLING NOTE for this directory. Several modules here are behavioural ports
+ and name their upstream in prose. Write those package names WITHOUT the
+ leading `@` scope-and-slash (`rc-component's \`form\``, not the npm
+ specifier), and antd class names without their leading dot. These files open
+ with an `@license` block, which terser preserves, so their header comments
+ land verbatim in `build/web` — and `scripts/antd-zero-gate.sh` part (b) reads
+ an antd-family specifier or a dotted antd class there as evidence that antd is
+ back. The gate cannot tell our prose from a real reintroduction, and the
+ signature is worth more sharp than our comments are worth verbatim.
 
  A DROP-IN replacement for the slice of antd's form API this repository uses.
  Migrating a call site is an import rewrite and nothing else — the module

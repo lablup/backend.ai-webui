@@ -17,6 +17,7 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import type { RcFile } from './FileUploadManager';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
@@ -42,22 +43,17 @@ const MonacoEditor = React.lazy(() =>
 /**
  * The file shape `FileUploadManager.uploadFiles` accepts.
  *
- * P15: `import { RcFile } from 'antd/es/upload'` is a deep antd SUBPATH
- * import — it renders nothing, but it still keeps this module in the antd
- * import graph, and subpath imports are the ones that slip past a
- * `from 'antd'` grep. Structurally `RcFile` is `File` plus rc-upload's own
- * bookkeeping fields; this file only ever builds one and hands it straight to
- * `uploadFiles`, so the local declaration below covers the whole use. The
- * upload manager itself still owns the antd type (frontier — its conversion is
- * a different partition's work), and rc-upload additionally stamps a
- * deprecated `lastModifiedDate` onto every file it hands around, so the local
- * declaration reproduces that field too. Once FileUploadManager sheds
- * `antd/es/upload`, both sides can settle on a single shared type.
+ * This was a local restatement of `import { RcFile } from 'antd/es/upload'` —
+ * a deep antd SUBPATH import that rendered nothing but kept this module in the
+ * import graph (P15), and that a `from 'antd'` grep does not catch. It was
+ * declared here rather than shared because `FileUploadManager` still owned the
+ * antd type at the time, with a note that both sides should settle on one type
+ * once it shed `antd/es/upload`. It has, so they do: `RcFile` is now imported
+ * from the upload manager itself, which is where the producer of the contract
+ * lives. The shape is unchanged (`File` + rc-upload's `uid` + the deprecated
+ * `lastModifiedDate` it stamps on every file).
  */
-type UploadableFile = File & {
-  uid: string;
-  readonly lastModifiedDate: Date;
-};
+type UploadableFile = RcFile;
 
 interface VFolderTextFileEditorModalProps extends Omit<
   BAIModalProps,

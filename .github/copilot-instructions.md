@@ -4,7 +4,7 @@ This file provides custom instructions for GitHub Copilot when reviewing code an
 
 ## Project Overview
 
-Backend.AI WebUI is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
+Backend.AI WebUI is a **React web application** using React 19 + Astryx (`@astryxdesign/core`) + Relay 20 (GraphQL).
 
 ### Key Technologies
 
@@ -12,7 +12,7 @@ Backend.AI WebUI is a **React web application** using React 19 + Ant Design 6 + 
 - **Component Library Build**: Vite (`packages/backend.ai-ui/`)
 - **Service Worker**: vite-plugin-pwa (Workbox under the hood, integrated into the Vite build)
 - **Package Manager**: pnpm with workspace monorepo
-- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Ant Design remains on the un-migrated surface; `antd-style` was removed in to-astryx ticket 33.
+- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Ant Design is fully removed — `scripts/antd-zero-gate.sh` asserts it is absent from the dependency graph, the bundle and the import graph.
 - **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
 - **GraphQL**: Relay compiler for React components and backend.ai-ui package
 - **Testing**: Vitest for unit tests, Playwright for E2E tests

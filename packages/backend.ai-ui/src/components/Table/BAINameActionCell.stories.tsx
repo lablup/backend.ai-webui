@@ -4,8 +4,6 @@ import { BAIClient } from '../provider/BAIClientProvider';
 import BAINameActionCell from './BAINameActionCell';
 import type { BAINameActionCellAction } from './BAINameActionCell';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
 import { Copy, Trash, Folder, Share2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -15,8 +13,8 @@ const mockClientPromise = Promise.resolve(mockClient);
 const mockAnonymousClientFactory = () => mockClient;
 
 const locales = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
+  en: { lang: 'en' },
+  ko: { lang: 'ko' },
 } as const;
 
 const meta: Meta<typeof BAINameActionCell> = {

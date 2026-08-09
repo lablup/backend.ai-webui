@@ -181,3 +181,11 @@ e2e/.agent-output/
 
 
 e2e/recordings/
+
+# Playwright storageState captured by the .scratch/astryx-migration probes.
+# The probe scripts, their JSON reports and their screenshots ARE committed
+# (that directory is the migration's evidence trail), but a storage state
+# holds a live `backendaiwebui.sessionid` for whichever backend the probe
+# logged into — a credential, not evidence.
+.scratch/**/*-state.json
+

@@ -4,8 +4,8 @@
 
  Path + store primitives for the self-hosted form engine (to-astryx ticket 34).
 
- Byte-for-byte behavioural port of the pieces of `@rc-component/form`'s
- `utils/valueUtil`, `utils/NameMap` and `@rc-component/util`'s `get`/`set`/
+ Byte-for-byte behavioural port of the pieces of rc-component's `form`
+ `utils/valueUtil`, `utils/NameMap` and rc-component's `util` `get`/`set`/
  `merge` that this repository actually exercises. Everything here is pure and
  dependency-free apart from `lodash-es`, so the engine carries no antd/rc
  runtime.

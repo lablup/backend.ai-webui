@@ -7,15 +7,15 @@
  Note that the sibling `FolderCreateModalV2` keeps its own copy — the two
  modals are on different migration tracks and must not share a class.
 
- to-astryx ticket 35 re-pointed the two surviving rules from `.ant-form-item*`
+ to-astryx ticket 35 re-pointed the two surviving rules from `ant-form-item*`
  to the engine's `[data-bai-form-item*]` anchors: the form engine is
  self-hosted now, so the antd selectors matched nothing (P6). The third rule,
- `.ant-form-item-label > label::after { display: none }`, is GONE rather than
+ `ant-form-item-label > label::after { display: none }`, is GONE rather than
  re-pointed — it existed to hide antd's automatic label colon, and the BAI
  visual shell never renders one.
 
  to-astryx phase 3 / ticket B dropped the `.folder-create-modal
- .ant-modal-body` padding override: `BAIModal` renders Astryx `Dialog` +
+ ant-modal-body` padding override: `BAIModal` renders Astryx `Dialog` +
  `LayoutContent`, so that selector matches nothing and the body padding now
  comes from the dialog container tokens.
 

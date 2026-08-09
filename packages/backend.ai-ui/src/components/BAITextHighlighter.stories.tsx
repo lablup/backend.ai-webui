@@ -1,7 +1,8 @@
+import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAITextHighlighter from './BAITextHighlighter';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Card, Input } from 'antd';
 import React from 'react';
 
 const meta: Meta<typeof BAITextHighlighter> = {
@@ -71,7 +72,11 @@ export const Default: Story = {
 export const CaseInsensitiveMatching: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
-      <Card size="small" title="Different case variations">
+      <BAICard
+        size="small"
+        title="Different case variations"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap="sm">
           <BAITextHighlighter keyword="backend">
             Backend.AI is a powerful platform
@@ -83,7 +88,7 @@ export const CaseInsensitiveMatching: Story = {
             The backend infrastructure is robust
           </BAITextHighlighter>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -99,19 +104,27 @@ export const CaseInsensitiveMatching: Story = {
 export const MultipleOccurrences: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
-      <Card size="small" title="Multiple matches in single text">
+      <BAICard
+        size="small"
+        title="Multiple matches in single text"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAITextHighlighter keyword="test">
           This is a test. Testing is important. We need to test everything.
           Tests ensure quality.
         </BAITextHighlighter>
-      </Card>
-      <Card size="small" title="Long text with multiple matches">
+      </BAICard>
+      <BAICard
+        size="small"
+        title="Long text with multiple matches"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAITextHighlighter keyword="api">
           The Backend.AI API provides a comprehensive set of endpoints. You can
           use the API to manage sessions, access the API documentation, and
           integrate API calls into your application.
         </BAITextHighlighter>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -127,7 +140,11 @@ export const MultipleOccurrences: Story = {
 export const SpecialCharacters: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
-      <Card size="small" title="Regex special characters are safely escaped">
+      <BAICard
+        size="small"
+        title="Regex special characters are safely escaped"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap="sm">
           <BAITextHighlighter keyword="[test]">
             Array notation: items[test] = value
@@ -142,7 +159,7 @@ export const SpecialCharacters: Story = {
             Parentheses and plus: Calculate (a+b) * c
           </BAITextHighlighter>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -158,15 +175,23 @@ export const SpecialCharacters: Story = {
 export const CustomStyling: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md">
-      <Card size="small" title="Custom highlight color">
+      <BAICard
+        size="small"
+        title="Custom highlight color"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAITextHighlighter
           keyword="custom"
           style={{ backgroundColor: '#52c41a' }}
         >
           This text has custom green highlighting for the word custom.
         </BAITextHighlighter>
-      </Card>
-      <Card size="small" title="Custom styling with other properties">
+      </BAICard>
+      <BAICard
+        size="small"
+        title="Custom styling with other properties"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAITextHighlighter
           keyword="styled"
           style={{
@@ -179,8 +204,12 @@ export const CustomStyling: Story = {
         >
           This text has a styled highlight with multiple properties applied.
         </BAITextHighlighter>
-      </Card>
-      <Card size="small" title="Underlined highlight">
+      </BAICard>
+      <BAICard
+        size="small"
+        title="Underlined highlight"
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAITextHighlighter
           keyword="important"
           style={{
@@ -191,7 +220,7 @@ export const CustomStyling: Story = {
         >
           This is an important message with underlined highlighting.
         </BAITextHighlighter>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -218,13 +247,20 @@ export const InteractiveSearch: Story = {
 
     return (
       <BAIFlex direction="column" gap="lg" style={{ width: '100%' }}>
-        <Card title="Search Filter" size="small" style={{ maxWidth: 400 }}>
+        <BAICard
+          title="Search Filter"
+          size="small"
+          style={{ maxWidth: 400 }}
+          styles={{ body: { paddingTop: 0 } }}
+        >
           <BAIFlex direction="column" gap="sm">
-            <Input
+            <TextInput
+              label="Search"
+              isLabelHidden
               placeholder="Search..."
               value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              allowClear
+              onChange={setSearchKeyword}
+              hasClear
             />
             <BAIFlex direction="column" gap="xs">
               {items.map((item, index) => (
@@ -236,9 +272,13 @@ export const InteractiveSearch: Story = {
               ))}
             </BAIFlex>
           </BAIFlex>
-        </Card>
+        </BAICard>
 
-        <Card title="Log Entry Highlighting" size="small">
+        <BAICard
+          title="Log Entry Highlighting"
+          size="small"
+          styles={{ body: { paddingTop: 0 } }}
+        >
           <BAIFlex direction="column" gap="xs">
             <BAITextHighlighter
               keyword="error"
@@ -259,9 +299,13 @@ export const InteractiveSearch: Story = {
               [2024-01-15 10:24:15] ERROR: Max retries exceeded
             </BAITextHighlighter>
           </BAIFlex>
-        </Card>
+        </BAICard>
 
-        <Card title="User Search in Table" size="small">
+        <BAICard
+          title="User Search in Table"
+          size="small"
+          styles={{ body: { paddingTop: 0 } }}
+        >
           <BAIFlex direction="column" gap="sm">
             {[
               { name: 'John Smith', email: 'john.smith@example.com' },
@@ -279,7 +323,7 @@ export const InteractiveSearch: Story = {
               </div>
             ))}
           </BAIFlex>
-        </Card>
+        </BAICard>
       </BAIFlex>
     );
   },

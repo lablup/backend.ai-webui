@@ -815,8 +815,8 @@ export default defineConfig(({ command, mode }) => {
       //   `nuqs/adapters/react-router/v6` (the only nuqs entry that ships the
       //   adapter). Listing these saves the optimizer a discover-and-reload
       //   cycle the first time the source scan reaches them. Pure deep-import
-      //   conveniences with no separate entry (e.g. `antd/es/locale/ko_KR`)
-      //   are NOT listed — the entries scan picks them up automatically.
+      //   conveniences with no separate entry are NOT listed — the entries
+      //   scan picks them up automatically.
       // - Do NOT list anything in `exclude` below (`backend.ai-ui`,
       //   `backend.ai-client`, `i18next`, `react-i18next`).
       // - When a new heavy top-level dep starts being imported on the first
@@ -826,9 +826,6 @@ export default defineConfig(({ command, mode }) => {
         'react-dom',
         'react-dom/client',
         'react-router-dom',
-        'antd',
-        '@ant-design/icons',
-        '@ant-design/colors',
         'jotai',
         'react-relay',
         'relay-runtime',

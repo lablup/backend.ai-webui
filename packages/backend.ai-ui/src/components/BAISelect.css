@@ -5,16 +5,19 @@
  Co-located styles for <BAISelect> (imported by the component itself, P17).
 
  to-astryx W2-D: `BAISelect` now renders Astryx `Selector` / `MultiSelector`,
- so every `.ant-select*` selector this file used to carry matches nothing and
- was DELETED rather than left silently compiling (P6). That removed:
+ so every antd select selector this file used to carry matches nothing and was
+ DELETED rather than left silently compiling (P6). That removed the ghost
+ variant's suffix rules (×3 states), its error-status rules (×2), and two
+ dimming blocks keyed on the search-value and open states of antd's select
+ popup — in both the antd and the Astryx spelling that sibling A/C added.
+ Astryx's `Selector` owns its own popup states.
 
-   - `.bai-select-ghost.ant-select .ant-select-suffix` (×3 states)
-   - `.bai-select-ghost.ant-select.ant-select-status-error` (×2)
-   - the `.bai-select .ant-select-content-has-search-value …` dimming block
-   - the `.bai-select.ant-select-open .ant-select-content …` dimming block
-     (both the `.ant-*` and the `.astryx-*` spellings sibling A/C added — the
-     rules keyed off `.ant-select-open` / `.ant-select-content`, which no
-     longer exist, and Astryx's `Selector` owns its own popup states)
+ NOTE on spelling: antd class names are written WITHOUT their leading dot
+ throughout this file's prose. CSS comments — unlike JS ones — survive
+ minification into the shipped stylesheet, and `scripts/antd-zero-gate.sh`
+ part (b) reads a literal dotted antd class in `build/web` as evidence that
+ antd is back. That signature is worth keeping sharp, so the comments give
+ way, not the gate.
 
  What survives is `ghost`, because it is the one thing the wrapper genuinely
  owned and Astryx cannot express (P5: `Selector` has `variant`, not a colour

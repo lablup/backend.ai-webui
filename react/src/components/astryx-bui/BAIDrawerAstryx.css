@@ -9,13 +9,13 @@
  table (`packages/backend.ai-ui/src/theme-shim/mapping.ts`), so the migrated
  drawers keep the legacy arrangement pixel for pixel:
 
-   .ant-drawer-header  padding: `padding` `paddingLG`  -> 16px 24px
+   ant-drawer-header  padding: `padding` `paddingLG`  -> 16px 24px
                        border-bottom: `lineWidth` solid `colorSplit`
                        font-size: `fontSizeLG`         -> 16px
-   .ant-drawer-close   margin-inline-end: `marginXS`   -> 8px
-   .ant-drawer-title   flex: 1; font-weight: `fontWeightStrong`
-   .ant-drawer-extra   flex: none
-   .ant-drawer-body    padding: `paddingLG`            -> 24px; overflow: auto
+   ant-drawer-close   margin-inline-end: `marginXS`   -> 8px
+   ant-drawer-title   flex: 1; font-weight: `fontWeightStrong`
+   ant-drawer-extra   flex: none
+   ant-drawer-body    padding: `paddingLG`            -> 24px; overflow: auto
 
  Token names come from the declared Astryx variable set only (P19) — the same
  `--spacing-*` / `--color-*` / `--font-*` ladder the theme-shim maps antd's
@@ -32,11 +32,11 @@
   }
 
   .bai-drawer-header-title {
-    /* .ant-drawer-header-title: flex: 1, so the extra slot is pushed to the
+    /* ant-drawer-header-title: flex: 1, so the extra slot is pushed to the
        trailing edge and a long title truncates instead of shoving it off. */
     flex: 1;
     min-width: 0;
-    /* .ant-drawer-close: margin-inline-end: marginXS. Applied to the button's
+    /* ant-drawer-close: margin-inline-end: marginXS. Applied to the button's
        sibling gap rather than the button itself so the IconButton keeps its
        own hit area. */
     column-gap: var(--spacing-2);
@@ -46,14 +46,14 @@
     flex: 1;
     min-width: 0;
     margin: 0;
-    /* .ant-drawer-title truncates rather than wrapping the header to 2 rows. */
+    /* ant-drawer-title truncates rather than wrapping the header to 2 rows. */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .bai-drawer-extra {
-    /* .ant-drawer-extra: flex: none */
+    /* ant-drawer-extra: flex: none */
     flex: none;
     display: inline-flex;
     align-items: center;

@@ -47,11 +47,13 @@ const useKeyboardShortcut = (
     return false;
   };
 
-  // `dialog[open]` covers every Astryx-backed modal (`BAIModal`, the app-shim's
+  // `dialog[open]` covers every modal in the app (`BAIModal`, the app-shim's
   // imperative confirm/alert dialogs) — they are native `<dialog>` elements
-  // opened with `showModal()`. `.ant-modal` stays until the last antd `Modal`
-  // call site is converted (to-astryx phase 3 / ticket B).
-  const isModalOpen = () => document.querySelector('.ant-modal, dialog[open]');
+  // opened with `showModal()`. The `.ant-modal` alternative that used to sit
+  // beside it is gone with antd: nothing renders that class any more, so
+  // keeping it would only make the selector look like it covers a case it
+  // cannot.
+  const isModalOpen = () => document.querySelector('dialog[open]');
 
   /**
    * Handles the keydown event, invoking the handler if conditions are met.

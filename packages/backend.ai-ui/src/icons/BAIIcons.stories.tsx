@@ -1,8 +1,9 @@
 import BAIFlex from '../components/BAIFlex';
+import BAIText from '../components/BAIText';
 import { theme } from '../theme-shim';
 import * as Icons from './index';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Input, Typography } from 'antd';
 import React, { useState } from 'react';
 
 const icons = Object.entries(Icons)
@@ -41,7 +42,7 @@ const IconWrapper: React.FC<{
       }}
     >
       <div style={{ fontSize: 28, marginBottom: 8, lineHeight: 1 }}>{icon}</div>
-      <Typography.Text
+      <BAIText
         style={{
           fontSize: 11,
           textAlign: 'center',
@@ -50,7 +51,7 @@ const IconWrapper: React.FC<{
         }}
       >
         {name.replace('BAI', '').replace('Icon', '')}
-      </Typography.Text>
+      </BAIText>
     </div>
   );
 };
@@ -65,16 +66,18 @@ const IconsOverview: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="lg">
-      <Input
+      <TextInput
+        label="Search icons"
+        isLabelHidden
         placeholder="Search icons..."
         value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        allowClear
+        onChange={setFilter}
+        hasClear
         style={{ maxWidth: 300 }}
       />
-      <Typography.Text type="secondary">
+      <BAIText type="secondary">
         {filteredIcons.length} icon{filteredIcons.length !== 1 ? 's' : ''} found
-      </Typography.Text>
+      </BAIText>
       <div
         style={{
           display: 'flex',
@@ -102,11 +105,11 @@ const meta: Meta = {
 **Backend.AI Icons** are custom icon components for Backend.AI WebUI.
 
 ## Features
-- Custom SVG icons wrapped in Ant Design Icon component
+- Custom SVG icons wrapped in a first-party icon shim (\`iconShim\`) that mirrors the API \`@ant-design/icons\`' \`Icon\` used to provide, with zero antd imports
 - Consistent styling and sizing
 - Accessibility support with \`aria-label\` prop
 - Optional \`size\` prop for hardware/accelerator icons
-- Extends \`CustomIconComponentProps\` from Ant Design
+- Extends \`CustomIconComponentProps\` declared locally in \`iconShim\` (type-compatible with Ant Design's former shape, so existing \`Omit<CustomIconComponentProps, ...>\` call sites compile unchanged)
 
 ## Usage
 \`\`\`tsx
@@ -130,7 +133,7 @@ import { BAINvidiaIcon, BAISessionsIcon } from '@backend.ai/backend.ai-ui';
 | \`style\` | \`CSSProperties\` | - | Custom styles |
 | \`className\` | \`string\` | - | CSS class name |
 
-All icons extend Ant Design's \`CustomIconComponentProps\` (excluding \`width\`, \`height\`, \`fill\`).
+All icons extend the locally-declared \`CustomIconComponentProps\` (excluding \`width\`, \`height\`, \`fill\`) from \`icons/iconShim.tsx\`.
         `,
       },
     },

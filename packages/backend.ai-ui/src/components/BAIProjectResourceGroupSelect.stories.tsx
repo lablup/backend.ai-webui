@@ -3,7 +3,6 @@ import { BAIConfigProvider } from './provider';
 import { BAIClient } from './provider/BAIClientProvider';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import enUS from 'antd/locale/en_US';
 import { Suspense, type ReactNode, useMemo, useState } from 'react';
 
 // =============================================================================
@@ -93,7 +92,7 @@ const StoryProvider = ({
 
   return (
     <BAIConfigProvider
-      locale={{ lang: 'en', antdLocale: enUS }}
+      locale={{ lang: 'en' }}
       clientPromise={clientPromise}
       anonymousClientFactory={mockAnonymousClientFactory}
     >

@@ -47,6 +47,33 @@ describe('BAICard', () => {
       expect(card).toBeTruthy();
       expect(card?.getAttribute('style')).toContain('background-color: red');
     });
+
+    // Product tours anchor steps to the header row and the action slot by
+    // query (`SessionLauncherErrorTourProps`,
+    // `AdminDeploymentPresetValidationTour`) — the elements are rendered
+    // inside this component, so there is no ref for the call site to pass.
+    // They pointed at `.ant-card-head` / `.ant-card-extra` until the Astryx
+    // rebuild silently stopped emitting them; a missing tour anchor degrades
+    // to an unanchored step instead of throwing, so nothing caught it. These
+    // two assertions are the guard that replaces "nothing caught it".
+    it('should expose the tour anchor classes on the header row and extra slot', () => {
+      const { container } = render(
+        <BAICard title="Card Title" extra={<button>Modify</button>}>
+          Content
+        </BAICard>,
+      );
+      const head = container.querySelector('.bai-card__head');
+      expect(head).toBeTruthy();
+      expect(head).toHaveTextContent('Card Title');
+      expect(container.querySelector('.bai-card__extra')).toHaveTextContent(
+        'Modify',
+      );
+    });
+
+    it('should not render the header row when there is no title or extra', () => {
+      const { container } = render(<BAICard>Content only</BAICard>);
+      expect(container.querySelector('.bai-card__head')).toBeNull();
+    });
   });
 
   describe('Status Variants', () => {

@@ -1,6 +1,9 @@
 import BAIBoardItemTitle from './BAIBoardItemTitle';
+import BAIButton from './BAIButton';
+import BAIFlex from './BAIFlex';
+import BAITag from './BAITag';
+import { Heading } from '@astryxdesign/core/Text';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Space, Tag, Typography } from 'antd';
 import { Settings, RotateCw } from 'lucide-react';
 
 /**
@@ -82,9 +85,9 @@ export const WithExtra: Story = {
   args: {
     title: 'Session Overview',
     extra: (
-      <Button type="primary" size="small">
+      <BAIButton type="primary" size="small">
         Refresh
-      </Button>
+      </BAIButton>
     ),
   },
   parameters: {
@@ -103,11 +106,11 @@ export const WithTooltipAndExtra: Story = {
     title: 'Compute Sessions',
     tooltip: 'Active compute sessions in your environment',
     extra: (
-      <Space>
-        <Tag color="blue">12 Active</Tag>
-        <Button type="text" size="small" icon={<RotateCw size="1em" />} />
-        <Button type="text" size="small" icon={<Settings size="1em" />} />
-      </Space>
+      <BAIFlex gap="xs" align="center">
+        <BAITag color="blue">12 Active</BAITag>
+        <BAIButton type="text" size="small" icon={<RotateCw size="1em" />} />
+        <BAIButton type="text" size="small" icon={<Settings size="1em" />} />
+      </BAIFlex>
     ),
   },
   parameters: {
@@ -124,12 +127,12 @@ export const CustomTitle: Story = {
   name: 'CustomTitleNode',
   args: {
     title: (
-      <Space>
-        <Typography.Title level={5} style={{ margin: 0, color: '#1890ff' }}>
+      <BAIFlex gap="xs" align="center">
+        <Heading level={5} style={{ margin: 0, color: '#1890ff' }}>
           Custom Styled Title
-        </Typography.Title>
-        <Tag color="green">NEW</Tag>
-      </Space>
+        </Heading>
+        <BAITag color="green">NEW</BAITag>
+      </BAIFlex>
     ),
     tooltip: 'This demonstrates using a custom React node as title',
   },
@@ -148,7 +151,7 @@ export const LongTitle: Story = {
     title: 'Very Long Board Item Title That Might Wrap to Multiple Lines',
     tooltip:
       'Long titles will wrap appropriately while maintaining proper alignment',
-    extra: <Button size="small">Action</Button>,
+    extra: <BAIButton size="small">Action</BAIButton>,
   },
   parameters: {
     docs: {
@@ -166,9 +169,9 @@ export const CustomStyles: Story = {
     title: 'Styled Header',
     tooltip: 'Custom background and styling',
     extra: (
-      <Button type="primary" size="small">
+      <BAIButton type="primary" size="small">
         Custom
-      </Button>
+      </BAIButton>
     ),
     style: {
       backgroundColor: '#f0f8ff',
@@ -192,13 +195,13 @@ export const MultipleActions: Story = {
     title: 'Management Dashboard',
     tooltip: 'Comprehensive view of system resources and controls',
     extra: (
-      <Space size="small">
-        <Button size="small">Export</Button>
-        <Button size="small">Filter</Button>
-        <Button type="primary" size="small">
+      <BAIFlex gap="xs" align="center">
+        <BAIButton size="small">Export</BAIButton>
+        <BAIButton size="small">Filter</BAIButton>
+        <BAIButton type="primary" size="small">
           Create New
-        </Button>
-      </Space>
+        </BAIButton>
+      </BAIFlex>
     ),
   },
   parameters: {

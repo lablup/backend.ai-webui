@@ -6,7 +6,7 @@
 
  antd `List.Item` supplied two things to `BAIGeneralNotificationItem` /
  `BAIMultiStepNotificationItem`: a 16px vertical padding and a hairline between
- consecutive rows (`.ant-list-item` + `:last-child` reset). Astryx `ListItem`
+ consecutive rows (`ant-list-item` + `:last-child` reset). Astryx `ListItem`
  cannot stand in — it is a fixed label/description/start/end row and these
  notifications are multi-row blocks — so the two metrics move here, imported by
  the components themselves (P17, component-scoped rather than app-global).

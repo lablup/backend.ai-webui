@@ -4,7 +4,7 @@
 
  React contexts for the self-hosted form engine (to-astryx ticket 34).
 
- Collapses what upstream splits across `@rc-component/form`'s `FieldContext` /
+ Collapses what upstream splits across rc-component's `form` `FieldContext` /
  `FormContext` / `ListContext` and antd's `form/context` (`FormContext`,
  `NoStyleItemContext`, `FormItemInputContext`) into one module, so the
  engine's provider tree is legible in a single read.

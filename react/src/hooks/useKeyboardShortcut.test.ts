@@ -111,15 +111,36 @@ describe('useKeyboardShortcut', () => {
   });
 
   describe('Modal detection', () => {
+    // The hook detects an open modal as `dialog[open]`. It used to also accept
+    // `.ant-modal`, and these fixtures built a `<div class="ant-modal">`;
+    // nothing renders that class since antd was removed, and every modal in
+    // the app (`BAIModal`, the app-shim's imperative dialogs) is a native
+    // `<dialog>` opened with `showModal()`. Building the real element is also
+    // a stronger fixture than a class-named div — it can only pass if the
+    // selector matches what the app actually mounts.
+    const appendOpenDialog = () => {
+      const dialog = document.createElement('dialog');
+      dialog.setAttribute('open', '');
+      document.body.appendChild(dialog);
+      return dialog;
+    };
+
     it('should not trigger handler when modal is open', () => {
-      const modal = document.createElement('div');
-      modal.className = 'ant-modal';
-      document.body.appendChild(modal);
+      appendOpenDialog();
 
       renderHook(() => useKeyboardShortcut(mockHandler));
       triggerKeydown({ key: 'a' });
 
       expect(mockHandler).not.toHaveBeenCalled();
+    });
+
+    it('should trigger handler when a dialog is present but closed', () => {
+      document.body.appendChild(document.createElement('dialog'));
+
+      renderHook(() => useKeyboardShortcut(mockHandler));
+      triggerKeydown({ key: 'a' });
+
+      expect(mockHandler).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger handler when no modal is open', () => {
@@ -253,8 +274,8 @@ describe('useKeyboardShortcut', () => {
       document.body.appendChild(input);
       input.focus();
 
-      const modal = document.createElement('div');
-      modal.className = 'ant-modal';
+      const modal = document.createElement('dialog');
+      modal.setAttribute('open', '');
       document.body.appendChild(modal);
 
       renderHook(() => useKeyboardShortcut(mockHandler));

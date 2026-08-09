@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react';
-import glob from 'fast-glob';
-import { dirname, resolve, basename } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -22,22 +21,16 @@ const peerDependencyPatterns = Object.keys(peerDependencies).map(
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
-  // Only the per-language entry modules (`en_US.ts`, `pt_BR.ts`, …) become
-  // `dist/locale/*` build entries — that directory IS the `./dist/locale/*`
-  // package export, so anything else living in `src/locale/` (e.g.
-  // `astryxOverrides.ts`, which is plumbing rather than a locale) must not be
-  // published under it. The `*_*` shape is the naming convention every locale
-  // entry follows; `index.ts` is skipped below as well.
-  const localeFiles = glob.sync('src/locale/*_*.ts', { cwd: __dirname });
+  // Single entry. There used to be one extra entry per language
+  // (`src/locale/en_US.ts` → `dist/locale/en_US.js`, the `./dist/locale/*`
+  // package export), but those modules existed only to re-export
+  // `antd/es/locale/*` bundles for antd's `ConfigProvider locale` prop. The
+  // to-astryx final switch removed that provider, the 21 modules and the
+  // package export together — BUI's OWN translation catalogs are the JSONs in
+  // `src/locale/`, which are bundled into this entry, not published as one.
   const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
   };
-  // Add locale entries
-  localeFiles.forEach((file) => {
-    const name = basename(file, '.ts');
-    if (name === 'index') return;
-    entries[`locale/${name}`] = resolve(__dirname, file);
-  });
 
   return {
     resolve: {

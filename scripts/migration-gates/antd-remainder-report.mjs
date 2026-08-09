@@ -99,9 +99,41 @@ const GATE_CAVEATS = [
       "first-party class to `bai-icon` / `bai-icon-spin` across the shim, " +
       "BUI's `src/styles/backend.ai-ui.css`, the ~15 app/BUI components that " +
       "spin a bare lucide glyph, and the two e2e locators that still named " +
-      "antd glyph classes. The gate's signature list is deliberately " +
-      "UNCHANGED — dropping it would also stop catching a real " +
-      "reintroduction, which is the whole point of keeping it.",
+      "antd glyph classes.",
+  },
+  {
+    id: "anticon-bpe-token",
+    severity: "false FAIL (RESOLVED - to-astryx final switch)",
+    what: "A BPE vocabulary token kept part (b)'s icon signature red forever.",
+    detail:
+      "`build/web/assets/main-*.js` bundles the Chat token counter's " +
+      "`cl100k_base` / `o200k` vocabularies, and a quote-SPACE-anticon-quote " +
+      "sequence is one of their ~200k merge tokens. It sits in a run of " +
+      "unrelated multilingual tokens and is third-party data we cannot " +
+      "change, so the bare-word signature fired on a completely clean build. " +
+      "The signature was NARROWED, not dropped: it now requires the dotted " +
+      "CSS-reset form or the glyph-suffixed form (`anticon-<letter>`), which " +
+      "covers the icon package's own stylesheet, every rendered glyph, and " +
+      "the minified class concatenation in the icon component. A real " +
+      "reintroduction emits both; the BPE token emits neither. Measured on " +
+      "the final-switch build: bare word 1 hit, anchored 0. Do not widen it " +
+      "back, and do not delete it.",
+  },
+  {
+    id: "license-comments-survive-minification",
+    severity: "false FAIL (RESOLVED - to-astryx final switch)",
+    what: "Our own comments about antd were shipping into the bundle.",
+    detail:
+      "CSS comments always survive minification, and terser preserves JS " +
+      "comment blocks containing `@license` - which every file in this repo " +
+      "opens with. First-party prose quoting an antd class name or an " +
+      "antd-family package specifier therefore landed verbatim in " +
+      "`build/web` and tripped part (b) signatures on a clean build. " +
+      "Resolved by phrasing that prose without the literal tokens: antd " +
+      "class names lose their leading dot, package names lose their scope " +
+      "prefix. See the SPELLING NOTE in " +
+      "`packages/backend.ai-ui/src/form-engine/engine.ts`. Keep new comments " +
+      "that way rather than weakening the signatures.",
   },
 ];
 
@@ -270,8 +302,24 @@ function toMarkdown(report, roots) {
   L.push(
     "authority is `scripts/antd-zero-gate.sh`; this file is the actionable view",
   );
-  L.push("of *why* it is not green yet.");
+  L.push("of *why* it is or is not green.");
   L.push("");
+  if (
+    report.totals.directAntd === 0 &&
+    report.totals.transitivelyReachable === 0
+  ) {
+    L.push(
+      "**ZERO — the migration is complete.** No shipping file imports antd,",
+    );
+    L.push(
+      "directly or transitively. Every bucket below is empty. They are kept",
+    );
+    L.push(
+      "rather than deleted so that a regression shows up as a bucket refilling",
+    );
+    L.push("rather than as a new document.");
+    L.push("");
+  }
   const t = report.totals;
   L.push("## Totals");
   L.push("");

@@ -1,7 +1,9 @@
 import type { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
 import { Form } from '../../../form-engine';
 import { toGlobalId } from '../../../helper';
+import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
+import BAIText from '../../BAIText';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIVFolderSelectAstryx from '../../fragments/BAIVFolderSelectAstryx';
 import { BAIClientContext } from '../../provider/BAIClientProvider/context';
@@ -15,7 +17,6 @@ import BAIDirectoryPickerModal, {
 import BAIVFolderPathPicker from './BAIVFolderPathPicker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Button, Typography } from 'antd';
 import { useState, useTransition } from 'react';
 import { RelayEnvironmentProvider, useQueryLoader } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -324,14 +325,14 @@ export const Default: Story = {
             vfolderUuid={MOCK_VFOLDERS[0].uuid}
             onChange={setLastChange}
           />
-          <Typography.Text type="secondary">
+          <BAIText type="secondary">
             onChange:{' '}
-            <Typography.Text code>
+            <BAIText code>
               {lastChange === undefined
                 ? 'undefined'
                 : JSON.stringify(lastChange)}
-            </Typography.Text>
-          </Typography.Text>
+            </BAIText>
+          </BAIText>
         </BAIFlex>
       </MockProviders>
     );
@@ -402,13 +403,13 @@ export const WithinForm: Story = {
             />
           </Form.Item>
           <BAIFlex direction="column" align="start" gap="sm">
-            <Button type="primary" htmlType="submit">
+            <BAIButton type="primary" htmlType="submit">
               Submit
-            </Button>
+            </BAIButton>
             {submitted && (
-              <Typography.Text type="secondary">
-                submitted: <Typography.Text code>{submitted}</Typography.Text>
-              </Typography.Text>
+              <BAIText type="secondary">
+                submitted: <BAIText code>{submitted}</BAIText>
+              </BAIText>
             )}
           </BAIFlex>
         </Form>
@@ -436,7 +437,7 @@ const DirectoryPickerModalDemo: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="start">
-      <Button
+      <BAIButton
         type="primary"
         loading={isOpenPending}
         onClick={() => {
@@ -455,13 +456,13 @@ const DirectoryPickerModalDemo: React.FC = () => {
         }}
       >
         Open directory picker
-      </Button>
-      <Typography.Text type="secondary">
+      </BAIButton>
+      <BAIText type="secondary">
         Last selection:{' '}
-        <Typography.Text code>
+        <BAIText code>
           {lastResult === undefined ? '(none)' : `/${lastResult}`}
-        </Typography.Text>
-      </Typography.Text>
+        </BAIText>
+      </BAIText>
       {queryRef != null && (
         <BAIUnmountAfterClose>
           <BAIDirectoryPickerModal

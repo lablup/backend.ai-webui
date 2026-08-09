@@ -48,9 +48,12 @@ const SessionLauncherValidationTour: React.FC<
   // `targetRef` whose element must already exist when the step renders. The
   // same DOM queries now run once in an effect when the tour opens, and the
   // resolved elements are handed to the steps as literal ref objects. The
-  // `.ant-card-head` selector is intentional and unchanged: BAICard is an
-  // unconverted BUI frontier component and still renders antd Card DOM —
-  // revisit when that component converts.
+  // The header anchor is `.bai-card__head`. It was `.ant-card-head`, on the
+  // then-true premise that `BAICard` was an unconverted frontier component
+  // still rendering antd Card DOM. It converted; the class went with it, the
+  // query started returning null, and this step lost its anchor without
+  // failing. `BAICard` now emits a BAI-namespaced class for exactly this
+  // purpose (see the comment on its header row).
   const [targets, setTargets] = useState<TourTargets | null>(null);
 
   const isActive = !!open && !hasOpenedValidationTour;
@@ -74,7 +77,7 @@ const SessionLauncherValidationTour: React.FC<
       card.scrollIntoView({ block: 'center' });
       setTargets({
         card,
-        head: card.querySelector<HTMLElement>('.ant-card-head'),
+        head: card.querySelector<HTMLElement>('.bai-card__head'),
         nav: document.querySelector<HTMLElement>(
           '[data-test-id="neo-session-launcher-tour-step-navigation"]',
         ),

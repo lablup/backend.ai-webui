@@ -11,6 +11,22 @@
  *
  * Usage: node scripts/gen-theme-schema.cjs [output-path]
  * Default output: ./resources/antdThemeConfig.schema.json
+ *
+ * STATUS (to-astryx final switch): `antd` is no longer a dependency of this
+ * repo, so this script cannot run as-is — it reads antd's own `.d.ts` files
+ * out of `react/node_modules/antd`. It is kept, not deleted, because the
+ * artifact it produces (`resources/antdThemeConfig.schema.json`) is committed
+ * and still live: `resources/theme.json` is authored in antd token names,
+ * which is what the theme-shim reads and what `react/src/astryx-theme/`
+ * translates into Astryx themes. The schema is therefore FROZEN at the antd
+ * 6.5.0 shape, like `theme-shim/tokenType.ts` and
+ * `theme-shim/antdDesignTokenFixture.ts`.
+ *
+ * To regenerate (should be rare — only if the deployment-facing theme.json
+ * vocabulary is deliberately extended): `npm i --no-save antd@6.5.0` inside
+ * `react/`, run this script, then remove it again. Do not add antd back to
+ * any package.json for it; `scripts/antd-zero-gate.sh` part (a) would fail.
+ * The companion test self-skips its integration block when antd is absent.
  */
 const ts = require('typescript');
 const path = require('path');

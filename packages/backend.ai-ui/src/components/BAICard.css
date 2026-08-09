@@ -62,9 +62,9 @@
 /*
  `tabList` — the card-top tab chrome (QA2-A / item 3).
 
- antd's `Card` rendered `tabList` INSIDE `.ant-card-head`, so the tab strip was
+ antd's `Card` rendered `tabList` INSIDE `ant-card-head`, so the tab strip was
  part of the card's chrome, not content: the head's `border-bottom` ran the FULL
- width of the card (`.ant-card-head { padding: 0 24px; border-bottom: 1px solid
+ width of the card (`ant-card-head { padding: 0 24px; border-bottom: 1px solid
  colorBorderSecondary }`) while the first tab's LABEL started at the same 24px
  inset as the body below it.  Astryx's `Card` is a single padded box, so
  rebuilding that anatomy means full-bleeding the strip back out to the card's
@@ -109,7 +109,7 @@
 
 /*
  Title-less tabbed card: pull the strip up to the card's top edge and reserve
- the header band above it, so the rule lands where antd's 56px `.ant-card-head`
+ the header band above it, so the rule lands where antd's 56px `ant-card-head`
  bottom border did (20px + 32px tab + 4px rail gap + 1px = 57px) instead of
  floating a full card padding below the top edge.
 */

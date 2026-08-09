@@ -5,61 +5,54 @@
  THE acceptance suite for the self-hosted form engine (to-astryx ticket 34).
 
  29 tests distilled from `answers/08 §5` — the semantics this repository
- actually depends on, each traced to a real call site. The suite runs TWICE,
- once against antd's `Form` and once against the engine, so "the replacement
- behaves like the thing it replaces" is asserted rather than asserted-about.
- Keeping the antd row green is deliberate: it proves the tests describe antd
- rather than the engine, and it stays as the oracle until antd is uninstalled,
- at which point the `antd` row is dropped and the `engine` row becomes a plain
- regression suite.
+ actually depends on, each traced to a real call site.
 
- STATUS (2026-08-09, ticket 35): the engine is LIVE — the `form-engine` alias
- resolves to it, so the `engine` row is the row that describes production and
- the `antd` row is the reference oracle. (It was parked for one day between
- 2026-08-08 and 2026-08-09; the row split is what made re-enabling it a
- one-line alias flip rather than an archaeology exercise.)
+ STATUS (final switch): antd is UNINSTALLED. This suite used to run TWICE —
+ `describe.each([['antd', AntdForm], ['engine', EngineForm]])` — so that "the
+ replacement behaves like the thing it replaces" was asserted rather than
+ asserted-about, with the antd row acting as a live oracle and a green antd
+ row proving the tests described antd rather than the engine. The plan
+ recorded here from the start was that the antd row is dropped when the
+ package goes and the engine row becomes a plain regression suite. That is
+ what happened; the assertions themselves are unchanged, and they carry the
+ oracle's verdict forward because they passed against real antd on every run
+ up to this commit.
+
+ The companion `it('the form-engine alias resolves to the self-hosted engine,
+ not antd')` guard went with it — it compared `EngineForm` against
+ `AntdForm`, and with no antd to compare against there is nothing the alias
+ could forward to.
 
  Rules for editing this file:
-   - Assert through the FormInstance API and rendered TEXT only. Any assertion
-     on antd class names or on BAI `data-*` anchors would pass in one row and
-     fail in the other for reasons that have nothing to do with semantics.
-   - When a test needs specific message text, pass `message` explicitly. The
-     two implementations agree on the default templates, but pinning generated
-     English here would make the suite a locale test.
+   - Assert through the FormInstance API and rendered TEXT only, NOT on class
+     names or BAI `data-*` anchors. That rule outlives the two-row setup it
+     was written for: it is what keeps these tests about form semantics rather
+     than about one implementation's DOM.
+   - When a test needs specific message text, pass `message` explicitly.
+     Pinning generated English here would make the suite a locale test.
  */
 // Through the ALIAS on purpose (ticket 35): this is the module every one of
 // the 115 form call sites resolves, so the suite pins the wiring as well as
-// the engine. If the alias ever forwarded to antd again, the two rows would
-// become identical and 29 of the 58 assertions would stop meaning anything —
-// which is precisely the regression this import is positioned to catch.
-import { Form as EngineForm } from '../form-engine';
+// the engine.
+import { Form as EngineForm, type FormInstance } from '../form-engine';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form as AntdForm } from 'antd';
-import type { FormInstance } from 'antd';
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 /**
- * Both implementations under one type. `any` on purpose: the two prop types
- * are structurally compatible for everything this suite uses, and unifying
- * them precisely would mean re-declaring antd's types here.
+ * `any` on purpose, carried over from the two-row setup: the assertions below
+ * reach for `Form.List` / `Form.Item` render-prop shapes that the engine's
+ * precise prop types express differently per overload, and tightening them
+ * here would rewrite 29 tests for no additional coverage.
  */
 type AnyForm = any;
 
 const IMPLEMENTATIONS: [name: string, Form: AnyForm][] = [
-  ['antd', AntdForm],
   ['engine', EngineForm],
 ];
 
-// The alias is what the app resolves; if it ever forwarded back to antd, both
-// rows below would run antd and stay green while asserting nothing. Pin it.
-it('the `form-engine` alias resolves to the self-hosted engine, not antd', () => {
-  expect(EngineForm).not.toBe(AntdForm);
-  expect(EngineForm.Item).not.toBe(AntdForm.Item);
-});
-
-/** Plain controlled input, so no antd/Astryx control is in the test path. */
+/** Plain controlled input, so no Astryx control is in the test path. */
 const Input: React.FC<any> = ({ value = '', onChange, ...rest }) => (
   <input value={value} onChange={(e) => onChange?.(e)} {...rest} />
 );

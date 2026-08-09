@@ -6,7 +6,6 @@ import {
   getLocaleDirection,
 } from '@astryxdesign/core/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConfigProvider, type ConfigProviderProps } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -35,7 +34,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -45,10 +44,19 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
-export interface BAIConfigProviderBaseProps extends Omit<
-  ConfigProviderProps,
-  'locale'
-> {
+/**
+ * to-astryx final switch: this used to `extend Omit<ConfigProviderProps,
+ * 'locale'>`, which is how the host passed `csp`, `theme`, `modal`, `drawer`
+ * and `tag` straight through to the antd `ConfigProvider` this component
+ * wrapped. With that provider gone the pass-through has no destination —
+ * every one of those props configured antd components that no longer exist,
+ * and Astryx's `Theme` / `InternationalizationProvider` take their
+ * configuration from `react/src/astryx-theme/` instead. So the interface is
+ * now standalone (the one case `component-props-extension.md` does not
+ * cover: there is no underlying component left to extend).
+ */
+export interface BAIConfigProviderBaseProps {
+  children?: ReactNode;
   locale?: BAILocale;
 }
 
@@ -78,7 +86,6 @@ const BAIConfigProvider = ({
   locale,
   clientPromise,
   anonymousClientFactory,
-  ...props
 }: BAIConfigProviderProps) => {
   // Sync BUI's i18n + dayjs locale to the prop. BUI components access
   // `buiI18n` *explicitly* via `useBAIi18n()` (which calls
@@ -118,18 +125,16 @@ const BAIConfigProvider = ({
         overrides={astryxOverrides}
         dir={getLocaleDirection(astryxLocale)}
       >
-        <ConfigProvider locale={locale?.antdLocale} {...props}>
-          {clientPromise && anonymousClientFactory ? (
-            <BAIClientProvider
-              clientPromise={clientPromise}
-              anonymousClientFactory={anonymousClientFactory}
-            >
-              {children}
-            </BAIClientProvider>
-          ) : (
-            children
-          )}
-        </ConfigProvider>
+        {clientPromise && anonymousClientFactory ? (
+          <BAIClientProvider
+            clientPromise={clientPromise}
+            anonymousClientFactory={anonymousClientFactory}
+          >
+            {children}
+          </BAIClientProvider>
+        ) : (
+          children
+        )}
       </InternationalizationProvider>
     </QueryClientProvider>
   );

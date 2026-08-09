@@ -43,8 +43,11 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
   // resolved elements are handed to the steps as literal ref objects. Each
   // target contains a real `<button>` (the review card's Modify link / the
   // footer nav buttons), satisfying the Popover anchor contract. The
-  // `.ant-card-extra` selector is intentional: BAICard is an unconverted BUI
-  // frontier component and still renders antd Card DOM.
+  // The action-slot anchor is `.bai-card__extra`. It was `.ant-card-extra`,
+  // which stopped existing when `BAICard` was rebuilt on Astryx — the query
+  // returned null and this step silently lost its anchor. `BAICard` now emits
+  // a BAI-namespaced class for exactly this purpose (see the comment on its
+  // header row).
   const [targets, setTargets] = useState<TourTargets | null>(null);
 
   const isActive = !!open && !hasOpened;
@@ -68,7 +71,7 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
       card.scrollIntoView({ block: 'center' });
       setTargets({
         card,
-        extra: card.querySelector<HTMLElement>('.ant-card-extra'),
+        extra: card.querySelector<HTMLElement>('.bai-card__extra'),
         nav: document.querySelector<HTMLElement>(
           '[data-test-id="deployment-preset-step-navigation"]',
         ),

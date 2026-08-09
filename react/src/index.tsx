@@ -11,7 +11,6 @@ import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import { applyDevServerTitle } from './helper/devServerTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
-import { ConfigProvider, theme as antdTheme } from 'antd';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -57,59 +56,23 @@ if (process.env.NODE_ENV === 'development') {
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
 
-// Static antd methods (message.* / notification.* / Modal.*) render in a
-// detached holder built from globalConfig(), OUTSIDE the app's ConfigProvider,
-// so their cssinjs styles never receive the CSP nonce. Wrap that holder via
-// `holderRender` in a ConfigProvider carrying the per-request nonce so the
-// injected <style> nodes survive a strict `style-src 'nonce-...'` policy.
-// (globalThis.baiNonce is empty in dev, like the inline scripts in index.html.)
+// to-astryx final switch — the `ConfigProvider.config({ holderRender })` block
+// that used to live here is gone.
 //
-// The holder is also outside the app's THEME, which is why it carries the
-// dark algorithm explicitly here. Without it every statically-invoked toast /
-// confirm painted with antd's default (light) algorithm on a dark page — the
-// same "renders outside the themed subtree" hazard the Astryx side solves by
-// syncing `data-theme` onto <html>. `ThemeModeProvider` is the single source
-// of truth: it publishes `globalThis.isDarkMode` and fires
-// `change:backendaiwebui.setting.isDarkMode` on every flip, and this holder
-// subscribes so a mid-session toggle repaints it (the holder is created once
-// and never remounted).
-const StaticHolderTheme: React.FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => {
-  'use memo';
-  const [isDark, setIsDark] = React.useState(
-    () => globalThis.isDarkMode ?? false,
-  );
-  React.useEffect(() => {
-    const handler = (e: Event) => setIsDark(!!(e as CustomEvent).detail);
-    document.addEventListener(
-      'change:backendaiwebui.setting.isDarkMode',
-      handler,
-    );
-    return () =>
-      document.removeEventListener(
-        'change:backendaiwebui.setting.isDarkMode',
-        handler,
-      );
-  }, []);
-
-  return (
-    <ConfigProvider
-      csp={{ nonce: globalThis.baiNonce }}
-      theme={{
-        algorithm: isDark
-          ? antdTheme.darkAlgorithm
-          : antdTheme.defaultAlgorithm,
-      }}
-    >
-      {children}
-    </ConfigProvider>
-  );
-};
-
-ConfigProvider.config({
-  holderRender: (children) => <StaticHolderTheme>{children}</StaticHolderTheme>,
-});
+// It existed for antd's STATIC methods (`message.*` / `notification.*` /
+// `Modal.*`), which render in a detached holder built from `globalConfig()` —
+// outside the app's ConfigProvider, and therefore outside both its CSP nonce
+// and its theme. The holder had to be re-wrapped in its own ConfigProvider
+// carrying the nonce (so cssinjs's injected <style> survived a strict
+// `style-src 'nonce-…'`) and the dark algorithm (so a statically-invoked toast
+// did not paint light on a dark page), subscribing to
+// `change:backendaiwebui.setting.isDarkMode` to follow a mid-session flip.
+//
+// None of that has a subject any more. The imperative API is `app-shim`
+// (ticket 04), whose host `<BAIAppProvider>` is mounted INSIDE the app's
+// `<AstryxBrandTheme>` in `DefaultProviders`, so it inherits theme and mode
+// like any other component — and Astryx injects no runtime <style>, so there
+// is no nonce to plumb.
 
 // In dev, distinguish multiple dev-server tabs by prefixing the tab title with
 // the Portless app name injected via VITE_DEV_SERVER_NAME (no-op in production).

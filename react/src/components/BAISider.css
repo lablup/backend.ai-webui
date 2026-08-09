@@ -3,7 +3,7 @@
  * element (forbidden under strict CSP); a same-origin stylesheet is covered
  * by `style-src 'self'` and needs no nonce.
  *
- * to-astryx ticket 24: the `.bai-sider .ant-layout-sider-children` flex rule
+ * to-astryx ticket 24: the `.bai-sider ant-layout-sider-children` flex rule
  * is gone with antd `Layout.Sider` — Astryx `SideNav` is already a flex
  * column (P6: an `.ant-*` rule left behind here would keep compiling and stop
  * applying). The scrollbar-hiding and the Electron drag regions are DOM-shape
@@ -292,7 +292,7 @@
  * `.bai-sider` only, so no other `SideNav` in the app (or in Storybook) is
  * touched, and every value is an Astryx token.
  *
- *   antd (legacy `.ant-menu-item-group-title` + BAIMenu's createStyles)
+ *   antd (legacy `ant-menu-item-group-title` + BAIMenu's createStyles)
  *   --------------------------------------------------------------------
  *   font-size: groupTitleFontSize = token.fontSize (14px)
  *                                     -> var(--font-size-base)

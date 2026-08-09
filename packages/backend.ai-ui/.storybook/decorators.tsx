@@ -1,15 +1,15 @@
 import { BAIAppProvider } from '../src/app-shim';
 import BAIText from '../src/components/BAIText';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
+import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
 import { i18n } from '../src/locale';
-import { ThemeShimProvider } from '../src/theme-shim';
+import { ThemeShimProvider, theme } from '../src/theme-shim';
 import { astryxBrandTheme } from './astryxBrandTheme';
-import { getAntdLocale } from './localeConfig';
 import { themeConfigs, type ThemeStyle } from './themeConfig';
 import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
 import type { Decorator } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { Skeleton, theme } from 'antd';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -78,7 +78,6 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const antdLocale = getAntdLocale(locale);
   const currentThemeConfig = themeConfigs[themeStyle];
   const isWebUIStyle = themeStyle === 'webui';
   const seedToken =
@@ -112,32 +111,29 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
           fontFamily: seedToken.fontFamily,
         }}
       >
-        {/* BAIConfigProvider (ticket 30): the real production wrapper —
-            antd ConfigProvider + Astryx InternationalizationProvider, both
-            driven from the same locale/theme so Astryx chrome strings and
-            plurals follow the story's locale instead of sitting on the
-            'en' context default (P13). */}
-        <BAIConfigProvider
-          locale={{ lang: locale, antdLocale }}
-          theme={{
-            ...(isDarkMode
-              ? currentThemeConfig.dark
-              : currentThemeConfig.light),
-            algorithm: isDarkMode
-              ? theme.darkAlgorithm
-              : theme.defaultAlgorithm,
-          }}
-          {...(isWebUIStyle && {
-            modal: {
-              mask: { blur: false },
-            },
-            drawer: {
-              mask: { blur: false },
-            },
-            tag: {
-              variant: 'outlined',
-            },
-            form: {
+        {/* BAIConfigProvider (ticket 30): the real production wrapper. It
+            used to be antd's ConfigProvider + Astryx's
+            InternationalizationProvider; the final switch removed the antd
+            leg, so it now carries only the locale — which still drives BUI's
+            i18next, dayjs and Astryx's resolver from one `lang`, keeping
+            Astryx chrome strings and plurals on the story's locale instead of
+            the 'en' context default (P13).
+
+            The `theme` / `modal` / `drawer` / `tag` props that used to be
+            passed through here are gone with that leg: each configured an
+            antd component. The mode and seeds the toolbar picks reach the
+            tree through `AstryxThemeProvider` + `ThemeShimProvider` above,
+            which is where they already were. */}
+        <BAIConfigProvider locale={{ lang: locale }}>
+          {/* The `form.requiredMark` inversion — no asterisk on required
+              fields, "(Optional)" appended to the rest — moved off
+              `ConfigProvider form={{…}}` onto the self-hosted engine's own
+              provider (tickets 34 + 35), mirroring what
+              `react/src/components/DefaultProviders.tsx` does in the app.
+              Still gated on the WebUI theme style, since it is Backend.AI
+              product behaviour rather than an engine default. */}
+          <FormConfigProvider
+            {...(isWebUIStyle && {
               requiredMark: (label, { required }) => (
                 <>
                   {label}
@@ -154,15 +150,15 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
                   )}
                 </>
               ),
-            },
-          })}
-        >
-          {/* App.useApp shim (ticket 11): stories exercising imperative
-              message/modal flows read the shim's toast/dialog host from here
-              (replaces the per-story antd <App> wrappers). */}
-          <BAIAppProvider>
-            <ThemedContainer>{children}</ThemedContainer>
-          </BAIAppProvider>
+            })}
+          >
+            {/* App.useApp shim (ticket 11): stories exercising imperative
+                message/modal flows read the shim's toast/dialog host from here
+                (replaces the per-story antd <App> wrappers). */}
+            <BAIAppProvider>
+              <ThemedContainer>{children}</ThemedContainer>
+            </BAIAppProvider>
+          </FormConfigProvider>
         </BAIConfigProvider>
       </ThemeShimProvider>
     </AstryxThemeProvider>
@@ -181,7 +177,7 @@ const StorybookProvider: React.FC<StorybookProviderProps> = ({
   }, [locale]);
 
   return (
-    <Suspense fallback={<Skeleton active />}>
+    <Suspense fallback={<Skeleton />}>
       <I18nextProvider i18n={i18n}>
         <GlobalConfigProvider
           locale={locale}

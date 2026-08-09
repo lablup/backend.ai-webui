@@ -175,7 +175,12 @@ export function resolveSpecifier(spec, fromFile, repoRoot = REPO_ROOT) {
       return resolveWithSuffixes(join(repoRoot, target, "index"));
     }
     if (spec.startsWith(alias + "/")) {
-      // `backend.ai-ui/dist/locale/*` maps back into src/locale/* (tsconfig).
+      // `backend.ai-ui/dist/locale/*` used to map back into src/locale/*
+      // (a tsconfig path). That package export and the 21 modules behind it
+      // were removed with the antd ConfigProvider layer, so nothing should hit
+      // this rewrite today — it stays because the resolver's job is to model
+      // how specifiers ACTUALLY resolve, and a stale-import regression should
+      // resolve and be reported rather than silently drop out of the graph.
       const rest = spec
         .slice(alias.length + 1)
         .replace(/^dist\/locale\//, "locale/");

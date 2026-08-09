@@ -3,7 +3,6 @@ packages:
   - packages/*
 
 catalog:
-  "@ant-design/icons": ^6.3.2
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.4
@@ -25,7 +24,6 @@ catalog:
   "@types/react-relay": ^18.2.1
   "@types/relay-runtime": ^19.0.3
   "@types/relay-test-utils": ^19.0.0
-  antd: ^6.5.0
   babel-jest: ^30.3.0
   babel-plugin-react-compiler: ^1.0.0
   big.js: ^7.0.1
@@ -154,7 +152,6 @@ overrides:
 
 patchedDependencies:
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
-  "@rc-component/form": react/patches/@rc-component__form.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
   portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

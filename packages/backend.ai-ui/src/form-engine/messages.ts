@@ -4,7 +4,7 @@
 
  Default validate-message templates (to-astryx ticket 34).
 
- Same strings as `@rc-component/form`'s `utils/messages`, restricted to the
+ Same strings as rc-component's `form` `utils/messages`, restricted to the
  rule keys this repository uses. They are only the LAST-RESORT fallback: under
  `<FormConfigProvider>` (mounted app-wide in
  `react/src/components/DefaultProviders.tsx`) the `${label}`-based, LOCALIZED

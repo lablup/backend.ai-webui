@@ -31,12 +31,12 @@ import { ANTD_ALIGN_TOKENS } from './antdParity';
 import { resolveAstryxVars, resolveLightDark, rgbToHex } from './astryxVars';
 import { TOKEN_MAP, type BrandSeedName } from './mapping';
 import { SELF_TOKENS } from './selfTokens';
+import { type BAIThemeToken } from './tokenType';
 import {
   palette,
   presetDarkPalettes,
   presetPalettes,
 } from './vendor/antdColors';
-import type { GlobalToken } from 'antd';
 import {
   createContext,
   use,
@@ -108,7 +108,7 @@ export function buildTokens(
   mode: Mode,
   rawSeeds?: Partial<BrandSeeds>,
   _cascadeEpoch = 0,
-): GlobalToken {
+): BAIThemeToken {
   const seeds = mergeSeeds(rawSeeds);
 
   // 1. every 'astryx' entry, resolved live from the CSS custom properties.
@@ -197,11 +197,11 @@ export function buildTokens(
   // 7. antd component tokens (`token.Layout?.headerBg`).
   if (seeds.components) Object.assign(out, seeds.components);
 
-  return out as unknown as GlobalToken;
+  return out as unknown as BAIThemeToken;
 }
 
 interface ShimValue {
-  token: GlobalToken;
+  token: BAIThemeToken;
   hashId: string;
   theme: { id: number };
 }

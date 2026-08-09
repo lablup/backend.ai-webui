@@ -265,7 +265,18 @@ const BAICard: React.FC<BAICardProps> = ({
       <VStack gap={4} align="stretch">
         {cover}
         {hasTitleRow ? (
+          // `bai-card__head` / `bai-card__extra` are ANCHORS, not styling
+          // hooks: two product tours (`SessionLauncherErrorTourProps`,
+          // `AdminDeploymentPresetValidationTour`) point a step at the error
+          // card's header and at its action slot, and can only reach them by
+          // query since the elements are rendered here, not at the call site.
+          // They used to query `.ant-card-head` / `.ant-card-extra`, which
+          // this component stopped emitting when it was rebuilt on Astryx —
+          // silently, because a missing tour anchor degrades to an unanchored
+          // step rather than throwing. Named in BAI's own namespace so the
+          // same thing cannot happen again on the next engine change.
           <HStack
+            className="bai-card__head"
             justify={title ? 'between' : 'end'}
             align="center"
             wrap="wrap"
@@ -281,7 +292,11 @@ const BAICard: React.FC<BAICardProps> = ({
             ) : (
               title
             )}
-            {extraNode ? <HStack gap={2}>{extraNode}</HStack> : null}
+            {extraNode ? (
+              <HStack className="bai-card__extra" gap={2}>
+                {extraNode}
+              </HStack>
+            ) : null}
           </HStack>
         ) : null}
         {tabs.length ? (

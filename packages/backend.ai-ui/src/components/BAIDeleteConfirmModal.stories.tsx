@@ -1,10 +1,11 @@
 'use memo';
 
 import BAIButton from './BAIButton';
+import BAICheckbox from './BAICheckbox';
 import BAIDeleteConfirmModal from './BAIDeleteConfirmModal';
 import BAIFlex from './BAIFlex';
+import BAITag from './BAITag';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Checkbox, Space, Tag } from 'antd';
 import { Trash2, Folder } from 'lucide-react';
 import { useState } from 'react';
 
@@ -230,31 +231,31 @@ export const CustomRenderedItems: Story = {
       {
         key: '1',
         label: (
-          <Space>
+          <BAIFlex gap="xs" align="center">
             <Folder size="1em" />
             <span>shared-dataset</span>
-            <Tag color="blue">Public</Tag>
-          </Space>
+            <BAITag color="blue">Public</BAITag>
+          </BAIFlex>
         ),
       },
       {
         key: '2',
         label: (
-          <Space>
+          <BAIFlex gap="xs" align="center">
             <Folder size="1em" />
             <span>model-weights-v2</span>
-            <Tag color="red">Private</Tag>
-          </Space>
+            <BAITag color="red">Private</BAITag>
+          </BAIFlex>
         ),
       },
       {
         key: '3',
         label: (
-          <Space>
+          <BAIFlex gap="xs" align="center">
             <Folder size="1em" />
             <span>training-logs</span>
-            <Tag color="green">Archived</Tag>
-          </Space>
+            <BAITag color="green">Archived</BAITag>
+          </BAIFlex>
         ),
       },
     ];
@@ -307,8 +308,8 @@ export const WithExtraContent: Story = {
           items={items}
           extraContent={
             <BAIFlex direction="column" align="start">
-              <Checkbox>Also delete shared folders</Checkbox>
-              <Checkbox>Terminate running sessions</Checkbox>
+              <BAICheckbox>Also delete shared folders</BAICheckbox>
+              <BAICheckbox>Terminate running sessions</BAICheckbox>
             </BAIFlex>
           }
           onOk={() => setOpen(false)}
