@@ -1,0 +1,615 @@
+{
+  "results": {
+    "light-1600": {
+      "dialog": {
+        "x": 80,
+        "y": 265,
+        "w": 1440,
+        "h": 471,
+        "b": 735
+      },
+      "header": {
+        "x": 80,
+        "y": 265,
+        "w": 1440,
+        "h": 66,
+        "b": 330
+      },
+      "headerHasDivider": false,
+      "content": {
+        "x": 80,
+        "y": 330,
+        "w": 1440,
+        "h": 405,
+        "b": 735
+      },
+      "contentPadding": "0px 24px 16px",
+      "explorerHeader": {
+        "x": 104,
+        "y": 281,
+        "w": 1360,
+        "h": 34,
+        "b": 314,
+        "gap": "20px"
+      },
+      "explorerActions": {
+        "x": 1061,
+        "y": 281,
+        "w": 403,
+        "h": 34,
+        "b": 314,
+        "gap": "8px"
+      },
+      "breadcrumbs": {
+        "x": 108,
+        "y": 339,
+        "w": 14,
+        "h": 14,
+        "b": 353
+      },
+      "tableScrollWrapper": {
+        "x": 80,
+        "y": 382,
+        "w": 719,
+        "h": 84,
+        "b": 466,
+        "marginLeft": "-24px",
+        "marginRight": "-24px"
+      },
+      "tabList": {
+        "x": 776,
+        "y": 330,
+        "w": 720,
+        "h": 36,
+        "b": 366,
+        "marginBottom": "0px"
+      },
+      "tabPanel": {
+        "x": 776,
+        "y": 366,
+        "w": 720,
+        "h": 353,
+        "b": 719
+      },
+      "resizeHandle": {
+        "x": 775,
+        "y": 330,
+        "w": 1,
+        "h": 0,
+        "b": 330,
+        "margin": "0px"
+      },
+      "bodyWrap": {
+        "x": 104,
+        "y": 330,
+        "w": 1392,
+        "h": 389,
+        "b": 719,
+        "minHeight": "100%"
+      },
+      "rootStack": {
+        "x": 104,
+        "y": 330,
+        "w": 1392,
+        "h": 389,
+        "b": 719,
+        "gap": "24px"
+      },
+      "derived": {
+        "headerBottomToContentTop": 0,
+        "breadcrumbTopMinusContentTop": 9,
+        "tabListBottomToPanelTop": 0,
+        "tableLeftMinusContentLeft": 0,
+        "explorerPaneToInfoPaneGap": -23,
+        "dialogFillRatio": 47
+      }
+    },
+    "light-1200": {
+      "dialog": {
+        "x": 60,
+        "y": 223,
+        "w": 1080,
+        "h": 555,
+        "b": 777
+      },
+      "header": {
+        "x": 60,
+        "y": 223,
+        "w": 1080,
+        "h": 66,
+        "b": 288
+      },
+      "headerHasDivider": false,
+      "content": {
+        "x": 60,
+        "y": 288,
+        "w": 1080,
+        "h": 489,
+        "b": 777
+      },
+      "contentPadding": "0px 24px 16px",
+      "explorerHeader": {
+        "x": 84,
+        "y": 239,
+        "w": 1000,
+        "h": 34,
+        "b": 272,
+        "gap": "20px"
+      },
+      "explorerActions": {
+        "x": 681,
+        "y": 239,
+        "w": 403,
+        "h": 34,
+        "b": 272,
+        "gap": "8px"
+      },
+      "breadcrumbs": {
+        "x": 88,
+        "y": 297,
+        "w": 14,
+        "h": 14,
+        "b": 311
+      },
+      "tableScrollWrapper": {
+        "x": 60,
+        "y": 340,
+        "w": 529,
+        "h": 84,
+        "b": 424,
+        "marginLeft": "-24px",
+        "marginRight": "-24px"
+      },
+      "tabList": {
+        "x": 566,
+        "y": 288,
+        "w": 550,
+        "h": 36,
+        "b": 324,
+        "marginBottom": "0px"
+      },
+      "tabPanel": {
+        "x": 566,
+        "y": 324,
+        "w": 550,
+        "h": 437,
+        "b": 761
+      },
+      "resizeHandle": {
+        "x": 565,
+        "y": 288,
+        "w": 1,
+        "h": 0,
+        "b": 288,
+        "margin": "0px"
+      },
+      "bodyWrap": {
+        "x": 84,
+        "y": 288,
+        "w": 1032,
+        "h": 473,
+        "b": 761,
+        "minHeight": "100%"
+      },
+      "rootStack": {
+        "x": 84,
+        "y": 288,
+        "w": 1032,
+        "h": 473,
+        "b": 761,
+        "gap": "24px"
+      },
+      "derived": {
+        "headerBottomToContentTop": 0,
+        "breadcrumbTopMinusContentTop": 9,
+        "tabListBottomToPanelTop": 0,
+        "tableLeftMinusContentLeft": 0,
+        "explorerPaneToInfoPaneGap": -23,
+        "dialogFillRatio": 56
+      }
+    },
+    "light-800": {
+      "dialog": {
+        "x": 40,
+        "y": 172,
+        "w": 720,
+        "h": 656,
+        "b": 828
+      },
+      "header": {
+        "x": 40,
+        "y": 172,
+        "w": 720,
+        "h": 66,
+        "b": 238
+      },
+      "headerHasDivider": false,
+      "content": {
+        "x": 40,
+        "y": 238,
+        "w": 720,
+        "h": 590,
+        "b": 828
+      },
+      "contentPadding": "0px 24px 16px",
+      "explorerHeader": {
+        "x": 64,
+        "y": 188,
+        "w": 640,
+        "h": 34,
+        "b": 222,
+        "gap": "20px"
+      },
+      "explorerActions": {
+        "x": 536,
+        "y": 188,
+        "w": 168,
+        "h": 34,
+        "b": 222,
+        "gap": "8px"
+      },
+      "breadcrumbs": {
+        "x": 68,
+        "y": 247,
+        "w": 14,
+        "h": 14,
+        "b": 261
+      },
+      "tableScrollWrapper": {
+        "x": 40,
+        "y": 290,
+        "w": 720,
+        "h": 84,
+        "b": 374,
+        "marginLeft": "-24px",
+        "marginRight": "-24px"
+      },
+      "tabList": {
+        "x": 64,
+        "y": 398,
+        "w": 672,
+        "h": 37,
+        "b": 435,
+        "marginBottom": "0px"
+      },
+      "tabPanel": {
+        "x": 64,
+        "y": 459,
+        "w": 672,
+        "h": 353,
+        "b": 812
+      },
+      "resizeHandle": null,
+      "bodyWrap": {
+        "x": 64,
+        "y": 238,
+        "w": 672,
+        "h": 574,
+        "b": 812,
+        "minHeight": "100%"
+      },
+      "rootStack": {
+        "x": 64,
+        "y": 238,
+        "w": 672,
+        "h": 574,
+        "b": 812,
+        "gap": "24px"
+      },
+      "derived": {
+        "headerBottomToContentTop": 0,
+        "breadcrumbTopMinusContentTop": 9,
+        "tabListBottomToPanelTop": 24,
+        "tableLeftMinusContentLeft": 0,
+        "explorerPaneToInfoPaneGap": -696,
+        "dialogFillRatio": 66
+      }
+    },
+    "dark-1600": {
+      "dialog": {
+        "x": 80,
+        "y": 265,
+        "w": 1440,
+        "h": 471,
+        "b": 735
+      },
+      "header": {
+        "x": 80,
+        "y": 265,
+        "w": 1440,
+        "h": 66,
+        "b": 330
+      },
+      "headerHasDivider": false,
+      "content": {
+        "x": 80,
+        "y": 330,
+        "w": 1440,
+        "h": 405,
+        "b": 735
+      },
+      "contentPadding": "0px 24px 16px",
+      "explorerHeader": {
+        "x": 104,
+        "y": 281,
+        "w": 1360,
+        "h": 34,
+        "b": 314,
+        "gap": "20px"
+      },
+      "explorerActions": {
+        "x": 1061,
+        "y": 281,
+        "w": 403,
+        "h": 34,
+        "b": 314,
+        "gap": "8px"
+      },
+      "breadcrumbs": {
+        "x": 108,
+        "y": 339,
+        "w": 14,
+        "h": 14,
+        "b": 353
+      },
+      "tableScrollWrapper": {
+        "x": 80,
+        "y": 382,
+        "w": 719,
+        "h": 84,
+        "b": 466,
+        "marginLeft": "-24px",
+        "marginRight": "-24px"
+      },
+      "tabList": {
+        "x": 776,
+        "y": 330,
+        "w": 720,
+        "h": 36,
+        "b": 366,
+        "marginBottom": "0px"
+      },
+      "tabPanel": {
+        "x": 776,
+        "y": 366,
+        "w": 720,
+        "h": 353,
+        "b": 719
+      },
+      "resizeHandle": {
+        "x": 775,
+        "y": 330,
+        "w": 1,
+        "h": 0,
+        "b": 330,
+        "margin": "0px"
+      },
+      "bodyWrap": {
+        "x": 104,
+        "y": 330,
+        "w": 1392,
+        "h": 389,
+        "b": 719,
+        "minHeight": "100%"
+      },
+      "rootStack": {
+        "x": 104,
+        "y": 330,
+        "w": 1392,
+        "h": 389,
+        "b": 719,
+        "gap": "24px"
+      },
+      "derived": {
+        "headerBottomToContentTop": 0,
+        "breadcrumbTopMinusContentTop": 9,
+        "tabListBottomToPanelTop": 0,
+        "tableLeftMinusContentLeft": 0,
+        "explorerPaneToInfoPaneGap": -23,
+        "dialogFillRatio": 47
+      }
+    },
+    "dark-1200": {
+      "dialog": {
+        "x": 60,
+        "y": 223,
+        "w": 1080,
+        "h": 555,
+        "b": 777
+      },
+      "header": {
+        "x": 60,
+        "y": 223,
+        "w": 1080,
+        "h": 66,
+        "b": 288
+      },
+      "headerHasDivider": false,
+      "content": {
+        "x": 60,
+        "y": 288,
+        "w": 1080,
+        "h": 489,
+        "b": 777
+      },
+      "contentPadding": "0px 24px 16px",
+      "explorerHeader": {
+        "x": 84,
+        "y": 239,
+        "w": 1000,
+        "h": 34,
+        "b": 272,
+        "gap": "20px"
+      },
+      "explorerActions": {
+        "x": 681,
+        "y": 239,
+        "w": 403,
+        "h": 34,
+        "b": 272,
+        "gap": "8px"
+      },
+      "breadcrumbs": {
+        "x": 88,
+        "y": 297,
+        "w": 14,
+        "h": 14,
+        "b": 311
+      },
+      "tableScrollWrapper": {
+        "x": 60,
+        "y": 340,
+        "w": 529,
+        "h": 84,
+        "b": 424,
+        "marginLeft": "-24px",
+        "marginRight": "-24px"
+      },
+      "tabList": {
+        "x": 566,
+        "y": 288,
+        "w": 550,
+        "h": 36,
+        "b": 324,
+        "marginBottom": "0px"
+      },
+      "tabPanel": {
+        "x": 566,
+        "y": 324,
+        "w": 550,
+        "h": 437,
+        "b": 761
+      },
+      "resizeHandle": {
+        "x": 565,
+        "y": 288,
+        "w": 1,
+        "h": 0,
+        "b": 288,
+        "margin": "0px"
+      },
+      "bodyWrap": {
+        "x": 84,
+        "y": 288,
+        "w": 1032,
+        "h": 473,
+        "b": 761,
+        "minHeight": "100%"
+      },
+      "rootStack": {
+        "x": 84,
+        "y": 288,
+        "w": 1032,
+        "h": 473,
+        "b": 761,
+        "gap": "24px"
+      },
+      "derived": {
+        "headerBottomToContentTop": 0,
+        "breadcrumbTopMinusContentTop": 9,
+        "tabListBottomToPanelTop": 0,
+        "tableLeftMinusContentLeft": 0,
+        "explorerPaneToInfoPaneGap": -23,
+        "dialogFillRatio": 56
+      }
+    },
+    "dark-800": {
+      "dialog": {
+        "x": 40,
+        "y": 172,
+        "w": 720,
+        "h": 656,
+        "b": 828
+      },
+      "header": {
+        "x": 40,
+        "y": 172,
+        "w": 720,
+        "h": 66,
+        "b": 238
+      },
+      "headerHasDivider": false,
+      "content": {
+        "x": 40,
+        "y": 238,
+        "w": 720,
+        "h": 590,
+        "b": 828
+      },
+      "contentPadding": "0px 24px 16px",
+      "explorerHeader": {
+        "x": 64,
+        "y": 188,
+        "w": 640,
+        "h": 34,
+        "b": 222,
+        "gap": "20px"
+      },
+      "explorerActions": {
+        "x": 536,
+        "y": 188,
+        "w": 168,
+        "h": 34,
+        "b": 222,
+        "gap": "8px"
+      },
+      "breadcrumbs": {
+        "x": 68,
+        "y": 247,
+        "w": 14,
+        "h": 14,
+        "b": 261
+      },
+      "tableScrollWrapper": {
+        "x": 40,
+        "y": 290,
+        "w": 720,
+        "h": 84,
+        "b": 374,
+        "marginLeft": "-24px",
+        "marginRight": "-24px"
+      },
+      "tabList": {
+        "x": 64,
+        "y": 398,
+        "w": 672,
+        "h": 37,
+        "b": 435,
+        "marginBottom": "0px"
+      },
+      "tabPanel": {
+        "x": 64,
+        "y": 459,
+        "w": 672,
+        "h": 353,
+        "b": 812
+      },
+      "resizeHandle": null,
+      "bodyWrap": {
+        "x": 64,
+        "y": 238,
+        "w": 672,
+        "h": 574,
+        "b": 812,
+        "minHeight": "100%"
+      },
+      "rootStack": {
+        "x": 64,
+        "y": 238,
+        "w": 672,
+        "h": 574,
+        "b": 812,
+        "gap": "24px"
+      },
+      "derived": {
+        "headerBottomToContentTop": 0,
+        "breadcrumbTopMinusContentTop": 9,
+        "tabListBottomToPanelTop": 24,
+        "tableLeftMinusContentLeft": 0,
+        "explorerPaneToInfoPaneGap": -696,
+        "dialogFillRatio": 66
+      }
+    }
+  },
+  "pageErrors": []
+}

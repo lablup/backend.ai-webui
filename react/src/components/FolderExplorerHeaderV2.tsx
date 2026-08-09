@@ -50,11 +50,16 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
   return (
     <HStack
       justify="between"
-      gap={5}
+      align="center"
+      // Legacy `BAIFlex gap={token.marginMD}` = 16px = `--spacing-4` (step 4).
+      // The conversion had landed on step 5 (20px).
+      gap={4}
       width="100%"
       {...({ 'data-testid': 'folder-explorer-header' } as object)}
     >
       <HStack
+        align="center"
+        // Legacy `BAIFlex gap="xs"` = antd `sizeXS` = 8px = step 2.
         gap={2}
         // reset font weight set by the modal header
         style={{ flex: 1, fontWeight: 'normal', ...titleStyle }}
@@ -95,7 +100,10 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
       </HStack>
       <HStack
         justify="end"
-        gap={2}
+        align="center"
+        // Legacy `BAIFlex gap={token.marginSM}` = 12px = `--spacing-3` (step 3).
+        // The conversion had landed on step 2 (8px), crowding the two buttons.
+        gap={3}
         {...({ 'data-testid': 'folder-explorer-actions' } as object)}
       >
         {vfolderNode && !vfolderNode?.unmanagedPath ? (

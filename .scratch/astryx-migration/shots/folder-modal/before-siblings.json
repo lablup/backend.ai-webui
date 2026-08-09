@@ -1,0 +1,117 @@
+{
+  "results": {
+    "create-light": {
+      "dialog": {
+        "x": 375,
+        "y": 286,
+        "w": 650,
+        "h": 429,
+        "b": 715
+      },
+      "headerHasDivider": false,
+      "headerPadding": "16px 24px",
+      "contentPadding": "0px 24px 16px",
+      "footerHasDivider": true,
+      "footerPadding": "0px",
+      "content": {
+        "x": 375,
+        "y": 334,
+        "w": 650,
+        "h": 316,
+        "b": 650
+      },
+      "header": {
+        "x": 375,
+        "y": 286,
+        "w": 650,
+        "h": 48,
+        "b": 334
+      }
+    },
+    "explorer-mkdir-light": {
+      "dialog": {
+        "x": 70,
+        "y": 41,
+        "w": 1260,
+        "h": 918,
+        "b": 959
+      },
+      "headerHasDivider": false,
+      "headerPadding": "16px 24px",
+      "contentPadding": "0px 24px 16px",
+      "footerHasDivider": null,
+      "footerPadding": null,
+      "content": {
+        "x": 70,
+        "y": 107,
+        "w": 1260,
+        "h": 433,
+        "b": 540
+      },
+      "header": {
+        "x": 70,
+        "y": 41,
+        "w": 1260,
+        "h": 66,
+        "b": 107
+      }
+    },
+    "create-dark": {
+      "dialog": {
+        "x": 375,
+        "y": 286,
+        "w": 650,
+        "h": 429,
+        "b": 715
+      },
+      "headerHasDivider": false,
+      "headerPadding": "16px 24px",
+      "contentPadding": "0px 24px 16px",
+      "footerHasDivider": true,
+      "footerPadding": "0px",
+      "content": {
+        "x": 375,
+        "y": 334,
+        "w": 650,
+        "h": 316,
+        "b": 650
+      },
+      "header": {
+        "x": 375,
+        "y": 286,
+        "w": 650,
+        "h": 48,
+        "b": 334
+      }
+    },
+    "explorer-mkdir-dark": {
+      "dialog": {
+        "x": 70,
+        "y": 41,
+        "w": 1260,
+        "h": 918,
+        "b": 959
+      },
+      "headerHasDivider": false,
+      "headerPadding": "16px 24px",
+      "contentPadding": "0px 24px 16px",
+      "footerHasDivider": null,
+      "footerPadding": null,
+      "content": {
+        "x": 70,
+        "y": 107,
+        "w": 1260,
+        "h": 433,
+        "b": 540
+      },
+      "header": {
+        "x": 70,
+        "y": 41,
+        "w": 1260,
+        "h": 66,
+        "b": 107
+      }
+    }
+  },
+  "pageErrors": []
+}

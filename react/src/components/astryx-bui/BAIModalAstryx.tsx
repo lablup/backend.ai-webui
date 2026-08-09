@@ -167,7 +167,17 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
         style={style}
         header={
           headerContent ? (
-            <LayoutHeader>
+            // `hasDivider` is NOT decoration. Legacy `BAIModal` pinned
+            // `styles.header = { borderBottom: 1px solid colorBorder }` on
+            // every modal, and Astryx's `LayoutContent` keys its own top
+            // padding off the divider: `:has(> .astryx-layout-header
+            // :not([data-divider]))` COLLAPSES `padding-block-start` to 0 for a
+            // "seamless" header. Without it the body lost both the rule and its
+            // 16px top gutter (legacy `styles.body.paddingTop = paddingMD`), so
+            // content butted straight against the title row. BUI's converted
+            // `BAIModal` already sets it on both header branches; this pilot
+            // copy (still used by the 12 VFolder-area modals) had not caught up.
+            <LayoutHeader hasDivider>
               <HStack justify="between" align="center" gap={2} width="100%">
                 {headerContent}
                 <IconButton
@@ -181,6 +191,10 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
             </LayoutHeader>
           ) : (
             <DialogHeader
+              // Same reason as the `headerContent` branch above — `DialogHeader`
+              // renders a `LayoutHeader` internally, so the divider both draws
+              // the legacy header rule and keeps the body's top gutter alive.
+              hasDivider
               title={title ?? ''}
               subtitle={subtitle}
               onOpenChange={(next) => {

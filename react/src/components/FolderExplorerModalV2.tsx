@@ -63,6 +63,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useQueryLoader } from 'react-relay';
 
+/**
+ * Height cap for the explorer dialog. The legacy modal derived its own from
+ * `calc(100vh - 174px)` (header 69 + footer band 57 + `marginLG * 2`); 95vh is
+ * the ticket-16 stand-in and is also what the min-height below is measured
+ * against, so the two must stay written as one value.
+ */
+const EXPLORER_MAX_HEIGHT = '95vh';
+
 export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
   _openDeleteMultipleFileDialog: () => void;
@@ -316,13 +324,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       enableWrite={hasWriteContentPermission}
       enableUpload={hasUploadContentPermission}
       enableEdit={hasUploadContentPermission}
-      tableProps={{
-        scroll: xl
-          ? { x: 'max-content' }
-          : { x: 'max-content', y: 'calc(100vh - 400px)' },
-      }}
+      // NOTE: the legacy `tableProps.scroll` ({x:'max-content'} at `xl`,
+      // plus a `y: calc(100vh - 400px)` body cap below it) is gone on purpose:
+      // `BAITableAstryx` accepts and ignores `scroll` (Astryx's own scroll
+      // wrapper owns horizontal overflow), and the dialog body is the scroll
+      // container for the vertical axis now.
       style={{
-        paddingBottom: xl ? 24 : 0,
+        // Legacy `paddingBottom: token.paddingLG` = 24px = `--spacing-6`.
+        paddingBottom: xl ? 'var(--spacing-6)' : 0,
       }}
       fileDropContainerRef={bodyRef}
       onClickEditFile={(file, currentPath) => {
@@ -330,6 +339,17 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       }}
     />
   ) : null;
+
+  // antd's `Tabs` reserved `token.margin` (16px) under the tab bar
+  // (`.ant-tabs-nav { margin: 0 0 16px }`) and this call site added
+  // `styles.content.paddingBottom = token.paddingContentVertical` (12px).
+  // `BAITabs` renders the active panel bare, so both gutters have to be
+  // restored around the panel content — scoped here rather than in the shared
+  // wrapper, whose other five call sites were signed off flush.
+  const infoPanelPanelStyle: React.CSSProperties = {
+    paddingBlockStart: 'var(--spacing-4)',
+    paddingBlockEnd: 'var(--spacing-3)',
+  };
 
   const vFolderInfoPanelElement = vfolderNode ? (
     <BAITabs
@@ -349,25 +369,31 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         {
           key: 'metadata',
           label: t('explorer.Metadata'),
-          children: <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />,
+          children: (
+            <div style={infoPanelPanelStyle}>
+              <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+            </div>
+          ),
         },
         {
           key: 'auditLog',
           label: t('auditLog.AuditLog'),
           children: (
-            <BAIErrorBoundary>
-              {auditLogQueryRef ? (
-                <Suspense fallback={<BAISkeleton rows={4} />}>
-                  <ScopedAuditLog
-                    queryRef={auditLogQueryRef}
-                    onReload={reloadAuditLogQuery}
-                    tableSettings={{}}
-                  />
-                </Suspense>
-              ) : (
-                <BAISkeleton rows={4} />
-              )}
-            </BAIErrorBoundary>
+            <div style={infoPanelPanelStyle}>
+              <BAIErrorBoundary>
+                {auditLogQueryRef ? (
+                  <Suspense fallback={<BAISkeleton rows={4} />}>
+                    <ScopedAuditLog
+                      queryRef={auditLogQueryRef}
+                      onReload={reloadAuditLogQuery}
+                      tableSettings={{}}
+                    />
+                  </Suspense>
+                ) : (
+                  <BAISkeleton rows={4} />
+                )}
+              </BAIErrorBoundary>
+            </div>
           ),
         },
       ]}
@@ -377,7 +403,20 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   return (
     <BAIModal
       width={'min(90%, 1900px)'}
-      maxHeight={'95vh'}
+      maxHeight={EXPLORER_MAX_HEIGHT}
+      // FILL, don't shrink-wrap. The legacy antd modal pinned
+      // `styles.body = { height: '100vh' }`, which `BAIModal` then clamped with
+      // its own `maxHeight: calc(100vh - 174px)` — net effect: the explorer was
+      // ALWAYS a near-full-height panel. Astryx's `Dialog` is content-sized
+      // with `maxHeight` only as a cap, so the conversion turned it into a
+      // short box that grew with its content (measured 47% of the viewport at
+      // 1600px wide vs the legacy ~90%). Pushing the min-height onto the
+      // `Layout` restores the legacy proportion: the dialog cap minus the
+      // dialog's own block padding, which the theme publishes as
+      // `--astryx-dialog-padding-block-*` on `.astryx-dialog`.
+      style={{
+        minHeight: `calc(${EXPLORER_MAX_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`,
+      }}
       headerContent={
         vfolderNode ? (
           <FolderExplorerHeaderV2 vfolderNodeFrgmt={vfolderNode} />
@@ -398,7 +437,28 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         {deferredOpen !== modalProps.open || vfolderNode === undefined ? (
           <BAISkeleton rows={4} />
         ) : (
-          <VStack gap={6} align="stretch" style={{ minHeight: '100%' }}>
+          <VStack
+            gap={6}
+            align="stretch"
+            style={{
+              minHeight: '100%',
+              // Astryx's `Table` bleeds out of its container by design: its
+              // scroll wrapper carries
+              // `margin-inline: calc(-1 * var(--container-padding-inline-*))`
+              // so rows run edge-to-edge inside a padded surface. `LayoutContent`
+              // publishes the dialog's 24px gutter into those vars, so the file
+              // list and the audit-log table were pulled 24px past the modal's
+              // gutter on BOTH sides — and at `xl` the right bleed ran the file
+              // table 23px UNDER the resize handle and the info panel. The
+              // legacy antd tables sat inside the body gutter; zeroing the vars
+              // for this subtree restores that without touching the app-wide
+              // card/table look.
+              ['--container-padding-inline-start' as string]: '0px',
+              ['--container-padding-inline-end' as string]: '0px',
+              ['--container-padding-block-start' as string]: '0px',
+              ['--container-padding-block-end' as string]: '0px',
+            }}
+          >
             {vfolderNode === null ? (
               <Banner
                 title={t('explorer.FolderNotFoundOrNoAccess')}
@@ -425,8 +485,20 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               xl ? (
                 // antd `Splitter` → Astryx `useResizable` + `ResizeHandle`:
                 // explorer fills the remaining space, the info panel keeps a
-                // drag-resizable width (default 45%, min 550px).
-                <div style={{ display: 'flex', flex: 1, minWidth: 0 }}>
+                // drag-resizable width (default 45%, min 550px). `gap` restores
+                // the legacy `Splitter style={{ gap: token.size }}` — 16px of
+                // total separation between the two panes, which the conversion
+                // dropped (the 1px handle sat flush against both). The flex gap
+                // applies on BOTH sides of the handle, so half the legacy value
+                // (`--spacing-2`) reproduces it: 8 + 1 + 8 = 17px.
+                <div
+                  style={{
+                    display: 'flex',
+                    flex: 1,
+                    minWidth: 0,
+                    gap: 'var(--spacing-2)',
+                  }}
+                >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {fileExplorerElement}
                   </div>
