@@ -56,7 +56,14 @@ export const DEFAULT_DECLARED_CSS = [
 ];
 
 const SCAN_EXT = /\.(ts|tsx|js|jsx|mjs|cjs|css|scss|less|html)$/;
-const EXCLUDE_DIR = new Set(["node_modules", "__generated__"]);
+// `tests` alongside `__tests__`/`__generated__`: harness directories are not
+// shipping surface (to-astryx final-B — kept identical across the three gates).
+const EXCLUDE_DIR = new Set([
+  "node_modules",
+  "__generated__",
+  "__tests__",
+  "tests",
+]);
 
 /** Custom-property declarations in CSS text: `--name: value`. */
 export function parseDeclaredCss(text) {

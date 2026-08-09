@@ -14,9 +14,14 @@ import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
+import {
+  AstryxFormNumberInput,
+  AstryxFormSwitch,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from '../astryxFormControls';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelectAstryx from './BAIRuntimeVariantSelectAstryx';
-import { Input, InputNumber, Switch } from 'antd';
 import React, { Suspense, useRef } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -290,7 +295,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <Input
+          <AstryxFormTextInput
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.Name')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.NamePlaceholder',
             )}
@@ -300,7 +306,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.Description')}
           name="description"
         >
-          <Input.TextArea
+          <AstryxFormTextArea
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.Description')}
             rows={2}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.DescriptionPlaceholder',
@@ -395,7 +402,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             },
           ]}
         >
-          <Input
+          <AstryxFormTextInput
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.KeyPlaceholder',
             )}
@@ -405,7 +413,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
           name="defaultValue"
         >
-          <Input
+          <AstryxFormTextInput
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
             placeholder={t(
               'comp:BAIRuntimeVariantPresetSettingModal.DefaultValuePlaceholder',
             )}
@@ -420,7 +429,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               'comp:BAIRuntimeVariantPresetSettingModal.RequiredTooltip',
             )}
           >
-            <Switch />
+            <AstryxFormSwitch
+              label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
+            />
           </Form.Item>
         ) : null}
         {preset ? (
@@ -429,7 +440,18 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             name="rank"
             tooltip={t('comp:BAIRuntimeVariantPresetSettingModal.RankTooltip')}
           >
-            <InputNumber min={0} precision={0} style={{ width: '100%' }} />
+            {/* PILOT-DECISION (to-astryx final-B): antd `InputNumber
+                precision={0}` -> `AstryxFormNumberInput step={1}`. Astryx's
+                `NumberInput` has no display-precision knob; `step={1}` is the
+                integer contract the field actually wants (rank is an ordinal),
+                and the mutation input is an `Int` the server rejects a
+                fraction for either way. `style={{ width: '100%' }}` is dropped
+                because the adapter already defaults `width` to `'100%'`. */}
+            <AstryxFormNumberInput
+              label={t('comp:BAIRuntimeVariantPresetSettingModal.Rank')}
+              min={0}
+              step={1}
+            />
           </Form.Item>
         ) : null}
       </Form>

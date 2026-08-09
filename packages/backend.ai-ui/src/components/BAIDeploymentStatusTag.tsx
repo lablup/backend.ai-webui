@@ -119,7 +119,7 @@ const BAIDeploymentStatusTag: React.FC<BAIDeploymentStatusTagProps> = ({
       {...tagProps}
       icon={
         isDeploymentInProgress(status) ? (
-          <LoaderCircle className="anticon-spin" size="1em" />
+          <LoaderCircle className="bai-icon-spin" size="1em" />
         ) : undefined
       }
       // The SEMANTIC NAME, not a resolved hex. `BAITag` now routes `color`

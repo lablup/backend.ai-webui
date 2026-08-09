@@ -21,7 +21,7 @@ const TotalFooter: React.FC<{
     <BAIFlex justify="end" gap={'xs'}>
       {loading ? (
         <LoaderCircle
-          className="anticon-spin"
+          className="bai-icon-spin"
           style={{ color: 'var(--color-text-secondary)' }}
           size="1em"
         />

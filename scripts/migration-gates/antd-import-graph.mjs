@@ -44,7 +44,19 @@ const DEFAULT_ROOTS = [
 ];
 
 const SOURCE_EXT = /\.(ts|tsx|js|jsx|mjs|cjs)$/;
-const EXCLUDE_DIR = new Set(["node_modules", "__generated__", "__tests__"]);
+// `tests` joins `__tests__` here (to-astryx final-B). EXCLUDE_FILE below
+// already drops `*.test.*` / `*.stories.*`, but a HELPER those files import
+// carries neither suffix — `packages/backend.ai-ui/src/tests/
+// storybook-mock-utils.ts` was reported as a real antd render for exactly that
+// reason. Both spellings of the harness directory are non-shipping (BUI's
+// `src/tests/` holds a Storybook mock harness and a demo button fixture), so
+// scope them out by directory rather than chasing helper filenames.
+const EXCLUDE_DIR = new Set([
+  "node_modules",
+  "__generated__",
+  "__tests__",
+  "tests",
+]);
 // Non-shipping files: unit tests, stories, spec helpers.
 const EXCLUDE_FILE = /\.(test|spec|stories)\.[tj]sx?$/;
 

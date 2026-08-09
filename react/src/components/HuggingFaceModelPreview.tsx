@@ -110,7 +110,7 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
   // While the input is still settling, any previously rendered card belongs
   // to a different model, so hide it instead of showing stale information.
   if (debouncedModelId !== modelId || isFetching) {
-    return <LoaderCircle className="anticon-spin" size="1em" />;
+    return <LoaderCircle className="bai-icon-spin" size="1em" />;
   }
 
   if (isError) {

@@ -432,7 +432,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // side reads as a contradiction.
                   <BAITag
                     color="warning"
-                    icon={<LoaderCircle className="anticon-spin" size="1em" />}
+                    icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
                   >
                     {t('deployment.Applying')}
                   </BAITag>

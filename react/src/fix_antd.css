@@ -1,4 +1,11 @@
-.anticon {
+/* to-astryx final-B: the icon baseline here was antd's own icon reset,
+   renamed with the rest of the codebase when `iconShim` stopped borrowing
+   antd's class name (see `packages/backend.ai-ui/src/icons/iconShim.tsx` for
+   why). The canonical copy of these rules lives in BUI's own stylesheet
+   (`packages/backend.ai-ui/src/styles/backend.ai-ui.css`, ticket 30); this
+   file is currently imported by nothing, so it is kept renamed rather than
+   edited further — deleting it is a separate call. */
+.bai-icon {
   display: inline-block;
   color: inherit;
   font-style: normal;
@@ -11,28 +18,24 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.anticon > * {
+.bai-icon > * {
   line-height: 1;
 }
 
-.anticon svg {
+.bai-icon svg {
   display: inline-block;
 }
 
-.anticon::before {
+.bai-icon::before {
   display: none;
 }
 
-.anticon .anticon-icon {
-  display: block;
-}
-
-.anticon[tabindex] {
+.bai-icon[tabindex] {
   cursor: pointer;
 }
 
-.anticon-spin::before,
-.anticon-spin {
+.bai-icon-spin::before,
+.bai-icon-spin {
   display: inline-block;
   -webkit-animation: loadingCircle 1s infinite linear;
   animation: loadingCircle 1s infinite linear;

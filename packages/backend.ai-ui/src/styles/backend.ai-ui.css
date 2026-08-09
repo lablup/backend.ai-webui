@@ -2,12 +2,12 @@
  * backend.ai-ui — the package's own stylesheet.
  *
  * to-astryx TICKET 30. Before this file existed, BUI had no CSS of its own:
- * the `.anticon*` baseline its icon surface needs came either from the HOST's
+ * the icon baseline its icon surface needs came either from the HOST's
  * `fix_antd.css` (an undeclared dependency on the consumer shipping antd's
  * reset) or from an imperative `<style>` element that `iconShim` appended to
  * `document.head` on first `<Icon>` render — which never fired for the several
  * components that spin a lucide glyph directly (`<LoaderCircle
- * className="anticon-spin" />`). Both are gone; the rules live here.
+ * className="bai-icon-spin" />`). Both are gone; the rules live here.
  *
  * ## Consumer contract
  *
@@ -41,11 +41,15 @@
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
 @layer components {
-  /* antd `@ant-design/icons` baseline. `iconShim` renders `.anticon` wrappers
-     with the same contract, and BUI components that spin a bare lucide icon
-     use `.anticon-spin` directly. Copied from `@ant-design/icons`' reset (via
-     the host's `fix_antd.css`) so the rules survive antd's eventual removal. */
-  .anticon {
+  /* First-party icon baseline. `iconShim` renders `.bai-icon` wrappers and BUI
+     components that spin a bare lucide icon use `.bai-icon-spin` directly. The
+     declarations are antd's `@ant-design/icons` reset (copied via the host's
+     `fix_antd.css`) so the rules survive antd's removal; the CLASS NAMES are
+     ours as of to-astryx final-B — see `src/icons/iconShim.tsx` for why the
+     borrowed antd icon class name had to go. (Spelled out rather than quoted:
+     a CSS comment can survive minification into the bundle, and quoting it
+     would re-arm `scripts/antd-zero-gate.sh` part (b) against our own CSS.) */
+  .bai-icon {
     display: inline-block;
     color: inherit;
     font-style: normal;
@@ -58,23 +62,23 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  .anticon > * {
+  .bai-icon > * {
     line-height: 1;
   }
 
-  .anticon svg {
+  .bai-icon svg {
     display: inline-block;
   }
 
-  .anticon::before {
+  .bai-icon::before {
     display: none;
   }
 
-  .anticon[tabindex] {
+  .bai-icon[tabindex] {
     cursor: pointer;
   }
 
-  .anticon-spin {
+  .bai-icon-spin {
     display: inline-block;
     animation: bai-icon-spin 1s infinite linear;
   }
@@ -82,7 +86,7 @@
   /* A spinner that never stops is a vestibular hazard; a user who asked for
      less motion gets a static glyph instead. */
   @media (prefers-reduced-motion: reduce) {
-    .anticon-spin {
+    .bai-icon-spin {
       animation: none;
     }
   }

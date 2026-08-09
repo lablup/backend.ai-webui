@@ -72,7 +72,7 @@ const ReplicaStatusTag: React.FC<ReplicaStatusTagProps> = ({
   // WARMING_UP so the two states stay visually distinct in the status column.
   const icon =
     status === 'WARMING_UP' ? (
-      <LoaderCircle className="anticon-spin" size="1em" />
+      <LoaderCircle className="bai-icon-spin" size="1em" />
     ) : undefined;
 
   const badge = (

@@ -51,7 +51,9 @@ const PrometheusQueryTemplatePreview: React.FC<{
         );
       }}
     >
-      <Suspense fallback={<LoaderCircle className="anticon-spin" size="1em" />}>
+      <Suspense
+        fallback={<LoaderCircle className="bai-icon-spin" size="1em" />}
+      >
         <PrometheusQueryTemplatePreviewContent queryTemplate={queryTemplate} />
       </Suspense>
     </ErrorBoundary>
@@ -116,7 +118,7 @@ const PrometheusQueryTemplatePreviewContent: React.FC<{
     : formatPreviewValue(adminPreviewPrometheusQueryPreset?.result, t);
 
   return fetchTemplate !== trimmed ? (
-    <LoaderCircle className="anticon-spin" size="1em" />
+    <LoaderCircle className="bai-icon-spin" size="1em" />
   ) : !fetchTemplate ? null : hadDomainError ? (
     <BAIFlex gap="xxs">
       <BAIText type="danger">

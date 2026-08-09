@@ -234,7 +234,7 @@ const DiagnosticsPage = () => {
           <BAIButton
             icon={
               <RotateCw
-                className={isPending ? 'anticon-spin' : undefined}
+                className={isPending ? 'bai-icon-spin' : undefined}
                 size="1em"
               />
             }

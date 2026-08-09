@@ -10,21 +10,32 @@
  *   <Icon component={SomeSvg} aria-label="..." {...props} />
  *
  * This shim reproduces exactly that frame with zero antd imports:
- *   - outer `<span role="img" class="anticon">` (class kept on purpose: the
- *     repo's own `react/src/fix_antd.css` baseline rules, unit-test and E2E
- *     selectors all key on `.anticon` until the Phase-4 selector migration)
+ *   - outer `<span role="img" class="bai-icon">`
  *   - svg receives `width/height: 1em`, `fill: currentColor`,
  *     `aria-hidden`, `focusable="false"` — same as antd's svgBaseProps
  *   - `spin` / `rotate` supported (antd IconBaseProps parity)
  *   - baseline styles + spin keyframes come from BUI's own stylesheet
  *     (`src/styles/backend.ai-ui.css`, imported by `src/index.ts` and exported
- *     as `backend.ai-ui/styles.css`), so the shim stays correct even after
- *     `fix_antd.css` shrinks. Ticket 07 injected them from here at runtime
- *     instead, because BUI declared `sideEffects: false` and a CSS import
- *     would have been tree-shaken away; ticket 30 fixed `sideEffects` to keep
- *     every CSS file, which makes the stylesheet the honest home. The injection
- *     also never fired for the components that spin a bare lucide glyph
- *     (`<LoaderCircle className="anticon-spin" />`) without rendering `Icon`.
+ *     as `backend.ai-ui/styles.css`). Ticket 07 injected them from here at
+ *     runtime instead, because BUI declared `sideEffects: false` and a CSS
+ *     import would have been tree-shaken away; ticket 30 fixed `sideEffects`
+ *     to keep every CSS file, which makes the stylesheet the honest home. The
+ *     injection also never fired for the components that spin a bare lucide
+ *     glyph (`<LoaderCircle className="bai-icon-spin" />`) without rendering
+ *     `Icon`.
+ *
+ * ## Why the class is `bai-icon`, not `anticon` (to-astryx final-B)
+ *
+ * Through ticket 30 the wrapper kept antd's own `anticon` / `anticon-spin`
+ * class names, because the host's `fix_antd.css` baseline and a handful of
+ * selectors still keyed on them. Nothing outside this repo's own first-party
+ * CSS reads them any more — and keeping antd's name made
+ * `scripts/antd-zero-gate.sh` part (b) permanently red: its `anticon` bundle
+ * signature is a HIGH-confidence trace of `@ant-design/icons`, so our own
+ * output was indistinguishable from a real antd reintroduction. Renaming to a
+ * first-party name restores that signature's meaning: it may now fire only if
+ * someone actually pulls `@ant-design/icons` back in. The gate's pattern list
+ * is deliberately unchanged.
  *
  * Type parity with `@ant-design/icons/lib/components/Icon` is deliberate:
  * `CustomIconComponentProps`, `IconBaseProps`, and `IconComponentProps`
@@ -81,7 +92,7 @@ const Icon = forwardRef<HTMLSpanElement, IconComponentProps>((props, ref) => {
     ...restProps
   } = props;
 
-  const svgClassName = spin ? 'anticon-spin' : undefined;
+  const svgClassName = spin ? 'bai-icon-spin' : undefined;
   const svgStyle: React.CSSProperties | undefined = rotate
     ? { msTransform: `rotate(${rotate}deg)`, transform: `rotate(${rotate}deg)` }
     : undefined;
@@ -115,7 +126,7 @@ const Icon = forwardRef<HTMLSpanElement, IconComponentProps>((props, ref) => {
       {...restProps}
       ref={ref}
       style={style}
-      className={className ? `anticon ${className}` : 'anticon'}
+      className={className ? `bai-icon ${className}` : 'bai-icon'}
     >
       {Component ? <Component {...innerSvgProps} /> : children}
     </span>

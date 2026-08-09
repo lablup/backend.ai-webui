@@ -1,8 +1,8 @@
 import { BAIClient } from '../components/provider/BAIClientProvider';
 import type { DeviceMetaData } from '../components/provider/BAIMetaDataProvider';
 import { BAILocale } from '../locale';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
+import enUS from '../locale/en_US';
+import koKR from '../locale/ko_KR';
 
 // =============================================================================
 // Mock BAIClient
@@ -47,10 +47,19 @@ export const createMockClientWithElapsedTime = () => {
 // Locale Setup
 // =============================================================================
 
-/** Simple locale setup for Storybook stories */
+/**
+ * Simple locale setup for Storybook stories.
+ *
+ * to-astryx final-B: these were hand-assembled from `antd/locale/*`, which made
+ * this non-shipping story helper the only `src/tests/` file in the antd import
+ * graph. BUI already publishes the assembled bundles (`../locale/en_US`), so
+ * the helper now reuses them and holds no antd import of its own — whatever
+ * `BAILocale` ends up carrying after the locale bundles are converted, this
+ * file follows for free.
+ */
 export const locales: Record<string, BAILocale> = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
+  en: enUS,
+  ko: koKR,
 };
 
 // =============================================================================

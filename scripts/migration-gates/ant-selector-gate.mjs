@@ -44,7 +44,14 @@ const SECTIONS = [
 ];
 
 const SCAN_EXT = /\.(ts|tsx|js|jsx|mjs|cjs|css|scss|less)$/;
-const EXCLUDE_DIR = new Set(["node_modules", "__generated__"]);
+// `tests` alongside `__tests__`/`__generated__`: harness directories are not
+// shipping surface (to-astryx final-B — kept identical across the three gates).
+const EXCLUDE_DIR = new Set([
+  "node_modules",
+  "__generated__",
+  "__tests__",
+  "tests",
+]);
 // antd's own class prefix at a CSS-selector boundary. The letter anchor
 // avoids matching a bare trailing ".ant-" in prose.
 const PATTERN = /\.ant-[a-zA-Z]/;

@@ -32,8 +32,8 @@
  *      renamed JSX element gets `size="1em"` unless it already sets size
  *      (PILOT-DECISION: mechanical 1em keeps inline layout; Astryx-hosted
  *      call sites can drop it in ticket 12).
- *   5. `spin` prop (antd-only) -> `className="anticon-spin"` (keyframes ship
- *      with fix_antd.css and the iconShim's injected styles).
+ *   5. `spin` prop (antd-only) -> `className="bai-icon-spin"` (keyframes ship
+ *      with BUI's `src/styles/backend.ai-ui.css`).
  *
  * What it flags instead of rewriting (manual attention for ticket 12):
  *   - `rotate` / `twoToneColor` props on converted glyphs (no lucide twin)
@@ -219,7 +219,7 @@ for (const abs of SCAN_ROOTS.flatMap((r) => walk(r))) {
   for (const [, to] of renames) {
     if (GLYPHS.GithubOutlined?.component === to || GLYPHS.GitlabOutlined?.component === to)
       continue; // own-SVG components size themselves like antd (1em)
-    // spin -> className="anticon-spin"
+    // spin -> className="bai-icon-spin"
     next = next.replace(
       new RegExp(`<${to}(\\s[^>]*?)?\\sspin(\\s|/|>)`, 'g'),
       (m, attrs = '', tail) => {
@@ -227,7 +227,7 @@ for (const abs of SCAN_ROOTS.flatMap((r) => walk(r))) {
           flags.push(`${relPath}: <${to} spin> already has className — merge by hand`);
           return m;
         }
-        return `<${to}${attrs || ''} className="anticon-spin"${tail}`;
+        return `<${to}${attrs || ''} className="bai-icon-spin"${tail}`;
       },
     );
     // 1em sizing for inline parity with antd (skip if size already set)

@@ -4,7 +4,7 @@
 
  `TotalFooter` on Astryx (to-astryx phase 3, ticket A). The "Total N items"
  row under a table. antd `Typography.Text type="secondary"` -> Astryx
- `Text color="secondary"`; the spinner keeps BUI's own `.anticon-spin`
+ `Text color="secondary"`; the spinner keeps BUI's own `.bai-icon-spin`
  keyframes (re-homed into `styles/backend.ai-ui.css` by ticket 33 — the class
  name is legacy, the rule is ours), so nothing here reaches antd.
 */
@@ -22,7 +22,7 @@ const TotalFooter: React.FC<{
     <BAIFlex justify="end" gap={'xs'}>
       {loading ? (
         <LoaderCircle
-          className="anticon-spin"
+          className="bai-icon-spin"
           style={{ color: 'var(--color-text-secondary)' }}
           size="1em"
         />

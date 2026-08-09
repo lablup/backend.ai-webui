@@ -8,7 +8,7 @@
  (`react/src/components/astryxFormControls.tsx`); this is the BUI counterpart,
  deliberately the same shape so the two stay recognisable as one pattern. BUI
  cannot import the host module — it is a published package — and duplicating
- four thin adapters is far cheaper than fixing Astryx's three universal
+ a handful of thin adapters is far cheaper than fixing Astryx's three universal
  contracts at every call site (SKILL.md: "Normalise at a wrapper or adapter,
  never at 187 call sites").
 
@@ -29,6 +29,7 @@
  adapters are only the control layer.
 */
 import { NumberInput } from '@astryxdesign/core/NumberInput';
+import { Switch } from '@astryxdesign/core/Switch';
 import { TextArea } from '@astryxdesign/core/TextArea';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import type { SizeValue } from '@astryxdesign/core/utils';
@@ -123,6 +124,49 @@ export const AstryxFormTextArea: React.FC<AstryxFormTextAreaProps> = ({
       placeholder={placeholder}
       isDisabled={disabled}
       width={width}
+    />
+  );
+};
+
+/**
+ * Mirrors the host adapter of the same name
+ * (`react/src/components/astryxFormControls.tsx`) — see the file header for why
+ * the two exist side by side. Kept to the surface BUI actually needs: no
+ * `isLoading` / `onValueChange` until a BUI call site wants them.
+ */
+export interface AstryxFormSwitchProps {
+  /** Injected by `Form.Item` (default `valuePropName`, i.e. `value`). */
+  value?: boolean;
+  /** Injected by `Form.Item valuePropName="checked"`. */
+  checked?: boolean;
+  onChange?: (value: boolean) => void;
+  label: string;
+  disabled?: boolean;
+  size?: 'sm' | 'md';
+  [key: `data-${string}`]: string | undefined;
+}
+
+export const AstryxFormSwitch: React.FC<AstryxFormSwitchProps> = ({
+  value,
+  checked,
+  onChange,
+  label,
+  disabled,
+  size,
+  ...rest
+}) => {
+  'use memo';
+  return (
+    <Switch
+      {...(rest as object)}
+      // Contract 3 again, in boolean form: an untouched `valuePropName="checked"`
+      // field arrives as `undefined`, and Astryx's `Switch.value` is required.
+      value={value ?? checked ?? false}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      isDisabled={disabled}
+      size={size}
     />
   );
 };

@@ -80,7 +80,7 @@ const DeploymentCurrentRevisionTab: React.FC<
       {isDeployingDifferentRevision && (
         <Banner
           status="info"
-          icon={<LoaderCircle className="anticon-spin" size="1em" />}
+          icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
           style={{ marginBottom: token.marginMD }}
           title={t('deployment.ApplyingRevision', {
             revisionNumber:

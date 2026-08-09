@@ -143,6 +143,25 @@ echo ""
 #      (`<span class="anticon anticon-xxx">`). Also used verbatim by
 #      @ant-design/icons independent of antd. HIGH confidence, no known
 #      collisions.
+#      NOTE (to-astryx final-B): until this ticket our OWN icon shim
+#      (`packages/backend.ai-ui/src/icons/iconShim.tsx`) also rendered
+#      `class="anticon"`, with BUI shipping the matching reset — so this
+#      signature fired on first-party output and would have stayed red
+#      forever, indistinguishable from a real reintroduction. The shim and
+#      every first-party rule/selector now use `bai-icon` / `bai-icon-spin`.
+#      Do NOT "fix" a future failure here by weakening or deleting this
+#      pattern: a match now means someone genuinely pulled
+#      @ant-design/icons back in.
+#      ONE KNOWN FALSE POSITIVE remains, and it is not fixable from our side:
+#      `build/web/assets/main-*.js` bundles the Chat token counter's BPE
+#      vocabularies (`cl100k_base` / `o200k`), and `" anticon"` happens to be
+#      one of their ~200k merge tokens. Verified by hand: the match sits in a
+#      run of unrelated multilingual tokens, not in any class name. If this
+#      signature ever lists ONLY that chunk, the build is clean.
+#      Also note that CSS comments — unlike JS ones — can survive minification
+#      into `build/web/assets/*.css`. Two first-party comments quoting antd's
+#      icon class used to land in the bundle and trip this check; they are now
+#      phrased without the literal token. Keep new comments that way.
 #   3. `data-ant-cssinjs-cache-path` — DOM attribute @ant-design/cssinjs
 #      writes to manage its style cache. Fully qualified, unique string.
 #      HIGH confidence.

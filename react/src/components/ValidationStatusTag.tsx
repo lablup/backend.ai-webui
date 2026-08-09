@@ -29,14 +29,14 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
     // `indicator` node is dropped — Spinner owns its glyph.
     <Suspense fallback={<Spinner size="sm" />}>
       {/* antd `Tag` (no `closable`) -> `Badge`; `icon` survives, children
-          become `label`. The spinning glyph keeps the shared `anticon-spin`
+          become `label`. The spinning glyph keeps the shared `bai-icon-spin`
           keyframe class (see REMAINDER's note: that class is now OURS, shipped
           by BUI's reset, not antd's). */}
       <Badge
         variant={badgeVariantForStatus('validation', status)}
         icon={
           status === 'processing' ? (
-            <LoaderCircle className="anticon-spin" size="1em" />
+            <LoaderCircle className="bai-icon-spin" size="1em" />
           ) : status === 'finished' ? (
             <CircleCheck size="1em" />
           ) : status === 'error' ? (

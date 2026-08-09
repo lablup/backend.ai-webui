@@ -16,6 +16,6 @@
 /* BUI's own stylesheet (ticket 30's `backend.ai-ui/styles.css` export). The
    host app gets this for free through `src/index.ts`'s first-statement
    import; Storybook's decorators import BUI components directly by path
-   (not through the barrel), so it never loaded on its own — the `.anticon`
+   (not through the barrel), so it never loaded on its own — the `.bai-icon`
    baseline (ticket 30 §2) was silently missing from every story. */
 @import '../src/styles/backend.ai-ui.css';

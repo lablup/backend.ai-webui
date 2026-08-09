@@ -53,7 +53,7 @@ export const getStatusIcon = (status: string) => {
   switch (status.toLowerCase()) {
     case 'pulling':
     case 'verifying':
-      return <RefreshCw className="anticon-spin" size="1em" />;
+      return <RefreshCw className="bai-icon-spin" size="1em" />;
     default:
       return null;
   }

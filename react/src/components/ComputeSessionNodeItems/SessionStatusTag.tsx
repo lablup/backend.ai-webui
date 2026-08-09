@@ -78,7 +78,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
       variant={badgeVariantForStatus('session', session.status)}
       icon={
         isTransitional(session) ? (
-          <LoaderCircle className="anticon-spin" size="1em" />
+          <LoaderCircle className="bai-icon-spin" size="1em" />
         ) : undefined
       }
       label={
@@ -112,7 +112,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
           variant={badgeVariantForStatus('session', session.status)}
           icon={
             isTransitional(session) ? (
-              <LoaderCircle className="anticon-spin" size="1em" />
+              <LoaderCircle className="bai-icon-spin" size="1em" />
             ) : undefined
           }
           label={session.status || ' '}
@@ -142,7 +142,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
           variant={badgeVariantForStatus('session', session.status)}
           icon={
             isTransitional(session) ? (
-              <LoaderCircle className="anticon-spin" size="1em" />
+              <LoaderCircle className="bai-icon-spin" size="1em" />
             ) : undefined
           }
           label={session.status || ' '}

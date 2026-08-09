@@ -217,7 +217,7 @@
  * has only a viewBox and no intrinsic width, so the bare lucide glyphs
  * (Start, Dashboard, Data, Chat, Statistics, Admin Settings) shrank to zero
  * and DISAPPEARED, while the `BAI*Icon` glyphs survived — those sit inside a
- * `<span class="anticon">`, a non-replaced flex item whose automatic minimum
+ * `<span class="bai-icon">`, a non-replaced flex item whose automatic minimum
  * size is its 16px min-content.
  *
  * `.bai-sider--collapsed` is set by `BAISider` because `SideNav` reflects no

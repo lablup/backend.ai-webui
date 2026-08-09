@@ -87,21 +87,21 @@ const GATE_CAVEATS = [
   },
   {
     id: "anticon-is-first-party",
-    severity: "false FAIL (active)",
-    what: "`anticon` is now OUR class name, not antd's.",
+    severity: "false FAIL (RESOLVED — to-astryx final-B)",
+    what: "`anticon` used to be OUR class name too, which made part (b) lie.",
     detail:
-      "`packages/backend.ai-ui/src/icons/iconShim.tsx` deliberately renders " +
-      '`class="anticon"`, and BUI ships the matching reset — measured: ' +
-      "`packages/backend.ai-ui/dist/backend.ai-ui.css` contains `anticon` and " +
-      "`anticon-spin` as first-party rules. Two e2e locators still use the " +
-      "class — `e2e/user-profile/user-profile.spec.ts` (`.anticon-close`) and " +
-      "`e2e/auto-scaling-rule-preset/preset-table-settings.spec.ts` " +
-      "(`.anticon-check`); every other `.anticon-*` hit under `e2e/` is a " +
-      "comment recording that the class is GONE. So part (b)'s `anticon` " +
-      "signature " +
-      "will keep firing after antd is entirely gone. The fix is to rename the " +
-      "shim's class and repoint the e2e locators — NOT to drop the signature, " +
-      "which would also stop catching real @ant-design/icons reintroduction.",
+      "`packages/backend.ai-ui/src/icons/iconShim.tsx` used to render " +
+      '`class="anticon"` (+ `anticon-spin`) with BUI shipping the matching ' +
+      "reset, so part (b)'s HIGH-confidence `anticon` bundle signature fired " +
+      "on our OWN output and would have kept firing after antd was entirely " +
+      "gone — a permanently red gate that could no longer distinguish us from " +
+      "a real @ant-design/icons reintroduction. RESOLVED by renaming the " +
+      "first-party class to `bai-icon` / `bai-icon-spin` across the shim, " +
+      "BUI's `src/styles/backend.ai-ui.css`, the ~15 app/BUI components that " +
+      "spin a bare lucide glyph, and the two e2e locators that still named " +
+      "antd glyph classes. The gate's signature list is deliberately " +
+      "UNCHANGED — dropping it would also stop catching a real " +
+      "reintroduction, which is the whole point of keeping it.",
   },
 ];
 

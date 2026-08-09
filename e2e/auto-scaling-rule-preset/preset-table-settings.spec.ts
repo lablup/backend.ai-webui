@@ -292,11 +292,14 @@ test.describe(
       await expect(copyButton).toBeVisible();
       await copyButton.click();
 
-      // Verify the copy interaction is acknowledged (check icon or "Copied" state appears)
-      // Ant Design Typography.Text copyable shows a check icon briefly after copying
-      await expect(
-        queryTemplateCell.locator('.anticon-check, [aria-label="check"]'),
-      ).toBeVisible({ timeout: 5000 });
+      // Verify the copy interaction is acknowledged ("Copied" state appears).
+      // to-astryx final-B: was `.anticon-check, [aria-label="check"]`, both
+      // from antd's `Typography.Text copyable`. The control is now BUI's own
+      // `BAIText` copy button (`packages/backend.ai-ui/src/components/
+      // BAIText.tsx`), which swaps its icon to lucide's Check AND disables
+      // itself for 1.5s after a copy. The disabled state is the behavioural
+      // assertion — it does not depend on any icon class name.
+      await expect(copyButton).toBeDisabled({ timeout: 5000 });
     });
   },
 );
