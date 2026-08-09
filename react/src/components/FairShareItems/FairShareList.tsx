@@ -20,6 +20,7 @@ import { theme } from '../../theme-shim';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from '../AutoUpdateFetchKeyButton';
+import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
   DomainFairShare,
@@ -38,7 +39,6 @@ import UserFairShareTable, {
   UserFairShare,
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -853,11 +853,12 @@ const FairShareListTitle: React.FC<{
   return (
     <BAIFlex gap={'xs'}>
       {currentStep !== 'resource-group' && <BAIBackButton to={navigateTo} />}
-      {/* antd `Typography.Title level={4}` -> Astryx `Heading` (MAPPING §4:
-          the ramps differ entirely, so every `level` is a visual decision, not
-          a rename — antd h4 is 20px, Astryx heading-4 is 14px). `level={2}`
-          (20px) is the size-faithful rung for this section title. */}
-      <Heading level={2} style={{ margin: 0 }}>
+      {/* antd `Typography.Title level={4}` (20px) -> Astryx `Heading`
+          (MAPPING §4: every `level` is a visual decision, not a rename).
+          `level={2}` was the 20px rung of Astryx's own ramp; on the restored
+          antd ramp (`ANTD_ALIGN_TOKENS`, 38/30/24/20/16) 20px is heading-4,
+          and heading-2 is 30px. */}
+      <Heading level={4} style={{ margin: 0 }}>
         {currentStep === 'resource-group'
           ? t('fairShare.ResourceGroup')
           : currentStep === 'domain'

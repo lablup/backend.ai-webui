@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 7;
+export const THEME_NAME_REV = 8;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -276,12 +276,51 @@ const ANTD_NEUTRAL_TEXT = {
  * `--color-background-surface` — so in dark mode a modal rendered `#141414`,
  * the same colour as the cards behind it, with no elevation cue beyond the
  * shadow. Naming the popover surface here restores the legacy two-step.
+ *
+ * ## The dialog TITLE (approved-1b)
+ *
+ * `DialogHeader` hard-codes `<Heading level={2}>` for its title — the level is
+ * not a prop, so no call site can change it, and `BAIModal` routes all 146 of
+ * its titles through it. antd's `.ant-modal-title` was `fontSizeLG` (16px) at
+ * `fontWeightStrong` (600). Astryx's own ramp put heading-2 at 20px (already
+ * 4px over), and once `ANTD_ALIGN_TOKENS` restored the antd heading scale it
+ * became `fontSizeHeading2` = 30px — nearly double the legacy title, on every
+ * dialog in the app. This is the "the dialog title needs its own pin" the
+ * audit-1 fallout note called for.
+ *
+ * The pin is the two heading-2 TYPE TOKENS, redeclared on `.astryx-dialog` so
+ * they cascade to the header's `Heading` — NOT a `font-size` on the heading
+ * itself. Two reasons:
+ *
+ *   1. `defineTheme({components})` emits `.astryx-<name>` rules on the element
+ *      that owns the class; it cannot reach a descendant (the same constraint
+ *      documented for `side-nav-heading` below). The dialog root is the only
+ *      element in reach, so the override has to travel by INHERITANCE, and
+ *      custom properties are what inherit.
+ *   2. `DialogHeader.titleWrapper` optically centres the title against the
+ *      close button with
+ *      `marginBlock: calc(--size-element-md/2 - --spacing-2 - --text-heading-2-size * --text-heading-2-leading / 2)`.
+ *      A `font-size` override would shrink the text but leave that calc on
+ *      30px (-13px, title riding up out of the header band); overriding the
+ *      TOKEN fixes both at once (16 × 1.5 → -4px).
+ *
+ * `--text-heading-2-weight` is NOT pinned: it already resolves to
+ * `--font-weight-semibold` = 600 = antd's `fontWeightStrong`.
+ *
+ * Blast radius is any `<Heading level={2}>` rendered INSIDE a dialog. There
+ * are none in this repo (censused with the approved-1b re-level pass — the one
+ * former level-2 site, `FairShareList`, is a page section title and is now
+ * level 4), and a level-2 heading in a dialog body would be an outline bug on
+ * its own given the header already owns h2.
  */
 const ANTD_DIALOG_SURFACE = {
   dialog: {
     base: {
       padding: '16px 24px',
       backgroundColor: 'var(--color-background-popover)',
+      // antd `.ant-modal-title`: fontSizeLG 16px / lineHeightLG 1.5.
+      '--text-heading-2-size': '16px',
+      '--text-heading-2-leading': '1.5',
     },
   },
 };

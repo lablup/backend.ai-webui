@@ -77,10 +77,11 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
         <Grid columns={{ minWidth: 280, max: 2 }} gap={6}>
           {parsedLiveStat?.devices?.cpu_util ? (
             <BAIFlex direction="column" gap="xxs" align="stretch">
-              {/* antd Title level={5} → Heading level={3} (ticket 15
-                  precedent: every level is a visual decision, not a
-                  rename — MAPPING §4). */}
-              <Heading level={3}>
+              {/* antd Title level={5} = 16px → `Heading level={5}` (every
+                  level here is a visual decision, not a rename — MAPPING §4;
+                  the restored antd type ramp puts 16px on heading-5, where
+                  Astryx's own ramp had put 17px on heading-3). */}
+              <Heading level={5}>
                 {mergedResourceSlots?.cpu?.human_readable_name}
               </Heading>
               {_.map(parsedLiveStat?.devices?.cpu_util, (value, key) => (
@@ -102,7 +103,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
           <BAIFlex direction="column" gap="sm" align="stretch">
             {parsedAvailableSlots?.mem ? (
               <BAIFlex direction="column" gap="xxs" align="stretch">
-                <Heading level={3}>
+                <Heading level={5}>
                   {mergedResourceSlots?.mem?.human_readable_name}
                 </Heading>
                 <BAIProgressWithLabel
@@ -118,7 +119,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
             ) : null}
             {parsedLiveStat?.node ? (
               <BAIFlex direction="column" gap="xxs" align="start">
-                <Heading level={3}>{t('session.launcher.Network')}</Heading>
+                <Heading level={5}>{t('session.launcher.Network')}</Heading>
                 <BAIFlex gap="xl">
                   <Text>TX:</Text>
                   <Text>
@@ -162,7 +163,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 _.split(key, '_').slice(0, -1).join('-') + '.device';
               return (
                 <BAIFlex key={key} direction="column" gap="xxs" align="stretch">
-                  <Heading level={3}>
+                  <Heading level={5}>
                     {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
                     {t('session.Utilization')}
                   </Heading>
@@ -196,7 +197,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                 _.split(key, '_').slice(0, -1).join('-') + '.device';
               return (
                 <BAIFlex key={key} direction="column" gap="xxs" align="stretch">
-                  <Heading level={3}>
+                  <Heading level={5}>
                     {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
                     {t('session.launcher.Memory')}
                   </Heading>

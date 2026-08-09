@@ -106,7 +106,9 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
     <BAIModal
       title={
         <BAIFlex style={{ maxWidth: '100%' }} gap={'sm'}>
-          <Heading level={4}>{t('kernel.ContainerLogs')}</Heading>
+          {/* A modal title: antd's `.ant-modal-title` is 16px, which the
+              restored antd type ramp puts on heading-5 (heading-4 is 20px). */}
+          <Heading level={5}>{t('kernel.ContainerLogs')}</Heading>
           {session ? (
             <>
               <Text maxLines={1}>{session?.name}</Text>

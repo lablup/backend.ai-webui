@@ -104,29 +104,51 @@ export const ANTD_ALIGN_TOKENS = {
   // the route-error headline (level 4) came out smaller than body text
   // (catalog G-3, O-2, R-5, 57 sites).
   //
-  // ⚠ KNOWN FALLOUT — OPEN, needs a call-site pass, not a token change.
+  // ✅ FALLOUT RESOLVED (approved-1b) — the call-site pass landed.
   // These five lines restore the antd SCALE, but a large share of this repo's
-  // `<Heading level={N}>` call sites were chosen against the OLD Astryx scale,
-  // i.e. by rendered size rather than by document level. Several carry a
-  // PILOT-DECISION comment saying so outright — e.g.
-  // `MyResourceWithinResourceGroup.tsx:203` converts an antd `Typography.Text`
-  // at `fontSizeHeading5` (16px) to `Heading level={3}` "visual values follow
-  // Astryx defaults", which was 16px then and is 24px now. Measured after this
-  // pin, at 1600x1000, light + dark:
+  // `<Heading level={N}>` call sites had been chosen against the OLD Astryx
+  // scale, i.e. by rendered size rather than by document level. Several carried
+  // a PILOT-DECISION comment saying so outright — e.g.
+  // `MyResourceWithinResourceGroup.tsx` converted an antd `Typography.Text` at
+  // `fontSizeHeading5` (16px) to `Heading level={3}` "visual values follow
+  // Astryx defaults", which was 16px then and 24px after the pin.
   //
-  //   BAICard string title (`BAICard.tsx:270`, level 3)   16px -> 24px
-  //   Board widget titles (dashboard, x9, level 3)        16px -> 24px
-  //   Astryx `DialogHeader` title (hard-coded level 2)    20px -> 30px
-  //     — antd `.ant-modal-title` was 16px, so catalog O-2's "closed by G-3"
-  //       is wrong in BOTH directions; the dialog title needs its own pin.
-  //   Card titles already on level 5 (a-settings, …)      12px -> 16px ✅
+  // approved-1b censused every `<Heading level={N}>` site in `react/src` and
+  // `packages/backend.ai-ui/src` and re-levelled the ones whose LEGACY rendered
+  // size no longer matched their level (16px -> 5, 20px -> 4, 24px -> 3):
   //
-  // So the pin FIXES every level-5 site and OVERSHOOTS the 33 level-3 and
-  // 2 level-2 sites. The fix is to re-level those call sites (mostly
-  // `level={3}` -> `level={5}`), which is a component pass and deliberately
-  // out of scope here. If that pass is not landing in the same release, drop
-  // these five lines plus the `--font-size-3xl` rung above and the scale
-  // reverts cleanly — nothing else in this table depends on them.
+  //   BAICard / BAICardAstryx string title      level 3 -> 5   (16px)
+  //   BAIBoardItemTitle (dashboard widgets x9)  level 3 -> 5   (16px)
+  //   AgentDetailModal x5, AgentStats,
+  //     My/TotalResourceWithinResourceGroup,
+  //     ChatPage x2, ContainerLogModal          level 3|4 -> 5 (16px)
+  //   AllocationHistoryStatistics GraphCard     level 4 -> 5   (14px legacy;
+  //     the antd ramp has no 14px rung and heading-4 is now 20px, which
+  //     inverted this inner card against its outer card)
+  //   FairShareList section title               level 2 -> 4   (20px)
+  //   RouteErrorContent headline                level 4 -> 3   (24px; legacy
+  //     overrode antd h4 with `fontSizeHeading3`)
+  //
+  // Sites whose legacy target already matches the restored ramp were LEFT
+  // ALONE: every `level={5}` site (antd `Title level={5}` / modal / drawer
+  // titles, all 16px — these are the ones the pin fixed), and the `level={3}`
+  // page/section titles that came from an antd `Title level={3}` (24px):
+  // VFolderNameTitle, EditableVFolderName(V2) + FolderExplorerHeader(V2),
+  // LoginFormPanel, StorageHostDetailDrawerContent, DeploymentDetailPage,
+  // AdminDeploymentPresetSettingPage, ReservoirArtifactDetailPage,
+  // SessionDetailContent, and SessionLauncherPage's `level={4}` (antd h4 20px).
+  //
+  // The one thing NO call site could fix is Astryx `DialogHeader`, which
+  // hard-codes `Heading level={2}` (20px before the pin, 30px after) against
+  // antd's 16px `.ant-modal-title`. That is pinned in the THEME instead —
+  // `ANTD_DIALOG_SURFACE` in `react/src/astryx-theme/backendAiTheme.ts`
+  // redeclares `--text-heading-2-size`/`-leading` on `.astryx-dialog`, which
+  // also keeps `DialogHeader`'s optical-centring calc honest. Catalog O-2's
+  // "closed by G-3" was wrong in BOTH directions; this closes it properly.
+  //
+  // If these five lines are ever dropped (plus the `--font-size-3xl` rung
+  // above), the re-levelled call sites above and that dialog pin must be
+  // reverted with them — they are now written against the antd ramp.
   '--text-heading-1-size': 'var(--font-size-4xl)', // antd fontSizeHeading1 38
   '--text-heading-2-size': 'var(--font-size-3xl)', // antd fontSizeHeading2 30
   '--text-heading-3-size': 'var(--font-size-2xl)', // antd fontSizeHeading3 24

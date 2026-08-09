@@ -135,11 +135,15 @@ export const astryxBrandTheme = defineTheme({
       'color:success': { color: 'var(--color-success)' },
     },
     // KEEP IN SYNC with `ANTD_DIALOG_SURFACE` in
-    // `react/src/astryx-theme/backendAiTheme.ts` (audit 1, catalog O-1/O-10).
+    // `react/src/astryx-theme/backendAiTheme.ts` (audit 1, catalog O-1/O-10;
+    // the heading-2 pin is approved-1b — `DialogHeader` hard-codes
+    // `Heading level={2}`, and antd's `.ant-modal-title` was 16px/1.5).
     dialog: {
       base: {
         padding: '16px 24px',
         backgroundColor: 'var(--color-background-popover)',
+        '--text-heading-2-size': '16px',
+        '--text-heading-2-leading': '1.5',
       },
     },
   },

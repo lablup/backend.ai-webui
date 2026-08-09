@@ -292,10 +292,10 @@ const TotalResourceWithinResourceGroup: React.FC<
       <BAIBoardItemTitle
         title={
           <BAIFlex gap={'xs'} wrap="wrap">
-            {/* PILOT-DECISION: antd Typography.Text (fontSizeHeading5 +
-                fontWeightStrong) -> Astryx Heading level={3}; visual values
-                follow Astryx defaults. */}
-            <Heading level={3}>{t('webui.menu.TotalResourcesIn')}</Heading>
+            {/* antd Typography.Text (fontSizeHeading5 = 16px +
+                fontWeightStrong). 16px is heading-5 on the restored antd type
+                ramp; `level={3}` tracked the same 16px under Astryx's own. */}
+            <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
             <SharedResourceGroupSelectForCurrentProject
               size="small"
               showSearch

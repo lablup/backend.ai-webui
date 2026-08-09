@@ -23,7 +23,7 @@
      │  children                                   │  <- body
      └─────────────────────────────────────────────┘
 
-   `title`               -> `Heading level={3}` (string) / verbatim (JSX)
+   `title`               -> `Heading level={5}` (string) / verbatim (JSX)
    `extra`               -> right-aligned in the title row
    `size="small"`        -> `padding={3}` (12px, antd's small card padding);
                             otherwise `padding={6}` (24px, antd's default)
@@ -81,12 +81,17 @@
  `headerHeight`. Applies to all 19 `tabList` call sites with no edit at any of
  them. The two tab LOOKS themselves live in `BAITabList`.
 
- PILOT-DECISION — **`title` becomes a real `<h3>`.** antd rendered the card
- title as a `<div>`; Astryx's `Heading` emits a heading element. This is the
- pilot's ratified choice for `BAICardAstryx` and it makes card titles
- navigable, but it DOES add headings to the document outline — worth knowing
- when auditing page heading structure. JSX titles (icon + text rows) are still
- rendered verbatim, so they are unaffected.
+ PILOT-DECISION — **`title` becomes a real heading element (`<h5>`).** antd
+ rendered the card title as a `<div>`; Astryx's `Heading` emits a heading
+ element. This is the pilot's ratified choice for `BAICardAstryx` and it makes
+ card titles navigable, but it DOES add headings to the document outline —
+ worth knowing when auditing page heading structure. JSX titles (icon + text
+ rows) are still rendered verbatim, so they are unaffected.
+
+ The LEVEL is chosen by rendered size, not by document depth: antd's card head
+ title is `fontSizeLG` (16px), which the restored antd type ramp
+ (`ANTD_ALIGN_TOKENS`, 38/30/24/20/16) puts on heading-5. It read `level={3}`
+ for as long as Astryx's own ramp put 17px there.
 */
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import BAIButton from './BAIButton';
@@ -267,7 +272,12 @@ const BAICard: React.FC<BAICardProps> = ({
             gap={2}
           >
             {typeof title === 'string' ? (
-              <Heading level={3}>{title}</Heading>
+              // `level={5}`, not 3 — see the "`title` becomes a real heading"
+              // PILOT-DECISION in the file header. antd's `.ant-card-head-title`
+              // is `fontSizeLG` (16px), and on the restored antd ramp 16px is
+              // heading-5. (It was `level={3}` while Astryx's own ramp put 17px
+              // there.)
+              <Heading level={5}>{title}</Heading>
             ) : (
               title
             )}

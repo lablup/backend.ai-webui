@@ -222,6 +222,10 @@ interface EditableChatTitleProps {
 // has no Astryx destination (MAPPING.md §3.4 — `editable` is NONE, self-build).
 // Rebuilt as a minimal toggle between a `Heading` + edit `IconButton` and a
 // controlled `TextInput` that commits on blur/Enter and reverts on Escape.
+// `level={5}` = 16px on the restored antd type ramp — this is a BAICard title
+// slot, so it matches every other card title (`BAICard` renders its own string
+// titles at the same level). It was `level={3}` while Astryx's own ramp put
+// 17px there; on the antd ramp heading-3 is 24px, which read as a page title.
 const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
   label,
   editable,
@@ -238,7 +242,7 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
   }, [label]);
 
   if (!editable) {
-    return <Heading level={3}>{label}</Heading>;
+    return <Heading level={5}>{label}</Heading>;
   }
 
   if (isEditing) {
@@ -272,7 +276,7 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
 
   return (
     <HStack gap={1} align="center">
-      <Heading level={3}>{label}</Heading>
+      <Heading level={5}>{label}</Heading>
       <IconButton
         variant="ghost"
         size="sm"

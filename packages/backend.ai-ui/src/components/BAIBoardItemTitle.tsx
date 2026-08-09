@@ -42,9 +42,12 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
     >
       <BAIFlex gap={'xs'} align="center" wrap="wrap">
         {typeof title === 'string' ? (
-          // PILOT-DECISION: antd Typography.Title level={5} (16px) -> Astryx
-          // Heading level={3} (17px); visual values follow Astryx defaults.
-          <Heading level={3}>{title}</Heading>
+          // antd Typography.Title level={5} = 16px. `level={3}` was picked when
+          // Astryx's heading ramp still started three rungs lower (h3 = 17px);
+          // once `ANTD_ALIGN_TOKENS` restored the antd scale (38/30/24/20/16),
+          // 16px moved to `level={5}` and h3 became 24px. Re-levelled by
+          // RENDERED SIZE, which is what the original choice was tracking.
+          <Heading level={5}>{title}</Heading>
         ) : (
           title
         )}

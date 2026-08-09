@@ -122,14 +122,15 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
           </BAIFlex>
         ) : null}
 
-        {/* PILOT-DECISION: antd `Typography.Title level={4}` → Astryx
-            `Heading level={4}` (MAPPING §4). The hand-tuned type ramp
-            (`fontSizeHeading3` + letter-spacing + line-height) is dropped —
-            Astryx's heading scale is theme-owned and the visual-values policy
-            keeps component defaults. `justify="center"` replaces
-            `textAlign`. */}
+        {/* antd `Typography.Title level={4}` overridden to
+            `fontSize: token.fontSizeHeading3`, i.e. the headline RENDERED at
+            24px. The letter-spacing / line-height hand-tuning is still dropped
+            (Astryx's heading scale is theme-owned), but the SIZE is restored:
+            on the antd type ramp (`ANTD_ALIGN_TOKENS`) 24px is heading-3.
+            `level={4}` was the ticket-24 choice against Astryx's own ramp and
+            now renders 20px. `justify="center"` replaces `textAlign`. */}
         <Heading
-          level={4}
+          level={3}
           justify="center"
           style={{ margin: 0, maxWidth: 560 }}
         >

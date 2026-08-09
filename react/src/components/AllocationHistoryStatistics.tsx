@@ -43,17 +43,22 @@ interface GraphCardProps {
 // Astryx `Card` is a bare surface, the header is composition). antd's inner
 // variant differed from the outer one by a tinted header strip, a 14px title
 // and 16px body padding; Astryx has no header strip to tint, so the two
-// carried-over metrics are `Heading level={4}` (the 14px rung of Astryx's
-// ramp) and `padding={4}` (16px). The tint itself is DROPPED — reproducing it
-// would be a per-component CSS block fighting `astryx-card`, which the
-// defaults-first policy rules out.
+// carried-over metrics are the card title level and `padding={4}` (16px). The
+// tint itself is DROPPED — reproducing it would be a per-component CSS block
+// fighting `astryx-card`, which the defaults-first policy rules out.
+//
+// The title is `Heading level={5}` (16px). It was `level={4}` for the 14px rung
+// of Astryx's own ramp, but the restored antd ramp has no 14px heading rung at
+// all (38/30/24/20/16) and heading-4 is now 20px — bigger than the OUTER card
+// titles this inner card sits under, i.e. an inverted hierarchy. 16px is the
+// nearest rung and lines this up with every other card title.
 export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
   <BAICardAstryx
     padding={4}
     width="100%"
     title={
       <BAIFlex gap={'xxs'} align="center">
-        <Heading level={4}>{title}</Heading>
+        <Heading level={5}>{title}</Heading>
         {tooltipText ? (
           <BAIQuestionIconWithTooltip title={tooltipText} />
         ) : null}

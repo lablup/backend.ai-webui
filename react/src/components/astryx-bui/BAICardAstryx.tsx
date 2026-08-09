@@ -88,7 +88,10 @@ const BAICardAstryx: React.FC<BAICardAstryxProps> = ({
             {title || extra ? (
               <HStack justify="between" align="center" wrap="wrap" gap={2}>
                 {typeof title === 'string' ? (
-                  <Heading level={3}>{title}</Heading>
+                  // 16px = antd's `.ant-card-head-title` (`fontSizeLG`), which
+                  // the restored antd type ramp puts on heading-5. Mirrors
+                  // `BAICard`.
+                  <Heading level={5}>{title}</Heading>
                 ) : (
                   title
                 )}

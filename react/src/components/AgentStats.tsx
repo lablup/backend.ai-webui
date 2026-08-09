@@ -173,10 +173,11 @@ const AgentStats: React.FC<AgentStatsProps> = ({
     >
       <BAIBoardItemTitle
         title={
-          // PILOT-DECISION: antd Typography.Text styled to fontSizeHeading5 +
-          // fontWeightStrong -> Astryx Heading level={3} (visual values follow
-          // Astryx defaults; per-pixel parity is a non-goal).
-          <Heading level={3}>{t('agentStats.AgentStats')}</Heading>
+          // antd Typography.Text styled to fontSizeHeading5 (16px) +
+          // fontWeightStrong. On the restored antd type ramp 16px is
+          // heading-5; `level={3}` tracked the same 16px back when Astryx's
+          // own ramp put 17px there.
+          <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
         }
         tooltip={t('agentStats.AgentStatsDescription')}
         extra={
