@@ -9,18 +9,14 @@ import {
 } from './ChatMessageContainer';
 import ChatMessageContent from './ChatMessageContent';
 import { UIMessage } from '@ai-sdk/react';
-// FRONTIER (documented, ticket 23 @ant-design/x judgment call): `FileCard`
-// has no Astryx equivalent (not in MAPPING.md — it is outside the antd core
-// surface the mapping measured) and rebuilding a file-attachment preview card
-// is disproportionate to one call site. Kept as-is, same treatment as the
-// lobehub icon packages — convert only the antd chrome AROUND it.
-import { FileCard } from '@ant-design/x';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
 import { Thumbnail } from '@astryxdesign/core/Thumbnail';
+import { Token } from '@astryxdesign/core/Token';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { PaperclipIcon } from 'lucide-react';
 import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -107,11 +103,18 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             />
           </BAIFlex>
         ) : (
-          <FileCard
+          // PILOT-DECISION: `@ant-design/x`'s `FileCard` (icon + name +
+          // description + download link) has no Astryx card equivalent — the
+          // closest primitive is `Token`, which carries the same three
+          // affordances (leading icon, file name, `href` to the attachment)
+          // in a smaller, list-friendly shape. The redundant `description`
+          // (it repeated the file name) is dropped.
+          <Token
             key={`${message?.id}-${index}`}
-            name={filename}
+            label={filename}
             description={filename}
-            src={part?.url}
+            icon={<PaperclipIcon size="1em" />}
+            href={part?.url}
           />
         );
       })}

@@ -53,15 +53,15 @@ const rel = (f) => relative(REPO_ROOT, f).split(sep).join("/");
  * is converted. `antd` itself is excluded — it is the target, not a carrier.
  */
 const CARRIER_PACKAGES = [
-  {
-    name: "@ant-design/x",
-    importedBy: "react/src/components/Chat/*, react/src/helper/index.tsx",
-    why:
-      "peerDependencies { antd: ^6.1.1 } plus hard deps on @ant-design/icons, " +
-      "@ant-design/cssinjs, @ant-design/colors and @rc-component/*. With " +
-      "autoInstallPeers the peer resolves into the production graph, so this " +
-      "package alone keeps antd-zero-gate part (a) red.",
-  },
+  // EMPTY as of qa2-d. The only entry was `@ant-design/x` (peerDependencies
+  // { antd: ^6.1.1 } plus hard deps on @ant-design/icons, @ant-design/cssinjs,
+  // @ant-design/colors and @rc-component/*), imported by
+  // react/src/components/Chat/*. Astryx 0.3.0 ships a first-class chat
+  // composer family (ChatComposer / ChatComposerInput / ChatComposerDrawer /
+  // ChatSendButton), so those surfaces were rebuilt on it and the dependency
+  // was dropped from react/package.json. `pnpm why @ant-design/x` is now
+  // empty; the remaining antd edges are FIRST-PARTY direct dependencies (the
+  // parked Form engine), not carriers.
 ];
 
 /**
@@ -314,6 +314,15 @@ function toMarkdown(report, roots) {
   );
   L.push("amount of first-party conversion removes these.");
   L.push("");
+  if (!report.carrierPackages.length) {
+    L.push(
+      "**None.** The last carrier (`@ant-design/x`) was removed in qa2-d — " +
+        "the Chat composer surfaces it provided are now built on Astryx's " +
+        "own chat family. Every remaining antd edge is a first-party direct " +
+        "dependency.",
+    );
+    L.push("");
+  }
   for (const p of report.carrierPackages) {
     L.push(`### \`${p.name}\``);
     L.push("");
@@ -380,6 +389,7 @@ if (args.includes("--json")) {
   console.log(`TYPE-ONLY (cheap):  ${report.typeOnly.count} files`);
   console.log("");
   console.log("CARRIER PACKAGES (not closable by conversion):");
+  if (!report.carrierPackages.length) console.log("    (none)");
   for (const p of report.carrierPackages) console.log(`    - ${p.name}`);
   console.log("");
   console.log(

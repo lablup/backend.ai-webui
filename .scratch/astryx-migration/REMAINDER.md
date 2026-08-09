@@ -15,33 +15,31 @@ of *why* it is not green yet.
 | Metric | Files |
 |---|---:|
 | Scanned (shipping source) | 972 |
-| Import antd directly | 53 |
-| Reach antd transitively | 638 |
-| antd-free | 281 |
+| Import antd directly | 49 |
+| Reach antd transitively | 641 |
+| antd-free | 282 |
 
 ## Bucket 1 — RENDER (real conversion work)
 
-46 files import antd **values**. Each needs an Astryx
+44 files import antd **values**. Each needs an Astryx
 equivalent and a visual check — this is the number to plan against.
 
 | Owner | Files |
 |---|---:|
 | BUI · infrastructure (shims, hooks, helper) | 23 |
-| app · components | 20 |
+| app · components | 18 |
 | BUI · fragments | 1 |
 | BUI · components | 1 |
 | app · other | 1 |
 
 ## Bucket 2 — TYPE-ONLY (cheap, ships nothing)
 
-5 files import only antd **types**. Erased at build
+3 files import only antd **types**. Erased at build
 time, so they add nothing to the bundle; they only keep antd required for
 `tsc`. Closing them does not move the bundle scan.
 
 - `packages/backend.ai-ui/src/locale/index.ts`
 - `packages/backend.ai-ui/src/theme-shim/index.tsx`
-- `react/src/components/Chat/ChatInput.tsx`
-- `react/src/helper/index.tsx`
 - `react/src/hooks/reactPaginationQueryOptions.tsx`
 
 ## Bucket 3 — CARRIER PACKAGES (not closable by conversion)
@@ -49,14 +47,10 @@ time, so they add nothing to the bundle; they only keep antd required for
 Dependencies that drag the antd family in through their own trees. No
 amount of first-party conversion removes these.
 
-### `@ant-design/x`
-
-- **Imported by**: react/src/components/Chat/*, react/src/helper/index.tsx
-- **Why it blocks the gate**: peerDependencies { antd: ^6.1.1 } plus hard deps on @ant-design/icons, @ant-design/cssinjs, @ant-design/colors and @rc-component/*. With autoInstallPeers the peer resolves into the production graph, so this package alone keeps antd-zero-gate part (a) red.
+**None.** The last carrier (`@ant-design/x`) was removed in qa2-d — the Chat composer surfaces it provided are now built on Astryx's own chat family. Every remaining antd edge is a first-party direct dependency.
 
 ### Live production-graph roots (`pnpm -r list --prod --depth 1`)
 
-- `backend-ai-webui-react → @ant-design/x`
 - `backend-ai-webui-react → antd`
 - `backend.ai-ui → antd`
 
