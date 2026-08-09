@@ -153,16 +153,16 @@ const CLIDownloadTab: React.FC = () => {
       {cliDownloadUrl ? (
         <>
           <BAIFlex direction="column" align="stretch" gap="sm">
-            <Text weight="semibold">
-              {t('summary.CLIDownloadExecutable')}
-            </Text>
+            <Text weight="semibold">{t('summary.CLIDownloadExecutable')}</Text>
             <MetadataList columns="single">
               <MetadataListItem label={t('summary.OS')}>
                 <Selector
                   label={t('summary.OS')}
                   isLabelHidden
                   value={selectedOS}
-                  onChange={(value) => setSelectedOS(value as typeof selectedOS)}
+                  onChange={(value) =>
+                    setSelectedOS(value as typeof selectedOS)
+                  }
                   options={map(OS, (os) => ({ value: os, label: os }))}
                 />
               </MetadataListItem>
@@ -268,7 +268,9 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
           frontier wrapper that keeps the antd-shaped `items` contract and
           renders the active panel itself (Astryx `TabList` is navigation
           only). */}
-      <BAITabs items={tabItems} />
+      {/* `type="line"`: this modal used a PLAIN antd `Tabs` on `main`, i.e. the
+          underlined strip — not the card tabs `BAITabs` now defaults to. */}
+      <BAITabs items={tabItems} type="line" />
     </BAIModal>
   );
 };

@@ -35,7 +35,8 @@
                             no border, not no background; reading it as
                             `transparent` is what made the pilot's phase-2/3
                             screenshots look wrong)
-   `tabList`/`activeTabKey`/`onTabChange` -> `TabList hasDivider` + `Tab`
+   `tabList`/`activeTabKey`/`onTabChange` -> `TabList hasDivider` + `Tab`,
+                            full-bleed as HEADER CHROME (see below)
    `status`              -> a border tint from `BAICard.css` (tokens only)
    `hoverable`           -> a hover shadow from `BAICard.css`
    `loading`             -> `Skeleton` boxes in place of the body
@@ -60,6 +61,26 @@
  explicit `Divider`. `tabList` keeps its implicit divider through
  `TabList hasDivider`, which is where Astryx puts the rail's rule.
 
+ PILOT-DECISION (QA2-A) — **`tabList` is CARD CHROME, not body content.**
+ antd rendered `tabList` inside `.ant-card-head`, so the rail was the head's
+ own `border-bottom` and ran the card's full width while the first tab's label
+ stayed on the body inset. Phase 3 rendered the strip as an ordinary row inside
+ the padded body AND wrapped it in an `HStack` next to `tabBarExtraContent`;
+ that flex row made Astryx's widthless `<nav>` hug its tabs, so the rail
+ stopped at the last tab — a card three tabs wide got a 534px rule under a
+ 1264px bar. Two changes fix it, and both are structural rather than paint:
+
+   1. the `<nav>` is a DIRECT child of the stretch `VStack` (block-level, so it
+      fills the bar), and `tabBarExtraContent` moves INSIDE it — Astryx's own
+      `TabListTabsWithActions` idiom;
+   2. `bai-card__tabs` in `BAICard.css` full-bleeds the strip back out to the
+      card's borders and re-adds the inset as padding.
+
+ MEASURED after: rail 265→1575 on a 264→1576 card (border to border), first tab
+ label at x=288 = the body's content inset, header band 58px vs antd's 56px
+ `headerHeight`. Applies to all 19 `tabList` call sites with no edit at any of
+ them. The two tab LOOKS themselves live in `BAITabList`.
+
  PILOT-DECISION — **`title` becomes a real `<h3>`.** antd rendered the card
  title as a `<div>`; Astryx's `Heading` emits a heading element. This is the
  pilot's ratified choice for `BAICardAstryx` and it makes card titles
@@ -70,11 +91,12 @@
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import BAIButton from './BAIButton';
 import './BAICard.css';
+import BAITabList from './BAITabList';
 import { Card } from '@astryxdesign/core/Card';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Tab } from '@astryxdesign/core/TabList';
 import { Heading } from '@astryxdesign/core/Text';
 import { CircleX, TriangleAlert } from 'lucide-react';
 import React from 'react';
@@ -208,12 +230,21 @@ const BAICard: React.FC<BAICardProps> = ({
   const hasTitleRow = !!title || !!extraNode;
   const tabs = tabList ?? [];
   const activeTab = activeTabKey ?? defaultActiveTabKey ?? tabs[0]?.key ?? '';
+  // antd's `Card` put `tabList` INSIDE `.ant-card-head`, so a title-less tabbed
+  // card opened with the tab strip welded to the card's top edge. When a title
+  // or a cover comes first the strip is a mid-card rule instead, and the
+  // top-edge weld must not apply.
+  const tabsAreFirstRow = !hasTitleRow && !cover;
 
   return (
     <Card
       {...cardProps}
       className={[
         'bai-card',
+        // `padding` is a StyleX prop with no reflected data attribute, so the
+        // card's own inset is republished as a class the co-located CSS can
+        // read (`--bai-card-inset`, used by the full-bleed tab strip).
+        size === 'small' ? 'bai-card--compact' : '',
         status !== 'default' ? `bai-card--${status}` : '',
         // Kept verbatim: `.bai-card-error` is an existing hook the app styles
         // and asserts on, and dropping it would be a silent contract change.
@@ -244,38 +275,45 @@ const BAICard: React.FC<BAICardProps> = ({
           </HStack>
         ) : null}
         {tabs.length ? (
-          <HStack justify="between" align="end" gap={2}>
-            <TabList
-              value={activeTab}
-              onChange={(key) => onTabChange?.(key)}
-              hasDivider
-            >
-              {tabs.map((tab) => {
-                const rawLabel = tab.label ?? tab.tab;
-                return (
-                  <Tab
-                    key={tab.key}
-                    value={tab.key}
-                    // `Tab.label` is a required STRING that doubles as the
-                    // accessible name (P2), so a JSX tab label is flattened
-                    // for the name.
-                    //
-                    // DEFECT FIXED (phase 3, wave 3): the trailing slot used to
-                    // fall back to the WHOLE `rawLabel` node whenever the label
-                    // was JSX. Since `label` already renders the flattened text,
-                    // the text came out TWICE — measured on `SchedulerPage`,
-                    // whose tab read "Fair Share Setting Fair Share Setting ⓘ".
-                    // Only the call site knows where a rich label splits, so it
-                    // now passes `endContent` explicitly and keeps `label` a
-                    // string; there is no guess to get wrong.
-                    label={nodeToAccessibleLabel(rawLabel)}
-                    endContent={tab.endContent}
-                  />
-                );
-              })}
-            </TabList>
-            {tabBarExtraContent}
-          </HStack>
+          // The tab strip is the card's HEADER CHROME, not a widget floating in
+          // the body — see the `tabList` PILOT-DECISION in the file header.
+          // `BAITabList` owns the ANATOMY (block-level `<nav>` so the rail
+          // spans the bar, trailing slot rendered inside it); `bai-card__tabs`
+          // adds the card-specific full-bleed on top.
+          <BAITabList
+            className={
+              tabsAreFirstRow
+                ? 'bai-card__tabs bai-card__tabs--top'
+                : 'bai-card__tabs'
+            }
+            value={activeTab}
+            onChange={(key) => onTabChange?.(key)}
+            tabBarExtraContent={tabBarExtraContent}
+          >
+            {tabs.map((tab) => {
+              const rawLabel = tab.label ?? tab.tab;
+              return (
+                <Tab
+                  key={tab.key}
+                  value={tab.key}
+                  // `Tab.label` is a required STRING that doubles as the
+                  // accessible name (P2), so a JSX tab label is flattened
+                  // for the name.
+                  //
+                  // DEFECT FIXED (phase 3, wave 3): the trailing slot used to
+                  // fall back to the WHOLE `rawLabel` node whenever the label
+                  // was JSX. Since `label` already renders the flattened text,
+                  // the text came out TWICE — measured on `SchedulerPage`,
+                  // whose tab read "Fair Share Setting Fair Share Setting ⓘ".
+                  // Only the call site knows where a rich label splits, so it
+                  // now passes `endContent` explicitly and keeps `label` a
+                  // string; there is no guess to get wrong.
+                  label={nodeToAccessibleLabel(rawLabel)}
+                  endContent={tab.endContent}
+                />
+              );
+            })}
+          </BAITabList>
         ) : showDivider ? (
           <Divider />
         ) : null}

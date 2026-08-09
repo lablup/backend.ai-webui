@@ -1,0 +1,110 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAITabList` card-type tab strip (QA2-A / item 2).
+
+ ## Why this is CSS and not a theme variant
+
+ Astryx offers three customization routes (`astryx docs styling`,
+ `astryx docs theme`):
+
+  1. `xstyle` — StyleX. Not available: this repo has no StyleX compiler
+     (CLAUDE.md: "No StyleX/Tailwind compiler here — don't use xstyle").
+  2. `defineTheme({ components })` — the systematic route, and the right one for
+     a NEW DEFAULT. It cannot express this style, for two independent reasons:
+     (a) a custom variant key (`'variant:card'`) only renders if the component
+     REFLECTS that prop, and `TabList` reflects `size` only
+     (`themeProps('tab-list', {size})` — see the theming table in
+     `astryx component TabList`); (b) the look needs `tab` styled CONDITIONALLY
+     on its ancestor strip, and component overrides are flat per-component, so
+     `tab.base` would repaint every tab in the app. A theme override is also
+     global by construction, and the brief requires the two styles side by side
+     (`FolderExplorerModalV2` renders card at `xl` and line below it).
+  3. `className` + design tokens, selected via the stable `.astryx-*` class and
+     reflected `data-*` attributes — "the preferred selector surface for new
+     CSS" (`astryx docs styling`). That is what this file uses.
+
+ `astryx swizzle TabList` was rejected: it forks the component source into the
+ repo (and with it the roving-tabindex/keyboard-hint machinery) to change
+ nothing but paint, which is a permanent maintenance cost for a purely visual
+ delta. Astryx reserves swizzle for "deep customization".
+
+ ## Metrics — measured from antd (`antd/es/tabs/style`, default tokens) plus
+ the legacy `BAITabs` NEO override (`git show
+ origin/main:react/src/components/BAITabs.tsx`, FR-534)
+
+   cardHeight   = controlHeightLG        = 40px  -> `--size-element-lg` (36px)
+   cardPadding  = "8px 16px"                     -> `--spacing-4` inline
+   cardGutter   = marginXXS / 2          = 2px   -> `--spacing-0-5`
+   cardBg       = colorFillAlter                 -> `--color-background-muted`
+   active bg    = colorBgContainer               -> `--color-background-card`
+   border       = 1px solid colorBorderSecondary -> `--border-width` / `--color-border`
+   radius       = borderRadiusLG         = 8px   -> `--radius-element` (8px, exact)
+   NEO override: nav rail, inactive tabs' bottom border and the ACTIVE tab's
+   whole border are recoloured to `colorPrimary`   -> `--color-accent`
+
+ PILOT-DECISION — the tab height comes from `--size-element-lg` (36px, the
+ `size="lg"` step) rather than antd's 40px. 40px is not on Astryx's element-size
+ scale, and a literal would pin the height against every future theme; a 4px
+ shorter strip is the cheaper of the two errors. Everything else is exact.
+*/
+
+/*
+ The strip. `hasDivider` gives the rail; the card style only recolours it and
+ removes the reserved gap, because boxed tabs sit ON the rail rather than above
+ it (antd: the tab's own bottom border coincides with `.ant-tabs-nav::before`).
+*/
+.bai-tab-list--card {
+  align-items: flex-end;
+  gap: var(--spacing-0-5);
+  padding-block-end: 0;
+  border-block-end-color: var(--color-accent);
+}
+
+.bai-tab-list--card .astryx-tab {
+  padding-inline: var(--spacing-4);
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-muted);
+  border: var(--border-width) solid var(--color-border);
+  border-block-end-color: var(--color-accent);
+  border-radius: var(--radius-element) var(--radius-element) 0 0;
+  /* Overlap the rail by exactly the border width, so the tab box and the strip
+     share one line instead of stacking two. antd did this with
+     `Card.tabsMarginBottom` / the nav's negative offset. */
+  margin-block-end: calc(-1 * var(--border-width));
+  /* The line style's hover pill is a rounded overlay sized to the tab; on a
+     boxed tab it would round the wrong corners. Card tabs signal hover with the
+     accent text colour, as antd did (`.ant-tabs-tab:hover { color: … }`). */
+  --color-overlay-hover: transparent;
+}
+
+.bai-tab-list--card .astryx-tab:hover {
+  color: var(--color-accent);
+}
+
+.bai-tab-list--card .astryx-tab[data-selected='selected'] {
+  color: var(--color-accent);
+  background-color: var(--color-background-card);
+  border-color: var(--color-accent);
+  /* Knock the bottom edge out against the panel so the active tab reads as
+     continuous with the content below it — antd's
+     `border-bottom-color: colorBgContainer`. */
+  border-block-end-color: var(--color-background-card);
+}
+
+/* The sliding underline is the LINE style's selected-state device; the boxed
+   tab carries that job here. */
+.bai-tab-list--card .astryx-tab-indicator {
+  display: none;
+}
+
+/* antd rendered `tabBarExtraContent` at the trailing edge of the bar. Astryx's
+   TabList anatomy has the same "Right Content" slot but exposes no prop for it,
+   so it is laid out as a nav child — the `TabListTabsWithActions` idiom. */
+.bai-tab-list__extra {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+  padding-inline-start: var(--spacing-2);
+}

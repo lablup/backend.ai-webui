@@ -10,9 +10,8 @@
  - antd `Splitter` becomes `useResizable` + `ResizeHandle` + `Layout` slots
    (MAPPING §5: Splitter → useResizable).
  - antd `Tabs` becomes the converted `BAITabs` wrapper (renders the active
-   panel itself). PILOT-DECISION: the `type={xl ? 'card' : 'line'}` visual
-   split has no Astryx counterpart — the underlined tab strip is used at all
-   breakpoints.
+   panel itself). The `type={xl ? 'card' : 'line'}` visual split is intact:
+   QA2-A gave `BAITabs` a real card variant, so both looks exist again.
  - `Grid.useBreakpoint` becomes `useBAIBreakpoint` (RESPONSIVE-POLICY R2).
  - The `createStyles` block (`.ant-modal-title` width) is deleted — dead CSS
    once the modal is no longer antd (P6).
@@ -334,6 +333,11 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
 
   const vFolderInfoPanelElement = vfolderNode ? (
     <BAITabs
+      // Restored (QA2-A): the legacy `type={xl ? 'card' : 'line'}` split. The
+      // wide layout puts this panel beside the file list, where the boxed tabs
+      // read as a panel header; the narrow layout stacks it, where the
+      // underlined strip is lighter.
+      type={xl ? 'card' : 'line'}
       activeKey={activeTab}
       onChange={(key: string) => {
         if (key === 'auditLog' && auditLogQueryRef == null) {

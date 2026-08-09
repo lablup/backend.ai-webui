@@ -8,9 +8,7 @@ import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
 import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useTabQuerySnapshot } from '../hooks';
-import { Card } from '@astryxdesign/core/Card';
-import { VStack } from '@astryxdesign/core/Stack';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,43 +21,42 @@ const tabParser = parseAsStringLiteral([
   'resourceGroup',
 ]).withDefault('agents');
 
-// antd `BAICard tabList` -> Astryx `Card` + `TabList hasDivider` composition
-// (MAPPING.md: Card is COMPOSITION — Card + Stack + Heading (+ TabList)),
-// same idiom as AgentSummaryPage (ticket 15). The tab rail sits on the
-// header's bottom edge and the body starts under the divider, matching the
-// original tabbed-card anatomy.
+// QA2-A: folded the hand-inlined `Card` + `VStack` + `TabList` copy back onto
+// `BAICard tabList`, which now renders the strip as the card's header chrome
+// (full-bleed rail, tab label on the body inset). See `AgentSummaryPage`.
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   return (
-    <Card padding={6}>
-      <VStack gap={4} align="stretch">
-        <TabList value={currentTab} onChange={onTabChange} hasDivider>
-          <Tab value="agents" label={t('agent.Agent')} />
-          <Tab value="storages" label={t('general.StorageProxies')} />
-          <Tab value="resourceGroup" label={t('general.ResourceGroup')} />
-        </TabList>
-        <Suspense fallback={<BAISkeletonAstryx />}>
-          {currentTab === 'agents' && (
-            <BAIErrorBoundary>
-              <AgentList />
-            </BAIErrorBoundary>
-          )}
-          {currentTab === 'storages' && (
-            <BAIErrorBoundary>
-              <StorageProxyList />
-            </BAIErrorBoundary>
-          )}
-          {currentTab === 'resourceGroup' && (
-            <BAIErrorBoundary>
-              <ResourceGroupList />
-            </BAIErrorBoundary>
-          )}
-        </Suspense>
-      </VStack>
-    </Card>
+    <BAICard
+      activeTabKey={currentTab}
+      onTabChange={onTabChange}
+      tabList={[
+        { key: 'agents', label: t('agent.Agent') },
+        { key: 'storages', label: t('general.StorageProxies') },
+        { key: 'resourceGroup', label: t('general.ResourceGroup') },
+      ]}
+    >
+      <Suspense fallback={<BAISkeletonAstryx />}>
+        {currentTab === 'agents' && (
+          <BAIErrorBoundary>
+            <AgentList />
+          </BAIErrorBoundary>
+        )}
+        {currentTab === 'storages' && (
+          <BAIErrorBoundary>
+            <StorageProxyList />
+          </BAIErrorBoundary>
+        )}
+        {currentTab === 'resourceGroup' && (
+          <BAIErrorBoundary>
+            <ResourceGroupList />
+          </BAIErrorBoundary>
+        )}
+      </Suspense>
+    </BAICard>
   );
 };
 

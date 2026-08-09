@@ -298,6 +298,64 @@ describe('BAICard', () => {
       expect(handleTabChange).toHaveBeenCalledWith('tab2');
     });
 
+    /*
+     QA2-A: the tab strip is the card's HEADER CHROME. Two structural facts
+     carry the look, and neither is observable in jsdom's layout — so they are
+     asserted as structure:
+       - the `<nav>` carries `bai-card__tabs`, which full-bleeds it to the
+         card's edges (antd's `.ant-card-head` border ran the card's full
+         width while the first tab's label stayed at the body inset);
+       - `tabBarExtraContent` is a CHILD of the nav, not a sibling. As a
+         sibling it forced the nav into a flex row, where Astryx's widthless
+         strip hugs its tabs and the rail stops at the last tab.
+    */
+    it('should full-bleed the tab strip as card chrome', () => {
+      const { container } = render(
+        <BAICard tabList={[{ key: 'tab1', label: 'Tab 1' }]}>Content</BAICard>,
+      );
+      const nav = container.querySelector('nav');
+      expect(nav).toHaveClass('bai-card__tabs');
+      // No title and no cover: the strip is the card's first row, so it welds
+      // to the top edge.
+      expect(nav).toHaveClass('bai-card__tabs--top');
+    });
+
+    it('should not weld the tab strip to the top edge when a title comes first', () => {
+      const { container } = render(
+        <BAICard title="Card" tabList={[{ key: 'tab1', label: 'Tab 1' }]}>
+          Content
+        </BAICard>,
+      );
+      const nav = container.querySelector('nav');
+      expect(nav).toHaveClass('bai-card__tabs');
+      expect(nav).not.toHaveClass('bai-card__tabs--top');
+    });
+
+    it('should render tabBarExtraContent inside the tab nav', () => {
+      const { container } = render(
+        <BAICard
+          tabList={[{ key: 'tab1', label: 'Tab 1' }]}
+          tabBarExtraContent={<span>Extra</span>}
+        >
+          Content
+        </BAICard>,
+      );
+      const nav = container.querySelector('nav');
+      // The trailing slot is `BAITabList`'s (`.bai-tab-list__extra`).
+      const extra = container.querySelector('.bai-tab-list__extra');
+      expect(extra).toBeInTheDocument();
+      expect(nav).toContainElement(extra as HTMLElement);
+    });
+
+    it('should republish the card padding step as a class for the bleed math', () => {
+      const { container } = render(
+        <BAICard size="small" tabList={[{ key: 'tab1', label: 'Tab 1' }]}>
+          Content
+        </BAICard>,
+      );
+      expect(container.querySelector('.bai-card--compact')).toBeInTheDocument();
+    });
+
     it('should auto-enable divider when tabList is provided', () => {
       const { container } = render(
         <BAICard

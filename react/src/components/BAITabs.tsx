@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Tab } from '@astryxdesign/core/TabList';
+import { BAITabList } from 'backend.ai-ui';
 import React from 'react';
 
 /**
@@ -28,9 +29,20 @@ import React from 'react';
  * `className`) are restated below. The public contract is unchanged.
  *
  * 2. antd's `type="card"` visual (boxed tabs with a primary-coloured rail) has
- *    no Astryx counterpart. `hasDivider` is the nearest equivalent — an
- *    underlined tab strip. PILOT-DECISION: accepted the underline look rather
- *    than re-implementing card tabs; needs a design call.
+ *    no Astryx counterpart.
+ *    QA2-A: the earlier decision ("accepted the underline look; needs a design
+ *    call") was overturned — the design call came back as "restore it". The
+ *    card style now lives in BUI as `BAITabList type="card"` (see
+ *    `packages/backend.ai-ui/src/components/BAITabList.css` for the mechanism
+ *    and the antd metrics it reproduces). It is the DEFAULT here because
+ *    legacy `BAITabs` hard-coded `type="card"`, so every wrapper call site was
+ *    a card-tab site. Pass `type="line"` for the underlined strip; the two
+ *    coexist, which is what `FolderExplorerModalV2` needs (card at `xl`, line
+ *    below) and what `DownloadModal` needs (it was a plain antd `Tabs`).
+ *
+ * `tabBarExtraContent` and the full-width rail are `BAITabList`'s job now —
+ * this wrapper only translates antd's `items` array into `Tab` children and
+ * renders the active item's panel.
  */
 export interface BAITabItem {
   key: string;
@@ -56,10 +68,12 @@ export interface BAITabsProps {
   items?: Array<BAITabItem>;
   size?: 'sm' | 'md' | 'lg';
   /**
-   * antd renders this at the trailing edge of the tab bar. Astryx's TabList
-   * anatomy has a "Right Content" slot but exposes no prop for it, so the
-   * wrapper lays it out with flexbox instead.
+   * antd `Tabs.type`. `'card'` (the default, matching legacy `BAITabs`) draws
+   * the boxed, gutter-separated tabs sitting on an accent rail; `'line'` draws
+   * Astryx's underlined strip.
    */
+  type?: 'line' | 'card';
+  /** antd's trailing tab-bar slot; forwarded to `BAITabList`. */
   tabBarExtraContent?: React.ReactNode;
 }
 
@@ -68,7 +82,9 @@ const BAITabs: React.FC<BAITabsProps> = ({
   activeKey,
   defaultActiveKey,
   onChange,
-  size = 'md',
+  className,
+  size,
+  type = 'card',
   tabBarExtraContent,
 }) => {
   'use memo';
@@ -83,30 +99,27 @@ const BAITabs: React.FC<BAITabsProps> = ({
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <TabList
-          value={currentKey ?? ''}
-          onChange={(value) => {
-            if (!isControlled) setUncontrolledKey(value);
-            onChange?.(value);
-          }}
-          size={size}
-          hasDivider
-        >
-          {items?.map((item) => (
-            <Tab
-              key={item.key}
-              value={item.key}
-              // See note 1 above: ReactNode labels still render, typed string.
-              label={item.label as string}
-              endContent={item.endContent}
-            />
-          ))}
-        </TabList>
-        {tabBarExtraContent ? (
-          <div style={{ marginInlineStart: 'auto' }}>{tabBarExtraContent}</div>
-        ) : null}
-      </div>
+      <BAITabList
+        type={type}
+        className={className}
+        size={size}
+        value={currentKey ?? ''}
+        onChange={(value) => {
+          if (!isControlled) setUncontrolledKey(value);
+          onChange?.(value);
+        }}
+        tabBarExtraContent={tabBarExtraContent}
+      >
+        {items?.map((item) => (
+          <Tab
+            key={item.key}
+            value={item.key}
+            // See note 1 above: ReactNode labels still render, typed string.
+            label={item.label as string}
+            endContent={item.endContent}
+          />
+        ))}
+      </BAITabList>
       {activePanel}
     </>
   );
