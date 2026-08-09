@@ -1,14 +1,18 @@
 import type { UserResourceGroupAlertQuery } from '../../__generated__/UserResourceGroupAlertQuery.graphql';
-import { Alert, AlertProps } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface UserResourceGroupAlertProps extends AlertProps {
+// `style` is the only key any call site passes (`FairShareWeightSettingModal`;
+// `FairShareList` passes none) — see the note in DomainResourceGroupAlert.tsx.
+interface UserResourceGroupAlertProps {
   isModalOpen?: boolean;
   resourceGroupName: string;
   domainName: string;
   projectId: string;
+  style?: CSSProperties;
 }
 
 const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
@@ -16,7 +20,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   resourceGroupName,
   domainName,
   projectId,
-  ...alertProps
+  ...bannerProps
 }) => {
   'use memo';
 
@@ -59,14 +63,13 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   }
 
   return (
-    <Alert
-      type="warning"
+    <Banner
+      status="warning"
       title={t('fairShare.UserNotAllowedInResourceGroup', {
         project: group?.name,
         resourceGroup: resourceGroupName,
       })}
-      showIcon
-      {...alertProps}
+      {...bannerProps}
     />
   );
 };

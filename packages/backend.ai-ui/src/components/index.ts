@@ -107,6 +107,8 @@ export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnit
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIColorPicker, toHexColor } from './BAIColorPicker';
+export type { BAIColorPickerProps } from './BAIColorPicker';
 export { default as BAIListAlert } from './BAIListAlert';
 export type { BAIListAlertProps, BAIListAlertItem } from './BAIListAlert';
 export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGroupSelect';

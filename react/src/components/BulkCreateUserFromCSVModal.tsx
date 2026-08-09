@@ -46,10 +46,7 @@ import { FileInput } from '@astryxdesign/core/FileInput';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
-// Raw antd Tooltip/Typography — still used inside the CSV preview grid's cell
-// renderers. The grid's `Table` itself moved to `BAITableAstryx` in ticket
-// 30-D; these two primitives belong to sibling tickets.
-import { Tooltip, Typography } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlert,
   BAIButton,
@@ -685,8 +682,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // table existed in that ticket's scope. Ticket 30-D closed that frontier:
   // both grids now render through `BAITableAstryx`, which accepts this exact
   // antd-shaped column model (`render` / `onCell` / `width` / `dataIndex`)
-  // unchanged. The cell renderers below still use antd `Typography.Text` and
-  // `Tooltip`, which belong to sibling tickets.
+  // unchanged. The cell renderers' last two antd primitives closed in
+  // final-A: `Typography.Text` -> `BAIText` (a rename — BAIText's public prop
+  // surface is antd-shaped) and `Tooltip` -> Astryx `Tooltip`.
 
   const cellStyle = (record: ValidatedRow, field: string) => ({
     style: record.fieldErrors[field]
@@ -707,12 +705,14 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     mask?: boolean,
   ) => {
     if (errorMsg) {
+      // PILOT-DECISION: the red tooltip surface is DROPPED. antd took `color`
+      // + `styles.container`; Astryx `Tooltip` owns its surface and exposes no
+      // colour knob (the inverted media surface is the whole point of its
+      // design). Nothing is lost semantically — the cell already carries the
+      // error in two other channels: the `colorError` `CircleAlert` icon and
+      // the `type="danger"` text.
       return (
-        <Tooltip
-          title={errorMsg}
-          color={token.colorError}
-          styles={{ container: { color: token.colorWhite } }}
-        >
+        <Tooltip content={errorMsg}>
           <BAIFlex gap="xs" align="center" style={{ cursor: 'default' }}>
             <CircleAlert
               role="img"
@@ -723,20 +723,17 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             {mask && val ? (
               // Never surface a raw password, even when it fails validation —
               // the error icon + tooltip already convey the problem.
-              <Typography.Text
-                type="danger"
-                style={{ letterSpacing: '0.15em' }}
-              >
+              <BAIText type="danger" style={{ letterSpacing: '0.15em' }}>
                 {'· · · · · · · ·'}
-              </Typography.Text>
+              </BAIText>
             ) : val ? (
               <BAIText type="danger" ellipsis={{ tooltip: false }}>
                 {val}
               </BAIText>
             ) : (
-              <Typography.Text type="secondary" italic>
+              <BAIText type="secondary" italic>
                 {t('dialog.warning.Required')}
-              </Typography.Text>
+              </BAIText>
             )}
           </BAIFlex>
         </Tooltip>
@@ -744,12 +741,12 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     }
     if (mask && val) {
       return (
-        <Typography.Text type="secondary" style={{ letterSpacing: '0.15em' }}>
+        <BAIText type="secondary" style={{ letterSpacing: '0.15em' }}>
           {'· · · · · · · ·'}
-        </Typography.Text>
+        </BAIText>
       );
     }
-    return <Typography.Text>{val || '—'}</Typography.Text>;
+    return <BAIText>{val || '—'}</BAIText>;
   };
 
   // ── Table columns ─────────────────────────────────────────────────────────
@@ -801,9 +798,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       dataIndex: 'lineNumber',
       key: 'lineNumber',
       width: 44,
-      render: (v: number) => (
-        <Typography.Text type="secondary">{v}</Typography.Text>
-      ),
+      render: (v: number) => <BAIText type="secondary">{v}</BAIText>,
     },
     {
       title: requiredLabel(t('general.E-Mail')),
@@ -837,7 +832,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       dataIndex: 'fullName',
       key: 'fullName',
       width: 140,
-      render: (val: string) => <Typography.Text>{val || '—'}</Typography.Text>,
+      render: (val: string) => <BAIText>{val || '—'}</BAIText>,
     },
     showRole && {
       title: t('credential.Role'),
@@ -863,13 +858,13 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       key: 'needPasswordChange',
       width: 110,
       render: (val: boolean, record: ValidatedRow) => (
-        <Typography.Text
+        <BAIText
           type={
             record.fromDefaults.needPasswordChange ? 'secondary' : undefined
           }
         >
           {val ? t('button.Yes') : t('button.No')}
-        </Typography.Text>
+        </BAIText>
       ),
     },
     showDomain && {
@@ -879,11 +874,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 120,
       onCell: (record: ValidatedRow) => cellStyle(record, 'domainName'),
       render: (val: string, record: ValidatedRow) => (
-        <Typography.Text
+        <BAIText
           type={record.fromDefaults.domainName ? 'secondary' : undefined}
         >
           {val || '—'}
-        </Typography.Text>
+        </BAIText>
       ),
     },
     showResourcePolicy && {
@@ -893,11 +888,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 140,
       onCell: (record: ValidatedRow) => cellStyle(record, 'resourcePolicy'),
       render: (val: string, record: ValidatedRow) => (
-        <Typography.Text
+        <BAIText
           type={record.fromDefaults.resourcePolicy ? 'secondary' : undefined}
         >
           {val || '—'}
-        </Typography.Text>
+        </BAIText>
       ),
     },
     showDescription && {
@@ -928,11 +923,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         }
         // Per-row project name from CSV takes priority.
         if (record.projectName) {
-          return <Typography.Text>{record.projectName}</Typography.Text>;
+          return <BAIText>{record.projectName}</BAIText>;
         }
         // Fall back to global defaults (show resolved names).
         if (globalDefaults.groupIds.length === 0) {
-          return <Typography.Text type="secondary">{'—'}</Typography.Text>;
+          return <BAIText type="secondary">{'—'}</BAIText>;
         }
         const names = globalDefaults.groupIds.map((id) => idToName[id] ?? id);
         const display = names.join(', ');
@@ -1010,9 +1005,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 title: t('dialog.error.Error'),
                 dataIndex: 'message',
                 key: 'message',
-                render: (v: string) => (
-                  <Typography.Text type="danger">{v}</Typography.Text>
-                ),
+                render: (v: string) => <BAIText type="danger">{v}</BAIText>,
               },
             ]}
           />

@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Action execution failed",
     "ErrorOccurred": "Error Occurred"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Clear",
+    "HexValue": "Hex value",
+    "NoColor": "No color",
+    "SelectColor": "Select color"
+  },
   "comp:BAIComplexSelect": {
     "NoResults": "No results",
     "Search": "Search"

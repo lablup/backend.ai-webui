@@ -4,16 +4,19 @@
  */
 import { theme } from '../theme-shim';
 import { Grid } from '@astryxdesign/core/Grid';
-// FRONTIER (astryx/22): Astryx has no ColorPicker component (checked via
-// `astryx search "color picker"` — no `component` hit, only Selector-family
-// results). antd's `ColorPicker` is a genuine gap component, kept as-is; the
-// surrounding layout (this file) is otherwise fully migrated (theme-shim +
-// Astryx `Grid` + `BAIFlex`).
-import { ColorPicker, type ColorPickerProps } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import {
+  BAIColorPicker,
+  BAIFlex,
+  type BAIColorPickerProps,
+} from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
-type SchemeColorPickerProps = ColorPickerProps & { 'data-testid'?: string };
+/**
+ * Per-scheme picker props. Was `ColorPickerProps` (antd); `BAIColorPicker` is
+ * the Astryx-era replacement for the widget itself — see its header for why
+ * Astryx has no colour picker and what the rebuilt one covers.
+ */
+type SchemeColorPickerProps = Omit<BAIColorPickerProps, 'showText'>;
 
 export interface LightDarkColorPickerProps {
   /** Props for the light-scheme picker (value, onChangeComplete, onClear, …). */
@@ -23,7 +26,7 @@ export interface LightDarkColorPickerProps {
 }
 
 /**
- * Shared presentational light/dark two-column `ColorPicker` layout. The
+ * Shared presentational light/dark two-column colour-picker layout. The
  * persistence strategy is injected per scheme via props: the User Settings
  * accent picker (`ThemeAccentColorPicker`) writes the `custom_primary_color`
  * scheme override, while the Branding `ThemeColorPicker` writes the
@@ -63,9 +66,9 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
             wrap="wrap"
           >
             {label}:
-            <ColorPicker
-              format="hex"
+            <BAIColorPicker
               showText
+              label={label}
               style={{ minWidth: 110 }}
               {...pickerProps}
             />

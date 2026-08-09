@@ -1,7 +1,7 @@
 import type { ProjectResourceGroupWarningIconFragment$key } from '../../__generated__/ProjectResourceGroupWarningIconFragment.graphql';
 import type { ProjectResourceGroupWarningIconQuery } from '../../__generated__/ProjectResourceGroupWarningIconQuery.graphql';
 import { theme } from '../../theme-shim';
-import { Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +61,7 @@ const ProjectResourceGroupWarningIcon: React.FC<
 
   return (
     <Tooltip
-      title={t('fairShare.ProjectNotAllowedInResourceGroup', {
+      content={t('fairShare.ProjectNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,
       })}
     >

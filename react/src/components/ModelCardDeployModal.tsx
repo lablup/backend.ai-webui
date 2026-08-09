@@ -11,7 +11,8 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Alert, Button, Space, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIAvailablePresetSelectAstryx,
   BAIFlex,
@@ -275,9 +276,8 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
       onCancel={onClose}
     >
       {noAvailablePresets && (
-        <Alert
-          type="info"
-          showIcon
+        <Banner
+          status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={
             <Trans
@@ -313,18 +313,22 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
               }
               isDisabled={noAvailablePresets}
             />
-            <Space.Compact>
-              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
-                <Button
-                  icon={<Info size="1em" />}
-                  disabled={!effectivePresetId || noAvailablePresets}
-                  onClick={() => {
-                    if (!effectivePresetId) return;
-                    setPresetDetailId(effectivePresetId);
-                  }}
-                />
-              </Tooltip>
-            </Space.Compact>
+            {/* `Space.Compact` wrapped a single child, so it welded nothing
+                together and is dropped rather than translated to an
+                `InputGroup`. The antd `Tooltip` + icon-only `Button` pair is
+                one Astryx `IconButton`, which owns the tooltip itself (and
+                keeps the button focusable while disabled, via
+                `aria-disabled`). */}
+            <IconButton
+              icon={<Info size="1em" />}
+              label={t('modelService.DeploymentPresetDetail')}
+              tooltip={t('modelService.DeploymentPresetDetail')}
+              isDisabled={!effectivePresetId || noAvailablePresets}
+              onClick={() => {
+                if (!effectivePresetId) return;
+                setPresetDetailId(effectivePresetId);
+              }}
+            />
           </BAIFlex>
         </Form.Item>
         <Form.Item

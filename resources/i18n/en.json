@@ -1669,6 +1669,7 @@
     "UpdatedAt": "Updated At",
     "User": "User",
     "Username": "Username",
+    "Value": "Value",
     "ValueRequired": "Please enter {{ name }}",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
