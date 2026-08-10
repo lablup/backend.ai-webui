@@ -45,11 +45,18 @@ const TagsField: React.FC<{
 
 // The UI exposes only one model (index 0); the form keeps the
 // `modelDefinition.models` array shape for the submit mutation. Field names
-// are absolute (`['modelDefinition', 'models', 0, ...]`) rather than
-// Form.List-relative — a Form.List wrapper would auto-prefix every
-// descendant Form.Item (including the absolute-path Service
-// Configuration/Health Check/Pre-Start Actions passed via
+// are absolute (`['modelDefinition', 'models', 0, ...]`, via `modelField()`
+// below) rather than Form.List-relative — a Form.List wrapper would
+// auto-prefix every descendant Form.Item (including the absolute-path
+// Service Configuration/Health Check/Pre-Start Actions passed via
 // `beforeMetadataSlot`) with its own name, doubling the path.
+const modelField = (...path: Array<string | number>) => [
+  'modelDefinition',
+  'models',
+  0,
+  ...path,
+];
+
 const ModelConfigItem: React.FC<{
   /**
    * BA-7210 / FR-3481 (26.9.0+, `preset-model-config-type`): the server
@@ -78,7 +85,7 @@ const ModelConfigItem: React.FC<{
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFlex gap="md" wrap="wrap">
         <BAIFormItem
-          name={['modelDefinition', 'models', 0, 'name']}
+          name={modelField('name')}
           label={t('adminDeploymentPreset.modelDef.ModelName')}
           style={{ flex: 1, minWidth: 160 }}
           tooltip={
@@ -97,7 +104,7 @@ const ModelConfigItem: React.FC<{
           />
         </BAIFormItem>
         <BAIFormItem
-          name={['modelDefinition', 'models', 0, 'modelPath']}
+          name={modelField('modelPath')}
           label={t('adminDeploymentPreset.modelDef.ModelPath')}
           style={{ flex: 2, minWidth: 200 }}
           tooltip={
@@ -133,7 +140,7 @@ const ModelConfigItem: React.FC<{
         <BAIFlex direction="column" align="stretch" gap="xs">
           <BAIFlex gap="md" wrap="wrap">
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'title']}
+              name={modelField('metadata', 'title')}
               label={t('adminDeploymentPreset.modelDef.Title')}
               style={{ flex: 1, minWidth: 160 }}
             >
@@ -142,7 +149,7 @@ const ModelConfigItem: React.FC<{
               />
             </BAIFormItem>
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'author']}
+              name={modelField('metadata', 'author')}
               label={t('adminDeploymentPreset.modelDef.Author')}
               style={{ flex: 1, minWidth: 160 }}
             >
@@ -153,7 +160,7 @@ const ModelConfigItem: React.FC<{
           </BAIFlex>
           <BAIFlex gap="md" wrap="wrap">
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'version']}
+              name={modelField('metadata', 'version')}
               label={t('adminDeploymentPreset.modelDef.Version')}
               style={{ flex: 1, minWidth: 120 }}
             >
@@ -162,7 +169,7 @@ const ModelConfigItem: React.FC<{
               />
             </BAIFormItem>
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'license']}
+              name={modelField('metadata', 'license')}
               label={t('adminDeploymentPreset.modelDef.License')}
               style={{ flex: 1, minWidth: 120 }}
             >
@@ -172,7 +179,7 @@ const ModelConfigItem: React.FC<{
             </BAIFormItem>
           </BAIFlex>
           <BAIFormItem
-            name={['modelDefinition', 'models', 0, 'metadata', 'description']}
+            name={modelField('metadata', 'description')}
             label={t('adminDeploymentPreset.modelDef.Description')}
           >
             <AstryxFormTextArea
@@ -182,7 +189,7 @@ const ModelConfigItem: React.FC<{
           </BAIFormItem>
           <BAIFlex gap="md" wrap="wrap">
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'task']}
+              name={modelField('metadata', 'task')}
               label={t('adminDeploymentPreset.modelDef.Task')}
               style={{ flex: 1, minWidth: 120 }}
             >
@@ -191,7 +198,7 @@ const ModelConfigItem: React.FC<{
               />
             </BAIFormItem>
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'category']}
+              name={modelField('metadata', 'category')}
               label={t('adminDeploymentPreset.modelDef.Category')}
               style={{ flex: 1, minWidth: 120 }}
             >
@@ -200,13 +207,7 @@ const ModelConfigItem: React.FC<{
               />
             </BAIFormItem>
             <BAIFormItem
-              name={[
-                'modelDefinition',
-                'models',
-                0,
-                'metadata',
-                'architecture',
-              ]}
+              name={modelField('metadata', 'architecture')}
               label={t('adminDeploymentPreset.modelDef.Architecture')}
               style={{ flex: 1, minWidth: 120 }}
             >
@@ -217,7 +218,7 @@ const ModelConfigItem: React.FC<{
           </BAIFlex>
           <BAIFlex gap="md" wrap="wrap">
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'framework']}
+              name={modelField('metadata', 'framework')}
               label={t('adminDeploymentPreset.modelDef.Framework')}
               style={{ flex: 1, minWidth: 160 }}
             >
@@ -229,7 +230,7 @@ const ModelConfigItem: React.FC<{
               />
             </BAIFormItem>
             <BAIFormItem
-              name={['modelDefinition', 'models', 0, 'metadata', 'label']}
+              name={modelField('metadata', 'label')}
               label={t('adminDeploymentPreset.modelDef.Label')}
               style={{ flex: 1, minWidth: 160 }}
             >

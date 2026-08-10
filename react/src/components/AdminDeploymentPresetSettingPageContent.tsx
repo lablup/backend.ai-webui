@@ -9,6 +9,7 @@ import type { FormInstance } from '../form-engine';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
+  resolvesReadsVfolderConfigFiles,
 } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
@@ -470,9 +471,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const selectedRuntimeVariantForServiceConfig = runtimeVariants.find(
     (rt) => toLocalId(rt.id) === runtimeVariantIdWatched,
   );
-  const readsVfolderConfigFiles =
-    selectedRuntimeVariantForServiceConfig?.readsVfolderConfigFiles ??
-    selectedRuntimeVariantForServiceConfig?.name === 'custom';
+  const readsVfolderConfigFiles = resolvesReadsVfolderConfigFiles(
+    selectedRuntimeVariantForServiceConfig,
+  );
 
   // Shared between the two render sites below (Step 1 for nullable-capable
   // managers, nested in the Model Definition card for legacy managers).
@@ -928,31 +929,18 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 submitted unless Model Definition is also on. For legacy
                 managers it's rendered nested inside the Model Definition
                 card instead (below). Matches the revision modal's Collapse
-                pattern (FR-3205). */}
-            <BAIFormItem dependencies={['runtimeVariantId']} noStyle>
-              {(formArg) => {
-                const { getFieldValue } =
-                  formArg as FormInstance<AdminDeploymentPresetFormValue>;
-                const variantId = getFieldValue('runtimeVariantId');
-                const variant = runtimeVariants.find(
-                  (rt) => toLocalId(rt.id) === variantId,
-                );
-                const variantName = variant?.name;
-                const reads =
-                  variant?.readsVfolderConfigFiles ?? variantName === 'custom';
-                if (!reads || !supportsNullableModelDefinition) return null;
-                return (
-                  <div
-                    style={{
-                      marginTop: -token.margin,
-                      marginBottom: token.marginLG,
-                    }}
-                  >
-                    {renderServiceConfigurationFormItems()}
-                  </div>
-                );
-              }}
-            </BAIFormItem>
+                pattern (FR-3205). Reuses the `readsVfolderConfigFiles`
+                already watched above instead of re-deriving it here. */}
+            {readsVfolderConfigFiles && supportsNullableModelDefinition && (
+              <div
+                style={{
+                  marginTop: -token.margin,
+                  marginBottom: token.marginLG,
+                }}
+              >
+                {renderServiceConfigurationFormItems()}
+              </div>
+            )}
 
             {/* Health Check + Pre-Start Actions — regardless of runtime
                 variant, but (like Service Configuration above) only

@@ -14,7 +14,11 @@ import AdminDeploymentPresetSettingPageContent, {
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
 import { Form } from '../form-engine';
-import { resolveCommandShell } from '../helper/modelServiceCommand';
+import {
+  preStartActionsToInput,
+  resolveCommandShell,
+  resolvesReadsVfolderConfigFiles,
+} from '../helper/modelServiceCommand';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -98,17 +102,15 @@ const buildModelDefinitionInput = (
       // so the server inherits it from the runtime variant baseline / model
       // mount destination at revision resolution. Older managers require
       // non-null values, so they keep the previous fallbacks ('' / 8000).
-      const nameValue = modelEnabled ? m.name : undefined;
-      const modelPathValue = modelEnabled ? m.modelPath : undefined;
+      const nullableStringField = (value: string | undefined) =>
+        supportsNullableModelDefinition ? value || null : (value ?? '');
       const portFallback = supportsNullableModelDefinition ? null : 8000;
       return [
         {
-          name: supportsNullableModelDefinition
-            ? nameValue || null
-            : (nameValue ?? ''),
-          modelPath: supportsNullableModelDefinition
-            ? modelPathValue || null
-            : (modelPathValue ?? ''),
+          name: nullableStringField(modelEnabled ? m.name : undefined),
+          modelPath: nullableStringField(
+            modelEnabled ? m.modelPath : undefined,
+          ),
           service: {
             port: hasCommandData
               ? (service.port ?? portFallback)
@@ -135,16 +137,7 @@ const buildModelDefinitionInput = (
                     ),
                   }
               : {}),
-            preStartActions: (service.preStartActions ?? []).map((a) => ({
-              action: a.action,
-              args: (() => {
-                try {
-                  return JSON.parse(a.args || '{}');
-                } catch {
-                  return {};
-                }
-              })(),
-            })),
+            preStartActions: preStartActionsToInput(service.preStartActions),
             healthCheck: (() => {
               const hc = service.healthCheck;
               const checked = !!service.enableHealthCheck;
@@ -433,9 +426,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     const selectedVariant = runtimeVariantList.find(
       (rt) => toLocalId(rt.id) === values.runtimeVariantId,
     );
-    const reads =
-      selectedVariant?.readsVfolderConfigFiles ??
-      selectedVariant?.name === 'custom';
+    const reads = resolvesReadsVfolderConfigFiles(selectedVariant);
 
     setIsSubmitting(true);
     try {
