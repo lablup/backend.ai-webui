@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-docs-toolkit",
-  "version": "26.8.0",
+  "version": "26.8.1",
   "description": "A reusable documentation toolkit for generating PDFs and web previews from Markdown content",
   "repository": {
     "type": "git",
