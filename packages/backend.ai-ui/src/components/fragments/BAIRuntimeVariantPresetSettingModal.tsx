@@ -765,6 +765,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   tooltip={t(
                     'comp:BAIRuntimeVariantPresetSettingModal.SliderStepTooltip',
                   )}
+                  // Surface a negative step as a validation error (via antd's
+                  // global `validateMessages` template, see DefaultProviders.tsx)
+                  // instead of clamping/blocking input through InputNumber's `min`.
+                  rules={[{ type: 'number' as const, min: 0 }]}
                   style={{ flex: 1 }}
                 >
                   <AstryxFormNumberInput
