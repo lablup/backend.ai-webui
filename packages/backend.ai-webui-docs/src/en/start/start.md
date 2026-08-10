@@ -121,12 +121,33 @@ Experimental features may change or be removed in future updates.
 :::
 
 ![](../images/start_from_url_huggingface.png)
-<!-- TODO(screenshot): start_from_url_huggingface.png now shows helper text under the Model Folder field -->
 
 1. Enter the model in the **Hugging Face Model URL or ID** field. Both a model
    page URL such as `https://huggingface.co/openai/gpt-oss-20b` and a plain
    model ID such as `openai/gpt-oss-20b` are accepted. Addresses that point to
    a dataset, a space, or any other non-model page are rejected.
+
+   Once the field contains a valid model, the dialog looks it up on Hugging
+   Face after a short pause — a loading indicator shows while it checks — and
+   displays a preview card below the field before you start the import. The
+   card shows the model ID as a link to its Hugging Face page, the model's
+   task and library tags (when available), its **Size**, and when it was last
+   updated. Hovering over the size shows a note that it is the total size of
+   the repository including every revision, so the actual download may be
+   smaller.
+
+   The preview also warns about models that cannot be downloaded as-is: a red
+   error appears when the model is disabled on Hugging Face and cannot be
+   downloaded, and a yellow warning appears when the model is gated — accept
+   its license on Hugging Face and enter an access token (see step 3), or the
+   download will fail. If nothing is found under the entered address, the
+   preview reports that the model was not found or is private — check the
+   model ID, or enter an access token.
+
+   The lookup is advisory only. If the model information cannot be loaded —
+   for example, when your browser cannot reach `huggingface.co` — the dialog
+   notes that you can still start the import, and the import is not blocked.
+
 2. Optionally enter a **Revision** — the branch, tag, or commit of the model
    repository to download. Leave it empty to download the default revision. If
    the address you entered already contains a revision, that revision is used.
