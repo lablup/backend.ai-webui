@@ -215,6 +215,7 @@ test.describe(
       // In Ant Design 6, use role-based selector for dialog
       const modal = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modal).toBeVisible();
+      await expect(modal.locator('.ant-form-item').first()).toBeVisible();
       const numberOfAppsBeforeAdd = await modal
         .locator('.ant-form-item')
         .count();
@@ -243,7 +244,34 @@ test.describe(
         await page.getByRole('button', { name: 'OK' }).nth(1).click();
       }
 
-      // Verify app is added
+      // Verify app is added. Reopening the modal picks up whatever row
+      // reference the list currently holds; a click made before the
+      // post-submit refetch resolves captures the *pre-add* row and (since
+      // the modal is `destroyOnHidden`) freezes on stale data rather than
+      // updating in place. Poll the full reopen+read+close cycle — not just
+      // an assertion on an already-open modal — until the refetch lands.
+      const openManageAppsModalAndCountApps = async () => {
+        await firstRow
+          .locator('.ant-table-cell')
+          .nth(controlColumnIndex)
+          .getByRole('button', { name: 'appstore' })
+          .click();
+        const dialog = page.getByRole('dialog', { name: /Manage Apps/i });
+        await expect(dialog).toBeVisible();
+        const count = await dialog.locator('.ant-form-item').count();
+        await dialog.getByRole('button', { name: 'Cancel' }).click();
+        await expect(dialog).toBeHidden();
+        return count;
+      };
+      await expect
+        .poll(openManageAppsModalAndCountApps, {
+          message: 'Waiting for the added app row to appear after refetch',
+          timeout: 20000,
+        })
+        .toBe(numberOfAppsBeforeAdd + 1);
+
+      // Reopen once more now that the refetched data is confirmed fresh, to
+      // assert on the added row's field values and perform cleanup.
       await firstRow
         .locator('.ant-table-cell')
         .nth(controlColumnIndex)
@@ -252,9 +280,6 @@ test.describe(
       // In Ant Design 6, use role-based selector for dialog
       const modalAfterAdd = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modalAfterAdd).toBeVisible();
-      // Retry the count assertion: the freshly-reopened modal renders its
-      // app form-items asynchronously, so a one-shot `.count()` can read the
-      // old total before the added row mounts (flaky off by one).
       await expect(modalAfterAdd.locator('.ant-form-item')).toHaveCount(
         numberOfAppsBeforeAdd + 1,
       );
