@@ -133,6 +133,7 @@ const PendingSessionNodeList: React.FC = () => {
 
       <SessionNodes
         disableSorter
+        enablePriorityColumn
         onClickSessionName={(session) => {
           // Set sessionDetailDrawerFrgmt in location state via webUINavigate
           // instead of directly setting sessionDetailId query param
