@@ -62,6 +62,17 @@ type RuntimeVariantPresetFormValues = {
   textPlaceholder?: string;
 };
 
+/**
+ * Trims a text field and collapses an empty/whitespace-only result to `null`
+ * so clearing `category`/`displayName` in the form actually clears the
+ * metadata on the manager, instead of persisting `""` (which the read side's
+ * `?? name` / `?? 'general'` nullish fallback doesn't treat as absent).
+ */
+function normalizeOptionalText(value?: string): string | null {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : null;
+}
+
 /** Builds the `uiOption` mutation input from the flattened form fields, or `undefined` when no UI type was chosen. */
 function buildUIOptionInput(
   values: RuntimeVariantPresetFormValues,
@@ -316,8 +327,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           : {};
         const uiMetadataFields = isUIMetadataSupported
           ? {
-              category: values.category ?? null,
-              displayName: values.displayName ?? null,
+              category: normalizeOptionalText(values.category),
+              displayName: normalizeOptionalText(values.displayName),
               uiOption: buildUIOptionInput(values) ?? null,
             }
           : {};
@@ -741,6 +752,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                     'comp:BAIRuntimeVariantPresetSettingModal.SliderMax',
                   )}
                   name="sliderMax"
+                  // Revalidate against the minimum whenever it changes too,
+                  // not just when the maximum itself is edited.
+                  dependencies={['sliderMin']}
                   rules={[
                     {
                       required: true,
@@ -748,6 +762,27 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                         'comp:BAIRuntimeVariantPresetSettingModal.SliderMaxRequired',
                       ),
                     },
+                    ({ getFieldValue }) => ({
+                      validator(_rule, value) {
+                        const min = getFieldValue('sliderMin');
+                        if (
+                          value !== undefined &&
+                          value !== null &&
+                          min !== undefined &&
+                          min !== null &&
+                          value <= min
+                        ) {
+                          return Promise.reject(
+                            new Error(
+                              t(
+                                'comp:BAIRuntimeVariantPresetSettingModal.SliderMaxMustExceedMin',
+                              ),
+                            ),
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    }),
                   ]}
                   style={{ flex: 1 }}
                 >
@@ -765,10 +800,26 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   tooltip={t(
                     'comp:BAIRuntimeVariantPresetSettingModal.SliderStepTooltip',
                   )}
-                  // Surface a negative step as a validation error (via antd's
-                  // global `validateMessages` template, see DefaultProviders.tsx)
-                  // instead of clamping/blocking input through InputNumber's `min`.
-                  rules={[{ type: 'number' as const, min: 0 }]}
+                  // A step of 0 (or below) can never advance the slider, so
+                  // require a strictly positive value rather than only
+                  // rejecting negatives.
+                  rules={[
+                    {
+                      validator: async (_rule, value) => {
+                        if (
+                          value !== undefined &&
+                          value !== null &&
+                          value <= 0
+                        ) {
+                          throw new Error(
+                            t(
+                              'comp:BAIRuntimeVariantPresetSettingModal.SliderStepMustBePositive',
+                            ),
+                          );
+                        }
+                      },
+                    },
+                  ]}
                   style={{ flex: 1 }}
                 >
                   <AstryxFormNumberInput
@@ -800,6 +851,32 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                     'comp:BAIRuntimeVariantPresetSettingModal.NumberMax',
                   )}
                   name="numberMax"
+                  // Revalidate against the minimum whenever it changes too,
+                  // not just when the maximum itself is edited.
+                  dependencies={['numberMin']}
+                  rules={[
+                    ({ getFieldValue }) => ({
+                      validator(_rule, value) {
+                        const min = getFieldValue('numberMin');
+                        if (
+                          value !== undefined &&
+                          value !== null &&
+                          min !== undefined &&
+                          min !== null &&
+                          value <= min
+                        ) {
+                          return Promise.reject(
+                            new Error(
+                              t(
+                                'comp:BAIRuntimeVariantPresetSettingModal.NumberMaxMustExceedMin',
+                              ),
+                            ),
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
                   style={{ flex: 1 }}
                 >
                   <AstryxFormNumberInput
