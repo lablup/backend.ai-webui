@@ -112,7 +112,11 @@ interface RawNavGroup {
  * the same parsed object.
  */
 export interface RawBookConfig {
-  title: string;
+  /**
+   * Either a single title shared by every language, or a per-language map
+   * keyed the same way `navigation` is. See {@link resolveBookTitle}.
+   */
+  title: string | Record<string, string>;
   description?: string;
   languages: string[];
   navigation: Record<string, RawNavigation>;
@@ -131,10 +135,24 @@ export interface RawBookConfig {
  * cross-language slug map) keep using `navigation` unchanged.
  */
 export interface NormalizedBookConfig {
-  /** Single-line, whitespace-collapsed. Safe for `<title>` and headers. */
+  /**
+   * Single-line, whitespace-collapsed. Safe for `<title>` and headers.
+   *
+   * This is the *default* title — the `default` key of a per-language map, or
+   * its first entry. Language-aware pipelines should call
+   * {@link resolveBookTitle} instead, so a translated build does not stamp the
+   * source language onto every page.
+   */
   title: string;
   /** Raw multi-line form. Use only where line breaks are part of the design. */
   titleMultiline: string;
+  /**
+   * Per-language titles, single-line. Always populated: a string `title`
+   * yields `{ default: "..." }`.
+   */
+  titleByLang: Record<string, string>;
+  /** Per-language titles, multi-line form preserved. */
+  titleMultilineByLang: Record<string, string>;
   description: string;
   languages: string[];
   /** Flat per-language nav list (backward-compatible, used by PDF pipeline). */
@@ -153,6 +171,71 @@ export interface NormalizedBookConfig {
  */
 export function normalizeTitle(raw: string): string {
   return raw.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Resolve the title for one language.
+ *
+ * Mirrors how `branding.subLabel` already resolves in `config.ts`: exact
+ * language, then `default`, then the first entry. A `book.config.yaml` with a
+ * plain string `title` resolves to that string for every language, so existing
+ * projects are unaffected.
+ */
+export function resolveBookTitle(
+  config: NormalizedBookConfig,
+  lang: string,
+): { title: string; titleMultiline: string } {
+  const pick = (map: Record<string, string>, fallback: string): string =>
+    map[lang] ?? map.default ?? Object.values(map)[0] ?? fallback;
+  return {
+    title: pick(config.titleByLang, config.title),
+    titleMultiline: pick(config.titleMultilineByLang, config.titleMultiline),
+  };
+}
+
+/**
+ * Normalize the raw `title` into per-language maps plus the default pair.
+ * A string collapses to a single `default` entry.
+ */
+function normalizeBookTitle(raw: string | Record<string, string> | undefined): {
+  title: string;
+  titleMultiline: string;
+  titleByLang: Record<string, string>;
+  titleMultilineByLang: Record<string, string>;
+} {
+  if (raw && typeof raw === "object") {
+    const titleByLang: Record<string, string> = {};
+    const titleMultilineByLang: Record<string, string> = {};
+    for (const [lang, value] of Object.entries(raw)) {
+      if (typeof value !== "string") {
+        console.warn(
+          `[book.config.yaml] title.${lang}: expected a string, dropping entry`,
+        );
+        continue;
+      }
+      const multiline = value.trimEnd();
+      titleMultilineByLang[lang] = multiline;
+      titleByLang[lang] = normalizeTitle(multiline);
+    }
+    const defaultMultiline =
+      titleMultilineByLang.default ??
+      Object.values(titleMultilineByLang)[0] ??
+      "";
+    return {
+      title: normalizeTitle(defaultMultiline),
+      titleMultiline: defaultMultiline,
+      titleByLang,
+      titleMultilineByLang,
+    };
+  }
+  const titleMultiline = (raw ?? "").trimEnd();
+  const title = normalizeTitle(titleMultiline);
+  return {
+    title,
+    titleMultiline,
+    titleByLang: { default: title },
+    titleMultilineByLang: { default: titleMultiline },
+  };
 }
 
 /**
@@ -268,8 +351,8 @@ export function loadBookConfig(srcDir: string): NormalizedBookConfig {
   const configPath = path.join(srcDir, "book.config.yaml");
   const raw = parseYaml(fs.readFileSync(configPath, "utf-8")) as RawBookConfig;
 
-  const titleMultiline = (raw.title ?? "").trimEnd();
-  const title = normalizeTitle(titleMultiline);
+  const { title, titleMultiline, titleByLang, titleMultilineByLang } =
+    normalizeBookTitle(raw.title);
 
   const navigation: Record<string, NavItem[]> = {};
   const navigationGroups: Record<string, NavGroup[]> = {};
@@ -283,6 +366,8 @@ export function loadBookConfig(srcDir: string): NormalizedBookConfig {
   return {
     title,
     titleMultiline,
+    titleByLang,
+    titleMultilineByLang,
     description: raw.description ?? "",
     languages: raw.languages ?? [],
     navigation,
