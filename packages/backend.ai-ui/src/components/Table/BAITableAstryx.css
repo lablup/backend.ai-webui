@@ -52,3 +52,29 @@
     --container-padding-block-end: 0px;
   }
 }
+
+@layer components {
+  /*
+   Unblock the header's clip wrapper inside Astryx's sort button.
+
+   `BAITableAstryx` already wraps every header label in an
+   `overflow: hidden; text-overflow: ellipsis` span, because Astryx's own
+   `overflowStyles.cell` clip is cancelled on the `<th>` by
+   `useTableColumnResize` (which needs `overflow: visible` so its drag handle
+   can run the full height of the body). That wrapper works on a plain header —
+   but on a SORTABLE one Astryx nests it inside the sort `<button>`'s label
+   span, which is a flex item with the initial `min-width: auto`. A flex item's
+   automatic minimum size is its min-content width, so the wrapper is floored at
+   the label's full width and clips nothing: dragging "Session Name" down to
+   60px measured the `<th>` painting 41px over the "Status" header.
+
+   Element selectors only — the same discipline as the `no-header` rule above —
+   so this survives an Astryx bump, and `@layer components` outranks
+   `@layer astryx-base` where the button's own StyleX lives. Measured after:
+   escape +41.0px -> -16.6px, with the `<th>` still `overflow: visible` so the
+   drag handle and the sticky shadow are untouched. QA-FINDINGS Q-18.
+  */
+  .bai-table-astryx-dim-layer thead th button > span {
+    min-width: 0;
+  }
+}

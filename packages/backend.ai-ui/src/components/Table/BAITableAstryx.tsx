@@ -697,11 +697,55 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           if (isDetailRow(item)) return null;
           const record = item as RecordType;
           const value = readDataIndex(record, column.dataIndex);
-          if (column.render) {
-            const index = rowIndexByKey.get(getRowKey(record)) ?? 0;
-            return column.render(value, record, index) as ReactNode;
-          }
-          return value == null || value === '' ? null : String(value);
+          const content = column.render
+            ? (column.render(
+                value,
+                record,
+                rowIndexByKey.get(getRowKey(record)) ?? 0,
+              ) as ReactNode)
+            : value == null || value === ''
+              ? null
+              : String(value);
+          // Body cells are clipped by the same wrapper the header above uses,
+          // and for the same reason one rung down (QA-FINDINGS Q-18).
+          //
+          // Astryx DOES clip at the cell — `overflowStyles.cell` sets
+          // `overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+          // max-width:0` when `textOverflow="truncate"`, which this component
+          // requests. But two of its own plugins then re-declare
+          // `overflow: visible` on that same cell so their decoration can bleed
+          // out: `useTableStickyColumns` for the pinned-column shadow, and
+          // `useTableColumnResize` for the full-height drag handle. Only
+          // `overflow` is cancelled — `white-space: nowrap` and `max-width: 0`
+          // survive, so the content has a non-wrapping zero-width box with
+          // nothing clipping it and paints sideways over the next column.
+          // `text-overflow: ellipsis` is inert without `overflow: hidden`.
+          //
+          // Measured on the session scheduling-history nested table: the pinned
+          // `step` cell escaped its box by +30px onto `result`, while an
+          // identically sized NON-pinned cell with 255px of overflow escaped by
+          // 0. Same on `/agent`'s pinned `row_id`. Legacy antd clipped both
+          // faces unconditionally — `.ant-table-cell { overflow: hidden }` in
+          // `BAITable`'s `resizableTable` block matched `<th>`, `<td>` and
+          // `.ant-table-cell-fix-left` alike.
+          //
+          // Wrapping the CONTENT rather than re-clipping the cell keeps the
+          // plugins' bleed working: the shadow and the drag handle are painted
+          // by the cell, not by this span.
+          if (textOverflow !== 'truncate' || content == null) return content;
+          return (
+            <span
+              style={{
+                display: 'block',
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {content}
+            </span>
+          );
         },
       });
     });

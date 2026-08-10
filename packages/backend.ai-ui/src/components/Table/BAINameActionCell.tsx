@@ -319,10 +319,21 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   // More menu: overflowed auto actions + menu-only actions
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
   // PILOT-DECISION (to-astryx W2-D): `DropdownMenuItemData` has no `danger`
-  // flag — its rows are uniform (P5). A destructive overflow row therefore
-  // relies on its icon and label alone, exactly as it already does inside the
-  // `modal.confirm` it escalates to. The visible (non-overflowed) button keeps
-  // its danger tint through `bai-nac-action-button-danger`.
+  // flag AND its `label` is typed `string`, not `ReactNode` — its rows are
+  // uniform (P5). A destructive overflow row therefore relies on its icon and
+  // label alone, exactly as it already does inside the `modal.confirm` it
+  // escalates to. The visible (non-overflowed) button keeps its danger tint
+  // through `bai-nac-action-button-danger`.
+  //
+  // Re-examined for QA-FINDINGS Q-15 ("더보기 버튼을 눌렀을 때 버튼 색상이 모두
+  // default 색상으로 처리됨", measured #141414/#FFFFFF where antd set
+  // `danger: action.type === 'danger'` and drew #FF4D4F/#BE3D3F). The colour IS
+  // reachable — but only through `DropdownMenu`'s COMPOUND mode, whose
+  // `DropdownMenuItem` takes `label: ReactNode` plus `style`. That means
+  // rewriting this menu's whole render path (data `items` -> children),
+  // carrying the divider, disabled and keyboard behaviour across with it, for a
+  // change the reporter themselves marked optional. Left as-is and reported
+  // rather than taken on inside a QA row.
   const toMenuItem = (action: BAINameActionCellAction) => ({
     label: action.title,
     icon: action.icon,
@@ -442,6 +453,29 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
               : 'bai-nac-actions',
             'bai-name-action-cell-actions',
           )}
+          // The action-button palette, published as custom properties the
+          // co-located CSS reads (QA-FINDINGS Q-15).
+          //
+          // These used to be Astryx hue-family TEXT tiers picked by hand —
+          // `--color-text-blue` (#00458C/#C7D3FF) and `--color-text-red`
+          // (#89001A/#FFC6C1) — which are 4 ramp steps darker than what antd
+          // drew and match no antd token. The visible consequence was that the
+          // SAME semantic action had two colours: the bulk-selection buttons
+          // kept their inline `token.colorInfo` and stayed #028DF2, while the
+          // per-row buttons went through the remap and came out #00458C.
+          //
+          // The shim's measured antd values close that. `--color-error` happens
+          // to already be declared as antd's `colorError`, but there is no
+          // declared info token at all (`CoreTokenName` is error/success/
+          // warning only), so both pairs travel the same way for symmetry.
+          style={
+            {
+              '--bai-nac-info': token.colorInfo,
+              '--bai-nac-info-bg': token.colorInfoBg,
+              '--bai-nac-error': token.colorError,
+              '--bai-nac-error-bg': token.colorErrorBg,
+            } as React.CSSProperties
+          }
         >
           {visibleActions.map((action) => {
             const buttonClassName = action.disabled

@@ -17,7 +17,7 @@
  | `BAIModal` + `okButtonProps.danger`     | `BAIModalAstryx` + `actionVariant="destructive"` |
  | `Form` + `Form.Item` + `Form.useWatch`  | one `useState` + `TextInput`        |
  | antd `Input autoFocus allowClear`       | `TextInput hasAutoFocus hasClear`   |
- | `Typography.Text type="danger"`         | `Banner status="error"`             |
+ | `Typography.Text type="danger"`         | `Text color="danger"` (see PD 2)    |
  | `ExclamationCircleFilled` in the title  | the Banner's own status icon        |
  | `<BAITrans components={{code: …}}>`     | `Text` + `Text type="code"` split   |
 
@@ -30,12 +30,23 @@
     made the code *smaller* — the locked "Form stays" decision is about form
     STATE ENGINES, and a single gate input is not one.
  2. **The warning moves from the title into the body.** Astryx
-    `DialogHeader.title` is a plain `string` (P2) with no inline-icon slot, and
-    Astryx `Text` has no `danger` colour (P5 — `TextColor` is
-    primary/secondary/disabled/placeholder/accent/inherit only). Rendering
-    "This action cannot be undone." as a `Banner status="error"` restores both
-    the icon and the danger colour, and is the idiomatic Astryx form. Net: the
-    warning is *more* prominent than in the antd original.
+    `DialogHeader.title` is a plain `string` (P2) with no inline-icon slot, so
+    the warning cannot ride along with the title and has to live in the body.
+    That half stands.
+
+    ~~and Astryx `Text` has no `danger` colour (P5 — `TextColor` is
+    primary/secondary/disabled/placeholder/accent/inherit only), so it is a
+    `Banner status="error"`~~ — **SUPERSEDED (QA-FINDINGS Q-17).** The brand
+    theme registers `STATUS_TEXT_COLORS` (`react/src/astryx-theme/
+    backendAiTheme.ts`), which maps `color:danger` to `var(--color-error)` and
+    emits the `TextColorMap` augmentation, so `Text color="danger"` type-checks
+    and paints antd's `colorError` (#FF4D4F / #BE3D3F) in both modes. With the
+    input present the warning is therefore a plain danger `Text` directly under
+    it, which is where legacy put it and what the QA report asks for; the
+    `Banner` is kept only for the no-input variant, which has nothing to sit
+    under. The trade is real and deliberate: the Banner WAS more prominent, but
+    it also rendered below the option checkboxes — after the thing it warns
+    about.
  3. **`inputLabel` is a `ReactNode` in BUI and a `string` here** (P2 again —
     `TextInput.label` is `string` and doubles as the accessible name). BUI's
     `<Trans>` with an embedded `<code>` chunk is therefore split into a plain
@@ -193,16 +204,46 @@ const BAIDeleteConfirmModalAstryx: React.FC<
               hasClear
               htmlName="confirmText"
             />
-            {/* PILOT-DECISION 3: BUI put the exact string inside the label via
-                `<Trans>` + `<code>`. `TextInput.label` is a plain string, so
-                the code-formatted echo becomes its own line. */}
-            <Text type="code" color="secondary">
-              {confirmText}
-            </Text>
+            {/* PILOT-DECISION 2 — SUPERSEDED. It moved the "cannot be undone"
+                warning out from under the input into a trailing `Banner`,
+                because "Astryx `Text` has no `danger` colour (P5 — `TextColor`
+                is primary/secondary/disabled/placeholder/accent/inherit only)".
+                That is no longer true: the brand theme registers
+                `STATUS_TEXT_COLORS` (`backendAiTheme.ts`), which adds
+                `color:danger` -> `var(--color-error)` and emits the
+                `TextColorMap` augmentation, so `color="danger"` type-checks and
+                paints antd's `colorError` (#FF4D4F / #BE3D3F) in both modes.
+                `TerminateSessionModalForProjectAdmin.tsx` already uses it.
+
+                Reported as: "WARNING: this cannot be undone! 이 input 하단에
+                나오는 것이 아니라 별도의 alert 로 추가됨. input 하단에 있는
+                Permanently Delete text 대신 error text color 로 warning 을
+                추가해야 함." QA-FINDINGS Q-17. Legacy rendered exactly this —
+                `<Text type="danger">` immediately under the input, above the
+                option checkboxes (`git show origin/main:packages/backend.ai-ui/
+                src/components/BAIDeleteConfirmModal.tsx`).
+
+                It takes the slot of PILOT-DECISION 3's code echo, which is
+                redundant: the input's own label already carries the string
+                (`Please type "Permanently Delete".`), so only the monospace
+                emphasis is lost.
+
+                Trade recorded honestly: PILOT-DECISION 2 argued the Banner was
+                MORE prominent than antd's text. It was — but it also sat BELOW
+                the two option checkboxes, i.e. after the thing it warns about.
+                Restoring the legacy position fixes that ordering; the typed
+                confirmation gate (`requireConfirmInput` / `isActionDisabled`)
+                is untouched, so `.claude/rules/destructive-confirmation.md`
+                still holds. */}
+            {!reversible && cannotBeUndoneText ? (
+              <Text color="danger">{cannotBeUndoneText}</Text>
+            ) : null}
           </VStack>
         ) : null}
         {extraContent}
-        {!reversible && cannotBeUndoneText ? (
+        {/* A reversible-tier modal never had a warning; a non-input one has no
+            input to sit under, so it keeps the banner. */}
+        {!needsInput && !reversible && cannotBeUndoneText ? (
           <Banner status="error" title={cannotBeUndoneText} />
         ) : null}
       </VStack>
