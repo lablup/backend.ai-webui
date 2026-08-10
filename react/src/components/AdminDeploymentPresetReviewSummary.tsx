@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { FormInstance } from '../form-engine';
+import { resolvesReadsVfolderConfigFiles } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
@@ -52,7 +53,14 @@ const STEP2_FIELDS = [
 interface PresetReviewSummaryProps {
   form: FormInstance<AdminDeploymentPresetFormValue>;
   onGoToStep: (index: number) => void;
-  runtimeVariants: ReadonlyArray<{ id: string; name: string }>;
+  runtimeVariants: ReadonlyArray<{
+    id: string;
+    name: string;
+    // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
+    // undefined; `resolvesReadsVfolderConfigFiles` falls back to the legacy
+    // `name === 'custom'` heuristic.
+    readsVfolderConfigFiles?: boolean | null;
+  }>;
   errorFieldNames: string[];
   /** Touched, non-default runtime-variant preset values (label + value). */
   runtimeParamRows?: ReadonlyArray<{
@@ -100,9 +108,18 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   );
   const step2HasError = STEP2_FIELDS.some((f) => errorFieldNames.includes(f));
 
-  const runtimeName =
-    runtimeVariants.find((r) => toLocalId(r.id) === values.runtimeVariantId)
-      ?.name ?? values.runtimeVariantId;
+  const selectedRuntimeVariant = runtimeVariants.find(
+    (r) => toLocalId(r.id) === values.runtimeVariantId,
+  );
+  const runtimeName = selectedRuntimeVariant?.name ?? values.runtimeVariantId;
+  // FR-3481 review-parity fix: the Shell/Command/Port rows must only show
+  // when the selected variant actually reads vfolder config files — the
+  // form store preserves stale values after switching away from a
+  // config-reading variant, but buildModelDefinitionInput() omits them from
+  // the submit payload in that case, so Review must match.
+  const readsVfolderConfigFiles = resolvesReadsVfolderConfigFiles(
+    selectedRuntimeVariant,
+  );
 
   const editLink = (stepIndex: number, cardId: string) => (
     <Button
@@ -126,28 +143,41 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   // `supportsNullableModelDefinition`, which decides which site calls this.
   const renderServiceConfigSummaryFields = (
     svc: ModelServiceFormValue | undefined,
+    readsVfolderConfigFiles: boolean,
   ) => (
     <>
-      {/* Exec mode sends `shell: null` regardless of what's typed
-          in the (now-hidden) Shell input — resolveCommandShell()
-          discards it. The field's stale value otherwise lingers in
-          the form store after switching Execution away from
-          Shell, so gate the display on the mode actually being
-          submitted, not just on the raw value being present. */}
-      {svc?.shell && svc?.execution !== 'exec' && (
-        <MetadataListItem label={t('modelService.Shell')}>
-          <Code>{svc.shell}</Code>
-        </MetadataListItem>
-      )}
-      {svc?.startCommand && (
-        <MetadataListItem label={t('modelService.Command')}>
-          <SourceCodeView language="shell">{svc.startCommand}</SourceCodeView>
-        </MetadataListItem>
-      )}
-      {svc?.port != null && (
-        <MetadataListItem label={t('modelService.Port')}>
-          {svc.port}
-        </MetadataListItem>
+      {/* Shell/Command/Port are only relevant when the selected variant
+          reads vfolder config files — the form store preserves stale
+          values after switching away from a config-reading variant, but
+          the submit payload omits them in that case (readsVfolderConfigFiles
+          in buildModelDefinitionInput, AdminDeploymentPresetSettingPage.tsx),
+          so Review must match. */}
+      {readsVfolderConfigFiles && (
+        <>
+          {/* Exec mode sends `shell: null` regardless of what's typed
+              in the (now-hidden) Shell input — resolveCommandShell()
+              discards it. The field's stale value otherwise lingers in
+              the form store after switching Execution away from
+              Shell, so gate the display on the mode actually being
+              submitted, not just on the raw value being present. */}
+          {svc?.shell && svc?.execution !== 'exec' && (
+            <MetadataListItem label={t('modelService.Shell')}>
+              <Code>{svc.shell}</Code>
+            </MetadataListItem>
+          )}
+          {svc?.startCommand && (
+            <MetadataListItem label={t('modelService.Command')}>
+              <SourceCodeView language="shell">
+                {svc.startCommand}
+              </SourceCodeView>
+            </MetadataListItem>
+          )}
+          {svc?.port != null && (
+            <MetadataListItem label={t('modelService.Port')}>
+              {svc.port}
+            </MetadataListItem>
+          )}
+        </>
       )}
       <MetadataListItem
         label={t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
@@ -266,6 +296,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
           {supportsNullableModelDefinition &&
             renderServiceConfigSummaryFields(
               values.modelDefinition?.models?.[0]?.service,
+              readsVfolderConfigFiles,
             )}
           <MetadataListItem label={t('adminDeploymentPreset.Image')}>
             {imageReference ? (
@@ -434,7 +465,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     </Code>
                   </MetadataListItem>
                   {!supportsNullableModelDefinition &&
-                    renderServiceConfigSummaryFields(svc)}
+                    renderServiceConfigSummaryFields(
+                      svc,
+                      readsVfolderConfigFiles,
+                    )}
                   {m.metadata?.title && (
                     <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Title')}

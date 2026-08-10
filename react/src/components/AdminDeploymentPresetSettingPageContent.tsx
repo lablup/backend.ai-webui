@@ -574,9 +574,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           ? {
               // The model definition switch gates name/path/metadata (Step 2).
               // A model that only carries service data (port, command, health
-              // check) was created with the switch OFF — treat it as disabled.
-              // Name/path are optional even when the switch is ON (e.g. a
-              // metadata-only definition), so metadata presence also counts.
+              // check) was created with the switch OFF — treat it as disabled
+              // so the required name/path fields don't trigger validation.
+              // BA-7210: a sparse preset can have name/modelPath both null
+              // (inheriting from the variant baseline) while still carrying
+              // metadata, so check that too — otherwise editing such a
+              // preset shows the switch off, hides its metadata, and the
+              // next save drops it.
               enabled: preset.modelDefinition.models.some(
                 (m) => !!m.name || !!m.modelPath || !!m.metadata,
               ),
