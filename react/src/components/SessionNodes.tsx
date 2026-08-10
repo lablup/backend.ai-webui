@@ -196,7 +196,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                   },
                 enablePriorityColumn && {
                   key: 'editPriority',
-                  title: t('session.EditPriority'),
+                  title: t('button.Settings'),
                   icon: <SettingsIcon />,
                   // Priority only orders the pending queue, so it is only
                   // editable while the session is PENDING.

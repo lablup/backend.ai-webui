@@ -124,7 +124,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
 
   return (
     <BAIModal
-      title={t('session.EditPriority')}
+      title={t('session.SessionSettings')}
       okText={t('button.Save')}
       onOk={handleOk}
       onCancel={() => onRequestClose()}
@@ -145,7 +145,9 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
               : (filteredSessions[0]?.priority ?? SESSION_PRIORITY_DEFAULT),
           }}
         >
-          <Form.Item label={t('session.SessionName')}>
+          {/* Display-only field; `required` only suppresses the global
+              requiredMark's "(Optional)" label on non-required items. */}
+          <Form.Item label={t('session.SessionName')} required>
             {isBulkEdit ? (
               <BAITagList
                 items={_.map(

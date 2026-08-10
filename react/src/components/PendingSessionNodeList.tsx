@@ -144,7 +144,7 @@ const PendingSessionNodeList: React.FC = () => {
                 count={selectedSessionList.length}
                 onClearSelection={() => setSelectedSessionList([])}
               />
-              <Tooltip title={t('session.EditPriority')} placement="topLeft">
+              <Tooltip title={t('button.Settings')} placement="topLeft">
                 <Button
                   icon={<SettingsIcon />}
                   onClick={() => {
