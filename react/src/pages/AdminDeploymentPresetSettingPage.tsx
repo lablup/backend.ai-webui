@@ -75,6 +75,15 @@ const buildModelDefinitionInput = (
   // Neither the model definition switch nor any service fields are set → null.
   if (!value.enabled && !hasServiceData) return null;
 
+  // Legacy managers (`PresetModelConfigInput.name`/`modelPath` are
+  // `String!`, min_length=1 server-side, prior to BA-7210) cannot accept a
+  // model entry without a real, non-empty name + modelPath — sending ''
+  // fails backend validation. So the "service-only" submission above (Model
+  // Definition switch off, but Service Configuration has data) is only
+  // possible on managers that support inheriting name/modelPath (26.9.0+);
+  // on older managers, there is no valid payload to send in that state.
+  if (!supportsNullableModelDefinition && !value.enabled) return null;
+
   return {
     models: value.models.flatMap((m) => {
       const service = m.service;
