@@ -27,17 +27,6 @@ Backend.AIは、ユーザーのファイルを安全に保管するための専�
 ページ自体も招待を確認するための有効なエントリーポイントです。データページを開けば、
 フォルダステータスの概要から同じ招待リストにアクセスできます。
 
-<a id="refresh-folder-list"></a>
-
-## フォルダ一覧を更新
-
-更新ボタンをクリックすると、フォルダ一覧を更新できます。ボタン右側の
-ドロップダウン矢印をクリックすると、**自動更新** の間隔を設定できます。
-詳細は[自動更新](#common-auto-refresh)を参照してください。
-
-![](../images/vfolder_auto_refresh_menu.png)
-
-
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
 

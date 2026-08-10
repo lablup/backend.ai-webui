@@ -35,17 +35,6 @@ list with the `Invited` type. The `/data` page itself is also a valid entry
 point for reviewing invitations — open the Data page and the same invitation
 list is reachable from the folder status summary.
 
-<a id="refresh-folder-list"></a>
-
-## Refresh the folder list
-
-Click the refresh button to refresh the folder list. Click the dropdown arrow
-on the right side of the button to set the **Auto Refresh** interval — see
-[Auto-refresh](#common-auto-refresh).
-
-![](../images/vfolder_auto_refresh_menu.png)
-
-
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
 

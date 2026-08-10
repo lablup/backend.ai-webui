@@ -27,17 +27,6 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 자체도 초대를 검토하는 유효한 진입점입니다. 데이터 페이지를 열면 폴더 상태 요약에서
 동일한 초대 목록에 접근할 수 있습니다.
 
-<a id="refresh-folder-list"></a>
-
-## 폴더 목록 새로고침
-
-새로고침 버튼을 클릭해 폴더 목록을 갱신할 수 있습니다. 버튼 오른쪽의
-드롭다운 화살표를 클릭하면 **자동 새로고침** 주기를 설정할 수 있습니다.
-자세한 내용은 [자동 새로고침](#common-auto-refresh) 섹션을 참고하세요.
-
-![](../images/vfolder_auto_refresh_menu.png)
-
-
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
 

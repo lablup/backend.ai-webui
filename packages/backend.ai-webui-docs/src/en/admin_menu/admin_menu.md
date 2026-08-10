@@ -451,9 +451,6 @@ Each individual admin deployment has its own address under the Admin Deployments
 URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
 :::
 
-The refresh control at the top right of the deployment list carries the shared auto-refresh interval
-dropdown (see [Auto-refresh](#common-auto-refresh)); this list starts at a 15-second interval.
-
 #### Deployment detail page
 
 When you open a deployment from the Admin Deployments page, the **Revisions** card on the Deployment Detail Page provides three tabs: **Current Revision**, **Revision History**, and **Audit Log**. These behave the same as on the user-facing Deployments page — for the full description of each tab, see the [Revisions Tab](#revisions-tab) section in the Model Deployment documentation.
@@ -576,10 +573,6 @@ The preset table lists all Prometheus query presets across the cluster. Each row
 - **Created At** / **Updated At**: Timestamps maintained automatically by the server.
 
 You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
-
-Because a Prometheus query can be expensive to evaluate, the refresh control on this tab offers longer
-auto-refresh intervals than the other admin lists — 30 seconds, 1 minute, 5 minutes, and 10 minutes —
-and auto-refresh starts **Off** (see [Auto-refresh](#common-auto-refresh)).
 
 <a id="prometheus-preset-column-settings"></a>
 
@@ -1013,10 +1006,6 @@ On the **Sessions** tab, the property filter offers the following conditions:
   shows the project's name.
 - **Session Name**, **Resource Group**, **Agent**, **Owner Email**: Narrow the list by text match.
 
-Both tabs refresh on their own — **Sessions** starts at a 15-second interval and **Pending Sessions**
-at a 10-second interval, each remembered separately (see
-[Auto-refresh](#common-auto-refresh)).
-
 ## Fair share scheduler
 
 The Fair Share Scheduler page is available in the
@@ -1079,9 +1068,6 @@ you edit a weight rather than only in the table.
 At each step, the following common features are available:
 
 - **Pagination**: Navigate through results with configurable page size.
-- **Auto-refresh**: Because a Fair Share query is expensive, the refresh button offers longer
-  intervals than elsewhere — 30 seconds, 1 minute, 5 minutes, and 10 minutes — and auto-refresh starts
-  **Off** (see [Auto-refresh](#common-auto-refresh)).
 
 ### Resource group
 
@@ -1417,13 +1403,10 @@ as a reference for node management; if it is empty, then no disconnection or ter
 ![](../images/terminated_agent_list.png)
 
 You can narrow the list with the property filter, which supports **ID**, **Endpoint**, and
-**Schedulable**. The list starts at a 15-second auto-refresh interval; because a cluster-wide agent
-query is heavy, 15 seconds is also the shortest interval offered here (see
-[Auto-refresh](#common-auto-refresh)).
+**Schedulable**.
 
 Click an agent's ID to open the **Agent Info** drawer, which shows the exact resource usage for that
-node. The drawer has its own refresh control with an interval dropdown; auto-refresh is **Off** until you
-pick an interval.
+node.
 
 ![](../images/detailed_agent_node_usage_information.png)
 
@@ -1559,9 +1542,6 @@ By using this feature, admin can easily manage and monitor the exact amount of s
 
 ![](../images/storage_list.png)
 <!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
-
-The refresh control above the list carries the shared auto-refresh interval dropdown (see
-[Auto-refresh](#common-auto-refresh)); auto-refresh starts **Off** on this tab.
 
 To manage a storage host, click the storage host name in the Storages list. This opens the **Storage Host
 Detail Drawer**, where capacity (quota) and folder permissions are configured.

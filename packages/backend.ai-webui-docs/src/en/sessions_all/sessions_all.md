@@ -17,8 +17,8 @@ After logging in with a user account, click `Sessions` on the left sidebar.
 
 ![](../images/sessions_page.png)
 
-For how the list is organized, filtered, and refreshed, see
-[Session List View and Refresh](#session-list-view-and-refresh).
+For how the list is organized and filtered, see
+[Session List View](#session-list-view-and-refresh).
 
 Click the `Start Session` button to start a new compute session.
 
@@ -325,7 +325,7 @@ browser.
 
 <a id="session-list-view-and-refresh"></a>
 
-## Session List View and Refresh
+## Session List View
 
 The session list groups your sessions into type tabs — **All**, **Interactive**,
 **Batch**, **Inference**, and **Upload Sessions** — and each tab carries a
@@ -335,19 +335,6 @@ The session list groups your sessions into type tabs — **All**, **Interactive*
 Every tab keeps its own filter, sort order, and page number while you stay on the
 page, so switching to another tab and back restores the view you left instead of
 resetting it.
-
-<a id="auto-refresh-interval"></a>
-
-### Auto-Refresh Interval
-
-The refresh button at the right of the list toolbar reloads the session list on
-demand and carries the shared auto-refresh interval selector — see
-[Auto-refresh](#common-auto-refresh). Auto-refresh is on out of the box on the
-compute session surfaces: the **session list** starts at a 15-second interval,
-and the **session detail panel** and the **container log** window start at a
-10-second interval, each remembered separately.
-
-![](../images/session_list_auto_refresh_dropdown.png)
 
 <a id="session-detail-panel"></a>
 
@@ -359,10 +346,6 @@ session ID, user ID, status, type, environments, mount information, resource all
 elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
 
 Click the `Log` button next to the `Hostname` in `Kernels` to view the logs of that kernel directly.
-
-The refresh button in the panel header reloads the session information and, like
-the list toolbar, offers an auto-refresh interval selector. See
-[Auto-Refresh Interval](#auto-refresh-interval) for how the intervals work.
 
 ![](../images/session_detail.png)
 
@@ -608,19 +591,9 @@ The log window provides the following controls above the log view:
   single-container session there is only one entry; for a cluster session, each
   container is listed by its hostname with the first characters of its ID.
 - **Download**: Save the currently displayed log to a text file.
-- **Refresh**: Reload the log. The button also carries the auto-refresh interval
-  selector described in [Auto-Refresh Interval](#auto-refresh-interval).
-
-Because a log window is normally opened to watch new lines arrive, auto-refresh
-starts at a 10-second interval. The log view scrolls to the newest lines after
-each reload, and the lines that arrived since the previous reload are
-highlighted.
 
 You can also search within the displayed log using the search box built into the
 log view.
-
-![](../images/container_log_refresh_dropdown.png)
-
 
 <a id="rename-running-session"></a>
 

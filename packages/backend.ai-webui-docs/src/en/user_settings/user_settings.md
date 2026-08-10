@@ -421,15 +421,6 @@ Revoking a login session signs it out immediately. If you revoke the login
 session you are currently using, you have to log in again.
 :::
 
-<a id="auto-refresh-interval"></a>
-
-### Refreshing the list
-
-The refresh button above the table reloads the list on demand and carries the
-shared **Auto Refresh** interval menu — see
-[Auto-refresh](#common-auto-refresh). Auto-refresh starts **Off** on this list
-until you choose an interval.
-
 <a id="login-history-tab"></a>
 
 ## Login History tab
@@ -485,7 +476,3 @@ Use the filter above the table to narrow down the list:
 
 Use the pagination controls below the table to move between pages and to change
 how many rows are shown per page.
-
-The refresh button and its auto-refresh interval menu work the same way as on
-the Login Sessions tab — see [Refreshing the list](#auto-refresh-interval). This
-list keeps its own interval, separate from the Login Sessions list.

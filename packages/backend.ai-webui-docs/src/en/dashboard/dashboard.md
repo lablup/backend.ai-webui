@@ -51,18 +51,6 @@ When you are logged in as a superadmin, the Dashboard page also displays
 **Agent Statistics** and **Active Agents** panels alongside the standard user panels.
 These panels show cluster-wide agent health and resource utilization.
 
-## Auto-refresh
-
-The Dashboard automatically refreshes all panel data every **15 seconds**, so
-the displayed information stays up to date without manual interaction. Panels
-that have a refresh button in their header can also be refreshed individually
-at any time — see [Auto-refresh](#common-auto-refresh) for how the shared
-refresh control works.
-
-:::note
-The [Superadmin Dashboard](#superadmin-dashboard) uses a **30-second** refresh interval instead.
-:::
-
 ## Customizing the dashboard layout
 
 You can customize the Dashboard layout by rearranging and resizing panels to

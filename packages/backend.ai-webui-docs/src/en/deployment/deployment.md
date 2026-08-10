@@ -27,8 +27,6 @@ At the top of the page, you can filter deployments by lifecycle stage:
 
 You can also use the property filter bar to search deployments by **Deployment Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
 
-The refresh button at the top of the list also controls auto-refresh (see [Auto-refresh](#common-auto-refresh)); the Deployments list starts at a `15s` interval.
-
 Click the `New Deployment` button to open the **Create Deployment** modal.
 
 <a id="create-deployment"></a>
@@ -629,8 +627,6 @@ The Replicas tab shows the routing nodes that make up the deployment. Replica en
 
 - **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
 - **Terminated**: Shows replicas that have completed their lifecycle.
-
-The Replicas card has its own auto-refresh control on the refresh button (see [Auto-refresh](#common-auto-refresh)). Because replica state changes quickly, this card starts at `10s`, remembered separately from the interval on the Deployments list.
 
 Each replica row carries three **independent** status fields. They describe different axes and should be read together — a replica can be *Running* in its lifecycle while its health is still *Not Checked*, for example.
 
