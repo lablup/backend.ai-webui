@@ -1223,36 +1223,38 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             }}
           >
             {modelDefinitionEnabled ? (
-              <BAIFlex direction="column" align="stretch" gap="md">
-                <Form.List name={['modelDefinition', 'models']}>
-                  {(fields) => {
-                    const firstField = fields[0];
-                    if (!firstField) return null;
-                    const { key, name, ...rest } = firstField;
-                    return (
-                      <ModelConfigItem
-                        key={key}
-                        listItemName={name}
-                        restField={rest}
-                        supportsNullableModelDefinition={
-                          supportsNullableModelDefinition
-                        }
-                      />
-                    );
-                  }}
-                </Form.List>
-                {/* Legacy managers (pre-BA-7210) cannot submit Service
-                    Configuration/Health Check/Pre-Start Actions
-                    independently of Model Definition — nest them here
-                    instead of Step 1's now-nullable-only placement above, so
-                    they're only reachable (and only get submitted) once
-                    this switch is on. */}
-                {!supportsNullableModelDefinition &&
-                  readsVfolderConfigFiles &&
-                  renderServiceConfigurationFormItems()}
-                {!supportsNullableModelDefinition &&
-                  renderHealthCheckAndPreStartActionsFormItems()}
-              </BAIFlex>
+              <Form.List name={['modelDefinition', 'models']}>
+                {(fields) => {
+                  const firstField = fields[0];
+                  if (!firstField) return null;
+                  const { key, name, ...rest } = firstField;
+                  return (
+                    <ModelConfigItem
+                      key={key}
+                      listItemName={name}
+                      restField={rest}
+                      supportsNullableModelDefinition={
+                        supportsNullableModelDefinition
+                      }
+                      // Legacy managers (pre-BA-7210) cannot submit Service
+                      // Configuration/Health Check/Pre-Start Actions
+                      // independently of Model Definition — nest them above
+                      // Metadata instead of Step 1's now-nullable-only
+                      // placement above, so they're only reachable (and only
+                      // get submitted) once this switch is on.
+                      beforeMetadataSlot={
+                        !supportsNullableModelDefinition ? (
+                          <>
+                            {readsVfolderConfigFiles &&
+                              renderServiceConfigurationFormItems()}
+                            {renderHealthCheckAndPreStartActionsFormItems()}
+                          </>
+                        ) : undefined
+                      }
+                    />
+                  );
+                }}
+              </Form.List>
             ) : null}
           </BAICard>
 

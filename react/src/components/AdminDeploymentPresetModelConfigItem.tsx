@@ -57,7 +57,20 @@ const ModelConfigItem: React.FC<{
    * tends to fail at runtime — so the UI keeps requiring both.
    */
   supportsNullableModelDefinition: boolean;
-}> = ({ listItemName, restField, supportsNullableModelDefinition }) => {
+  /**
+   * FR-3481: on legacy managers, Service Configuration/Health Check/
+   * Pre-Start Actions render nested here (instead of independently in
+   * Step 1 — see AdminDeploymentPresetSettingPageContent.tsx) since they
+   * can only be submitted together with a real name/modelPath. Rendered
+   * above Metadata to match the pre-FR-3205 field order.
+   */
+  beforeMetadataSlot?: React.ReactNode;
+}> = ({
+  listItemName,
+  restField,
+  supportsNullableModelDefinition,
+  beforeMetadataSlot,
+}) => {
   'use memo';
   const { t } = useTranslation();
 
@@ -108,7 +121,11 @@ const ModelConfigItem: React.FC<{
         </BAIFormItem>
       </BAIFlex>
 
+      {beforeMetadataSlot}
+
       {/* PILOT-DECISION: antd Collapse (items API) → Astryx Collapsible.
+          `size="small"` from the antd side is dropped — Collapsible has no
+          density axis (same decision as ServiceConfigurationFormItems).
           `label`→`trigger`, `defaultActiveKey={['metadata']}`→`defaultIsOpen`;
           the single-panel accordion frame (bordered antd panel chrome) is
           replaced by Collapsible's flat default. */}
