@@ -541,6 +541,20 @@ const SIDE_NAV_DENSITY = {
       height: '40px',
       marginBlock: '2px',
       paddingInline: '24px',
+      // ⚠ RE-APPLIED AS `xstyle` IN `react/src/components/BAIMenu.tsx` — do
+      // not delete either copy. This declaration is the canonical default and
+      // is what every non-app `SideNav` (Storybook) renders, but it is the ONE
+      // key in this whole `components:` surface that a PRODUCTION build
+      // discards. `SideNavItem`'s own StyleX sets `border-radius`; Astryx's
+      // `dist/**` is not StyleX-precompiled, so rollup runs it through
+      // `@stylexjs/unplugin`, which is `useCSSLayers: false` — the entry
+      // stylesheet therefore carries an UNLAYERED copy of that base rule, and
+      // unlayered CSS outranks `@layer astryx-theme` where this block lands.
+      // Measured 20px in dev, 8px in the built app. The other four values here
+      // have no StyleX counterpart and survive untouched; a dev-vs-prod census
+      // of every `components:` key in this theme found no other casualty.
+      // Mechanism and measurements: the `styles.navItem` comment in
+      // `BAIMenu.tsx`, and QA-FINDINGS Q-6.
       borderRadius: '20px',
       fontSize: '16px',
     },

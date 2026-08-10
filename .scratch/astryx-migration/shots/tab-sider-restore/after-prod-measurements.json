@@ -1,0 +1,961 @@
+{
+  "light/environment": [
+    {
+      "style": "line",
+      "labels": [
+        "ImagesImages",
+        "Resource PresetsResource",
+        "RegistriesRegistries"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 582,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/environment__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Environments",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/resources": [],
+  "light/resources__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": null,
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/resource-policy": [
+    {
+      "style": "line",
+      "labels": [
+        "Keypair Resource PolicyK",
+        "User Resource PolicyUser",
+        "Project Resource PolicyP"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 810,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/resource-policy__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Resource Policies",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/statistics": [
+    {
+      "style": "line",
+      "labels": [
+        "Allocation HistoryAlloca",
+        "User Session HistoryUser"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 586,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/statistics__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Statistics",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/users": [
+    {
+      "style": "line",
+      "labels": [
+        "UsersUsers",
+        "CredentialsCredentials"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 440,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/users__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Projects",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/project": [
+    {
+      "style": "line",
+      "labels": [
+        "ProjectsProjects"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 356,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/project__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Projects",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/maintenance": [
+    {
+      "style": "line",
+      "labels": [
+        "MaintenanceMaintenance"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 386,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/maintenance__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Maintenance",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/settings": [
+    {
+      "style": "line",
+      "labels": [
+        "ConfigurationsConfigurat"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 400,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/settings__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Configurations",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/scheduler": [
+    {
+      "style": "line",
+      "labels": [
+        "Fair Share SettingFair S"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 436,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/scheduler__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Scheduler",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/my-environment": [
+    {
+      "style": "line",
+      "labels": [
+        "ImagesImages"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 347,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/my-environment__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "My Environments",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "light/session": [
+    {
+      "style": "card",
+      "labels": [
+        "All11All11",
+        "Interactive11Interactive",
+        "BatchBatch",
+        "InferenceInference",
+        "Upload SessionsUpload Se"
+      ],
+      "navX": 288,
+      "navW": 1264,
+      "navH": 36,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 846,
+      "borderBottom": "1px solid rgb(255, 122, 0)",
+      "paddingBlockEnd": "0px",
+      "spansParent": true
+    }
+  ],
+  "light/session__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Sessions",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "color": "rgb(20, 20, 20)"
+    },
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(20, 20, 20)"
+    }
+  },
+  "dark/environment": [
+    {
+      "style": "line",
+      "labels": [
+        "ImagesImages",
+        "Resource PresetsResource",
+        "RegistriesRegistries"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 582,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/environment__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Environments",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/resources": [],
+  "dark/resources__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": null,
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/resource-policy": [
+    {
+      "style": "line",
+      "labels": [
+        "Keypair Resource PolicyK",
+        "User Resource PolicyUser",
+        "Project Resource PolicyP"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 810,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/resource-policy__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Resource Policies",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/statistics": [
+    {
+      "style": "line",
+      "labels": [
+        "Allocation HistoryAlloca",
+        "User Session HistoryUser"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 586,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/statistics__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Statistics",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/users": [
+    {
+      "style": "line",
+      "labels": [
+        "UsersUsers",
+        "CredentialsCredentials"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 440,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/users__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Projects",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/project": [
+    {
+      "style": "line",
+      "labels": [
+        "ProjectsProjects"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 356,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/project__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Projects",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/maintenance": [
+    {
+      "style": "line",
+      "labels": [
+        "MaintenanceMaintenance"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 386,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/maintenance__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Maintenance",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/settings": [
+    {
+      "style": "line",
+      "labels": [
+        "ConfigurationsConfigurat"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 400,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/settings__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Configurations",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/scheduler": [
+    {
+      "style": "line",
+      "labels": [
+        "Fair Share SettingFair S"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 436,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/scheduler__sider": {
+    "count": 15,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Scheduler",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Users",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/my-environment": [
+    {
+      "style": "line",
+      "labels": [
+        "ImagesImages"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 347,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/my-environment__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "My Environments",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "dark/session": [
+    {
+      "style": "card",
+      "labels": [
+        "All11All11",
+        "Interactive11Interactive",
+        "BatchBatch",
+        "InferenceInference",
+        "Upload SessionsUpload Se"
+      ],
+      "navX": 288,
+      "navW": 1264,
+      "navH": 36,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 846,
+      "borderBottom": "1px solid rgb(190, 94, 6)",
+      "paddingBlockEnd": "0px",
+      "spansParent": true
+    }
+  ],
+  "dark/session__sider": {
+    "count": 10,
+    "radii": [
+      "20px"
+    ],
+    "selected": {
+      "label": "Sessions",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgb(38, 38, 38)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "rest": {
+      "label": "Admin Settings",
+      "w": 224,
+      "h": 40,
+      "radius": "20px",
+      "padInline": "24px/24px",
+      "marginBlock": "2px/2px",
+      "fontSize": "16px",
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(255, 255, 255)"
+    }
+  },
+  "pageErrors": []
+}

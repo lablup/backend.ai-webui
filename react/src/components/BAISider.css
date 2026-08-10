@@ -165,6 +165,73 @@
 }
 
 /*
+ * NAV-ITEM PILL RADIUS — re-applied here because the THEME LAYER CANNOT REACH
+ * IT IN A PRODUCTION BUILD (QA-FINDINGS Q-6).
+ *
+ * The value is not in dispute and is not duplicated by preference. Legacy antd
+ * `BAIMenu` set `Menu.itemBorderRadius: 20` on a 40px row — confirmed against
+ * an antd 6.5.0 oracle rebuilt outside the repo from `origin/main:BAIMenu.tsx`,
+ * where `li.ant-menu-item` measures `border-radius: 20px` — and
+ * `SIDE_NAV_DENSITY` in `react/src/astryx-theme/backendAiTheme.ts` declares
+ * exactly that as the `side-nav-item` theme default. That declaration is the
+ * canonical one, stays, and is what every non-app `SideNav` (Storybook)
+ * renders. This rule only re-applies it on the app rail, where the cascade
+ * discards it.
+ *
+ * ## The mechanism (production-only, which is why every dev probe was clean)
+ *
+ * `defineTheme({components})` output is emitted into `@layer astryx-theme`,
+ * which outranks Astryx's PREBUILT `astryx.css` (`@layer astryx-base`). That is
+ * the assumption every `components:` block in the theme file rests on, and it
+ * holds under `pnpm dev`.
+ *
+ * It does not hold under `pnpm run build`. Astryx's `dist/**` is NOT
+ * StyleX-precompiled — `dist/SideNav/SideNavItem.js` still imports
+ * `@stylexjs/stylex` and calls `stylex.create()` — so rollup hands it to
+ * `@stylexjs/unplugin`, which runs `useCSSLayers: false` (`react/vite.config.ts`,
+ * deliberately: unlayered output is what lets app `xstyle` beat `astryx-base`).
+ * The entry stylesheet therefore gains a SECOND, UNLAYERED copy of
+ * `SideNavItem`'s own base rule, and unlayered CSS outranks every named layer.
+ * Measured on `build/web/assets/index-*.css`:
+ *
+ *   (unlayered)>astryx-theme  .astryx-side-nav-item        border-radius: 20px
+ *   (unlayered)>astryx-base   .xh6dtrn:not(#\#):not(#\#)   border-radius: var(--radius-element)
+ *   (unlayered)               .xh6dtrn:not(#\#)            border-radius: var(--radius-element)  <- won
+ *
+ * Result: 20px pills in dev, 8px rounded rectangles in the built app, on all
+ * 22 route x mode combinations. Only `border-radius` was hit — the other four
+ * values in the same theme block (height 40, margin-block 2, padding-inline 24,
+ * font-size 16) have no counterpart in `SideNavItem`'s StyleX base, so nothing
+ * outranks them. A dev-vs-prod census of every `components:` key this theme
+ * declares (`side-nav`, `side-nav-item`, `side-nav-section`, `card`, `section`,
+ * `dropdown-menu`, `dropdown-menu-item`, `dialog`, `progressbar`) found this
+ * one key differing and no other.
+ *
+ * ## Why `!important`, after the two cheaper levers were tried and measured
+ *
+ * 1. A more specific selector does not work. StyleX pads its selectors with
+ *    `:not(#\#)`, and `:not()` takes the specificity of its argument — an ID.
+ *    `.xh6dtrn:not(#\#)` is therefore (1,1,0), ID-weight. A (0,3,0) rule
+ *    (`.astryx-side-nav.bai-sider .astryx-side-nav-item`) was written, built
+ *    and re-measured: still 8px. No class-only selector can win.
+ * 2. `xstyle` does not reach this element. It would be the engine-native fix —
+ *    StyleX resolves conflicts per atomic property at merge time, so it needs
+ *    no cascade at all — but `SideNavItem` spreads `xstyle` onto its outer
+ *    wrapper (`stylex.props(styles.root, xstyle)`), while the radius lives on
+ *    the inner nav element built from `themeProps('side-nav-item') +
+ *    stylex.props(navItemStyles.item, …)`, which takes no caller styles. This
+ *    was also written, built and re-measured: still 8px. `SideNavItem` exposes
+ *    no `className` passthrough either.
+ *
+ * That leaves importance, which is the one axis that outranks an unlayered
+ * ID-weight declaration. It is narrow by construction: one property, scoped to
+ * `.bai-sider`, so no other `SideNav` and no other property is affected.
+ */
+.bai-sider .astryx-side-nav-item {
+  border-radius: 20px !important;
+}
+
+/*
  * P6/P17 guard — antd's anchor reset vs. Astryx nav items.
  *
  * `SideNavItem` renders a real `<a>` (that is the point: middle-click and
