@@ -176,11 +176,7 @@ const FairShareList: React.FC = () => {
             {t('fairShare.Project')}
           </BAIText>
           {deferredStepQueryParams.project && (
-            <Suspense fallback={null}>
-              <ProjectStepNameText
-                projectId={deferredStepQueryParams.project}
-              />
-            </Suspense>
+            <ProjectStepNameText projectId={deferredStepQueryParams.project} />
           )}
         </BAIFlex>
       ),

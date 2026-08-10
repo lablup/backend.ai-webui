@@ -6,7 +6,7 @@ import {
   DomainFairShareOrderBy,
   DomainFairShareStepQuery,
 } from '../../__generated__/DomainFairShareStepQuery.graphql';
-import { convertToOrderBy } from '../../helper';
+import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
@@ -16,7 +16,6 @@ import FairShareStepToolbar from './FairShareStepToolbar';
 import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import ResourceGroupSchedulerTypeAlert from './ResourceGroupSchedulerTypeAlert';
 import UsageBucketModal from './UsageBucketModal';
-import { useFairShareStepSelectionState } from './useFairShareStepSelectionState';
 import { theme } from 'antd';
 import {
   BAIFlex,
@@ -26,7 +25,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useDeferredValue } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -46,20 +45,11 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const {
-    selectedRows,
-    selectedSingleRow,
-    openWeightSettingModal,
-    openUsageModal,
-    setSelectedSingleRow,
-    setOpenWeightSettingModal,
-    setOpenUsageModal,
-    handleRowSelect,
-    clearSelection,
-    closeModals,
-  } = useFairShareStepSelectionState<DomainFairShare, 'domainName'>(
-    'domainName',
-  );
+  const [selectedRows, setSelectedRows] = useState<Array<DomainFairShare>>([]);
+  const [selectedSingleRow, setSelectedSingleRow] =
+    useState<DomainFairShare | null>(null);
+  const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
+  const [openUsageModal, setOpenUsageModal] = useState(false);
 
   const {
     baiPaginationOption,
@@ -170,7 +160,7 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
         }}
         selection={{
           selectedCount: selectedRows.length,
-          onClearSelection: clearSelection,
+          onClearSelection: () => setSelectedRows([]),
           onShowUsage: () => setOpenUsageModal(true),
           onBulkEdit: () => setOpenWeightSettingModal(true),
         }}
@@ -185,7 +175,14 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
           fetchKey !== deferredFetchKey
         }
         selectedRows={selectedRows}
-        onRowSelect={handleRowSelect}
+        onRowSelect={(selectedRowKeys, currentPageItems) => {
+          handleRowSelectionChange(
+            selectedRowKeys,
+            currentPageItems,
+            setSelectedRows,
+            'domainName',
+          );
+        }}
         onOpenWeightSetting={(row) => {
           setSelectedSingleRow(row);
         }}
@@ -218,9 +215,10 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
           onRequestClose={(success) => {
             if (success) {
               updateFetchKey();
-              clearSelection();
+              setSelectedRows([]);
             }
-            closeModals();
+            setSelectedSingleRow(null);
+            setOpenWeightSettingModal(false);
           }}
         />
       </BAIUnmountAfterClose>
