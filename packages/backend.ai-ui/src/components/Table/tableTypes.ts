@@ -26,6 +26,7 @@
  (`order` / `onChangeOrder`), and filtering goes through `BAIPropertyFilter`
  (server-side) everywhere in this app.
 */
+import { isValidElement } from 'react';
 import type { Key, ReactNode, TdHTMLAttributes } from 'react';
 
 /** Loose record constraint, mirroring antd's `AnyObject`. */
@@ -247,3 +248,41 @@ export const restoreColumnToDefault = (
 export const restoreAllColumnsToDefault = (): BAITableColumnOverrideRecord => {
   return {};
 };
+
+/**
+ * Flatten a column `title` down to plain text.
+ *
+ * `title` is a `ReactNode`, but the column-settings and CSV-export surfaces
+ * need a `string` for their checkbox labels. Both used to reach for
+ * `String(title)`, which on a React element is the literal `"[object Object]"`
+ * — the defect reported on the Deployments column list (QA-FINDINGS Q-12). The
+ * app's own legacy `TableColumnsSettingModal` had a narrower version of the
+ * same bug: it picked only the DIRECT string children of an element, so a
+ * header that nested its text one level deeper came out blank.
+ *
+ * Walking `props.children` recovers the text for every shape a header actually
+ * uses: elements, fragments and arrays. Anything genuinely textless — an
+ * icon-only header — yields `''`, and callers fall back to the column key.
+ *
+ * Lives here rather than in the engine because it is a fact about the COLUMN
+ * MODEL, and both the engine's own modal and the app's legacy one need it.
+ */
+export const columnTitleToPlainText = (node: ReactNode): string => {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(columnTitleToPlainText).join('');
+  if (isValidElement(node)) {
+    const { children } = node.props as { children?: ReactNode };
+    return columnTitleToPlainText(children);
+  }
+  return '';
+};
+
+/**
+ * Resolve a column's `title`, which may be a render function, to a node.
+ */
+export const renderColumnTitle = (column: { title?: unknown }): ReactNode =>
+  typeof column.title === 'function'
+    ? (column.title as (props: unknown) => ReactNode)({})
+    : (column.title as ReactNode);

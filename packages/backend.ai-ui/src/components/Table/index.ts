@@ -15,6 +15,19 @@
  * module, which imports no table implementation at all.
  */
 export { default as BAITableAstryx } from './BAITableAstryx';
+/**
+ * Exported for the app's own `TableColumnsSettingModal`, which serves the five
+ * tables that predate `BAITableAstryx`'s built-in `tableSettings` and keep
+ * their own `useHiddenColumnKeysSetting` persistence. It delegates its
+ * rendering here so those tables' column settings look like every other
+ * table's (QA-FINDINGS Q-13) without migrating their storage shape.
+ */
+export { default as BAITableAstryxSettingModal } from './BAITableAstryxSettingModal';
+export type {
+  BAITableAstryxSettingColumn,
+  BAITableAstryxSettingResult,
+  BAITableAstryxSettingModalProps,
+} from './BAITableAstryxSettingModal';
 export { default as BAINameActionCell } from './BAINameActionCell';
 export type {
   BAINameActionCellAction,
@@ -42,4 +55,6 @@ export {
   getVisibleColumns,
   restoreColumnToDefault,
   restoreAllColumnsToDefault,
+  columnTitleToPlainText,
+  renderColumnTitle,
 } from './tableTypes';

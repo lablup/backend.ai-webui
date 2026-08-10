@@ -1,0 +1,63 @@
+{
+  "builtin-agents": {
+    "path": "agent",
+    "metrics": {
+      "dialog": {
+        "w": 420
+      },
+      "heading": "Table Settings",
+      "subtitle": null,
+      "searchPlaceholder": "Search table columns",
+      "searchVisibleLabel": null,
+      "scrollerMaxHeight": "none",
+      "scrollerHeight": "317.859px",
+      "buttons": [
+        "Cancel",
+        "Apply"
+      ],
+      "gripHandles": 9,
+      "checkboxes": 9
+    }
+  },
+  "rbac": {
+    "path": "admin/rbac",
+    "metrics": {
+      "dialog": {
+        "w": 420
+      },
+      "heading": "Table Settings",
+      "subtitle": null,
+      "searchPlaceholder": "Search table columns",
+      "searchVisibleLabel": null,
+      "scrollerMaxHeight": "none",
+      "scrollerHeight": "287.875px",
+      "buttons": [
+        "Cancel",
+        "Apply"
+      ],
+      "gripHandles": 0,
+      "checkboxes": 8
+    }
+  },
+  "my-environments": {
+    "path": "my-environment",
+    "metrics": {
+      "dialog": {
+        "w": 420
+      },
+      "heading": "Table Settings",
+      "subtitle": null,
+      "searchPlaceholder": "Search table columns",
+      "searchVisibleLabel": null,
+      "scrollerMaxHeight": "none",
+      "scrollerHeight": "317.859px",
+      "buttons": [
+        "Cancel",
+        "Apply"
+      ],
+      "gripHandles": 0,
+      "checkboxes": 9
+    }
+  },
+  "pageErrors": []
+}
