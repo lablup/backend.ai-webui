@@ -6,7 +6,7 @@ import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { MediaTheme, useTheme } from '@astryxdesign/core/theme';
+import { MediaTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';
@@ -39,7 +39,6 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
   hidden,
 }) => {
   const { t } = useTranslation();
-  const { mode } = useTheme();
   const label = collapsed ? t('button.Expand') : t('button.Collapse');
   return (
     <BAIFlex
@@ -72,12 +71,19 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
           `MediaTheme` is Astryx's own answer for exactly this ("media
           overlays, scrims, toasts, and tooltips"); it renders `display:
           contents`, so it costs no layout. Its `mode` is the tooltip
-          surface's luminance, which is the OPPOSITE of the app's — the
-          tooltip is dark while the app is light and vice versa. */}
+          surface's luminance.
+
+          That mode is now the CONSTANT `'dark'`. It used to be the opposite of
+          the app's, because Astryx's tooltip inverts against the page. The
+          theme pins the bubble to antd's `colorBgSpotlight`
+          (`rgba(0,0,0,0.85)` / `#424242` — dark in BOTH schemes, see
+          `ANTD_HOVER_PARITY`), so the surface no longer flips and a mode that
+          tracks the app would put on-LIGHT tokens on a dark bubble in dark
+          mode. QA-FINDINGS Q-10. */}
       <Tooltip
         placement="end"
         content={
-          <MediaTheme mode={mode === 'dark' ? 'light' : 'dark'}>
+          <MediaTheme mode="dark">
             {label} <Kbd keys="[" />
           </MediaTheme>
         }

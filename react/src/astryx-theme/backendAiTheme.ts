@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 9;
+export const THEME_NAME_REV = 10;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -636,6 +636,115 @@ const ANTD_DROPDOWN_DENSITY = {
   },
 };
 
+/**
+ * HOVER + TOOLTIP PARITY — three reported defects, one shared mechanism
+ * (QA-FINDINGS Q-8 / Q-9 / Q-10).
+ *
+ * ## The mechanism
+ *
+ * Astryx paints EVERY interactive hover state as one composited layer —
+ * `background-image: linear-gradient(var(--color-overlay-hover),
+ * var(--color-overlay-hover))` over whatever the element already had, and for
+ * a `Tab` as an absolutely-positioned overlay span that is the tab's FIRST
+ * child. Measured live (`.scratch/astryx-migration/qa8/probe-hover.mjs`,
+ * `probe-tab-overlay.mjs`).
+ *
+ * `--color-overlay-hover` is pinned to antd's `colorBgTextHover`
+ * (`ANTD_NEUTRAL_SURFACES`), which is `rgba(0,0,0,0.06)` in light but
+ * **opaque `#262626`** in dark — and that opaque value is *correct*: it comes
+ * from `resources/theme.json`'s `colorFillSecondary: '#262626'` dark seed, so
+ * it is what legacy antd rendered. The bug is not the token, it is that antd
+ * only ever used it on surfaces with NO fill of their own (text/ghost buttons,
+ * menu rows) while Astryx reuses it as a universal overlay. Composited over a
+ * filled button it replaces the brand colour outright; painted over a tab it
+ * covers the label, because an absolutely-positioned child with `z-index:auto`
+ * paints in the positioned phase, i.e. ABOVE static in-flow text.
+ *
+ * That single fact explains all three reports:
+ *
+ *   Q-8  "다크모드에서 버튼 hover 시 … 대비가 너무 많이 납니다"
+ *        primary button `#be5e06` -> flat `#262626` grey.
+ *   Q-9  "탭을 hover 했을 때 다크모드에서 글씨가 안보입니다"
+ *        the label is not low-contrast, it is painted over. Light survives only
+ *        because 6% black is nearly transparent.
+ *   Q-10 "다크모드에서도 툴팁은 검은색 배경을 유지합니다"
+ *        separate but adjacent: Astryx inverts the tooltip against the app
+ *        surface, so dark mode gets a WHITE bubble.
+ *
+ * ## The antd targets (measured, not guessed)
+ *
+ * antd 6.5.0 `getDesignToken()` over the shipped `resources/theme.json` seeds,
+ * light + `darkAlgorithm` (oracle rebuilt outside the repo — antd is not a
+ * dependency on this branch):
+ *
+ *   colorPrimary       #ff7a00            / #be5e06
+ *   colorPrimaryHover  #ff9729            / #d37f25   <- LIGHTER, same hue
+ *   colorError         #ff4d4f            / #be3d3f
+ *   colorErrorHover    #ff7875            / #d36664   <- LIGHTER, same hue
+ *   colorBgSpotlight   rgba(0,0,0,0.85)   / #424242   <- DARK in BOTH modes
+ *
+ * So antd's filled-button hover *lightens within the hue* in both modes, and
+ * its tooltip is dark in both modes. antd's `Tabs` had no hover background at
+ * all — `.ant-tabs-tab:hover` sets `color` only.
+ *
+ * ## Why the theme layer, and why per-variant
+ *
+ * `--color-overlay-hover` must stay as it is globally: it is antd-correct for
+ * the ghost/text/menu surfaces that make up most of its call sites, and audit 1
+ * (catalog G-4) pinned the opaque dark value precisely because a translucent
+ * wash is invisible on `#141414`. So the override is scoped to the components
+ * that composite it over something that must survive — `button` (which reflects
+ * `data-variant`, so `variant:*` keys render) and `tab`. Both keys are the ones
+ * `astryx component Button` / `astryx component TabList` document.
+ *
+ * PILOT-DECISION — the filled-button hover is a translucent WHITE WASH rather
+ * than antd's exact `colorPrimaryHover`. antd derives that step from its palette
+ * generator, which this repo would have to re-implement to keep working under a
+ * runtime `theme.json` rebrand; a wash needs no palette maths and survives any
+ * seed. Measured residue of `rgba(255,255,255,0.16)` against antd:
+ *
+ *   primary     light  #ff8f29 vs #ff9729   (ΔG 8/255)
+ *               dark   #c87830 vs #d37f25   (ΔR 11, ΔG 7, ΔB 9)
+ *   destructive light  #ff7d7f vs #ff7875   (ΔG 5, ΔB 10)
+ *               dark   #c86c6e vs #d36664   (ΔR 11, ΔG 6, ΔB 10)
+ *
+ * i.e. the same hue, one perceptual step short of antd's lift — against a
+ * previous state that dropped the hue entirely in dark.
+ */
+const ANTD_HOVER_PARITY = {
+  // antd `colorBgSpotlight` — the tooltip bubble is DARK in both schemes, with
+  // `colorTextLightSolid` (#fff) copy. Astryx instead inverts against the app
+  // surface, which is what turned the dark-mode bubble white.
+  tooltip: {
+    base: {
+      backgroundColor: 'light-dark(rgba(0,0,0,0.85), #424242)',
+      color: '#FFFFFF',
+    },
+  },
+  // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
+  // Astryx's hover pill is an absolutely-positioned overlay that outranks the
+  // label in paint order, so in dark (opaque `#262626`) it erased it.
+  // `--color-overlay-hover: transparent` removes the pill and leaves Astryx's
+  // own accent recolour, which is antd's behaviour exactly.
+  // `BAITabList.css` already does this for the card variant; this generalises
+  // it to the line variant, which is where the defect was reported.
+  tab: {
+    base: {
+      '--color-overlay-hover': 'transparent',
+    },
+  },
+  // Filled variants only. `secondary` / `ghost` keep the global overlay: they
+  // have no brand fill to destroy, and that IS antd's `colorBgTextHover`.
+  button: {
+    'variant:primary': {
+      '--color-overlay-hover': 'rgba(255,255,255,0.16)',
+    },
+    'variant:destructive': {
+      '--color-overlay-hover': 'rgba(255,255,255,0.16)',
+    },
+  },
+};
+
 export interface BrandSeedPair {
   /** Light-scheme seed, as declared in theme.json. */
   light: string;
@@ -884,6 +993,7 @@ export function buildBackendAiTheme(
       ...STATUS_TEXT_COLORS,
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
+      ...ANTD_HOVER_PARITY,
     },
   });
 

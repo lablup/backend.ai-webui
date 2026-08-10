@@ -1,0 +1,217 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "primaryLabel": "Start Session",
+    "primaryDelta": [
+      {
+        "path": "root",
+        "tag": "button",
+        "cls": "astryx-button primary",
+        "changes": {
+          "bgImage": {
+            "rest": "none",
+            "hover": "linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.16))"
+          }
+        }
+      }
+    ],
+    "tabDelta": [
+      {
+        "path": "root",
+        "tag": "button",
+        "cls": "astryx-tab x1n2onr6",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      },
+      {
+        "path": "root>0",
+        "tag": "span",
+        "cls": "x10l6tqk x10a8y8t",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      },
+      {
+        "path": "root>1",
+        "tag": "span",
+        "cls": "xwz0xwf",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      },
+      {
+        "path": "root>1>0",
+        "tag": "span",
+        "cls": "x1agbcgv xcrlgei",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      },
+      {
+        "path": "root>1>0>0",
+        "tag": "div",
+        "cls": "",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      },
+      {
+        "path": "root>1>1",
+        "tag": "span",
+        "cls": "x1agbcgv xcrlgei",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      },
+      {
+        "path": "root>1>1>0",
+        "tag": "div",
+        "cls": "",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      },
+      {
+        "path": "root>2",
+        "tag": "span",
+        "cls": "astryx-tab-indicator x10l6tqk",
+        "changes": {
+          "color": {
+            "rest": "rgba(0, 0, 0, 0.65)",
+            "hover": "rgb(255, 122, 0)"
+          }
+        }
+      }
+    ]
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "primaryLabel": "Start Session",
+    "primaryDelta": [
+      {
+        "path": "root",
+        "tag": "button",
+        "cls": "astryx-button primary",
+        "changes": {
+          "bgImage": {
+            "rest": "none",
+            "hover": "linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.16))"
+          }
+        }
+      }
+    ],
+    "tabDelta": [
+      {
+        "path": "root",
+        "tag": "button",
+        "cls": "astryx-tab x1n2onr6",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      },
+      {
+        "path": "root>0",
+        "tag": "span",
+        "cls": "x10l6tqk x10a8y8t",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      },
+      {
+        "path": "root>1",
+        "tag": "span",
+        "cls": "xwz0xwf",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      },
+      {
+        "path": "root>1>0",
+        "tag": "span",
+        "cls": "x1agbcgv xcrlgei",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      },
+      {
+        "path": "root>1>0>0",
+        "tag": "div",
+        "cls": "",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      },
+      {
+        "path": "root>1>1",
+        "tag": "span",
+        "cls": "x1agbcgv xcrlgei",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      },
+      {
+        "path": "root>1>1>0",
+        "tag": "div",
+        "cls": "",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      },
+      {
+        "path": "root>2",
+        "tag": "span",
+        "cls": "astryx-tab-indicator x10l6tqk",
+        "changes": {
+          "color": {
+            "rest": "rgba(255, 255, 255, 0.65)",
+            "hover": "rgb(190, 94, 6)"
+          }
+        }
+      }
+    ]
+  },
+  "pageErrors": []
+}

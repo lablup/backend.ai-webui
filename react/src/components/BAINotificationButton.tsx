@@ -4,7 +4,6 @@
  */
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
-import { useThemeMode } from '../hooks/useThemeMode';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -35,7 +34,6 @@ type BAINotificationButtonProps = Pick<
 const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   ...props
 }) => {
-  const { isDarkMode } = useThemeMode();
   const [notifications] = useBAINotificationState();
 
   const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
@@ -95,15 +93,21 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   // So the on-dark context now sits on the trigger BUTTON itself
   // (`data-astryx-media="dark"` is exactly what `MediaTheme` renders — a
   // wrapper is only needed when several elements share the context), and the
-  // tooltip CONTENT takes the opposite-of-app media mode, the same recipe
-  // `SiderToggleButton` uses for its inverted tooltip.
+  // tooltip CONTENT takes the tooltip surface's own luminance, the same recipe
+  // `SiderToggleButton` uses.
+  //
+  // That luminance is now CONSTANT. The theme pins the bubble to antd's
+  // `colorBgSpotlight` (`rgba(0,0,0,0.85)` / `#424242` — dark in both schemes,
+  // `ANTD_HOVER_PARITY`), so it no longer follows the app polarity and the
+  // content mode is a plain `"dark"` rather than the opposite of the app's.
+  // QA-FINDINGS Q-10.
   return (
     <>
       {/* antd `Tooltip title` -> `content`; `placement="left"` -> `"start"`
           (Astryx uses logical placements — MAPPING §4). */}
       <Tooltip
         content={
-          <MediaTheme mode={isDarkMode ? 'light' : 'dark'}>
+          <MediaTheme mode="dark">
             {t('notification.Notifications')}{' '}
             <BAIText keyboardWithLightBorder>{']'}</BAIText>
           </MediaTheme>

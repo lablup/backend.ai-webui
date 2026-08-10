@@ -188,4 +188,5 @@ e2e/recordings/
 # holds a live `backendaiwebui.sessionid` for whichever backend the probe
 # logged into — a credential, not evidence.
 .scratch/**/*-state.json
+.scratch/**/state.json
 
