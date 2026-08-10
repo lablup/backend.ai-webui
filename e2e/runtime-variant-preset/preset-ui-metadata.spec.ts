@@ -145,13 +145,13 @@ test.describe(
       );
 
       await modal
-        .getByRole('combobox', { name: 'Category (optional)' })
+        .getByRole('combobox', { name: /^Category/ })
         .fill('e2e_category');
       await modal
-        .getByRole('textbox', { name: 'Display Name (optional)' })
+        .getByRole('textbox', { name: /^Display Name/ })
         .fill('E2E Display Name');
 
-      await modal.getByRole('combobox', { name: 'UI Type (optional)' }).click();
+      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
       await page
         .locator('.ant-select-dropdown')
         .getByText('Select', { exact: true })
@@ -193,7 +193,7 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
-      await modal.getByRole('combobox', { name: 'UI Type (optional)' }).click();
+      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
       await page
         .locator('.ant-select-dropdown')
         .getByText('Slider', { exact: true })
@@ -225,7 +225,7 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
-      await modal.getByRole('combobox', { name: 'UI Type (optional)' }).click();
+      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
       await page
         .locator('.ant-select-dropdown')
         .getByText('Slider', { exact: true })
@@ -234,6 +234,37 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(modal.getByText('Maximum value is required.')).toBeVisible();
+
+      await modal.getByRole('button', { name: 'Cancel' }).click();
+    });
+
+    test('Superadmin cannot save a SLIDER UI option with a negative Step', async ({
+      page,
+    }) => {
+      test.skip(
+        !(await supportsUIMetadata(page)),
+        'runtime-variant-preset-ui-metadata requires manager >= 26.9.0',
+      );
+
+      const modal = await openCreateModalWithRequiredFields(
+        page,
+        `e2e-preset-slider-negative-step-${Date.now()}`,
+        `E2E_KEY_${Date.now()}`,
+      );
+
+      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
+      await page
+        .locator('.ant-select-dropdown')
+        .getByText('Slider', { exact: true })
+        .click();
+
+      await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
+      await modal.getByRole('spinbutton', { name: 'Maximum' }).fill('8');
+      await modal.getByRole('spinbutton', { name: 'Step' }).fill('-1');
+
+      await modal.getByRole('button', { name: 'Create' }).click();
+
+      await expect(modal.getByText('Step must be minimum 0')).toBeVisible();
 
       await modal.getByRole('button', { name: 'Cancel' }).click();
     });
@@ -282,12 +313,12 @@ test.describe(
       );
 
       await modal
-        .getByRole('combobox', { name: 'Category (optional)' })
+        .getByRole('combobox', { name: /^Category/ })
         .fill('e2e_category');
       await modal
-        .getByRole('textbox', { name: 'Display Name (optional)' })
+        .getByRole('textbox', { name: /^Display Name/ })
         .fill('E2E Display Name');
-      await modal.getByRole('combobox', { name: 'UI Type (optional)' }).click();
+      await modal.getByRole('combobox', { name: /^UI Type/ }).click();
       await page
         .locator('.ant-select-dropdown')
         .getByText('Select', { exact: true })
@@ -317,10 +348,10 @@ test.describe(
       await expect(editModal).toContainText('Edit Preset');
 
       await expect(
-        editModal.getByRole('combobox', { name: 'Category (optional)' }),
+        editModal.getByRole('combobox', { name: /^Category/ }),
       ).toHaveValue('e2e_category');
       await expect(
-        editModal.getByRole('textbox', { name: 'Display Name (optional)' }),
+        editModal.getByRole('textbox', { name: /^Display Name/ }),
       ).toHaveValue('E2E Display Name');
 
       // The regression this covers: row count used to be right but the
