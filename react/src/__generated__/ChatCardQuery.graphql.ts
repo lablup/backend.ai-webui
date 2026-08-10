@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<66d5074596f4c4c9082e6df0b8a2131b>>
+ * @generated SignedSource<<98289759770227d3e3f411563ce60562>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,14 +11,18 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs, Result } from "relay-runtime";
 export type ChatCardQuery$variables = {
-  endpointId: string;
+  deploymentId: string;
 };
 export type ChatCardQuery$data = {
-  readonly endpoint: Result<{
-    readonly endpoint_id: string | null | undefined;
-    readonly replicas: number | null | undefined;
-    readonly url: string | null | undefined;
-    readonly " $fragmentSpreads": FragmentRefs<"ChatHeader_Endpoint">;
+  readonly deployment: Result<{
+    readonly id: string;
+    readonly networkAccess: {
+      readonly endpointUrl: string | null | undefined;
+    };
+    readonly replicaState: {
+      readonly desiredReplicaCount: number;
+    };
+    readonly " $fragmentSpreads": FragmentRefs<"ChatHeader_Deployment">;
   } | null | undefined, unknown>;
 };
 export type ChatCardQuery = {
@@ -31,35 +35,57 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "endpointId"
+    "name": "deploymentId"
   }
 ],
 v1 = [
   {
     "kind": "Variable",
-    "name": "endpoint_id",
-    "variableName": "endpointId"
+    "name": "id",
+    "variableName": "deploymentId"
   }
 ],
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "endpoint_id",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "url",
+  "concreteType": "ModelDeploymentNetworkAccess",
+  "kind": "LinkedField",
+  "name": "networkAccess",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "endpointUrl",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "replicas",
+  "concreteType": "ReplicaState",
+  "kind": "LinkedField",
+  "name": "replicaState",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "desiredReplicaCount",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -74,9 +100,9 @@ return {
         "field": {
           "alias": null,
           "args": (v1/*: any*/),
-          "concreteType": "Endpoint",
+          "concreteType": "ModelDeployment",
           "kind": "LinkedField",
-          "name": "endpoint",
+          "name": "deployment",
           "plural": false,
           "selections": [
             (v2/*: any*/),
@@ -85,7 +111,7 @@ return {
             {
               "args": null,
               "kind": "FragmentSpread",
-              "name": "ChatHeader_Endpoint"
+              "name": "ChatHeader_Deployment"
             }
           ],
           "storageKey": null
@@ -105,9 +131,9 @@ return {
       {
         "alias": null,
         "args": (v1/*: any*/),
-        "concreteType": "Endpoint",
+        "concreteType": "ModelDeployment",
         "kind": "LinkedField",
-        "name": "endpoint",
+        "name": "deployment",
         "plural": false,
         "selections": [
           (v2/*: any*/),
@@ -116,15 +142,19 @@ return {
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
+            "concreteType": "ModelDeploymentMetadata",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -133,16 +163,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "99c9ded5ee686463528762c94e09697b",
+    "cacheID": "3f9013e20edcaafd1a678f53b915b406",
     "id": null,
     "metadata": {},
     "name": "ChatCardQuery",
     "operationKind": "query",
-    "text": "query ChatCardQuery(\n  $endpointId: UUID!\n) {\n  endpoint(endpoint_id: $endpointId) {\n    endpoint_id\n    url\n    replicas\n    ...ChatHeader_Endpoint\n    id\n  }\n}\n\nfragment ChatHeader_Endpoint on Endpoint {\n  endpoint_id\n  name\n}\n"
+    "text": "query ChatCardQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    networkAccess {\n      endpointUrl\n    }\n    replicaState {\n      desiredReplicaCount\n    }\n    ...ChatHeader_Deployment\n  }\n}\n\nfragment ChatHeader_Deployment on ModelDeployment {\n  id\n  metadata {\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d528439518d2d61f340b117a8ac42ee8";
+(node as any).hash = "0a7cffdb9b1bf06c7a0b1c1cff29396b";
 
 export default node;

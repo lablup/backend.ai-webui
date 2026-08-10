@@ -19,6 +19,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from './useCurrentProject';
+import { useResolveImageReference } from './useDefaultImagesWithFallback';
 import { generateRandomString, toGlobalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +35,11 @@ type SessionCreationSuccess = {
 interface CreateSessionInfo {
   kernelName: string;
   sessionName: string;
-  architecture: string;
+  // Left `undefined` when the image reference carries no `@arch` suffix, so
+  // that `createIfNotExists()` applies its own `x86_64` default. Passing an
+  // empty string instead would suppress that default and send a blank
+  // architecture to the manager.
+  architecture: string | undefined;
   batchTimeout?: string;
   resources: SessionResources;
 }
@@ -112,6 +117,7 @@ export const useStartSession = () => {
   const { upsertNotification } = useSetBAINotification();
 
   const relayEnv = useRelayEnvironment();
+  const resolveImageReference = useResolveImageReference();
   const baiClient = useSuspendedBackendaiClient();
   const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
@@ -157,12 +163,21 @@ export const useStartSession = () => {
   const startSession = async (
     values: SessionLauncherFormValue & { dependencies?: string[] },
   ) => {
-    // If manual image is selected, use it as kernelName
+    // A manual image (the `allowManualImageNameForSession` escape hatch) is
+    // used verbatim — the user explicitly typed it, so it must not be
+    // rewritten by resolution. `environment` holds a name-only reference (see
+    // `normalizeEnvironmentFormat`); config values such as
+    // `defaultImportEnvironment` may omit the tag and/or the architecture, so
+    // resolve them against the registered image list here to make every
+    // caller of `startSession` behave like the launcher form (FR-3462).
     const imageFullName =
-      values.environments.manual || values.environments.version;
-    const [kernelName, architecture] = imageFullName
-      ? imageFullName.split('@')
-      : ['', ''];
+      values.environments.manual ||
+      (await resolveImageReference(
+        values.environments.version || values.environments.environment,
+      ));
+    // `architecture` stays `undefined` for a reference without `@arch` on
+    // purpose — see the note on `CreateSessionInfo.architecture`.
+    const [kernelName = '', architecture] = imageFullName?.split('@') ?? [];
 
     const sessionName = _.isEmpty(values.sessionName)
       ? generateSessionId()

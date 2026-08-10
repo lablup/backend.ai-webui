@@ -9,8 +9,9 @@ import {
   chatPageQueryMockResponse,
   chatCardQueryMockResponse,
   chatCardQueryNullUrlMockResponse,
-  endpointSelectQueryMockResponse,
-  endpointSelectValueQueryMockResponse,
+  deploymentSelectQueryMockResponse,
+  deploymentSelectValueQueryMockResponse,
+  deploymentTokenSelectQueryMockResponse,
   makeSseResponse,
   modelsApiMockResponse,
   MOCK_MODEL_ID,
@@ -155,10 +156,12 @@ test.describe(
 
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       await page.route('**/v1/models', async (route) => {
@@ -626,10 +629,12 @@ test.describe(
 
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       await page.route('**/v1/models', async (route) => {
@@ -684,10 +689,12 @@ test.describe(
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
         ChatCardQuery: (vars) =>
-          chatCardQueryNullUrlMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+          chatCardQueryNullUrlMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       await page.route('**/v1/models', async (route) => {
@@ -740,10 +747,12 @@ test.describe(
 
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       // Models API returns HTTP 401 to trigger an error notification

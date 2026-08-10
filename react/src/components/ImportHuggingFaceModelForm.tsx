@@ -3,12 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
   App,
@@ -144,6 +146,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
     null,
   );
   const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
@@ -257,6 +260,27 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         >
           <Input placeholder="https://huggingface.co/openai/gpt-oss-20b" />
         </Form.Item>
+        {/* The preview must stay mounted even while the input is
+            unparseable: `useDebounce` seeds its state with the current
+            value, so remounting on every unparseable→parseable transition
+            (`openai/` → `openai/g`) would fire an undebounced request at the
+            rate-limited API. `hidden` collapses the row to `display: none`,
+            so an empty input leaves no gap above the next field without
+            unmounting anything. */}
+        <Form.Item noStyle dependencies={['model']}>
+          {({
+            getFieldValue,
+          }: FormInstance<ImportHuggingFaceModelFormValues>) => {
+            const modelId = parseHuggingFaceModel(
+              getFieldValue('model') ?? '',
+            )?.modelId;
+            return (
+              <Form.Item hidden={!modelId}>
+                <HuggingFaceModelPreview modelId={modelId} />
+              </Form.Item>
+            );
+          }}
+        </Form.Item>
         <Form.Item
           name="revision"
           label={t('import.HuggingFaceRevision')}
@@ -272,7 +296,11 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         >
           <Input.Password autoComplete="off" />
         </Form.Item>
-        <Form.Item label={t('deployment.ModelFolder')} required>
+        <Form.Item
+          label={t('deployment.ModelFolder')}
+          required
+          extra={t('import.OnlyWritableModelFoldersAreListed')}
+        >
           <BAIFlex direction="row" gap="xs">
             <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
               <Form.Item
@@ -290,7 +318,14 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                 <BAIVFolderSelect
                   ref={vfolderSelectRef}
                   excludeDeleted
-                  filter='usage_mode == "model"'
+                  // The session writes into the folder, so a read-only mount
+                  // fails. `mount_rw` covers read-only *shares* and hosts, but
+                  // the resolver filters rows by scope only and strips
+                  // MOUNT_RW afterwards, so a row-level `ro` folder still comes
+                  // back — exclude it here too.
+                  filter='usage_mode == "model" & permission != "ro"'
+                  requiredPermission="mount_rw"
+                  currentProjectId={currentProject.id ?? undefined}
                   style={{ flex: 1 }}
                   onResolvedNamesChange={(nameMap) => {
                     setFolderNameMap((prev) => ({ ...prev, ...nameMap }));
@@ -362,6 +397,10 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsFolderCreateModalOpen(false);
+          if (result?.accessControl?.permission === 'READ_ONLY') {
+            app.message.warning(t('import.CreatedFolderIsReadOnly'));
+            return;
+          }
           if (result?.id) {
             // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
             // but BAIVFolderSelect's value query reads from `vfolder_nodes`

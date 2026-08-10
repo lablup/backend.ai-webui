@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
+import { ChatHeader_Deployment$key } from '../../__generated__/ChatHeader_Deployment.graphql';
 import { useWebUINavigate } from '../../hooks';
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
@@ -10,7 +10,7 @@ import { useProjectPath } from '../../hooks/useRouteScope';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
-import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
+import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
 import ModelSelect from './ModelSelect';
 import {
   CloseOutlined,
@@ -25,7 +25,7 @@ import {
   Popover,
   Tooltip,
 } from 'antd';
-import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
   ScaleIcon,
@@ -70,8 +70,8 @@ interface ChatHeaderProps {
   models: ChatModel[];
   modelId: string;
   onChangeModel: (modelId: string) => void;
-  endpointFrgmt?: ChatHeader_Endpoint$key | null;
-  onChangeEndpoint: EndpointSelectProps['onChange'];
+  deploymentFrgmt?: ChatHeader_Deployment$key | null;
+  onChangeDeployment: DeploymentSelectProps['onChange'];
   agents: AIAgent[];
   agent?: AIAgent;
   onChangeAgent: (agent: AIAgent) => void;
@@ -96,8 +96,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   models,
   modelId,
   onChangeModel,
-  endpointFrgmt,
-  onChangeEndpoint,
+  deploymentFrgmt,
+  onChangeDeployment,
   agent,
   onChangeAgent,
   sync,
@@ -115,20 +115,26 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
-  const [isPendingEndpointTransition, startEndpointTransition] =
+  const [isPendingDeploymentTransition, startDeploymentTransition] =
     useTransition();
   const [isPendingAgentTransition, startAgentTransition] = useTransition();
 
-  // Using fragment instead of just endpoint_id to support future EndpointSelect extensions
-  const endpoint = useFragment(
+  // Using fragment instead of just the id to support future DeploymentSelect extensions
+  const deployment = useFragment(
     graphql`
-      fragment ChatHeader_Endpoint on Endpoint {
-        endpoint_id
-        name
+      fragment ChatHeader_Deployment on ModelDeployment {
+        id
+        metadata {
+          name
+        }
       }
     `,
-    endpointFrgmt,
+    deploymentFrgmt,
   );
+  // The `deployments` chatting tab and DeploymentSelect both address a
+  // deployment by its local UUID, while the Strawberry node exposes the global
+  // Relay ID.
+  const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
 
   const items: MenuProps['items'] = filterOutEmpty([
     showCompareMenuItem && {
@@ -140,7 +146,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           pathname: buildProjectPath('deployments'),
           search: new URLSearchParams({
             tab: 'chatting',
-            endpointId: endpoint?.endpoint_id ?? '',
+            endpointId: deploymentId ?? '',
             modelId: modelId,
           }).toString(),
         });
@@ -212,15 +218,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         )}
         {!agentBinding?.endpoint_url && (
-          <EndpointSelect
+          <DeploymentSelect
             fetchKey={fetchKey}
-            loading={isPendingEndpointTransition}
+            loading={isPendingDeploymentTransition}
             onChange={(id) => {
-              startEndpointTransition(() => {
-                onChangeEndpoint?.(id);
+              startDeploymentTransition(() => {
+                onChangeDeployment?.(id);
               });
             }}
-            value={endpoint?.endpoint_id}
+            value={deploymentId}
             popupMatchSelectWidth={false}
             showDetailPageButton
           />
@@ -228,7 +234,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         {!isEmpty(models) && (
           <ModelSelect
             models={models}
-            endpointName={endpoint?.name}
+            deploymentName={deployment?.metadata.name}
             value={modelId}
             onChange={(modelId) => {
               startTransition(() => {

@@ -199,6 +199,7 @@ Context-qualified rows are skipped outright on prose because long-form text is f
 | worker node | en | agent node | Reserve "worker node" for model serving context only |
 | スケーリンググループ | ja | リソースグループ | Deprecated term ("scaling group"); the UI and docs use "リソースグループ" |
 | 레플리카 | ko | 복제본 | Use the Korean translation, not the transliteration, for consistency |
+| 리소스 그룹 | ko | 자원 그룹 | Use the Korean translation, not the transliteration, for consistency with "자원 정책" |
 | 슈퍼관리자 | ko | 슈퍼 관리자 | Use the spaced form for consistency |
 | 슈퍼어드민 | ko | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
 | 스케일링 그룹 | ko | 자원 그룹 | Deprecated term ("scaling group"); the UI and docs use "자원 그룹" |

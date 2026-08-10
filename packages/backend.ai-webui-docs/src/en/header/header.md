@@ -18,6 +18,22 @@ Users can switch between projects using the project selector provided in the top
 By default, the project that the user currently belongs to is selected.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
 
+The selector lists the projects you can access. If you open an address that names a
+project which does not exist or which you cannot access, the project selector
+shows no selection and the page explains what happened instead of silently
+switching you to another project.
+
+![](../images/project_not_found_or_no_access.png)
+
+- The message reads `Project ‘<name>’ was not found or you don’t have access to it.`
+- Below it, a hint asks you to select an accessible project from the project
+  selector at the top of the page.
+- A `Go to <project>` button takes you to a project you can access.
+
+If you do not belong to any project, the page shows
+`No accessible projects.` together with
+`Ask your administrator to grant you access to a project.`
+
 <a id="login-session-timer"></a>
 
 ## Login session timer
@@ -49,11 +65,10 @@ Press the shortcut key (`]`) to open and close the notification area.
 
 <a id="theme-mode"></a>
 
-## Theme mode
+## Display mode
 
 
-You can change the theme mode of the WebUI via the dark mode button on the
-right side of the header.
+You can change the display mode of the WebUI via the light/dark mode button.
 
 ![](../images/theme_mode.png)
 
@@ -63,7 +78,7 @@ right side of the header.
 
 
 Click the question mark button to access the web version of this guide document.
-You will be directed to the appropriate documentation based on the page you are currently on.
+The link is built to match the WebUI you are using.
 
 <a id="responsive-layout"></a>
 
@@ -99,8 +114,9 @@ Below the user information, the following action items are available.
 - `Preferences`: Go to the user settings page.
 - `Logs / Errors`: Go to the logs tab in the user settings page. You can check
   the log and error history recorded on the client side.
-- `Download Desktop App`: Download the stand-alone WebUI app for your platform.
-  This option is only visible when enabled by the administrator.
+- `Downloads`: Open the Downloads dialog, where you can get the stand-alone
+  WebUI desktop app and the Backend.AI command-line interface (CLI). This option
+  is only visible when the administrator has enabled at least one of the two.
 - `Log Out`: Log out of the WebUI.
 
 <a id="my-account"></a>
@@ -157,3 +173,38 @@ To log in, you must open the 2FA application and enter a 6-digit code in the One
 
 If you want to disable 2FA, turn off the `2FA Enabled` switch and click the confirm button in the
 following dialog.
+
+<a id="downloads"></a>
+
+### Downloads
+
+Selecting `Downloads` opens a dialog with one tab for each download the
+administrator has enabled: `Desktop App` and `CLI`.
+
+![](../images/downloads_desktop_app_tab.png)
+
+On the `Desktop App` tab, select your operating system in the **OS** field, then
+click the button for your CPU architecture to start the download. The
+stand-alone app gives you the same WebUI outside a browser.
+
+![](../images/downloads_cli_tab.png)
+
+The `CLI` tab offers two ways to start using the command-line client:
+
+- **Download standalone executable**: Select your operating system, then click
+  the button for your CPU architecture. Linux and macOS builds are offered.
+  After downloading, run the commands shown below the buttons to make the file
+  executable and, optionally, install it as `backend.ai` on your `PATH`. On
+  macOS, the dialog instead shows how to clear the quarantine flag first,
+  because the build is not signed yet.
+- **Install via pip**: A ready-to-run snippet that creates a Python virtual
+  environment, installs the client version matching the server you are connected
+  to, and sets the environment variables the client needs. Use the copy button at
+  the top right of the snippet to copy the whole block.
+
+:::note
+The snippet fills in the endpoint of your current session, but never your
+credentials. Replace `<your-access-key>` and `<your-secret-key>` with your own
+keypair before running it. The snippet also pins Python 3.13, which the client
+requires.
+:::
