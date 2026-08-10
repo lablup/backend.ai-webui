@@ -131,22 +131,7 @@ Experimental features may change or be removed in future updates.
    Face after a short pause — a loading indicator shows while it checks — and
    displays a preview card below the field before you start the import. The
    card shows the model ID as a link to its Hugging Face page, the model's
-   task and library tags (when available), its **Size**, and when it was last
-   updated. Hovering over the size shows a note that it is the total size of
-   the repository including every revision, so the actual download may be
-   smaller.
-
-   The preview also warns about models that cannot be downloaded as-is: a red
-   error appears when the model is disabled on Hugging Face and cannot be
-   downloaded, and a yellow warning appears when the model is gated — accept
-   its license on Hugging Face and enter an access token (see step 3), or the
-   download will fail. If nothing is found under the entered address, the
-   preview reports that the model was not found or is private — check the
-   model ID, or enter an access token.
-
-   The lookup is advisory only. If the model information cannot be loaded —
-   for example, when your browser cannot reach `huggingface.co` — the dialog
-   notes that you can still start the import, and the import is not blocked.
+   task and library tags, its size, and when it was last updated.
 
 2. Optionally enter a **Revision** — the branch, tag, or commit of the model
    repository to download. Leave it empty to download the default revision. If
