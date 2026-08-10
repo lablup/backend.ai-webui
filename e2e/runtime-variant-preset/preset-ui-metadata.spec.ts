@@ -93,7 +93,17 @@ async function deletePreset(page: Page, presetName: string): Promise<void> {
   await page.goto(PRESET_TAB_URL);
   await page.waitForLoadState('domcontentloaded');
   const row = page.getByRole('row').filter({ hasText: presetName });
-  if ((await row.count()) === 0) return;
+  // `domcontentloaded` fires before the Relay table data renders, and
+  // `.count()` resolves immediately without waiting — so reading it right
+  // after navigation can race the render and report 0 while the table is
+  // still showing its loading skeleton, silently skipping real cleanup.
+  // Wait for the row to actually appear (or definitively time out) instead.
+  const appeared = await row
+    .first()
+    .waitFor({ state: 'visible', timeout: 15000 })
+    .then(() => true)
+    .catch(() => false);
+  if (!appeared) return;
   await row.getByRole('button', { name: 'Delete', exact: true }).click();
   const confirmModal = page.getByRole('dialog');
   await expect(confirmModal).toBeVisible({ timeout: 15000 });
@@ -167,6 +177,23 @@ test.describe(
       await choiceRows.nth(1).fill('bf16');
       await labelRows.nth(1).fill('BF16');
 
+      // Exercise the remove flow too, not just add: a temporary third row
+      // is added, filled, then removed via its own row Delete button. This
+      // verifies the row count drops back to 2 and the remaining rows keep
+      // their own values (i.e. `remove()` targets the right Form.List index)
+      // — a broken remove handler wouldn't fail any test without this.
+      await modal.getByRole('button', { name: /Add Choice/i }).click();
+      await choiceRows.nth(2).fill('int8');
+      await labelRows.nth(2).fill('INT8');
+      await expect(choiceRows).toHaveCount(3);
+      await modal
+        .getByRole('button', { name: 'Delete', exact: true })
+        .last()
+        .click();
+      await expect(choiceRows).toHaveCount(2);
+      await expect(choiceRows.nth(0)).toHaveValue('fp16');
+      await expect(choiceRows.nth(1)).toHaveValue('bf16');
+
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
@@ -209,6 +236,28 @@ test.describe(
         page.getByText('Runtime variant preset has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
+
+      // Reopen and verify the persisted UI Option actually round-trips with
+      // the exact bounds/step submitted, not just that *some* preset was
+      // created — the assertions above would still pass even if `uiOption`
+      // were dropped or miswritten. The Minimum/Maximum/Step fields only
+      // render at all when `uiType === 'SLIDER'`, so their presence here
+      // doubles as proof the UI type round-tripped too.
+      const row = page.getByRole('row').filter({ hasText: presetName });
+      await expect(row).toBeVisible({ timeout: 60000 });
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
+      const editModal = page.getByRole('dialog');
+      await expect(editModal).toBeVisible();
+      await expect(
+        editModal.getByRole('spinbutton', { name: 'Minimum' }),
+      ).toHaveValue('0');
+      await expect(
+        editModal.getByRole('spinbutton', { name: 'Maximum' }),
+      ).toHaveValue('8');
+      await expect(
+        editModal.getByRole('spinbutton', { name: 'Step' }),
+      ).toHaveValue('1');
+      await editModal.getByRole('button', { name: 'Cancel' }).click();
     });
 
     test('Superadmin cannot save a SLIDER UI option without Minimum/Maximum', async ({
@@ -219,9 +268,15 @@ test.describe(
         'runtime-variant-preset-ui-metadata requires manager >= 26.9.0',
       );
 
+      // Tracked in `presetName` (read by `afterEach`) even though this
+      // preset is expected to fail validation and never be created: if a
+      // regression makes the required rule silently pass, the mutation
+      // would succeed and leave a persistent preset that global teardown
+      // doesn't sweep.
+      presetName = `e2e-preset-slider-invalid-${Date.now()}`;
       const modal = await openCreateModalWithRequiredFields(
         page,
-        `e2e-preset-slider-invalid-${Date.now()}`,
+        presetName,
         `E2E_KEY_${Date.now()}`,
       );
 
@@ -233,6 +288,10 @@ test.describe(
 
       await modal.getByRole('button', { name: 'Create' }).click();
 
+      // Both Minimum and Maximum are left blank; assert both required
+      // messages so a regression dropping either field's `required` rule
+      // doesn't slip through unnoticed.
+      await expect(modal.getByText('Minimum value is required.')).toBeVisible();
       await expect(modal.getByText('Maximum value is required.')).toBeVisible();
 
       await modal.getByRole('button', { name: 'Cancel' }).click();
@@ -246,9 +305,13 @@ test.describe(
         'runtime-variant-preset-ui-metadata requires manager >= 26.9.0',
       );
 
+      // Tracked in `presetName` for the same reason as the sibling
+      // Minimum/Maximum-required test above: a regression in the
+      // negative-step rule would otherwise leave an unswept preset.
+      presetName = `e2e-preset-slider-negative-step-${Date.now()}`;
       const modal = await openCreateModalWithRequiredFields(
         page,
-        `e2e-preset-slider-negative-step-${Date.now()}`,
+        presetName,
         `E2E_KEY_${Date.now()}`,
       );
 
@@ -264,7 +327,9 @@ test.describe(
 
       await modal.getByRole('button', { name: 'Create' }).click();
 
-      await expect(modal.getByText('Step must be minimum 0')).toBeVisible();
+      await expect(
+        modal.getByText('Step must be greater than 0.'),
+      ).toBeVisible();
 
       await modal.getByRole('button', { name: 'Cancel' }).click();
     });
@@ -323,15 +388,17 @@ test.describe(
         .locator('.ant-select-dropdown')
         .getByText('Select', { exact: true })
         .click();
+      // Two choice rows, not one — a bug that only mishandles the second
+      // (or later) `Form.List` row wouldn't be caught by asserting `.first()`
+      // alone below.
       await modal.getByRole('button', { name: /Add Choice/i }).click();
-      await modal
-        .locator('input[placeholder="e.g., fp16"]')
-        .first()
-        .fill('fp16');
-      await modal
-        .locator('input[placeholder="e.g., FP16"]')
-        .first()
-        .fill('FP16');
+      await modal.getByRole('button', { name: /Add Choice/i }).click();
+      const createChoiceRows = modal.locator('input[placeholder="e.g., fp16"]');
+      const createLabelRows = modal.locator('input[placeholder="e.g., FP16"]');
+      await createChoiceRows.nth(0).fill('fp16');
+      await createLabelRows.nth(0).fill('FP16');
+      await createChoiceRows.nth(1).fill('bf16');
+      await createLabelRows.nth(1).fill('BF16');
       await modal.getByRole('button', { name: 'Create' }).click();
       await expect(
         page.getByText('Runtime variant preset has been created.'),
@@ -355,13 +422,19 @@ test.describe(
       ).toHaveValue('E2E Display Name');
 
       // The regression this covers: row count used to be right but the
-      // value/label inputs came back empty.
-      await expect(
-        editModal.locator('input[placeholder="e.g., fp16"]').first(),
-      ).toHaveValue('fp16');
-      await expect(
-        editModal.locator('input[placeholder="e.g., FP16"]').first(),
-      ).toHaveValue('FP16');
+      // value/label inputs came back empty. Check both rows, not just the
+      // first, so a bug affecting only the second-or-later row is caught.
+      const editChoiceRows = editModal.locator(
+        'input[placeholder="e.g., fp16"]',
+      );
+      const editLabelRows = editModal.locator(
+        'input[placeholder="e.g., FP16"]',
+      );
+      await expect(editChoiceRows).toHaveCount(2);
+      await expect(editChoiceRows.nth(0)).toHaveValue('fp16');
+      await expect(editLabelRows.nth(0)).toHaveValue('FP16');
+      await expect(editChoiceRows.nth(1)).toHaveValue('bf16');
+      await expect(editLabelRows.nth(1)).toHaveValue('BF16');
 
       await editModal.getByRole('button', { name: 'Cancel' }).click();
     });

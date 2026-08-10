@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 312 / 457 features covered (68%)**
+**Overall (in-scope routes): 317 / 462 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
@@ -50,8 +50,9 @@
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`     |    17    |   14    | 🔶 82%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    4     |    4    | ✅ 100% |
+| Runtime Variant Preset   | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **477**  | **329** | **69%** |
+| **Total**                |                                        | **482**  | **334** | **69%** |
 
 ---
 
@@ -1208,6 +1209,53 @@
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
 **Coverage: 🔶 12/16 features (4 deferred to backend-surface testing or future work)**
+
+---
+
+### 31. Admin - Runtime Variant Preset Metadata (`/admin/deployments?tab=runtime-variant-presets`)
+
+**Test files:** [`e2e/runtime-variant-preset/preset-ui-metadata.spec.ts`](runtime-variant-preset/preset-ui-metadata.spec.ts)
+
+**Requires:** Superadmin login, `runtime-variant-preset-ui-metadata` feature flag (manager ≥ 26.9.0) — tests skip gracefully on older managers instead of failing.
+**Primary action:** "Create Preset" → `BAIRuntimeVariantPresetSettingModal`
+**Row actions:** Edit → `BAIRuntimeVariantPresetSettingModal`, Delete → `BAIDeleteConfirmModal` (`requireConfirmInput`, so the spec types the preset name before confirming)
+
+#### Create Preset — Category / Display Name / UI Option
+
+| Feature                                                                    | Status | Test                                                                                          |
+| --------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
+| Create with Category, Display Name, SELECT UI option (add + remove a choice row) | ✅     | `Superadmin can create a preset with Category, Display Name, and a SELECT UI option`            |
+| Create with a SLIDER UI option, values round-trip on reopen                 | ✅     | `Superadmin can create a preset with a SLIDER UI option`                                        |
+| Validation: Slider Minimum and Maximum both required                        | ✅     | `Superadmin cannot save a SLIDER UI option without Minimum/Maximum`                             |
+| Validation: Slider Step must be positive                                    | ✅     | `Superadmin cannot save a SLIDER UI option with a negative Step`                                |
+
+#### Edit Preset
+
+| Feature                                                                     | Status | Test                                                                                             |
+| ---------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------|
+| Edit round-trip preserves Category, Display Name, and multiple choice rows   | ✅     | `Editing a SELECT preset re-populates category, display name, and every choice row`               |
+
+**Coverage: ✅ 5/5 features**
+
+---
+
+### 32. Project-Agnostic Scope — header project context (the project-agnostic `/admin/*` routes)
+
+**Test files:** [`e2e/admin-scope/admin-header-project-selector.spec.ts`](admin-scope/admin-header-project-selector.spec.ts), [`e2e/admin-scope/admin-data-folder-create.spec.ts`](admin-scope/admin-data-folder-create.spec.ts)
+
+FR-3414 / FR-3415 / ADR-0001: the project-agnostic routes — every `/admin/*`
+route except `admin-dashboard`, which still depends on the ambient project and
+is deliberately out of scope — operate above project scope — the header project selector is hidden there, folder creation asks for the target project inside the modal, and the Environments page selects its project in the page. The route list is derived from `react/src/helper/projectAgnosticRoutes.ts` (minus the feature-flag-gated `scheduler` / `rbac` / `reservoir`, which are not navigable on every test cluster), so a newly gated page is covered automatically.
+
+| Feature                                                                  | Covered | Test                                                                               |
+| ------------------------------------------------------------------------ | :-----: | ---------------------------------------------------------------------------------- |
+| Header project selector absent on every project-agnostic route           |   ✅    | `selector is absent on every project-agnostic route`                               |
+| Environments page offers in-page project selection instead               |   ✅    | `the Environments page selects its project in the page, not the header`            |
+| Header project selector present on the user Data page                    |   ✅    | `selector is present on the user Data page`                                        |
+| Leaving an admin route restores the previous selection untouched         |   ✅    | `leaving an admin route restores the previous selection untouched`                 |
+| Folder created from admin Data page lands in the in-modal chosen project |   ✅    | `folder created from the admin Data page lands in the project chosen in the modal` |
+
+**Coverage: 5 / 5 features (100%)**
 
 ---
 
