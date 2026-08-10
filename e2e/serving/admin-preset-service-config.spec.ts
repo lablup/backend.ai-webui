@@ -13,6 +13,15 @@
 // `readsVfolderConfigFiles` branching and the outgoing mutation payload are
 // both under deterministic test control.
 //
+// This spec always targets the latest (nullable-capable,
+// `preset-model-config-type`, 26.9.0+/BA-7210) behavior — it doesn't
+// simulate legacy managers. On latest managers, Service Configuration/
+// Health Check/Pre-Start Actions render independently in Basic Info without
+// Model Definition ever needing to be enabled, which is exactly the flow
+// every test here drives. (Legacy managers nest the same fields inside
+// Model Definition instead — see AdminDeploymentPresetSettingPageContent.tsx,
+// FR-3481 — but that's a different layout this spec doesn't cover.)
+//
 // Behaviors asserted:
 //   1. Service Configuration is shown for the (mocked) `custom` variant, with
 //      Start Command / Port both optional (BA-6613) — matching the
@@ -28,8 +37,9 @@
 //      Check / Pre-Start Actions data in the expected nested
 //      `modelDefinition.models[0].service` shape.
 //   4. Leaving Start Command and Port blank still submits successfully —
-//      `command` is omitted and `port` falls back to the submit-mapping
-//      layer's default (8000), rather than being blocked by form validation.
+//      `command` is omitted and `port` is sent as `null` (BA-7210: the
+//      server inherits the runtime variant baseline's port at revision
+//      resolution), rather than being blocked by form validation.
 import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import {
@@ -50,11 +60,12 @@ import {
 type Capture = { input: any };
 
 /**
- * Force `model-service-command-string` on, persistently across full-page
- * reloads via `addInitScript`. Mirrors `add-revision-support.ts`'s
- * `installDeploymentFlagOverride` (not reused directly — that helper also
- * forces `model-card-v2`/`prometheus-auto-scaling-rule`, which are specific
- * to the deployment detail page this spec never visits).
+ * Force `model-service-command-string` and `preset-model-config-type` on,
+ * persistently across full-page reloads via `addInitScript`. Mirrors
+ * `add-revision-support.ts`'s `installDeploymentFlagOverride` (not reused
+ * directly — that helper also forces `model-card-v2`/
+ * `prometheus-auto-scaling-rule`, which are specific to the deployment
+ * detail page this spec never visits).
  *
  * `model-service-command-string` is gated at manager version 26.8.0 exactly
  * (see `packages/backend.ai-client/src/client.ts`, FR-3205/BA-6551). The
@@ -62,6 +73,15 @@ type Capture = { input: any };
  * under PEP440 (release candidates are pre-releases), so the flag is false
  * against it even though the feature is present — every Execution/Shell
  * control this spec asserts on is gated behind it.
+ *
+ * `preset-model-config-type` is gated at 26.9.0 (BA-7210), not yet released
+ * on the shared test backend at all — forced here so this spec always
+ * exercises the latest (nullable-capable) layout: Service
+ * Configuration/Health Check/Pre-Start Actions render independently in
+ * Basic Info without Model Definition needing to be enabled first. Without
+ * this override the same fields render nested inside Model Definition
+ * instead (legacy managers, FR-3481) — a different layout this spec
+ * intentionally doesn't cover.
  */
 async function installPresetFlagOverride(page: Page): Promise<void> {
   await page.addInitScript(() => {
@@ -78,7 +98,12 @@ async function installPresetFlagOverride(page: Page): Promise<void> {
         ) {
           const origSupports = value.supports.bind(value);
           value.supports = function (feature: string) {
-            if (feature === 'model-service-command-string') return true;
+            if (
+              feature === 'model-service-command-string' ||
+              feature === 'preset-model-config-type'
+            ) {
+              return true;
+            }
             return origSupports(feature);
           };
           value.__depFlagPatched = true;
@@ -383,8 +408,9 @@ test.describe(
       // AdminDeploymentPresetSettingPage.tsx).
       expect(service.command).toBeUndefined();
       expect(service.startCommand).toBeUndefined();
-      // Port still falls back to the submit-mapping layer's default.
-      expect(service.port).toBe(8000);
+      // BA-7210: omitted port is sent as `null` (not a fallback number) so
+      // the server inherits the runtime variant baseline's port.
+      expect(service.port).toBeNull();
       expect(service.healthCheck).toMatchObject({
         path: '/health',
         interval: 10,
