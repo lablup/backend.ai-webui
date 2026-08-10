@@ -23,6 +23,9 @@ const SESSION_PRIORITY_MAX = 100;
 // Matches the manager's SESSION_PRIORITY_DEFAULT; the column is non-null
 // server-side, so this only guards the fragment's nullable typing.
 const SESSION_PRIORITY_DEFAULT = 10;
+// Selection is preserved across pages, so a bulk edit can target an unbounded
+// number of sessions — commit in chunks to cap concurrent mutations.
+const MUTATION_CONCURRENCY = 10;
 
 interface EditSessionPriorityModalProps extends BAIModalProps {
   sessionFrgmts: EditSessionPriorityModalFragment$key | null;
@@ -91,7 +94,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
   const handleOk = () => {
     return formRef.current
       ?.validateFields()
-      .then((values) => {
+      .then(async (values) => {
         // `undefined` means "Keep as is" in bulk mode — nothing to commit.
         if (filteredSessions.length === 0 || _.isUndefined(values.priority)) {
           onRequestClose();
@@ -99,25 +102,27 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
         }
         // TODO(needs-backend): replace this per-session loop with a single
         // bulk mutation once the core supports one.
-        return Promise.allSettled(
-          filteredSessions.map((session) =>
-            commitOne(session.id, values.priority),
-          ),
-        ).then((results) => {
-          const { fulfilled, rejected } = _.groupBy(
-            results,
-            (result) => result.status,
+        const results: PromiseSettledResult<void>[] = [];
+        for (const chunk of _.chunk(filteredSessions, MUTATION_CONCURRENCY)) {
+          results.push(
+            ...(await Promise.allSettled(
+              chunk.map((session) => commitOne(session.id, values.priority)),
+            )),
           );
-          if (!_.isEmpty(rejected)) {
-            message.error(t('session.FailToUpdatePriority'));
-            // Keep the modal open so the user can retry the failed sessions.
-            return;
-          }
-          if (!_.isEmpty(fulfilled)) {
-            message.success(t('session.PrioritySuccessfullyUpdated'));
-          }
-          onRequestClose(true);
-        });
+        }
+        const { fulfilled, rejected } = _.groupBy(
+          results,
+          (result) => result.status,
+        );
+        if (!_.isEmpty(rejected)) {
+          message.error(t('session.FailToUpdatePriority'));
+          // Keep the modal open so the user can retry the failed sessions.
+          return;
+        }
+        if (!_.isEmpty(fulfilled)) {
+          message.success(t('session.PrioritySuccessfullyUpdated'));
+        }
+        onRequestClose(true);
       })
       .catch(() => {
         // Keep the modal open when form validation rejects.
