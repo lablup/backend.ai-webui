@@ -35,7 +35,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PowerOffIcon, SquarePenIcon } from 'lucide-react';
+import { PowerOffIcon, SettingsIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -194,6 +194,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                     disabled: !isAppSupported || !isActive || !isOwner,
                     onClick: () => setAppLauncherTarget(session),
                   },
+                enablePriorityColumn && {
+                  key: 'editPriority',
+                  title: t('session.EditPriority'),
+                  icon: <SettingsIcon />,
+                  // Priority only orders the pending queue, so it is only
+                  // editable while the session is PENDING.
+                  disabled: session.status !== 'PENDING',
+                  onClick: () => setEditPriorityTarget(session),
+                },
                 {
                   key: 'terminate',
                   title: t('session.TerminateSession'),
@@ -224,26 +233,12 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         title: t('session.Priority'),
         dataIndex: 'priority',
         // Priority only orders the pending queue, so it is only meaningful
-        // (and editable) while the session is PENDING.
-        render: (priority: number | null, session) => {
-          if (session.status !== 'PENDING') {
-            return '-';
-          }
-          return (
-            <BAINameActionCell
-              title={_.isNil(priority) ? '-' : String(priority)}
-              showActions="always"
-              actions={[
-                {
-                  key: 'editPriority',
-                  title: t('session.EditPriority'),
-                  icon: <SquarePenIcon />,
-                  onClick: () => setEditPriorityTarget(session),
-                },
-              ]}
-            />
-          );
-        },
+        // while the session is PENDING. Editing goes through the name cell's
+        // action (Settings icon), not this column.
+        render: (priority: number | null, session) =>
+          session.status === 'PENDING' && !_.isNil(priority)
+            ? String(priority)
+            : '-',
       },
       {
         key: 'reclamationStatus',
@@ -438,7 +433,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       />
       <BAIUnmountAfterClose>
         <EditSessionPriorityModal
-          sessionFrgmt={editPriorityTarget}
+          sessionFrgmts={editPriorityTarget ? [editPriorityTarget] : null}
           open={!!editPriorityTarget}
           onRequestClose={() => setEditPriorityTarget(null)}
         />

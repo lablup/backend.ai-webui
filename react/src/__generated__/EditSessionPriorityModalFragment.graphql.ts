@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<98ad332cd97747e03a54b5a1e48a33de>>
+ * @generated SignedSource<<af7dcb3254316099b46e3def661e4369>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,21 +10,23 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type EditSessionPriorityModalFragment$data = {
+export type EditSessionPriorityModalFragment$data = ReadonlyArray<{
   readonly id: string;
   readonly name: string | null | undefined;
   readonly priority: number | null | undefined;
   readonly " $fragmentType": "EditSessionPriorityModalFragment";
-} | null | undefined;
-export type EditSessionPriorityModalFragment$key = {
+} | null | undefined>;
+export type EditSessionPriorityModalFragment$key = ReadonlyArray<{
   readonly " $data"?: EditSessionPriorityModalFragment$data;
   readonly " $fragmentSpreads": FragmentRefs<"EditSessionPriorityModalFragment">;
-};
+}>;
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "plural": true
+  },
   "name": "EditSessionPriorityModalFragment",
   "selections": [
     {
@@ -57,6 +59,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "4c099e3263222bfe238710749386d065";
+(node as any).hash = "7367aed83bd274e19a480fa868def672";
 
 export default node;

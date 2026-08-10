@@ -5,7 +5,15 @@
 import { EditSessionPriorityModalFragment$key } from '../../__generated__/EditSessionPriorityModalFragment.graphql';
 import { EditSessionPriorityModalMutation } from '../../__generated__/EditSessionPriorityModalMutation.graphql';
 import { App, Form, FormInstance, InputNumber, Typography } from 'antd';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIBulkEditFormItem,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAITagList,
+  filterOutNullAndUndefined,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -17,12 +25,12 @@ const SESSION_PRIORITY_MAX = 100;
 const SESSION_PRIORITY_DEFAULT = 10;
 
 interface EditSessionPriorityModalProps extends BAIModalProps {
-  sessionFrgmt: EditSessionPriorityModalFragment$key | null;
+  sessionFrgmts: EditSessionPriorityModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
 const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
-  sessionFrgmt,
+  sessionFrgmts,
   onRequestClose,
   ...modalProps
 }) => {
@@ -32,16 +40,19 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
 
-  const session = useFragment(
+  const sessions = useFragment(
     graphql`
-      fragment EditSessionPriorityModalFragment on ComputeSessionNode {
+      fragment EditSessionPriorityModalFragment on ComputeSessionNode
+      @relay(plural: true) {
         id @required(action: NONE)
         name
         priority @since(version: "24.09.0")
       }
     `,
-    sessionFrgmt,
+    sessionFrgmts,
   );
+  const filteredSessions = filterOutNullAndUndefined(sessions ?? []);
+  const isBulkEdit = filteredSessions.length > 1;
 
   const [commitModifySessionPriority, isInFlight] =
     useMutation<EditSessionPriorityModalMutation>(graphql`
@@ -57,32 +68,53 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
       }
     `);
 
+  const commitOne = (id: string, priority: number) =>
+    new Promise<void>((resolve, reject) => {
+      commitModifySessionPriority({
+        variables: {
+          input: {
+            id,
+            priority,
+          },
+        },
+        onCompleted(res, errors) {
+          if (!res?.modify_compute_session?.item || errors) {
+            reject(new Error(errors?.[0]?.message));
+          } else {
+            resolve();
+          }
+        },
+        onError: reject,
+      });
+    });
+
   const handleOk = () => {
     return formRef.current
       ?.validateFields()
       .then((values) => {
-        if (!session) {
+        // `undefined` means "Keep as is" in bulk mode — nothing to commit.
+        if (filteredSessions.length === 0 || _.isUndefined(values.priority)) {
           onRequestClose();
           return;
         }
-        commitModifySessionPriority({
-          variables: {
-            input: {
-              id: session.id,
-              priority: values.priority,
-            },
-          },
-          onCompleted(res, errors) {
-            if (!res?.modify_compute_session?.item || errors) {
-              message.error(t('session.FailToUpdatePriority'));
-              return;
-            }
+        return Promise.allSettled(
+          filteredSessions.map((session) =>
+            commitOne(session.id, values.priority),
+          ),
+        ).then((results) => {
+          const { fulfilled, rejected } = _.groupBy(
+            results,
+            (result) => result.status,
+          );
+          if (!_.isEmpty(rejected)) {
+            message.error(t('session.FailToUpdatePriority'));
+            // Keep the modal open so the user can retry the failed sessions.
+            return;
+          }
+          if (!_.isEmpty(fulfilled)) {
             message.success(t('session.PrioritySuccessfullyUpdated'));
-            onRequestClose(true);
-          },
-          onError(error) {
-            message.error(error?.message || t('session.FailToUpdatePriority'));
-          },
+          }
+          onRequestClose(true);
         });
       })
       .catch(() => {
@@ -106,28 +138,51 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
           layout="vertical"
           preserve={false}
           initialValues={{
-            priority: session?.priority ?? SESSION_PRIORITY_DEFAULT,
+            // Bulk edit starts in "Keep as is" (undefined) so unchanged
+            // sessions are excluded from submission.
+            priority: isBulkEdit
+              ? undefined
+              : (filteredSessions[0]?.priority ?? SESSION_PRIORITY_DEFAULT),
           }}
         >
           <Form.Item label={t('session.SessionName')}>
-            <Typography.Text>{session?.name}</Typography.Text>
+            {isBulkEdit ? (
+              <BAITagList
+                items={_.map(
+                  filteredSessions,
+                  (session) => session.name || session.id,
+                )}
+              />
+            ) : (
+              <Typography.Text>{filteredSessions[0]?.name}</Typography.Text>
+            )}
           </Form.Item>
-          <Form.Item
-            label={t('session.Priority')}
-            name="priority"
-            rules={[
-              {
-                required: true,
-                message: t('data.explorer.ValueRequired'),
-              },
-            ]}
-          >
-            <InputNumber
-              min={SESSION_PRIORITY_MIN}
-              max={SESSION_PRIORITY_MAX}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
+          {isBulkEdit ? (
+            <BAIBulkEditFormItem label={t('session.Priority')} name="priority">
+              <InputNumber
+                min={SESSION_PRIORITY_MIN}
+                max={SESSION_PRIORITY_MAX}
+                style={{ width: '100%' }}
+              />
+            </BAIBulkEditFormItem>
+          ) : (
+            <Form.Item
+              label={t('session.Priority')}
+              name="priority"
+              rules={[
+                {
+                  required: true,
+                  message: t('data.explorer.ValueRequired'),
+                },
+              ]}
+            >
+              <InputNumber
+                min={SESSION_PRIORITY_MIN}
+                max={SESSION_PRIORITY_MAX}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          )}
         </Form>
       </BAIFlex>
     </BAIModal>
