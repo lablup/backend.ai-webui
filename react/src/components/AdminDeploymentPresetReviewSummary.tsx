@@ -56,6 +56,15 @@ interface PresetReviewSummaryProps {
     label: string;
     value: string;
   }>;
+  /**
+   * FR-3481: mirrors the input form's placement of Service
+   * Configuration/Health Check/Pre-Start Actions — under Basic Info when
+   * true (managers that can submit them independently of Model
+   * Definition), nested under Model & Execution's Model Definition fields
+   * when false (legacy managers, where they can only be submitted
+   * alongside a real name/modelPath).
+   */
+  supportsNullableModelDefinition: boolean;
 }
 
 const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
@@ -64,6 +73,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   runtimeVariants,
   errorFieldNames,
   runtimeParamRows = [],
+  supportsNullableModelDefinition,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -144,113 +154,120 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               </BAIFlex>
             </MetadataListItem>
           )}
-          {/* Service Configuration fields (moved to Step 1) */}
-          {(() => {
-            const svc = values.modelDefinition?.models?.[0]?.service;
-            return (
-              <>
-                {/* Exec mode sends `shell: null` regardless of what's typed
+          {/* Service Configuration fields — Basic Info only on managers that
+              can submit them independently of Model Definition
+              (`supportsNullableModelDefinition`). Legacy managers show these
+              nested under Model & Execution's Model Definition fields
+              instead (below), mirroring the input form (FR-3481). */}
+          {supportsNullableModelDefinition &&
+            (() => {
+              const svc = values.modelDefinition?.models?.[0]?.service;
+              return (
+                <>
+                  {/* Exec mode sends `shell: null` regardless of what's typed
                     in the (now-hidden) Shell input — resolveCommandShell()
                     discards it. The field's stale value otherwise lingers in
                     the form store after switching Execution away from
                     Shell, so gate the display on the mode actually being
                     submitted, not just on the raw value being present. */}
-                {svc?.shell && svc?.execution !== 'exec' && (
-                  <MetadataListItem label={t('modelService.Shell')}>
-                    <Code>{svc.shell}</Code>
+                  {svc?.shell && svc?.execution !== 'exec' && (
+                    <MetadataListItem label={t('modelService.Shell')}>
+                      <Code>{svc.shell}</Code>
+                    </MetadataListItem>
+                  )}
+                  {svc?.startCommand && (
+                    <MetadataListItem label={t('modelService.Command')}>
+                      <SourceCodeView language="shell">
+                        {svc.startCommand}
+                      </SourceCodeView>
+                    </MetadataListItem>
+                  )}
+                  {svc?.port != null && (
+                    <MetadataListItem label={t('modelService.Port')}>
+                      {svc.port}
+                    </MetadataListItem>
+                  )}
+                  <MetadataListItem
+                    label={t(
+                      'adminDeploymentPreset.modelDef.EnableHealthCheck',
+                    )}
+                  >
+                    {svc?.enableHealthCheck
+                      ? t('general.Enabled')
+                      : t('general.Disabled')}
                   </MetadataListItem>
-                )}
-                {svc?.startCommand && (
-                  <MetadataListItem label={t('modelService.Command')}>
-                    <SourceCodeView language="shell">
-                      {svc.startCommand}
-                    </SourceCodeView>
-                  </MetadataListItem>
-                )}
-                {svc?.port != null && (
-                  <MetadataListItem label={t('modelService.Port')}>
-                    {svc.port}
-                  </MetadataListItem>
-                )}
-                <MetadataListItem
-                  label={t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
-                >
-                  {svc?.enableHealthCheck
-                    ? t('general.Enabled')
-                    : t('general.Disabled')}
-                </MetadataListItem>
-                {svc?.enableHealthCheck && svc?.healthCheck && (
-                  <>
-                    {svc.healthCheck.path && (
-                      <MetadataListItem
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckPath',
-                        )}
-                      >
-                        <Code>{svc.healthCheck.path}</Code>
-                      </MetadataListItem>
-                    )}
-                    {svc.healthCheck.interval != null && (
-                      <MetadataListItem
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                        )}
-                      >
-                        {svc.healthCheck.interval}
-                      </MetadataListItem>
-                    )}
-                    {svc.healthCheck.maxRetries != null && (
-                      <MetadataListItem
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                        )}
-                      >
-                        {svc.healthCheck.maxRetries}
-                      </MetadataListItem>
-                    )}
-                    {svc.healthCheck.maxWaitTime != null && (
-                      <MetadataListItem
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                        )}
-                      >
-                        {svc.healthCheck.maxWaitTime}
-                      </MetadataListItem>
-                    )}
-                    {svc.healthCheck.expectedStatusCode != null && (
-                      <MetadataListItem
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                        )}
-                      >
-                        {svc.healthCheck.expectedStatusCode}
-                      </MetadataListItem>
-                    )}
-                    {svc.healthCheck.initialDelay != null && (
-                      <MetadataListItem
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                        )}
-                      >
-                        {svc.healthCheck.initialDelay}
-                      </MetadataListItem>
-                    )}
-                  </>
-                )}
-                {(svc?.preStartActions?.length ?? 0) > 0 && (
-                  <MetadataListItem label={t('modelService.PreStartActions')}>
-                    <BAIFlex direction="column" align="start" gap="xxs">
-                      {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
-                        <Code key={ai} style={{ display: 'block' }}>
-                          {a?.action}: {a?.args || '{}'}
-                        </Code>
-                      ))}
-                    </BAIFlex>
-                  </MetadataListItem>
-                )}
-              </>
-            );
-          })()}
+                  {svc?.enableHealthCheck && svc?.healthCheck && (
+                    <>
+                      {svc.healthCheck.path && (
+                        <MetadataListItem
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckPath',
+                          )}
+                        >
+                          <Code>{svc.healthCheck.path}</Code>
+                        </MetadataListItem>
+                      )}
+                      {svc.healthCheck.interval != null && (
+                        <MetadataListItem
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                          )}
+                        >
+                          {svc.healthCheck.interval}
+                        </MetadataListItem>
+                      )}
+                      {svc.healthCheck.maxRetries != null && (
+                        <MetadataListItem
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                          )}
+                        >
+                          {svc.healthCheck.maxRetries}
+                        </MetadataListItem>
+                      )}
+                      {svc.healthCheck.maxWaitTime != null && (
+                        <MetadataListItem
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                          )}
+                        >
+                          {svc.healthCheck.maxWaitTime}
+                        </MetadataListItem>
+                      )}
+                      {svc.healthCheck.expectedStatusCode != null && (
+                        <MetadataListItem
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                          )}
+                        >
+                          {svc.healthCheck.expectedStatusCode}
+                        </MetadataListItem>
+                      )}
+                      {svc.healthCheck.initialDelay != null && (
+                        <MetadataListItem
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                          )}
+                        >
+                          {svc.healthCheck.initialDelay}
+                        </MetadataListItem>
+                      )}
+                    </>
+                  )}
+                  {(svc?.preStartActions?.length ?? 0) > 0 && (
+                    <MetadataListItem label={t('modelService.PreStartActions')}>
+                      <BAIFlex direction="column" align="start" gap="xxs">
+                        {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
+                          <Code key={ai} style={{ display: 'block' }}>
+                            {a?.action}: {a?.args || '{}'}
+                          </Code>
+                        ))}
+                      </BAIFlex>
+                    </MetadataListItem>
+                  )}
+                </>
+              );
+            })()}
           <MetadataListItem label={t('adminDeploymentPreset.Image')}>
             {imageReference ? (
               <BAIText code copyable style={{ wordBreak: 'break-all' }}>
@@ -392,21 +409,24 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               '-'
             )}
           </MetadataListItem>
-        </MetadataList>
-        {values.modelDefinition?.enabled &&
-        values.modelDefinition?.models?.length ? (
-          <BAIFlex
-            direction="column"
-            align="stretch"
-            gap="xs"
-            style={{ marginTop: token.marginSM }}
-          >
-            <Text type="supporting">
-              {t('adminDeploymentPreset.ModelDefinition')}
-            </Text>
-            {values.modelDefinition.models.filter(Boolean).map((m, i) => (
-              <BAICard key={i} size="small" title={m.name || '-'}>
-                <MetadataList columns={1}>
+          {/* Model Definition — flat rows like every other field here,
+              rather than a separate card titled by the model name (FR-3481).
+              Legacy managers additionally show Service
+              Configuration/Health Check/Pre-Start Actions here (mirroring
+              the input form's nesting), since those fields can only be
+              submitted alongside a real name/modelPath pre-BA-7210. */}
+          {values.modelDefinition?.enabled &&
+            (() => {
+              const m = values.modelDefinition.models?.[0];
+              if (!m) return null;
+              const svc = m.service;
+              return (
+                <>
+                  <MetadataListItem
+                    label={t('adminDeploymentPreset.modelDef.ModelName')}
+                  >
+                    {m.name || '-'}
+                  </MetadataListItem>
                   <MetadataListItem
                     label={t('adminDeploymentPreset.modelDef.ModelPath')}
                   >
@@ -414,6 +434,109 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.modelPath || '-'}
                     </Code>
                   </MetadataListItem>
+                  {!supportsNullableModelDefinition && (
+                    <>
+                      {svc?.shell && svc?.execution !== 'exec' && (
+                        <MetadataListItem label={t('modelService.Shell')}>
+                          <Code>{svc.shell}</Code>
+                        </MetadataListItem>
+                      )}
+                      {svc?.startCommand && (
+                        <MetadataListItem label={t('modelService.Command')}>
+                          <SourceCodeView language="shell">
+                            {svc.startCommand}
+                          </SourceCodeView>
+                        </MetadataListItem>
+                      )}
+                      {svc?.port != null && (
+                        <MetadataListItem label={t('modelService.Port')}>
+                          {svc.port}
+                        </MetadataListItem>
+                      )}
+                      <MetadataListItem
+                        label={t(
+                          'adminDeploymentPreset.modelDef.EnableHealthCheck',
+                        )}
+                      >
+                        {svc?.enableHealthCheck
+                          ? t('general.Enabled')
+                          : t('general.Disabled')}
+                      </MetadataListItem>
+                      {svc?.enableHealthCheck && svc?.healthCheck && (
+                        <>
+                          {svc.healthCheck.path && (
+                            <MetadataListItem
+                              label={t(
+                                'adminDeploymentPreset.modelDef.HealthCheckPath',
+                              )}
+                            >
+                              <Code>{svc.healthCheck.path}</Code>
+                            </MetadataListItem>
+                          )}
+                          {svc.healthCheck.interval != null && (
+                            <MetadataListItem
+                              label={t(
+                                'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                              )}
+                            >
+                              {svc.healthCheck.interval}
+                            </MetadataListItem>
+                          )}
+                          {svc.healthCheck.maxRetries != null && (
+                            <MetadataListItem
+                              label={t(
+                                'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                              )}
+                            >
+                              {svc.healthCheck.maxRetries}
+                            </MetadataListItem>
+                          )}
+                          {svc.healthCheck.maxWaitTime != null && (
+                            <MetadataListItem
+                              label={t(
+                                'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                              )}
+                            >
+                              {svc.healthCheck.maxWaitTime}
+                            </MetadataListItem>
+                          )}
+                          {svc.healthCheck.expectedStatusCode != null && (
+                            <MetadataListItem
+                              label={t(
+                                'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                              )}
+                            >
+                              {svc.healthCheck.expectedStatusCode}
+                            </MetadataListItem>
+                          )}
+                          {svc.healthCheck.initialDelay != null && (
+                            <MetadataListItem
+                              label={t(
+                                'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                              )}
+                            >
+                              {svc.healthCheck.initialDelay}
+                            </MetadataListItem>
+                          )}
+                        </>
+                      )}
+                      {(svc?.preStartActions?.length ?? 0) > 0 && (
+                        <MetadataListItem
+                          label={t('modelService.PreStartActions')}
+                        >
+                          <BAIFlex direction="column" align="start" gap="xxs">
+                            {svc?.preStartActions
+                              ?.filter(Boolean)
+                              .map((a, ai) => (
+                                <Code key={ai} style={{ display: 'block' }}>
+                                  {a?.action}: {a?.args || '{}'}
+                                </Code>
+                              ))}
+                          </BAIFlex>
+                        </MetadataListItem>
+                      )}
+                    </>
+                  )}
                   {m.metadata?.title && (
                     <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Title')}
@@ -500,11 +623,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       </HStack>
                     </MetadataListItem>
                   )}
-                </MetadataList>
-              </BAICard>
-            ))}
-          </BAIFlex>
-        ) : null}
+                </>
+              );
+            })()}
+        </MetadataList>
       </BAICard>
     </BAIFlex>
   );
