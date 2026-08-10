@@ -89,15 +89,48 @@ import React from 'react';
  * `'validating'` / `'success'` are intentionally not forwarded: antd painted
  * neither on the control (they drive the `hasFeedback` icon, which the item
  * owns).
+ *
+ * **`statusVariant` is CONSTANT — never conditional on `status`.** Astryx's
+ * `Field` renders `{children}` inside an extra `<div>` when
+ * `statusVariant === 'attached'` (its default) and as a bare fragment
+ * otherwise. Returning `{}` while pristine and `{statusVariant: 'detached'}`
+ * once a rule fails therefore changed the ELEMENT STRUCTURE at the control's
+ * position, so React unmounted the whole control subtree and mounted a fresh
+ * one — the `<input>` node was replaced and **focus was lost on the very first
+ * keystroke** of any field carrying `rules` (measured on the login screen's
+ * `api_endpoint`: character 1 landed, the node was swapped,
+ * `document.activeElement` fell back to `<body>`, and characters 2..n went
+ * nowhere). Pinning the variant keeps `Field`'s tree stable; with no
+ * `status.message` the detached branch renders exactly `{children}`, so the
+ * only thing dropped is that wrapper div (`display:flex;flex-direction:column`
+ * inside a `Field` container that is already `flex column`) — layout-neutral.
+ * `astryxFormControls.test.tsx` locks this in.
  */
 const useFormControlStatusProps = (): {
   status?: { type: 'error' | 'warning' };
-  statusVariant?: 'detached';
+  statusVariant: 'detached';
+} => {
+  'use memo';
+  const { status } = React.useContext(FormItemInputContext);
+  if (status !== 'error' && status !== 'warning')
+    return { statusVariant: 'detached' };
+  return { status: { type: status }, statusVariant: 'detached' };
+};
+
+/**
+ * Status without `statusVariant`, for the controls that are NOT built on
+ * Astryx's `Field` (`Switch`, `CheckboxInput`): they accept `status` but do
+ * not declare `statusVariant`, so passing it would only land an unknown
+ * attribute on the DOM. They render no structural branch on status either, so
+ * they never had the remount problem the hook above fixes.
+ */
+const useFormControlStatusOnly = (): {
+  status?: { type: 'error' | 'warning' };
 } => {
   'use memo';
   const { status } = React.useContext(FormItemInputContext);
   if (status !== 'error' && status !== 'warning') return {};
-  return { status: { type: status }, statusVariant: 'detached' };
+  return { status: { type: status } };
 };
 
 export interface AstryxFormTextInputProps {
@@ -317,7 +350,7 @@ export const AstryxFormSwitch: React.FC<AstryxFormSwitchProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
+  const statusProps = useFormControlStatusOnly();
   return (
     <Switch
       value={value ?? checked ?? false}
@@ -600,7 +633,7 @@ export const AstryxFormCheckbox: React.FC<AstryxFormCheckboxProps> = ({
   ...rest
 }) => {
   'use memo';
-  const statusProps = useFormControlStatusProps();
+  const statusProps = useFormControlStatusOnly();
   return (
     <CheckboxInput
       value={value ?? checked ?? false}

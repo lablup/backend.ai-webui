@@ -169,7 +169,28 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         width={modalWidth}
         getContainer={false}
         title={
-          <div style={{ textAlign: 'center' }}>
+          // A flex row, not `textAlign: center`: as an inline image the 35px
+          // logo sat in a 27px line box (the dialog's 16px/24px base) and
+          // overflowed it by 4px on each side, so it painted outside the
+          // header's own padding box.
+          //
+          // `marginTop` reclaims the header's top padding. Astryx's
+          // `DialogHeader` gives its title wrapper `marginBlock: -4px` (a
+          // measured `calc()` that optically centres a TEXT cap-height against
+          // the close button); this dialog has neither text title nor close
+          // button, so on the top edge that compensation just ate 4 of the
+          // header's 16px padding — the logo sat 12px below the dialog edge
+          // against legacy's 19px. The bottom -4px is left alone on purpose:
+          // it is what keeps the logo-to-first-field gap at 28px, which is
+          // legacy's 27px (antd 6.5.0 oracle).
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 'var(--spacing-1)',
+            }}
+          >
             <img
               src={
                 isDarkMode
@@ -190,7 +211,18 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         }
         styles={{
           header: { borderBottom: 'none', paddingBottom: 0 },
-          body: { padding: token.paddingLG, paddingTop: token.paddingSM },
+          // NO body padding. Under antd, `BAIModal` gave the modal CONTENT
+          // element `padding: 0` and the BODY `0 24px`, so this call site's
+          // `padding: paddingLG` REPLACED the body's own padding and the form
+          // ended up 24px in from each dialog edge (352px wide inside the
+          // 400px modal — measured on the antd 6.5.0 oracle).
+          //
+          // On Astryx the dialog's `LayoutContent` already owns that padding
+          // (`16px 24px`), so the same declaration became ADDITIVE: 24 + 24 =
+          // 48px per side and a 304px form — 48px narrower than legacy, with
+          // 40px between the logo and the first field instead of 27px. The
+          // Astryx-canonical answer is to let the layout slot own the body
+          // padding and pass nothing here.
           // When needToResetPassword is true, hide the login modal wrapper via
           // display:none while keeping open={true}. This preserves the Form
           // instance (and its field values) that child modals depend on.
@@ -367,7 +399,16 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   uses `href="#"` + `preventDefault` (the pilot's fallback).
                   The hand-set 13px/10px sizes are dropped (closed type
                   scale). */}
+              {/* `isStandalone` is not cosmetic: an Astryx `Link` with no
+                  `isStandalone` INHERITS its font size, and the dialog's base
+                  is the app's 16px/24px, whereas antd pinned `.ant-modal` to
+                  14px/22px. Without it this disclosure row rendered 2px larger
+                  than legacy (measured 16px/24px vs 14px/22px). `isStandalone`
+                  is Astryx's own "this link is not inside a paragraph" flag and
+                  resolves to `--text-body-size` / `--text-body-leading`, i.e.
+                  exactly 14px / 1.5714 — the legacy values. */}
               <Link
+                isStandalone
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
@@ -473,13 +514,22 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   {t('login.SignUp')}
                 </Link>
               )}
+              {/* `type="inherit"` is the Astryx spelling of legacy's
+                  `style={{ fontSize: 'inherit' }}` on these `Typography.Text`s:
+                  the row pins 13px and every child followed it. A plain `Text`
+                  imposes its own `--text-body-size` (14px) instead, which is
+                  1px off legacy right next to `Link`s that DO inherit. */}
               {loginConfig.signup_support &&
                 loginConfig.allowAnonymousChangePassword && (
-                  <Text color="secondary">|</Text>
+                  <Text type="inherit" color="secondary">
+                    |
+                  </Text>
                 )}
               {loginConfig.allowAnonymousChangePassword && (
                 <>
-                  <Text color="secondary">{t('login.ForgotPassword')}</Text>
+                  <Text type="inherit" color="secondary">
+                    {t('login.ForgotPassword')}
+                  </Text>
                   <Link
                     href="#"
                     onClick={(e) => {

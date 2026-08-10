@@ -17,7 +17,6 @@ import {
   DropdownMenu,
   type DropdownMenuOption,
 } from '@astryxdesign/core/DropdownMenu';
-import { MediaTheme } from '@astryxdesign/core/theme';
 import {
   BAIUnmountAfterClose,
   filterOutEmpty,
@@ -49,8 +48,9 @@ const UserProfileSettingModal = React.lazy(
 // `placement="bottomRight"` splits into `placement="below" alignment="end"`).
 // Astryx `DropdownMenu` OWNS its trigger button (`button` prop), so the
 // `buttonRender` escape hatch — whose only caller wrapped the trigger in
-// `ReverseThemeProvider` — is dropped: the trigger and its panel sit inside a
-// `<MediaTheme mode="dark">` declared below instead.
+// `ReverseThemeProvider` — is dropped: the trigger carries the band's on-dark
+// media context on itself (`button['data-astryx-media']`), which is also what
+// keeps the panel out of it — see the call site.
 // P7: the per-item `data-testid`s are dropped (Astryx `DropdownMenuItemData`
 // has no passthrough). The e2e suite clicks these rows by TEXT
 // (`getByText('My Account')`, `getByText('Log Out')`) and only anchors on
@@ -186,47 +186,60 @@ const UserDropdownMenu: React.FC<{
           icon as the Button's `icon`. On < lg the label collapses to the icon
           (`isIconOnly`), which is what the old `screens.lg &&` children
           expression did. */}
-      {/* The trigger + its popover panel are the part of this component that
-          sits ON the orange header band, so the on-dark media context is
-          scoped to exactly them. It used to be declared by `WebUIHeader`
-          around the WHOLE `<UserDropdownMenu>`; because Astryx `Dialog` is a
+      {/* Only the TRIGGER sits on the orange header band, so only the trigger
+          takes the on-dark media context — and it takes it on the element
+          itself rather than through a wrapper.
+
+          History: `WebUIHeader` used to declare `<MediaTheme mode="dark">`
+          around the WHOLE `<UserDropdownMenu>`. Because Astryx `Dialog` is a
           native, NON-portalled `<dialog>` (measured: `showModal()` on an
           in-place element), every modal below was a DOM descendant of that
-          context and inherited `color-scheme: dark` + the on-dark tokens.
-          Result: `--color-background-surface` stayed on its dark value, so
+          context and inherited `color-scheme: dark` + the on-dark tokens, so
           the Downloads / About / My Account dialogs rendered at
-          `rgb(20,20,20)` in LIGHT mode — and the antd form engine, which
-          follows the real app mode, painted `My Account`'s labels
-          `rgb(20,20,20)` on top of that, i.e. invisible. (Both measured; see
-          `.scratch/astryx-migration/shots/p3-w3b/measure-before.json`.)
+          `rgb(20,20,20)` in LIGHT mode with equally dark labels on top
+          (`.scratch/astryx-migration/shots/p3-w3b/measure-before.json`). That
+          fix moved the wrapper here — but `DropdownMenu` renders its trigger
+          and its `[popover]` PANEL as SIBLINGS, so the panel was still inside
+          the wrapper and kept resolving `color-scheme: dark` in both app
+          modes: a `rgb(48,48,48)` menu with white text on a white page
+          (measured, light AND dark). The menu is a floating page surface, not
+          band chrome; it has to follow the APP's mode like every other menu in
+          the app.
 
-          `data-testid` belongs on `DropdownMenu` itself, NOT inside `button`:
-          the component renders `<Button {...button} … data-testid={testId} />`
-          — its own `data-testid` prop wins because it is applied AFTER the
-          spread, so a `data-testid` passed inside `button` is overwritten with
-          `undefined` and the attribute disappears from the DOM entirely
-          (measured: the trigger had no `data-testid`). The whole e2e suite
-          waits on `[data-testid="user-dropdown-button"]` — `loginAsAdmin` in
-          `e2e/utils/test-util.ts` blocks on it — so this is load-bearing. */}
-      <MediaTheme mode="dark">
-        <DropdownMenu
-          data-testid="user-dropdown-button"
-          placement="below"
-          alignment="end"
-          menuWidth={300}
-          button={{
-            variant: 'ghost',
-            icon: <User size="1em" />,
-            isIconOnly: !screens.lg,
-            label: _.truncate(displayName, { length: 30 }),
-            style,
-          }}
-          items={items}
-        />
-      </MediaTheme>
-      {/* The overlays are page-level surfaces, not band content, so they mount
-          OUTSIDE the media context above. They are still DOM descendants of
-          the header row, which carries an inline
+          A wrapper only exists to share a context between siblings, and here
+          exactly one element needs it. `data-astryx-media` IS what `MediaTheme`
+          renders (`<div data-astryx-media={mode} style="display:contents">`;
+          the theme CSS keys the on-dark token block off that attribute), and
+          `BaseProps` explicitly admits `data-*`, so declaring it on the trigger
+          is the same primitive at element scope — and stops at the trigger.
+
+          `data-testid` still belongs on `DropdownMenu` itself, NOT inside
+          `button`: the component renders `<Button {...button} …
+          data-testid={testId} />` — its own prop is applied AFTER the spread,
+          so a `data-testid` passed inside `button` is overwritten with
+          `undefined` and the attribute disappears from the DOM entirely. The
+          whole e2e suite waits on `[data-testid="user-dropdown-button"]` —
+          `loginAsAdmin` in `e2e/utils/test-util.ts` blocks on it. (Note the
+          asymmetry: `data-astryx-media` is NOT re-declared by `DropdownMenu`,
+          so the spread carries it through unharmed.) */}
+      <DropdownMenu
+        data-testid="user-dropdown-button"
+        placement="below"
+        alignment="end"
+        menuWidth={300}
+        button={{
+          'data-astryx-media': 'dark',
+          variant: 'ghost',
+          icon: <User size="1em" />,
+          isIconOnly: !screens.lg,
+          label: _.truncate(displayName, { length: 30 }),
+          style,
+        }}
+        items={items}
+      />
+      {/* The overlays are page-level surfaces, not band content, and the
+          trigger's media context no longer reaches them. They are still DOM
+          descendants of the header row, which carries an inline
           `color: var(--color-on-dark)` for the antd-engine `ProjectSelect`
           value; `display: contents` + `--color-text-primary` re-establishes
           the page's inherited text colour without adding a layout box. This

@@ -323,26 +323,28 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
               {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
             </Suspense>
           )}
+        {/* `BAINotificationButton` scopes its own on-dark context to its
+            button, because it also owns a `Tooltip` whose panel is an inline
+            sibling — see that file. */}
         <BAINotificationButton data-testid="button-notification" />
         {/* Same swap, same reason as the project group above: these controls
             sit ON the accent band, so they take the on-dark media context and
-            their glyphs come out white instead of the dark theme's grey. */}
+            their glyphs come out white instead of the dark theme's grey.
+            Both are plain `IconButton`s — they open no floating surface, so a
+            shared wrapper has nothing to leak into. */}
         <MediaTheme mode="dark">
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
         </MediaTheme>
-        {/* `UserDropdownMenu` declares its OWN on-dark context, around just
-            the trigger and its popover panel.
+        {/* `UserDropdownMenu` declares its OWN on-dark context, on just the
+            trigger button.
 
-            It used to sit inside the `MediaTheme` above, and its dropdown
-            PANEL still wants that (Astryx renders the popover as an inline
-            `[popover]` sibling of the trigger, not through a portal —
-            measured — so it inherits the context, keeping
-            `--color-background-popover` dark exactly as legacy's
-            `ReverseThemeProvider` did). But the component ALSO mounts three
-            modals, and Astryx `Dialog` is likewise non-portalled: those were
-            DOM descendants of this context too, so they rendered as dark
-            surfaces in LIGHT mode. Scoping the context is therefore the
+            It used to sit inside the `MediaTheme` above. Astryx renders both
+            the popover panel and the component's three `Dialog`s as inline
+            siblings/descendants rather than through a portal (measured), so a
+            wrapper here reached all of them: the modals painted as dark
+            surfaces in LIGHT mode, and the dropdown panel stayed dark in both
+            modes. Scoping the context to the trigger element is therefore the
             component's own business, not the header's — see
             `UserDropdownMenu.tsx`. */}
         <UserDropdownMenu

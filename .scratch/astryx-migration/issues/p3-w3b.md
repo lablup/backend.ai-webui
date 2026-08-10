@@ -86,6 +86,31 @@ render.
 Header band unchanged in both modes: `bg rgb(255,151,41)` / `rgb(232,138,40)`,
 label `rgb(255,255,255)`.
 
+> **SUPERSEDED (QA-FINDINGS `Q-3`) — "the panel keeps its dark surface" no
+> longer holds.** The clause above is the one part of this decision that was
+> reversed. It was justified by legacy parity: antd's `ReverseThemeProvider`
+> INVERTED relative to the app, so in light mode the panel was indeed dark.
+> But the same mechanism made it *light* in dark mode, and POLISH-2 had already
+> abandoned inversion for the band itself (`mode="dark"` is constant there,
+> because the orange band is a dark surface in both modes). Keeping the panel
+> pinned dark therefore reproduced neither legacy (which flipped) nor the
+> band's own rule (which is about the BAND, not about a floating surface the
+> band opens) — and users read a `rgb(48,48,48)` menu on a white page in light
+> mode as a bug. QA directive: the band chrome stays on-dark, but every
+> floating surface it opens resolves the APP's mode.
+>
+> The three options in the table above are still correctly rejected — none of
+> them is what the fix does. The fix removes the wrapper instead: the on-dark
+> context now sits on the TRIGGER ELEMENT (`button['data-astryx-media']`),
+> which is `MediaTheme`'s own mechanism at element scope, and `DropdownMenu`
+> renders its `[popover]` panel as a SIBLING of the trigger — so the panel is
+> outside the context with nothing to undo. Same move in
+> `BAINotificationButton`, where the wrapper had also been reaching the
+> `Tooltip` panel (`Tooltip` renders trigger and panel as siblings too),
+> forcing `color-scheme: dark` onto Astryx's deliberately-inverted tooltip
+> surface: measured `bg rgb(255,255,255)` with `--color-text-primary` pinned to
+> `#ffffff`, i.e. the `Kbd` badge was white on white in BOTH modes.
+
 ---
 
 ## D2 — the user-dropdown trigger had lost its `data-testid`

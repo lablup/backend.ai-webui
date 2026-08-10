@@ -19,6 +19,8 @@
  *    `<input>` — so declaring it in the adapter is the whole fix.
  *  - **`tokenSeparators`.** Three call sites' own UI text instructs the user
  *    to separate values with a comma or space.
+ *  - **focus survives the first failing keystroke.** Reflecting the status
+ *    turned out to be able to REMOUNT the control (see the last describe).
  */
 import { Form } from '../form-engine';
 import {
@@ -27,6 +29,7 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('AstryxFormTextInput — restored props', () => {
@@ -184,5 +187,77 @@ describe('Form.Item status reaches the control', () => {
     const wrapper = input.closest('.astryx-text-input');
     expect(wrapper).not.toBeNull();
     expect(wrapper?.getAttribute('data-status')).toBe('error');
+  });
+});
+
+describe('the control is not remounted when its status changes', () => {
+  /**
+   * Regression: typing into ANY field carrying `rules` lost focus after the
+   * first character.
+   *
+   * `useFormControlStatusProps` used to return `{}` while the field was
+   * pristine and `{ status, statusVariant: 'detached' }` once a rule failed.
+   * Astryx's `Field` renders `{children}` inside an extra `<div>` when
+   * `statusVariant === 'attached'` (its default, i.e. what `{}` selects) and
+   * as a bare fragment otherwise — so the first keystroke swapped the element
+   * structure at the control's position, React unmounted the subtree, and the
+   * new `<input>` was a different DOM node with no focus. Characters 2..n went
+   * to `<body>`.
+   *
+   * The login screen's endpoint field is the reported instance (its rule is
+   * `pattern: /^https?:\/\//`, which a half-typed URL fails), so the harness
+   * below is that field.
+   */
+  const EndpointHarness = () => {
+    const [form] = Form.useForm();
+    return (
+      <Form form={form}>
+        <Form.Item
+          name="api_endpoint"
+          rules={[
+            {
+              pattern: /^https?:\/\/(.*)/,
+              message: 'Endpoint must start with http:// or https://',
+            },
+          ]}
+        >
+          <AstryxFormTextInput label="Endpoint" />
+        </Form.Item>
+      </Form>
+    );
+  };
+
+  it('keeps focus and accumulates every character while the value is invalid', async () => {
+    const user = userEvent.setup();
+    render(<EndpointHarness />);
+    const input = screen.getByLabelText('Endpoint');
+    await user.click(input);
+    expect(document.activeElement).toBe(input);
+
+    // Every one of these leaves the field invalid, so the status stays
+    // 'error' for characters 2..n and flips on character 1 — the exact
+    // transition that used to remount.
+    await user.keyboard('http:/x');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Endpoint')).toHaveValue('http:/x');
+    });
+    // Same DOM node throughout, and it never lost focus.
+    expect(screen.getByLabelText('Endpoint')).toBe(input);
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('keeps focus across the invalid -> valid transition too', async () => {
+    const user = userEvent.setup();
+    render(<EndpointHarness />);
+    const input = screen.getByLabelText('Endpoint');
+    await user.click(input);
+    await user.keyboard('http://a.b');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Endpoint')).toHaveValue('http://a.b');
+    });
+    expect(screen.getByLabelText('Endpoint')).toBe(input);
+    expect(document.activeElement).toBe(input);
   });
 });

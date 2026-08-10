@@ -4,11 +4,12 @@
  */
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
+import { useThemeMode } from '../hooks/useThemeMode';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { MediaTheme } from '@astryxdesign/core/theme';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { MediaTheme } from '@astryxdesign/core/theme';
 import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
@@ -34,6 +35,7 @@ type BAINotificationButtonProps = Pick<
 const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   ...props
 }) => {
+  const { isDarkMode } = useThemeMode();
   const [notifications] = useBAINotificationState();
 
   const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
@@ -79,48 +81,69 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   // purpose: Astryx renders overlays as inline siblings rather than through a
   // portal (measured — see `UserDropdownMenu.tsx`), so a drawer inside this
   // context would paint as a dark surface in light mode.
+  //
+  // ...and the TOOLTIP is such an overlay too. `Tooltip` renders
+  // `<div display:contents>{trigger}</div>` and its `[popover]` panel as
+  // SIBLINGS, so a `MediaTheme` wrapped around the whole `Tooltip` reached the
+  // panel as well and pinned `color-scheme: dark` on it in BOTH app modes.
+  // Astryx's tooltip surface is deliberately INVERTED (`light-dark()` the other
+  // way round), so the forced dark scheme resolved it to WHITE while the
+  // on-dark tokens painted the content `--color-on-dark` — white text on a
+  // white tooltip, illegible in light *and* dark mode (measured
+  // `bg rgb(255,255,255)` / `color rgb(255,255,255)`).
+  //
+  // So the on-dark context now sits on the trigger BUTTON itself
+  // (`data-astryx-media="dark"` is exactly what `MediaTheme` renders — a
+  // wrapper is only needed when several elements share the context), and the
+  // tooltip CONTENT takes the opposite-of-app media mode, the same recipe
+  // `SiderToggleButton` uses for its inverted tooltip.
   return (
     <>
-      <MediaTheme mode="dark">
-        {/* antd `Tooltip title` -> `content`; `placement="left"` -> `"start"`
-            (Astryx uses logical placements — MAPPING §4). */}
-        <Tooltip
-          content={
-            <>
-              {t('notification.Notifications')}{' '}
-              <BAIText keyboardWithLightBorder>{']'}</BAIText>
-            </>
+      {/* antd `Tooltip title` -> `content`; `placement="left"` -> `"start"`
+          (Astryx uses logical placements — MAPPING §4). */}
+      <Tooltip
+        content={
+          <MediaTheme mode={isDarkMode ? 'light' : 'dark'}>
+            {t('notification.Notifications')}{' '}
+            <BAIText keyboardWithLightBorder>{']'}</BAIText>
+          </MediaTheme>
+        }
+        placement="start"
+      >
+        {/* antd icon-only `Button type="text"` -> `IconButton
+            variant="ghost"`, which requires the accessible name antd let
+            this button ship without (P8). The `Badge dot` overlay is
+            MAPPING §3.8's NONE branch, already self-built once as
+            `BAIBadgeCountAstryx`; antd `color="red"` becomes
+            `variant="error"` (the closed-enum equivalent). */}
+        <IconButton
+          // The band's on-dark context, scoped to this element instead of a
+          // `MediaTheme` wrapper that the sibling tooltip panel would inherit.
+          // `data-astryx-media` IS `MediaTheme`'s whole mechanism (it renders
+          // `<div data-astryx-media={mode} style="display:contents">`; the
+          // theme CSS keys the on-dark tokens off that attribute), so this is
+          // the same primitive applied at element scope.
+          data-astryx-media="dark"
+          variant="ghost"
+          label={t('notification.Notifications')}
+          icon={
+            <BAIBadgeCountAstryx
+              hasDot={hasRunningBackgroundTask}
+              variant="error"
+              title={t('notification.Notifications')}
+            >
+              {/* On the glyph itself, not just the button: the overlay
+                  wrapper declares its own `color`, so it intercepts
+                  inheritance from the button before the icon sees it.
+                  `Bell` strokes with `currentColor`. */}
+              <Bell size="1em" style={{ color: 'var(--color-on-dark)' }} />
+            </BAIBadgeCountAstryx>
           }
-          placement="start"
-        >
-          {/* antd icon-only `Button type="text"` -> `IconButton
-              variant="ghost"`, which requires the accessible name antd let
-              this button ship without (P8). The `Badge dot` overlay is
-              MAPPING §3.8's NONE branch, already self-built once as
-              `BAIBadgeCountAstryx`; antd `color="red"` becomes
-              `variant="error"` (the closed-enum equivalent). */}
-          <IconButton
-            variant="ghost"
-            label={t('notification.Notifications')}
-            icon={
-              <BAIBadgeCountAstryx
-                hasDot={hasRunningBackgroundTask}
-                variant="error"
-                title={t('notification.Notifications')}
-              >
-                {/* On the glyph itself, not just the button: the overlay
-                    wrapper declares its own `color`, so it intercepts
-                    inheritance from the button before the icon sees it.
-                    `Bell` strokes with `currentColor`. */}
-                <Bell size="1em" style={{ color: 'var(--color-on-dark)' }} />
-              </BAIBadgeCountAstryx>
-            }
-            onClick={() => setIsOpenDrawer((v) => !v)}
-            {...props}
-            style={{ color: 'var(--color-on-dark)', ...props.style }}
-          />
-        </Tooltip>
-      </MediaTheme>
+          onClick={() => setIsOpenDrawer((v) => !v)}
+          {...props}
+          style={{ color: 'var(--color-on-dark)', ...props.style }}
+        />
+      </Tooltip>
       <WEBUINotificationDrawer
         open={isOpenDrawer}
         onClose={() => setIsOpenDrawer((v) => !v)}
