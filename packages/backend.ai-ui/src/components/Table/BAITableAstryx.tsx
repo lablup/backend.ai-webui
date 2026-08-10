@@ -351,6 +351,50 @@ const renderTitle = (column: { title?: unknown }): ReactNode =>
     ? (column.title as (props: unknown) => ReactNode)({})
     : (column.title as ReactNode);
 
+/**
+ * Flatten a rendered column title down to plain text.
+ *
+ * The settings and CSV-export modals need a `string` label, and both used to
+ * take it with `String(renderTitle(column))`. A `title` is a `ReactNode`, and
+ * plenty of columns supply an element rather than a bare string — a header with
+ * a tooltip, a unit suffix, a sort affordance — so `String()` stringified the
+ * React element to the literal `"[object Object]"`, which is what the
+ * Deployments column list showed (QA-FINDINGS Q-12).
+ *
+ * Walking `props.children` recovers the text for every shape a header actually
+ * uses: elements, fragments (which is how `flattenColumns` joins a group title
+ * to its child) and arrays. Anything genuinely textless — an icon-only header —
+ * yields `''`, and the caller falls back to the column key, exactly as before.
+ */
+const titleToPlainText = (node: ReactNode): string => {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return _.map(node, titleToPlainText).join('');
+  if (React.isValidElement(node)) {
+    const { children } = node.props as { children?: ReactNode };
+    return titleToPlainText(children);
+  }
+  return '';
+};
+
+/**
+ * The label a column carries in the settings / export modals: its own title,
+ * prefixed by its group's when it has one, so a nested column reads
+ * `Resources / CPU` rather than a bare `CPU` that collides with its siblings
+ * under other groups. Falls back to the column key when the header is textless.
+ */
+const columnPlainLabel = <RecordType extends AnyRecord>({
+  key,
+  column,
+  groupTitle,
+}: FlatColumn<RecordType>): string => {
+  const own = titleToPlainText(renderTitle(column)).trim();
+  const group = titleToPlainText(groupTitle).trim();
+  const label = group && own ? `${group} / ${own}` : own || group;
+  return label || key;
+};
+
 /* -------------------------------------------------------------------------- */
 /* Component                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -729,10 +773,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
               },
             ]
           : []),
-        ..._.map(flatColumns, ({ key, column }) => ({
-          key,
-          label: String(renderTitle(column) ?? key),
-          isAlwaysVisible: !!column.required,
+        ..._.map(flatColumns, (flat) => ({
+          key: flat.key,
+          label: columnPlainLabel(flat),
+          isAlwaysVisible: !!flat.column.required,
         })),
       ],
       [flatColumns, hasExpandable],
@@ -1128,10 +1172,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
         <BAIUnmountAfterClose>
           <BAITableAstryxSettingModal
             open={isSettingModalOpen}
-            columns={_.map(flatColumns, ({ key, column }) => ({
-              key,
-              label: String(renderTitle(column) ?? key),
-              required: !!column.required,
+            columns={_.map(flatColumns, (flat) => ({
+              key: flat.key,
+              label: columnPlainLabel(flat),
+              required: !!flat.column.required,
             }))}
             visibleColumnKeys={_.without(activeColumnKeys, EXPAND_COLUMN_KEY)}
             disableReorder={!isColumnReorderEnabled}
