@@ -1,0 +1,363 @@
+{
+  "tag": "after",
+  "at": "2026-08-10T23:32:59.206Z",
+  "light": {
+    "listRename": {
+      "error": "no button with aria-label === Edit"
+    },
+    "sessionVars": {
+      "theme": "light",
+      "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+      "--color-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-accent-muted": "light-dark(color-mix(in srgb, light-dark(#FF7A00, #be5e06) 20%, transparent), color-mix(in srgb, light-dark(#FF7A00, #be5e06) 25%, transparent))"
+    },
+    "drawer": {
+      "Session Scheduling History": {
+        "label": "Session Scheduling History",
+        "rest": {
+          "color": "rgb(255, 122, 0)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(255, 122, 0)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "Copy": {
+        "label": "Copy",
+        "rest": {
+          "color": "rgb(255, 122, 0)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(255, 122, 0)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "Edit": {
+        "label": "Edit",
+        "rest": {
+          "color": "rgb(255, 122, 0)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(255, 122, 0)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "button.Copy": {
+        "error": "no button with aria-label === button.Copy"
+      },
+      "Close": {
+        "label": "Close",
+        "rest": {
+          "color": "rgb(20, 20, 20)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(20, 20, 20)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "See Container Logs": {
+        "label": "See Container Logs",
+        "rest": {
+          "color": "rgb(20, 20, 20)",
+          "bg": "rgba(0, 0, 0, 0.06)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button secondary md x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(20, 20, 20)",
+          "bg": "rgba(0, 0, 0, 0.06)",
+          "bgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button secondary md x1n2onr6"
+        }
+      }
+    },
+    "drawerCopyLabels": [
+      "Copy",
+      "Copy",
+      "Copy",
+      "Copy"
+    ],
+    "drawerAccentButtons": [
+      {
+        "label": "Copy",
+        "color": "rgb(255, 122, 0)"
+      },
+      {
+        "label": "Edit",
+        "color": "rgb(255, 122, 0)"
+      },
+      {
+        "label": "Session Scheduling History",
+        "color": "rgb(255, 122, 0)"
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(255, 122, 0)"
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(255, 122, 0)"
+      }
+    ],
+    "copyLabelsKo": [
+      "복사",
+      "Copy",
+      "복사",
+      "복사"
+    ],
+    "envVars": {
+      "theme": "light",
+      "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+      "--color-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-accent-muted": "light-dark(color-mix(in srgb, light-dark(#FF7A00, #be5e06) 20%, transparent), color-mix(in srgb, light-dark(#FF7A00, #be5e06) 25%, transparent))"
+    },
+    "env": {
+      "Edit Minimum Image Resource Limit": {
+        "label": "Edit Minimum Image Resource Limit",
+        "rest": {
+          "color": "rgb(2, 141, 242)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(2, 141, 242)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        }
+      },
+      "Manage Apps": {
+        "label": "Manage Apps",
+        "rest": {
+          "color": "rgb(2, 141, 242)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(2, 141, 242)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        }
+      }
+    }
+  },
+  "dark": {
+    "listRename": {
+      "error": "no button with aria-label === Edit"
+    },
+    "sessionVars": {
+      "theme": "dark",
+      "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+      "--color-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-accent-muted": "light-dark(color-mix(in srgb, light-dark(#FF7A00, #be5e06) 20%, transparent), color-mix(in srgb, light-dark(#FF7A00, #be5e06) 25%, transparent))"
+    },
+    "drawer": {
+      "Session Scheduling History": {
+        "label": "Session Scheduling History",
+        "rest": {
+          "color": "rgb(190, 94, 6)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(190, 94, 6)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "Copy": {
+        "label": "Copy",
+        "rest": {
+          "color": "rgb(190, 94, 6)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(190, 94, 6)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "Edit": {
+        "label": "Edit",
+        "rest": {
+          "color": "rgb(190, 94, 6)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(190, 94, 6)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "button.Copy": {
+        "error": "no button with aria-label === button.Copy"
+      },
+      "Close": {
+        "label": "Close",
+        "rest": {
+          "color": "rgb(255, 255, 255)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(255, 255, 255)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button ghost sm x1n2onr6"
+        }
+      },
+      "See Container Logs": {
+        "label": "See Container Logs",
+        "rest": {
+          "color": "rgb(255, 255, 255)",
+          "bg": "rgb(38, 38, 38)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button secondary md x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(255, 255, 255)",
+          "bg": "rgb(38, 38, 38)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "accentVar": "light-dark(#FF7A00, #be5e06)",
+          "cls": "astryx-button secondary md x1n2onr6"
+        }
+      }
+    },
+    "drawerCopyLabels": [
+      "Copy",
+      "Copy",
+      "Copy",
+      "Copy"
+    ],
+    "drawerAccentButtons": [
+      {
+        "label": "Copy",
+        "color": "rgb(190, 94, 6)"
+      },
+      {
+        "label": "Edit",
+        "color": "rgb(190, 94, 6)"
+      },
+      {
+        "label": "Session Scheduling History",
+        "color": "rgb(190, 94, 6)"
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(190, 94, 6)"
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(190, 94, 6)"
+      }
+    ],
+    "copyLabelsKo": [
+      "복사",
+      "Copy",
+      "복사",
+      "복사"
+    ],
+    "envVars": {
+      "theme": "dark",
+      "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+      "--color-accent": "light-dark(#FF7A00, #be5e06)",
+      "--color-accent-muted": "light-dark(color-mix(in srgb, light-dark(#FF7A00, #be5e06) 20%, transparent), color-mix(in srgb, light-dark(#FF7A00, #be5e06) 25%, transparent))"
+    },
+    "env": {
+      "Edit Minimum Image Resource Limit": {
+        "label": "Edit Minimum Image Resource Limit",
+        "rest": {
+          "color": "rgb(3, 135, 191)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(3, 135, 191)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        }
+      },
+      "Manage Apps": {
+        "label": "Manage Apps",
+        "rest": {
+          "color": "rgb(3, 135, 191)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        },
+        "hover": {
+          "color": "rgb(3, 135, 191)",
+          "bg": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "accentVar": "light-dark(#028DF2, #0387bf)",
+          "cls": "astryx-button ghost md x1n2onr6"
+        }
+      }
+    }
+  },
+  "pageErrors": []
+}

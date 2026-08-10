@@ -58,7 +58,19 @@ const BAICopyableText: React.FC<BAICopyableTextProps> = ({
   return (
     <HStack gap={1} align="center" className="bai-copyable-text">
       <Text {...textProps}>{children}</Text>
+      {/* QA-FINDINGS Q-37 — this component IS the antd `Typography.Text
+          copyable` replacement, and antd painted that control through its
+          `operationUnit` mixin (`color: token.colorLink`). The ticket-08
+          rebuild into a ghost `IconButton` inherited the ghost default
+          `--color-text-primary` instead. The session detail drawer showed the
+          consequence directly: after Q-37 the title's copy/rename and the
+          Environments row's `BAIText` copy were accent while the Session ID
+          row's copy — the same affordance, one row apart — stayed black.
+          `.bai-action-accent` restores `colorLink` (brand routes) /
+          `colorInfo` (admin routes) at all 86 call sites at once; see
+          `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
       <IconButton
+        className="bai-action-accent"
         variant="ghost"
         size="sm"
         icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}

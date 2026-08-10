@@ -1,9 +1,22 @@
 /// <reference types="vite-plugin-svgr/client" />
-// BUI's own stylesheet (ticket 30). Kept as the FIRST statement so bundlers
-// that consume BUI from source get the `@layer components` rules before any
-// component module evaluates. `package.json#sideEffects` lists `**/*.css`
-// precisely so this import survives tree-shaking; consumers of the built
-// `dist` that bundle CSS separately import `backend.ai-ui/styles.css`.
+// BUI's stylesheets, kept as the FIRST statements so bundlers that consume BUI
+// from source get them before any component module evaluates.
+// `package.json#sideEffects` lists `**/*.css` precisely so these imports
+// survive tree-shaking; consumers of the built `dist` that bundle CSS
+// separately import `backend.ai-ui/styles.css`.
+//
+// The two are ordered alphabetically by the import sorter, NOT by intent, and
+// that is safe: ticket 30's "must come first" requirement is about the `@layer`
+// ORDER STATEMENT, which lives in `backend.ai-ui.css`. `actionAccent.css`
+// declares no layer at all (QA-FINDINGS Q-37 — it has to outrank Astryx's
+// `@layer astryx-base` ghost-button colour, and only an unlayered rule can),
+// so it cannot influence layer precedence in either position, and
+// `backend.ai-ui.css` is still the first LAYERED sheet in the bundle.
+//
+// `.bai-action-accent` is imported from the barrel rather than from a component
+// because both BUI (`BAIText`) and app-side call sites under
+// `react/src/components` use the class; no single component owns it.
+import './styles/actionAccent.css';
 import './styles/backend.ai-ui.css';
 
 export * from './components';

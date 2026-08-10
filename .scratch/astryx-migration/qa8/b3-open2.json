@@ -1,0 +1,499 @@
+{
+  "url": "https://to-astryx.backend-ai-webui.localhost:1357/project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/session/start?step=1",
+  "triggers": [
+    {
+      "i": 0,
+      "text": "a한국어가능_cde",
+      "imgCount": 0,
+      "badgeCount": 0,
+      "html": "<span class=\"x1iyjqo2 xeuugli xb3r6kr xlyipyv xuxw1ft x1yc453h\">a한국어가능_cde</span>",
+      "rect": {
+        "x": 345,
+        "y": 19,
+        "w": 102,
+        "h": 22
+      }
+    },
+    {
+      "i": 1,
+      "text": "Python Python\tmultiarch",
+      "imgCount": 0,
+      "badgeCount": 0,
+      "html": "<span class=\"x1iyjqo2 xeuugli xb3r6kr xlyipyv xuxw1ft x1yc453h\">Python Python\tmultiarch</span>",
+      "rect": {
+        "x": 289,
+        "y": 244,
+        "w": 626,
+        "h": 22
+      }
+    },
+    {
+      "i": 2,
+      "text": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+      "imgCount": 0,
+      "badgeCount": 0,
+      "html": "<span class=\"x1iyjqo2 xeuugli xb3r6kr xlyipyv xuxw1ft x1yc453h\">3.13 x86_64 3.13\tUbuntu 24.04\tx86_64</span>",
+      "rect": {
+        "x": 289,
+        "y": 302,
+        "w": 626,
+        "h": 22
+      }
+    },
+    {
+      "i": 3,
+      "text": "default",
+      "imgCount": 0,
+      "badgeCount": 0,
+      "html": "<span class=\"x1iyjqo2 xeuugli xb3r6kr xlyipyv xuxw1ft x1yc453h\">default</span>",
+      "rect": {
+        "x": 289,
+        "y": 576,
+        "w": 626,
+        "h": 22
+      }
+    },
+    {
+      "i": 4,
+      "text": "cpu01-small",
+      "imgCount": 0,
+      "badgeCount": 0,
+      "html": "<span class=\"x1iyjqo2 xeuugli xb3r6kr xlyipyv xuxw1ft x1yc453h\">cpu01-small</span>",
+      "rect": {
+        "x": 289,
+        "y": 678,
+        "w": 626,
+        "h": 22
+      }
+    },
+    {
+      "i": 5,
+      "text": "GiB",
+      "imgCount": 0,
+      "badgeCount": 0,
+      "html": "<span class=\"x1iyjqo2 xeuugli xb3r6kr xlyipyv xuxw1ft x1yc453h\">GiB</span>",
+      "rect": {
+        "x": 435,
+        "y": 880,
+        "w": 69,
+        "h": 22
+      }
+    }
+  ],
+  "popups": {
+    "t0:a한국어가능_cde": {
+      "found": true,
+      "rect": {
+        "x": 332,
+        "y": 78,
+        "w": 270,
+        "h": 196
+      },
+      "panelText": "Search optionsGenerala한국어가능_cdedefaultmyProjectModel Storemodel-store",
+      "optionCount": 4,
+      "groupCount": 2,
+      "groupLabels": [
+        "General",
+        "Model Store"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "hasSearchBox": true,
+      "options": [
+        {
+          "text": "a한국어가능_cde",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          }
+        },
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          }
+        },
+        {
+          "text": "myProject",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          }
+        },
+        {
+          "text": "model-store",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          }
+        }
+      ]
+    },
+    "t1:Python Python\tmultiarch": {
+      "found": true,
+      "rect": {
+        "x": 276,
+        "y": 303,
+        "w": 676,
+        "h": 104
+      },
+      "panelText": "Search optionsLanguagePythonmultiarchPython",
+      "optionCount": 2,
+      "groupCount": 1,
+      "groupLabels": [
+        "Language"
+      ],
+      "totalImgs": 2,
+      "totalBadges": 1,
+      "hasSearchBox": true,
+      "options": [
+        {
+          "text": "Pythonmultiarch",
+          "imgCount": 1,
+          "imgSrc": "resources/icons/python.png",
+          "imgNatural": {
+            "w": 2000,
+            "h": 2000
+          },
+          "imgRect": {
+            "w": 15,
+            "h": 15
+          },
+          "badgeCount": 1,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        },
+        {
+          "text": "Python",
+          "imgCount": 1,
+          "imgSrc": "resources/icons/python.png",
+          "imgNatural": {
+            "w": 2000,
+            "h": 2000
+          },
+          "imgRect": {
+            "w": 15,
+            "h": 15
+          },
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        }
+      ]
+    },
+    "t2:3.13 x86_64 3.13\tUbuntu 24.04\tx86_64": {
+      "found": true,
+      "rect": {
+        "x": 276,
+        "y": 361,
+        "w": 676,
+        "h": 76
+      },
+      "panelText": "Search options3.13x86_64Ubuntu 24.043.9x86_64Ubuntu 20.04",
+      "optionCount": 2,
+      "groupCount": 0,
+      "groupLabels": [],
+      "totalImgs": 0,
+      "totalBadges": 2,
+      "hasSearchBox": true,
+      "options": [
+        {
+          "text": "3.13x86_64Ubuntu 24.04",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 1,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        },
+        {
+          "text": "3.9x86_64Ubuntu 20.04",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 1,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        }
+      ]
+    },
+    "t3:default": {
+      "found": true,
+      "rect": {
+        "x": 276,
+        "y": 635,
+        "w": 676,
+        "h": 42
+      },
+      "panelText": "Search optionsdefault",
+      "optionCount": 1,
+      "groupCount": 0,
+      "groupLabels": [],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "hasSearchBox": true,
+      "options": [
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        }
+      ]
+    },
+    "t4:cpu01-small": {
+      "found": true,
+      "rect": {
+        "x": 276,
+        "y": 373,
+        "w": 676,
+        "h": 300
+      },
+      "panelText": "Search optionsCustom allocationMinimum requirementsSelect as the minimum requirement for the selected running environmentPresetcpu01-small1Core1GiBcpu02-medium4Core8GiBcpu03-large8Core16GiBcuda01-smal",
+      "optionCount": 8,
+      "groupCount": 1,
+      "groupLabels": [
+        "Preset"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "hasSearchBox": true,
+      "options": [
+        {
+          "text": "Custom allocation",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        },
+        {
+          "text": "Minimum requirementsSelect as the minimum requirement for the selected running environment",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        },
+        {
+          "text": "cpu01-small1Core1GiB",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        },
+        {
+          "text": "cpu02-medium4Core8GiB",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        },
+        {
+          "text": "cpu03-large8Core16GiB",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        },
+        {
+          "text": "cuda01-small1Core4GiB",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 668,
+            "h": 34
+          }
+        }
+      ]
+    },
+    "t5:GiB": {
+      "found": true,
+      "rect": {
+        "x": 422,
+        "y": 907,
+        "w": 119,
+        "h": 76
+      },
+      "panelText": "MiBGiB",
+      "optionCount": 2,
+      "groupCount": 0,
+      "groupLabels": [],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "hasSearchBox": true,
+      "options": [
+        {
+          "text": "MiB",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 110.9,
+            "h": 34
+          }
+        },
+        {
+          "text": "GiB",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "rect": {
+            "w": 110.9,
+            "h": 34
+          }
+        }
+      ]
+    }
+  },
+  "numeric": [
+    {
+      "i": 0,
+      "value": "1",
+      "min": "1",
+      "max": "7",
+      "step": "1",
+      "ariaLabel": null,
+      "rect": {
+        "x": 297,
+        "y": 782,
+        "w": 196.8,
+        "h": 22
+      },
+      "fieldText": "ValueCore",
+      "buttons": []
+    },
+    {
+      "i": 1,
+      "value": "1",
+      "min": "0.3125",
+      "max": "16",
+      "step": null,
+      "ariaLabel": null,
+      "rect": {
+        "x": 297,
+        "y": 880,
+        "w": 92.9,
+        "h": 22
+      },
+      "fieldText": "SelectUnitGiBMiBGiB",
+      "buttons": [
+        {
+          "label": "Increase",
+          "w": 16,
+          "h": 16
+        },
+        {
+          "label": "Decrease",
+          "w": 16,
+          "h": 16
+        },
+        {
+          "label": "GiB",
+          "w": 68.9,
+          "h": 22
+        }
+      ]
+    },
+    {
+      "i": 2,
+      "value": "0",
+      "min": "0",
+      "max": null,
+      "step": "1",
+      "ariaLabel": null,
+      "rect": {
+        "x": 297,
+        "y": 1024,
+        "w": 234.8,
+        "h": 22
+      },
+      "fieldText": "Value",
+      "buttons": []
+    },
+    {
+      "i": 3,
+      "value": "1",
+      "min": "1",
+      "max": "1",
+      "step": "1",
+      "ariaLabel": null,
+      "rect": {
+        "x": 285,
+        "y": 1218,
+        "w": 202.4,
+        "h": 22
+      },
+      "fieldText": "ValueNode",
+      "buttons": []
+    }
+  ],
+  "pageErrors": []
+}

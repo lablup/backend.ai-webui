@@ -403,10 +403,21 @@ const SessionDetailContent: React.FC<{
                 sessionFrgmt={session}
                 showInfo={!supportsSessionSchedulingHistory}
               />
+              {/* QA-FINDINGS Q-37 — both controls in this row were antd
+                  `type="link"` buttons (`Button` / `BAIButton`), i.e. painted
+                  `colorLink` #FF7A00. The conversion to `IconButton
+                  variant="ghost"` dropped the tint to `--color-text-primary`
+                  (measured rgb(20,20,20) light / rgb(255,255,255) dark),
+                  which is what "버튼 색깔이 default 라서 클릭 가능한지 알기
+                  힘듭니다" is describing. `.bai-action-accent` restores it
+                  through `--color-text-accent`, which resolves to exactly
+                  `colorLink` here and to `colorInfo` under the admin theme —
+                  see `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
               {!supportsSessionSchedulingHistory &&
               session?.status_data &&
               session?.status_data !== '{}' ? (
                 <IconButton
+                  className="bai-action-accent"
                   variant="ghost"
                   size="sm"
                   icon={<Info size="1em" />}
@@ -419,6 +430,7 @@ const SessionDetailContent: React.FC<{
               ) : null}
               {supportsSessionSchedulingHistory && (
                 <IconButton
+                  className="bai-action-accent"
                   variant="ghost"
                   size="sm"
                   icon={<History size="1em" />}
@@ -445,8 +457,11 @@ const SessionDetailContent: React.FC<{
                 off too. */}
             <BAIFlex>
               <BAISessionTypeTag sessionFrgmt={session} />
+              {/* QA-FINDINGS Q-37 — legacy `BAIButton type="link"`, so the
+                  accent here is a straight parity restoration. */}
               {session.type === 'batch' && session.startup_command && (
                 <IconButton
+                  className="bai-action-accent"
                   variant="ghost"
                   size="sm"
                   icon={<Info size="1em" />}
@@ -523,7 +538,20 @@ const SessionDetailContent: React.FC<{
                     direction={md ? 'row' : 'column'}
                   />
                 </Suspense>
+                {/* QA-FINDINGS Q-37 — recorded honestly: this one is NOT a
+                    parity restoration. Legacy rendered a bare
+                    `<QuestionCircleOutlined style={{cursor:'pointer'}}>` in the
+                    Descriptions LABEL, at the label's inherited neutral colour,
+                    so antd never tinted it either. It gets the accent anyway
+                    because it is a real action affordance (opens
+                    `IdleCheckDescriptionModal`) and it now sits in the drawer's
+                    content column alongside the two ⓘ buttons above — leaving
+                    one of three identical `size="sm"` ghost glyphs black while
+                    the others are accent would read as an inconsistency rather
+                    than a distinction. The report "세션 디테일 드로어에서 i 가
+                    클릭 가능한지 인식하기 어렵네요" names this glyph class. */}
                 <IconButton
+                  className="bai-action-accent"
                   variant="ghost"
                   size="sm"
                   icon={<CircleHelp size="1em" />}

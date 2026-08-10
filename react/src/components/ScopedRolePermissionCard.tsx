@@ -430,9 +430,19 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                     filter, so a labeled button crowds it (same pattern as the
                     session list's bulk actions). MAPPING §3.3: an icon-only
                     Button becomes `IconButton`, which owns its own tooltip
-                    and finally has an accessible name. The `colorInfo` glyph
-                    tint is dropped (P5, closed variant enum). */}
+                    and finally has an accessible name.
+                    QA-FINDINGS Q-37 — the `colorInfo` glyph tint is RESTORED
+                    (the earlier "dropped (P5, closed variant enum)" note is
+                    superseded). Legacy was
+                    `icon={<SquarePenIcon style={{ color: token.colorInfo }} />}`
+                    on a DEFAULT (bordered) antd Button, which is why this call
+                    site keeps `IconButton`'s `secondary` default rather than
+                    going ghost — only the glyph colour was ever accented. On
+                    this `/admin/*` route `--color-text-accent` resolves to
+                    #028DF2/#0387bf, i.e. `colorInfo`. See
+                    `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
                 <IconButton
+                  className="bai-action-accent"
                   icon={<SquarePenIcon aria-hidden />}
                   label={t('rbac.EditScopePermissions')}
                   tooltip={t('rbac.EditScopePermissions')}

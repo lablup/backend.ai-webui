@@ -519,8 +519,19 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                             {/* PILOT-DECISION: antd's `color: token.colorInfo`
                                 icon tint has no ghost-`IconButton` colour
                                 escape hatch (P5, closed variant enum) —
-                                dropped, default ghost styling. */}
+                                dropped, default ghost styling.
+                                QA-FINDINGS Q-37 — SUPERSEDED. The escape hatch
+                                is `className`, not `variant`: legacy was
+                                `BAIButton type="text" style={{ color:
+                                token.colorInfo }}`, and `--color-text-accent`
+                                carries that hue per route without a token read.
+                                This control is one of two identical-looking
+                                glyphs in the row (the other is the disabled
+                                `BanIcon` on the main key), so an accented,
+                                obviously-actionable one also separates them.
+                                See `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
                             <IconButton
+                              className="bai-action-accent"
                               icon={<KeyRoundIcon size="1em" />}
                               label={t('credential.SetAsMain')}
                               tooltip={t('credential.SetAsMain')}

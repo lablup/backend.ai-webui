@@ -19,3 +19,11 @@
    (not through the barrel), so it never loaded on its own — the `.bai-icon`
    baseline (ticket 30 §2) was silently missing from every story. */
 @import '../src/styles/backend.ai-ui.css';
+
+/* QA-FINDINGS Q-37 — `.bai-action-accent`, the shared accent tint on icon-only
+   action affordances. Same reason as the import above: the barrel that pulls
+   it into the app (`src/index.ts`) is not what Storybook loads, so without
+   this line `BAIText copyable`'s copy control renders at
+   `--color-text-primary` in the preview and at `--color-text-accent`
+   everywhere else. Deliberately unlayered — see the file's own header. */
+@import '../src/styles/actionAccent.css';

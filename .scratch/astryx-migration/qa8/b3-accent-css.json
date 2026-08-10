@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "layer": "components",
+      "sel": ".bai-compact-group :is(.astryx-text-input, .astryx-number-input, .astryx-textarea, .astryx-selector, .astryx-multi-selector, .astryx-tokenizer, .astryx-typeahead, .astryx-date-input, .astryx-time-input):is(:hover, :focus",
+      "css": "z-index: 2;"
+    }
+  ],
+  "btnColor": "rgb(20, 20, 20)",
+  "btnVars": {
+    "--color-text-accent": "light-dark(#028DF2, #0387bf)",
+    "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+    "--color-accent": "light-dark(#028DF2, #0387bf)",
+    "--color-accent-muted": "light-dark(color-mix(in srgb, light-dark(#028DF2, #0387bf) 20%, transparent), color-mix(in srgb, light-dark(#028DF2, #0387bf) 25%, transparent))",
+    "--color-background-hover": "",
+    "--color-background-muted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))"
+  },
+  "themeAttr": "bai-r10-default-admin-hacwbnj",
+  "pageErrors": []
+}

@@ -308,8 +308,20 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           {/* PILOT-DECISION: antd text Buttons with token.colorInfo-tinted
               icons -> Astryx ghost IconButtons. IconButton's variant enum is
               closed, so the info-blue icon tint is dropped (P5/P11);
-              accessible labels reuse the modal titles they open (P8). */}
+              accessible labels reuse the modal titles they open (P8).
+              QA-FINDINGS Q-37 — SUPERSEDED for the colour half. The report
+              "/admin/environment 페이지의 control 버튼 색상이 default 입니다"
+              is precisely this drop: measured rgb(20,20,20) light /
+              rgb(255,255,255) dark against antd's `colorInfo` #028DF2/#0387BF.
+              The closed enum still has no colour slot, but `className` does:
+              `--color-text-accent` on this route resolves through
+              `AstryxAdminTheme` to #028DF2/#0387bf, i.e. `colorInfo` exactly,
+              so the class restores the tint without a per-route read. The
+              `type="text"` hover wash (`colorBgTextHover` rgba(0,0,0,0.06)) is
+              already what Astryx's ghost `:hover` paints, so it is untouched.
+              See `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
           <IconButton
+            className="bai-action-accent"
             variant="ghost"
             icon={<SquarePenIcon />}
             label={t('environment.ModifyMinimumImageResourceLimit')}
@@ -317,6 +329,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             onClick={() => setManagingResourceLimit(row)}
           />
           <IconButton
+            className="bai-action-accent"
             variant="ghost"
             icon={<LayoutGrid size="1em" />}
             label={t('environment.ManageApps')}

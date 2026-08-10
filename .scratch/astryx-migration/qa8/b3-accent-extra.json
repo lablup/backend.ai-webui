@@ -1,0 +1,15 @@
+{
+  "light": {
+    "sessionListEdit": [],
+    "rbacUrl": "https://to-astryx.backend-ai-webui.localhost:1357/admin/rbac",
+    "rbacEditScope": [],
+    "rbacEditRole": []
+  },
+  "dark": {
+    "sessionListEdit": [],
+    "rbacUrl": "https://to-astryx.backend-ai-webui.localhost:1357/admin/rbac",
+    "rbacEditScope": [],
+    "rbacEditRole": []
+  },
+  "pageErrors": []
+}

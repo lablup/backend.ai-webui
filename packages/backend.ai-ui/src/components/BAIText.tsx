@@ -151,8 +151,14 @@ const CopyControl: React.FC<{
   const [copied, setCopied] = useState(false);
   const config = typeof copyable === 'object' ? copyable : undefined;
   return (
+    // QA-FINDINGS Q-37 — antd rendered `Typography`'s copy control through the
+    // `operationUnit` mixin (`color: token.colorLink`), i.e. the SAME accent
+    // the rest of this cluster lost. `variant="ghost"` has no colour slot, so
+    // the tint comes back as a class; `--color-text-accent` resolves to
+    // `colorLink` on brand routes and `colorInfo` on admin ones, which is
+    // exactly what antd painted here. See `styles/actionAccent.css`.
     <IconButton
-      className="bai-text-copy"
+      className="bai-text-copy bai-action-accent"
       variant="ghost"
       size="sm"
       label={label}
@@ -316,7 +322,18 @@ const BAIText: React.FC<BAITextProps> = ({
         </Link>
       ) : null}
       {copyable ? (
-        <CopyControl copyable={copyable} label={t('button.Copy')}>
+        // QA-FINDINGS Q-38 — the key was `button.Copy`, which does not exist in
+        // BUI's OWN locale bundle: every BUI key is namespaced under `general.`
+        // (`general.button.Copy`), as the two `Link` labels immediately above
+        // already are. `useBAIi18n` binds to BUI's private i18next instance
+        // rather than resolving through React context, so there is no host
+        // bundle to fall through to; with no `parseMissingKeyHandler` set
+        // (`src/locale/index.ts`), i18next's default is to return the KEY —
+        // which then shipped as the copy button's aria-label and its visible
+        // tooltip. Measured on the session detail drawer in both
+        // modes: `aria-label="button.Copy"`, and reported independently as
+        // "엑세스 토큰 생성 이후에 뜨는 모달에서도 카피 버튼의 i18n이 깨짐".
+        <CopyControl copyable={copyable} label={t('general.button.Copy')}>
           {children}
         </CopyControl>
       ) : null}

@@ -117,6 +117,18 @@ const PortSelectFormItem: React.FC<Props> = ({
       <AstryxFormTagsInput
         tokenSeparators={[',', ' ']}
         label={t('session.launcher.PreOpenPortTitle')}
+        // QA-FINDINGS Q-39: an EMPTY placeholder, deliberately.
+        //
+        // Astryx's `Tokenizer` defaults its input to "Search…", and this field
+        // has no suggestion source at all (`EMPTY_TAG_SEARCH_SOURCE`) — so it
+        // invited the user to search, showed no list, and read as broken. The
+        // `extra` line directly above already says to separate values with a
+        // comma or a space, which is the actual instruction.
+        //
+        // Empty is also exact legacy parity: `git show origin/main:` has the
+        // `placeholder` prop COMMENTED OUT on the antd `Select mode="tags"`, so
+        // legacy rendered no placeholder either.
+        placeholder=""
       />
     </Form.Item>
   );

@@ -1,0 +1,33 @@
+{
+  "found": true,
+  "optionHTML": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\"><div style=\"align-items: center; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-flow: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0px; min-width: 0px; padding: 0px; position: relative; text-decoration: inherit; gap: 0px; justify-content: flex-start;\"><span>3.13</span><div role=\"separator\" aria-orientation=\"vertical\" class=\"astryx-divider subtle vertical x3nfvp2 xdt5ytf x6s0dn4 x5yr21d\" data-variant=\"subtle\" data-orientation=\"vertical\"><div class=\"xjk4fl7 x1iyjqo2 xs83m0k x1m4xfpy\"></div></div><span>x86_64</span><div role=\"separator\" aria-orientation=\"vertical\" class=\"astryx-divider subtle vertical x3nfvp2 xdt5ytf x6s0dn4 x5yr21d\" data-variant=\"subtle\" data-orientation=\"vertical\"><div class=\"xjk4fl7 x1iyjqo2 xs83m0k x1m4xfpy\"></div></div><div style=\"align-items: flex-start; border: 0px solid black; box-sizing: border-box; display: flex; flex-basis: auto; flex-flow: row; flex-shrink: 0; list-style: none; margin: 0px; min-height: 0px; min-width: 0px; padding: 0px; position: relative; text-decoration: inherit; gap: 8px; justify-content: flex-start;\"><span class=\"astryx-bad",
+  "dividerCount": 2,
+  "dividers": [
+    {
+      "tag": "DIV",
+      "cls": "astryx-divider subtle vertical x3nfvp2 xdt5ytf x6s0dn4 x5yr2",
+      "w": 1,
+      "h": 0,
+      "marginInline": "0px/0px",
+      "borderLeft": "0px",
+      "alignSelf": "auto",
+      "display": "flex"
+    },
+    {
+      "tag": "DIV",
+      "cls": "astryx-divider subtle vertical x3nfvp2 xdt5ytf x6s0dn4 x5yr2",
+      "w": 1,
+      "h": 0,
+      "marginInline": "0px/0px",
+      "borderLeft": "0px",
+      "alignSelf": "auto",
+      "display": "flex"
+    }
+  ],
+  "rowGap": {
+    "display": "flex",
+    "gap": "0px",
+    "alignItems": "center"
+  },
+  "pageErrors": []
+}

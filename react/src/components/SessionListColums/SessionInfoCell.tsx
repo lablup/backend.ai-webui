@@ -162,10 +162,17 @@ const SessionInfoCell: React.FC<{
             {optimisticName}
           </Text>
           {editable && (
-            // MAPPING §3.3: icon-only -> `IconButton`. The `colorLink` glyph
-            // tint is dropped (P5, closed variant enum), and the required
-            // `label` gives the control its first accessible name.
+            // MAPPING §3.3: icon-only -> `IconButton`. The required `label`
+            // gives the control its first accessible name.
+            // QA-FINDINGS Q-37 — the `colorLink` glyph tint is RESTORED (the
+            // earlier "dropped (P5, closed variant enum)" note is superseded).
+            // Legacy was `Button type="text" style={{ color: token.colorLink }}`
+            // and this is the session list's own rename control, the sibling of
+            // the drawer's rename the report names. `--color-text-accent`
+            // resolves to `colorLink` on this route; see
+            // `packages/backend.ai-ui/src/styles/actionAccent.css`.
             <IconButton
+              className="bai-action-accent"
               isLoading={isPendingRename}
               variant="ghost"
               size="sm"

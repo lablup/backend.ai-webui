@@ -226,7 +226,17 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       : []),
     // antd `Select.OptGroup` → Astryx `{type: 'section'}` (a native option
     // kind, MAPPING §3.1 notwithstanding — `Selector` grew sections in 0.3.0).
-    { type: 'section' as const, title: 'Preset', options: presetOptions },
+    // QA-FINDINGS Q-40: the section title was the hardcoded English string
+    // 'Preset'. `modelStore.Preset` is that exact word and is already
+    // translated in all 21 locale files, so it is reused rather than adding a
+    // 21-file duplicate of a single word. The namespace is inherited, not
+    // ideal — if this string ever needs to diverge from the model-store one,
+    // that is the moment to give it its own key.
+    {
+      type: 'section' as const,
+      title: t('modelStore.Preset'),
+      options: presetOptions,
+    },
   ];
 
   return (
@@ -241,7 +251,12 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       }}
     >
       <Selector
-        label={t('session.launcher.ResourcePresets')}
+        // QA-FINDINGS Q-40: `session.launcher.ResourcePresets` does not exist
+        // in any locale file, so i18next fell through and Astryx rendered the
+        // RAW KEY as this Selector's accessible name.
+        // `resourcePreset.ResourcePresets` is the same string and is present in
+        // all 21 locales.
+        label={t('resourcePreset.ResourcePresets')}
         isLabelHidden
         isLoading={isPendingUpdate}
         isDisabled={disabled}

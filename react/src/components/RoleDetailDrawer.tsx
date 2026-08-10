@@ -122,9 +122,15 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
           {role?.source === 'CUSTOM' && (
             // MAPPING §3.3: an icon-only button with no children is an
             // Astryx `IconButton`, whose `label` doubles as the tooltip —
-            // so the antd `Tooltip` wrapper disappears. The `colorInfo`
-            // tint is dropped (P5, closed variant enum).
+            // so the antd `Tooltip` wrapper disappears.
+            // QA-FINDINGS Q-37 — the `colorInfo` tint is RESTORED (the earlier
+            // "dropped (P5, closed variant enum)" note is superseded). Legacy
+            // was `icon={<SquarePenIcon style={{ color: token.colorInfo }} />}`.
+            // This is an `/admin/*` route, where `--color-text-accent` resolves
+            // through `AstryxAdminTheme` to #028DF2/#0387bf — `colorInfo`
+            // exactly. See `packages/backend.ai-ui/src/styles/actionAccent.css`.
             <IconButton
+              className="bai-action-accent"
               variant="ghost"
               icon={<SquarePenIcon aria-hidden />}
               label={t('rbac.EditRole')}
