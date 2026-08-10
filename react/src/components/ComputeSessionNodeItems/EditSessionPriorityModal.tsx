@@ -97,6 +97,8 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
           onRequestClose();
           return;
         }
+        // TODO(needs-backend): replace this per-session loop with a single
+        // bulk mutation once the core supports one.
         return Promise.allSettled(
           filteredSessions.map((session) =>
             commitOne(session.id, values.priority),
@@ -164,6 +166,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
               <InputNumber
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}
+                precision={0}
                 style={{ width: '100%' }}
               />
             </BAIBulkEditFormItem>
@@ -181,6 +184,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
               <InputNumber
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}
+                precision={0}
                 style={{ width: '100%' }}
               />
             </Form.Item>
