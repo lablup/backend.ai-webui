@@ -1,0 +1,339 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "settled": true,
+    "table": {
+      "tableWidth": 2452,
+      "containerWidth": 2452,
+      "colgroupWidths": [],
+      "columns": [
+        {
+          "key": "__xds_selection",
+          "label": "Select all rows",
+          "w": 52
+        },
+        {
+          "key": "email",
+          "label": "E-Mail",
+          "w": 120
+        },
+        {
+          "key": "id",
+          "label": "User ID",
+          "w": 120
+        },
+        {
+          "key": "username",
+          "label": "Username",
+          "w": 120
+        },
+        {
+          "key": "full_name",
+          "label": "Full Name",
+          "w": 120
+        },
+        {
+          "key": "domain_name",
+          "label": "Domain",
+          "w": 120
+        },
+        {
+          "key": "integration_name",
+          "label": "Integration Name",
+          "w": 120
+        },
+        {
+          "key": "system_role",
+          "label": "Role",
+          "w": 120
+        },
+        {
+          "key": "resource_policy",
+          "label": "Resource Policy",
+          "w": 120
+        },
+        {
+          "key": "main_access_key",
+          "label": "Main Access Key",
+          "w": 120
+        },
+        {
+          "key": "sudo_session_enabled",
+          "label": "Sudo Session Enabled",
+          "w": 120
+        },
+        {
+          "key": "allowed_client_ip",
+          "label": "Allowed Client IPs",
+          "w": 120
+        },
+        {
+          "key": "status",
+          "label": "Status",
+          "w": 120
+        },
+        {
+          "key": "status_info",
+          "label": "Status Info",
+          "w": 120
+        },
+        {
+          "key": "need_password_change",
+          "label": "Need Password Change",
+          "w": 120
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "w": 120
+        },
+        {
+          "key": "container_uid",
+          "label": "Container UIDNumeric User ID",
+          "w": 120
+        },
+        {
+          "key": "container_main_gid",
+          "label": "Container GIDDefault numeric",
+          "w": 120
+        },
+        {
+          "key": "container_gids",
+          "label": "Supplementary GIDAdditional ",
+          "w": 120
+        },
+        {
+          "key": "created_at",
+          "label": "Created At",
+          "w": 120
+        },
+        {
+          "key": "modified_at",
+          "label": "Modified At",
+          "w": 120
+        }
+      ],
+      "firstRowCellWidths": [
+        52,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120
+      ]
+    },
+    "emailCell": {
+      "tdWidth": 120,
+      "tdPaddingInline": "8px / 8px",
+      "wrapperClientWidth": 104,
+      "wrapperScrollWidth": 104,
+      "titleClientWidth": 46,
+      "titleScrollWidth": 46,
+      "actionStripWidth": 50,
+      "actionStripCount": 1,
+      "buttons": [
+        {
+          "label": "User Detail",
+          "w": 24,
+          "visible": true
+        },
+        {
+          "label": "More actions",
+          "w": 24,
+          "visible": true
+        }
+      ],
+      "gap": "8px",
+      "fontSize": "14px",
+      "widestEmailPx": 388,
+      "widestEmail": "ㅁㄴㅇㄹㅁㄴㅇㄹ@asdfsad.comㅁㄴㅇㄹㅁㄴㅇㄹ@asdfsad.com",
+      "renderedEmails": 10,
+      "neededContentPx": 446,
+      "shortfallPx": 342
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "settled": true,
+    "table": {
+      "tableWidth": 2452,
+      "containerWidth": 2452,
+      "colgroupWidths": [],
+      "columns": [
+        {
+          "key": "__xds_selection",
+          "label": "Select all rows",
+          "w": 52
+        },
+        {
+          "key": "email",
+          "label": "E-Mail",
+          "w": 120
+        },
+        {
+          "key": "id",
+          "label": "User ID",
+          "w": 120
+        },
+        {
+          "key": "username",
+          "label": "Username",
+          "w": 120
+        },
+        {
+          "key": "full_name",
+          "label": "Full Name",
+          "w": 120
+        },
+        {
+          "key": "domain_name",
+          "label": "Domain",
+          "w": 120
+        },
+        {
+          "key": "integration_name",
+          "label": "Integration Name",
+          "w": 120
+        },
+        {
+          "key": "system_role",
+          "label": "Role",
+          "w": 120
+        },
+        {
+          "key": "resource_policy",
+          "label": "Resource Policy",
+          "w": 120
+        },
+        {
+          "key": "main_access_key",
+          "label": "Main Access Key",
+          "w": 120
+        },
+        {
+          "key": "sudo_session_enabled",
+          "label": "Sudo Session Enabled",
+          "w": 120
+        },
+        {
+          "key": "allowed_client_ip",
+          "label": "Allowed Client IPs",
+          "w": 120
+        },
+        {
+          "key": "status",
+          "label": "Status",
+          "w": 120
+        },
+        {
+          "key": "status_info",
+          "label": "Status Info",
+          "w": 120
+        },
+        {
+          "key": "need_password_change",
+          "label": "Need Password Change",
+          "w": 120
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "w": 120
+        },
+        {
+          "key": "container_uid",
+          "label": "Container UIDNumeric User ID",
+          "w": 120
+        },
+        {
+          "key": "container_main_gid",
+          "label": "Container GIDDefault numeric",
+          "w": 120
+        },
+        {
+          "key": "container_gids",
+          "label": "Supplementary GIDAdditional ",
+          "w": 120
+        },
+        {
+          "key": "created_at",
+          "label": "Created At",
+          "w": 120
+        },
+        {
+          "key": "modified_at",
+          "label": "Modified At",
+          "w": 120
+        }
+      ],
+      "firstRowCellWidths": [
+        52,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120,
+        120
+      ]
+    },
+    "emailCell": {
+      "tdWidth": 120,
+      "tdPaddingInline": "8px / 8px",
+      "wrapperClientWidth": 104,
+      "wrapperScrollWidth": 104,
+      "titleClientWidth": 46,
+      "titleScrollWidth": 46,
+      "actionStripWidth": 50,
+      "actionStripCount": 1,
+      "buttons": [
+        {
+          "label": "User Detail",
+          "w": 24,
+          "visible": true
+        },
+        {
+          "label": "More actions",
+          "w": 24,
+          "visible": true
+        }
+      ],
+      "gap": "8px",
+      "fontSize": "14px",
+      "widestEmailPx": 388,
+      "widestEmail": "ㅁㄴㅇㄹㅁㄴㅇㄹ@asdfsad.comㅁㄴㅇㄹㅁㄴㅇㄹ@asdfsad.com",
+      "renderedEmails": 10,
+      "neededContentPx": 446,
+      "shortfallPx": 342
+    }
+  },
+  "pageErrors": []
+}

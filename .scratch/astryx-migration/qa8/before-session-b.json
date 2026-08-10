@@ -1,0 +1,795 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "clicked": "clicked:See App Dialog",
+    "modal": {
+      "modalCls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+      "imgs": [
+        {
+          "alt": "ttyd",
+          "src": "./resources/icons/terminal.svg",
+          "natural": {
+            "w": 24,
+            "h": 24
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 101.98,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        },
+        {
+          "alt": "jupyter",
+          "src": "./resources/icons/jupyter.png",
+          "natural": {
+            "w": 346,
+            "h": 346
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 123.97,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        },
+        {
+          "alt": "jupyterlab",
+          "src": "./resources/icons/jupyterlab.png",
+          "natural": {
+            "w": 400,
+            "h": 400
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 123.97,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        },
+        {
+          "alt": "vscode",
+          "src": "./resources/icons/vscode.svg",
+          "natural": {
+            "w": 256,
+            "h": 256
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 123.97,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        }
+      ],
+      "tiles": [
+        {
+          "label": "Close",
+          "w": 32,
+          "h": 32,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button ghost md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq"
+        },
+        {
+          "label": "Console",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        },
+        {
+          "label": "Jupyter Notebook",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        },
+        {
+          "label": "JupyterLab",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        },
+        {
+          "label": "Visual Studio Code",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        }
+      ]
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "clicked": "clicked:See App Dialog",
+    "modal": {
+      "modalCls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+      "imgs": [
+        {
+          "alt": "ttyd",
+          "src": "./resources/icons/terminal.svg",
+          "natural": {
+            "w": 24,
+            "h": 24
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 101.98,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        },
+        {
+          "alt": "jupyter",
+          "src": "./resources/icons/jupyter.png",
+          "natural": {
+            "w": 346,
+            "h": 346
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 123.97,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        },
+        {
+          "alt": "jupyterlab",
+          "src": "./resources/icons/jupyterlab.png",
+          "natural": {
+            "w": 400,
+            "h": 400
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 123.97,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        },
+        {
+          "alt": "vscode",
+          "src": "./resources/icons/vscode.svg",
+          "natural": {
+            "w": 256,
+            "h": 256
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 16,
+            "h": 36
+          },
+          "renderedRatio": 0.4444,
+          "inlineStyle": "height: 36px; width: 36px;",
+          "computed": {
+            "width": "16px",
+            "height": "36px",
+            "maxWidth": "100%",
+            "maxHeight": "none",
+            "minWidth": "auto",
+            "minHeight": "auto",
+            "objectFit": "fill",
+            "aspectRatio": "auto",
+            "flex": "0 1 auto",
+            "alignSelf": "auto"
+          },
+          "ancestors": [
+            {
+              "tag": "SPAN",
+              "cls": "x3nfvp2 x6s0dn4 xl56j7k x2lah0s x1kky2od xlup9mm x1j61zf2",
+              "w": 16,
+              "h": 16,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 0 auto"
+            },
+            {
+              "tag": "SPAN",
+              "cls": "xjp7ctv",
+              "w": 0,
+              "h": 0,
+              "display": "contents",
+              "alignItems": "normal",
+              "justifyContent": "normal",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "BUTTON",
+              "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0",
+              "w": 72,
+              "h": 72,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "14px",
+              "overflow": "visible",
+              "minWidth": "auto",
+              "flex": "0 1 auto"
+            },
+            {
+              "tag": "DIV",
+              "cls": "",
+              "w": 82.5,
+              "h": 123.97,
+              "display": "flex",
+              "alignItems": "center",
+              "justifyContent": "flex-start",
+              "padding": "0px 0px 0px 0px",
+              "fontSize": "16px",
+              "overflow": "visible",
+              "minWidth": "0px",
+              "flex": "0 0 auto"
+            }
+          ]
+        }
+      ],
+      "tiles": [
+        {
+          "label": "Close",
+          "w": 32,
+          "h": 32,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button ghost md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq"
+        },
+        {
+          "label": "Console",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        },
+        {
+          "label": "Jupyter Notebook",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        },
+        {
+          "label": "JupyterLab",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        },
+        {
+          "label": "Visual Studio Code",
+          "w": 72,
+          "h": 72,
+          "display": "flex",
+          "alignItems": "center",
+          "padding": "0px 0px 0px 0px",
+          "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib "
+        }
+      ]
+    }
+  },
+  "pageErrors": []
+}

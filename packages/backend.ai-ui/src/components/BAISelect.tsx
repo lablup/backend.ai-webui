@@ -537,6 +537,19 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   const singleValue = toOptionKey(value ?? defaultValue);
   return (
     <Selector
+      // QA-FINDINGS Q-34 — `placement` is the documented opt-out from
+      // Astryx's selected-item overlay, and every search-less `BAISelect`
+      // needs it. `Selector` computes
+      // `shouldOverlaySelectedItem = placement == null && !hasSearch`, and
+      // when that is true it applies a negative `margin-block-start` sized to
+      // centre the SELECTED option on top of the trigger — so the field's
+      // label and its current value both disappear behind the panel the moment
+      // it opens. antd's `Select` never drew its dropdown over its trigger, so
+      // this reads as a broken control rather than a style. Naming a placement
+      // takes the standard layer-positioning path (offset 0, panel below), and
+      // `MultiSelector` already hard-codes exactly this. Written BEFORE the
+      // spread so a call site that genuinely wants `above` still wins.
+      placement="below"
       {...shared}
       options={optionsWithSlots}
       hasClear={allowClear}

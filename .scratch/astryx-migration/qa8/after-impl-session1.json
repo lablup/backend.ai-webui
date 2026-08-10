@@ -1,0 +1,794 @@
+{
+  "tag": "after",
+  "base": "https://to-astryx.backend-ai-webui.localhost:1357/",
+  "at": "2026-08-10T22:42:00.873Z",
+  "fix3": {
+    "/session@1600": {
+      "headers": [
+        {
+          "label": "Select all rows",
+          "w": 52
+        },
+        {
+          "label": "Session Name",
+          "w": 140
+        },
+        {
+          "label": "Status",
+          "w": 140
+        },
+        {
+          "label": "Reclamation Status",
+          "w": 140
+        },
+        {
+          "label": "AI Accelerator",
+          "w": 140
+        },
+        {
+          "label": "CPU",
+          "w": 140
+        },
+        {
+          "label": "Memory",
+          "w": 140
+        },
+        {
+          "label": "Elapsed Time",
+          "w": 140
+        },
+        {
+          "label": "Agent",
+          "w": 140
+        },
+        {
+          "label": "Owner Email",
+          "w": 140
+        }
+      ],
+      "statusIndex": 2,
+      "thWidth": 140,
+      "thMinWidth": "140px",
+      "cells": [
+        {
+          "text": "PENDING#4Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#3Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#2Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#1Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        }
+      ],
+      "worstClip": 0
+    },
+    "/session@1200": {
+      "headers": [
+        {
+          "label": "Select all rows",
+          "w": 52
+        },
+        {
+          "label": "Session Name",
+          "w": 140
+        },
+        {
+          "label": "Status",
+          "w": 140
+        },
+        {
+          "label": "Reclamation Status",
+          "w": 140
+        },
+        {
+          "label": "AI Accelerator",
+          "w": 140
+        },
+        {
+          "label": "CPU",
+          "w": 140
+        },
+        {
+          "label": "Memory",
+          "w": 140
+        },
+        {
+          "label": "Elapsed Time",
+          "w": 140
+        },
+        {
+          "label": "Agent",
+          "w": 140
+        },
+        {
+          "label": "Owner Email",
+          "w": 140
+        }
+      ],
+      "statusIndex": 2,
+      "thWidth": 140,
+      "thMinWidth": "140px",
+      "cells": [
+        {
+          "text": "PENDING#4Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#3Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#2Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#1Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        }
+      ],
+      "worstClip": 0
+    },
+    "/admin-session@1600": {
+      "headers": [
+        {
+          "label": "Select all rows",
+          "w": 52
+        },
+        {
+          "label": "Session Name",
+          "w": 140
+        },
+        {
+          "label": "Status",
+          "w": 140
+        },
+        {
+          "label": "Reclamation Status",
+          "w": 140
+        },
+        {
+          "label": "AI Accelerator",
+          "w": 140
+        },
+        {
+          "label": "CPU",
+          "w": 140
+        },
+        {
+          "label": "Memory",
+          "w": 140
+        },
+        {
+          "label": "Elapsed Time",
+          "w": 140
+        },
+        {
+          "label": "Environments",
+          "w": 140
+        },
+        {
+          "label": "Resource Group",
+          "w": 140
+        },
+        {
+          "label": "Session Type",
+          "w": 140
+        },
+        {
+          "label": "Cluster Mode",
+          "w": 140
+        },
+        {
+          "label": "Created At",
+          "w": 140
+        },
+        {
+          "label": "Project",
+          "w": 140
+        },
+        {
+          "label": "Agent",
+          "w": 140
+        },
+        {
+          "label": "Owner Email",
+          "w": 140
+        }
+      ],
+      "statusIndex": 2,
+      "thWidth": 140,
+      "thMinWidth": "140px",
+      "cells": [
+        {
+          "text": "PENDING#4Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#3Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#2Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#1Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        }
+      ],
+      "worstClip": 0
+    },
+    "/admin-session@1200": {
+      "headers": [
+        {
+          "label": "Select all rows",
+          "w": 52
+        },
+        {
+          "label": "Session Name",
+          "w": 140
+        },
+        {
+          "label": "Status",
+          "w": 140
+        },
+        {
+          "label": "Reclamation Status",
+          "w": 140
+        },
+        {
+          "label": "AI Accelerator",
+          "w": 140
+        },
+        {
+          "label": "CPU",
+          "w": 140
+        },
+        {
+          "label": "Memory",
+          "w": 140
+        },
+        {
+          "label": "Elapsed Time",
+          "w": 140
+        },
+        {
+          "label": "Environments",
+          "w": 140
+        },
+        {
+          "label": "Resource Group",
+          "w": 140
+        },
+        {
+          "label": "Session Type",
+          "w": 140
+        },
+        {
+          "label": "Cluster Mode",
+          "w": 140
+        },
+        {
+          "label": "Created At",
+          "w": 140
+        },
+        {
+          "label": "Project",
+          "w": 140
+        },
+        {
+          "label": "Agent",
+          "w": 140
+        },
+        {
+          "label": "Owner Email",
+          "w": 140
+        }
+      ],
+      "statusIndex": 2,
+      "thWidth": 140,
+      "thMinWidth": "140px",
+      "cells": [
+        {
+          "text": "PENDING#4Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#3Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#2Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "PENDING#1Queue Position",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        },
+        {
+          "text": "RUNNING",
+          "tdClientW": 140,
+          "tdScrollW": 140,
+          "innerClientW": 124,
+          "innerScrollW": 124,
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "padding": "8px/8px",
+          "clipped": 0
+        }
+      ],
+      "worstClip": 0
+    }
+  },
+  "fix1": {
+    "light": {
+      "imgs": [
+        {
+          "alt": "ttyd",
+          "naturalW": 24,
+          "naturalH": 24,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        },
+        {
+          "alt": "jupyter",
+          "naturalW": 346,
+          "naturalH": 346,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        },
+        {
+          "alt": "jupyterlab",
+          "naturalW": 400,
+          "naturalH": 400,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        },
+        {
+          "alt": "vscode",
+          "naturalW": 256,
+          "naturalH": 256,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        }
+      ],
+      "firstTileButton": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "dark": {
+      "imgs": [
+        {
+          "alt": "ttyd",
+          "naturalW": 24,
+          "naturalH": 24,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        },
+        {
+          "alt": "jupyter",
+          "naturalW": 346,
+          "naturalH": 346,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        },
+        {
+          "alt": "jupyterlab",
+          "naturalW": 400,
+          "naturalH": 400,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        },
+        {
+          "alt": "vscode",
+          "naturalW": 256,
+          "naturalH": 256,
+          "renderedW": 36,
+          "renderedH": 36,
+          "flexShrink": "0",
+          "objectFit": "contain",
+          "ratio": 1
+        }
+      ],
+      "firstTileButton": {
+        "w": 32,
+        "h": 32
+      }
+    }
+  },
+  "pageErrors": []
+}

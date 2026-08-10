@@ -86,8 +86,18 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { targetVFolderId, targetVFolderName, currentPath } =
     use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
-  const [openUploadDropdown, { toggle: toggleUploadDropdown }] =
-    useToggle(false);
+  // QA-FINDINGS Q-28: the upload menu is driven by `set`, not `toggle`.
+  // `useToggle`'s `toggle` takes no argument — it flips whatever the current
+  // state is and ignores the boolean `onOpenChange` hands it. Astryx's
+  // `DropdownMenu` fires `onOpenChange` TWICE for one pointer transition (once
+  // from the trigger's own click handler, once from the popover lifecycle), so
+  // an argument-blind toggle flips twice and lands back where it started —
+  // and because each flip re-renders `isMenuOpen`, the lifecycle fires again
+  // and the menu oscillates open/closed indefinitely. `set(value)` is
+  // idempotent, so a duplicate notification with the same value is a no-op.
+  // (The keyboard path was never affected: it calls `popover.show()` directly
+  // and notifies once, which is why Enter always worked.)
+  const [openUploadDropdown, { set: setUploadDropdownOpen }] = useToggle(false);
   const [openCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [openCreateFileModal, { toggle: toggleCreateFileModal }] =
     useToggle(false);
@@ -109,7 +119,9 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
       uploadFiles(files, onUpload);
     }
     lastFileListRef.current = files;
-    toggleUploadDropdown();
+    // Q-28: an explicit close, not a flip — the menu is already closed by the
+    // time the native picker returns, so a flip would REOPEN it.
+    setUploadDropdownOpen(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
     if (directoryInputRef.current) directoryInputRef.current.value = '';
   };
@@ -274,7 +286,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             />
             <DropdownMenu
               isMenuOpen={openUploadDropdown}
-              onOpenChange={toggleUploadDropdown}
+              // Q-28: pass the value through; see the `useToggle` note above.
+              onOpenChange={setUploadDropdownOpen}
               items={[
                 {
                   label: t('comp:FileExplorer.UploadFiles'),

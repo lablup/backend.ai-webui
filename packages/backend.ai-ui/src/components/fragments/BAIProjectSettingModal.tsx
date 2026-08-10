@@ -18,7 +18,6 @@ import { Form, FormInstance } from '../../form-engine';
 import { convertToBinaryUnit } from '../../helper';
 import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAICheckbox from '../BAICheckbox';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import {
@@ -27,6 +26,7 @@ import {
   AstryxFormTextInput,
 } from '../astryxFormControls';
 import { useBAIResourceSlots } from '../provider';
+import { HStack } from '@astryxdesign/core/Stack';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {
@@ -68,7 +68,6 @@ const BAIProjectSettingModal = ({
   ...modalProps
 }: BAIProjectSettingModalProps) => {
   'use memo';
-  const { token } = theme.useToken();
   const { t } = useBAIi18n();
   const deferredOpen = useDeferredValue(modalProps.open);
   const { resourceSlots, deviceMetaData } = useBAIResourceSlots();
@@ -560,39 +559,50 @@ const BAIProjectSettingModal = ({
             }),
           ]}
         >
-          <Form.Item
-            name="registry"
-            noStyle
-            rules={[
-              {
-                pattern: /^[a-zA-Z0-9.:/_-]*$/,
-                message: t('general.validation.LetterNumber:/-_dot'),
-              },
-            ]}
-          >
-            <AstryxFormTextInput
-              label={t('comp:BAIProjectSettingModal.Registry')}
-              placeholder={t('comp:BAIProjectSettingModal.Registry')}
-              width="calc(50% - 8px)"
-              style={{ margin: 0, marginRight: token.sizeXS }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="project"
-            noStyle
-            rules={[
-              {
-                pattern: /^[a-zA-Z0-9./_-]*$/,
-                message: t('general.validation.LetterNumber:/-_dot'),
-              },
-            ]}
-          >
-            <AstryxFormTextInput
-              label={t('comp:BAIProjectSettingModal.Project')}
-              placeholder={t('comp:BAIProjectSettingModal.Project')}
-              width="calc(50% - 8px)"
-            />
-          </Form.Item>
+          {/* QA-FINDINGS Q-29: the two inputs need an explicit row.
+              Under antd these were `Input`s — `display: inline-block` — so two
+              of them at `calc(50% - 8px)` shared a line by pure inline flow,
+              and the gap was a `marginRight` on the first. `AstryxFormTextInput`
+              renders Astryx's `.astryx-field` wrapper, which is a BLOCK
+              (`display: flex`), so the same two widths simply stacked: measured
+              at y916 and y948, 32px apart, each still correctly 228px wide.
+              The widths were never the problem; the FLOW was. An `HStack` states
+              the row explicitly and owns the gap, so both fields go to
+              `width="100%"` of their half and the margin hack disappears. */}
+          <HStack gap={2} align="start" width="100%">
+            <Form.Item
+              name="registry"
+              noStyle
+              rules={[
+                {
+                  pattern: /^[a-zA-Z0-9.:/_-]*$/,
+                  message: t('general.validation.LetterNumber:/-_dot'),
+                },
+              ]}
+            >
+              <AstryxFormTextInput
+                label={t('comp:BAIProjectSettingModal.Registry')}
+                placeholder={t('comp:BAIProjectSettingModal.Registry')}
+                width="100%"
+              />
+            </Form.Item>
+            <Form.Item
+              name="project"
+              noStyle
+              rules={[
+                {
+                  pattern: /^[a-zA-Z0-9./_-]*$/,
+                  message: t('general.validation.LetterNumber:/-_dot'),
+                },
+              ]}
+            >
+              <AstryxFormTextInput
+                label={t('comp:BAIProjectSettingModal.Project')}
+                placeholder={t('comp:BAIProjectSettingModal.Project')}
+                width="100%"
+              />
+            </Form.Item>
+          </HStack>
         </Form.Item>
         <Form.Item valuePropName="checked" name="is_active">
           <BAICheckbox>{t('comp:BAIProjectSettingModal.IsActive')}</BAICheckbox>

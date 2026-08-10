@@ -67,7 +67,7 @@ import type {
 } from '@astryxdesign/core/Typeahead';
 import type { SizeValue } from '@astryxdesign/core/utils';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { useEffectEvent } from 'react';
 
 /**
  * RESTORED (input-parity pass) — **the control paints the field's validation
@@ -711,9 +711,18 @@ export const AstryxFormSelector: React.FC<AstryxFormSelectorProps> = ({
   // `hasClear` is a discriminated union on Selector (with it, value/onChange
   // become nullable) — branch instead of passing `boolean | undefined`.
   const selectorOptions = options as SelectorOptionType[];
+  // QA-FINDINGS Q-34 — both branches pin `placement`. Without it `Selector`
+  // takes `shouldOverlaySelectedItem = placement == null && !hasSearch` and
+  // offsets the panel upwards by a negative `margin-block-start` so that the
+  // selected option lands ON the trigger, hiding the field's label and current
+  // value. Inside a `Form.Item` that is worse than elsewhere: the visible
+  // label `BAIFormItem` renders is exactly what gets covered. Every one of
+  // these adapters is search-optional, so the condition is live whenever a
+  // call site omits `hasSearch`.
   return hasClear ? (
     <Selector
       hasClear
+      placement="below"
       value={value ?? null}
       onChange={(next: string | null) => onChange?.(next)}
       label={label}
@@ -729,6 +738,7 @@ export const AstryxFormSelector: React.FC<AstryxFormSelectorProps> = ({
     />
   ) : (
     <Selector
+      placement="below"
       value={value ?? undefined}
       onChange={(next: string) => onChange?.(next)}
       label={label}
@@ -841,11 +851,12 @@ export interface AstryxFormTagsInputProps {
    * space", `UserSettingModal` says "Enter GIDs separated by commas or
    * spaces", and `AppLauncherModal` labels its field "(comma-separated)".
    *
-   * The split happens on commit rather than on the keystroke: Astryx's
-   * `Tokenizer` exposes no paste/input hook, so `"a,b,c"` is committed as one
-   * token by `hasCreate` and taken apart here. Typing or pasting separated
-   * text and pressing Enter therefore behaves as antd did; the only lost nuance
-   * is antd's split at the instant of the paste, before Enter.
+   * Honoured on TWO paths, because antd honoured both:
+   *  - **while typing** — pressing one of these keys commits the pending text
+   *    as a token (see the `QA-FINDINGS Q-31` block on the component below);
+   *  - **on commit** — `splitOnSeparators` takes a single committed entry
+   *    apart, which is what makes a PASTE of `"a,b,c"` + Enter behave as antd
+   *    did (Astryx's `Tokenizer` exposes no paste hook).
    */
   tokenSeparators?: Array<string>;
   width?: SizeValue;
@@ -859,10 +870,8 @@ export interface AstryxFormTagsInputProps {
  *
  * PILOT-DECISION: antd `Select mode="tags"` → Astryx `Tokenizer` with
  * `hasCreate` over an empty search source (there are no suggestions to
- * search). `tokenSeparators` (comma/space splitting one paste into several
- * tags) has no Tokenizer equivalent and is dropped — tags are committed one at
- * a time with Enter. `allowClear` → `hasClear`; `maxTagCount` (how many chips
- * render before a "+N" collapse) is dropped — Tokenizer owns that through
+ * search). `allowClear` → `hasClear`; `maxTagCount` (how many chips render
+ * before a "+N" collapse) is dropped — Tokenizer owns that through
  * `tokenOverflowBehavior`. `notFoundContent` maps to nothing: the empty search
  * source simply yields no dropdown.
  */
@@ -880,6 +889,7 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
 }) => {
   'use memo';
   const statusProps = useFormControlStatusProps();
+  const rootRef = React.useRef<HTMLDivElement>(null);
   const splitOnSeparators = (label: string): Array<string> => {
     if (!tokenSeparators?.length) return [label];
     const pattern = new RegExp(
@@ -890,8 +900,93 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
       .map((part) => part.trim())
       .filter(Boolean);
   };
+
+  /*
+   * QA-FINDINGS Q-31 — "supplementary GID splits on comma and space, but the
+   * only trigger is Enter".
+   *
+   * MEASURED SYMPTOM (Admin > Users > Edit, the Supplementary GID field):
+   * typing `10,20 30` at 120ms/key left the whole raw string sitting in the
+   * input and produced ZERO tokens; only Enter committed, and only then did
+   * `splitOnSeparators` above take the single committed entry apart into
+   * `10 / 20 / 30`. So the separators were honoured on COMMIT and never while
+   * typing — while the field's own helper text promises "Enter GIDs separated
+   * by commas or spaces". Legacy was antd `Select mode="tags"
+   * tokenSeparators={[',', ' ']}`, which cut a token on the KEYSTROKE.
+   *
+   * WHY THERE IS NO PROP: Astryx's `Tokenizer` has no delimiter API —
+   * `astryx component Tokenizer` lists none, `Tokenizer.d.ts` contains no
+   * `separator`/`delimiter`, and `TokenizerHandle` exposes only
+   * `focus()`/`blur()`. `InputGroup`-style composition does not apply either.
+   * The only reachable seam is the DOM.
+   *
+   * MECHANISM: `TokenizerProps` extends `Omit<BaseProps<HTMLDivElement>,
+   * 'onChange'>`, so the root div takes a ref. A CAPTURE-phase `keydown`
+   * listener on that root sees the separator key before anything else,
+   * cancels it (a separator is never part of a tag) and re-dispatches a
+   * synthetic `Enter` keydown on the same `<input>`. Astryx's own create path
+   * then runs unmodified: `BaseTypeahead` selects the highlighted
+   * `Create "…"` row that `Tokenizer`'s `hasCreate` source appended, and
+   * `handleAdd` emits a `type: 'create'` change. We commit nothing ourselves,
+   * so dedupe, `maxEntries`, the announce region and the form binding all
+   * behave exactly as they do for a real Enter.
+   *
+   * `debounceMs={0}` below is LOAD-BEARING, not tidying. `BaseTypeahead`
+   * defaults to 150ms, and its Enter branch is gated on `popover.isOpen` —
+   * at 120ms/key the search for `"10"` had not fired yet when `,` arrived, so
+   * the synthetic Enter hit a closed popover, did nothing, and the cancelled
+   * comma was simply lost. The search source here is `EMPTY_TAG_SEARCH_SOURCE`
+   * (no network, no work), so debouncing it buys nothing anyway.
+   *
+   * FRAGILITY — read before bumping `@astryxdesign/core`. This depends on
+   * Astryx's keydown handler accepting a NON-TRUSTED event and on its create
+   * path still being reachable from `Enter`. Both are internal details: if
+   * upstream starts checking `event.isTrusted`, moves the create commit to
+   * `keypress`/`beforeinput`, or stops opening the popover for a
+   * create-only result set, this stops working SILENTLY — no type error, no
+   * lint, no test in CI outside this file. The standing ask is an upstream
+   * `tokenSeparators` / `delimiters` prop on `Tokenizer`; when it lands,
+   * delete this block and pass the prop.
+   *
+   * PASTE still goes through `splitOnSeparators` on commit: `paste` inserts
+   * text without a keydown per character, so there is no separator key to
+   * intercept.
+   */
+  const handleSeparatorKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    if (!tokenSeparators?.length || !tokenSeparators.includes(event.key)) {
+      return;
+    }
+    // Never steal a shortcut, and never cut a token mid-IME-composition.
+    if (event.altKey || event.ctrlKey || event.metaKey || event.isComposing) {
+      return;
+    }
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement)) return;
+    // A separator character is never part of a tag, so it is swallowed even
+    // when there is nothing to commit (leading/repeated separators).
+    event.preventDefault();
+    if (!input.value.trim()) return;
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+  });
+
+  React.useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const listener = (event: KeyboardEvent) => handleSeparatorKeyDown(event);
+    root.addEventListener('keydown', listener, true);
+    return () => root.removeEventListener('keydown', listener, true);
+  }, []);
+
   return (
     <Tokenizer
+      ref={rootRef}
       value={(value ?? []).map((tag) => ({ id: tag, label: tag }))}
       onChange={(items) =>
         // antd tags mode deduplicated entries; keep that behavior.
@@ -905,6 +1000,9 @@ export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
       isLabelHidden
       searchSource={EMPTY_TAG_SEARCH_SOURCE}
       hasCreate
+      // See the Q-31 block above — the separator keystroke needs the create
+      // row to already be in `results`, and the source is free to query.
+      debounceMs={0}
       hasClear={hasClear}
       maxEntries={maxEntries}
       placeholder={placeholder}

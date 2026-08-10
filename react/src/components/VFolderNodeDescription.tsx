@@ -174,7 +174,12 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
         // from the fragment (the same source the default came from), and
         // `popupMatchSelectWidth={false}` is dropped — Astryx sizes its own
         // popup (MAPPING §3.1 lists it as having no destination).
+        // QA-FINDINGS Q-34 — `placement` also has to be named here (the V1
+        // twin of `VFolderNodeDescriptionV2`): with no search field and no
+        // placement, `Selector` overlays the selected option on the trigger and
+        // the row's label and value both vanish behind the panel.
         <Selector
+          placement="below"
           label={t('data.folders.MountPermission')}
           isLabelHidden
           value={

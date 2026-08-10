@@ -1,0 +1,388 @@
+{
+  "clusterMode": {
+    "occurrences": [
+      {
+        "tag": "LABEL",
+        "cls": "",
+        "x": 276,
+        "y": 1125.3,
+        "w": 98,
+        "h": 22,
+        "display": "inline-flex",
+        "visibility": "visible",
+        "position": "relative",
+        "clip": "none",
+        "overflow": "visible",
+        "fontSize": "14px",
+        "color": "rgb(20, 20, 20)"
+      }
+    ],
+    "segmented": {
+      "tag": "DIV",
+      "cls": "astryx-segmented-control sm x3nfvp2 x6s0dn4 x1lsbc85 x18jk3ff xpoxszi ",
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "display": "flex",
+      "visibility": "visible",
+      "position": "static",
+      "clip": "none",
+      "overflow": "visible",
+      "fontSize": "16px",
+      "color": "rgb(0, 0, 0)"
+    },
+    "segmentedItems": [
+      {
+        "text": "All",
+        "ariaChecked": "true",
+        "ariaSelected": null,
+        "dataState": null,
+        "tag": "BUTTON",
+        "cls": "astryx-segmented-control-item sm selected x1n2onr6 x3nfvp2 x6s0dn4 xl5",
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "display": "flex",
+        "visibility": "visible",
+        "position": "relative",
+        "clip": "none",
+        "overflow": "visible",
+        "fontSize": "12px",
+        "color": "rgb(20, 20, 20)"
+      },
+      {
+        "text": "In progress",
+        "ariaChecked": "false",
+        "ariaSelected": null,
+        "dataState": null,
+        "tag": "BUTTON",
+        "cls": "astryx-segmented-control-item sm x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k xzye",
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "display": "flex",
+        "visibility": "visible",
+        "position": "relative",
+        "clip": "none",
+        "overflow": "visible",
+        "fontSize": "12px",
+        "color": "rgba(0, 0, 0, 0.65)"
+      }
+    ],
+    "segmentedHTML": "<div role=\"radiogroup\" aria-label=\"Notifications\" class=\"astryx-segmented-control sm x3nfvp2 x6s0dn4 x1lsbc85 x18jk3ff xpoxszi x17x4s8c x9icjy1 x1hapoqb\" data-size=\"sm\" style=\"anchor-name: --astryx-layer-_r_26_;\"><button type=\"button\" role=\"radio\" aria-checked=\"true\" data-value=\"all\" tabindex=\"0\" class=\"astryx-segmented-control-item sm selected x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k xzye2dw xc342km xng3xce xjb2p0i x1kq96og x1ypdohk x1vix5yk xuedmi6 xlr8y92 x17nn4n9 x1wfwxd8 x7s97pk xzj98nu xc910v0 xf314gf x141an7d x1kzknox x1tgivj0 x1k5gbb1 x2mo6ok x10xzikg x1jzqe4 x1i5ehqx\" data-size=\"sm\" data-selected=\"selected\"><span>All</span></button><button type=\"button\" role=\"radio\" aria-checked=\"false\" data-value=\"in progress\" tabindex=\"-1\" class=\"astryx-segmented-control-item sm x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k xzye2dw xc342km xng3xce xjb2p0i x1kq96og x1e4wzip xv1l7n4 x1ypdohk x1vix5yk xuedmi6 xlr8y92 x17nn4n9 x1wfwxd8 x7s97pk xzj98nu xc910v0 xf314gf x141an7d xe9uy6x\" data-size=\"sm\"><span>In progress</span></button><div id=\"_r_27_\" popover=\"manual\" class=\"xdj266r xat24cr x1lziwak x14z9mp xc342km xng3xce x1rea2x4 x9ynric xixxii4 x1anvkwx x1ghz6dp x1prclbq xh6dtrn x1i5ehqx xfsso4q xy143xn x12gdq22 x1djylfy x141an7d x1ltkj2j xv1l7n4 xuxw1ft xg01cxk xofkqq2 xsm4mo9 xx6bhzk xd00j3c x47corl\" style=\"position-anchor: --astryx-layer-_r_27_; position-area: self-block-end span-self-inline-end; position"
+  },
+  "step2Selectors": [
+    {
+      "idx": 0,
+      "fieldLabel": {
+        "y": 13,
+        "h": 1,
+        "top": 13,
+        "bottom": 14,
+        "x": 263,
+        "w": 1,
+        "text": "Select Project"
+      },
+      "formItemLabel": null,
+      "trigger": {
+        "y": 19,
+        "h": 22,
+        "top": 19,
+        "bottom": 41,
+        "x": 345,
+        "w": 102,
+        "text": "a한국어가능_cde"
+      },
+      "triggerText": "a한국어가능_cde",
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "4px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_1mr_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedCy": null
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversFieldLabel": false,
+        "panelCoversFormLabel": false,
+        "panelTopMinusTriggerBottom": -41,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "idx": 4,
+      "fieldLabel": {
+        "y": 237.7,
+        "h": 1,
+        "top": 237.7,
+        "bottom": 238.7,
+        "x": 275,
+        "w": 1,
+        "text": "Select"
+      },
+      "formItemLabel": {
+        "y": 206.7,
+        "h": 24,
+        "top": 206.7,
+        "bottom": 230.7,
+        "x": 276,
+        "w": 187,
+        "text": "Environments / Versionbutton.C"
+      },
+      "trigger": {
+        "y": 243.7,
+        "h": 22,
+        "top": 243.7,
+        "bottom": 265.7,
+        "x": 289,
+        "w": 626,
+        "text": "Python Python\tmultiarch"
+      },
+      "triggerText": "Python Python\tmultiarch",
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "4px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_1mr_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedCy": null
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversFieldLabel": false,
+        "panelCoversFormLabel": false,
+        "panelTopMinusTriggerBottom": -265.7,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "idx": 5,
+      "fieldLabel": {
+        "y": 295.7,
+        "h": 1,
+        "top": 295.7,
+        "bottom": 296.7,
+        "x": 275,
+        "w": 1,
+        "text": "Select"
+      },
+      "formItemLabel": null,
+      "trigger": {
+        "y": 301.7,
+        "h": 22,
+        "top": 301.7,
+        "bottom": 323.7,
+        "x": 289,
+        "w": 626,
+        "text": "3.13 x86_64 3.13\tUbuntu 24.04\t"
+      },
+      "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "4px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_1mr_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedCy": null
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversFieldLabel": false,
+        "panelCoversFormLabel": false,
+        "panelTopMinusTriggerBottom": -323.7,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "idx": 6,
+      "fieldLabel": {
+        "y": 483.3,
+        "h": 1,
+        "top": 483.3,
+        "bottom": 484.3,
+        "x": 275,
+        "w": 1,
+        "text": "Select"
+      },
+      "formItemLabel": {
+        "y": 454.3,
+        "h": 22,
+        "top": 454.3,
+        "bottom": 476.3,
+        "x": 276,
+        "w": 113,
+        "text": "Resource Group"
+      },
+      "trigger": {
+        "y": 489.3,
+        "h": 22,
+        "top": 489.3,
+        "bottom": 511.3,
+        "x": 289,
+        "w": 626,
+        "text": "default"
+      },
+      "triggerText": "default",
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "4px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_1mr_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedCy": null
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversFieldLabel": false,
+        "panelCoversFormLabel": false,
+        "panelTopMinusTriggerBottom": -511.3,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "idx": 7,
+      "fieldLabel": {
+        "y": 483.3,
+        "h": 1,
+        "top": 483.3,
+        "bottom": 484.3,
+        "x": 275,
+        "w": 1,
+        "text": "session.launcher.ResourcePrese"
+      },
+      "formItemLabel": {
+        "y": 454.3,
+        "h": 22,
+        "top": 454.3,
+        "bottom": 476.3,
+        "x": 276,
+        "w": 123,
+        "text": "Resource Presets"
+      },
+      "trigger": {
+        "y": 489.3,
+        "h": 22,
+        "top": 489.3,
+        "bottom": 511.3,
+        "x": 289,
+        "w": 626,
+        "text": "cpu01-small"
+      },
+      "triggerText": "cpu01-small",
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "4px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_1mr_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedCy": null
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversFieldLabel": false,
+        "panelCoversFormLabel": false,
+        "panelTopMinusTriggerBottom": -511.3,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "idx": 8,
+      "fieldLabel": {
+        "y": 483.3,
+        "h": 1,
+        "top": 483.3,
+        "bottom": 484.3,
+        "x": 287,
+        "w": 1,
+        "text": "Select"
+      },
+      "formItemLabel": {
+        "y": 448.3,
+        "h": 22,
+        "top": 448.3,
+        "bottom": 470.3,
+        "x": 288,
+        "w": 83,
+        "text": "MemoryComputer memory is a tem"
+      },
+      "trigger": {
+        "y": 489.3,
+        "h": 22,
+        "top": 489.3,
+        "bottom": 511.3,
+        "x": 434.9,
+        "w": 68.9,
+        "text": "GiB"
+      },
+      "triggerText": "GiB",
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "4px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_1mr_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedCy": null
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversFieldLabel": false,
+        "panelCoversFormLabel": false,
+        "panelTopMinusTriggerBottom": -511.3,
+        "selectedCyMinusTriggerCy": null
+      }
+    }
+  ],
+  "pageErrors": []
+}

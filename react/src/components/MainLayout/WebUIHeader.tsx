@@ -24,6 +24,7 @@ import {
   useCurrentMenuKey,
   useSwitchProject,
 } from '../../hooks/useRouteScope';
+import { useThemeMode } from '../../hooks/useThemeMode';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { theme, useBAIBreakpoint } from '../../theme-shim';
@@ -37,7 +38,12 @@ import './WebUIHeader.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { MediaTheme } from '@astryxdesign/core/theme';
-import { BAIFlex, BAIFlexProps, useSessionStorageState } from 'backend.ai-ui';
+import {
+  ANTD_REVERSED_BAND_OVERLAYS,
+  BAIFlex,
+  BAIFlexProps,
+  useSessionStorageState,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
@@ -50,6 +56,7 @@ export interface WebUIHeaderProps extends BAIFlexProps {
 
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
   const { t } = useTranslation();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
@@ -150,6 +157,33 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         // rendering and `--color-on-accent`, already pinned white for the same
         // reason. The band's BACKGROUND is unchanged in both modes by design.
         color: 'var(--color-on-dark)',
+        // The neutral hover/pressed washes, resolved against the APP scheme —
+        // which is why they are declared HERE, on the band root, and not inside
+        // the `MediaTheme mode="dark"` below (QA-FINDINGS Q-20).
+        //
+        // Every control on this band sits inside that `MediaTheme`, because the
+        // band is a dark surface in both app modes. `--color-overlay-hover` is
+        // `light-dark(rgba(0,0,0,0.06), #262626)`, so inside a forced-dark
+        // subtree it ALWAYS takes the opaque `#262626` branch and every header
+        // button hovers to a near-black block on the brand-orange band.
+        //
+        // Legacy resolved the band against the INVERTED mode
+        // (`ReverseThemeProvider`), giving `#262626` in light and antd's default
+        // `rgba(0,0,0,0.06)` in dark. Declaring the pair on this element, which
+        // is OUTSIDE the `MediaTheme`, lets `light-dark()` pick against the page
+        // scheme; the resolved colour then inherits into the subtree as a plain
+        // value, so the forced dark context can no longer re-resolve it.
+        //
+        // The pair is indexed in JS, not with `light-dark()`: a custom
+        // property holding `light-dark(a, b)` is substituted at USE time by the
+        // consuming element, and every consumer here is inside that forced-dark
+        // subtree — so the dark slot would win in both app modes regardless of
+        // where the property is declared (measured). Legacy's
+        // `ReverseThemeProvider` also picked its token set in JS.
+        //
+        // The measured pair lives in the theme shim next to the other antd
+        // parity tables (P19: no literal here).
+        ...ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'],
       }}
       className="bai-webui-header"
     >

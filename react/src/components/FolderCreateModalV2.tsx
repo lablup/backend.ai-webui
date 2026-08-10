@@ -415,6 +415,20 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           // its own label via `--bai-form-item-label-width`. Kept only because
           // antd's Form context still reads it for any non-migrated child.
           labelCol={{ span: 8 }}
+          // QA-FINDINGS Q-26: the label column width survived the migration
+          // (33.3%, i.e. the `span: 8` above) but its ALIGNMENT did not. Legacy
+          // carried a `createStyles` block that set
+          // `.ant-form-item-label { display: flex; align-items: start;
+          // padding-left: token.paddingSM }` — left-aligned labels inset 12px.
+          // That block went away with antd-style, and the form engine's own
+          // default took over: `[data-bai-form-item-label-col]` is
+          // `text-align: end`, which parks every label hard against the control
+          // column and leaves 59-143px of dead space to its left, so the labels
+          // read as a ragged block bunched in the middle of the modal.
+          // `labelAlign="left"` is the engine's own switch for this — Form
+          // context -> FormItem -> `FormItemVisual` emits `data-align="left"`,
+          // whose rule is `text-align: start`. No CSS needed at this call site.
+          labelAlign="left"
         >
           <BAIFormItem
             label={t('data.UsageMode')}

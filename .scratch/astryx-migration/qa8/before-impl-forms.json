@@ -1,0 +1,191 @@
+{
+  "pageErrors": [],
+  "light": {
+    "appliedTheme": "light",
+    "settled": true,
+    "gidBefore": {
+      "tokenTexts": [],
+      "inputValue": ""
+    },
+    "gidAfterTypingNoEnter": {
+      "tokenTexts": [],
+      "inputValue": "10,20 30"
+    },
+    "gidAfterEnter": {
+      "tokenTexts": [
+        "10",
+        "20",
+        "30"
+      ],
+      "inputValue": ""
+    },
+    "gidAfterCommaOnly": {
+      "tokenTexts": [
+        "10",
+        "20",
+        "30"
+      ],
+      "inputValue": "41,"
+    },
+    "gidAfterSpaceOnly": {
+      "tokenTexts": [
+        "10",
+        "20",
+        "30"
+      ],
+      "inputValue": "41,52 "
+    },
+    "compact": {
+      "parentTag": "DIV",
+      "parentClass": "astryx-stack horizontal gap-0 x78zum5 x1q0g3np x1o57wo1 x6yxi7o",
+      "parentGap": "0px",
+      "parentDisplay": "flex",
+      "itemGapPx": 0,
+      "prefixBox": {
+        "cls": "astryx-text-input md x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x1gnnqk1 x12y27fx xuihb5h x1a2a7pz x1ueg155",
+        "x": 564,
+        "right": 800,
+        "y": 330,
+        "w": 236,
+        "h": 32,
+        "radiusTL": "8px",
+        "radiusTR": "8px",
+        "radiusBR": "8px",
+        "radiusBL": "8px",
+        "borderLeft": "1px",
+        "borderRight": "1px",
+        "borderColor": "rgb(217, 217, 217)",
+        "marginLeft": "0px",
+        "marginRight": "0px",
+        "zIndex": "1"
+      },
+      "suffixBox": {
+        "cls": "astryx-text-input md x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x1gnnqk1 x12y27fx xuihb5h x1a2a7pz x1ueg155",
+        "x": 800,
+        "right": 1036,
+        "y": 330,
+        "w": 236,
+        "h": 32,
+        "radiusTL": "8px",
+        "radiusTR": "8px",
+        "radiusBR": "8px",
+        "radiusBL": "8px",
+        "borderLeft": "1px",
+        "borderRight": "1px",
+        "borderColor": "rgb(217, 217, 217)",
+        "marginLeft": "0px",
+        "marginRight": "0px",
+        "zIndex": "1"
+      },
+      "boxGapPx": 0,
+      "borderWidthVar": "1px",
+      "radiusElementVar": "8px"
+    },
+    "compactFocused": {
+      "prefix": {
+        "zIndex": "1",
+        "borderColor": "rgb(2, 141, 242)",
+        "position": "relative"
+      },
+      "suffix": {
+        "zIndex": "1",
+        "borderColor": "rgb(217, 217, 217)",
+        "position": "relative"
+      }
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "settled": true,
+    "gidBefore": {
+      "tokenTexts": [],
+      "inputValue": ""
+    },
+    "gidAfterTypingNoEnter": {
+      "tokenTexts": [],
+      "inputValue": "10,20 30"
+    },
+    "gidAfterEnter": {
+      "tokenTexts": [
+        "10",
+        "20",
+        "30"
+      ],
+      "inputValue": ""
+    },
+    "gidAfterCommaOnly": {
+      "tokenTexts": [
+        "10",
+        "20",
+        "30"
+      ],
+      "inputValue": "41,"
+    },
+    "gidAfterSpaceOnly": {
+      "tokenTexts": [
+        "10",
+        "20",
+        "30"
+      ],
+      "inputValue": "41,52 "
+    },
+    "compact": {
+      "parentTag": "DIV",
+      "parentClass": "astryx-stack horizontal gap-0 x78zum5 x1q0g3np x1o57wo1 x6yxi7o",
+      "parentGap": "0px",
+      "parentDisplay": "flex",
+      "itemGapPx": 0,
+      "prefixBox": {
+        "cls": "astryx-text-input md x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x1gnnqk1 x12y27fx xuihb5h x1a2a7pz x1ueg155",
+        "x": 564,
+        "right": 800,
+        "y": 330,
+        "w": 236,
+        "h": 32,
+        "radiusTL": "8px",
+        "radiusTR": "8px",
+        "radiusBR": "8px",
+        "radiusBL": "8px",
+        "borderLeft": "1px",
+        "borderRight": "1px",
+        "borderColor": "rgb(66, 66, 66)",
+        "marginLeft": "0px",
+        "marginRight": "0px",
+        "zIndex": "1"
+      },
+      "suffixBox": {
+        "cls": "astryx-text-input md x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x1gnnqk1 x12y27fx xuihb5h x1a2a7pz x1ueg155",
+        "x": 800,
+        "right": 1036,
+        "y": 330,
+        "w": 236,
+        "h": 32,
+        "radiusTL": "8px",
+        "radiusTR": "8px",
+        "radiusBR": "8px",
+        "radiusBL": "8px",
+        "borderLeft": "1px",
+        "borderRight": "1px",
+        "borderColor": "rgb(66, 66, 66)",
+        "marginLeft": "0px",
+        "marginRight": "0px",
+        "zIndex": "1"
+      },
+      "boxGapPx": 0,
+      "borderWidthVar": "1px",
+      "radiusElementVar": "8px"
+    },
+    "compactFocused": {
+      "prefix": {
+        "zIndex": "1",
+        "borderColor": "rgb(3, 135, 191)",
+        "position": "relative"
+      },
+      "suffix": {
+        "zIndex": "1",
+        "borderColor": "rgb(66, 66, 66)",
+        "position": "relative"
+      }
+    }
+  }
+}

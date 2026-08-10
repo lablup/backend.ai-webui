@@ -33,7 +33,7 @@ const openSettings = async (columns: BAIColumnsType<Row>) => {
       rowKey="id"
       dataSource={ROWS}
       columns={columns}
-      tableSettings={{ columnOverrides: {}, onChangeColumnOverrides: () => {} }}
+      tableSettings={{ columnOverrides: {}, onColumnOverridesChange: () => {} }}
     />,
   );
   await userEvent.click(screen.getByRole('button', { name: /setting/i }));

@@ -1,0 +1,371 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "openedRow": "Select Q29tcHV0ZVNlc3Npb25Ob2RlOmU5NjFhODVjLTI5YjMtNDI5ZS1iM",
+    "actionButtons": {
+      "groupCls": "astryx-button-group lg horizontal x3nfvp2 x1qjc9v5 x1gnnqk1",
+      "group": {
+        "w": 144,
+        "h": 36,
+        "gap": "normal"
+      },
+      "buttons": [
+        {
+          "label": "See App Dialog",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "8px 0px 0px 8px",
+          "dataSize": "lg",
+          "cls": "astryx-button primary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "label": "Execute Terminal App",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "0px",
+          "dataSize": "lg",
+          "cls": "astryx-button secondary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib ",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "label": "See Container Logs",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "0px",
+          "dataSize": "lg",
+          "cls": "astryx-button secondary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib ",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "label": "Terminate Session",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "0px 8px 8px 0px",
+          "dataSize": "lg",
+          "cls": "astryx-button secondary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib ",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        }
+      ]
+    },
+    "sessionType": {
+      "valueCls": "x1tgivj0 xjm74w1 xw6l6zx x1ghz6dp x1717udv x13faqbe",
+      "valueDisplay": "block",
+      "valueAlignItems": "normal",
+      "valueGap": "normal",
+      "valueLineHeight": "21.9996px",
+      "valueRect": {
+        "cls": "x1tgivj0 xjm74w1 xw6l6zx x1ghz6dp x1717udv x13faqbe",
+        "tag": "DD",
+        "x": 1208.5,
+        "y": 225,
+        "w": 367.5,
+        "h": 22,
+        "cy": 235.97,
+        "display": "block",
+        "verticalAlign": "baseline"
+      },
+      "labelRect": {
+        "y": 201,
+        "h": 22,
+        "cy": 211.98
+      },
+      "children": [
+        {
+          "cls": "astryx-badge blue x3nfvp2 x6s0dn4 xl56j7k xzye2dw x1grt7ep xt970qd xf314gf xjspbzw xjb2p0i",
+          "tag": "SPAN",
+          "x": 1208.5,
+          "y": 227,
+          "w": 93,
+          "h": 20,
+          "cy": 236.97,
+          "display": "inline-flex",
+          "verticalAlign": "baseline"
+        }
+      ],
+      "deltaCy": null,
+      "text": "INTERACTIVE"
+    },
+    "statusRow": {
+      "valueCls": "x1tgivj0 xjm74w1 xw6l6zx x1ghz6dp x1717udv x13faqbe",
+      "display": "block",
+      "alignItems": "normal",
+      "kids": [
+        {
+          "tag": "DIV",
+          "cls": "",
+          "h": 20,
+          "cy": 236.97
+        },
+        {
+          "tag": "BUTTON",
+          "cls": "astryx-button ghost sm x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342",
+          "h": 24,
+          "cy": 236.97
+        },
+        {
+          "tag": "DIV",
+          "cls": "astryx-tooltip xexx8yu x18d9i69 x1c1uobl xyri2b xc342km xng3xce x1rea2",
+          "h": 0,
+          "cy": 0
+        }
+      ]
+    },
+    "appBtnClicked": "See App Dialog",
+    "appIcons": {
+      "dialog": {
+        "tag": "DIALOG",
+        "cls": "astryx-drawer end xixxii4 x1ghz6dp x1717udv x7ab17h x9f619 xdt5ytf x10xzikg x1kcpxr7 xb3r6",
+        "w": 800
+      },
+      "imgs": [
+        {
+          "src": "resources/icons/python.png",
+          "natural": {
+            "w": 2000,
+            "h": 2000
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 14,
+            "h": 14
+          },
+          "renderedRatio": 1,
+          "objectFit": "fill",
+          "width": "14px",
+          "height": "14px",
+          "maxWidth": "100%",
+          "maxHeight": "none",
+          "aspectRatio": "auto",
+          "alignSelf": "auto",
+          "flex": "0 1 auto",
+          "inlineStyle": "width: 1em; height: 1em; vertical-align: middle;",
+          "imgCls": "",
+          "parent": {
+            "tag": "DIV",
+            "cls": "",
+            "w": 367.5,
+            "h": 24,
+            "display": "flex",
+            "alignItems": "center",
+            "fontSize": "14px"
+          },
+          "button": null
+        }
+      ]
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "openedRow": "Select Q29tcHV0ZVNlc3Npb25Ob2RlOmU5NjFhODVjLTI5YjMtNDI5ZS1iM",
+    "actionButtons": {
+      "groupCls": "astryx-button-group lg horizontal x3nfvp2 x1qjc9v5 x1gnnqk1",
+      "group": {
+        "w": 144,
+        "h": 36,
+        "gap": "normal"
+      },
+      "buttons": [
+        {
+          "label": "See App Dialog",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "8px 0px 0px 8px",
+          "dataSize": "lg",
+          "cls": "astryx-button primary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "label": "Execute Terminal App",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "0px",
+          "dataSize": "lg",
+          "cls": "astryx-button secondary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib ",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "label": "See Container Logs",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "0px",
+          "dataSize": "lg",
+          "cls": "astryx-button secondary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib ",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        },
+        {
+          "label": "Terminate Session",
+          "w": 36,
+          "h": 36,
+          "padding": "0px 0px 0px 0px",
+          "fontSize": "14px",
+          "minHeight": "auto",
+          "minWidth": "auto",
+          "borderRadius": "0px 8px 8px 0px",
+          "dataSize": "lg",
+          "cls": "astryx-button secondary lg x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib ",
+          "svg": {
+            "w": 20,
+            "h": 20
+          }
+        }
+      ]
+    },
+    "sessionType": {
+      "valueCls": "x1tgivj0 xjm74w1 xw6l6zx x1ghz6dp x1717udv x13faqbe",
+      "valueDisplay": "block",
+      "valueAlignItems": "normal",
+      "valueGap": "normal",
+      "valueLineHeight": "21.9996px",
+      "valueRect": {
+        "cls": "x1tgivj0 xjm74w1 xw6l6zx x1ghz6dp x1717udv x13faqbe",
+        "tag": "DD",
+        "x": 1208.5,
+        "y": 225,
+        "w": 367.5,
+        "h": 22,
+        "cy": 235.97,
+        "display": "block",
+        "verticalAlign": "baseline"
+      },
+      "labelRect": {
+        "y": 201,
+        "h": 22,
+        "cy": 211.98
+      },
+      "children": [
+        {
+          "cls": "astryx-badge blue x3nfvp2 x6s0dn4 xl56j7k xzye2dw x1grt7ep xt970qd xf314gf xjspbzw xjb2p0i",
+          "tag": "SPAN",
+          "x": 1208.5,
+          "y": 227,
+          "w": 93,
+          "h": 20,
+          "cy": 236.97,
+          "display": "inline-flex",
+          "verticalAlign": "baseline"
+        }
+      ],
+      "deltaCy": null,
+      "text": "INTERACTIVE"
+    },
+    "statusRow": {
+      "valueCls": "x1tgivj0 xjm74w1 xw6l6zx x1ghz6dp x1717udv x13faqbe",
+      "display": "block",
+      "alignItems": "normal",
+      "kids": [
+        {
+          "tag": "DIV",
+          "cls": "",
+          "h": 20,
+          "cy": 236.97
+        },
+        {
+          "tag": "BUTTON",
+          "cls": "astryx-button ghost sm x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342",
+          "h": 24,
+          "cy": 236.97
+        },
+        {
+          "tag": "DIV",
+          "cls": "astryx-tooltip xexx8yu x18d9i69 x1c1uobl xyri2b xc342km xng3xce x1rea2",
+          "h": 0,
+          "cy": 0
+        }
+      ]
+    },
+    "appBtnClicked": "See App Dialog",
+    "appIcons": {
+      "dialog": {
+        "tag": "DIALOG",
+        "cls": "astryx-drawer end xixxii4 x1ghz6dp x1717udv x7ab17h x9f619 xdt5ytf x10xzikg x1kcpxr7 xb3r6",
+        "w": 800
+      },
+      "imgs": [
+        {
+          "src": "resources/icons/python.png",
+          "natural": {
+            "w": 2000,
+            "h": 2000
+          },
+          "naturalRatio": 1,
+          "rendered": {
+            "w": 14,
+            "h": 14
+          },
+          "renderedRatio": 1,
+          "objectFit": "fill",
+          "width": "14px",
+          "height": "14px",
+          "maxWidth": "100%",
+          "maxHeight": "none",
+          "aspectRatio": "auto",
+          "alignSelf": "auto",
+          "flex": "0 1 auto",
+          "inlineStyle": "width: 1em; height: 1em; vertical-align: middle;",
+          "imgCls": "",
+          "parent": {
+            "tag": "DIV",
+            "cls": "",
+            "w": 367.5,
+            "h": 24,
+            "display": "flex",
+            "alignItems": "center",
+            "fontSize": "14px"
+          },
+          "button": null
+        }
+      ]
+    }
+  },
+  "pageErrors": []
+}

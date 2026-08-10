@@ -1,0 +1,471 @@
+{
+  "route": "session/start",
+  "inventory": [
+    {
+      "i": 0,
+      "label": null,
+      "triggerText": "a한국어가능_cde",
+      "y": 19,
+      "h": null
+    },
+    {
+      "i": 1,
+      "label": null,
+      "triggerText": "Select…",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 2,
+      "label": null,
+      "triggerText": "Select…",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 3,
+      "label": null,
+      "triggerText": "Select…",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 4,
+      "label": null,
+      "triggerText": "Python Python\tmultiarch",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 5,
+      "label": null,
+      "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 6,
+      "label": null,
+      "triggerText": "default",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 7,
+      "label": null,
+      "triggerText": "cpu01-small",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 8,
+      "label": null,
+      "triggerText": "GiB",
+      "y": 0,
+      "h": null
+    },
+    {
+      "i": 9,
+      "label": null,
+      "triggerText": "MiB",
+      "y": 0,
+      "h": null
+    }
+  ],
+  "clusterMode": [
+    {
+      "text": "Cluster Mode",
+      "tag": "LABEL",
+      "cls": "",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0
+      },
+      "holderHTML": "<div class=\"astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl x9f619 xjmlhfd x1ihxwbr x1rqz8me x1omyuck x14rzhog xjej9fs x4poyjn x1u1kw4e x1litavf x1y0btm7 x14i3s5s xs19ii7 x12frdag x1nex4ik xbv1mwh\" data-variant=\"default\" style=\"display: none;\"><div class=\"astryx-stack vertical gap-4 x78zum5 xdt5ytf xty4p9g xtx9w7w x1qjc9v5\" data-direction=\"vertical\" data-gap=\"4\"><h5 class=\"astryx-heading level-5 primary x1tgivj0 xsgqta0 xo3gurs xno150v x1lliihq\" data-level=\"5\" data-color=\"primary\">Resource Allocation</h5><div data-bai-form-item=\"\" data-layout=\"vertical\" style=\"margin-bottom: var(--bai-form-item-margin-bottom, var(--spacing-6, 24px));\"><div data-bai-form-item-row=\"\"><div data-bai-form-item-label-col=\"\"><label for=\"resourceGroup\" data-bai-form-item-label=\"\" data-bai-form-item-required=\"\" data-required-mark=\"optional\" title=\"Resource Group\" style=\"color: var(--bai-form"
+    }
+  ],
+  "opens": [
+    {
+      "i": 0,
+      "label": null,
+      "trigger": {
+        "x": 345,
+        "y": 19,
+        "w": 102,
+        "h": 22,
+        "top": 19,
+        "bottom": 41
+      },
+      "labelRect": null,
+      "triggerText": "a한국어가능_cde",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 927,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 1,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "Select…",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 2,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "Select…",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 3,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "Select…",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 4,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "Python Python\tmultiarch",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 5,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 6,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "default",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 7,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "cpu01-small",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 8,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "GiB",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    },
+    {
+      "i": 9,
+      "label": null,
+      "trigger": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "labelRect": null,
+      "triggerText": "MiB",
+      "panel": {
+        "rect": {
+          "x": 1568,
+          "y": 968,
+          "w": 32,
+          "h": 32,
+          "top": 968,
+          "bottom": 1000
+        },
+        "marginBlockStart": "0px",
+        "positionArea": "none",
+        "inlineStyle": null,
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "listboxCls": "undefined"
+      },
+      "verdict": {
+        "coversTrigger": false,
+        "coversLabel": false,
+        "panelTopMinusTriggerBottom": 968,
+        "selectedCyMinusTriggerCy": null
+      }
+    }
+  ],
+  "pageErrors": []
+}

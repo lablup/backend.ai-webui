@@ -321,7 +321,11 @@ export const theme = { useToken };
 
 // Shared measured tables (consumed by react/src/astryx-theme/backendAiTheme.ts
 // via the `backend.ai-ui` public entry — see antdParity.ts).
-export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
+export {
+  ANTD_ALIGN_TOKENS,
+  ANTD_DARK_ALGORITHM_OUTPUT,
+  ANTD_REVERSED_BAND_OVERLAYS,
+} from './antdParity';
 
 // Palette algorithm (ticket 35). `vendor/antdColors.ts` was already a
 // bit-identical port of `@ant-design/colors` (parity-tested in

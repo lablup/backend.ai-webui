@@ -22,8 +22,9 @@ import { useTranslation } from 'react-i18next';
 // exactly that surface instead of `extends BAIAlertProps`.
 // The announcement has no severity in the data model; antd's untyped Alert
 // defaulted to `info`, which is the status kept here. The markdown body was
-// antd's `description` (BAIAlert forced an empty `message`); Banner requires
-// a `title`, so the body moves there — one content block either way.
+// antd's `description` (BAIAlert forced an empty `message`), and it is the
+// `description` again here — see QA-FINDINGS Q-25 below for why the earlier
+// "one content block either way" reading was wrong.
 interface Props {
   showIcon?: boolean;
   closable?: boolean;
@@ -42,7 +43,22 @@ const AnnouncementAlert: React.FC<Props> = ({ closable }) => {
       <Banner
         status="info"
         isDismissable={closable}
-        title={
+        // QA-FINDINGS Q-25: the markdown body belongs in `description`, not
+        // `title`. `Banner` decides its header's cross-axis alignment from the
+        // SLOT SHAPE, not from the measured height —
+        // `isSingleLine = description == null && hasActions` — and when that is
+        // true it swaps the header's `align-items: flex-start` for `center`.
+        // An announcement is arbitrary multi-line markdown, so putting all of
+        // it in `title` with no `description` told Banner "one line plus
+        // actions" about a ~100px block: the icon and the Edit/Dismiss end area
+        // were then centred against it, ~38px below the first line of text.
+        // Legacy antd rendered this as `ant-alert-with-description`, which is
+        // `align-items: flex-start` for icon, content, actions and close alike;
+        // moving the body to `description` restores exactly that, because
+        // `description != null` is what turns the centring off. `title={null}`
+        // renders an empty block box — no line boxes, so no extra height.
+        title={null}
+        description={
           // POLISH-3 item 2: no styling of the Banner's own boxes. What used
           // to be here was a negative `marginBottom` on a wrapper plus a
           // trailing empty `<p>` — a pair of hacks whose only job was to

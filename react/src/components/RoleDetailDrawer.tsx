@@ -47,6 +47,37 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // QA-FINDINGS Q-27: hold the last non-null fragment ref so the drawer still
+  // has data to paint while it animates OUT.
+  //
+  // RBACManagementPage drives `open` and `roleFrgmt` from the same URL param,
+  // so closing nulls the ref in the SAME commit that flips `open` to false.
+  // `BAIDrawerAstryx` keeps the drawer mounted and fully laid out for the
+  // exit transition, so for that whole window the user is looking at a live
+  // drawer whose title has fallen back to `rbac.RoleDetailInfo` and whose body
+  // is empty — measured at 182ms, with the slide-out not starting until
+  // ~630ms. The usual escape hatches do not apply: `BAIUnmountAfterClose` is a
+  // no-op here (`BAIDrawerAstryx` exposes no `afterClose`/`afterOpenChange` to
+  // hang it on), and keying the drawer on the role id would remount it on every
+  // selection change and throw away the animation entirely.
+  //
+  // The store is state, not a `useRef`: a ref written and read during render
+  // is exactly what `react-hooks/refs` forbids, so this is React's documented
+  // "adjust state while rendering" form instead. It cannot loop — within one
+  // parent commit `roleFrgmt` is a fixed prop, so the immediate re-render
+  // React schedules sees the guard as false.
+  //
+  // A live `roleFrgmt` always wins, and it is captured on the SAME render it
+  // arrives, so opening a different role paints that role on its first frame;
+  // the stored fragment ref is consulted only after the parent has already
+  // cleared its selection, i.e. during the exit.
+  const [lastRoleFrgmt, setLastRoleFrgmt] =
+    useState<RoleDetailDrawerFragment$key | null>(roleFrgmt ?? null);
+  if (roleFrgmt && roleFrgmt !== lastRoleFrgmt) {
+    setLastRoleFrgmt(roleFrgmt);
+  }
+  const effectiveRoleFrgmt = roleFrgmt ?? lastRoleFrgmt;
+
   const [role, refetch] = useRefetchableFragment<
     RoleDetailDrawerRefetchQuery,
     RoleDetailDrawerFragment$key
@@ -60,7 +91,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
         ...RoleFormModalFragment
       }
     `,
-    roleFrgmt ?? null,
+    effectiveRoleFrgmt,
   );
 
   return (

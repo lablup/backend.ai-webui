@@ -329,12 +329,45 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                         gap={'xs'}
                         style={{ height: '100%' }}
                       >
+                        {/* QA-FINDINGS Q-33 — every one of these four
+                            declarations is load-bearing; the icon was
+                            rendering 16x36 from a 1:1 source (a 2.25x
+                            horizontal squash) because TWO independent
+                            constraints each pin the width to 16px:
+
+                            1. `@astryxdesign/core/reset.css` declares
+                               `:where(img, video) { max-width: 100%; height:
+                               auto }`. Astryx's `Button` puts the icon in a
+                               fixed 16x16 `iconWrapper` span, so "100% of the
+                               container" IS 16px. `max-width` beats `width`
+                               whatever the specificity, so the inline
+                               `width: 36` never had a chance — `maxWidth:
+                               'none'` is the only way out. (The `height: 36`
+                               did survive, which is exactly why the box came
+                               out 16 WIDE and 36 TALL rather than 16x16.)
+                            2. that same 16px wrapper is a flex container and
+                               the `<img>` is a flex item at the default
+                               `flex-shrink: 1`, so even with the cap lifted it
+                               would shrink to the slot on the main axis while
+                               the cross-axis height stayed 36.
+
+                            `objectFit: 'contain'` then makes the source's own
+                            ratio the one that wins if the slot is ever resized
+                            again. Legacy drew 36x36 inside a 72x72 button; the
+                            72x72 button survived the migration, only the icon
+                            did not. */}
                         <IconButton
                           icon={
                             <img
                               src={app?.src}
                               alt={app?.name}
-                              style={{ height: 36, width: 36 }}
+                              style={{
+                                height: 36,
+                                width: 36,
+                                maxWidth: 'none',
+                                flexShrink: 0,
+                                objectFit: 'contain',
+                              }}
                             />
                           }
                           label={app?.title ?? app?.name ?? ''}
@@ -363,12 +396,21 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                       gap={'xs'}
                       style={{ height: '100%' }}
                     >
+                      {/* QA-FINDINGS Q-33 — same reset `max-width` + icon-slot
+                          shrink as the template grid above; see the comment
+                          there for the mechanism. */}
                       <IconButton
                         icon={
                           <img
                             src={app?.src}
                             alt={app?.name}
-                            style={{ height: 36, width: 36 }}
+                            style={{
+                              height: 36,
+                              width: 36,
+                              maxWidth: 'none',
+                              flexShrink: 0,
+                              objectFit: 'contain',
+                            }}
                           />
                         }
                         label={app?.title ?? app?.name ?? ''}

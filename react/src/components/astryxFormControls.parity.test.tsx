@@ -30,6 +30,7 @@ import {
 } from './astryxFormControls';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('AstryxFormTextInput — restored props', () => {
@@ -150,6 +151,63 @@ describe('AstryxFormTagsInput — tokenSeparators', () => {
       <AstryxFormTagsInput label="Tags" value={['a,b']} onChange={onChange} />,
     );
     expect(screen.getByRole('combobox', { name: /Tags/ })).toBeInTheDocument();
+  });
+
+  /*
+   * QA-FINDINGS Q-31 — the separator must cut a token WHILE TYPING, not only
+   * on Enter. Measured before the fix: typing `10,20 30` at 120ms/key left the
+   * whole string in the input and produced zero tokens.
+   *
+   * The trailing `30` is deliberately still pending here: antd's
+   * `tokenSeparators` cut on the SEPARATOR, so text with no trailing separator
+   * stays in the search input until Enter, in antd and here alike.
+   */
+  it('commits a token on the separator keystroke, with no Enter', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const Harness = () => {
+      const [tags, setTags] = useState<Array<string>>([]);
+      return (
+        <AstryxFormTagsInput
+          label="GIDs"
+          value={tags}
+          onChange={(next) => {
+            setTags(next);
+            onChange(next);
+          }}
+          tokenSeparators={[',', ' ']}
+        />
+      );
+    };
+    render(<Harness />);
+    const combobox = screen.getByRole('combobox', { name: /GIDs/ });
+    await user.click(combobox);
+    await user.type(combobox, '10,20 30');
+
+    await waitFor(() => {
+      expect(onChange).toHaveBeenCalledTimes(2);
+    });
+    expect(onChange.mock.calls.at(-1)?.[0]).toEqual(['10', '20']);
+    // The separator characters themselves are never typed into the field.
+    expect(combobox).toHaveValue('30');
+  });
+
+  it('swallows a separator pressed with nothing to commit', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <AstryxFormTagsInput
+        label="GIDs"
+        value={[]}
+        onChange={onChange}
+        tokenSeparators={[',', ' ']}
+      />,
+    );
+    const combobox = screen.getByRole('combobox', { name: /GIDs/ });
+    await user.click(combobox);
+    await user.type(combobox, ',, ');
+    expect(onChange).not.toHaveBeenCalled();
+    expect(combobox).toHaveValue('');
   });
 });
 

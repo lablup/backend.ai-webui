@@ -1,0 +1,123 @@
+{
+  "pageErrors": [],
+  "rest": {
+    "wrapper": {
+      "clientW": 1312,
+      "scrollW": 1312,
+      "scrollLeft": 0
+    },
+    "tableMinWidth": "1132px",
+    "tableWidth": "1312px",
+    "sticky": [
+      {
+        "i": 0,
+        "key": "__xds_selection",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "backgroundImage": "none",
+        "zIndex": "1",
+        "overflowX": "visible",
+        "rect": {
+          "x": 264,
+          "right": 316,
+          "w": 52
+        },
+        "stickyBgVar": ""
+      },
+      {
+        "i": 1,
+        "key": "name",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "backgroundImage": "none",
+        "zIndex": "1",
+        "overflowX": "visible",
+        "rect": {
+          "x": 316,
+          "right": 456,
+          "w": 140
+        },
+        "stickyBgVar": ""
+      }
+    ],
+    "overlaps": []
+  },
+  "widened": {
+    "wrapper": {
+      "clientW": 1312,
+      "scrollW": 1312,
+      "scrollLeft": 0
+    },
+    "tableMinWidth": "1292px",
+    "tableWidth": "1312px",
+    "sticky": [
+      {
+        "i": 0,
+        "key": "__xds_selection",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "backgroundImage": "none",
+        "zIndex": "1",
+        "overflowX": "visible",
+        "rect": {
+          "x": 264,
+          "right": 316,
+          "w": 52
+        },
+        "stickyBgVar": ""
+      },
+      {
+        "i": 1,
+        "key": "name",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "backgroundImage": "none",
+        "zIndex": "1",
+        "overflowX": "visible",
+        "rect": {
+          "x": 316,
+          "right": 536,
+          "w": 220
+        },
+        "stickyBgVar": ""
+      }
+    ],
+    "overlaps": []
+  },
+  "scrolled": {
+    "wrapper": {
+      "clientW": 1312,
+      "scrollW": 1312,
+      "scrollLeft": 0
+    },
+    "tableMinWidth": "1292px",
+    "tableWidth": "1312px",
+    "sticky": [
+      {
+        "i": 0,
+        "key": "__xds_selection",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "backgroundImage": "none",
+        "zIndex": "1",
+        "overflowX": "visible",
+        "rect": {
+          "x": 264,
+          "right": 316,
+          "w": 52
+        },
+        "stickyBgVar": ""
+      },
+      {
+        "i": 1,
+        "key": "name",
+        "backgroundColor": "rgb(255, 255, 255)",
+        "backgroundImage": "none",
+        "zIndex": "1",
+        "overflowX": "visible",
+        "rect": {
+          "x": 316,
+          "right": 536,
+          "w": 220
+        },
+        "stickyBgVar": ""
+      }
+    ],
+    "overlaps": []
+  }
+}

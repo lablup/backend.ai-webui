@@ -489,8 +489,30 @@ const BAIModal: React.FC<BAIModalProps> = ({
   // antd allowed a per-breakpoint width record. Astryx `Dialog.width` is a
   // single value that already caps at `90vw`, so the record collapses to its
   // largest declared entry (the desktop budget) — see RESPONSIVE-POLICY.
+  //
+  // `width="auto"` needs translating, not forwarding (QA-FINDINGS Q-21).
+  // Reported as "/admin/settings 페이지의 모든 모달 크기가 지나치게 크네요":
+  // the Overlay Network and Scheduler dialogs measured **1440px** wide against
+  // content that needs 301 and 288 — 4.8x, and exactly the `max-width: 90vw`
+  // clamp.
+  //
+  // In antd, `auto` meant shrink-to-fit, but only because `BAIModal` defaulted
+  // `centered` to true and antd's `.ant-modal-centered .ant-modal` is
+  // `display: inline-block` on top of `width: auto`. `centered` is one of this
+  // component's accepted-and-ignored props (PILOT-DECISION 2), and dropping it
+  // silently took the shrink-to-fit with it: on a native `<dialog>` the UA
+  // stylesheet keeps `inset-inline: 0` and Astryx keeps `margin: auto`, so
+  // `width: auto` resolves against the VIEWPORT rather than the content.
+  //
+  // `fit-content` is the CSS keyword that means what antd's `auto` meant here,
+  // and `Dialog.width` documents "any CSS value". The `max-width: 90vw` cap
+  // still applies. Measured after: 301 / 288px, i.e. the content width.
   const resolvedWidth =
-    typeof width === 'object' ? (Object.values(width).at(-1) ?? 520) : width;
+    typeof width === 'object'
+      ? (Object.values(width).at(-1) ?? 520)
+      : width === 'auto'
+        ? 'fit-content'
+        : width;
 
   const dialogWidth = isMinimized
     ? MINIMIZED_WIDTH

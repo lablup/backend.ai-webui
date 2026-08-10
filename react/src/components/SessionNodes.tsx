@@ -207,6 +207,18 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         key: 'status',
         title: t('session.Status'),
         dataIndex: 'status',
+        // QA-FINDINGS Q-35 — a column that declares neither `width` nor
+        // `minWidth` is handed `proportional(1)`, i.e. a STRICT 1/N equal share
+        // of the table, and the cell clips (`overflow: hidden`) rather than
+        // pushing back. The worst real cell here is `PENDING` + `#n` + the
+        // "Queue Position" tooltip label, which needs 124px of content box;
+        // the equal share gives 120px minus 8/8 cell padding = 104px, so the
+        // tag was cut mid-glyph on `/admin-session` at every width and on
+        // `/session` below 1600. antd's engine measured content and grew the
+        // column, so the column definition itself is byte-identical to legacy's
+        // — the fallback is what changed. 140 = 124 content + the 16px of cell
+        // padding the engine does not add on its own.
+        minWidth: 140,
         render: (__, session) => {
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;

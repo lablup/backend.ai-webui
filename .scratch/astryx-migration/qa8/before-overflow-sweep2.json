@@ -1,0 +1,50 @@
+{
+  "pageErrors": [],
+  "phases": {
+    "sessionRest": [],
+    "sessionDragging_name": [
+      {
+        "ti": 0,
+        "ri": 0,
+        "ci": 1,
+        "tag": "th",
+        "key": "name",
+        "position": "sticky",
+        "overflowX": "visible",
+        "w": 60,
+        "escapeRightPx": 41,
+        "text": "Session Name"
+      }
+    ],
+    "sessionDragging_status": [
+      {
+        "ti": 0,
+        "ri": 0,
+        "ci": 1,
+        "tag": "th",
+        "key": "name",
+        "position": "sticky",
+        "overflowX": "visible",
+        "w": 60,
+        "escapeRightPx": 41,
+        "text": "Session Name"
+      }
+    ],
+    "admin/users": [],
+    "storage-settings": "ERROR TimeoutError: page.waitForSelector: Timeout 40000ms exceeded.\nCall log:\n\u001b[2m  - ",
+    "agent": [
+      {
+        "ti": 0,
+        "ri": 1,
+        "ci": 0,
+        "tag": "td",
+        "key": "row_id",
+        "position": "sticky",
+        "overflowX": "visible",
+        "w": 145.8,
+        "escapeRightPx": 4.2,
+        "text": "tcp://127.0.0.1:6011"
+      }
+    ]
+  }
+}

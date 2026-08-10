@@ -1,0 +1,254 @@
+{
+  "phase": "before",
+  "banner": {
+    "light": {
+      "appliedTheme": "light",
+      "geometry": {
+        "headerAlignItems": "center",
+        "root": {
+          "x": 264,
+          "y": 120,
+          "w": 1312,
+          "h": 123.8,
+          "cy": 181.9
+        },
+        "icon": {
+          "x": 280,
+          "y": 171.9,
+          "w": 20,
+          "h": 20,
+          "cy": 181.9
+        },
+        "content": {
+          "x": 308,
+          "y": 132,
+          "w": 1146,
+          "h": 99.8,
+          "cy": 181.9
+        },
+        "end": {
+          "x": 1454,
+          "y": 169.9,
+          "w": 106,
+          "h": 24,
+          "cy": 181.9
+        },
+        "endLabels": [
+          "Edit",
+          "Dismiss"
+        ],
+        "contentSlots": [
+          {
+            "x": 308,
+            "y": 132,
+            "w": 1146,
+            "h": 99.8,
+            "cy": 181.9,
+            "fontSize": "14px",
+            "color": "rgb(0, 69, 140)",
+            "len": 19,
+            "head": "adlfjkasdfasdfhello"
+          }
+        ],
+        "endOffsetBelowContentTop": 0
+      }
+    },
+    "dark": {
+      "appliedTheme": "dark",
+      "geometry": {
+        "headerAlignItems": "center",
+        "root": {
+          "x": 264,
+          "y": 120,
+          "w": 1312,
+          "h": 123.8,
+          "cy": 181.9
+        },
+        "icon": {
+          "x": 280,
+          "y": 171.9,
+          "w": 20,
+          "h": 20,
+          "cy": 181.9
+        },
+        "content": {
+          "x": 308,
+          "y": 132,
+          "w": 1146,
+          "h": 99.8,
+          "cy": 181.9
+        },
+        "end": {
+          "x": 1454,
+          "y": 169.9,
+          "w": 106,
+          "h": 24,
+          "cy": 181.9
+        },
+        "endLabels": [
+          "Edit",
+          "Dismiss"
+        ],
+        "contentSlots": [
+          {
+            "x": 308,
+            "y": 132,
+            "w": 1146,
+            "h": 99.8,
+            "cy": 181.9,
+            "fontSize": "14px",
+            "color": "rgb(199, 211, 255)",
+            "len": 19,
+            "head": "adlfjkasdfasdfhello"
+          }
+        ],
+        "endOffsetBelowContentTop": 0
+      }
+    }
+  },
+  "createFolder": {
+    "triggerFound": 1,
+    "url": "https://to-astryx.backend-ai-webui.localhost:1357/project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/data",
+    "light": {
+      "formW": 562,
+      "items": [
+        {
+          "label": "Usage Mode",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 615.3,
+          "textRight": 693.3,
+          "gapBeforeText": 96.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Folder name",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 614.3,
+          "textRight": 693.3,
+          "gapBeforeText": 95.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Location",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 638.3,
+          "textRight": 693.3,
+          "gapBeforeText": 119.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Type",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 662.3,
+          "textRight": 693.3,
+          "gapBeforeText": 143.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Mount Permission",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 578.3,
+          "textRight": 693.3,
+          "gapBeforeText": 59.3,
+          "gapAfterText": 13
+        }
+      ]
+    },
+    "dark": {
+      "formW": 562,
+      "items": [
+        {
+          "label": "Usage Mode",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 615.3,
+          "textRight": 693.3,
+          "gapBeforeText": 96.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Folder name",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 614.3,
+          "textRight": 693.3,
+          "gapBeforeText": 95.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Location",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 638.3,
+          "textRight": 693.3,
+          "gapBeforeText": 119.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Type",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 662.3,
+          "textRight": 693.3,
+          "gapBeforeText": 143.3,
+          "gapAfterText": 13
+        },
+        {
+          "label": "Mount Permission",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": null,
+          "textAlign": "end",
+          "controlColX": 706.3,
+          "textX": 578.3,
+          "textRight": 693.3,
+          "gapBeforeText": 59.3,
+          "gapAfterText": 13
+        }
+      ]
+    }
+  },
+  "pageErrors": []
+}

@@ -34,7 +34,6 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryx-bui/astryxFormControls';
-import { HStack } from '@astryxdesign/core/Stack';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { Tokenizer } from '@astryxdesign/core/Tokenizer';
@@ -44,6 +43,7 @@ import type {
 } from '@astryxdesign/core/Typeahead';
 import {
   BAIAlert,
+  BAICompactGroup,
   BAIDomainSelect,
   BAIModal,
   BAIModalProps,
@@ -691,12 +691,18 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 description={t('credential.BulkCreateUserDescription')}
                 style={{ marginBottom: token.marginMD }}
               />
-              {/* antd `Space.Compact` welded the two inputs' borders together;
-                  Astryx has no equivalent weld for arbitrary form controls
-                  (only ButtonGroup/InputGroup, MAPPING §"Space/Space.Compact"),
-                  so the two fields are laid out with a plain gapless HStack
-                  instead (PILOT-DECISION). */}
-              <HStack gap={0} style={{ width: '100%' }}>
+              {/* QA-FINDINGS Q-32 — "email prefix 와 email suffix 사이의
+                  input margin 이 없음". The gapless `HStack` this replaces put
+                  the two BORDERED boxes edge to edge at x=800 with each still
+                  carrying `border-radius: 8px`, so they collided instead of
+                  reading as one control. antd welded them with
+                  `<Space.Compact>`; `BAICompactGroup` is that weld — the
+                  members overlap by one `var(--border-width)` so the doubled
+                  border collapses to a single stroke, the inner corners are
+                  squared, and the focused field's edge is raised above its
+                  neighbour's. The prefix and suffix are two halves of ONE
+                  address, so a gap would have been the wrong control. */}
+              <BAICompactGroup>
                 <BAIFormItem
                   name="email_prefix"
                   label={t('credential.EmailPrefix')}
@@ -738,7 +744,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     placeholder={t('maxLength.30chars')}
                   />
                 </BAIFormItem>
-              </HStack>
+              </BAICompactGroup>
               <BAIFormItem
                 name="user_count"
                 label={t('credential.UserCount')}

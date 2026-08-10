@@ -1,0 +1,238 @@
+{
+  "rest": {
+    "name": {
+      "key": "name",
+      "text": "Session Name",
+      "thW": 140,
+      "thRight": 456,
+      "textRight": 417,
+      "layers": [
+        {
+          "tag": "span",
+          "cls": "",
+          "inlineStyle": "display: block; min-width: 0px; overflow: hidden; text-overf",
+          "display": "block",
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "93px",
+          "flex": "0 1 auto",
+          "right": 417,
+          "w": 93
+        },
+        {
+          "tag": "span",
+          "cls": "",
+          "inlineStyle": "",
+          "display": "block",
+          "overflowX": "visible",
+          "textOverflow": "clip",
+          "whiteSpace": "nowrap",
+          "minWidth": "auto",
+          "width": "93px",
+          "flex": "0 1 auto",
+          "right": 417,
+          "w": 93
+        },
+        {
+          "tag": "button",
+          "cls": "x78zum5 x6s0dn4",
+          "inlineStyle": "",
+          "display": "flex",
+          "overflowX": "visible",
+          "textOverflow": "clip",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "124px",
+          "flex": "0 1 auto",
+          "right": 448,
+          "w": 124
+        },
+        {
+          "tag": "div",
+          "cls": "x1n2onr6 xpdipgo",
+          "inlineStyle": "",
+          "display": "block",
+          "overflowX": "visible",
+          "textOverflow": "clip",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "124px",
+          "flex": "0 1 auto",
+          "right": 448,
+          "w": 124
+        },
+        {
+          "tag": "th",
+          "cls": "astryx-table-header-cell compact",
+          "inlineStyle": "width: 11.1111%; min-width: 120px; inset-inline-start: 52px;",
+          "display": "table-cell",
+          "overflowX": "visible",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "120px",
+          "width": "140px",
+          "flex": "0 1 auto",
+          "right": 456,
+          "w": 140
+        }
+      ]
+    },
+    "status": {
+      "key": "status",
+      "text": "Status",
+      "thW": 140,
+      "thRight": 596,
+      "textRight": 507,
+      "layers": [
+        {
+          "tag": "span",
+          "cls": "",
+          "inlineStyle": "display: block; min-width: 0px; overflow: hidden; text-overf",
+          "display": "block",
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "124px",
+          "flex": "0 1 auto",
+          "right": 588,
+          "w": 124
+        },
+        {
+          "tag": "th",
+          "cls": "astryx-table-header-cell compact",
+          "inlineStyle": "width: 11.1111%; min-width: 120px;",
+          "display": "table-cell",
+          "overflowX": "visible",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "120px",
+          "width": "140px",
+          "flex": "0 1 auto",
+          "right": 596,
+          "w": 140
+        }
+      ]
+    }
+  },
+  "dragging": {
+    "name": {
+      "key": "name",
+      "text": "Session Name",
+      "thW": 60,
+      "thRight": 376,
+      "textRight": 417,
+      "layers": [
+        {
+          "tag": "span",
+          "cls": "",
+          "inlineStyle": "display: block; min-width: 0px; overflow: hidden; text-overf",
+          "display": "block",
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "93px",
+          "flex": "0 1 auto",
+          "right": 417,
+          "w": 93
+        },
+        {
+          "tag": "span",
+          "cls": "",
+          "inlineStyle": "",
+          "display": "block",
+          "overflowX": "visible",
+          "textOverflow": "clip",
+          "whiteSpace": "nowrap",
+          "minWidth": "auto",
+          "width": "93px",
+          "flex": "0 1 auto",
+          "right": 417,
+          "w": 93
+        },
+        {
+          "tag": "button",
+          "cls": "x78zum5 x6s0dn4",
+          "inlineStyle": "",
+          "display": "flex",
+          "overflowX": "visible",
+          "textOverflow": "clip",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "44px",
+          "flex": "0 1 auto",
+          "right": 368,
+          "w": 44
+        },
+        {
+          "tag": "div",
+          "cls": "x1n2onr6 xpdipgo",
+          "inlineStyle": "",
+          "display": "block",
+          "overflowX": "visible",
+          "textOverflow": "clip",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "44px",
+          "flex": "0 1 auto",
+          "right": 368,
+          "w": 44
+        },
+        {
+          "tag": "th",
+          "cls": "astryx-table-header-cell compact",
+          "inlineStyle": "width: 60px; min-width: 60px; inset-inline-start: 52px; max-",
+          "display": "table-cell",
+          "overflowX": "visible",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "60px",
+          "width": "60px",
+          "flex": "0 1 auto",
+          "right": 376,
+          "w": 60
+        }
+      ]
+    },
+    "status": {
+      "key": "status",
+      "text": "Status",
+      "thW": 220,
+      "thRight": 596,
+      "textRight": 427,
+      "layers": [
+        {
+          "tag": "span",
+          "cls": "",
+          "inlineStyle": "display: block; min-width: 0px; overflow: hidden; text-overf",
+          "display": "block",
+          "overflowX": "hidden",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "0px",
+          "width": "204px",
+          "flex": "0 1 auto",
+          "right": 588,
+          "w": 204
+        },
+        {
+          "tag": "th",
+          "cls": "astryx-table-header-cell compact",
+          "inlineStyle": "width: 220px; min-width: 220px; max-width: 220px;",
+          "display": "table-cell",
+          "overflowX": "visible",
+          "textOverflow": "ellipsis",
+          "whiteSpace": "nowrap",
+          "minWidth": "220px",
+          "width": "220px",
+          "flex": "0 1 auto",
+          "right": 596,
+          "w": 220
+        }
+      ]
+    }
+  }
+}

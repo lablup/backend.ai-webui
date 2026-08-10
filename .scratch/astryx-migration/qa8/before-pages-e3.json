@@ -1,0 +1,301 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "headerBg": "rgb(255, 151, 41)",
+    "buttons": {
+      "notification": {
+        "rest": {
+          "rect": {
+            "x": 1325,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1325,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      },
+      "theme": {
+        "rest": {
+          "rect": {
+            "x": 1361,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1361,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      },
+      "help": {
+        "rest": {
+          "rect": {
+            "x": 1397,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1397,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      },
+      "user": {
+        "rest": {
+          "rect": {
+            "x": 1437,
+            "y": 14,
+            "w": 151,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1437,
+            "y": 14,
+            "w": 151,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      }
+    },
+    "projectSelect": {
+      "rect": {
+        "x": 332,
+        "y": 14,
+        "w": 152,
+        "h": 32
+      },
+      "bgColor": "rgba(0, 0, 0, 0)",
+      "bgImage": "none",
+      "color": "rgb(255, 255, 255)",
+      "colorScheme": "light",
+      "mediaAttr": null,
+      "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+      "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "headerBg": "rgb(232, 138, 40)",
+    "buttons": {
+      "notification": {
+        "rest": {
+          "rect": {
+            "x": 1325,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1325,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      },
+      "theme": {
+        "rest": {
+          "rect": {
+            "x": 1361,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1361,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      },
+      "help": {
+        "rest": {
+          "rect": {
+            "x": 1397,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1397,
+            "y": 14,
+            "w": 32,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      },
+      "user": {
+        "rest": {
+          "rect": {
+            "x": 1437,
+            "y": 14,
+            "w": 151,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "none",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        },
+        "hover": {
+          "rect": {
+            "x": 1437,
+            "y": 14,
+            "w": 151,
+            "h": 32
+          },
+          "bgColor": "rgba(0, 0, 0, 0)",
+          "bgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))",
+          "color": "rgb(255, 255, 255)",
+          "colorScheme": "dark",
+          "mediaAttr": "dark",
+          "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+          "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+        }
+      }
+    },
+    "projectSelect": {
+      "rect": {
+        "x": 332,
+        "y": 14,
+        "w": 152,
+        "h": 32
+      },
+      "bgColor": "rgba(0, 0, 0, 0)",
+      "bgImage": "none",
+      "color": "rgb(255, 255, 255)",
+      "colorScheme": "dark",
+      "mediaAttr": null,
+      "overlayHover": "light-dark(rgba(0,0,0,0.06), #262626)",
+      "overlayPressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+    }
+  },
+  "pageErrors": []
+}

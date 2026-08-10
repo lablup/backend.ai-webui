@@ -1,0 +1,95 @@
+{
+  "viewport": {
+    "w": 1600,
+    "h": 1000
+  },
+  "light": {
+    "appliedTheme": "light",
+    "controlPageTooltip": {
+      "error": "no open [role=tooltip]"
+    },
+    "dialogOpen": 1,
+    "iconCount": 1,
+    "inDialogTooltip": {
+      "tooltip": {
+        "text": "Auto-mount folders are automatically mounted when ",
+        "rect": {
+          "x": 878.3,
+          "y": 315,
+          "w": 300,
+          "h": 52
+        },
+        "position": "fixed",
+        "positionAnchor": "--astryx-layer-_r_6t_",
+        "positionArea": "self-block-start",
+        "positionTryFallbacks": "flip-block, flip-inline, flip-block flip-inline, span-left top, span-right top, span-left bottom, span-right bottom",
+        "inset": "0px 0px 0px 0px",
+        "margin": "4px 0px 4px 0px",
+        "insideDialog": true,
+        "popoverOpen": true
+      },
+      "anchor": {
+        "tag": "button",
+        "anchorNameInline": "--astryx-layer-_r_6t_",
+        "display": "flex",
+        "rect": {
+          "x": 1021.3,
+          "y": 371,
+          "w": 14,
+          "h": 14
+        },
+        "insideDialog": true
+      },
+      "delta": {
+        "dx": -143,
+        "dy": -56
+      },
+      "atViewportOrigin": false
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "controlPageTooltip": {
+      "error": "no open [role=tooltip]"
+    },
+    "dialogOpen": 1,
+    "iconCount": 1,
+    "inDialogTooltip": {
+      "tooltip": {
+        "text": "Auto-mount folders are automatically mounted when ",
+        "rect": {
+          "x": 878.3,
+          "y": 315,
+          "w": 300,
+          "h": 52
+        },
+        "position": "fixed",
+        "positionAnchor": "--astryx-layer-_r_8i_",
+        "positionArea": "self-block-start",
+        "positionTryFallbacks": "flip-block, flip-inline, flip-block flip-inline, span-left top, span-right top, span-left bottom, span-right bottom",
+        "inset": "0px 0px 0px 0px",
+        "margin": "4px 0px 4px 0px",
+        "insideDialog": true,
+        "popoverOpen": true
+      },
+      "anchor": {
+        "tag": "button",
+        "anchorNameInline": "--astryx-layer-_r_8i_",
+        "display": "flex",
+        "rect": {
+          "x": 1021.3,
+          "y": 371,
+          "w": 14,
+          "h": 14
+        },
+        "insideDialog": true
+      },
+      "delta": {
+        "dx": -143,
+        "dy": -56
+      },
+      "atViewportOrigin": false
+    }
+  },
+  "pageErrors": []
+}

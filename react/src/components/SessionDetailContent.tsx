@@ -430,17 +430,32 @@ const SessionDetailContent: React.FC<{
             </BAIFlex>
           </MetadataListItem>
           <MetadataListItem label={t('session.SessionType')}>
-            <BAISessionTypeTag sessionFrgmt={session} />
-            {session.type === 'batch' && session.startup_command && (
-              <IconButton
-                variant="ghost"
-                size="sm"
-                icon={<Info size="1em" />}
-                label={t('session.ViewStartupCommand')}
-                tooltip={t('session.ViewStartupCommand')}
-                onClick={() => toggleOpenCodeHighlighterModal()}
-              />
-            )}
+            {/* QA-FINDINGS Q-36 — the `<dd>` a `MetadataListItem` renders is
+                `display: block`, so a tag and an icon button dropped in as
+                siblings are two inline-flex boxes sitting on the SAME TEXT
+                BASELINE, not on a shared centre line. Their content boxes have
+                different heights, so aligning their baselines puts their
+                centres 4px apart. The Status row above already avoids this by
+                wrapping its identical tag+IconButton pair in a `BAIFlex`
+                (default `align: center`), which replaces baseline alignment
+                with cross-axis centring; this row now does the same. Note this
+                is NOT a migration regression — antd's
+                `.ant-descriptions-item-content` was `display: table-cell` and
+                laid the same pair out on the same baseline, so legacy was 4px
+                off too. */}
+            <BAIFlex>
+              <BAISessionTypeTag sessionFrgmt={session} />
+              {session.type === 'batch' && session.startup_command && (
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={<Info size="1em" />}
+                  label={t('session.ViewStartupCommand')}
+                  tooltip={t('session.ViewStartupCommand')}
+                  onClick={() => toggleOpenCodeHighlighterModal()}
+                />
+              )}
+            </BAIFlex>
           </MetadataListItem>
           <MetadataListItem label={t('session.launcher.Environments')}>
             {session.kernel_nodes?.edges[0]?.node?.image ? (

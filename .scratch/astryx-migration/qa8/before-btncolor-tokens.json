@@ -1,0 +1,44 @@
+{
+  "session": {
+    "astryxTheme": "bai-r10-default-brand-hxcnquk",
+    "--color-text-blue": "light-dark(#00458c, #c7d3ff)",
+    "--color-background-blue": "light-dark(#c4ddfb, #9eb7ff3D)",
+    "--color-text-red": "light-dark(#89001a, #ffc6c1)",
+    "--color-background-red": "light-dark(#facecb, #ff9e973D)",
+    "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-error": "light-dark(#FF4D4F, #be3d3f)",
+    "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+    "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
+    "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+    "--color-background-muted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))"
+  },
+  "admin/users": {
+    "astryxTheme": "bai-r10-default-brand-hxcnquk",
+    "--color-text-blue": "light-dark(#00458c, #c7d3ff)",
+    "--color-background-blue": "light-dark(#c4ddfb, #9eb7ff3D)",
+    "--color-text-red": "light-dark(#89001a, #ffc6c1)",
+    "--color-background-red": "light-dark(#facecb, #ff9e973D)",
+    "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-error": "light-dark(#FF4D4F, #be3d3f)",
+    "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+    "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
+    "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+    "--color-background-muted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))"
+  },
+  "admin/environment": {
+    "astryxTheme": "bai-r10-default-brand-hxcnquk",
+    "--color-text-blue": "light-dark(#00458c, #c7d3ff)",
+    "--color-background-blue": "light-dark(#c4ddfb, #9eb7ff3D)",
+    "--color-text-red": "light-dark(#89001a, #ffc6c1)",
+    "--color-background-red": "light-dark(#facecb, #ff9e973D)",
+    "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-error": "light-dark(#FF4D4F, #be3d3f)",
+    "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+    "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
+    "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+    "--color-background-muted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))"
+  }
+}

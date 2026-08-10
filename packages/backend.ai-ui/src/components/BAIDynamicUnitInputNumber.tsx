@@ -307,7 +307,13 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       {/* A single available unit is a static label, not a choice — antd faked
           that with `suffixIcon={null} open={false}` on a Select. */}
       {units.length > 1 ? (
+        // QA-FINDINGS Q-34 — the unit Selector sits immediately to the right
+        // of the number field, so the overlay behaviour Astryx applies when
+        // `placement == null && !hasSearch` puts the option list on top of the
+        // unit the user currently has selected. Name the placement so the panel
+        // takes the standard layer position (below, offset 0).
         <Selector
+          placement="below"
           label={t('general.Unit')}
           isLabelHidden
           value={unit}
