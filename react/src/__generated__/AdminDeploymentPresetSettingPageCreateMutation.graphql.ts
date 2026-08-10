@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<466920504aecfeeec777247e500d2854>>
+ * @generated SignedSource<<006967620d343fbc6984e0c3e55ebafb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -60,7 +60,7 @@ export type PresetModelConfigInput = {
 export type PresetModelServiceConfigInput = {
   command?: string | null | undefined;
   healthCheck?: PresetModelHealthCheckInput | null | undefined;
-  port: number;
+  port?: number | null | undefined;
   preStartActions: ReadonlyArray<PreStartActionInput>;
   shell?: string | null | undefined;
   startCommand?: ReadonlyArray<string> | null | undefined;
@@ -440,7 +440,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ModelDefinition",
+                "concreteType": "PresetModelDefinition",
                 "kind": "LinkedField",
                 "name": "modelDefinition",
                 "plural": false,
@@ -448,7 +448,7 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "ModelConfig",
+                    "concreteType": "PresetModelConfig",
                     "kind": "LinkedField",
                     "name": "models",
                     "plural": true,
@@ -464,7 +464,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ModelServiceConfig",
+                        "concreteType": "PresetModelServiceConfig",
                         "kind": "LinkedField",
                         "name": "service",
                         "plural": false,

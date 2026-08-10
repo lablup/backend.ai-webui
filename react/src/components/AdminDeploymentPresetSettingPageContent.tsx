@@ -528,11 +528,16 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   startCommand: m.service?.startCommand,
                 });
                 return {
-                  name: m.name,
-                  modelPath: m.modelPath,
+                  // BA-7210 (26.9.0+): `name`/`modelPath` are nullable in the
+                  // output now (a sparse preset omits them to inherit the
+                  // variant baseline at revision resolution). Fall back to
+                  // '' for prefill until the capability-gated "inherited"
+                  // UX (FR-3481) lands; older managers never send null here.
+                  name: m.name ?? '',
+                  modelPath: m.modelPath ?? '',
                   service: m.service
                     ? {
-                        port: m.service.port,
+                        port: m.service.port ?? undefined,
                         shell: commandModeState.shell,
                         startCommand: commandModeState.command,
                         execution: commandModeState.execution,
