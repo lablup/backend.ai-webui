@@ -31,6 +31,31 @@
 (function () {
   if (typeof document === "undefined") return;
 
+  // Keep in sync with the identical helper in search.js. These are two
+  // independently content-hashed standalone scripts with no shared
+  // module, so the duplication is deliberate.
+  //
+  // Shortcuts must fire on the same physical key regardless of the
+  // active input language. `e.key` is the *character the layout/IME
+  // produced*: with a Hangul IME active, Cmd-K reports `e.key === 'ㅏ'`
+  // (or 'Process' mid-composition), so a plain `e.key === "k"` check
+  // silently stops matching. `e.code` names the physical key ("KeyK")
+  // and is layout- and IME-independent.
+  //
+  // We prefer `e.key` when the layout produced a Latin letter, so
+  // non-QWERTY Latin layouts (Dvorak, Colemak) still trigger on the key
+  // the user sees labeled "K". We fall back to `e.code` only when the
+  // produced character is not a Latin letter — i.e. exactly the
+  // non-Latin-layout / IME case this guards against.
+  function matchesShortcutKey(e, code, char) {
+    var k = e.key;
+    if (typeof k === "string" && k.length === 1) {
+      if (k.toLowerCase() === char) return true;
+      if (/[a-z]/i.test(k)) return false;
+    }
+    return e.code === code;
+  }
+
   // The BAI topbar may be absent on legacy F3 pages; topbar-dependent
   // wiring below is conditional so it no-ops cleanly. The global
   // keyboard shortcuts at the bottom of this file always register so
@@ -485,16 +510,25 @@
   document.addEventListener("keydown", function (e) {
     var key = e.key;
     var isCmdK =
-      (e.metaKey || e.ctrlKey) && (key === "k" || key === "K");
-    var isSlash = key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey;
+      (e.metaKey || e.ctrlKey) && matchesShortcutKey(e, "KeyK", "k");
+    var isSlash =
+      matchesShortcutKey(e, "Slash", "/") &&
+      !e.metaKey &&
+      !e.ctrlKey &&
+      !e.altKey;
     var inField =
       document.activeElement &&
       (document.activeElement.tagName === "INPUT" ||
         document.activeElement.tagName === "TEXTAREA" ||
         document.activeElement.isContentEditable);
 
-    // Skip keys another handler already claimed (e.g. listbox type-ahead).
-    if ((isCmdK || (isSlash && !inField)) && !e.defaultPrevented) {
+    // Cmd-K is deliberately NOT gated on `defaultPrevented`: it is a
+    // modifier chord no other handler on the page legitimately claims,
+    // and gating it here is exactly what silently disabled the shortcut
+    // before (search.js preventDefault()-ed it first — see the note in
+    // that file). `/` keeps the guard because it is a bare printable
+    // key that other widgets may consume (e.g. listbox type-ahead).
+    if (isCmdK || (isSlash && !inField && !e.defaultPrevented)) {
       e.preventDefault();
       openPalette();
       return;

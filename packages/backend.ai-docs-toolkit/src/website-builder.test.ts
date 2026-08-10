@@ -2003,3 +2003,66 @@ describe("interactions.js template — FR-3265 switcher listbox enhancer", () =>
     assert.doesNotMatch(interactionsSource, /docs\.notice\.notInVersion/);
   });
 });
+
+describe("keyboard shortcuts — single owner, layout-independent", () => {
+  // Behavioral coverage lives in the example package's Playwright spec
+  // (tests/web/search-palette.spec.ts). These source-level assertions
+  // pin the two invariants that made the Cmd-K shortcut dead on arrival
+  // and that a future refactor could silently reintroduce.
+  const interactionsSource = fs.readFileSync(
+    new URL("../templates/assets/interactions.js", import.meta.url),
+    "utf8",
+  );
+  const searchSource = fs.readFileSync(
+    new URL("../templates/assets/search.js", import.meta.url),
+    "utf8",
+  );
+
+  /** Drop block comments and whole-line `//` comments so the
+   * "must not appear" assertions below read code, not the prose that
+   * explains why the code is written the way it is. */
+  const codeOnly = (source: string): string =>
+    source
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .split("\n")
+      .filter((line) => !line.trim().startsWith("//"))
+      .join("\n");
+
+  it("gives the palette sole ownership of Cmd-K when it is present", () => {
+    // search.js loads before interactions.js (both `defer`), so an
+    // unconditional handler there wins the event and its
+    // preventDefault() suppresses the palette. Its handler must stay
+    // behind the "no palette on this page" guard.
+    const guard = /if \(!document\.querySelector\('\[data-search-palette\]'\)\) \{/;
+    assert.match(searchSource, guard);
+    const guardIndex = searchSource.search(guard);
+    const handlerIndex = searchSource.indexOf(
+      "(e.metaKey || e.ctrlKey) && matchesShortcutKey(e, 'KeyK', 'k')",
+    );
+    assert.ok(handlerIndex > guardIndex, "Cmd-K handler must sit inside the guard");
+  });
+
+  it("matches Cmd-K by physical key so a Hangul IME cannot break it", () => {
+    // `e.key` is the character the layout/IME produced — "ㅏ" under a
+    // Hangul IME. Both scripts must route through the helper that falls
+    // back to `e.code === "KeyK"`.
+    for (const source of [interactionsSource, searchSource]) {
+      const code = codeOnly(source);
+      assert.match(code, /function matchesShortcutKey\(e, code, char\)/);
+      assert.match(code, /e\.code === code/);
+      assert.match(code, /matchesShortcutKey\(e, ["']KeyK["'], ["']k["']\)/);
+      // No direct character comparison may gate a shortcut.
+      assert.doesNotMatch(code, /key === ["']k["']/);
+      assert.doesNotMatch(code, /key === ["']K["']/);
+    }
+  });
+
+  it("does not gate Cmd-K on defaultPrevented", () => {
+    // The old `(isCmdK || ...) && !e.defaultPrevented` guard is exactly
+    // what let search.js disable the shortcut. `/` keeps the guard
+    // because it is a bare printable key other widgets may consume.
+    const code = codeOnly(interactionsSource);
+    assert.doesNotMatch(code, /isCmdK \|\| [^)]*\) && !e\.defaultPrevented/);
+    assert.match(code, /isSlash && !inField && !e\.defaultPrevented/);
+  });
+});

@@ -11,7 +11,7 @@
  *   - CJK + Thai bigram tokenization
  *   - Latin word split with min-length 2
  *   - 200ms debounce on input
- *   - Cmd-K / Ctrl-K focus shortcut
+ *   - Cmd-K / Ctrl-K focus shortcut (only on palette-less pages — see below)
  *   - Escape blurs and hides results
  *   - URL allow-list ('./...' or '/...') guards rendered links
  */
@@ -24,6 +24,31 @@
   if (!inp || !res) return;
   var noResultsText =
     (inp.getAttribute('data-no-results') || 'No results found');
+
+  // Keep in sync with the identical helper in interactions.js. These are
+  // two independently content-hashed standalone scripts with no shared
+  // module, so the duplication is deliberate.
+  //
+  // Shortcuts must fire on the same physical key regardless of the
+  // active input language. `e.key` is the *character the layout/IME
+  // produced*: with a Hangul IME active, Cmd-K reports `e.key === 'ㅏ'`
+  // (or 'Process' mid-composition), so a plain `e.key === 'k'` check
+  // silently stops matching. `e.code` names the physical key ('KeyK')
+  // and is layout- and IME-independent.
+  //
+  // We prefer `e.key` when the layout produced a Latin letter, so
+  // non-QWERTY Latin layouts (Dvorak, Colemak) still trigger on the key
+  // the user sees labeled "K". We fall back to `e.code` only when the
+  // produced character is not a Latin letter — i.e. exactly the
+  // non-Latin-layout / IME case this guards against.
+  function matchesShortcutKey(e, code, char) {
+    var k = e.key;
+    if (typeof k === 'string' && k.length === 1) {
+      if (k.toLowerCase() === char) return true;
+      if (/[a-z]/i.test(k)) return false;
+    }
+    return e.code === code;
+  }
 
   function tokenize(t) {
     var tokens = [];
@@ -225,12 +250,28 @@
   document.addEventListener('click', function (e) {
     if (!e.target.closest('.doc-search')) res.hidden = true;
   });
-  document.addEventListener('keydown', function (e) {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      inp.focus();
-    }
-  });
+  // Cmd-K / Ctrl-K.
+  //
+  // On website builds the input lives inside the search palette overlay,
+  // which is `hidden` until interactions.js opens it. Focusing a node
+  // inside a `hidden` subtree is a no-op, so this handler could never
+  // do anything useful there — and worse, it *broke* the shortcut
+  // outright: this script is emitted before interactions.js (both
+  // `defer`, so document order = execution order), its listener ran
+  // first, and its `preventDefault()` made interactions.js skip its own
+  // `openPalette()` via that handler's `!e.defaultPrevented` guard.
+  //
+  // The palette owns the shortcut whenever it is present. Only legacy /
+  // preview pages that render a bare, always-visible #search-input keep
+  // the focus-only behavior here.
+  if (!document.querySelector('[data-search-palette]')) {
+    document.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && matchesShortcutKey(e, 'KeyK', 'k')) {
+        e.preventDefault();
+        inp.focus();
+      }
+    });
+  }
   fetch('./search-index.json')
     .then(function (r) {
       return r.json();
