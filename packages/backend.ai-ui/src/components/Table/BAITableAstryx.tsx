@@ -138,6 +138,13 @@ const EXPAND_COLUMN_KEY = '__bai_expand__';
  * checkbox inside the pinned start run.
  */
 const SELECTION_COLUMN_KEY = '__xds_selection';
+/**
+ * Width of that injected column: the 24px first-column inset Astryx applies to
+ * a bleeding table + the 20px checkbox + the 8px trailing cell pad. Without it
+ * the plugin's default 36px leaves 4px of content box and the checkbox
+ * overhangs its own cell (QA-FINDINGS Q-14).
+ */
+const SELECTION_COLUMN_WIDTH = 52;
 /** Marker field placed on the synthetic detail rows. */
 const DETAIL_ROW_MARKER = '__bai_detail_for__';
 
@@ -973,6 +980,34 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
 
   /* ---- plugin record ----------------------------------------------------- */
 
+  /**
+   * Give the injected selection column room for its own checkbox.
+   *
+   * Astryx insets the FIRST column by 24px so a bleeding table's content still
+   * lines up with its card's content edge — that is what makes a normal first
+   * cell start exactly there. The selection plugin injects its column without a
+   * width, and the default lands at 36px, of which the first-column inset takes
+   * 24 and the trailing pad 8: the 20px checkbox is centred in the 4px that is
+   * left and overhangs 8px each side. Measured on the sessions and admin-users
+   * tables (`.scratch/astryx-migration/qa8/probe-selcell.mjs`): checkbox left
+   * 280 against a card content edge of 287, while the same table's first data
+   * column starts at 288. That 7-8px is "첫 row의 시작점은 다듬어야" in the
+   * report (QA-FINDINGS Q-14).
+   *
+   * 24 (inset) + 20 (checkbox) + 8 (trailing pad) = 52.
+   */
+  const selectionWidthPlugin: TablePlugin<AnyRow> = useMemo(
+    () => ({
+      transformColumns: (cols) =>
+        _.map(cols, (column) =>
+          column.key === SELECTION_COLUMN_KEY
+            ? { ...column, width: pixel(SELECTION_COLUMN_WIDTH) }
+            : column,
+        ),
+    }),
+    [],
+  );
+
   const plugins = useMemo(() => {
     const next: Record<string, TablePlugin<AnyRow>> = {
       // Canonical Astryx order is columnSettings -> sort -> tree -> selection
@@ -980,7 +1015,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
       columnSettings: columnSettingsPlugin,
       sort: sortPlugin,
     };
-    if (rowSelection) next.selection = selectionPlugin;
+    if (rowSelection) {
+      next.selection = selectionPlugin;
+      next.selectionWidth = selectionWidthPlugin;
+    }
     if (resizable) next.resize = resizePlugin;
     next.sticky = stickyPlugin;
     next.cellRow = cellRowPlugin;
@@ -991,6 +1029,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     sortPlugin,
     rowSelection,
     selectionPlugin,
+    selectionWidthPlugin,
     resizable,
     resizePlugin,
     stickyPlugin,
