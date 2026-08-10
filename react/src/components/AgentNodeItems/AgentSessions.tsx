@@ -39,6 +39,8 @@ const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
   'CREATING',
   'RUNNING',
   'DEPRIORITIZING',
+  'PREEMPTED',
+  'RESCHEDULING',
   'TERMINATING',
 ];
 
@@ -217,6 +219,12 @@ const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
         }}
         tableSettings={{
           columnOverrides: columnOverrides,
+          // `BAISessionNodesV2` hides `createdAt` by default; the linked
+          // issue (FR-3252) lists created time as a key column, so make it
+          // visible by default while keeping it user-hidable.
+          defaultColumnOverrides: {
+            createdAt: { hidden: false },
+          },
           onColumnOverridesChange: setColumnOverrides,
         }}
       />

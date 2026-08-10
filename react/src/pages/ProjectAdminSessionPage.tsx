@@ -48,6 +48,8 @@ const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
   'CREATING',
   'RUNNING',
   'DEPRIORITIZING',
+  'PREEMPTED',
+  'RESCHEDULING',
   'TERMINATING',
 ];
 
