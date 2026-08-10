@@ -1212,24 +1212,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           >
             {modelDefinitionEnabled ? (
               <ModelConfigItem
-                supportsNullableModelDefinition={
-                  supportsNullableModelDefinition
-                }
-                // Legacy managers (pre-BA-7210) cannot submit Service
-                // Configuration/Health Check/Pre-Start Actions
-                // independently of Model Definition — nest them above
-                // Metadata instead of Step 1's now-nullable-only placement
-                // above, so they're only reachable (and only get
-                // submitted) once this switch is on.
-                beforeMetadataSlot={
-                  !supportsNullableModelDefinition ? (
-                    <>
-                      {readsVfolderConfigFiles &&
-                        renderServiceConfigurationFormItems()}
-                      {renderHealthCheckAndPreStartActionsFormItems()}
-                    </>
-                  ) : undefined
-                }
+                readsVfolderConfigFiles={readsVfolderConfigFiles}
               />
             ) : null}
           </BAICard>
@@ -1299,9 +1282,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                     runtimeVariants={runtimeVariants}
                     errorFieldNames={errorFieldNames}
                     runtimeParamRows={getRuntimeParamReviewRows()}
-                    supportsNullableModelDefinition={
-                      supportsNullableModelDefinition
-                    }
                   />
                 </Suspense>
               )}

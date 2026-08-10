@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { FormInstance } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { theme } from '../theme-shim';
@@ -59,15 +60,6 @@ interface PresetReviewSummaryProps {
     label: string;
     value: string;
   }>;
-  /**
-   * FR-3481: mirrors the input form's placement of Service
-   * Configuration/Health Check/Pre-Start Actions — under Basic Info when
-   * true (managers that can submit them independently of Model
-   * Definition), nested under Model & Execution's Model Definition fields
-   * when false (legacy managers, where they can only be submitted
-   * alongside a real name/modelPath).
-   */
-  supportsNullableModelDefinition: boolean;
 }
 
 const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
@@ -76,11 +68,22 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   runtimeVariants,
   errorFieldNames,
   runtimeParamRows = [],
-  supportsNullableModelDefinition,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  /**
+   * FR-3481: mirrors the input form's placement of Service
+   * Configuration/Health Check/Pre-Start Actions — under Basic Info when
+   * true (managers that can submit them independently of Model Definition),
+   * nested under Model & Execution's Model Definition fields when false
+   * (legacy managers, where they can only be submitted alongside a real
+   * name/modelPath).
+   */
+  const supportsNullableModelDefinition = baiClient.supports(
+    'preset-model-config-type',
+  );
   // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
   // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);

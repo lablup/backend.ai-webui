@@ -2,7 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
+import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
+import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import {
   AstryxFormTagsInput,
   AstryxFormTextArea,
@@ -48,8 +52,8 @@ const TagsField: React.FC<{
 // are absolute (`['modelDefinition', 'models', 0, ...]`, via `modelField()`
 // below) rather than Form.List-relative — a Form.List wrapper would
 // auto-prefix every descendant Form.Item (including the absolute-path
-// Service Configuration/Health Check/Pre-Start Actions passed via
-// `beforeMetadataSlot`) with its own name, doubling the path.
+// Service Configuration/Health Check/Pre-Start Actions rendered below) with
+// its own name, doubling the path.
 const modelField = (...path: Array<string | number>) => [
   'modelDefinition',
   'models',
@@ -59,25 +63,35 @@ const modelField = (...path: Array<string | number>) => [
 
 const ModelConfigItem: React.FC<{
   /**
+   * FR-3481: whether the selected runtime variant reads vfolder config
+   * files (custom) — gates whether Service Configuration (Command/Port) is
+   * relevant for this variant at all. Not a manager-capability check (see
+   * `supportsNullableModelDefinition` below, determined internally), so this
+   * stays a prop: it's runtime-variant data the parent already computed
+   * once (from the selected `runtimeVariantId` + the `runtimeVariants`
+   * list) to avoid re-deriving it here.
+   */
+  readsVfolderConfigFiles: boolean;
+}> = ({ readsVfolderConfigFiles }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  /**
    * BA-7210 / FR-3481 (26.9.0+, `preset-model-config-type`): the server
    * genuinely resolves an omitted name/modelPath from the runtime variant
    * baseline / model mount destination at revision resolution, so on these
    * managers name/modelPath become truly optional. Older managers don't do
    * that resolution — omitting them there is the kind of deployment that
-   * tends to fail at runtime — so the UI keeps requiring both.
+   * tends to fail at runtime — so the UI keeps requiring both, and also
+   * nests Service Configuration/Health Check/Pre-Start Actions here (instead
+   * of independently in Step 1 — see AdminDeploymentPresetSettingPageContent
+   * .tsx) since they can only be submitted together with a real
+   * name/modelPath. Rendered above Metadata to match the pre-FR-3205 field
+   * order.
    */
-  supportsNullableModelDefinition: boolean;
-  /**
-   * FR-3481: on legacy managers, Service Configuration/Health Check/
-   * Pre-Start Actions render nested here (instead of independently in
-   * Step 1 — see AdminDeploymentPresetSettingPageContent.tsx) since they
-   * can only be submitted together with a real name/modelPath. Rendered
-   * above Metadata to match the pre-FR-3205 field order.
-   */
-  beforeMetadataSlot?: React.ReactNode;
-}> = ({ supportsNullableModelDefinition, beforeMetadataSlot }) => {
-  'use memo';
-  const { t } = useTranslation();
+  const supportsNullableModelDefinition = baiClient.supports(
+    'preset-model-config-type',
+  );
 
   // Rendered only when the model-definition switch is ON; sub-fields are
   // required here unless the manager supports inheriting them (see above).
@@ -124,7 +138,33 @@ const ModelConfigItem: React.FC<{
         </BAIFormItem>
       </BAIFlex>
 
-      {beforeMetadataSlot}
+      {!supportsNullableModelDefinition && (
+        <>
+          {readsVfolderConfigFiles && (
+            <ServiceConfigurationFormItems
+              namePrefix={modelField('service')}
+              placeholders={{
+                command: t(
+                  'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
+                ),
+                port: t('general.Example', { value: '8080' }),
+              }}
+            />
+          )}
+          <ModelServiceHealthCheckFormItems
+            namePrefix={modelField('service')}
+            placeholders={{
+              path: t('general.Example', { value: '/health' }),
+              interval: t('general.Example', { value: '10' }),
+              maxRetries: t('general.Example', { value: '10' }),
+              maxWaitTime: t('general.Example', { value: '15' }),
+              expectedStatusCode: t('general.Example', { value: '200' }),
+              initialDelay: t('general.Example', { value: '60' }),
+            }}
+          />
+          <PreStartActionsFormList namePrefix={modelField('service')} />
+        </>
+      )}
 
       {/* PILOT-DECISION: antd Collapse (items API) → Astryx Collapsible.
           `size="small"` from the antd side is dropped — Collapsible has no
