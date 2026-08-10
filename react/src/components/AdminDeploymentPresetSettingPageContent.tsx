@@ -10,6 +10,7 @@ import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
 } from '../helper/modelServiceCommand';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -243,6 +244,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const screens = useBAIBreakpoint();
+  const baiClient = useSuspendedBackendaiClient();
+  // BA-7210 / FR-3481: managers this version+ resolve an omitted model
+  // name/modelPath from the runtime variant baseline / model mount
+  // destination at revision resolution, so the form can stop requiring them.
+  const supportsNullableModelDefinition = baiClient.supports(
+    'preset-model-config-type',
+  );
 
   const preset = useFragment(
     graphql`
@@ -885,6 +893,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         ),
                         port: t('general.Example', { value: '8080' }),
                       }}
+                      portTooltipExtra={
+                        supportsNullableModelDefinition
+                          ? t(
+                              'adminDeploymentPreset.modelDef.PortInheritTooltip',
+                            )
+                          : undefined
+                      }
                     />
                   </div>
                 );
@@ -1179,6 +1194,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       key={key}
                       listItemName={name}
                       restField={rest}
+                      supportsNullableModelDefinition={
+                        supportsNullableModelDefinition
+                      }
                     />
                   );
                 }}

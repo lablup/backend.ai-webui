@@ -48,15 +48,21 @@ const TagsField: React.FC<{
 const ModelConfigItem: React.FC<{
   listItemName: number;
   restField: object;
-}> = ({ listItemName, restField }) => {
+  /**
+   * BA-7210 / FR-3481 (26.9.0+, `preset-model-config-type`): the server
+   * genuinely resolves an omitted name/modelPath from the runtime variant
+   * baseline / model mount destination at revision resolution, so on these
+   * managers name/modelPath become truly optional. Older managers don't do
+   * that resolution — omitting them there is the kind of deployment that
+   * tends to fail at runtime — so the UI keeps requiring both.
+   */
+  supportsNullableModelDefinition: boolean;
+}> = ({ listItemName, restField, supportsNullableModelDefinition }) => {
   'use memo';
   const { t } = useTranslation();
 
-  // Rendered only when the model-definition switch is ON. Name/path are
-  // optional on PresetModelConfigInput — a user can enable the model
-  // definition purely for metadata without naming a model — but the UI
-  // still shows the required asterisk as a hint via the `required` prop
-  // (visual only, no `rules`, so it doesn't block submission).
+  // Rendered only when the model-definition switch is ON; sub-fields are
+  // required here unless the manager supports inheriting them (see above).
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFlex gap="md" wrap="wrap">
@@ -65,7 +71,13 @@ const ModelConfigItem: React.FC<{
           name={[listItemName, 'name']}
           label={t('adminDeploymentPreset.modelDef.ModelName')}
           style={{ flex: 1, minWidth: 160 }}
-          required
+          tooltip={
+            supportsNullableModelDefinition
+              ? t('adminDeploymentPreset.modelDef.ModelNameInheritTooltip')
+              : undefined
+          }
+          required={!supportsNullableModelDefinition}
+          rules={supportsNullableModelDefinition ? [] : [{ required: true }]}
         >
           <AstryxFormTextInput
             label={t('adminDeploymentPreset.modelDef.ModelName')}
@@ -79,7 +91,13 @@ const ModelConfigItem: React.FC<{
           name={[listItemName, 'modelPath']}
           label={t('adminDeploymentPreset.modelDef.ModelPath')}
           style={{ flex: 2, minWidth: 200 }}
-          required
+          tooltip={
+            supportsNullableModelDefinition
+              ? t('adminDeploymentPreset.modelDef.ModelPathInheritTooltip')
+              : undefined
+          }
+          required={!supportsNullableModelDefinition}
+          rules={supportsNullableModelDefinition ? [] : [{ required: true }]}
         >
           <AstryxFormTextInput
             label={t('adminDeploymentPreset.modelDef.ModelPath')}
