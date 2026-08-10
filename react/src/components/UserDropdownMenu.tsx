@@ -226,7 +226,19 @@ const UserDropdownMenu: React.FC<{
         data-testid="user-dropdown-button"
         placement="below"
         alignment="end"
-        menuWidth={300}
+        // Legacy was `styles={{ root: { maxWidth: 300 } }}` — a CAP, not a
+        // width: antd's dropdown shrink-wrapped to its widest row and only
+        // stopped growing at 300. `menuWidth={300}` made that a fixed 300px
+        // panel, so this menu painted ~120px of empty gutter (measured on an
+        // antd 6.5.0 oracle rendering the SAME item strings: legacy 181.4px
+        // vs 300px — `.scratch/astryx-migration/qa4-menu-metrics.mjs`).
+        //
+        // `fit-content(300px)` is the CSS spelling of exactly that pair —
+        // `min(max-content, max(min-content, 300px))` — so the panel sizes to
+        // its content and stops at legacy's cap. `menuWidth` is typed
+        // `number | string` and lands on the popover's `width`, which is the
+        // element legacy's `styles.root` also sized.
+        menuWidth="fit-content(300px)"
         button={{
           'data-astryx-media': 'dark',
           variant: 'ghost',

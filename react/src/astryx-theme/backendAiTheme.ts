@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 8;
+export const THEME_NAME_REV = 9;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -552,6 +552,76 @@ const SIDE_NAV_DENSITY = {
   },
 };
 
+/**
+ * DROPDOWN MENU DENSITY — pinned to the measured legacy antd `Dropdown`
+ * (`menu={{items}}`) metrics.
+ *
+ * ## The defect
+ *
+ * A user reported that the header's user-name menu "looks different from
+ * before". Measured on `to-astryx` against an antd 6.5.0 oracle rebuilt
+ * outside the repo from `origin/main:react/src/components/UserDropdownMenu.tsx`
+ * (`.scratch/astryx-migration/qa4-menu-metrics.mjs`, 1600x1000, both modes):
+ *
+ *   metric        legacy (antd)   before
+ *   item padding  5px 12px        6px 8px
+ *   item height   32px            34px
+ *   item leading  22px            21px
+ *   row gap       0               2px
+ *   max-height    none            300px  -> the panel SCROLLED and clipped
+ *                                           "Log Out" below its own fold
+ *
+ * Radius (8px container / 4px item), panel padding (4px), icon size (14px),
+ * the 8px icon-to-label gap, the 4px offset from the trigger and the
+ * right-edge alignment already matched and are NOT touched here.
+ *
+ * ## Why the theme layer
+ *
+ * All five are Astryx `DropdownMenu` component defaults, not call-site
+ * decisions, and every dropdown in the app inherited the same drift from the
+ * same antd baseline — so one `components:` block fixes the reported surface
+ * and the other 34 `<DropdownMenu>` call sites at once. `astryx component
+ * DropdownMenu` documents exactly these two theming keys (`dropdown-menu`,
+ * `dropdown-menu-item`), which is the sanctioned knob; the alternative was a
+ * scoped `.astryx-item` override, which would have to be repeated per call
+ * site and would fight StyleX specificity (`@layer astryx-theme` outranks
+ * `astryx-base`, so the theme wins cleanly).
+ *
+ * Blast radius, measured rather than assumed: the row element renders as
+ * `class="astryx-item astryx-dropdown-menu-item"`, and `.astryx-item` on its
+ * own is shared with other Astryx list surfaces — so the rule is keyed on the
+ * dropdown-specific class. `.scratch/astryx-migration/qa4-blast-radius.mjs`
+ * censuses every visible `.astryx-item` with a `Selector` open and with the
+ * menu open: 9 rows, all of them `inDropdown: true`, and the Selector
+ * contributes none.
+ *
+ * `maxHeight: 'none'` closes REGRESSION-CATALOG `O-16` ("a new unconditional
+ * `max-height: 300px; overflow-y: auto` — long user/action menus now scroll
+ * where they used to grow"), which that audit ranked Low with "lift the cap
+ * if it bites". It bites: the 10-row user menu is 352px of content in a 300px
+ * box, so the logout row — the one item a user reaches for by muscle memory —
+ * was only reachable by scrolling. antd applied no cap; the viewport-driven
+ * flip/shift that Astryx's popover positioning already does is what keeps a
+ * genuinely long menu on screen.
+ */
+const ANTD_DROPDOWN_DENSITY = {
+  'dropdown-menu': {
+    base: {
+      // antd's `.ant-dropdown-menu` is a plain list: adjacent items touch.
+      gap: '0px',
+      maxHeight: 'none',
+    },
+  },
+  'dropdown-menu-item': {
+    base: {
+      // antd `Dropdown` item: `padding: 5px 12px`, `line-height: 22px`
+      // (fontSize 14 x lineHeight 1.5714) -> a 32px row.
+      padding: '5px 12px',
+      lineHeight: '22px',
+    },
+  },
+};
+
 export interface BrandSeedPair {
   /** Light-scheme seed, as declared in theme.json. */
   light: string;
@@ -682,6 +752,7 @@ export const computeThemeName = (
       ANTD_NEUTRAL_TEXT,
       ANTD_STATUS_ON_COLORS,
       ANTD_DIALOG_SURFACE,
+      ANTD_DROPDOWN_DENSITY,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -798,6 +869,7 @@ export function buildBackendAiTheme(
       ...SIDE_NAV_DENSITY,
       ...STATUS_TEXT_COLORS,
       ...ANTD_DIALOG_SURFACE,
+      ...ANTD_DROPDOWN_DENSITY,
     },
   });
 

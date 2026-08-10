@@ -183,10 +183,25 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           // against legacy's 19px. The bottom -4px is left alone on purpose:
           // it is what keeps the logo-to-first-field gap at 28px, which is
           // legacy's 27px (antd 6.5.0 oracle).
+          //
+          // `flex-start`, NOT `center`. The legacy source reads
+          // `<div style={{ textAlign: 'center' }}>`, but that rule never
+          // rendered: antd's `.ant-modal-title` is a `flex: 0 1 auto` item of
+          // `BAIModal`'s `display:flex; justify-content:space-between` header,
+          // so it SHRINK-WRAPPED to the image's own 213.5px and centring
+          // inside a box that exactly fits its only child is a no-op. The
+          // logo therefore sat on the header's content-box left edge — 24px
+          // from the dialog, the same x as the form below it. Astryx's
+          // `DialogHeader` gives the title slot the full 352px content width
+          // instead, which turned that inert declaration into a live one and
+          // pushed the logo to x=93. Measured on the antd 6.5.0 oracle
+          // (`.scratch/astryx-migration/qa4-oracle-logo.mjs`, both modes):
+          // logo x = 24 from the dialog edge, right gap 162.5, `centred:
+          // false`.
           <div
             style={{
               display: 'flex',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
               alignItems: 'center',
               marginTop: 'var(--spacing-1)',
             }}

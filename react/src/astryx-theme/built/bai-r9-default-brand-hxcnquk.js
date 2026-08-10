@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r8-default-brand-h48p6jt theme — built by `pnpm exec astryx theme build`
+ * bai-r9-default-brand-hxcnquk theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR8DefaultBrandH48p6jtTheme } from './bai-r8-default-brand-h48p6jt';
- *   import './bai-r8-default-brand-h48p6jt.css';
+ *   import { baiR9DefaultBrandHxcnqukTheme } from './bai-r9-default-brand-hxcnquk';
+ *   import './bai-r9-default-brand-hxcnquk.css';
  */
-export const baiR8DefaultBrandH48p6jtTheme = {
-  name: 'bai-r8-default-brand-h48p6jt',
+export const baiR9DefaultBrandHxcnqukTheme = {
+  name: 'bai-r9-default-brand-hxcnquk',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
