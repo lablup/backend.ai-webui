@@ -264,9 +264,19 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   // result modal when some users were created, or in a standalone modal over
   // this form when none were.
   const [failedUsers, setFailedUsers] = useState<FailedUserCreation[]>([]);
-  // The server's own created count — the mutation may reject users the form
-  // considered valid, so this is not derived from the requested count.
+  // The server's own created count for the LAST submit — the mutation may
+  // reject users the form considered valid, so this is not derived from the
+  // requested count. Per-attempt on purpose: it labels that attempt's failure
+  // report ("Success: n, Failed: m"), so a retry must overwrite it.
   const [createdCount, setCreatedCount] = useState(0);
+  // Whether any user reached the backend during this modal session. Separate
+  // from `createdCount` because that one is per-attempt: retrying a partially
+  // successful bulk create can succeed 0 times, which would otherwise reset
+  // the count to 0 and make the close below report "nothing created" even
+  // though the first attempt did create users. Monotonic, and never cleared —
+  // the modal is unmounted on close (BAIUnmountAfterClose), so the next
+  // session starts from false. Mirrors `AssignRoleModal`'s `hasAssignedAny`.
+  const [hasCreatedAny, setHasCreatedAny] = useState(false);
 
   const user = useFragment(
     graphql`
@@ -487,6 +497,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               const failedList =
                 res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
               setCreatedCount(succeededCount);
+              if (succeededCount > 0) {
+                setHasCreatedAny(true);
+              }
 
               // Reveal the generated keypairs (secret keys are returned once).
               const keypairs = _.map(createdList, (created) => created.keypair);
@@ -652,9 +665,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       }
       // A bulk create that partially failed leaves this form open, so its
       // Cancel still has to report the users that *were* created — otherwise
-      // the list behind it never refetches. `createdCount` stays 0 on the
-      // single-create and edit paths, which keeps their behaviour unchanged.
-      onCancel={() => onRequestClose(createdCount > 0)}
+      // the list behind it never refetches. Uses the session-wide
+      // `hasCreatedAny` rather than the per-attempt `createdCount`, so a retry
+      // that creates nothing cannot erase an earlier attempt's success. Stays
+      // false on the single-create and edit paths, which keeps their behaviour
+      // unchanged.
+      onCancel={() => onRequestClose(hasCreatedAny)}
       loading={deferredOpen !== baiModalProps.open}
       {...baiModalProps}
     >

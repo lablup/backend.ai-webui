@@ -200,10 +200,22 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // result modal when some users were created, or in a standalone modal over
   // the preview when none were.
   const [failedUsers, setFailedUsers] = useState<FailedUserCreation[]>([]);
-  // The server's actual created count from the last partial-failure submit.
-  // Not derived from client stats — the server may reject rows the client
-  // considered valid.
+  // The server's actual created count from the LAST submit. Not derived from
+  // client stats — the server may reject rows the client considered valid.
+  // Per-attempt on purpose: it labels that attempt's failure report
+  // ("Success: n, Failed: m"), so a retry must overwrite it, and `resetState`
+  // (which the Remove File button also runs) clears it with the rest of the
+  // loaded file.
   const [createdCount, setCreatedCount] = useState(0);
+  // Whether any user reached the backend during this modal session. Separate
+  // from `createdCount` because that one is per-attempt AND file-scoped:
+  // retrying with 0 successes, or removing the file, would otherwise reset it
+  // to 0 and make the close paths below report "nothing created" even though
+  // an earlier submit did create users. Monotonic, deliberately NOT part of
+  // `resetState` — removing the file does not un-create them. The modal is
+  // unmounted on close (BAIUnmountAfterClose), so the next session starts from
+  // false. Mirrors `AssignRoleModal`'s `hasAssignedAny`.
+  const [hasCreatedAny, setHasCreatedAny] = useState(false);
   // All active groups for the current domain, used to map project name <-> id.
   // The UI (preview, selectors) works with names; only the mutation uses ids.
   const [groupList, setGroupList] = useState<
@@ -505,6 +517,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
+  // Clears everything scoped to the loaded file. Shared by `afterClose` and
+  // the Remove File button, so it deliberately leaves `hasCreatedAny` alone —
+  // dropping the file does not un-create the users an earlier submit already
+  // created, and the close paths still have to report them.
   const resetState = () => {
     setFileName(null);
     setRawRows([]);
@@ -639,6 +655,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           const succeededCount = createdList.length;
           const failed = res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
           setCreatedCount(succeededCount);
+          if (succeededCount > 0) {
+            setHasCreatedAny(true);
+          }
           // Surface keypairs first: secret keys are one-time and must be shown
           // regardless of whether some rows failed.
           const keypairs = _.map(createdList, (created) => created.keypair);
@@ -986,7 +1005,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       }}
       footer={
         <BAIFlex justify="end" gap="sm">
-          <BAIButton onClick={() => onRequestClose(createdCount > 0)}>
+          <BAIButton onClick={() => onRequestClose(hasCreatedAny)}>
             {t('button.Cancel')}
           </BAIButton>
           <BAIButton
@@ -1002,8 +1021,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       }
       // A partial failure leaves this form open, so closing it still has to
       // report the users that *were* created — otherwise the list behind it
-      // never refetches. `createdCount` is 0 until a submit succeeds in part.
-      onCancel={() => onRequestClose(createdCount > 0)}
+      // never refetches. Uses the session-wide `hasCreatedAny` rather than the
+      // per-attempt, file-scoped `createdCount`, so neither a retry that
+      // creates nothing nor a Remove File can erase an earlier success.
+      onCancel={() => onRequestClose(hasCreatedAny)}
       afterClose={resetState}
       {...baiModalProps}
     >
