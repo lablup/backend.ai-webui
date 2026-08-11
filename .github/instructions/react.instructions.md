@@ -96,7 +96,8 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 - Export the "one row" type so consumers don't re-derive it:
   `export type UserNodeInList = NonNullable<BAIUserNodesFragment$data[number]>;`
 - Pagination argument modes are mutually exclusive — see `.claude/rules/graphql-pagination.md`.
-- `@since` / `@deprecatedSince` / `@sinceMultiple` / `@skipOnClient` in `graphql` tags are
+- `@since` / `@sinceMultiple` / `@deprecatedSince` / `@deprecatedSinceMultiple` /
+  `@skipOnClient` in `graphql` tags are
   **client-side** directives defined in `data/client-directives.graphql` and stripped at
   runtime by `react/src/helper/graphql-transformer.ts` — they never reach the server. Do not
   remove them as "unknown directives".
