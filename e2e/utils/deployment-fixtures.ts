@@ -39,6 +39,7 @@ import {
   navigateTo,
 } from './test-util';
 import { expect, Page } from '@playwright/test';
+import fs from 'fs';
 import path from 'path';
 
 const FIXTURES_DIR = path.join(__dirname, '..', 'serving', 'fixtures');
@@ -288,6 +289,7 @@ async function sweepStaleDeploymentPresets(page: Page): Promise<void> {
 async function uploadDeploymentFixtureFiles(
   page: Page,
   folderName: string,
+  options: { yamlContent?: string } = {},
 ): Promise<void> {
   const FIXTURE_FILES = [
     'mock_openai_server.py',
@@ -321,8 +323,28 @@ async function uploadDeploymentFixtureFiles(
     page.waitForEvent('filechooser'),
     page.getByRole('button', { name: 'file-add Upload Files' }).click(),
   ]);
+  // `options.yamlContent` swaps in a caller-provided model-definition.yaml
+  // body (e.g. a partial fixture defining only `start_command`, to exercise
+  // the field-by-field DB-fallback merge) — `setFiles` only accepts either
+  // all paths or all in-memory payloads in one call, so once any override is
+  // needed every entry is read into a buffer, uploaded under its original
+  // fixture filename regardless of source.
   await fileChooser.setFiles(
-    FIXTURE_FILES.map((f) => path.join(FIXTURES_DIR, f)),
+    options.yamlContent === undefined
+      ? FIXTURE_FILES.map((f) => path.join(FIXTURES_DIR, f))
+      : await Promise.all(
+          FIXTURE_FILES.map(async (f) => ({
+            name: f,
+            mimeType:
+              f === 'model-definition.yaml'
+                ? 'text/yaml'
+                : 'application/octet-stream',
+            buffer:
+              f === 'model-definition.yaml'
+                ? Buffer.from(options.yamlContent!)
+                : await fs.promises.readFile(path.join(FIXTURES_DIR, f)),
+          })),
+        ),
   );
 
   // The explorer's file table refreshes when uploads complete, but with
@@ -526,11 +548,12 @@ export async function ensureDeploymentPreset(
  */
 export async function provisionDeploymentModelFolder(
   page: Page,
+  options: { yamlContent?: string } = {},
 ): Promise<string> {
   const folderName = `e2e-dfx-fld-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   await createVFolderAndVerify(page, folderName, 'model');
   try {
-    await uploadDeploymentFixtureFiles(page, folderName);
+    await uploadDeploymentFixtureFiles(page, folderName, options);
   } catch (error) {
     await cleanupDeploymentFixtures(page, { folderName });
     throw error;

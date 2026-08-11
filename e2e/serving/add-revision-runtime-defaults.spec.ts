@@ -20,10 +20,15 @@
 //      (display-only), not the values.
 //   4. Typing into the Advanced "Model Definition File Path" does NOT change the
 //      placeholders of the fields above it.
+//   4.5. A partial model-definition.yaml (only `start_command` defined)
+//      overrides just that placeholder; port/health-check fall back to the
+//      DB baseline field-by-field, proving the merge is per-field and not
+//      all-or-nothing.
 //   5. Old-manager fallback (readsVfolderConfigFiles omitted, name==='custom'):
-//      see the `test.fixme` note below — not reachable from a fresh variant
-//      selection because the shared BAIRuntimeVariantSelect coerces the omitted
-//      flag to `false` before the modal can apply its name-based fallback.
+//      BAIRuntimeVariantSelect itself resolves the omitted (pre-26.8.0) flag
+//      via `readsVfolderConfigFiles ?? name === 'custom'`, so this is
+//      reachable directly from a fresh variant selection — no separate
+//      "Load current revision" prefill path needed to exercise it.
 import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
 import {
   cleanupDeploymentFixtures,
@@ -220,7 +225,8 @@ test.describe(
       // seeded fixture yaml defines command, port, AND max_retries, so it
       // overrides all three placeholders asserted below — but any field the yaml
       // omitted would instead fall through to the DB baseline. That per-field
-      // fallthrough is not exercised by this fully-populated fixture.
+      // fallthrough is exercised separately by the next test, which uploads a
+      // yaml defining only `start_command`.
       test.setTimeout(240_000);
       const name = `e2e-fr3342-vfolder-override-${Date.now()}`;
       let folderName: string | undefined;
@@ -283,6 +289,77 @@ test.describe(
       }
     });
 
+    test('Admin sees a partial model-definition.yaml override only the fields it defines, falling back to the DB baseline for the rest', async ({
+      page,
+      request,
+    }) => {
+      // Exercises the field-by-field merge the previous test's fully-populated
+      // fixture cannot: this yaml defines ONLY `start_command`, omitting
+      // `port` and `health_check` entirely, so the command placeholder should
+      // flip to the vfolder value while port/max_retries fall through to the
+      // DB baseline untouched.
+      test.setTimeout(240_000);
+      const name = `e2e-fr3342-vfolder-partial-${Date.now()}`;
+      let folderName: string | undefined;
+      try {
+        await loginWithVariantMocks(page, request, {
+          ...runtimeVariantSelectMocks('custom', true),
+          DeploymentAddRevisionModalVariantDefaultQuery:
+            variantDefaultModelDefinitionMock(),
+        });
+        folderName = await provisionDeploymentModelFolder(page, {
+          yamlContent: `models:
+  - name: "mock-openai"
+    model_path: "/models"
+    service:
+      start_command:
+        - python3
+        - /models/mock_openai_server.py
+`,
+        });
+
+        await createDeploymentAndOpenPage(page, name);
+        const modal = await openAddRevisionAdvanced(page);
+        await selectRuntimeVariant(page, modal, 'custom');
+        await selectRevisionModalOption(page, '#modelFolderId', folderName);
+
+        // Guard: same vacuous-pass concern as the full-override test.
+        expect(MOCK_VFOLDER_COMMAND).not.toBe(MOCK_DB_DEFAULT_COMMAND);
+        expect(MOCK_VFOLDER_PORT).not.toBe(MOCK_DB_DEFAULT_PORT);
+        expect(MOCK_VFOLDER_MAX_RETRIES).not.toBe(MOCK_DB_DEFAULT_MAX_RETRIES);
+
+        // Command: the yaml defines it, so it overrides the DB baseline.
+        const startCommand = modal.locator('#startCommand').first();
+        await expect(startCommand).toHaveAttribute(
+          'placeholder',
+          MOCK_VFOLDER_COMMAND,
+          { timeout: 15000 },
+        );
+
+        // Port: the yaml omits it, so the placeholder stays the DB baseline
+        // — NOT the (irrelevant, never-uploaded) vfolder port constant.
+        await expect(modal.locator('#port').first()).toHaveAttribute(
+          'placeholder',
+          String(MOCK_DB_DEFAULT_PORT),
+          { timeout: 10000 },
+        );
+
+        // Health-check max_retries: same field-by-field fallback, the yaml
+        // omits `health_check` entirely.
+        await modal.getByText('Enable Health Check', { exact: true }).click();
+        await expect(
+          modal.locator('#healthCheck_maxRetries').first(),
+        ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_MAX_RETRIES), {
+          timeout: 10000,
+        });
+      } finally {
+        await cleanupDeploymentSafely(page, name);
+        if (folderName) {
+          await cleanupDeploymentFixtures(page, { folderName });
+        }
+      }
+    });
+
     test('Admin sees the Model Definition File Path leave the command placeholder unchanged', async ({
       page,
       request,
@@ -328,23 +405,6 @@ test.describe(
       page,
       request,
     }) => {
-      // Not reachable via a fresh variant selection: the shared
-      // `BAIRuntimeVariantSelect` populates `runtimeVariantMap` with
-      // `readsVfolderConfigFiles: node.readsVfolderConfigFiles ?? false`, i.e.
-      // it coerces the @since(26.8.0)-stripped (omitted) flag to `false`
-      // BEFORE the modal ever reads it. The modal's legacy
-      // `?? name === 'custom'` fallback only fires when the value is
-      // `undefined`, which never happens through the select path — the
-      // fallback is exercised only via the "Load current revision" prefill
-      // (which sets the map directly from the revision fragment, preserving
-      // undefined). Asserting it here would require mocking the entire
-      // DeploymentDetailPageQuery + a current revision, which is out of scope
-      // for these modal-focused mock specs.
-      //
-      // TODO(FR-3342): cover the name-based fallback via the prefill path once
-      // a full DeploymentDetailPageQuery mock (with a currentRevision whose
-      // variant name is `custom` and readsVfolderConfigFiles omitted) exists.
-      test.fixme(true, 'name-based fallback unreachable from fresh select');
       const name = `e2e-fr3342-oldmgr-${Date.now()}`;
       try {
         await loginWithVariantMocks(page, request, {
