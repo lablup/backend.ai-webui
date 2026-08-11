@@ -108,6 +108,11 @@ Optional, hedged, ≤3 lines. No fix proposal.
   actionable in six weeks. Spend the effort there, not on prose.
 - **Expected** must be concrete enough to test against. "Should look right" is
   not an expectation; "same height as the other admin tables" is.
+- **Scope** comes from the reporter, **Also used in** comes from a `grep`. They
+  are different claims: the importer list is usage breadth, and never on its own
+  evidence that the defect reproduces at every usage. When the reporter saw it in
+  one place only, `Scope` is `this page only` even if the component has 12
+  importers.
 - **Impact** is inferred, not asked. Three values only: blocks the task /
   workaround exists / cosmetic.
 - **Missing** — when a required field survived the one intake round unanswered,

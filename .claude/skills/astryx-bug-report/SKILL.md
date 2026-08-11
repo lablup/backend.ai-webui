@@ -32,7 +32,9 @@ the issue.
 - diagnose root cause, read Astryx internals, probe computed styles, or compare
   theme artifacts — that is `astryx-fix`'s "measure before you fix" step, and it
   belongs at fix time, not report time;
-- propose or apply a fix, edit any file, create a branch, or open a PR;
+- propose or apply a fix, edit any file in the repository, create a branch, or
+  open a PR — the only file you write is the scratchpad the description is
+  drafted in (Step 5);
 - run `scripts/verify.sh`, tests, or a build;
 - launch a browser to reproduce, unless the user explicitly asks for it.
 
@@ -119,8 +121,11 @@ Allowed, because it makes the issue actionable later:
 - locate the component file (`react/src/components/**`,
   `packages/backend.ai-ui/src/components/**`) and note the Astryx primitive it
   renders, if it is visible in the first screenful;
-- count how many files import that component (`grep -rl`), to tell "one page" from
-  "everywhere" — list up to 5 of them;
+- count how many files import that component (`grep -rl`) and list up to 5 of
+  them. This records **usage breadth**, not defect scope: the report is not
+  reproduced at each usage, so the count never becomes "it happens everywhere".
+  Scope stays what the reporter saw — `this page only` / `every usage` /
+  `Unknown`;
 - look up the exact UI string in `resources/i18n/en.json` when the reporter
   paraphrased a label.
 
@@ -154,8 +159,9 @@ and skip a link whose only commonality is "also an Astryx bug".
 
 ## Step 5 — Create the issue
 
-Title and description in **English** (project rule), even when the report came in
-Korean. Reply to the user in Korean.
+Title and description in **English** (project rule), whatever language the report
+came in. Talk to the reporter in *their* language — the questions in Step 2 and
+the wrap-up in Step 6 follow the language they reported in.
 
 **Title:** `<Page or Component>: <the defect in one line>`
 
@@ -191,8 +197,8 @@ record its path/URL in the **Evidence** section and hand them the issue URL so
 they can drop it in — or, for a shareable link, use the `fw:github-image-upload`
 skill (public URLs; never for anything sensitive).
 
-Then report back, in Korean: issue key + URL, category, which fields you had to
-mark Unknown, and any duplicate/related links you made.
+Then report back, in the reporter's language: issue key + URL, category, which
+fields you had to mark Unknown, and any duplicate/related links you made.
 
 ## Quality bar
 
