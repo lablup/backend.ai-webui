@@ -586,7 +586,7 @@ export const Keyboard: Story = {
     docs: {
       description: {
         story:
-          'Shortcut badges are Astryx `Kbd`, not a `BAIText` prop — `keyboard` / `keyboardWithLightBorder` were retired in FR-3509. `Kbd` takes a `keys` spec rather than children; a key it does not know (`]`) is rendered verbatim. On an inverted surface such as a tooltip, wrap the tooltip\'s CONTENT — never the whole `Tooltip` — in `MediaTheme mode="dark"`, or `Kbd` resolves its tokens against the page surface and disappears (see `SiderToggleButton` / `BAINotificationButton`).',
+          'Shortcut badges are Astryx `Kbd`, not a `BAIText` prop — `keyboard` / `keyboardWithLightBorder` were retired in FR-3509. `Kbd` takes a `keys` spec rather than children; a key it does not know (`]`) is rendered verbatim. Match the `MediaTheme` to the surface the badge actually sits on, rather than assuming one: `useTooltip` hardcodes its bubble colours without flipping token context, so on a DARK bubble the content must be wrapped in `MediaTheme mode="dark"` (never the whole `Tooltip`) or `Kbd` resolves against the page surface and disappears. The host app pins its tooltip dark in BOTH modes via `ANTD_HOVER_PARITY`, which is why `SiderToggleButton` / `BAINotificationButton` do exactly that; this Storybook has no such pin, so its own tooltip is light and the same wrapper would be wrong here.',
       },
     },
   },
