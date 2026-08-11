@@ -273,7 +273,7 @@ with `SelectProps` / `BaseOptionType` / `DefaultOptionType` / `GetRef` declared
 locally so the module drops out of the antd import graph. Its public prop
 surface stays antd-`Select`-shaped because 12 components declare
 `interface XProps extends BAISelectProps` and spread the bag straight through.
-For that antd-shaped surface, see `.claude/rules/antd-v6-props.md`.
+For that antd-shaped surface, see `.claude/rules/component-props-extension.md`.
 
 **It is not the base for Relay-backed selects.** On Astryx `Selector` the
 pagination props are accepted **and inert**:
@@ -320,5 +320,5 @@ Use `BAISelect` only for a static, in-memory option list.
 - `../patterns/BAIUserSelectAstryx.md` — the canonical worked example
 - `../patterns/BAIVFolderSelectAstryx.md` — id-valued variant
 - `../patterns/BAIAdminResourceGroupSelectAstryx.md` — cursor-fragment variant
-- `.claude/rules/antd-v6-props.md` — the antd-shaped prop surface `BAISelect`
+- `.claude/rules/component-props-extension.md` — the antd-shaped prop surface `BAISelect`
   still carries

@@ -28,7 +28,7 @@ The engine is self-hosted at `packages/backend.ai-ui/src/form-engine/`
 `<Form.Item>`, `Form.useForm()`, `Form.List`, `Form.Provider`, `Form.useWatch`
 and `Form.Item.useStatus` all behave as the antd equivalents did, which is why
 the guidance below survived the migration unchanged. See
-`.claude/rules/antd-v6-props.md` for why the prop surface is shaped that way.
+`.claude/rules/component-props-extension.md` for why the prop surface is shaped that way.
 
 What did change is the **DOM**: `Form.Item` is `BAIFormItem`, so items render
 `[data-bai-form-item]` attributes rather than `.ant-form-item*` classes.

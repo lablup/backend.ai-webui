@@ -116,7 +116,7 @@ interface FolderCreateModalProps extends BAIModalProps {
 When a modal MUST surface both buttons' intent (e.g. delete flow with different
 follow-up), keep the `onOk` / `onCancel` pair — these are real `BAIModal` props
 (the surface is antd-`Modal`-shaped by design, see
-`.claude/rules/antd-v6-props.md`). PurgeUsersModal does this.
+`.claude/rules/component-props-extension.md`). PurgeUsersModal does this.
 
 ## 3. Open State: by-id beats by-boolean
 

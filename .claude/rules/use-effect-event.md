@@ -155,5 +155,5 @@ After editing a file that uses `useEffect`, ensure:
   the need for `useCallback`/`useMemo` for regular values and JSX-passed
   callbacks. `useEffectEvent` complements this for the effect-internal case
   where the compiler cannot express "ignore this dep for re-synchronization".
-- `component-props-extension.md`: wrapper component prop conventions.
-- `antd-v6-props.md`: Ant Design v6 prop name conventions.
+- `component-props-extension.md`: wrapper component prop conventions,
+  including the frozen antd-v6-shaped prop vocabulary section.

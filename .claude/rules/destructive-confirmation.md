@@ -148,7 +148,7 @@ Soft-delete / trash-bin flows count as reversible **only if** the UI actually ex
 
 ## Verification
 
-- No `import … from 'antd'` and no `@ant-design/icons` glyph in the touched files (`bash scripts/antd-zero-gate.sh`).
+- No `import … from 'antd'` and no `@ant-design/icons` glyph in the touched files — antd is not a dependency of this project, so an antd import fails to resolve.
 - Every permanent-deletion path opens `BAIDeleteConfirmModal` with `requireConfirmInput` and a `confirmText` the user can read off the screen.
 - `packages/backend.ai-ui/src/app-shim/destructiveConfirmFlow.test.tsx` still passes — it asserts the typed-confirm gate (OK disabled until the exact string is typed) end to end.
 - `bash scripts/verify.sh` passes.
@@ -159,5 +159,5 @@ Soft-delete / trash-bin flows count as reversible **only if** the UI actually ex
 - `BAIPopconfirmAstryx` — `react/src/components/astryx-bui/BAIPopconfirmAstryx.tsx`
 - `BAINameActionCell` / `BAIPopconfirmConfig` — `packages/backend.ai-ui/src/components/Table/BAINameActionCell.tsx`
 - App shim (`App.useApp()`, `message`, `modal`) — `packages/backend.ai-ui/src/app-shim/`
-- `antd-v6-props.md` — why `okButtonProps.danger` and friends still carry antd names on these surfaces
+- `component-props-extension.md` — the frozen antd-v6-shaped prop vocabulary section explains why `okButtonProps.danger` and friends still carry antd names on these surfaces
 - FR-2479 — the refactor that standardized this convention across the project
