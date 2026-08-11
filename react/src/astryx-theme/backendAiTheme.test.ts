@@ -59,6 +59,45 @@ describe('backendAiTheme', () => {
     });
   });
 
+  describe('dropdown menu is a page surface (FR-3493)', () => {
+    // Without this the panel inherits WebUIHeader's app-mode-INVERTED wash,
+    // because it renders as a DOM child of the band. Nothing else guards it:
+    // dropping the spread only changes the theme name, so regenerating the
+    // artifacts makes every other check pass again.
+    const base = backendAiBrandTheme.components?.['dropdown-menu']?.base as
+      Record<string, string> | undefined;
+
+    it.each([
+      ['--color-overlay-hover', 'light-dark(rgba(0,0,0,0.06), #262626)'],
+      [
+        '--color-overlay-pressed',
+        'light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))',
+      ],
+    ] as const)('pins %s to the page pair', (prop, value) => {
+      expect(base?.[prop]).toBe(value);
+    });
+
+    it('keeps the pair in sync with the tokens it restores', () => {
+      // The override exists to RESTORE the page value, so it must equal the
+      // theme's own token — a change to the neutral pair cannot leave the
+      // menu behind. (`defineTheme` normalizes a [light, dark] tuple to a
+      // `light-dark()` string, so both sides compare as strings.)
+      for (const prop of [
+        '--color-overlay-hover',
+        '--color-overlay-pressed',
+      ] as const) {
+        expect(base?.[prop]).toBe(backendAiBrandTheme.tokens?.[prop]);
+      }
+    });
+
+    it('does not carry the density keys into a colour override', () => {
+      // `dropdown-menu.base` is shared with ANTD_DROPDOWN_DENSITY; a spread
+      // that replaced rather than merged would drop these.
+      expect(base?.gap).toBe('0px');
+      expect(base?.maxHeight).toBe('none');
+    });
+  });
+
   describe('theme name numbering', () => {
     it('is deterministic and encodes rev/family/role', () => {
       const name = computeThemeName();

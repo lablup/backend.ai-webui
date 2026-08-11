@@ -144,6 +144,8 @@ A wrapper may declare its props **standalone**, restating a frozen antd-SHAPED s
 
 Two conditions make this legitimate rather than the ❌ pattern above: the surface is **frozen** (it exists to keep existing call sites compiling, not to grow), and the reason is **written down in the file header**. If neither holds, extend a base type.
 
+"Written down" means a **short** note — the constraint and a pointer, not a design history. See `comment-density.md`: the reasoning behind the decision belongs in the commit body and the PR that made it; the file header carries the one sentence a reader needs to not undo it.
+
 ## Frozen antd-v6-shaped prop vocabulary
 
 Many BAI wrappers (`BAIAlert`, `BAICard`, `BAITable`, `BAIModal`, `BAISelect`, …)

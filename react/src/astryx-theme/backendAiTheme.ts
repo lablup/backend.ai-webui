@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 10;
+export const THEME_NAME_REV = 11;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -567,6 +567,21 @@ const SIDE_NAV_DENSITY = {
 };
 
 /**
+ * A `DropdownMenu` panel is a floating PAGE surface, so it resolves the neutral
+ * interaction overlays against the app scheme — never against whatever it is
+ * nested under. Load-bearing because the panel renders as a SIBLING of its
+ * trigger, i.e. a DOM child of `WebUIHeader`'s band, and would otherwise
+ * inherit the band's app-mode-INVERTED wash; the highlight that consumes the
+ * token is focus-driven (`menuItemHover.js`), not `:hover`. Read from
+ * `ANTD_NEUTRAL_SURFACES` so it cannot drift from the token it restores.
+ * Mechanism, measurements and the sibling reports it does NOT close: FR-3493.
+ */
+const MENU_PANEL_PAGE_OVERLAYS = {
+  '--color-overlay-hover': `light-dark(${ANTD_NEUTRAL_SURFACES['--color-overlay-hover'][0]}, ${ANTD_NEUTRAL_SURFACES['--color-overlay-hover'][1]})`,
+  '--color-overlay-pressed': `light-dark(${ANTD_NEUTRAL_SURFACES['--color-overlay-pressed'][0]}, ${ANTD_NEUTRAL_SURFACES['--color-overlay-pressed'][1]})`,
+};
+
+/**
  * DROPDOWN MENU DENSITY — pinned to the measured legacy antd `Dropdown`
  * (`menu={{items}}`) metrics.
  *
@@ -624,6 +639,8 @@ const ANTD_DROPDOWN_DENSITY = {
       // antd's `.ant-dropdown-menu` is a plain list: adjacent items touch.
       gap: '0px',
       maxHeight: 'none',
+      // Surface scope, not density — see `MENU_PANEL_PAGE_OVERLAYS` above.
+      ...MENU_PANEL_PAGE_OVERLAYS,
     },
   },
   'dropdown-menu-item': {
