@@ -74,12 +74,25 @@ export interface BAIRuntimeVariantSelectAstryxProps extends Omit<
       { name: string; readsVfolderConfigFiles: boolean }
     >,
   ) => void;
+  /**
+   * @deprecated Use `onResolvedVariantsChange` instead — this only surfaces
+   * `name`, not `readsVfolderConfigFiles`. Kept (and still notified
+   * alongside the richer callback) so existing consumers of this shared
+   * backend.ai-ui component don't break on upgrade.
+   */
+  onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
   ref?: React.Ref<BAIRuntimeVariantSelectAstryxRef>;
 }
 
 const BAIRuntimeVariantSelectAstryx: React.FC<
   BAIRuntimeVariantSelectAstryxProps
-> = ({ onResolvedVariantsChange, isLoading, ref, ...selectProps }) => {
+> = ({
+  onResolvedVariantsChange,
+  onResolvedNamesChange,
+  isLoading,
+  ref,
+  ...selectProps
+}) => {
   'use memo';
   const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
@@ -206,7 +219,7 @@ const BAIRuntimeVariantSelectAstryx: React.FC<
   // the legacy `name === 'custom'` heuristic (NEVER `?? false`, which would
   // pre-empt the caller-side fallback and hide Service Configuration).
   const notifyResolvedVariants = useEffectEvent(() => {
-    if (!onResolvedVariantsChange) return;
+    if (!onResolvedVariantsChange && !onResolvedNamesChange) return;
     const variantMap: Record<
       string,
       { name: string; readsVfolderConfigFiles: boolean }
@@ -232,7 +245,11 @@ const BAIRuntimeVariantSelectAstryx: React.FC<
           };
       }
     }
-    if (!_.isEmpty(variantMap)) onResolvedVariantsChange(variantMap);
+    if (_.isEmpty(variantMap)) return;
+    onResolvedVariantsChange?.(variantMap);
+    // Deprecated: notify the old name-only callback too, for consumers not
+    // yet migrated to `onResolvedVariantsChange`.
+    onResolvedNamesChange?.(_.mapValues(variantMap, (v) => v.name));
   });
 
   useEffect(() => {

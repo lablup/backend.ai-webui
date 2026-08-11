@@ -6,6 +6,7 @@ import type { AdminDeploymentPresetSettingPageCreateMutation } from '../__genera
 import type { AdminDeploymentPresetSettingPagePresetQuery } from '../__generated__/AdminDeploymentPresetSettingPagePresetQuery.graphql';
 import type { AdminDeploymentPresetSettingPageResourceSlotTypesQuery } from '../__generated__/AdminDeploymentPresetSettingPageResourceSlotTypesQuery.graphql';
 import type { AdminDeploymentPresetSettingPageRuntimeVariantsQuery } from '../__generated__/AdminDeploymentPresetSettingPageRuntimeVariantsQuery.graphql';
+import type { AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery } from '../__generated__/AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery.graphql';
 import type { AdminDeploymentPresetSettingPageUpdateMutation } from '../__generated__/AdminDeploymentPresetSettingPageUpdateMutation.graphql';
 import { App } from '../app-shim';
 import AdminDeploymentPresetSettingPageContent, {
@@ -22,6 +23,7 @@ import { theme } from '../theme-shim';
 import { Heading } from '@astryxdesign/core/Heading';
 import {
   BAIFlex,
+  convertToUUID,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
@@ -242,6 +244,36 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       { fetchPolicy: 'store-or-network' },
     );
 
+  // The list above is capped at 100 and unordered, so an existing preset's
+  // runtime variant can fall outside it (e.g. the variant list has grown
+  // since the preset was created). Without this point lookup, selectedVariant
+  // below would resolve to undefined for such a preset, `reads` would default
+  // to false, and saving would silently drop the preset's existing
+  // command/port fields. Point-lookup the currently selected id directly so
+  // it's always resolvable regardless of list position — mirrors
+  // BAIRuntimeVariantSelect.tsx's own selected-value point lookup.
+  const watchedRuntimeVariantId = Form.useWatch('runtimeVariantId', form);
+  const selectedUuid = watchedRuntimeVariantId
+    ? convertToUUID(watchedRuntimeVariantId)
+    : '';
+  const { runtimeVariant: selectedRuntimeVariantLookup } =
+    useLazyLoadQuery<AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery>(
+      graphql`
+        query AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery(
+          $id: UUID!
+          $skip: Boolean!
+        ) {
+          runtimeVariant(id: $id) @skip(if: $skip) {
+            id
+            name
+            readsVfolderConfigFiles @since(version: "26.8.0")
+          }
+        }
+      `,
+      { id: selectedUuid, skip: !selectedUuid },
+      { fetchPolicy: selectedUuid ? 'store-or-network' : 'store-only' },
+    );
+
   const { resourceSlotTypes } =
     useLazyLoadQuery<AdminDeploymentPresetSettingPageResourceSlotTypesQuery>(
       graphql`
@@ -270,10 +302,21 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       { fetchPolicy: 'store-or-network' },
     );
 
-  const runtimeVariantList =
+  const paginatedRuntimeVariantList =
     runtimeVariants?.edges
       ?.map((e) => e?.node)
       ?.filter((n): n is NonNullable<typeof n> => Boolean(n)) ?? [];
+  // Append the point-looked-up selected variant when it fell outside the
+  // capped/unordered list above, so every consumer of this list (the Runtime
+  // Select's options, and the readsVfolderConfigFiles derivation at submit
+  // time below) resolves it consistently.
+  const runtimeVariantList =
+    selectedRuntimeVariantLookup &&
+    !paginatedRuntimeVariantList.some(
+      (rt) => rt.id === selectedRuntimeVariantLookup.id,
+    )
+      ? [...paginatedRuntimeVariantList, selectedRuntimeVariantLookup]
+      : paginatedRuntimeVariantList;
 
   const resourceSlotTypeList =
     resourceSlotTypes?.edges
