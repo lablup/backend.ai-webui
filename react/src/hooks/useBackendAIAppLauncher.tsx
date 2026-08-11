@@ -1100,23 +1100,33 @@ export const useBackendAIAppLauncher = (
  * the response, so the user-facing copy covers both.
  *
  * Called exclusively from `_resolveV2ProxyUri`'s catch (the `startService`
- * call site). At that endpoint any 404 is by definition "session lookup
- * failed" — the manager produces a `SessionNotFound` exception there with
+ * call site). The manager produces a `SessionNotFound` exception there with
  * varying English titles (`"No such session."`, `"Session ... not found"`,
- * etc.). Keying off `statusCode === 404` alone is therefore the safest
- * heuristic: it is robust against title wording changes, against
- * locale-translated manager responses, and against `_wrapWithPromise`
+ * etc.), so branching on title wording is fragile — it breaks on wording
+ * changes, locale-translated manager responses, and `_wrapWithPromise`
  * reformatting (it concatenates `statusText` into `title`, which is empty
  * on some manager versions).
+ *
+ * A bare `statusCode === 404` is not enough either: start-service also
+ * returns 404 for a missing *app* (`error_code: "backendai_read_not-found"`,
+ * e.g. the app name is not in the session's service_ports), which must NOT
+ * be presented as "session not accessible". Manager ≥24.09 sends a stable
+ * `error_code` ("{domain}_{operation}_{detail}"), so when one is present we
+ * additionally require the `session` domain; when absent (older managers)
+ * we keep the 404-only heuristic from FR-2586.
  */
-function isSessionNotFoundError(err: unknown): boolean {
+export function isSessionNotFoundError(err: unknown): boolean {
   if (!err || typeof err !== 'object') return false;
-  const e = err as { statusCode?: unknown };
-  return e.statusCode === 404;
+  const e = err as { statusCode?: unknown; error_code?: unknown };
+  if (e.statusCode !== 404) return false;
+  if (typeof e.error_code === 'string') {
+    return e.error_code.startsWith('session_');
+  }
+  return true;
 }
 
 // Custom error class for app launch errors
-class AppLaunchError extends Error {
+export class AppLaunchError extends Error {
   stage: 'detecting' | 'configuring' | 'requesting' | 'connecting';
   // The Backend.AI client rejects with a plain object, not an Error
   // (see `_wrapWithPromise` in packages/backend.ai-client), so this must be
@@ -1162,7 +1172,7 @@ class AppLaunchError extends Error {
  * response (which carries no success payload) flows downstream as a
  * pseudo-success. (FR-3027)
  */
-function isSendRequestErrorResponse(
+export function isSendRequestErrorResponse(
   response: unknown,
 ): response is { status: number; statusText?: string; body?: unknown } {
   return (
@@ -1181,7 +1191,7 @@ function isSendRequestErrorResponse(
  * with `title: "Worker not available."`. Prefer `msg` / `title` / `message`
  * from the parsed body, then fall back to `statusText`, then the default.
  */
-function getAppProxyErrorMessage(
+export function getAppProxyErrorMessage(
   response: { status: number; statusText?: string; body?: unknown },
   fallback: string,
 ): string {
@@ -1220,11 +1230,11 @@ const PROXY_REQUEST_TIMEOUT_MS = 30000;
  * @param request - Request configuration object
  * @returns Parsed response body or error object with status
  */
-interface SendRequestConfig extends RequestInit {
+export interface SendRequestConfig extends RequestInit {
   uri: string;
   method?: string;
 }
-async function sendRequest(request: SendRequestConfig) {
+export async function sendRequest(request: SendRequestConfig) {
   try {
     if (request.method === 'GET') {
       request.body = undefined;
