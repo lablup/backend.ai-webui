@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cd95a9f66cdfb804ef833680f7699518>>
+ * @generated SignedSource<<1f2eb1bcfaf74595241bfa2b8eb84e70>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type SessionV2Filter = {
   AND?: ReadonlyArray<SessionV2Filter> | null | undefined;
   NOT?: ReadonlyArray<SessionV2Filter> | null | undefined;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6dae1685a0d37836ce882e215f330e60>>
+ * @generated SignedSource<<3a262027beb1f1a0d374af1163fda14f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,15 +11,45 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
+export type RuntimeVariantPresetUIType = "CHECKBOX" | "NUMBER_INPUT" | "SELECT" | "SLIDER" | "TEXT_INPUT" | "%future added value";
 export type CreateRuntimeVariantPresetInput = {
+  category?: string | null | undefined;
   defaultValue?: string | null | undefined;
   description?: string | null | undefined;
+  displayName?: string | null | undefined;
   key: string;
   name: string;
   presetTarget: PresetTarget;
   required?: boolean;
   runtimeVariantId: string;
+  uiOption?: RuntimeVariantPresetUIOptionInput | null | undefined;
   valueType: PresetValueType;
+};
+export type RuntimeVariantPresetUIOptionInput = {
+  choices?: RuntimeVariantPresetChoiceOptionInput | null | undefined;
+  number?: RuntimeVariantPresetNumberOptionInput | null | undefined;
+  slider?: RuntimeVariantPresetSliderOptionInput | null | undefined;
+  text?: RuntimeVariantPresetTextOptionInput | null | undefined;
+  uiType: RuntimeVariantPresetUIType;
+};
+export type RuntimeVariantPresetSliderOptionInput = {
+  max: number;
+  min: number;
+  step?: number;
+};
+export type RuntimeVariantPresetNumberOptionInput = {
+  max?: number | null | undefined;
+  min?: number | null | undefined;
+};
+export type RuntimeVariantPresetChoiceOptionInput = {
+  items: ReadonlyArray<RuntimeVariantPresetChoiceItemInput>;
+};
+export type RuntimeVariantPresetChoiceItemInput = {
+  label: string;
+  value: string;
+};
+export type RuntimeVariantPresetTextOptionInput = {
+  placeholder?: string | null | undefined;
 };
 export type BAIRuntimeVariantPresetSettingModalCreateMutation$variables = {
   input: CreateRuntimeVariantPresetInput;
