@@ -299,20 +299,26 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   );
 
   useEffect(() => {
+    // Only reset selectedRowKeys when currentProject changes if there are no controlled selectedRowKeys
+    if (!controlledSelectedRowKeys || controlledSelectedRowKeys.length === 0) {
+      setSelectedRowKeys([]);
+    }
+    // Clear stale automount data when project changes, so the
+    // autoMountedFolderNames effect below re-populates with the new
+    // project's dot files rather than keeping the previous project's.
+    if (_.isFunction(onChangeAutoMountedFolders)) {
+      onChangeAutoMountedFolders([]);
+    }
+    // Reset selectedRowKeys when currentProject changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentProject.id]);
+
+  useEffect(() => {
     _.isFunction(onChangeAutoMountedFolders) &&
       onChangeAutoMountedFolders(autoMountedFolderNames);
     // Omit `onChangeAutoMountedFolders` from deps so a parent re-render doesn't retrigger this effect
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoMountedFolderNames]);
-
-  useEffect(() => {
-    // Only reset selectedRowKeys when currentProject changes if there are no controlled selectedRowKeys
-    if (!controlledSelectedRowKeys || controlledSelectedRowKeys.length === 0) {
-      setSelectedRowKeys([]);
-    }
-    // Reset selectedRowKeys when currentProject changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentProject.id]);
 
   const [searchKey, setSearchKey] = useState('');
   const displayingFolders = _.filter(mountableFoldersByPermission, (vf) => {
