@@ -213,7 +213,7 @@ const BAIDeleteConfirmModalAstryx: React.FC<
                 `color:danger` -> `var(--color-error)` and emits the
                 `TextColorMap` augmentation, so `color="danger"` type-checks and
                 paints antd's `colorError` (#FF4D4F / #BE3D3F) in both modes.
-                `TerminateSessionModalForProjectAdmin.tsx` already uses it.
+                `TerminateSessionModalV2.tsx` already uses it.
 
                 Reported as: "WARNING: this cannot be undone! 이 input 하단에
                 나오는 것이 아니라 별도의 alert 로 추가됨. input 하단에 있는

@@ -12,7 +12,7 @@ import type {
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import TerminateSessionModalForProjectAdmin from '../components/TerminateSessionModalForProjectAdmin';
+import TerminateSessionModalV2 from '../components/TerminateSessionModalV2';
 import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -58,7 +58,7 @@ const FINISHED_STATUSES: ReadonlyArray<SessionV2Status> = [
 
 // The query-level session node. It carries the masked fragment refs for both
 // the table (`BAISessionNodesV2Fragment`) and the terminate modal
-// (`TerminateSessionModalForProjectAdminFragment`), so row selection / the
+// (`TerminateSessionModalV2Fragment`), so row selection / the
 // terminate target list pass these nodes straight to the modal.
 type ProjectSessionNode = NonNullableNodeOnEdges<
   ProjectAdminSessionPageQuery$data['projectSessionsV2']
@@ -156,7 +156,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 name
               }
               ...BAISessionNodesV2Fragment
-              ...TerminateSessionModalForProjectAdminFragment
+              ...TerminateSessionModalV2Fragment
             }
           }
         }
@@ -344,7 +344,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
           onColumnOverridesChange: setColumnOverrides,
         }}
       />
-      <TerminateSessionModalForProjectAdmin
+      <TerminateSessionModalV2
         open={isTerminateOpen}
         sessionsFrgmt={terminateTargets}
         onRequestClose={(success) => {

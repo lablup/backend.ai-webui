@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { TerminateSessionModalForProjectAdminFragment$key } from '../__generated__/TerminateSessionModalForProjectAdminFragment.graphql';
-import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/TerminateSessionModalForProjectAdminMutation.graphql';
+import { TerminateSessionModalV2Fragment$key } from '../__generated__/TerminateSessionModalV2Fragment.graphql';
+import { TerminateSessionModalV2Mutation } from '../__generated__/TerminateSessionModalV2Mutation.graphql';
 import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import './TerminateSessionModalForProjectAdmin.css';
+import './TerminateSessionModalV2.css';
 import BAICopyableText from './astryx-bui/BAICopyableText';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
@@ -28,27 +28,30 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 // The antd `ModalProps` type import is replaced by BUI's own `BAIModalProps`
 // — the modal this component actually renders. A type-only antd import still
 // keeps the module in the antd import graph (P15/MAPPING §6).
-export interface TerminateSessionModalForProjectAdminProps extends Omit<
+export interface TerminateSessionModalV2Props extends Omit<
   BAIModalProps,
   'onOk' | 'onCancel'
 > {
   /** Sessions to terminate. A single-element list terminates one session;
    *  multiple elements perform a bulk terminate via the same mutation. */
-  sessionsFrgmt?: TerminateSessionModalForProjectAdminFragment$key;
+  sessionsFrgmt?: TerminateSessionModalV2Fragment$key;
   onRequestClose: (success: boolean) => void;
 }
 
 /**
- * Terminate confirmation modal for the project-admin session list. Mirrors the
- * v1 `TerminateSessionModal` UI (message + highlighted name(s) + force-terminate
- * checkbox + per-agent container cleanup list), but drives the scope-agnostic
- * `terminateSessionsV2` mutation, which accepts an id array — so the same modal
- * handles single and bulk terminate. Per-session RBAC permission is enforced by
- * the backend bulk validator; any denial fails the whole request.
+ * Terminate confirmation modal for the v2 session lists (admin and
+ * project-admin). Mirrors the v1 `TerminateSessionModal` UI (message +
+ * highlighted name(s) + force-terminate checkbox + per-agent container cleanup
+ * list), but drives the scope-agnostic `terminateSessionsV2` mutation, which
+ * accepts an id array — so the same modal handles single and bulk terminate.
+ * Per-session RBAC permission is enforced by the backend bulk validator; any
+ * denial fails the whole request.
  */
-const TerminateSessionModalForProjectAdmin: React.FC<
-  TerminateSessionModalForProjectAdminProps
-> = ({ sessionsFrgmt, onRequestClose, ...modalProps }) => {
+const TerminateSessionModalV2: React.FC<TerminateSessionModalV2Props> = ({
+  sessionsFrgmt,
+  onRequestClose,
+  ...modalProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -59,7 +62,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
   const sessions = filterOutNullAndUndefined(
     useFragment(
       graphql`
-        fragment TerminateSessionModalForProjectAdminFragment on SessionV2
+        fragment TerminateSessionModalV2Fragment on SessionV2
         @relay(plural: true) {
           id
           metadata {
@@ -83,8 +86,8 @@ const TerminateSessionModalForProjectAdmin: React.FC<
   );
 
   const [commitTerminate, isInFlight] =
-    useMutation<TerminateSessionModalForProjectAdminMutation>(graphql`
-      mutation TerminateSessionModalForProjectAdminMutation(
+    useMutation<TerminateSessionModalV2Mutation>(graphql`
+      mutation TerminateSessionModalV2Mutation(
         $sessionIds: [ID!]!
         $forced: Boolean!
       ) {
@@ -208,4 +211,4 @@ const TerminateSessionModalForProjectAdmin: React.FC<
   );
 };
 
-export default TerminateSessionModalForProjectAdmin;
+export default TerminateSessionModalV2;

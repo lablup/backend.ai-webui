@@ -2,80 +2,85 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
+import type {
   AdminComputeSessionListPageQuery,
   AdminComputeSessionListPageQuery$data,
-  AdminComputeSessionListPageQuery$variables,
+  SessionV2Filter,
+  SessionV2OrderBy,
 } from '../__generated__/AdminComputeSessionListPageQuery.graphql';
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import BAITabs from '../components/BAITabs';
-import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
-import SessionNodes, {
-  availableSessionSorterValues,
-} from '../components/SessionNodes';
-import { handleRowSelectionChange } from '../helper';
-import { ExtractResultValue } from '../helper/resultTypes';
-import { useWebUINavigate } from '../hooks';
+import TerminateSessionModalV2 from '../components/TerminateSessionModalV2';
+import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIAdminProjectSelectAstryx,
   BAIFlex,
-  BAIPropertyFilter,
+  BAIGraphQLPropertyFilter,
+  BAINameActionCell,
   BAISelectionLabel,
+  BAISessionNodesV2,
+  INITIAL_FETCH_KEY,
+  availableSessionV2SorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  INITIAL_FETCH_KEY,
-  mergeFilterValues,
-  PRIMARY_TAG_VARIANT,
+  toLocalId,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PowerOffIcon } from 'lucide-react';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+  useQueryStates,
+} from 'nuqs';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useLocation } from 'react-router-dom';
 
-const typeFilterValues = [
-  'all',
-  'interactive',
-  'batch',
-  'inference',
-  'system',
-] as const;
-type TypeFilterType = (typeof typeFilterValues)[number];
+const statusCategoryValues = ['running', 'finished'] as const;
 
-// Extract the success value type from Result
-type ComputeSessionNodesData = ExtractResultValue<
-  AdminComputeSessionListPageQuery$data['computeSessionNodeResult']
+const FINISHED_STATUSES = ['TERMINATED', 'CANCELLED'] as const;
+
+// The query-level session node. It carries the masked fragment refs for both
+// the table (`BAISessionNodesV2Fragment`) and the terminate modal
+// (`TerminateSessionModalV2Fragment`), so row selection / the terminate target
+// list pass these nodes straight to the modal.
+type AdminSessionNode = NonNullableNodeOnEdges<
+  AdminComputeSessionListPageQuery$data['adminSessionsV2']
 >;
-
-type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 
 const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
-
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const webUINavigate = useWebUINavigate();
-  const location = useLocation();
+
   const [selectedSessionList, setSelectedSessionList] = useState<
-    Array<SessionNode>
+    Array<AdminSessionNode>
   >([]);
-  const [isOpenTerminateModal, setOpenTerminateModal] = useState(false);
+  const [terminateTargets, setTerminateTargets] = useState<
+    Array<AdminSessionNode>
+  >([]);
+  const [isTerminateOpen, setIsTerminateOpen] = useState(false);
+  // Opens the legacy session detail drawer mounted at `AdminSessionPage`
+  // (`SessionDetailAndContainerLogOpenerLegacy`). Superadmin has access to the
+  // v1 `compute_session_node` query the drawer relies on, so name-click detail
+  // keeps working until a v2 detail flow exists (FR-2944).
+  const [, setSessionDetailId] = useQueryState(
+    'sessionDetail',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminComputeSessionListPage',
@@ -94,432 +99,326 @@ const AdminComputeSessionListPage = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableSessionSorterValues),
-      filter: parseAsString.withDefault(''),
-      type: parseAsStringLiteral(typeFilterValues).withDefault('all'),
-      statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
-        'running',
-      ),
+      statusCategory:
+        parseAsStringLiteral(statusCategoryValues).withDefault('running'),
+      order: parseAsStringLiteral(availableSessionV2SorterValues),
+      filter: parseAsJson<SessionV2Filter>((value) => value as SessionV2Filter),
     },
     {
       history: 'replace',
     },
   );
 
-  const queryMapRef = useRef({
-    [queryParams.type]: {
-      queryParams,
-      tablePaginationOption,
-    },
-  });
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
-  useEffect(() => {
-    queryMapRef.current[queryParams.type] = {
-      queryParams,
-      tablePaginationOption,
-    };
-  }, [queryParams, tablePaginationOption]);
-
-  const typeFilter =
-    queryParams.type === 'all' || queryParams.type === undefined
-      ? undefined
-      : `type == "${queryParams.type}"`;
-
+  // Mirrors the v1 filter semantics (`status != "TERMINATED" & status !=
+  // "CANCELLED"`): `notIn` keeps every non-final status in the running
+  // category without enumerating the full status list.
   const statusFilter =
-    queryParams.statusCategory === 'running' ||
-    queryParams.statusCategory === undefined
-      ? 'status != "TERMINATED" & status != "CANCELLED"'
-      : 'status == "TERMINATED" | status == "CANCELLED"';
+    queryParams.statusCategory === 'running'
+      ? { notIn: [...FINISHED_STATUSES] }
+      : { in: [...FINISHED_STATUSES] };
 
   const isNotRunningCategory = (status?: string | null) => {
     return status === 'TERMINATED' || status === 'CANCELLED';
   };
 
-  const [fetchKey, updateFetchKey] = useFetchKey();
-
-  // scopeId is intentionally omitted so superadmin sees all sessions across all projects/domains
-  const queryVariables: AdminComputeSessionListPageQuery$variables = {
+  // scope is intentionally absent (`adminSessionsV2`) so superadmin sees all
+  // sessions across all projects/domains.
+  const queryVariables = {
+    filter: {
+      ...(queryParams.filter ?? {}),
+      status: statusFilter,
+    },
+    orderBy: convertToOrderBy<Required<SessionV2OrderBy>>(
+      queryParams.order,
+    ) ?? [
+      { field: 'CREATED_AT', direction: 'DESC' } as Required<SessionV2OrderBy>,
+    ],
+    limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    first: baiPaginationOption.first,
-    filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
-    order: queryParams.order || '-created_at',
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const queryRef = useLazyLoadQuery<AdminComputeSessionListPageQuery>(
+  const data = useLazyLoadQuery<AdminComputeSessionListPageQuery>(
     graphql`
-        query AdminComputeSessionListPageQuery(
-          $first: Int = 20
-          $offset: Int = 0
-          $filter: String
-          $order: String
+      query AdminComputeSessionListPageQuery(
+        $filter: SessionV2Filter
+        $orderBy: [SessionV2OrderBy!]
+        $limit: Int
+        $offset: Int
+      ) {
+        adminSessionsV2(
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
         ) {
-          computeSessionNodeResult: compute_session_nodes(
-            first: $first
-            offset: $offset
-            filter: $filter
-            order: $order
-          ) @catch(to: RESULT) {
-            edges @required(action: THROW) {
-              node @required(action: THROW) {
-                id @required(action: THROW)
-                name @required(action: THROW)
-                ...SessionNodesFragment
-                ...TerminateSessionModalFragment
+          count
+          edges {
+            node {
+              id
+              metadata {
+                name
               }
+              ...BAISessionNodesV2Fragment
+              ...TerminateSessionModalV2Fragment
             }
-            count
-          }
-          all: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
-          ) {
-            count
-          }
-          interactive: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-          ) {
-            count
-          }
-          inference: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-          ) {
-            count
-          }
-          batch: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-          ) {
-            count
-          }
-          system: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-          ) {
-            count
           }
         }
-      `,
+      }
+    `,
     deferredQueryVariables,
     {
+      fetchKey: deferredFetchKey,
       fetchPolicy:
         deferredFetchKey === INITIAL_FETCH_KEY
           ? 'store-and-network'
           : 'network-only',
-      fetchKey: deferredFetchKey,
     },
   );
 
-  const { computeSessionNodeResult, ...sessionCounts } = queryRef;
-  const compute_session_nodes = computeSessionNodeResult.ok
-    ? computeSessionNodeResult.value
-    : null;
+  const sessionNodes = filterOutNullAndUndefined(
+    data.adminSessionsV2?.edges?.map((edge) => edge?.node),
+  );
+  const total = data.adminSessionsV2?.count ?? 0;
+
+  const openTerminateModal = (targets: Array<AdminSessionNode>) => {
+    setTerminateTargets(targets);
+    setIsTerminateOpen(true);
+  };
+
+  const isLoading =
+    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
   return (
-    <BAIFlex direction="column" align="stretch" gap={'sm'}>
-      <BAITabs
-        activeKey={queryParams.type}
-        onChange={(key) => {
-          const storedQuery = queryMapRef.current[key] || {
-            queryParams: {
-              statusCategory: 'running',
-            },
-          };
-          // Set to null first to reset to default values
-          setQueryParams(null);
-          setQueryParams({
-            ...storedQuery.queryParams,
-            type: key as TypeFilterType,
-          });
-          setTablePaginationOption(
-            storedQuery.tablePaginationOption || { current: 1 },
-          );
-          setSelectedSessionList([]);
-        }}
-        items={_.map(
-          {
-            all: t('general.All'),
-            interactive: t('session.Interactive'),
-            batch: t('session.Batch'),
-            inference: t('session.Inference'),
-            system: t('session.System'),
-          },
-          (label, key) => ({
-            key,
-            label: (
-              <BAIFlex justify="center" gap={10}>
-                {label}
-                {
-                  // display badge only if count is greater than 0
-                  // @ts-ignore
-                  (sessionCounts[key]?.count || 0) > 0 && (
-                    <Badge
-                      // PILOT-DECISION: antd count Badge (brand color when the
-                      // tab is active, gray otherwise) -> Astryx Badge pill.
-                      // Arbitrary token colors are inexpressible (P5); the
-                      // active state maps to PRIMARY_TAG_VARIANT (policy
-                      // class 4) and the inactive state to `neutral`. The
-                      // 10px font-size / paddingXS tweaks are dropped
-                      // (defaults-first).
-                      variant={
-                        queryParams.type === key
-                          ? PRIMARY_TAG_VARIANT
-                          : 'neutral'
-                      }
-                      label={
-                        // @ts-ignore
-                        sessionCounts[key].count
-                      }
-                    />
-                  )
-                }
-              </BAIFlex>
-            ),
-          }),
-        )}
-      />
-      <BAIFlex direction="column" align="stretch" gap={'sm'}>
-        <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-          <BAIFlex
-            gap={'sm'}
-            align="start"
-            style={{
-              flexShrink: 1,
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
+        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIRadioGroup
+            optionType="button"
+            value={queryParams.statusCategory}
+            onChange={(e) => {
+              setQueryParams({ statusCategory: e.target.value });
+              setTablePaginationOption({ current: 1 });
+              setSelectedSessionList([]);
             }}
-            wrap="wrap"
-          >
-            <BAIRadioGroup
-              optionType="button"
-              value={queryParams.statusCategory}
-              onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
-                setTablePaginationOption({ current: 1 });
-                setSelectedSessionList([]);
-              }}
-              options={[
-                {
-                  label: t('session.Running'),
-                  value: 'running',
-                },
-                {
-                  label: t('session.Finished'),
-                  value: 'finished',
-                },
-              ]}
-            />
-            <BAIPropertyFilter
-              filterProperties={filterOutEmpty([
-                {
-                  // `project_id` is the compute_session queryfilter field
-                  // mapped to the session's group (project) UUID.
-                  key: 'project_id',
-                  propertyLabel: t('data.Project'),
-                  type: 'string',
-                  defaultOperator: '==',
-                  renderInput: ({ onAddCondition }) => (
-                    <BAIAdminProjectSelectAstryx
-                      // The filter row already prints the property label.
-                      label={t('data.Project')}
-                      isLabelHidden
-                      value={null}
-                      width={200}
-                      onChange={(value, option) => {
-                        // P3C-1: the second argument survives on this wrapper so
-                        // the condition tag stays human-readable (project name)
-                        // while the UUID serializes into the filter.
-                        onAddCondition(
-                          value as string | undefined,
-                          _.castArray(option ?? [])[0]?.label,
-                        );
-                      }}
-                    />
-                  ),
-                },
-                {
-                  key: 'name',
-                  propertyLabel: t('session.SessionName'),
-                  type: 'string',
-                },
-                {
-                  key: 'scaling_group',
-                  propertyLabel: t('session.ResourceGroup'),
-                  type: 'string',
-                },
-                {
-                  key: 'agent_ids',
-                  propertyLabel: t('session.Agent'),
-                  type: 'string',
-                },
-                {
-                  key: 'user_email',
-                  propertyLabel: t('session.launcher.OwnerEmail'),
-                  type: 'string',
-                },
-              ])}
-              value={queryParams.filter || undefined}
-              onChange={(value) => {
-                setQueryParams({ filter: value || '' });
-                setTablePaginationOption({ current: 1 });
-                setSelectedSessionList([]);
-              }}
-            />
-          </BAIFlex>
-          <BAIFlex gap={'xs'}>
-            {selectedSessionList.length > 0 && (
-              <>
-                <BAISelectionLabel
-                  count={selectedSessionList.length}
-                  onClearSelection={() => setSelectedSessionList([])}
-                />
-                <IconButton
-                  label={t('session.TerminateSession')}
-                  tooltip={t('session.TerminateSession')}
-                  icon={<PowerOffIcon color="var(--color-error)" />}
-                  onClick={() => {
-                    setOpenTerminateModal(true);
-                  }}
-                />
-              </>
-            )}
-            <AutoUpdateFetchKeyButton
-              settingId="admin-session-list"
-              defaultAutoUpdateDelay={15_000}
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-              value={fetchKey}
-              onChange={(newFetchKey) => {
-                updateFetchKey(newFetchKey);
-              }}
-            />
-          </BAIFlex>
-        </BAIFlex>
-        {computeSessionNodeResult.ok ? (
-          <SessionNodes
-            order={queryParams.order}
-            onClickSessionName={(session) => {
-              const newSearchParams = new URLSearchParams(location.search);
-              newSearchParams.set('sessionDetail', session.row_id);
-              webUINavigate(
-                {
-                  pathname: location.pathname,
-                  hash: location.hash,
-                  search: newSearchParams.toString(),
-                },
-                {
-                  state: {
-                    sessionDetailDrawerFrgmt: session,
-                    createdAt: new Date().toISOString(),
-                  },
-                },
-              );
-            }}
-            loading={deferredQueryVariables !== queryVariables}
-            rowSelection={{
-              type: 'checkbox',
-              preserveSelectedRowKeys: true,
-              getCheckboxProps(record) {
-                return {
-                  disabled: isNotRunningCategory(record.status),
-                };
+            options={[
+              { label: t('session.Running'), value: 'running' },
+              { label: t('session.Finished'), value: 'finished' },
+            ]}
+          />
+          <BAIGraphQLPropertyFilter<SessionV2Filter>
+            filterProperties={[
+              {
+                key: 'id',
+                propertyLabel: 'ID',
+                type: 'uuid',
               },
-              onChange: (selectedRowKeys) => {
-                handleRowSelectionChange(
-                  selectedRowKeys,
-                  filterOutNullAndUndefined(
-                    compute_session_nodes?.edges.map((e) => e?.node),
-                  ),
-                  setSelectedSessionList,
+              {
+                key: 'name',
+                propertyLabel: t('session.SessionName'),
+                type: 'string',
+              },
+              {
+                key: 'projectId',
+                propertyLabel: t('data.Project'),
+                type: 'uuid',
+                renderInput: ({ onAddCondition }) => (
+                  <BAIAdminProjectSelectAstryx
+                    // The filter row already prints the property label.
+                    label={t('data.Project')}
+                    isLabelHidden
+                    value={null}
+                    width={200}
+                    onChange={(value, option) => {
+                      // The picker emits the project UUID; forward the option
+                      // label (project name) so the condition tag stays
+                      // readable while the UUID serializes into the filter.
+                      onAddCondition(
+                        value as string | undefined,
+                        _.castArray(option ?? [])[0]?.label,
+                      );
+                    }}
+                  />
+                ),
+              },
+              {
+                key: 'userUuid',
+                propertyLabel: t('session.OwnerUUID'),
+                type: 'uuid',
+              },
+              {
+                key: 'domainName',
+                propertyLabel: t('credential.Domain'),
+                type: 'string',
+              },
+            ]}
+            value={queryParams.filter ?? undefined}
+            onChange={(value) => {
+              setQueryParams({ filter: value ?? null });
+              setTablePaginationOption({ current: 1 });
+              setSelectedSessionList([]);
+            }}
+          />
+        </BAIFlex>
+        <BAIFlex gap={'xs'}>
+          {selectedSessionList.length > 0 && (
+            <>
+              <BAISelectionLabel
+                count={selectedSessionList.length}
+                onClearSelection={() => setSelectedSessionList([])}
+              />
+              <IconButton
+                label={t('session.TerminateSession')}
+                tooltip={t('session.TerminateSession')}
+                icon={<PowerOffIcon color="var(--color-error)" />}
+                onClick={() => openTerminateModal(selectedSessionList)}
+              />
+            </>
+          )}
+          <AutoUpdateFetchKeyButton
+            settingId="admin-session-list"
+            defaultAutoUpdateDelay={15_000}
+            loading={isLoading}
+            value={fetchKey}
+            onChange={(newFetchKey) => {
+              updateFetchKey(newFetchKey);
+            }}
+          />
+        </BAIFlex>
+      </BAIFlex>
+      <BAISessionNodesV2
+        sessionsFrgmt={sessionNodes}
+        loading={isLoading}
+        order={queryParams.order}
+        onChangeOrder={(order) => {
+          setQueryParams({ order });
+        }}
+        rowSelection={{
+          type: 'checkbox',
+          preserveSelectedRowKeys: true,
+          getCheckboxProps(record) {
+            return {
+              disabled: isNotRunningCategory(record.lifecycle?.status),
+            };
+          },
+          onChange: (selectedRowKeys) => {
+            handleRowSelectionChange(
+              selectedRowKeys,
+              sessionNodes,
+              setSelectedSessionList,
+            );
+          },
+          selectedRowKeys: selectedSessionList.map((session) => session.id),
+        }}
+        customizeColumns={(cols) =>
+          cols.map((col) => {
+            if (col.key !== 'name') return col;
+            return {
+              ...col,
+              render: (_value, session) => {
+                const status = session.lifecycle?.status;
+                const isTerminated =
+                  !!status &&
+                  ['TERMINATED', 'CANCELLED', 'TERMINATING'].includes(status);
+                // Recover the query-level node (which carries the terminate
+                // modal's fragment ref) from the masked table row by id.
+                const targetNode = sessionNodes.find(
+                  (node) => node.id === session.id,
+                );
+                return (
+                  <BAINameActionCell
+                    title={session.metadata?.name ?? '-'}
+                    onTitleClick={() => {
+                      setSessionDetailId(toLocalId(session.id));
+                    }}
+                    showActions="always"
+                    actions={filterOutEmpty([
+                      {
+                        key: 'terminate',
+                        title: t('session.TerminateSession'),
+                        icon: <PowerOffIcon />,
+                        type: 'danger' as const,
+                        disabled: isTerminated || !targetNode,
+                        onClick: () =>
+                          targetNode && openTerminateModal([targetNode]),
+                      },
+                    ])}
+                  />
                 );
               },
-              selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
-            }}
-            sessionsFrgmt={filterOutNullAndUndefined(
-              compute_session_nodes?.edges.map((e) => e?.node),
-            )}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              current: tablePaginationOption.current,
-              total: compute_session_nodes?.count ?? 0,
-              onChange: (current, pageSize) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({ current, pageSize });
-                }
-              },
-            }}
-            onChangeOrder={(order) => {
-              setQueryParams({ order });
-            }}
-            tableSettings={{
-              columnOverrides: columnOverrides,
-              defaultColumnOverrides: {
-                environment: { hidden: false },
-                resourceGroup: { hidden: false },
-                type: { hidden: false },
-                cluster_mode: { hidden: false },
-                created_at: { hidden: false },
-                project_id: { hidden: false },
-              },
-              onColumnOverridesChange: setColumnOverrides,
-            }}
-            exportSettings={
-              !_.isEmpty(supportedFields) &&
-              (userRole === 'superadmin' || userRole === 'admin')
-                ? {
-                    supportedFields,
-                    onExport: async (selectedExportKeys) => {
-                      const csvFilter: Record<string, unknown> = {};
-                      if (queryParams.statusCategory === 'finished') {
-                        csvFilter.status = ['TERMINATED', 'CANCELLED'];
-                      } else {
-                        csvFilter.status = [
-                          'PENDING',
-                          'SCHEDULED',
-                          'PREPARING',
-                          'PREPARED',
-                          'CREATING',
-                          'PULLING',
-                          'RESTARTING',
-                          'RUNNING',
-                          'TERMINATING',
-                          'ERROR',
-                        ];
-                      }
-                      if (queryParams.type && queryParams.type !== 'all') {
-                        csvFilter.session_type = [queryParams.type];
-                      }
-                      await exportCSV(selectedExportKeys, csvFilter).catch(
-                        (err) => {
-                          message.error(t('general.ErrorOccurred'));
-                          logger.error(err);
-                        },
-                      );
-                    },
+            };
+          })
+        }
+        pagination={{
+          current: tablePaginationOption.current,
+          pageSize: tablePaginationOption.pageSize,
+          total,
+          onChange: (current, pageSize) => {
+            setTablePaginationOption({ current, pageSize });
+          },
+        }}
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          // BAISessionNodesV2 hides these columns by default
+          // (defaultHidden: true) to keep the shared component compact.
+          // Override them to visible so the admin list keeps the
+          // default-visible columns of the v1 admin session list.
+          defaultColumnOverrides: {
+            environment: { hidden: false },
+            resourceGroup: { hidden: false },
+            sessionType: { hidden: false },
+            clusterMode: { hidden: false },
+            createdAt: { hidden: false },
+            project: { hidden: false },
+          },
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        exportSettings={
+          !_.isEmpty(supportedFields) &&
+          (userRole === 'superadmin' || userRole === 'admin')
+            ? {
+                supportedFields,
+                onExport: async (selectedExportKeys) => {
+                  const csvFilter: Record<string, unknown> = {};
+                  if (queryParams.statusCategory === 'finished') {
+                    csvFilter.status = [...FINISHED_STATUSES];
+                  } else {
+                    csvFilter.status = [
+                      'PENDING',
+                      'SCHEDULED',
+                      'PREPARING',
+                      'PREPARED',
+                      'CREATING',
+                      'PULLING',
+                      'RESTARTING',
+                      'RUNNING',
+                      'TERMINATING',
+                      'ERROR',
+                    ];
                   }
-                : undefined
-            }
-          />
-        ) : (
-          <Banner status="error" title={t('error.FailedToLoadTableData')} />
-        )}
-      </BAIFlex>
-      <TerminateSessionModal
-        open={isOpenTerminateModal}
-        sessionFrgmts={selectedSessionList}
+                  await exportCSV(selectedExportKeys, csvFilter).catch(
+                    (err) => {
+                      message.error(t('general.ErrorOccurred'));
+                      logger.error(err);
+                    },
+                  );
+                },
+              }
+            : undefined
+        }
+      />
+      <TerminateSessionModalV2
+        open={isTerminateOpen}
+        sessionsFrgmt={terminateTargets}
         onRequestClose={(success) => {
-          setOpenTerminateModal(false);
+          setIsTerminateOpen(false);
           if (success) {
             setSelectedSessionList([]);
+            updateFetchKey();
           }
         }}
       />

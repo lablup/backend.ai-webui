@@ -70,8 +70,9 @@ type ResourceEntry = { resourceType: string; quantity: string };
 const findEntry = (entries: ReadonlyArray<ResourceEntry>, type: string) =>
   entries.find((entry) => entry.resourceType === type);
 
-// Occupied slots: the actually-allocated (`used`) entries when present,
-// otherwise fall back to the `requested` entries. Mirrors the v1
+// Occupied slots: the live `used` entries when present, then the persisted
+// `allocated` entries (kept after the session is freed/terminated, unlike
+// `used`), and finally the `requested` entries. Mirrors the v1
 // `SessionSlotCell`, which falls back from `occupied_slots` to
 // `requested_slots`, so the displayed value matches the admin session list.
 const getOccupiedEntries = (
@@ -81,12 +82,17 @@ const getOccupiedEntries = (
         readonly used?: {
           readonly entries: ReadonlyArray<ResourceEntry>;
         } | null;
+        readonly allocated?: {
+          readonly entries: ReadonlyArray<ResourceEntry>;
+        } | null;
       }
     | null
     | undefined,
 ): ReadonlyArray<ResourceEntry> => {
   const used = allocation?.used?.entries;
   if (used && used.length > 0) return used;
+  const allocated = allocation?.allocated?.entries;
+  if (allocated && allocated.length > 0) return allocated;
   return allocation?.requested?.entries ?? [];
 };
 
@@ -148,6 +154,10 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   'use memo';
   const { t } = useBAIi18n();
 
+  // `resourceAllocation` is the on-demand allocation (added in 26.8.0),
+  // replacing the deprecated eager `resource.allocation`. Its `allocated`
+  // slots persist after the session is freed or terminated, so finished
+  // sessions still show their resources.
   const sessions = useFragment(
     graphql`
       fragment BAISessionNodesV2Fragment on SessionV2 @relay(plural: true) {
@@ -170,18 +180,24 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         }
         resource {
           resourceGroupName
-          allocation {
-            requested {
-              entries {
-                resourceType
-                quantity
-              }
+        }
+        resourceAllocation {
+          requested {
+            entries {
+              resourceType
+              quantity
             }
-            used {
-              entries {
-                resourceType
-                quantity
-              }
+          }
+          used {
+            entries {
+              resourceType
+              quantity
+            }
+          }
+          allocated {
+            entries {
+              resourceType
+              quantity
             }
           }
         }
@@ -260,7 +276,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         title: t('comp:SessionV2Nodes.AIAccelerator'),
         render: (__, session) => {
           const occupied = acceleratorEntries(
-            getOccupiedEntries(session.resource?.allocation),
+            getOccupiedEntries(session.resourceAllocation),
           );
           if (occupied.length === 0) return '-';
           return occupied
@@ -273,7 +289,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         title: t('comp:SessionV2Nodes.CPU'),
         render: (__, session) =>
           formatCpu(
-            findEntry(getOccupiedEntries(session.resource?.allocation), 'cpu'),
+            findEntry(getOccupiedEntries(session.resourceAllocation), 'cpu'),
           ),
       },
       {
@@ -281,7 +297,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         title: t('comp:SessionV2Nodes.Memory'),
         render: (__, session) =>
           formatMem(
-            findEntry(getOccupiedEntries(session.resource?.allocation), 'mem'),
+            findEntry(getOccupiedEntries(session.resourceAllocation), 'mem'),
           ),
       },
       {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5cd4a94f9a2089a82f2810de0e978003>>
+ * @generated SignedSource<<b5799caad819ca5d4d96b8e241b3e453>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,38 +9,77 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs, Result } from "relay-runtime";
+import { FragmentRefs } from "relay-runtime";
+export type OrderDirection = "ASC" | "DESC" | "%future added value";
+export type SessionV2OrderField = "CREATED_AT" | "ID" | "NAME" | "STATUS" | "TERMINATED_AT" | "%future added value";
+export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Filter = {
+  AND?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  OR?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  domainName?: StringFilter | null | undefined;
+  id?: UUIDFilter | null | undefined;
+  name?: StringFilter | null | undefined;
+  projectId?: UUIDFilter | null | undefined;
+  status?: SessionV2StatusFilter | null | undefined;
+  userUuid?: UUIDFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type SessionV2StatusFilter = {
+  equals?: SessionV2Status | null | undefined;
+  in?: ReadonlyArray<SessionV2Status> | null | undefined;
+  notEquals?: SessionV2Status | null | undefined;
+  notIn?: ReadonlyArray<SessionV2Status> | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type SessionV2OrderBy = {
+  direction?: OrderDirection;
+  field: SessionV2OrderField;
+};
 export type AdminComputeSessionListPageQuery$variables = {
-  filter?: string | null | undefined;
-  first?: number | null | undefined;
+  filter?: SessionV2Filter | null | undefined;
+  limit?: number | null | undefined;
   offset?: number | null | undefined;
-  order?: string | null | undefined;
+  orderBy?: ReadonlyArray<SessionV2OrderBy> | null | undefined;
 };
 export type AdminComputeSessionListPageQuery$data = {
-  readonly all: {
-    readonly count: number | null | undefined;
-  } | null | undefined;
-  readonly batch: {
-    readonly count: number | null | undefined;
-  } | null | undefined;
-  readonly computeSessionNodeResult: Result<{
-    readonly count: number | null | undefined;
+  readonly adminSessionsV2: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
-        readonly name: string;
-        readonly " $fragmentSpreads": FragmentRefs<"SessionNodesFragment" | "TerminateSessionModalFragment">;
+        readonly metadata: {
+          readonly name: string;
+        };
+        readonly " $fragmentSpreads": FragmentRefs<"BAISessionNodesV2Fragment" | "TerminateSessionModalV2Fragment">;
       };
-    } | null | undefined>;
-  } | null | undefined, unknown>;
-  readonly inference: {
-    readonly count: number | null | undefined;
-  } | null | undefined;
-  readonly interactive: {
-    readonly count: number | null | undefined;
-  } | null | undefined;
-  readonly system: {
-    readonly count: number | null | undefined;
+    }>;
   } | null | undefined;
 };
 export type AdminComputeSessionListPageQuery = {
@@ -55,19 +94,19 @@ var v0 = {
   "name": "filter"
 },
 v1 = {
-  "defaultValue": 20,
+  "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "first"
+  "name": "limit"
 },
 v2 = {
-  "defaultValue": 0,
+  "defaultValue": null,
   "kind": "LocalArgument",
   "name": "offset"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "order"
+  "name": "orderBy"
 },
 v4 = [
   {
@@ -77,8 +116,8 @@ v4 = [
   },
   {
     "kind": "Variable",
-    "name": "first",
-    "variableName": "first"
+    "name": "limit",
+    "variableName": "limit"
   },
   {
     "kind": "Variable",
@@ -87,163 +126,62 @@ v4 = [
   },
   {
     "kind": "Variable",
-    "name": "order",
-    "variableName": "order"
+    "name": "orderBy",
+    "variableName": "orderBy"
   }
 ],
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
+  "name": "count",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "id",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "count",
+  "name": "name",
   "storageKey": null
 },
-v8 = {
-  "kind": "Literal",
-  "name": "first",
-  "value": 0
-},
-v9 = {
-  "kind": "Literal",
-  "name": "offset",
-  "value": 0
-},
-v10 = [
+v8 = [
   (v7/*: any*/)
 ],
-v11 = {
-  "alias": "all",
-  "args": [
-    {
-      "kind": "Literal",
-      "name": "filter",
-      "value": "status != \"TERMINATED\" & status != \"CANCELLED\""
-    },
-    (v8/*: any*/),
-    (v9/*: any*/)
-  ],
-  "concreteType": "ComputeSessionConnection",
-  "kind": "LinkedField",
-  "name": "compute_session_nodes",
-  "plural": false,
-  "selections": (v10/*: any*/),
-  "storageKey": "compute_session_nodes(filter:\"status != \"TERMINATED\" & status != \"CANCELLED\"\",first:0,offset:0)"
-},
-v12 = {
-  "alias": "interactive",
-  "args": [
-    {
-      "kind": "Literal",
-      "name": "filter",
-      "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-    },
-    (v8/*: any*/),
-    (v9/*: any*/)
-  ],
-  "concreteType": "ComputeSessionConnection",
-  "kind": "LinkedField",
-  "name": "compute_session_nodes",
-  "plural": false,
-  "selections": (v10/*: any*/),
-  "storageKey": "compute_session_nodes(filter:\"status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\"\",first:0,offset:0)"
-},
-v13 = {
-  "alias": "inference",
-  "args": [
-    {
-      "kind": "Literal",
-      "name": "filter",
-      "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-    },
-    (v8/*: any*/),
-    (v9/*: any*/)
-  ],
-  "concreteType": "ComputeSessionConnection",
-  "kind": "LinkedField",
-  "name": "compute_session_nodes",
-  "plural": false,
-  "selections": (v10/*: any*/),
-  "storageKey": "compute_session_nodes(filter:\"status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\"\",first:0,offset:0)"
-},
-v14 = {
-  "alias": "batch",
-  "args": [
-    {
-      "kind": "Literal",
-      "name": "filter",
-      "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-    },
-    (v8/*: any*/),
-    (v9/*: any*/)
-  ],
-  "concreteType": "ComputeSessionConnection",
-  "kind": "LinkedField",
-  "name": "compute_session_nodes",
-  "plural": false,
-  "selections": (v10/*: any*/),
-  "storageKey": "compute_session_nodes(filter:\"status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\"\",first:0,offset:0)"
-},
-v15 = {
-  "alias": "system",
-  "args": [
-    {
-      "kind": "Literal",
-      "name": "filter",
-      "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-    },
-    (v8/*: any*/),
-    (v9/*: any*/)
-  ],
-  "concreteType": "ComputeSessionConnection",
-  "kind": "LinkedField",
-  "name": "compute_session_nodes",
-  "plural": false,
-  "selections": (v10/*: any*/),
-  "storageKey": "compute_session_nodes(filter:\"status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\"\",first:0,offset:0)"
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "row_id",
-  "storageKey": null
-},
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status_info",
-  "storageKey": null
-},
-v19 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "tag",
-  "storageKey": null
-},
-v20 = [
+v9 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ResourceSlotEntry",
+    "kind": "LinkedField",
+    "name": "entries",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "resourceType",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "quantity",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+],
+v10 = [
   {
     "alias": null,
     "args": null,
@@ -258,42 +196,6 @@ v20 = [
     "name": "value",
     "storageKey": null
   }
-],
-v21 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "idle_checks",
-  "storageKey": null
-},
-v22 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ComputeSessionEdge",
-    "kind": "LinkedField",
-    "name": "edges",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ComputeSessionNode",
-        "kind": "LinkedField",
-        "name": "node",
-        "plural": false,
-        "selections": [
-          (v5/*: any*/),
-          (v16/*: any*/),
-          (v6/*: any*/),
-          (v17/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  },
-  (v7/*: any*/)
 ];
 return {
   "fragment": {
@@ -308,103 +210,18 @@ return {
     "name": "AdminComputeSessionListPageQuery",
     "selections": [
       {
-        "kind": "CatchField",
-        "field": {
-          "alias": "computeSessionNodeResult",
-          "args": (v4/*: any*/),
-          "concreteType": "ComputeSessionConnection",
-          "kind": "LinkedField",
-          "name": "compute_session_nodes",
-          "plural": false,
-          "selections": [
-            {
-              "kind": "RequiredField",
-              "field": {
-                "alias": null,
-                "args": null,
-                "concreteType": "ComputeSessionEdge",
-                "kind": "LinkedField",
-                "name": "edges",
-                "plural": true,
-                "selections": [
-                  {
-                    "kind": "RequiredField",
-                    "field": {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "ComputeSessionNode",
-                      "kind": "LinkedField",
-                      "name": "node",
-                      "plural": false,
-                      "selections": [
-                        {
-                          "kind": "RequiredField",
-                          "field": (v5/*: any*/),
-                          "action": "THROW"
-                        },
-                        {
-                          "kind": "RequiredField",
-                          "field": (v6/*: any*/),
-                          "action": "THROW"
-                        },
-                        {
-                          "args": null,
-                          "kind": "FragmentSpread",
-                          "name": "SessionNodesFragment"
-                        },
-                        {
-                          "args": null,
-                          "kind": "FragmentSpread",
-                          "name": "TerminateSessionModalFragment"
-                        }
-                      ],
-                      "storageKey": null
-                    },
-                    "action": "THROW"
-                  }
-                ],
-                "storageKey": null
-              },
-              "action": "THROW"
-            },
-            (v7/*: any*/)
-          ],
-          "storageKey": null
-        },
-        "to": "RESULT"
-      },
-      (v11/*: any*/),
-      (v12/*: any*/),
-      (v13/*: any*/),
-      (v14/*: any*/),
-      (v15/*: any*/)
-    ],
-    "type": "Query",
-    "abstractKey": null
-  },
-  "kind": "Request",
-  "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v2/*: any*/),
-      (v0/*: any*/),
-      (v3/*: any*/)
-    ],
-    "kind": "Operation",
-    "name": "AdminComputeSessionListPageQuery",
-    "selections": [
-      {
-        "alias": "computeSessionNodeResult",
+        "alias": null,
         "args": (v4/*: any*/),
-        "concreteType": "ComputeSessionConnection",
+        "concreteType": "SessionV2Connection",
         "kind": "LinkedField",
-        "name": "compute_session_nodes",
+        "name": "adminSessionsV2",
         "plural": false,
         "selections": [
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "ComputeSessionEdge",
+            "concreteType": "SessionV2Edge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -412,106 +229,240 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ComputeSessionNode",
+                "concreteType": "SessionV2",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
-                  (v16/*: any*/),
-                  (v17/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "type",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "service_ports",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "user_id",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "agent_ids",
-                    "storageKey": null
-                  },
-                  (v18/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "status_data",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "queue_position",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "created_at",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "starts_at",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "terminated_at",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "occupied_slots",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "requested_slots",
-                    "storageKey": null
-                  },
-                  (v19/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "KernelConnection",
+                    "concreteType": "SessionV2MetadataInfo",
                     "kind": "LinkedField",
-                    "name": "kernel_nodes",
+                    "name": "metadata",
+                    "plural": false,
+                    "selections": (v8/*: any*/),
+                    "storageKey": null
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "BAISessionNodesV2Fragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "TerminateSessionModalV2Fragment"
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "type": "Query",
+    "abstractKey": null
+  },
+  "kind": "Request",
+  "operation": {
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v3/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
+    "kind": "Operation",
+    "name": "AdminComputeSessionListPageQuery",
+    "selections": [
+      {
+        "alias": null,
+        "args": (v4/*: any*/),
+        "concreteType": "SessionV2Connection",
+        "kind": "LinkedField",
+        "name": "adminSessionsV2",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "SessionV2Edge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "SessionV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "SessionV2MetadataInfo",
+                    "kind": "LinkedField",
+                    "name": "metadata",
+                    "plural": false,
+                    "selections": [
+                      (v7/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "sessionType",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "clusterMode",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "clusterSize",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "project",
+                    "plural": false,
+                    "selections": [
+                      (v6/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ProjectBasicInfo",
+                        "kind": "LinkedField",
+                        "name": "basicInfo",
+                        "plural": false,
+                        "selections": (v8/*: any*/),
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "SessionV2LifecycleInfo",
+                    "kind": "LinkedField",
+                    "name": "lifecycle",
                     "plural": false,
                     "selections": [
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "KernelEdge",
+                        "kind": "ScalarField",
+                        "name": "status",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "createdAt",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "terminatedAt",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "SessionV2ResourceInfo",
+                    "kind": "LinkedField",
+                    "name": "resource",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "resourceGroupName",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ResourceAllocation",
+                    "kind": "LinkedField",
+                    "name": "resourceAllocation",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ResourceSlot",
+                        "kind": "LinkedField",
+                        "name": "requested",
+                        "plural": false,
+                        "selections": (v9/*: any*/),
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ResourceSlot",
+                        "kind": "LinkedField",
+                        "name": "used",
+                        "plural": false,
+                        "selections": (v9/*: any*/),
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ResourceSlot",
+                        "kind": "LinkedField",
+                        "name": "allocated",
+                        "plural": false,
+                        "selections": (v9/*: any*/),
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ImageV2Connection",
+                    "kind": "LinkedField",
+                    "name": "images",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2Edge",
                         "kind": "LinkedField",
                         "name": "edges",
                         "plural": true,
@@ -519,81 +470,25 @@ return {
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "KernelNode",
+                            "concreteType": "ImageV2",
                             "kind": "LinkedField",
                             "name": "node",
                             "plural": false,
                             "selections": [
+                              (v6/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
-                                "kind": "ScalarField",
-                                "name": "live_stat",
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "cluster_role",
-                                "storageKey": null
-                              },
-                              (v5/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "concreteType": "ImageNode",
+                                "concreteType": "ImageV2IdentityInfo",
                                 "kind": "LinkedField",
-                                "name": "image",
+                                "name": "identity",
                                 "plural": false,
                                 "selections": [
                                   {
                                     "alias": null,
                                     "args": null,
                                     "kind": "ScalarField",
-                                    "name": "base_image_name",
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "version",
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "architecture",
-                                    "storageKey": null
-                                  },
-                                  (v6/*: any*/),
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "concreteType": "KVPair",
-                                    "kind": "LinkedField",
-                                    "name": "tags",
-                                    "plural": true,
-                                    "selections": (v20/*: any*/),
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "concreteType": "KVPair",
-                                    "kind": "LinkedField",
-                                    "name": "labels",
-                                    "plural": true,
-                                    "selections": (v20/*: any*/),
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
-                                    "name": "registry",
+                                    "name": "canonicalName",
                                     "storageKey": null
                                   },
                                   {
@@ -603,40 +498,45 @@ return {
                                     "name": "namespace",
                                     "storageKey": null
                                   },
-                                  (v19/*: any*/),
-                                  (v5/*: any*/)
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "architecture",
+                                    "storageKey": null
+                                  }
                                 ],
                                 "storageKey": null
                               },
-                              (v16/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
-                                "kind": "ScalarField",
-                                "name": "cluster_hostname",
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "cluster_idx",
-                                "storageKey": null
-                              },
-                              (v17/*: any*/),
-                              (v18/*: any*/),
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "agent_id",
-                                "storageKey": null
-                              },
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "container_id",
+                                "concreteType": "ImageV2MetadataInfo",
+                                "kind": "LinkedField",
+                                "name": "metadata",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "ImageV2TagEntry",
+                                    "kind": "LinkedField",
+                                    "name": "tags",
+                                    "plural": true,
+                                    "selections": (v10/*: any*/),
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "ImageV2LabelEntry",
+                                    "kind": "LinkedField",
+                                    "name": "labels",
+                                    "plural": true,
+                                    "selections": (v10/*: any*/),
+                                    "storageKey": null
+                                  }
+                                ],
                                 "storageKey": null
                               }
                             ],
@@ -648,59 +548,48 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v21/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "project_id",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "UserNode",
+                    "concreteType": "UserV2",
                     "kind": "LinkedField",
-                    "name": "owner",
+                    "name": "user",
                     "plural": false,
                     "selections": [
+                      (v6/*: any*/),
                       {
                         "alias": null,
                         "args": null,
-                        "kind": "ScalarField",
-                        "name": "email",
+                        "concreteType": "UserV2BasicInfo",
+                        "kind": "LinkedField",
+                        "name": "basicInfo",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "email",
+                            "storageKey": null
+                          }
+                        ],
                         "storageKey": null
-                      },
-                      (v5/*: any*/)
+                      }
                     ],
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "resource_opts",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "vfolder_mounts",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "VirtualFolderConnection",
+                    "concreteType": "KernelV2Connection",
                     "kind": "LinkedField",
-                    "name": "vfolder_nodes",
+                    "name": "kernels",
                     "plural": false,
                     "selections": [
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "VirtualFolderEdge",
+                        "concreteType": "KernelV2Edge",
                         "kind": "LinkedField",
                         "name": "edges",
                         "plural": true,
@@ -708,92 +597,44 @@ return {
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "VirtualFolderNode",
+                            "concreteType": "KernelV2",
                             "kind": "LinkedField",
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v16/*: any*/),
                               (v6/*: any*/),
-                              (v5/*: any*/)
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "KernelV2ResourceInfo",
+                                "kind": "LinkedField",
+                                "name": "resource",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "agentId",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "containerId",
+                                    "storageKey": null
+                                  }
+                                ],
+                                "storageKey": null
+                              }
                             ],
                             "storageKey": null
                           }
                         ],
                         "storageKey": null
-                      },
-                      (v7/*: any*/)
+                      }
                     ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "scaling_group",
-                    "storageKey": null
-                  },
-                  (v21/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "startup_command",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ComputeSessionConnection",
-                    "kind": "LinkedField",
-                    "name": "dependees",
-                    "plural": false,
-                    "selections": (v22/*: any*/),
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ComputeSessionConnection",
-                    "kind": "LinkedField",
-                    "name": "dependents",
-                    "plural": false,
-                    "selections": (v22/*: any*/),
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "access_key",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "commit_status",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "priority",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "cluster_mode",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "cluster_size",
                     "storageKey": null
                   }
                 ],
@@ -801,29 +642,23 @@ return {
               }
             ],
             "storageKey": null
-          },
-          (v7/*: any*/)
+          }
         ],
         "storageKey": null
-      },
-      (v11/*: any*/),
-      (v12/*: any*/),
-      (v13/*: any*/),
-      (v14/*: any*/),
-      (v15/*: any*/)
+      }
     ]
   },
   "params": {
-    "cacheID": "b3b5faa20af0e10a6e9f82769480a697",
+    "cacheID": "efb7f7b120324c6910be8f85cd60bd58",
     "id": null,
     "metadata": {},
     "name": "AdminComputeSessionListPageQuery",
     "operationKind": "query",
-    "text": "query AdminComputeSessionListPageQuery(\n  $first: Int = 20\n  $offset: Int = 0\n  $filter: String\n  $order: String\n) {\n  computeSessionNodeResult: compute_session_nodes(first: $first, offset: $offset, filter: $filter, order: $order) {\n    edges {\n      node {\n        id\n        name\n        ...SessionNodesFragment\n        ...TerminateSessionModalFragment\n      }\n    }\n    count\n  }\n  all: compute_session_nodes(first: 0, offset: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\"\") {\n    count\n  }\n  interactive: compute_session_nodes(first: 0, offset: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"interactive\\\"\") {\n    count\n  }\n  inference: compute_session_nodes(first: 0, offset: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"inference\\\"\") {\n    count\n  }\n  batch: compute_session_nodes(first: 0, offset: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"batch\\\"\") {\n    count\n  }\n  system: compute_session_nodes(first: 0, offset: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"system\\\"\") {\n    count\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAISessionAgentIdsFragment on ComputeSessionNode {\n  agent_ids\n}\n\nfragment BAISessionClusterModeFragment on ComputeSessionNode {\n  cluster_mode\n  cluster_size\n}\n\nfragment BAISessionTypeTagFragment on ComputeSessionNode {\n  type\n}\n\nfragment ConnectedKernelListFragment on KernelNode {\n  id\n  row_id\n  cluster_hostname\n  cluster_idx\n  cluster_role\n  status\n  status_info\n  agent_id\n  container_id\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment EditableSessionNameFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  priority\n  user_id\n  status\n  project_id\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment ImageNodeSimpleTagFragment on ImageNode {\n  base_image_name\n  version\n  architecture\n  name\n  tags {\n    key\n    value\n  }\n  labels {\n    key\n    value\n  }\n  registry\n  namespace\n  tag\n}\n\nfragment MountedVFolderLinksFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        ...FolderLink_vfolderNode\n        id\n      }\n    }\n  }\n  ...MountedVFolderLinksLegacyLazyFolderLinkFragment\n}\n\nfragment MountedVFolderLinksLegacyLazyFolderLinkFragment on ComputeSessionNode {\n  row_id\n  vfolder_mounts\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionDetailContentFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  project_id\n  user_id\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n  resource_opts\n  status\n  status_data\n  vfolder_mounts\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        ...FolderLink_vfolderNode\n        id\n      }\n    }\n    count\n  }\n  created_at\n  terminated_at\n  scaling_group\n  agent_ids\n  requested_slots\n  occupied_slots\n  tag\n  idle_checks @since(version: \"24.12.0\")\n  type\n  startup_command\n  kernel_nodes {\n    edges {\n      node {\n        image {\n          ...ImageNodeSimpleTagFragment\n          id\n        }\n        ...ConnectedKernelListFragment\n        id\n      }\n    }\n  }\n  dependees {\n    edges {\n      node {\n        id\n        row_id\n        name\n        status\n      }\n    }\n    count\n  }\n  dependents {\n    edges {\n      node {\n        id\n        row_id\n        name\n        status\n      }\n    }\n    count\n  }\n  ...SessionStatusTagFragment\n  ...SessionActionButtonsFragment\n  ...BAISessionTypeTagFragment\n  ...EditableSessionNameFragment\n  ...SessionReservationFragment\n  ...ContainerLogModalFragment\n  ...SessionUsageMonitorFragment\n  ...ContainerCommitModalFragment\n  ...SessionIdleChecksNodeFragment\n  ...SessionStatusDetailModalFragment\n  ...AppLauncherModalFragment\n  ...MountedVFolderLinksFragment\n  ...BAISessionAgentIdsFragment\n  ...BAISessionClusterModeFragment\n}\n\nfragment SessionDetailDrawerFragment on ComputeSessionNode {\n  id\n  project_id\n  ...SessionDetailContentFragment\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionNodesFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  type\n  service_ports\n  user_id\n  agent_ids\n  ...SessionStatusTagFragment\n  ...SessionReservationFragment\n  ...SessionSlotCellFragment\n  ...SessionReclamationStatusCellFragment\n  ...SessionUsageMonitorFragment\n  ...SessionDetailDrawerFragment\n  ...BAISessionAgentIdsFragment\n  ...BAISessionTypeTagFragment\n  ...BAISessionClusterModeFragment\n  ...AppLauncherModalFragment\n  ...TerminateSessionModalFragment\n  kernel_nodes {\n    edges {\n      node {\n        image {\n          ...ImageNodeSimpleTagFragment\n          id\n        }\n        id\n      }\n    }\n  }\n  created_at\n  scaling_group\n  project_id\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n  dependees {\n    edges {\n      node {\n        row_id\n        name\n        id\n      }\n    }\n    count\n  }\n  dependents {\n    edges {\n      node {\n        row_id\n        name\n        id\n      }\n    }\n    count\n  }\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionSlotCellFragment on ComputeSessionNode {\n  id\n  status\n  occupied_slots\n  requested_slots\n  tag\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusTagFragment\n}\n\nfragment SessionStatusTagFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n}\n\nfragment SessionUsageMonitorFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query AdminComputeSessionListPageQuery(\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminSessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    namespace\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTagV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n  }\n  resourceAllocation {\n    requested {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n    used {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n    allocated {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTagV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalV2Fragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "20511d2ccabe11df1c413275a52a3443";
+(node as any).hash = "62496f7a8e74db3a1ca6ec77701f39fb";
 
 export default node;

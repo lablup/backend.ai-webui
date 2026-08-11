@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6aa345b193b1c906d692570c6331f904>>
+ * @generated SignedSource<<ca63985683ffc04fcade7d6011134442>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,21 +37,27 @@ export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
     readonly id: string;
   } | null | undefined;
   readonly resource: {
-    readonly allocation: {
-      readonly requested: {
-        readonly entries: ReadonlyArray<{
-          readonly quantity: any;
-          readonly resourceType: string;
-        }>;
-      };
-      readonly used: {
-        readonly entries: ReadonlyArray<{
-          readonly quantity: any;
-          readonly resourceType: string;
-        }>;
-      } | null | undefined;
-    };
     readonly resourceGroupName: string | null | undefined;
+  };
+  readonly resourceAllocation: {
+    readonly allocated: {
+      readonly entries: ReadonlyArray<{
+        readonly quantity: any;
+        readonly resourceType: string;
+      }>;
+    } | null | undefined;
+    readonly requested: {
+      readonly entries: ReadonlyArray<{
+        readonly quantity: any;
+        readonly resourceType: string;
+      }>;
+    };
+    readonly used: {
+      readonly entries: ReadonlyArray<{
+        readonly quantity: any;
+        readonly resourceType: string;
+      }>;
+    } | null | undefined;
   };
   readonly user: {
     readonly basicInfo: {
@@ -213,36 +219,46 @@ return {
           "kind": "ScalarField",
           "name": "resourceGroupName",
           "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ResourceAllocation",
+      "kind": "LinkedField",
+      "name": "resourceAllocation",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlot",
+          "kind": "LinkedField",
+          "name": "requested",
+          "plural": false,
+          "selections": (v2/*: any*/),
+          "storageKey": null
         },
         {
           "alias": null,
           "args": null,
-          "concreteType": "ResourceAllocation",
+          "concreteType": "ResourceSlot",
           "kind": "LinkedField",
-          "name": "allocation",
+          "name": "used",
           "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ResourceSlot",
-              "kind": "LinkedField",
-              "name": "requested",
-              "plural": false,
-              "selections": (v2/*: any*/),
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ResourceSlot",
-              "kind": "LinkedField",
-              "name": "used",
-              "plural": false,
-              "selections": (v2/*: any*/),
-              "storageKey": null
-            }
-          ],
+          "selections": (v2/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ResourceSlot",
+          "kind": "LinkedField",
+          "name": "allocated",
+          "plural": false,
+          "selections": (v2/*: any*/),
           "storageKey": null
         }
       ],
@@ -323,6 +339,6 @@ return {
 };
 })();
 
-(node as any).hash = "8a95f29a56c4f590b7cf7269949d9396";
+(node as any).hash = "9d80d3cc46b00b5b4f650dd68e67a3b6";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7bf0f76957c2a150ffeeced598b5c73a>>
+ * @generated SignedSource<<5750fb44bc625861395df942078fb609>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type TerminateSessionModalForProjectAdminFragment$data = ReadonlyArray<{
+export type TerminateSessionModalV2Fragment$data = ReadonlyArray<{
   readonly id: string;
   readonly kernels: {
     readonly edges: ReadonlyArray<{
@@ -26,11 +26,11 @@ export type TerminateSessionModalForProjectAdminFragment$data = ReadonlyArray<{
   readonly metadata: {
     readonly name: string;
   };
-  readonly " $fragmentType": "TerminateSessionModalForProjectAdminFragment";
+  readonly " $fragmentType": "TerminateSessionModalV2Fragment";
 }>;
-export type TerminateSessionModalForProjectAdminFragment$key = ReadonlyArray<{
-  readonly " $data"?: TerminateSessionModalForProjectAdminFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"TerminateSessionModalForProjectAdminFragment">;
+export type TerminateSessionModalV2Fragment$key = ReadonlyArray<{
+  readonly " $data"?: TerminateSessionModalV2Fragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"TerminateSessionModalV2Fragment">;
 }>;
 
 const node: ReaderFragment = (function(){
@@ -47,7 +47,7 @@ return {
   "metadata": {
     "plural": true
   },
-  "name": "TerminateSessionModalForProjectAdminFragment",
+  "name": "TerminateSessionModalV2Fragment",
   "selections": [
     (v0/*: any*/),
     {
@@ -133,6 +133,6 @@ return {
 };
 })();
 
-(node as any).hash = "7f806d407dac1670a060b0f1979cba15";
+(node as any).hash = "f74f81e34384b45e3c3bb26b4843e680";
 
 export default node;

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <TerminateSessionModalForProjectAdmin> (to-astryx
+ Co-located styles for <TerminateSessionModalV2> (to-astryx
  ticket 33). Replaces the antd-style `createStyles` block; imported by the
  component itself (P17). Plain `ul` chrome — nothing targets `.ant-*` (P6).
 

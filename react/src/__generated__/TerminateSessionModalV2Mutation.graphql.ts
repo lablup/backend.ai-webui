@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bc1c2a7db82d47e4f5977b1c56768d7e>>
+ * @generated SignedSource<<a047bb04b9e3849fcac03e1fdd03446e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,11 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type TerminateSessionModalForProjectAdminMutation$variables = {
+export type TerminateSessionModalV2Mutation$variables = {
   forced: boolean;
   sessionIds: ReadonlyArray<string>;
 };
-export type TerminateSessionModalForProjectAdminMutation$data = {
+export type TerminateSessionModalV2Mutation$data = {
   readonly terminateSessionsV2: {
     readonly cancelled: ReadonlyArray<string>;
     readonly forceTerminated: ReadonlyArray<string>;
@@ -21,9 +21,9 @@ export type TerminateSessionModalForProjectAdminMutation$data = {
     readonly terminating: ReadonlyArray<string>;
   } | null | undefined;
 };
-export type TerminateSessionModalForProjectAdminMutation = {
-  response: TerminateSessionModalForProjectAdminMutation$data;
-  variables: TerminateSessionModalForProjectAdminMutation$variables;
+export type TerminateSessionModalV2Mutation = {
+  response: TerminateSessionModalV2Mutation$data;
+  variables: TerminateSessionModalV2Mutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -97,7 +97,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "TerminateSessionModalForProjectAdminMutation",
+    "name": "TerminateSessionModalV2Mutation",
     "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -109,20 +109,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "TerminateSessionModalForProjectAdminMutation",
+    "name": "TerminateSessionModalV2Mutation",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "be4736b37ff54351dd17b8f5d312c2bd",
+    "cacheID": "53fbd34327b225329fb49f15f9980a01",
     "id": null,
     "metadata": {},
-    "name": "TerminateSessionModalForProjectAdminMutation",
+    "name": "TerminateSessionModalV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation TerminateSessionModalForProjectAdminMutation(\n  $sessionIds: [ID!]!\n  $forced: Boolean!\n) {\n  terminateSessionsV2(sessionIds: $sessionIds, forced: $forced) {\n    cancelled\n    terminating\n    forceTerminated\n    skipped\n  }\n}\n"
+    "text": "mutation TerminateSessionModalV2Mutation(\n  $sessionIds: [ID!]!\n  $forced: Boolean!\n) {\n  terminateSessionsV2(sessionIds: $sessionIds, forced: $forced) {\n    cancelled\n    terminating\n    forceTerminated\n    skipped\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8c1ab011f362b60cae0d0e3b7c59bf7e";
+(node as any).hash = "944b2585ad829431ca3605e9176ca9c7";
 
 export default node;
