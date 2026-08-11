@@ -31,7 +31,9 @@ repeated here. Depth lives in the on-demand skills listed at the bottom.
   `BAICard`, `BAIText`, `BAITableAstryx`, … They own this project's defaults and wrap the
   Astryx internals.
 - When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. Discover
-  before writing: `pnpm exec astryx search "<thing>"`, `pnpm exec astryx component <Name>`.
+  before writing: `astryx search "<thing>"`, `astryx component <Name>`. The CLI lives in
+  the `react` workspace, so run it as `pnpm exec astryx …` from `react/` or
+  `pnpm run astryx …` from the repository root — `pnpm exec` finds no binary at the root.
   See the `ASTRYX` block in `AGENTS.md` / `react/AGENTS.md`.
 - **antd is not a dependency.** `import … from 'antd'` does not resolve and fails `tsc`;
   the workspace is exact-pinned so it cannot re-enter transitively. Never add one.
