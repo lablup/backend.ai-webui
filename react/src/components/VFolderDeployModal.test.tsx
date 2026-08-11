@@ -7,7 +7,6 @@ import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import { loadQuery, RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -124,7 +123,7 @@ const renderModal = () => {
   );
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <App>
+      <>
         <Suspense fallback={null}>
           <VFolderDeployModal
             open
@@ -134,7 +133,7 @@ const renderModal = () => {
             onClose={onClose}
           />
         </Suspense>
-      </App>
+      </>
     </RelayEnvironmentProvider>,
   );
   return { environment, onClose };

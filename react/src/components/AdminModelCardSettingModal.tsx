@@ -13,7 +13,6 @@ import BAIFormItem from './BAIFormItem';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import {
   AstryxFormSelector,
   AstryxFormTextArea,

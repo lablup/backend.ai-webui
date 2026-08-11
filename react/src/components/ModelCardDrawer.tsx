@@ -27,7 +27,6 @@ import {
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   toLocalId,
-  useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

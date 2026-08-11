@@ -6,7 +6,6 @@ import DeploymentSettingModal from './DeploymentSettingModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
@@ -87,13 +86,13 @@ const renderModal = (
   const environment: RelayMockEnvironment = createMockEnvironment();
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <App>
+      <>
         <DeploymentSettingModal
           open
           project={project}
           onRequestClose={onRequestClose}
         />
-      </App>
+      </>
     </RelayEnvironmentProvider>,
   );
   return { environment, onRequestClose };

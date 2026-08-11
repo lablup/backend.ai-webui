@@ -12,6 +12,7 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import { ProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
