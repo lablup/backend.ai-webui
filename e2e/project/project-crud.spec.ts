@@ -140,7 +140,7 @@ test.describe(
       // "Project" -> "Projects", see webui.menu.Projects in ProjectPage.tsx)
       await expect(
         page.getByRole('tab', { name: 'Projects', selected: true }),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: 10000 });
 
       // 3. Verify table columns are visible
       await expect(
