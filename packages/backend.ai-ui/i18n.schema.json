@@ -16,6 +16,9 @@
         },
         "^[a-z].*$": {
           "$ref": "#/definitions/recursiveSchema"
+        },
+        "^@astryx\\..+$": {
+          "type": "string"
         }
       }
     }
