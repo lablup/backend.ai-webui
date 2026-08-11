@@ -12,6 +12,7 @@ import VFolderTable, {
   vFolderAliasNameRegExp,
 } from './VFolderTable';
 import { useEventNotStable } from 'backend.ai-ui';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,6 +40,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
 }) => {
   const form = Form.useFormInstance();
   const { t } = useTranslation();
+  const currentProject = useCurrentProjectValue();
 
   const { message } = App.useApp();
   return (
@@ -108,7 +110,7 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         trigger="onChangeSelectedRowKeys"
       >
         <VFolderTable
-          key={tableProps?.ownerEmail}
+          key={`${tableProps?.ownerEmail}-${currentProject.id}`}
           rowKey={rowKey}
           showAliasInput
           aliasMap={form.getFieldValue('mount_id_map')}

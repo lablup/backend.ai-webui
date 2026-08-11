@@ -303,7 +303,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       onChangeAutoMountedFolders(autoMountedFolderNames);
     // Omit `onChangeAutoMountedFolders` from deps so a parent re-render doesn't retrigger this effect
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoMountedFolderNames]);
+  }, [autoMountedFolderNames, currentProject.id]);
 
   useEffect(() => {
     // Only reset selectedRowKeys when currentProject changes if there are no controlled selectedRowKeys
