@@ -5,7 +5,8 @@ applyTo: "react/**/*.tsx,react/**/*.ts"
 # React Guidelines for Backend.AI WebUI
 
 Project-specific deltas only. Generic React 19 / TypeScript practice is assumed and not
-repeated here. Depth lives in the on-demand skills listed at the bottom.
+repeated here. For anything deeper, read the source: existing sibling components are the
+canonical reference, and each BAI wrapper's file header documents its deliberate quirks.
 
 ## React Compiler — `'use memo'`
 
@@ -95,7 +96,13 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
 - Export the "one row" type so consumers don't re-derive it:
   `export type UserNodeInList = NonNullable<BAIUserNodesFragment$data[number]>;`
 - Pagination argument modes are mutually exclusive — see `.claude/rules/graphql-pagination.md`.
-- Depth: `relay-patterns`, `react-relay-table`, `create-relay-nodes-component` skills.
+- `@since` / `@deprecatedSince` / `@sinceMultiple` / `@skipOnClient` in `graphql` tags are
+  **client-side** directives defined in `data/client-directives.graphql` and stripped at
+  runtime by `react/src/helper/graphql-transformer.ts` — they never reach the server. Do not
+  remove them as "unknown directives".
+- Auto-refresh must not flash Suspense fallbacks: pass query variables **and** `fetchKey`
+  through `useDeferredValue` so a background refetch re-renders with stale data instead of
+  unmounting to the fallback (FR-941).
 
 ## Naming
 
@@ -173,12 +180,10 @@ are Vitest; E2E is Playwright under `e2e/` (see the `playwright-test-*` agents i
 
 ## On-demand skills
 
-`react-form` (Form/`Form.Item`, validators) · `react-modal-drawer` · `react-layout`
-(`BAIFlex`, spacing, breakpoints) · `react-relay-table` · `react-suspense-fetching`
-(fetch policies, `fetchKey`) · `react-url-state` (`nuqs`) · `react-async-actions` ·
-`tab-url-state` · `relay-patterns` · `create-relay-nodes-component` ·
-`relay-infinite-scroll-select` · `astryx-fix` (visual/behavioural fixes on Astryx UI) ·
-`fw:i18n-patterns` · `fw:storybook-patterns`.
+`astryx-fix` (visual/behavioural fixes on Astryx UI) · `fw:i18n-patterns` ·
+`fw:storybook-patterns`. For component-authoring patterns, follow existing code:
+sibling `*Nodes` tables, `*SelectAstryx` selects, and `*Modal` components are the
+templates — copy the nearest one and adapt.
 
 ## Review checklist (project-specific)
 
