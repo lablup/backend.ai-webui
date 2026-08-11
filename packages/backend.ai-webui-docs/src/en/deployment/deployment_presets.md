@@ -40,11 +40,6 @@ Only administrators can create, edit, or delete deployment presets. Administrato
 
 ![](../images/admin_deployment_preset_list.png)
 
-The Admin Deployments page hosts several tabs — **Deployments**, **Model Store Management**, **Prometheus Preset**, and **Deployment Presets**. Each tab's filter, sort order, and page number are saved in the URL, which gives you two benefits:
-
-- Switching to another tab and back restores the Deployment Presets tab exactly as you left it.
-- You can bookmark or share the URL of a filtered preset list, and the recipient lands on the same filter, sort, and page.
-
 The list view shows each preset with key fields. From this list, administrators can:
 
 - Filter presets by name, runtime, or tag.
@@ -175,10 +170,6 @@ End users apply a deployment preset through the **VFolder Deploy** modal, which 
 
    - **Auto-deploy**: Create the deployment immediately using the preset's values as-is. This is the fastest path; the deployment is created in one click with no further input required.
    - **Manual deploy** (*Create New Deployment with Preset*): Open the deployment launcher with all fields pre-populated from the preset, so you can review and adjust before confirming.
-
-:::note
-The active preset, tab key, and other navigation state are preserved in the URL via `URLSearchParams`. You can share a link to a specific preset's detail view, and the recipient lands on the same screen.
-:::
 
 ## Pre-populated launcher fields
 
