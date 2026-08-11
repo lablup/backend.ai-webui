@@ -2,8 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { PROJECT_AGNOSTIC_MENU_KEYS } from '../helper/projectAgnosticRoutes';
+import {
+  PROJECT_AGNOSTIC_MENU_KEYS,
+  PROJECT_AGNOSTIC_PATHNAME_REGEX,
+} from '../helper/projectAgnosticRoutes';
 import { useCurrentMenuKey } from './useRouteScope';
+import { useLocation } from 'react-router-dom';
 
 export {
   PROJECT_AGNOSTIC_MENU_KEYS,
@@ -39,7 +43,15 @@ export type { ProjectAgnosticMenuKey } from '../helper/projectAgnosticRoutes';
 export const useIsProjectAgnosticPage = (): boolean => {
   'use memo';
   const menuKey = useCurrentMenuKey();
-  return (PROJECT_AGNOSTIC_MENU_KEYS as readonly string[]).includes(
-    menuKey ?? '',
-  );
+  const { pathname } = useLocation();
+  if ((PROJECT_AGNOSTIC_MENU_KEYS as readonly string[]).includes(menuKey ?? '')) {
+    return true;
+  }
+  // `useCurrentMenuKey`'s own fallback derives a FEATURE key from the first
+  // path segment, which does not cover every legacy alias: `/admin-serving`
+  // yields `admin-serving` (not a menu key at all) and the exact `/project`
+  // shim yields no feature key. `PROJECT_AGNOSTIC_PATHNAME_REGEX` is derived
+  // from the same route table and encodes both — including the exact-vs-prefix
+  // distinction that keeps `/project/:projectName/...` OUT.
+  return PROJECT_AGNOSTIC_PATHNAME_REGEX.test(pathname);
 };
