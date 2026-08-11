@@ -87,6 +87,29 @@ describe("ICU argument extraction", () => {
   it("throws on an unbalanced brace", () => {
     expect(() => parseIcuArguments("Clear {label")).toThrow();
   });
+
+  it("throws when a plural/select argument is never closed", () => {
+    // Running out of input ended the branch loop silently, so the argument was
+    // recorded as valid and IntlMessageFormat threw at runtime instead.
+    expect(() => parseIcuArguments("{n, plural, one {a} other {b}")).toThrow(
+      /unterminated/,
+    );
+    expect(() =>
+      parseIcuArguments("{g, select, male {a} other {b}"),
+    ).toThrow(/unterminated/);
+  });
+
+  it("still parses well-formed plural, select and nested arguments", () => {
+    expect(() =>
+      parseIcuArguments("{n, plural, one {a} other {b}}"),
+    ).not.toThrow();
+    expect(() =>
+      parseIcuArguments("{g, select, male {a} other {b}}"),
+    ).not.toThrow();
+    expect(() =>
+      parseIcuArguments("{a, plural, one {{b, number}} other {x}}"),
+    ).not.toThrow();
+  });
 });
 
 describe("compareIcu", () => {

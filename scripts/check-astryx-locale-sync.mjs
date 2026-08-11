@@ -181,10 +181,12 @@ export function parseIcuArguments(message) {
 
     // plural / selectordinal / select — parse the `selector {body}` branches.
     const selectors = [];
+    let closed = false;
     while (i < len) {
       skipSpace();
       if (message[i] === "}") {
         i += 1;
+        closed = true;
         break;
       }
       if (message[i] === ",") {
@@ -206,6 +208,11 @@ export function parseIcuArguments(message) {
       parseBody(true);
       i += 1; // consume the branch's closing brace
       selectors.push(selector);
+    }
+    // Running out of input is not a terminator: without this the argument is
+    // recorded as valid and IntlMessageFormat throws at runtime instead.
+    if (!closed) {
+      throw new IcuParseError(`unterminated '{${name}, ${type}'`);
     }
     if (selectors.length === 0) {
       throw new IcuParseError(`'${name}' has no ${type} branches`);
