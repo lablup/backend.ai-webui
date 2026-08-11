@@ -1,0 +1,64 @@
+/**
+@license
+Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+Co-located styles for <AnnouncementAlert> (to-astryx ticket 08).
+
+The announcement Banner uses `status="info"`, whose Astryx theme paints the
+header background in `--color-background-blue`. The markdown content (tables,
+code, blockquotes) sits inside the Banner's `description` slot, which is part
+of the header area — so all of it renders on the blue surface with no visual
+separation between content elements.
+
+Issue #8662 asks for the banner background to match the card surface below it
+so the announcement's inner content reads with normal contrast; only the status
+icon carries the info colour.
+
+`@layer components` so these rules outrank the `astryx-theme` layer.
+*/
+@layer components {
+  /* Override the info Banner background to a neutral card surface so the
+     announcement content sits on a readable background. The status icon keeps
+     its accent/info colour via the Banner's own icon slot. */
+  .bai-announcement-alert .astryx-banner.info {
+    background-color: var(--color-background-card);
+  }
+
+  /* Markdown content inside the announcement — tables, code, blockquotes —
+     need distinct visual separation on the neutral card surface. */
+  .bai-announcement-alert table {
+    margin-block: var(--spacing-3);
+    border-collapse: collapse;
+  }
+
+  .bai-announcement-alert th,
+  .bai-announcement-alert td {
+    padding: var(--spacing-1) var(--spacing-2);
+    border: var(--border-width) solid var(--color-border);
+  }
+
+  .bai-announcement-alert pre {
+    background-color: var(--color-background-muted);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-2);
+    overflow-x: auto;
+  }
+
+  .bai-announcement-alert code {
+    background-color: var(--color-background-muted);
+    border-radius: var(--radius-xs);
+    padding: 0 var(--spacing-1);
+  }
+
+  .bai-announcement-alert pre code {
+    background: none;
+    padding: 0;
+  }
+
+  .bai-announcement-alert blockquote {
+    margin-inline: 0;
+    padding-inline: var(--spacing-3);
+    border-inline-start: 2px solid var(--color-accent);
+    color: var(--color-text-secondary);
+  }
+}

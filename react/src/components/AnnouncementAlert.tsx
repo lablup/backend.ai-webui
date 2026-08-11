@@ -5,6 +5,7 @@
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
 import AnnouncementEditModal from './AnnouncementEditModal';
+import './AnnouncementAlert.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { BAIUnmountAfterClose, useToggle } from 'backend.ai-ui';
@@ -40,7 +41,8 @@ const AnnouncementAlert: React.FC<Props> = ({ closable }) => {
 
   return !_.isEmpty(announcement.message) ? (
     <>
-      <Banner
+      <div className="bai-announcement-alert">
+        <Banner
         status="info"
         isDismissable={closable}
         // QA-FINDINGS Q-25: the markdown body belongs in `description`, not
@@ -84,7 +86,8 @@ const AnnouncementAlert: React.FC<Props> = ({ closable }) => {
             />
           ) : undefined
         }
-      />
+        />
+      </div>
       {isSuperAdmin && (
         <BAIUnmountAfterClose>
           <AnnouncementEditModal
