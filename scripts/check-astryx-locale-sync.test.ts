@@ -122,7 +122,39 @@ describe("compareIcu", () => {
   it("rejects demoting a rendered number to a plural branch", () => {
     const problems = compareIcu(EN, "{count, plural, other {results}}");
     expect(problems).toHaveLength(1);
-    expect(problems[0]).toContain("no longer renders its value");
+    expect(problems[0]).toContain("changes how its value renders");
+  });
+
+  it("rejects swapping one value formatter for another", () => {
+    // {count, number} -> {count, date} parses and keeps the placeholder, but
+    // renders a completely different value.
+    const problems = compareIcu(
+      "Page {count, number}",
+      "Seite {count, date} {count, plural, one {r} other {rs}}",
+    );
+    expect(problems).toEqual([
+      "'count' changes how its value renders: {number} -> {date}",
+    ]);
+  });
+
+  it("accepts a select whose branch names are preserved", () => {
+    // `select` branches are arbitrary identifiers, not CLDR plural categories,
+    // so they must not be measured against the plural vocabulary.
+    expect(
+      compareIcu(
+        "{g, select, male {he} female {she} other {they}}",
+        "{g, select, male {er} female {sie} other {sie}}",
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects a select that invents or drops a branch", () => {
+    const problems = compareIcu(
+      "{g, select, male {he} other {they}}",
+      "{g, select, admin {er} other {sie}}",
+    );
+    expect(problems).toContain("'g' invents select branch(es): admin");
+    expect(problems).toContain("'g' drops select branch(es): male");
   });
 
   it("rejects a plural with no 'other' branch", () => {

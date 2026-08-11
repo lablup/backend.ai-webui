@@ -69,6 +69,8 @@ export const ASTRYX_SUBTREE = "astryx";
 export const EXEMPT_LOCALES = new Set(["en"]);
 
 const PLURAL_TYPES = new Set(["plural", "selectordinal", "select"]);
+/** Only these carry CLDR branch names; `select` branches are arbitrary. */
+const PLURAL_BRANCH_TYPES = new Set(["plural", "selectordinal"]);
 const PLURAL_SELECTOR = /^(zero|one|two|few|many|other|=\d+)$/;
 
 /* ------------------------------------------------------------------ *
@@ -228,7 +230,8 @@ const setsEqual = (a, b) =>
  * branch text, so demoting `{n, number}` to a plural branch loses the number.
  */
 const VALUE_TYPES = new Set(["simple", "number", "date", "time"]);
-const hasValueType = (types) => [...types].some((t) => VALUE_TYPES.has(t));
+const valueTypesOf = (types) =>
+  new Set([...types].filter((t) => VALUE_TYPES.has(t)));
 
 /**
  * Compare one translated message against the English source.
@@ -272,22 +275,45 @@ export function compareIcu(englishMessage, translatedMessage) {
   for (const [name, sourceArg] of source) {
     const targetArg = target.get(name);
     if (!targetArg) continue;
-    if (hasValueType(sourceArg.types) && !hasValueType(targetArg.types)) {
+    // The formatter is structure, not translation: number/date/time/simple each
+    // render a different value, so the target must keep the source's set exactly.
+    const sourceValueTypes = valueTypesOf(sourceArg.types);
+    const targetValueTypes = valueTypesOf(targetArg.types);
+    if (!setsEqual(sourceValueTypes, targetValueTypes)) {
       problems.push(
-        `'${name}' no longer renders its value: {${[...sourceArg.types].join("|")}} -> ` +
-          `{${[...targetArg.types].join("|")}}`,
+        `'${name}' changes how its value renders: {${[...sourceValueTypes].join("|") || "-"}} -> ` +
+          `{${[...targetValueTypes].join("|") || "-"}}`,
       );
     }
     if (targetArg.selectors.size > 0) {
       if (!targetArg.selectors.has("other")) {
         problems.push(`'${name}' has no 'other' branch (ICU requires one)`);
       }
-      for (const selector of targetArg.selectors) {
-        if (!PLURAL_SELECTOR.test(selector)) {
-          problems.push(
-            `'${name}' has an invalid plural selector '${selector}'`,
-          );
+      if ([...targetArg.types].some((t) => PLURAL_BRANCH_TYPES.has(t))) {
+        for (const selector of targetArg.selectors) {
+          if (!PLURAL_SELECTOR.test(selector)) {
+            problems.push(
+              `'${name}' has an invalid plural selector '${selector}'`,
+            );
+          }
         }
+      } else {
+        // `select` branch names are arbitrary identifiers chosen upstream, so
+        // they are matched against the source rather than a fixed vocabulary.
+        const invented = [...targetArg.selectors].filter(
+          (s) => !sourceArg.selectors.has(s),
+        );
+        const dropped = [...sourceArg.selectors].filter(
+          (s) => !targetArg.selectors.has(s),
+        );
+        if (invented.length)
+          problems.push(
+            `'${name}' invents select branch(es): ${invented.join(", ")}`,
+          );
+        if (dropped.length)
+          problems.push(
+            `'${name}' drops select branch(es): ${dropped.join(", ")}`,
+          );
       }
     }
   }
