@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-07-29
+> **Last Updated:** 2026-08-11
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -49,8 +49,8 @@
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`     |    16    |   12    | 🔶 75%  |
-| Super-Admin Scope        | `/admin/session\|deployments\|data`    |    4     |    4    | ✅ 100% |
-| **Total**                |                                        | **474**  | **325** | **69%** |
+| Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
+| **Total**                |                                        | **475**  | **326** | **69%** |
 
 ---
 
@@ -1261,11 +1261,13 @@ To efficiently build new E2E tests, these POMs should be created:
 
 ---
 
-### 30. Project-Agnostic Scope — header project context (the whole `/admin/*` surface)
+### 30. Project-Agnostic Scope — header project context (the project-agnostic `/admin/*` routes)
 
 **Test files:** [`e2e/admin-scope/admin-header-project-selector.spec.ts`](admin-scope/admin-header-project-selector.spec.ts), [`e2e/admin-scope/admin-data-folder-create.spec.ts`](admin-scope/admin-data-folder-create.spec.ts)
 
-FR-3414 / FR-3415 / ADR-0001: the project-agnostic routes operate above project scope — the header project selector is hidden there, folder creation asks for the target project inside the modal, and the Environments page selects its project in the page. The route list is derived from `react/src/helper/projectAgnosticRoutes.ts` (minus the feature-flag-gated `scheduler` / `rbac` / `reservoir`, which are not navigable on every test cluster), so a newly gated page is covered automatically.
+FR-3414 / FR-3415 / ADR-0001: the project-agnostic routes — every `/admin/*`
+route except `admin-dashboard`, which still depends on the ambient project and
+is deliberately out of scope — operate above project scope — the header project selector is hidden there, folder creation asks for the target project inside the modal, and the Environments page selects its project in the page. The route list is derived from `react/src/helper/projectAgnosticRoutes.ts` (minus the feature-flag-gated `scheduler` / `rbac` / `reservoir`, which are not navigable on every test cluster), so a newly gated page is covered automatically.
 
 | Feature                                                                  | Covered | Test                                                                               |
 | ------------------------------------------------------------------------ | :-----: | ---------------------------------------------------------------------------------- |
