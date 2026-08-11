@@ -168,10 +168,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         onChange={(key) => setActiveTabKey(key as TabKey)}
       >
         <Tab value="resources" label={t('agent.Resources')} />
-        {/* `AgentV2.sessions` is only available on manager 26.3.0+. */}
-        {baiClient.isManagerVersionCompatibleWith('26.3.0') ? (
-          <Tab value="sessions" label={t('webui.menu.Sessions')} />
-        ) : null}
+        <Tab value="sessions" label={t('webui.menu.Sessions')} />
       </TabList>
       {activeTabKey === 'resources' && (
         <BAIErrorBoundary>
