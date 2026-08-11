@@ -290,9 +290,11 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   // Astryx's `Selector` is `options`-driven only, so the element tree is
   // flattened into the same option model — the group's `label` becomes a
   // `{type: 'section'}` entry (Astryx's native grouping), each option's JSX
-  // body is kept for `renderOption`, and `filterValue` (the synthetic search
-  // key `ImageEnvironmentSelectFormItems` sets) is folded into the searchable
-  // label. Two call sites use this form; both nest options inside OptGroups.
+  // body is kept for `renderOption`, and the option's flattened text becomes
+  // its label. `filterValue` (the synthetic search key
+  // `ImageEnvironmentSelectFormItems` sets) is NOT folded in — see FR-3499 at
+  // the leaf branch below. Two call sites use this form; both nest options
+  // inside OptGroups.
   const childOptions: Array<BAISelectOption> = [];
   const childSections: Array<SelectorOptionType> = [];
   if (options === undefined && children !== undefined) {
@@ -326,22 +328,31 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
           });
           return;
         }
-        const searchable =
-          [
-            nodeToAccessibleLabel(childProps.children),
-            childProps.filterValue ?? '',
-          ]
-            .filter(Boolean)
-            .join(' ') || toOptionKey(childProps.value);
+        // FR-3499 — the option label is the DISPLAY text, never the search key.
+        // Astryx's `Selector` spends `SelectorOptionData.label` twice: the
+        // dropdown filters on it AND the closed trigger renders it
+        // (`selectedItem?.label`). There is no separate search field on the
+        // option model. Folding `filterValue` in therefore printed the
+        // synthetic search key onto the control itself — measured live on the
+        // Session Launcher and the deployment Add-Revision modal, the trigger
+        // read `PyTorch PyTorch` and
+        // `2.1.0 x86_64 2.1.0\tPython 3.10\tx86_64\tGPU\tCUDA12.1\tUbuntu 22.04`,
+        // tab separators and all. Search now filters on the text the user is
+        // reading, which is exactly what the `optionFilterProp` PILOT-DECISION
+        // above already specifies for the `options`-prop path; this makes the
+        // two option APIs agree instead of only one of them corrupting itself.
+        const displayLabel =
+          nodeToAccessibleLabel(childProps.children) ||
+          toOptionKey(childProps.value);
         into.push({
           value: childProps.value as BAISelectOption['value'],
           label: childProps.children,
           disabled: childProps.disabled,
-          title: searchable,
+          title: displayLabel,
         });
         out.push({
           value: toOptionKey(childProps.value),
-          label: searchable,
+          label: displayLabel,
           disabled: childProps.disabled,
         });
       });

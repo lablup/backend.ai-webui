@@ -460,16 +460,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
               });
             } else {
               // NOTE: when user set environment only then set the version to the first item
-              const firstInListImage: Image = imageGroups
-                .flatMap((group) => group.environmentGroups)
-                .filter((envGroup) => envGroup.environmentName === value)[0]
-                .images[0];
+              //
+              // FR-3499 — write the OPTION's own key back, not the image's
+              // bare namespace. Every option in this select is keyed by
+              // `environmentGroup.environmentName`, i.e. `registry/namespace`,
+              // and the rest of the component agrees: the version select finds
+              // `selectedEnvironmentGroup` by `environmentName`, and the
+              // auto-select effect stores `nextEnvironment.environmentName`.
+              // Storing the registry-less `namespace` produced a value no
+              // option matched, so Astryx `Selector` fell back to its
+              // placeholder — the environment trigger read "Select…" and the
+              // version select, keyed off the same field, emptied with it.
+              // Choosing a DIFFERENT environment masked this, because the
+              // resulting `version` change re-ran the effect and it rewrote the
+              // field correctly; choosing the environment that was already
+              // selected left the broken value in place, so on a cluster with a
+              // single environment no image could be selected at all.
+              const selectedEnvironmentGroup = _.find(
+                _.flatMap(imageGroups, (group) => group.environmentGroups),
+                (envGroup) => envGroup.environmentName === value,
+              );
+              const firstInListImage: Image | undefined =
+                selectedEnvironmentGroup?.images[0];
               form.setFieldsValue({
                 environments: {
-                  environment:
-                    (supportExtendedImageInfo
-                      ? firstInListImage?.namespace
-                      : firstInListImage?.name) || '',
+                  environment: selectedEnvironmentGroup?.environmentName ?? '',
                   version: getImageFullName(firstInListImage),
                   image: firstInListImage,
                 },
