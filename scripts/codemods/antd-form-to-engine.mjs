@@ -80,6 +80,15 @@ const MOVES = {
   'antd/es/form/context': new Set(['FormItemInputContext', 'NoStyleItemContext']),
 };
 
+/**
+ * Escape a literal string for embedding in a `RegExp()` source.
+ *
+ * The set is the full ECMAScript metacharacter set; `/` is deliberately NOT in
+ * it, because a forward slash is only special inside a `/…/` literal and this
+ * builds its pattern from a template string.
+ */
+const escapeRegExp = (literal) => literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
     if (entry === '__generated__' || entry === 'node_modules' || entry === 'form-engine')
@@ -131,8 +140,14 @@ for (const target of TARGETS) {
     const enginePath = enginePathFrom(abs, engineDirAbs);
 
     for (const [source, moveSet] of Object.entries(MOVES)) {
+      // Escape EVERY regex metacharacter, not just `/`. The previous
+      // `source.replace(/\//g, '\\/')` left `.` and `-` live, so an import
+      // specifier such as `backend.ai-ui` matched any character in those
+      // positions and could rewrite an unrelated import (CodeQL
+      // `js/incomplete-sanitization`). `/` needs no escaping inside a
+      // `RegExp()` string at all — only inside a `/…/` literal.
       const re = new RegExp(
-        `import\\s+(type\\s+)?\\{([^}]*)\\}\\s*from\\s*'${source.replace(/\//g, '\\/')}';?`,
+        `import\\s+(type\\s+)?\\{([^}]*)\\}\\s*from\\s*'${escapeRegExp(source)}';?`,
         'g',
       );
       next = next.replace(re, (full, typeKeyword, inner) => {

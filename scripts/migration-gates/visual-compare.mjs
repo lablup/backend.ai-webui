@@ -299,8 +299,37 @@ const fmtRatio = ({ checked, matched }) =>
     ? "n/a"
     : `${matched}/${checked} (${((matched / checked) * 100).toFixed(1)}%)`;
 
+/**
+ * Build the `--ignore` matcher.
+ *
+ * The flag IS meant to take a regex, so the fix for CodeQL's
+ * `js/regex-injection` here is not to stop compiling one — it is to stop
+ * compiling an unbounded one. A pattern arrives from this script's own CLI, so
+ * the realistic failure is a catastrophically backtracking pattern typed by
+ * hand (ReDoS against the operator's own terminal), not an attack. Two cheap
+ * bounds remove that: cap the source length, and reject nested quantifiers,
+ * which is the shape that backtracks exponentially.
+ */
+const compileIgnore = (pattern) => {
+  if (!pattern) return null;
+  if (pattern.length > 200) {
+    throw new Error(
+      `--ignore pattern is ${pattern.length} chars; cap is 200. ` +
+        'Narrow the pattern rather than widening the cap.',
+    );
+  }
+  // (a+)+ / (a*)* / (a+)* … — a quantified group whose body is itself quantified.
+  if (/\([^)]*[+*][^)]*\)\s*[+*]/.test(pattern)) {
+    throw new Error(
+      `--ignore pattern has a nested quantifier and can backtrack ` +
+        `exponentially: ${pattern}`,
+    );
+  }
+  return new RegExp(pattern);
+};
+
 function compareMode(before, after, { ignore, tolerance }) {
-  const ignoreRe = ignore ? new RegExp(ignore) : null;
+  const ignoreRe = compileIgnore(ignore);
   const filt = (list) =>
     ignoreRe ? list.filter((lm) => !ignoreRe.test(lm.key)) : list;
   const b = filt(before.landmarks);

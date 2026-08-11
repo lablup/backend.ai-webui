@@ -103,6 +103,55 @@ export function getValue(entity: any, path: InternalNamePath): any {
   return current;
 }
 
+/**
+ * Segments that must never reach a plain `obj[key] = v`.
+ *
+ * `clone.__proto__ = v` mutates the prototype CHAIN instead of storing a value,
+ * and `constructor` / `prototype` are the adjacent reachable slots. A form
+ * whose field is literally named one of these is pathological, but name paths
+ * flow in from `Form.List` indices and caller-built arrays, so the engine
+ * should not be the thing that trusts them (CodeQL `js/prototype-polluting-
+ * assignment`).
+ */
+const UNSAFE_SEGMENTS: ReadonlySet<string> = new Set([
+  '__proto__',
+  'constructor',
+  'prototype',
+]);
+
+/**
+ * Store `value` at `key` WITHOUT ever walking the prototype chain.
+ *
+ * For an ordinary key this is a plain assignment — the hot path is unchanged.
+ * For a dangerous one it defines an own, enumerable, writable data property,
+ * which is what the caller meant: the value is kept and readable through the
+ * same path, it simply stops being a prototype mutation. Nothing is silently
+ * dropped, so a field genuinely named `constructor` still round-trips.
+ */
+const safeAssign = (target: any, key: NamePathSegment, value: any): void => {
+  if (typeof key === 'string' && UNSAFE_SEGMENTS.has(key)) {
+    Object.defineProperty(target, key, {
+      value,
+      enumerable: true,
+      writable: true,
+      configurable: true,
+    });
+    return;
+  }
+  target[key] = value;
+};
+
+/** Read a segment without falling through to the prototype chain. */
+const safeRead = (source: any, key: NamePathSegment): any => {
+  if (source == null) return undefined;
+  if (typeof key === 'string' && UNSAFE_SEGMENTS.has(key)) {
+    return Object.prototype.hasOwnProperty.call(source, key)
+      ? (Object.getOwnPropertyDescriptor(source, key)?.value as unknown)
+      : undefined;
+  }
+  return source[key];
+};
+
 function internalSet(
   entity: any,
   paths: InternalNamePath,
@@ -126,9 +175,14 @@ function internalSet(
   // is what makes `preserve={false}` drop the key from `getFieldsValue()`
   // rather than leaving `{ field: undefined }`.
   if (removeIfUndefined && value === undefined && restPath.length === 1) {
-    delete clone[path][restPath[0]];
+    const child = safeRead(clone, path);
+    if (child != null) delete child[restPath[0]];
   } else {
-    clone[path] = internalSet(clone[path], restPath, value, removeIfUndefined);
+    safeAssign(
+      clone,
+      path,
+      internalSet(safeRead(clone, path), restPath, value, removeIfUndefined),
+    );
   }
   return clone;
 }
