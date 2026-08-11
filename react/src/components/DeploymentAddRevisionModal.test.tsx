@@ -7,7 +7,6 @@ import type { DeploymentAddRevisionModalTestQuery } from '../__generated__/Deplo
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -198,11 +197,11 @@ const renderModal = (metadata: DeploymentMetadataMock) => {
   );
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <App>
+      <>
         <Suspense fallback={null}>
           <TestRenderer />
         </Suspense>
-      </App>
+      </>
     </RelayEnvironmentProvider>,
   );
   return { environment };

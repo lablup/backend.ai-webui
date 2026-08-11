@@ -1535,9 +1535,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           flips to Custom first and applies once the form mounts (see
           `handleLoadCurrent`). */}
       {!deploymentProject ? (
-        <Alert
-          type="warning"
-          showIcon
+        <Banner
+          status="warning"
           style={{ marginBottom: token.marginMD }}
           title={t('deployment.CannotResolveDeploymentProject')}
         />

@@ -3,13 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import '../../../__test__/matchMedia.mock.js';
+import { Form } from '../../form-engine';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
 } from './ResourceAllocationFormItems';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
-import { Form } from 'antd';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -135,7 +135,9 @@ const PASSED_PROJECT = {
   name: 'passed-project-name',
 };
 
-const renderFormItems = ({ autoResolve = true }: { autoResolve?: boolean } = {}) => {
+const renderFormItems = ({
+  autoResolve = true,
+}: { autoResolve?: boolean } = {}) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   if (autoResolve) {
     environment.mock.queueOperationResolver((operation) =>
