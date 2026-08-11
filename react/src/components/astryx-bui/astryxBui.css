@@ -303,3 +303,26 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+/* Ticket 08 — MetadataList divider (issue #8664).
+   Astryx MetadataList renders <dt> / <dd> pairs in a CSS grid. The
+   `label={{ position: 'start' }}` layout puts the label in the first grid
+   column and the value in the second. Without a visual divider, the label
+   column floats next to the value column with no separation — indistinguishable
+   from a single block of text, especially in the 2-column multi-row layout
+   used in the agent detail drawer.
+
+   Add a border-between the label and value columns by giving the <dt> a right
+   border. The grid's `gap` ensures the border doesn't touch the text. The
+   `@layer components` outranks `@layer astryx-theme`.
+
+   Selector: the Astryx MetadataListComponent renders a `<dl>` grid, and inside
+   it `<dt>` elements are the label cells. The `[data-theme-props~="metadata-list"]`
+   attribute is set on the MetadataList root, so `.astryx-metadata-list dt` is a
+   stable selector unaffected by StyleX class names. */
+@layer components {
+  .astryx-metadata-list dl dt {
+    border-inline-end: var(--border-width) solid var(--color-border);
+    padding-inline-end: var(--spacing-2);
+  }
+}
