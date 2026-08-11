@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 11;
+export const THEME_NAME_REV = 12;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -582,6 +582,19 @@ const MENU_PANEL_PAGE_OVERLAYS = {
 };
 
 /**
+ * Same surface rule as above for a `Selector` listbox, which `themeProps` does
+ * not reach: `selector` sits on the TRIGGER and the panel carries no theme
+ * class, so `field` — the wrapper both render inside — is the only declaration
+ * point. The band re-declares the inverted pair on the trigger itself, which is
+ * inline and therefore still wins there. FR-3505.
+ */
+const FIELD_PAGE_OVERLAYS = {
+  field: {
+    base: { ...MENU_PANEL_PAGE_OVERLAYS },
+  },
+};
+
+/**
  * DROPDOWN MENU DENSITY — pinned to the measured legacy antd `Dropdown`
  * (`menu={{items}}`) metrics.
  *
@@ -892,6 +905,7 @@ export const computeThemeName = (
       ANTD_STATUS_ON_COLORS,
       ANTD_DIALOG_SURFACE,
       ANTD_DROPDOWN_DENSITY,
+      FIELD_PAGE_OVERLAYS,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -1009,6 +1023,7 @@ export function buildBackendAiTheme(
       ...STATUS_TEXT_COLORS,
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
+      ...FIELD_PAGE_OVERLAYS,
       ...ANTD_HOVER_PARITY,
     },
   });

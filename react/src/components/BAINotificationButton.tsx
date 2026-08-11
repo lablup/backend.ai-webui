@@ -4,6 +4,7 @@
  */
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
+import { useThemeMode } from '../hooks/useThemeMode';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -35,6 +36,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   ...props
 }) => {
   const [notifications] = useBAINotificationState();
+  const { isDarkMode } = useThemeMode();
 
   const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
 
@@ -54,53 +56,18 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
     return n.backgroundTask?.status === 'pending';
   });
 
-  // This button only ever renders on `WebUIHeader`'s brand-accent band. The
-  // three nested `ReverseThemeProvider`s here were the legacy way to force the
-  // bell to the OPPOSITE polarity of the page so it read white on the orange —
-  // but "opposite of the page" only coincides with white in light mode: in dark
-  // mode the flip resolves to the LIGHT palette and painted the bell near-black
-  // (measured `rgb(20,20,20)`) on a still-orange band.
+  // TRAP: the media context must stay OFF the `Tooltip` and off the drawer.
+  // Astryx renders both as inline SIBLINGS of the trigger, not through a
+  // portal, so a wrapper reaches their panels too — measured, that pinned
+  // `color-scheme: dark` on the tooltip in both app modes and produced white
+  // text on a white bubble.
   //
-  // The band is a dark surface in BOTH modes, so the glyph is simply "on dark".
-  // Naming that directly (`--color-on-dark`, `#ffffff` in both modes) drops two
-  // of the three providers and the `Typography.Text` whose only job was to
-  // supply a colour, and matches what `WebUIHeader` now does for the rest of
-  // the band.
-  //
-  // The last provider is gone too (final switch). It was still an antd
-  // `ConfigProvider`, and by then nothing under it was an antd component —
-  // the tooltip, the button and the badge are all Astryx — so it re-themed
-  // exactly nothing. `MediaTheme mode="dark"` is the live replacement and the
-  // same primitive `WebUIHeader` wraps the sibling band controls
-  // (`WebUIThemeToggleButton`, `WEBUIHelpButton`) in, so the tooltip panel now
-  // matches theirs instead of following the page polarity.
-  //
-  // It wraps ONLY the trigger. `WEBUINotificationDrawer` stays outside on
-  // purpose: Astryx renders overlays as inline siblings rather than through a
-  // portal (measured — see `UserDropdownMenu.tsx`), so a drawer inside this
-  // context would paint as a dark surface in light mode.
-  //
-  // ...and the TOOLTIP is such an overlay too. `Tooltip` renders
-  // `<div display:contents>{trigger}</div>` and its `[popover]` panel as
-  // SIBLINGS, so a `MediaTheme` wrapped around the whole `Tooltip` reached the
-  // panel as well and pinned `color-scheme: dark` on it in BOTH app modes.
-  // Astryx's tooltip surface is deliberately INVERTED (`light-dark()` the other
-  // way round), so the forced dark scheme resolved it to WHITE while the
-  // on-dark tokens painted the content `--color-on-dark` — white text on a
-  // white tooltip, illegible in light *and* dark mode (measured
-  // `bg rgb(255,255,255)` / `color rgb(255,255,255)`).
-  //
-  // So the on-dark context now sits on the trigger BUTTON itself
-  // (`data-astryx-media="dark"` is exactly what `MediaTheme` renders — a
-  // wrapper is only needed when several elements share the context), and the
-  // tooltip CONTENT takes the tooltip surface's own luminance, the same recipe
-  // `SiderToggleButton` uses.
-  //
-  // That luminance is now CONSTANT. The theme pins the bubble to antd's
-  // `colorBgSpotlight` (`rgba(0,0,0,0.85)` / `#424242` — dark in both schemes,
-  // `ANTD_HOVER_PARITY`), so it no longer follows the app polarity and the
-  // content mode is a plain `"dark"` rather than the opposite of the app's.
-  // QA-FINDINGS Q-10.
+  // The tooltip CONTENT's `mode="dark"` below is CONSTANT on purpose: the theme
+  // pins the bubble to antd's `colorBgSpotlight` (dark in both schemes,
+  // `ANTD_HOVER_PARITY`), so it does not follow the app polarity. Only the
+  // trigger is band chrome. QA-FINDINGS Q-10.
+  const bandMediaMode = isDarkMode ? 'light' : 'dark';
+
   return (
     <>
       {/* antd `Tooltip title` -> `content`; `placement="left"` -> `"start"`
@@ -121,13 +88,9 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
             `BAIBadgeCountAstryx`; antd `color="red"` becomes
             `variant="error"` (the closed-enum equivalent). */}
         <IconButton
-          // The band's on-dark context, scoped to this element instead of a
-          // `MediaTheme` wrapper that the sibling tooltip panel would inherit.
-          // `data-astryx-media` IS `MediaTheme`'s whole mechanism (it renders
-          // `<div data-astryx-media={mode} style="display:contents">`; the
-          // theme CSS keys the on-dark tokens off that attribute), so this is
-          // the same primitive applied at element scope.
-          data-astryx-media="dark"
+          // `data-astryx-media` IS `MediaTheme`'s whole mechanism, applied at
+          // element scope so the sibling tooltip panel cannot inherit it.
+          data-astryx-media={bandMediaMode}
           variant="ghost"
           label={t('notification.Notifications')}
           icon={
@@ -136,16 +99,15 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
               variant="error"
               title={t('notification.Notifications')}
             >
-              {/* On the glyph itself, not just the button: the overlay
-                  wrapper declares its own `color`, so it intercepts
-                  inheritance from the button before the icon sees it.
-                  `Bell` strokes with `currentColor`. */}
-              <Bell size="1em" style={{ color: 'var(--color-on-dark)' }} />
+              {/* On the glyph itself, not just the button: the badge wrapper
+                  declares its own `color`, so it intercepts inheritance before
+                  the icon sees it. `MediaTheme` remaps the token above. */}
+              <Bell size="1em" style={{ color: 'var(--color-icon-primary)' }} />
             </BAIBadgeCountAstryx>
           }
           onClick={() => setIsOpenDrawer((v) => !v)}
           {...props}
-          style={{ color: 'var(--color-on-dark)', ...props.style }}
+          style={{ color: 'var(--color-icon-primary)', ...props.style }}
         />
       </Tooltip>
       <WEBUINotificationDrawer
