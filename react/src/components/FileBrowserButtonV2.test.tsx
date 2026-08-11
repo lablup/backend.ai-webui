@@ -11,7 +11,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -217,14 +216,14 @@ const renderButton = (
   render(
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
-        <App>
+        <>
           <Suspense fallback={null}>
             <TestRenderer
               project={project}
               noProjectTooltip={noProjectTooltip}
             />
           </Suspense>
-        </App>
+        </>
       </QueryClientProvider>
     </RelayEnvironmentProvider>,
   );
