@@ -477,3 +477,39 @@
   background-color: var(--color-background-surface);
   color: var(--color-accent);
 }
+
+/*
+ * SIDER FOOTER — restore the pre-Astryx secondary tone and 11px scale.
+ *
+ * The footer used to be an antd `Typography.Text type="secondary"` wrapping a
+ * `.terms-of-use` div with three `Typography.Link type="secondary"` entries at
+ * a hand-set 11px. Astryx `Link` has no `type="secondary"` and no font-size
+ * prop (closed enums, P5), so the migration left the links at the default
+ * link treatment and the block at the default body size — louder and larger
+ * than the chrome-level footer should be (FR-3512).
+ *
+ * The footer row is the `<VStack className="terms-of-use">` in WebUISider.
+ * Astryx `Link` renders a real `<a>`; antd's global anchor reset (still
+ * mounted while the ConfigProvider survives, see MainLayout) would outrank a
+ * single-class rule with `colorLink`, so these rules anchor on the
+ * `.terms-of-use` container and pin the same specificity antd cannot beat.
+ *
+ * At rest the labels sit in the secondary text tone (the nearest declared
+ * tier to antd's `secondary`); on hover they pick up the accent/link colour
+ * and an underline so the click affordance stays discoverable.
+ */
+.terms-of-use {
+  font-size: 11px;
+}
+
+.terms-of-use a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: inherit;
+}
+
+.terms-of-use a:hover,
+.terms-of-use a:focus-visible {
+  color: var(--color-text-accent);
+  text-decoration: underline;
+}
