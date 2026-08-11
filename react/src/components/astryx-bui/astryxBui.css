@@ -303,3 +303,13 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+/* #8676 — Session notification card: disabled action buttons indistinguishable
+   from enabled ones on the info background.
+   Astryx Button already applies `opacity: 0.5` when disabled, but on the
+   info (light blue) background the icon still reads as enabled. Reduce opacity
+   further so the disabled state is visually distinct. */
+.bai-notification-stack-item[data-status="info"]
+  button:where([disabled], [aria-disabled="true"]) {
+  opacity: 0.25;
+}
