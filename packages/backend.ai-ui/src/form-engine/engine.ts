@@ -30,10 +30,11 @@
  leading `@` scope-and-slash (`rc-component's \`form\``, not the npm
  specifier), and antd class names without their leading dot. These files open
  with an `@license` block, which terser preserves, so their header comments
- land verbatim in `build/web` — and `scripts/antd-zero-gate.sh` part (b) reads
- an antd-family specifier or a dotted antd class there as evidence that antd is
- back. The gate cannot tell our prose from a real reintroduction, and the
- signature is worth more sharp than our comments are worth verbatim.
+ land verbatim in `build/web`. antd is no longer a dependency of this repo
+ at all — the workspace pins its dependencies exactly and any antd import
+ fails `tsc` immediately, so there is no live check reading these comments
+ for stray antd names. The convention below is a style habit that outlived
+ its enforcement, not a hard requirement.
 
  A DROP-IN replacement for the slice of antd's form API this repository uses.
  Migrating a call site is an import rewrite and nothing else — the module

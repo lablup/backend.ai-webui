@@ -43,9 +43,11 @@ This is a **React web application** using React 19 + Astryx (`@astryxdesign/core
 directly (see the `ASTRYX` block below for the discover-don't-guess workflow). Ant Design
 is **gone** — removed on the `to-astryx` branch, down to the dependency itself: no
 `package.json` declares it, no source file imports it, and there is no antd
-`ConfigProvider` in the tree. `scripts/antd-zero-gate.sh` asserts all three (production
-dependency graph / built bundle / source import graph) and must stay green. A `from
-'antd'` import is not migration debt any more; it is a regression that will not install.
+`ConfigProvider` in the tree. antd is not a dependency of this workspace at
+all — the workspace pins its dependency versions exactly, so it cannot
+re-enter as a transitive dependency, and any `from 'antd'` import fails
+`tsc` immediately. It is not migration debt any more; it is a regression
+that will not compile.
 
 ### Key Technologies
 

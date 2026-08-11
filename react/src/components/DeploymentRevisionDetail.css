@@ -17,10 +17,11 @@
     rotation keyframes live here under a component-scoped class.
 
     (to-astryx final-B: the antd class name is spelled out in prose rather
-    than quoted verbatim ON PURPOSE. Unlike JS comments, a leading CSS comment
-    survives minification into `build/web/assets/*.css`, so quoting it made
-    `scripts/antd-zero-gate.sh` part (b)'s bundle signature fire on a comment.
-    Keep it unquoted here.)
+    than quoted verbatim, a habit left over from when a build-output scan
+    treated a quoted antd class name in `build/web/assets/*.css` as evidence
+    of a real reintroduction. antd is no longer a dependency of this repo at
+    all, so there's nothing left to scan for — kept unquoted here purely for
+    consistency with the rest of the codebase.)
 */
 
 .deployment-revision-detail-metadata dd {

@@ -60,7 +60,7 @@ One antd-family package remains, in `devDependencies` only:
 `@ant-design/colors`, which `src/theme-shim/themeShim.test.ts` uses as the
 reference implementation its vendored port (`theme-shim/vendor/antdColors.ts`)
 is asserted bit-identical to. It ships in nothing and is invisible to the
-production dependency graph. `scripts/antd-zero-gate.sh` is the authority.
+production dependency graph — the workspace's exact-pinned `pnpm-lock.yaml` is what keeps it that way.
 
 ### CSS
 

@@ -25,7 +25,9 @@
  * To regenerate (should be rare — only if the deployment-facing theme.json
  * vocabulary is deliberately extended): `npm i --no-save antd@6.5.0` inside
  * `react/`, run this script, then remove it again. Do not add antd back to
- * any package.json for it; `scripts/antd-zero-gate.sh` part (a) would fail.
+ * any package.json for it — the workspace pins its dependencies exactly,
+ * and a stray antd entry would stand out in review and break `pnpm install
+ * --frozen-lockfile` for everyone else on the next install.
  * The companion test self-skips its integration block when antd is absent.
  */
 const ts = require('typescript');

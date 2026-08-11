@@ -275,7 +275,7 @@ test.describe(
         await expect(dialog).toBeVisible();
         // `[data-bai-form-item]`, not main's `.ant-form-item`: this helper
         // arrives with the main merge, and that class does not exist on this
-        // branch (antd is gone; `scripts/antd-zero-gate.sh` asserts it), so the
+        // branch (antd is gone — it is not a dependency of this workspace at all), so the
         // locator would match nothing and this poll would compare a constant 0.
         const count = await dialog.locator('[data-bai-form-item]').count();
         await dialog.getByRole('button', { name: 'Cancel' }).click();
@@ -304,8 +304,8 @@ test.describe(
       // old total before the added row mounts (flaky off by one).
       //
       // The selector stays `[data-bai-form-item]`: main's `.ant-form-item`
-      // class does not exist on this branch — antd is gone and
-      // `scripts/antd-zero-gate.sh` asserts it — so that locator would match
+      // class does not exist on this branch — antd is gone and is not a
+      // dependency of this workspace at all — so that locator would match
       // nothing and the assertion would fail on an empty set.
       await expect(modalAfterAdd.locator('[data-bai-form-item]')).toHaveCount(
         numberOfAppsBeforeAdd + 1,

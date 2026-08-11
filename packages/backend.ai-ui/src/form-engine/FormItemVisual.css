@@ -336,8 +336,8 @@
 
  Every one of those controls is Astryx now, and Astryx controls read the
  engine's own context, so all three groups matched nothing. Keeping them would
- also have kept `.ant-*` literals in the shipped stylesheet, which
- `scripts/antd-zero-gate.sh` part (b) correctly reads as antd evidence — CSS,
- unlike JS, carries its text into the minified bundle.
+ also have kept `.ant-*` literals in the shipped stylesheet — misleading,
+ since antd is no longer a dependency of this repo at all; CSS, unlike JS,
+ carries its text into the minified bundle regardless.
 */
 
