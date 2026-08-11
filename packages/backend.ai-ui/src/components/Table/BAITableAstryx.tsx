@@ -114,10 +114,11 @@ import type {
   TablePlugin,
   TableSortState,
 } from '@astryxdesign/core/Table';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Text } from '@astryxdesign/core/Text';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { ChevronDown, ChevronRight, FileDown, Settings } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileDown, Inbox, Settings } from 'lucide-react';
 import React, { useMemo, useState, type ReactNode } from 'react';
 
 /** Internal row shape Astryx's generic constraint requires. */
@@ -1151,7 +1152,8 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           isStriped={isStriped}
           hasHover={hasHover}
           textOverflow={textOverflow}
-          emptyState={emptyState ?? locale?.emptyText}
+          emptyState={emptyState ?? locale?.emptyText
+            ?? <EmptyState icon={<Inbox size="2em" />} title={String(t('comp:BAITable.NoData'))} isCompact />}
           rowCount={total || undefined}
           rowIndexStart={
             pagination !== false

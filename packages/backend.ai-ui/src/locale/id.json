@@ -475,7 +475,8 @@
     "Pagination": "Penomoran halaman",
     "SearchTableColumn": "Kolom Tabel Cari",
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel"
+    "SettingTable": "Pengaturan Tabel",
+    "NoData": "Tidak ada data"
   },
   "comp:BAITestButton": {
     "Test": "tes"

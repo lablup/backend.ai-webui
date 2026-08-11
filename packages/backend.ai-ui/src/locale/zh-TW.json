@@ -475,7 +475,8 @@
     "Pagination": "分頁",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "選擇要顯示的列",
-    "SettingTable": "表設置"
+    "SettingTable": "表設置",
+    "NoData": "暫無數據"
   },
   "comp:BAITestButton": {
     "Test": "測試"

@@ -475,7 +475,8 @@
     "Pagination": "Sivutus",
     "SearchTableColumn": "Hakutaulukon sarakkeet",
     "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
-    "SettingTable": "Taulukon asetukset"
+    "SettingTable": "Taulukon asetukset",
+    "NoData": "Ei tietoja"
   },
   "comp:BAITestButton": {
     "Test": "testi"

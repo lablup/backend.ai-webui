@@ -475,7 +475,8 @@
     "Pagination": "Σελιδοποίηση",
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
     "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
-    "SettingTable": "Ρυθμίσεις πίνακα"
+    "SettingTable": "Ρυθμίσεις πίνακα",
+    "NoData": "Χωρίς δεδομένα"
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"

@@ -475,7 +475,8 @@
     "Pagination": "Sayfalama",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
-    "SettingTable": "Masa Ayarları"
+    "SettingTable": "Masa Ayarları",
+    "NoData": "Veri yok"
   },
   "comp:BAITestButton": {
     "Test": "test"

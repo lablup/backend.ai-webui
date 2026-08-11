@@ -475,7 +475,8 @@
     "Pagination": "Penomboran halaman",
     "SearchTableColumn": "Lajur jadual carian",
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
-    "SettingTable": "Tetapan Jadual"
+    "SettingTable": "Tetapan Jadual",
+    "NoData": "Tiada data"
   },
   "comp:BAITestButton": {
     "Test": "ujian"

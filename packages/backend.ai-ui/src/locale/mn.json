@@ -475,7 +475,8 @@
     "Pagination": "Хуудаслалт",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
-    "SettingTable": "Хүснэгтийн тохиргоо"
+    "SettingTable": "Хүснэгтийн тохиргоо",
+    "NoData": "Өгөгдөл байхгүй"
   },
   "comp:BAITestButton": {
     "Test": "турших"

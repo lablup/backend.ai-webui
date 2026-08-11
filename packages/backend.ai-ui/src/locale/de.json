@@ -475,7 +475,8 @@
     "Pagination": "Seitennummerierung",
     "SearchTableColumn": "Suchtabellenspalten",
     "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
-    "SettingTable": "Tabelleneinstellungen"
+    "SettingTable": "Tabelleneinstellungen",
+    "NoData": "Keine Daten"
   },
   "comp:BAITestButton": {
     "Test": "test"

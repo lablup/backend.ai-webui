@@ -475,7 +475,8 @@
     "Pagination": "Phân trang",
     "SearchTableColumn": "Các cột bảng tìm kiếm",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
-    "SettingTable": "Cài đặt bảng"
+    "SettingTable": "Cài đặt bảng",
+    "NoData": "Không có dữ liệu"
   },
   "comp:BAITestButton": {
     "Test": "kiểm tra"

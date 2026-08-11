@@ -499,7 +499,8 @@
     "Pagination": "Pagination",
     "SearchTableColumn": "Search table columns",
     "SelectColumnToDisplay": "Select columns to display",
-    "SettingTable": "Table Settings"
+    "SettingTable": "Table Settings",
+    "NoData": "No data"
   },
   "comp:BAITestButton": {
     "Test": "Test"

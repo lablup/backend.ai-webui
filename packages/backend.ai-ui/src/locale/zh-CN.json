@@ -475,7 +475,8 @@
     "Pagination": "分页",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "选择要显示的列",
-    "SettingTable": "表设置"
+    "SettingTable": "表设置",
+    "NoData": "暂无数据"
   },
   "comp:BAITestButton": {
     "Test": "测试"

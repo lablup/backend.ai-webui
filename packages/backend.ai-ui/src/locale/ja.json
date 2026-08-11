@@ -475,7 +475,8 @@
     "Pagination": "ページネーション",
     "SearchTableColumn": "テーブル列を検索します",
     "SelectColumnToDisplay": "表示する列を選択します",
-    "SettingTable": "テーブル設定"
+    "SettingTable": "テーブル設定",
+    "NoData": "データなし"
   },
   "comp:BAITestButton": {
     "Test": "テスト"

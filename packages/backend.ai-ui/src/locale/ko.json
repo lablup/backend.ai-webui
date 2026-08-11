@@ -475,7 +475,8 @@
     "Pagination": "페이지 나누기",
     "SearchTableColumn": "표시할 열 검색",
     "SelectColumnToDisplay": "표시할 열 선택",
-    "SettingTable": "표 설정"
+    "SettingTable": "표 설정",
+    "NoData": "데이터 없음"
   },
   "comp:BAITestButton": {
     "Test": "테스트"

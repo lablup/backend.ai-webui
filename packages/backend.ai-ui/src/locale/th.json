@@ -475,7 +475,8 @@
     "Pagination": "การแบ่งหน้า",
     "SearchTableColumn": "คอลัมน์ตารางค้นหา",
     "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SettingTable": "การตั้งค่าตาราง"
+    "SettingTable": "การตั้งค่าตาราง",
+    "NoData": "ไม่มีข้อมูล"
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"

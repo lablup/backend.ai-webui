@@ -475,7 +475,8 @@
     "Pagination": "Разбиение на страницы",
     "SearchTableColumn": "Поиск таблицы столбцов",
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
-    "SettingTable": "Настройки таблицы"
+    "SettingTable": "Настройки таблицы",
+    "NoData": "Нет данных"
   },
   "comp:BAITestButton": {
     "Test": "тест"
