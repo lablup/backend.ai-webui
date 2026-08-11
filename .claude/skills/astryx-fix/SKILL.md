@@ -9,7 +9,9 @@ description: >
   `scripts/migration-gates/astryx-token-gate.mjs`, the known traps (stale
   theme artifacts, stale BUI dist, Grid child overflow, Table bleed, Tooltip
   `display:contents`, MediaTheme leaking into native `<dialog>`), and the
-  verification bar (verify.sh + vitest + live light/dark probe). Use whenever
+  verification bar (verify.sh + vitest + live light/dark probe), and shipping
+  the fix through to an open draft PR (branch, scratch cleanup, commit,
+  `Resolves #N (FR-N)` body carrying the measured evidence). Use whenever
   someone reports a visual or behavioural regression on the Astryx UI, or any
   fix touches Astryx component usage, theme tokens, or layout.
 ---
@@ -228,8 +230,57 @@ Terminology.
   call site explaining *why*, so the next reader does not "fix" it back.
 - **A superseded idiom** is marked superseded where it's documented, not
   deleted, so history stays legible.
-- Commit or push only when asked, following the repo's normal PR/commit
-  conventions.
+
+## 8. Ship it — branch, commit, PR
+
+A finished Astryx fix ends at an **open draft PR**, not at a dirty working
+tree. Do this without being asked again; the request to fix the regression is
+the request to ship it. Two things still need an explicit ask: marking the PR
+**ready for review**, and **merging** it.
+
+1. **Branch.** `FR-XXXX` off `main` (the dev URL derives from it —
+   `https://fr-XXXX.localhost:1355`). If the fix was made on `main`, branch
+   first and carry the changes over.
+
+2. **Delete the scratch.** Probe scripts, harness pages, screenshots dumped in
+   the repo root — none of it belongs in the diff. `git status` should show
+   only the fix and its regenerated artifacts before you commit.
+
+3. **Commit.** `fix(FR-XXXX): <what changed>` (`style:` when it is purely
+   visual with no behaviour change). Body: the mechanism in two or three
+   sentences — the *cause*, not the symptom.
+
+4. **Find the GitHub issue.** The Jira issue is cloned to GitHub by a webhook:
+
+   ```bash
+   gh issue list --search "FR-XXXX" --state all --json number,title,url
+   ```
+
+   Match on the title, not the search rank — sibling reports in the same
+   symptom family come back from the same query. If the webhook has not fired
+   yet, say so and open the PR without the `Resolves` line rather than
+   inventing a number.
+
+5. **Open the PR.** Single fix → `git push -u origin FR-XXXX` +
+   `gh pr create --draft`. Stacked on another branch → `gh stack submit --auto`
+   (see the `gh-stack` and `fw:stacked-pr-workflow` skills). Title
+   `fix(FR-XXXX): title`; body starts `Resolves #NNNN (FR-XXXX)` — **the space
+   before `(` is required** or the project-status-sync workflow misses the link.
+
+6. **The body carries the evidence this skill made you collect**, because that
+   is what a reviewer cannot reproduce from the diff:
+   - the **mechanism**, named — which token/prop/DOM relationship actually did
+     it, and how you know (§0);
+   - the **measured before/after table**, light *and* dark, in the real app;
+   - the **verification bar** results with real counts (§6), including any
+     gate that was already failing on `main` — say that it is pre-existing and
+     how you checked;
+   - **residue** — what this fix deliberately does not close, and any sibling
+     report it does or does not subsume. A reader must not have to guess
+     whether a neighbouring bug was covered.
+   - before/after **screenshots** when the change is visual. Capture them
+     during the live probe; a scratchpad can be cleared between sessions, so
+     attach them to the PR rather than leaving them on disk.
 
 ## Related
 

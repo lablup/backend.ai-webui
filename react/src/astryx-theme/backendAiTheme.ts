@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 10;
+export const THEME_NAME_REV = 11;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -567,6 +567,91 @@ const SIDE_NAV_DENSITY = {
 };
 
 /**
+ * MENU_PANEL_IS_A_PAGE_SURFACE — a `DropdownMenu` panel resolves its neutral
+ * interaction overlays against the PAGE, never against whatever it happens to
+ * be nested under (FR-3493).
+ *
+ * ## The defect
+ *
+ * "Hovering a menu item in the header user dropdown paints a background of the
+ * opposite tone, and the item's label becomes unreadable against it. In light
+ * mode the hovered row turns black while the label stays dark." Reproduced in
+ * both modes.
+ *
+ * ## The mechanism (measured, not guessed)
+ *
+ * Three facts compose into it:
+ *
+ * 1. A menu item's highlight is NOT `:hover` — `focusMenuItemOnHover`
+ *    (`@astryxdesign/core/DropdownMenu/menuItemHover.js`) moves DOM focus onto
+ *    the pointed-at item so hover and keyboard share one highlight, and
+ *    `DropdownMenuItem`'s own `:focus` rule paints
+ *    `background-color: var(--color-overlay-hover)`.
+ * 2. `WebUIHeader` declares `ANTD_REVERSED_BAND_OVERLAYS` — the band's
+ *    app-mode-INVERTED wash — as an inline style on the band ROOT, so every
+ *    control on the orange band inherits it.
+ * 3. `DropdownMenu` renders its trigger and its floating panel as SIBLINGS, so
+ *    the panel is a DOM DESCENDANT OF THE BAND and inherits the band's custom
+ *    properties. Measured live in the app: the open panel's ancestry runs
+ *    `.astryx-dropdown-menu` -> … -> `DIV.bai-webui-header`, and its
+ *    `--color-overlay-hover` equalled the band's in both modes. (Astryx does
+ *    NOT portal it, and in this build it is not a native `[popover]` either —
+ *    it is an in-place layer div, so there is not even a top-layer promotion to
+ *    argue about.)
+ *
+ * Measured live, hovering "My Account" (before this fix):
+ *
+ *   light  item background rgb(38,38,38)      label rgb(20,20,20)  <- 1.02:1
+ *   dark   item background rgba(0,0,0,0.06)   label rgb(255,255,255)
+ *
+ * So in LIGHT mode the row painted the band's opaque `#262626` under
+ * `--color-text-primary` `#141414` — black on black, exactly as reported. In
+ * DARK mode it inherited the band's `rgba(0,0,0,0.06)`, a DARKENING wash on an
+ * already-dark panel, i.e. the inverted direction. The panel's `color-scheme`
+ * measured correctly as the APP's in both passes, which is what rules out a
+ * media-context leak and pins the defect on this one token.
+ *
+ * After the fix, same probe:
+ *
+ *   light  item background rgba(0,0,0,0.06)   label rgb(20,20,20)
+ *   dark   item background rgb(38,38,38)      label rgb(255,255,255)
+ *
+ * with the band's own `--color-overlay-hover` unchanged in both modes, i.e.
+ * band chrome untouched.
+ *
+ * ## Why here, and why the whole component
+ *
+ * The band's declaration is correct for band chrome and wrong for a floating
+ * page surface, so the fix belongs to the surface, not the band: any
+ * declaration beats inheritance, and re-declaring the token on the panel makes
+ * `light-dark()` resolve against the panel's own scheme — which IS the app
+ * scheme, because the trigger's `data-astryx-media="dark"` is scoped to the
+ * trigger element and never reaches the sibling panel.
+ *
+ * It applies to every `DropdownMenu`, not just the header's, because that is
+ * the invariant: a menu is a floating page surface, not the chrome of whatever
+ * opened it, and it has to follow the app's mode like every other menu in the
+ * app (the same argument `UserDropdownMenu.tsx` already makes for the panel's
+ * `color-scheme`). All 26 modules that import `DropdownMenu` on this branch
+ * open menus over ordinary page content; the header is the only one nested in
+ * an inverted band.
+ *
+ * The pair is READ from `ANTD_NEUTRAL_SURFACES` rather than restated, so it
+ * cannot drift from the token it is restoring. `light-dark()` is spelled out
+ * because a `components:` value is a CSS string, not a token tuple.
+ *
+ * RESIDUE — the same band inheritance still reaches the three `Dialog`s
+ * `UserDropdownMenu` mounts (Astryx dialogs are non-portalled too), so a
+ * ghost/secondary control inside them hovers to the band's wash. Not what
+ * FR-3493 reports and not measured live here; left for its own report rather
+ * than fixed blind.
+ */
+const MENU_PANEL_PAGE_OVERLAYS = {
+  '--color-overlay-hover': `light-dark(${ANTD_NEUTRAL_SURFACES['--color-overlay-hover'][0]}, ${ANTD_NEUTRAL_SURFACES['--color-overlay-hover'][1]})`,
+  '--color-overlay-pressed': `light-dark(${ANTD_NEUTRAL_SURFACES['--color-overlay-pressed'][0]}, ${ANTD_NEUTRAL_SURFACES['--color-overlay-pressed'][1]})`,
+};
+
+/**
  * DROPDOWN MENU DENSITY — pinned to the measured legacy antd `Dropdown`
  * (`menu={{items}}`) metrics.
  *
@@ -624,6 +709,10 @@ const ANTD_DROPDOWN_DENSITY = {
       // antd's `.ant-dropdown-menu` is a plain list: adjacent items touch.
       gap: '0px',
       maxHeight: 'none',
+      // …and the panel re-declares the neutral interaction overlays, pinning
+      // them to the PAGE surface. Not density — surface SCOPE. See
+      // `MENU_PANEL_PAGE_OVERLAYS` above for the mechanism and FR-3493.
+      ...MENU_PANEL_PAGE_OVERLAYS,
     },
   },
   'dropdown-menu-item': {
