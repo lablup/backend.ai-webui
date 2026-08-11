@@ -59,4 +59,4 @@ The generated output is just those two inputs run through `pnpm relay`, and
 - `.gitattributes` — the `linguist-generated=true` entries for `__generated__`.
 - `.github/copilot-instructions.md` — Copilot's matching skip list.
 - `pnpm-lockfile-conflicts.md` — why the lockfile is auto-generated and never hand-merged.
-- `relay-patterns` skill — the fragment architecture whose `graphql` tags ARE the review surface.
+- `.github/instructions/react.instructions.md` (Relay section) — the fragment architecture whose `graphql` tags ARE the review surface.

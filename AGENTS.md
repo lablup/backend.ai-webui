@@ -201,8 +201,11 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
-- **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 - **Astryx UI fixes**: `astryx-fix` skill (measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
+
+Component-authoring patterns (Relay tables, selects, modals, forms, layout) have no
+dedicated skills: read `react.instructions.md` for the project deltas, then copy the
+nearest existing sibling component.
 
 ### Terminology Precedence
 

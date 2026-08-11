@@ -490,6 +490,11 @@ const sampleData: DataType[] = [
 
 ## Decorators
 
+> **The `.storybook/` config files (`main.ts`, `preview.tsx`, `decorators.tsx`,
+> `astryx.css`) already exist and are already configured.** Never overwrite them
+> with boilerplate from Storybook docs or examples — edit only what a change
+> actually requires.
+
 ### Global Decorators (in preview.tsx)
 
 The real decorator lives in `./decorators.tsx` and is wired into `preview.tsx`
