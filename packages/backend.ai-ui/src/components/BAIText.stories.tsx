@@ -1,11 +1,12 @@
 import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
+import { Kbd } from '@astryxdesign/core/Kbd';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**
  * BAIText keeps an Ant Design Typography.Text-shaped prop surface (`type`,
- * `strong`, `ellipsis`, `copyable`, `code`, `keyboard`, ...) for call-site
+ * `strong`, `ellipsis`, `copyable`, `code`, `mark`, ...) for call-site
  * compatibility, but renders through Astryx's `Text` primitive internally.
  *
  * Key features:
@@ -25,7 +26,7 @@ const meta: Meta<typeof BAIText> = {
     docs: {
       description: {
         component: `
-**BAIText** keeps an [Ant Design Typography.Text](https://ant.design/components/typography)-shaped prop surface for call-site compatibility, and renders through Astryx's \`Text\` primitive (\`@astryxdesign/core/Text\`) internally — with \`code\`/\`keyboard\`/\`mark\` box treatments, an \`ellipsis\`-driven tooltip, and a self-built \`copyable\` control (\`IconButton\` + \`navigator.clipboard\`) layered on top.
+**BAIText** keeps an [Ant Design Typography.Text](https://ant.design/components/typography)-shaped prop surface for call-site compatibility, and renders through Astryx's \`Text\` primitive (\`@astryxdesign/core/Text\`) internally — with \`code\`/\`mark\` box treatments, an \`ellipsis\`-driven tooltip, and a self-built \`copyable\` control (\`IconButton\` + \`navigator.clipboard\`) layered on top.
 
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
@@ -143,14 +144,6 @@ For all other props, see \`BAIText.tsx\` — the antd-shaped types (\`BAITextEll
     code: {
       control: { type: 'boolean' },
       description: 'Inline code styling with background and border',
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
-      },
-    },
-    keyboard: {
-      control: { type: 'boolean' },
-      description: 'Keyboard shortcut styling with shadow effect',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -575,23 +568,25 @@ export const Interactive: Story = {
 export const Keyboard: Story = {
   name: 'KeyboardShortcuts',
   render: () => (
-    <BAIFlex direction="column">
+    <BAIFlex direction="column" gap="md" align="start">
       <div>
-        <BAIText keyboard>Ctrl</BAIText> + <BAIText keyboard>C</BAIText>
+        <BAIText type="secondary">Copy: </BAIText> <Kbd keys="mod+c" />
       </div>
       <div>
-        <BAIText keyboard>Cmd</BAIText> + <BAIText keyboard>Shift</BAIText> +{' '}
-        <BAIText keyboard>P</BAIText>
+        <BAIText type="secondary">Quick open: </BAIText>{' '}
+        <Kbd keys="mod+shift+p" />
       </div>
       <div>
-        Press <BAIText keyboard>Enter</BAIText> to submit
+        <BAIText type="secondary">A single literal key: </BAIText>{' '}
+        <Kbd keys="]" />
       </div>
     </BAIFlex>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Display keyboard shortcuts with keyboard styling.',
+        story:
+          'Shortcut badges are Astryx `Kbd`, not a `BAIText` prop — `keyboard` / `keyboardWithLightBorder` were retired in FR-3509. `Kbd` takes a `keys` spec rather than children; a key it does not know (`]`) is rendered verbatim. On an inverted surface such as a tooltip, wrap the tooltip\'s CONTENT — never the whole `Tooltip` — in `MediaTheme mode="dark"`, or `Kbd` resolves its tokens against the page surface and disappears (see `SiderToggleButton` / `BAINotificationButton`).',
       },
     },
   },
@@ -742,18 +737,14 @@ export const RealWorldExamples: Story = {
         styles={{ body: { paddingTop: 0 } }}
       >
         <BAIText type="secondary">To copy the command: </BAIText>
-        <BAIText keyboard>Ctrl</BAIText>
-        <BAIText type="secondary"> + </BAIText>
-        <BAIText keyboard>C</BAIText>
+        <Kbd keys="mod+c" />
         <br />
         <BAIText code copyable>
           git clone repository.git
         </BAIText>
         <br />
         <BAIText type="secondary">Quick Open: </BAIText>
-        <BAIText keyboard copyable ellipsis>
-          Ctrl+Shift+P+Alt+Meta+Super
-        </BAIText>
+        <Kbd keys="mod+shift+p" />
       </BAICard>
 
       <BAICard
