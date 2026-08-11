@@ -188,16 +188,12 @@ async function createServiceViaUI(
     .first()
     .click({ timeout: 10000 });
 
-  // This toggle is `DeploymentAddRevisionModal.tsx`'s `DefinitionModeSegmented`,
-  // built on Astryx `SegmentedControl` (`@astryxdesign/core/SegmentedControl`)
-  // — a real, directly-clickable `<button role="radio">`
-  // (`SegmentedControlItem.tsx`), unlike antd's Segmented (visually-hidden
-  // input behind a clickable label div), so no separate label click is needed.
-  const useConfigFileRadio = page.getByRole('radio', {
-    name: 'Use Config File',
-  });
-  await useConfigFileRadio.click({ timeout: 10000 });
-  await expect(useConfigFileRadio).toBeChecked({ timeout: 3000 });
+  // FR-3205 removed the "Enter Command" / "Use Config File" mode toggle
+  // (`DefinitionModeSegmented`): whether the service reads the uploaded
+  // `model-definition.yaml` is now driven by the selected runtime variant's
+  // `readsVfolderConfigFiles` (the default `custom` variant reads it), so no
+  // mode switch is needed here — the uploaded fixture's start command, port,
+  // and health check apply as-is.
 
   const resourceGroupSelect = page
     .getByRole('combobox', { name: 'Resource Group' })

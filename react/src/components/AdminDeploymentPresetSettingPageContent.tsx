@@ -906,65 +906,61 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       marginTop: -token.margin,
                       marginBottom: token.marginLG,
                     }}
-                    trigger={
-                      <BAIFlex
-                        justify="between"
-                        align="center"
-                        gap="sm"
-                        style={{ flex: 1 }}
-                      >
-                        <span>{t('modelService.ServiceConfiguration')}</span>
-                        {supportsCommandShell && (
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <BAIFlex gap="xxs" align="center">
-                              <BAIFormItem
-                                name={[
-                                  'modelDefinition',
-                                  'models',
-                                  0,
-                                  'service',
-                                  'commandAdvanced',
-                                ]}
-                                noStyle
-                                getValueProps={(checked: boolean) => ({
-                                  value: checked ? 'advanced' : 'basic',
-                                })}
-                                // The form engine dropped antd's `normalize`;
-                                // `getValueFromEvent` is its equivalent here
-                                // (the adapter's onChange emits the raw value).
-                                getValueFromEvent={(m: string) =>
-                                  m === 'advanced'
-                                }
-                              >
-                                {/* antd `Segmented size="small"` →
-                                    AstryxFormSegmented (no density axis). */}
-                                <AstryxFormSegmented
-                                  // Aria-only group label; reuses an existing
-                                  // key (no new i18n keys).
-                                  label={t('modelService.ServiceConfiguration')}
-                                  options={[
-                                    {
-                                      label: t('general.Basic'),
-                                      value: 'basic',
-                                    },
-                                    {
-                                      label: t('general.Advanced'),
-                                      value: 'advanced',
-                                    },
-                                  ]}
-                                />
-                              </BAIFormItem>
-                              <BAIQuestionIconWithTooltip
-                                title={t(
-                                  'modelService.CommandAdvancedModeTooltip',
-                                )}
-                              />
-                            </BAIFlex>
-                          </div>
-                        )}
-                      </BAIFlex>
-                    }
+                    trigger={t('modelService.ServiceConfiguration')}
                   >
+                    {/* PILOT-DECISION: the Basic/Advanced Segmented moves from
+                        the antd Collapse header into the top of the content —
+                        Astryx renders the whole `trigger` inside a <button>,
+                        which cannot host interactive controls (same decision
+                        as DeploymentAddRevisionModal; this also drops the
+                        stopPropagation dance the antd header needed). */}
+                    {supportsCommandShell && (
+                      <BAIFlex
+                        gap="xxs"
+                        align="center"
+                        justify="end"
+                        style={{ marginBottom: token.marginXS }}
+                      >
+                        <BAIFormItem
+                          name={[
+                            'modelDefinition',
+                            'models',
+                            0,
+                            'service',
+                            'commandAdvanced',
+                          ]}
+                          noStyle
+                          getValueProps={(checked: boolean) => ({
+                            value: checked ? 'advanced' : 'basic',
+                          })}
+                          // The form engine dropped antd's `normalize`;
+                          // `getValueFromEvent` is its equivalent here
+                          // (the adapter's onChange emits the raw value).
+                          getValueFromEvent={(m: string) => m === 'advanced'}
+                        >
+                          {/* antd `Segmented size="small"` →
+                              AstryxFormSegmented (no density axis). */}
+                          <AstryxFormSegmented
+                            // Aria-only group label; reuses an existing
+                            // key (no new i18n keys).
+                            label={t('modelService.ServiceConfiguration')}
+                            options={[
+                              {
+                                label: t('general.Basic'),
+                                value: 'basic',
+                              },
+                              {
+                                label: t('general.Advanced'),
+                                value: 'advanced',
+                              },
+                            ]}
+                          />
+                        </BAIFormItem>
+                        <BAIQuestionIconWithTooltip
+                          title={t('modelService.CommandAdvancedModeTooltip')}
+                        />
+                      </BAIFlex>
+                    )}
                     {supportsCommandShell && (
                       <BAIFormItem
                         dependencies={[

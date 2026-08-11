@@ -61,7 +61,7 @@ export interface BAIRuntimeVariantSelectAstryxProps extends Omit<
   onChange?: (value: string | undefined) => void;
   /**
    * Notifies the parent of resolved variant metadata as the paginated list
-   * and selected-value point lookup fan in, keyed by vfolder UUID (the
+   * and selected-value point lookup fan in, keyed by runtime variant UUID (the
    * dash-stripped local id of the node's global id). The parent typically
    * merges these into a local map so it can resolve the *currently selected*
    * variant id back to its `name` and its `readsVfolderConfigFiles` flag
