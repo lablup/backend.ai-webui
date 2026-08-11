@@ -60,11 +60,16 @@ versions:
   - label: "next"
     source:
       kind: workspace
+  - label: "26.8"
+    source:
+      kind: archive-branch
+      ref: docs-archive/26.8
+    latest: true
+    pdfTag: "v26.8.1"
   - label: "26.7"
     source:
       kind: archive-branch
       ref: docs-archive/26.7
-    latest: true
     pdfTag: "v26.7.3"
   - label: "26.4"
     source:

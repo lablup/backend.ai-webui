@@ -11,21 +11,27 @@ import {
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
 import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated__/MyKeypairManagementModalRevokeMyKeypairMutation.graphql';
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { downloadCSV } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Alert, App, Empty, Popconfirm, theme, Tooltip } from 'antd';
+import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAITable,
+  BAITableAstryx,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -187,6 +193,15 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
+  // The table renders the dataset fetched with deferredQueryVariables, which
+  // lags activeFilter during the tab-switch transition. Row-level UI (Controls
+  // cell, empty text) must follow the rendered dataset, not the pending
+  // filter — otherwise still-rendered Active rows briefly show the Inactive
+  // controls (Restore/Delete) and vice versa.
+  const deferredActiveFilter: ActiveFilter = deferredQueryVariables.filter
+    .isActive
+    ? 'active'
+    : 'inactive';
 
   const data = useLazyLoadQuery<MyKeypairManagementModalQuery>(
     graphql`
@@ -351,9 +366,8 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
       >
         <BAIFlex direction="column" align="stretch" gap="sm">
           {mainAccessKey && (
-            <Alert
-              type="info"
-              showIcon
+            <Banner
+              status="info"
               icon={
                 <KeyRoundIcon
                   style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
@@ -426,18 +440,16 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                   updateFetchKey(newFetchKey);
                 }}
               />
-              <BAIButton
-                type="primary"
-                icon={<PlusIcon />}
+              <Button
+                variant="primary"
+                icon={<PlusIcon size="1em" />}
+                label={t('credential.IssueNewKeypair')}
                 onClick={handleIssueKeypair}
-              >
-                {t('credential.IssueNewKeypair')}
-              </BAIButton>
+              />
             </BAIFlex>
           </BAIFlex>
-          <BAITable<KeypairNode>
+          <BAITableAstryx<KeypairNode>
             rowKey="id"
-            scroll={{ x: 'max-content' }}
             loading={deferredQueryVariables !== queryVariables}
             dataSource={keypairNodes}
             order={order}
@@ -461,10 +473,24 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                       {value}
                     </BAIText>
                     {value === mainAccessKey && (
-                      <Tooltip title={t('credential.MainAccessKey')}>
-                        <KeyRoundIcon
-                          style={{ color: token.colorTextSecondary }}
-                        />
+                      // Astryx `Tooltip` anchors to an interactive child (see
+                      // `BAIQuestionIconWithTooltipAstryx`) — this decorative
+                      // status icon gets the same unstyled-button wrapper.
+                      <Tooltip content={t('credential.MainAccessKey')}>
+                        <button
+                          type="button"
+                          aria-label={t('credential.MainAccessKey')}
+                          style={{
+                            all: 'unset',
+                            cursor: 'default',
+                            display: 'inline-flex',
+                          }}
+                        >
+                          <KeyRoundIcon
+                            size="1em"
+                            style={{ color: token.colorTextSecondary }}
+                          />
+                        </button>
                       </Tooltip>
                     )}
                   </BAIFlex>
@@ -475,101 +501,112 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 title: t('credential.Controls'),
                 fixed: 'right' as const,
                 render: (_: unknown, record: KeypairNode) => {
-                  if (activeFilter === 'active') {
+                  if (deferredActiveFilter === 'active') {
                     const isMain = record.accessKey === mainAccessKey;
                     return (
                       <BAIFlex gap="xxs">
                         {!isMain && (
-                          <Popconfirm
+                          <BAIPopconfirmAstryx
                             title={t('credential.SetAsMain')}
                             description={t('credential.SetAsMainConfirm')}
                             okText={t('button.Confirm')}
                             cancelText={t('button.Cancel')}
-                            placement="left"
+                            placement="start"
                             onConfirm={() =>
                               handleSwitchMainKey(record.accessKey ?? '')
                             }
                           >
-                            <Tooltip title={t('credential.SetAsMain')}>
-                              <BAIButton
-                                type="text"
-                                icon={<KeyRoundIcon />}
-                                size="small"
-                                style={{ color: token.colorInfo }}
-                              />
-                            </Tooltip>
-                          </Popconfirm>
+                            {/* PILOT-DECISION: antd's `color: token.colorInfo`
+                                icon tint has no ghost-`IconButton` colour
+                                escape hatch (P5, closed variant enum) —
+                                dropped, default ghost styling.
+                                QA-FINDINGS Q-37 — SUPERSEDED. The escape hatch
+                                is `className`, not `variant`: legacy was
+                                `BAIButton type="text" style={{ color:
+                                token.colorInfo }}`, and `--color-text-accent`
+                                carries that hue per route without a token read.
+                                This control is one of two identical-looking
+                                glyphs in the row (the other is the disabled
+                                `BanIcon` on the main key), so an accented,
+                                obviously-actionable one also separates them.
+                                See `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
+                            <IconButton
+                              className="bai-action-accent"
+                              icon={<KeyRoundIcon size="1em" />}
+                              label={t('credential.SetAsMain')}
+                              tooltip={t('credential.SetAsMain')}
+                              variant="ghost"
+                              size="sm"
+                            />
+                          </BAIPopconfirmAstryx>
                         )}
                         {isMain ? (
-                          <Tooltip
-                            title={t('credential.MainKeyCannotDeactivate')}
-                          >
-                            <BAIButton
-                              type="text"
-                              danger
-                              icon={<BanIcon />}
-                              size="small"
-                              disabled
-                            />
-                          </Tooltip>
+                          // PILOT-DECISION (P18, ticket-18 precedent): antd's
+                          // `Tooltip` wrapping a `disabled` icon button has no
+                          // Astryx destination — `IconButton` has no
+                          // `disabledMessage`. The hover explanation is
+                          // dropped; the disabled state itself is preserved.
+                          <IconButton
+                            icon={<BanIcon size="1em" />}
+                            label={t('credential.MainKeyCannotDeactivate')}
+                            variant="destructive"
+                            size="sm"
+                            isDisabled
+                          />
                         ) : (
-                          <Popconfirm
+                          <BAIPopconfirmAstryx
                             title={t('credential.Deactivate')}
                             description={t('credential.DeactivateConfirm')}
                             okText={t('button.Confirm')}
-                            okType="danger"
+                            isDanger
                             cancelText={t('button.Cancel')}
-                            placement="left"
+                            placement="start"
                             onConfirm={() =>
                               handleDeactivateKeypair(record.accessKey ?? '')
                             }
                           >
-                            <Tooltip title={t('credential.Deactivate')}>
-                              <BAIButton
-                                type="text"
-                                danger
-                                icon={<BanIcon />}
-                                size="small"
-                              />
-                            </Tooltip>
-                          </Popconfirm>
+                            <IconButton
+                              icon={<BanIcon size="1em" />}
+                              label={t('credential.Deactivate')}
+                              tooltip={t('credential.Deactivate')}
+                              variant="destructive"
+                              size="sm"
+                            />
+                          </BAIPopconfirmAstryx>
                         )}
                       </BAIFlex>
                     );
                   }
                   return (
                     <BAIFlex gap="xxs">
-                      <Popconfirm
+                      <BAIPopconfirmAstryx
                         title={t('credential.Restore')}
                         description={t('credential.RestoreConfirm')}
                         okText={t('button.Confirm')}
                         cancelText={t('button.Cancel')}
-                        placement="left"
+                        placement="start"
                         onConfirm={() =>
                           handleActivateKeypair(record.accessKey ?? '')
                         }
                       >
-                        <Tooltip title={t('credential.Restore')}>
-                          <BAIButton
-                            type="text"
-                            icon={<UndoIcon />}
-                            size="small"
-                          />
-                        </Tooltip>
-                      </Popconfirm>
-                      <Tooltip title={t('credential.DeleteKeypair')}>
-                        <BAIButton
-                          type="text"
-                          danger
-                          icon={<Trash2Icon />}
-                          size="small"
-                          onClick={() =>
-                            setDeletingKeypairAccessKey(
-                              record.accessKey ?? null,
-                            )
-                          }
+                        <IconButton
+                          icon={<UndoIcon size="1em" />}
+                          label={t('credential.Restore')}
+                          tooltip={t('credential.Restore')}
+                          variant="ghost"
+                          size="sm"
                         />
-                      </Tooltip>
+                      </BAIPopconfirmAstryx>
+                      <IconButton
+                        icon={<Trash2Icon size="1em" />}
+                        label={t('credential.DeleteKeypair')}
+                        tooltip={t('credential.DeleteKeypair')}
+                        variant="destructive"
+                        size="sm"
+                        onClick={() =>
+                          setDeletingKeypairAccessKey(record.accessKey ?? null)
+                        }
+                      />
                     </BAIFlex>
                   );
                 },
@@ -605,16 +642,15 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                   value ? dayjs(value).format('lll') : '-',
               },
             ])}
-            showSorterTooltip={false}
             locale={{
               emptyText: (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={
-                    activeFilter === 'active'
+                <EmptyState
+                  title={
+                    deferredActiveFilter === 'active'
                       ? t('credential.NoActiveKeypairs')
                       : t('credential.NoInactiveKeypairs')
                   }
+                  isCompact
                 />
               ),
             }}
@@ -638,24 +674,22 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         width={640}
         footer={
           <BAIFlex justify="end">
-            <BAIButton
-              type="primary"
-              icon={<DownloadIcon />}
+            <Button
+              variant="primary"
+              icon={<DownloadIcon size="1em" />}
+              label={t('credential.DownloadCSV')}
               onClick={() => {
                 if (credentialResult) {
                   downloadCredentialCSV(credentialResult);
                 }
               }}
-            >
-              {t('credential.DownloadCSV')}
-            </BAIButton>
+            />
           </BAIFlex>
         }
       >
         <BAIFlex direction="column" gap="sm">
-          <Alert
-            type="warning"
-            showIcon
+          <Banner
+            status="warning"
             icon={
               <TriangleAlertIcon
                 style={{ width: token.fontSizeLG, height: token.fontSizeLG }}

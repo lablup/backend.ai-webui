@@ -4,16 +4,16 @@
  */
 import { QuotaScopeTableQuery as QuotaScopeTableQueryType } from '../__generated__/QuotaScopeTableQuery.graphql';
 import { QuotaScopeTableUnsetMutation } from '../__generated__/QuotaScopeTableUnsetMutation.graphql';
+import { App } from '../app-shim';
 import { bytesToGB } from '../helper/index';
 import QuotaSettingModal from './QuotaSettingModal';
-import { CloseOutlined } from '@ant-design/icons';
-import { App, Empty } from 'antd';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import {
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import { SquarePenIcon } from 'lucide-react';
+import { X, SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -101,16 +101,18 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
   );
 
   const selectProjectOrUserFirst = (
-    <Empty
+    // antd `Empty` → `EmptyState` (MAPPING §4): `description` becomes the
+    // required string `title`; the simple placeholder illustration has no
+    // Astryx counterpart and is dropped.
+    <EmptyState
       style={{ width: '100%' }}
-      image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={<div>{t('storageHost.quotaSettings.SelectFirst')}</div>}
+      title={t('storageHost.quotaSettings.SelectFirst')}
     />
   );
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
         pagination={false}
         loading={queryVariables !== deferredQueryVariables}
@@ -134,7 +136,7 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
                   {
                     key: 'unset',
                     title: t('button.Unset'),
-                    icon: <CloseOutlined />,
+                    icon: <X size="1em" />,
                     type: 'danger',
                     disabled: queryVariables !== deferredQueryVariables, // Disable unset button while loading new data
                     popConfirm: {

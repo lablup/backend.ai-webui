@@ -1,9 +1,9 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIAlertIconWithTooltip from './BAIAlertIconWithTooltip';
 import BAIBoardItemTitle, {
   type BAIBoardItemTitleProps,
 } from './BAIBoardItemTitle';
-import { theme } from 'antd';
 import React, { type PropsWithChildren } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 

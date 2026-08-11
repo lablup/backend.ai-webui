@@ -249,12 +249,12 @@ test.describe(
       await expect(drawerPanel).toBeVisible({ timeout: 10000 });
       await expect(drawer.getByText('RBAC Role Info')).toBeVisible();
 
-      // 6. Verify a Refresh button (reload icon) is visible in the drawer header
-      await expect(
-        drawer
-          .locator('button')
-          .filter({ has: page.locator('.anticon-reload') }),
-      ).toBeVisible();
+      // 6. Verify a Refresh button is visible in the drawer header.
+      // `RoleDetailDrawer.tsx` uses `BAIFetchKeyButton`, whose icon is lucide
+      // `RotateCw` (no antd `.anticon-reload` class since ticket 12); the
+      // button carries the native `title="Refresh"` attribute instead
+      // (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
+      await expect(drawer.locator('button[title="Refresh"]')).toBeVisible();
 
       // 7. Close the drawer
       await drawer.getByRole('button', { name: 'close' }).click();
@@ -290,9 +290,14 @@ test.describe(
       await expect(drawerPanel).toBeVisible({ timeout: 10000 });
 
       // 4. Verify two tabs are visible: "Permissions" and "Role Assignments".
-      // The former separate "Scopes" tab was merged into "Permissions" (now
-      // "Detailed Permissions" internally) — see the docblock on
-      // RolePermissionDetailTab.tsx.
+      // Managers below 26.8.0 (the nightly manager under test) don't support
+      // the merged "Detailed Permissions" view, so the drawer actually shows
+      // three tabs here — "Scopes", "Permissions", "Role Assignments" — with
+      // "Scopes" active by default. See the docblock on
+      // RoleDetailDrawerContent.tsx / RolePermissionDetailTab.tsx for the
+      // version-gated split. Assert the "Permissions" tab becomes active on
+      // click instead of assuming it's the default, so this passes on both
+      // legacy and merged-view managers.
       await expect(
         drawer.getByRole('tab', { name: 'Permissions' }),
       ).toBeVisible();
@@ -300,7 +305,8 @@ test.describe(
         drawer.getByRole('tab', { name: 'Role Assignments' }),
       ).toBeVisible();
 
-      // 5. Verify "Permissions" tab is active by default
+      // 5. Click the "Permissions" tab and verify it becomes active
+      await drawer.getByRole('tab', { name: 'Permissions' }).click();
       await expect(
         drawer.getByRole('tab', { name: 'Permissions' }),
       ).toHaveAttribute('aria-selected', 'true');
@@ -689,9 +695,9 @@ test.describe(
       try {
         await loginAsAdmin(adminPage, adminRequest);
         await navigateTo(adminPage, 'credential');
-        await expect(
-          adminPage.getByRole('tab', { name: 'Users' }),
-        ).toBeVisible();
+        await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible(
+          { timeout: 10000 },
+        );
         await adminPage.getByRole('button', { name: 'Create User' }).click();
         const userSettingModal = new UserSettingModal(adminPage);
         await userSettingModal.createUser(

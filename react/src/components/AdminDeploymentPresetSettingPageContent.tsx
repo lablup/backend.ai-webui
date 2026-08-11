@@ -4,6 +4,8 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
+import { Form } from '../form-engine';
+import type { FormInstance } from '../form-engine';
 import { formatShellCommand } from '../helper/parseCliCommand';
 import {
   buildRuntimeVariantPresetValues,
@@ -11,6 +13,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { theme, useBAIBreakpoint } from '../theme-shim';
 import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
@@ -24,41 +27,39 @@ import {
 } from './AdminDeploymentPresetResourceFields';
 import PresetReviewSummary from './AdminDeploymentPresetReviewSummary';
 import PresetValidationTour from './AdminDeploymentPresetValidationTour';
+import BAIFormItem from './BAIFormItem';
 import RuntimeParameterFormSection, {
   RUNTIME_PARAMS_NAMESPACE,
   type RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  DoubleRightOutlined,
-  LeftOutlined,
-  MinusCircleOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
-import { useDebounceFn } from 'ahooks';
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormSwitch,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { Selector } from '@astryxdesign/core/Selector';
+import { Step, Stepper } from '@astryxdesign/lab';
 import {
-  AutoComplete,
-  Button,
-  Checkbox,
-  Form,
-  Grid,
-  Input,
-  InputNumber,
-  Select,
-  Skeleton,
-  Steps,
-  Switch,
-  theme,
-} from 'antd';
-import type { FormInstance, StepsProps } from 'antd';
-import {
-  BAIAdminImageSelect,
+  BAIAdminImageSelectAstryx,
   BAIButton,
   BAICard,
   BAIFlex,
   toLocalId,
+  useDebounceFn,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import {
+  ChevronsRight,
+  ChevronLeft,
+  CircleMinus,
+  ChevronRight,
+  PlusIcon,
+} from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -111,18 +112,36 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
+// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelectAstryx
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
   value?: string;
-  onChange?: (value: string) => void;
+  // Widened to the Astryx sibling's emit type (`multiple` is off here, so the
+  // array arm never occurs in practice) — `Form.Item` injects this untyped.
+  onChange?: (value: string | Array<string> | undefined) => void;
 }> = ({ value, onChange }) => {
   'use memo';
   const { t } = useTranslation();
   return (
-    <Suspense fallback={<Select disabled placeholder={t('general.Loading')} />}>
-      <BAIAdminImageSelect value={value} onChange={onChange} />
+    <Suspense
+      fallback={
+        <Selector
+          label={t('general.Loading')}
+          isLabelHidden
+          isDisabled
+          options={[]}
+          placeholder={t('general.Loading')}
+          width="100%"
+        />
+      }
+    >
+      <BAIAdminImageSelectAstryx
+        label={t('adminDeploymentPreset.Image')}
+        isLabelHidden
+        value={value}
+        onChange={onChange}
+      />
     </Suspense>
   );
 };
@@ -199,7 +218,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const screens = Grid.useBreakpoint();
+  const screens = useBAIBreakpoint();
 
   const preset = useFragment(
     graphql`
@@ -326,8 +345,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   // }`, the shape the section's `initialPresetValues` expects. No explicit
   // useMemo — the React Compiler ('use memo') memoizes this derivation.
   const initialRuntimePresetValues:
-    | ReadonlyArray<RuntimeVariantPresetValueEntry>
-    | undefined =
+    ReadonlyArray<RuntimeVariantPresetValueEntry> | undefined =
     mode === 'edit'
       ? (preset?.presetValues?.map((pv) => ({
           presetId: pv.presetId,
@@ -349,8 +367,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   // the shape the schema helpers operate on.
   const readRuntimeParamStringValues = (): Record<string, string> => {
     const runtimeParams = form.getFieldValue([RUNTIME_PARAMS_NAMESPACE]) as
-      | RuntimeParameterValues
-      | undefined;
+      RuntimeParameterValues | undefined;
     const stringValues: Record<string, string> = {};
     if (!runtimeParams) return stringValues;
     for (const [key, val] of Object.entries(runtimeParams)) {
@@ -418,9 +435,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         imageId: preset.execution?.imageId ?? undefined,
         clusterMode:
           (preset.cluster?.clusterMode as
-            | 'SINGLE_NODE'
-            | 'MULTI_NODE'
-            | undefined) ?? undefined,
+            'SINGLE_NODE' | 'MULTI_NODE' | undefined) ?? undefined,
         clusterSize: preset.cluster?.clusterSize ?? undefined,
         ...(() => {
           const slots = preset.resourceSlots ?? [];
@@ -662,16 +677,15 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     reviewHasError,
   ];
 
-  const stepItems: NonNullable<StepsProps['items']> = [
-    { title: t('adminDeploymentPreset.step.BasicInfo') },
-    { title: t('adminDeploymentPreset.step.ModelAndExecution') },
-    {
-      title: (
-        <span style={reviewHasError ? { color: token.colorError } : undefined}>
-          {t('adminDeploymentPreset.step.Review')}
-        </span>
-      ),
-    },
+  // PILOT-DECISION: antd Steps item titles could be ReactNodes, which let the
+  // review step tint its title `colorError` without an error icon. Astryx
+  // `Step.label` is a plain string, so the review step now reports errors the
+  // same way as the other steps — `status="error"` on the Step (color + glyph;
+  // note the *current* step always keeps its current-step indicator).
+  const stepTitles: string[] = [
+    t('adminDeploymentPreset.step.BasicInfo'),
+    t('adminDeploymentPreset.step.ModelAndExecution'),
+    t('adminDeploymentPreset.step.Review'),
   ];
 
   return (
@@ -697,7 +711,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             style={{ display: currentStepKey === 'basic' ? 'block' : 'none' }}
             showDivider
           >
-            <Form.Item
+            <BAIFormItem
               name="name"
               label={t('adminDeploymentPreset.Name')}
               rules={[
@@ -707,18 +721,22 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 },
               ]}
             >
-              <Input placeholder={t('adminDeploymentPreset.NamePlaceholder')} />
-            </Form.Item>
-            <Form.Item
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.Name')}
+                placeholder={t('adminDeploymentPreset.NamePlaceholder')}
+              />
+            </BAIFormItem>
+            <BAIFormItem
               name="description"
               label={t('adminDeploymentPreset.Description')}
             >
-              <Input.TextArea
+              <AstryxFormTextArea
+                label={t('adminDeploymentPreset.Description')}
                 rows={2}
                 placeholder={t('adminDeploymentPreset.DescriptionPlaceholder')}
               />
-            </Form.Item>
-            <Form.Item
+            </BAIFormItem>
+            <BAIFormItem
               name="runtimeVariantId"
               label={t('adminDeploymentPreset.Runtime')}
               tooltip={t('adminDeploymentPreset.RuntimeTooltip')}
@@ -729,27 +747,26 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 },
               ]}
             >
-              <Select
+              {/* PILOT-DECISION: antd's custom `showSearch.filterOption`
+                  (case-insensitive label match) dropped — Astryx Selector's
+                  built-in `hasSearch` filtering covers the same UX. */}
+              <AstryxFormSelector
+                label={t('adminDeploymentPreset.Runtime')}
                 options={runtimeVariantOptions}
                 placeholder={t('adminDeploymentPreset.SelectRuntimeVariant')}
-                showSearch={{
-                  filterOption: (input, option) =>
-                    String(option?.label ?? '')
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
+                hasSearch
               />
-            </Form.Item>
+            </BAIFormItem>
 
             {/* Runtime parameters — appear once a (non-custom) runtime variant
                 is selected, directly under the Runtime selector and before the
                 Image field. Reuses the Add Revision modal's section so the
                 preset can pre-seed runtime-variant preset values; values live
                 in the section's own state and are read at submit time. */}
-            <Form.Item dependencies={['runtimeVariantId']} noStyle>
-              {({
-                getFieldValue,
-              }: FormInstance<AdminDeploymentPresetFormValue>) => {
+            <BAIFormItem dependencies={['runtimeVariantId']} noStyle>
+              {(formArg) => {
+                const { getFieldValue } =
+                  formArg as FormInstance<AdminDeploymentPresetFormValue>;
                 const variantId = getFieldValue('runtimeVariantId');
                 const variantName = runtimeVariants.find(
                   (rt) => toLocalId(rt.id) === variantId,
@@ -765,7 +782,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       marginBottom: token.marginLG,
                     }}
                   >
-                    <Suspense fallback={<Skeleton active />}>
+                    <Suspense fallback={<BAISkeletonAstryx />}>
                       <RuntimeParameterFormSection
                         runtimeVariant={variantName}
                         onTouchedKeysChange={(keys) => {
@@ -782,15 +799,15 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   </div>
                 );
               }}
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="imageId"
               label={t('adminDeploymentPreset.Image')}
               rules={[{ required: true }]}
             >
               <ImageSelectField />
-            </Form.Item>
+            </BAIFormItem>
           </BAICard>
 
           {/* ----------------------------------------------------------------
@@ -805,7 +822,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             }}
             showDivider
           >
-            <Form.Item
+            <BAIFormItem
               label={t('adminDeploymentPreset.ResourceSlots')}
               style={{ marginBottom: 0 }}
               required
@@ -833,7 +850,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                           onRemove={() => remove(name)}
                         />
                       ))}
-                      <Form.Item noStyle>
+                      <BAIFormItem noStyle>
                         <BAIButton
                           type="dashed"
                           onClick={() => add()}
@@ -842,13 +859,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         >
                           {t('adminDeploymentPreset.AddResourceSlot')}
                         </BAIButton>
-                      </Form.Item>
+                      </BAIFormItem>
                     </>
                   )}
                 </Form.List>
               </BAIFlex>
-            </Form.Item>
-            <Form.Item
+            </BAIFormItem>
+            <BAIFormItem
               label={t('adminDeploymentPreset.ResourceOpts')}
               style={{ marginBottom: 0, marginTop: token.marginMD }}
             >
@@ -862,38 +879,40 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         align="baseline"
                         gap="xs"
                       >
-                        <Form.Item
+                        <BAIFormItem
                           {...rest}
                           name={[name, 'name']}
                           style={{ marginBottom: 0, flex: 1 }}
                           rules={[{ required: true, message: '' }]}
                         >
-                          <AutoComplete
-                            options={[{ value: 'shmem' }]}
-                            filterOption={(input, option) =>
-                              String(option?.value ?? '')
-                                .toLowerCase()
-                                .includes(input.toLowerCase())
-                            }
+                          {/* PILOT-DECISION: antd `AutoComplete` (free text +
+                              one 'shmem' suggestion) has no Astryx equivalent;
+                              converted to a plain text input — the placeholder
+                              already shows the same example. */}
+                          <AstryxFormTextInput
+                            label={t('adminDeploymentPreset.ResourceOpts')}
                             placeholder={t('general.Example', {
                               value: 'shmem',
                             })}
                           />
-                        </Form.Item>
-                        <Form.Item
+                        </BAIFormItem>
+                        <BAIFormItem
                           {...rest}
                           name={[name, 'value']}
                           style={{ marginBottom: 0, flex: 1 }}
                           rules={[{ required: true, message: '' }]}
                         >
-                          <Input
+                          <AstryxFormTextInput
+                            label={t(
+                              'session.launcher.EnvironmentVariableValue',
+                            )}
                             placeholder={t('general.Example', { value: '64m' })}
                           />
-                        </Form.Item>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
+                        </BAIFormItem>
+                        <CircleMinus size="1em" onClick={() => remove(name)} />
                       </BAIFlex>
                     ))}
-                    <Form.Item noStyle>
+                    <BAIFormItem noStyle>
                       <BAIButton
                         type="dashed"
                         onClick={() => add()}
@@ -902,17 +921,17 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       >
                         {t('adminDeploymentPreset.AddResourceOpt')}
                       </BAIButton>
-                    </Form.Item>
+                    </BAIFormItem>
                   </BAIFlex>
                 )}
               </Form.List>
-            </Form.Item>
+            </BAIFormItem>
             <BAIFlex
               gap="md"
               wrap="wrap"
               style={{ alignItems: 'flex-end', marginTop: token.marginMD }}
             >
-              <Form.Item
+              <BAIFormItem
                 name="clusterMode"
                 label={t('adminDeploymentPreset.ClusterMode')}
                 style={{ flex: 1, minWidth: 160 }}
@@ -924,7 +943,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <Select
+                <AstryxFormSelector
+                  label={t('adminDeploymentPreset.ClusterMode')}
                   placeholder={t('adminDeploymentPreset.SelectClusterMode')}
                   options={[
                     {
@@ -937,8 +957,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                     },
                   ]}
                 />
-              </Form.Item>
-              <Form.Item
+              </BAIFormItem>
+              <BAIFormItem
                 name="clusterSize"
                 label={t('adminDeploymentPreset.ClusterSize')}
                 style={{ flex: 1, minWidth: 120 }}
@@ -950,14 +970,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   },
                 ]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('adminDeploymentPreset.ClusterSize')}
                   min={1}
-                  style={{ width: '100%' }}
                   placeholder={t(
                     'adminDeploymentPreset.ClusterSizePlaceholder',
                   )}
                 />
-              </Form.Item>
+              </BAIFormItem>
             </BAIFlex>
           </BAICard>
 
@@ -972,36 +992,38 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             }}
             showDivider
           >
-            <Form.Item
+            <BAIFormItem
               name="startupCommand"
               label={t('adminDeploymentPreset.StartupCommand')}
               tooltip={t('adminDeploymentPreset.StartupCommandTooltip')}
               extra={t('modelService.StartCommandHelperShell')}
             >
-              <Input.TextArea
+              <AstryxFormTextArea
+                label={t('adminDeploymentPreset.StartupCommand')}
                 rows={2}
                 placeholder={t(
                   'adminDeploymentPreset.StartupCommandPlaceholder',
                 )}
               />
-            </Form.Item>
-            <Form.Item
+            </BAIFormItem>
+            <BAIFormItem
               name="bootstrapScript"
               label={t('adminDeploymentPreset.BootstrapScript')}
             >
-              <Input.TextArea
+              <AstryxFormTextArea
+                label={t('adminDeploymentPreset.BootstrapScript')}
                 rows={3}
                 placeholder={t(
                   'adminDeploymentPreset.BootstrapScriptPlaceholder',
                 )}
               />
-            </Form.Item>
-            <Form.Item
+            </BAIFormItem>
+            <BAIFormItem
               label={t('adminDeploymentPreset.EnvironmentVariables')}
               style={{ marginBottom: 0 }}
             >
               <EnvVarFormList name="environ" />
-            </Form.Item>
+            </BAIFormItem>
           </BAICard>
 
           {/* ----------------------------------------------------------------
@@ -1018,13 +1040,15 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               overflow: 'visible',
             }}
             extra={
-              <Form.Item
+              <BAIFormItem
                 name={['modelDefinition', 'enabled']}
                 valuePropName="checked"
                 noStyle
               >
-                <Switch />
-              </Form.Item>
+                <AstryxFormSwitch
+                  label={t('adminDeploymentPreset.ModelDefinition')}
+                />
+              </BAIFormItem>
             }
             // When off, show only the header: hide the divider and zero-pad the
             // (still-mounted) body to avoid a toggle flicker. `title` overflow
@@ -1066,53 +1090,54 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             showDivider
           >
             <BAIFlex gap="md" wrap="wrap" style={{ alignItems: 'flex-end' }}>
-              <Form.Item
+              <BAIFormItem
                 name="replicaCount"
                 label={t('adminDeploymentPreset.Replicas')}
                 tooltip={t('adminDeploymentPreset.ReplicasTooltip')}
                 style={{ flex: 1, minWidth: 120 }}
                 rules={[{ required: true }]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('adminDeploymentPreset.Replicas')}
                   min={1}
-                  style={{ width: '100%' }}
                   placeholder={t('adminDeploymentPreset.ReplicasPlaceholder')}
                 />
-              </Form.Item>
-              <Form.Item
+              </BAIFormItem>
+              <BAIFormItem
                 name="revisionHistoryLimit"
                 label={t('adminDeploymentPreset.RevisionHistoryLimit')}
                 tooltip={t('adminDeploymentPreset.RevisionHistoryLimitTooltip')}
                 style={{ flex: 1, minWidth: 120 }}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('adminDeploymentPreset.RevisionHistoryLimit')}
                   min={1}
-                  style={{ width: '100%' }}
                   placeholder={t(
                     'adminDeploymentPreset.RevisionHistoryLimitPlaceholder',
                   )}
                 />
-              </Form.Item>
+              </BAIFormItem>
             </BAIFlex>
-            <Form.Item
+            <BAIFormItem
               name="openToPublic"
               valuePropName="checked"
               tooltip={t('adminDeploymentPreset.OpenToPublicTooltip')}
             >
-              <Checkbox>{t('adminDeploymentPreset.OpenToPublic')}</Checkbox>
-            </Form.Item>
+              <AstryxFormCheckbox
+                label={t('adminDeploymentPreset.OpenToPublic')}
+              />
+            </BAIFormItem>
           </BAICard>
 
           {/* ----------------------------------------------------------------
               Step 3 — Review
           ---------------------------------------------------------------- */}
           {currentStepKey === 'review' && (
-            <Form.Item noStyle shouldUpdate>
+            <BAIFormItem noStyle shouldUpdate>
               {() => (
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx />}>
                   <PresetReviewSummary
                     form={form}
-                    mode={mode}
                     onGoToStep={goToStep}
                     runtimeVariants={runtimeVariants}
                     errorFieldNames={errorFieldNames}
@@ -1120,7 +1145,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   />
                 </Suspense>
               )}
-            </Form.Item>
+            </BAIFormItem>
           )}
 
           {/* ----------------------------------------------------------------
@@ -1136,11 +1161,11 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           >
             {!isFirstStep && (
               <Button
-                icon={<LeftOutlined />}
+                variant="secondary"
+                icon={<ChevronLeft size="1em" />}
+                label={t('button.Previous')}
                 onClick={() => goToStep(currentStepIndex - 1)}
-              >
-                {t('button.Previous')}
-              </Button>
+              />
             )}
             {isLastStep ? (
               onSubmit && (
@@ -1155,17 +1180,22 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               )
             ) : (
               <>
+                {/* PILOT-DECISION: antd `type="primary" ghost` (outlined
+                    primary) has no Astryx variant; `variant="primary"` is the
+                    nearest expression — Next is the main action on non-final
+                    steps, so solid primary reads correctly. */}
                 <Button
-                  type="primary"
-                  ghost
+                  variant="primary"
+                  label={t('button.Next')}
+                  endContent={<ChevronRight size="1em" />}
                   onClick={() => goToStep(currentStepIndex + 1)}
-                >
-                  {t('button.Next')} <RightOutlined />
-                </Button>
-                <Button onClick={() => goToStep(STEP_KEYS.length - 1)}>
-                  {t('adminDeploymentPreset.nav.SkipToReview')}
-                  <DoubleRightOutlined />
-                </Button>
+                />
+                <Button
+                  variant="secondary"
+                  label={t('adminDeploymentPreset.nav.SkipToReview')}
+                  endContent={<ChevronsRight size="1em" />}
+                  onClick={() => goToStep(STEP_KEYS.length - 1)}
+                />
               </>
             )}
           </BAIFlex>
@@ -1176,22 +1206,27 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           Hidden below lg so the form gets the full viewport width on small screens. */}
       {screens.lg && (
         <BAIFlex style={{ position: 'sticky', top: 80 }}>
-          <Steps
-            size="small"
+          {/* PILOT-DECISION: antd Steps → lab Stepper. `current`→`activeStep`,
+              `onChange`→`onStepClick`, `size="small"`→`density="compact"`;
+              antd's explicit 'process'/'wait' statuses are derived
+              automatically from `activeStep` and were dropped. Note Astryx
+              only makes completed/current steps clickable — forward jumps go
+              through the Next / Skip-to-Review buttons instead of the rail. */}
+          <Stepper
+            activeStep={currentStepIndex}
             orientation="vertical"
-            current={currentStepIndex}
-            onChange={(nextIndex) => goToStep(nextIndex)}
-            items={stepItems.map((item, idx) => ({
-              ...item,
-              // Review step (last) uses title color for error feedback — no 'error' icon.
-              status:
-                stepErrors[idx] && idx !== STEP_KEYS.length - 1
-                  ? 'error'
-                  : idx === currentStepIndex
-                    ? 'process'
-                    : 'wait',
-            }))}
-          />
+            density="compact"
+            onStepClick={(nextIndex) => goToStep(nextIndex)}
+          >
+            {stepTitles.map((title, idx) => (
+              <Step
+                key={title}
+                step={idx}
+                label={title}
+                status={stepErrors[idx] ? 'error' : undefined}
+              />
+            ))}
+          </Stepper>
         </BAIFlex>
       )}
 

@@ -7,15 +7,25 @@ import {
   TerminateSessionModalFragment$key,
 } from '../../__generated__/TerminateSessionModalFragment.graphql';
 import { TerminateSessionModalRefetchQuery } from '../../__generated__/TerminateSessionModalRefetchQuery.graphql';
+import { App } from '../../app-shim';
 import { requestLocalProxyToken } from '../../helper/localProxyToken';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
-import { App, Card, Checkbox, type ModalProps, Typography } from 'antd';
-import { createStyles } from 'antd-style';
-import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
+import BAICopyableText from '../astryx-bui/BAICopyableText';
+import { Card } from '@astryxdesign/core/Card';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import * as stylex from '@stylexjs/stylex';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  BAIModal,
+  type BAIModalProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,8 +36,10 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
+// antd `ModalProps` -> BUI `BAIModalProps` (§6: a type-only antd import is
+// still an antd import). The render was already `BAIModal`.
 interface TerminateSessionModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   sessionFrgmts?: TerminateSessionModalFragment$key;
@@ -36,15 +48,19 @@ interface TerminateSessionModalProps extends Omit<
 
 // Cannot destroy sessions in scheduled/preparing/pulling/prepared/creating/terminating/error status
 
-const useStyle = createStyles(({ css, token }) => {
-  return {
-    custom: css`
-      ul {
-        list-style-type: circle;
-        padding-left: ${token.paddingMD}px;
-      }
-    `,
-  };
+// antd-style `createStyles` (`.custom ul { ... }`) -> StyleX applied directly
+// on the <ul> elements (P17: keep replacement CSS component-scoped).
+const styles = stylex.create({
+  warningList: {
+    listStyleType: 'circle',
+    paddingLeft: 20,
+  },
+  // antd `Typography.Paragraph type="danger"` — Astryx TextColor has no
+  // danger hue (MAPPING.md §3.4); the semantic error token is applied
+  // directly. `--color-error` is a declared Astryx variable (P19-checked).
+  dangerText: {
+    color: 'var(--color-error)',
+  },
 });
 
 type KernelType = NonNullableNodeOnEdges<
@@ -54,6 +70,11 @@ type KernelType = NonNullableNodeOnEdges<
 type SessionForTerminateModal = NonNullable<
   TerminateSessionModalFragment$data[number]
 >;
+
+// Budget for the best-effort wsproxy cleanup performed before a session is
+// deleted. A proxy that accepts the TCP connection but never returns an HTTP
+// response would otherwise leave these requests pending forever (FR-3398).
+const WSPROXY_CLEANUP_TIMEOUT_MS = 10_000;
 
 const sendRequest = async (
   rqst: {
@@ -66,7 +87,13 @@ const sendRequest = async (
     if (rqst.method === 'GET') {
       rqst.body = undefined;
     }
-    resp = await fetch(rqst.uri, rqst);
+    resp = await fetch(rqst.uri, {
+      ...rqst,
+      // Abort an unresponsive proxy instead of hanging. The rejection is
+      // caught below and reported as "no response", which the caller already
+      // treats as "nothing to clean up".
+      signal: rqst.signal ?? AbortSignal.timeout(WSPROXY_CLEANUP_TIMEOUT_MS),
+    });
     const contentType = resp.headers.get('Content-Type');
     if (contentType === null) {
       body = resp.ok;
@@ -115,6 +142,13 @@ const getProxyURL = async (
   wsproxyVersion?: string,
 ) => {
   let url = 'http://127.0.0.1:5050/';
+  // The `_config.proxyURL` branch uses a truthy check, which covers undefined,
+  // null, and empty string. The Backend.AI client initializes
+  // `_config._proxyURL = null` by default, and `config.toml` can ship
+  // `wsproxy.proxyURL = ""`. Both must fall through to the default URL above
+  // instead of overwriting it with a non-string value (which would later throw
+  // in `new URL(...)`). Mirrors the same guard in `useBackendAIAppLauncher`'s
+  // `getProxyURL`.
   if (
     // @ts-ignore
     globalThis.__local_proxy !== undefined &&
@@ -123,7 +157,7 @@ const getProxyURL = async (
   ) {
     // @ts-ignore
     url = globalThis.__local_proxy.url;
-  } else if (baiClient._config.proxyURL !== undefined) {
+  } else if (baiClient._config.proxyURL) {
     url = baiClient._config.proxyURL;
   }
   if (resourceGroupIdOfSession !== undefined && projectId !== undefined) {
@@ -201,9 +235,9 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const openTerminateModal = false;
   const { t } = useTranslation();
-  const { styles } = useStyle();
   const sessions = useFragment(
     graphql`
       fragment TerminateSessionModalFragment on ComputeSessionNode
@@ -234,32 +268,28 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
 
   const { pendingCount, trackPromise } = usePromiseTracker();
 
-  const terminateSession = (session: SessionForTerminateModal) => {
-    return terminateApp(
-      session,
-      baiClient._config.accessKey,
-      session.project_id,
-      baiClient,
-    )
-      .catch((e) => {
-        return {
-          error: e,
-        };
-      })
-      .then((result) => {
-        const err = result?.error;
-        if (
-          err === undefined || //no error
-          (err && // Even if wsproxy address is invalid, session must be deleted.
-            err.message &&
-            (err.statusCode === 404 || err.statusCode === 500))
-        ) {
-          // BAI client destroy try to request 3times as default
-          return baiClient.destroy(session.row_id, session.access_key, isForce);
-        } else {
-          throw err;
-        }
-      });
+  // The wsproxy cleanup is best-effort: it releases a leftover app-proxy route
+  // for the session. It must never prevent the deletion the user actually asked
+  // for — an unreachable, misconfigured, or unresponsive proxy is not a reason
+  // to keep a session alive (FR-3398). The previous guard only let `destroy()`
+  // run for a 404/500 cleanup failure and re-threw everything else, so a
+  // network-level failure silently skipped the deletion.
+  //
+  // The step is also time-boxed as a whole, not just at the `fetch` level:
+  // `getWSProxyVersion` goes through the Backend.AI client, which applies no
+  // request timeout of its own.
+  const terminateSession = async (session: SessionForTerminateModal) => {
+    await Promise.race([
+      terminateApp(
+        session,
+        baiClient._config.accessKey,
+        session.project_id,
+        baiClient,
+      ).catch(() => undefined),
+      new Promise((resolve) => setTimeout(resolve, WSPROXY_CLEANUP_TIMEOUT_MS)),
+    ]);
+    // BAI client destroy try to request 3times as default
+    return baiClient.destroy(session.row_id, session.access_key, isForce);
   };
 
   const relayEvn = useRelayEnvironment();
@@ -346,40 +376,36 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
       }}
       {...modalProps}
     >
-      <BAIFlex
-        className={styles.custom}
-        direction="column"
-        align="stretch"
-        gap={'xs'}
-      >
-        <Typography.Text>
-          {t('userSettings.SessionTerminationDialog')}
-        </Typography.Text>
-        <Typography.Text mark>
+      <BAIFlex direction="column" align="stretch" gap={'xs'}>
+        <Text>{t('userSettings.SessionTerminationDialog')}</Text>
+        {/* PILOT-DECISION: antd `Typography.Text mark` (yellow highlight) has
+            no Astryx destination (MAPPING.md §3.4 — NONE); emphasis is kept
+            via semibold weight instead. */}
+        <Text weight="semibold">
           {sessions?.length === 1
             ? sessions?.[0]?.name
             : `${sessions?.length} sessions`}
-        </Typography.Text>
-        <Checkbox
-          checked={isForce}
-          onChange={(e) => {
-            setIsForce(e.target.checked);
+        </Text>
+        <CheckboxInput
+          label={t('button.ForceTerminate')}
+          value={isForce}
+          onChange={(checked) => {
+            setIsForce(checked);
           }}
-        >
-          {t('button.ForceTerminate')}
-        </Checkbox>
+        />
         {isForce && (
-          <Card>
-            <Typography.Paragraph type="danger">
+          <Card variant="muted">
+            <Text as="p" display="block" xstyle={styles.dangerText}>
               {t('session.ForceTerminateWarningMsg')}
-            </Typography.Paragraph>
-            <ul>
+            </Text>
+            <ul {...stylex.props(styles.warningList)}>
               <li>{t('session.ForceTerminateWarningMsg2')}</li>
               <li>{t('session.ForceTerminateWarningMsg3')}</li>
             </ul>
             {userRole === 'superadmin' && (
-              <>
-                <Card type="inner" title={t('session.ContainerToCleanUp')}>
+              <Card variant="default">
+                <BAIFlex direction="column" align="stretch" gap="xs">
+                  <Heading level={5}>{t('session.ContainerToCleanUp')}</Heading>
                   {_.map(
                     _.groupBy(
                       _.compact(
@@ -393,12 +419,12 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                       return (
                         <React.Fragment key={agentId}>
                           {agentId}
-                          <ul>
+                          <ul {...stylex.props(styles.warningList)}>
                             {kernels.map((k) => (
                               <li key={k.container_id}>
-                                <Typography.Text copyable>
-                                  {k.container_id}
-                                </Typography.Text>
+                                <BAICopyableText>
+                                  {k.container_id ?? ''}
+                                </BAICopyableText>
                               </li>
                             ))}
                           </ul>
@@ -406,8 +432,8 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                       );
                     },
                   )}
-                </Card>
-              </>
+                </BAIFlex>
+              </Card>
             )}
           </Card>
         )}

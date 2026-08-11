@@ -53,6 +53,7 @@ import {
   createDeploymentShell,
   deleteDeploymentAndVerify,
   type DeploymentFixtures,
+  ensureDeploymentPreset,
   escapeForRegExp,
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
@@ -96,15 +97,15 @@ test.describe(
         await expect(page.getByRole('radio', { name: 'Running' })).toBeChecked({
           timeout: 20000,
         });
-        // antd's button-style BAIRadioGroup visually hides the raw <input>
-        // (opacity: 0) and renders the clickable label on the surrounding
-        // `.ant-radio-button-wrapper` -- `toBeVisible()` on the raw radio
-        // always fails ("hidden") even though the option is genuinely
-        // offered. Assert on the visible wrapper instead (confirmed via
-        // live DOM inspection; see also endpoint-route-table.spec.ts for the
-        // same pattern on an analogous Running/Finished toggle).
+        // `BAIRadioGroup` (`react/src/components/BAIRadioGroup.tsx`) has
+        // rendered on Astryx `SegmentedControl` since ticket 10 — a real,
+        // directly-visible `<button role="radio">`
+        // (`SegmentedControlItem.tsx`), not antd's button-style radio group
+        // with its opacity:0 input behind a clickable label wrapper. No
+        // `.ant-radio-button-wrapper` workaround is needed any more; the
+        // radio role itself is visible.
         await expect(
-          page.locator('.ant-radio-button-wrapper', { hasText: 'Terminated' }),
+          page.getByRole('radio', { name: 'Terminated' }),
         ).toBeVisible();
         await expect(
           page.getByRole('button', { name: 'reload' }),
@@ -235,12 +236,9 @@ test.describe(
         await expect(page.getByText(deploymentName).first()).toBeHidden({
           timeout: 30000,
         });
-        // The raw radio input is visually hidden by antd's button-style
-        // radio group; click the visible wrapper instead (see comment in
-        // "Admin can view the deployments list..." above).
-        await page
-          .locator('.ant-radio-button-wrapper', { hasText: 'Terminated' })
-          .click();
+        // `BAIRadioGroup` renders a directly-clickable `role="radio"` button
+        // (see comment in "Admin can view the deployments list..." above).
+        await page.getByRole('radio', { name: 'Terminated' }).click();
         await expect(page.getByText(deploymentName).first()).toBeHidden({
           timeout: 10000,
         });
@@ -347,15 +345,12 @@ test.describe(
         page.getByRole('tablist').getByRole('button', { name: 'Add Revision' }),
       ).toBeVisible();
 
-      // Replicas section
+      // Replicas section (`DeploymentReplicasCard.tsx`'s `BAIRadioGroup`
+      // toggle — see the deployments list page's toggle comment above).
       await expect(page.getByText('Replicas', { exact: true })).toBeVisible();
-      // Same hidden-input caveat as the deployments list page's toggle --
-      // assert on the visible `.ant-radio-button-wrapper`, not the raw radio.
+      await expect(page.getByRole('radio', { name: 'Running' })).toBeVisible();
       await expect(
-        page.locator('.ant-radio-button-wrapper', { hasText: 'Running' }),
-      ).toBeVisible();
-      await expect(
-        page.locator('.ant-radio-button-wrapper', { hasText: 'Terminated' }),
+        page.getByRole('radio', { name: 'Terminated' }),
       ).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Replica ID' }),
@@ -451,6 +446,26 @@ test.describe(
     test('Admin can view Preset Mode fields in the Add Revision modal', async ({
       page,
     }) => {
+      // Preset Mode's fields only render once at least one deployment preset
+      // exists on the cluster -- with none, the modal shows a "No deployment
+      // presets available" empty state instead (confirmed live via GraphQL:
+      // this cluster had zero deployment presets at test time, which the app
+      // correctly reflects as an intentional empty state, not a bug). Ensure
+      // one exists first, exactly like the Preset Mode revision-attach test
+      // below -- reusing a compatible pre-existing preset when the cluster
+      // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
+      // model folder is not needed here since this test only inspects the
+      // modal's fields and never submits.
+      await skipUnlessClientFeature(
+        page,
+        'deployment-preset',
+        "Preset Mode requires the 'deployment-preset' capability (manager >= 26.4.x)",
+      );
+      const preset = await ensureDeploymentPreset(page);
+      if (preset.presetId) {
+        fixtures = { presetId: preset.presetId, presetName: preset.presetName };
+      }
+
       const deploymentName = `e2e-plan-preset-${Date.now()}`;
       await navigateTo(page, 'deployments');
       await createDeploymentShell(page, deploymentName);
@@ -884,7 +899,7 @@ test.describe(
           // paired slider's own input (which `.fill()` cannot set).
           const cpuInput = dialog
             .locator(
-              '.ant-form-item-row:has-text("CPU") .ant-input-number input',
+              '[data-bai-form-item]:has-text("CPU") .ant-input-number input',
             )
             .first();
           await cpuInput.click();
@@ -892,7 +907,7 @@ test.describe(
           await cpuInput.blur();
           const memInput = dialog
             .locator(
-              '.ant-form-item-row:has-text("Memory") .ant-input-number input',
+              '[data-bai-form-item]:has-text("Memory") .ant-input-number input',
             )
             .first();
           await memInput.fill('4'); // GiB (default unit) — comfortably over 1088MiB

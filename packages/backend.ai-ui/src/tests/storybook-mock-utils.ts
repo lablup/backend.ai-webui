@@ -1,8 +1,6 @@
 import { BAIClient } from '../components/provider/BAIClientProvider';
 import type { DeviceMetaData } from '../components/provider/BAIMetaDataProvider';
 import { BAILocale } from '../locale';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
 
 // =============================================================================
 // Mock BAIClient
@@ -47,10 +45,18 @@ export const createMockClientWithElapsedTime = () => {
 // Locale Setup
 // =============================================================================
 
-/** Simple locale setup for Storybook stories */
+/**
+ * Simple locale setup for Storybook stories.
+ *
+ * to-astryx final-B pointed these at BUI's published `../locale/en_US`
+ * bundles instead of hand-assembling them from `antd/locale/*`. The final
+ * switch removed those bundles with the antd ConfigProvider layer they fed —
+ * `BAILocale` is now just the language code — so the literals below ARE the
+ * whole locale.
+ */
 export const locales: Record<string, BAILocale> = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
+  en: { lang: 'en' },
+  ko: { lang: 'ko' },
 };
 
 // =============================================================================

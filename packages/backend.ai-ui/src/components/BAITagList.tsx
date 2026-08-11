@@ -1,5 +1,35 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAITagList` on Astryx (to-astryx phase 3, wave 2 / ticket W2-D).
+
+   antd `Tag`             -> Astryx `Badge`   (MAPPING §3.5, not closable)
+   antd `Typography.Text` -> Astryx `Text`
+   antd `Typography.Link` -> Astryx `Link`
+   antd `Tooltip`         -> Astryx `Tooltip` (`title` -> `content`)
+   antd `Popover`         -> Astryx `Popover` (`trigger="click"` is its only
+                             trigger; hover overlays are `Tooltip`/`HoverCard`)
+
+ The public prop surface (`items`, `maxInline`, `emptyText`, `variant`,
+ `trigger`) is unchanged.
+
+ PILOT-DECISION — **a click-triggered overflow always uses a `Link` trigger,
+ in both variants.** Astryx `Popover` requires its trigger subtree to contain a
+ `<button>` or `[role="button"]` — it wires the click/keydown handlers and the
+ `aria-haspopup`/`aria-expanded`/`aria-controls` triple onto that element. A
+ `Badge` is not one, so the `text` variant's click branch (which wrapped a
+ chip) now renders the same `+N` affordance the `chip` variant already used.
+ The default for `text` is `hover`, which keeps its `Badge`-in-a-`Tooltip`
+ shape, so no default rendering changes. What is GAINED is that the click
+ affordance is now keyboard-reachable — the antd chip was not.
+*/
 import BAIFlex from './BAIFlex';
-import { Popover, Tag, theme, Tooltip, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Link } from '@astryxdesign/core/Link';
+import { Popover } from '@astryxdesign/core/Popover';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
 
@@ -11,11 +41,11 @@ export interface BAITagListProps {
   emptyText?: ReactNode;
   /**
    * Visual style of the list.
-   * - `'chip'` (default): the first `maxInline` items render as antd `Tag`
+   * - `'chip'` (default): the first `maxInline` items render as `Badge`
    *   chips and the `+N` overflow opens a `Popover`. Suited for interactive
    *   contexts (modals).
    * - `'text'`: the first `maxInline` items render as inline plain (nowrap)
-   *   text and the `+N` overflow is a compact `Tag`. Suited for dense table
+   *   text and the `+N` overflow is a compact `Badge`. Suited for dense table
    *   cells.
    *
    * Both variants' popups list only the overflowed items — the inline items
@@ -37,7 +67,6 @@ const BAITagList: React.FC<BAITagListProps> = ({
   trigger,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
 
   const inlineItems = _.slice(items, 0, maxInline);
   const restItems = _.slice(items, maxInline);
@@ -48,40 +77,34 @@ const BAITagList: React.FC<BAITagListProps> = ({
     return <>{emptyText}</>;
   }
 
+  const restItemsList = (
+    <BAIFlex
+      direction="column"
+      align="start"
+      style={{ maxHeight: 240, overflowY: 'auto' }}
+    >
+      {_.map(restItems, (item, index) => (
+        <Text key={`${item}-${index}`}>{item}</Text>
+      ))}
+    </BAIFlex>
+  );
+
+  const overflowControl =
+    effectiveTrigger === 'hover' ? (
+      <Tooltip content={restItemsList}>
+        <Badge
+          variant="neutral"
+          label={`+${restCount}`}
+          style={{ cursor: 'help' }}
+        />
+      </Tooltip>
+    ) : (
+      <Popover label={`+${restCount}`} content={restItemsList}>
+        <Link>+{restCount}</Link>
+      </Popover>
+    );
+
   if (variant === 'text') {
-    const renderOverflow = () => {
-      const restItemsList = (
-        <BAIFlex
-          direction="column"
-          align="start"
-          style={{ maxHeight: 240, overflowY: 'auto' }}
-        >
-          {_.map(restItems, (item, index) => (
-            <span key={`${item}-${index}`}>{item}</span>
-          ))}
-        </BAIFlex>
-      );
-      const overflowTag = (
-        <Tag
-          color="default"
-          style={{
-            marginInlineEnd: 0,
-            cursor: effectiveTrigger === 'hover' ? 'help' : 'pointer',
-          }}
-        >
-          +{restCount}
-        </Tag>
-      );
-
-      return effectiveTrigger === 'hover' ? (
-        <Tooltip title={restItemsList}>{overflowTag}</Tooltip>
-      ) : (
-        <Popover trigger="click" content={restItemsList}>
-          {overflowTag}
-        </Popover>
-      );
-    };
-
     return (
       <BAIFlex gap="xxs" align="center" style={{ display: 'inline-flex' }}>
         {_.map(inlineItems, (item, index) => (
@@ -89,7 +112,7 @@ const BAITagList: React.FC<BAITagListProps> = ({
             {item}
           </span>
         ))}
-        {restCount > 0 && renderOverflow()}
+        {restCount > 0 && overflowControl}
       </BAIFlex>
     );
   }
@@ -98,33 +121,13 @@ const BAITagList: React.FC<BAITagListProps> = ({
     <span>
       <BAIFlex wrap="wrap" gap="xs" style={{ display: 'inline-flex' }}>
         {_.map(inlineItems, (item, index) => (
-          <Tag key={`${item}-${index}`}>{item}</Tag>
+          <Badge key={`${item}-${index}`} variant="neutral" label={item} />
         ))}
       </BAIFlex>
       {restCount > 0 && (
         <>
           &nbsp;
-          <Popover
-            trigger={effectiveTrigger}
-            content={
-              <ul
-                style={{
-                  paddingLeft: token.padding,
-                  margin: 0,
-                  maxHeight: 240,
-                  overflow: 'auto',
-                }}
-              >
-                {_.map(restItems, (item, index) => (
-                  <li key={`${item}-${index}`} style={{ listStyle: 'disc' }}>
-                    <Typography.Text>{item}</Typography.Text>
-                  </li>
-                ))}
-              </ul>
-            }
-          >
-            <Typography.Link>+{restCount}</Typography.Link>
-          </Popover>
+          {overflowControl}
         </>
       )}
     </span>

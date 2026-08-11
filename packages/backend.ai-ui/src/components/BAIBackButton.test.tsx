@@ -37,7 +37,12 @@ describe('BAIBackButton', () => {
       expect(svg).toBeInTheDocument();
     });
 
-    it('should render as text type button', () => {
+    // to-astryx W2-D: the button is an Astryx `IconButton variant="ghost"`, so
+    // the antd `ant-btn-text` class is gone (Astryx styles through StyleX, and
+    // its generated class names are not a contract). What IS newly guaranteed —
+    // and what the antd original never had — is an accessible name on an
+    // icon-only control (P8).
+    it('should render an icon-only button with an accessible name', () => {
       render(
         <MemoryRouter>
           <BAIBackButton to="/previous" />
@@ -45,7 +50,8 @@ describe('BAIBackButton', () => {
       );
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('ant-btn-text');
+      expect(button).toHaveAccessibleName();
+      expect(button.querySelector('svg')).toBeInTheDocument();
     });
   });
 

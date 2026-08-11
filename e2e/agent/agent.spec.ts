@@ -4,8 +4,8 @@ import { test, expect, Locator } from '@playwright/test';
 
 test.beforeEach(async ({ page, request }) => {
   await loginAsAdmin(page, request);
-  await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
-  await page.getByRole('menuitem', { name: 'hdd Resources' }).click();
+  await page.getByRole('link', { name: 'Admin Settings' }).click();
+  await page.getByRole('link', { name: 'hdd Resources' }).click();
   await expect(
     page.getByTestId('webui-breadcrumb').getByText('Resources'),
   ).toBeVisible();

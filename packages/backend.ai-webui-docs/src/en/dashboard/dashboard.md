@@ -18,10 +18,12 @@ The page is composed of several main panels:
     such as *Interactive*, *Batch*, *Inference*, and *Upload*.
     You can quickly see how many sessions of each type are currently running.
 
-- **My Total Resources Limit**:
-    Displays the total used and free resources across all your projects and resource groups.
+- **My Total Resource Usage**:
+    Displays the resources you are currently using across all your projects.
+    Each resource shows a usage bar below its value; hover over the bar to see
+    how much of your total limit that usage represents.
     When multiple limits (domain, project, or keypair) apply,
-    the system uses the **most restrictive** available limit to calculate the remaining resources.
+    the **most restrictive** one takes effect.
 
 - **My Resources in Resource Group**:
     Shows your current resource usage and remaining capacity
@@ -48,16 +50,6 @@ system configuration.
 When you are logged in as a superadmin, the Dashboard page also displays
 **Agent Statistics** and **Active Agents** panels alongside the standard user panels.
 These panels show cluster-wide agent health and resource utilization.
-
-## Auto-refresh
-
-The Dashboard automatically refreshes all panel data every **15 seconds**. This
-ensures that the displayed information stays up to date without requiring manual
-interaction.
-
-:::note
-The [Superadmin Dashboard](#superadmin-dashboard) uses a **30-second** refresh interval instead.
-:::
 
 ## Customizing the dashboard layout
 

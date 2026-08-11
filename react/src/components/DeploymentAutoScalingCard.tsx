@@ -9,13 +9,15 @@ import {
 } from '../__generated__/DeploymentAutoScalingCardListQuery.graphql';
 import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/DeploymentAutoScalingCardPresetsQuery.graphql';
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
+import { App } from '../app-shim';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { App, Skeleton, Tooltip, theme } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAICard,
@@ -31,7 +33,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { CircleHelp, PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -97,16 +99,17 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
       title={
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.AutoScaling')}
-          <Tooltip title={t('deployment.tab.description.AutoScaling')}>
-            <QuestionCircleOutlined
+          <Tooltip content={t('deployment.tab.description.AutoScaling')}>
+            <CircleHelp
               style={{ color: token.colorTextDescription }}
+              size="1em"
             />
           </Tooltip>
         </BAIFlex>
       }
       styles={{ body: { paddingTop: 0 } }}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         <DeploymentAutoScalingCardContent
           deploymentId={deployment.id}
           isEndpointDestroying={isEndpointDestroying}
@@ -148,7 +151,7 @@ const DeploymentAutoScalingCardContent: React.FC<
     'table_column_overrides.AutoScalingRuleList',
   );
 
-  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC)
+  // BAITableAstryx order string: "createdAt" (ASC) | "-createdAt" (DESC)
   const [queryParams, setQueryParams] = useQueryStates(
     {
       order: parseAsStringLiteral([
@@ -179,8 +182,7 @@ const DeploymentAutoScalingCardContent: React.FC<
       {
         field: 'CREATED_AT' as const,
         direction: (orderString.startsWith('-') ? 'DESC' : 'ASC') as
-          | 'ASC'
-          | 'DESC',
+          'ASC' | 'DESC',
       },
     ],
     filter: graphQLFilter ?? null,

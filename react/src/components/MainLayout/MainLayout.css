@@ -1,0 +1,46 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <MainLayout> (to-astryx ticket 33). Replaces BOTH the
+ antd-style `createGlobalStyle` scrollbar block and the `createStyles`
+ alert-wrapper block; imported by the component itself (P17). A bundled
+ same-origin stylesheet is covered by `style-src 'self'` and needs no nonce,
+ which is what `createGlobalStyle` was buying (see BAISider.css for the same
+ argument). Nothing here targets `.ant-*` (P6).
+
+ Token mapping (P19-checked against the declared Astryx set):
+   theme.colorBorderSecondary -> var(--color-border)
+   theme.colorBgElevated      -> var(--color-background-popover)
+   token.margin (16px)        -> var(--spacing-4)
+*/
+
+/* Scrollbar styling, app-wide. */
+/* Firefox */
+* {
+  scrollbar-width: 2px;
+  scrollbar-color: var(--color-border) var(--color-background-popover);
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  max-width: 2px;
+  background-color: var(--color-background-popover);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-background-popover);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+}
+
+/* Top/bottom breathing room for the stacked layout alerts. */
+.main-layout-alert-wrapper > *:first-child {
+  margin-top: var(--spacing-4);
+}
+
+.main-layout-alert-wrapper > *:last-child {
+  margin-bottom: var(--spacing-4);
+}

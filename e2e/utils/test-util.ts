@@ -1,6 +1,12 @@
 import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
 import TOML from '@iarna/toml';
-import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
+import {
+  APIRequestContext,
+  Locator,
+  Page,
+  expect,
+  request as apiRequest,
+} from '@playwright/test';
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return (
@@ -140,8 +146,67 @@ export async function login(
     await page.getByText('Advanced').click();
   }
   await endpointInput.fill(endpoint);
-  await page.getByLabel('Login', { exact: true }).click();
-  await page.waitForSelector('[data-testid="user-dropdown-button"]');
+  // A busy shared test backend can transiently reject a *valid* login (the
+  // manager surfaces an internal error, the UI renders it as "Login
+  // information mismatch"). Retry the submit a couple of times, with a fixed
+  // 5s delay between attempts, so a short server hiccup doesn't fail the whole
+  // (often serial) suite at a random beforeEach.
+  //
+  // Cost of that choice, since login() runs per test: against a backend that
+  // is genuinely down this burns up to 3 x 30s + 2 x 5s = 100s per test before
+  // reporting, instead of failing fast. The per-attempt wait stays at 30s on
+  // purpose — a rejection surfaces far sooner than that, but a slow-but-
+  // accepted login keeps the form up for an unknown while, and a shorter wait
+  // would misread it as a rejection and re-submit.
+  const maxAttempts = 3;
+  const retryDelayMs = 5000;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    await page.getByLabel('Login', { exact: true }).click();
+    try {
+      await page.waitForSelector('[data-testid="user-dropdown-button"]', {
+        timeout: 30000,
+      });
+      return;
+    } catch (error) {
+      const stillOnLoginForm = await page
+        .getByLabel('Login', { exact: true })
+        .isVisible()
+        .catch(() => false);
+      if (!stillOnLoginForm) {
+        // The login was accepted (the form is gone) and the app is just
+        // booting slowly — keep waiting instead of re-submitting.
+        await page.waitForSelector('[data-testid="user-dropdown-button"]', {
+          timeout: 60000,
+        });
+        return;
+      }
+      // Diagnostic: surface the server's actual rejection reason (the UI
+      // collapses every failure into "Login information mismatch"). Runs in a
+      // throwaway context so a successful probe cannot leave its session
+      // cookie in the page's context and silently authenticate the next
+      // attempt.
+      let probeContext: APIRequestContext | undefined;
+      try {
+        probeContext = await apiRequest.newContext();
+        const probe = await probeContext.post(`${endpoint}/server/login`, {
+          data: { username, password },
+        });
+        console.log(
+          `[login] attempt ${attempt} rejected for ${username}; direct API login → ${probe.status()} ${(await probe.text()).slice(0, 300)}`,
+        );
+      } catch (probeError) {
+        console.log(
+          `[login] attempt ${attempt} rejected for ${username}; probe failed: ${String(probeError).slice(0, 200)}`,
+        );
+      } finally {
+        await probeContext?.dispose();
+      }
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+      await page.waitForTimeout(retryDelayMs);
+    }
+  }
 }
 
 export const userInfo = {
@@ -326,31 +391,39 @@ export async function fillOutVaadinGridCellFilter(
   await nameInput.fill(inputValue);
 }
 
+/**
+ * `BAIPropertyFilter` / `BAIGraphQLPropertyFilter` (to-astryx ticket 28) are
+ * built on Astryx `PowerSearch`. A committed filter is a token whose remove
+ * control carries `aria-label="Remove {label}"`
+ * (`t('@astryx.token.remove', {label})`, `Token.tsx` / locales/en.json), and
+ * whose label follows `"<Field>: <operator> <value>"` (`PowerSearch.tsx`
+ * `tokenizerValue` -> `displayLabel`). "name" has no `defaultOperator`
+ * override on the vfolder pages this targets, so it uses the BUI default
+ * `ilike` = "contains".
+ */
 export async function removeSearchButton(page: Page, folderName: string) {
   try {
-    const filterChip = page
+    const removeButton = page
       .getByTestId('vfolder-filter')
-      .locator('div')
-      .filter({ hasText: `Name: ${folderName}` })
-      .locator('svg')
-      .first();
+      .getByRole('button', { name: `Remove Name: contains ${folderName}` });
 
-    // Only try to click if the filter chip exists
-    if (await filterChip.isVisible({ timeout: 1000 })) {
-      await filterChip.click();
+    // Only try to click if the filter token exists
+    if (await removeButton.isVisible({ timeout: 1000 })) {
+      await removeButton.click();
     }
   } catch {
-    // Silently ignore if filter chip doesn't exist
+    // Silently ignore if filter token doesn't exist
     // This prevents cascading failures when the filter was already removed
   }
 }
 
 export async function clearAllFilters(page: Page) {
   try {
-    // Find all filter chips in the vfolder-filter component
+    // Every token's remove button carries an aria-label starting with
+    // "Remove " (see `removeSearchButton` above).
     const filterChips = page
       .getByTestId('vfolder-filter')
-      .locator('.ant-tag-close-icon');
+      .getByRole('button', { name: /^Remove / });
 
     // Get count of filter chips
     const count = await filterChips.count();
@@ -371,7 +444,15 @@ export async function clearAllFilters(page: Page) {
 }
 
 /**
- * Select a property filter and search for a value in BAIPropertyFilter component
+ * Select a property filter and search for a value in a `BAIPropertyFilter` /
+ * `BAIGraphQLPropertyFilter` component (to-astryx ticket 28 rebuilt both on
+ * Astryx `PowerSearch`: a single typeahead that, for a field with no
+ * pre-filled value, opens an edit popover (Field/Operator/Value) on
+ * selection — `PowerSearch.tsx` `handleTokenizerChange`). The `data-testid`
+ * lands on `PowerSearch`'s own root (`data-testid={testId}`,
+ * `PowerSearch.tsx`), which contains exactly one `role="combobox"` (the
+ * typeahead), so scoping through it stays unambiguous regardless of any
+ * per-page `label` override.
  * @param page - Playwright Page object
  * @param propertyName - Name of the property to filter by (e.g., 'Name', 'Status')
  * @param searchValue - Value to search for
@@ -385,48 +466,36 @@ export async function selectPropertyFilter(
 ) {
   const filterContainer = page.getByTestId(testId);
 
-  // The BAIPropertyFilter is inside .ant-space-compact with two .ant-select elements
-  // 1. Property selector (first .ant-select in Space.Compact)
-  // 2. Search input (AutoComplete, second .ant-select in Space.Compact)
+  // Open the typeahead and pick the field.
+  const searchBar = filterContainer.getByRole('combobox').first();
+  await searchBar.click();
+  await page.getByRole('option', { name: propertyName, exact: true }).click();
 
-  // Click the first Select in the Space.Compact (property selector)
-  const propertySelect = filterContainer
-    .locator('.ant-space-compact')
-    .locator('.ant-select')
-    .first();
-  await propertySelect.click();
-
-  // Select the property option from the visible dropdown. Ant Design keeps
-  // closed dropdowns mounted but hidden, so scope the option lookup to the
-  // currently open popup to avoid clicking a stale/hidden orphan.
-  await page
-    .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-    .getByRole('option', { name: propertyName })
-    .first()
-    .click();
-
-  // Fill in the search value in the AutoComplete input
-  // It's the second .ant-select in the Space.Compact
-  const searchInput = filterContainer
-    .locator('.ant-space-compact')
-    .locator('.ant-select')
-    .last()
-    .locator('input[role="combobox"]');
-  await searchInput.fill(searchValue);
-
-  // Click search button
-  await page.getByRole('button', { name: 'search' }).click();
+  // Fill the Value control in the edit popover it opens. The value editor's
+  // accessible name is "Value" (`t('@astryx.powersearch.valueEditor.value')`)
+  // regardless of which control renders it: free-text fields render a
+  // `TextInput` (`role="textbox"`, commits via the popover's Apply button);
+  // strict-selection fields render a `Selector` (`role="combobox"`, commits
+  // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
+  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
+  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await valueTextbox.fill(searchValue);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  } else {
+    await page.getByRole('combobox', { name: 'Value' }).click();
+    await page.getByRole('option', { name: searchValue, exact: true }).click();
+  }
 }
 
 /**
- * Locates the table refresh button (BAIFetchKeyButton, ReloadOutlined icon).
+ * Locates the table refresh button (BAIFetchKeyButton). The icon is lucide
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
+ * carries the native `title="Refresh"` attribute instead
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
  * Clicking it bumps the list's fetchKey, forcing a network-only refetch.
  */
 export function getTableRefreshButton(page: Page) {
-  return page
-    .locator('button')
-    .filter({ has: page.locator('.anticon-reload') })
-    .first();
+  return page.locator('button[title="Refresh"]').first();
 }
 
 /**

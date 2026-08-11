@@ -4,6 +4,7 @@
  */
 import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
 import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
+import { App } from '../app-shim';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ErrorLogList from '../components/ErrorLogList';
 import LoginHistory, { LoginHistoryQuery } from '../components/LoginHistory';
@@ -14,6 +15,7 @@ import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import {
   useBAISettingGeneralState,
@@ -24,11 +26,15 @@ import {
   useCustomThemeConfig,
 } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { SettingOutlined } from '@ant-design/icons';
-import { useSessionStorageState, useToggle } from 'ahooks';
-import { App, Button, Skeleton, Typography } from 'antd';
-import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  BAICard,
+  filterOutEmpty,
+  useSessionStorageState,
+  useToggle,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral } from 'nuqs';
 import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -293,27 +299,22 @@ const UserPreferencesPage = () => {
           title: t('userSettings.Language'),
           description: t('userSettings.DescLanguage'),
           selectProps: {
+            // PILOT-DECISION: antd's JSX option label (name + a grey
+            // `Typography.Text type="secondary"` "(Default)" suffix) is
+            // dropped for a plain string (Selector's `SelectorOptionData.
+            // label` is `string`-only, P2) — baked directly into the text
+            // instead of styled separately. `optionFilterProp: 'filterValue'`
+            // always targeted the same text as the label, so it's a no-op
+            // once search runs against the option label directly.
             options: languageOptions.map((item) =>
               item.value === defaultLanguage
                 ? {
                     ...item,
-                    label: (
-                      <>
-                        {item.label}&nbsp;
-                        <Typography.Text type="secondary">
-                          ({t('userSettings.Default')})
-                        </Typography.Text>
-                      </>
-                    ),
-                    filterValue: item.label,
+                    label: `${item.label} (${t('userSettings.Default')})`,
                   }
-                : {
-                    ...item,
-                    filterValue: item.label,
-                  },
+                : item,
             ),
-            showSearch: true,
-            optionFilterProp: 'filterValue',
+            hasSearch: true,
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
@@ -366,11 +367,10 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescMyKeypairInfo'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => toggleSSHKeypairInfoModal()}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -381,11 +381,10 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescSSHKeypairManagement'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => toggleSSHKeypairManagementModal()}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -395,27 +394,25 @@ const UserPreferencesPage = () => {
           title: t('userSettings.MaxConcurrentUploads'),
           description: t('userSettings.DescMaxConcurrentUploads'),
           selectProps: {
+            // PILOT-DECISION: option `value` narrows number -> string
+            // (Selector, P3/P4); the item's own `value`/`onChange` narrows
+            // to `string` too (SettingItem.tsx), so the numeric type is
+            // recovered at THIS boundary via `_.toNumber` on the way out
+            // (was already doing that) and `String(num)` on the way in.
             options: _.map([2, 3, 4, 5], (num) =>
               num === 2
                 ? {
-                    label: (
-                      <>
-                        {num}&nbsp;
-                        <Typography.Text type="secondary">
-                          ({t('userSettings.Default')})
-                        </Typography.Text>
-                      </>
-                    ),
-                    value: num,
+                    label: `${num} (${t('userSettings.Default')})`,
+                    value: String(num),
                   }
                 : {
                     label: num.toString(),
-                    value: num,
+                    value: String(num),
                   },
             ),
           },
-          defaultValue: 2,
-          value: maxConcurrentUpload || 2,
+          defaultValue: '2',
+          value: String(maxConcurrentUpload || 2),
           onChange: (value) => setMaxConcurrentUpload(_.toNumber(value)),
         },
       ]),
@@ -430,14 +427,13 @@ const UserPreferencesPage = () => {
           title: t('userSettings.EditBootstrapScript'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => {
                 setShellInfo('bootstrap');
                 toggleShellScriptEditModal();
               }}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -447,14 +443,13 @@ const UserPreferencesPage = () => {
           title: t('userSettings.EditUserConfigScript'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => {
                 setShellInfo('userconfig');
                 toggleShellScriptEditModal();
               }}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -511,7 +506,7 @@ const UserPreferencesPage = () => {
           },
         ]}
       >
-        <Suspense fallback={<Skeleton active />}>
+        <Suspense fallback={<BAISkeletonAstryx />}>
           {currentTab === 'general' && (
             <BAIErrorBoundary>
               <SettingList
@@ -535,7 +530,7 @@ const UserPreferencesPage = () => {
                   onReload={loadLoginSessionQuery}
                 />
               ) : (
-                <Skeleton active />
+                <BAISkeletonAstryx />
               )}
             </BAIErrorBoundary>
           )}
@@ -547,7 +542,7 @@ const UserPreferencesPage = () => {
                   onReload={loadLoginHistoryQuery}
                 />
               ) : (
-                <Skeleton active />
+                <BAISkeletonAstryx />
               )}
             </BAIErrorBoundary>
           )}

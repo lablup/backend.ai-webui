@@ -52,9 +52,17 @@ The modal contains the following fields:
 - **Resource Group**: The resource group where the deployment will run. If only one resource group is available to your project, the field is auto-selected and you can proceed without choosing one manually.
 - **Desired Replicas**: The number of replicas to keep running for this deployment. The system scales the active pool toward this target.
 - **Tags**: Optional labels for organizing and filtering deployments. Press Enter or comma to add.
-- **Open To Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
+- **Open to Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 
-Click `Create Deployment` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision. To update deployment-level settings (name, visibility, desired replicas, or tags) after creation, click the **Edit** button on the Service Info card.
+:::warning[The resource group is fixed at creation]
+A warning notice sits under the **Resource Group** field from the moment the modal opens: *"The resource group selected at creation cannot be changed."* The resource group belongs to the deployment rather than to a revision, so you cannot move a deployment to a different resource group later — not by editing the deployment and not by adding a new revision. Pick the right one before you create the deployment; if you need a different resource group, create a new deployment.
+
+**Open to Public** is fixed in the same way. In the **Edit Deployment** modal the checkbox is read-only and its tooltip reads *"Cannot be changed after creation."*
+:::
+
+Click `Create` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision.
+
+To change deployment-level settings (name, desired replicas, or tags) after creation, click the **Edit** button on the Service Info card, update the values in the **Edit Deployment** modal, and save your changes. The resource group and **Open to Public** setting cannot be changed here — both are fixed at creation, as described above.
 
 <a id="add-revision"></a>
 
@@ -122,7 +130,7 @@ Use:
 The Review step (step 4 of the wizard) renders the start command and bootstrap script as code blocks for easy review before you confirm.
 :::
 
-- **Model Mount Destination**: The path inside the container where the model storage folder is mounted (default: `/models`).
+- **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
 - **Port**: The container port that the inference server listens on (default: `8000`).
 - **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
    * **Path**: The HTTP endpoint path called during service health checks (default: `/health`).
@@ -136,8 +144,12 @@ The Review step (step 4 of the wizard) renders the start command and bootstrap s
 
 Select **Use Config File** to load the startup configuration from a `model-definition.yaml` file stored in the model storage folder. The following fields are available:
 
-- **Mount Destination**: The path inside the container where the model storage folder is mounted (default: `/models`).
+- **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
 - **Model Definition File Path**: The path to the model definition file within the model storage folder (default: `model-definition.yaml`).
+
+:::note
+Both model definition modes label this field **Mount Destination For Model Folder** and write the same value, so switching between **Enter Command** and **Use Config File** does not change what the field means.
+:::
 
 For instructions on creating a model definition file, refer to the [Creating a Model Definition File](#model-definition-guide) section.
 
@@ -206,7 +218,19 @@ In addition to runtime parameters, the `vLLM` and `SGLang` runtime variants pre-
 The **Environments** section is present for all runtime variants.
 
 - **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list to images that are compatible with that runtime.
+- **Image Name (Manual)**: A free-text image reference, shown only when your administrator has enabled manual image names on the server. Typing here clears the **Environment / Version** selection, and vice versa — the two are alternative ways of choosing the same image.
 - **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely.
+
+##### Entering an image name manually
+
+When you type into **Image Name (Manual)** instead of picking from the dropdown, the reference you entered is looked up against the images registered on the server when you submit the form, and the revision is created from the image that matches.
+
+- Enter a reference in the same form the registry uses, for example `cr.backend.ai/stable/python:3.10-ubuntu20.04`.
+- You can append an `@` architecture suffix — for example `cr.backend.ai/stable/python:3.10-ubuntu20.04@aarch64` — to pin a specific architecture. Without the suffix, the manager's default architecture is used.
+
+If no registered image matches what you typed, the revision is **not** created and an inline error appears on the field: *"The manually entered image could not be found. Enter a registered image reference, or pick one from the list."* The form scrolls to the field so you can correct it. Correct the reference, or clear the field and choose an image from **Environment / Version** instead.
+
+   Because the lookup happens on submit, the error appears after you click the submit button rather than while you type.
 
 #### Cluster and resources
 
@@ -469,7 +493,7 @@ Click on a deployment name in the Deployments list to view detailed information 
 The Deployment Detail Page shows contextual alert banners at the top, reflecting the current state of the deployment:
 
 - **Deployment is ready**: Shown when the deployment is `HEALTHY`. Includes a **Test in Chat** button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.
-- **Private deployment — use an access token to access the endpoint.**: Shown when **Open To Public** is disabled. Includes a shortcut to **Manage Access Tokens** so you can issue or copy a token. See [Access Tokens](#generating-tokens).
+- **Private deployment — use an access token to access the endpoint.**: Shown when **Open to Public** is disabled, the endpoint URL has been issued, and the deployment does not have an access token yet. Includes an **Add Access Token** button that opens the Create Access Token dialog directly from the banner. The banner disappears once you create the first token. See [Access Tokens](#generating-tokens).
 - **No revision is deployed — add a revision to activate this service.**: Shown when the deployment has no current revision. Click `Add Revision` to create the first revision and activate the service.
 
 - **Preparing your service**: Shown while the deployment is being created or transitioning between states. Indicates the service is not yet ready to handle requests.
@@ -496,9 +520,19 @@ The Service Info card displays the following details:
 
 #### More menu (edit and delete)
 
-The Service Info card's header exposes an **Edit** button alongside a **More** menu. The More menu currently contains the **Delete Deployment** action.
+The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment). The More menu currently contains the **Delete Deployment** action.
 
 ![](../images/endpoint_detail_more_menu.png)
+
+<a id="scheduling-history"></a>
+
+#### Scheduling history
+
+Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. The modal lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
+
+![](../images/deployment_scheduling_history.png)
+
+The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table. See [Replicas](#replicas-tab-history).
 
 <a id="revisions-tab"></a>
 
@@ -603,6 +637,8 @@ The three statuses are independent axes. During the **Warming Up** lifecycle pha
 
 Click the session name in the **Session** column to open the session detail drawer. Click the revision number in the **Revision (ID)** column to open the revision detail drawer.
 
+<a id="replicas-tab-history"></a>
+
 Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
 
 ![](../images/replica_scheduling_history.png)
@@ -652,24 +688,51 @@ Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To mo
 
 ### Generating tokens
 
-Once the deployment is `HEALTHY`, you can click on its name in the Deployments list to open the Deployment Detail Page. The **Service Endpoint** URL is shown in the Service Info card. If **Open To Public** is enabled, end users can access the deployment without a token. If it is disabled, generate and share a token as described below.
+Once the deployment is `HEALTHY`, you can click on its name in the Deployments list to open the Deployment Detail Page. The **Service Endpoint** URL is shown in the Service Info card. If **Open to Public** is enabled, end users can access the deployment without a token. If it is disabled, create and share a token as described below.
+
+Access tokens are managed in the **Access Tokens** card at the bottom of the Deployment Detail Page. Hover the ⓘ icon next to the card title for a summary: *"Manage access tokens for authenticating API requests to this deployment's endpoint."*
 
 ![](../images/generate_token.png)
 
-Click the `Generate Token` button located to the right of the generated
-token list. In the modal that appears, enter the expiration date.
+#### Creating an access token
+
+1. Click the `Create Access Token` button in the card header. You can also click **Add Access Token** in the **Private deployment** banner at the top of the page — it opens the same dialog.
+2. Choose an **Expiration** for the token:
+   * `7 Days`, `30 Days`, or `90 Days`: The token expires that many days from now. `7 Days` is the default.
+   * **Custom Expiration**: Reveals a date-and-time picker so you can set the exact expiry. The chosen moment must be in the future.
+   * **No Expiration**: Sets the expiration to a far-future date (`December 31, 2099`), so the token effectively never expires. This date — not a literal *No Expiration* label — is what appears afterward in the token dialog, the access token list, and the Chat token selector.
+3. Click `Create Access Token` to issue it.
 
 ![](../images/token_generation_dialog.png)
 
-The issued token will be added to the list of generated tokens. Each token displays its **Status** (Valid or Expired), **Expiration Date**, and **Created Date**. Click the `copy` button in the token
-item to copy the token, and add it as the value of the following key.
+   The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment. While it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own and for a deployment that is being deleted.
+
+After the token is issued, a **Token** dialog shows the token value once, together with a copy button and the expiration date you chose. Copy the token from this dialog, or from the table afterwards.
+
+#### Access token list
+
+The card lists every access token issued for this deployment, newest first:
+
+- **Token**: The token value, shown truncated with a copy button. A delete icon in the same cell removes the token.
+- **Created At**: When the token was issued.
+- **Expiration**: When the token expires. Tokens created with **No Expiration** show `December 31, 2099`.
 
 ![](../images/generated_token_copy.png)
 
-| Key           | Value            |
-|---------------|------------------|
-| Content-Type  | application/json |
-| Authorization | BackendAI        |
+Send the token in the `Authorization` request header:
+
+| Key           | Value                   |
+|---------------|-------------------------|
+| Content-Type  | application/json        |
+| Authorization | BackendAI `<token>`     |
+
+#### Deleting an access token
+
+Click the delete icon in a token's row. The **Delete Access Token** dialog asks you to type `delete` to confirm; the OK button stays disabled until the typed text matches.
+
+:::danger
+Deleting an access token is **irreversible** and takes effect immediately. Any client still sending that token will start receiving authentication failures.
+:::
 
 ### Terminating a deployment
 
@@ -681,7 +744,7 @@ When a deployment is no longer needed, it is recommended to terminate it to free
 
 ### Making API requests
 
-To allow end users to call your deployment, share the deployment URL with them. If the **Open To Public** option is enabled, you can share the **Service Endpoint** URL from the Deployment Detail Page directly. If the deployment is private, share the URL along with an access token.
+To allow end users to call your deployment, share the deployment URL with them. If the **Open to Public** option is enabled, you can share the **Service Endpoint** URL from the Deployment Detail Page directly. If the deployment is private, share the URL along with an access token.
 
 Here is a simple command using `curl` to verify that the deployment is responding:
 
@@ -710,6 +773,19 @@ For more information about the chat feature, please refer to the [Chat page](#ch
 
 ![](../images/LLM_chat.png)
 
+#### Choosing a token on the Chat page
+
+When the Chat page is talking to a Backend.AI deployment, the token field is a selector listing that deployment's access tokens rather than a plain text box:
+
+- Every option shows the **last six characters** of the token as a code chip, plus its expiry date (for example `~ Aug 26, 2026`, or `~ Dec 31, 2099` for tokens created with **No Expiration**). All tokens begin with the same JWT header, so the tail is the part that actually tells them apart. Hover an option to see the full issued → expiry timestamps.
+- **Expired tokens are hidden.** Only tokens that are still valid appear in the list.
+- When the field is empty, the **most recently created valid token** is selected for you. If you clear the selection deliberately, it is not re-applied.
+- The gear icon next to the field (**Access Token Settings**) opens the deployment's Access Tokens section, so you can issue a new token without losing your place. The list reloads when you come back, so a token you just created is immediately selectable.
+
+If the deployment has no valid token, the selector is empty; create one first as described in [Access Tokens](#generating-tokens).
+
+![](../images/chat_deployment_token_select.png)
+
 If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
 To use the model, you will need the following information:
 
@@ -734,12 +810,15 @@ The Model Store provides a card-based gallery of pre-configured models that you 
 
 ### Browsing and searching models
 
-The page uses a search and sort layout at the top:
+The page uses a filter and sort layout at the top:
 
-- **Filter By Name**: Search model cards by name.
-- **Storage Host**: Filter cards by the storage host where the model folder resides.
+- **Property filter bar**: Add one or more conditions to narrow the card list. Two properties are available:
+   * **Model Name**: Match model cards by name.
+   * **Storage Host**: Match cards by the storage host that holds the model folder. Instead of typing a host name, pick one from the dropdown of storage hosts registered on the server; the value is committed as a filter condition as soon as you select it. Use the `equals` operator to keep only that host, or `not equals` to exclude it.
 - **Sort**: Choose how results are ordered. The available options are `Name (A→Z)`, `Name (Z→A)`, `Oldest first`, and `Newest first`.
 - **Refresh**: Click the refresh button to reload the card list.
+
+   Because you pick the host from a list rather than typing it, a mistyped host name cannot silently produce an empty result set. Conditions stack with `AND`, so you can combine a name condition with a storage-host condition.
 
 :::note
 The model list is automatically scoped to the current domain's MODEL_STORE project. There is no separate domain filter — all cards visible on this page already belong to your domain.

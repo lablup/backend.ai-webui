@@ -1,15 +1,17 @@
 import { BAIActivateArtifactsModalArtifactsFragment$key } from '../../__generated__/BAIActivateArtifactsModalArtifactsFragment.graphql';
 import { BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation } from '../../__generated__/BAIActivateArtifactsModalArtifactsFragmentRestoreArtifactsMutation.graphql';
+import { App } from '../../app-shim';
 import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { App, Modal, Typography, type ModalProps } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export type BAIActivateArtifactsModalArtifactsFragmentKey =
   BAIActivateArtifactsModalArtifactsFragment$key;
 
-export interface BAIActivateArtifactsModalProps extends ModalProps {
+export interface BAIActivateArtifactsModalProps extends BAIModalProps {
   selectedArtifactsFragment: BAIActivateArtifactsModalArtifactsFragmentKey;
 }
 
@@ -52,7 +54,7 @@ const BAIActivateArtifactsModal = ({
 
   return (
     <BAIUnmountAfterClose>
-      <Modal
+      <BAIModal
         title={t('comp:BAIActivateArtifactsModal.ActivateArtifacts')}
         centered
         {...props}
@@ -94,7 +96,7 @@ const BAIActivateArtifactsModal = ({
         okText={t('comp:BAIActivateArtifactsModal.Activate')}
         okButtonProps={{ loading: isInflightRestoreArtifacts }}
       >
-        <Typography.Text>
+        <Text>
           {selectedArtifacts.length === 1
             ? t(
                 'comp:BAIActivateArtifactsModal.AreYouSureYouWantToActivateOne',
@@ -104,8 +106,8 @@ const BAIActivateArtifactsModal = ({
                 'comp:BAIActivateArtifactsModal.AreYouSureYouWantToActivateSome',
                 { count: selectedArtifacts.length },
               )}
-        </Typography.Text>
-      </Modal>
+        </Text>
+      </BAIModal>
     </BAIUnmountAfterClose>
   );
 };

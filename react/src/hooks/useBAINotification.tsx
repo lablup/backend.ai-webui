@@ -4,14 +4,12 @@
  */
 import { useWebUINavigate } from '.';
 import { BAINodeNotificationItemFragment$key } from '../__generated__/BAINodeNotificationItemFragment.graphql';
-import BAIGeneralNotificationItem from '../components/BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from '../components/BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from '../components/BAINodeNotificationItem';
+import { toBAINotificationStackItems } from '../components/astryx-bui/BAINotificationStackAdapter';
+import BAINotificationStackAstryx from '../components/astryx-bui/BAINotificationStackAstryx';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { useBAISettingUserState } from './useBAISetting';
-import { App } from 'antd';
-import { createStyles } from 'antd-style';
-import { ArgsProps } from 'antd/lib/notification';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
@@ -25,15 +23,35 @@ import { useTranslation } from 'react-i18next';
 import { To, createPath } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * Keys that have already been announced. Its only remaining job is the
+ * desktop `Notification` mirror's "is this new?" test — the floating stack
+ * itself is rendered declaratively from `notificationListState` (ticket 29),
+ * so nothing imperative tracks visibility any more.
+ */
 const _activeNotificationKeys: Key[] = [];
 
-const useStyle = createStyles(({ css }) => ({
-  notificationItem: css`
-    .ant-notification-notice-description {
-      margin-top: 0 !important;
-    }
-  `,
-}));
+/**
+ * The base `NotificationState` used to extend antd's `ArgsProps` (ticket 29
+ * removed that import — it was the last antd `notification` dependency in the
+ * repo). Only the fields call sites actually set are kept; anything else
+ * antd's toast accepted was never reaching a renderer.
+ */
+export interface BAINotificationArgs {
+  /** Headline. */
+  title?: ReactNode;
+  /** @deprecated antd's pre-v6 name for `title`; most call sites still use it. */
+  message?: ReactNode;
+  description?: ReactNode;
+  /**
+   * Seconds until the notice auto-closes. `0` (antd's own convention, and the
+   * default this hook applies to a pending background task) or `null` keeps it
+   * open until dismissed. The countdown pauses while the notice is hovered or
+   * focused.
+   */
+  duration?: number | null;
+  type?: 'success' | 'info' | 'warning' | 'error';
+}
 
 // Helper type to ensure promise and onChange.resolved have matching types
 type BackgroundTaskConfig<T> = {
@@ -67,10 +85,7 @@ type BackgroundTaskConfig<T> = {
   promise?: Promise<T> | null;
 };
 
-export interface NotificationState<T = any> extends Omit<
-  ArgsProps,
-  'placement' | 'key' | 'icon'
-> {
+export interface NotificationState<T = any> extends BAINotificationArgs {
   key: React.Key;
   created?: string;
   toTextKey?: string;
@@ -91,21 +106,11 @@ export interface NotificationState<T = any> extends Omit<
     steps: Array<{
       label: string;
       status:
-        | 'idle'
-        | 'pending'
-        | 'resolved'
-        | 'rejected'
-        | 'warned'
-        | 'cancelled';
+        'idle' | 'pending' | 'resolved' | 'rejected' | 'warned' | 'cancelled';
       progress?: number;
     }>;
     overallStatus:
-      | 'idle'
-      | 'running'
-      | 'completed'
-      | 'failed'
-      | 'warned'
-      | 'cancelled';
+      'idle' | 'running' | 'completed' | 'failed' | 'warned' | 'cancelled';
   };
 }
 
@@ -168,99 +173,109 @@ function _upsertDesktopNotification(
 }
 
 /**
- * Custom hook that listens to background tasks and updates notifications accordingly.
- * Also reactively opens/updates/closes antd notifications based on notificationListState.
+ * The floating notification stack — the whole visible half of this module.
+ *
+ * Ticket 29 replaced the imperative `app.notification.open()/destroy()` effect
+ * with this component: the jotai list IS the rendered state, so there is no
+ * second source of truth to keep in sync (the class of bug that produced the
+ * "zombie re-open" and the `setHoverKeys` render loop this file used to guard
+ * against). `NotificationHost` mounts it once, app-wide.
+ *
+ * The presentation lives in `BAINotificationStackAstryx`; the mapping in
+ * `BAINotificationStackAdapter`. Everything routed, translated or Relay-bound
+ * is injected from here, which is why those two stay antd-free.
+ */
+export const BAINotificationStackHost: React.FC = () => {
+  'use memo';
+  const _notifications = useAtomValue(notificationListState);
+  const { closeNotification } = useSetBAINotification();
+  const webuiNavigate = useWebUINavigate();
+  const { t } = useTranslation();
+
+  const items = toBAINotificationStackItems(_notifications, {
+    onNavigate: (notification) => {
+      if (notification.to) {
+        webuiNavigate(notification.to);
+      }
+      closeNotification(notification.key);
+    },
+    getActionText: (notification) =>
+      notification.toText ??
+      (notification.toTextKey
+        ? t(notification.toTextKey)
+        : t('notification.SeeDetail')),
+    cancelText: t('button.Cancel'),
+    retryText: t('button.Retry'),
+    // `node` and `multiStep` render a complete notice of their own (folder /
+    // session link, status tag, step list), so they take the body outright.
+    renderContent: (notification) =>
+      notification.node ? (
+        <BAINodeNotificationItem
+          notification={notification}
+          nodeFrgmt={notification.node}
+        />
+      ) : notification.multiStep ? (
+        <BAIMultiStepNotificationItem
+          notification={notification}
+          onRetry={notification.onRetry ?? undefined}
+          onCancel={notification.onCancel ?? undefined}
+        />
+      ) : null,
+    // Only the general notice needs the disclosure wired here — the two
+    // renderers above draw their own `extraDescription`.
+    renderExtra: (notification) =>
+      notification.node || notification.multiStep
+        ? null
+        : notification.extraDescription,
+  });
+
+  return (
+    <BAINotificationStackAstryx
+      // Newest last = newest nearest the corner, as antd's `bottomRight`
+      // stack ordered it (the jotai list is newest-first).
+      notifications={items.reverse()}
+      onClose={closeNotification}
+    />
+  );
+};
+
+/**
+ * Custom hook that listens to background tasks and updates notifications
+ * accordingly, and mirrors newly opened notifications to the desktop
+ * `Notification` API. Rendering is `BAINotificationStackHost`'s job.
  */
 export const useBAINotificationEffect = () => {
   'use memo';
   const _notifications = useAtomValue(notificationListState);
-  const setNotifications = useSetAtom(notificationListState);
 
-  const app = App.useApp();
-  const { styles } = useStyle();
-  const webuiNavigate = useWebUINavigate();
   const [desktopNotification] = useBAISettingUserState('desktop_notification');
   const { t } = useTranslation();
 
   const listeningTaskIdsRef = useRef<(string | undefined)[]>([]);
   const listeningPromiseKeysRef = useRef<NotificationState['key'][]>([]);
-  const { upsertNotification, closeNotification } = useSetBAINotification();
+  const { upsertNotification } = useSetBAINotification();
 
-  // Reactive antd notification opener.
-  //
-  // upsertNotification is PURE (only updates Jotai state). This effect is the
-  // single place that calls app.notification.open() / destroy(), ensuring the
-  // antd side-effect is always deferred to after React's commit phase rather
-  // than being called synchronously during a state update or event handler.
-  // That separation prevents antd's NoticeList from recreating its internal
-  // `keys` array mid-render and triggering an infinite setHoverKeys loop.
-  const processNotifications = useEffectEvent(
+  // Desktop mirror. A side effect, so it stays out of the render path: it
+  // fires once per key, the first time that key asks to be shown.
+  const mirrorToDesktop = useEffectEvent(
     (notifications: NotificationState[]) => {
       notifications.forEach((notification) => {
         if (!notification.key) return;
         const isActive = _activeNotificationKeys.includes(notification.key);
-
-        if (notification.open === true) {
-          const isNew = !isActive;
-          if (isNew) {
-            _activeNotificationKeys.push(notification.key);
-            if (!notification.skipDesktopNotification && desktopNotification) {
-              _upsertDesktopNotification(notification, t);
-            }
+        if (notification.open === true && !isActive) {
+          _activeNotificationKeys.push(notification.key);
+          if (!notification.skipDesktopNotification && desktopNotification) {
+            _upsertDesktopNotification(notification, t);
           }
-          const key = notification.key;
-          app.notification.open({
-            ...notification,
-            icon: undefined,
-            type: undefined,
-            placement: 'bottomRight',
-            // Suppress antd's built-in header; all content lives in description.
-            message: undefined,
-            title: undefined,
-            className: styles.notificationItem,
-            description: notification.node ? (
-              <BAINodeNotificationItem
-                notification={notification}
-                nodeFrgmt={notification.node}
-              />
-            ) : notification.multiStep ? (
-              <BAIMultiStepNotificationItem
-                notification={notification}
-                onRetry={notification.onRetry ?? undefined}
-                onCancel={notification.onCancel ?? undefined}
-              />
-            ) : (
-              <BAIGeneralNotificationItem
-                notification={notification}
-                onClickAction={() => {
-                  if (notification.to) {
-                    webuiNavigate(notification.to);
-                  }
-                  closeNotification(key);
-                }}
-              />
-            ),
-            onClose() {
-              _.remove(_activeNotificationKeys, (k) => k === key);
-              setNotifications((prevList) => {
-                const idx = prevList.findIndex((n) => n.key === key);
-                if (idx < 0) return prevList;
-                const newList = [...prevList];
-                newList[idx] = { ...newList[idx], open: false };
-                return newList;
-              });
-            },
-          });
         } else if (notification.open === false && isActive) {
           _.remove(_activeNotificationKeys, (k) => k === notification.key);
-          app.notification.destroy(notification.key);
         }
       });
     },
   );
 
   useEffect(() => {
-    processNotifications(_notifications);
+    mirrorToDesktop(_notifications);
   }, [_notifications]);
 
   // Background task listeners
@@ -440,13 +455,11 @@ export const useSetBAINotification = () => {
   'use memo';
 
   const setNotifications = useSetAtom(notificationListState);
-  const app = App.useApp();
 
   const closeAllNotifications = () => {
     _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
-    app.notification.destroy();
-    // Mark all notifications as closed so the reactive opener does not
-    // re-show them on the next state change.
+    // Mark all notifications as closed. `open` is what the stack renders from,
+    // so this both hides them and keeps them in the drawer.
     setNotifications((prev) => prev.map((n) => ({ ...n, open: false })));
   };
 
@@ -455,7 +468,6 @@ export const useSetBAINotification = () => {
    */
   const clearAllNotifications = () => {
     _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
-    app.notification.destroy();
     setNotifications([]);
   };
 
@@ -463,21 +475,27 @@ export const useSetBAINotification = () => {
    * Function to hide specific notification. It remains in the drawer.
    */
   const closeNotification = (key: React.Key) => {
-    app.notification.destroy(key);
+    _.remove(_activeNotificationKeys, (k) => k === key);
+    setNotifications((prevList) => {
+      const idx = prevList.findIndex((n) => n.key === key);
+      if (idx < 0 || prevList[idx].open === false) return prevList;
+      const newList = [...prevList];
+      newList[idx] = { ...newList[idx], open: false };
+      return newList;
+    });
   };
 
   /**
    * Function to remove specific notification from the list and hide it.
    */
   const clearNotification = (key: React.Key) => {
+    _.remove(_activeNotificationKeys, (k) => k === key);
     setNotifications((prev) => prev.filter((n) => n.key !== key));
-    closeNotification(key);
   };
 
   /**
-   * Pure state updater — only writes to notificationListState.
-   * The reactive effect in useBAINotificationEffect is solely responsible
-   * for calling app.notification.open() / destroy().
+   * Pure state updater — only writes to notificationListState, which
+   * `BAINotificationStackHost` renders directly.
    */
   const upsertNotification = <T = any,>(
     params: Partial<Omit<NotificationState<T>, 'created'>>,

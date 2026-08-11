@@ -3,14 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { PrometheusQueryTemplatePreviewQuery } from '../__generated__/PrometheusQueryTemplatePreviewQuery.graphql';
-import { LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Typography } from 'antd';
 import {
   BAIButton,
   BAIFlex,
   useDebouncedDeferredValue,
   useFetchKey,
+  BAIText,
 } from 'backend.ai-ui';
+import { LoaderCircle, RotateCw } from 'lucide-react';
 import React, { Suspense, useDeferredValue } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
@@ -41,17 +41,19 @@ const PrometheusQueryTemplatePreview: React.FC<{
       fallbackRender={({ error }) => {
         return (
           <BAIFlex gap="xxs">
-            <Typography.Text type="danger">
+            <BAIText type="danger">
               {extractErrorMessage(
                 error,
                 t('autoScalingRule.QueryExecutionFailed'),
               )}
-            </Typography.Text>
+            </BAIText>
           </BAIFlex>
         );
       }}
     >
-      <Suspense fallback={<LoadingOutlined spin />}>
+      <Suspense
+        fallback={<LoaderCircle className="bai-icon-spin" size="1em" />}
+      >
         <PrometheusQueryTemplatePreviewContent queryTemplate={queryTemplate} />
       </Suspense>
     </ErrorBoundary>
@@ -116,25 +118,23 @@ const PrometheusQueryTemplatePreviewContent: React.FC<{
     : formatPreviewValue(adminPreviewPrometheusQueryPreset?.result, t);
 
   return fetchTemplate !== trimmed ? (
-    <LoadingOutlined spin />
+    <LoaderCircle className="bai-icon-spin" size="1em" />
   ) : !fetchTemplate ? null : hadDomainError ? (
     <BAIFlex gap="xxs">
-      <Typography.Text type="danger">
+      <BAIText type="danger">
         {t('autoScalingRule.QueryExecutionFailed')}
-      </Typography.Text>
+      </BAIText>
     </BAIFlex>
   ) : (
     <BAIFlex gap="xxs">
-      <Typography.Text type="secondary">
-        {t('autoScalingRule.CurrentValue')}:
-      </Typography.Text>
-      <Typography.Text type="secondary">
+      <BAIText type="secondary">{t('autoScalingRule.CurrentValue')}:</BAIText>
+      <BAIText type="secondary">
         {value ?? t('autoScalingRule.NoDataAvailable')}
-      </Typography.Text>
+      </BAIText>
       <BAIButton
         type="link"
         size="small"
-        icon={<ReloadOutlined />}
+        icon={<RotateCw size="1em" />}
         loading={fetchKey !== deferredKey}
         onClick={() => updateFetchKey()}
         title={t('autoScalingRule.RefreshPreview')}

@@ -1,6 +1,6 @@
+import { theme } from '../theme-shim';
 import BAIAlert, { BAIAlertProps } from './BAIAlert';
-import { theme } from 'antd';
-import { createStyles } from 'antd-style';
+import './BAIListAlert.css';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
 
@@ -13,28 +13,6 @@ export interface BAIListAlertProps extends Omit<BAIAlertProps, 'description'> {
   items: Array<BAIListAlertItem>;
   maxHeight?: React.CSSProperties['maxHeight'];
 }
-
-const useStyles = createStyles(({ css, token }) => ({
-  // scrollbar with no track background — only the thumb floats over content
-  transparentScrollbar: css`
-    /* Firefox, Chrome 121+ — thumb / track */
-    scrollbar-color: ${token.colorTextQuaternary} transparent;
-    scrollbar-width: thin;
-
-    /* Safari and older WebKit (ignored where scrollbar-color is supported) */
-    &::-webkit-scrollbar,
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: ${token.colorTextQuaternary};
-      border-radius: 3px;
-    }
-  `,
-}));
 
 /**
  * Alert that summarizes a list of items (e.g. selected resources in a modal)
@@ -52,7 +30,6 @@ const BAIListAlert: React.FC<BAIListAlertProps> = ({
 }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   return (
     <BAIAlert
       {...alertProps}
@@ -61,7 +38,7 @@ const BAIListAlert: React.FC<BAIListAlertProps> = ({
           <ul
             // make the scrollable region reachable by keyboard
             tabIndex={0}
-            className={styles.transparentScrollbar}
+            className="bai-list-alert-scroll"
             style={{
               margin: 0,
               padding: 0,

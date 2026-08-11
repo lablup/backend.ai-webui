@@ -10,9 +10,11 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
+import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
-import { Card, theme } from 'antd';
-import { createStyles } from 'antd-style';
+import './AllocationHistoryStatistics.css';
+import BAICardAstryx from './astryx-bui/BAICardAstryx';
+import { Heading } from '@astryxdesign/core/Heading';
 import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -26,34 +28,6 @@ import {
   YAxis,
 } from 'recharts';
 
-const useStyles = createStyles(({ css, token }) => ({
-  graphCard: css`
-    .recharts-cartesian-axis-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-value {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-label {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-default-tooltip {
-      background-color: ${token.colorBgBase} !important;
-      border: 1px solid ${token.colorBorderSecondary} !important;
-      color: ${token.colorText} !important;
-    }
-    .recharts-tooltip-label {
-      color: ${token.colorText} !important;
-    }
-    .recharts-tooltip-item {
-      color: ${token.colorText} !important;
-    }
-  `,
-}));
-
 type ByteUnit = 'B' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB' | 'EiB';
 type DecimalUnit = 'B' | 'KB' | 'MB' | 'GB' | 'TB' | 'PB' | 'EB';
 
@@ -65,21 +39,34 @@ interface GraphCardProps {
   tooltipText?: string;
   children: React.ReactNode;
 }
+// PILOT-DECISION: antd `Card type="inner"` -> `BAICardAstryx` (MAPPING §5.1 —
+// Astryx `Card` is a bare surface, the header is composition). antd's inner
+// variant differed from the outer one by a tinted header strip, a 14px title
+// and 16px body padding; Astryx has no header strip to tint, so the two
+// carried-over metrics are the card title level and `padding={4}` (16px). The
+// tint itself is DROPPED — reproducing it would be a per-component CSS block
+// fighting `astryx-card`, which the defaults-first policy rules out.
+//
+// The title is `Heading level={5}` (16px). It was `level={4}` for the 14px rung
+// of Astryx's own ramp, but the restored antd ramp has no 14px heading rung at
+// all (38/30/24/20/16) and heading-4 is now 20px — bigger than the OUTER card
+// titles this inner card sits under, i.e. an inverted hierarchy. 16px is the
+// nearest rung and lines this up with every other card title.
 export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
-  <Card
-    type="inner"
+  <BAICardAstryx
+    padding={4}
+    width="100%"
     title={
-      <BAIFlex gap={'xxs'}>
-        {title}
+      <BAIFlex gap={'xxs'} align="center">
+        <Heading level={5}>{title}</Heading>
         {tooltipText ? (
           <BAIQuestionIconWithTooltip title={tooltipText} />
         ) : null}
       </BAIFlex>
     }
-    style={{ width: '100%' }}
   >
     {children}
-  </Card>
+  </BAICardAstryx>
 );
 
 interface UsageBarChartProps {
@@ -103,7 +90,6 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
 }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { isDarkMode } = useThemeMode();
 
   const formatValue = (value: number) => {
@@ -145,7 +131,7 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
     <ResponsiveContainer
       width="100%"
       height={height}
-      className={styles.graphCard}
+      className="allocation-history-graph-card"
     >
       <BarChart
         data={chartData}

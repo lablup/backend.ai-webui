@@ -3,14 +3,22 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
-import BAITable, { type BAIColumnsType } from './Table/BAITable';
-import { theme } from 'antd';
-import type { AnyObject } from 'antd/es/_util/type';
+import { BAITableAstryx, type BAIColumnsType } from './Table';
 import { TriangleAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
+
+/**
+ * to-astryx phase 3 / ticket B: was `import type { AnyObject } from
+ * 'antd/es/_util/type'` — a direct antd import for a two-line structural type.
+ * Inlined verbatim (antd's own definition) so the modal family carries no antd
+ * specifier of its own.
+ */
+
+type AnyObject = Record<PropertyKey, any>;
 
 export interface BAIBulkErrorModalProps<RecordType = AnyObject> extends Omit<
   BAIModalProps,
@@ -86,7 +94,7 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
             description={alertDescription}
           />
         )}
-        <BAITable<RecordType>
+        <BAITableAstryx<RecordType>
           columns={columns}
           dataSource={dataSource}
           // Client-side pagination: 10 rows per page, hidden entirely while
@@ -99,7 +107,6 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
           resizable={false}
           size="small"
           bordered
-          scroll={{ x: 'max-content' }}
         />
       </BAIFlex>
     </BAIModal>

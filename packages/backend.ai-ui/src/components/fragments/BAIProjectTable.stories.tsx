@@ -12,7 +12,6 @@ import BAIProjectTable, {
   availableProjectSorterValues,
 } from './BAIProjectTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { App } from 'antd';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -65,7 +64,7 @@ const meta: Meta<typeof BAIProjectTable> = {
 - **Project ID**: Global ID (sortable, copyable)
 - **Integration ID**: External integration ID
 
-For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
+For other props (loading, pagination, etc.), refer to [BAITableAstryx](?path=/docs/table-baitable--docs).
         `,
       },
     },
@@ -104,17 +103,15 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
       const baiLocale = locales[locale] || locales.en;
 
       return (
-        <App>
-          <BAIConfigProvider
-            locale={baiLocale}
-            clientPromise={mockClientPromise}
-            anonymousClientFactory={mockAnonymousClientFactory}
-          >
-            <BAIMetaDataProvider deviceMetaData={mockDeviceMetaData}>
-              <Story />
-            </BAIMetaDataProvider>
-          </BAIConfigProvider>
-        </App>
+        <BAIConfigProvider
+          locale={baiLocale}
+          clientPromise={mockClientPromise}
+          anonymousClientFactory={mockAnonymousClientFactory}
+        >
+          <BAIMetaDataProvider deviceMetaData={mockDeviceMetaData}>
+            <Story />
+          </BAIMetaDataProvider>
+        </BAIConfigProvider>
       );
     },
   ],

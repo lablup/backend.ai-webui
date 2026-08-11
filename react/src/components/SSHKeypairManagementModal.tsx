@@ -4,16 +4,20 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
-import { useToggle } from 'ahooks';
-import { Button, Typography, theme } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
+import { Copy } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -54,47 +58,55 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
         title={t('userSettings.SSHKeypairGeneration')}
         onCancel={() => onRequestClose()}
         footer={[
-          <Button key="back" onClick={() => onRequestClose()}>
-            {t('button.Close')}
-          </Button>,
+          <Button
+            key="back"
+            variant="secondary"
+            label={t('button.Close')}
+            onClick={() => onRequestClose()}
+          />,
           <Button
             key="generate"
-            type="primary"
+            variant="primary"
+            label={t('button.Generate')}
             onClick={toggleSSHKeypairGenerationModal}
-          >
-            {t('button.Generate')}
-          </Button>,
+          />,
           <Button
             key="enterManually"
-            type="primary"
+            variant="primary"
+            label={t('button.EnterManually')}
             onClick={toggleSSHKeypairManualFormModal}
-          >
-            {t('button.EnterManually')}
-          </Button>,
+          />,
         ]}
         {...modalProps}
       >
-        <Typography.Text strong>
-          {t('userSettings.CurrentSSHPublicKey')}
-        </Typography.Text>
+        <Text weight="semibold">{t('userSettings.CurrentSSHPublicKey')}</Text>
         {data?.ssh_public_key ? (
           <BAIFlex direction="row" align="start" justify="between">
-            <Typography.Paragraph>
-              <pre style={{ width: 430, height: 270 }}>
-                {data?.ssh_public_key}
-              </pre>
-            </Typography.Paragraph>
-            <Typography.Text
-              copyable={{ text: data?.ssh_public_key }}
+            <pre style={{ width: 430, height: 270 }}>
+              {data?.ssh_public_key}
+            </pre>
+            {/* antd `Typography.Text copyable={{text}}` with no children
+                rendered ONLY the copy glyph — a standalone copy control, not
+                a labeled text row (so `BAICopyableText`, which always pairs
+                text + icon, doesn't fit). Self-built as a bare IconButton. */}
+            <IconButton
+              icon={<Copy size="1em" />}
+              label={t('button.Copy')}
+              tooltip={t('button.Copy')}
+              variant="ghost"
+              size="sm"
               style={{ marginTop: token.margin }}
+              onClick={() => {
+                if (data?.ssh_public_key) {
+                  void navigator.clipboard?.writeText(data.ssh_public_key);
+                }
+              }}
             />
           </BAIFlex>
         ) : (
-          <Typography.Paragraph>
-            <pre style={{ height: 270 }}>
-              {t('userSettings.NoExistingSSHKeypair')}
-            </pre>
-          </Typography.Paragraph>
+          <pre style={{ height: 270 }}>
+            {t('userSettings.NoExistingSSHKeypair')}
+          </pre>
         )}
       </BAIModal>
       <SSHKeypairGenerationModal

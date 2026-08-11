@@ -1,14 +1,15 @@
+import { App } from '../../../app-shim';
 import { convertToBinaryUnit, initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import BAIButton, { BAIButtonProps } from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
-import { DeleteFilled, MoreOutlined } from '@ant-design/icons';
-import { App, theme, Dropdown, Tooltip } from 'antd';
-import { DownloadIcon, EditIcon } from 'lucide-react';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Trash2, EllipsisVertical, DownloadIcon, EditIcon } from 'lucide-react';
 import { use, useState } from 'react';
 
 const MAX_EDITABLE_FILE_SIZE = 1024 * 1024; // 1 MB
@@ -88,12 +89,22 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const editDisabledReason = isDirectory
+    ? t('comp:FileExplorer.UnsupportedFileFormat')
+    : t('comp:FileExplorer.FileTooLargeToEdit', {
+        size: convertToBinaryUnit(MAX_EDITABLE_FILE_SIZE, 'auto')?.numberFixed,
+      });
+
   return (
     <BAIFlex gap="xs">
       <BAIButton
         type="text"
         size="small"
-        icon={<DownloadIcon color={token.colorInfo} />}
+        icon={
+          <DownloadIcon
+            color={enableDownload ? token.colorInfo : token.colorTextDisabled}
+          />
+        }
         disabled={!enableDownload}
         onClick={(e) => e.stopPropagation()}
         action={async () => {
@@ -109,7 +120,14 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
       <BAIButton
         type="text"
         size="small"
-        icon={<DeleteFilled style={{ color: token.colorError }} />}
+        icon={
+          <Trash2
+            style={{
+              color: enableDelete ? token.colorError : token.colorTextDisabled,
+            }}
+            size="1em"
+          />
+        }
         disabled={!enableDelete}
         onClick={(e) => {
           e.stopPropagation();
@@ -117,65 +135,42 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         }}
         {...deleteButtonProps}
       />
-      <Dropdown
-        trigger={['click']}
-        open={dropdownOpen}
-        disabled={isDirectory}
+      {/* PILOT-DECISION (to-astryx W2-D): antd `Dropdown popupRender` with a
+          hand-built surface -> `DropdownMenu items`. `DropdownMenu` owns its
+          elevation, radius and shadow, so the three `token.*` reads that
+          reproduced them are gone (defaults-first).
+
+          The disabled-edit explanation loses its tooltip: `DropdownMenuItemData`
+          has no tooltip slot, and Astryx explicitly advises against tooltips on
+          disabled controls (P18). Rather than drop the information, the reason
+          is folded into the row's own LABEL — "Edit file (file too large)" —
+          which every user sees, not just the ones who hover. */}
+      <DropdownMenu
+        isMenuOpen={dropdownOpen}
         onOpenChange={setDropdownOpen}
-        popupRender={() => {
-          return (
-            <BAIFlex
-              direction="column"
-              align="stretch"
-              style={{
-                padding: 4,
-                backgroundColor: token.colorBgElevated,
-                borderRadius: token.borderRadiusLG,
-                boxShadow: token.boxShadowSecondary,
-              }}
-            >
-              <Tooltip
-                title={
-                  isEditDisabled
-                    ? isDirectory
-                      ? t('comp:FileExplorer.UnsupportedFileFormat')
-                      : t('comp:FileExplorer.FileTooLargeToEdit', {
-                          size: convertToBinaryUnit(
-                            MAX_EDITABLE_FILE_SIZE,
-                            'auto',
-                          )?.numberFixed,
-                        })
-                    : undefined
-                }
-              >
-                <BAIButton
-                  type="text"
-                  icon={<EditIcon />}
-                  disabled={isEditDisabled}
-                  onClick={(e: React.MouseEvent) => {
-                    e.stopPropagation();
-                    setDropdownOpen(false);
-                    onClickEdit?.();
-                  }}
-                  style={{ justifyContent: 'start' }}
-                >
-                  {t('comp:FileExplorer.EditFile')}
-                </BAIButton>
-              </Tooltip>
-            </BAIFlex>
-          );
+        items={[
+          {
+            label: isEditDisabled
+              ? `${t('comp:FileExplorer.EditFile')} (${editDisabledReason})`
+              : t('comp:FileExplorer.EditFile'),
+            icon: <EditIcon />,
+            isDisabled: isEditDisabled,
+            onClick: () => {
+              setDropdownOpen(false);
+              onClickEdit?.();
+            },
+          },
+        ]}
+        button={{
+          variant: 'ghost',
+          size: 'sm',
+          isIconOnly: true,
+          icon: <EllipsisVertical size="1em" />,
+          label: t('comp:FileExplorer.MoreOptions'),
+          isDisabled: isDirectory,
         }}
-      >
-        <BAIButton
-          type="text"
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          icon={<MoreOutlined />}
-          aria-label={t('comp:FileExplorer.MoreOptions')}
-        />
-      </Dropdown>
+        hasChevron={false}
+      />
     </BAIFlex>
   );
 };

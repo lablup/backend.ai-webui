@@ -24,8 +24,9 @@ inside an effect:
   silently captures stale closures.
 - Wrapping each one in `useCallback` and propagating that everywhere creates
   cascading dep arrays that are hard to maintain.
-- `ahooks` `useMemoizedFn` was a popular workaround pre-19.2 but is now
-  redundant.
+- A "memoized fn" helper (the `ahooks` `useMemoizedFn` pattern) was the usual
+  pre-19.2 workaround, but is now redundant. `ahooks` is no longer a dependency
+  of this repo at all.
 
 `useEffectEvent` solves all of these. It returns a stable function whose body
 always reads the *latest* values from the surrounding closure. The dep array
@@ -50,8 +51,11 @@ of the surrounding `useEffect` only needs the values that actually represent
    Treat them as effect-internal helpers, not as event handlers passed to JSX
    (use a regular function or `useCallback` for that — though under the
    `'use memo'` directive even those are unnecessary).
-5. Prefer `useEffectEvent` over `ahooks` `useMemoizedFn`. Do not introduce new
-   `useMemoizedFn` usage; remove it when touching nearby code.
+5. Prefer `useEffectEvent` over any "stable callback that reads the latest
+   closure" helper. BUI has one — `useLatestCallback` in
+   `packages/backend.ai-ui/src/hooks/internal/useLatest.ts` — but it exists
+   solely so the ported `useControllableValue` / storage-state hooks can keep
+   their stable-setter contract. Do not use it in application code.
 
 ## Pattern
 
@@ -138,7 +142,8 @@ prop to remount cleanly so identity is the synchronization key.
 
 After editing a file that uses `useEffect`, ensure:
 
-- No `useMemoizedFn` from `ahooks` remains (project-wide convention).
+- No `useMemoizedFn`-style stable-callback helper is used outside BUI's own
+  ported hooks (project-wide convention).
 - No `// eslint-disable-next-line react-hooks/exhaustive-deps` introduced just
   to drop a callback dep — convert to `useEffectEvent` instead.
 - `bash scripts/verify.sh` passes; `react-hooks/exhaustive-deps` lint should be
@@ -150,5 +155,5 @@ After editing a file that uses `useEffect`, ensure:
   the need for `useCallback`/`useMemo` for regular values and JSX-passed
   callbacks. `useEffectEvent` complements this for the effect-internal case
   where the compiler cannot express "ignore this dep for re-synchronization".
-- `component-props-extension.md`: wrapper component prop conventions.
-- `antd-v6-props.md`: Ant Design v6 prop name conventions.
+- `component-props-extension.md`: wrapper component prop conventions,
+  including the frozen antd-v6-shaped prop vocabulary section.

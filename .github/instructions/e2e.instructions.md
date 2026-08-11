@@ -4,815 +4,449 @@ applyTo: "e2e/**/*.ts"
 
 # E2E Test Writing Guidelines for Backend.AI WebUI
 
-This document provides guidelines for writing effective and maintainable E2E tests using Playwright in the Backend.AI WebUI project.
+Playwright conventions for the `e2e/` suite. Read the **Selector Strategy** section before
+writing a single locator — the app's DOM changed wholesale when the UI moved off Ant Design
+onto Astryx, and most locator habits inherited from older specs no longer match anything.
 
-## Table of Contents
+## Read this first: `.ant-*` classes do not exist anymore
 
-- [Core Principles](#core-principles)
-- [Playwright Auto-Waiting](#playwright-auto-waiting)
-- [Page Object Pattern](#page-object-pattern)
-- [Selector Strategy](#selector-strategy)
-- [Common Patterns](#common-patterns)
-- [Anti-Patterns to Avoid](#anti-patterns-to-avoid)
-- [Example Test Structure](#example-test-structure)
+antd is not a dependency of this repository. The component system is Astryx
+(`@astryxdesign/core`) plus the BUI wrappers in `packages/backend.ai-ui/`, and the form layer
+is the self-hosted engine in `packages/backend.ai-ui/src/form-engine/`. Nothing renders an
+`ant-` prefixed class.
 
----
+- A locator like `.ant-modal`, `.ant-select-dropdown`, `.ant-table-row`,
+  `.ant-table-measure-row`, `.ant-form-item-control`, `.ant-popover`, `.ant-tabs-tab-active`
+  now matches **zero** elements. It does not fail loudly — it burns its whole timeout and then
+  reports a generic "element not found".
+- There are still ~690 such lines across ~65 files in `e2e/` (`git grep -n '\.ant-' -- e2e`).
+  That is a **known cleanup backlog**, not a pattern to copy. Some of them sit in shared
+  helpers, so a helper that "looks official" can still be carrying a dead selector.
+- **New or edited tests must not add a single new `.ant-*` locator.** When you touch a spec or
+  POM class that contains one, fix that locator in the same change rather than working around
+  it.
+- There is no measure row in the Astryx table, so `tr:not(.ant-table-measure-row)` is both dead
+  and unnecessary — plain rows are the only rows.
 
-## Core Principles
-
-### 1. Trust Playwright's Auto-Waiting
-
-Playwright has built-in auto-waiting for all actions. **You almost never need `waitForTimeout`.**
-
-```typescript
-// ❌ BAD: Unnecessary timeout
-await page.click('button');
-await page.waitForTimeout(1000);
-await page.fill('input', 'text');
-
-// ✅ GOOD: Playwright waits automatically
-await page.click('button');        // Waits until clickable
-await page.fill('input', 'text');  // Waits until enabled
-```
-
-**When Playwright waits automatically:**
-- Element is visible
-- Element is enabled
-- Element is stable (no animations)
-- Element is not obscured by other elements
-
-**Only use explicit waits for:**
-- Waiting for new elements to appear in DOM: `waitForSelector()`
-- Waiting for network requests: `waitForResponse()`
-- Waiting for page navigation: `waitForURL()`
-
-### 2. Use Semantic Selectors
-
-Prefer semantic selectors that reflect user interaction:
-
-```typescript
-// ✅ BEST: Role-based selectors (accessibility-friendly)
-await page.getByRole('button', { name: 'Start Session' });
-await page.getByRole('textbox', { name: 'Email' });
-await page.getByLabel('Environments / Version');
-
-// ✅ GOOD: Test IDs for unique elements
-await page.getByTestId('user-dropdown-button');
-
-// ⚠️ USE SPARINGLY: CSS selectors (fragile)
-await page.locator('.ant-select-dropdown');
-
-// ❌ AVOID: Complex CSS selectors (breaks easily)
-await page.locator('div:nth-child(4) > .rc-virtual-list-holder');
-```
-
-### 3. Use Page Object Pattern
-
-Encapsulate page interactions in reusable classes:
-
-```typescript
-// ✅ GOOD: Page Object Pattern
-import { StartPage } from './utils/classes/StartPage';
-
-test('should start session', async ({ page }) => {
-  const startPage = new StartPage(page);
-  await startPage.goto();
-
-  const card = startPage.getInteractiveSessionCard();
-  const button = startPage.getStartButtonFromCard(card);
-  await button.click();
-});
-
-// ❌ BAD: Direct selectors in test
-test('should start session', async ({ page }) => {
-  await page.goto('http://localhost:9081/start');
-  await page.getByRole('button', { name: 'Start Session' }).first().click();
-});
-```
+Background on how the component mapping was decided lives in
+`.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md` if you need to know what a given antd
+component became.
 
 ---
 
-## Playwright Auto-Waiting
+## Setup and how to run
 
-### Built-in Waiting Behaviors
+Tests read their environment from `e2e/envs/.env.playwright`, loaded by `playwright.config.ts`
+via dotenv with `override: true`. The file is git-ignored; copy the committed sample and edit:
 
-All Playwright actions have built-in waiting:
-
-| Action | Auto-Waits For |
-|--------|----------------|
-| `click()` | Actionable (visible, enabled, stable, not obscured) |
-| `fill()` | Editable (visible, enabled, not readonly) |
-| `type()` | Editable |
-| `selectOption()` | Visible and enabled |
-| `check()` / `uncheck()` | Actionable |
-| `hover()` | Visible and stable |
-
-### Explicit Waits (Use When Necessary)
-
-```typescript
-// ✅ Wait for element to appear
-await page.waitForSelector('.modal', { state: 'visible' });
-
-// ✅ Wait for element to disappear
-await page.waitForSelector('.loading', { state: 'hidden' });
-
-// ✅ Wait for element to be attached to DOM
-await element.waitFor({ state: 'attached' });
-
-// ✅ Wait for network response
-await page.waitForResponse(response =>
-  response.url().includes('/api/images')
-);
-
-// ✅ Wait for URL change
-await page.waitForURL('**/dashboard');
+```bash
+cp e2e/envs/.env.playwright.sample e2e/envs/.env.playwright
 ```
 
-### Timeout Configuration
+Variables it defines (all consumed in `e2e/utils/test-util.ts`, each with a fallback default):
 
-```typescript
-// Default timeout is sufficient for most cases
-await page.click('button'); // 30s timeout by default
+| Variable | Purpose |
+|---|---|
+| `E2E_WEBUI_ENDPOINT` | WebUI under test (default `http://127.0.0.1:9081`) → `webuiEndpoint` |
+| `E2E_WEBSERVER_ENDPOINT` | Backend.AI webserver (default `http://127.0.0.1:8090`) → `webServerEndpoint` |
+| `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` | superadmin account |
+| `E2E_USER_EMAIL` / `E2E_USER_PASSWORD` | regular user |
+| `E2E_USER2_EMAIL` / `E2E_USER2_PASSWORD` | second regular user (sharing/invitation flows) |
+| `E2E_MONITOR_EMAIL` / `E2E_MONITOR_PASSWORD` | monitor account |
+| `E2E_DOMAIN_ADMIN_EMAIL` / `E2E_DOMAIN_ADMIN_PASSWORD` | domain admin |
+| `E2E_ADMIN_EMAIL_FOR_VISUAL` / `E2E_USER_EMAIL_FOR_VISUAL` (+ `_PASSWORD`) | visual-regression accounts; fall back to the normal admin/user pair |
+| `E2E_DEFAULT_IMAGE` | container image used by session-creation specs |
+| `SCREENSHOT_PATH` | output directory for screenshot specs |
 
-// Override only when necessary
-await page.waitForSelector('.slow-element', {
-  timeout: 15000 // 15 seconds
-});
+`webuiEndpoint` also drives `isLocalEnvironment`; config-modification tests only run reliably
+against `127.0.0.1` / `localhost` because remote deployments may cache `config.toml` before
+route interception takes effect.
 
-// For flaky tests, investigate root cause instead of increasing timeout
+Running (a full Backend.AI cluster must already be up):
+
+```bash
+pnpm exec playwright test                         # everything
+pnpm exec playwright test --grep @smoke           # tag subsets: @smoke / @critical / @regression
+pnpm exec playwright test --grep-invert @visual   # skip visual regression
+pnpm exec playwright test e2e/vfolder/            # one directory
+pnpm exec playwright test e2e/auth/login.spec.ts  # one file
+pnpm exec playwright test --shard=1/4             # sharded
 ```
+
+Config facts worth knowing (`playwright.config.ts`): `testDir` is `./e2e`, tests are
+`fullyParallel`, per-test `timeout` is 180 s, `actionTimeout` is 30 s (so one stuck click cannot
+eat the whole test budget), trace is captured `on-first-retry`, the only enabled project is
+`chromium` with `locale: 'en-US'` — **UI strings are English**, so match English labels — and it
+declares a `cleanup` teardown project that runs `e2e/global-cleanup.teardown.ts` after the
+suite regardless of pass/fail. Snapshots resolve to `e2e/{testFileDir}/snapshot/{arg}{ext}`.
 
 ---
 
-## Page Object Pattern
-
-### Directory Structure
+## Directory layout and naming
 
 ```
 e2e/
-├── utils/
-│   ├── classes/
-│   │   ├── StartPage.ts
-│   │   ├── SessionLauncherModal.ts
-│   │   └── FolderCreationModal.ts
-│   ├── test-util.ts
-│   └── test-util-antd.ts
-└── *.test.ts
+├── auth/ user/ vfolder/ session/ serving/ environment/ agent/ project/
+│   credential/ config/ dashboard/ chat/ …          # feature directories, *.spec.ts
+├── visual_regression/                              # screenshot comparisons
+├── envs/.env.playwright.sample                     # env template (real file git-ignored)
+├── global-cleanup.teardown.ts                      # suite-wide best-effort sweep
+├── seed.spec.ts                                    # skipped seed for the Playwright MCP generator
+└── utils/
+    ├── classes/
+    │   ├── base/{BasePage,BaseModal}.ts
+    │   ├── common/{StartPage,NotificationHandler}.ts
+    │   ├── session/{SessionLauncher,SessionDetailPage,AppLauncherModal,SessionAPIHelper}.ts
+    │   ├── user/{UserSettingModal,BulkCreateUserModal,PurgeUsersModal}.ts
+    │   └── vfolder/{FolderCreationModal,FolderExplorerModal}.ts
+    ├── test-util.ts          # login, navigation, vfolder flows, config/theme interception
+    ├── test-util-antd.ts     # legacy filename; see the helper table below
+    ├── admin-api.ts          # GraphQL admin context + API-level sweeps
+    ├── cleanup-util.ts       # sweepServices / sweepVFolders / cleanupVFolderSafely
+    └── feature-gate-util.ts  # skipUnlessWebUIVersion / skipUnlessClientFeature / …
 ```
 
-### Example Page Object Class
+Naming (full rules in `e2e/E2E-TEST-NAMING-GUIDELINES.md`):
+
+- Files: kebab-case, `.spec.ts`, `{feature}-{action}.spec.ts` — `vfolder-crud.spec.ts`,
+  `session-lifecycle.spec.ts`. `.test.ts` is a legacy pattern; do not create new ones.
+- `test.describe` blocks: `[Component/Feature] - [Context/Category]`.
+- Test cases: `[Actor] can/cannot [action] [when/with/in condition]` —
+  `'user can create an interactive session with a mounted folder'`.
+- Tag every describe block: priority (`@smoke` / `@critical` / `@regression`), feature
+  (`@vfolder`, `@session`, …) and type (`@functional`, `@visual`, `@integration`).
+- POM classes go in `e2e/utils/classes/{feature}/`, extending `BasePage` / `BaseModal`.
+
+---
+
+## Login and test setup
+
+Never hand-roll the login form. `e2e/utils/test-util.ts` exports role-specific helpers, all
+taking `(page, request)`:
 
 ```typescript
-// e2e/utils/classes/StartPage.ts
-import { Locator, Page } from '@playwright/test';
+import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 
-export class StartPage {
-  private readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
-  }
-
-  async goto(): Promise<void> {
-    await getMenuItem(this.page, 'Start').click();
-  }
-
-  private getCardByTitle(title: string): Locator {
-    return this.page.locator(`.bai_grid_item:has-text("${title}")`);
-  }
-
-  getInteractiveSessionCard(): Locator {
-    return this.getCardByTitle('Start Interactive Session');
-  }
-
-  getBatchSessionCard(): Locator {
-    return this.getCardByTitle('Start Batch Session');
-  }
-
-  getStartButtonFromCard(card: Locator): Locator {
-    return card.getByRole('button', { name: 'Start' });
-  }
-}
+test.beforeEach(async ({ page, request }) => {
+  await loginAsAdmin(page, request);   // or loginAsUser / loginAsUser2 /
+  await navigateTo(page, 'data');      // loginAsDomainAdmin / loginAsMonitor /
+});                                    // loginAsCreatedAccount / loginAsVisualRegression*
 ```
 
-### Using Page Objects in Tests
+What `login()` actually does, so you can reason about failures:
 
-```typescript
-import { StartPage } from './utils/classes/StartPage';
+1. Calls `modifyConfigToml` to force `general.connectionMode = 'SESSION'` and blank
+   `apiEndpoint`, so the login form accepts a manually entered endpoint.
+2. Navigates to `webuiEndpoint`, fills **Email or Username** / **Password** by label, expands
+   the **Advanced** section when the Endpoint field is hidden, fills the endpoint.
+3. Submits up to 3 times with a 5 s gap — a busy shared backend can transiently reject a valid
+   login. Success is `[data-testid="user-dropdown-button"]` appearing. On rejection it probes
+   `POST {endpoint}/server/login` from a throwaway request context and logs the real status, so
+   check the test output before assuming a frontend bug.
 
-test('should create interactive session', async ({ page }) => {
-  await loginAsAdmin(page);
+Related helpers: `logout(page)`, `navigateTo(page, path)` (resolves against `webuiEndpoint` —
+never hardcode a URL), `notFoundPageHeading(page)` / `forbiddenPageHeading(page)` for the
+route-level 404 / 401 screens (they render text, not images).
 
-  // Use page object
-  const startPage = new StartPage(page);
-  await startPage.goto();
-
-  const card = startPage.getInteractiveSessionCard();
-  const button = startPage.getStartButtonFromCard(card);
-  await button.click();
-
-  // Continue with test...
-});
-```
+`e2e/seed.spec.ts` is a permanently skipped scaffold: it logs in via `loginAsUser` and gives
+the Playwright MCP generator a live authenticated page to record against. Use it as a starting
+point for generated flows; do not turn it into a real test.
 
 ---
 
 ## Selector Strategy
 
-### Priority Order (Best to Worst)
+### Priority ladder
 
-1. **Role-based selectors** (Best for accessibility)
+1. **Role + accessible name** — the default. Works because the Astryx primitives render real
+   semantics: dialogs are native `<dialog>` elements, tables are real `<table>`/`<thead>`/
+   `<tbody>`, selectors are `combobox` + `option`.
+
    ```typescript
-   page.getByRole('button', { name: 'Submit' })
-   page.getByRole('textbox', { name: 'Email' })
-   page.getByRole('checkbox', { name: 'Remember me' })
+   page.getByRole('button', { name: 'Create Folder' });
+   page.getByRole('dialog', { name: 'Create a new storage folder' });
+   page.getByRole('row', { name: `VFolder Identicon ${folderName}` });
+   page.getByRole('columnheader', { name: 'Status' });
+   page.getByRole('tab', { name: 'Trash' });
+   page.getByRole('option', { name: 'Python 3.11', exact: true });
    ```
 
-2. **Label selectors** (Good for form fields)
+2. **Label / accessible-name lookups** for form controls and icon buttons.
+
    ```typescript
-   page.getByLabel('Username')
-   page.getByLabel('Password')
+   page.getByLabel('Email or Username');
+   folderRow.getByRole('button', { name: 'Move to trash bin' }); // action title, not icon name
    ```
 
-3. **Test ID selectors** (Good for unique elements)
-   ```typescript
-   page.getByTestId('user-dropdown-button')
-   page.getByTestId('submit-form')
-   ```
+   Icon-only buttons take their accessible name from the action's title or an explicit
+   `aria-label`, **not** from the lucide icon (most glyphs are `aria-hidden`). If
+   `{ name: 'delete' }` does not match, look up what the component passes as the title.
 
-4. **Text selectors** (Good for unique text)
-   ```typescript
-   page.getByText('Welcome back')
-   page.getByText('Settings', { exact: true })
-   ```
+3. **`data-testid`** for things with no stable text — about 90 exist across the app.
+   Established ones: `user-dropdown-button`, `webui-breadcrumb`, `bai-notification-stack`,
+   `notification-title`, `notification-description`, `vfolder-filter`, `app-launcher-modal`,
+   `create-folder-button`. Adding a new one to a component is fair game when no semantic anchor
+   exists — prefer that over reaching for a CSS class.
 
-5. **CSS selectors** (Use sparingly)
-   ```typescript
-   page.locator('.ant-select-dropdown')
-   page.locator('tbody tr:not(.ant-table-measure-row)')
-   ```
+4. **`data-bai-*` structural hooks** — the form engine's presentational shell exposes a stable
+   attribute at every level (`packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`):
 
-### Ant Design Specific Selectors
+   | Attribute | Meaning |
+   |---|---|
+   | `[data-bai-form-item]` | the form item root |
+   | `[data-bai-form-item-label]` | the `<label>` |
+   | `[data-bai-form-item-required]` | present when the item is required |
+   | `[data-bai-form-item-control]` / `[data-bai-form-item-control-input]` | the control column / input wrapper |
+   | `[data-bai-form-item-explain]`, `…-explain-error`, `…-explain-warning` | validation messages |
+   | `[data-bai-form-item-extra]` | the `extra` slot |
 
-```typescript
-// ✅ Wait for dropdown to appear
-await page.waitForSelector('.ant-select-dropdown', { state: 'visible' });
+   The notification stack exposes `[data-testid="bai-notification-stack"]` with one
+   `[data-notification-key]` per notice.
 
-// ✅ Exclude hidden measure rows in tables
-const rows = page.locator('tbody tr:not(.ant-table-measure-row)');
+5. **Text** for unique, stable copy: `page.getByText('Successfully left the shared folder')`.
 
-// ✅ Find specific Ant Design components
-await page.locator('.ant-modal').waitFor({ state: 'visible' });
-```
+6. **CSS** only as a last resort, and only against a class the repo itself owns (e.g.
+   `bai-table-astryx-*`) or a plain structural selector such as `tbody tr`. Never against a
+   framework-internal class, and never position-based (`div:nth-child(4) > …`).
 
-### Handling Dynamic Content
+### What replaced what
 
-```typescript
-// ✅ Wait for element to be attached before reading
-await row.waitFor({ state: 'attached', timeout: 5000 });
-const text = await row.textContent({ timeout: 3000 });
-
-// ✅ Retry pattern for flaky selectors
-for (let i = 0; i < 10; i++) {
-  try {
-    const text = await element.textContent({ timeout: 3000 });
-    if (text && text.trim()) {
-      // Found valid content
-      break;
-    }
-  } catch (e) {
-    continue; // Try next element
-  }
-}
-```
+| Dead locator | Use instead |
+|---|---|
+| `.ant-modal`, `.ant-modal-content`, `.ant-modal-confirm` | `page.getByRole('dialog')`, narrowed with `{ name }` or `.filter({ hasText })` |
+| `.ant-modal-title`, `.ant-modal-confirm-title` | `dialog.getByRole('heading')` |
+| `.ant-drawer`, `.ant-drawer-content-wrapper` | `page.getByRole('dialog')` (drawers are dialogs too) |
+| `.ant-table`, `.ant-table-content`, `.ant-table-tbody` | `page.getByRole('table')`, or scope through the surrounding card/testid |
+| `.ant-table-row`, `tr:not(.ant-table-measure-row)` | `page.getByRole('row', { name })`, or `tbody tr` when counting |
+| `.ant-table-cell` | `row.getByRole('cell')` |
+| `.ant-table-thead th` | `page.getByRole('columnheader', { name })` |
+| `.ant-select`, `.ant-select-dropdown` | `page.getByRole('combobox')` → the listbox opens as `option` roles |
+| `.ant-select-item-option` | `page.getByRole('option', { name, exact: true })` |
+| `.ant-form-item-row`, `.ant-form-item-control` | `getFormItemControlByLabel(page, 'Label')` / `[data-bai-form-item]` |
+| `.ant-tabs-tab-active` | `page.getByRole('tab', { selected: true })` or assert `aria-selected` |
+| `.ant-popover`, `.ant-popconfirm` | the confirm button by name: `page.getByRole('button', { name: 'Confirm' })` |
+| `.ant-message-notice-wrapper`, `.ant-notification-notice` | `[data-testid="bai-notification-stack"] [data-notification-key]`, or `page.getByRole('alert')` |
+| `.anticon-*`, `svg[data-icon="…"]` | the button's accessible name (`getByRole('button', { name })`) |
+| `.ant-card`, `.ant-card-head-title` | `page.getByRole('heading', { name })` plus a scoping testid |
+| `.ant-list-item` | `page.getByRole('listitem')`, filtered by text |
 
 ---
 
-## Common Patterns
+## Common patterns
 
-### Login Pattern
-
-```typescript
-// Reusable login utility
-export async function loginAsAdmin(page: Page) {
-  await page.goto(webuiEndpoint);
-  await page.getByLabel('Email or Username').fill('admin@lablup.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('password');
-  await page.getByRole('textbox', { name: 'Endpoint' }).fill(webServerEndpoint);
-  await page.getByLabel('Login', { exact: true }).click();
-  await page.waitForSelector('[data-testid="user-dropdown-button"]');
-}
-
-// Usage in tests
-test('should access dashboard', async ({ page }) => {
-  await loginAsAdmin(page);
-  // Test continues...
-});
-```
-
-### Modal Interaction Pattern
+### Dialogs (modals and drawers)
 
 ```typescript
-// Wait for modal to open
-const modal = page.locator('.ant-modal');
-await modal.waitFor({ state: 'visible' });
-
-// Interact with modal content
-await modal.getByLabel('Folder Name').fill('my-folder');
+const modal = page.getByRole('dialog').filter({ hasText: 'Create a new storage folder' });
+await expect(modal).toBeVisible();
+// Scope by form item when the control's own accessible name is not wired to the label.
+await modal
+  .locator('[data-bai-form-item]')
+  .filter({ has: page.locator('[data-bai-form-item-label]', { hasText: 'Folder Name' }) })
+  .getByRole('textbox')
+  .fill('e2e-my-folder');
 await modal.getByRole('button', { name: 'Create' }).click();
-
-// Wait for modal to close
-await modal.waitFor({ state: 'hidden' });
+await expect(modal).toBeHidden({ timeout: 30000 });
 ```
 
-### Table Interaction Pattern
+### Form items
 
 ```typescript
-// Get all data rows (excluding measure rows)
-const rows = page.locator('tbody tr:not(.ant-table-measure-row)');
+import { getFormItemControlByLabel } from '../utils/test-util-antd';
 
-// Wait for at least one row
-await rows.first().waitFor({ state: 'visible' });
-
-// Iterate through rows
-const rowCount = await rows.count();
-for (let i = 0; i < rowCount; i++) {
-  const row = rows.nth(i);
-  const cell = row.locator('td').nth(2);
-  const text = await cell.textContent();
-
-  if (text?.includes('target')) {
-    await row.click();
-    break;
-  }
-}
+const location = getFormItemControlByLabel(page, 'Location');
+await location.getByRole('combobox').click();
+await page.getByRole('option', { name: 'local:volume1', exact: true }).click();
 ```
 
-### Dropdown Selection Pattern
+`getFormItemControlByLabel` is `[data-bai-form-item]` filtered by its
+`[data-bai-form-item-label]` text, returning `[data-bai-form-item-control-input]` — no antd
+fallback remains in it.
+
+### Selectors / comboboxes
 
 ```typescript
-// Open dropdown
-await page.getByLabel('Select Environment').click({ force: true });
-
-// Wait for dropdown options to appear
-await page.waitForSelector('.ant-select-dropdown', { state: 'visible' });
-
-// Select an option
-const options = page.locator('.ant-select-item-option');
-await options.filter({ hasText: 'Python 3.11' }).click();
-
-// Or search and select
-await page.getByLabel('Select Environment').fill('python');
-await options.first().click();
+// Prefer the accessible name when the control exposes one; otherwise scope through the
+// form item (or a testid) and take the single combobox inside it.
+const selector = getFormItemControlByLabel(page, 'Environments / Version').getByRole('combobox');
+await selector.click();
+await selector.fill('python');                       // typeahead filtering
+await page.getByRole('option', { name: /python/ }).first().click();
 ```
 
-### Configuration Change Pattern
+### Tables
 
 ```typescript
-// Modify config
-const requestConfig = {
-  environments: {
-    showNonInstalledImages: true,
-  },
-};
-await modifyConfigToml(page, request, requestConfig);
+const row = page.getByRole('row', { name: `VFolder Identicon ${folderName}` });
+await expect(row).toBeVisible();
+await row.getByRole('button', { name: 'Move to trash bin' }).click();
 
-// Reload to apply changes
+// Sorting / column lookup
+await page.getByRole('columnheader', { name: 'Status' }).click();
+
+// Emptiness / counting
+await expect(page.locator('tbody tr').filter({ hasText: folderName })).toHaveCount(0);
+```
+
+### Notifications and toasts
+
+```typescript
+const notice = page
+  .locator('[data-testid="bai-notification-stack"] [data-notification-key]')
+  .first();
+await expect(notice.getByTestId('notification-title')).toContainText('Folder created');
+await notice.getByRole('button', { name: 'Dismiss' }).click();  // Astryx Banner's dismiss
+```
+
+Dismiss stray notices before clicking anything they overlap — the stack intercepts pointer
+events (`FolderCreationModal.dismissOverlappingNotifications()` is the reference implementation).
+
+### Property filters (PowerSearch)
+
+`BAIPropertyFilter` / `BAIGraphQLPropertyFilter` are Astryx `PowerSearch`: one combobox that,
+on picking a field, opens an edit popover whose value control is named **Value** (a `textbox`
+committed with **Apply**, or a `combobox` committed by picking an option). Committed filters
+are tokens whose remove control is `aria-label="Remove {Field}: {operator} {value}"`. Use the
+helpers rather than re-deriving this: `selectPropertyFilter(page, 'Name', value, testId?)`,
+`removeSearchButton(page, name)`, `clearAllFilters(page)`.
+
+### Refresh-and-retry instead of long waits
+
+List pages do not refetch on their own, so a mutation that the backend applies late will never
+show up no matter how long you wait on the DOM. `test-util.ts` pairs short assertion windows
+with an explicit refetch — `getTableRefreshButton(page)` locates the `BAIFetchKeyButton` by its
+native `title="Refresh"` attribute (the lucide `RotateCw` icon has no accessible name), and the
+`*AndVerify` vfolder helpers poll through it. Reuse those helpers; if you need the pattern
+elsewhere, copy the shape (assert with a ~2.5 s window, click refresh, retry) rather than
+raising a timeout to 30 s.
+
+### Config and theme interception
+
+```typescript
+await modifyConfigToml(page, request, { environments: { showNonInstalledImages: true } });
 await page.reload();
-
-// Verify changes took effect
-// ... test logic
 ```
+
+`modifyConfigToml` fetches the real `config.toml` once through a throwaway browser context,
+deep-merges your keys (explicit `undefined` deletes), caches the result per page and serves it
+via `page.route('**/config.toml**')`. Repeated calls accumulate. `modifyThemeJson(page, request,
+themeConfig)` does the same for `/resources/theme.json`. Both need a reload to take effect and
+are only reliable when `isLocalEnvironment` is true.
 
 ---
 
-## Anti-Patterns to Avoid
+## Anti-patterns
 
-### ❌ 1. Using `waitForTimeout`
-
-```typescript
-// ❌ BAD: Arbitrary wait
-await page.click('button');
-await page.waitForTimeout(2000); // Don't do this!
-await page.fill('input', 'text');
-
-// ✅ GOOD: Trust auto-waiting or use explicit waits
-await page.click('button');
-await page.fill('input', 'text'); // Automatically waits
-
-// ✅ GOOD: Explicit wait for specific condition
-await page.click('button');
-await page.waitForSelector('.result', { state: 'visible' });
-```
-
-### ❌ 2. Fragile CSS Selectors
-
-```typescript
-// ❌ BAD: Position-based selector
-await page.locator('div:nth-child(4) > div > div:nth-child(2)').click();
-
-// ✅ GOOD: Semantic selector
-await page.getByRole('button', { name: 'Submit' }).click();
-
-// ✅ GOOD: Test ID
-await page.getByTestId('submit-button').click();
-```
-
-### ❌ 3. Hardcoded URLs
-
-```typescript
-// ❌ BAD: Hardcoded URL
-await page.goto('http://127.0.0.1:9081/start');
-
-// ✅ GOOD: Use Page Object
-const startPage = new StartPage(page);
-await startPage.goto();
-
-// ✅ GOOD: Use constant
-await page.goto(`${webuiEndpoint}/start`);
-```
-
-### ❌ 4. Not Handling Race Conditions
-
-```typescript
-// ❌ BAD: Assuming element exists immediately
-const text = await page.locator('.result').textContent();
-
-// ✅ GOOD: Wait for element first
-await page.locator('.result').waitFor({ state: 'visible' });
-const text = await page.locator('.result').textContent();
-
-// ✅ BETTER: Use assertion with auto-retry
-await expect(page.locator('.result')).toContainText('Success');
-```
-
-### ❌ 5. Testing Implementation Details
-
-```typescript
-// ❌ BAD: Testing CSS classes
-await expect(page.locator('.btn-primary.active')).toBeVisible();
-
-// ✅ GOOD: Testing user-visible behavior
-await expect(page.getByRole('button', { name: 'Submit' })).toBeEnabled();
-```
-
-### ❌ 6. Copy-Paste Without Understanding
-
-```typescript
-// ❌ BAD: Complex clipboard manipulation
-await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-const text = await page.evaluateHandle(() => navigator.clipboard.readText());
-const clipboardContent = await text.jsonValue();
-
-// ✅ GOOD: Directly verify what you need
-const imageName = await cell.textContent();
-expect(imageName).toContain('python');
-```
+1. **`.ant-*` anything.** See the top of this file.
+2. **`waitForTimeout` as a synchronization tool.** Playwright auto-waits for actionability on
+   `click` / `fill` / `check` / `selectOption` / `hover`. For state that is not
+   element-visibility, use `expect.poll()`. Short fixed delays are tolerable only as a last
+   resort for stabilization, never as a polling loop.
+3. **`waitForLoadState('networkidle')`.** Discouraged by Playwright upstream; it causes flaky
+   runs and unexpected context closures. Assert on a real readiness signal instead
+   (`await expect(page.getByRole('heading', { name: 'Data' })).toBeVisible()`). Older specs
+   still call it — remove it when you touch them.
+4. **Visibility checks with fallback branches.** `if (await x.isVisible()) … else <other path>`
+   and `try { click } catch { continue }` hide real regressions. Let the test fail fast. (The
+   deliberate exceptions are the best-effort cleanup sweeps, which are *supposed* to skip
+   unavailable resources.)
+5. **Hardcoded URLs.** Use `navigateTo(page, 'data')` or a POM's `goto()`.
+6. **Positional selectors** — `div:nth-child(4) > …`, `.nth(1)` on an action button. Row action
+   buttons are located by accessible name so a layout change cannot silently retarget them.
+7. **Asserting on styling.** Test what the user can do (`toBeEnabled`, `toBeVisible`, text),
+   not which classes an element carries.
+8. **Waiting on a toast as proof of success.** Toasts are transient. Assert the durable
+   consequence (the row disappeared, the API returned 2xx) instead; several helpers explicitly
+   await the network response (`page.waitForResponse`) and throw with the status body.
 
 ---
 
-## Example Test Structure
+## Test isolation, cleanup, and shared state
 
-### Complete Test Example
-
-```typescript
-import { test, expect } from '@playwright/test';
-import { loginAsAdmin, webuiEndpoint } from './utils/test-util';
-import { StartPage } from './utils/classes/StartPage';
-
-test.describe('Session Creation', () => {
-  test('user can create interactive session with uninstalled images', async ({
-    page,
-    request
-  }) => {
-    // Step 1: Setup - Enable showNonInstalledImages
-    const requestConfig = {
-      environments: {
-        showNonInstalledImages: true,
-      },
-    };
-    await modifyConfigToml(page, request, requestConfig);
-    await loginAsAdmin(page);
-
-    // Step 2: Navigate to Environments page
-    await page.getByRole('group').getByText('Environments', { exact: true }).click();
-
-    // Wait for table to load
-    await page.waitForSelector('table tbody tr:not(.ant-table-measure-row)', {
-      state: 'visible',
-      timeout: 15000,
-    });
-
-    // Sort by Status column
-    const statusHeader = page.getByRole('columnheader', { name: 'Status' });
-    await statusHeader.click();
-
-    // Find uninstalled image
-    const allRows = page.locator('tbody tr:not(.ant-table-measure-row)');
-    await allRows.first().waitFor({ state: 'visible', timeout: 10000 });
-
-    let uninstalledImageName: string | null = null;
-    const rowCount = await allRows.count();
-
-    for (let i = 0; i < Math.min(rowCount, 15); i++) {
-      const row = allRows.nth(i);
-      await row.waitFor({ state: 'attached', timeout: 5000 });
-
-      const statusCell = row.locator('td').nth(1);
-
-      try {
-        const statusText = await statusCell.textContent({ timeout: 3000 });
-
-        if (!statusText || statusText.trim() === '') {
-          const imageCell = row.locator('td').nth(2);
-          const imageText = await imageCell.textContent({ timeout: 3000 });
-
-          if (imageText) {
-            uninstalledImageName = imageText.replace(/복사|Copy/g, '').trim();
-            break;
-          }
-        }
-      } catch (e) {
-        continue;
-      }
-    }
-
-    expect(uninstalledImageName).toBeTruthy();
-    const imageName = uninstalledImageName;
-
-    // Step 3: Navigate to Start page and open session launcher
-    const startPage = new StartPage(page);
-    await startPage.goto();
-
-    const interactiveSessionCard = startPage.getInteractiveSessionCard();
-    const startButton = startPage.getStartButtonFromCard(interactiveSessionCard);
-    await startButton.click();
-
-    // Navigate to Environments & Resource step
-    await page.getByRole('button', { name: '2 Environments & Resource' }).click();
-
-    // Open environment selector
-    const environmentSelector = page.getByLabel('Environments / Version');
-    await environmentSelector.click({ force: true });
-
-    // Wait for dropdown
-    await page.waitForSelector('.ant-select-dropdown', {
-      state: 'visible',
-      timeout: 5000,
-    });
-
-    // Verify options are visible
-    const dropdownOptions = page.locator('.ant-select-dropdown .ant-select-item-option');
-    const optionCountEnabled = await dropdownOptions.count();
-    expect(optionCountEnabled).toBeGreaterThan(0);
-
-    // Verify environment is searchable
-    const environmentMatch = imageName?.match(/\/([^/:]+):/);
-    const environmentName = environmentMatch ? environmentMatch[1] : null;
-
-    if (environmentName) {
-      await environmentSelector.fill(environmentName);
-      const searchResults = await dropdownOptions.count();
-      expect(searchResults).toBeGreaterThan(0);
-    }
-
-    // Close launcher
-    await page.keyboard.press('Escape');
-
-    // Step 4: Verify disabled state
-    requestConfig.environments.showNonInstalledImages = false;
-    await modifyConfigToml(page, request, requestConfig);
-    await page.reload();
-
-    // Go to session launcher again
-    await startPage.goto();
-    const interactiveSessionCard2 = startPage.getInteractiveSessionCard();
-    const startButton2 = startPage.getStartButtonFromCard(interactiveSessionCard2);
-    await startButton2.click();
-
-    await page.getByRole('button', { name: '2 Environments & Resource' }).click();
-
-    await page.getByLabel('Environments / Version').click({ force: true });
-    await page.waitForSelector('.ant-select-dropdown', {
-      state: 'visible',
-      timeout: 5000,
-    });
-
-    // Verify fewer options when disabled
-    const dropdownOptionsDisabled = page.locator('.ant-select-dropdown .ant-select-item-option');
-    const optionCountDisabled = await dropdownOptionsDisabled.count();
-    expect(optionCountDisabled).toBeLessThan(optionCountEnabled);
-
-    if (environmentName) {
-      await page.getByLabel('Environments / Version').fill(environmentName);
-      const searchResults = await dropdownOptionsDisabled.count();
-      expect(searchResults).toBeLessThanOrEqual(optionCountEnabled);
-    }
-  });
-});
-```
+- Each test must stand alone: log in and navigate in `beforeEach`, never rely on ordering.
+- Use `test.describe.configure({ mode: 'serial' })` only when tests genuinely share one
+  expensive resource; prefer `afterEach` cleanup for isolated tests and `afterAll` for a
+  shared one.
+- **Name every created resource with an `e2e-` prefix** and a unique suffix. The suite-wide
+  teardown (`e2e/global-cleanup.teardown.ts`, wired as the `cleanup` project) sweeps leftover
+  `e2e-*` vfolders and services after the run, and `e2e/utils/cleanup-util.ts` /
+  `e2e/utils/admin-api.ts` provide `sweepVFolders`, `sweepServices`, `cleanupVFolderSafely`,
+  `sweepProfileTestUsersViaApi`, `sweepLeftoverDeploymentsViaApi`.
+- Track created resources in a variable and clean up in `afterEach`, wrapped in try/catch —
+  never assume creation succeeded.
+- Skip rather than fail when the target deployment lacks a feature:
+  `skipUnlessWebUIVersion`, `skipUnlessClientFeature`, `skipUnlessClientConfig`,
+  `skipUnlessAllowedVFolderType` from `e2e/utils/feature-gate-util.ts`.
 
 ---
 
-## Test Maintenance Tips
+## Utility reference
 
-### 1. Keep Tests Independent
+`e2e/utils/test-util.ts` — `webuiEndpoint`, `webServerEndpoint`, `isLocalEnvironment`,
+`userInfo`, `login` + the `loginAs*` family, `logout`, `navigateTo`,
+`notFoundPageHeading` / `forbiddenPageHeading`, `selectPropertyFilter`, `removeSearchButton`,
+`clearAllFilters`, `getTableRefreshButton`, `getVFolderRow`, `verifyVFolder`,
+`createVFolderAndVerify`, `moveToTrashAndVerify`, `deleteForeverAndVerifyFromTrash`,
+`restoreVFolderAndVerify`, `shareVFolderAndVerify`, `leaveSharedFolderAndVerify`,
+`acceptAllInvitationAndVerifySpecificFolder`, `modifyConfigToml`, `modifyThemeJson`.
 
-Each test should be able to run independently:
+`e2e/utils/test-util-antd.ts` — the filename is historical; treat it as "shared DOM helpers".
 
-```typescript
-// ✅ GOOD: Each test sets up its own state
-test.beforeEach(async ({ page }) => {
-  await loginAsAdmin(page);
-});
+| Helper | State |
+|---|---|
+| `getFormItemControlByLabel(page, label)` | current — `[data-bai-form-item]` based |
+| `getNotificationMessageBox(page)` / `getNotificationDescriptionBox(page)` | current — testid based |
+| `getMenuItem(page, name)` | current — `getByRole('link', { exact: true })` |
+| `checkActiveTab(tabs, name)` | **stale** (`.ant-tabs-tab-active`) — use `getByRole('tab', { selected: true })` |
+| `getTableHeaders(locator)` / `findColumnIndex(table, title)` | **stale** (`.ant-table-thead th`) — use `getByRole('columnheader')` |
+| `getCardItemByCardTitle(page, title)` | **stale** (`.ant-card`) — scope by heading or testid |
 
-test('test A', async ({ page }) => {
-  // Test A logic
-});
-
-test('test B', async ({ page }) => {
-  // Test B logic - doesn't depend on test A
-});
-```
-
-### 2. Use Descriptive Test Names
-
-```typescript
-// ❌ BAD: Vague name
-test('test 1', async ({ page }) => { ... });
-
-// ✅ GOOD: Descriptive name
-test('user can create interactive session with Python 3.11', async ({ page }) => { ... });
-
-// ✅ GOOD: With tags
-test('user can filter images by architecture', { tag: ['@images', '@filter'] },
-  async ({ page }) => { ... }
-);
-```
-
-### 3. Add Comments for Complex Logic
-
-```typescript
-// Find the first row where the status cell is empty (uninstalled image)
-// Uninstalled images have no status badge, so the cell will be empty
-const allRows = page.locator('tbody tr:not(.ant-table-measure-row)');
-
-for (let i = 0; i < rowCount; i++) {
-  const statusCell = row.locator('td').nth(1); // Status column is 2nd cell
-  const statusText = await statusCell.textContent();
-
-  // Empty status = uninstalled
-  if (!statusText || statusText.trim() === '') {
-    // Found uninstalled image...
-  }
-}
-```
-
-### 4. Regular Refactoring
-
-When you notice patterns repeating:
-1. Extract to utility functions
-2. Create Page Object classes
-3. Update existing tests to use new patterns
+Fix a stale helper (and its call sites) when your change depends on it; do not build new tests
+on one.
 
 ---
 
-## Debugging Tips
-
-### 1. Use Headed Mode
+## Debugging
 
 ```bash
-pnpm exec playwright test --headed
+pnpm exec playwright test --headed        # watch the run
+pnpm exec playwright test --debug         # step through with the Inspector
+PWDEBUG=1 pnpm exec playwright test       # same, via env var
+pnpm exec playwright show-report          # the HTML report (written on every run)
+pnpm exec playwright show-trace <trace>   # traces are captured on first retry
 ```
-
-### 2. Use Debug Mode
-
-```bash
-pnpm exec playwright test --debug
-```
-
-### 3. Take Screenshots on Failure
 
 ```typescript
-test('my test', async ({ page }) => {
-  try {
-    // Test logic
-  } catch (error) {
-    await page.screenshot({ path: 'screenshot-error.png' });
-    throw error;
-  }
-});
+page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+page.on('pageerror', (error) => console.log('PAGE ERROR:', error));
 ```
 
-### 4. Use Playwright Inspector
-
-```bash
-PWDEBUG=1 pnpm exec playwright test
-```
-
-### 5. Check Console Logs
-
-```typescript
-page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-page.on('pageerror', error => console.log('PAGE ERROR:', error));
-```
+When a locator times out, check whether it is a dead `.ant-*` selector **before** suspecting a
+product bug — that is by far the most common cause of a failure in an untouched old spec.
 
 ---
 
-## Summary
+## E2E coverage report maintenance
 
-### Key Takeaways
+`e2e/E2E_COVERAGE_REPORT.md` is a living record of which pages and features have coverage.
+Update it whenever you add, remove, or rename test files, add cases to an existing file, or add
+a Page Object class:
 
-1. **Trust Playwright's auto-waiting** - Almost never use `waitForTimeout`
-2. **Use semantic selectors** - Prefer role-based and label-based selectors
-3. **Follow Page Object Pattern** - Encapsulate page logic in classes
-4. **Write readable tests** - Use descriptive names and add comments
-5. **Handle dynamic content** - Wait for specific conditions, not arbitrary timeouts
-6. **Keep tests independent** - Each test should run in isolation
-7. **Regular refactoring** - Extract common patterns into utilities
-
-### When in Doubt
-
-- Check [Playwright Documentation](https://playwright.dev/)
-- Look at existing test examples in `/e2e` directory
-- Use explicit waits (`waitForSelector`) instead of timeouts
-- Prefer user-facing selectors over implementation details
-- Write tests that reflect actual user behavior
+1. In the affected page's feature table, flip `❌` → `✅`, fill in the test name and test-file
+   reference, and update that section's `**Coverage: …**` line.
+2. Recalculate the row in the **Coverage Summary** table (Covered count, `❌ 0%` / `🔶 N%` /
+   `✅ 100%`), the **Total** row, and the `**Overall: X / Y features covered (Z%)**` line.
+3. Update the **Coverage Matrix (Quick Reference)** status for the affected routes.
+4. Prune or re-prioritize **Priority Recommendations**.
+5. Update **Test Infrastructure** when you add POM classes or shared utilities.
+6. Bump the **Last Updated** date.
 
 ---
 
-## E2E Coverage Report Maintenance
+## Additional resources
 
-### Coverage Report Location
-
-The project maintains a living E2E coverage report at [`e2e/E2E_COVERAGE_REPORT.md`](../../e2e/E2E_COVERAGE_REPORT.md). This report tracks which pages and features have E2E test coverage and which do not.
-
-### When to Update the Coverage Report
-
-**You MUST update `e2e/E2E_COVERAGE_REPORT.md` whenever you:**
-
-1. **Add new E2E test files** - Add the test file reference and update feature coverage status
-2. **Add new test cases to existing files** - Update the feature table for the relevant page
-3. **Remove or rename E2E test files** - Reflect the changes in the report
-4. **Add new Page Object Models** - Update the "Test Infrastructure" section
-
-### How to Update
-
-Follow these steps when modifying E2E tests:
-
-1. **Update the feature table** for the affected page section:
-   - Change `❌` to `✅` for newly covered features
-   - Add the test name in the "Test" column
-   - Add test file references under "Test files"
-   - Update the `**Coverage: ...**` line at the bottom of that page section
-
-2. **Update the "Coverage Summary" table** at the top:
-   - Recalculate the **Covered** count for the affected page row
-   - Update the **Status** column: `❌ 0%` / `🔶 N%` / `✅ 100%`
-   - Recalculate the **Total** row (sum of all Features and Covered columns)
-   - Update the **Overall** line: `**Overall: X / Y features covered (Z%)**`
-
-3. **Update the "Coverage Matrix (Quick Reference)"** table:
-   - Change the Functional Tests column status for affected routes
-
-4. **Update "Priority Recommendations"** if applicable:
-   - Remove items that are now fully covered
-   - Adjust priority if partially covered
-
-5. **Update the "Last Updated" date** at the top of the report
-
-6. **Update "Test Infrastructure"** section if you:
-   - Created new Page Object Model classes
-   - Added new shared utility functions
-   - Remove items from "Page Object Models Needed" when created
-
-### Example Update
-
-When adding 2 new tests for the Serving page (`/serving`):
-
-```markdown
-<!-- Before: feature table -->
-| Endpoint list rendering | ❌ | - |
-| "Start Service" → navigate to `/service/start` | ❌ | - |
-
-<!-- After: feature table -->
-| Endpoint list rendering | ✅ | `User can see endpoint list` |
-| "Start Service" → navigate to `/service/start` | ✅ | `User can start a new service` |
-
-<!-- Before: Coverage Summary row -->
-| Serving | `/serving` | 7 | 0 | ❌ 0% |
-
-<!-- After: Coverage Summary row -->
-| Serving | `/serving` | 7 | 2 | 🔶 29% |
-
-<!-- Also update the Total row and Overall line -->
-```
-
----
-
-## Additional Resources
-
-- [Playwright Auto-Waiting Documentation](https://playwright.dev/docs/actionability)
-- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
-- [Playwright Selectors Guide](https://playwright.dev/docs/selectors)
-- [Page Object Pattern](https://playwright.dev/docs/pom)
+- `e2e/README.md` — directory map, tag strategy, POM base classes
+- `e2e/E2E-TEST-NAMING-GUIDELINES.md` — naming rules in full
+- [Playwright actionability / auto-waiting](https://playwright.dev/docs/actionability)
+- [Playwright best practices](https://playwright.dev/docs/best-practices)
+- [Locators](https://playwright.dev/docs/locators) · [Page Object Model](https://playwright.dev/docs/pom)

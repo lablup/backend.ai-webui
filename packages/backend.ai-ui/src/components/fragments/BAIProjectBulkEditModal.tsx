@@ -1,5 +1,6 @@
 import { BAIProjectBulkEditModalFragment$key } from '../../__generated__/BAIProjectBulkEditModalFragment.graphql';
 import { BAIProjectBulkEditModalProjectMutation } from '../../__generated__/BAIProjectBulkEditModalProjectMutation.graphql';
+import { Form } from '../../form-engine';
 import { useMutationWithPromise } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
@@ -7,7 +8,6 @@ import BAIListAlert from '../BAIListAlert';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
-import { Form } from 'antd';
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { graphql, useFragment } from 'react-relay';

@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderPermissionCellFragment$key } from '../__generated__/VFolderPermissionCellFragment.graphql';
-import { Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,17 +59,23 @@ const VFolderPermissionCell: React.FC<VFolderPermissionCellProps> = ({
     };
   }, [permissionProp, vfolderData, t]);
 
+  // PHASE 6 (item 4) — FRONTIER conversion. The external props are unchanged
+  // (`vfolderFrgmt` / `permission`), so the five unmigrated consumers compile
+  // untouched; only the internals move. antd `Typography.Text code` becomes
+  // Astryx `Text type="code"`, and `BAIFlex gap="xs"` becomes `HStack gap={2}`
+  // (BUI `xs` resolves to antd's `sizeXS` = 8px = Astryx step 2 — the Phase-3
+  // corrected mapping, not the token NAME).
   return (
-    <BAIFlex gap={'xs'} {...props}>
-      <Typography.Text>{permissionInfo?.label}</Typography.Text>
-      <BAIFlex>
+    <HStack gap={2} {...props}>
+      <Text>{permissionInfo?.label}</Text>
+      <HStack>
         {_.map(permissionInfo?.icon, (tag) => (
-          <Typography.Text key={tag} code>
+          <Text key={tag} type="code">
             {_.toUpper(tag)}
-          </Typography.Text>
+          </Text>
         ))}
-      </BAIFlex>
-    </BAIFlex>
+      </HStack>
+    </HStack>
   );
 };
 

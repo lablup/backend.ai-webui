@@ -11,6 +11,8 @@ export { default as BAIExampleStartIcon } from './BAIExampleStartIcon';
 export { default as BAIFileBrowserIcon } from './BAIFileBrowserIcon';
 export { default as BAIFuriosaIcon } from './BAIFuriosaIcon';
 export { default as BAIGaudiIcon } from './BAIGaudiIcon';
+export { default as BAIGitHubIcon } from './BAIGitHubIcon';
+export { default as BAIGitLabIcon } from './BAIGitLabIcon';
 export { default as BAIHuggingFaceIcon } from './BAIHuggingFaceIcon';
 export { default as BAIInteractiveSessionIcon } from './BAIInteractiveSessionIcon';
 export { default as BAIIpuIcon } from './BAIIpuIcon';

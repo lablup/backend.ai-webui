@@ -17,14 +17,16 @@ After logging in with a user account, click `Sessions` on the left sidebar.
 
 ![](../images/sessions_page.png)
 
+For how the list is organized and filtered, see
+[Session List View](#session-list-view-and-refresh).
 
-Click the `START` button to start a new compute session.
+Click the `Start Session` button to start a new compute session.
 
 ![](../images/launch_session_type.png)
 
 <a id="session-type"></a>
 
-### Session type
+### Session Type
 
 In the first page, users can select the type of session, 'interactive' or 'batch'.
 If needed, setting the name of the session (optional) is also available.
@@ -80,10 +82,10 @@ You can also select a project and resource group.
 
 <a id="environments-and-resource-allocation"></a>
 
-### Environments & resource allocation
+### Environments & Resource Allocation
 
 
-Click the `Next` button below, or the `Environments & Resource allocation` menu on the right
+Click the `Next` button below, or the `Environments & Resource Allocation` menu on the right
 to proceed to the next page. If you want to create a session without any further
 settings, press the `Skip to review` button. In this case, settings on the
 other pages will all use the default values.
@@ -109,7 +111,7 @@ refer to the following:
 
   ![](../images/launch_session_environments.png)
 
-### Resource allocation
+### Resource Allocation
 
 
 - Resource Group: Specifies the resource group in which to create a compute
@@ -200,7 +202,7 @@ The Agent Select feature may not be available depending on the server environmen
 <a id="data-and-storage"></a>
 <a id="session-mounts"></a>
 
-### Data & storage
+### Data & Storage
 
 
 Click the `Next` button below, or the `Data & Storage` menu on the right to proceed to the next page.
@@ -238,7 +240,7 @@ On this page, Network configuration can be done such as Preopen Ports.
 
 <a id="confirm-and-launch"></a>
 
-### Confirm and launch
+### Confirm and Launch
 
 
 If you are done with the network setting, click the `Next` button below, or
@@ -294,7 +296,7 @@ By clicking the app dialog button on the far left, you can view the available ap
 ![](../images/app_dialog.png)
 
 
-### Recent history
+### Recent History
 
 
 'Session Launcher' page provides a set of options for creating sessions. The
@@ -320,6 +322,15 @@ Compute session list may not be displayed normally due to intermittent
 network connection problems, and etc. This can be solved by refreshing the
 browser.
 :::
+
+<a id="session-list-view-and-refresh"></a>
+
+## Session List View
+
+The session list groups your sessions into type tabs — **All**, **Interactive**,
+**Batch**, **Inference**, and **Upload Sessions** — and each tab carries a
+**Running** / **Finished** switch and a property filter for **Session Name**,
+**Resource Group**, and **Agent**.
 
 <a id="session-detail-panel"></a>
 
@@ -393,11 +404,6 @@ preferred order.
 The scheduling history table is paginated with offset-based pagination. The default page size is 10
 records per page. Changing a filter or the sort order automatically resets the view back to page 1.
 
-:::note
-The **Expand errors only** mode (described below) applies only to the records visible on the current
-page, not to the entire history.
-:::
-
 #### Expandable sub-steps
 
 Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
@@ -414,20 +420,6 @@ The sub-steps table includes the following columns:
 - **Message**: Detailed information or error description
 - **Started At**: When the sub-step began
 - **Ended At**: When the sub-step completed
-
-#### Expand / collapse control
-
-A kebab menu (⋮) in the expand-column header opens the **Expand options** menu, which lets you control
-how rows are expanded across the entire table. Three view modes are available:
-
-- **Expand all**: Expands every row so all sub-steps are immediately visible.
-- **Collapse all**: Collapses every row to show only the top-level history records.
-- **Expand errors only** (default): Automatically expands rows whose result is not SUCCESS, and
-  also hides SUCCESS sub-steps within those expanded rows. This is the most useful mode for quickly
-  identifying what went wrong in a session's scheduling lifecycle.
-
-The selected mode is remembered per user and persists across modal opens. You can still manually
-expand or collapse individual rows at any time, regardless of the active mode.
 
 #### Result badge colors
 
@@ -574,6 +566,16 @@ icon in the session detail panel.
 
 ![](../images/session_log.png)
 
+The log window provides the following controls above the log view:
+
+- **Kernel selector**: Choose which kernel of the session to read. For a
+  single-container session there is only one entry; for a cluster session, each
+  container is listed by its hostname with the first characters of its ID.
+- **Download**: Save the currently displayed log to a text file.
+
+You can also search within the displayed log using the search box built into the
+log view.
+
 <a id="rename-running-session"></a>
 
 ## Rename running session
@@ -605,12 +607,17 @@ Backend.AI supports three types of inactivity (idleness) criteria for automatic 
 collection of compute sessions: Max Session Lifetime, Network Idle Timeout, and Utilization
 Checker.
 
-The criteria for session termination can be found in the 'Idle Checks' section of the session detail panel.
+The criteria that apply to a running session are shown in the **Reclamation Status**
+row of the session detail panel, together with the time remaining before each one
+would terminate the session. The row appears while the session is running and at
+least one of its idle checks has a countdown, whether that countdown still has
+days to go or only minutes.
 
 ![](../images/idle_checks_column.png)
 
-The meaning of idle checkers are as follows, and more detailed explanations can be
-found by clicking the information (i) button in the idle checks section.
+The meaning of idle checkers are as follows. Click the question-mark (`?`) icon
+next to the **Reclamation Status** label to open a dialog with the full
+explanation of each one.
 
 - Max Session Lifetime: Force-terminate sessions after this time from creation.
   This measure prevents sessions from running indefinitely.
@@ -645,16 +652,59 @@ remains low. Briefly using the resources does not extend the grace period.
 Only the average utilization over the last idle timeout is considered.
 :::
 
-Hovering the mouse over the Utilization Checker will display a tooltip with the
-utilization and threshold values. The text color changes to yellow and then red
-as the current utilization approaches the threshold (indicating low resource
-utilization).
-
-
 :::note
-Depending on the environment settings, idle checkers and resource types of
-utilization checker's tooltip may be different.
+Depending on the environment settings, the idle checkers that apply and the
+resource types listed for the utilization checker may be different.
 :::
+
+<a id="reclamation-status"></a>
+
+### Reclamation Status
+
+The session list includes a **Reclamation Status** column that tells you at a
+glance how close each session is to being reclaimed by the utilization checker.
+The same badge replaces the plain label of the utilization entry in the
+**Reclamation Status** row of the session detail panel.
+
+The badge has three levels, described in the popover legend as:
+
+- **Safe**: The current average utilization is comfortably above the threshold.
+- **Warning**: The current average is above the threshold, but close to it.
+- **At risk**: The current average is below the threshold.
+
+The badge changes level before the average actually falls below the threshold, so a
+session can show **At risk** while its current average is still above the configured
+value. Treat it as an early warning that leaves you time to react, not as a report
+that the threshold has already been crossed.
+
+Sessions that the utilization checker does not apply to, and sessions for which
+no measurement is available yet, show `-` in the column. In the session detail
+panel, an entry whose first reclamation decision has not been made yet reads
+**Checking reclamation status** in place of the remaining-time tag.
+
+Hover the information (i) icon next to the badge to open a popover with the
+details behind the level:
+
+- The condition sentence, which states whether resources are reclaimed when
+  **any** of the listed conditions stays at the at-risk level or only when
+  **all** of them do. Which sentence appears depends on how your administrator
+  configured the checker.
+- One row per measured resource, each with its own level badge and the current
+  average against the configured threshold, in the form
+  `(current 12% | threshold 5%)`.
+- A legend describing the criterion for each of the three levels.
+
+Resources without a measurement are listed with a dash and do not affect the
+overall level.
+
+As the countdown on the utilization entry gets short, the remaining-time tag next to
+it takes on the same color as the badge, so a countdown shown in red belongs to a
+session about to be reclaimed. While there is still plenty of time left, the tag
+stays plain even if the badge already shows a risk level.
+
+![](../images/session_reclamation_status_column.png)
+
+![](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 

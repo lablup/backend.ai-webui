@@ -22,8 +22,11 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { useToggle } from 'ahooks';
-import { Alert, Button, Result, Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Heading } from '@astryxdesign/core/Heading';
 import {
   BAIButton,
   BAIDeploymentStatus,
@@ -34,9 +37,10 @@ import {
   isDeploymentInStoppedCategory,
   toGlobalId,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
-import { BotMessageSquareIcon, PlusIcon } from 'lucide-react';
+import { BotMessageSquareIcon, PlusIcon, TriangleAlert } from 'lucide-react';
 import React, {
   useEffect,
   useEffectEvent,
@@ -301,20 +305,12 @@ const DeploymentDetailPage: React.FC = () => {
   const cannotUseModelServiceAlert = () => {
     if (hasNoDesiredReplicas) {
       return (
-        <Alert
-          type="warning"
-          showIcon
-          title={t('deployment.NoDesiredReplicas')}
-        />
+        <Banner status="warning" title={t('deployment.NoDesiredReplicas')} />
       );
     }
     if (hasNoRunningReplicas) {
       return (
-        <Alert
-          type="warning"
-          showIcon
-          title={t('deployment.NoRunningReplicas')}
-        />
+        <Banner status="warning" title={t('deployment.NoRunningReplicas')} />
       );
     }
   };
@@ -322,11 +318,10 @@ const DeploymentDetailPage: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       {isProjectMismatch && deploymentProjectId && (
-        <Alert
-          type="warning"
-          showIcon
+        <Banner
+          status="warning"
           title={t('deployment.NotInProject')}
-          action={<SwitchToProjectButton projectId={deploymentProjectId} />}
+          endContent={<SwitchToProjectButton projectId={deploymentProjectId} />}
         />
       )}
       {hasNoActiveReplicas &&
@@ -334,15 +329,15 @@ const DeploymentDetailPage: React.FC = () => {
         !isDeploymentDestroying &&
         cannotUseModelServiceAlert()}
       {isDeploymentReady && !hasNoRevision && !hasNoActiveReplicas && (
-        <Alert
-          type="success"
-          showIcon
+        <Banner
+          status="success"
           title={t('deployment.DeploymentReady')}
-          action={
+          endContent={
             !isChatBlocked && (
               <Button
-                type="primary"
+                variant="primary"
                 icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
+                label={t('deployment.StartChatTest')}
                 onClick={() => {
                   webuiNavigate({
                     pathname: buildProjectPath('chat', { scope: 'project' }),
@@ -351,9 +346,7 @@ const DeploymentDetailPage: React.FC = () => {
                     }).toString(),
                   });
                 }}
-              >
-                {t('deployment.StartChatTest')}
-              </Button>
+              />
             )
           }
         />
@@ -365,11 +358,10 @@ const DeploymentDetailPage: React.FC = () => {
       {hasNoRevision &&
         !isProjectMismatch &&
         !isDeploymentInStoppedCategory(deploymentStatus) && (
-          <Alert
-            type="warning"
-            showIcon
+          <Banner
+            status="warning"
             title={t('deployment.NoCurrentRevisionDeployed')}
-            action={
+            endContent={
               <BAIButton
                 type="primary"
                 icon={<PlusIcon />}
@@ -386,11 +378,10 @@ const DeploymentDetailPage: React.FC = () => {
           />
         )}
       {isPrivateDeployment && (
-        <Alert
-          type="info"
-          showIcon
+        <Banner
+          status="info"
           title={t('deployment.PrivateDeploymentAlertTitle')}
-          action={
+          endContent={
             <BAIButton
               type="primary"
               icon={<PlusIcon />}
@@ -407,9 +398,9 @@ const DeploymentDetailPage: React.FC = () => {
         />
       )}
       <BAIFlex direction="row" align="center" gap="sm">
-        <Typography.Title level={3} style={{ margin: 0 }}>
-          {deploymentName}
-        </Typography.Title>
+        {/* `style={{ margin: 0 }}` dropped — it only reset antd's built-in
+            Title margin; Astryx Heading has none. */}
+        <Heading level={3}>{deploymentName}</Heading>
         <BAIDeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
       <DeploymentBasicInfoCard
@@ -507,18 +498,20 @@ const DeploymentInaccessibleResult: React.FC = () => {
     firstAvailableMenuItem?.labelText ?? t('webui.menu.FirstPageNameAlias');
   return (
     <BAIFlex style={{ margin: 'auto' }} justify="center" align="center">
-      <Result
-        status="warning"
+      {/* PILOT-DECISION: antd `Result status="warning"` → `EmptyState` with a
+          lucide TriangleAlert as the status icon (Astryx has no Result
+          equivalent; `extra` → `actions`). */}
+      <EmptyState
+        icon={<TriangleAlert size={48} />}
         title={t('deployment.NotAccessibleOrDeleted')}
-        extra={
+        actions={
           <Button
-            type="primary"
+            variant="primary"
+            label={t('button.GoBackToStartPage', { title: defaultPageTitle })}
             onClick={() => {
               webuiNavigate(defaultPagePath);
             }}
-          >
-            {t('button.GoBackToStartPage', { title: defaultPageTitle })}
-          </Button>
+          />
         }
       />
     </BAIFlex>

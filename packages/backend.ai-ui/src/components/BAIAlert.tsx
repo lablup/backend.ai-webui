@@ -1,48 +1,113 @@
-import { Alert, type AlertProps } from 'antd';
-import { createStyles } from 'antd-style';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAIAlert` on Astryx (to-astryx phase 3, ticket A).
+
+ FRONTIER COMPONENT — antd `Alert`'s prop names stay on the surface so the 18
+ call sites in 15 files (plus `BAIListAlert`) do not change; internally it is
+ an Astryx `Banner` (MAPPING §4, `Alert -> Banner`):
+
+   `type`        -> `status`   (info | warning | error | success — all four ✅)
+   `title`       -> `title`    (antd v6 name; `message` is antd's deprecated
+                                alias and is accepted here for the 2 sites
+                                that still pass it)
+   `description` -> `description`
+   `closable`    -> `isDismissable` (+ `onClose` -> `onDismiss`)
+   `banner`      -> `container="section"`
+   `action`      -> `endContent`  (the established Banner idiom on this branch)
+   `showIcon`    -> DROPPED — Banner always shows the status icon
+   `icon`        -> `icon` (Banner does allow the override)
+
+ Banner keeps its DEFAULT Astryx style (standing decision on this branch): the
+ `bai-alert*` re-theme is gone, and with it the whole of `BAIAlert.css`.
+
+ PILOT-DECISION — `ghostInfoBg`. The prop repainted an `info` alert with the
+ plain surface background + a neutral border instead of antd's blue tint (one
+ live call site, `BAIProjectBulkEditModal`, passes `false` to opt OUT).
+ Astryx `Banner` owns its header colour per `status` and exposes no knob, so
+ the prop is now a NO-OP kept only for source compatibility. Reproducing it
+ would be a per-component CSS block fighting `astryx-base` on the one status
+ that already reads as the quietest of the four.
+
+ PILOT-DECISION — `description={description || ' '}`. The old wrapper injected
+ a blank description to force antd's two-line "NEO" layout. Banner lays out
+ title/description natively, so the hack is dropped; a description-only call
+ site (`<BAIAlert description={…} />`, no title) promotes its description into
+ the required `title` slot rather than rendering an empty header.
+
+ The one exception to "Banner keeps its DEFAULT Astryx style" is the single
+ rule in `BAIAlert.css`, which RESTORES that default: Banner centres its
+ header slots whenever a banner has actions and no description, on the
+ assumption that such a banner is one line tall — and the promotion above
+ makes that predicate fire on exactly the call sites whose copy is longest.
+ See the file for the measurement and the reasoning.
+*/
+import './BAIAlert.css';
+import { Banner } from '@astryxdesign/core/Banner';
 import classNames from 'classnames';
 import React from 'react';
+import type { ReactNode } from 'react';
 
-export interface BAIAlertProps extends AlertProps {
+export interface BAIAlertProps {
+  /** antd `Alert.type`. Defaults to `info`, as antd did. */
+  type?: 'info' | 'warning' | 'error' | 'success';
+  title?: ReactNode;
+  /** antd's deprecated alias for `title`. */
+  message?: ReactNode;
+  description?: ReactNode;
+  /** antd rendered the status icon only on request; Banner always does. */
+  showIcon?: boolean;
+  icon?: ReactNode;
+  closable?: boolean;
+  onClose?: () => void;
+  /** antd's full-width, square-cornered page banner. */
+  banner?: boolean;
+  action?: ReactNode;
+  /** No-op since the Astryx conversion — see the PILOT-DECISION above. */
   ghostInfoBg?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+  children?: ReactNode;
+  'data-testid'?: string;
 }
-const useStyle = createStyles(({ css, token }) => ({
-  baiAlertDefault: css`
-    .ant-alert-message {
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 0;
-    }
-    .ant-alert-icon {
-      font-size: 22px;
-    }
-  `,
-  ghostInfoBg: css`
-    &.ant-alert-info {
-      background-color: ${token.colorBgContainer};
-      border-color: ${token.colorBorder};
-    }
-  `,
-}));
 
 const BAIAlert: React.FC<BAIAlertProps> = ({
-  className,
+  type = 'info',
+  title,
+  message,
   description,
-  ghostInfoBg = true,
-  ...otherProps
+  showIcon: _showIcon,
+  icon,
+  closable,
+  onClose,
+  banner,
+  action,
+  ghostInfoBg: _ghostInfoBg,
+  className,
+  children,
+  ...restProps
 }) => {
-  const { styles } = useStyle();
+  const resolvedTitle = title ?? message;
+  const hasTitle = resolvedTitle !== undefined && resolvedTitle !== null;
+
   return (
-    <Alert
-      className={classNames(
-        styles.baiAlertDefault,
-        ghostInfoBg && styles.ghostInfoBg,
-        className,
-      )}
-      // Add empty description to follow the NEO style
-      description={description || ' '}
-      {...otherProps}
-    />
+    <Banner
+      {...restProps}
+      // The hook `BAIAlert.css` needs; every call site's own className still
+      // rides along.
+      className={classNames('bai-alert', className)}
+      status={type}
+      title={hasTitle ? resolvedTitle : description}
+      description={hasTitle ? description : undefined}
+      icon={icon}
+      isDismissable={closable}
+      onDismiss={onClose}
+      container={banner ? 'section' : 'card'}
+      endContent={action}
+    >
+      {children}
+    </Banner>
   );
 };
 

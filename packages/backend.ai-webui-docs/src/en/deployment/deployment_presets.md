@@ -26,7 +26,7 @@ Each preset stores the following deployment defaults:
 - **Image**: The container image to deploy, shown in `<canonicalName>@<architecture>` format.
 - **Runtime Parameters**: Serving-framework parameters for vLLM or SGLang runtimes (not shown for the Custom runtime).
 - **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
-- **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+- **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
 - **Execution**: Startup command, environment variables, and bootstrap script.
 - **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
 - **Health Check**: Optional periodic health check, gated behind an *Enable Health Check* toggle.
@@ -36,7 +36,7 @@ Each preset stores the following deployment defaults:
 
 ## Managing deployment presets
 
-Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page.
+Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page, at `/admin/deployments`.
 
 ![](../images/admin_deployment_preset_list.png)
 
@@ -51,10 +51,24 @@ The following columns are visible by default: **Name**, **Runtime**, **Image** (
 
 Additional columns can be shown or hidden using the column visibility gear button (⚙) at the right of the table header: **Description**, **Startup Command** (truncated with a tooltip for long values, copyable), **Cluster**, **Strategy**, **Open to Public** (shown as a Public/Private tag), **Revision History Limit**, and **Rank** (sortable).
 
+:::note[Preset page addresses]
+Deployment preset pages belong to the admin scope, so their addresses all begin with `/admin`:
+
+| Page | Address |
+|---|---|
+| Preset list | `/admin/deployments` (the **Deployment Presets** tab) |
+| New preset | `/admin/deployments/deployment-presets/new` |
+| Edit preset | `/admin/deployments/deployment-presets/{presetId}/edit` |
+
+The end-user flow described in [Using a Preset When Deploying a Model](#using-a-preset-when-deploying-a-model) runs in the project scope instead, so the Data page you deploy a model from is at `/project/{project name}/data`. The segment after `/project/` is the project's **name**, not its ID.
+
+Older flat links such as `/admin-deployments/deployment-presets/new` still work — they redirect to the scoped address above — so an existing bookmark does not break.
+:::
+
 ### Create a deployment preset
 
-1. Click the **Create Preset** button at the top right of the preset list.
-2. Fill in the fields in the *Create Preset* dialog. The dialog is organized into the following sections:
+1. Click the **Create Preset** button at the top right of the preset list. This opens the preset form at `/admin/deployments/deployment-presets/new`.
+2. Fill in the fields. The form is a three-step wizard — **Basic Info**, **Model & Execution**, and **Review** — with the step list on the right and `Previous` / `Next` navigation at the bottom. Use `Skip to Review` to jump straight to the last step. The fields are organized into the following sections:
 
    - **Basic Info**:
       * **Name**: A unique preset name (for example, `vLLM-GPU-Large`).
@@ -64,8 +78,19 @@ Additional columns can be shown or hidden using the column visibility gear butto
    - **Image**: The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`). This format helps distinguish images by CPU architecture on mixed-architecture clusters. The same format appears on the Review step.
    - **Runtime Parameters** (appears when a non-Custom runtime such as vLLM or SGLang is selected): Configure the serving framework parameters for this preset. Parameters are organized in tabs — for example, **Model Loading**, **Resource Memory**, **Serving Performance**, **Multimodal**, and **Tool Reasoning** for vLLM. Saved parameter values are applied when a deployment is created from this preset; parameters you leave unchanged will use the runtime's defaults when the deployment runs.
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
-   - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+   - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
    - **Execution**: **Startup Command**, environment variables, and bootstrap script. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
+
+      :::note[Startup Command is not the Start Command]
+      The two commands are different, and each field now carries its own description so they are easier to tell apart.
+
+      | Field | Where it lives | What it does | Example |
+      |---|---|---|---|
+      | **Startup Command** | Execution section of the preset | *"The command that prepares the environment before the model framework starts (e.g., installing packages such as vllm)."* | `pip install vllm` |
+      | **Start Command** | Model Definition section of the preset | *"The CLI command to start the model serving process."* | `vllm serve /models --tp 2` |
+
+      Use **Startup Command** for preparation work — installing packages, fetching assets, writing config files. Use **Start Command** for the command that actually launches the serving framework. The placeholder text on each field shows an example of the right kind of command.
+      :::
    - **Deployment Defaults**:
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
@@ -75,11 +100,31 @@ Additional columns can be shown or hidden using the column visibility gear butto
 
    ![](../images/deployment_preset_create_modal.png)
 
-3. Click **Create Preset** to save. A success notification confirms the preset has been created.
+3. On the **Review** step, check the summary and click `Create` to save. A success notification confirms the preset has been created.
 
 :::tip
-If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
+If a required field is missing or invalid, the submit button on the Review step stays disabled until the error is resolved, and the card that contains the offending field is outlined in red. Required fields show inline validation messages as you type.
 :::
+
+<a id="preset-review-step"></a>
+
+#### The Review step
+
+The last step of the wizard is a read-only summary that mirrors every earlier step, grouped into the same cards you filled in. Each card has an **Edit** link that takes you back to the matching step and scrolls to that card.
+
+The **Basic Info** card summarizes, in the order the fields appear on step 1:
+
+- **Name**
+- **Description** (only when the preset has one)
+- **Runtime**: The runtime variant the preset uses, shown as its display name.
+- **Image**: In `<canonicalName>@<architecture>` format.
+- **Runtime Parameters** (only for a non-Custom runtime with configured values)
+
+The remaining cards summarize **Resources** (resource slots, resource options, cluster mode, cluster size), **Deployment** (replica count, revision history limit, Open to Public), and **Model & Execution** (startup command, bootstrap script, environment variables, and the model definition when enabled).
+
+   The **Runtime** row appears when you create a preset **and** when you edit one, matching the fact that the runtime is editable on step 1 in both cases. Use it to confirm which runtime the preset will use before you save.
+
+![](../images/deployment_preset_review_step.png)
 
 :::note[Required parameters in presets]
 Administrators can mark individual Runtime Parameters as required. Required parameters display a red asterisk (★) next to the label. The save button stays disabled until all required parameters are filled in. Required parameter validation applies even to parameters on unvisited tabs.
@@ -92,10 +137,10 @@ The **Enable Health Check** toggle also applies to the vLLM/SGLang Advanced Mode
 ### Edit a deployment preset
 
 1. From the preset list, open the action menu on the preset row (or open the preset's detail view) and select **Edit Preset**.
-2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog, including the **Runtime Parameters** section for vLLM and SGLang runtimes.
-3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
+2. The preset form opens at `/admin/deployments/deployment-presets/{presetId}/edit` with the preset's current values pre-filled. The steps and sections are identical to the create flow, including the **Runtime Parameters** section for vLLM and SGLang runtimes.
+3. Adjust the fields as needed. On the **Review** step, confirm the summary — including the **Runtime** row — and click `Save` to store your changes.
 
-![](../images/deployment_preset_edit_modal.png)
+![](../images/deployment_preset_edit_wizard.png)
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 
@@ -125,10 +170,6 @@ End users apply a deployment preset through the **VFolder Deploy** modal, which 
 
    - **Auto-deploy**: Create the deployment immediately using the preset's values as-is. This is the fastest path; the deployment is created in one click with no further input required.
    - **Manual deploy** (*Create New Deployment with Preset*): Open the deployment launcher with all fields pre-populated from the preset, so you can review and adjust before confirming.
-
-:::note
-The active preset, tab key, and other navigation state are preserved in the URL via `URLSearchParams`. You can share a link to a specific preset's detail view, and the recipient lands on the same screen.
-:::
 
 ## Pre-populated launcher fields
 

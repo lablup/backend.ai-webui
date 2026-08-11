@@ -1,6 +1,12 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ ModelCardSelect — a Relay-paginated, id-valued single select over the model
+ store's `projectModelCardsV2`, built on `BAIComplexSelect` (the same recipe as
+ `BAIAvailablePresetSelectAstryx` / `AgentSelect`). The OUTER value contract is
+ a plain card local id (`string`); labelInValue lives strictly between this
+ wrapper and `BAIComplexSelect`.
  */
 import {
   ModelCardSelectQuery,
@@ -10,10 +16,14 @@ import { ModelCardSelectValueQuery } from '../__generated__/ModelCardSelectValue
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import { useLazyPaginatedQuery } from '../hooks/usePaginatedQuery';
 import ModelBrandIcon from './ModelBrandIcon';
-import TotalFooter from './TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { type SelectProps, Skeleton, Typography } from 'antd';
-import { BAIFlex, BAISelect, toLocalId } from 'backend.ai-ui';
+import {
+  BAIComplexSelect,
+  toLocalId,
+  useControllableValue,
+  type BAIComplexSelectOption,
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,9 +50,12 @@ export interface SelectedModelCard {
 }
 
 export interface ModelCardSelectProps extends Omit<
-  SelectProps,
-  'options' | 'labelInValue'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total' | 'multiple'
 > {
+  /** Plain card local id (raw UUID). */
+  value?: string | null;
+  onChange?: (value: string | undefined) => void;
   fetchKey?: string;
   /**
    * Fired alongside `onChange` with the resolved card (id + vfolderId), or
@@ -55,7 +68,8 @@ export interface ModelCardSelectProps extends Omit<
 const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
   fetchKey,
   onSelectCard,
-  loading,
+  isLoading,
+  isDisabled,
   ...selectProps
 }) => {
   'use memo';
@@ -70,10 +84,13 @@ const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
   const modelStoreProjectId = modelStoreProject.id;
 
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | undefined
-  >(selectProps);
+    string | null | undefined
+  >(selectProps as Record<string, unknown>, {
+    valuePropName: 'value',
+    trigger: 'onChange',
+  });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
@@ -81,7 +98,7 @@ const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
     },
   );
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
+  const [searchStr, setSearchStr] = useState<string>('');
   const deferredSearchStr = useDeferredValue(searchStr);
 
   // Resolve the label of the currently selected card so the closed select
@@ -160,23 +177,24 @@ const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
       },
     );
 
-  type ModelCardOption = {
-    label: string;
-    value: string;
-    card: ModelCardItem;
-    disabled?: boolean;
-  };
-  const selectOptions: ModelCardOption[] = _.compact(
+  // id-valued: the raw UUID (`toLocalId`), never the Relay global id. The card
+  // node rides along on the option so `onChange` can surface its `vfolderId`.
+  const cardByKey: Record<string, ModelCardItem> = {};
+  const options: Array<BAIComplexSelectOption> = _.compact(
     _.map(paginationData, (item) => {
       if (!item?.id) return null;
+      const key = toLocalId(item.id) ?? item.id;
+      cardByKey[key] = item;
       // Cards with no compatible preset cannot be deployed — disable them,
       // mirroring the dimmed cards on the Model Store list page.
       const hasNoPresets = item.availablePresets?.count === 0;
       return {
-        label: item.metadata?.title || item.name,
-        value: toLocalId(item.id) ?? item.id,
-        card: item,
+        // P26-3: `label` must be a string (trigger text + accessible name);
+        // the brand icon rides in the `extra` slot.
+        label: item.metadata?.title || item.name || key,
+        value: key,
         disabled: hasNoPresets,
+        extra: item.name ? <ModelBrandIcon modelName={item.name} /> : undefined,
       };
     }),
   );
@@ -185,86 +203,55 @@ const ModelCardSelect: React.FC<ModelCardSelectProps> = ({
   // title instantly (before `ModelCardSelectValueQuery` resolves), without
   // snapshotting the value into local state. The displayed value is always
   // derived from the injected `controllableValue`, so an external Form reset
-  // (e.g. switching the model source) stays in sync — mirroring how
-  // `BAIAvailablePresetSelect` derives its labeled value.
+  // (e.g. switching the model source) stays in sync.
   const [optimisticLabels, setOptimisticLabels] = useState<
     Record<string, string>
   >({});
-  const displayLabel = controllableValue
-    ? (optimisticLabels[controllableValue] ??
-      selectedCard?.metadata?.title ??
-      selectedCard?.name ??
-      controllableValue)
-    : undefined;
-  const displayValue = controllableValue
-    ? { label: displayLabel, value: controllableValue }
-    : undefined;
+
+  const labeledValue: BAIComplexSelectValue = controllableValue
+    ? {
+        label:
+          optimisticLabels[controllableValue] ??
+          selectedCard?.metadata?.title ??
+          selectedCard?.name ??
+          controllableValue,
+        value: controllableValue,
+      }
+    : null;
 
   return (
-    <BAISelect
+    <BAIComplexSelect
       placeholder={t('deployment.SelectModelCard')}
-      style={{ flex: 1 }}
-      showSearch={{
-        searchValue: searchStr,
-        onSearch: (v) => {
-          setSearchStr(v);
-        },
-        autoClearSearchValue: true,
-        filterOption: false,
-      }}
-      loading={searchStr !== deferredSearchStr || loading}
-      options={selectOptions}
-      optionRender={(option) => (
-        <BAIFlex direction="row" align="center" gap="xs">
-          <ModelBrandIcon modelName={option.data.card?.name} />
-          <Typography.Text ellipsis style={{ flex: 1 }}>
-            {option.label}
-          </Typography.Text>
-        </BAIFlex>
-      )}
       {...selectProps}
-      disabled={selectProps.disabled || !modelStoreProjectId}
-      labelInValue
-      value={displayValue}
-      onChange={(v, option) => {
-        const card = _.castArray(option)?.[0]?.card as
-          | ModelCardItem
-          | undefined;
-        if (v?.value && typeof v.label === 'string') {
+      multiple={false}
+      isDisabled={isDisabled || !modelStoreProjectId}
+      isLoading={isLoading || searchStr !== deferredSearchStr}
+      isLoadingNext={isLoadingNext}
+      total={result.projectModelCardsV2?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const picked = _.compact(_.castArray(next ?? []))[0];
+        if (picked?.value) {
           setOptimisticLabels((prev) => ({
             ...prev,
-            [v.value]: v.label as string,
+            [picked.value]: picked.label,
           }));
         }
         // `setControllableValue` forwards to the Form-injected `onChange`,
         // so the bound `modelCardId` field updates from here.
-        setControllableValue(v?.value, option);
-        const localId = card?.id ? toLocalId(card.id) : undefined;
+        setControllableValue(picked?.value, undefined);
+        const card = picked?.value ? cardByKey[picked.value] : undefined;
         onSelectCard?.(
-          localId && card?.vfolderId
-            ? { id: localId, vfolderId: card.vfolderId }
+          picked?.value && card?.vfolderId
+            ? { id: picked.value, vfolderId: card.vfolderId }
             : null,
         );
       }}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.projectModelCardsV2?.count) &&
-        result.projectModelCardsV2.count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.projectModelCardsV2.count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

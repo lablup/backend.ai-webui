@@ -10,9 +10,13 @@ The User Settings page allows you to customize your Backend.AI WebUI experience.
 You can access it by clicking the person icon at the top right and selecting
 the Preferences menu. From here, you can configure preferences such as theme mode,
 language, desktop notifications, SSH keypair management, shell scripts, and
-experimental features.
+experimental features. You can also review the client-side logs, the login
+sessions currently signed in to your account, and your login history.
 
 ![](../images/preferences.png)
+
+The page is organized into four tabs: **General**, **Logs**, **Login Sessions**,
+and **Login History**.
 
 <a id="general-tab"></a>
 
@@ -21,7 +25,9 @@ experimental features.
 ![](../images/user_settings_page.png)
 
 The General tab contains all preference settings organized into groups:
-**Preferences**, **Shell Environments**, and **Experimental features**.
+**Preferences**, **Shell Environments**, and **Experimental features**. The list
+on the left lets you jump to a single group, or select **All** to see every
+setting at once.
 
 ### Searching and filtering settings
 
@@ -35,9 +41,9 @@ is useful for reviewing all customizations you have made at a glance.
 
 ### Resetting settings to default
 
-To restore all settings to their default values, click the **Reset to Default**
-button at the top of the settings area. A confirmation dialog will appear before
-the reset is applied.
+To restore all settings to their default values, click the **Reset** button at
+the top of the settings area. A confirmation dialog appears before the reset is
+applied, warning you that the action cannot be undone.
 
 Each individual setting also has its own reset button (displayed when the value
 differs from the default), allowing you to reset a single setting without
@@ -51,6 +57,49 @@ Select the display mode for the WebUI. You can choose from:
   mode setting.
 - **Light Mode**: Always use the light theme.
 - **Dark Mode**: Always use the dark theme.
+
+### Theme
+
+A theme is a color family that Backend.AI applies across the whole WebUI, in
+both light and dark mode. When theme selection is available, the **Theme**
+setting lets you pick one of the built-in themes that ship with the product:
+
+- **Default**: The standard look, built from the colors configured for your
+  installation.
+- **Stained**
+- **Glass**
+- **Reverie**
+- **Bliss**
+
+The selected theme is applied immediately, and the choice is remembered for your
+account. Click the setting's reset button to go back to **Default**.
+
+![](../images/user_settings_theme.png)
+
+:::note
+The **Theme** setting appears only when your administrator has enabled theme
+customization and more than one theme is available for your installation. The
+set of themes offered can therefore differ from the list above.
+:::
+
+### Primary color
+
+**Primary Color** overrides the main accent color of the selected theme. Two
+color pickers are provided — one for **Light mode** and one for **Dark mode** —
+so each display mode can use a different accent color.
+
+1. Click the color swatch of the mode you want to change
+2. Choose a color from the picker, or enter a hex value
+3. The new accent color is applied to the WebUI immediately
+
+Clear a picker to fall back to the color that the selected theme provides for
+that mode. Clicking the setting's reset button clears both modes and restores
+the theme's own colors.
+
+:::note
+Like the **Theme** setting, **Primary Color** appears only when your
+administrator has enabled theme customization.
+:::
 
 ### Enables desktop notifications
 
@@ -219,7 +268,7 @@ compute session. Once you sign up for Backend.AI, a public keypair is
 provided. If you click the button on the right of the SSH Keypair Management
 section, the following dialog appears. Click the copy button on the right to
 copy the existing SSH public key. You can update the SSH keypair by clicking
-the `GENERATE` button at the bottom of the dialog. SSH public/private keys are
+the `Generate` button at the bottom of the dialog. SSH public/private keys are
 randomly generated and stored as user information. Please note that the secret
 key cannot be checked again unless it is saved manually immediately after
 creation.
@@ -233,12 +282,12 @@ this into a PPK key.
 
 Backend.AI WebUI supports adding your own SSH keypair to provide flexibility
 such as accessing a private repository. To add your own SSH keypair, click the
-`Enter Manually` button. You will then see two text areas
-corresponding to the "public" and "private" keys.
+`Enter Manually` button. You will then see two text areas labeled **Public Key**
+and **Private Key**.
 
 ![](../images/add_ssh_keypair_manually_dialog.png)
 
-Enter the keys and click the `SAVE` button. You can now access your Backend.AI
+Enter the keys and click the `Save` button. You can now access your Backend.AI
 session using your own key.
 
 ![](../images/ssh_keypair_dialog_after.png)
@@ -273,39 +322,47 @@ script to register your command aliases or specify that certain files are always
 downloaded to a specific location.
 
 Use the drop-down menu at the top to select the type of script you want to write
-and then write the content. You can save the script by
-clicking the `Save` or `Save And Close` button. Click the `Delete` button to delete
-the script.
+(`.bashrc`, `.zshrc`, `.tmux.conf.local`, `.vimrc`, or `.Renviron`) and then
+write the content. Click `Save And Close` to save the script and close the
+dialog, or open the arrow next to it and select `Save Without Close` to save
+while keeping the dialog open. The buttons on the left of the dialog delete the
+script or reset your unsaved changes.
 
 ![](../images/edit_user_config_script.png)
+
+<a id="experimental-features"></a>
 
 ### Experimental features
 
 Access new experimental features early -- these may change or be removed in
-future updates.
+future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ![](../images/experimental_features.png)
 
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
   available for use in your sessions.
+- **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
+  **Start From URL** dialog on the Start page, so you can import a model from
+  Hugging Face directly into a model folder. The tab appears only when model
+  deployment is also available in your installation.
 
 ## Logs tab
 
 Displays detailed information of various logs recorded on the client side. You
 can visit this page to find out more about errors that occurred.
 You can search and filter error logs, refresh the list, and clear all logs by
-clicking the Clear Logs button at the top right.
+clicking the **Clear Logs** button at the top right.
 
 ![](../images/user_log.png)
 
 :::note
-If you only have one page logged in, clicking the REFRESH button may not seem
-to work properly. The Logs page is a collection of requests to the server and
-responses from the server. If the current page is the Logs page, it will
+If you only have one page logged in, clicking the **Refresh** button may not
+seem to work properly. The Logs page is a collection of requests to the server
+and responses from the server. If the current page is the Logs page, it will
 not send any requests to the server except when explicitly refreshing the page.
 To check that logs are being stacked properly, open another page and click
-the REFRESH button.
+the **Refresh** button.
 :::
 
 If you want to hide or show certain columns, click the gear icon at the bottom
@@ -313,3 +370,109 @@ right of the table. A dialog will appear where you can select the columns you
 want to see.
 
 ![](../images/logs_table_setting.png)
+
+<a id="login-sessions-tab"></a>
+
+## Login Sessions tab
+
+The Login Sessions tab lists the login sessions currently associated with your
+account — one entry for every place where you are signed in to Backend.AI. Use
+it to review where your account is in use and to sign out a session you no
+longer need.
+
+![](../images/login_sessions_tab.png)
+
+The table includes the following columns:
+
+- **User**: The email address of the account that owns the login session.
+- **Access Key**: The access key the login session authenticates with. Click the
+  copy icon to copy it.
+- **Created At**: When the login session was created. Click the column header to
+  sort by this column.
+
+### Filtering login sessions
+
+Use the filter above the table to narrow down the list:
+
+- **Access Key**: Shows only the login sessions whose access key contains the
+  text you enter.
+- **Created At**: Shows only the login sessions created after (or before) the
+  date and time you select.
+
+Use the pagination controls below the table to move between pages and to change
+how many rows are shown per page.
+
+### Revoking a login session
+
+Each row provides a **Revoke Session** action next to the email address in the
+**User** column.
+
+1. Click **Revoke Session** on the row you want to end
+2. Check the confirmation prompt, which shows the access key of that login
+   session
+3. Click **Revoke**
+
+The list reloads and the message *"Login session revoked."* is displayed. If the
+login session cannot be revoked, *"Failed to revoke login session."* is shown
+instead.
+
+:::warning
+Revoking a login session signs it out immediately. If you revoke the login
+session you are currently using, you have to log in again.
+:::
+
+<a id="login-history-tab"></a>
+
+## Login History tab
+
+The Login History tab shows the login attempts recorded for your account —
+successful sign-ins, failed attempts, and login session events such as logout or
+expiry. This tab is read-only; there are no actions on the rows.
+
+![](../images/login_history_tab.png)
+
+The table includes the following columns:
+
+- **Result**: The outcome of the login attempt, shown as a color-coded tag. You
+  can sort by this column.
+- **Domain**: The domain the login attempt was made against. You can sort by
+  this column.
+- **Login Time**: When the login attempt was recorded. You can sort by this
+  column.
+- **Failure Reason**: Additional detail reported for a failed attempt. Shows `-`
+  when there is none.
+
+:::note
+Result values are shown exactly as the server reports them (for example,
+`SUCCESS` or `FAILED_INVALID_CREDENTIALS`) and are not translated.
+:::
+
+### Result values
+
+| Result | Color | Meaning |
+|--------|-------|---------|
+| SUCCESS | Green | The sign-in succeeded |
+| FAILED_INVALID_CREDENTIALS | Red | The email address or password was wrong |
+| FAILED_USER_INACTIVE | Red | The account is not active |
+| FAILED_BLOCKED | Red | The sign-in was blocked |
+| FAILED_PASSWORD_EXPIRED | Red | The account password has expired |
+| FAILED_REJECTED_BY_HOOK | Red | The sign-in was rejected by a server-side hook |
+| FAILED_SESSION_ALREADY_EXISTS | Red | A login session already exists for the account |
+| LOGOUT | Gray | The login session was ended by signing out |
+| REVOKED_BY_ADMIN | Yellow | An administrator revoked the login session |
+| REVOKED_BY_USER | Gray | You revoked the login session yourself |
+| EVICTED | Yellow | The server evicted the login session |
+| EXPIRED | Gray | The login session expired |
+
+### Filtering login history
+
+Use the filter above the table to narrow down the list:
+
+- **Result**: Shows only the entries with the result you select from the list of
+  values above.
+- **Domain**: Shows only the entries whose domain contains the text you enter.
+- **Login Time**: Shows only the entries recorded after (or before) the date and
+  time you select.
+
+Use the pagination controls below the table to move between pages and to change
+how many rows are shown per page.

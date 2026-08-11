@@ -11,6 +11,9 @@
  "URL 파라미터 파싱 규약 (nuqs)". A static assertion in the accompanying
  unit test (`STokenLoginBoundary.test.tsx`) enforces this in CI.
  */
+import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
+import { Form } from '../form-engine';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
@@ -22,8 +25,13 @@ import {
   initializeConfigOnce,
   loginConfigState,
 } from '../hooks/useWebUIConfig';
-import { App, Form, Input, Spin, Typography } from 'antd';
-import { BAIButton, BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Spinner } from '@astryxdesign/core/Spinner';
+import { Text } from '@astryxdesign/core/Text';
+import { BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useStore } from 'jotai';
 import {
   Suspense,
@@ -531,13 +539,11 @@ const DefaultFallback: React.FC<{ step?: PendingStep }> = ({
     >
       <BAICard style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
         <BAIFlex direction="column" align="center" gap="md">
-          <Spin size="large" />
-          <Typography.Title level={5} style={{ margin: 0 }}>
+          <Spinner size="lg" />
+          <Heading level={5} style={{ margin: 0 }}>
             {t('sTokenLoginBoundary.AuthenticatingTitle')}
-          </Typography.Title>
-          <Typography.Text type="secondary">
-            {t(descriptionKey)}
-          </Typography.Text>
+          </Heading>
+          <Text color="secondary">{t(descriptionKey)}</Text>
         </BAIFlex>
       </BAICard>
     </BAIFlex>
@@ -621,16 +627,18 @@ const DefaultErrorCard: React.FC<{
         style={{ maxWidth: 520, width: '100%' }}
       >
         <BAIFlex direction="column" gap="md" align="stretch">
-          <Typography.Paragraph style={{ margin: 0 }}>
+          <Text as="p" display="block" style={{ margin: 0 }}>
             {description}
-          </Typography.Paragraph>
+          </Text>
           {causeDetail && error.kind !== 'totp-required' && (
-            <Typography.Paragraph
-              type="secondary"
-              style={{ margin: 0, fontSize: 12, whiteSpace: 'pre-wrap' }}
+            <Text
+              as="div"
+              display="block"
+              type="supporting"
+              style={{ margin: 0, whiteSpace: 'pre-wrap' }}
             >
               {causeDetail}
-            </Typography.Paragraph>
+            </Text>
           )}
           {error.kind === 'totp-required' ? (
             <TotpInlineForm
@@ -640,26 +648,30 @@ const DefaultErrorCard: React.FC<{
             />
           ) : error.kind === 'concurrent-session' ? (
             <BAIFlex direction="row" gap="sm" justify="end">
-              <BAIButton action={handleCopy} disabled={isInlineRetrying}>
-                {t('sTokenLoginBoundary.CopyErrorDetails')}
-              </BAIButton>
-              <BAIButton
-                type="primary"
-                loading={isInlineRetrying}
-                disabled={isInlineRetrying}
+              <Button
+                clickAction={handleCopy}
+                isDisabled={isInlineRetrying}
+                label={t('sTokenLoginBoundary.CopyErrorDetails')}
+              />
+              <Button
+                variant="primary"
+                isLoading={isInlineRetrying}
+                isDisabled={isInlineRetrying}
                 onClick={onConfirmForce}
-              >
-                {t('login.Login')}
-              </BAIButton>
+                label={t('login.Login')}
+              />
             </BAIFlex>
           ) : (
             <BAIFlex direction="row" gap="sm" justify="end">
-              <BAIButton action={handleCopy}>
-                {t('sTokenLoginBoundary.CopyErrorDetails')}
-              </BAIButton>
-              <BAIButton type="primary" action={handleRetry}>
-                {t('sTokenLoginBoundary.Retry')}
-              </BAIButton>
+              <Button
+                clickAction={handleCopy}
+                label={t('sTokenLoginBoundary.CopyErrorDetails')}
+              />
+              <Button
+                variant="primary"
+                clickAction={handleRetry}
+                label={t('sTokenLoginBoundary.Retry')}
+              />
             </BAIFlex>
           )}
         </BAIFlex>
@@ -696,7 +708,12 @@ const TotpInlineForm: React.FC<{
         onSubmit(trimmed);
       }}
     >
-      <Form.Item
+      {/* PILOT-DECISION: antd `Input.OTP` (six segmented boxes) is MAPPING
+          §3.6's explicit NONE — "self-build". Per the simplicity policy the
+          segmented widget is DROPPED rather than rebuilt: the field becomes a
+          plain `TextInput`, keeping the same `^\d{6}$` rule, the same
+          required message and the same submit path. */}
+      <BAIFormItem
         name="otp"
         label={t('sTokenLoginBoundary.TotpPlaceholder')}
         rules={[
@@ -713,22 +730,19 @@ const TotpInlineForm: React.FC<{
         help={invalidOtp ? t('sTokenLoginBoundary.ErrorTotpInvalidHint') : null}
         style={{ marginBottom: 12 }}
       >
-        <Input.OTP
-          length={6}
-          size="large"
+        <AstryxFormTextInput
+          label={t('sTokenLoginBoundary.TotpPlaceholder')}
           disabled={isSubmitting}
-          aria-label={t('sTokenLoginBoundary.TotpPlaceholder')}
         />
-      </Form.Item>
+      </BAIFormItem>
       <BAIFlex direction="row" gap="sm" justify="end">
-        <BAIButton
-          type="primary"
-          htmlType="submit"
-          loading={isSubmitting}
-          disabled={isSubmitting}
-        >
-          {t('sTokenLoginBoundary.SubmitOtp')}
-        </BAIButton>
+        <Button
+          variant="primary"
+          type="submit"
+          isLoading={isSubmitting}
+          isDisabled={isSubmitting}
+          label={t('sTokenLoginBoundary.SubmitOtp')}
+        />
       </BAIFlex>
     </Form>
   );

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bce4b88985ec81a7022430af74743651>>
+ * @generated SignedSource<<21da41c4ca8e45474cdc3d38933f03bc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -243,6 +243,20 @@ return {
             "kind": "InlineFragment",
             "selections": [
               {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "source",
+                "storageKey": null
+              },
+              {
                 "alias": "firstScope",
                 "args": [
                   {
@@ -405,16 +419,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e0f84306e5926664a1ba3b6b4732125a",
+    "cacheID": "3fa8c5e941ca4d715644f8e9150bad89",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_40cQ3G\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Role {\n  id\n  firstScope: scopes(first: 1) {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_40cQ3G\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "409010db642c0926546832b7d5e21e2f";
+(node as any).hash = "1686ca5dcae81b1949d2704e9d05ec20";
 
 export default node;

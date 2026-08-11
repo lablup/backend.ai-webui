@@ -16,7 +16,15 @@ import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRev
 import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
+import { theme } from '../theme-shim';
+import { Button } from '@astryxdesign/core/Button';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Link } from '@astryxdesign/core/Link';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIArtifactRevisionDeleteButton,
   BAIArtifactRevisionDownloadButton,
@@ -50,8 +58,6 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
 dayjs.extend(relativeTime);
-
-const { Title, Text, Paragraph } = Typography;
 
 type RevisionNode = NonNullable<
   NonNullable<ReservoirArtifactDetailPageQuery$data['artifact']>['revisions']
@@ -237,56 +243,54 @@ const ReservoirArtifactDetailPage = () => {
       const status = record.status;
 
       return (
+        // The three antd `Tooltip` wrappers are gone: all three buttons are
+        // `BAIButton`-shaped, and `BAIButton` now forwards `title` to Astryx's
+        // own `tooltip` AND uses it as the icon-only accessible name. The
+        // delete button already passed `title` — so it had the string twice.
         <BAIFlex gap={'xs'}>
-          <Tooltip title={t('reservoirPage.PullThisVersion')}>
-            <BAIArtifactRevisionDownloadButton
-              size="small"
-              revisionsFrgmt={[record]}
-              loading={status === 'PULLING' || status === 'VERIFYING'}
-              onClick={() => {
-                artifact?.revisions?.edges?.forEach((edge) => {
-                  if (edge.node.id === record.id) {
-                    setSelectedRevisions([edge.node]);
-                  }
-                });
-              }}
-            />
-          </Tooltip>
-          <Tooltip
+          <BAIArtifactRevisionDownloadButton
+            size="small"
+            title={t('reservoirPage.PullThisVersion')}
+            revisionsFrgmt={[record]}
+            loading={status === 'PULLING' || status === 'VERIFYING'}
+            onClick={() => {
+              artifact?.revisions?.edges?.forEach((edge) => {
+                if (edge.node.id === record.id) {
+                  setSelectedRevisions([edge.node]);
+                }
+              });
+            }}
+          />
+          <ImportArtifactRevisionToFolderButton
+            size="small"
             title={t('importArtifactRevisionToFolderModal.ImportToFolder')}
-          >
-            <ImportArtifactRevisionToFolderButton
-              size="small"
-              revisionsFrgmt={_.map(
-                _.filter(
-                  artifact?.revisions?.edges,
-                  (edge) => edge.node.id === record.id,
-                ),
-                'node',
-              )}
-              onClick={() => {
-                artifact?.revisions?.edges?.forEach((edge) => {
-                  if (edge.node.id === record.id) {
-                    setSelectedImportRevisions([edge.node]);
-                  }
-                });
-              }}
-            />
-          </Tooltip>
-          <Tooltip title={t('reservoirPage.RemoveThisVersion')}>
-            <BAIArtifactRevisionDeleteButton
-              size="small"
-              title={t('reservoirPage.RemoveThisVersion')}
-              revisionsFrgmt={[record]}
-              onClick={() => {
-                artifact?.revisions?.edges?.forEach((edge) => {
-                  if (edge.node.id === record.id) {
-                    setSelectedDeleteRevisions([edge.node]);
-                  }
-                });
-              }}
-            />
-          </Tooltip>
+            revisionsFrgmt={_.map(
+              _.filter(
+                artifact?.revisions?.edges,
+                (edge) => edge.node.id === record.id,
+              ),
+              'node',
+            )}
+            onClick={() => {
+              artifact?.revisions?.edges?.forEach((edge) => {
+                if (edge.node.id === record.id) {
+                  setSelectedImportRevisions([edge.node]);
+                }
+              });
+            }}
+          />
+          <BAIArtifactRevisionDeleteButton
+            size="small"
+            title={t('reservoirPage.RemoveThisVersion')}
+            revisionsFrgmt={[record]}
+            onClick={() => {
+              artifact?.revisions?.edges?.forEach((edge) => {
+                if (edge.node.id === record.id) {
+                  setSelectedDeleteRevisions([edge.node]);
+                }
+              });
+            }}
+          />
         </BAIFlex>
       );
     },
@@ -300,9 +304,9 @@ const ReservoirArtifactDetailPage = () => {
         justify="between"
       >
         <BAIFlex align="center" gap="xs">
-          <Title level={3} style={{ margin: 0 }}>
-            {artifact?.name}
-          </Title>
+          {/* `Typography.Title level={3}` -> `Heading level={3}`. The
+              `margin: 0` reset goes with antd's heading margins. */}
+          <Heading level={3}>{artifact?.name}</Heading>
           {artifact && <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />}
         </BAIFlex>
         <AutoUpdateFetchKeyButton
@@ -339,71 +343,85 @@ const ReservoirArtifactDetailPage = () => {
         showDivider
         extra={
           <Button
-            type="primary"
+            variant="primary"
             icon={<Download size={16} />}
             onClick={() => {
               if (!latestArtifact) return;
               setSelectedRevisions([latestArtifact]);
             }}
-            disabled={!latestArtifact || latestArtifact.status !== 'SCANNED'}
-          >
-            {latestArtifact
-              ? t('reservoirPage.PullLatestVersion', {
-                  version: latestArtifact.version,
-                })
-              : 'N/A'}
-          </Button>
+            isDisabled={!latestArtifact || latestArtifact.status !== 'SCANNED'}
+            label={
+              latestArtifact
+                ? t('reservoirPage.PullLatestVersion', {
+                    version: latestArtifact.version,
+                  })
+                : 'N/A'
+            }
+          />
         }
         style={{ marginBottom: token.marginMD }}
       >
-        <Descriptions column={2} bordered>
-          <Descriptions.Item label={t('reservoirPage.Name')}>
+        {/* antd `Descriptions column={2} bordered` -> `MetadataList
+            columns={2}` (MAPPING §4: `bordered` has no destination and is
+            DROPPED — Astryx renders label/value pairs, not a table grid).
+            PILOT-DECISION: `Descriptions.Item span={2}` (a full-width row) has
+            no `MetadataListItem` counterpart either, so the two long fields —
+            Last updated and Description — move OUT of the 2-column list into
+            their own single-column list below it. That keeps them full width
+            without a span mechanism, and keeps the short fields paired. */}
+        <MetadataList columns={2}>
+          <MetadataListItem label={t('reservoirPage.Name')}>
             {artifact?.name}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('reservoirPage.Type')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('reservoirPage.Type')}>
             {artifact && <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('reservoirPage.Size')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('reservoirPage.Size')}>
             <BAIText monospace>
               {latestArtifact?.size
                 ? convertToDecimalUnit(latestArtifact.size, 'auto')
                     ?.displayValue
                 : 'N/A'}
             </BAIText>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('reservoirPage.Source')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('reservoirPage.Source')}>
             {artifact?.source ? (
-              <Typography.Link
-                href={artifact.source.url ?? ''}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              // `Typography.Link` with an href -> Astryx `Link` (MAPPING §3.5
+              // routes the href-carrying branch there). The explicit
+              // `rel="noopener noreferrer"` goes: Astryx merges both tokens
+              // automatically for `target="_blank"`.
+              <Link href={artifact.source.url ?? ''} target="_blank">
                 {artifact.source.name || 'N/A'}
-              </Typography.Link>
+              </Link>
             ) : (
               'N/A'
             )}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('reservoirPage.Registry')}>
-            <Typography>
+          </MetadataListItem>
+          <MetadataListItem label={t('reservoirPage.Registry')}>
+            <Text>
               {artifact?.registry
                 ? `${artifact.registry.name} (${artifact.registry.url})`
                 : 'N/A'}
-            </Typography>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('reservoirPage.LastUpdated')} span={2}>
+            </Text>
+          </MetadataListItem>
+        </MetadataList>
+        <MetadataList columns="single">
+          <MetadataListItem label={t('reservoirPage.LastUpdated')}>
             {artifact?.updatedAt
               ? dayjs(artifact?.updatedAt).format('lll')
               : 'N/A'}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('reservoirPage.Description')} span={2}>
+          </MetadataListItem>
+          <MetadataListItem label={t('reservoirPage.Description')}>
             {artifact?.description ? (
-              <Paragraph>{artifact.description}</Paragraph>
+              // `Typography.Paragraph` -> `Text as="p" display="block"`.
+              <Text as="p" display="block">
+                {artifact.description}
+              </Text>
             ) : (
               'N/A'
             )}
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </MetadataList>
       </BAICard>
 
       <BAICard
@@ -469,54 +487,51 @@ const ReservoirArtifactDetailPage = () => {
             {selectedRevisionIdList.length > 0 ? (
               <BAIFlex gap={'xs'}>
                 <Text>{selectedRevisionIdList.length} selected</Text>
-                <Tooltip title={t('reservoirPage.PullSelectedVersions')}>
-                  <BAIArtifactRevisionDownloadButton
-                    type="default"
-                    revisionsFrgmt={selectedRevisionIdList.flatMap(
-                      (arr) => arr.data,
-                    )}
-                    onClick={() => {
-                      if (!artifact) return;
-                      setSelectedRevisions(
-                        selectedRevisionIdList.flatMap((arr) => arr.data),
-                      );
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip
+                {/* Same as the row control column: the `Tooltip` wrappers fold
+                    into each button's own `title` -> Astryx `tooltip`. */}
+                <BAIArtifactRevisionDownloadButton
+                  type="default"
+                  title={t('reservoirPage.PullSelectedVersions')}
+                  revisionsFrgmt={selectedRevisionIdList.flatMap(
+                    (arr) => arr.data,
+                  )}
+                  onClick={() => {
+                    if (!artifact) return;
+                    setSelectedRevisions(
+                      selectedRevisionIdList.flatMap((arr) => arr.data),
+                    );
+                  }}
+                />
+                <ImportArtifactRevisionToFolderButton
+                  type="default"
                   title={t(
                     'importArtifactRevisionToFolderModal.ImportToFolder',
                   )}
-                >
-                  <ImportArtifactRevisionToFolderButton
-                    type="default"
-                    revisionsFrgmt={selectedRevisionIdList.flatMap(
-                      (arr) => arr.data,
-                    )}
-                    onClick={() => {
-                      if (!artifact) return;
-                      setSelectedImportRevisions(
-                        _.flatMap(selectedRevisionIdList, (arr) => arr.data),
-                      );
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip title={t('reservoirPage.RemoveSelectedVersions')}>
-                  <BAIArtifactRevisionDeleteButton
-                    style={{
-                      borderColor: token.colorBorder,
-                    }}
-                    revisionsFrgmt={selectedRevisionIdList.flatMap(
-                      (arr) => arr.data,
-                    )}
-                    onClick={() => {
-                      if (!artifact) return;
-                      setSelectedDeleteRevisions(
-                        selectedRevisionIdList.flatMap((arr) => arr.data),
-                      );
-                    }}
-                  />
-                </Tooltip>
+                  revisionsFrgmt={selectedRevisionIdList.flatMap(
+                    (arr) => arr.data,
+                  )}
+                  onClick={() => {
+                    if (!artifact) return;
+                    setSelectedImportRevisions(
+                      _.flatMap(selectedRevisionIdList, (arr) => arr.data),
+                    );
+                  }}
+                />
+                <BAIArtifactRevisionDeleteButton
+                  title={t('reservoirPage.RemoveSelectedVersions')}
+                  style={{
+                    borderColor: token.colorBorder,
+                  }}
+                  revisionsFrgmt={selectedRevisionIdList.flatMap(
+                    (arr) => arr.data,
+                  )}
+                  onClick={() => {
+                    if (!artifact) return;
+                    setSelectedDeleteRevisions(
+                      selectedRevisionIdList.flatMap((arr) => arr.data),
+                    );
+                  }}
+                />
               </BAIFlex>
             ) : null}
           </BAIFlex>

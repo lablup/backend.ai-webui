@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Eksekusi gagal",
     "ErrorOccurred": "Terjadi kesalahan"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Tidak ada hasil",
+    "Search": "Pencarian"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Container"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
@@ -261,6 +268,9 @@
     "Tags": "Tag",
     "UpdatedAt": "Diperbarui pada"
   },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
@@ -355,6 +365,62 @@
     "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "CreatePreset": "Buat Preset",
+    "DefaultValue": "Nilai Default",
+    "DefaultValuePlaceholder": "mis. 1",
+    "Description": "Deskripsi",
+    "DescriptionPlaceholder": "Jelaskan parameter apa yang dikontrol oleh nilai ini dan bagaimana pengaruhnya terhadap perilaku inferensi.",
+    "EditPreset": "Edit Preset",
+    "Key": "Kunci",
+    "KeyPlaceholder": "mis. TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Kunci wajib diisi.",
+    "Name": "Nama",
+    "NamePlaceholder": "mis. Tensor Parallel Size",
+    "NameRequired": "Nama wajib diisi.",
+    "PresetCreated": "Preset varian runtime telah dibuat.",
+    "PresetTarget": "Target Preset",
+    "PresetTargetArgs": "Argumen Baris Perintah",
+    "PresetTargetEnv": "Variabel Lingkungan",
+    "PresetTargetRequired": "Target preset wajib diisi.",
+    "PresetUpdated": "Preset varian runtime telah diperbarui.",
+    "Rank": "Peringkat",
+    "RankTooltip": "Urutan tampilan di antara preset dari varian runtime yang sama. Nilai yang lebih rendah ditampilkan terlebih dahulu.",
+    "Required": "Wajib",
+    "RequiredTooltip": "Menentukan apakah parameter preset ini harus disediakan saat membuat revisi deployment.",
+    "RuntimeVariant": "Varian Runtime",
+    "RuntimeVariantRequired": "Varian runtime wajib diisi.",
+    "ValueType": "Tipe Nilai",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Penanda",
+    "ValueTypeFloat": "Bilangan Desimal",
+    "ValueTypeInt": "Bilangan Bulat",
+    "ValueTypeRequired": "Tipe nilai wajib diisi.",
+    "ValueTypeStr": "String"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "CreatedAt": "Tanggal dibuat",
+    "DefaultValue": "Nilai Default",
+    "Description": "Deskripsi",
+    "Key": "Kunci",
+    "ModifiedAt": "Tanggal diubah",
+    "Name": "Nama",
+    "Optional": "Opsional",
+    "PresetTarget": "Target Preset",
+    "PresetTargetArgs": "Argumen Baris Perintah",
+    "PresetTargetEnv": "Variabel Lingkungan",
+    "Rank": "Peringkat",
+    "RankTooltip": "Urutan tampilan di antara preset dari varian runtime yang sama. Nilai yang lebih rendah ditampilkan terlebih dahulu.",
+    "Required": "Wajib",
+    "RuntimeVariant": "Varian Runtime",
+    "RuntimeVariantId": "ID Varian Runtime",
+    "ValueType": "Tipe Nilai",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Penanda",
+    "ValueTypeFloat": "Bilangan Desimal",
+    "ValueTypeInt": "Bilangan Bulat",
+    "ValueTypeStr": "String"
+  },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Pilih Varian Runtime"
   },
@@ -395,14 +461,18 @@
     "Step": "Langkah"
   },
   "comp:BAITable": {
+    "Apply": "Terapkan",
+    "Cancel": "Batal",
     "CollapseAll": "Ciutkan semua",
     "ExpandAll": "Perluas semua",
     "ExpandErrorsOnly": "Perluas hanya kesalahan",
     "ExpandOptions": "Opsi perluasan",
+    "ExpandRow": "Perluas baris",
     "Export": "Ekspor",
     "ExportCSV": "Ekspor CSV",
     "GoToFirstPage": "Ke halaman pertama",
     "InvalidPageNumber": "Nomor halaman tidak valid",
+    "Pagination": "Penomoran halaman",
     "SearchTableColumn": "Kolom Tabel Cari",
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
     "SettingTable": "Pengaturan Tabel"
@@ -470,8 +540,10 @@
     "MoreOptions": "Opsi lainnya",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Namanya telah berhasil diubah.",
     "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
     "Size": "Ukuran",
@@ -538,21 +610,73 @@
     "UserID": "ID Pengguna",
     "Username": "Nama Pengguna"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Klik untuk memilih jalur",
+    "SelectAPath": "Pilih jalur",
+    "SelectAPathInFolder": "Pilih jalur di {{folderName}}",
+    "SelectFolderFirst": "Pilih folder terlebih dahulu",
+    "SelectThisLocation": "Pilih lokasi ini",
+    "SelectedPath": "Terpilih"
+  },
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
+  "form": {
+    "Optional": "(optional)",
+    "validateMessages": {
+      "Default": "Kesalahan validasi untuk ${label}",
+      "Required": "Tolong masukkan ${label}",
+      "Whitespace": "${label} tidak boleh berupa karakter kosong",
+      "array": {
+        "Len": "Harus ${len} ${label}",
+        "Max": "Maksimal ${max} ${label}",
+        "Min": "Minimal ${min} ${label}",
+        "Range": "Jumlah ${label} harus di antara ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} harus sama dengan ${len}",
+        "Max": "${label} harus maksimal ${max}",
+        "Min": "${label} harus minimal ${min}",
+        "Range": "${label} harus di antara ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} tidak sesuai dengan pola ${pattern}"
+      },
+      "string": {
+        "Len": "${label} harus berupa ${len} karakter",
+        "Max": "${label} harus maksimal ${max} karakter",
+        "Min": "${label} harus minimal ${min} karakter",
+        "Range": "${label} harus diantara ${min}-${max} karakter"
+      },
+      "types": {
+        "Email": "${label} tidak valid ${type}",
+        "Number": "${label} tidak valid ${type}",
+        "Object": "${label} tidak valid ${type}",
+        "String": "${label} tidak valid ${type}",
+        "Url": "${label} tidak valid ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Batalkan semua pilihan",
     "File": "Berkas",
+    "Increase": "Increase",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",
+    "Select": "Select",
     "TotalItems": "Total {{total}} item",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Membatalkan",
       "Close": "Menutup",
       "Collapse": "Runtuh",
+      "Confirm": "Confirm",
       "Copied": "Disalin",
+      "Copy": "Salin",
       "CopyAll": "Salin semua",
       "Create": "Membuat",
       "Delete": "Menghapus",

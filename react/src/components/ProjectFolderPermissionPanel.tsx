@@ -6,19 +6,20 @@ import { ProjectFolderPermissionPanelPermissionQuery } from '../__generated__/Pr
 import { ProjectFolderPermissionPanelQuery } from '../__generated__/ProjectFolderPermissionPanelQuery.graphql';
 import { ProjectFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/ProjectFolderPermissionPanel_storageVolumeFrgmt.graphql';
 import { useCurrentDomainValue } from '../hooks';
+import { theme } from '../theme-shim';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
-import { CheckCircleOutlined } from '@ant-design/icons';
-import { Typography, theme } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIAlert,
   BAICard,
   BAIDomainSelect,
   BAIFetchKeyButton,
   BAIFlex,
-  BAIGraphQLPropertyFilter,
+  BAISelect,
   useFetchKey,
 } from 'backend.ai-ui';
+import { CircleCheck } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -100,10 +101,12 @@ const ProjectFolderPermissionPanel: React.FC<
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
-      <BAIAlert
-        type="info"
-        showIcon
-        description={t(
+      {/* antd Alert type="info" showIcon description → Banner (MAPPING §4).
+          `showIcon` drops (Banner always shows the status icon); the single
+          `description` string becomes `title` since Banner requires one. */}
+      <Banner
+        status="info"
+        title={t(
           'storageHost.permission.ProjectFolderPermissionsAlertDescription',
         )}
       />
@@ -114,32 +117,47 @@ const ProjectFolderPermissionPanel: React.FC<
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
           <BAIFlex align="center" justify="between" gap="md" wrap="wrap">
-            <BAIGraphQLPropertyFilter
-              filterProperties={[
-                {
-                  key: 'domainName',
-                  propertyLabel: t('storageHost.permission.Name'),
-                  type: 'uuid',
-                  fixedOperator: 'equals',
-                  renderInput: () => (
-                    <BAIDomainSelect
-                      value={selectedDomainName}
-                      onChange={(value) =>
-                        setSelectedDomainName(
-                          (value as string | undefined) || undefined,
-                        )
-                      }
-                      allowClear
-                      style={{ minWidth: 200 }}
-                    />
-                  ),
-                },
-              ]}
-            />
+            {/* The domain picker drives this panel's own query state rather
+                than a GraphQL filter, so it is a plain compact pair (label
+                select + domain select) instead of BAIGraphQLPropertyFilter,
+                whose renderInput contract expects stateless controls committing
+                via onAddCondition (FR-3405). */}
+            {/* PILOT-DECISION: antd Space.Compact's visually-joined border
+                (MAPPING §4 Space → ButtonGroup/InputGroup) has no home here —
+                both children are frontier antd Selects (BAISelect,
+                BAIDomainSelect), and Astryx InputGroup only accepts its own
+                native input family as children. Dropped to a plain gapped
+                BAIFlex; functionally identical, loses the compact join. */}
+            <BAIFlex gap="xxs">
+              <BAISelect
+                popupMatchSelectWidth={false}
+                options={[
+                  {
+                    label: t('storageHost.permission.Name'),
+                    value: 'domainName',
+                  },
+                ]}
+                value="domainName"
+                style={{ minWidth: 150 }}
+              />
+              <BAIDomainSelect
+                value={selectedDomainName ?? null}
+                onChange={(value) =>
+                  setSelectedDomainName(
+                    (value as string | undefined) || undefined,
+                  )
+                }
+                allowClear
+                style={{ minWidth: 200 }}
+              />
+            </BAIFlex>
             <BAIFetchKeyButton
               value={domainFetchKey}
               onChange={updateDomainFetchKey}
-              loading={deferredFetchKey !== domainFetchKey}
+              loading={
+                deferredFetchKey !== domainFetchKey ||
+                deferredQueryVariables !== queryVariables
+              }
             />
           </BAIFlex>
           <DomainStoragePermissionTable
@@ -156,22 +174,16 @@ const ProjectFolderPermissionPanel: React.FC<
         extra={
           <BAIFlex gap="sm" align="center" wrap="wrap">
             <BAIFlex gap="xxs" align="center">
-              <CheckCircleOutlined style={{ color: token.colorSuccess }} />
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: token.fontSizeSM }}
-              >
+              <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+              <Text color="secondary" size="xsm">
                 {t('storageHost.permission.LegendProject')}
-              </Typography.Text>
+              </Text>
             </BAIFlex>
             <BAIFlex gap="xxs" align="center">
-              <CheckCircleOutlined style={{ color: token.purple5 }} />
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: token.fontSizeSM }}
-              >
+              <CircleCheck style={{ color: token.purple5 }} size="1em" />
+              <Text color="secondary" size="xsm">
                 {t('storageHost.permission.LegendInherited')}
-              </Typography.Text>
+              </Text>
             </BAIFlex>
           </BAIFlex>
         }
@@ -181,6 +193,10 @@ const ProjectFolderPermissionPanel: React.FC<
           storageVolumeFrgmt={storageVolume}
           domainFrgmt={domain}
           permissionFrgmt={vfolder_host_permissions}
+          loading={
+            deferredFetchKey !== domainFetchKey ||
+            deferredQueryVariables !== queryVariables
+          }
         />
       </BAICard>
     </BAIFlex>

@@ -8,11 +8,14 @@ import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
 } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
-import { DeleteFilled } from '@ant-design/icons';
-import { App, Tooltip, theme } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -21,7 +24,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
   toLocalId,
   useBAILogger,
@@ -29,7 +32,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { Trash2, PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -52,6 +55,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
@@ -91,6 +95,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       )
       @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
         id
+        name
+        source
         # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
         # nodes the drawer fragment now composes with, and unaliased fields
         # with different arguments conflict in one query.
@@ -136,6 +142,17 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     data.firstScope?.edges?.[0]?.node?.scopeType === 'PROJECT'
       ? data.firstScope.edges[0].node.scopeId
       : undefined;
+
+  // System-generated project admin roles are managed through the project
+  // page's one-click admin setting, which requires manager >= 26.8.0
+  // (role-mapped-scope-filter). Show their assignments read-only there; on
+  // older managers direct assignment here is the only way to grant project
+  // admin, so keep the actions available (FR-3424).
+  const isReadOnly =
+    data.source === 'SYSTEM' &&
+    !!projectScopeId &&
+    !!data.name?.toLowerCase().includes('admin') &&
+    baiClient.supports('role-mapped-scope-filter');
 
   const mutateBulkRevokeRole =
     useMutationWithPromise<RoleAssignmentTabBulkRevokeMutation>(graphql`
@@ -208,14 +225,12 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   };
 
   return (
-    <>
-      <BAIFlex
-        justify="between"
-        align="start"
-        gap="sm"
-        wrap="wrap"
-        style={{ marginBottom: 12 }}
-      >
+    <BAIFlex align="stretch" direction="column" gap="sm">
+      {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
+      {isReadOnly && (
+        <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
+      )}
+      <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
         <BAIGraphQLPropertyFilter<RoleAssignmentFilter>
           filterProperties={[
             {
@@ -239,9 +254,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
-              <Tooltip title={t('rbac.RevokeUser')}>
+              <Tooltip content={t('rbac.RevokeUser')}>
                 <BAIButton
-                  icon={<DeleteFilled style={{ color: token.colorError }} />}
+                  icon={
+                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                  }
                   onClick={() => {
                     const userIds = assignments
                       .filter((a) => selectedRowKeys.includes(a?.id ?? ''))
@@ -258,16 +275,18 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             value=""
             onChange={() => handleRefresh()}
           />
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => setIsAssignModalOpen(true)}
-          >
-            {t('rbac.AssignUser')}
-          </BAIButton>
+          {!isReadOnly && (
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => setIsAssignModalOpen(true)}
+            >
+              {t('rbac.AssignUser')}
+            </BAIButton>
+          )}
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
         dataSource={assignments}
         loading={isPendingRefetch}
@@ -282,11 +301,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             doRefetch({ limit: pageSize, offset: newOffset });
           },
         }}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys,
-          onChange: (keys) => setSelectedRowKeys(keys),
-        }}
+        rowSelection={
+          isReadOnly
+            ? undefined
+            : {
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (keys) => setSelectedRowKeys(keys),
+              }
+        }
         order={queryParams.order}
         onChangeOrder={(newOrder) => {
           setQueryParams((prev) => ({
@@ -305,15 +328,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               <BAINameActionCell
                 title={record?.user?.basicInfo?.email || '-'}
                 showActions="always"
-                actions={[
-                  {
-                    key: 'delete',
-                    title: t('rbac.RevokeUser'),
-                    icon: <DeleteFilled />,
-                    type: 'danger',
-                    onClick: () => handleBulkRevoke([record?.userId]),
-                  },
-                ]}
+                actions={
+                  isReadOnly
+                    ? []
+                    : [
+                        {
+                          key: 'delete',
+                          title: t('rbac.RevokeUser'),
+                          icon: <Trash2 size="1em" />,
+                          type: 'danger',
+                          onClick: () => handleBulkRevoke([record?.userId]),
+                        },
+                      ]
+                }
               />
             ),
             sorter: true,
@@ -400,7 +427,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }}
         onCancel={() => setRevokingTargets(null)}
       />
-    </>
+    </BAIFlex>
   );
 };
 

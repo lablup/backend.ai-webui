@@ -4,48 +4,41 @@
  */
 import AgentEditorModal from '../components/AgentEditorModal';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { DeleteFilled, MoreOutlined, UndoOutlined } from '@ant-design/icons';
+import { theme } from '../theme-shim';
+import './AIAgentPage.css';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Card } from '@astryxdesign/core/Card';
 import {
-  Button,
-  Col,
-  Dropdown,
-  Row,
-  Skeleton,
-  Tag,
-  Typography,
-  theme,
-} from 'antd';
-import { createStyles } from 'antd-style';
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIButton,
-  BAICard,
   BAIFlex,
   BAIUnmountAfterClose,
   BAIDeleteConfirmModal,
+  badgeVariantForTagColor,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import {
+  Trash2,
+  EllipsisVertical,
+  Undo2,
+  PlusIcon,
+  SquarePenIcon,
+} from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const useStyles = createStyles(({ css, token }) => {
-  return {
-    cardList: css`
-      .and-col {
-        height: calc(100% - ${token.marginMD});
-      }
-      .ant-tag {
-        margin-inline-end: 0;
-      }
-      .ant-card:hover .agent-more-button {
-        opacity: 1 !important;
-      }
-    `,
-  };
-});
+// `.ant-*` selectors dropped (P6) — the hover-reveal rule now targets the
+// converted card's own class (`.agent-card`, plain CSS file, P17: component-
+// imported, not the app stylesheet) instead of antd's `.ant-card`.
 
 interface AIAgentCardProps {
   agent: AIAgent;
@@ -68,63 +61,61 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
   const tags = agent.tags || [];
   const { token } = theme.useToken();
 
-  const menuItems = _.compact([
+  // PILOT-DECISION: antd `danger` (red text on "Delete Agent") has no
+  // destination on Astryx `DropdownMenuItemData` (P5, closed shape, no
+  // colour field) — dropped.
+  const menuItems: DropdownMenuOption[] = _.compact([
     onEdit && {
-      key: 'edit',
       label: t('button.Edit'),
       icon: <SquarePenIcon />,
-      onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
-        e.domEvent.stopPropagation();
-        onEdit(agent);
-      },
+      onClick: () => onEdit(agent),
     },
     isOverridden &&
       onReset && {
-        key: 'reset',
         label: t('aiAgent.ResetToDefault'),
-        icon: <UndoOutlined />,
-        onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
-          e.domEvent.stopPropagation();
-          onReset(agent);
-        },
+        icon: <Undo2 size="1em" />,
+        onClick: () => onReset(agent),
       },
+    agent.isCustom && onDelete && { type: 'divider' as const },
     agent.isCustom &&
       onDelete && {
-        type: 'divider' as const,
-      },
-    agent.isCustom &&
-      onDelete && {
-        key: 'delete',
-        danger: true,
         label: t('aiAgent.DeleteAgent'),
-        icon: <DeleteFilled />,
-        onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
-          e.domEvent.stopPropagation();
-          onDelete(agent);
-        },
+        icon: <Trash2 size="1em" />,
+        onClick: () => onDelete(agent),
       },
   ]);
 
   return (
-    <BAICard hoverable style={{ position: 'relative', width: '100%' }}>
+    <Card
+      className="agent-card"
+      style={{ position: 'relative', width: '100%', cursor: 'pointer' }}
+    >
       {menuItems.length > 0 && (
-        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-          <Button
-            type="text"
-            className="agent-more-button"
-            icon={<MoreOutlined />}
-            size="small"
-            style={{
-              position: 'absolute',
-              top: token.paddingXS,
-              right: token.paddingXS,
-              zIndex: 1,
-              color: token.colorTextSecondary,
-              opacity: 0,
+        // Stops the click from bubbling to the parent grid item's
+        // navigate-to-chat handler (antd's per-item `domEvent.stopPropagation()`
+        // has no equivalent on Astryx `DropdownMenuItemData.onClick`, which
+        // takes no event — caught one level up instead).
+        <div
+          style={{
+            position: 'absolute',
+            top: token.paddingXS,
+            right: token.paddingXS,
+            zIndex: 1,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DropdownMenu
+            items={menuItems}
+            button={{
+              variant: 'ghost',
+              className: 'agent-more-button',
+              icon: <EllipsisVertical size="1em" />,
+              label: t('button.MoreActions'),
+              isIconOnly: true,
+              style: { color: token.colorTextSecondary, opacity: 0 },
             }}
-            onClick={(e) => e.stopPropagation()}
           />
-        </Dropdown>
+        </div>
       )}
       <BAIFlex
         direction="column"
@@ -141,16 +132,17 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
             gap="xxs"
             style={{ flex: 1, minWidth: 0 }}
           >
-            <Typography.Text strong style={{ whiteSpace: 'normal' }}>
+            <Text weight="semibold" style={{ whiteSpace: 'normal' }}>
               {agent.name}
-            </Typography.Text>
-            <Typography.Paragraph
-              type="secondary"
-              ellipsis={{ rows: 3 }}
+            </Text>
+            <Text
+              color="secondary"
+              maxLines={3}
+              as="p"
               style={{ marginBottom: 0 }}
             >
               {agent.description}
-            </Typography.Paragraph>
+            </Text>
           </BAIFlex>
         </BAIFlex>
         <BAIFlex
@@ -161,20 +153,30 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
           wrap="wrap"
         >
           {endpointLabel && (
-            <Tag key={endpointLabel} color="orange-inverse">
-              {endpointLabel}
-            </Tag>
+            <Badge
+              key={endpointLabel}
+              label={endpointLabel}
+              variant={badgeVariantForTagColor('orange-inverse')}
+            />
           )}
           {agent.isCustom && !isOverridden && (
-            <Tag color="blue-inverse">{t('aiAgent.Custom')}</Tag>
+            <Badge
+              label={t('aiAgent.Custom')}
+              variant={badgeVariantForTagColor('blue-inverse')}
+            />
           )}
-          {isOverridden && <Tag color="orange">{t('aiAgent.Edited')}</Tag>}
+          {isOverridden && (
+            <Badge
+              label={t('aiAgent.Edited')}
+              variant={badgeVariantForTagColor('orange')}
+            />
+          )}
           {tags.map((tag) => (
-            <Tag key={tag}>{tag}</Tag>
+            <Badge key={tag} label={tag} variant="neutral" />
           ))}
         </BAIFlex>
       </BAIFlex>
-    </BAICard>
+    </Card>
   );
 };
 
@@ -182,12 +184,10 @@ const AIAgentPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { agents, builtInAgents, deleteAgent, getEndpointBinding } =
     useAIAgent();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const { styles } = useStyles();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<AIAgent | undefined>();
@@ -210,36 +210,32 @@ const AIAgentPage: React.FC = () => {
   };
 
   return (
-    <Suspense
-      fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-    >
+    <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
       <BAIFlex direction="column" align="stretch" justify="center" gap="sm">
         <BAIFlex direction="row" justify="end" align="center">
-          <BAIButton
+          <Button
             icon={<PlusIcon />}
+            label={t('button.Add')}
             onClick={() => {
               setEditingAgent(undefined);
               setIsEditorOpen(true);
             }}
-          >
-            {t('button.Add')}
-          </BAIButton>
+          />
         </BAIFlex>
-        <Row gutter={[16, 16]} className={styles.cardList}>
+        {/* PILOT-DECISION (RESPONSIVE-POLICY.md R1): antd `Row/Col
+            xs={24} sm={24} md={24} lg={12} xl={12} xxl={8} xxxl={6}` — a
+            uniform card grid that first goes 2-up at `lg` (992px) — becomes
+            `Grid columns={{minWidth: 496, max: 4}}` (992/2 ≈ 496; max 4 from
+            `xxxl={6}` = 24/6). Same recipe as ModelStoreListPageV2 (both
+            flagged in the census as the repo's two `xxxl` sites). */}
+        <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
           {agents.map((agent) => {
             const isOverridden = !agent.isCustom
               ? false
               : builtInIds.has(agent.id);
             return (
-              <Col
+              <div
                 key={agent.id}
-                xs={24}
-                sm={24}
-                md={24}
-                lg={12}
-                xl={12}
-                xxl={8}
-                xxxl={6}
                 style={{ display: 'flex' }}
                 onClick={() => {
                   const searchParams: Record<string, string> = {
@@ -267,10 +263,10 @@ const AIAgentPage: React.FC = () => {
                   }
                   onReset={isOverridden ? handleReset : undefined}
                 />
-              </Col>
+              </div>
             );
           })}
-        </Row>
+        </Grid>
         <BAIUnmountAfterClose>
           <AgentEditorModal
             open={isEditorOpen}

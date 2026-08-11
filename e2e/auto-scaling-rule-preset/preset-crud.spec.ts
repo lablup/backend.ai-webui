@@ -44,8 +44,10 @@ async function deletePreset(page: Page, presetName: string): Promise<void> {
   await page.waitForLoadState('domcontentloaded');
   const row = page.getByRole('row').filter({ hasText: presetName });
   if ((await row.count()) === 0) return;
-  // BAINameActionCell renders icon-only buttons; locate by icon class
-  await row.locator('button:has(.anticon-delete)').click();
+  // BAINameActionCell renders icon-only buttons (lucide `Trash2`, no antd
+  // `.anticon-delete` class); locate by the button's accessible name
+  // (`aria-label={action.title}` = t('button.Delete')).
+  await row.getByRole('button', { name: 'Delete', exact: true }).click();
   const confirmModal = page.getByRole('dialog');
   await expect(confirmModal).toBeVisible({ timeout: 15000 });
   const confirmInput = confirmModal.locator('input');
@@ -521,10 +523,12 @@ test.describe(
       await modal.getByRole('textbox', { name: 'Query Template' }).fill('up');
       await modal.getByRole('button', { name: 'Create' }).click();
 
-      // Verify error notification (duplicate name rejected by server)
+      // Verify error notification (duplicate name rejected by server) — the
+      // antd `message` toast is unmigrated; the floating notification stack
+      // is now `BAINotificationStack` (to-astryx ticket 29 rewire).
       await expect(
         page
-          .locator('.ant-message, .ant-notification')
+          .locator('.ant-message, [data-testid="bai-notification-stack"]')
           .filter({ hasText: /error|duplicate|unique|already/i }),
       ).toBeVisible({ timeout: 60000 });
 
@@ -960,7 +964,7 @@ test.describe(
       // Locate the preset row and click Delete
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-delete)').click();
+      await row.getByRole('button', { name: 'Delete', exact: true }).click();
 
       // Verify the BAIConfirmModalWithInput opens
       // In this version of Ant Design, .ant-modal itself has role="dialog"
@@ -1019,7 +1023,7 @@ test.describe(
       // Locate the preset row and click Delete
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-delete)').click();
+      await row.getByRole('button', { name: 'Delete', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const confirmModal = page.getByRole('dialog');
@@ -1064,7 +1068,7 @@ test.describe(
       // Locate the preset row and click Delete
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-delete)').click();
+      await row.getByRole('button', { name: 'Delete', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const confirmModal = page.getByRole('dialog');

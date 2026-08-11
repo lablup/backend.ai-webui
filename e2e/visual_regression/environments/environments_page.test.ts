@@ -11,9 +11,11 @@ test.beforeEach(async ({ page, request }) => {
   });
   await loginAsVisualRegressionAdmin(page, request);
   await navigateTo(page, 'environment');
-  // Wait for the BAIPropertyFilter via its accessible combobox
+  // Wait for the BAIPropertyFilter via its accessible combobox. Since
+  // to-astryx ticket 28 the filter is an Astryx `PowerSearch`: one typeahead
+  // combobox labelled by the control, not the antd property selector.
   await page
-    .getByRole('combobox', { name: 'Filter property selector' })
+    .getByRole('combobox', { name: 'Search filters' })
     .waitFor({ state: 'visible' });
 });
 

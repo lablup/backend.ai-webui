@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { modal } from '../../app-shim';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../../helper/pathBuilder';
 import {
   useCurrentDomainValue,
@@ -21,38 +22,33 @@ import {
   rewriteProjectNameInPath,
   useActiveProjectName,
   useCurrentMenuKey,
-  useRouteScope,
+  useSwitchProject,
 } from '../../hooks/useRouteScope';
+import { useThemeMode } from '../../hooks/useThemeMode';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
+import { theme, useBAIBreakpoint } from '../../theme-shim';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
-import ReverseThemeProvider from '../ReverseThemeProvider';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
-import { useSessionStorageState } from 'ahooks';
-import { theme, Button, Modal, Typography, Grid, Divider } from 'antd';
-import { createStyles } from 'antd-style';
-import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
+import './WebUIHeader.css';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { MediaTheme } from '@astryxdesign/core/theme';
+import {
+  ANTD_REVERSED_BAND_OVERLAYS,
+  BAIFlex,
+  BAIFlexProps,
+  useSessionStorageState,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useMatches } from 'react-router-dom';
-
-const useStyles = createStyles(({ css }) => ({
-  webuiHeader: css`
-    &,
-    & .draggable {
-      -webkit-app-region: drag;
-    }
-    & .non-draggable {
-      -webkit-app-region: no-drag;
-    }
-  `,
-}));
+import { useMatches } from 'react-router-dom';
 
 export interface WebUIHeaderProps extends BAIFlexProps {
   onClickMenuIcon?: () => void;
@@ -60,17 +56,18 @@ export interface WebUIHeaderProps extends BAIFlexProps {
 
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
+  const { isDarkMode } = useThemeMode();
   const { t } = useTranslation();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
   const baiClient = useSuspendedBackendaiClient();
-  const gridBreakpoint = Grid.useBreakpoint();
+  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
+  const gridBreakpoint = useBAIBreakpoint();
   const webuiNavigate = useWebUINavigate();
-  const location = useLocation();
   const matches = useMatches();
-  const routeScope = useRouteScope();
   const currentMenuKey = useCurrentMenuKey();
+  const switchProject = useSwitchProject();
   // When the URL carries an invalid/inaccessible `:projectName`, the atom keeps
   // the last valid project, which would make the header selector look like that
   // project is selected. Detect this and show the selector unselected instead.
@@ -117,8 +114,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const isProjectChanging =
     isPendingProjectChanged || isConfirmingProjectSwitch;
 
-  const [modal, modalContextHolder] = Modal.useModal();
-
   const applyProjectChange = (projectInfo: {
     projectId: string;
     projectName: string;
@@ -126,55 +121,15 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   }) => {
     setOptimisticProjectId(projectInfo.projectId);
 
-    // On project / project-admin scope the URL owns the current project: stay
-    // on the exact same page and swap ONLY the project name, then let
-    // `ProjectScopeLayout` converge `currentProjectAtom` to the new URL. We
-    // deliberately do NOT call `setCurrentProject` here on these scopes, to
-    // avoid the atom being set twice (once here, once by the layout sync effect).
-    if (routeScope === 'project' || routeScope === 'projectAdmin') {
-      // Replace only the `:projectName` segment, preserving everything after it
-      // (e.g. `/session/start`, a detail `:id`) and the query string, so
-      // in-progress UI state survives — matching the legacy behavior where
-      // changing the project never navigated away (the session launcher form
-      // stays mounted with its contents intact).
-      const segments = location.pathname.split('/');
-      if (segments[1] === 'project' && segments.length > 2) {
-        startProjectChangedTransition(() => {
-          webuiNavigate(
-            rewriteProjectNameInPath(
-              location.pathname,
-              projectInfo.projectName,
-            ) + location.search,
-          );
-        });
-        return;
-      }
-      // Defensive fallback: reconstruct from the current feature key when the
-      // path is not under `/project/:projectName` for some reason.
-      const scopeFeature = currentMenuKey
-        ? MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey]
-        : undefined;
-      const featureKey =
-        scopeFeature && scopeFeature.scope === routeScope
-          ? scopeFeature.featureKey
-          : 'session';
-      startProjectChangedTransition(() => {
-        webuiNavigate(
-          buildPath(routeScope, featureKey, projectInfo.projectName) +
-            location.search,
-        );
-      });
-      return;
-    }
-
-    // Admin (global) scope has no project-aware layout, so preserve today's
-    // behavior: update the atom directly without navigating.
+    // `useSwitchProject` holds the canonical scope rule (FR-3428): on project
+    // / project-admin scope the URL owns the current project, so it stays on
+    // the exact same page and swaps ONLY the `:projectName` segment, letting
+    // `ProjectScopeLayout` converge `currentProjectAtom` to the new URL. On
+    // global admin scope it updates the atom directly.
     startProjectChangedTransition(() => {
-      setCurrentProject(projectInfo);
+      switchProject(projectInfo);
     });
   };
-
-  const { styles } = useStyles();
 
   return (
     <BAIFlex
@@ -187,16 +142,90 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         backgroundColor: token.Layout?.headerBg,
         paddingRight: token.marginLG,
         paddingLeft: token.marginLG,
-        color: token.colorBgBase,
+        // The inherited text colour for everything on the band that is NOT an
+        // Astryx component declaring its own (the antd-engine `ProjectSelect`
+        // value, bare `currentColor` glyphs).
+        //
+        // This was `token.colorBgBase`, which is how legacy spelled "white":
+        // antd's `colorBgBase` is `#fff` in light mode, so the header text came
+        // out pure white. The shim maps `colorBgBase -> --color-background-body`
+        // (the correct role mapping), and this theme pins that to the legacy
+        // PAGE backdrop `#F7F7F6` — so the same expression now resolves to an
+        // off-white grey, which is the greying users reported. `--color-on-dark`
+        // is the Astryx token that actually means "content on a dark/inverted
+        // surface" and is `#ffffff` in both modes, matching both the legacy
+        // rendering and `--color-on-accent`, already pinned white for the same
+        // reason. The band's BACKGROUND is unchanged in both modes by design.
+        color: 'var(--color-on-dark)',
+        // The neutral hover/pressed washes, resolved against the APP scheme —
+        // which is why they are declared HERE, on the band root, and not inside
+        // the `MediaTheme mode="dark"` below (QA-FINDINGS Q-20).
+        //
+        // Every control on this band sits inside that `MediaTheme`, because the
+        // band is a dark surface in both app modes. `--color-overlay-hover` is
+        // `light-dark(rgba(0,0,0,0.06), #262626)`, so inside a forced-dark
+        // subtree it ALWAYS takes the opaque `#262626` branch and every header
+        // button hovers to a near-black block on the brand-orange band.
+        //
+        // Legacy resolved the band against the INVERTED mode
+        // (`ReverseThemeProvider`), giving `#262626` in light and antd's default
+        // `rgba(0,0,0,0.06)` in dark. Declaring the pair on this element, which
+        // is OUTSIDE the `MediaTheme`, lets `light-dark()` pick against the page
+        // scheme; the resolved colour then inherits into the subtree as a plain
+        // value, so the forced dark context can no longer re-resolve it.
+        //
+        // The pair is indexed in JS, not with `light-dark()`: a custom
+        // property holding `light-dark(a, b)` is substituted at USE time by the
+        // consuming element, and every consumer here is inside that forced-dark
+        // subtree — so the dark slot would win in both app modes regardless of
+        // where the property is declared (measured). Legacy's
+        // `ReverseThemeProvider` also picked its token set in JS.
+        //
+        // The measured pair lives in the theme shim next to the other antd
+        // parity tables (P19: no literal here).
+        ...ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'],
       }}
-      className={`${styles.webuiHeader} bai-webui-header`}
+      className="bai-webui-header"
     >
       <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
-        <ReverseThemeProvider>
+        {/* The header paints itself with the brand accent, so its contents
+            need the opposite polarity from the page.
+
+            This was `AstryxReverseTheme` — a nested `<Theme>` carrying the
+            INVERTED RESOLVED MODE, the direct translation of antd's
+            `ReverseThemeProvider` (a ConfigProvider with the flipped
+            algorithm). That reproduces legacy's mechanism but not legacy's
+            RESULT: a full theme flip resolves `--color-text-primary` to the
+            other mode's ordinary body text — Astryx's dark-mode grey
+            `#EBE0DA` (measured) — whereas antd's flipped algorithm gave
+            `rgba(255,255,255,0.85)`, which over `#FF9729` renders as
+            ≈`rgb(255,239,223)`, i.e. white. Users read the difference as the
+            header text having gone grey.
+
+            `MediaTheme` is the Astryx primitive for this case and it is a
+            different thing from a theme flip: it declares the SURFACE
+            LUMINANCE the content sits on, and its `defaultOnDarkTokens`
+            (see `@astryxdesign/core/theme/onMediaTokens`) map
+            `--color-text-primary` and `--color-icon-primary` to
+            `var(--color-on-dark)` — pure white — on top of the
+            `color-scheme: dark` flip. That is exactly "white text and icons
+            on the accent band", expressed as a token context rather than a
+            per-component colour. It is also the same fix the sider's tooltip
+            took in c97189e60.
+
+            `mode="dark"` is CONSTANT, not derived from the app mode: the
+            orange band is a dark surface in both light and dark mode, so its
+            content is "on dark" in both. That is what makes the header text
+            white in both modes, which is the requested behaviour — the band's
+            BACKGROUND is deliberately untouched.
+
+            It renders `display: contents`, so it costs no layout. */}
+        <MediaTheme mode="dark">
           {!gridBreakpoint.sm && (
-            <Button
-              icon={<MenuIcon />}
-              type="text"
+            <IconButton
+              icon={<MenuIcon size="1em" />}
+              variant="ghost"
+              label={t('webui.menu.Menu')}
               onClick={() => {
                 onClickMenuIcon?.();
               }}
@@ -207,16 +236,11 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             />
           )}
           {gridBreakpoint.sm && (
-            <Typography.Text
-              style={{
-                fontWeight: 600, // semi-bold
-                fontSize: token.fontSizeLG,
-              }}
-            >
+            <Text type="large" weight="semibold">
               {t('webui.menu.Project')}
-            </Typography.Text>
+            </Text>
           )}
-        </ReverseThemeProvider>
+        </MediaTheme>
         <Suspense>
           <ProjectSelect
             data-testid="selector-project"
@@ -325,27 +349,39 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
           baiClient._config.enableExtendLoginSession && (
             <Suspense>
               <LoginSessionExtendButton data-testid="button-extend-login-session" />
-              {gridBreakpoint.md && (
-                <Divider
-                  orientation="vertical"
-                  style={{ borderColor: 'transparent' }}
-                />
-              )}
+              {/* PILOT-DECISION: the antd `Divider orientation="vertical"`
+                  here was painted `borderColor: 'transparent'` — i.e. it was
+                  a SPACER, not a rule. Astryx `Divider` has no colour prop
+                  (closed enums, P5), so the spacer is expressed as spacing
+                  instead of a hidden rule. */}
+              {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
             </Suspense>
           )}
+        {/* `BAINotificationButton` scopes its own on-dark context to its
+            button, because it also owns a `Tooltip` whose panel is an inline
+            sibling — see that file. */}
         <BAINotificationButton data-testid="button-notification" />
-        <ReverseThemeProvider>
+        {/* Same swap, same reason as the project group above: these controls
+            sit ON the accent band, so they take the on-dark media context and
+            their glyphs come out white instead of the dark theme's grey.
+            Both are plain `IconButton`s — they open no floating surface, so a
+            shared wrapper has nothing to leak into. */}
+        <MediaTheme mode="dark">
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
-        </ReverseThemeProvider>
+        </MediaTheme>
+        {/* `UserDropdownMenu` declares its OWN on-dark context, on just the
+            trigger button.
+
+            It used to sit inside the `MediaTheme` above. Astryx renders both
+            the popover panel and the component's three `Dialog`s as inline
+            siblings/descendants rather than through a portal (measured), so a
+            wrapper here reached all of them: the modals painted as dark
+            surfaces in LIGHT mode, and the dropdown panel stayed dark in both
+            modes. Scoping the context to the trigger element is therefore the
+            component's own business, not the header's — see
+            `UserDropdownMenu.tsx`. */}
         <UserDropdownMenu
-          data-testid="dropdown-user-menu"
-          buttonRender={(btn) => (
-            //  Add a `div` to resolve the Dropdown bug when the child is a `ConfigProvider`(ReverseThemeProvider).
-            <div>
-              <ReverseThemeProvider>{btn}</ReverseThemeProvider>
-            </div>
-          )}
           style={{
             marginLeft: token.marginXXS,
             marginRight: token.marginSM * -1,
@@ -354,7 +390,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
           }}
         />
       </BAIFlex>
-      {modalContextHolder}
     </BAIFlex>
   );
 };

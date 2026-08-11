@@ -4,11 +4,11 @@ import {
   localeCompare,
 } from '../../../helper';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
-import BAILink from '../../BAILink';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
-import { BAITable, BAITableProps } from '../../Table';
+import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../../Table';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
@@ -17,17 +17,19 @@ import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
-import { FolderOutlined } from '@ant-design/icons';
-import { Breadcrumb, Skeleton, theme, type TableColumnsType } from 'antd';
-import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
-import type { RcFile } from 'antd/es/upload';
+import type { RcFile } from './hooks';
+import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
+import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { Text } from '@astryxdesign/core/Text';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { HouseIcon } from 'lucide-react';
+import { File, Folder, HouseIcon } from 'lucide-react';
 import {
   createContext,
   Suspense,
   useEffect,
+  useEffectEvent,
   useImperativeHandle,
   useMemo,
   useState,
@@ -51,7 +53,19 @@ export interface BAIFileExplorerProps {
   targetVFolderId: string;
   targetVFolderName?: string;
   fetchKey?: string;
-  onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  // 'explorer' (default): full file manager — multi-select, upload, file
+  // editing. 'directoryPicker': directory-selection UI — files are visible
+  // but disabled, a row click navigates into the directory, checkbox
+  // selection and file-creation/upload entry points are hidden; folder CRUD
+  // (create / rename / delete) stays available.
+  mode?: 'explorer' | 'directoryPicker';
+  // Path inside the vfolder to start browsing from, in currentPath notation
+  // ('.' = root). Applied once on mount.
+  defaultPath?: string;
+  // Reports currentPath ('.' = root) whenever navigation changes it,
+  // including the initial value on mount.
+  onChangeCurrentPath?: (currentPath: string) => void;
+  onUpload?: (files: Array<RcFile>, currentPath: string) => void;
   tableProps?: Partial<BAITableProps<VFolderFile>>;
   style?: React.CSSProperties;
   fileDropContainerRef?: React.RefObject<HTMLDivElement | null>;
@@ -80,6 +94,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   targetVFolderId,
   targetVFolderName,
   fetchKey,
+  mode = 'explorer',
+  defaultPath,
+  onChangeCurrentPath,
   onUpload,
   tableProps,
   fileDropContainerRef,
@@ -119,6 +136,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     navigateToPath,
     refetch,
   } = useSearchVFolderFiles(targetVFolderId, fetchKey);
+  const isDirectoryPicker = mode === 'directoryPicker';
 
   useImperativeHandle(
     ref,
@@ -128,16 +146,45 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     [refetch],
   );
 
-  const breadCrumbItems: Array<ItemType> = useMemo(() => {
+  // Applied once on mount; idempotent under StrictMode.
+  const navigateToDefaultPath = useEffectEvent(() => {
+    if (defaultPath && defaultPath !== '.') {
+      navigateToPath(defaultPath);
+    }
+  });
+  useEffect(() => {
+    navigateToDefaultPath();
+  }, []);
+
+  const notifyCurrentPath = useEffectEvent(() => {
+    onChangeCurrentPath?.(currentPath);
+  });
+  useEffect(() => {
+    notifyCurrentPath();
+  }, [currentPath]);
+
+  // to-astryx W2-D: antd `Breadcrumb items={[{title, onClick, menu}]}` ->
+  // Astryx `Breadcrumbs` + `BreadcrumbItem` children (MAPPING §4).
+  //
+  // PILOT-DECISION: the sibling-folder dropdown moves onto `BreadcrumbItem`'s
+  // NATIVE `menu` prop, which takes `DropdownMenuOption[]` — `{label: string,
+  // onClick}` rows. antd's rows carried a JSX label whose own `onClick` did
+  // the navigating (a click handler on a `<div>` inside a menu row, reachable
+  // by mouse only). The Astryx rows are real menu items: the label is the
+  // folder name, the icon is the folder glyph, and `onClick` belongs to the
+  // ITEM — so keyboard selection works, which it did not before.
+  const breadCrumbItems = useMemo(() => {
     const pathParts = currentPath === '.' ? [] : currentPath.split('/');
 
-    const items: Array<ItemType> = [
+    const items: Array<{
+      key: string;
+      label: React.ReactNode;
+      onClick: () => void;
+      menu?: Array<DropdownMenuOption>;
+    }> = [
       {
-        title: (
-          <BAILink style={{ color: 'inherit' }}>
-            <HouseIcon />
-          </BAILink>
-        ),
+        key: '.',
+        label: <HouseIcon size="1em" />,
         onClick: () => {
           navigateToPath('.');
           setSelectedItems([]);
@@ -154,32 +201,25 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           (item) => item.type === 'DIRECTORY',
         ) || [];
 
-      const menuItems = parentFolders.map((dir) => ({
-        key: dir.name,
-        label: (
-          <BAIFlex
-            align="center"
-            gap="xxs"
-            onClick={() => {
-              const newPath =
-                parentPath === '.' ? dir.name : `${parentPath}/${dir.name}`;
-              navigateToPath(newPath);
-              setSelectedItems([]);
-            }}
-          >
-            <FolderOutlined />
-            {dir.name}
-          </BAIFlex>
-        ),
+      const menuItems: Array<DropdownMenuOption> = parentFolders.map((dir) => ({
+        label: dir.name,
+        icon: <Folder size="1em" />,
+        onClick: () => {
+          const newPath =
+            parentPath === '.' ? dir.name : `${parentPath}/${dir.name}`;
+          navigateToPath(newPath);
+          setSelectedItems([]);
+        },
       }));
 
       items.push({
-        title: <BAILink style={{ color: 'inherit' }}>{part}</BAILink>,
+        key: navigatePath,
+        label: part,
         onClick: () => {
           navigateToPath(navigatePath);
           setSelectedItems([]);
         },
-        menu: menuItems.length > 1 ? { items: menuItems } : undefined,
+        menu: menuItems.length > 1 ? menuItems : undefined,
       });
     });
 
@@ -187,30 +227,40 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPath, directoryTree]);
 
-  const tableColumns: TableColumnsType<VFolderFile> = filterOutEmpty([
+  const tableColumns: BAIColumnsType<VFolderFile> = filterOutEmpty([
     {
       title: t('comp:FileExplorer.Name'),
       dataIndex: 'name',
       sorter: (a, b) => localeCompare(a.name, b.name),
-      render: (name, record) => (
-        <EditableFileName
-          fileInfo={record}
-          existingFiles={files?.items || []}
-          disabled={!enableWrite}
-          onEndEdit={() => {
-            refetch();
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            const targetEl = e.target as HTMLElement;
-            if (targetEl.closest('button')) return;
-            if (record.type === 'DIRECTORY') {
-              navigateDown(name);
-              setSelectedItems([]);
-            }
-          }}
-        />
-      ),
+      render: (name, record) =>
+        isDirectoryPicker && record.type !== 'DIRECTORY' ? (
+          // In the directory picker, files are shown for context but are not
+          // interactive — only directories can be entered and chosen.
+          <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
+            <File style={{ color: token.colorTextDisabled }} size="1em" />
+            <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
+              {name}
+            </Text>
+          </BAIFlex>
+        ) : (
+          <EditableFileName
+            fileInfo={record}
+            existingFiles={files?.items || []}
+            disabled={!enableWrite}
+            onEndEdit={() => {
+              refetch();
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              const targetEl = e.target as HTMLElement;
+              if (targetEl.closest('button')) return;
+              if (record.type === 'DIRECTORY') {
+                navigateDown(name);
+                setSelectedItems([]);
+              }
+            }}
+          />
+        ),
     },
     {
       title: t('comp:FileExplorer.Controls'),
@@ -226,17 +276,21 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             ),
           );
 
+        if (isDirectoryPicker && record.type !== 'DIRECTORY') {
+          return null;
+        }
+
         return (
-          <Suspense fallback={<Skeleton.Button size="small" active />}>
+          <Suspense fallback={<Skeleton height={24} width={80} />}>
             <FileItemControls
               selectedItem={record}
               onClickDelete={() => {
                 setSelectedSingleItem(record);
               }}
               onClickEdit={() => onClickEditFile?.(record, currentPath)}
-              enableDownload={enableDownload}
+              enableDownload={!isDirectoryPicker && enableDownload}
               enableDelete={enableDelete}
-              enableEdit={enableEdit}
+              enableEdit={!isDirectoryPicker && enableEdit}
               deleteButtonProps={{ loading: isPendingDelete }}
             />
           </Suspense>
@@ -314,7 +368,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       {isDragMode && enableUpload && (
         <DragAndDrop
           portalContainer={dragPortalContainer || undefined}
-          onUpload={(files, currentPath) => onUpload(files, currentPath)}
+          onUpload={(files, currentPath) => onUpload?.(files, currentPath)}
         />
       )}
       <BAIFlex
@@ -325,19 +379,40 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         style={{ height: '100%', ...style }}
       >
         <BAIFlex align="center" justify="between">
-          <Breadcrumb
-            items={breadCrumbItems}
+          <Breadcrumbs
+            label={t('comp:FileExplorer.Path')}
             style={{
               marginLeft: token.marginXXS,
             }}
-          />
+          >
+            {breadCrumbItems.map((item, index) => (
+              <BreadcrumbItem
+                key={item.key}
+                onClick={item.onClick}
+                menu={item.menu}
+                isCurrent={index === breadCrumbItems.length - 1}
+              >
+                {item.label}
+              </BreadcrumbItem>
+            ))}
+          </Breadcrumbs>
           <ExplorerActionControls
             selectedFiles={selectedItems}
+            mode={mode}
             enableDownload={enableDownload}
             enableDelete={enableDelete}
             enableWrite={enableWrite}
             enableUpload={enableUpload}
-            onUpload={(files, currentPath) => onUpload(files, currentPath)}
+            onUpload={(files, currentPath) => onUpload?.(files, currentPath)}
+            onFolderCreated={
+              isDirectoryPicker
+                ? (folderName) => {
+                    // Jump straight into the created folder so "select this
+                    // location" picks it.
+                    navigateDown(folderName);
+                  }
+                : undefined
+            }
             onDeleteFilesInBackground={onDeleteFilesInBackground}
             onClearSelection={() => setSelectedItems([])}
             onRequestClose={(
@@ -374,9 +449,8 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           />
         </BAIFlex>
 
-        <BAITable
+        <BAITableAstryx
           rowKey="name"
-          scroll={{ x: 'max-content' }}
           dataSource={files?.items}
           columns={tableColumns}
           // If no files have been loaded yet (including cache), show spinner loading
@@ -384,31 +458,51 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           // If files have been loaded before, use normal loading style (opacity)
           loading={!isFirstFetching && isFetching}
           pagination={false}
-          rowSelection={{
-            type: 'checkbox',
-            selectedRowKeys: _.map(selectedItems, 'name'),
-            onChange: (selectedRowKeys) => {
-              setSelectedItems(
-                files?.items?.filter((file) =>
-                  selectedRowKeys.includes(file.name),
-                ) || [],
-              );
-            },
-          }}
-          onRow={(record) => ({
-            onClick: () => {
-              const isSelected = selectedItems.some(
-                (item) => item.name === record.name,
-              );
-              if (isSelected) {
-                setSelectedItems(
-                  selectedItems?.filter((item) => item.name !== record.name),
-                );
-              } else {
-                setSelectedItems([...selectedItems, record]);
-              }
-            },
-          })}
+          rowSelection={
+            isDirectoryPicker
+              ? undefined
+              : {
+                  type: 'checkbox',
+                  selectedRowKeys: _.map(selectedItems, 'name'),
+                  onChange: (selectedRowKeys) => {
+                    setSelectedItems(
+                      files?.items?.filter((file) =>
+                        selectedRowKeys.includes(file.name),
+                      ) || [],
+                    );
+                  },
+                }
+          }
+          onRow={(record) =>
+            isDirectoryPicker
+              ? {
+                  onClick: () => {
+                    if (record.type === 'DIRECTORY') {
+                      navigateDown(record.name);
+                    }
+                  },
+                  style:
+                    record.type === 'DIRECTORY'
+                      ? { cursor: 'pointer' }
+                      : { cursor: 'not-allowed' },
+                }
+              : {
+                  onClick: () => {
+                    const isSelected = selectedItems.some(
+                      (item) => item.name === record.name,
+                    );
+                    if (isSelected) {
+                      setSelectedItems(
+                        selectedItems?.filter(
+                          (item) => item.name !== record.name,
+                        ),
+                      );
+                    } else {
+                      setSelectedItems([...selectedItems, record]);
+                    }
+                  },
+                }
+          }
           {...tableProps}
         />
       </BAIFlex>

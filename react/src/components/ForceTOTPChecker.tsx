@@ -6,8 +6,7 @@ import { ForceTOTPCheckerQuery } from '../__generated__/ForceTOTPCheckerQuery.gr
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import TOTPActivateModal from './TOTPActivateModal';
-import { useToggle } from 'ahooks';
-import { useUpdatableState } from 'backend.ai-ui';
+import { useToggle, useUpdatableState } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const ForceTOTPChecker = () => {

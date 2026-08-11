@@ -1,4 +1,4 @@
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import * as _ from 'lodash-es';
 import React from 'react';
 

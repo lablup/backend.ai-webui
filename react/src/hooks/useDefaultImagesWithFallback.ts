@@ -2,12 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { backendaiClientPromise } from '.';
+import { backendaiClientPromise, useSuspendedBackendaiClient } from '.';
 import {
   useDefaultImagesWithFallbackQuery,
   useDefaultImagesWithFallbackQuery$data,
 } from '../__generated__/useDefaultImagesWithFallbackQuery.graphql';
-import { getImageFullName } from '../helper';
+import {
+  getImageFullName,
+  parseImageString,
+  resolveImageFullName,
+} from '../helper';
+import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
@@ -160,4 +165,66 @@ export const useDefaultSystemSSHImageWithFallback = () => {
   }, []);
 
   return { systemSSHImage, systemSSHImageInfo };
+};
+
+/**
+ * Resolve a possibly-partial image reference into a full
+ * `registry/namespace:tag@arch` name, using the registered image list.
+ *
+ * `ImageEnvironmentSelectFormItems` performs this matching for the session
+ * launcher form, but launch paths that never render that form (the Start from
+ * URL import features) previously passed the configured string straight to the
+ * manager. A documented partial value such as `cr.backend.ai/stable/python`
+ * then reached the manager verbatim, which resolves it to a `:latest` tag that
+ * is not registered, failing the launch (FR-3462).
+ *
+ * A fully-qualified reference skips the lookup entirely, and anything that
+ * cannot be resolved is returned unchanged so the server keeps reporting the
+ * misconfiguration exactly as before.
+ */
+export const useResolveImageReference = () => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+  const baiClient = useSuspendedBackendaiClient();
+  const { logger } = useBAILogger();
+  // Mirror the candidate set `ImageEnvironmentSelectFormItems` queries, so both
+  // launch paths resolve the same reference to the same image. Narrowing to
+  // installed images here would make a tag-less default pick an older image
+  // than the launcher form does when `showNonInstalledImages` is enabled.
+  const imageQueryVariables = baiClient?._config?.showNonInstalledImages
+    ? {}
+    : { installed: true };
+
+  const resolveImageReference = async (
+    imageString: string | undefined,
+  ): Promise<string | undefined> => {
+    if (!imageString) return imageString;
+
+    const { hasTag, hasArch } = parseImageString(imageString);
+    // Already fully qualified — no lookup needed.
+    if (hasTag && hasArch) return imageString;
+
+    try {
+      const response = await fetchQuery<useDefaultImagesWithFallbackQuery>(
+        relayEnv,
+        IMAGES_QUERY,
+        imageQueryVariables,
+        {
+          fetchPolicy: 'store-or-network',
+        },
+      ).toPromise();
+
+      return resolveImageFullName(imageString, response?.images) ?? imageString;
+    } catch (error) {
+      // Keep the original value so the launch surfaces the server-side error
+      // instead of silently doing nothing.
+      logger.debug(
+        'Failed to query images while resolving an image reference; keeping the original value',
+        { imageString, error },
+      );
+      return imageString;
+    }
+  };
+
+  return resolveImageReference;
 };

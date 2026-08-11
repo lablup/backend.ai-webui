@@ -8,17 +8,17 @@ import {
   newLineToBrElement,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
 import BAIText from '../BAIText';
 import {
+  BAIAstryxTableProps,
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
-  BAITableProps,
+  BAITableAstryx,
 } from '../Table';
-import { theme } from 'antd';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
@@ -43,7 +43,7 @@ const isEnableSorter = (key: string) => {
 };
 
 export interface BAISubStepNodesProps extends Omit<
-  BAITableProps<SubStepInList>,
+  BAIAstryxTableProps<SubStepInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
   subStepsFrgmt: BAISubStepNodesFragment$key;
@@ -51,19 +51,12 @@ export interface BAISubStepNodesProps extends Omit<
     baseColumns: BAIColumnsType<SubStepInList>,
   ) => BAIColumnsType<SubStepInList>;
   disableSorter?: boolean;
-  /**
-   * When true, only non-success sub-steps are shown (mirrors the parent table's
-   * "errors-only" mode), so an expanded row surfaces just the failing / retried
-   * steps.
-   */
-  errorsOnly?: boolean;
 }
 
 const BAISubStepNodes = ({
   subStepsFrgmt,
   customizeColumns,
   disableSorter,
-  errorsOnly,
   ...tableProps
 }: BAISubStepNodesProps) => {
   'use memo';
@@ -181,17 +174,17 @@ const BAISubStepNodes = ({
     ? customizeColumns(baseColumns)
     : baseColumns;
 
-  const dataSource = filterOutNullAndUndefined(subSteps)
-    .filter((subStep) => !errorsOnly || subStep.result !== 'SUCCESS')
-    .reverse();
+  const dataSource = filterOutNullAndUndefined(subSteps).reverse();
 
   return (
-    <BAITable
+    // to-astryx ticket 25: migrated to the Astryx engine. This table renders
+    // INSIDE an expanded row of `BAISchedulingHistoryNodes`, so it also proves
+    // the nested-table case (`onCell` cell styles, `fixed: 'left'`).
+    <BAITableAstryx
       rowKey="step"
       size="small"
       dataSource={dataSource}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       {...tableProps}
     />
   );

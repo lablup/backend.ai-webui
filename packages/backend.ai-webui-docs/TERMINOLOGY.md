@@ -199,6 +199,7 @@ Context-qualified rows are skipped outright on prose because long-form text is f
 | worker node | en | agent node | Reserve "worker node" for model serving context only |
 | スケーリンググループ | ja | リソースグループ | Deprecated term ("scaling group"); the UI and docs use "リソースグループ" |
 | 레플리카 | ko | 복제본 | Use the Korean translation, not the transliteration, for consistency |
+| 리소스 그룹 | ko | 자원 그룹 | Use the Korean translation, not the transliteration, for consistency with "자원 정책" |
 | 슈퍼관리자 | ko | 슈퍼 관리자 | Use the spaced form for consistency |
 | 슈퍼어드민 | ko | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
 | 스케일링 그룹 | ko | 자원 그룹 | Deprecated term ("scaling group"); the UI and docs use "자원 그룹" |
@@ -213,7 +214,7 @@ This table pins **one approved action verb per intent** so docs and UI use the s
 The table below is generated from the `verbs` array in `terminology.json`. Edit `terminology.json` and run `pnpm run build:terminology`; do not hand-edit between the markers.
 
 :::warning[Lexical, not behavioral — keep the two axes orthogonal]
-This list governs only **which word** labels an action. It does **not** decide the confirmation UX. Whether an action needs a typed-confirmation modal (`BAIConfirmModalWithInput`) or a one-click `Popconfirm` is decided **per call site** by [`.claude/rules/destructive-confirmation.md`](../../.claude/rules/destructive-confirmation.md), keyed off the action's **reversibility** — never derived from the verb. "Delete" can be reversible (soft-delete with a reachable restore path) or irreversible; the same word can map to either confirmation pattern. The optional **Reversible** column below is documentation only — read the rule, not this column, when choosing the confirmation component.
+This list governs only **which word** labels an action. It does **not** decide the confirmation UX. Whether an action needs a typed-confirmation modal (`BAIDeleteConfirmModal` with `requireConfirmInput`) or a one-click anchored confirm (`BAIPopconfirmAstryx`) is decided **per call site** by [`.claude/rules/destructive-confirmation.md`](../../.claude/rules/destructive-confirmation.md), keyed off the action's **reversibility** — never derived from the verb. "Delete" can be reversible (soft-delete with a reachable restore path) or irreversible; the same word can map to either confirmation pattern. The optional **Reversible** column below is documentation only — read the rule, not this column, when choosing the confirmation component.
 :::
 
 <!-- terminology:auto:verbs START -->

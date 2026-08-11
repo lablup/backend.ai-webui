@@ -9,7 +9,13 @@ export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
 export { default as BAICard } from './BAICard';
-export type { BAICardProps } from './BAICard';
+export type { BAICardProps, BAICardTabItem } from './BAICard';
+export { default as BAITabList } from './BAITabList';
+export type { BAITabListProps } from './BAITabList';
+export { default as BAICompactGroup } from './BAICompactGroup';
+export type { BAICompactGroupProps } from './BAICompactGroup';
+export { default as BAIMetadataList } from './BAIMetadataList';
+export type { BAIMetadataListProps } from './BAIMetadataList';
 export {
   default as BAIPropertyFilter,
   mergeFilterValues,
@@ -48,8 +54,23 @@ export { default as BAIText } from './BAIText';
 export type { BAITextProps } from './BAIText';
 export { default as BAIId } from './BAIId';
 export type { BAIIdProps } from './BAIId';
-export { default as BAISelect } from './BAISelect';
-export type { BAISelectProps } from './BAISelect';
+export {
+  default as BAISelect,
+  BAISelectOptionItem,
+  BAISelectOptionGroup,
+} from './BAISelect';
+export type {
+  BAISelectProps,
+  BAISelectOptionProps,
+  BAISelectOptionGroupProps,
+} from './BAISelect';
+export { default as BAIComplexSelect } from './BAIComplexSelect';
+export type {
+  BAIComplexSelectProps,
+  BAIComplexSelectOption,
+  BAIComplexSelectValue,
+  BAILabeledValue,
+} from './BAIComplexSelect';
 export { default as BAINotificationItem } from './BAINotificationItem';
 export type {
   BAINotificationItemProps,
@@ -88,6 +109,8 @@ export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnit
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIColorPicker, toHexColor } from './BAIColorPicker';
+export type { BAIColorPickerProps } from './BAIColorPicker';
 export { default as BAIListAlert } from './BAIListAlert';
 export type { BAIListAlertProps, BAIListAlertItem } from './BAIListAlert';
 export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGroupSelect';

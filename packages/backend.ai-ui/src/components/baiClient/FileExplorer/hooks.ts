@@ -1,12 +1,29 @@
+import { App } from '../../../app-shim';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useQuery } from '@tanstack/react-query';
-import { App } from 'antd';
-import { RcFile } from 'antd/es/upload';
 import * as _ from 'lodash-es';
 import { use, useState } from 'react';
+
+/**
+ * `RcFile` from `antd/es/upload`, restated locally (to-astryx W2-D).
+ *
+ * It is the ONE antd specifier the FileExplorer's upload path carried, across
+ * four modules (`hooks.ts`, `BAIFileExplorer`, `DragAndDrop`,
+ * `ExplorerActionControls`) — a type that renders nothing and is therefore
+ * invisible to a screenshot (MAPPING §6 rule 1). The upstream definition is
+ * two lines (`interface RcFile extends File { uid: string }` in
+ * rc-component's `upload`, plus antd's `readonly lastModifiedDate: Date`), and
+ * the file objects themselves come from the browser's `DataTransfer` /
+ * `<input type="file">` — never from antd's `Upload`, which this component
+ * tree no longer renders. Consumers keep importing the name from here.
+ */
+export interface RcFile extends File {
+  uid: string;
+  readonly lastModifiedDate: Date;
+}
 
 export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
   const baiClient = useConnectedBAIClient();

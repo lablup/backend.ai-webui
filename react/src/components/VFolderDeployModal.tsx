@@ -4,14 +4,17 @@
  */
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Form, Space, theme, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAvailablePresetSelect,
+  BAIAvailablePresetSelectAstryx,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -21,6 +24,7 @@ import {
   useErrorMessageResolver,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
+import { Info } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -286,9 +290,9 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       onCancel={onClose}
     >
       {noAvailablePresets && (
-        <Alert
-          type="info"
-          showIcon
+        // `type` -> `status`; `showIcon` dropped (Banner always shows it).
+        <Banner
+          status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={
             <Trans
@@ -315,26 +319,29 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAIAvailablePresetSelect
+            <BAIAvailablePresetSelectAstryx
+              label={t('modelStore.Preset')}
+              isLabelHidden
               value={effectivePresetId}
               onChange={(value) =>
                 setUserSelectedPresetId(value as string | undefined)
               }
-              style={{ flex: 1 }}
-              disabled={noAvailablePresets}
+              isDisabled={noAvailablePresets}
             />
-            <Space.Compact>
-              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
-                <Button
-                  icon={<InfoCircleOutlined />}
-                  disabled={!effectivePresetId || noAvailablePresets}
-                  onClick={() => {
-                    if (!effectivePresetId) return;
-                    setPresetDetailId(effectivePresetId);
-                  }}
-                />
-              </Tooltip>
-            </Space.Compact>
+            {/* MAPPING §3.3: an icon-only button is `IconButton`, which
+                carries its own tooltip and required accessible name — so both
+                the `Tooltip` wrapper and the single-child `Space.Compact`
+                (which welded nothing to anything) disappear. */}
+            <IconButton
+              icon={<Info size="1em" />}
+              label={t('modelService.DeploymentPresetDetail')}
+              tooltip={t('modelService.DeploymentPresetDetail')}
+              isDisabled={!effectivePresetId || noAvailablePresets}
+              onClick={() => {
+                if (!effectivePresetId) return;
+                setPresetDetailId(effectivePresetId);
+              }}
+            />
           </BAIFlex>
         </Form.Item>
         <Form.Item

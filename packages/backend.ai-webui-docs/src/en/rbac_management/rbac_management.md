@@ -19,7 +19,12 @@ To access the RBAC Management page, click **RBAC Management** in the **Admin Set
 The Role List page displays all roles in a table format. You can filter, search, and sort roles using the controls at the top of the page.
 
 - **Status filter**: A segmented control to toggle between **Active** and **Inactive** roles. Active is selected by default.
-- **Name search**: A property filter to search roles by name or filter by source (System or Custom). The filter input adapts to the selected property — for example, the **Source** filter exposes the available values (System / Custom) as a typed selector rather than a free-form text box, while the **Name** filter accepts free text.
+- **Property filter**: A property filter to narrow the list. The filter input adapts to the selected property. The following properties are available:
+   * **Name**: Free-text search by role name.
+   * **Source**: A typed selector that exposes the available values (**System** / **Custom**) rather than a free-form text box.
+   * **Assigned User**: A user picker that filters the list to the roles assigned to the chosen user. The user's email is shown on the resulting condition tag.
+   * **Scope Type**: A typed selector of RBAC scope types (for example, Domain, Project, or User).
+   * **Scope ID**: Free-text search by the raw scope UUID.
 - **Create Role**: A button to create a new custom role.
 
 The table displays the following columns:
@@ -77,7 +82,7 @@ The drawer header displays the role name and provides an **Edit** button for cus
 - **Updated At**: The last modification timestamp
 - **Description**: The role's description
 
-Below the metadata, three tabs are available: **Scopes**, **Permissions**, and **Role Assignments**.
+Below the metadata, two tabs are available: **Permissions** and **Role Assignments**. The **Permissions** tab is selected by default.
 
 ![](../images/rbac_role_detail_drawer.png)
 
@@ -99,31 +104,47 @@ To edit a custom role's name, description, or auto-assignment setting:
 The Edit button is only available for Custom roles. System roles cannot have their name or description modified. Scopes cannot be modified after role creation in either case.
 :::
 
-## View role scopes
-
-The **Scopes** tab in the role detail drawer lists the scope entries that were assigned to the role at creation time. Each entry constrains the set of targets that permissions on this role can reference.
-
-![](../images/rbac_role_scope_tab.png)
-
-The table displays the following columns:
-
-- **Scope Type**: The type of the scope entry (e.g., Domain, Project, User).
-- **Target**: The human-readable name of the scope target (e.g., the domain name, project name, or user email).
-- **Scope ID**: The UUID of the scope target.
-
-Use the filter control at the top to narrow down scope entries by **Scope Type**.
-
-:::note
-Scopes are read-only in this tab. To change a role's scopes, you must create a new role with the desired scopes.
-:::
+<a id="view-role-scopes"></a>
 
 <a id="manage-permissions"></a>
 
 ## Manage permissions
 
-The **Permissions** tab in the role detail drawer shows the fine-grained permissions configured for the role.
+The **Permissions** tab in the role detail drawer is a merged, detailed view that combines the role's scopes and its fine-grained permissions. It renders **one card per scope type** the role uses, and each card shows that scope type's scopes together with the permissions granted on them.
 
 ![](../images/rbac_permissions_tab.png)
+
+:::info
+The scopes a role can reference are defined when the role is created and are **read-only** afterward — you cannot change them from the role detail drawer. In the Permissions tab, scopes appear as the rows inside each scope-type card. To change a role's scopes, create a new role with the desired scopes.
+:::
+
+### Scope-type cards
+
+The Permissions tab shows one card for each scope type the role uses (for example, Domain, Project, or User). Scope types the role does not use are hidden, and the card title is the localized scope-type name. Each card contains:
+
+- **Scope ID filter**: A property filter that narrows the card's rows by the raw scope UUID. Searching by the resolved scope name is not supported.
+- **Refresh** button: Reloads the card's rows and recomputes the permission tags.
+- **Scope table**: Lists the role's scopes of this type, with these columns:
+   * **Name**: The resolved scope name (for example, the domain, project, or user's display name), with an inline **Edit** action that opens the permission edit modal for that scope.
+   * **ID**: The scope UUID.
+   * **Permissions**: One tag per permission type, colored by grant state (see below). When the scope type has no configurable entities, this column shows `-`.
+- **Pagination**: Pages through the card's scopes when there are many.
+
+If a role has no scopes at all, the tab shows the message **No scopes are configured for this role** instead of any cards.
+
+<a id="grant-state-tags"></a>
+
+### Grant-state tags
+
+In the **Permissions** column, each permission-type tag is colored by how many of that type's operations are granted for the scope:
+
+- **Fully allowed** (green): Every operation of that permission type is granted.
+- **Partially allowed** (yellow): Some, but not all, operations are granted.
+- **Not allowed** (no color): None of the operations are granted.
+
+Hover over a tag to see its state label.
+
+![](../images/rbac_permissions_card_grant_tags.png)
 
 ### Understanding permissions
 
@@ -137,7 +158,7 @@ Each permission consists of four components:
    * **Delegate to Others**: Delegate All, Delegate Read, Delegate Update, Delegate Soft Delete, Delegate Hard Delete
 
 :::info
-The combined **Scope Type / Target** of each permission is inherited from the role's scope entries. When you add a permission, you can only pick from the scopes that were defined when the role was created. To broaden a role's reach, create a new role with additional scopes.
+The combined **Scope Type / Target** of each permission is inherited from the role's scope entries. You can only grant permissions on scopes that were defined when the role was created. To broaden a role's reach, create a new role with additional scopes.
 :::
 
 ### Permission examples
@@ -153,24 +174,53 @@ Here are some common permission configurations to help you understand how the fo
 
 <a id="add-a-permission"></a>
 
-### Add a permission
+<a id="remove-a-permission"></a>
 
-1. Open the role detail drawer and select the **Permissions** tab
-2. Click the **Add Permission** button
-3. In the modal, fill in the following fields:
-   - **Scope Type / Target**: Select one of the scope entries that were assigned to the role. The dropdown lists only scopes that have at least one actionable entity. The target is shown by its resolved, localized name (for example, the domain or project's display name) rather than its raw UUID, so you can recognize the scope at a glance.
-   - **Permission Type**: Select the entity type. Only valid types for the selected scope type are shown. Permission type labels (such as **Role Assignment**) are localized to match your UI language.
-   - **Permission**: Select the operation (e.g., Create, Read, Update, Soft Delete, Hard Delete, or delegation operations)
-4. Click **Add** to create the permission
+<a id="edit-permissions-for-a-scope"></a>
 
-![](../images/rbac_permission_modal.png)
+### Edit permissions for a scope (single scope)
 
-### Remove a permission
+Permissions are edited per scope through a grid-based modal, where each row is a permission type and each cell is an operation checkbox.
 
-1. In the **Permissions** tab, click the **Remove Permission** button next to the permission you want to remove
-2. A small confirmation popup appears anchored to the button. Click **OK** to confirm, or **Cancel** to dismiss.
+1. In the **Permissions** tab, open the scope-type card and click the **Edit** action on the scope row you want to change.
+2. The **Edit {Scope Type} Permissions** modal opens with the scope name shown as a subtitle. It shows a grid where:
+   - Rows are the **Permission Types** valid for the scope type.
+   - Columns are grouped into **Direct** (Create, Read, Update, Soft Delete, Hard Delete) and **Delegate to Others** (All, Read, Update, Soft Delete, Hard Delete).
+   - Cells the permission matrix does not support render as `-` with a **This permission cannot be assigned.** tooltip.
+3. Each checkbox is **pre-checked** to the scope's currently granted operations. Tick or untick cells to change what is allowed.
+4. Click **Save**. The changes are reconciled against the scope's current grants — newly ticked cells are granted and cleared cells are removed.
 
-Removing a permission from a role only detaches it from the role's permission set — the role itself, its scopes, and its user assignments are kept. You can add the same permission back later from the same tab, so this action is treated as reversible and uses a lightweight popup confirmation rather than a typed-name confirmation modal.
+![](../images/rbac_permission_edit_modal_single.png)
+
+:::note
+Editing permissions is **reversible** — you can re-open the modal and change the grid again at any time — so saving uses a normal **Save** button rather than a typed-name confirmation.
+:::
+
+<a id="edit-permissions-for-multiple-scopes"></a>
+
+### Edit permissions for multiple scopes (bulk)
+
+You can apply the same permission change to several scopes of the same type at once.
+
+1. In a scope-type card, use the row checkboxes to select **two or more** scopes. A selection-count label appears; use the pencil (**Edit Permissions**) control next to it to open the bulk modal.
+2. The **Bulk Edit {Scope Type} Permissions** modal opens. Every cell starts in a **Keep as is** state: untouched cells keep each selected scope's existing value, and only the cells you switch into edit mode are applied to **all** selected scopes.
+3. Click a cell to switch it into edit mode (it starts checked). Tick or untick it to set the value you want to apply to every selected scope.
+4. Click **Save** to apply the changes to all selected scopes.
+
+![](../images/rbac_permission_edit_modal_bulk.png)
+
+<a id="no-op-and-partial-failure-behavior"></a>
+
+### No-op and partial-failure behavior
+
+When you save permission changes:
+
+- If nothing changed, the modal closes without sending a request and shows the message **No changes made.**
+- On success, the message **Permissions saved successfully.** is shown and the card's tags are recomputed.
+- On a **partial failure**, the modal stays open with the failed cells flagged. A bulk-error modal lists each failed request — the target scope, the permission, and the error message — along with success and failure counts. You can adjust the grid and save again to retry only the cells that failed.
+
+<!-- ![](../images/rbac_permission_partial_failure_modal.png) -->
+<!-- TODO: Capture the bulk-error modal shown after a partial-failure permission save -->
 
 <a id="manage-user-assignments"></a>
 
@@ -192,7 +242,20 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 
 ![](../images/rbac_add_user_modal.png)
 
-Adding users is a bulk operation — you can select several users in a single pass and assign them all at once.
+Adding users is a bulk operation — you can select several users in a single pass and assign them all at once. If some assignments fail, the modal stays open and a bulk-error modal lists each failed user with an error message and success and failure counts. The users that were assigned successfully are cleared from the selection, so only the failed users remain selected and you can click **Add** again to retry just those.
+
+<!-- ![](../images/rbac_assign_user_partial_failure.png) -->
+<!-- TODO: Capture the Add User modal with the bulk-error modal listing failed assignments -->
+
+<a id="system-roles-and-assignment-restrictions"></a>
+
+### System roles and assignment restrictions
+
+The system-generated project-admin role (the `project-<project_id>-admin` role, whose **Source** is **System**) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, **Roles automatically created by the system cannot have users directly assigned or unassigned.**, and the assignment table is read-only (the **Add User** and revoke controls are hidden).
+
+![](../images/rbac_system_role_assignments_readonly.png)
+
+To manage who administers a project, use **Set Project Admin** on the Project page instead. See [Set Project Admin](#set-project-admin) in the Project Admin Features chapter and [Grant Project Admin authority](#grant-project-admin) below.
 
 <a id="revoke-users-from-a-role"></a>
 
@@ -205,7 +268,7 @@ To revoke a single user:
 1. In the **Role Assignments** tab, hover over the user row and click the revoke (trash) icon next to the user.
 2. A **Revoke User** confirmation modal opens. Review the listed user(s) and click **Revoke User** to confirm, or **Cancel** to dismiss.
 
-![](../images/rbac_revoke_popconfirm.png)
+![](../images/rbac_revoke_confirm_modal.png)
 
 To revoke multiple users at once:
 
@@ -225,18 +288,12 @@ Revoking a role assignment can be reversed by re-adding the user to the role fro
 
 ## Grant Project Admin authority
 
-Creating a project also creates a dedicated role named `project-<project_id>-admin`, where `<project_id>` is the UUID of that project. Assigning a user to this role grants them [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
+Creating a project also creates a dedicated role named `project-<project_id>-admin`, where `<project_id>` is the UUID of that project. A user assigned to this role gains [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
 
 ![](../images/rbac_project_admin_role_in_list.png)
 
-To grant Project Admin authority to a user:
-
-1. Open the [Role List](#role-list) and locate the `project-<project_id>-admin` role for the target project. Use the property filter to search by role name (e.g. enter `project-` to narrow the list).
-2. Click the role name to open the role detail view.
-3. Follow [Add Users to a Role](#add-users-to-a-role) on this role to assign the user.
+Grant and revoke project admin through the **Set Project Admin** one-click flow on the **Project** admin page, described in [Set Project Admin](#set-project-admin) in the Project Admin Features chapter. The `project-<project_id>-admin` role is a system role, so its Role Assignments tab here is **read-only** and provided for inspection — you can still open the role to review who currently holds project admin. The **Set Project Admin** modal also links back to this role's detail drawer through its RBAC shortcut.
 
 ![](../images/rbac_project_admin_role_detail.png)
 
-The user gains Project Admin authority immediately. The next time they open the header's project dropdown they will see the project-admin badge next to the corresponding project, and the project-admin sidebar entries described in the [Project Admin Features](#project-admin-features) chapter.
-
-To revoke Project Admin authority, follow [Revoke Users from a Role](#revoke-users-from-a-role) on the same `project-<project_id>-admin` role.
+Once granted, the user gains Project Admin authority immediately. The next time they open the header's project dropdown they will see the project-admin badge next to the corresponding project, and the project-admin sidebar entries described in the [Project Admin Features](#project-admin-features) chapter.

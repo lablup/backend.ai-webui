@@ -12,6 +12,8 @@ import {
   UserRoleV2,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import {
   buildDynamicColumnAliases,
   CanonicalUserColumn,
@@ -25,36 +27,26 @@ import {
 } from '../helper/bulkUserCSV';
 import { downloadBlob, parseCSV } from '../helper/csv-util';
 import { useCurrentDomainValue } from '../hooks';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import BAIPanelItem from './BAIPanelItem';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  CheckCircleFilled,
-  CloseCircleFilled,
-  DeleteOutlined,
-  DownloadOutlined,
-  ExclamationCircleFilled,
-  FileTextOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import {
-  App,
-  Checkbox,
-  Empty,
-  Form,
-  Input,
-  Skeleton,
-  Switch,
-  Table,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-  Upload,
-} from 'antd';
+  AstryxFormCheckbox,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Badge } from '@astryxdesign/core/Badge';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { FileInput } from '@astryxdesign/core/FileInput';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlert,
   BAIButton,
@@ -64,11 +56,23 @@ import {
   BAIModalProps,
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
+  BAITableAstryx,
   BAIText,
+  badgeVariantForTagColor,
   useBAILogger,
   useBAISignedRequestWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import {
+  CircleCheck,
+  CircleX,
+  Trash,
+  Download,
+  CircleAlert,
+  FileText,
+  Plus,
+  RotateCw,
+} from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -671,6 +675,16 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   };
 
   // ── Cell renderer helpers ─────────────────────────────────────────────────
+  //
+  // Ticket 21 left the CSV preview grid (12 conditional columns, a shared
+  // error/mask cell renderer, per-field `onCell` background styling) and the
+  // failed-rows grid as a raw antd `Table` island, because no Astryx-backed
+  // table existed in that ticket's scope. Ticket 30-D closed that frontier:
+  // both grids now render through `BAITableAstryx`, which accepts this exact
+  // antd-shaped column model (`render` / `onCell` / `width` / `dataIndex`)
+  // unchanged. The cell renderers' last two antd primitives closed in
+  // final-A: `Typography.Text` -> `BAIText` (a rename — BAIText's public prop
+  // surface is antd-shaped) and `Tooltip` -> Astryx `Tooltip`.
 
   const cellStyle = (record: ValidatedRow, field: string) => ({
     style: record.fieldErrors[field]
@@ -691,35 +705,35 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     mask?: boolean,
   ) => {
     if (errorMsg) {
+      // PILOT-DECISION: the red tooltip surface is DROPPED. antd took `color`
+      // + `styles.container`; Astryx `Tooltip` owns its surface and exposes no
+      // colour knob (the inverted media surface is the whole point of its
+      // design). Nothing is lost semantically — the cell already carries the
+      // error in two other channels: the `colorError` `CircleAlert` icon and
+      // the `type="danger"` text.
       return (
-        <Tooltip
-          title={errorMsg}
-          color={token.colorError}
-          styles={{ container: { color: token.colorWhite } }}
-        >
+        <Tooltip content={errorMsg}>
           <BAIFlex gap="xs" align="center" style={{ cursor: 'default' }}>
-            <ExclamationCircleFilled
+            <CircleAlert
               role="img"
               aria-label={errorMsg}
               style={{ color: token.colorError, flexShrink: 0 }}
+              size="1em"
             />
             {mask && val ? (
               // Never surface a raw password, even when it fails validation —
               // the error icon + tooltip already convey the problem.
-              <Typography.Text
-                type="danger"
-                style={{ letterSpacing: '0.15em' }}
-              >
+              <BAIText type="danger" style={{ letterSpacing: '0.15em' }}>
                 {'· · · · · · · ·'}
-              </Typography.Text>
+              </BAIText>
             ) : val ? (
               <BAIText type="danger" ellipsis={{ tooltip: false }}>
                 {val}
               </BAIText>
             ) : (
-              <Typography.Text type="secondary" italic>
+              <BAIText type="secondary" italic>
                 {t('dialog.warning.Required')}
-              </Typography.Text>
+              </BAIText>
             )}
           </BAIFlex>
         </Tooltip>
@@ -727,12 +741,12 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     }
     if (mask && val) {
       return (
-        <Typography.Text type="secondary" style={{ letterSpacing: '0.15em' }}>
+        <BAIText type="secondary" style={{ letterSpacing: '0.15em' }}>
           {'· · · · · · · ·'}
-        </Typography.Text>
+        </BAIText>
       );
     }
-    return <Typography.Text>{val || '—'}</Typography.Text>;
+    return <BAIText>{val || '—'}</BAIText>;
   };
 
   // ── Table columns ─────────────────────────────────────────────────────────
@@ -774,9 +788,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 36,
       render: (_: unknown, record: ValidatedRow) =>
         record.isValid ? (
-          <CheckCircleFilled style={{ color: token.colorSuccess }} />
+          <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
         ) : (
-          <CloseCircleFilled style={{ color: token.colorError }} />
+          <CircleX style={{ color: token.colorError }} size="1em" />
         ),
     },
     {
@@ -784,9 +798,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       dataIndex: 'lineNumber',
       key: 'lineNumber',
       width: 44,
-      render: (v: number) => (
-        <Typography.Text type="secondary">{v}</Typography.Text>
-      ),
+      render: (v: number) => <BAIText type="secondary">{v}</BAIText>,
     },
     {
       title: requiredLabel(t('general.E-Mail')),
@@ -820,7 +832,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       dataIndex: 'fullName',
       key: 'fullName',
       width: 140,
-      render: (val: string) => <Typography.Text>{val || '—'}</Typography.Text>,
+      render: (val: string) => <BAIText>{val || '—'}</BAIText>,
     },
     showRole && {
       title: t('credential.Role'),
@@ -846,13 +858,13 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       key: 'needPasswordChange',
       width: 110,
       render: (val: boolean, record: ValidatedRow) => (
-        <Typography.Text
+        <BAIText
           type={
             record.fromDefaults.needPasswordChange ? 'secondary' : undefined
           }
         >
           {val ? t('button.Yes') : t('button.No')}
-        </Typography.Text>
+        </BAIText>
       ),
     },
     showDomain && {
@@ -862,11 +874,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 120,
       onCell: (record: ValidatedRow) => cellStyle(record, 'domainName'),
       render: (val: string, record: ValidatedRow) => (
-        <Typography.Text
+        <BAIText
           type={record.fromDefaults.domainName ? 'secondary' : undefined}
         >
           {val || '—'}
-        </Typography.Text>
+        </BAIText>
       ),
     },
     showResourcePolicy && {
@@ -876,11 +888,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 140,
       onCell: (record: ValidatedRow) => cellStyle(record, 'resourcePolicy'),
       render: (val: string, record: ValidatedRow) => (
-        <Typography.Text
+        <BAIText
           type={record.fromDefaults.resourcePolicy ? 'secondary' : undefined}
         >
           {val || '—'}
-        </Typography.Text>
+        </BAIText>
       ),
     },
     showDescription && {
@@ -911,11 +923,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         }
         // Per-row project name from CSV takes priority.
         if (record.projectName) {
-          return <Typography.Text>{record.projectName}</Typography.Text>;
+          return <BAIText>{record.projectName}</BAIText>;
         }
         // Fall back to global defaults (show resolved names).
         if (globalDefaults.groupIds.length === 0) {
-          return <Typography.Text type="secondary">{'—'}</Typography.Text>;
+          return <BAIText type="secondary">{'—'}</BAIText>;
         }
         const names = globalDefaults.groupIds.map((id) => idToName[id] ?? id);
         const display = names.join(', ');
@@ -973,10 +985,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               failCount: failedRows.length,
             })}
           />
-          <Table
+          <BAITableAstryx
             size="small"
             rowKey="index"
-            scroll={{ x: 'max-content' }}
             dataSource={failedRows}
             pagination={false}
             columns={[
@@ -994,9 +1005,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 title: t('dialog.error.Error'),
                 dataIndex: 'message',
                 key: 'message',
-                render: (v: string) => (
-                  <Typography.Text type="danger">{v}</Typography.Text>
-                ),
+                render: (v: string) => <BAIText type="danger">{v}</BAIText>,
               },
             ]}
           />
@@ -1013,9 +1022,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       destroyOnHidden
       title={
         <BAIFlex align="center" gap="xs">
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('credential.BulkCreateUserFromCSV')}
-          </Typography.Title>
+          <Heading level={5}>{t('credential.BulkCreateUserFromCSV')}</Heading>
           <BAIQuestionIconWithTooltip
             title={t('credential.BulkCreateUserFromCSVSubtitle')}
           />
@@ -1045,7 +1052,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           </BAIButton>
           <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<Plus size="1em" />}
             disabled={!canSubmit}
             loading={isInFlight}
             action={handleSubmit}
@@ -1077,9 +1084,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         {/* ── Source file section ── */}
         <BAIFlex direction="column" align="stretch" gap="sm">
           <BAIFlex align="center" gap="xs">
-            <Typography.Title level={5} style={{ margin: 0 }}>
-              {t('credential.SourceFile')}
-            </Typography.Title>
+            <Heading level={5}>{t('credential.SourceFile')}</Heading>
             <BAIQuestionIconWithTooltip
               title={t('credential.SourceFileHint')}
             />
@@ -1126,7 +1131,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     flexShrink: 0,
                   }}
                 >
-                  <FileTextOutlined />
+                  <FileText size="1em" />
                 </BAIFlex>
                 <BAIFlex
                   direction="column"
@@ -1146,7 +1151,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               <BAIFlex gap="xs">
                 <BAIButton
                   size="small"
-                  icon={<ReloadOutlined />}
+                  icon={<RotateCw size="1em" />}
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {t('credential.ReplaceFile')}
@@ -1154,7 +1159,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 <BAIButton
                   size="small"
                   danger
-                  icon={<DeleteOutlined />}
+                  icon={<Trash size="1em" />}
                   onClick={resetState}
                 >
                   {t('credential.RemoveFile')}
@@ -1162,50 +1167,38 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               </BAIFlex>
             </BAIFlex>
           ) : (
-            <Upload.Dragger
+            // antd `Upload.Dragger` was used purely as a file *picker*
+            // (`beforeUpload` returns false, `showUploadList={false}`) →
+            // `FileInput mode="dropzone"` per MAPPING.md §3.12. PILOT-DECISION:
+            // the hand-built icon-in-a-box + two-line text layout is dropped
+            // in favor of FileInput's own label/description slots
+            // (defaults-first; MIGRATION-SPEC §0 simplicity policy) — the
+            // primary/secondary line pairing is preserved via `label`/
+            // `description` instead of custom styling.
+            <FileInput
+              label={t('credential.UploadCSVFile')}
+              description={t('credential.CSVOneRowPerUser')}
+              mode="dropzone"
               accept=".csv,text/csv"
-              showUploadList={false}
-              beforeUpload={(file) => {
-                file
+              value={null}
+              onChange={(file) => {
+                const selected = Array.isArray(file) ? file[0] : file;
+                if (!selected) return;
+                selected
                   .text()
-                  .then((text) => loadCSVText(file.name, text))
+                  .then((text) => loadCSVText(selected.name, text))
                   .catch(() => {
                     message.error(t('credential.validation.CSVParseFailed'));
                   });
-                return false;
               }}
-              style={{ background: token.colorFillQuaternary }}
-            >
-              <BAIFlex
-                justify="center"
-                style={{
-                  fontSize: 40,
-                  color: token.colorPrimary,
-                  lineHeight: 1,
-                  marginBottom: token.marginSM,
-                }}
-              >
-                <FileTextOutlined />
-              </BAIFlex>
-              <Typography.Text
-                style={{ display: 'block', marginBottom: token.marginXXS }}
-              >
-                {t('credential.UploadCSVFile')}
-              </Typography.Text>
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: token.fontSizeSM }}
-              >
-                {t('credential.CSVOneRowPerUser')}
-              </Typography.Text>
-            </Upload.Dragger>
+            />
           )}
 
           {/* Action buttons */}
           <BAIFlex gap="xs" wrap="wrap">
             <BAIButton
               size="small"
-              icon={<DownloadOutlined />}
+              icon={<Download size="1em" />}
               onClick={handleDownloadTemplate}
             >
               {t('credential.DownloadCSVTemplate')}
@@ -1216,20 +1209,18 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         {/* ── Global defaults section ── */}
         <BAIFlex direction="column" align="stretch" gap="sm">
           <BAIFlex align="center" gap="xs">
-            <Typography.Title level={5} style={{ margin: 0 }}>
-              {t('credential.GlobalDefaults')}
-            </Typography.Title>
+            <Heading level={5}>{t('credential.GlobalDefaults')}</Heading>
             <BAIQuestionIconWithTooltip
               title={t('credential.GlobalDefaultsHint')}
             />
           </BAIFlex>
 
           <Form layout="vertical" requiredMark={false} component={false}>
-            <Form.Item
+            <BAIFormItem
               label={t('credential.Domain')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<Skeleton.Input active block />}>
+              <Suspense fallback={<BAISkeletonAstryx />}>
                 <BAIDomainSelect
                   value={globalDefaults.domainName}
                   onChange={(v) => {
@@ -1242,15 +1233,15 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{ width: '100%' }}
                 />
               </Suspense>
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('session.launcher.Project')}
               style={{ marginBottom: token.marginSM }}
             >
               <Suspense
                 key={globalDefaults.domainName}
-                fallback={<Skeleton.Input active block />}
+                fallback={<BAISkeletonAstryx />}
               >
                 <ProjectSelect
                   key={globalDefaults.domainName}
@@ -1273,13 +1264,13 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{ width: '100%' }}
                 />
               </Suspense>
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('credential.UserResourcePolicy')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<Skeleton.Input active block />}>
+              <Suspense fallback={<BAISkeletonAstryx />}>
                 <UserResourcePolicySelect
                   value={globalDefaults.resourcePolicy}
                   onChange={(v) =>
@@ -1294,63 +1285,67 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{ width: '100%' }}
                 />
               </Suspense>
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('general.Password')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Input.Password
-                // "new-password" takes the modal out of the browser's
-                // login-form heuristic, so Chrome stops autofilling saved
-                // credentials here and into the adjacent resource-policy
-                // combobox it would otherwise treat as the username field.
-                autoComplete="new-password"
+              {/* PILOT-DECISION: antd `Input.Password autoComplete="new-password"`
+                  (the Chrome-autofill-suppression workaround) is dropped —
+                  `AstryxFormTextInputProps` has no `autoComplete` passthrough
+                  (MIGRATION-SPEC §0 simplicity policy; not worth widening the
+                  shared adapter's type for one call site). Worst case Chrome
+                  may offer to autofill this field; it does not affect
+                  behavior. */}
+              <AstryxFormTextInput
+                label={t('general.Password')}
+                type="password"
                 value={globalDefaults.defaultPassword}
-                onChange={(e) =>
+                onChange={(next) =>
                   setGlobalDefaults((prev) => ({
                     ...prev,
-                    defaultPassword: e.target.value,
+                    defaultPassword: next,
                   }))
                 }
                 placeholder={t('credential.NoDefaultPlaceholder')}
               />
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('credential.DescRequirePasswordChange')}
               tooltip={t('credential.TooltipForRequirePasswordChange')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Checkbox
-                checked={globalDefaults.needPasswordChange}
-                onChange={(e) =>
+              <AstryxFormCheckbox
+                label={t('general.Enable')}
+                value={globalDefaults.needPasswordChange}
+                onChange={(next) =>
                   setGlobalDefaults((prev) => ({
                     ...prev,
-                    needPasswordChange: e.target.checked,
+                    needPasswordChange: next,
                   }))
                 }
-              >
-                {t('general.Enable')}
-              </Checkbox>
-            </Form.Item>
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('credential.Description')}
               style={{ marginBottom: 0 }}
             >
-              <Input.TextArea
+              <AstryxFormTextArea
+                label={t('credential.Description')}
                 value={globalDefaults.description}
-                onChange={(e) =>
+                onChange={(next) =>
                   setGlobalDefaults((prev) => ({
                     ...prev,
-                    description: e.target.value,
+                    description: next,
                   }))
                 }
                 placeholder={t('credential.NoDefaultPlaceholder')}
                 rows={2}
               />
-            </Form.Item>
+            </BAIFormItem>
           </Form>
         </BAIFlex>
       </BAIFlex>
@@ -1368,9 +1363,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         }}
       >
         <BAIFlex align="center" gap="xs">
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('credential.PreviewAndValidation')}
-          </Typography.Title>
+          <Heading level={5}>{t('credential.PreviewAndValidation')}</Heading>
           <BAIQuestionIconWithTooltip
             title={t('credential.ReviewBeforeCreating')}
           />
@@ -1408,14 +1401,14 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               </BAIRowWrapWithDividers>
               <BAIFlex gap="xs" align="center">
                 <Switch
-                  size="small"
-                  checked={onlyErrors}
+                  size="sm"
+                  label={t('credential.OnlyShowErrors')}
+                  isLabelHidden
+                  value={onlyErrors}
                   onChange={setOnlyErrors}
-                  disabled={stats.withErrors === 0}
+                  isDisabled={stats.withErrors === 0}
                 />
-                <Typography.Text style={{ fontSize: token.fontSizeSM }}>
-                  {t('credential.OnlyShowErrors')}
-                </Typography.Text>
+                <Text size="sm">{t('credential.OnlyShowErrors')}</Text>
               </BAIFlex>
             </BAIFlex>
 
@@ -1433,29 +1426,24 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 }}
               >
                 <BAIFlex gap="xs" align="center">
-                  <CloseCircleFilled style={{ color: token.colorError }} />
-                  <Typography.Text strong style={{ color: token.colorError }}>
+                  <CircleX style={{ color: token.colorError }} size="1em" />
+                  <Text weight="semibold" style={{ color: token.colorError }}>
                     {t('credential.NOfMRowsError', {
                       errorCount: stats.withErrors,
                       total: stats.total,
                     })}
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
                 <BAIFlex gap="xs" align="center" wrap="wrap">
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM, flexShrink: 0 }}
-                  >
+                  <Text color="secondary" size="sm" style={{ flexShrink: 0 }}>
                     {t('credential.IssuesFound')}
-                  </Typography.Text>
+                  </Text>
                   {errorCategories.map((cat) => (
-                    <Tag
+                    <Badge
                       key={cat.key}
-                      color="error"
-                      style={{ fontSize: token.fontSizeSM, margin: 0 }}
-                    >
-                      {cat.label} · {cat.count}
-                    </Tag>
+                      variant={badgeVariantForTagColor('error')}
+                      label={`${cat.label} · ${cat.count}`}
+                    />
                   ))}
                 </BAIFlex>
               </BAIFlex>
@@ -1470,22 +1458,25 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             )}
 
             {/* Preview table */}
-            <Table<ValidatedRow>
+            {/* PILOT-DECISION (ticket 30-D): the `rowClassName` that tagged
+                invalid rows with `bulk-csv-error-row` is dropped — no rule
+                for that class exists anywhere in the repo, and the invalid
+                state is already carried by the validity icon column plus the
+                per-cell error background that `onCell` paints. */}
+            <BAITableAstryx<ValidatedRow>
               size="small"
               rowKey="key"
               dataSource={displayRows}
               columns={tableColumns}
               pagination={false}
-              scroll={{ x: 'max-content' }}
-              rowClassName={(record) =>
-                record.isValid ? '' : 'bulk-csv-error-row'
-              }
             />
           </>
         ) : (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t('credential.NoFileLoaded')}
+          // The former `description` string becomes the required `title`;
+          // the simple placeholder illustration is dropped (EmptyState has
+          // no built-in "simple" image, only an optional custom `icon`).
+          <EmptyState
+            title={t('credential.NoFileLoaded')}
             style={{
               flex: 1,
               display: 'flex',

@@ -2,100 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import './BAIBoard.css';
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
-import { createStyles } from 'antd-style';
 import classNames from 'classnames';
-
-const useStyles = createStyles(({ css, token }) => {
-  return {
-    board: css`
-      .bai_board_placeholder {
-        border-radius: ${token.borderRadius}px !important;
-      }
-      .bai_board_placeholder--active {
-        background-color: ${token.colorSplit} !important ;
-      }
-      .bai_board_placeholder--hover {
-        background-color: ${token.colorPrimaryHover} !important ;
-        // FIXME: global token doesn't exist, so opacity fits color
-        opacity: 0.3;
-      }
-      .bai_board_handle button span {
-        color: ${token.colorTextQuaternary} !important;
-        padding-left: 5px !important;
-      }
-      .bai_board_header {
-        padding: 0 !important;
-        padding-top: ${token.padding - 1}px !important;
-        padding-left: ${token.paddingXS}px !important;
-      }
-      .bai_board_resizer button span {
-        color: ${token.colorTextQuaternary} !important;
-      }
-      .bai_board_container-override
-        > div:first-child
-        > div:nth-child(2)
-        > div:first-child {
-        padding: 0 !important;
-      }
-      /*
-       * Upstream renders the drag/resize "active" outline as a ::before pseudo
-       * on .container-override.active (content only set on the active variant,
-       * so the pseudo is invisible at rest). Two corrections:
-       *  1. radius — upstream hardcodes 16px; align with BAICard token.borderRadius.
-       *  2. stacking — the pseudo has implicit z-index 0, so the sticky
-       *     BAIBoardItemTitle (z-index 50) paints over the outline near the top.
-       *     Lift it above the title and keep it click-through.
-       */
-      .bai_board_container-override::before {
-        border-radius: ${token.borderRadius}px !important;
-        z-index: 60;
-        pointer-events: none;
-      }
-    `,
-    disableResize: css`
-      .bai_board_resizer {
-        display: none !important;
-      }
-    `,
-    disableMove: css`
-      .bai_board_handle {
-        display: none !important;
-      }
-      .bai_board_header {
-        display: none !important;
-      }
-    `,
-    boardItems: css`
-      & > div:first-child {
-        border-radius: ${token.borderRadius}px !important;
-        background-color: ${token.colorBgContainer} !important;
-        border: 1px solid ${token.colorBorderSecondary} !important;
-      }
-
-      &:has([data-bai-board-item-status='error']) > div:first-child {
-        border-color: ${token.colorError} !important;
-      }
-
-      &:has([data-bai-board-item-status='warning']) > div:first-child {
-        border-color: ${token.colorWarning} !important;
-      }
-
-      & > div:first-child > div:first-child > div:first-child {
-        margin-bottom: ${token.margin}px;
-        background-color: ${token.colorBgContainer} !important;
-        position: absolute;
-        z-index: 1;
-      }
-    `,
-    disableBorder: css`
-      & > div:first-child {
-        border: none !important;
-      }
-    `,
-  };
-});
 
 export interface BAIBoardDataType {
   content?: React.ReactNode;
@@ -117,21 +27,20 @@ const BAIBoard = <T extends BAIBoardDataType>({
   bordered = false,
   ...BoardProps
 }: BAIBoardProps<T>) => {
-  const { styles } = useStyles();
   return (
     <Board<T>
       className={classNames(
-        styles.board,
-        !movable && styles.disableMove,
-        !resizable && styles.disableResize,
+        'bai-board',
+        !movable && 'bai-board-disable-move',
+        !resizable && 'bai-board-disable-resize',
       )}
       empty
       renderItem={(item: BoardProps.Item<T>) => {
         return (
           <BoardItem
             className={classNames(
-              styles.boardItems,
-              !bordered && styles.disableBorder,
+              'bai-board-item',
+              !bordered && 'bai-board-item-disable-border',
             )}
             key={item.id}
             i18nStrings={{

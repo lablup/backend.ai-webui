@@ -698,15 +698,10 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Switch to "Collapse all" via the header kebab (⋮) menu first. The
-      // default "expand errors only" mode filters SUCCESS sub-steps out of the
-      // nested table, so expanding the all-SUCCESS schedule-sessions row would
-      // show an empty sub-step table. "Collapse all" disables that filter while
-      // leaving every row collapsed, so the row can still be manually expanded.
-      await modal.locator('thead button').first().click();
-      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
-
-      // 3. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
+      // 2. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
+      // The expand mode only decides which rows start open — every row with
+      // sub-steps stays expandable in all three modes, and expanding one always
+      // shows its full sub-step list (FR-3425). No mode switch needed here.
       // NOTE: antd renders a "spaced" (invisible) expand button on ALL rows, even non-expandable
       // ones. Playwright's accessible-name computation for <tr> uses text content only (not
       // nested button aria-labels), so the pattern /Expand row schedule-sessions/ does not match
@@ -717,7 +712,7 @@ test.describe(
         .filter({ hasText: 'schedule-sessions' });
       await expect(expandableRow).toBeVisible();
 
-      // 4. Click the expand icon/arrow on that row
+      // 3. Click the expand icon/arrow on that row
       await expandableRow.getByLabel('Expand row').click();
 
       // 4. Verify the sub-steps table columns are visible
@@ -757,13 +752,7 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Switch to "Collapse all" so the nested sub-step table is not filtered
-      // to errors-only (the default mode hides the SUCCESS sub-step asserted
-      // below). Rows start collapsed, so the row can still be manually expanded.
-      await modal.locator('thead button').first().click();
-      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
-
-      // 3. Expand the schedule-sessions row.
+      // 2. Expand the schedule-sessions row.
       // Use filter by text content — see test #8 comment for why the name pattern
       // /Expand row schedule-sessions/ does not work with Playwright's row accname.
       // Narrow to the first match to avoid strict-mode violations if multiple
@@ -906,13 +895,7 @@ test.describe(
         .filter({ hasText: 'schedule-sessions' });
       await expect(scheduleRow).toBeVisible();
 
-      // 5. Switch to "Collapse all" so the nested sub-step table is not filtered
-      // to errors-only (the default mode hides the SUCCESS sub-step asserted in
-      // step 7). Rows stay collapsed, so the row is still manually expandable.
-      await modal.locator('thead button').first().click();
-      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
-
-      // 6. Expand the schedule-sessions row to view sub-step details
+      // 5. Expand the schedule-sessions row to view sub-step details
       await scheduleRow.getByLabel('Expand row').click();
 
       // 6. Verify the sub-steps table appears with correct column headers

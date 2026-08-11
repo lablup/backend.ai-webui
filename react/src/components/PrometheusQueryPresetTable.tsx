@@ -1,0 +1,309 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import {
+  PrometheusQueryPresetTableFragment$data,
+  PrometheusQueryPresetTableFragment$key,
+} from '../__generated__/PrometheusQueryPresetTableFragment.graphql';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  BAIColumnsType,
+  BAIFlex,
+  BAINameActionCell,
+  BAITableAstryx,
+  BAITableProps,
+  BAIText,
+  badgeVariantForTagColor,
+  filterOutNullAndUndefined,
+  toLocalId,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import { Trash2, SquarePenIcon } from 'lucide-react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
+
+export type PrometheusQueryPresetNodeInList = NonNullable<
+  PrometheusQueryPresetTableFragment$data[number]
+>;
+
+const availablePrometheusQueryPresetSorterKeys = [
+  'name',
+  'createdAt',
+  'updatedAt',
+] as const;
+
+export const availablePrometheusQueryPresetSorterValues = [
+  ...availablePrometheusQueryPresetSorterKeys,
+  ...availablePrometheusQueryPresetSorterKeys.map((key) => `-${key}` as const),
+] as const;
+
+const isEnableSorter = (key: string) => {
+  return _.includes(availablePrometheusQueryPresetSorterKeys, key);
+};
+
+interface PrometheusQueryPresetTableProps extends Omit<
+  BAITableProps<PrometheusQueryPresetNodeInList>,
+  'dataSource' | 'columns' | 'onChangeOrder'
+> {
+  presetsFrgmt: PrometheusQueryPresetTableFragment$key;
+  onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
+  onEditPreset?: (preset: PrometheusQueryPresetNodeInList) => void;
+  customizeColumns?: (
+    baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList>,
+  ) => BAIColumnsType<PrometheusQueryPresetNodeInList>;
+  onChangeOrder?: (
+    order: (typeof availablePrometheusQueryPresetSorterValues)[number] | null,
+  ) => void;
+}
+
+const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
+  presetsFrgmt,
+  onDeletePreset,
+  onEditPreset,
+  customizeColumns,
+  onChangeOrder,
+  ...tableProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  const presets = useFragment(
+    graphql`
+      fragment PrometheusQueryPresetTableFragment on QueryDefinition
+      @relay(plural: true) {
+        id
+        name
+        description
+        rank
+        categoryId
+        metricName
+        queryTemplate
+        timeWindow
+        options {
+          filterLabels
+          groupLabels
+        }
+        createdAt
+        updatedAt
+        category {
+          id
+          name
+        }
+        ...PrometheusQueryPresetEditorModalFragment
+      }
+    `,
+    presetsFrgmt,
+  );
+
+  const baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList> = [
+    {
+      title: t('prometheusQueryPreset.Name'),
+      dataIndex: 'name',
+      key: 'name',
+      fixed: 'left',
+      required: true,
+      sorter: isEnableSorter('name'),
+      render: (_name: string, row) => (
+        <BAINameActionCell
+          title={row.name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SquarePenIcon />,
+              onClick: () => onEditPreset?.(row),
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <Trash2 size="1em" />,
+              type: 'danger',
+              onClick: () => onDeletePreset?.(row),
+            },
+          ]}
+        />
+      ),
+    },
+    {
+      title: t('prometheusQueryPreset.Id'),
+      dataIndex: 'id',
+      key: 'id',
+      defaultHidden: true,
+      sorter: isEnableSorter('id'),
+      onCell: () => ({ style: { maxWidth: 120 } }),
+      render: (id: string) => (
+        <BAIText copyable ellipsis monospace title={toLocalId(id)}>
+          {toLocalId(id)}
+        </BAIText>
+      ),
+    },
+    {
+      title: t('prometheusQueryPreset.MetricName'),
+      dataIndex: 'metricName',
+      key: 'metricName',
+      sorter: isEnableSorter('metricName'),
+      render: (metricName: string) => metricName ?? '-',
+    },
+    {
+      title: t('prometheusQueryPreset.QueryTemplate'),
+      dataIndex: 'queryTemplate',
+      key: 'queryTemplate',
+      sorter: isEnableSorter('queryTemplate'),
+      onCell: () => ({ style: { maxWidth: 320 } }),
+      render: (queryTemplate: string) =>
+        queryTemplate ? (
+          <BAIText
+            code
+            ellipsis={{ tooltip: true }}
+            copyable={{ text: queryTemplate }}
+          >
+            {queryTemplate}
+          </BAIText>
+        ) : (
+          '-'
+        ),
+    },
+    {
+      title: t('prometheusQueryPreset.TimeWindow'),
+      dataIndex: 'timeWindow',
+      key: 'timeWindow',
+      sorter: isEnableSorter('timeWindow'),
+      render: (timeWindow: string | null | undefined) => timeWindow ?? '-',
+    },
+    {
+      title: t('prometheusQueryPreset.CategoryId'),
+      dataIndex: ['category', 'id'],
+      key: 'categoryId',
+      defaultHidden: true,
+      sorter: isEnableSorter('categoryId'),
+      onCell: () => ({ style: { maxWidth: 120 } }),
+      render: (_value: unknown, row) => (
+        <BAIText ellipsis copyable monospace title={row.category?.id ?? '-'}>
+          {row.category?.id ?? '-'}
+        </BAIText>
+      ),
+    },
+    {
+      title: t('prometheusQueryPreset.CategoryName'),
+      dataIndex: ['category', 'name'],
+      key: 'categoryName',
+      sorter: isEnableSorter('categoryName'),
+      render: (_value: unknown, row) => row.category?.name ?? '-',
+    },
+    {
+      title: t('prometheusQueryPreset.FilterLabels'),
+      dataIndex: ['options', 'filterLabels'],
+      key: 'filterLabels',
+      sorter: isEnableSorter('filterLabels'),
+      width: 200,
+      render: (_value: unknown, row) => {
+        const labels = row.options?.filterLabels;
+        if (!labels || labels.length === 0) return '-';
+        return (
+          <BAIFlex wrap="wrap" gap="xxs">
+            {/* antd `Tag` (no colour) → Astryx `Badge` through the
+                repo-global lookup (ticket 13). */}
+            {_.map(labels, (label) => (
+              <Badge
+                key={label}
+                variant={badgeVariantForTagColor(undefined)}
+                label={label}
+              />
+            ))}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      title: t('prometheusQueryPreset.GroupLabels'),
+      dataIndex: ['options', 'groupLabels'],
+      key: 'groupLabels',
+      sorter: isEnableSorter('groupLabels'),
+      width: 200,
+      render: (_value: unknown, row) => {
+        const labels = row.options?.groupLabels;
+        if (!labels || labels.length === 0) return '-';
+        return (
+          <BAIFlex wrap="wrap" gap="xxs">
+            {/* antd `Tag` (no colour) → Astryx `Badge` through the
+                repo-global lookup (ticket 13). */}
+            {_.map(labels, (label) => (
+              <Badge
+                key={label}
+                variant={badgeVariantForTagColor(undefined)}
+                label={label}
+              />
+            ))}
+          </BAIFlex>
+        );
+      },
+    },
+    {
+      title: t('prometheusQueryPreset.Rank'),
+      dataIndex: 'rank',
+      defaultHidden: true,
+      key: 'rank',
+      sorter: isEnableSorter('rank'),
+      render: (rank: number | null | undefined) =>
+        _.isNumber(rank) ? rank : '-',
+    },
+    {
+      title: t('prometheusQueryPreset.Description'),
+      dataIndex: 'description',
+      key: 'description',
+      defaultHidden: true,
+      sorter: isEnableSorter('description'),
+      onCell: () => ({ style: { maxWidth: 320 } }),
+      render: (description: string | null | undefined) =>
+        description ? (
+          <BAIText ellipsis={{ tooltip: true }}>{description}</BAIText>
+        ) : (
+          '-'
+        ),
+    },
+    {
+      title: t('prometheusQueryPreset.CreatedAt'),
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      defaultHidden: true,
+      sorter: isEnableSorter('createdAt'),
+      render: (createdAt: string | null | undefined) =>
+        createdAt ? dayjs(createdAt).format('lll') : '-',
+    },
+    {
+      title: t('prometheusQueryPreset.UpdatedAt'),
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      defaultHidden: true,
+      sorter: isEnableSorter('updatedAt'),
+      render: (updatedAt: string | null | undefined) =>
+        updatedAt ? dayjs(updatedAt).format('lll') : '-',
+    },
+  ];
+
+  const allColumns = customizeColumns
+    ? customizeColumns(baseColumns)
+    : baseColumns;
+
+  return (
+    <BAITableAstryx
+      size="small"
+      rowKey="id"
+      dataSource={filterOutNullAndUndefined(presets)}
+      columns={allColumns}
+      onChangeOrder={(order) => {
+        onChangeOrder?.(
+          (order as (typeof availablePrometheusQueryPresetSorterValues)[number]) ||
+            null,
+        );
+      }}
+      {...tableProps}
+    />
+  );
+};
+
+export default PrometheusQueryPresetTable;

@@ -1,9 +1,10 @@
 import { default as logo } from './Restore.svg?react';
-import Icon from '@ant-design/icons';
-import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import Icon, { CustomIconComponentProps } from './iconShim';
 
-interface BAIRestoreIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+interface BAIRestoreIconProps extends Omit<
+  CustomIconComponentProps,
+  'width' | 'height' | 'fill'
+> {
   'aria-label'?: string;
 }
 

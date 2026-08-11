@@ -8,26 +8,27 @@ import {
   ModelRevisionOrderBy,
 } from '../__generated__/DeploymentRevisionHistoryTabListQuery.graphql';
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import {
-  LoadingOutlined,
-  MoreOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
-import { App, Dropdown, Popconfirm, Space, theme, Typography } from 'antd';
+import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import {
   type BAIColumnType,
-  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
-  BAITable,
+  BAITableAstryx,
   BAITag,
   BAIUnmountAfterClose,
   BAIId,
@@ -43,7 +44,12 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CopyPlusIcon } from 'lucide-react';
+import {
+  LoaderCircle,
+  EllipsisVertical,
+  CirclePlay,
+  CopyPlusIcon,
+} from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
@@ -394,7 +400,7 @@ const DeploymentRevisionHistoryTab: React.FC<
           <BAINameActionCell
             title={
               <BAIFlex gap="xs" align="center" wrap="nowrap">
-                <Typography.Link
+                <Link
                   onClick={() =>
                     setDrawerRevision({
                       frgmt: record,
@@ -409,7 +415,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   {record.revisionNumber != null
                     ? `#${record.revisionNumber}`
                     : '-'}
-                </Typography.Link>
+                </Link>
                 <BAIFlex gap={0} align="center">
                   {'('}
                   <BAIId globalId={record.id} />
@@ -424,7 +430,10 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // `deployingRevisionId` set after promotion until the
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
-                  <BAITag color="warning" icon={<LoadingOutlined spin />}>
+                  <BAITag
+                    color="warning"
+                    icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
+                  >
                     {t('deployment.Applying')}
                   </BAITag>
                 ) : null}
@@ -440,7 +449,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               {
                 key: 'deploy',
                 title: t('deployment.Apply'),
-                icon: <PlayCircleOutlined />,
+                icon: <CirclePlay size="1em" />,
                 disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
                 popConfirm: {
@@ -543,7 +552,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         if (vfolder) {
           return <FolderLink vfolderNodeFragment={vfolder} />;
         }
-        return <Typography.Text type="secondary">{vfolderId}</Typography.Text>;
+        return <Text color="secondary">{vfolderId}</Text>;
       },
     },
     {
@@ -622,65 +631,73 @@ const DeploymentRevisionHistoryTab: React.FC<
           onClose={() => setDrawerRevision(null)}
           extra={
             drawerRevision ? (
-              <Space.Compact>
-                <Popconfirm
+              <ButtonGroup label={t('general.Control')}>
+                {/* QA2-B-2: the RENDER-PROP form of the popconfirm, not the
+                    element form. Astryx welds a ButtonGroup's members with
+                    `:first-child` / `IS_LAST_ITEM` CSS on the button element,
+                    so a member must be a DIRECT child of the group — and
+                    `Popover`'s element form wraps its trigger in an
+                    `inline-flex` anchor div, which made Apply `:first-child`
+                    of the WRAPPER and left it with a full pill next to the
+                    menu's `0 8px 8px 0`. The render prop hands the trigger
+                    wiring to the button itself and emits no wrapper. */}
+                <BAIPopconfirmAstryx
                   title={t('deployment.ApplyRevision')}
                   description={t('deployment.ApplyConfirm', {
                     revisionNumber: drawerRevision.frgmt.revisionNumber,
                   })}
                   okText={t('deployment.Apply')}
                   cancelText={t('button.Cancel')}
-                  okButtonProps={{ danger: true }}
+                  isDanger
                   onConfirm={async () => {
                     const success = await handleRollback(drawerRevision.frgmt);
                     if (success) setDrawerRevision(null);
                   }}
                 >
-                  <BAIButton
-                    type="primary"
-                    icon={<PlayCircleOutlined />}
-                    disabled={
-                      drawerRevision.status === 'current' ||
-                      drawerRevision.status === 'deploying' ||
-                      isDeploymentInStoppedCategory(deploymentStatus) ||
-                      !!rollingBackRevisionId
-                    }
-                  >
-                    {t('deployment.Apply')}
-                  </BAIButton>
-                </Popconfirm>
-                <Dropdown
-                  trigger={['click']}
-                  menu={{
-                    items: [
-                      {
-                        key: 'duplicate',
-                        label: t('deployment.AddNewRevisionFromThis'),
-                        icon: <CopyPlusIcon size={token.fontSize} />,
-                        disabled:
-                          isDeploymentInStoppedCategory(deploymentStatus),
-                        onClick: () => {
-                          // Capture the fragment ref before closing the
-                          // drawer so the source survives the drawer unmount.
-                          const source = drawerRevision.frgmt;
-                          setDrawerRevision(null);
-                          setSourceRevisionFrgmt(source);
-                        },
-                      },
-                    ],
+                  {(triggerProps) => (
+                    <Button
+                      {...triggerProps}
+                      variant="primary"
+                      icon={<CirclePlay size="1em" />}
+                      label={t('deployment.Apply')}
+                      isDisabled={
+                        drawerRevision.status === 'current' ||
+                        drawerRevision.status === 'deploying' ||
+                        isDeploymentInStoppedCategory(deploymentStatus) ||
+                        !!rollingBackRevisionId
+                      }
+                    />
+                  )}
+                </BAIPopconfirmAstryx>
+                {/* TODO: "AddNewRevisionFromThis" is the only menu item.
+                    Disable the entire button when stopped. When more items
+                    are added, disable per-item instead. */}
+                <DropdownMenu
+                  button={{
+                    label: t('button.More'),
+                    icon: <EllipsisVertical size="1em" />,
+                    isIconOnly: true,
+                    variant: 'primary',
+                    isDisabled: isDeploymentInStoppedCategory(deploymentStatus),
                   }}
-                >
-                  {/* TODO: "AddNewRevisionFromThis" is the only menu item.
-                      Disable the entire button when stopped. When more items
-                      are added, disable per-item instead. */}
-                  <BAIButton
-                    type="primary"
-                    icon={<MoreOutlined />}
-                    aria-label={t('button.More')}
-                    disabled={isDeploymentInStoppedCategory(deploymentStatus)}
-                  />
-                </Dropdown>
-              </Space.Compact>
+                  hasChevron={false}
+                  items={[
+                    {
+                      label: t('deployment.AddNewRevisionFromThis'),
+                      icon: <CopyPlusIcon size={token.fontSize} />,
+                      isDisabled:
+                        isDeploymentInStoppedCategory(deploymentStatus),
+                      onClick: () => {
+                        // Capture the fragment ref before closing the
+                        // drawer so the source survives the drawer unmount.
+                        const source = drawerRevision.frgmt;
+                        setDrawerRevision(null);
+                        setSourceRevisionFrgmt(source);
+                      },
+                    },
+                  ]}
+                />
+              </ButtonGroup>
             ) : undefined
           }
         />
@@ -708,13 +725,12 @@ const DeploymentRevisionHistoryTab: React.FC<
           onChange={() => handleRefresh()}
         />
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
         dataSource={revisions}
         columns={columns}
         loading={isPending}
         size="small"
-        scroll={{ x: 'max-content' }}
         tableSettings={{
           columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

@@ -7,15 +7,18 @@ import type { AdminDeploymentPresetSettingPagePresetQuery } from '../__generated
 import type { AdminDeploymentPresetSettingPageResourceSlotTypesQuery } from '../__generated__/AdminDeploymentPresetSettingPageResourceSlotTypesQuery.graphql';
 import type { AdminDeploymentPresetSettingPageRuntimeVariantsQuery } from '../__generated__/AdminDeploymentPresetSettingPageRuntimeVariantsQuery.graphql';
 import type { AdminDeploymentPresetSettingPageUpdateMutation } from '../__generated__/AdminDeploymentPresetSettingPageUpdateMutation.graphql';
+import { App } from '../app-shim';
 import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
+import { Form } from '../form-engine';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
-import { App, Form, Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Heading } from '@astryxdesign/core/Heading';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -397,11 +400,14 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       style={{ paddingBottom: token.paddingContentVerticalLG }}
     >
       <BAIFlex direction="row" justify="between" align="center">
-        <Typography.Title level={3} style={{ margin: 0 }}>
+        {/* PILOT-DECISION: antd `style={{margin: 0}}` dropped — Astryx Heading
+            has no default outer margin, so the reset is redundant. Semantic
+            level kept; the Astryx type ramp size applies (defaults-first). */}
+        <Heading level={3}>
           {mode === 'edit'
             ? t('adminDeploymentPreset.EditPreset')
             : t('adminDeploymentPreset.CreatePreset')}
-        </Typography.Title>
+        </Heading>
       </BAIFlex>
 
       <AdminDeploymentPresetSettingPageContent

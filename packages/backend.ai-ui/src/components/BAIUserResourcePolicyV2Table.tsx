@@ -1,7 +1,7 @@
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   convertToDecimalUnit,
   filterOutEmpty,
@@ -149,13 +149,11 @@ const BAIUserResourcePolicyV2Table = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       resizable
       rowKey="id"
-      showSorterTooltip={false}
       dataSource={filterOutNullAndUndefined(userResourcePolicies)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableUserResourcePolicySorterValues)[number]) ||

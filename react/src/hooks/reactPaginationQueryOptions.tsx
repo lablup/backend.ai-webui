@@ -4,7 +4,6 @@
  */
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
-import type { SorterResult } from 'antd/lib/table/interface';
 import * as _ from 'lodash-es';
 import {
   parseAsArrayOf,
@@ -13,6 +12,7 @@ import {
   parseAsString,
   useQueryStates,
 } from 'nuqs';
+import type React from 'react';
 import { useMemo, useState } from 'react';
 import {
   fetchQuery,
@@ -20,7 +20,19 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
-export type SorterInterface = Pick<SorterResult<any>, 'field' | 'order'>;
+/**
+ * A table sort descriptor: which column, which direction.
+ *
+ * Was `Pick<SorterResult<any>, 'field' | 'order'>` from
+ * `antd/lib/table/interface` — a type-only import, so it shipped nothing, but
+ * it kept this module (a 388-file taint hub) inside the import-graph gate's
+ * antd-reachable set and kept antd required for `tsc`. The two picked members
+ * are restated here verbatim; `BAITable` is the only producer and consumer.
+ */
+export interface SorterInterface {
+  field?: React.Key | readonly React.Key[];
+  order?: 'ascend' | 'descend' | null;
+}
 
 export const antdSorterResultToOrder = (
   sorter: SorterInterface | SorterInterface[],

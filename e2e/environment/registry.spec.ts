@@ -12,34 +12,54 @@ import { Page, expect, test } from '@playwright/test';
 // ---------------------------------------------------------------------------
 
 async function navigateToRegistriesTab(page: Page) {
-  await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
-  await page.getByRole('menuitem', { name: 'file-done Environments' }).click();
+  await page.getByRole('link', { name: 'Admin Settings' }).click();
+  await page.getByRole('link', { name: 'file-done Environments' }).click();
   await page.getByRole('tab', { name: /Registries/i }).click();
   await expect(page.getByRole('table')).toBeVisible();
 }
 
 // ---------------------------------------------------------------------------
 // Shared filter helpers
+//
+// to-astryx ticket 28 rebuilt BAIPropertyFilter on Astryx `PowerSearch`
+// (packages/backend.ai-ui/src/components/BAIPropertyFilter.tsx). Registry
+// Name is the *only* filter property here
+// (`react/src/components/ContainerRegistryList.tsx` `filterProperties`, no
+// `defaultOperator` override -> BUI default `ilike` = "contains") and no
+// explicit `contentSearchFieldKey`, so it becomes PowerSearch's own default
+// content-search field (`defaultContentSearchFieldKey`,
+// `BAIPropertyFilter.tsx`): typed text matches a `"<query>"` content-search
+// suggestion whose `filterValue` is already filled in, which commits
+// IMMEDIATELY on click — no separate field pick + edit-popover + Apply step
+// (`usePowerSearchSource.ts`'s content-search branch; contrast with
+// `environment.spec.ts`, which has several fields and goes through the
+// popover).
 // ---------------------------------------------------------------------------
 
 async function applyRegistryFilter(page: Page, value: string) {
-  // Registry Name is the only filter property and is auto-selected,
-  // so we only need to fill the value and search.
-  const valueInput = page.locator('[aria-label="Filter value search"]');
-  await valueInput.fill(value);
-  await page.getByRole('button', { name: 'search' }).click();
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.click();
+  await searchBar.fill(value);
+  // The content-search suggestion's label is the typed query, double-quoted
+  // (`usePowerSearchSource.ts`: `label: \`"${query}"\``).
+  await page.getByRole('option', { name: `"${value}"`, exact: true }).click();
   await page
     .locator('.ant-spin-spinning')
     .waitFor({ state: 'detached', timeout: 10000 })
     .catch(() => {});
 }
 
-async function removeRegistryFilterTag(page: Page, tagText: string) {
-  const tag = page
-    .locator('.ant-tag')
-    .filter({ has: page.locator('[aria-label="Close"]') })
-    .filter({ hasText: tagText });
-  await tag.locator('[aria-label="Close"]').click();
+/**
+ * @param tokenLabel Full committed-token label, e.g.
+ *   `"Registry Name: contains cr"` (`"<Field>: <operator> <value>"`,
+ *   `PowerSearch.tsx` `tokenizerValue` -> `displayLabel`).
+ */
+async function removeRegistryFilterTag(page: Page, tokenLabel: string) {
+  // The token's remove control carries `aria-label="Remove {label}"`
+  // (`t('@astryx.token.remove', {label})`, `Token.tsx` / locales/en.json).
+  await page
+    .getByRole('button', { name: `Remove ${tokenLabel}`, exact: true })
+    .click();
   await page
     .locator('.ant-spin-spinning')
     .waitFor({ state: 'detached', timeout: 10000 })
@@ -99,9 +119,13 @@ test.describe(
         page.getByRole('button', { name: /Add Registry/i }),
       ).toBeVisible();
       await expect(
-        page.getByRole('combobox', { name: 'Filter property selector' }),
+        page.getByRole('combobox', { name: 'Search filters' }),
       ).toBeVisible();
-      await expect(page.getByRole('button', { name: 'reload' })).toBeVisible();
+      // The refresh control is a plain `IconButton` (`ContainerRegistryList.tsx`),
+      // not `BAIFetchKeyButton` — `label={t('button.Refresh')}` = "Refresh"
+      // (resources/i18n/en.json), not antd's auto icon-name aria-label
+      // ("reload") this assertion targeted before the icon migration.
+      await expect(page.getByRole('button', { name: 'Refresh' })).toBeVisible();
     });
 
     // 1.3
@@ -241,10 +265,9 @@ test.describe(
       // Apply filter to find the created registry
       await applyRegistryFilter(page, REGISTRY_NAME);
 
-      const filterTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: `Registry Name: ${REGISTRY_NAME}` });
+      const filterTag = page.getByRole('button', {
+        name: `Remove Registry Name: contains ${REGISTRY_NAME}`,
+      });
       await expect(filterTag).toBeVisible();
 
       // Verify registry row is visible with correct values
@@ -266,7 +289,10 @@ test.describe(
       ).toBeVisible();
 
       // Cleanup filter
-      await removeRegistryFilterTag(page, `Registry Name: ${REGISTRY_NAME}`);
+      await removeRegistryFilterTag(
+        page,
+        `Registry Name: contains ${REGISTRY_NAME}`,
+      );
     });
 
     // 2.3
@@ -321,7 +347,10 @@ test.describe(
       await expect(dialog).toBeHidden({ timeout: 10000 });
 
       // Cleanup filter
-      await removeRegistryFilterTag(page, `Registry Name: ${REGISTRY_NAME}`);
+      await removeRegistryFilterTag(
+        page,
+        `Registry Name: contains ${REGISTRY_NAME}`,
+      );
     });
 
     // 2.4
@@ -343,7 +372,10 @@ test.describe(
         registryRow.locator('.ant-tag', { hasText: PROJECT_NAME_MODIFIED }),
       ).toBeVisible();
 
-      await removeRegistryFilterTag(page, `Registry Name: ${REGISTRY_NAME}`);
+      await removeRegistryFilterTag(
+        page,
+        `Registry Name: contains ${REGISTRY_NAME}`,
+      );
     });
 
     // 2.5
@@ -435,7 +467,10 @@ test.describe(
       ).toBeVisible({ timeout: 10000 });
 
       // Verify removed from filter results
-      await removeRegistryFilterTag(page, `Registry Name: ${REGISTRY_NAME}`);
+      await removeRegistryFilterTag(
+        page,
+        `Registry Name: contains ${REGISTRY_NAME}`,
+      );
       await applyRegistryFilter(page, REGISTRY_NAME);
 
       // Table should show empty state (no matching rows)
@@ -443,7 +478,10 @@ test.describe(
         timeout: 10000,
       });
 
-      await removeRegistryFilterTag(page, `Registry Name: ${REGISTRY_NAME}`);
+      await removeRegistryFilterTag(
+        page,
+        `Registry Name: contains ${REGISTRY_NAME}`,
+      );
     });
   },
 );
@@ -645,7 +683,7 @@ test.describe(
       await loginAsAdmin(page, request);
       await navigateToRegistriesTab(page);
       await expect(
-        page.getByRole('combobox', { name: 'Filter property selector' }),
+        page.getByRole('combobox', { name: 'Search filters' }),
       ).toBeVisible();
     });
 
@@ -656,18 +694,17 @@ test.describe(
       // Apply filter with partial name "cr" (matches cr.backend.ai)
       await applyRegistryFilter(page, 'cr');
 
-      // Filter tag appears
-      const filterTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Registry Name: cr' });
+      // Filter token appears
+      const filterTag = page.getByRole('button', {
+        name: 'Remove Registry Name: contains cr',
+      });
       await expect(filterTag).toBeVisible();
 
       // Table is still visible with filtered results
       await expect(page.getByRole('table')).toBeVisible();
 
       // Cleanup
-      await removeRegistryFilterTag(page, 'Registry Name: cr');
+      await removeRegistryFilterTag(page, 'Registry Name: contains cr');
       await expect(filterTag).toBeHidden();
     });
 
@@ -678,18 +715,20 @@ test.describe(
       const nonExistentName = 'zzz-nonexistent-registry-999';
       await applyRegistryFilter(page, nonExistentName);
 
-      // Filter tag appears
-      const filterTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: `Registry Name: ${nonExistentName}` });
+      // Filter token appears
+      const filterTag = page.getByRole('button', {
+        name: `Remove Registry Name: contains ${nonExistentName}`,
+      });
       await expect(filterTag).toBeVisible();
 
       // Table shows empty state
       await expect(page.locator('.ant-table-placeholder')).toBeVisible();
 
       // Cleanup
-      await removeRegistryFilterTag(page, `Registry Name: ${nonExistentName}`);
+      await removeRegistryFilterTag(
+        page,
+        `Registry Name: contains ${nonExistentName}`,
+      );
       await expect(filterTag).toBeHidden();
 
       // Registry rows reappear
@@ -719,30 +758,33 @@ test.describe(
 
       // Apply filter — the anchor row must be filtered out
       await applyRegistryFilter(page, 'cr');
-      const filterTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Registry Name: cr' });
+      const filterTag = page.getByRole('button', {
+        name: 'Remove Registry Name: contains cr',
+      });
       await expect(filterTag).toBeVisible();
       await expect(anchorRow).toBeHidden();
 
       // Remove the filter tag
-      await removeRegistryFilterTag(page, 'Registry Name: cr');
+      await removeRegistryFilterTag(page, 'Registry Name: contains cr');
       await expect(filterTag).toBeHidden();
 
       await expect(anchorRow.first()).toBeVisible({ timeout: 10000 });
     });
 
     // 4.4
-    test('Admin can see the filter property selector shows Registry Name', async ({
+    test('Admin can see Registry Name offered as a filter field', async ({
       page,
     }) => {
-      // When there is only one filter property, it is auto-selected and displayed
-      // as the current value in the property selector
+      // PowerSearch has no persistent "current property" selector the way
+      // antd's auto-selected single-option Select did (the search bar is a
+      // stateless typeahead, `Tokenizer.tsx`); the equivalent invariant is
+      // that "Registry Name" is the (only) field PowerSearch offers when the
+      // typeahead opens (`config.fields`, built from
+      // `ContainerRegistryList.tsx`'s single-entry `filterProperties`).
+      const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+      await searchBar.click();
       await expect(
-        page
-          .locator('.ant-select-content')
-          .filter({ hasText: 'Registry Name' }),
+        page.getByRole('option', { name: 'Registry Name', exact: true }),
       ).toBeVisible();
     });
   },

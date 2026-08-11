@@ -15,15 +15,17 @@ import {
   BAIColumnType,
   BAIColumnsType,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagChips from './BAIDeploymentTagChips';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { theme, Tooltip, Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -32,19 +34,20 @@ export type ModelDeploymentNodeInList = NonNullable<
 >;
 
 /**
- * Sortable `DeploymentOrderField` enum values. BAITable column `dataIndex`
- * for sortable columns matches an entry here so antd emits `sorter.field`
- * directly in the server enum's shape — no separate camelCase ↔ enum
- * mapping is needed. `UPDATED_AT` is intentionally omitted because the
- * server enum does not include it.
+ * Sortable column keys, in the same camelCase form every other table uses
+ * (see `AdminDeploymentPresetTable`). A sortable column's `dataIndex` matches
+ * an entry here, and callers bridge these strings to the server
+ * `DeploymentOrderField` enum with the shared `convertToOrderBy` helper
+ * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
+ * intentionally omitted because the server enum does not include it.
  */
 const availableDeploymentSorterKeys = [
-  'NAME',
-  'CREATED_AT',
-  'DOMAIN',
-  'PROJECT',
-  'RESOURCE_GROUP',
-  'TAG',
+  'name',
+  'createdAt',
+  'domain',
+  'project',
+  'resourceGroup',
+  'tag',
 ] as const;
 
 export const availableDeploymentSorterValues = [
@@ -57,20 +60,6 @@ export type DeploymentOrderValue =
 
 const isEnableSorter = (key: string) => {
   return _.includes(availableDeploymentSorterKeys, key);
-};
-
-/**
- * Parse a BAITable order string (e.g. `'-CREATED_AT'`) into a single
- * `DeploymentOrderBy` entry the server accepts. Returns `undefined` when
- * `order` is empty so callers can simply skip the `orderBy` variable.
- */
-export const parseDeploymentOrder = (
-  order: string | null | undefined,
-): { field: string; direction: 'ASC' | 'DESC' } | undefined => {
-  if (!order) return undefined;
-  const descending = order.startsWith('-');
-  const field = descending ? order.slice(1) : order;
-  return { field, direction: descending ? 'DESC' : 'ASC' };
 };
 
 export interface BAIModelDeploymentNodesProps extends Omit<
@@ -96,7 +85,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
@@ -158,8 +146,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         title: t('comp:BAIModelDeploymentNodes.Name'),
         fixed: 'left',
         required: true,
-        dataIndex: 'NAME',
-        sorter: isEnableSorter('NAME'),
+        dataIndex: 'name',
+        sorter: isEnableSorter('name'),
         render: (_value, record) => (
           <BAINameActionCell
             title={record.metadata?.name ?? '-'}
@@ -173,25 +161,20 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.RevisionNumber')}
             <Tooltip
-              title={t('comp:BAIModelDeploymentNodes.RevisionNumberTooltip')}
+              content={t('comp:BAIModelDeploymentNodes.RevisionNumberTooltip')}
             >
-              <QuestionCircleOutlined
-                style={{
-                  color: token.colorTextTertiary,
-                  cursor: 'help',
-                }}
-              />
+              <Text color="placeholder" style={{ cursor: 'help' }}>
+                <CircleHelp size="1em" />
+              </Text>
             </Tooltip>
           </BAIFlex>
         ),
         render: (__, record) => {
           const revision = record.currentRevision;
           if (revision?.revisionNumber == null) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
-          return (
-            <Typography.Text>{`#${revision.revisionNumber}`}</Typography.Text>
-          );
+          return <Text>{`#${revision.revisionNumber}`}</Text>;
         },
       },
       {
@@ -214,14 +197,11 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.ReplicaSummary')}
             <Tooltip
-              title={t('comp:BAIModelDeploymentNodes.ReplicaSummaryTooltip')}
+              content={t('comp:BAIModelDeploymentNodes.ReplicaSummaryTooltip')}
             >
-              <QuestionCircleOutlined
-                style={{
-                  color: token.colorTextTertiary,
-                  cursor: 'help',
-                }}
-              />
+              <Text color="placeholder" style={{ cursor: 'help' }}>
+                <CircleHelp size="1em" />
+              </Text>
             </Tooltip>
           </BAIFlex>
         ),
@@ -229,12 +209,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           const running = record.runningReplicas?.count ?? 0;
           const desired = record.replicaState?.desiredReplicaCount ?? 0;
           return (
-            <Typography.Text>
+            <Text>
               {t('comp:BAIModelDeploymentNodes.HealthySummary', {
                 healthy: running,
                 total: desired,
               })}
-            </Typography.Text>
+            </Text>
           );
         },
       },
@@ -245,15 +225,15 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           const modelName =
             record.currentRevision?.modelMountConfig?.vfolder?.name ?? null;
           if (!modelName) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
           return (
-            <Typography.Text
+            <BAIText
               ellipsis={{ tooltip: modelName }}
               style={{ maxWidth: 200 }}
             >
               {modelName}
-            </Typography.Text>
+            </BAIText>
           );
         },
       },
@@ -279,13 +259,13 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'tags',
         title: t('comp:BAIModelDeploymentNodes.Tags'),
         defaultHidden: true,
-        dataIndex: 'TAG',
-        sorter: isEnableSorter('TAG'),
+        dataIndex: 'tag',
+        sorter: isEnableSorter('tag'),
         render: (__, record) => (
           <BAIDeploymentTagChips
             metadataFrgmt={record.metadata}
             stopRowClick
-            fallback={<Typography.Text type="secondary">-</Typography.Text>}
+            fallback={<Text color="secondary">-</Text>}
           />
         ),
       },
@@ -293,12 +273,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'projectId',
         title: t('comp:BAIModelDeploymentNodes.Project'),
         defaultHidden: true,
-        dataIndex: 'PROJECT',
-        sorter: isEnableSorter('PROJECT'),
+        dataIndex: 'project',
+        sorter: isEnableSorter('project'),
         render: (__, record) => {
           const projectId = record.metadata?.projectId;
           if (!projectId) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
           const projectName = record.metadata?.projectV2?.basicInfo?.name;
           if (!projectName) {
@@ -306,16 +286,16 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           }
           return (
             <>
-              <Typography.Text
+              <BAIText
                 ellipsis={{ tooltip: projectName }}
                 style={{ maxWidth: 160 }}
               >
                 {projectName}
-              </Typography.Text>
+              </BAIText>
               &nbsp;
-              <Typography.Text type="secondary">
+              <Text color="secondary">
                 (<BAIId globalId={projectId} copyable type="secondary" />)
-              </Typography.Text>
+              </Text>
             </>
           );
         },
@@ -324,14 +304,14 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'domainName',
         title: t('comp:BAIModelDeploymentNodes.DomainName'),
         defaultHidden: true,
-        dataIndex: 'DOMAIN',
-        sorter: isEnableSorter('DOMAIN'),
+        dataIndex: 'domain',
+        sorter: isEnableSorter('domain'),
         render: (__, record) => {
           const domain = record.metadata?.domainName;
           return domain ? (
-            <Typography.Text>{domain}</Typography.Text>
+            <Text>{domain}</Text>
           ) : (
-            <Typography.Text type="secondary">-</Typography.Text>
+            <Text color="secondary">-</Text>
           );
         },
       },
@@ -339,14 +319,14 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'resourceGroup',
         title: t('comp:BAIModelDeploymentNodes.ResourceGroup'),
         defaultHidden: true,
-        dataIndex: 'RESOURCE_GROUP',
-        sorter: isEnableSorter('RESOURCE_GROUP'),
+        dataIndex: 'resourceGroup',
+        sorter: isEnableSorter('resourceGroup'),
         render: (__, record) => {
           const resourceGroup = record.metadata?.resourceGroupName;
           return resourceGroup ? (
-            <Typography.Text>{resourceGroup}</Typography.Text>
+            <Text>{resourceGroup}</Text>
           ) : (
-            <Typography.Text type="secondary">-</Typography.Text>
+            <Text color="secondary">-</Text>
           );
         },
       },
@@ -378,12 +358,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         render: (__, record) => {
           const url = record.networkAccess?.endpointUrl;
           if (!url) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
           return (
-            <Typography.Link href={url} target="_blank" rel="noreferrer">
+            <Link href={url} target="_blank" rel="noreferrer">
               {url}
-            </Typography.Link>
+            </Link>
           );
         },
       },
@@ -418,8 +398,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'updatedAt',
         title: t('comp:BAIModelDeploymentNodes.UpdatedAt'),
         defaultHidden: true,
-        dataIndex: 'UPDATED_AT',
-        sorter: isEnableSorter('UPDATED_AT'),
+        dataIndex: 'updatedAt',
+        sorter: isEnableSorter('updatedAt'),
         render: (_, record) =>
           record.metadata?.updatedAt
             ? dayjs(record.metadata.updatedAt).format('lll')
@@ -428,8 +408,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       {
         key: 'createdAt',
         title: t('comp:BAIModelDeploymentNodes.CreatedAt'),
-        dataIndex: 'CREATED_AT',
-        sorter: isEnableSorter('CREATED_AT'),
+        dataIndex: 'createdAt',
+        sorter: isEnableSorter('createdAt'),
         defaultSortOrder: 'descend',
         render: (_, record) =>
           record.metadata?.createdAt
@@ -447,13 +427,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
     : baseColumns;
 
   return (
-    <BAITable<ModelDeploymentNodeInList>
+    <BAITableAstryx<ModelDeploymentNodeInList>
       resizable
       rowKey="id"
       size="small"
       dataSource={filterOutNullAndUndefined(deployments)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           order

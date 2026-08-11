@@ -1,10 +1,12 @@
 # FR-3267 — tab-url-state Migration Targets
 
-Audit of every tab UI in `react/src/**` against the policy in
-`.claude/skills/tab-url-state/SKILL.md`. Each work item below is scoped to be
-implemented independently by one subagent. Read the skill first; it defines
-Pattern A (page-like tabs: full URL state + `queryMapRef` save/restore) and
-Pattern B (widget tabs on a detail surface: tab key only, table state local).
+Audit of every tab UI in `react/src/**` against the FR-3267 tab-URL-state
+policy. Each work item below is scoped to be implemented independently by one
+subagent. The policy defines two patterns — Pattern A (page-like tabs: full URL
+state + `queryMapRef` save/restore) and Pattern B (widget tabs on a detail
+surface: tab key only, table state local) — and the reference implementations
+table below is the canonical definition of each: read those files first and
+copy the nearest one.
 
 - Audit date: 2026-07-11 (branch `feat/FR-3267-per-tab-url-state`, base `main` @ 1c5a8e35b)
 - Jira: FR-3267 / GitHub #8173
@@ -33,7 +35,7 @@ migration is out of FR-3267 scope).
 ## Verification required for every item
 
 1. `bash scripts/verify.sh` passes.
-2. Reload test per the skill's checklist: for Pattern A, set filter + page on
+2. Reload test: for Pattern A, set filter + page on
    each tab, switch tabs, reload — the active tab's state must reproduce; for
    Pattern B, only the open tab (where a tab key exists) survives reload.
 3. No two sibling tabs read/write the same URL key via separate declarations.

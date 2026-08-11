@@ -137,18 +137,18 @@ await page.getByRole('button', { name: 'Submit' }).click();
 - Focus on fixing test logic, not renaming tests
 - Refer to `e2e/E2E-TEST-NAMING-GUIDELINES.md` for detailed naming guidelines if creating new tests
 
-**Ant Design 5.6+ Modal Locator Updates:**
-- **IMPORTANT**: With Ant Design 5.6+, modal locators have changed significantly
-- **Old Pattern (Deprecated)**: `.ant-modal-content:has-text("Modal Title")`
-- **New Pattern (Recommended)**: `getByRole('dialog', { name: 'Modal Title' })`
-- When fixing failing tests with modal locators, always migrate from class-based selectors to role-based selectors
+**Modal Locator Best Practices (Role-Based Selectors):**
+- **IMPORTANT**: antd is not a dependency of this project — any locator that still targets `.ant-modal-*` classes is dead code, those classes never render in the current DOM, so the selector will simply never match
+- **Old Pattern (Broken)**: `.ant-modal-content:has-text("Modal Title")`
+- **Current Pattern (Use This)**: `getByRole('dialog', { name: 'Modal Title' })`
+- When fixing failing tests with modal locators, always migrate leftover class-based selectors to role-based selectors
 - Role-based selectors are more semantic, accessible, and resilient to DOM structure changes
-- For modal content access: Use `page.getByRole('dialog').getByRole('heading')` instead of `.ant-modal-content .ant-modal-title`
-- For modal buttons: Use `page.getByRole('dialog').getByRole('button', { name: 'Button Text' })` instead of `.ant-modal-content button`
+- For modal content access: Use `page.getByRole('dialog').getByRole('heading')` instead of a class-based title selector
+- For modal buttons: Use `page.getByRole('dialog').getByRole('button', { name: 'Button Text' })` instead of a class-based button selector
 
 **Examples of Modal Locator Migration:**
 ```typescript
-// ❌ Old: Class-based selector (breaks with Ant Design 5.6+)
+// ❌ Old: Class-based selector (dead code now that antd is removed)
 const modal = page.locator('.ant-modal-content:has-text("Modify Minimum Image Resource Limit")');
 await modal.locator('.ant-modal-body input').fill('value');
 
@@ -165,13 +165,14 @@ const confirmModal = page.getByRole('dialog');
 await confirmModal.getByRole('button', { name: 'OK' }).click();
 ```
 
-**Ant Design Form Item Locator:**
+**Form Item Locator:**
 - When locating form controls by their label, use the utility function from `e2e/utils/test-util-antd.ts`
 - **Pattern**: `getFormItemControlByLabel(page, 'Label Text')`
-- This function handles the Ant Design form structure properly:
-  - Finds `.ant-form-item-row` container
-  - Filters by label text in `.ant-form-item-label label`
-  - Returns the `.ant-form-item-control` element
+- The self-hosted form engine (`Form.Item` / `BAIFormItem`) renders every field with `[data-bai-form-item]`, `[data-bai-form-item-label]`, and `[data-bai-form-item-control-input]` attributes (defined in `packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`). The utility:
+  - Finds the `[data-bai-form-item]` container
+  - Filters it by label text inside `[data-bai-form-item-label]`
+  - Returns the `[data-bai-form-item-control-input]` element
+- There is no antd DOM to fall back on: `Form.Item` **is** `BAIFormItem` now, so this is the only shape the utility ever matches against.
 
 **Examples of Form Item Locator:**
 ```typescript
@@ -179,13 +180,13 @@ import { getFormItemControlByLabel } from '../utils/test-util-antd';
 
 // ✅ Correct: Using utility function
 const locationControl = getFormItemControlByLabel(page, 'Location');
-await locationControl.locator('.ant-select').click();
+await locationControl.getByRole('combobox').click();
 
 const nameControl = getFormItemControlByLabel(page, 'Name');
 await nameControl.getByRole('textbox').fill('My Name');
 
 // ❌ Avoid: Direct CSS selectors that may break with DOM changes
-const control = page.locator('.ant-form-item:has-text("Location") .ant-form-item-control');
+const control = page.locator('[data-bai-form-item]:has-text("Location") [data-bai-form-item-control-input]');
 ```
 
 **Icon Locators with aria-label:**
@@ -220,12 +221,12 @@ await page.locator('svg[data-icon="upload"]').click();
 - System: `'dashboard'`, `'system monitor'`
 
 **Test Utility Functions:**
-- **Ant Design utilities** (`e2e/utils/test-util-antd.ts`):
-  - `getFormItemControlByLabel(page, label)` - Form control locator by label
+- **Legacy component-locator utilities** (`e2e/utils/test-util-antd.ts` — the filename predates the Astryx migration; some of its helpers still target antd-era classes that are now dead code, since antd is not a dependency of this project. Fix these locators forward to role-based/`data-*` selectors as you touch them):
+  - `getFormItemControlByLabel(page, label)` - Form control locator by label (already migrated to `[data-bai-form-item]`, see above)
   - `getMenuItem(page, menuName)` - Menu item locator
-  - `getCardItemByCardTitle(page, title)` - Card locator by title
-  - `checkActiveTab(tabsLocator, expectedTabName)` - Tab verification
-  - Notification utilities for testing alerts
+  - `getCardItemByCardTitle(page, title)` - Card locator by title (still `.ant-card`-based — broken, migrate on sight)
+  - `checkActiveTab(tabsLocator, expectedTabName)` - Tab verification (still `.ant-tabs-tab-active`-based — broken, migrate on sight)
+  - Notification utilities for testing alerts (`[data-testid="bai-notification-stack"]`-based)
 
 - **General utilities** (`e2e/utils/test-util.ts`):
   - Import appropriate utility based on UI framework being tested
@@ -277,16 +278,16 @@ test.describe('Session Lifecycle', () => {
 });
 ```
 
-**Vaadin Grid → Ant Design Table Migration:**
-- Many components have migrated from Vaadin Grid to Ant Design Table
-- Update locators accordingly when fixing tests
+**Legacy Table Locator Migration (Role-Based):**
+- Historically, components migrated from Vaadin Grid class-based locators to role-based table locators. Role-based locators (`getByRole('row')` / `getByRole('cell')`) work against any semantic HTML table regardless of the styling/component library rendering it, so prefer them over any framework-specific class
+- Update locators accordingly when fixing tests that still use old Vaadin Grid selectors, or stale `.ant-table-*` classes — the latter are dead code now that antd is removed and will never match
 
 ```typescript
 // ❌ OLD: Vaadin Grid locators
 const row = page.locator('vaadin-grid-cell-content');
 const cell = sessionRow.locator('cell');
 
-// ✅ NEW: Ant Design Table locators
+// ✅ NEW: Role-based table locators
 const row = page.getByRole('row');
 const cell = sessionRow.getByRole('cell');
 ```

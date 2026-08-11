@@ -2,8 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Button, Result } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAIFlex, StorageHostFetchError } from 'backend.ai-ui';
+import { TriangleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
@@ -31,19 +33,22 @@ const StorageHostFetchErrorBoundary: React.FC<
             justify="center"
             align="center"
           >
-            <Result
-              status="warning"
+            {/* MAPPING §5: antd `Result` -> `EmptyState` (`subTitle` ->
+                `description`, `extra` -> `actions`). `status="warning"` has
+                no counterpart beyond an icon you choose — the same
+                `TriangleAlertIcon` BAIErrorBoundary settled on. */}
+            <EmptyState
+              icon={<TriangleAlertIcon size={40} />}
               title={t('errorBoundary.StorageHostFetchFailedTitle')}
-              extra={
+              actions={
                 <BAIFlex direction="column" gap="md">
                   <Button
-                    type="primary"
+                    variant="primary"
+                    label={t('button.GoBackToPreviousPage')}
                     onClick={() => {
                       globalThis.history.back();
                     }}
-                  >
-                    {t('button.GoBackToPreviousPage')}
-                  </Button>
+                  />
                 </BAIFlex>
               }
             />

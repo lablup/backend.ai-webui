@@ -952,6 +952,13 @@ export class Client {
       // RoleFilter gained `mappedScope` (RoleMappedScopeNestedFilter) — look
       // up roles registered to a specific scope. FR-3317.
       this._features['role-mapped-scope-filter'] = true;
+      // DeploymentFilter.replicas / ReplicaNestedFilter — filter deployments by
+      // conditions on their replicas (e.g. traffic status). backend #12805
+      // (BA-6849 "support nested replica deployment filters"). FR-3332.
+      this._features['deployment-replica-nested-filter'] = true;
+      // BA-6809 / backend PR #12708 — RuntimeVariantPreset.runtimeVariant
+      // nested field (DataLoader-resolved name/description). FR-3256.
+      this._features['runtime-variant-preset-runtime-variant-field'] = true;
     }
   }
 

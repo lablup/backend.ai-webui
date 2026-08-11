@@ -4,7 +4,8 @@
  */
 import { SessionReservationFragment$key } from '../../__generated__/SessionReservationFragment.graphql';
 import { formatDurationAsDays } from '../../helper';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIDoubleTag, BAIIntervalView } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -31,9 +32,7 @@ const SessionReservation: React.FC<{
   const formattedCreatedAt = dayjs(session.created_at).format('lll');
   return (
     <>
-      {mode !== 'simple-elapsed' && (
-        <Typography.Text>{formattedCreatedAt}</Typography.Text>
-      )}
+      {mode !== 'simple-elapsed' && <Text>{formattedCreatedAt}</Text>}
       <BAIIntervalView
         key={session.id}
         callback={() => {
@@ -45,9 +44,9 @@ const SessionReservation: React.FC<{
         delay={1000}
         render={(intervalValue) =>
           mode === 'simple-elapsed' ? (
-            <Typography.Text title={formattedCreatedAt || ''}>
-              {intervalValue}
-            </Typography.Text>
+            <Tooltip content={formattedCreatedAt || ''}>
+              <Text>{intervalValue}</Text>
+            </Tooltip>
           ) : (
             <BAIDoubleTag
               values={[

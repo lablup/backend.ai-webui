@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import * as _ from 'lodash-es';
 import React from 'react';
 

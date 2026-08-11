@@ -32,19 +32,22 @@ test.describe(
       await setupChatPage(page, request);
 
       // Wait for the chat input to be *enabled*, not merely visible. The input
-      // stays `disabled` until the mocked model-readiness chain completes
+      // stays disabled until the mocked model-readiness chain completes
       // (ChatPageQuery auto-selects the endpoint → ChatCardQuery resolves the
-      // base URL → /v1/models returns without error). Gating on `toBeEnabled`
-      // is the deterministic readiness barrier — unlike the model-name text,
-      // which was flaky — and it must happen *before* the 15s waitForRequest
-      // window below, otherwise that window would include the model-load time
-      // and time out on slower machines while the input is still disabled.
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      // base URL → /v1/models returns without error). The Astryx composer
+      // input is a contenteditable div, not a form control, so the readiness
+      // barrier is its `contenteditable` attribute rather than `toBeEnabled`.
+      // It must happen *before* the 15s waitForRequest window below, otherwise
+      // that window would include the model-load time and time out on slower
+      // machines while the input is still disabled.
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
-      await expect(chatInput).toBeEnabled({ timeout: 15000 });
+      await expect(chatInput).toHaveAttribute('contenteditable', 'true', {
+        timeout: 15000,
+      });
 
-      // Attach a PNG through the (hidden) Attachments upload input. The prefix
-      // Attachments is always rendered, so the first file input is the target.
+      // Attach a PNG through the composer's hidden native file input — the one
+      // the paperclip button in the composer header opens.
       const fileInput = page.locator('input[type="file"]').first();
       await fileInput.setInputFiles({
         name: 'attachment.png',
@@ -60,7 +63,7 @@ test.describe(
         { timeout: 15000 },
       );
 
-      // Type a message and send (Sender submitType="enter").
+      // Type a message and send (Enter submits, Shift+Enter inserts a newline).
       await chatInput.click();
       await chatInput.fill('Describe this image');
       await chatInput.press('Enter');

@@ -1,9 +1,10 @@
+import Icon, { CustomIconComponentProps } from './iconShim';
 import { default as logo } from './tenstorrent.svg?react';
-import Icon from '@ant-design/icons';
-import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
-interface BAITenstorrentIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+interface BAITenstorrentIconProps extends Omit<
+  CustomIconComponentProps,
+  'width' | 'height' | 'fill'
+> {
   'aria-label'?: string;
 }
 

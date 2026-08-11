@@ -6,7 +6,6 @@ import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { AttachmentsProps } from '@ant-design/x';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import Big from 'big.js';
 import dayjs from 'dayjs';
@@ -488,6 +487,138 @@ export const localeCompare = (a?: string | null, b?: string | null) => {
   return a.localeCompare(b);
 };
 
+/**
+ * Compare two dot-separated version strings numerically.
+ * @returns 1 when version1 is newer, -1 when older, 0 when equal
+ */
+export const compareImageVersions = (
+  version1: string,
+  version2: string,
+): number => {
+  const v1 = version1.split('.').map(Number);
+  const v2 = version2.split('.').map(Number);
+
+  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+    const num1 = v1[i] || 0;
+    const num2 = v2[i] || 0;
+
+    if (num1 > num2) {
+      return 1;
+    } else if (num1 < num2) {
+      return -1;
+    }
+  }
+
+  return 0;
+};
+
+type PartialImageRef = NonNullable<
+  DeepPartial<Image | CommittedImage | EnvironmentImage>
+>;
+
+/**
+ * Whether an image is marked private via the `ai.backend.features` label.
+ * The session launcher form (`ImageEnvironmentSelectFormItems`) hides private
+ * images unless explicitly asked to show them.
+ */
+export const isPrivateImage = (
+  image: PartialImageRef | null | undefined,
+): boolean => {
+  return _.some(image?.labels, (label) => {
+    return (
+      label?.key === 'ai.backend.features' &&
+      label?.value?.split(' ').includes('private')
+    );
+  });
+};
+
+/**
+ * Resolve a possibly-partial image reference from `config.toml` against the
+ * registered image list, following the formats documented in
+ * `config.toml.sample` for `defaultSessionEnvironment` /
+ * `defaultImportEnvironment`:
+ *
+ * - `registry/namespace:tag@arch` → the exact image
+ * - `registry/namespace:tag` → the first available architecture for that tag
+ * - `registry/namespace` → the latest version, first available architecture
+ * - `registry/namespace@arch` (undocumented) → the latest version restricted
+ *   to that architecture
+ *
+ * This mirrors the matching `ImageEnvironmentSelectFormItems` performs for the
+ * session launcher form, so launch paths that bypass that form (the Start from
+ * URL import features) resolve the same config value to the same image.
+ * Private images are excluded from the candidate set, matching the launcher
+ * form's default behavior.
+ *
+ * @returns the full image name (`registry/namespace:tag@arch`), or `undefined`
+ *   when no registered image matches
+ */
+export const resolveImageFullName = (
+  imageString: string | undefined | null,
+  images: ReadonlyArray<PartialImageRef | null | undefined> | undefined | null,
+): string | undefined => {
+  if (!imageString) return undefined;
+
+  const candidates = (images ?? []).filter(
+    (image): image is PartialImageRef => !!image && !isPrivateImage(image),
+  );
+
+  // 1. Exact full name match (registry/namespace:tag@arch)
+  const exactMatch = _.find(
+    candidates,
+    (image) => getImageFullName(image) === imageString,
+  );
+  if (exactMatch) return getImageFullName(exactMatch);
+
+  const { registryAndNamespace, architecture, hasTag, hasArch } =
+    parseImageString(imageString);
+
+  // 2. Tag but no architecture: take the first available architecture.
+  // Sorted by architecture name so the pick does not depend on the order the
+  // server happened to return the images in.
+  if (hasTag && !hasArch) {
+    const sameTag = _.filter(
+      candidates,
+      (image) =>
+        removeArchitectureFromImageFullName(getImageFullName(image)) ===
+        imageString,
+    );
+    const matched = _.first(
+      [...sameTag].sort((a, b) =>
+        localeCompare(a?.architecture, b?.architecture),
+      ),
+    );
+    return matched ? getImageFullName(matched) : undefined;
+  }
+
+  // 3. No tag: take the latest version. An explicit `@arch` without a tag
+  // (`registry/namespace@arch`) restricts the candidates to that architecture
+  // instead of silently returning a different one.
+  if (!hasTag) {
+    const sameEnvironment = _.filter(
+      candidates,
+      (image) =>
+        `${image.registry}/${image.namespace ?? image.name}` ===
+          registryAndNamespace &&
+        (!hasArch || image.architecture === architecture),
+    );
+    // Sorted the same way as the launcher's version select: latest first,
+    // then by architecture name so the pick is deterministic.
+    const latest = _.first(
+      [...sameEnvironment].sort(
+        (a, b) =>
+          compareImageVersions(
+            b?.tag?.split('-')?.[0] ?? '',
+            a?.tag?.split('-')?.[0] ?? '',
+          ) || localeCompare(a?.architecture, b?.architecture),
+      ),
+    );
+    return latest ? getImageFullName(latest) : undefined;
+  }
+
+  return undefined;
+};
+
 export const numberSorterWithInfinityValue = (
   a?: number | null,
   b?: number | null,
@@ -582,15 +713,6 @@ export const handleRowSelectionChange = <T extends object, K extends keyof T>(
     );
   });
 };
-
-export function createDataTransferFiles(files: AttachmentsProps['items']) {
-  const fileList = _.map(files, (item) => item.originFileObj as File);
-  const dataTransfer = new DataTransfer();
-  _.forEach(fileList, (file) => {
-    dataTransfer.items.add(file);
-  });
-  return dataTransfer.files;
-}
 
 export function getOS() {
   const userAgent = navigator.userAgent.toLowerCase();
@@ -856,11 +978,7 @@ export function isIpIncludedInList(ip: string, entries: string[]): boolean {
 }
 
 type SSEHandlerKeys =
-  | 'onUpdated'
-  | 'onDone'
-  | 'onFailed'
-  | 'onTaskFailed'
-  | 'onTaskCancelled';
+  'onUpdated' | 'onDone' | 'onFailed' | 'onTaskFailed' | 'onTaskCancelled';
 
 export type SSEEventHandlerTypes<
   BaseType = unknown,
@@ -986,4 +1104,29 @@ export const convertToOrderBy = <
       direction: isDescending ? 'DESC' : 'ASC',
     } as TOrderBy,
   ];
+};
+
+/**
+ * Reverses `convertToOrderBy`: converts the first entry of a GraphQL v2
+ * OrderBy array back to a UI order string (e.g., for a `BAITableAstryx`'s `order`
+ * prop, or to persist the current sort to the URL).
+ *
+ * @param orderBy - An OrderBy array (or its first entry's `field`/`direction`).
+ * @returns The order string, or `null` if `orderBy` is empty/undefined.
+ *
+ * @example
+ * convertFirstOrderByToString([{ field: 'NAME', direction: 'ASC' }])
+ * // => 'name'
+ *
+ * @example
+ * convertFirstOrderByToString([{ field: 'CREATED_AT', direction: 'DESC' }])
+ * // => '-createdAt'
+ */
+export const convertFirstOrderByToString = (
+  orderBy:
+    ReadonlyArray<{ field?: string; direction?: string }> | null | undefined,
+): string | null => {
+  const first = orderBy?.[0];
+  if (!first?.field) return null;
+  return `${first.direction === 'DESC' ? '-' : ''}${_.camelCase(first.field)}`;
 };

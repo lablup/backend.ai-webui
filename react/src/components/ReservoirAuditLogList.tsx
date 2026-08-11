@@ -2,8 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Tag, Typography } from 'antd';
-import { BAIPropertyFilter, BAIFlex, BAITable, BAIText } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  BAIPropertyFilter,
+  BAIFlex,
+  BAITableAstryx,
+  BAIText,
+  badgeVariantForTagColor,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';
@@ -89,7 +95,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
           onChange={onFilterChange}
         />
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         size="small"
         dataSource={auditLogs}
         rowKey="id"
@@ -100,7 +106,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
             dataIndex: 'artifactName',
             key: 'artifactName',
             render: (artifactName: string) => (
-              <Typography.Text strong>{artifactName}</Typography.Text>
+              <BAIText strong>{artifactName}</BAIText>
             ),
             sorter: true,
           },
@@ -115,16 +121,19 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
             title: 'Operation',
             dataIndex: 'operation',
             key: 'operation',
-            render: (operation: string) => <Tag>{operation.toUpperCase()}</Tag>,
+            render: (operation: string) => (
+              <Badge
+                variant={badgeVariantForTagColor(undefined)}
+                label={operation.toUpperCase()}
+              />
+            ),
             sorter: true,
           },
           {
             title: 'Modifier',
             dataIndex: 'modifier',
             key: 'modifier',
-            render: (modifier: string) => (
-              <Typography.Text>{modifier}</Typography.Text>
-            ),
+            render: (modifier: string) => <BAIText>{modifier}</BAIText>,
             sorter: true,
           },
           {
@@ -132,29 +141,31 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
             dataIndex: 'timestamp',
             key: 'timestamp',
             render: (timestamp: string) => (
-              <Typography.Text type="secondary">
+              <BAIText type="secondary">
                 {dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')}
-              </Typography.Text>
+              </BAIText>
             ),
             sorter: true,
           },
         ]}
         pagination={pagination}
-        scroll={{ x: 'max-content' }}
         // order={order}
         expandable={{
           expandedRowRender: (record) => (
             <BAIFlex direction="column" gap="xs" style={{ padding: '8px 0' }}>
               <BAIFlex align="center" gap="xs">
-                <Typography.Text strong>Status:</Typography.Text>
-                <Tag
-                  color={
+                <BAIText strong>Status:</BAIText>
+                {/* antd `Tag color` → Astryx `Badge variant` via the
+                    repo-global lookup (ticket 13); the leading glyph moves to
+                    `icon`, Badge's icon slot. */}
+                <Badge
+                  variant={badgeVariantForTagColor(
                     record.status === 'success'
                       ? 'green'
                       : record.status === 'failed'
                         ? 'red'
-                        : 'blue'
-                  }
+                        : 'blue',
+                  )}
                   icon={
                     record.status === 'success' ? (
                       <CheckCircle size={12} />
@@ -164,21 +175,17 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
                       <Activity size={12} />
                     )
                   }
-                >
-                  {record.status.toUpperCase()}
-                </Tag>
+                  label={record.status.toUpperCase()}
+                />
               </BAIFlex>
               {record.details && (
                 <BAIFlex align="start" gap="xs">
-                  <Typography.Text strong>Details:</Typography.Text>
-                  <Typography.Text type="secondary">
-                    {record.details}
-                  </Typography.Text>
+                  <BAIText strong>Details:</BAIText>
+                  <BAIText type="secondary">{record.details}</BAIText>
                 </BAIFlex>
               )}
             </BAIFlex>
           ),
-          expandRowByClick: true,
         }}
       />
     </BAIFlex>
