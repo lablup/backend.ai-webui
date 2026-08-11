@@ -492,7 +492,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     // `baseShowSearch ?? true`, so a `BAISelect` that says nothing about
     // search was type-to-filter. Treating `undefined` as "no search" turned
     // that off on every call site that omitted the prop.
-    hasSearch: showSearch !== false,
+    hasSearch: showSearch === true,
     status:
       status === 'error' || status === 'warning' ? { type: status } : undefined,
     size:
