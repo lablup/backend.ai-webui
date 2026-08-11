@@ -273,7 +273,7 @@ attribute vocabulary).
 
 ## Related Skills
 
-- **`react-component-basics`** — page root shape (`<BAIFlex direction="column" align="stretch" gap="sm">`)
+- **`.github/instructions/react.instructions.md`** — page root shape (`<BAIFlex direction="column" align="stretch" gap="sm">`)
 - **`react-relay-table`** — header row layout above tables
 - **`react-modal-drawer`** — modal footer layout
 - **`react-form`** — form field row spacing

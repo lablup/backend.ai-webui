@@ -402,7 +402,7 @@ Avoid `useEffect`-driven coordination between sibling modals. Instead:
 - **`react-form`** — forms inside modals (validators, required markers)
 - **`react-url-state`** — opening a modal from URL query params
 - **`react-async-actions`** — submit button and feedback inside modal footer
-- **`react-component-basics`** — `BAIModalProps` / `BAIDrawerProps` extension pattern
+- **`.claude/rules/component-props-extension.md`** — `BAIModalProps` / `BAIDrawerProps` extension pattern
 - **`react-suspense-fetching`** — when the modal body owns a Relay query
 
 ## 10. Verification Checklist

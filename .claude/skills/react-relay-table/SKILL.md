@@ -197,7 +197,7 @@ When a consumer needs to inject an action column mid-table, use
 ## 4. Orchestrator Wiring (full example)
 
 ```tsx
-import { theme } from '../theme-shim';   // NOT 'antd' — see react-component-basics
+import { theme } from '../theme-shim';   // NOT 'antd' — see react.instructions.md
 import { useTranslation } from 'react-i18next';
 
 const UserManagement: React.FC = () => {

@@ -47,6 +47,32 @@ For each component:
 
 ---
 
+## Storybook Configuration Files (Do Not Recreate)
+
+> **`.storybook/main.ts` and `.storybook/preview.tsx` already exist and are
+> already configured.** Never scaffold or overwrite them with generic
+> boilerplate while creating or updating a story — read them first if you need
+> to check a setting, and add only the key you actually need.
+
+A few repo-specific facts worth knowing before you touch a story file:
+
+- `typescript.reactDocgen` is set to `false` in `main.ts` (avoids a
+  "Cannot convert a symbol to a string" build error). This means **argTypes
+  are never auto-derived from TypeScript types** — every `argTypes` entry in a
+  story must be written out by hand, per the templates below.
+- `main.ts` also registers `@storybook/addon-docs`, `@storybook/addon-onboarding`,
+  and `@vueless/storybook-dark-mode`, plus a `staticDirs` list (fonts, icons)
+  and an `Introduction.mdx` entry — none of that needs touching for a
+  component story.
+- `preview.tsx`'s decorator is `withGlobalProvider` from `./decorators`, which
+  mounts Astryx's theme, `BAIConfigProvider` (locale), and the app-shim
+  around every story. There is **no** antd `ConfigProvider` — antd is not a
+  dependency of this project — so don't add one when writing a story-level
+  decorator either; use `BAIConfigProvider` if a story genuinely needs its own
+  provider override.
+
+---
+
 ## CREATE Mode (No Story Exists)
 
 When the story file doesn't exist:
@@ -118,7 +144,7 @@ actually renders, and it varies:
 That last row is common and matters here. Several wrappers restate a frozen,
 antd-**shaped** prop surface inline so hundreds of call sites kept compiling
 through the Astryx migration — the vocabulary outlived the library
-(`.claude/rules/antd-v6-props.md`). `BAIAlertProps`, for instance, is a
+(`.claude/rules/component-props-extension.md`). `BAIAlertProps`, for instance, is a
 standalone interface that declares `type`, `title`, `message` (documented as the
 deprecated alias for `title`), `showIcon`, `closable`, `banner`, `action` and
 `ghostInfoBg` itself — none of them "inherited".
