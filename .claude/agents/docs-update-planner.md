@@ -207,6 +207,7 @@ Produce a structured plan saved as a Markdown file at `packages/backend.ai-webui
 5. **Screenshot Planning**: Identify where new screenshots are needed or existing ones need updating
 6. **Navigation Updates**: Flag when `book.config.yaml` needs updating for new sections
 7. **Code-Informed**: Even when working from a description, always verify details against the actual codebase to ensure accuracy
+8. **Content Exclusions (FR-3480, PR #8619)**: Never plan documentation for topics deliberately removed from the manual: auto-refresh controls / default refresh intervals on list pages (only genuinely feature-specific polling like the deployment revision apply's 5s polling is allowed), URL/query-string view-state boilerplate (filters/sort/pagination surviving reload or being shareable), and self-evident table expand-mode / table-state enumerations. These are discoverable from the UI and were judged not worth manual space — planning them forces the same removal work again. The docs-update-writer carries the matching skip rule.
 
 ## Documentation Style Reference
 
