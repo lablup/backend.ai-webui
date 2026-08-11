@@ -2,1132 +2,196 @@
 applyTo: "react/**/*.tsx,react/**/*.ts"
 ---
 
-# React Component Guidelines for Backend.AI WebUI
-
-These instructions apply to React components in the `/react` directory.
-
-## React Compiler Optimization
-
-### 'use memo' Directive (Required)
-
-- This project uses the new **React Compiler**.
-- We actively use React directives such as `use memo` and `use client` at the top of **component and custom hook** function bodies (NOT files).
-- `use memo` is **intentional and valid** in this codebase.
-- Even if tooling or TypeScript/ESLint shows something like:
-  - `Unknown directive: 'use memo'.`
-  - or similar warnings/errors
-    these directives are still **correct and should not be removed or changed**.
-
-### What should do
-
-- When generating or editing React components **or custom hooks** (`use*` functions):
-  - **Always** add `'use memo'` at the top of the function body.
-  - **Never** remove existing `use memo` directives.
-  - **Never** “fix” or “rename” `use memo` to something else.
-  - **Never** add comments suggesting that `use memo` is unknown, invalid, or deprecated.
-
-### Placement Rules for 'use memo'
-
-The `'use memo'` directive has **strict placement requirements**:
-
-- **Must be at the very beginning of a function body**, before any other code
-- Comments before the directive are allowed
-- Must use double or single quotes: `"use memo"` or `'use memo'` (**not backticks**)
-- Cannot be placed conditionally or later in the function
-- Only the first directive is processed; additional directives are ignored
-
-```typescript
-// ✅ Good: 'use memo' at the very beginning of component body
-function MyComponent({ data }: Props) {
-  'use memo';
-
-  const [state, setState] = useState(0);
-  // Component logic - React Compiler handles optimization
-  return <div>{data}</div>;
-}
-
-// ✅ Good: 'use memo' in custom hooks too
-const useMyHook = (id: string) => {
-  'use memo';
-
-  const [value, setValue] = useState(null);
-  return value;
-};
-
-// ✅ Good: Comments before 'use memo' are OK
-const AnotherComponent: React.FC<Props> = ({ data }) => {
-  // This component is optimized by React Compiler
-  'use memo';
-
-  return <div>{data}</div>;
-};
-
-// ❌ Bad: 'use memo' after other statements
-function BadComponent({ data }: Props) {
-  const value = 'test'; // ❌ Code before directive
-  'use memo';
-  return <div>{data}</div>;
-}
-
-// ❌ Bad: 'use memo' in conditional
-function ConditionalBad({ data }: Props) {
-  if (condition) {
-    'use memo'; // ❌ Cannot be conditional
-  }
-  return <div>{data}</div>;
-}
-
-// ❌ Bad: Using backticks
-function BacktickBad({ data }: Props) {
-  `use memo`; // ❌ Must use quotes, not backticks
-  return <div>{data}</div>;
-}
-
-// ❌ Bad: Missing 'use memo' in a new custom hook
-function useData(id: string) {
-  // ❌ Should have 'use memo' at the top
-  return useSomeQuery(id);
-}
-```
-
-### Manual Optimization Hooks (Use Sparingly)
-
-- `useMemo` and `useCallback` can still be used when needed
-- However, prefer `'use memo'` directive as React Compiler handles most cases automatically
-- Only use manual hooks when you have specific performance bottlenecks identified through profiling
-- Do NOT suggest adding `useMemo`/`useCallback` unnecessarily in code reviews
-
-### useEffectEvent Hook (Recommended)
-
-`useEffectEvent` extracts non-reactive logic from Effects, allowing access to latest props/state without making them dependencies.
-
-**When to Use:**
-
-- Access current values in Effects without triggering re-runs
-- Separate what triggers the Effect from what it does
-- Event handlers, logging, or analytics inside Effects
-
-**Example:**
-
-```typescript
-const onConnected = useEffectEvent(() => {
-  showNotification("Connected!", theme); // Latest theme, not reactive
-});
-
-useEffect(() => {
-  const connection = createConnection(url);
-  connection.on("connected", onConnected);
-  return () => connection.disconnect();
-}, [url]); // Only url triggers re-connection
-```
-
-**Restrictions:**
-
-- Only call inside `useEffect`/`useLayoutEffect`/`useInsertionEffect`
-- Never use to bypass legitimate dependencies
-- Only for truly non-reactive logic (logging, analytics, non-triggering side effects)
-
-**Benefits Over useCallback:**
-
-```typescript
-// ❌ Old: Re-subscribes on every change
-const handler = useCallback(() => doSomething(a, b, c), [a, b, c]);
-
-// ✅ New: Subscribe once, always latest values
-const handler = useEffectEvent(() => doSomething(a, b, c));
-useEffect(() => {
-  subscribe(handler);
-}, []);
-```
-
-## Rules of Hooks
-
-All React Hooks (useState, useEffect, useContext, useMemo, useCallback, useLazyLoadQuery, etc.) must follow these fundamental rules:
-
-### Rule 1: Only Call Hooks at the Top Level
-
-**Don't call Hooks inside loops, conditions, nested functions, or try/catch/finally blocks.**
-
-Always use Hooks at the top level of your React function, before any early returns.
-
-**Why this matters:** React relies on the order in which Hooks are called to maintain state correctly between re-renders. Calling Hooks conditionally breaks this order.
-
-```typescript
-// ✅ Good: Hooks at the top level
-function MyComponent({ condition }: Props) {
-  const [count, setCount] = useState(0);
-  const theme = useContext(ThemeContext);
-  const data = useLazyLoadQuery(query, {});
-
-  if (condition) {
-    return <div>Condition met</div>;
-  }
-
-  return <div>{count}</div>;
-}
-
-// ❌ Bad: Hook inside a condition
-function BadComponent({ condition }: Props) {
-  if (condition) {
-    const [count, setCount] = useState(0); // ❌ Conditional Hook call
-  }
-  return <div>Content</div>;
-}
-
-// ❌ Bad: Hook inside a loop
-function BadLoop({ items }: Props) {
-  const results = [];
-  for (let i = 0; i < items.length; i++) {
-    const data = useQuery(items[i]); // ❌ Hook in loop
-    results.push(data);
-  }
-  return <div>{results}</div>;
-}
-
-// ❌ Bad: Hook after early return
-function BadEarlyReturn({ condition }: Props) {
-  if (condition) {
-    return <div>Early return</div>;
-  }
-
-  const [count, setCount] = useState(0); // ❌ After conditional return
-  return <div>{count}</div>;
-}
-
-// ❌ Bad: Hook in event handler
-function BadEventHandler() {
-  function handleClick() {
-    const theme = useContext(ThemeContext); // ❌ Hook in event handler
-  }
-  return <button onClick={handleClick}>Click</button>;
-}
-
-// ❌ Bad: Hook in try/catch block
-function BadTryCatch() {
-  try {
-    const data = useQuery(query); // ❌ Hook in try block
-  } catch (error) {
-    // ...
-  }
-  return <div>Content</div>;
-}
-```
-
-### Rule 2: Only Call Hooks from React Functions
-
-**Don't call Hooks from regular JavaScript functions.**
-
-**✅ Call Hooks from:**
-- React function components
-- Custom Hooks (functions starting with `use`)
-
-**❌ Don't call Hooks from:**
-- Regular JavaScript functions
-- Class components
-- Event handlers
-
-```typescript
-// ✅ Good: Hook in component
-function MyComponent() {
-  const [count, setCount] = useState(0);
-  return <div>{count}</div>;
-}
-
-// ✅ Good: Hook in custom Hook
-function useCounter() {
-  const [count, setCount] = useState(0);
-  return { count, setCount };
-}
-
-// ❌ Bad: Hook in regular function
-function calculateTotal() { // Not a component or custom Hook
-  const [count, setCount] = useState(0); // ❌
-  return count;
-}
-```
-
-### Workarounds for Conditional Logic
-
-When you need conditional behavior with Hooks:
-
-```typescript
-// ✅ Good: Call Hook unconditionally, use result conditionally
-function MyComponent({ userId }: Props) {
-  const userData = useUserData(userId); // Always called
-
-  if (!userData) {
-    return <div>Loading...</div>;
-  }
-
-  return <div>{userData.name}</div>;
-}
-
-// ✅ Good: Move conditional logic inside the Hook
-function useOptionalFeature(enabled: boolean) {
-  const [value, setValue] = useState(null); // Always called
-
-  useEffect(() => {
-    if (enabled) { // Condition inside the Hook
-      // Do something
-    }
-  }, [enabled]);
-
-  return value;
-}
-
-// ✅ Good: Use array.map instead of loop
-function UserList({ userIds }: Props) {
-  return (
-    <div>
-      {userIds.map((id) => (
-        <UserItem key={id} userId={id} /> // Component uses hooks
-      ))}
-    </div>
-  );
-}
-```
-
-### ESLint Plugin
-
-**Use `eslint-plugin-react-hooks`** to automatically catch violations:
-
-```json
-{
-  "plugins": ["react-hooks"],
-  "rules": {
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
-  }
-}
-```
-
-## React Composability
-
-### Component Composition Principles
-
-Always consider React composability when writing or reviewing components:
-
-1. **Single Responsibility**
-
-   - Each component should do one thing well
-   - Extract complex logic into smaller, focused components
-
-2. **Composition Over Props Drilling**
-
-   - Use component composition instead of passing props through multiple levels
-   - Consider using Jotai for global state management
-   - Leverage children props and render props patterns
-
-3. **Reusability**
-
-   - Design components to be reusable across different contexts
-   - Use generic prop types when appropriate
-   - Avoid hard-coding values that could be props
-
-4. **Custom Hooks for Logic Reuse**
-   - Extract shared stateful logic into custom hooks
-   - Keep components focused on presentation
-   - Share business logic through hooks, not HOCs
-
-### Good Composition Examples
-
-```typescript
-// ❌ Bad: Props drilling
-<Parent>
-  <Child theme={theme} user={user} config={config} />
-</Parent>
-
-// ✅ Good: Composition with Jotai
-const themeAtom = atom('light');
-
-const Child = () => {
-  const [theme] = useAtom(themeAtom);
-  // ...
-};
-
-// ✅ Good: Extracting reusable logic
-const useUserData = () => {
-  // Shared logic
-};
-
-const ComponentA = () => {
-  const userData = useUserData();
-  // ...
-};
-```
-
-### The customizeColumns Pattern
-
-Replace array-based column extension with function-based composition for maximum flexibility.
-
-**Problem with Array-Based Approach:**
-
-```typescript
-// ❌ Limited: Can only append columns
-interface TableProps {
-  extraColumns?: BAIColumnType[];
-}
-
-// Usage is inflexible
-<UserTable extraColumns={[myColumn]} /> // Can only add at the end
-```
-
-**Solution: Function-Based Composition:**
-
-```typescript
-// ✅ Flexible: Full control over column order
-interface TableProps {
-  customizeColumns?: (baseColumns: BAIColumnType[]) => BAIColumnType[];
-}
-
-// Usage with full control
-<UserNodes
-  customizeColumns={(baseColumns) => [
-    baseColumns[0],           // Keep email column first
-    controlColumn,            // Insert control column second
-    ...baseColumns.slice(1),  // Rest of base columns
-  ]}
-/>
-
-// Can also filter, reorder, or replace columns
-<UserNodes
-  customizeColumns={(baseColumns) =>
-    baseColumns
-      .filter((col) => col.key !== 'hidden_column')
-      .map((col) =>
-        col.key === 'name' ? { ...col, width: 200 } : col
-      )
-  }
-/>
-```
-
-**Benefits:**
-
-- **Flexible Composition**: Insert, filter, reorder columns at any position
-- **Reusability**: Base component works with different column configurations
-- **Type Safety**: TypeScript ensures column customization is type-safe
-- **Clean Architecture**: Follows separation of concerns principle
-
-**When to Apply:**
-
-- Table components with customizable columns
-- Lists with configurable items
-- Any component where consumers need control over child element ordering
-
-## GraphQL/Relay Integration
-
-### Essential Relay Rules
-
-- **Hooks**: `useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`, `usePaginationFragment`
-- **Naming**: Query fragments use `queryRef`, other types use `{typeName}Frgmt` (e.g., `userFrgmt`)
-- **Architecture**: Separate query orchestrator (data fetching) from fragment component (presentation)
-- **Colocation**: Colocate GraphQL fragments with components that use them
-- **Optimization**: Only request fields you need; use pagination for lists
-
-For detailed patterns, examples, and architecture guides, use the `relay-patterns` skill.
-
-## Backend.AI UI Component Library
-
-### Prefer BAI Components
-
-- **Always reach for a `backend.ai-ui` component first** — `BAIFlex`, `BAIModal`, `BAIButton`, etc.
-- When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. antd is not an option: it is not a dependency of this project — see [antd Is Gone](#antd-is-gone--its-prop-vocabulary-is-not)
-- BAI components are custom-designed for Backend.AI WebUI; they own the project's defaults and wrap Astryx internals
-
-```typescript
-// ✅ Good: Use BAI components
-import { BAIModal, BAIFlex } from 'backend.ai-ui';
-
-<BAIModal open={open} onOk={handleOk}>
-  <BAIFlex direction="column" gap="md">
-    {content}
-  </BAIFlex>
-</BAIModal>
-```
-
-### BAIButton with action Prop
-
-`BAIButton` provides built-in React Transition support through its `action` prop. This pattern automatically handles loading states during async operations.
-
-**When to Use `action` vs `onClick`:**
-
-| Scenario                                | Use `action` | Use `onClick` |
-| --------------------------------------- | ------------ | ------------- |
-| Async operations (API calls, mutations) | ✅           | ❌            |
-| Simple state updates                    | ❌           | ✅            |
-| Operations requiring loading feedback   | ✅           | ❌            |
-| Navigation or routing                   | ✅           | ✅            |
-
-**Usage Examples:**
-
-```typescript
-// ✅ Good: Use action for async operations
-<BAIButton
-  action={async () => {
-    await commitMutation({ variables: { id } });
-    updateFetchKey();
-  }}
->
-  Save Changes
-</BAIButton>
-
-// ❌ Bad: Combine action with onClick for mixed scenarios
-<BAIButton
-  action={async () => {
-    await saveData();
-  }}
-  onClick={() => {
-    setOtherState('updated');
-  }}
->
-  Submit
-</BAIButton>
-
-// ❌ Bad: Managing loading state manually
-const [isLoading, setIsLoading] = useState(false);
-<Button
-  loading={isLoading}
-  onClick={async () => {
-    setIsLoading(true);
-    await saveData();
-    setIsLoading(false);
-  }}
->
-  Save
-</Button>
-```
-
-**Benefits:**
-
-- Automatic loading state management
-- React Transition integration for responsive UI
-- Prevents double clicks during execution
-- Consistent UX across the application
-
-### Imperative Modals and Messages (`App.useApp()`)
-
-- Simple confirmations that do not deserve a mounted `BAIModal` go through `modal.confirm()`
-- Toasts go through `message.*`
-- Both come from the **app shim**, not from a component: `App` / `useApp` / `message` / `modal` are defined in `packages/backend.ai-ui/src/app-shim/` and re-exported by `backend.ai-ui`. Files under `react/src` import them from the local re-export `react/src/app-shim` (`'../app-shim'`), which is what `scripts/codemods/antd-app-to-shim.mjs` pointed every call site at
-- The call shape is deliberately identical to antd's `App.useApp()` — only the import changed. `notification` is **not** part of the shim; it is owned by the Jotai store in `react/src/hooks/useBAINotification.tsx`
-- Mount `<BAIAppProvider>` once at the app root (`DefaultProviders`) — it owns the toast viewport and the imperative-modal host
-
-```typescript
-// ✅ Good: Use modal.confirm() from the app shim for simple confirmations
-import { App } from '../app-shim';
-
-const MyComponent = () => {
-  const { modal } = App.useApp();
-
-  const handleDelete = () => {
-    modal.confirm({
-      title: 'Are you sure?',
-      content: 'This action cannot be undone.',
-      onOk: () => {
-        // handle deletion
-      },
-    });
-  };
-
-  return <button onClick={handleDelete}>Delete</button>;
-};
-```
-
-## Custom Utilities and Hooks
-
-### useFetchKey Hook
-
-- Check if `useFetchKey` is needed for data fetching patterns
-- This hook manages fetch keys for cache invalidation
-- Verify it's being used when component needs to refetch data
-
-```typescript
-import { useFetchKey } from "./hooks/useFetchKey";
-
-const MyComponent = () => {
-  const [fetchKey, setFetchKey] = useFetchKey();
-
-  // Use fetchKey in queries to trigger refetch
-  const { data } = useQuery({
-    queryKey: ["data", fetchKey],
-    // ...
-  });
-};
-```
-
-### BAIUnmountAfterClose
-
-- Check if `BAIUnmountAfterClose` is being used for modals/drawers with forms
-- This component ensures proper cleanup of form state when modal closes
-- Prevents stale data issues in modals
-
-```typescript
-import { BAIUnmountAfterClose } from './components';
-
-<BAIUnmountAfterClose open={open}>
-  <BAIModal open={open} />
-</BAIUnmountAfterClose>
-```
-
-### Code Review Checklist for Custom Utils
-
-When reviewing code, verify:
-
-- [ ] `useFetchKey` is used when data needs manual refetching
-- [ ] `BAIUnmountAfterClose` wraps modal/drawer content with forms
-- [ ] Custom hooks are properly utilized where they provide value
-
-## Error Handling
-
-### Error Boundaries
-
-- **Always use pre-defined error boundary components**
-- `ErrorBoundaryWithNullFallback` - for silent error handling
-- `BAIErrorBoundary` - for user-facing error UI
-- Do NOT create new error boundary components without discussion
-
-```typescript
-// ✅ Good: Use existing error boundaries
-import { ErrorBoundaryWithNullFallback, BAIErrorBoundary } from './components';
-
-<BAIErrorBoundary>
-  <FeatureComponent />
-</BAIErrorBoundary>
-
-// For silent failures
-<ErrorBoundaryWithNullFallback>
-  <OptionalComponent />
-</ErrorBoundaryWithNullFallback>
-```
-
-### Empty Catch Blocks (Security Concern)
-
-**Never use empty catch blocks** - they are a security concern and hide errors:
-
-```typescript
-// ❌ Bad: Empty catch block
-try {
-  await fetchData();
-} catch (e) {
-  // Silent failure - security risk
-}
-
-// ✅ Good: Explicit error handling with logger
-try {
-  await fetchData();
-} catch (e) {
-  logger.error("Failed to fetch data:", e);
-  // Handle error appropriately
-}
-
-// ✅ Good: Explicitly ignore errors when intentional
-try {
-  await fetchData();
-} catch {
-  return undefined; // Explicit return for ignored errors
-}
-```
-
-**Why this matters:**
-
-- Empty catch blocks hide bugs and make debugging difficult
-- Security scanners flag empty catches as vulnerabilities
-- Makes code review harder - unclear if error is intentionally ignored
-- Can mask critical failures in production
-
-### Logging and Debugging
-
-#### Console.log Prohibition
-
-**Never use `console.log` or other console methods directly** - ESLint warns against it:
-
-```json
-// ESLint rule in package.json
-"no-console": ["warn"]
-```
-
-**Why this rule exists:**
-
-- Console statements should be removed before production
-- Uncontrolled logging clutters browser console
-- No way to filter or control log levels
-- Cannot be easily disabled in production
-- Makes it harder to find actual debug statements
-
-#### Use useBAILogger Instead
-
-**Always use `useBAILogger` hook** from `backend.ai-ui` package for all logging:
-
-```typescript
-import useBAILogger from '@backend.ai/backend.ai-ui/hooks/useBAILogger';
-
-const MyComponent = () => {
-  const { logger } = useBAILogger();
-
-  // ✅ Good: Use logger methods
-  logger.log('Component mounted');
-  logger.debug('Debugging state:', state);
-  logger.info('User action completed');
-  logger.warn('Deprecated API used');
-  logger.error('Failed to fetch data:', error);
-
-  return <div>...</div>;
-};
-```
-
-#### Log Levels
-
-Use appropriate log levels for different scenarios:
-
-- **`logger.log()`** - General logging (LogLevel.LOG)
-- **`logger.debug()`** - Detailed debugging information (LogLevel.DEBUG)
-- **`logger.info()`** - Informational messages (LogLevel.INFO)
-- **`logger.warn()`** - Warning messages (LogLevel.WARN)
-- **`logger.error()`** - Error messages (LogLevel.ERROR)
-
-```typescript
-// ✅ Good: Appropriate log levels
-const handleSubmit = async () => {
-  logger.debug("Form submitted with values:", formValues);
-
-  try {
-    const result = await submitData(formValues);
-    logger.info("Data submitted successfully:", result.id);
-  } catch (error) {
-    logger.error("Failed to submit data:", error);
-    throw error;
-  }
-};
-```
-
-#### Logger Features
-
-**Automatic production control:**
-
-```typescript
-// Logger is automatically disabled in production
-// No need to manually check NODE_ENV
-logger.debug("This only logs in development");
-```
-
-**Contextual logging:**
-
-```typescript
-// Add context to logs for better debugging
-const contextLogger = logger.withContext("userId", user.id);
-contextLogger.info("User action performed");
-```
-
-**Plugin support:**
-
-```typescript
-// Logger supports plugins for custom behavior
-logger.use({
-  beforeLog: (context) => {
-    // Modify or filter logs before output
-    return context;
-  },
-  afterLog: (context) => {
-    // Send logs to external service
-  },
-});
-```
-
-#### Migration from console.log
-
-When you encounter `console.log` in existing code:
-
-```typescript
-// ❌ Bad: Using console directly
-console.log("User logged in");
-console.error("API error:", error);
-console.warn("Deprecated feature used");
-
-// ✅ Good: Use logger with appropriate levels
-const { logger } = useBAILogger();
-logger.info("User logged in");
-logger.error("API error:", error);
-logger.warn("Deprecated feature used");
-```
-
-### Loading States
-
-- Always handle loading states in async operations
-- Use Suspense boundaries where appropriate
-- Provide skeleton loaders for better UX
-
-## Astryx, Shims, and the antd-Shaped Prop Surface
-
-### antd Is Gone — Its Prop Vocabulary Is Not
-
-antd is **not a dependency of this project**. `import ... from 'antd'` will not resolve, and `scripts/antd-zero-gate.sh` fails the build if antd re-enters through the dependency graph, the bundle, or the source import graph. **Never add an antd import.**
-
-What survived the removal is the prop *vocabulary*: many BAI wrappers (`BAIAlert`, `BAICard`, `BAITable`, `BAIModal`, `BAISelect`, …) were deliberately given an antd-v6-**shaped** prop surface so the call sites carried over from the antd era needed no edit when the internals were rebuilt on Astryx. That is why `BAIAlert` takes `title` rather than `message`.
-
-- **Canonical record: `.claude/rules/antd-v6-props.md`** — the v5→v6 rename table, the reason the v6 names specifically were frozen, and the accepted-and-ignored prop cases. Read it there; do not duplicate the table.
-- **Prefer `BAIFlex` over `Space`**: use `BAIFlex` (from `backend.ai-ui`) with `direction="column"` / `direction="row"` for layout.
-- **Verification is `bash scripts/antd-zero-gate.sh`**, not TypeScript deprecation warnings. The old advice to hunt `ts(6385)` (`is deprecated`) diagnostics has no subject any more — there is no antd type left to deprecate anything.
-
-```typescript
-// ❌ Bad: an antd import — will not resolve, and the zero-gate fails
-import { Alert, Flex, Space } from 'antd';
-
-// ✅ Good: BAI wrappers, antd-v6-shaped props, Astryx internals
-<BAIAlert type="error" title="Title" description="Description" />
-<BAIFlex direction="column">...</BAIFlex>
-```
-
-### When BAI Components Are Not Available
-
-- Use **Astryx** (`@astryxdesign/core`) directly when no BAI equivalent exists — never antd. Discover the component first (`pnpm exec astryx search "<thing>"` / `pnpm exec astryx component <Name>`); see the `ASTRYX` block in `react/AGENTS.md`.
-- Imperative modals and messages come from the **app shim** (`App.useApp()`), see [Imperative Modals and Messages](#imperative-modals-and-messages-appuseapp) above.
-- Theme tokens come from the **theme shim**: `theme.useToken()` from `react/src/theme-shim` (`'../theme-shim'`), a re-export of `packages/backend.ai-ui/src/theme-shim/`. It is a drop-in for antd's — same `{ token, hashId, theme }` shape, same JS types (numbers for dimensions, hex strings for colours) — backed by Astryx tokens. `scripts/codemods/antd-theme-to-shim.mjs` is what repointed the call sites.
-- Styling that tokens/props cannot express goes in a **co-located `.css` file** the component imports (P17), written with `var(--…)` Astryx custom properties. `antd-style` (`createStyles` / `createGlobalStyle`) was removed in to-astryx ticket 33 — do not reintroduce it.
-
-```typescript
-import { App } from '../app-shim';
-import { theme } from '../theme-shim';
-
-const MyComponent = () => {
-  const { token } = theme.useToken();
-  const { message } = App.useApp();
-
-  const handleSuccess = () => {
-    message.success('Operation completed');
-  };
-
-  // Use token for styling
-  return (
-    <div style={{
-      padding: token.padding,
-      background: token.colorBgContainer
-    }}>
-      {/* content */}
-    </div>
-  );
-};
-```
-
-### Theme Awareness
-
-- Components should work in both light and dark themes
-- Use theme tokens instead of hard-coded colors
-- Test components in both theme modes
-
-## TypeScript Best Practices
-
-### Variable Naming Convention
-
-- **All variable names must start with a lowercase letter** (camelCase)
-- This applies to local variables, function parameters, state variables, constants (non-enum), and hook return values
-
-```typescript
-// ✅ Good: Variables start with lowercase
-const userName = 'John';
-const [isLoading, setIsLoading] = useState(false);
-const fetchKey = useFetchKey();
-const handleSubmit = () => { /* ... */ };
-
-// ❌ Bad: Variables starting with uppercase
-const UserName = 'John';
-const FetchKey = useFetchKey();
-const HandleSubmit = () => { /* ... */ };
-```
-
-**Exceptions:**
-- React component names (PascalCase): `const MyComponent = () => { ... }`
-- Type/Interface names (PascalCase): `interface UserProps { ... }`
-- Enum members (PascalCase): `enum Status { Active, Inactive }`
-
-### Type Safety
-
-- Always define prop interfaces
-- When wrapping a component, extend the wrapped thing's props type — the Astryx component's props, a DOM props type (`React.HTMLAttributes<…>`), or another BUI wrapper's props. See `.claude/rules/component-props-extension.md` for the `Omit<>` and `...rest` conventions
-- Use discriminated unions for variant props
-- Use `interface` for props instead of `type` when possible
-
-```typescript
-// ✅ Good: Proper prop typing
-interface MyComponentProps extends BAIModalProps {
-  customProp: string;
-  variant: "primary" | "secondary";
-}
-
-// ✅ Good: Discriminated unions
-type Status =
-  | { type: "loading" }
-  | { type: "success"; data: Data }
-  | { type: "error"; error: Error };
-```
-
-### Discriminated Unions for Component Variants
-
-Use TypeScript discriminated unions to create type-safe component variants:
-
-```typescript
-// ✅ Good: Type-safe prop variants
-interface BaseSettingItemProps {
-  title: ReactNode;
-  description?: ReactNode;
-  value?: string | boolean;
-}
-
-type CheckboxSettingItemProps = BaseSettingItemProps & {
-  type: 'checkbox';
-  onChange?: (value?: boolean) => void;
-  checkboxProps?: Omit<CheckboxProps, 'value' | 'onChange'>;
-  selectProps?: never; // Prevents accidental usage
-};
-
-type SelectSettingItemProps = BaseSettingItemProps & {
-  type: 'select';
-  onChange?: (value?: string) => void;
-  selectProps?: Omit<SelectProps, 'value' | 'onChange'>;
-  checkboxProps?: never; // Prevents accidental usage
-};
-
-type SettingItemProps = CheckboxSettingItemProps | SelectSettingItemProps;
-
-// TypeScript enforces correct prop combinations
-<SettingItem
-  type="checkbox"
-  onChange={(value: boolean) => {}} // ✅ Correctly typed as boolean
-  checkboxProps={{ disabled: true }}
-  // selectProps={...} // ❌ TypeScript error: selectProps not allowed
-/>
-```
-
-### Standardized Callback APIs
-
-Replace ad-hoc callbacks with standard naming conventions:
-
-```typescript
-// ❌ Bad: Inconsistent naming
-interface OldProps {
-  setValue?: (v: string) => void;
-  onValueChange?: (v: string) => void;
-  onAfterChange?: (v: string) => void;
-}
-
-// ✅ Good: one standard `onChange`
-interface NewProps {
-  onChange?: (value: string) => void;
-}
-```
-
-### Generic Components
-
-- Use generics for reusable components with different data types
-- Properly constrain generic types
-
-```typescript
-// ✅ Good: Generic with proper constraints
-interface BAITableProps<T extends { id: string }> {
-  dataSource: T[];
-  columns: BAIColumnType<T>[];
-  onRowClick?: (record: T) => void;
-}
-
-const BAITable = <T extends { id: string }>({
-  dataSource,
-  columns,
-  onRowClick,
-}: BAITableProps<T>) => {
-  // Implementation
-};
-
-// Usage with type inference
-<BAITable
-  dataSource={users} // T inferred as User
-  columns={userColumns}
-  onRowClick={(user) => handleUserRowClick(user)} // user is typed as User
-/>
-```
-
-## Internationalization (i18n)
-
-- Always use i18n functions for user-facing text
-- Refer to `/i18n-translation-instruction.md` for translation guidelines
-- Never hard-code UI strings in English or other languages
-- Use appropriate context for translations
-
-## State Management
-
-### Local State
-
-- Use `useState` for component-local state
-- Use `useReducer` for complex state logic
-
-### Global State
-
-- Use **Jotai** for global state management
-- Use Relay for GraphQL-backed state
-- Use React Context for simple UI state that doesn't need persistence
-
-```typescript
-// ✅ Good: Jotai for global state
-import { atom, useAtom } from "jotai";
-
-const userSettingsAtom = atom({});
-
-const Component = () => {
-  const [settings, setSettings] = useAtom(userSettingsAtom);
-  // ...
-};
-```
-
-## Refactoring Principles
-
-### When to Refactor
-
-1. **API Inconsistency**: When component APIs don't follow standard patterns
-2. **Props Drilling**: When props pass through 3+ component levels
-3. **Duplicate Logic**: When similar logic exists in multiple components
-4. **Type Safety Gaps**: When `any` types or type assertions are used
-5. **Performance Issues**: When profiling shows unnecessary re-renders
-
-### Incremental Refactoring Approach
-
-1. **Plan**: Document what changes and why
-2. **Type First**: Update TypeScript interfaces before implementation
-3. **Update Usages**: Change all component usages together
-4. **Test**: Verify functionality in all affected areas
-5. **i18n**: Add translations for all 21 supported languages
-
-### Backward Compatibility
-
-```typescript
-// ✅ Good: Gradual migration with deprecation
-interface Props {
-  /** @deprecated Use onChange instead */
-  setValue?: (v: string) => void;
-  onChange?: (v: string) => void;
-}
-
-// In implementation
-const handleChange = (value: string) => {
-  onChange?.(value);
-  setValue?.(value); // Support legacy prop during transition
-};
-
-// ❌ Bad: Breaking change without migration path
-interface Props {
-  onChange: (v: string) => void; // Removed setValue without warning
-}
-```
-
-## Testing
-
-### Component Tests
-
-- Write tests for complex component logic
-- Test user interactions, not implementation details
-- Use React Testing Library conventions
-
-### Accessibility in Tests
-
-- Query by accessible roles and labels
-- Ensure keyboard navigation works
-- Test with screen reader expectations
-
-### E2E Tests
-
-- Cover critical user flows
-- Use Playwright-based E2E tests for full browser interactions
-- The `.claude/agents/` directory has agents for E2E testing. Please use the following agents when writing E2E tests:
-  - playwright-test-planner
-    - Use this agent when you need to create comprehensive test plan for a web application or website.
-  - playwright-test-generator
-    - Use this agent when you need to create automated browser tests using Playwright.
-  - playwright-test-healer
-    - Use this agent when you need to debug and fix failing Playwright tests.
-
-## Performance
-
-### Code Splitting
-
-- Lazy load heavy components with `React.lazy()`
-- Split routes at page boundaries
-- Monitor bundle sizes
-
-### Rendering Optimization
-
-- Prefer `'use memo'` directive for new components
-- Use `React.memo()` for expensive pure components only when profiling shows benefit
-- Avoid premature optimization
-
-## Code Review Checklist
-
-When reviewing React code, check for:
-
-### React Compiler & Optimization
-
-- [ ] Component and custom hook (`use*`) uses `'use memo'` directive if new
-- [ ] No unnecessary `useMemo`/`useCallback` (prefer 'use memo' directive)
-- [ ] `useEffectEvent` is used for non-reactive logic in Effects when appropriate
-
-### React Transitions
-
-- [ ] `BAIButton` uses `action` prop for async operations
-- [ ] No manual loading state management where `BAIButton` action suffices
-- [ ] `useTransition` is used for non-urgent state updates
-- [ ] `useDeferredValue` is used for optimistic rendering
-
-### Component Composition
-
-- [ ] Component follows composability principles (no props drilling, proper extraction)
-- [ ] Function-based APIs (`customizeColumns`) over array-based (`extraColumns`)
-- [ ] Components follow single responsibility principle
-- [ ] Complex components are split into smaller, focused components
-
-### Relay Architecture
-
-- [ ] Query orchestrator components separate from fragment components
-- [ ] Fragment refs are properly typed with generated `$key` types
-- [ ] Fragment props follow naming conventions (`queryRef` for Query, `{typeName}Frgmt` for others)
-- [ ] `@required` directive used for non-null fields
-- [ ] Fragments are colocated with components that use them
-- [ ] Relay hooks (`useLazyLoadQuery`, `useFragment`, `useRefetchableFragment`) are used correctly
-
-### UI Components
-
-- [ ] **BAI components are used first; Astryx (`@astryxdesign/core`) only where no BAI equivalent exists**
-- [ ] No `antd` import anywhere (it will not resolve; `bash scripts/antd-zero-gate.sh` gates it)
-- [ ] `BAIText` used for text rendering (theme management)
-- [ ] CSS inheritance (`fontSize: 'inherit'`) preferred over hard-coded values
-- [ ] Imperative modals/messages go through `App.useApp()` from the app shim (`'../app-shim'`), not a hand-rolled modal host
-- [ ] `useFetchKey` is used where data refetching is needed
-- [ ] `BAIUnmountAfterClose` wraps modal/drawer content with forms
-
-### TypeScript
-
-- [ ] Discriminated unions used for component variants
-- [ ] No `any` types without justification
-- [ ] Callback props follow standard naming (`onChange`, `onSubmit`)
-- [ ] Generic components have proper constraints
-- [ ] TypeScript types are properly defined
-
-### Error Handling & State
-
-- [ ] Pre-defined error boundaries (`ErrorBoundaryWithNullFallback`, `BAIErrorBoundary`) are used
-- [ ] Error states and loading states are handled
-- [ ] Jotai is used for global state when appropriate
-
-### Internationalization & Accessibility
-
-- [ ] i18n is used for all user-facing text
-- [ ] Component is accessible (ARIA, keyboard navigation)
-
-### Security & Quality
-
-- [ ] No security vulnerabilities (XSS, injection risks)
-- [ ] No empty catch blocks (use explicit error handling or `catch { return undefined; }`)
-- [ ] No `console.log` or direct console methods (use `useBAILogger` instead)
-- [ ] All 21 language translations included for new strings (if applicable)
-- [ ] Unused props and variables removed
-
-### Refactoring Quality (when applicable)
-
-- [ ] Changes are incremental and reviewable
-- [ ] All usages updated consistently
-- [ ] Backward compatibility maintained where needed
+# React Guidelines for Backend.AI WebUI
+
+Project-specific deltas only. Generic React 19 / TypeScript practice is assumed and not
+repeated here. Depth lives in the on-demand skills listed at the bottom.
+
+## React Compiler — `'use memo'`
+
+- `babel-plugin-react-compiler` runs in **annotation mode**: memoization happens only in
+  function bodies that start with `'use memo'`.
+- Add `'use memo'` as the **first statement of every component body and every custom hook
+  body** (function bodies, not files). Never remove, rename, or backtick an existing one.
+- Placement is strict: before any other code (comments are fine), quoted (`'use memo'` /
+  `"use memo"`), never conditional. Only the first directive is processed.
+- TypeScript/ESLint may report `Unknown directive: 'use memo'`. That is expected — do not
+  "fix" it, and do not comment that it is invalid or deprecated.
+- **Do not add `useMemo` / `useCallback` in new code.** Plain values, plain inline handlers.
+  Manual memoization is only for a profiled bottleneck, and reviewers will push back.
+  Full rule: `.claude/rules/react-compiler-memoization.md`.
+- For effect callbacks that must read latest props/state without re-triggering, use
+  `useEffectEvent` — never `// eslint-disable-next-line react-hooks/exhaustive-deps`.
+  See `.claude/rules/use-effect-event.md`. (The old ahooks `useMemoizedFn` pattern is gone;
+  `ahooks` is not a dependency.)
+
+## Component system: BAI first, Astryx second, antd never
+
+- **Reach for a `backend.ai-ui` component first** — `BAIFlex`, `BAIButton`, `BAIModal`,
+  `BAICard`, `BAIText`, `BAITableAstryx`, … They own this project's defaults and wrap the
+  Astryx internals.
+- When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. Discover
+  before writing: `pnpm exec astryx search "<thing>"`, `pnpm exec astryx component <Name>`.
+  See the `ASTRYX` block in `AGENTS.md` / `react/AGENTS.md`.
+- **antd is not a dependency.** `import … from 'antd'` does not resolve and fails `tsc`;
+  the workspace is exact-pinned so it cannot re-enter transitively. Never add one.
+- `antd-style` (`createStyles` / `createGlobalStyle`) is also gone. Styling that props and
+  tokens cannot express goes in a **co-located `.css` file** the component imports, written
+  with `var(--…)` Astryx custom properties. No raw hex / px.
+- Use `BAIFlex` for layout (`direction="row" | "column"`, `gap`), not a hand-rolled flex div.
+
+### Shims — same call shape, different import
+
+Three antd surfaces were replaced by self-hosted shims that are drop-in compatible. Adjust
+the `../` depth to the file; the same specifiers exist on both sides of the workspace
+(`react/src/*` re-exports the implementation in `packages/backend.ai-ui/src/*`).
+
+| Was | Now (host `react/src/**` and BUI `packages/backend.ai-ui/src/**`) |
+|---|---|
+| `import { App } from 'antd'` | `import { App } from '../app-shim'` |
+| `import { theme } from 'antd'` | `import { theme } from '../theme-shim'` |
+| `import { Form } from 'antd'` | `import { Form } from '../form-engine'` |
+
+- `App.useApp()` gives `{ message, modal }` with antd's exact call shape — `modal.confirm()`
+  for throwaway confirmations, `message.*` for toasts. There is **no `notification`** on the
+  shim; long-running notifications are the Jotai store in
+  `react/src/hooks/useBAINotification.tsx`. `<BAIAppProvider>` is mounted once in
+  `DefaultProviders`.
+- `theme.useToken()` returns the antd-shaped `{ token, hashId, theme }` (numbers for
+  dimensions, hex strings for colours) backed by Astryx tokens. Use tokens, never hard-coded
+  colours — every component must work in light and dark.
+- `Form` / `Form.Item` / `Form.List` / `Form.useForm` / `Form.useWatch` resolve to the
+  self-hosted engine; `Form.Item` **is** `BAIFormItem`.
+- Everything else that used to come from antd is a `BAI*` wrapper from `backend.ai-ui` or an
+  Astryx primitive from `@astryxdesign/core/<Name>`.
+
+### The antd-v6-shaped prop vocabulary is frozen deliberately
+
+antd is gone but its prop **names** survived on purpose: `BAIAlert`, `BAICard`, `BAIModal`,
+`BAISelect`, `BAITable`, … were given an antd-**v6**-shaped surface so the hundreds of
+inherited call sites needed no edit when their internals were rebuilt on Astryx.
+
+- Do **not** rename these props to Astryx spellings or invent a third one. `BAIAlert` takes
+  `title` (not `message`); steps take `orientation` (not `direction`).
+- When a wrapper's props `Omit<>` a name, that Omit targets the **v6** name.
+- Some props describe a mechanism Astryx does not have and are accepted-and-ignored; each
+  such case is recorded in the wrapper's own file header — check there before assuming a prop
+  does something.
+- Conventions for extending a wrapped component's props (`Omit<>` + `...rest`):
+  `.claude/rules/component-props-extension.md`.
+
+## Relay
+
+- **Architecture**: split the query orchestrator (`useLazyLoadQuery`, owns fetch policy and
+  Suspense boundary) from the fragment component (`useFragment`, owns presentation).
+- **Prop naming**: `queryRef` for a `Query` type ref; `{typeName}Frgmt` for everything else
+  (`userFrgmt`, `vfolderNodeFrgmt`, plural `usersFrgmt`).
+- Colocate fragments with the component that reads them; request only the fields you need;
+  paginate lists. Type refs with the generated `$key` types.
+- Name the fragment result after the GraphQL type (`const users = useFragment(...)`), not
+  `data` / `result`.
+- Export the "one row" type so consumers don't re-derive it:
+  `export type UserNodeInList = NonNullable<BAIUserNodesFragment$data[number]>;`
+- Pagination argument modes are mutually exclusive — see `.claude/rules/graphql-pagination.md`.
+- Depth: `relay-patterns`, `react-relay-table`, `create-relay-nodes-component` skills.
+
+## Naming
+
+| Kind | Convention |
+|---|---|
+| Shared component under `packages/backend.ai-ui/` | `BAI*` (`BAIButton`, `BAIFlex`, `BAIUserNodes`) |
+| Relay-backed table bound to a GraphQL type | `*Nodes` (`SessionNodes`, `VFolderNodes`) — colocates a `@relay(plural: true)` fragment |
+| Top-level route component in `react/src/pages/` | `*Page` (`AdminComputeSessionListPage`) |
+| Modal / drawer shell | `*Modal` / `*Drawer` |
+| Reusable group of `Form.Item`s | `*FormItems` (`ResourceAllocationFormItems`) |
+
+Callback props: `onChange` (never `setValue` — migrated away in FR-1720), `onChangeOrder`,
+`onRequestClose`, `customizeColumns`. Boolean props are descriptive, not `isXxx`
+(`disableSorter`, `showResetButton`).
+
+Variables and props start lowercase (camelCase). Exceptions: component names, types /
+interfaces, enum members.
+
+## Composition
+
+- Prefer function-based extension over array-based: `customizeColumns?: (base: BAIColumnType[]) => BAIColumnType[]`
+  lets consumers insert, filter, reorder or replace — `extraColumns` can only append.
+- Use discriminated unions for component variants, with `neverProps?: never` on the other
+  arm, and narrow the `*Props` bag to the fields call sites actually pass rather than
+  re-exporting a whole upstream props type.
+- Jotai for global state, Relay for GraphQL-backed state, React Context only for simple
+  non-persisted UI state. Compose instead of drilling props 3+ levels.
+
+## Async actions and refetching
+
+- Async work on a button goes through `BAIButton`'s **`action`** prop (React Transition +
+  automatic loading state + double-click guard). Do not hand-roll `useState(isLoading)`, and
+  do not pair `action` with `onClick` on the same button. `onClick` is for simple sync state.
+- `useFetchKey` drives manual refetch / cache invalidation; wire it into the query that must
+  re-run after a mutation.
+- `BAIUnmountAfterClose` must wrap modal/drawer content that holds a form — otherwise form
+  state goes stale across open/close.
+- Irreversible destructive actions require typed confirmation, not a popconfirm — see
+  `.claude/rules/destructive-confirmation.md`.
+
+## i18n — two separate i18next instances (FR-2986)
+
+- **Host** (`react/src/**`): `useTranslation()` / `<Trans>` from `react-i18next`.
+- **BUI** (`packages/backend.ai-ui/src/**`): `useBAIi18n()` / `<BAITrans>`, imported by
+  relative path from the package's own hook. These bind explicitly to BUI's i18next instance
+  and bypass React Context; direct `react-i18next` imports inside BUI are blocked by ESLint.
+- Never hard-code user-facing text; new strings need all supported locales.
+  Depth: `fw:i18n-patterns` skill and `.github/instructions/i18n.instructions.md`.
+
+## Logging and error handling
+
+- **No `console.*`** (ESLint `no-console`). Use `const { logger } = useBAILogger();` —
+  imported from `backend.ai-ui` — with the right level (`debug` / `info` / `warn` / `error`).
+  The logger is disabled in production automatically and supports `withContext`.
+- **No empty `catch {}`** — it trips the security scanner. Either log via `logger.error`, or
+  make the ignore explicit: `catch { return undefined; }`.
+- Use the pre-defined boundaries: `BAIErrorBoundary` (user-facing fallback) and
+  `ErrorBoundaryWithNullFallback` (silent). Do not write new error boundary components.
+
+## File conventions
+
+- Import order is enforced by `@trivago/prettier-plugin-sort-imports` with **no groups
+  configured** — one block sorted by module specifier (ASCII). Do not insert blank lines or
+  group comments between imports; `pnpm format-fix` strips them.
+- Use `lodash-es`, never `lodash`.
+- Hook call order inside a body: i18n / theme / app → context hooks → router & URL state →
+  Relay → `useState` → derived values → effects → handlers. Every hook above any early return.
+- Derive, don't mirror: no `useState` + `useEffect` for a value computable from props/state.
+
+## Verification
+
+`bash scripts/verify.sh` (Relay compile, ESLint, Prettier, TypeScript) must pass. Unit tests
+are Vitest; E2E is Playwright under `e2e/` (see the `playwright-test-*` agents in
+`.claude/agents/`).
+
+## On-demand skills
+
+`react-form` (Form/`Form.Item`, validators) · `react-modal-drawer` · `react-layout`
+(`BAIFlex`, spacing, breakpoints) · `react-relay-table` · `react-suspense-fetching`
+(fetch policies, `fetchKey`) · `react-url-state` (`nuqs`) · `react-async-actions` ·
+`tab-url-state` · `relay-patterns` · `create-relay-nodes-component` ·
+`relay-infinite-scroll-select` · `astryx-fix` (visual/behavioural fixes on Astryx UI) ·
+`fw:i18n-patterns` · `fw:storybook-patterns`.
+
+## Review checklist (project-specific)
+
+- [ ] `'use memo'` first line of every new component / hook body; no speculative
+      `useMemo` / `useCallback`; no `exhaustive-deps` disables.
+- [ ] No `antd` import, no `antd-style`; BAI component used where one exists, Astryx
+      otherwise; `App` / `theme` / `Form` imported from the shims.
+- [ ] BAI wrapper props keep their antd-v6-shaped names; props interface extends the wrapped
+      component's props via `Omit<>` with `...rest` forwarded.
+- [ ] Relay: orchestrator/fragment split, `queryRef` / `{typeName}Frgmt` naming, `$key`
+      types, colocated fragments, single pagination mode.
+- [ ] `BAIButton action` for async work; `useFetchKey` where refetch is needed;
+      `BAIUnmountAfterClose` around form-bearing modals/drawers.
+- [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
+      user-facing strings.
+- [ ] `useBAILogger` instead of `console.*`; no empty catch; pre-defined error boundaries.
+- [ ] Tokens/`var(--…)` instead of hard-coded colours or px; works in light and dark.
+- [ ] `bash scripts/verify.sh` passes.

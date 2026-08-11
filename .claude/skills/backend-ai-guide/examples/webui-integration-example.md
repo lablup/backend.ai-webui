@@ -19,7 +19,7 @@ The **Backend.AI WebUI** (this project) is a **client application** that communi
 ┌─────────────────────────────────────────────┐
 │  Backend.AI WebUI (this project)            │
 │  - React components (/react)                │
-│  - Ant Design + Relay (GraphQL)             │
+│  - Astryx + Relay (GraphQL)                 │
 └──────────────────┬──────────────────────────┘
                    │
                    │ API Calls (REST + GraphQL)
@@ -215,7 +215,7 @@ fetch('/session', {
 ```
 Backend.AI WebUI
 ├── React Components (/react)
-│   ├── Ant Design UI Library
+│   ├── Astryx UI Library
 │   ├── Relay (GraphQL Client)
 │   ├── Jotai (Global State)
 │   └── All features and pages
@@ -492,7 +492,7 @@ curl -X POST http://localhost:8090/admin/graphql \
 ## Summary: WebUI-Backend Communication
 
 **Key Points**:
-✅ **React Architecture**: React 19 + Ant Design 6 + Relay 20
+✅ **React Architecture**: React 19 + Astryx + Relay 20
 ✅ **Dual API Support**: REST for operations, GraphQL for queries
 ✅ **Authentication**: JWT tokens or signed requests
 ✅ **Hosted by**: Backend.AI Webserver component

@@ -34,7 +34,7 @@ They survive in the signature only so the 12 components that declare
 `interface XProps extends BAISelectProps` keep compiling. **A new Relay
 infinite-scroll select built on `BAISelect` will compile, render, and silently
 never paginate.** Use `BAISelect` only for a static, in-memory option list; for
-its antd-shaped prop surface see `.claude/rules/antd-v6-props.md`.
+its antd-shaped prop surface see `.claude/rules/component-props-extension.md`.
 
 `BAIComplexSelect` is built on Astryx's `ComplexSelector` — the only Astryx
 select that hands the popup body back as a **render prop**. That is what keeps
@@ -548,7 +548,7 @@ Related project rules:
 
 - `.claude/rules/graphql-pagination.md` — never mix pagination modes
 - `.claude/rules/component-props-extension.md` — the `Omit<…Props, …>` pattern
-- `.claude/rules/antd-v6-props.md` — the antd-shaped surface `BAISelect` still carries
+- `.claude/rules/component-props-extension.md` — the antd-shaped surface `BAISelect` still carries
 
 ## File Structure
 

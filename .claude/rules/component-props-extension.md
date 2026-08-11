@@ -10,10 +10,11 @@ When creating a BAI wrapper component, the component's props interface **must** 
 > component's props type", and its worked examples were
 > `BAICardProps extends Omit<CardProps, 'extra'>` and
 > `BAIBadgeProps extends Omit<BadgeProps, …>`. antd is no longer a dependency
-> (`scripts/antd-zero-gate.sh` asserts it), so `CardProps` / `BadgeProps` from
-> `antd` do not exist and neither example compiles. The **principle** is
-> unchanged — only the base is. Note that a wrapper's antd-shaped prop
-> *vocabulary* is a separate concern: see `antd-v6-props.md`.
+> of this project — an `antd` import does not resolve — so `CardProps` /
+> `BadgeProps` from `antd` do not exist and neither example compiles. The
+> **principle** is unchanged — only the base is. Note that a wrapper's
+> antd-shaped prop *vocabulary* is a separate, frozen concern — see "Frozen
+> antd-v6-shaped prop vocabulary" below.
 
 ## Why
 
@@ -125,7 +126,7 @@ export interface BAIListAlertProps extends Omit<BAIAlertProps, 'description'> {
 3. If a prop has the same type and semantics as the original, do **not** Omit it — let it pass through naturally.
 4. Pass remaining props through via `...rest` to the component being wrapped (`{...popoverProps}`, `{...cardProps}`, …).
 5. When the base is another BUI wrapper, extend **that wrapper's** exported props type — do not reach past it to the Astryx type it happens to sit on. The intermediate wrapper's overrides are part of the contract you are specializing.
-6. Do **not** reintroduce an `antd` import to obtain a base type. There is none to import, and `scripts/antd-zero-gate.sh` fails if one appears.
+6. Do **not** reintroduce an `antd` import to obtain a base type. antd is not a dependency of this project, so the import will not resolve.
 
 ## Escape hatch — a deliberately hand-restated surface
 
@@ -143,6 +144,22 @@ A wrapper may declare its props **standalone**, restating a frozen antd-SHAPED s
 
 Two conditions make this legitimate rather than the ❌ pattern above: the surface is **frozen** (it exists to keep existing call sites compiling, not to grow), and the reason is **written down in the file header**. If neither holds, extend a base type.
 
+## Frozen antd-v6-shaped prop vocabulary
+
+Many BAI wrappers (`BAIAlert`, `BAICard`, `BAITable`, `BAIModal`, `BAISelect`, …)
+were deliberately given an antd-**v6**-shaped prop surface, so the several
+hundred call sites carried over from the antd era needed no edit when their
+internals were rebuilt on Astryx — e.g. `BAIAlert` takes `title` (not
+`message`), and `Steps` takes `orientation` (not `direction`). These were
+aligned to antd v6 specifically because v6 renamed the v5 names as
+`@deprecated` and picked the semantically clearer spelling.
+
+**Do not rename these props to "modernize" them.** The vocabulary outlived the
+library on purpose — renaming would break every existing call site for no
+benefit. When a wrapper's props interface `Omit<>`s one of these names, target
+the **v6** name, not the v5 one. New props added to an antd-shaped wrapper
+should also follow the frozen v6 spelling rather than inventing a third one.
+
 ## Verification
 
 - The wrapper's props interface names a base that actually exists in the repo:
@@ -156,8 +173,6 @@ Two conditions make this legitimate rather than the ❌ pattern above: the surfa
 
 ## Related
 
-- `antd-v6-props.md` — why some BAI wrappers still take antd-v6-*named* props
-  even though no antd types remain, and which v6 name an `Omit<>` should target.
 - `use-bai-card.md` — `BAICard`'s own conventions; its props are the DOM-base
   plus hand-restated case above.
 - `BAICard` source: `packages/backend.ai-ui/src/components/BAICard.tsx`
