@@ -683,10 +683,11 @@ export async function generateWebsite(
           );
           continue;
         }
+        const { title: langTitle } = resolveBookTitle(versionBookConfig, lang);
         await buildLanguage({
           lang,
           version,
-          title: versionBookConfig.title,
+          title: langTitle,
           config: versionConfig,
           bookConfig: versionBookConfig,
           outRoot: versionDir,
