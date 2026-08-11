@@ -135,8 +135,8 @@ The following topics were deliberately **removed from the manual** after review 
 
 1. **Auto-refresh controls and intervals**: Do not describe the shared auto-refresh dropdown/toggle on list pages (sessions, vfolder, deployments, dashboard, agent list, storages, Fair Share, Prometheus presets, container logs, etc.), and do not state default refresh intervals (e.g. "refreshes every 15/30/10 seconds"). Do not add screenshots of the refresh dropdown/menu.
    - **Allowed exception**: genuinely feature-specific refresh behavior that a user cannot infer from the UI — e.g. the deployment revision tab polling every 5 seconds *while a revision apply is in progress*. When in doubt, leave it out.
-2. **URL/query-string view-state boilerplate**: Do not explain that filters, sort order, pagination, or tab selection are stored in the URL / survive reload / are shareable. This is self-evident platform behavior, not feature documentation.
-3. **Expand-mode / table-state enumerations**: Do not enumerate self-evident table interactions (row expand/collapse behavior, "click a row to expand", column show/hide mechanics) unless a specific non-obvious fact needs stating.
+2. **View-state persistence boilerplate (URL or in-page)**: Do not explain that filters, sort order, pagination, or tab selection are stored in the URL / survive reload / are shareable, **and** do not explain that each tab keeps its own filter/sort/page state so switching to another tab and back restores the view (e.g. "각 탭은 자체적인 필터, 정렬, 페이지 상태를 유지하므로 …그대로 복원됩니다"). This is self-evident platform behavior, not feature documentation.
+3. **Expand-mode / table-state enumerations**: Do not enumerate self-evident table interactions — row expand/collapse behavior, "click a row to expand", column show/hide mechanics, the **Expand options** kebab menu (expand all / collapse all / expand errors only, its default mode, or that the chosen mode is remembered per user).
 
 If a documentation update plan asks for any of the above, skip that item and note in your output that it was skipped per FR-3480.
 

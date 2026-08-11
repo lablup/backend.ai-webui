@@ -332,10 +332,6 @@ The session list groups your sessions into type tabs — **All**, **Interactive*
 **Running** / **Finished** switch and a property filter for **Session Name**,
 **Resource Group**, and **Agent**.
 
-Every tab keeps its own filter, sort order, and page number while you stay on the
-page, so switching to another tab and back restores the view you left instead of
-resetting it.
-
 <a id="session-detail-panel"></a>
 
 ## Session detail panel
@@ -429,16 +425,6 @@ The sub-steps table includes the following columns:
 - **Message**: Detailed information or error description
 - **Started At**: When the sub-step began
 - **Ended At**: When the sub-step completed
-
-#### Expand / collapse control
-
-A kebab menu (⋮) in the expand-column header opens the **Expand options** menu, which lets you expand
-all rows, collapse all rows, or expand only the rows whose result is not SUCCESS. **Expand errors
-only** is the default — in that mode SUCCESS sub-steps are also hidden within the expanded rows, so
-what went wrong in a session's scheduling lifecycle stands out immediately.
-
-The selected mode is remembered per user and persists across modal opens. You can still manually
-expand or collapse individual rows at any time, regardless of the active mode.
 
 #### Result badge colors
 
