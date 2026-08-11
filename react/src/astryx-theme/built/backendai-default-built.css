@@ -551,8 +551,8 @@
 
   .astryx-dialog {
     background-color: var(--color-background-popover);
-    --text-heading-2-size: 16px;
-    --text-heading-2-leading: 1.5;
+    --text-heading-2-size: var(--font-size-xl);
+    --text-heading-2-leading: 1.4;
     --astryx-dialog-padding-inline: 24px;
     --astryx-dialog-padding-block-start: 16px;
     --astryx-dialog-padding-block-end: 16px;

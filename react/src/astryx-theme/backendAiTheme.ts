@@ -318,9 +318,12 @@ const ANTD_DIALOG_SURFACE = {
     base: {
       padding: '16px 24px',
       backgroundColor: 'var(--color-background-popover)',
-      // antd `.ant-modal-title`: fontSizeLG 16px / lineHeightLG 1.5.
-      '--text-heading-2-size': '16px',
-      '--text-heading-2-leading': '1.5',
+      // antd `.ant-modal-title` was fontSizeLG 16px / lineHeightLG 1.5,
+      // but the header title rendered smaller than the footer area.
+      // Increased to --font-size-xl (20px) so the title reads as the
+      // dialog's primary heading — see FR-3495.
+      '--text-heading-2-size': 'var(--font-size-xl)',
+      '--text-heading-2-leading': '1.4',
     },
   },
 };
