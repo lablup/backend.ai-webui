@@ -26,13 +26,15 @@ export type ModelHealthCheckFormValue = {
 };
 
 export type ModelServiceFormValue = {
-  // `service` itself is optional on a model, but when present `port` /
-  // `startCommand` are always provided by the form, which marks them
-  // `required` (see AdminDeploymentPresetModelConfigItem). Of these the create
-  // input (PresetModelServiceConfigInput) only requires `port` non-null;
-  // `startCommand` became optional/deprecated in 26.7.0 (superseded by the
-  // single-string `command`), but this form still emits `startCommand`, so it
-  // stays required at the UI level.
+  // `service` itself is optional on a model, and so are `port` /
+  // `startCommand` within it — neither carries a `required` rule on either
+  // form (BA-6613, enforced in the shared `ServiceConfigurationFormItems`).
+  // The backend defaults `shell` to `/bin/bash` and each page's submit-mapping
+  // layer falls back to a default port, so blocking submit on them would be
+  // wrong. The create input (PresetModelServiceConfigInput) only requires
+  // `port` non-null, which that fallback satisfies; `startCommand` became
+  // optional/deprecated in 26.7.0 (superseded by the single-string `command`)
+  // and this form still emits it, but optionally.
   //
   // `startCommand` holds the raw command string typed by the user. On 26.7.0+
   // it is submitted as the single-string `command` (with `shell` derived from

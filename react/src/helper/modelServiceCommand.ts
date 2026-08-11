@@ -110,8 +110,10 @@ export function deriveCommandModeState(params: {
  * shell is set the kernel runs `[shell, '-c', command]`; a null/empty shell
  * disables shell wrapping and runs the command directly (argv).
  *
- * `execution` is optional: when omitted (e.g. the preset form, which has no
- * Exec mode) it is treated as Shell, so the result is never null.
+ * `execution` is optional: when a caller omits it — e.g. a legacy manager that
+ * renders no Execution control at all — it is treated as Shell, so the result
+ * is never null. Both callers of the shared Service Configuration form do
+ * expose Exec (FR-3474), so for them `execution` is always supplied.
  */
 export function resolveCommandShell(params: {
   execution?: CommandExecutionMode;
