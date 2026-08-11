@@ -532,11 +532,7 @@ Click the **Scheduling History** link button next to the status tag to open the 
 
 ![](../images/deployment_scheduling_history.png)
 
-Every event that has sub-steps can be expanded: click the `+` icon at the start of the row to see the sub-step table for that event. The menu in the expand column header offers three view options — expand all rows, collapse all rows, or expand only the rows with errors. **Expand errors only** is the default, so failures, retries, and expirations are visible as soon as the modal opens.
-
-The view option decides only **which rows start expanded** — it never changes what an expanded row shows. An expanded row always lists the **complete** sub-step table for that event, including sub-steps that succeeded, so you can read a failure in the context of the steps that ran before it. Rows you open or close by hand keep that state until you change the view option or the data reloads.
-
-The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table and the same expand controls. See [Replicas](#replicas-tab-history).
+The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table. See [Replicas](#replicas-tab-history).
 
 <a id="revisions-tab"></a>
 
@@ -646,8 +642,6 @@ Click the session name in the **Session** column to open the session detail draw
 Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
 
 ![](../images/replica_scheduling_history.png)
-
-Expanding a row and the three view options behave exactly as described in [Scheduling History](#scheduling-history): the view option chooses which rows start expanded, and an expanded row always shows the full sub-step table for that event.
 
 If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
 

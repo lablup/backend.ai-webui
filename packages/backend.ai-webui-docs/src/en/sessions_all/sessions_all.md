@@ -404,11 +404,6 @@ preferred order.
 The scheduling history table is paginated with offset-based pagination. The default page size is 10
 records per page. Changing a filter or the sort order automatically resets the view back to page 1.
 
-:::note
-The **Expand errors only** mode (described below) applies only to the records visible on the current
-page, not to the entire history.
-:::
-
 #### Expandable sub-steps
 
 Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
