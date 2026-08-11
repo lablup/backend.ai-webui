@@ -13,14 +13,13 @@
 // `readsVfolderConfigFiles` branching and the outgoing mutation payload are
 // both under deterministic test control.
 //
-// This spec always targets the latest (nullable-capable,
-// `preset-model-config-type`, 26.9.0+/BA-7210) behavior — it doesn't
-// simulate legacy managers. On latest managers, Service Configuration/
-// Health Check/Pre-Start Actions render independently in Basic Info without
-// Model Definition ever needing to be enabled, which is exactly the flow
-// every test here drives. (Legacy managers nest the same fields inside
-// Model Definition instead — see AdminDeploymentPresetSettingPageContent.tsx,
-// FR-3481 — but that's a different layout this spec doesn't cover.)
+// The FR-3474 scenarios below target the latest (nullable-capable,
+// `preset-model-config-type`, 26.9.0+/BA-7210) behavior: Service
+// Configuration/Health Check/Pre-Start Actions render independently in
+// Basic Info without Model Definition ever needing to be enabled. Legacy
+// managers nest the same fields inside Model Definition instead — see
+// AdminDeploymentPresetSettingPageContent.tsx, FR-3481 — covered by the
+// dedicated legacy-manager describe block at the bottom of this file.
 //
 // Behaviors asserted:
 //   1. Service Configuration is shown for the (mocked) `custom` variant, with
@@ -104,6 +103,43 @@ async function installPresetFlagOverride(page: Page): Promise<void> {
             ) {
               return true;
             }
+            return origSupports(feature);
+          };
+          value.__depFlagPatched = true;
+        }
+        clientRef = value;
+      },
+      configurable: true,
+    });
+  });
+}
+
+/**
+ * Force `model-service-command-string` on but `preset-model-config-type`
+ * explicitly OFF, simulating a legacy (pre-BA-7210) manager. Complements
+ * `installPresetFlagOverride` above (nullable-capable): on managers without
+ * `preset-model-config-type`, Service Configuration/Health Check/Pre-Start
+ * Actions render nested inside the Model Definition card (FR-3481) instead
+ * of independently in Basic Info, and Model Name/Model Path stay required
+ * — a layout `installPresetFlagOverride`'s scenarios don't exercise.
+ */
+async function installLegacyPresetFlagOverride(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    let clientRef: any;
+    Object.defineProperty(window, 'backendaiclient', {
+      get() {
+        return clientRef;
+      },
+      set(value: any) {
+        if (
+          value &&
+          typeof value.supports === 'function' &&
+          !value.__depFlagPatched
+        ) {
+          const origSupports = value.supports.bind(value);
+          value.supports = function (feature: string) {
+            if (feature === 'model-service-command-string') return true;
+            if (feature === 'preset-model-config-type') return false;
             return origSupports(feature);
           };
           value.__depFlagPatched = true;
@@ -216,6 +252,71 @@ async function setupPresetCreatePage(
   // (group label + inner label). TODO: give the call site a real label.
   await resourcesCard
     .getByRole('spinbutton', { name: 'Select Select', exact: true })
+    .fill('16');
+  await selectComplexSelectOption(page, 'Image', MOCK_IMAGE_OPTION_LABEL);
+
+  return { capture };
+}
+
+/**
+ * Legacy-manager counterpart to {@link setupPresetCreatePage}: same wizard
+ * setup, but under `installLegacyPresetFlagOverride` — so Service
+ * Configuration is NOT independently visible in Basic Info here (it only
+ * renders once Model Definition is enabled), matching the input form's
+ * legacy layout (FR-3481).
+ */
+async function setupLegacyPresetCreatePage(
+  page: Page,
+  request: APIRequestContext,
+): Promise<{ capture: Capture }> {
+  const capture: Capture = { input: null };
+  await installLegacyPresetFlagOverride(page);
+  await loginAsAdmin(page, request);
+  await setupGraphQLMocks(page, {
+    AdminDeploymentPresetSettingPageRuntimeVariantsQuery:
+      adminPresetRuntimeVariantsMock(),
+    AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery:
+      adminPresetSelectedRuntimeVariantMock(),
+    AdminDeploymentPresetSettingPageResourceSlotTypesQuery:
+      adminPresetResourceSlotTypesMock(),
+    ...adminPresetImageSelectMocks(),
+    AdminDeploymentPresetSettingPageCreateMutation:
+      adminPresetCreateMutationMock(capture),
+  });
+
+  await navigateTo(page, 'admin/deployments/deployment-presets/new');
+  const nameInput = page.getByRole('textbox', { name: 'Name', exact: true });
+  await expect(nameInput).toBeVisible({ timeout: 15000 });
+  await nameInput.fill(`e2e-fr3481-legacy-preset-${Date.now()}`);
+
+  // Astryx Selector: plain trigger button + clickable option rows (same
+  // idiom as setupPresetCreatePage above).
+  await page.getByRole('button', { name: 'Runtime', exact: true }).click();
+  const customOption = page.getByRole('option', {
+    name: 'custom',
+    exact: true,
+  });
+  await expect(customOption).toBeVisible({ timeout: 10000 });
+  await customOption.click();
+  // Wait for the selection to commit before asserting the negative below —
+  // otherwise "not visible yet" and "legacy layout" are indistinguishable.
+  await expect(
+    page.getByRole('button', { name: 'Runtime', exact: true }),
+  ).toContainText('custom', { timeout: 10000 });
+
+  // Legacy: unlike the nullable-capable path, Service Configuration is NOT
+  // independently visible in Basic Info — it only appears once Model
+  // Definition is enabled (nested inside that card, asserted by the test).
+  await expect(
+    page.getByText('Service Configuration', { exact: true }),
+  ).toHaveCount(0);
+
+  const resourcesCard = page.locator('#preset-form-card-resources');
+  await resourcesCard
+    .getByRole('spinbutton', { name: 'CPU', exact: true })
+    .fill('4');
+  await resourcesCard
+    .getByRole('spinbutton', { name: 'Select', exact: true })
     .fill('16');
   await selectComplexSelectOption(page, 'Image', MOCK_IMAGE_OPTION_LABEL);
 
@@ -419,6 +520,128 @@ test.describe(
         expectedStatusCode: 200,
         initialDelay: 3,
       });
+    });
+  },
+);
+
+test.describe(
+  'Admin Deployment Preset — Service Configuration, legacy manager (FR-3481)',
+  { tag: ['@serving', '@deploy', '@functional', '@regression'] },
+  () => {
+    test.describe.configure({ mode: 'serial', retries: 1 });
+
+    test('Admin sees Service Configuration/Health Check/Pre-Start Actions nested inside Model Definition, and the mutation carries required name/modelPath', async ({
+      page,
+      request,
+    }) => {
+      const { capture } = await setupLegacyPresetCreatePage(page, request);
+
+      // Deployment Defaults — replicaCount is required with no default, and
+      // lives on Basic Info (Step 1); fill it before switching steps.
+      await page
+        .getByRole('spinbutton', { name: 'Replica Count', exact: true })
+        .fill('1');
+
+      // Enable Model Definition — legacy managers can only submit Service
+      // Configuration/Health Check/Pre-Start Actions alongside a real
+      // name/modelPath (PresetModelConfigInput.name/modelPath were
+      // String!/min_length=1 pre-BA-7210), so the input form nests these
+      // sections inside this card instead of Basic Info.
+      await page.getByRole('button', { name: 'Model & Execution' }).click();
+      await page
+        .getByRole('switch', { name: 'Model Definition', exact: true })
+        .click();
+
+      const nameInput = page.getByRole('textbox', {
+        name: 'Model Name',
+        exact: true,
+      });
+      const modelPathInput = page.getByRole('textbox', {
+        name: 'Model Path',
+        exact: true,
+      });
+      await expect(nameInput).toBeVisible({ timeout: 10000 });
+      await nameInput.fill('e2e-fr3481-legacy-model');
+      await modelPathInput.fill('/models/e2e-fr3481-legacy-model');
+
+      // The nested Service Configuration/Health Check/Pre-Start Actions use
+      // the exact same field labels as the nullable-capable path's
+      // independent Basic Info placement — only their position in the DOM
+      // tree differs, not their accessible names.
+      const shellInput = page.getByRole('textbox', {
+        name: 'Shell',
+        exact: true,
+      });
+      await expect(shellInput).toBeVisible();
+      await expect(shellInput).toHaveValue('/bin/bash');
+
+      const rawCommand = 'python -m server --legacy';
+      await page
+        .getByRole('textbox', { name: 'Command', exact: true })
+        .fill(rawCommand);
+      await page
+        .getByRole('spinbutton', { name: 'Port', exact: true })
+        .fill('9000');
+
+      await page
+        .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
+        .check();
+      await page
+        .getByRole('textbox', { name: 'Path', exact: true })
+        .fill('/health');
+      await page
+        .getByRole('spinbutton', { name: 'Interval', exact: true })
+        .fill('10');
+      await page
+        .getByRole('spinbutton', { name: 'Max Retries', exact: true })
+        .fill('5');
+      await page
+        .getByRole('spinbutton', { name: 'Max Wait Time', exact: true })
+        .fill('15');
+      await page
+        .getByRole('spinbutton', { name: 'Status Code', exact: true })
+        .fill('200');
+      await page
+        .getByRole('spinbutton', { name: 'Startup Grace Period', exact: true })
+        .fill('3');
+
+      await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
+      await page
+        .getByRole('textbox', { name: 'Action', exact: true })
+        .fill('warm_cache');
+      await page
+        .getByRole('textbox', { name: 'Args (JSON)', exact: true })
+        .fill('{"size": 128}');
+
+      await page.getByText('Skip to Review', { exact: true }).click();
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+
+      await expect.poll(() => capture.input, { timeout: 15000 }).not.toBeNull();
+
+      const model = capture.input?.modelDefinition?.models?.[0];
+      expect(model).toBeTruthy();
+      // Legacy managers require real, non-empty name/modelPath — unlike the
+      // nullable-capable path (which would send `null` for either field
+      // left blank), so these must be the actual typed strings.
+      expect(model.name).toBe('e2e-fr3481-legacy-model');
+      expect(model.modelPath).toBe('/models/e2e-fr3481-legacy-model');
+
+      const service = model.service;
+      expect(service).toBeTruthy();
+      expect(service.command).toBe(rawCommand);
+      expect(service.shell).toBe('/bin/bash');
+      expect(service.port).toBe(9000);
+      expect(service.healthCheck).toMatchObject({
+        path: '/health',
+        interval: 10,
+        maxRetries: 5,
+        maxWaitTime: 15,
+        expectedStatusCode: 200,
+        initialDelay: 3,
+      });
+      expect(service.preStartActions).toEqual([
+        { action: 'warm_cache', args: { size: 128 } },
+      ]);
     });
   },
 );
