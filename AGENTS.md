@@ -203,6 +203,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 - **Astryx UI fixes**: `astryx-fix` skill (measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
+- **Astryx UI bug reporting**: `astryx-bug-report` skill (capture-only intake for visual / behavioral defects, files them as Jira Bugs under epic FR-3491, duplicate + relates scan). Use it when the ask is "record this", `astryx-fix` when it is "fix this".
 
 ### Terminology Precedence
 
