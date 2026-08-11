@@ -38,15 +38,18 @@ import logo from "./logo.svg";
 ## Styling
 
 - Use Ant Design theme configuration via `/resources/theme.json` for global theming. You can use [the theme editor](https://ant.design/theme-editor).
-- Use `antd-style` for styled components when Ant Design tokens alone aren't sufficient.
-- Use inline styles or CSS-in-JS for component-specific styling.
+- Use inline styles for component-specific values that tokens already cover.
+- For rules inline styles cannot express (pseudo-classes, descendant selectors,
+  media queries), add a **co-located `.css` file next to the component and import
+  it there**, using `var(--…)` Astryx custom properties for every value. This
+  replaced `antd-style` / `createStyles`, which to-astryx ticket 33 removed.
 
 ```jsx
-// DO: inline styles or antd-style
+// DO: inline styles for simple, token-backed values
 <Button style={{ width: 100 }} />
 
-// DON'T: import .css or .module.css
-import './App.css';
+// DO: a co-located stylesheet for selectors inline styles can't reach
+import './MyComponent.css';
 ```
 
 To import raw CSS strings:

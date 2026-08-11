@@ -2,11 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { IconType } from '@lobehub/icons/es/types';
+import type { BrandIconType } from './brandIcons/createBrandIcon';
 import React, { Suspense, use } from 'react';
 
 /**
- * Mapping of model card author (organization) names to @lobehub/icons Mono icons.
+ * Mapping of model card author (organization) names to vendored Mono brand icons
+ * (ticket 30 replaced `@lobehub/icons` with `brandIcons/generated/*`).
  * Used for displaying organization CI icons next to the author name.
  *
  * Each entry maps author name keywords to a lazy-loaded Mono icon.
@@ -14,99 +15,99 @@ import React, { Suspense, use } from 'react';
  */
 const AUTHOR_ICON_MAPPINGS: Array<{
   keywords: string[];
-  loader: () => Promise<{ default: IconType }>;
+  loader: () => Promise<{ default: BrandIconType }>;
 }> = [
   {
     keywords: ['openai'],
-    loader: () => import('@lobehub/icons/es/OpenAI/components/Mono'),
+    loader: () => import('./brandIcons/generated/OpenAIMono'),
   },
   {
     keywords: ['anthropic'],
-    loader: () => import('@lobehub/icons/es/Anthropic/components/Mono'),
+    loader: () => import('./brandIcons/generated/AnthropicMono'),
   },
   {
     keywords: ['google'],
-    loader: () => import('@lobehub/icons/es/Google/components/Mono'),
+    loader: () => import('./brandIcons/generated/GoogleMono'),
   },
   {
     keywords: ['meta-llama', 'meta'],
-    loader: () => import('@lobehub/icons/es/Meta/components/Mono'),
+    loader: () => import('./brandIcons/generated/MetaMono'),
   },
   {
     keywords: ['mistralai', 'mistral'],
-    loader: () => import('@lobehub/icons/es/Mistral/components/Mono'),
+    loader: () => import('./brandIcons/generated/MistralMono'),
   },
   {
     keywords: ['qwen'],
-    loader: () => import('@lobehub/icons/es/Qwen/components/Mono'),
+    loader: () => import('./brandIcons/generated/QwenMono'),
   },
   {
     keywords: ['deepseek'],
-    loader: () => import('@lobehub/icons/es/DeepSeek/components/Mono'),
+    loader: () => import('./brandIcons/generated/DeepSeekMono'),
   },
   {
     keywords: ['tiiuae', 'tii'],
-    loader: () => import('@lobehub/icons/es/TII/components/Mono'),
+    loader: () => import('./brandIcons/generated/TIIMono'),
   },
   {
     keywords: ['stabilityai', 'stability'],
-    loader: () => import('@lobehub/icons/es/Stability/components/Mono'),
+    loader: () => import('./brandIcons/generated/StabilityMono'),
   },
   {
     keywords: ['cohereforai', 'cohere'],
-    loader: () => import('@lobehub/icons/es/Cohere/components/Mono'),
+    loader: () => import('./brandIcons/generated/CohereMono'),
   },
   {
     keywords: ['microsoft'],
-    loader: () => import('@lobehub/icons/es/Microsoft/components/Mono'),
+    loader: () => import('./brandIcons/generated/MicrosoftMono'),
   },
   {
     keywords: ['nvidia'],
-    loader: () => import('@lobehub/icons/es/Nvidia/components/Mono'),
+    loader: () => import('./brandIcons/generated/NvidiaMono'),
   },
   {
     keywords: ['01-ai', 'yi-'],
-    loader: () => import('@lobehub/icons/es/Yi/components/Mono'),
+    loader: () => import('./brandIcons/generated/YiMono'),
   },
   {
     keywords: ['baichuan'],
-    loader: () => import('@lobehub/icons/es/Baichuan/components/Mono'),
+    loader: () => import('./brandIcons/generated/BaichuanMono'),
   },
   {
     keywords: ['xai', 'grok'],
-    loader: () => import('@lobehub/icons/es/Grok/components/Mono'),
+    loader: () => import('./brandIcons/generated/GrokMono'),
   },
   {
     keywords: ['huggingface', 'hugging'],
-    loader: () => import('@lobehub/icons/es/HuggingFace/components/Mono'),
+    loader: () => import('./brandIcons/generated/HuggingFaceMono'),
   },
   {
     keywords: ['alibaba', 'alibabacloud'],
-    loader: () => import('@lobehub/icons/es/Alibaba/components/Mono'),
+    loader: () => import('./brandIcons/generated/AlibabaMono'),
   },
   {
     keywords: ['aws', 'amazon'],
-    loader: () => import('@lobehub/icons/es/Aws/components/Mono'),
+    loader: () => import('./brandIcons/generated/AwsMono'),
   },
   {
     keywords: ['azure'],
-    loader: () => import('@lobehub/icons/es/Azure/components/Mono'),
+    loader: () => import('./brandIcons/generated/AzureMono'),
   },
   {
     keywords: ['baidu'],
-    loader: () => import('@lobehub/icons/es/Baidu/components/Mono'),
+    loader: () => import('./brandIcons/generated/BaiduMono'),
   },
   {
     keywords: ['bytedance'],
-    loader: () => import('@lobehub/icons/es/ByteDance/components/Mono'),
+    loader: () => import('./brandIcons/generated/ByteDanceMono'),
   },
   {
     keywords: ['ibm'],
-    loader: () => import('@lobehub/icons/es/IBM/components/Mono'),
+    loader: () => import('./brandIcons/generated/IBMMono'),
   },
   {
     keywords: ['tencent'],
-    loader: () => import('@lobehub/icons/es/Tencent/components/Mono'),
+    loader: () => import('./brandIcons/generated/TencentMono'),
   },
 ];
 
@@ -128,9 +129,9 @@ export interface AuthorIconProps {
   className?: string;
 }
 
-const iconCache = new Map<Function | string, Promise<IconType | null>>();
+const iconCache = new Map<Function | string, Promise<BrandIconType | null>>();
 
-function getIconPromise(author: string): Promise<IconType | null> {
+function getIconPromise(author: string): Promise<BrandIconType | null> {
   const loader = findAuthorIconLoader(author);
   if (!loader) return Promise.resolve(null);
 
@@ -145,7 +146,7 @@ function getIconPromise(author: string): Promise<IconType | null> {
 }
 
 const ResolvedIcon: React.FC<{
-  icon: IconType;
+  icon: BrandIconType;
   size: number;
   style?: React.CSSProperties;
   className?: string;
@@ -182,7 +183,7 @@ const SuspendingIcon: React.FC<AuthorIconProps> = ({
 };
 
 /**
- * Displays an organization/author Mono icon from @lobehub/icons.
+ * Displays an organization/author Mono brand icon from `brandIcons/generated`.
  * Renders nothing if no matching icon is found for the author name.
  */
 const AuthorIcon: React.FC<AuthorIconProps> = ({

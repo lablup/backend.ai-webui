@@ -1,0 +1,465 @@
+{
+  "url": "https://to-astryx.backend-ai-webui.localhost:1357/project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/session/start?step=1",
+  "popups": {
+    "trigger0:a한국어가능_cde": {
+      "found": true,
+      "rect": {
+        "x": 332,
+        "y": 78,
+        "w": 270,
+        "h": 196
+      },
+      "optionCount": 4,
+      "groupCount": 2,
+      "groupLabels": [
+        "General",
+        "Model Store"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "options": [
+        {
+          "text": "a한국어가능_cde",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">a한국어가능_cde</span><span aria-hidden=\"true\" class=\"astryx-icon sm accent x3nfvp2 x6s0dn4 xl56j7k x2lah0s xqwr325 xcdlrvm x1l36t39 x1jchvi3\" data-size=\"sm\" data-color=\"accent\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"1em\" "
+        },
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">default</span>"
+        },
+        {
+          "text": "myProject",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">myProject</span>"
+        },
+        {
+          "text": "model-store",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 262,
+            "h": 33
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">model-store</span>"
+        }
+      ]
+    },
+    "trigger1:Python Python\tmultiarch": {
+      "found": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "optionCount": 4,
+      "groupCount": 2,
+      "groupLabels": [
+        "General",
+        "Model Store"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "options": [
+        {
+          "text": "a한국어가능_cde",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">a한국어가능_cde</span><span aria-hidden=\"true\" class=\"astryx-icon sm accent x3nfvp2 x6s0dn4 xl56j7k x2lah0s xqwr325 xcdlrvm x1l36t39 x1jchvi3\" data-size=\"sm\" data-color=\"accent\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"1em\" "
+        },
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">default</span>"
+        },
+        {
+          "text": "myProject",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">myProject</span>"
+        },
+        {
+          "text": "model-store",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">model-store</span>"
+        }
+      ]
+    },
+    "trigger2:3.13 x86_64 3.13\tUbuntu 24.04\tx86_64": {
+      "found": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "optionCount": 4,
+      "groupCount": 2,
+      "groupLabels": [
+        "General",
+        "Model Store"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "options": [
+        {
+          "text": "a한국어가능_cde",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">a한국어가능_cde</span><span aria-hidden=\"true\" class=\"astryx-icon sm accent x3nfvp2 x6s0dn4 xl56j7k x2lah0s xqwr325 xcdlrvm x1l36t39 x1jchvi3\" data-size=\"sm\" data-color=\"accent\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"1em\" "
+        },
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">default</span>"
+        },
+        {
+          "text": "myProject",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">myProject</span>"
+        },
+        {
+          "text": "model-store",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">model-store</span>"
+        }
+      ]
+    },
+    "trigger3:default": {
+      "found": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "optionCount": 4,
+      "groupCount": 2,
+      "groupLabels": [
+        "General",
+        "Model Store"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "options": [
+        {
+          "text": "a한국어가능_cde",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">a한국어가능_cde</span><span aria-hidden=\"true\" class=\"astryx-icon sm accent x3nfvp2 x6s0dn4 xl56j7k x2lah0s xqwr325 xcdlrvm x1l36t39 x1jchvi3\" data-size=\"sm\" data-color=\"accent\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"1em\" "
+        },
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">default</span>"
+        },
+        {
+          "text": "myProject",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">myProject</span>"
+        },
+        {
+          "text": "model-store",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">model-store</span>"
+        }
+      ]
+    },
+    "trigger4:cpu01-small": {
+      "found": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "optionCount": 4,
+      "groupCount": 2,
+      "groupLabels": [
+        "General",
+        "Model Store"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "options": [
+        {
+          "text": "a한국어가능_cde",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">a한국어가능_cde</span><span aria-hidden=\"true\" class=\"astryx-icon sm accent x3nfvp2 x6s0dn4 xl56j7k x2lah0s xqwr325 xcdlrvm x1l36t39 x1jchvi3\" data-size=\"sm\" data-color=\"accent\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"1em\" "
+        },
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">default</span>"
+        },
+        {
+          "text": "myProject",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">myProject</span>"
+        },
+        {
+          "text": "model-store",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">model-store</span>"
+        }
+      ]
+    },
+    "trigger5:GiB": {
+      "found": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "optionCount": 4,
+      "groupCount": 2,
+      "groupLabels": [
+        "General",
+        "Model Store"
+      ],
+      "totalImgs": 0,
+      "totalBadges": 0,
+      "options": [
+        {
+          "text": "a한국어가능_cde",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">a한국어가능_cde</span><span aria-hidden=\"true\" class=\"astryx-icon sm accent x3nfvp2 x6s0dn4 xl56j7k x2lah0s xqwr325 xcdlrvm x1l36t39 x1jchvi3\" data-size=\"sm\" data-color=\"accent\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" width=\"1em\" "
+        },
+        {
+          "text": "default",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">default</span>"
+        },
+        {
+          "text": "myProject",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">myProject</span>"
+        },
+        {
+          "text": "model-store",
+          "imgCount": 0,
+          "imgSrc": null,
+          "imgNatural": null,
+          "imgRect": null,
+          "badgeCount": 0,
+          "markCount": 0,
+          "rect": {
+            "w": 0,
+            "h": 0
+          },
+          "htmlHead": "<span class=\"x78zum5 x6s0dn4 x1txdalj x98rzlu xeuugli\">model-store</span>"
+        }
+      ]
+    }
+  },
+  "visibleTriggerCount": 6,
+  "visibleTriggerTexts": [
+    "a한국어가능_cde",
+    "Python Python\tmultiarch",
+    "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+    "default",
+    "cpu01-small",
+    "GiB"
+  ],
+  "pageErrors": []
+}

@@ -1,0 +1,397 @@
+{
+  "viewport": {
+    "w": 1600,
+    "h": 1000
+  },
+  "light": {
+    "appliedTheme": "light",
+    "table-settings": {
+      "dialog": {
+        "w": 420,
+        "h": 454.9,
+        "left": 590,
+        "computedWidth": "420px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "590px / 590px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Table Settings",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(20, 20, 20)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "Cancel",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0.06)"
+        },
+        {
+          "label": "Apply",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgb(2, 141, 242)"
+        }
+      ]
+    },
+    "overlay-network": {
+      "error": "TimeoutError: locator.click: Timeout 20000ms exceeded."
+    },
+    "scheduler": {
+      "error": "TimeoutError: locator.click: Timeout 20000ms exceeded."
+    },
+    "terminate-session": {
+      "dialog": {
+        "w": 520,
+        "h": 252,
+        "left": 540,
+        "computedWidth": "520px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "540px / 540px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Terminate Session",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(20, 20, 20)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "Cancel",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0.06)"
+        },
+        {
+          "label": "Terminate",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(255, 77, 79, 0.2)"
+        }
+      ]
+    },
+    "terms-of-service": {
+      "dialog": {
+        "w": 1280,
+        "h": 750,
+        "left": 160,
+        "computedWidth": "1280px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "160px / 160px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Terms of Service",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(20, 20, 20)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    "privacy-policy": {
+      "dialog": {
+        "w": 1280,
+        "h": 750,
+        "left": 160,
+        "computedWidth": "1280px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "160px / 160px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Privacy Policy",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(20, 20, 20)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    "about-backend-ai": {
+      "dialog": {
+        "w": 350,
+        "h": 234.9,
+        "left": 625,
+        "computedWidth": "350px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "625px / 625px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(20, 20, 20)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "table-settings": {
+      "dialog": {
+        "w": 420,
+        "h": 454.9,
+        "left": 590,
+        "computedWidth": "420px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "590px / 590px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Table Settings",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(255, 255, 255)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "Cancel",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgb(38, 38, 38)"
+        },
+        {
+          "label": "Apply",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgb(3, 135, 191)"
+        }
+      ]
+    },
+    "overlay-network": {
+      "error": "TimeoutError: locator.click: Timeout 20000ms exceeded."
+    },
+    "scheduler": {
+      "error": "TimeoutError: locator.click: Timeout 20000ms exceeded."
+    },
+    "terminate-session": {
+      "dialog": {
+        "w": 520,
+        "h": 252,
+        "left": 540,
+        "computedWidth": "520px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "540px / 540px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Terminate Session",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(255, 255, 255)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "Cancel",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgb(38, 38, 38)"
+        },
+        {
+          "label": "Terminate",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(190, 61, 63, 0.247)"
+        }
+      ]
+    },
+    "terms-of-service": {
+      "dialog": {
+        "w": 1280,
+        "h": 750,
+        "left": 160,
+        "computedWidth": "1280px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "160px / 160px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Terms of Service",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(255, 255, 255)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    "privacy-policy": {
+      "dialog": {
+        "w": 1280,
+        "h": 750,
+        "left": 160,
+        "computedWidth": "1280px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "160px / 160px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "Privacy Policy",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(255, 255, 255)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    },
+    "about-backend-ai": {
+      "dialog": {
+        "w": 350,
+        "h": 234.9,
+        "left": 625,
+        "computedWidth": "350px",
+        "maxWidth": "1440px",
+        "insetInlineStart": "0px",
+        "insetInlineEnd": "0px",
+        "marginInline": "625px / 625px",
+        "headingSizeVar": "16px",
+        "headingLeadVar": "1.5",
+        "labelSizeVar": "0.875rem",
+        "fontSizeBaseVar": "0.875rem"
+      },
+      "title": {
+        "text": "",
+        "fontSize": 16,
+        "lineHeight": "24px",
+        "fontWeight": "600",
+        "color": "rgb(255, 255, 255)",
+        "rectH": 24
+      },
+      "footerButtons": [
+        {
+          "label": "",
+          "fontSize": 14,
+          "lineHeight": "21.9996px",
+          "fontWeight": "500",
+          "height": 32,
+          "bg": "rgba(0, 0, 0, 0)"
+        }
+      ]
+    }
+  },
+  "pageErrors": []
+}

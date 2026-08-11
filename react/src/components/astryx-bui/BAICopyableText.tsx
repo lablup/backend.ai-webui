@@ -1,0 +1,90 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Click-to-copy text (imported from the pilot; to-astryx ticket 08).
+
+ **Why it exists as a component:** it adds *behaviour* — click-to-copy against
+ `navigator.clipboard` with a copied-state affordance. Astryx `Text` has no
+ `copyable` counterpart, so this is not a styling wrapper.
+
+ **Props extend Astryx's**, not antd's: `TextProps` minus the slots this
+ component owns. There is no `copyable`-shaped antd ghost in the signature.
+
+ TICKET-08 FOLLOW-UP (from the pilot's link-styling sweep): the copy glyph
+ used to be a bare `<svg role="button" tabIndex={0}>` — interactive, but with
+ no hover surface and no focus ring. It is a button, so it is now an Astryx
+ `IconButton` (`variant="ghost" size="sm"`). The copied state swaps the icon
+ in place and disables re-entry for the reset window instead of removing the
+ control from the tab order. PILOT-DECISION: this grows the hit box from the
+ bare 14px glyph to the `sm` control box — accepted; the a11y affordance is
+ the point, and pixel equality with the old render is a non-goal.
+
+ APPROVED-2 FOLLOW-UP: the value can now shrink and wrap inside a constrained
+ container (`.bai-copyable-text` in `astryxBui.css`). Laying the value and the
+ control out as a flex row made the value refuse to shrink below its content —
+ a long image path pushed out of its table cell and dragged the copy control
+ past the clip with it, where the legacy inline `<span>` would have wrapped.
+*/
+import './astryxBui.css';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import type { TextProps } from '@astryxdesign/core/Text';
+import { CheckIcon, CopyIcon } from 'lucide-react';
+import React, { useState } from 'react';
+
+export interface BAICopyableTextProps extends Omit<TextProps, 'children'> {
+  /** The value copied to the clipboard. Rendered as the visible text. */
+  children: string;
+  /** Accessible name for the copy control. */
+  copyLabel?: string;
+  /**
+   * Copy THIS string instead of the visible `children` — antd's
+   * `copyable={{ text }}` shape (a truncated display whose copy target is the
+   * full value). Defaults to `children`.
+   */
+  copyText?: string;
+}
+
+const BAICopyableText: React.FC<BAICopyableTextProps> = ({
+  children,
+  copyLabel = 'Copy',
+  copyText,
+  ...textProps
+}) => {
+  'use memo';
+  const [copied, setCopied] = useState(false);
+  return (
+    <HStack gap={1} align="center" className="bai-copyable-text">
+      <Text {...textProps}>{children}</Text>
+      {/* QA-FINDINGS Q-37 — this component IS the antd `Typography.Text
+          copyable` replacement, and antd painted that control through its
+          `operationUnit` mixin (`color: token.colorLink`). The ticket-08
+          rebuild into a ghost `IconButton` inherited the ghost default
+          `--color-text-primary` instead. The session detail drawer showed the
+          consequence directly: after Q-37 the title's copy/rename and the
+          Environments row's `BAIText` copy were accent while the Session ID
+          row's copy — the same affordance, one row apart — stayed black.
+          `.bai-action-accent` restores `colorLink` (brand routes) /
+          `colorInfo` (admin routes) at all 86 call sites at once; see
+          `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
+      <IconButton
+        className="bai-action-accent"
+        variant="ghost"
+        size="sm"
+        icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
+        label={copyLabel}
+        tooltip={copyLabel}
+        isDisabled={copied}
+        onClick={() => {
+          void navigator.clipboard?.writeText(copyText ?? children);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        }}
+      />
+    </HStack>
+  );
+};
+
+export default BAICopyableText;

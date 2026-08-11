@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Échec de l'exécution",
     "ErrorOccurred": "Une erreur s'est produite"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Aucun résultat",
+    "Search": "Recherche"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Sélectionner un registre de conteneurs"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Sélectionner un domaine"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Actualisation automatique",
@@ -260,6 +267,9 @@
     "StrategyType": "Stratégie",
     "Tags": "Tags",
     "UpdatedAt": "Mis à jour le"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Le(s) projet(s) suivant(s) sera(ont) mis à jour.",
@@ -451,14 +461,18 @@
     "Step": "Étape"
   },
   "comp:BAITable": {
+    "Apply": "Appliquer",
+    "Cancel": "Annuler",
     "CollapseAll": "Tout réduire",
     "ExpandAll": "Tout développer",
     "ExpandErrorsOnly": "Développer les erreurs uniquement",
     "ExpandOptions": "Options de développement",
+    "ExpandRow": "Développer la ligne",
     "Export": "Exporter",
     "ExportCSV": "Exporter en CSV",
     "GoToFirstPage": "Aller à la première page",
     "InvalidPageNumber": "Numéro de page invalide",
+    "Pagination": "Pagination",
     "SearchTableColumn": "Colonnes de table de recherche",
     "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",
     "SettingTable": "Paramètres de la table"
@@ -526,8 +540,10 @@
     "MoreOptions": "Plus d'options",
     "Name": "Nom",
     "NoUploadPermissionForHost": "Vous n'avez pas la permission de téléverser sur cet hôte.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Le nom a été modifié avec succès.",
     "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
     "Size": "Taille",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },
+  "form": {
+    "Optional": "(optionnel)",
+    "validateMessages": {
+      "Default": "Erreur de validation pour le champ ${label}",
+      "Required": "Le champ ${label} est obligatoire",
+      "Whitespace": "La valeur du champ ${label} ne peut pas être vide",
+      "array": {
+        "Len": "La taille du tableau ${label} doit être de ${len}",
+        "Max": "La taille du tableau ${label} doit être au maximum de ${max}",
+        "Min": "La taille du tableau ${label} doit être au minimum de ${min}",
+        "Range": "La taille du tableau ${label} doit être entre ${min}-${max}"
+      },
+      "number": {
+        "Len": "La valeur du champ ${label} doit être égale à ${len}",
+        "Max": "La valeur du champ ${label} doit être plus petit que ${max}",
+        "Min": "La valeur du champ ${label} doit être plus grande que ${min}",
+        "Range": "La valeur du champ ${label} doit être entre ${min} et ${max}"
+      },
+      "pattern": {
+        "Mismatch": "La valeur du champ ${label} ne correspond pas au modèle ${pattern}"
+      },
+      "string": {
+        "Len": "La taille du champ ${label} doit être de ${len} caractères",
+        "Max": "La taille du champ ${label} doit être au maximum de ${max} caractères",
+        "Min": "La taille du champ ${label} doit être au minimum de ${min} caractères",
+        "Range": "La taille du champ ${label} doit être entre ${min} et ${max} caractères"
+      },
+      "types": {
+        "Email": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "Number": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "Object": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "String": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
+        "Url": "La valeur du champ ${label} n'est pas valide pour le type ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Tout désélectionner",
     "File": "Fichier",
+    "Increase": "Increase",
     "NSelected": "{{count}} sélectionné",
     "Optional": "Facultatif",
     "Project": "Projet",
+    "Select": "Select",
     "TotalItems": "Éléments totaux {{total}}",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Annuler",
       "Close": "Fermer",
       "Collapse": "Effondrement",
+      "Confirm": "Confirm",
       "Copied": "Copié",
+      "Copy": "Copier",
       "CopyAll": "Copier tout",
       "Create": "Créer",
       "Delete": "Supprimer",

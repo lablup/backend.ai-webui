@@ -1,0 +1,343 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ The form item's entire static stylesheet (to-astryx tickets 05 + 34).
+
+ Everything here is a transcription of antd's own form stylesheet
+ (`antd/es/form/style/index.js`) with `token.*` replaced by the same
+ custom-property chain `FormItemVisual.tsx` uses:
+ `--bai-form-item-*` override hook -> Astryx token -> antd-parity literal.
+ Values that depend on props (label height, grid spans, reserved explain
+ space) stay inline in the component; values that are constant per LAYOUT or
+ need a pseudo-element live here, because inline styles cannot express either.
+
+ Co-located and imported by `FormItemVisual.tsx` itself (P17: replacement CSS
+ belongs in a file the component imports, not the app stylesheet). Unlayered
+ on purpose: it must win over `@layer`ed sheets and survive antd's removal.
+ */
+
+/*
+ The description text tier antd calls `colorTextDescription` and Astryx does
+ not ship. Astryx's text ramp is primary (antd `colorText`) / secondary (antd
+ `colorTextSecondary`, 0.65) / disabled (0.25); antd paints form `-explain`
+ and `-extra` with the 0.45 step in between, and pointing the shell at
+ `--color-text-secondary` rendered both a step too dark.
+
+ Declared once, as a `light-dark()` pair keyed on `color-scheme` — the same
+ mechanism `antdParity.ts#ANTD_BOX_SHADOW_SECONDARY` uses — so it follows the
+ theme's mode switch like every other token instead of being frozen per usage.
+ The values are antd's measured neutral constants, independent of the brand
+ seed; `theme-shim/selfTokens.ts#colorTextDescription` is the same measurement
+ for the JS side.
+*/
+:where(:root) {
+  --bai-color-text-description: light-dark(
+    rgba(0, 0, 0, 0.45),
+    rgba(255, 255, 255, 0.45)
+  );
+}
+
+/* ================================= form ================================= */
+
+/* antd `ant-form-inline { display: flex; flex-wrap: wrap }` + the per-item
+   `flex: none; margin-inline-end: token.margin; margin-bottom: 0`. */
+[data-bai-form][data-layout='inline'] {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+[data-bai-form][data-layout='inline'] > [data-bai-form-item],
+[data-bai-form][data-layout='inline']
+  [data-bai-form-item][data-layout='inline'] {
+  flex: none;
+  margin-inline-end: var(--bai-form-item-inline-gap, var(--spacing-4, 16px));
+}
+
+/* ============================== item + row ============================== */
+
+/*
+ antd `ant-form-item { ...resetComponent(token); vertical-align: top }` +
+ `-hidden { display: none }`.
+
+ The type reset is load-bearing, not decoration: the label is an `inline-flex`
+ box inside a block col, so the COL's line box is what decides how tall the
+ label row is. Without antd's `line-height: token.lineHeight` on the item the
+ row inherits the page's leading and every vertical item came out 2px taller
+ than antd's (measured across all 16 vertical cases).
+*/
+[data-bai-form-item] {
+  box-sizing: border-box;
+  vertical-align: top;
+  font-size: var(--bai-form-item-label-font-size, var(--font-size-base, 14px));
+  line-height: var(--bai-form-item-label-line-height, 1.5714285714285714);
+}
+
+[data-bai-form-item][data-hidden] {
+  display: none;
+}
+
+/* antd `ant-row { display: flex; flex-flow: row wrap; min-width: 0 }` */
+[data-bai-form-item-row] {
+  display: flex;
+  flex-flow: row wrap;
+  min-width: 0;
+}
+
+[data-bai-form-item][data-layout='vertical'] [data-bai-form-item-row] {
+  flex-direction: column;
+}
+
+/* antd inline: `-item-row { flex-wrap: nowrap }` */
+[data-bai-form-item][data-layout='inline'] [data-bai-form-item-row] {
+  flex-wrap: nowrap;
+}
+
+/* ================================= label ================================= */
+
+/*
+ antd `ant-form-item-label`: a grid Col that does not grow, clips its text and
+ aligns it to the end. The width therefore comes from the CONTENT unless a
+ `labelCol` span is supplied — which is the behaviour the 120px fixed column
+ replaced before this pass.
+*/
+[data-bai-form-item-label-col] {
+  flex-grow: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: end;
+  vertical-align: middle;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+[data-bai-form-item-label-col][data-align='left'] {
+  text-align: start;
+}
+
+/* antd `-label-wrap` */
+[data-bai-form-item-label-col][data-wrap] {
+  overflow: unset;
+  line-height: var(--bai-form-item-label-line-height, 1.5714285714285714);
+  white-space: unset;
+}
+
+[data-bai-form-item-label-col][data-wrap] > [data-bai-form-item-label] {
+  vertical-align: middle;
+  text-wrap: balance;
+}
+
+/* antd `makeVerticalLayoutLabel`: `padding: 0 0 paddingXS; margin: 0;
+   white-space: initial; text-align: start` */
+[data-bai-form-item][data-layout='vertical'] [data-bai-form-item-label-col] {
+  padding: 0 0 var(--bai-form-item-gap, var(--spacing-2, 8px));
+  margin: 0;
+  white-space: initial;
+  text-align: start;
+}
+
+/* antd inline: `> -label { flex: none }` and both cols inline-block/top */
+[data-bai-form-item][data-layout='inline'] [data-bai-form-item-label-col] {
+  flex: none;
+}
+
+/* antd `-label > label` */
+[data-bai-form-item-label] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  line-height: var(--bai-form-item-label-line-height, 1.5714285714285714);
+}
+
+[data-bai-form-item][data-layout='vertical'] [data-bai-form-item-label] {
+  margin: 0;
+}
+
+/*
+ antd `-required::before`: the asterisk is a PSEUDO-ELEMENT, not a text node —
+ which is why antd's `label.textContent` is the bare label. Reproduced so the
+ accessible name, the measured label width and the glyph metrics all match.
+ `font-family: sans-serif` is antd v6's (v4 used SimSun; the shell had kept
+ the v4 value).
+*/
+[data-bai-form-item-label][data-bai-form-item-required]::before {
+  display: inline-block;
+  margin-inline-end: var(--bai-form-item-mark-gap, var(--spacing-1, 4px));
+  color: var(--bai-form-item-required-color, var(--color-error, #ff4d4f));
+  font-size: var(--bai-form-item-label-font-size, var(--font-size-base, 14px));
+  font-family: sans-serif;
+  line-height: 1;
+  content: '*';
+}
+
+/* antd `-required-mark-hidden` / `-required-mark-optional` suppress the glyph:
+   `requiredMark={false}`, `'optional'`, and any FUNCTION requiredMark (the
+   label itself carries the hint — this app's product contract). */
+[data-bai-form-item-label][data-required-mark]::before {
+  display: none;
+}
+
+/*
+ antd `-label > label::after`: the colon, with `marginXXS / 2` before and
+ `marginXS` after. Rendered in EVERY layout and hidden (not removed) in
+ vertical, exactly as antd does — that is what makes a vertical label's
+ measured width match antd's.
+*/
+[data-bai-form-item-label]::after {
+  content: ':';
+  position: relative;
+  margin-block: 0;
+  margin-inline-start: 2px;
+  margin-inline-end: var(--bai-form-item-colon-gap, var(--spacing-2, 8px));
+}
+
+[data-bai-form-item-label][data-no-colon]::after {
+  content: '\a0';
+}
+
+[data-bai-form-item][data-layout='vertical'] [data-bai-form-item-label]::after {
+  visibility: hidden;
+}
+
+/* antd `-item-optional { display: inline-block; margin-inline-start: marginXXS;
+   color: colorTextDescription }` */
+[data-bai-form-item-optional] {
+  display: inline-block;
+  margin-inline-start: var(--bai-form-item-mark-gap, var(--spacing-1, 4px));
+  color: var(
+    --bai-form-item-description-color,
+    var(--bai-color-text-description, rgba(0, 0, 0, 0.45))
+  );
+}
+
+/* antd `-item-tooltip { color: colorTextDescription; margin-inline-start:
+   marginXXS; cursor: help }` */
+[data-bai-form-item-tooltip] {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: var(--bai-form-item-mark-gap, var(--spacing-1, 4px));
+  cursor: help;
+  writing-mode: horizontal-tb;
+}
+
+/* ================================ control ================================ */
+
+/* antd `-control { display: flex; flex-direction: column; flex-grow: 1 }` */
+[data-bai-form-item-control] {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* antd `-control:first-child:not([class^="ant-col-"]) { width: 100% }` — a
+   control with no label and no wrapperCol SPAN fills the row. */
+[data-bai-form-item-row]
+  > [data-bai-form-item-control]:first-child:not([data-span]) {
+  width: 100%;
+}
+
+/* antd horizontal `-control { flex: 1 1 0; min-width: 0 }` */
+[data-bai-form-item]:not([data-layout='vertical'])
+  [data-bai-form-item-label-col]
+  + [data-bai-form-item-control] {
+  flex: 1 1 0;
+}
+
+/* antd vertical `-control { width: 100% }` */
+[data-bai-form-item][data-layout='vertical'] [data-bai-form-item-control] {
+  width: 100%;
+}
+
+/* antd `-control-input { position: relative; display: flex; align-items:
+   center }` — `min-height` is the size-dependent part and stays inline. */
+[data-bai-form-item-control-input] {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* antd `-control-input-content { flex: auto; max-width: 100% }` */
+[data-bai-form-item-control-input-content] {
+  flex: auto;
+  max-width: 100%;
+}
+
+/* ========================== explain / extra ========================== */
+
+/* antd `-additional { display: flex; flex-direction: column }` */
+[data-bai-form-item-additional] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* antd `-explain, -extra { clear: both }` (colour/size are inline, from the
+   same token chain) */
+[data-bai-form-item-explain],
+[data-bai-form-item-extra] {
+  clear: both;
+}
+
+/* ============================= feedback icon ============================= */
+
+/*
+ antd delivers the feedback glyph to the CONTROL through
+ `FormItemInputContext.feedbackIcon`, so an antd `Input` draws it as its own
+ suffix INSIDE the affix wrapper. The engine publishes its own context (ticket
+ 34 dropped the `antd/es/form/context` deep import), so the shell draws the
+ glyph itself and parks it where antd's suffix lands: 12px in from the
+ control's inline end, vertically centred on the control row.
+*/
+[data-bai-form-item-feedback-icon] {
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* antd's suffix box is one line tall (the item's `lineHeight`), not the
+     glyph's 14px — inherit it so the box, not just the glyph centre, lands
+     where antd's does. */
+  height: calc(
+    var(--bai-form-item-label-font-size, var(--font-size-base, 14px)) *
+      var(--bai-form-item-label-line-height, 1.5714285714285714)
+  );
+  pointer-events: none;
+}
+
+[data-bai-form-item-feedback-glyph='validating'] {
+  animation: bai-form-item-feedback-spin 1s linear infinite;
+}
+
+@keyframes bai-form-item-feedback-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ======================================================================== */
+/* The TRANSITIONAL block that used to end this file is GONE (final switch). */
+/* ======================================================================== */
+
+/*
+ It existed for the Ant Design controls that were still nested inside engine
+ form items after ticket 35, and it said so: "it deletes itself when the last
+ one does". Three groups of rules, all keyed on antd control classes:
+
+   - stretching a Select to the control width, reproducing the
+     `-in-form-item { width: 100% }` rule antd applied through a context the
+     engine does not provide;
+   - painting the error / warning border on Input / InputNumber / Select /
+     DatePicker / Mentions, for the same context reason;
+   - reserving inline-end padding for the shell-drawn feedback glyph.
+
+ Every one of those controls is Astryx now, and Astryx controls read the
+ engine's own context, so all three groups matched nothing. Keeping them would
+ also have kept `.ant-*` literals in the shipped stylesheet, which
+ `scripts/antd-zero-gate.sh` part (b) correctly reads as antd evidence — CSS,
+ unlike JS, carries its text into the minified bundle.
+*/
+

@@ -1,0 +1,2860 @@
+{
+  "url": "https://to-astryx.backend-ai-webui.localhost:1357/project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/session/start",
+  "controlCensus": {
+    ".astryx-selector": 10,
+    "[class*=\"selector\"]": 26,
+    ".bai-select": 6,
+    "[role=combobox]": 11,
+    "[aria-haspopup=listbox]": 10,
+    "input[type=number]": 7,
+    "[role=spinbutton]": 0,
+    "[role=slider]": 4,
+    "[data-astryx-component]": 0
+  },
+  "step0Triggers": [
+    {
+      "i": 0,
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "a한국어가능_cde",
+      "triggerHTMLLen": 81,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+      "dataVariant": "input",
+      "rect": {
+        "x": 345,
+        "y": 19,
+        "w": 102,
+        "h": 22
+      },
+      "disabled": false
+    },
+    {
+      "i": 1,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 2,
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "Select…",
+      "triggerHTMLLen": 78,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": true
+    },
+    {
+      "i": 3,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 4,
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "Select…",
+      "triggerHTMLLen": 78,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": true
+    },
+    {
+      "i": 5,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 6,
+      "tag": "BUTTON",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Owner resource group",
+      "triggerText": "Select…",
+      "triggerHTMLLen": 78,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": true
+    },
+    {
+      "i": 7,
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "Python Python\tmultiarch",
+      "triggerHTMLLen": 94,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 8,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 9,
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+      "triggerHTMLLen": 107,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 10,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 11,
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "default",
+      "triggerHTMLLen": 78,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 12,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 13,
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": null,
+      "labelText": "session.launcher.ResourcePresets",
+      "triggerText": "cpu01-small",
+      "triggerHTMLLen": 82,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 14,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Search options",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 15,
+      "tag": "BUTTON",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": null,
+      "triggerText": "GiB",
+      "triggerHTMLLen": 74,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 16,
+      "tag": "BUTTON",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": null,
+      "triggerText": "MiB",
+      "triggerHTMLLen": 74,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-selector input sm x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+      "dataVariant": "input",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    },
+    {
+      "i": 17,
+      "tag": "INPUT",
+      "role": "combobox",
+      "ariaLabel": null,
+      "labelText": "Preopen Ports",
+      "triggerText": "",
+      "triggerHTMLLen": 0,
+      "hasImg": false,
+      "hasSvg": false,
+      "classes": "astryx-tokenizer md x9f619 x1vjfegm x78zum5 x6s0dn4 xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x",
+      "dataVariant": null,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "disabled": false
+    }
+  ],
+  "step0Numeric": [
+    {
+      "i": 0,
+      "tag": "INPUT",
+      "role": null,
+      "type": "number",
+      "label": null,
+      "value": "1",
+      "min": "1",
+      "max": "7",
+      "step": "1",
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 1,
+      "tag": "DIV",
+      "role": "slider",
+      "type": null,
+      "label": null,
+      "value": "1",
+      "min": "1",
+      "max": "7",
+      "step": null,
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 2,
+      "tag": "INPUT",
+      "role": null,
+      "type": "number",
+      "label": null,
+      "value": "1",
+      "min": "0.3125",
+      "max": "16",
+      "step": null,
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 3
+    },
+    {
+      "i": 3,
+      "tag": "DIV",
+      "role": "slider",
+      "type": null,
+      "label": null,
+      "value": "1",
+      "min": "0",
+      "max": "16",
+      "step": null,
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 4,
+      "tag": "INPUT",
+      "role": null,
+      "type": "number",
+      "label": null,
+      "value": "64",
+      "min": "0",
+      "max": "1024",
+      "step": null,
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 3
+    },
+    {
+      "i": 5,
+      "tag": "INPUT",
+      "role": null,
+      "type": "number",
+      "label": null,
+      "value": "0",
+      "min": "0",
+      "max": null,
+      "step": "1",
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 6,
+      "tag": "DIV",
+      "role": "slider",
+      "type": null,
+      "label": null,
+      "value": "0",
+      "min": "0",
+      "max": "100",
+      "step": null,
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 7,
+      "tag": "INPUT",
+      "role": null,
+      "type": "number",
+      "label": null,
+      "value": "1",
+      "min": "1",
+      "max": "1",
+      "step": "1",
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 8,
+      "tag": "DIV",
+      "role": "slider",
+      "type": null,
+      "label": null,
+      "value": "1",
+      "min": "1",
+      "max": "1",
+      "step": null,
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 9,
+      "tag": "INPUT",
+      "role": null,
+      "type": "number",
+      "label": "Number of OpenMP threads",
+      "value": "",
+      "min": "1",
+      "max": "1000",
+      "step": "1",
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    },
+    {
+      "i": 10,
+      "tag": "INPUT",
+      "role": null,
+      "type": "number",
+      "label": "Number of OpenBLAS threads",
+      "value": "",
+      "min": "1",
+      "max": "1000",
+      "step": "1",
+      "rect": {
+        "w": 0,
+        "h": 0,
+        "x": 0
+      },
+      "textAlign": "start",
+      "siblingButtons": 0
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "heading": null,
+      "triggers": [
+        {
+          "i": 0,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "a한국어가능_cde",
+          "triggerHTMLLen": 81,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 345,
+            "y": 19,
+            "w": 102,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 3,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Owner resource group",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Python Python\tmultiarch",
+          "triggerHTMLLen": 94,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 289,
+            "y": 244,
+            "w": 626,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+          "triggerHTMLLen": 107,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 289,
+            "y": 302,
+            "w": 626,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "default",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 289,
+            "y": 576,
+            "w": 626,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "session.launcher.ResourcePresets",
+          "triggerText": "cpu01-small",
+          "triggerHTMLLen": 82,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 289,
+            "y": 678,
+            "w": 626,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "GiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 435,
+            "y": 880,
+            "w": 69,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "MiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input sm x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Preopen Ports",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-tokenizer md x9f619 x1vjfegm x78zum5 x6s0dn4 xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        }
+      ],
+      "numeric": [
+        {
+          "i": 0,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": "1",
+          "rect": {
+            "w": 196.8,
+            "h": 22,
+            "x": 297
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 1,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": null,
+          "rect": {
+            "w": 20,
+            "h": 20,
+            "x": 551
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 2,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "0.3125",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 92.9,
+            "h": 22,
+            "x": 297
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 3,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "0",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 20,
+            "h": 20,
+            "x": 574
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 4,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "64",
+          "min": "0",
+          "max": "1024",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": null,
+          "step": "1",
+          "rect": {
+            "w": 234.8,
+            "h": 22,
+            "x": 297
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 6,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": "100",
+          "step": null,
+          "rect": {
+            "w": 20,
+            "h": 20,
+            "x": 551
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 7,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": "1",
+          "rect": {
+            "w": 202.4,
+            "h": 22,
+            "x": 285
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 8,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": null,
+          "rect": {
+            "w": 20,
+            "h": 20,
+            "x": 548
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 9,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenMP threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenBLAS threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "heading": null,
+      "triggers": [
+        {
+          "i": 0,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "a한국어가능_cde",
+          "triggerHTMLLen": 81,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 345,
+            "y": 19,
+            "w": 102,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 3,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Owner resource group",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Python Python\tmultiarch",
+          "triggerHTMLLen": 94,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+          "triggerHTMLLen": 107,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "default",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "session.launcher.ResourcePresets",
+          "triggerText": "cpu01-small",
+          "triggerHTMLLen": 82,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "GiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "MiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input sm x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Preopen Ports",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-tokenizer md x9f619 x1vjfegm x78zum5 x6s0dn4 xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        }
+      ],
+      "numeric": [
+        {
+          "i": 0,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 1,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 2,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "0.3125",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 3,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "0",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 4,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "64",
+          "min": "0",
+          "max": "1024",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": null,
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 6,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": "100",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 7,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 8,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 9,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenMP threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenBLAS threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "heading": null,
+      "triggers": [
+        {
+          "i": 0,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "a한국어가능_cde",
+          "triggerHTMLLen": 81,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 345,
+            "y": 19,
+            "w": 102,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 3,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Owner resource group",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Python Python\tmultiarch",
+          "triggerHTMLLen": 94,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+          "triggerHTMLLen": 107,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "default",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "session.launcher.ResourcePresets",
+          "triggerText": "cpu01-small",
+          "triggerHTMLLen": 82,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "GiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "MiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input sm x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Preopen Ports",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-tokenizer md x9f619 x1vjfegm x78zum5 x6s0dn4 xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x",
+          "dataVariant": null,
+          "rect": {
+            "x": 285,
+            "y": 242,
+            "w": 658,
+            "h": 22
+          },
+          "disabled": false
+        }
+      ],
+      "numeric": [
+        {
+          "i": 0,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 1,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 2,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "0.3125",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 3,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "0",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 4,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "64",
+          "min": "0",
+          "max": "1024",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": null,
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 6,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": "100",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 7,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 8,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 9,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenMP threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenBLAS threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "heading": null,
+      "triggers": [
+        {
+          "i": 0,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "a한국어가능_cde",
+          "triggerHTMLLen": 81,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 345,
+            "y": 19,
+            "w": 102,
+            "h": 22
+          },
+          "disabled": false
+        },
+        {
+          "i": 1,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 2,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 3,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 4,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 6,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Owner resource group",
+          "triggerText": "Select…",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": true
+        },
+        {
+          "i": 7,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "Python Python\tmultiarch",
+          "triggerHTMLLen": 94,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 8,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 9,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "3.13 x86_64 3.13\tUbuntu 24.04\tx86_64",
+          "triggerHTMLLen": 107,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 11,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "default",
+          "triggerHTMLLen": 78,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 12,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 13,
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": null,
+          "labelText": "session.launcher.ResourcePresets",
+          "triggerText": "cpu01-small",
+          "triggerHTMLLen": 82,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 14,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Search options",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-text-input sm x9f619 x1n2onr6 x1vjfegm x78zum5 x6s0dn4 x1txdalj xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 15,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "GiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 16,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": null,
+          "triggerText": "MiB",
+          "triggerHTMLLen": 74,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-selector input sm x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x1",
+          "dataVariant": "input",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        },
+        {
+          "i": 17,
+          "tag": "INPUT",
+          "role": "combobox",
+          "ariaLabel": null,
+          "labelText": "Preopen Ports",
+          "triggerText": "",
+          "triggerHTMLLen": 0,
+          "hasImg": false,
+          "hasSvg": false,
+          "classes": "astryx-tokenizer md x9f619 x1vjfegm x78zum5 x6s0dn4 xu0wf1k xf314gf x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x",
+          "dataVariant": null,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          },
+          "disabled": false
+        }
+      ],
+      "numeric": [
+        {
+          "i": 0,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 1,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "7",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 2,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "0.3125",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 3,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "0",
+          "max": "16",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 4,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "64",
+          "min": "0",
+          "max": "1024",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 3
+        },
+        {
+          "i": 5,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": null,
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 6,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "0",
+          "min": "0",
+          "max": "100",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 7,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 8,
+          "tag": "DIV",
+          "role": "slider",
+          "type": null,
+          "label": null,
+          "value": "1",
+          "min": "1",
+          "max": "1",
+          "step": null,
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 9,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenMP threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        },
+        {
+          "i": 10,
+          "tag": "INPUT",
+          "role": null,
+          "type": "number",
+          "label": "Number of OpenBLAS threads",
+          "value": "",
+          "min": "1",
+          "max": "1000",
+          "step": "1",
+          "rect": {
+            "w": 0,
+            "h": 0,
+            "x": 0
+          },
+          "textAlign": "start",
+          "siblingButtons": 0
+        }
+      ]
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Geist:wght@500&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blo",
+    "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Geist:wght@500&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blo",
+    "Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif",
+    "Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for dif"
+  ]
+}

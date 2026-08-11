@@ -1,0 +1,11 @@
+{
+  "themeAfterToggle": "dark",
+  "initialRows": 10,
+  "rowsAfterScroll": [
+    11,
+    11
+  ],
+  "picked": "aaa1@lablup.com",
+  "triggerText": "aaa1@lablup.com",
+  "pageErrors": []
+}

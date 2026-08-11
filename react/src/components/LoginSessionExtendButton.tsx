@@ -4,12 +4,13 @@
  */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { ClockCircleOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
+import { useBAIBreakpoint } from '../theme-shim';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useUpdatableState, BAIFlex, BAIIntervalView } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import { atom, useAtom } from 'jotai';
-import { Repeat2Icon } from 'lucide-react';
+import { Clock, Repeat2Icon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,7 +26,9 @@ const LoginSessionExtendButton: React.FC<
   const [isPending, startTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
 
-  const gridBreakpoint = Grid.useBreakpoint();
+  // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → the theme-shim's
+  // `useBAIBreakpoint()` (MAPPING §3.9 — `useMediaQuery` is not equivalent).
+  const gridBreakpoint = useBAIBreakpoint();
 
   const [isLoginSessionExpired, setIsLoginSessionExpired] = useAtom(
     isLoginSessionExpiredState,
@@ -68,33 +71,32 @@ const LoginSessionExtendButton: React.FC<
         delay={isLoginSessionExpired ? null : 100}
         render={(text) => {
           return (
-            <Tooltip title={t('general.RemainingLoginSessionTime')}>
+            <Tooltip content={t('general.RemainingLoginSessionTime')}>
               <BAIFlex gap={'xxs'}>
-                <ClockCircleOutlined />
+                <Clock size="1em" />
                 {text}
               </BAIFlex>
             </Tooltip>
           );
         }}
       />
-      <ConfigProvider
-        theme={{
-          token: {
-            // hack to change the primary hover color for header
-            colorPrimaryHover: 'rgb(255,255,255,0.15)',
-          },
-        }}
-      >
-        <Tooltip title={t('general.ExtendLoginSession')}>
-          <Button
-            type="primary"
-            loading={isPending}
-            onClick={() => startTransition(() => updateFetchKey())}
-            icon={<Repeat2Icon />}
-            disabled={isLoginSessionExpired}
-          />
-        </Tooltip>
-      </ConfigProvider>
+      {/* PILOT-DECISION: antd `Tooltip` + icon-only `Button type="primary"`
+          → Astryx `IconButton variant="primary"` with its own `tooltip`
+          (MAPPING §3.3 / §4). The `ConfigProvider` `colorPrimaryHover`
+          "hack to change the primary hover color for header" is DROPPED —
+          Astryx has no per-instance colour escape hatch (P5/P11), and a
+          wrapper that existed only to re-theme antd has nowhere to land.
+          Astryx also forbids wrapping a disabled control in a Tooltip
+          (P18), which `IconButton`'s own `tooltip` prop sidesteps. */}
+      <IconButton
+        variant="primary"
+        tooltip={t('general.ExtendLoginSession')}
+        label={t('general.ExtendLoginSession')}
+        isLoading={isPending}
+        onClick={() => startTransition(() => updateFetchKey())}
+        icon={<Repeat2Icon size="1em" />}
+        isDisabled={isLoginSessionExpired}
+      />
     </BAIFlex>
   );
 };

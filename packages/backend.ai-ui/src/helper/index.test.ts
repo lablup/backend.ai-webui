@@ -8,31 +8,7 @@ import {
   omitNullAndUndefinedFields,
   parseValueWithUnit,
   toFixedFloorWithoutTrailingZeros,
-  transformSorterToOrderString,
 } from './index';
-
-describe('transformSorterToOrderString', () => {
-  it('should correctly transform single sorter to order string', () => {
-    const sorter = { order: 'descend' as const, field: 'name' };
-    const result = transformSorterToOrderString(sorter);
-    expect(result).toEqual('-name');
-  });
-
-  it('should correctly transform array of sorters to order string', () => {
-    const sorter = [
-      { order: 'descend' as const, field: 'name' },
-      { order: 'ascend' as const, field: 'age' },
-    ];
-    const result = transformSorterToOrderString(sorter);
-    expect(result).toEqual('-name,age');
-  });
-
-  it('should return undefined for sorter without order', () => {
-    const sorter = { field: 'name' };
-    const result = transformSorterToOrderString(sorter);
-    expect(result).toBeUndefined();
-  });
-});
 
 describe('parseUnit', () => {
   test('parses a number with a unit', () => {

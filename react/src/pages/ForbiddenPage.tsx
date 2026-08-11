@@ -11,7 +11,8 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { Button } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { Icon } from '@astryxdesign/core/Icon';
 import { ArrowRightIcon } from 'lucide-react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -55,15 +56,19 @@ const ForbiddenPage = () => {
       title={<Trans i18nKey={'webui.UnauthorizedAccess'} />}
       description={t('webui.AdminOnlyPage')}
       extra={
+        // PILOT-DECISION: antd `Button type="primary" size="large"` with a
+        // trailing icon (`iconPosition="end"`) → Astryx `Button
+        // variant="primary" size="lg"` + `endContent` (MAPPING §3.3). Astryx
+        // has no `iconPosition`; the trailing slot is `endContent`, which is
+        // typed for Icon/Badge elements, so the lucide glyph is wrapped in
+        // Astryx `Icon`.
         <Button
-          type="primary"
-          size="large"
-          icon={<ArrowRightIcon size="1em" />}
-          iconPosition="end"
+          variant="primary"
+          size="lg"
+          endContent={<Icon icon={ArrowRightIcon} />}
+          label={t('button.GoBackToStartPage', { title: defaultPageTitle })}
           onClick={() => webuiNavigate(defaultPagePath)}
-        >
-          {t('button.GoBackToStartPage', { title: defaultPageTitle })}
-        </Button>
+        />
       }
     />
   );

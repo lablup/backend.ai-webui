@@ -1,0 +1,132 @@
+/**
+ * backend.ai-ui — the package's own stylesheet.
+ *
+ * to-astryx TICKET 30. Before this file existed, BUI had no CSS of its own:
+ * the icon baseline its icon surface needs came either from the HOST's
+ * `fix_antd.css` (an undeclared dependency on the consumer shipping antd's
+ * reset) or from an imperative `<style>` element that `iconShim` appended to
+ * `document.head` on first `<Icon>` render — which never fired for the several
+ * components that spin a lucide glyph directly (`<LoaderCircle
+ * className="bai-icon-spin" />`). Both are gone; the rules live here.
+ *
+ * ## Consumer contract
+ *
+ * `src/index.ts` imports this file, so anything that consumes BUI through a
+ * bundler gets it in the module graph automatically. Consumers that load BUI's
+ * built `dist` without bundling its CSS must import it explicitly:
+ *
+ *     import 'backend.ai-ui/styles.css';
+ *
+ * ## @layer requirement (READ THIS BEFORE ADDING RULES)
+ *
+ * Everything here is inside `@layer components`. Astryx ships its component
+ * CSS inside `@layer astryx-base`, and an UNLAYERED rule outranks every named
+ * layer regardless of specificity — if BUI's rules were unlayered they would
+ * silently beat Astryx component styles everywhere, the P6 failure mode one
+ * design system over. `components` puts BUI above `astryx-base` (so a BUI rule
+ * can intentionally override an Astryx default) and below `utilities` (so an
+ * app-level utility still wins).
+ *
+ * That relative order only holds if the FULL order is declared before any
+ * layered rule appears, because layer precedence is fixed by first appearance
+ * and later `@layer` statements can only append names, never reorder ones
+ * already seen. Since `src/index.ts` imports this file first, BUI's CSS is
+ * frequently the first layered sheet in the bundle — so the statement lives
+ * here as well as in the app.
+ *
+ * !! KEEP IN SYNC with `react/src/index.css`, which declares the identical
+ * !! list. Two identical statements are idempotent (the second is a no-op);
+ * !! two DIFFERENT ones silently give you whichever loads first.
+ */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@layer components {
+  /* First-party icon baseline. `iconShim` renders `.bai-icon` wrappers and BUI
+     components that spin a bare lucide icon use `.bai-icon-spin` directly. The
+     declarations are antd's `@ant-design/icons` reset (copied via the host's
+     `fix_antd.css`) so the rules survive antd's removal; the CLASS NAMES are
+     ours as of to-astryx final-B — see `src/icons/iconShim.tsx` for why the
+     borrowed antd icon class name had to go. (Spelled out rather than quoted:
+     a CSS comment can survive minification into the bundle, and quoting it
+     would re-arm `scripts/antd-zero-gate.sh` part (b) against our own CSS.) */
+  .bai-icon {
+    display: inline-block;
+    color: inherit;
+    font-style: normal;
+    line-height: 0;
+    text-align: center;
+    text-transform: none;
+    vertical-align: -0.125em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .bai-icon > * {
+    line-height: 1;
+  }
+
+  .bai-icon svg {
+    display: inline-block;
+  }
+
+  .bai-icon::before {
+    display: none;
+  }
+
+  .bai-icon[tabindex] {
+    cursor: pointer;
+  }
+
+  .bai-icon-spin {
+    display: inline-block;
+    animation: bai-icon-spin 1s infinite linear;
+  }
+
+  /* A spinner that never stops is a vestibular hazard; a user who asked for
+     less motion gets a static glyph instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .bai-icon-spin {
+      animation: none;
+    }
+  }
+
+  /* ===================== Slider mark-label reservation =====================
+
+     Astryx's `Slider` paints its mark LABELS with `position: absolute` inside
+     the track container (`markLabelHorizontal { top: THUMB_SIZE / 2 + 4 }`,
+     `Slider.tsx`), so they contribute ZERO height: the labels hang ~23px below
+     a slider box that measures exactly 20px. Whatever follows the slider is
+     therefore laid out as if the labels did not exist, and paints over them.
+
+     antd reserved exactly this band —
+     `.ant-slider-with-marks { margin-bottom: controlHeightLG - controlSize }`
+     (`antd/es/slider/style/index.js`) — which is why nothing collided before
+     the migration. Astryx exposes no equivalent prop, so the reservation is
+     restored here, once, for every marked slider in the app.
+
+     Measured symptom this fixes: on the session launcher, the memory slider's
+     "320m" / "30.34g" marks sat UNDER the shared-memory bar, and the whole
+     shared-memory block (bar, legend, SHM input) started flush against the
+     memory row with no breathing room — reported as "the shared-memory field
+     has no top padding".
+
+     The height is derived, not guessed: `--spacing-1` is Astryx's own label
+     offset below the slider box, and the label is one line of supporting text
+     (`--text-supporting-size` x `--text-supporting-leading`). */
+  .astryx-slider:has([data-testid='slider-mark-label']) {
+    margin-block-end: calc(
+      var(--spacing-1) + var(--text-supporting-size) *
+        var(--text-supporting-leading)
+    );
+  }
+}
+
+/* Keyframes are not layerable — `@keyframes` inside `@layer` is legal but the
+   name still resolves globally, so it is declared once at the top level with a
+   BUI-scoped name that cannot collide with the host's `loadingCircle`. */
+@keyframes bai-icon-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

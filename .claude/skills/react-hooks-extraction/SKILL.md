@@ -32,7 +32,7 @@ custom hooks, and `use-effect-event.md` rule.
 - **`useSuspendedBackendaiClient()` suspends the caller.** Wrap the caller in `<Suspense>` or accept that the first render shows fallback.
 - **i18n inside the hook** — call `useTranslation()` internally (or `useBAIi18n()` if the hook lives in `packages/backend.ai-ui/src/**` — see FR-2986 / `.github/instructions/i18n.instructions.md`). Don't make callers pass `t` (project convention from lead coding style).
 - **Parametrize per-call inputs on the returned function**, not on the hook argument. `const { startSession } = useStartSession(); startSession(values)` — not `useStartSession(values)`.
-- **New `useMemoizedFn` usage from ahooks is forbidden** (`.claude/rules/use-effect-event.md`). Remove existing occurrences when you touch nearby code.
+- **`useMemoizedFn`-style stable-callback helpers are forbidden in app code** (`.claude/rules/use-effect-event.md`). `ahooks` is no longer a dependency; use `useEffectEvent` instead.
 
 ## 1. When to extract — decision rules
 
@@ -67,7 +67,7 @@ note a TODO. The reviewer will push back on speculative hooks.
 | `react/src/hooks/useThing.ts` | Generic / cross-feature hook |
 | `react/src/hooks/useThing.tsx` | Hook that returns JSX (notifications, overlays) |
 | `react/src/components/FooBar/useFooBar.ts` | Hook specific to a component/feature |
-| `packages/backend.ai-ui/src/hooks/useBaiLogger.ts` etc | Hooks generalizable to BUI |
+| `packages/backend.ai-ui/src/hooks/useBAILogger.tsx` etc | Hooks generalizable to BUI (must use `useBAIi18n`, not `useTranslation`) |
 
 `.tsx` extension only when the hook returns or constructs JSX.
 
@@ -134,18 +134,27 @@ const [resourceGroup, setResourceGroup] = useCurrentResourceGroupState();
 Split read vs read-write variants: `useXValue` for read-only, `useXState` for
 pair. Matches the Jotai convention.
 
-### 3.4 `useControllableState` — controllable prop pattern
+### 3.4 `useControllableState_deprecated` — controllable prop pattern
 
-When a BUI component should support both controlled and uncontrolled modes,
-use `useControllableState` (already in `react/src/hooks/`):
+For a component that must support both controlled and uncontrolled modes, the
+repo has `react/src/hooks/useControllableState.ts`. Note the export's actual
+name:
 
 ```tsx
-const [value, setValue] = useControllableState({
+import useControllableState_deprecated from '../hooks/useControllableState';
+
+const [value, setValue] = useControllableState_deprecated({
   value: props.value,
   defaultValue: props.defaultValue,
   onChange: props.onChange,
 });
 ```
+
+The `_deprecated` suffix is deliberate — the hook is kept for its existing call
+sites (`VFolderSelect`, `StorageSelect`, `ResourcePresetSelect`,
+`InputNumberWithSlider`, …), not recommended for new ones. Its shape is still
+the reference for *what* a controllable-state hook returns; prefer deriving
+from props directly in new components.
 
 ## 4. Parameterization: what goes in arguments
 
@@ -186,7 +195,7 @@ Rules (from `.claude/rules/use-effect-event.md`):
 - Don't pass to JSX as `onClick` etc.
 - Don't use to bypass legitimate dependencies — only for
   closures-the-effect-calls-but-doesn't-sync-on.
-- Don't introduce new `ahooks` `useMemoizedFn`. Remove it when you see it
+- Don't introduce a `useMemoizedFn`-style helper. Remove it when you see it
   nearby — `useEffectEvent` is the modern replacement.
 
 ## 6. Move-don't-abstract
@@ -200,7 +209,7 @@ Good signs for moving code into a hook:
 
 - The caller only needs the return value, not the intermediate states
 - Pulling it out reduces `useState` count in the caller
-- Tests become easier (hook-level Jest vs component-level RTL)
+- Tests become easier (hook-level Vitest vs component-level RTL)
 
 Bad signs (don't extract yet):
 
@@ -210,7 +219,7 @@ Bad signs (don't extract yet):
 
 ## 7. Testing hooks
 
-Place Jest tests at `react/src/hooks/__tests__/useFoo.test.tsx` or colocated
+Place Vitest tests at `react/src/hooks/__tests__/useFoo.test.tsx` or colocated
 as `useFoo.test.tsx`. Use `@testing-library/react`'s `renderHook`:
 
 ```tsx
@@ -221,8 +230,13 @@ act(() => { result.current[1](); });
 expect(result.current[0]).not.toBe(INITIAL_FETCH_KEY);
 ```
 
-For hooks that call Relay, use `RelayEnvironmentProvider` with a test env —
-see `useControllableState.test.ts` for a mock environment example.
+`act` comes from `react` (not from `react-dom/test-utils`) — see
+`react/src/hooks/useControllableState.test.ts`.
+
+For hooks that call Relay, wrap the render in `RelayEnvironmentProvider` with a
+`createMockEnvironment()` environment — see
+`packages/backend.ai-ui/src/components/fragments/BAIDomainSelect.test.tsx`, the
+repo's live example.
 
 ## 8. Returning JSX from a hook
 
@@ -230,12 +244,20 @@ Fine when the hook owns an overlay/notification pattern. Naming stays
 `useX` (not `renderX`):
 
 ```tsx
+import { App } from '../app-shim';   // NOT 'antd'; adjust `../` for depth
+
 export const useDeleteConfirm = () => {
-  const { modal } = App.useApp();
+  const { modal } = App.useApp();     // { message, modal } — no `notification`
   const confirm = (opts: Opts) => modal.confirm({ ... });
   return { confirm };
 };
 ```
+
+`App` here is the project's app-shim (`packages/backend.ai-ui/src/app-shim/`,
+re-exported for the host at `react/src/app-shim/`), which keeps antd's call
+shape on top of Astryx. `useApp()` returns a module-level constant, so the hook
+works outside any provider — what must be mounted once at the app root is
+`<BAIAppProvider>`. Details in `react-async-actions` §2.
 
 If a hook would return a full `<Component/>`, reconsider — that usually wants
 to be a component, not a hook.
@@ -256,6 +278,6 @@ to be a component, not a hook.
 - [ ] Returns a named object (not a tuple, unless mimicking `useState`).
 - [ ] Effect dependencies are only values the effect truly syncs on; callbacks closed over via `useEffectEvent`.
 - [ ] No `// eslint-disable-next-line react-hooks/exhaustive-deps`.
-- [ ] No new `ahooks` `useMemoizedFn` introduced.
+- [ ] No new `useMemoizedFn`-style stable-callback helper introduced.
 - [ ] Colocated with feature if feature-specific; under `react/src/hooks/` if cross-cutting.
-- [ ] Has a Jest test when it owns non-trivial state or side-effects.
+- [ ] Has a Vitest test when it owns non-trivial state or side-effects.

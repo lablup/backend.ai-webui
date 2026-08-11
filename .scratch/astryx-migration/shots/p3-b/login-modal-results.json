@@ -1,0 +1,17 @@
+{
+  "before": {
+    "open": true,
+    "role": "alertdialog",
+    "closeButtons": 0
+  },
+  "afterEscape": {
+    "open": true,
+    "role": "alertdialog",
+    "closeButtons": 0
+  },
+  "afterBackdrop": {
+    "open": true,
+    "role": "alertdialog",
+    "closeButtons": 0
+  }
+}

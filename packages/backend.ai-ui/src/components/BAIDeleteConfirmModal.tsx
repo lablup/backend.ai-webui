@@ -1,19 +1,74 @@
-import { useBAIi18n } from '../hooks/useBAIi18n';
-import BAIFlex from './BAIFlex';
-import BAIModal, { type BAIModalProps } from './BAIModal';
-import BAIText from './BAIText';
-import { BAITrans } from './BAITrans';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Form, Input, theme, Typography, type InputProps } from 'antd';
-import React from 'react';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
-const { Text } = Typography;
+ to-astryx PHASE 3 / ticket B — `BAIDeleteConfirmModal` rebuilt on Astryx.
+
+ This is the component `.claude/rules/destructive-confirmation.md` names: an
+ irreversible delete must be gated behind a modal in which the user TYPES the
+ resource name before the danger button enables. **That contract, and the
+ antd-shaped prop surface the ~30 call sites pass, are reproduced exactly** —
+ only the primitives change. `packages/backend.ai-ui/src/app-shim/
+ destructiveConfirmFlow.test.tsx` guards the gate.
+
+ | before (antd)                          | after (Astryx)                       |
+ |----------------------------------------|--------------------------------------|
+ | `BAIModal` (antd `Modal`)              | `BAIModal` (Astryx `Dialog`)         |
+ | `Form` + `Form.Item` + `Form.useWatch` | one `useState` + `TextInput`         |
+ | antd `Input autoFocus allowClear`      | `TextInput hasAutoFocus hasClear`    |
+ | `Typography.Text`                      | Astryx `Text`                        |
+ | `Typography.Text type="danger"`        | `Banner status="error"`              |
+ | `BAIText code` inside `<BAITrans>`     | Astryx `Text type="code"`            |
+
+ PILOT-DECISIONs (see .scratch/astryx-migration/issues/p3-b-modal-family.md):
+
+ 1. **The typed-confirm gate does not need a form engine.** The antd version
+    reached for `Form` + `Form.useWatch` purely to observe one input, which is
+    also why this file was pulling in the PARKED form-engine. Astryx
+    `TextInput` is `value` / `onChange(value)`, so a `useState` is the whole
+    mechanism — and the form-engine import disappears with it. The locked
+    "Form stays" decision is about form STATE ENGINES; a single gate input is
+    not one.
+ 2. **"This action cannot be undone." becomes a `Banner status="error"`.**
+    Astryx `Text` has no danger colour (its `color` set is
+    primary/secondary/disabled/placeholder/accent/inherit), and the banner
+    restores both the colour and an icon. Same call as the already-shipped
+    `BAIDeleteConfirmModalAstryx`, so the two delete surfaces still look alike.
+ 3. **`inputLabel` stays `ReactNode`.** `TextInput.label` is a plain `string`
+    that doubles as the accessible name, so a rich label is rendered above the
+    field and the field carries the flattened text with `isLabelHidden`.
+ 4. **The item list keeps a hand-rolled surface.** Astryx has no "boxed,
+    scrollable list of arbitrary nodes" primitive; a plain `div` styled from
+    theme CSS variables follows the brand/admin themes and both colour schemes.
+*/
+import { useBAIi18n } from '../hooks/useBAIi18n';
+import BAIModal, { type BAIModalProps } from './BAIModal';
+import { BAITrans } from './BAITrans';
+import { Banner } from '@astryxdesign/core/Banner';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { CircleAlert } from 'lucide-react';
+import React, { isValidElement, useState } from 'react';
 
 export interface BAIDeleteConfirmModalItem {
   /** Unique key for React list rendering */
   key: string;
   /** Display label — accepts ReactNode for custom rendering (icons, tags, etc.) */
   label: React.ReactNode;
+}
+
+/**
+ * The slice of the old antd `InputProps` the confirmation field honours. Every
+ * call site in the repo passes `placeholder` only; the index signature keeps
+ * the rest accepted-and-ignored so no call site needs an edit.
+ */
+export interface BAIDeleteConfirmModalInputProps {
+  placeholder?: string;
+  autoFocus?: boolean;
+  disabled?: boolean;
+  maxLength?: number;
+  [key: string]: unknown;
 }
 
 export interface BAIDeleteConfirmModalProps extends Omit<
@@ -53,8 +108,8 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   confirmText?: string;
   /** Label above the confirmation input. Default: "Type {confirmText} to confirm." */
   inputLabel?: React.ReactNode;
-  /** Additional props for the confirmation Input. */
-  inputProps?: InputProps;
+  /** Additional props for the confirmation input. */
+  inputProps?: BAIDeleteConfirmModalInputProps;
   /** Content rendered between the input field and "cannot be undone" text (e.g. checkboxes). */
   extraContent?: React.ReactNode;
   /** Max height (px) of the scrollable item list. Default: 200. Set 0 for no limit. */
@@ -72,6 +127,18 @@ function extractTextFromNode(node: React.ReactNode): string | undefined {
   if (typeof node === 'string') return node;
   if (typeof node === 'number') return String(node);
   return undefined;
+}
+
+/** Flattens a ReactNode label to the plain string the a11y name needs. */
+function toText(node: React.ReactNode): string {
+  if (node == null || typeof node === 'boolean') return '';
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(toText).join('');
+  if (isValidElement(node)) {
+    return toText((node.props as { children?: React.ReactNode }).children);
+  }
+  return '';
 }
 
 const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
@@ -96,9 +163,16 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   'use memo';
 
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
-  const [form] = Form.useForm();
-  const typedText = Form.useWatch('confirmText', form) ?? '';
+  const [typedText, setTypedText] = useState('');
+
+  // Reset the gate every time the dialog re-opens. Derived-state-from-props via
+  // the render-phase compare (React's documented alternative to an effect).
+  const isOpen = restModalProps.open ?? restModalProps.isOpen ?? false;
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
+    if (isOpen) setTypedText('');
+  }
 
   const needsInput = !reversible && (items.length > 1 || requireConfirmInput);
 
@@ -130,27 +204,26 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     <BAITrans
       i18nKey="comp:BAIDeleteConfirmModal.TypeToConfirm"
       values={{ confirmText: resolvedConfirmText }}
-      components={{ code: <BAIText code /> }}
+      components={{ code: <Text type="code">{''}</Text> }}
     />
   );
 
   const modalTitle = (
-    <BAIFlex
-      direction="column"
-      justify="start"
-      align="stretch"
-      style={{ width: '100%' }}
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 'var(--spacing-1)',
+        overflowWrap: 'anywhere',
+        wordBreak: 'break-word',
+      }}
     >
-      <Text
-        strong
-        style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
-      >
-        <ExclamationCircleFilled
-          style={{ color: token.colorWarning, marginRight: token.sizeXXS }}
-        />
-        {resolvedTitle}
-      </Text>
-    </BAIFlex>
+      <CircleAlert
+        style={{ color: 'var(--color-warning)', flexShrink: 0 }}
+        size="1em"
+      />
+      {resolvedTitle}
+    </span>
   );
 
   const itemListContent =
@@ -163,95 +236,79 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
             : {
                 maxHeight: itemListMaxHeight || undefined,
                 overflowY: itemListMaxHeight ? 'auto' : undefined,
-                backgroundColor: token.colorFillQuaternary,
-                border: `1px solid ${token.colorBorderSecondary}`,
-                borderRadius: token.borderRadiusSM,
-                padding: token.paddingXS,
-                paddingInline: token.padding,
+                backgroundColor: 'var(--color-background-muted)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-inner)',
+                padding: 'var(--spacing-2)',
+                paddingInline: 'var(--spacing-3)',
               }
         }
       >
-        <BAIFlex direction="column" align="stretch" gap="xxs">
+        <VStack align="stretch" gap={1}>
           {items.map((item) => (
             <div key={item.key} role="listitem">
               {item.label}
             </div>
           ))}
-        </BAIFlex>
+        </VStack>
       </div>
     ) : null;
 
-  if (needsInput) {
-    return (
-      <BAIModal
-        destroyOnHidden
-        {...restModalProps}
-        title={modalTitle}
-        okText={resolvedOkText}
-        okButtonProps={{
-          danger: true,
-          disabled: typedText !== resolvedConfirmText,
-          ...okButtonProps,
-        }}
-        onOk={(e) => {
-          form.resetFields();
-          onOk?.(e);
-        }}
-        onCancel={(e) => {
-          form.resetFields();
-          onCancel?.(e);
-        }}
-      >
-        <BAIFlex direction="column" align="stretch" gap="xs">
-          {resolvedDescription && <Text>{resolvedDescription}</Text>}
-          {items.length > 1 && itemListContent}
-          <Form
-            form={form}
-            layout="vertical"
-            requiredMark={false}
-            preserve={false}
-          >
-            <Form.Item
-              name="confirmText"
-              label={resolvedInputLabel}
-              style={{ marginBottom: 0 }}
-            >
-              <Input autoFocus autoComplete="off" allowClear {...inputProps} />
-            </Form.Item>
-          </Form>
-          <Text type="danger">
-            {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
-          </Text>
-          {extraContent}
-        </BAIFlex>
-      </BAIModal>
-    );
-  }
-
   return (
     <BAIModal
-      {...restModalProps}
       destroyOnHidden
+      {...restModalProps}
       title={modalTitle}
       okText={resolvedOkText}
       okButtonProps={{
         danger: true,
-        disabled: items.length === 0,
+        disabled: needsInput
+          ? typedText !== resolvedConfirmText
+          : items.length === 0,
         ...okButtonProps,
       }}
-      onOk={onOk}
-      onCancel={onCancel}
+      onOk={(e) => {
+        setTypedText('');
+        onOk?.(e);
+      }}
+      onCancel={(e) => {
+        setTypedText('');
+        onCancel?.(e);
+      }}
     >
-      <BAIFlex direction="column" align="stretch" gap="xs">
-        {resolvedDescription && <Text>{resolvedDescription}</Text>}
-        {itemListContent}
-        {!reversible && (
-          <Text type="danger">
-            {t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
-          </Text>
-        )}
+      <VStack align="stretch" gap={2}>
+        {resolvedDescription ? <Text>{resolvedDescription}</Text> : null}
+        {(needsInput ? items.length > 1 : true) ? itemListContent : null}
+        {needsInput ? (
+          <VStack align="stretch" gap={1}>
+            {/* PILOT-DECISION 3: `TextInput.label` is a plain string, so a rich
+                ReactNode label is rendered here and the field carries the
+                flattened text as its (hidden) accessible name. */}
+            <Text type="label">{resolvedInputLabel}</Text>
+            <TextInput
+              label={
+                toText(resolvedInputLabel) ||
+                `Type ${resolvedConfirmText} to confirm.`
+              }
+              isLabelHidden
+              value={typedText}
+              onChange={(value) => setTypedText(value ?? '')}
+              placeholder={inputProps?.placeholder}
+              isDisabled={inputProps?.disabled}
+              hasAutoFocus
+              hasClear
+              htmlName="confirmText"
+            />
+          </VStack>
+        ) : null}
+        {!reversible ? (
+          <Banner
+            status="error"
+            title={t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
+          />
+        ) : null}
         {extraContent}
-      </BAIFlex>
+      </VStack>
     </BAIModal>
   );
 };

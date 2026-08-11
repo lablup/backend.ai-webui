@@ -2,18 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AstryxAdminTheme } from '../../astryx-theme';
 import { useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
-import usePrimaryColors from '../../hooks/usePrimaryColors';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
+import { theme } from '../../theme-shim';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
-import { commonAppProps } from '../DefaultProviders';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
@@ -25,10 +25,9 @@ import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
+import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
-import { createGlobalStyle, createStyles } from 'antd-style';
 import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -52,44 +51,6 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   },
 );
 
-// Global scrollbar styling. antd-style's createGlobalStyle injects a nonce'd
-// emotion <style> (via the <StyleProvider nonce> in DefaultProviders), so it
-// survives a strict CSP style-src policy — unlike a raw <style> element.
-const ScrollbarGlobalStyle = createGlobalStyle`
-  /* Scrollbar stylings */
-  /* Works on Firefox */
-  * {
-    scrollbar-width: 2px;
-    scrollbar-color: ${({ theme }) => theme.colorBorderSecondary}
-      ${({ theme }) => theme.colorBgElevated};
-  }
-
-  /* Works on Chrome, Edge, and Safari */
-  *::-webkit-scrollbar {
-    max-width: 2px;
-    background-color: ${({ theme }) => theme.colorBgElevated};
-  }
-
-  *::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.colorBgElevated};
-  }
-
-  *::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.colorBorderSecondary};
-  }
-`;
-
-const useStyle = createStyles(({ css, token }) => ({
-  alertWrapper: css`
-    & > *:first-child {
-      margin-top: ${token.margin}px;
-    }
-    & > *:last-child {
-      margin-bottom: ${token.margin}px;
-    }
-  `,
-}));
-
 function MainLayout() {
   'use memo';
   const navigate = useWebUINavigate();
@@ -100,7 +61,6 @@ function MainLayout() {
   const matches = useMatches();
   // @ts-ignore
   const isHiddenBreadcrumb = _.last(matches)?.handle?.hideBreadcrumb ?? false;
-  const { styles } = useStyle();
 
   const [prevCompactSidebarActive, setPrevCompactSidebarActive] =
     useState(compactSidebarActive);
@@ -156,7 +116,6 @@ function MainLayout() {
   return (
     <LayoutWithPageTestId>
       <CSSTokenVariables />
-      <ScrollbarGlobalStyle />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <WebUISider
@@ -172,8 +131,12 @@ function MainLayout() {
             type === 'clickTrigger' && setSideCollapsed(collapsed);
           }}
         />
-        <Layout
+        <div
           style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 'auto',
+            minWidth: 0,
             backgroundColor: 'transparent',
           }}
         >
@@ -226,7 +189,7 @@ function MainLayout() {
                     direction="column"
                     gap={'sm'}
                     align="stretch"
-                    className={styles.alertWrapper}
+                    className="main-layout-alert-wrapper"
                   >
                     {/* Dev-only: warn when the connected backend differs from
                         VITE_DEFAULT_API_ENDPOINT. Guarded by import.meta.env.DEV
@@ -306,7 +269,7 @@ function MainLayout() {
               </BAIErrorBoundary>
             </BAIFlex>
           </BAIContentWithDrawerArea>
-        </Layout>
+        </div>
       </Suspense>
     </LayoutWithPageTestId>
   );
@@ -357,7 +320,6 @@ const AutoAdminPrimaryColorProvider = ({
 }) => {
   'use memo';
 
-  const primaryColors = usePrimaryColors();
   // Apply the admin primary color on any non-project scope (global `admin` and
   // `projectAdmin`). Derived from the matched route handle via `useRouteScope`
   // rather than the role-filtered `isSelectedAdminCategoryMenu`, so the admin
@@ -367,27 +329,50 @@ const AutoAdminPrimaryColorProvider = ({
   const isAdminScope = useRouteScope() !== 'project';
   if (isAdminScope) {
     return (
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: primaryColors.admin,
-          },
-        }}
-      >
-        {/* `display: contents` removes App's structural div from layout so
-            admin-scope Outlet content participates in the same flex context
-            as the other scopes (keeps route-error screens centered). */}
-        <App {...commonAppProps} style={{ display: 'contents' }}>
-          {children}
-        </App>
-      </ConfigProvider>
+      // `AstryxAdminTheme` is now the WHOLE accent swap. It used to be paired
+      // with an antd `ConfigProvider` (`colorPrimary: primaryColors.admin`)
+      // plus an antd `<App>` for the message/modal/notification holders,
+      // because the two libraries' theme switches were independent (MAPPING
+      // §5) and both had to be driven. The final switch removed the antd side
+      // entirely: no antd component is left to theme, and the `App` holders
+      // were replaced by `BAIAppProvider` (app-shim, ticket 04), which is
+      // mounted once app-wide in `DefaultProviders`. Dropping the `App`
+      // wrapper also drops the `display: contents` workaround its structural
+      // div needed.
+      <AstryxAdminTheme>{children}</AstryxAdminTheme>
     );
   }
 
   return children;
 };
 
-const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
+/**
+ * PILOT-DECISION (the frame): antd `Layout` → a plain flex row, and Astryx
+ * **`AppShell` is deliberately NOT adopted** even though MAPPING §5 names it
+ * as `Layout`'s destination. `AppShell` is an opinionated frame, not a
+ * translation of this one:
+ *
+ *  - It owns the scroll containers and renders its own `<main>`. This layout
+ *    publishes ITS scroll container through a jotai atom
+ *    (`mainContentDivRefState`) that pages read for scroll-to-top and
+ *    infinite scroll, and it relies on that same element being the scroll
+ *    parent for the sticky header. `AppShell` exposes no ref to its scroller,
+ *    so adopting it would mean nesting a second scroll container inside
+ *    `main` — which breaks the sticky header outright.
+ *  - Its `topNav` slot spans the FULL width, above the side nav. This app's
+ *    header spans only the content column, beside the sider's own branded
+ *    logo band. Moving it into `topNav` would relocate the brand bar, i.e.
+ *    change the layout rather than port it (original-fidelity rule).
+ *  - `BAIContentWithDrawerArea` shifts the content region when the
+ *    notification drawer opens; there is no `AppShell` slot for that.
+ *
+ * `SideNav` — the other half of the §5 recipe — IS adopted (see `BAISider`).
+ * Revisit `AppShell` at ticket 35, when the notification drawer and the
+ * scroll-ref consumers have themselves moved.
+ */
+const LayoutWithPageTestId: React.FC<{
+  children?: React.ReactNode;
+}> = (props) => {
   'use memo';
   const location = useLocation();
   // Prefer the scope-aware menu key (route handle) so the page test id stays
@@ -402,31 +387,48 @@ const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
     : cleanPath
       ? `page-${cleanPath}`
       : 'page-root';
-  return <Layout {...props} data-testid={pageTest} />;
+  return (
+    <div
+      {...props}
+      style={{ display: 'flex', flexDirection: 'row', minHeight: '100vh' }}
+      data-testid={pageTest}
+    />
+  );
 };
 
-type ThemeToken = ReturnType<typeof theme.useToken>['token'];
-
-// Minimal `:root` bridge exposing only the antd tokens that OUT-OF-TREE global
-// CSS still needs: `resources/webui.css` styles `body` (outside the React /
-// antd cssVar scope), so it reads these via `var(--token-...)`. In-tree styles
-// reference the antd token directly (createStyles / createGlobalStyle) and no
-// longer depend on this bridge. createGlobalStyle injects it as a nonce'd
-// <style>; `token` changes on theme switch, so the values stay in sync.
-const TokenCssVariables = createGlobalStyle((props) => {
-  const { token } = props as unknown as { token: ThemeToken };
-  return `:root {
-  --token-colorPrimary: ${token.colorPrimary};
-  --token-colorBgBase: ${token.colorBgBase};
-  --token-colorBgContainer: ${token.colorBgContainer};
-  --token-colorBorder: ${token.colorBorder};
-}`;
-}) as unknown as React.FC<{ token: ThemeToken }>;
-
+/**
+ * Minimal `:root` bridge exposing only the antd tokens that OUT-OF-TREE global
+ * CSS still needs: `resources/webui.css` styles `body` (outside the React /
+ * antd cssVar scope), so it reads these via `var(--token-...)`. In-tree styles
+ * reference Astryx custom properties directly (co-located CSS files, P17) and
+ * no longer depend on this bridge.
+ *
+ * to-astryx ticket 33: this used to be an antd-style `createGlobalStyle` that
+ * re-emitted a nonce'd `<style>` on every theme change. The values are now
+ * written straight to `document.documentElement` through the CSSOM, which the
+ * strict CSP does not intercept (`style-src` governs parsed `<style>` elements
+ * and `style` ATTRIBUTES, not `CSSStyleDeclaration.setProperty`) — so the
+ * nonce plumbing goes away with the last antd-style import.
+ */
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
+  const { colorPrimary, colorBgBase, colorBgContainer, colorBorder } = token;
 
-  return <TokenCssVariables token={token} />;
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const bridged: Record<string, string> = {
+      '--token-colorPrimary': colorPrimary,
+      '--token-colorBgBase': colorBgBase,
+      '--token-colorBgContainer': colorBgContainer,
+      '--token-colorBorder': colorBorder,
+    };
+    _.forEach(bridged, (value, name) => root.style.setProperty(name, value));
+    return () => {
+      _.forEach(bridged, (_value, name) => root.style.removeProperty(name));
+    };
+  }, [colorPrimary, colorBgBase, colorBgContainer, colorBorder]);
+
+  return null;
 };
 
 /**

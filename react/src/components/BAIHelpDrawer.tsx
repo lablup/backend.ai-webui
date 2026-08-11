@@ -2,12 +2,25 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ExportOutlined } from '@ant-design/icons';
-import { Button, Drawer, type DrawerProps } from 'antd';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { ExternalLink } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface BAIHelpDrawerProps extends DrawerProps {
+// PILOT-DECISION: antd `Drawer` → `BAIDrawerAstryx` (qa2-c), which wraps lab
+// `Drawer` and restores antd's header arrangement. `open` stays `open`,
+// `onClose` stays, `size="large"` (antd 736px) → `size={736}`, and the antd
+// `styles.body.padding: 0` override becomes `hasBodyPadding={false}` — the
+// body here is a full-bleed iframe.
+//
+// P1 grep: this component currently has NO consumers in `react/src`
+// (WEBUIHelpButton opens the hosted manual in a new tab instead), so the
+// props interface no longer `extends DrawerProps` — it declares the surface
+// its own render needs.
+interface BAIHelpDrawerProps {
+  open?: boolean;
+  onClose?: () => void;
   // Base URL of the manual
   manualURL: string;
   // URL matching table. Key is the URL of the page, value is the URL of the manual page.
@@ -32,36 +45,46 @@ const ExternalContentDisplay = ({ url }: { url: string }) => {
 };
 
 const BAIHelpDrawer: React.FC<BAIHelpDrawerProps> = ({
+  open = false,
+  onClose,
   manualURL,
   URLMatchingTable = {},
   matchingKey = '',
-  ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
 
   const URL =
     manualURL + (matchingKey ? URLMatchingTable[matchingKey] || '' : '');
 
   return (
-    <Drawer
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
+      side="end"
+      size={736}
       title={t('webui.menu.Help')}
-      extra={<Button icon={<ExportOutlined />} type="link" href={URL} />}
-      size="large"
-      styles={{
-        // mask: { backgroundColor: 'transparent' },
-        body: {
-          padding: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-        },
-        header: {
-          padding: 15,
-        },
-      }}
-      {...props}
+      // The body is a full-bleed iframe — antd's call site zeroed
+      // `styles.body.padding` for exactly this reason.
+      hasBodyPadding={false}
+      bodyClassName="bai-help-drawer-body"
+      extra={
+        // antd `Button type="link" href` → `IconButton` + `window.open`:
+        // IconButton renders a <button>, so the anchor affordances are lost
+        // while the new-tab behaviour is preserved (same decision as
+        // WEBUIHelpButton).
+        <IconButton
+          variant="ghost"
+          label={t('webui.menu.Help')}
+          icon={<ExternalLink size="1em" />}
+          onClick={() => {
+            window.open(URL, '_blank', 'noopener noreferrer');
+          }}
+        />
+      }
     >
       <ExternalContentDisplay url={URL} />
-    </Drawer>
+    </BAIDrawer>
   );
 };
 

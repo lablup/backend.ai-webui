@@ -7,16 +7,18 @@ import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { useToggle } from 'ahooks';
-import { Card, List, theme, Typography } from 'antd';
+import { Card } from '@astryxdesign/core/Card';
+import { Link } from '@astryxdesign/core/Link';
 import {
   BAIFlex,
   BAILink,
   BAINotificationItem,
   BAIText,
   toLocalId,
+  useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -85,61 +87,60 @@ const BAIVirtualFolderNodeNotificationItemV2: React.FC<
         </BAIText>
       }
       description={
-        <List.Item>
-          <BAIFlex direction="column" align="stretch" gap={'xxs'}>
-            <BAIFlex direction="row" align="end" gap={'xxs'} justify="between">
-              {_.isString(notification.description) ? (
-                <BAIText style={{ flex: 1, minWidth: 0 }}>
-                  {_.truncate(notification.description, { length: 300 })}
+        /* PILOT-DECISION: nested `List.Item` dropped — see above. */
+        <BAIFlex direction="column" align="stretch" gap={'xxs'}>
+          <BAIFlex direction="row" align="end" gap={'xxs'} justify="between">
+            {_.isString(notification.description) ? (
+              <BAIText style={{ flex: 1, minWidth: 0 }}>
+                {_.truncate(notification.description, { length: 300 })}
+              </BAIText>
+            ) : (
+              notification.description
+            )}
+
+            {notification.extraDescription && !notification?.onCancel ? (
+              <BAIFlex style={{ flexShrink: 0 }}>
+                <Link
+                  style={{ whiteSpace: 'nowrap' }}
+                  onClick={() => {
+                    toggleShowExtraDescription();
+                  }}
+                >
+                  {showExtraDescription
+                    ? t('notification.SeeSummary')
+                    : t('notification.SeeDetail')}
+                </Link>
+              </BAIFlex>
+            ) : null}
+          </BAIFlex>
+
+          {notification.extraDescription && showExtraDescription ? (
+            <Card
+              padding={4}
+              style={{
+                maxHeight: '300px',
+                overflow: 'auto',
+                overflowX: 'hidden',
+                marginTop: token.marginSM,
+              }}
+            >
+              {_.isString(notification.extraDescription) ? (
+                <BAIText type="secondary" copyable>
+                  {notification.extraDescription}
                 </BAIText>
               ) : (
-                notification.description
+                notification.extraDescription
               )}
+            </Card>
+          ) : null}
 
-              {notification.extraDescription && !notification?.onCancel ? (
-                <BAIFlex style={{ flexShrink: 0 }}>
-                  <Typography.Link
-                    style={{ whiteSpace: 'nowrap' }}
-                    onClick={() => {
-                      toggleShowExtraDescription();
-                    }}
-                  >
-                    {showExtraDescription
-                      ? t('notification.SeeSummary')
-                      : t('notification.SeeDetail')}
-                  </Typography.Link>
-                </BAIFlex>
-              ) : null}
-            </BAIFlex>
-
-            {notification.extraDescription && showExtraDescription ? (
-              <Card
-                size="small"
-                style={{
-                  maxHeight: '300px',
-                  overflow: 'auto',
-                  overflowX: 'hidden',
-                  marginTop: token.marginSM,
-                }}
-              >
-                {_.isString(notification.extraDescription) ? (
-                  <Typography.Text type="secondary" copyable>
-                    {notification.extraDescription}
-                  </Typography.Text>
-                ) : (
-                  notification.extraDescription
-                )}
-              </Card>
-            ) : null}
-
-            {notification.backgroundTask && (
-              <BAINotificationBackgroundProgress
-                backgroundTask={notification.backgroundTask}
-                showDate={showDate}
-              />
-            )}
-          </BAIFlex>
-        </List.Item>
+          {notification.backgroundTask && (
+            <BAINotificationBackgroundProgress
+              backgroundTask={notification.backgroundTask}
+              showDate={showDate}
+            />
+          )}
+        </BAIFlex>
       }
       footer={showDate ? dayjs(notification.created).format('lll') : undefined}
     />

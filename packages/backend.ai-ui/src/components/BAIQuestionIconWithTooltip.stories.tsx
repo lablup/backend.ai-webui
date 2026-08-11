@@ -18,7 +18,7 @@ It is typically placed next to a label, form field, or table column header to su
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`iconProps\` | \`React.ComponentProps<typeof QuestionCircleOutlined>\` | \`undefined\` | Props for the QuestionCircleOutlined icon from \`@ant-design/icons\`. Size is controlled via \`style.fontSize\` (antd icons have no \`size\` prop). |
+| \`iconProps\` | \`React.ComponentProps<typeof CircleHelp>\` | \`undefined\` | Props for the CircleHelp icon from \`lucide-react\` (e.g. \`size\`, \`strokeWidth\`, \`style\`). |
 
 **Note:** The \`children\` prop is omitted as the component provides its own icon.
 
@@ -31,11 +31,10 @@ For all other props, refer to [Ant Design Tooltip](https://ant.design/components
     // BAI-specific props - document fully
     iconProps: {
       control: { type: 'object' },
-      description:
-        'Props for the QuestionCircleOutlined icon (@ant-design/icons)',
+      description: 'Props for the CircleHelp icon (lucide-react)',
       table: {
         type: {
-          summary: 'React.ComponentProps<typeof QuestionCircleOutlined>',
+          summary: 'React.ComponentProps<typeof CircleHelp>',
         },
         defaultValue: { summary: 'undefined' },
       },

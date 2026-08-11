@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Esecuzione non riuscita",
     "ErrorOccurred": "Si è verificato un errore"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Nessun risultato",
+    "Search": "Ricerca"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Seleziona registro container"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Seleziona dominio"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Aggiornamento automatico",
@@ -260,6 +267,9 @@
     "StrategyType": "Strategia",
     "Tags": "Tag",
     "UpdatedAt": "Aggiornato il"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Il/I seguente/i progetto/i verrà/verranno aggiornato/i.",
@@ -451,14 +461,18 @@
     "Step": "Passo"
   },
   "comp:BAITable": {
+    "Apply": "Applica",
+    "Cancel": "Annulla",
     "CollapseAll": "Comprimi tutto",
     "ExpandAll": "Espandi tutto",
     "ExpandErrorsOnly": "Espandi solo errori",
     "ExpandOptions": "Opzioni di espansione",
+    "ExpandRow": "Espandi riga",
     "Export": "Esporta",
     "ExportCSV": "Esporta CSV",
     "GoToFirstPage": "Vai alla prima pagina",
     "InvalidPageNumber": "Numero di pagina non valido",
+    "Pagination": "Impaginazione",
     "SearchTableColumn": "Colonne della tabella di ricerca",
     "SelectColumnToDisplay": "Seleziona le colonne da visualizzare",
     "SettingTable": "Impostazioni della tabella"
@@ -526,8 +540,10 @@
     "MoreOptions": "Più opzioni",
     "Name": "Nome",
     "NoUploadPermissionForHost": "Non si dispone del permesso di caricamento per questo host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Immettere il nome della cartella.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Il nome è stato cambiato con successo.",
     "SelectedItemsDeletedSuccessfully": "I file e le cartelle selezionati sono stati eliminati correttamente.",
     "Size": "Misurare",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },
+  "form": {
+    "Optional": "(opzionale)",
+    "validateMessages": {
+      "Default": "Errore di convalida del campo ${label}",
+      "Required": "Si prega di inserire ${label}",
+      "Whitespace": "${label} non può essere un carattere vuoto",
+      "array": {
+        "Len": "Deve essere ${len} ${label}",
+        "Max": "Massimo ${max} ${label}",
+        "Min": "Almeno ${min} ${label}",
+        "Range": "Il totale di ${label} deve essere compreso tra ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} deve essere uguale a ${len}",
+        "Max": "${label} valor e massimo è ${max}",
+        "Min": "${label} valore minimo è ${min}",
+        "Range": "${label} deve essere compreso tra ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} non corrisponde al modello ${pattern}"
+      },
+      "string": {
+        "Len": "${label} deve avere ${len} caratteri",
+        "Max": "${label} deve contenere fino a ${max} caratteri",
+        "Min": "${label} deve contenere almeno ${min} caratteri",
+        "Range": "${label} deve contenere tra ${min}-${max} caratteri"
+      },
+      "types": {
+        "Email": " ${label} non è un ${type} valido",
+        "Number": " ${label} non è un ${type} valido",
+        "Object": " ${label} non è un ${type} valido",
+        "String": " ${label} non è un ${type} valido",
+        "Url": " ${label} non è un ${type} valido"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Deseleziona tutto",
     "File": "File",
+    "Increase": "Increase",
     "NSelected": "{{count}} selezionato",
     "Optional": "Opzionale",
     "Project": "Progetto",
+    "Select": "Select",
     "TotalItems": "Totali {{total}} elementi",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancellare",
       "Close": "Vicino",
       "Collapse": "Crollo",
+      "Confirm": "Confirm",
       "Copied": "Copiato",
+      "Copy": "Copia",
       "CopyAll": "Copia tutto",
       "Create": "Creare",
       "Delete": "Eliminare",

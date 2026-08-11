@@ -1,0 +1,39 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "bandOverlayVar": "#262626",
+    "controls": [
+      {
+        "label": "a한국어가능_cde",
+        "bgImage": "none",
+        "overlayVar": "#262626",
+        "hoverBgImage": "none"
+      },
+      {
+        "label": "Notifications",
+        "bgImage": "none",
+        "overlayVar": "#262626",
+        "hoverBgImage": "linear-gradient(rgb(38, 38, 38), rgb(38, 38, 38))"
+      }
+    ]
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "bandOverlayVar": "rgba(0,0,0,0.06)",
+    "controls": [
+      {
+        "label": "a한국어가능_cde",
+        "bgImage": "none",
+        "overlayVar": "rgba(0,0,0,0.06)",
+        "hoverBgImage": "none"
+      },
+      {
+        "label": "Notifications",
+        "bgImage": "none",
+        "overlayVar": "rgba(0,0,0,0.06)",
+        "hoverBgImage": "linear-gradient(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06))"
+      }
+    ]
+  },
+  "pageErrors": []
+}

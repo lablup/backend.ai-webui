@@ -1,0 +1,13 @@
+{
+  "candidateCss": "@layer components {\n  .bai-table-astryx-dim-layer thead th button > span { min-width: 0; }\n}",
+  "before": {
+    "thW": 60,
+    "escapeRightPx": 41,
+    "text": "Session Name"
+  },
+  "after": {
+    "thW": 60,
+    "escapeRightPx": -16.6,
+    "text": "Session Name"
+  }
+}

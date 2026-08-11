@@ -95,6 +95,16 @@
     "ActionExecutionFailed": "Action execution failed",
     "ErrorOccurred": "Error Occurred"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Clear",
+    "HexValue": "Hex value",
+    "NoColor": "No color",
+    "SelectColor": "Select color"
+  },
+  "comp:BAIComplexSelect": {
+    "NoResults": "No results",
+    "Search": "Search"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Select Container Registry"
   },
@@ -157,6 +167,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Select Domain"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
     "EveryHours": "{{count}}h",
@@ -171,6 +184,8 @@
     "operator": {
       "After": "after",
       "Before": "before",
+      "Contains": "contains",
+      "EndsWith": "ends with",
       "Equals": "equals",
       "GreaterThan": "greater than",
       "GreaterThanOrEqual": "greater or equal",
@@ -185,8 +200,12 @@
       "In": "in",
       "LessThan": "less than",
       "LessThanOrEqual": "less or equal",
+      "NotContains": "not contains",
+      "NotEndsWith": "not ends with",
       "NotEquals": "not equals",
-      "NotIn": "not in"
+      "NotIn": "not in",
+      "NotStartsWith": "not starts with",
+      "StartsWith": "starts with"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -261,6 +280,9 @@
     "Tags": "Tags",
     "UpdatedAt": "Updated At"
   },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
@@ -312,8 +334,20 @@
     "SelectFolder": "Select Folder"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Apply",
     "PlaceHolder": "Search",
-    "ResetFilter": "Reset filters"
+    "ResetFilter": "Reset filters",
+    "SearchLabel": "Search filters",
+    "operator": {
+      "Contains": "contains",
+      "Equals": "is",
+      "GreaterThan": "greater than",
+      "GreaterThanOrEqual": "greater or equal",
+      "In": "in",
+      "LessThan": "less than",
+      "LessThanOrEqual": "less or equal",
+      "NotEquals": "is not"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Cancel Pull",
@@ -451,14 +485,18 @@
     "Step": "Step"
   },
   "comp:BAITable": {
+    "Apply": "Apply",
+    "Cancel": "Cancel",
     "CollapseAll": "Collapse all",
     "ExpandAll": "Expand all",
     "ExpandErrorsOnly": "Expand errors only",
     "ExpandOptions": "Expand options",
+    "ExpandRow": "Expand row",
     "Export": "Export",
     "ExportCSV": "Export CSV",
     "GoToFirstPage": "Go to first page",
     "InvalidPageNumber": "Invalid page number",
+    "Pagination": "Pagination",
     "SearchTableColumn": "Search table columns",
     "SelectColumnToDisplay": "Select columns to display",
     "SettingTable": "Table Settings"
@@ -526,8 +564,10 @@
     "MoreOptions": "More options",
     "Name": "Name",
     "NoUploadPermissionForHost": "You don't have upload permission for this host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Please enter the folder name.",
+    "RenameFile": "Rename",
     "RenameSuccess": "The name has been successfully changed.",
     "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
     "Size": "Size",
@@ -605,18 +645,62 @@
   "error": {
     "UnknownError": "An unknown error occurred. Please try again."
   },
+  "form": {
+    "Optional": "(optional)",
+    "validateMessages": {
+      "Default": "Field validation error for ${label}",
+      "Required": "Please enter ${label}",
+      "Whitespace": "${label} cannot be a blank character",
+      "array": {
+        "Len": "Must be ${len} ${label}",
+        "Max": "At most ${max} ${label}",
+        "Min": "At least ${min} ${label}",
+        "Range": "The amount of ${label} must be between ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} must be equal to ${len}",
+        "Max": "${label} must be maximum ${max}",
+        "Min": "${label} must be minimum ${min}",
+        "Range": "${label} must be between ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} does not match the pattern ${pattern}"
+      },
+      "string": {
+        "Len": "${label} must be ${len} characters",
+        "Max": "${label} must be up to ${max} characters",
+        "Min": "${label} must be at least ${min} characters",
+        "Range": "${label} must be between ${min}-${max} characters"
+      },
+      "types": {
+        "Email": "${label} is not a valid ${type}",
+        "Number": "${label} is not a valid ${type}",
+        "Object": "${label} is not a valid ${type}",
+        "String": "${label} is not a valid ${type}",
+        "Url": "${label} is not a valid ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Deselect all",
     "File": "File",
+    "Increase": "Increase",
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "Project": "Project",
+    "Select": "Select",
     "TotalItems": "Total {{total}} items",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancel",
       "Close": "Close",
       "Collapse": "Collapse",
+      "Confirm": "Confirm",
       "Copied": "Copied",
+      "Copy": "Copy",
       "CopyAll": "Copy All",
       "Create": "Create",
       "Delete": "Delete",

@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Thực thi thất bại",
     "ErrorOccurred": "Đã xảy ra lỗi"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Không có kết quả",
+    "Search": "Tìm kiếm"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Chọn kho lưu trữ container"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Chọn miền"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
@@ -260,6 +267,9 @@
     "StrategyType": "Chiến lược",
     "Tags": "Thẻ",
     "UpdatedAt": "Ngày cập nhật"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
@@ -451,14 +461,18 @@
     "Step": "Bước"
   },
   "comp:BAITable": {
+    "Apply": "Áp dụng",
+    "Cancel": "Hủy",
     "CollapseAll": "Thu gọn tất cả",
     "ExpandAll": "Mở rộng tất cả",
     "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
     "ExpandOptions": "Tùy chọn mở rộng",
+    "ExpandRow": "Mở rộng hàng",
     "Export": "Xuất",
     "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",
     "InvalidPageNumber": "Số trang không hợp lệ",
+    "Pagination": "Phân trang",
     "SearchTableColumn": "Các cột bảng tìm kiếm",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SettingTable": "Cài đặt bảng"
@@ -526,8 +540,10 @@
     "MoreOptions": "Thêm tùy chọn",
     "Name": "Tên",
     "NoUploadPermissionForHost": "Bạn không có quyền tải lên cho máy chủ lưu trữ này.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Tên đã được thay đổi thành công.",
     "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
     "Size": "Kích cỡ",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
+  "form": {
+    "Optional": "(Tùy chọn)",
+    "validateMessages": {
+      "Default": "${label} không đáp ứng điều kiện quy định",
+      "Required": "Hãy nhập thông tin cho trường ${label}",
+      "Whitespace": "${label} không được chứa khoảng trắng",
+      "array": {
+        "Len": "Mảng ${label} phải có ${len} phần tử ",
+        "Max": "Mảng ${label} phải chứa tối đa ${max} phần tử ",
+        "Min": "Mảng ${label} phải chứa tối thiểu ${min} phần tử ",
+        "Range": "Mảng ${label} phải chứa từ ${min}-${max} phần tử"
+      },
+      "number": {
+        "Len": "${label} phải bằng ${len}",
+        "Max": "${label} phải nhỏ hơn hoặc bằng ${max}",
+        "Min": "${label} phải lớn hơn hoặc bằng ${min}",
+        "Range": "${label} phải nằm trong khoảng ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} không thỏa mãn mẫu kiểm tra ${pattern}"
+      },
+      "string": {
+        "Len": "${label} phải dài đúng ${len} ký tự",
+        "Max": "Độ dài tối đa trường ${label} là ${max} ký tự",
+        "Min": "Độ dài tối thiểu trường ${label} là ${min} ký tự",
+        "Range": "Độ dài trường ${label} phải từ ${min} đến ${max} ký tự"
+      },
+      "types": {
+        "Email": "${label} không phải kiểu ${type} hợp lệ",
+        "Number": "${label} không phải kiểu ${type} hợp lệ",
+        "Object": "${label} không phải kiểu ${type} hợp lệ",
+        "String": "${label} không phải kiểu ${type} hợp lệ",
+        "Url": "${label} không phải kiểu ${type} hợp lệ"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Bỏ chọn tất cả",
     "File": "Tệp",
+    "Increase": "Increase",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",
+    "Select": "Select",
     "TotalItems": "Tổng số {{total}} các mục",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Hủy bỏ",
       "Close": "Đóng",
       "Collapse": "Sụp đổ",
+      "Confirm": "Confirm",
       "Copied": "Đã sao chép",
+      "Copy": "Sao chép",
       "CopyAll": "Sao chép tất cả",
       "Create": "Tạo nên",
       "Delete": "Xóa bỏ",

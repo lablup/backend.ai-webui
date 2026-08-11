@@ -1,0 +1,69 @@
+== react/src/pages/DeploymentListPage.tsx
+  (no antd-family import)
+== react/src/pages/DeploymentDetailPage.tsx
+  (no antd-family import)
+== react/src/pages/AdminDeploymentPage.tsx
+50:import type { CardTabListType } from 'antd/es/card';
+== react/src/pages/AdminDeploymentPresetSettingPage.tsx
+21:import { Form } from 'antd';
+== react/src/pages/ProjectAdminDeploymentsPage.tsx
+  (no antd-family import)
+== react/src/components/AdminDeployment.tsx
+  (no antd-family import)
+== react/src/components/AdminDeploymentPreset.tsx
+  (no antd-family import)
+== react/src/components/AdminDeploymentPresetModelConfigItem.tsx
+15:import { Form } from 'antd';
+16:import type { FormInstance } from 'antd';
+== react/src/components/AdminDeploymentPresetResourceFields.tsx
+15:import { Form } from 'antd';
+== react/src/components/AdminDeploymentPresetReviewSummary.tsx
+20:import type { FormInstance } from 'antd';
+== react/src/components/AdminDeploymentPresetSettingPageContent.tsx
+46:import { Form } from 'antd';
+47:import type { FormInstance } from 'antd';
+== react/src/components/AdminDeploymentPresetTable.tsx
+  (no antd-family import)
+== react/src/components/AdminDeploymentPresetValidationTour.tsx
+  (no antd-family import)
+== react/src/components/AdminModelCard.tsx
+  (no antd-family import)
+== react/src/components/AdminModelCardSettingModal.tsx
+26:import { Form, type FormInstance } from 'antd';
+== react/src/components/AdminPrometheusPreset.tsx
+  (no antd-family import)
+== react/src/components/AdminRuntimeVariantPreset.tsx
+  (no antd-family import)
+== react/src/components/DeploymentAccessTokensCard.tsx
+19:import { Form } from 'antd';
+== react/src/components/DeploymentAddRevisionModal.tsx
+75:import { Form } from 'antd';
+76:import type { FormInstance } from 'antd';
+== react/src/components/DeploymentAuditLogTab.tsx
+  (no antd-family import)
+== react/src/components/DeploymentAutoScalingCard.tsx
+  (no antd-family import)
+== react/src/components/DeploymentBasicInfoCard.tsx
+  (no antd-family import)
+== react/src/components/DeploymentCurrentRevisionTab.tsx
+  (no antd-family import)
+== react/src/components/DeploymentPresetDetailModal.tsx
+  (no antd-family import)
+== react/src/components/DeploymentReplicasCard.tsx
+  (no antd-family import)
+== react/src/components/DeploymentRevisionCard.tsx
+  (no antd-family import)
+== react/src/components/DeploymentRevisionDetail.tsx
+  (no antd-family import)
+== react/src/components/DeploymentRevisionDetailDrawer.tsx
+  (no antd-family import)
+== react/src/components/DeploymentRevisionHistoryTab.tsx
+  (no antd-family import)
+== react/src/components/DeploymentSchedulingHistoryModal.tsx
+  (no antd-family import)
+== react/src/components/DeploymentSettingModal.tsx
+28:import { Form } from 'antd';
+== react/src/components/ReplicaStatusTag.tsx
+  (no antd-family import)
+== react/src/components/RouteSchedulingHistoryModal.tsx
+  (no antd-family import)

@@ -1,10 +1,21 @@
+/*
+ to-astryx W2-D: `GetProps<typeof Typography.Text>` -> `BAITextProps`.
+
+ `GetProps` has no Astryx analog (MAPPING §6 rule 2), and it was the ONLY
+ reason this module sat in the antd import graph — as a 572-file taint hub.
+ `BAIText` is the Astryx-backed frontier wrapper that already restates antd's
+ `Typography.Text` prop surface locally, so the props these call sites pass
+ (`type`, `ellipsis`, `copyable`, `style`) are unchanged.
+*/
 import { UNSAFELazyUserEmailViewQuery } from '../../__generated__/UNSAFELazyUserEmailViewQuery.graphql';
 import { toGlobalId } from '../../helper';
-import { Typography, type GetProps } from 'antd';
+import BAIText, { type BAITextProps } from '../BAIText';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export interface UNSAFELazyUserEmailViewProps
-  extends Omit<GetProps<typeof Typography.Text>, 'children'> {
+export interface UNSAFELazyUserEmailViewProps extends Omit<
+  BAITextProps,
+  'children'
+> {
   uuid?: string;
   fetchKey?: string;
 }
@@ -39,9 +50,7 @@ const UNSAFELazyUserEmailView: React.FC<UNSAFELazyUserEmailViewProps> = ({
     },
   );
   return (
-    user_node?.email && (
-      <Typography.Text {...textProps}>{user_node?.email}</Typography.Text>
-    )
+    user_node?.email && <BAIText {...textProps}>{user_node?.email}</BAIText>
   );
 };
 

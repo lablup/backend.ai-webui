@@ -1,0 +1,851 @@
+{
+  "pageErrors": [],
+  "light": {
+    "appliedTheme": "light",
+    "settled": true,
+    "bulkItems": [
+      {
+        "name": null,
+        "label": "Email prefix (before @)",
+        "rect": {
+          "x": 564,
+          "y": 300,
+          "w": 236,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 330,
+          "w": 236,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Email suffix (after @)",
+        "rect": {
+          "x": 800,
+          "y": 300,
+          "w": 236,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 800,
+          "y": 330,
+          "w": 236,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Number of users",
+        "rect": {
+          "x": 564,
+          "y": 386,
+          "w": 472,
+          "h": 86
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 416,
+          "w": 472,
+          "h": 32
+        },
+        "additional": {
+          "x": 564,
+          "y": 448,
+          "w": 472,
+          "h": 24
+        },
+        "extra": {
+          "x": 564,
+          "y": 448,
+          "w": 472,
+          "h": 24
+        },
+        "extraMinHeight": "24px",
+        "extraText": "",
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Password",
+        "rect": {
+          "x": 564,
+          "y": 496,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 526,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Confirm Password",
+        "rect": {
+          "x": 564,
+          "y": 582,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 612,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Password change requiredWhen enabled, th",
+        "rect": {
+          "x": 564,
+          "y": 668,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 698,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Description(optional)",
+        "rect": {
+          "x": 564,
+          "y": 754,
+          "w": 472,
+          "h": 114
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 784,
+          "w": 472,
+          "h": 84
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "User Status(optional)",
+        "rect": {
+          "x": 564,
+          "y": 891.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 921.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Role(optional)",
+        "rect": {
+          "x": 564,
+          "y": 977.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1007.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Enable sudo session(optional)",
+        "rect": {
+          "x": 564,
+          "y": 1063.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1093.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Resource Policy",
+        "rect": {
+          "x": 564,
+          "y": 1149.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1179.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Domain",
+        "rect": {
+          "x": 564,
+          "y": 1235.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1265.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Projects(optional)",
+        "rect": {
+          "x": 564,
+          "y": 1321.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1351.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Allowed client IPs(optional)",
+        "rect": {
+          "x": 564,
+          "y": 1407.9,
+          "w": 472,
+          "h": 86
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1437.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": {
+          "x": 564,
+          "y": 1469.9,
+          "w": 472,
+          "h": 24
+        },
+        "extra": {
+          "x": 564,
+          "y": 1469.9,
+          "w": 472,
+          "h": 24
+        },
+        "extraMinHeight": "24px",
+        "extraText": "CIDR address (e.g., 10.20.30.40, 10.20.30.0/24)",
+        "marginOffset": null
+      }
+    ],
+    "bulkRow": {
+      "parentTag": "DIV",
+      "parentClass": "astryx-stack horizontal gap-0 x78zum5 x1q0g3np x1o57wo1 x6yxi7o",
+      "parentGap": "0px",
+      "parentDisplay": "flex",
+      "itemGapPx": 0,
+      "inputGapPx": 18,
+      "prefixInput": {
+        "x": 573,
+        "w": 218,
+        "radius": "8px"
+      },
+      "suffixInput": {
+        "x": 809,
+        "w": 218,
+        "radius": "8px"
+      }
+    },
+    "bulkVerticalGaps": [
+      {
+        "label": "Email prefix (before @)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": -62
+      },
+      {
+        "label": "Email suffix (after @)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Number of users",
+        "controlBottomToItemBottom": 24,
+        "controlBottomToNextLabelTop": 48
+      },
+      {
+        "label": "Password",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Confirm Password",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Password change requiredWhen enabled, the user must change their password at next login.(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Description(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "User Status(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Role(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Enable sudo session(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Resource Policy",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Domain",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Projects(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Allowed client IPs(optional)",
+        "controlBottomToItemBottom": 24,
+        "controlBottomToNextLabelTop": null
+      }
+    ]
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "settled": true,
+    "bulkItems": [
+      {
+        "name": null,
+        "label": "Email prefix (before @)",
+        "rect": {
+          "x": 564,
+          "y": 300,
+          "w": 236,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 330,
+          "w": 236,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Email suffix (after @)",
+        "rect": {
+          "x": 800,
+          "y": 300,
+          "w": 236,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 800,
+          "y": 330,
+          "w": 236,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Number of users",
+        "rect": {
+          "x": 564,
+          "y": 386,
+          "w": 472,
+          "h": 86
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 416,
+          "w": 472,
+          "h": 32
+        },
+        "additional": {
+          "x": 564,
+          "y": 448,
+          "w": 472,
+          "h": 24
+        },
+        "extra": {
+          "x": 564,
+          "y": 448,
+          "w": 472,
+          "h": 24
+        },
+        "extraMinHeight": "24px",
+        "extraText": "",
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Password",
+        "rect": {
+          "x": 564,
+          "y": 496,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 526,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Confirm Password",
+        "rect": {
+          "x": 564,
+          "y": 582,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 612,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Password change requiredWhen enabled, th",
+        "rect": {
+          "x": 564,
+          "y": 668,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 698,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Description(optional)",
+        "rect": {
+          "x": 564,
+          "y": 754,
+          "w": 472,
+          "h": 114
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 784,
+          "w": 472,
+          "h": 84
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "User Status(optional)",
+        "rect": {
+          "x": 564,
+          "y": 891.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 921.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Role(optional)",
+        "rect": {
+          "x": 564,
+          "y": 977.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1007.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Enable sudo session(optional)",
+        "rect": {
+          "x": 564,
+          "y": 1063.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1093.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Resource Policy",
+        "rect": {
+          "x": 564,
+          "y": 1149.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1179.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Domain",
+        "rect": {
+          "x": 564,
+          "y": 1235.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1265.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Projects(optional)",
+        "rect": {
+          "x": 564,
+          "y": 1321.9,
+          "w": 472,
+          "h": 62
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1351.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": null,
+        "extra": null,
+        "extraMinHeight": null,
+        "extraText": null,
+        "marginOffset": null
+      },
+      {
+        "name": null,
+        "label": "Allowed client IPs(optional)",
+        "rect": {
+          "x": 564,
+          "y": 1407.9,
+          "w": 472,
+          "h": 86
+        },
+        "marginBottom": "24px",
+        "control": {
+          "x": 564,
+          "y": 1437.9,
+          "w": 472,
+          "h": 32
+        },
+        "additional": {
+          "x": 564,
+          "y": 1469.9,
+          "w": 472,
+          "h": 24
+        },
+        "extra": {
+          "x": 564,
+          "y": 1469.9,
+          "w": 472,
+          "h": 24
+        },
+        "extraMinHeight": "24px",
+        "extraText": "CIDR address (e.g., 10.20.30.40, 10.20.30.0/24)",
+        "marginOffset": null
+      }
+    ],
+    "bulkRow": {
+      "parentTag": "DIV",
+      "parentClass": "astryx-stack horizontal gap-0 x78zum5 x1q0g3np x1o57wo1 x6yxi7o",
+      "parentGap": "0px",
+      "parentDisplay": "flex",
+      "itemGapPx": 0,
+      "inputGapPx": 18,
+      "prefixInput": {
+        "x": 573,
+        "w": 218,
+        "radius": "8px"
+      },
+      "suffixInput": {
+        "x": 809,
+        "w": 218,
+        "radius": "8px"
+      }
+    },
+    "bulkVerticalGaps": [
+      {
+        "label": "Email prefix (before @)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": -62
+      },
+      {
+        "label": "Email suffix (after @)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Number of users",
+        "controlBottomToItemBottom": 24,
+        "controlBottomToNextLabelTop": 48
+      },
+      {
+        "label": "Password",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Confirm Password",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Password change requiredWhen enabled, the user must change their password at next login.(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Description(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "User Status(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Role(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Enable sudo session(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Resource Policy",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Domain",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Projects(optional)",
+        "controlBottomToItemBottom": 0,
+        "controlBottomToNextLabelTop": 24
+      },
+      {
+        "label": "Allowed client IPs(optional)",
+        "controlBottomToItemBottom": 24,
+        "controlBottomToNextLabelTop": null
+      }
+    ]
+  }
+}

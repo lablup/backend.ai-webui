@@ -1,0 +1,36 @@
+{
+  "A_initialRows": 10,
+  "A_rowsAfterScroll": [
+    20,
+    30,
+    40,
+    50,
+    57,
+    57
+  ],
+  "A_pageFetches": [
+    "0/10",
+    "10/10",
+    "20/10",
+    "30/10",
+    "40/10",
+    "50/10"
+  ],
+  "A_distinctOffsets": [
+    0,
+    10,
+    20,
+    30,
+    40,
+    50
+  ],
+  "A_hasActiveDescendant": true,
+  "A_valueAfterKeyboardEnter": "\"probe-user-002@backend.ai\"",
+  "B_initialFormValue": "{\"owner\":{\"label\":\"Option 3\",\"value\":\"opt-3\"}}",
+  "B_triggerShowsInitialLabel": "Option 3",
+  "B_formValueAfterSingleSelect": "{\"owner\":{\"label\":\"Option 5\",\"value\":\"opt-5\"}}",
+  "B_formValueAfterMultiSelect": "{\"owner\":{\"label\":\"Option 5\",\"value\":\"opt-5\"},\"reviewers\":[{\"label\":\"Option 1\",\"value\":\"opt-1\"},{\"label\":\"Option 2\",\"value\":\"opt-2\"}]}",
+  "B_submittedPayload": "{\"owner\":{\"label\":\"Option 5\",\"value\":\"opt-5\"},\"reviewers\":[{\"label\":\"Option 1\",\"value\":\"opt-1\"},{\"label\":\"Option 2\",\"value\":\"opt-2\"}]}",
+  "consoleErrors": [],
+  "pageErrors": []
+}

@@ -5,8 +5,13 @@
 import { AliasedImageDoubleTagsFragment$key } from '../__generated__/AliasedImageDoubleTagsFragment.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
-import { Tag } from 'antd';
-import { BAIDoubleTag, BAIFlex, DoubleTagObjectValue } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  BAIDoubleTag,
+  BAIFlex,
+  DoubleTagObjectValue,
+  badgeVariantForTagColor,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -69,12 +74,15 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
             {...doubleTagProps}
           />
         ) : (
-          <Tag
+          // antd Tag -> Astryx Badge through the repo-global Tag lookup
+          // (ticket 13 policy; unknown runtime strings drop to neutral).
+          <Badge
             key={tag.key}
-            color={isCustomized ? 'cyan' : doubleTagProps.color}
-          >
-            {aliasedTag}
-          </Tag>
+            variant={badgeVariantForTagColor(
+              isCustomized ? 'cyan' : doubleTagProps.color,
+            )}
+            label={aliasedTag}
+          />
         );
       })}
     </BAIFlex>

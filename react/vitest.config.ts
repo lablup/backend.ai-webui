@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import stylexVite from '@stylexjs/unplugin/vite';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import svgr from 'vite-plugin-svgr';
@@ -61,6 +62,22 @@ export default defineConfig({
   },
 
   plugins: [
+    // StyleX compiler — the same one `vite.config.ts` wires for the app
+    // (ticket 01). Without it, any module that calls `stylex.create()` at
+    // import time throws "Unexpected 'stylex.create' call at runtime", which
+    // took out 10 test files that merely import a component using `xstyle`
+    // (ticket 30). The plugin declares `enforce: 'pre'` itself, so it sees raw
+    // TSX ahead of @vitejs/plugin-react regardless of position here, and it
+    // only touches files that literally import `@stylexjs/stylex`.
+    //
+    // `cssInjectionTarget` is intentionally omitted: vitest aliases every CSS
+    // specifier to `__test__/rawCss.mock.js`, so nothing consumes the emitted
+    // sheet — only the transform matters here.
+    stylexVite({
+      useCSSLayers: false,
+      // Same anchor as the app build so generated class names match.
+      unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
+    }),
     react({
       babel: (id) => {
         const isBUI = id.startsWith(buiSrc);

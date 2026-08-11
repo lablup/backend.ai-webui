@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import { AssistantChatMessage } from './AssistantChatMesssage';
 import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
 import { UserChatMessage } from './UserChatMesssage';
 import { UIMessage } from '@ai-sdk/react';
-import { theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useRef, useState } from 'react';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';

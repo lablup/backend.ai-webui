@@ -6,7 +6,6 @@ import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { AttachmentsProps } from '@ant-design/x';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import Big from 'big.js';
 import dayjs from 'dayjs';
@@ -715,15 +714,6 @@ export const handleRowSelectionChange = <T extends object, K extends keyof T>(
   });
 };
 
-export function createDataTransferFiles(files: AttachmentsProps['items']) {
-  const fileList = _.map(files, (item) => item.originFileObj as File);
-  const dataTransfer = new DataTransfer();
-  _.forEach(fileList, (file) => {
-    dataTransfer.items.add(file);
-  });
-  return dataTransfer.files;
-}
-
 export function getOS() {
   const userAgent = navigator.userAgent.toLowerCase();
   if (_.includes(userAgent, 'windows')) return 'Windows';
@@ -1118,7 +1108,7 @@ export const convertToOrderBy = <
 
 /**
  * Reverses `convertToOrderBy`: converts the first entry of a GraphQL v2
- * OrderBy array back to a UI order string (e.g., for a `BAITable`'s `order`
+ * OrderBy array back to a UI order string (e.g., for a `BAITableAstryx`'s `order`
  * prop, or to persist the current sort to the URL).
  *
  * @param orderBy - An OrderBy array (or its first entry's `field`/`direction`).
@@ -1134,9 +1124,7 @@ export const convertToOrderBy = <
  */
 export const convertFirstOrderByToString = (
   orderBy:
-    | ReadonlyArray<{ field?: string; direction?: string }>
-    | null
-    | undefined,
+    ReadonlyArray<{ field?: string; direction?: string }> | null | undefined,
 ): string | null => {
   const first = orderBy?.[0];
   if (!first?.field) return null;

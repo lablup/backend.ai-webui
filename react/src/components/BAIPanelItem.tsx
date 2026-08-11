@@ -3,8 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import usePrimaryColors from '../hooks/usePrimaryColors';
-import { Progress, type ProgressProps, theme, Typography } from 'antd';
-import { createStyles } from 'antd-style';
+import { theme } from '../theme-shim';
+import { ProgressBar } from '@astryxdesign/core/ProgressBar';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
@@ -15,16 +16,9 @@ interface BAIPanelItemProps extends Omit<BAIFlexProps, 'title'> {
   unit?: string;
   percent?: number;
   color?: string;
-  progressProps?: ProgressProps;
+  /** Accessible name for the progress bar; defaults to a string `title`. */
+  progressLabel?: string;
 }
-
-const useStyles = createStyles(({ css }) => ({
-  progressSteps: css`
-    .ant-progress-steps-item {
-      border-radius: 100px;
-    }
-  `,
-}));
 
 const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
   title,
@@ -32,11 +26,10 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
   unit,
   percent,
   color,
-  progressProps,
+  progressLabel,
   ...props
 }) => {
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const primaryColors = usePrimaryColors();
   return (
     <BAIFlex
@@ -51,7 +44,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
       wrap="wrap"
     >
       {_.isString(title) ? (
-        <Typography.Text
+        <Text
           style={{
             fontSize: token.fontSizeHeading5,
             wordBreak: 'keep-all',
@@ -59,34 +52,41 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
           }}
         >
           {title}
-        </Typography.Text>
+        </Text>
       ) : (
         title
       )}
       <BAIFlex>
         {_.isString(value) || _.isNumber(value) ? (
-          <Typography.Text
+          <Text
             style={{
               fontSize: token.fontSizeHeading1,
               color: color ?? primaryColors.primary5,
             }}
           >
             {value}
-          </Typography.Text>
+          </Text>
         ) : (
           value
         )}
-        {unit && <Typography.Text>{unit}</Typography.Text>}
+        {unit && <Text>{unit}</Text>}
       </BAIFlex>
       {_.isNumber(percent) && (
-        <Progress
-          percent={percent}
-          strokeColor={color ?? token.colorPrimary}
-          showInfo={false}
-          steps={12}
-          size={[5, 12]}
-          className={styles.progressSteps}
-          {...progressProps}
+        /* PILOT-DECISION: antd `Progress steps={12} size={[5,12]}` (a 12-pill
+           segmented bar) -> Astryx `ProgressBar`, a continuous track.
+           MAPPING §3.11 grades `steps` as NONE — it is a self-build — and
+           `strokeColor` as NONE (P5, the variant enum is closed). NO live call
+           site passes `percent` today (grepped: `StorageStatusPanelCard`,
+           `BulkCreateUserFromCSVModal`, `SessionCountDashboardItem` pass only
+           title/value/unit/color/style), so the segmented look has no render to
+           regress; rebuilding 12 pills to keep an unused branch pixel-identical
+           is exactly what the simplicity policy rules out. The `.ant-progress-
+           steps-item` radius rule in `BAIPanelItem.css` died with it (P6), so
+           the file and its import are gone. */
+        <ProgressBar
+          label={progressLabel ?? (_.isString(title) ? title : '')}
+          isLabelHidden
+          value={percent}
         />
       )}
     </BAIFlex>

@@ -1,0 +1,10 @@
+{
+  "createFolderModal": {
+    "background": "rgb(255, 255, 255)",
+    "color": "rgb(0, 0, 0)",
+    "dialogThemeAttr": "bai-r6-default-brand-h1gij33a",
+    "rootThemeAttr": "bai-r6-default-brand-h1gij33a",
+    "bodyThemeAttr": null
+  },
+  "downloadModal": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"user-dropdown-button\"]').first()\u001b[22m\n"
+}

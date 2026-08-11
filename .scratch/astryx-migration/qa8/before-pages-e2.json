@@ -1,0 +1,245 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "surfaces": {
+      "notification": {
+        "via": "click",
+        "open": [
+          {
+            "name": ".astryx-drawer",
+            "cls": "astryx-drawer end xixxii4",
+            "rect": {
+              "x": 1320,
+              "y": 0,
+              "w": 280,
+              "h": 1000
+            },
+            "bg": "rgb(255, 255, 255)",
+            "color": "rgb(0, 0, 0)",
+            "colorScheme": "light",
+            "border": "rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0) rgb(217, 217, 217)",
+            "boxShadow": "none"
+          }
+        ]
+      },
+      "theme-toggle": {
+        "via": "hover",
+        "open": []
+      },
+      "help": {
+        "via": "hover",
+        "open": []
+      },
+      "user-dropdown": {
+        "via": "click",
+        "open": [
+          {
+            "name": "[role=\"menu\"]",
+            "cls": "astryx-dropdown-menu x9f619 x78zum5",
+            "rect": {
+              "x": 1413,
+              "y": 50,
+              "w": 175,
+              "h": 313.9
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "colorScheme": "light",
+            "border": "rgb(0, 0, 0)",
+            "boxShadow": "none"
+          },
+          {
+            "name": "[popover]:popover-open",
+            "cls": "x1lziwak x14z9mp xexx8yu",
+            "rect": {
+              "x": 1413,
+              "y": 50,
+              "w": 175,
+              "h": 313.9
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "colorScheme": "light",
+            "border": "rgb(0, 0, 0)",
+            "boxShadow": "none"
+          }
+        ]
+      },
+      "project-select": {
+        "via": "click",
+        "open": [
+          {
+            "name": "[role=\"listbox\"]",
+            "cls": "x9f619 xuyqlj2 x1odjw0f",
+            "rect": {
+              "x": 332,
+              "y": 78,
+              "w": 270,
+              "h": 196
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "colorScheme": "light",
+            "border": "rgb(0, 0, 0)",
+            "boxShadow": "none"
+          },
+          {
+            "name": "[popover]:popover-open",
+            "cls": "xdj266r xat24cr x1lziwak",
+            "rect": {
+              "x": 332,
+              "y": 46,
+              "w": 270,
+              "h": 228
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(0, 0, 0)",
+            "colorScheme": "light",
+            "border": "rgb(0, 0, 0)",
+            "boxShadow": "none"
+          }
+        ]
+      }
+    },
+    "hoverBg": {
+      "notification": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "theme-toggle": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "help": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "user-dropdown": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      }
+    }
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "surfaces": {
+      "notification": {
+        "via": "click",
+        "open": [
+          {
+            "name": ".astryx-drawer",
+            "cls": "astryx-drawer end xixxii4",
+            "rect": {
+              "x": 1320,
+              "y": 0,
+              "w": 280,
+              "h": 1000
+            },
+            "bg": "rgb(20, 20, 20)",
+            "color": "rgb(255, 255, 255)",
+            "colorScheme": "dark",
+            "border": "rgb(255, 255, 255) rgb(255, 255, 255) rgb(255, 255, 255) rgb(66, 66, 66)",
+            "boxShadow": "none"
+          }
+        ]
+      },
+      "theme-toggle": {
+        "via": "hover",
+        "open": []
+      },
+      "help": {
+        "via": "hover",
+        "open": []
+      },
+      "user-dropdown": {
+        "via": "click",
+        "open": [
+          {
+            "name": "[role=\"menu\"]",
+            "cls": "astryx-dropdown-menu x9f619 x78zum5",
+            "rect": {
+              "x": 1413,
+              "y": 50,
+              "w": 175,
+              "h": 313.9
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "colorScheme": "dark",
+            "border": "rgb(255, 255, 255)",
+            "boxShadow": "none"
+          },
+          {
+            "name": "[popover]:popover-open",
+            "cls": "x1lziwak x14z9mp xexx8yu",
+            "rect": {
+              "x": 1413,
+              "y": 50,
+              "w": 175,
+              "h": 313.9
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "colorScheme": "dark",
+            "border": "rgb(255, 255, 255)",
+            "boxShadow": "none"
+          }
+        ]
+      },
+      "project-select": {
+        "via": "click",
+        "open": [
+          {
+            "name": "[role=\"listbox\"]",
+            "cls": "x9f619 xuyqlj2 x1odjw0f",
+            "rect": {
+              "x": 332,
+              "y": 78,
+              "w": 270,
+              "h": 196
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "colorScheme": "dark",
+            "border": "rgb(255, 255, 255)",
+            "boxShadow": "none"
+          },
+          {
+            "name": "[popover]:popover-open",
+            "cls": "xdj266r xat24cr x1lziwak",
+            "rect": {
+              "x": 332,
+              "y": 46,
+              "w": 270,
+              "h": 228
+            },
+            "bg": "rgba(0, 0, 0, 0)",
+            "color": "rgb(255, 255, 255)",
+            "colorScheme": "dark",
+            "border": "rgb(255, 255, 255)",
+            "boxShadow": "none"
+          }
+        ]
+      }
+    },
+    "hoverBg": {
+      "notification": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "theme-toggle": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "help": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "user-dropdown": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)"
+      }
+    }
+  },
+  "pageErrors": []
+}

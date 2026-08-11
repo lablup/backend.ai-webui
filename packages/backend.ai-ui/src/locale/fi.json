@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Suoritus epäonnistui",
     "ErrorOccurred": "Tapahtui virhe"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Ei tuloksia",
+    "Search": "Etsi"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Valitse konttirekisteri"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Valitse toimialue"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
@@ -260,6 +267,9 @@
     "StrategyType": "Strategia",
     "Tags": "Tunnisteet",
     "UpdatedAt": "Päivitetty"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",
@@ -451,14 +461,18 @@
     "Step": "Vaihe"
   },
   "comp:BAITable": {
+    "Apply": "Käytä",
+    "Cancel": "Peruuta",
     "CollapseAll": "Tiivistä kaikki",
     "ExpandAll": "Laajenna kaikki",
     "ExpandErrorsOnly": "Laajenna vain virheet",
     "ExpandOptions": "Laajenemisvaihtoehdot",
+    "ExpandRow": "Laajenna rivi",
     "Export": "Vie",
     "ExportCSV": "Vie CSV",
     "GoToFirstPage": "Siirry ensimmäiselle sivulle",
     "InvalidPageNumber": "Virheellinen sivunumero",
+    "Pagination": "Sivutus",
     "SearchTableColumn": "Hakutaulukon sarakkeet",
     "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
     "SettingTable": "Taulukon asetukset"
@@ -526,8 +540,10 @@
     "MoreOptions": "Lisää vaihtoehtoja",
     "Name": "Nimi",
     "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
     "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
     "Size": "Koko",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },
+  "form": {
+    "Optional": "(optional)",
+    "validateMessages": {
+      "Default": "Kentän ${label} vahvistus epäonnistui",
+      "Required": "Syötä ${label}",
+      "Whitespace": "${label} ei voi olla tyhjä",
+      "array": {
+        "Len": "${label} täytyy sisältää täsmälleen ${len} kohdetta",
+        "Max": "${label} saa sisältää enintään ${max} kohdetta",
+        "Min": "${label} täytyy sisältää vähintään ${min} kohdetta",
+        "Range": "${label} täytyy sisältää ${min}–${max} kohdetta"
+      },
+      "number": {
+        "Len": "${label} täytyy olla yhtä suuri kuin ${len}",
+        "Max": "${label} saa olla enintään ${max}",
+        "Min": "${label} täytyy olla vähintään ${min}",
+        "Range": "${label} täytyy olla välillä ${min}–${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} ei vastaa mallia ${pattern}"
+      },
+      "string": {
+        "Len": "${label} täytyy olla täsmälleen ${len} merkkiä pitkä",
+        "Max": "${label} saa olla enintään ${max} merkkiä pitkä",
+        "Min": "${label} täytyy olla vähintään ${min} merkkiä pitkä",
+        "Range": "${label} täytyy olla ${min}–${max} merkkiä pitkä"
+      },
+      "types": {
+        "Email": "${label} ei ole kelvollinen ${type}",
+        "Number": "${label} ei ole kelvollinen ${type}",
+        "Object": "${label} ei ole kelvollinen ${type}",
+        "String": "${label} ei ole kelvollinen ${type}",
+        "Url": "${label} ei ole kelvollinen ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Poista kaikki valinnat",
     "File": "Tiedosto",
+    "Increase": "Increase",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",
+    "Select": "Select",
     "TotalItems": "Yhteensä {{total}} kohteet",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Peruuttaa",
       "Close": "Lähellä",
       "Collapse": "Romahdus",
+      "Confirm": "Confirm",
       "Copied": "Kopioitu",
+      "Copy": "Kopioi",
       "CopyAll": "Kopioida kaikki",
       "Create": "Luoda",
       "Delete": "Poistaa",

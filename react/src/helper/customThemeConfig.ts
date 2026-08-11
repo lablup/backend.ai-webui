@@ -2,8 +2,28 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { type ThemeConfig } from 'antd';
 import * as _ from 'lodash-es';
+
+/**
+ * The antd `ThemeConfig` import is replaced by the slice this file's consumers
+ * actually read out of `resources/theme.json`: the brand seed tokens (named
+ * explicitly so they stay assignable to `BrandSeeds` in
+ * `packages/backend.ai-ui/src/theme-shim`) plus the per-component override map.
+ * The open `Record` keeps any other antd token the document carries — theme.json
+ * is parsed from untyped JSON, so nothing in it is narrowed away.
+ */
+export type ThemeConfig = {
+  token?: {
+    colorPrimary?: string;
+    colorLink?: string;
+    colorError?: string;
+    colorSuccess?: string;
+    colorWarning?: string;
+    colorInfo?: string;
+    fontFamily?: string;
+  } & Record<string, unknown>;
+  components?: Record<string, Record<string, unknown>>;
+};
 
 export type LogoConfig = {
   src: string;
@@ -177,8 +197,7 @@ export const loadCustomThemeConfig = () => {
         const fontFamily =
           topLevelFont ??
           (_.get(_customTheme, 'light.token.fontFamily') as
-            | string
-            | undefined) ??
+            string | undefined) ??
           (_.get(_customTheme, 'dark.token.fontFamily') as string | undefined);
         if (fontFamily) {
           injectFontCSS(parseFontFamilies(fontFamily));

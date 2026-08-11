@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "実行エラー",
     "ErrorOccurred": "問題が発生しました。"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "結果がありません",
+    "Search": "検索"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "コンテナレジストリを選択"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "ドメインを選択"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動更新",
@@ -260,6 +267,9 @@
     "StrategyType": "戦略",
     "Tags": "タグ",
     "UpdatedAt": "更新日時"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",
@@ -451,14 +461,18 @@
     "Step": "ステップ"
   },
   "comp:BAITable": {
+    "Apply": "適用",
+    "Cancel": "キャンセル",
     "CollapseAll": "すべて折りたたむ",
     "ExpandAll": "すべて展開",
     "ExpandErrorsOnly": "エラーのみ展開",
     "ExpandOptions": "展開オプション",
+    "ExpandRow": "行を展開",
     "Export": "エクスポート",
     "ExportCSV": "CSV をエクスポート",
     "GoToFirstPage": "最初のページへ",
     "InvalidPageNumber": "無効なページ番号です",
+    "Pagination": "ページネーション",
     "SearchTableColumn": "テーブル列を検索します",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SettingTable": "テーブル設定"
@@ -526,8 +540,10 @@
     "MoreOptions": "その他のオプション",
     "Name": "名前",
     "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
+    "Path": "Path",
     "PleaseEnterAFileName": "ファイル名を入力してください。",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
+    "RenameFile": "Rename",
     "RenameSuccess": "名前は正常に変更されました。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
+  "form": {
+    "Optional": "(オプション)",
+    "validateMessages": {
+      "Default": "${label}のフィールド検証エラー",
+      "Required": "${label}を入力してください",
+      "Whitespace": "${label}は空白文字にすることはできません",
+      "array": {
+        "Len": "${label}は${len}である必要があります",
+        "Max": "${label}の最大は${max}です",
+        "Min": "${label}の最小は${min}です",
+        "Range": "${label}の合計は${min}-${max}の範囲である必要があります"
+      },
+      "number": {
+        "Len": "${label}は${len}と等しい必要があります",
+        "Max": "${label}の最大値は${max}です",
+        "Min": "${label}の最小値は${min}です",
+        "Range": "${label}は${min}-${max}の範囲である必要があります"
+      },
+      "pattern": {
+        "Mismatch": "${label}はパターン${pattern}と一致しません"
+      },
+      "string": {
+        "Len": "${label}は${len}文字である必要があります",
+        "Max": "${label}は${max}文字以下である必要があります",
+        "Min": "${label}は${min}文字以上である必要があります",
+        "Range": "${label}は${min}-${max}文字の範囲である必要があります"
+      },
+      "types": {
+        "Email": "${label}は有効な${type}ではありません",
+        "Number": "${label}は有効な${type}ではありません",
+        "Object": "${label}は有効な${type}ではありません",
+        "String": "${label}は有効な${type}ではありません",
+        "Url": "${label}は有効な${type}ではありません"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "すべて選択解除",
     "File": "ファイル",
+    "Increase": "Increase",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
+    "Select": "Select",
     "TotalItems": "Total {{total}}アイテム",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "キャンセル",
       "Close": "近い",
       "Collapse": "崩壊",
+      "Confirm": "Confirm",
       "Copied": "コピーしました",
+      "Copy": "コピー",
       "CopyAll": "すべてをコピーします",
       "Create": "作成する",
       "Delete": "消去",

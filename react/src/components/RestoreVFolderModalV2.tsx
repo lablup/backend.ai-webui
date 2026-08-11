@@ -4,21 +4,24 @@
  */
 import { RestoreVFolderModalV2Fragment$key } from '../__generated__/RestoreVFolderModalV2Fragment.graphql';
 import { RestoreVFolderModalV2Mutation } from '../__generated__/RestoreVFolderModalV2Mutation.graphql';
+import { message } from '../app-shim';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Typography, message } from 'antd';
-import {
-  BAIModal,
-  BAIModalProps,
-  toLocalId,
-  useErrorMessageResolver,
-} from 'backend.ai-ui';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import { Text } from '@astryxdesign/core/Text';
+import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useRelayEnvironment } from 'react-relay';
 import { commitMutation } from 'relay-runtime';
 
-interface RestoreVFolderModalV2Props extends BAIModalProps {
+interface RestoreVFolderModalV2Props extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside this area use it. */
+  open?: boolean;
   vfolderFrgmts?: RestoreVFolderModalV2Fragment$key;
   onRequestClose?: (success: boolean) => void;
 }
@@ -75,12 +78,14 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
 
   return (
     <BAIModal
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose?.(false);
+      }}
       title={t('data.folders.Restore')}
-      centered
-      okText={t('data.folders.Restore')}
-      confirmLoading={isRestoring}
-      onCancel={() => onRequestClose?.(false)}
-      onOk={() => {
+      actionLabel={t('data.folders.Restore')}
+      isActionLoading={isRestoring}
+      onAction={() => {
         const promises = _.map(vfolders, (vfolder) =>
           restoreSingle(vfolder.id).catch((error) => {
             upsertNotification({
@@ -117,7 +122,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
       }}
       {...baiModalProps}
     >
-      <Typography.Text>
+      <Text>
         {vfolders?.length === 1
           ? t('data.folders.RestoreDescription', {
               folderName: vfolders?.[0]?.metadata?.name,
@@ -125,7 +130,7 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
           : t('data.folders.RestoreMultipleDescription', {
               folderLength: vfolders?.length,
             })}
-      </Typography.Text>
+      </Text>
     </BAIModal>
   );
 };

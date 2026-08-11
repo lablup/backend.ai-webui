@@ -1,0 +1,63 @@
+{
+  "light": {
+    "Manage Apps": {
+      "rest": {
+        "isHover": false,
+        "color": "rgb(20, 20, 20)",
+        "bg": "rgba(0, 0, 0, 0)",
+        "cls": "astryx-button ghost md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 xjbqb8w x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      },
+      "hover": {
+        "isHover": true,
+        "color": "rgb(20, 20, 20)",
+        "bg": "rgba(0, 0, 0, 0)",
+        "cls": "astryx-button ghost md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 xjbqb8w x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      }
+    },
+    "Refresh": {
+      "rest": {
+        "isHover": false,
+        "color": "rgb(20, 20, 20)",
+        "bg": "rgba(0, 0, 0, 0.06)",
+        "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 x17x4s8c x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      },
+      "hover": {
+        "isHover": true,
+        "color": "rgb(20, 20, 20)",
+        "bg": "rgba(0, 0, 0, 0.06)",
+        "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 x17x4s8c x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      }
+    }
+  },
+  "dark": {
+    "Manage Apps": {
+      "rest": {
+        "isHover": false,
+        "color": "rgb(255, 255, 255)",
+        "bg": "rgba(0, 0, 0, 0)",
+        "cls": "astryx-button ghost md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 xjbqb8w x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      },
+      "hover": {
+        "isHover": true,
+        "color": "rgb(255, 255, 255)",
+        "bg": "rgba(0, 0, 0, 0)",
+        "cls": "astryx-button ghost md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 xjbqb8w x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      }
+    },
+    "Refresh": {
+      "rest": {
+        "isHover": false,
+        "color": "rgb(255, 255, 255)",
+        "bg": "rgb(38, 38, 38)",
+        "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 x17x4s8c x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      },
+      "hover": {
+        "isHover": true,
+        "color": "rgb(255, 255, 255)",
+        "bg": "rgb(38, 38, 38)",
+        "cls": "astryx-button secondary md x1n2onr6 x3nfvp2 x6s0dn4 xl56j7k x1txdalj xc342km xng3xce x1jxw6zd xjb2p0i xcr08ib x1kq96og x1e4wzip xuxw1ft x1ypdohk xrafxwg xuedmi6 x12w9bfk xlr8y92 x1ueg155 x17x4s8c x1tgivj0 x1ilzqfv xq8i9tn x17nn4n9 xkzo27j x1wfwxd8 x13aywxo x1v15ycx xioom0i xnjsko4 xt970qd x3oybdh xk4oym4 x1gnnqk1"
+      }
+    }
+  },
+  "pageErrors": []
+}

@@ -49,8 +49,7 @@ interface StorageHostsResponse {
 }
 
 type ProjectResourceGroupsQueryResult =
-  | [ScalingGroupsResponse, StorageHostsResponse]
-  | null;
+  [ScalingGroupsResponse, StorageHostsResponse] | null;
 
 interface UseProjectResourceGroupsOptions {
   /**

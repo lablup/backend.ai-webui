@@ -19,7 +19,6 @@
     "paths": {
       "backend.ai-ui": ["../packages/backend.ai-ui/src/index.ts"],
       "backend.ai-ui/*": ["../packages/backend.ai-ui/src/*"],
-      "backend.ai-ui/dist/locale/*": ["../packages/backend.ai-ui/src/locale/*"],
       "backend.ai-client": ["../packages/backend.ai-client/src/index.ts"],
       "backend.ai-client/*": ["../packages/backend.ai-client/src/*"],
       "react": ["./node_modules/@types/react"],

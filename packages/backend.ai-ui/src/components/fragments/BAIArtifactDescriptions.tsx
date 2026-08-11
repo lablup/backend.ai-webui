@@ -1,8 +1,28 @@
+/*
+ to-astryx W2-D: antd `Descriptions` -> Astryx `MetadataList` +
+ `MetadataListItem` (MAPPING §4), and `Typography.Paragraph` -> `Text as="p"
+ display="block"`.
+
+ PILOT-DECISION: `column={2}` becomes `columns="multi"` and the per-item
+ `span={2}` is DROPPED — MAPPING §4 records both `bordered` (×27 repo-wide) and
+ `Descriptions.Item span` (×20) as having **no** Astryx destination. The list
+ keeps its two-column reading; the two full-width rows (name, description) now
+ occupy one cell each. The `bordered` grid also goes: `MetadataList` is a
+ borderless definition list by design, which is the defaults-first answer to a
+ closed appearance API (P5).
+
+ The `items` ARRAY becomes children — `MetadataListItem` is a component, and
+ its `label` is a required string, which every entry here already was.
+*/
 import { BAIArtifactDescriptionsFragment$key } from '../../__generated__/BAIArtifactDescriptionsFragment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAILink from '../BAILink';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
-import { Descriptions, Typography, type DescriptionsProps } from 'antd';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { graphql, useFragment } from 'react-relay';
@@ -32,40 +52,30 @@ const BAIArtifactDescriptions = ({
     artifactFrgmt,
   );
 
-  const items: DescriptionsProps['items'] = [
-    {
-      key: 'name',
-      label: t('comp:BAIArtifactDescriptions.Name'),
-      children: artifact.name,
-      span: 2,
-    },
-    {
-      key: 'type',
-      label: t('comp:BAIArtifactDescriptions.Type'),
-      children: <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />,
-    },
-    {
-      key: 'source',
-      label: t('comp:BAIArtifactDescriptions.Source'),
-      children: (
+  return (
+    <MetadataList columns="multi">
+      <MetadataListItem label={t('comp:BAIArtifactDescriptions.Name')}>
+        {artifact.name}
+      </MetadataListItem>
+      <MetadataListItem label={t('comp:BAIArtifactDescriptions.Type')}>
+        <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />
+      </MetadataListItem>
+      <MetadataListItem label={t('comp:BAIArtifactDescriptions.Source')}>
         <BAILink to={artifact.source.url ?? ''} target="_blank">
           {artifact.source.name}
         </BAILink>
-      ),
-    },
-    {
-      key: 'description',
-      label: t('comp:BAIArtifactDescriptions.Description'),
-      children: artifact.description ? (
-        <Typography.Paragraph>{artifact.description}</Typography.Paragraph>
-      ) : (
-        'N/A'
-      ),
-      span: 2,
-    },
-  ];
-
-  return <Descriptions column={2} bordered items={items} />;
+      </MetadataListItem>
+      <MetadataListItem label={t('comp:BAIArtifactDescriptions.Description')}>
+        {artifact.description ? (
+          <Text as="p" display="block">
+            {artifact.description}
+          </Text>
+        ) : (
+          'N/A'
+        )}
+      </MetadataListItem>
+    </MetadataList>
+  );
 };
 
 export default BAIArtifactDescriptions;

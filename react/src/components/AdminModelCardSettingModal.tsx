@@ -5,30 +5,33 @@
 import type { AdminModelCardSettingModalCreateMutation } from '../__generated__/AdminModelCardSettingModalCreateMutation.graphql';
 import type { AdminModelCardSettingModalFragment$key } from '../__generated__/AdminModelCardSettingModalFragment.graphql';
 import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/AdminModelCardSettingModalUpdateMutation.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
+import BAIFormItem from './BAIFormItem';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
+import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import {
-  Alert,
-  App,
-  Form,
-  type FormInstance,
-  Input,
-  ModalProps,
-  Popconfirm,
-  Select,
-  Typography,
-} from 'antd';
+  AstryxFormSelector,
+  AstryxFormTextArea,
+  AstryxFormTagsInput,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIButton,
   BAIDomainSelect,
   BAIFlex,
   BAIModal,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
+  type BAIModalProps,
+  BAIVFolderSelectAstryx,
+  BAIVFolderSelectAstryxRef,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -56,7 +59,7 @@ type FormInputType = {
   accessLevel: string;
 };
 
-interface AdminModelCardSettingModalProps extends ModalProps {
+interface AdminModelCardSettingModalProps extends BAIModalProps {
   modelCardFrgmt?: AdminModelCardSettingModalFragment$key | null | undefined;
   isModelStoreProject?: boolean;
   modelStoreProject?: {
@@ -79,7 +82,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<FormInputType>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
   const currentProject = useCurrentProjectValue();
@@ -301,15 +304,14 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
         }}
       >
         {!modelStoreProject?.id ? (
-          <Alert
-            type="error"
-            showIcon
+          <Banner
+            status="error"
             title={t('modelStore.ProjectNotFound')}
             description={t('modelStore.ProjectNotFoundDescription')}
           />
         ) : (
           <Form ref={formRef} layout="vertical" initialValues={initialValues}>
-            <Form.Item
+            <BAIFormItem
               name="name"
               label={t('adminModelCard.Name')}
               tooltip={t('adminModelCard.NameTooltip')}
@@ -320,11 +322,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Name')} />
+            </BAIFormItem>
 
             {isEditMode ? (
-              <Form.Item label={t('adminModelCard.ModelStorageFolder')}>
+              <BAIFormItem label={t('adminModelCard.ModelStorageFolder')}>
                 <BAIFlex gap="xs" align="center">
                   {modelCard.vfolder && (
                     <VFolderNodeIdenticonV2
@@ -338,15 +340,25 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                     }
                   />
                 </BAIFlex>
-              </Form.Item>
+              </BAIFormItem>
             ) : (
-              <Form.Item
+              <BAIFormItem
                 label={t('adminModelCard.ModelStorageFolder')}
                 required
               >
                 <BAIFlex gap="xs" align="center">
-                  <Suspense fallback={<Input disabled style={{ flex: 1 }} />}>
-                    <Form.Item
+                  <Suspense
+                    fallback={
+                      <TextInput
+                        value=""
+                        label={t('adminModelCard.ModelStorageFolder')}
+                        isLabelHidden
+                        isDisabled
+                        style={{ flex: 1 }}
+                      />
+                    }
+                  >
+                    <BAIFormItem
                       name="vfolderId"
                       noStyle
                       rules={[
@@ -356,14 +368,15 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                         },
                       ]}
                     >
-                      <BAIVFolderSelect
+                      <BAIVFolderSelectAstryx
                         ref={vfolderSelectRef}
+                        label={t('adminModelCard.ModelStorageFolder')}
+                        isLabelHidden
                         excludeDeleted
                         filter='ownership_type == "group"'
                         currentProjectId={modelStoreProject?.id ?? undefined}
-                        style={{ flex: 1 }}
                       />
-                    </Form.Item>
+                    </BAIFormItem>
                   </Suspense>
                   {isModelStoreProject ? (
                     <BAIButton
@@ -371,7 +384,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                       onClick={() => setIsOpenCreateFolderModal(true)}
                     />
                   ) : (
-                    <Popconfirm
+                    <BAIPopconfirmAstryx
                       title={t(
                         'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
                       )}
@@ -404,134 +417,145 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                       }}
                     >
                       <BAIButton icon={<PlusIcon />} />
-                    </Popconfirm>
+                    </BAIPopconfirmAstryx>
                   )}
                 </BAIFlex>
-              </Form.Item>
+              </BAIFormItem>
             )}
 
             {isEditMode ? (
-              <Form.Item label={t('adminModelCard.Domain')}>
-                <Typography.Text>{modelCard.domainName}</Typography.Text>
-              </Form.Item>
+              <BAIFormItem label={t('adminModelCard.Domain')}>
+                <Text>{modelCard.domainName}</Text>
+              </BAIFormItem>
             ) : (
               <Suspense
                 fallback={
-                  <Form.Item
+                  <BAIFormItem
                     name="domainName"
                     label={t('adminModelCard.Domain')}
                   >
-                    <Input disabled />
-                  </Form.Item>
+                    <AstryxFormTextInput
+                      label={t('adminModelCard.Domain')}
+                      disabled
+                    />
+                  </BAIFormItem>
                 }
               >
-                <Form.Item name="domainName" label={t('adminModelCard.Domain')}>
+                <BAIFormItem
+                  name="domainName"
+                  label={t('adminModelCard.Domain')}
+                >
                   <BAIDomainSelect />
-                </Form.Item>
+                </BAIFormItem>
               </Suspense>
             )}
 
-            <Form.Item
+            <BAIFormItem
               name="author"
               label={t('adminModelCard.Author')}
               tooltip={t('adminModelCard.AuthorTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Author')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="title"
               label={t('adminModelCard.Title')}
               tooltip={t('adminModelCard.TitleTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Title')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="modelVersion"
               label={t('adminModelCard.ModelVersion')}
               tooltip={t('adminModelCard.ModelVersionTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.ModelVersion')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="description"
               label={t('adminModelCard.Description')}
               tooltip={t('adminModelCard.DescriptionTooltip')}
             >
-              <Input.TextArea rows={3} />
-            </Form.Item>
+              <AstryxFormTextArea
+                label={t('adminModelCard.Description')}
+                rows={3}
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="task"
               label={t('adminModelCard.Task')}
               tooltip={t('adminModelCard.TaskTooltip')}
             >
-              <Input placeholder={t('adminModelCard.TaskPlaceholder')} />
-            </Form.Item>
+              <AstryxFormTextInput
+                label={t('adminModelCard.Task')}
+                placeholder={t('adminModelCard.TaskPlaceholder')}
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="category"
               label={t('adminModelCard.Category')}
               tooltip={t('adminModelCard.CategoryTooltip')}
             >
-              <Input placeholder={t('adminModelCard.CategoryPlaceholder')} />
-            </Form.Item>
+              <AstryxFormTextInput
+                label={t('adminModelCard.Category')}
+                placeholder={t('adminModelCard.CategoryPlaceholder')}
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="architecture"
               label={t('adminModelCard.Architecture')}
               tooltip={t('adminModelCard.ArchitectureTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Architecture')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="framework"
               label={t('adminModelCard.Framework')}
               tooltip={t('adminModelCard.FrameworkTooltip')}
             >
-              {/* FR-3121: commit a framework on comma in addition to Enter. */}
-              <Select
-                mode="tags"
-                tokenSeparators={[',']}
+              <AstryxFormTagsInput
+                tokenSeparators={[',', ' ']}
+                label={t('adminModelCard.Framework')}
                 placeholder={t('adminModelCard.AddFramework')}
-                notFoundContent={null}
               />
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="label"
               label={t('adminModelCard.Label')}
               tooltip={t('adminModelCard.LabelTooltip')}
             >
-              {/* FR-3121: commit a label on comma in addition to Enter. */}
-              <Select
-                mode="tags"
-                tokenSeparators={[',']}
+              <AstryxFormTagsInput
+                tokenSeparators={[',', ' ']}
+                label={t('adminModelCard.Label')}
                 placeholder={t('adminModelCard.AddLabel')}
-                notFoundContent={null}
               />
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="license"
               label={t('adminModelCard.License')}
               tooltip={t('adminModelCard.LicenseTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.License')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="readme"
               label={t('adminModelCard.Readme')}
               tooltip={t('adminModelCard.ReadmeTooltip')}
             >
-              <Input.TextArea rows={6} />
-            </Form.Item>
+              <AstryxFormTextArea label={t('adminModelCard.Readme')} rows={6} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="accessLevel"
               label={t('adminModelCard.AccessLevel')}
               tooltip={t('adminModelCard.AccessLevelTooltip')}
@@ -542,7 +566,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <Select
+              <AstryxFormSelector
+                label={t('adminModelCard.AccessLevel')}
                 options={[
                   {
                     value: 'INTERNAL',
@@ -554,7 +579,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                   },
                 ]}
               />
-            </Form.Item>
+            </BAIFormItem>
           </Form>
         )}
       </BAIModal>

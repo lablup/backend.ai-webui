@@ -1,0 +1,13 @@
+{
+  "url": "http://127.0.0.1:9198/theme-probe/form.html?variant=antd&mode=light",
+  "mode": "light",
+  "declaredTokens": 235,
+  "resolvedTokenValues": {
+    "colors": 56,
+    "lengths": 23
+  },
+  "summary": {
+    "checked": 191,
+    "matched": 85
+  }
+}

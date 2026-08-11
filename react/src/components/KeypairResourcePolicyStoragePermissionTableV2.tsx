@@ -13,24 +13,26 @@ import {
   PERMISSION_DISPLAY_MAP,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
-import { Tooltip, Typography, theme } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAITag,
   BAIUnmountAfterClose,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import {
+  CircleCheck,
+  CircleX,
+  CircleAlert,
+  Info,
+  SquarePenIcon,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -208,9 +210,8 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         rowKey="id"
         resizable={false}
@@ -231,12 +232,12 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
             ) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
+                  <BAIText
                     ellipsis={{ tooltip: row.name }}
                     style={{ maxWidth: 160 }}
                   >
                     {row.name}
-                  </Typography.Text>
+                  </BAIText>
                 }
                 showActions="always"
                 actions={[
@@ -263,10 +264,13 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
               if (!selectedUserId) {
                 return (
                   <Tooltip
-                    title={t('storageHost.permission.SelectUserToSeeKeypairs')}
+                    content={t(
+                      'storageHost.permission.SelectUserToSeeKeypairs',
+                    )}
                   >
-                    <ExclamationCircleOutlined
+                    <CircleAlert
                       style={{ color: token.colorWarning }}
+                      size="1em"
                     />
                   </Tooltip>
                 );
@@ -275,7 +279,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                 row.keypairs?.edges?.map((edge) => edge?.node),
               );
               if (keypairNodes.length === 0) {
-                return <Typography.Text type="secondary">-</Typography.Text>;
+                return <BAIText type="secondary">-</BAIText>;
               }
               const isMainAccessKey = (
                 kp: (typeof keypairNodes)[number],
@@ -295,10 +299,10 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                     isMainAccessKey(kp) ? (
                       <Tooltip
                         key={kp.id}
-                        title={t('credential.MainAccessKey')}
+                        content={t('credential.MainAccessKey')}
                       >
                         <BAITag
-                          icon={<InfoCircleOutlined />}
+                          icon={<Info size="1em" />}
                           style={{
                             color: token.colorPrimary,
                             borderColor: token.colorPrimary,
@@ -332,10 +336,14 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                   entry?.permissions.map(v2PermissionToKey) ?? [],
                 );
                 return enabled.has(permKey) ? (
-                  <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+                  <CircleCheck
+                    style={{ color: token.colorSuccess }}
+                    size="1em"
+                  />
                 ) : (
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextDisabled }}
+                    size="1em"
                   />
                 );
               },

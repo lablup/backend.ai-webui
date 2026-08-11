@@ -2,22 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { SettingOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import {
-  Alert,
-  Badge,
-  Checkbox,
-  CheckboxProps,
-  Dropdown,
-  Select,
-  Typography,
-  theme,
-} from 'antd';
-import { createStyles } from 'antd-style';
-import { BAIButton, BAIFlex, BAIModal, BAISelectProps } from 'backend.ai-ui';
+import { Banner } from '@astryxdesign/core/Banner';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Selector, type SelectorOptionData } from '@astryxdesign/core/Selector';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Text } from '@astryxdesign/core/Text';
+import { BAIFlex, BAIModal, useToggle } from 'backend.ai-ui';
 import { t } from 'i18next';
-import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import React, { ReactElement, ReactNode, useState } from 'react';
 
 type BaseSettingItemProps = {
@@ -34,16 +27,34 @@ type CheckboxSettingItemProps = BaseSettingItemProps & {
   defaultValue?: boolean;
   value?: boolean;
   onChange?: (value?: boolean) => void;
-  checkboxProps?: Omit<CheckboxProps, 'value' | 'onChange' | 'defaultValue'>;
+  // PILOT-DECISION: narrowed from `Omit<CheckboxProps,...>` to the one field
+  // every call site in this area actually passes (grepped, P1) — `disabled`.
+  checkboxProps?: { disabled?: boolean };
   selectProps?: never;
 };
 
+/** Re-exported so callers can build option lists without importing Astryx directly. */
+export type SettingSelectOption = SelectorOptionData;
+
 type SelectSettingItemProps = BaseSettingItemProps & {
   type: 'select';
-  defaultValue?: string | number;
-  value?: string | number;
-  onChange?: (value?: string | number) => void;
-  selectProps?: Omit<BAISelectProps, 'value' | 'onChange' | 'defaultValue'>;
+  // PILOT-DECISION: antd's `Select` tolerated a `number` value/option (the
+  // "max concurrent uploads" 2|3|4|5 picker); Astryx `Selector.value` is
+  // `string`-only (P3/P4). Narrowed to `string` here — the one numeric call
+  // site converts at its own boundary (`String(n)` in / `_.toNumber(v)` out).
+  defaultValue?: string;
+  value?: string;
+  onChange?: (value?: string) => void;
+  // PILOT-DECISION: narrowed from `Omit<BAISelectProps,...>` to the fields
+  // this area's call sites actually pass (grepped, P1) — `options`,
+  // `showSearch` (renamed `hasSearch`). antd's `optionFilterProp:
+  // 'filterValue'` sites always set `filterValue` equal to the label text,
+  // which is Selector's default search target — dropped as a no-op.
+  selectProps?: {
+    options: SettingSelectOption[];
+    hasSearch?: boolean;
+    disabled?: boolean;
+  };
   checkboxProps?: never;
 };
 
@@ -57,18 +68,7 @@ type CustomSettingItemProps = BaseSettingItemProps & {
 };
 
 export type SettingItemProps =
-  | CheckboxSettingItemProps
-  | SelectSettingItemProps
-  | CustomSettingItemProps;
-
-const useStyles = createStyles(({ css }) => ({
-  baiSettingItemCheckbox: css`
-    .ant-checkbox {
-      align-self: flex-start;
-      margin-top: 0.2rem;
-    }
-  `,
-}));
+  CheckboxSettingItemProps | SelectSettingItemProps | CustomSettingItemProps;
 
 const SettingItem: React.FC<SettingItemProps> = ({
   'data-testid': dataTestId,
@@ -86,9 +86,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
 }) => {
   'use memo';
 
-  const { token } = theme.useToken();
-  const { styles } = useStyles();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isRowHovered, setIsRowHovered] = useState(false);
   const [isOpenResetChangesModal, { toggle: setIsOpenResetChangesModal }] =
     useToggle(false);
 
@@ -111,49 +109,39 @@ const SettingItem: React.FC<SettingItemProps> = ({
       direction="column"
       align="stretch"
       gap={'xxs'}
-      onMouseEnter={() => setIsDropdownOpen(true)}
-      onMouseLeave={() => setIsDropdownOpen(false)}
+      onMouseEnter={() => setIsRowHovered(true)}
+      onMouseLeave={() => setIsRowHovered(false)}
     >
       <BAIFlex direction="row" gap={'xxs'}>
-        <BAIFlex gap="xxs" align="start">
-          <Typography.Text
-            strong
-            style={{
-              fontSize: token.fontSize,
-            }}
-          >
-            {title}
-          </Typography.Text>
+        <BAIFlex gap="xxs" align="center">
+          <Text weight="semibold">{title}</Text>
           {isEnabled &&
             value !== undefined &&
             value !== null &&
-            defaultValue !== value && <Badge dot status="warning" />}
-          {isEnabled && showResetButton && (
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: 'reset',
-                    label: t('button.Reset'),
-                    onClick: () => setIsOpenResetChangesModal(),
-                    danger: true,
-                  },
-                ],
-              }}
-              placement="topLeft"
-              onOpenChange={(e) => e && setIsDropdownOpen(true)}
-            >
-              <BAIButton
-                icon={<SettingOutlined />}
-                type="text"
-                style={{
-                  width: 20,
-                  height: 20,
-                  opacity: isDropdownOpen ? 1 : 0,
-                  transition: 'opacity 0.2s ease-in-out',
-                }}
+            defaultValue !== value && (
+              <StatusDot
+                variant="warning"
+                label={t('settings.ChangedFromDefault', 'Changed from default')}
               />
-            </Dropdown>
+            )}
+          {isEnabled && showResetButton && (
+            // PILOT-DECISION: antd's `Dropdown` wrapping a single "Reset"
+            // menu item (with `danger` red tint, dropped separately per
+            // ticket-18 precedent) collapses to a direct reset action — a
+            // one-item menu is pure indirection (simplicity policy,
+            // MIGRATION-SPEC §0).
+            <IconButton
+              icon={<Settings size="1em" />}
+              label={t('button.Reset')}
+              tooltip={t('button.Reset')}
+              variant="ghost"
+              size="sm"
+              style={{
+                opacity: isRowHovered ? 1 : 0,
+                transition: 'opacity 0.2s ease-in-out',
+              }}
+              onClick={() => setIsOpenResetChangesModal()}
+            />
           )}
         </BAIFlex>
       </BAIFlex>
@@ -169,42 +157,64 @@ const SettingItem: React.FC<SettingItemProps> = ({
         </BAIFlex>
       )}
       {type === 'checkbox' && (
-        <Checkbox
-          className={styles.baiSettingItemCheckbox}
-          checked={value}
-          onChange={(e) => {
-            onChange?.(e.target.checked);
-          }}
-          {...checkboxProps}
-        >
-          <Typography.Text
-            type={checkboxProps?.disabled ? 'secondary' : undefined}
-          >
-            {description}
-          </Typography.Text>
-        </Checkbox>
+        // PILOT-DECISION: antd rendered `description` (often rich JSX with
+        // conditional extra lines) AS the checkbox's own clickable label
+        // (P2: label is a required string here). The row's `title` above
+        // already supplies an accessible name, so the checkbox reuses it
+        // (`isLabelHidden`) and `description` renders as plain auxiliary
+        // text below — clicking the description no longer toggles the
+        // checkbox, a minor interaction loss traded for keeping the rich
+        // JSX content intact.
+        // ROW, not column (sweep defect: "boolean settings render as plain
+        // gray squares"). antd rendered `<Checkbox>{description}</Checkbox>`,
+        // so the box and its text shared one line and the box read as a
+        // labelled control. Stacking them put a bare 24px box on a line of its
+        // own between the row title and the description — an anonymous grey
+        // square. `CheckboxInput` itself is fine (measured 24x24, radius 6px,
+        // 1px border, disabled fill `--color-overlay-hover`), and its
+        // `value`/`isDisabled` binding is correct; only the adjacency was
+        // lost. `align="start"` keeps the box aligned to the first text line
+        // when the description wraps, which is what antd's `.ant-checkbox
+        // { align-self: flex-start }` rule did.
+        <BAIFlex direction="row" gap="sm" align="start">
+          <CheckboxInput
+            label={title}
+            isLabelHidden
+            value={!!value}
+            isDisabled={checkboxProps?.disabled}
+            onChange={(checked) => onChange?.(checked)}
+          />
+          {description && (
+            <Text
+              color={checkboxProps?.disabled ? 'disabled' : 'primary'}
+              display="block"
+            >
+              {description}
+            </Text>
+          )}
+        </BAIFlex>
       )}
       {type === 'select' && (
-        <>
-          <Typography.Text
-            type={selectProps?.disabled ? 'secondary' : undefined}
-          >
-            {description}
-          </Typography.Text>
-          <Select
+        <BAIFlex direction="column" gap="xs" align="start">
+          {description && (
+            <Text
+              color={selectProps?.disabled ? 'disabled' : 'primary'}
+              display="block"
+            >
+              {description}
+            </Text>
+          )}
+          <Selector
+            label={title}
+            isLabelHidden
+            options={selectProps?.options ?? []}
+            hasSearch={selectProps?.hasSearch}
+            isDisabled={selectProps?.disabled}
             value={value}
-            popupMatchSelectWidth={false}
-            onChange={(value) => {
-              onChange?.(value);
-            }}
-            style={{
-              marginTop: token.marginXS,
-              width: 'fit-content',
-              ...selectProps?.style,
-            }}
-            {..._.omit(selectProps, ['style'])}
-          ></Select>
-        </>
+            width="fit-content"
+            onChange={(nextValue) => onChange?.(nextValue)}
+          />
+        </BAIFlex>
       )}
       <BAIModal
         open={isOpenResetChangesModal}
@@ -218,11 +228,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenResetChangesModal()}
       >
-        <Alert
-          showIcon
-          title={t('dialog.warning.CannotBeUndone')}
-          type="warning"
-        />
+        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
       </BAIModal>
     </BAIFlex>
   );

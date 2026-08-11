@@ -4,6 +4,7 @@
  */
 import { AdminPrometheusPresetDeleteMutation } from '../__generated__/AdminPrometheusPresetDeleteMutation.graphql';
 import { AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType } from '../__generated__/AdminPrometheusPresetQuery.graphql';
+import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
@@ -12,7 +13,6 @@ import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal
 import PrometheusQueryPresetTable, {
   PrometheusQueryPresetNodeInList,
 } from './PrometheusQueryPresetTable';
-import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

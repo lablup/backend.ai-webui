@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Pelaksanaan gagal",
     "ErrorOccurred": "Ralat berlaku"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Tiada keputusan",
+    "Search": "Cari"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Segar semula automatik",
@@ -260,6 +267,9 @@
     "StrategyType": "Strategi",
     "Tags": "Tag",
     "UpdatedAt": "Dikemas kini pada"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Projek berikut akan dikemas kini.",
@@ -451,14 +461,18 @@
     "Step": "Langkah"
   },
   "comp:BAITable": {
+    "Apply": "Guna",
+    "Cancel": "Batal",
     "CollapseAll": "Runtuhkan semua",
     "ExpandAll": "Kembangkan semua",
     "ExpandErrorsOnly": "Kembangkan ralat sahaja",
     "ExpandOptions": "Pilihan pengembangan",
+    "ExpandRow": "Kembangkan baris",
     "Export": "Eksport",
     "ExportCSV": "Eksport CSV",
     "GoToFirstPage": "Pergi ke halaman pertama",
     "InvalidPageNumber": "Nombor halaman tidak sah",
+    "Pagination": "Penomboran halaman",
     "SearchTableColumn": "Lajur jadual carian",
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
     "SettingTable": "Tetapan Jadual"
@@ -526,8 +540,10 @@
     "MoreOptions": "Pilihan lanjut",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak mempunyai kebenaran muat naik untuk hos ini.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Sila masukkan nama folder.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Nama telah berjaya diubah.",
     "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
     "Size": "Saiz",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },
+  "form": {
+    "Optional": "(Opsional)",
+    "validateMessages": {
+      "Default": "Ralat pengesahan untuk ${label}",
+      "Required": "Isi ${label}",
+      "Whitespace": "${label} tidak boleh kosong",
+      "array": {
+        "Len": "${len} ${label}",
+        "Max": "Max ${max} ${label}",
+        "Min": "Min ${min} ${label}",
+        "Range": "${label} antara ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} sama dengan ${len}",
+        "Max": "Max ${max}",
+        "Min": "Min ${min}",
+        "Range": "${label} antara ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} tidak sesuai ${pattern}"
+      },
+      "string": {
+        "Len": "${label} mesti ${len} aksara",
+        "Max": "Max ${max} aksara",
+        "Min": "Min ${min} aksara",
+        "Range": "${label} antara ${min}-${max} aksara"
+      },
+      "types": {
+        "Email": "${label} bukan ${type} jenis yang sah",
+        "Number": "${label} bukan ${type} jenis yang sah",
+        "Object": "${label} bukan ${type} jenis yang sah",
+        "String": "${label} bukan ${type} jenis yang sah",
+        "Url": "${label} bukan ${type} jenis yang sah"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Nyahpilih semua",
     "File": "Fail",
+    "Increase": "Increase",
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",
+    "Select": "Select",
     "TotalItems": "Jumlah {{total}} item",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Batalkan",
       "Close": "Tutup",
       "Collapse": "Runtuh",
+      "Confirm": "Confirm",
       "Copied": "Disalin",
+      "Copy": "Salin",
       "CopyAll": "Salin semua",
       "Create": "Buat",
       "Delete": "Padam",

@@ -8,7 +8,8 @@ import SessionReclamationStatusPopover, {
   getOverallReclamation,
   useReclamationColorMap,
 } from './SessionReclamationStatusPopover';
-import { Badge, Typography } from 'antd';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Text } from '@astryxdesign/core/Text';
 import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import { graphql, useFragment } from 'react-relay';
 
@@ -54,12 +55,12 @@ const SessionReclamationStatusCell: React.FC<
     return <>-</>;
   }
 
-  const { token: badgeColor, label } = colorMap[overall.color];
+  const { variant, label } = colorMap[overall.color];
 
   return (
     <BAIFlex gap="xxs" align="center">
-      <Badge color={badgeColor} />
-      <Typography.Text>{label}</Typography.Text>
+      <StatusDot variant={variant} label={label} />
+      <Text>{label}</Text>
       <SessionReclamationStatusPopover sessionFrgmt={session} />
     </BAIFlex>
   );

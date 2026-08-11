@@ -5,25 +5,28 @@
 import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
+import BAICopyableText from '../astryx-bui/BAICopyableText';
 import SessionStatusTag from './SessionStatusTag';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Descriptions, type ModalProps, Tag, Typography, theme } from 'antd';
-import { BAIFlex, BAIModal } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+import * as stylex from '@stylexjs/stylex';
+import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleCheck, CircleX } from 'lucide-react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-export const statusInfoTagColor = {
-  'idle-timeout': 'green',
-  'user-requested': 'green',
-  scheduled: 'green',
-  'self-terminated': 'green',
-  'failed-to-start': 'red',
-  'creation-failed': 'red',
-  'no-available-instances': 'red',
-};
+const styles = stylex.create({
+  predicateMsg: {
+    maxWidth: 350,
+  },
+});
 
 type Predicates = {
   name: string;
@@ -60,7 +63,9 @@ type StatusData = {
   };
 };
 
-interface SessionStatusDetailModalProps extends ModalProps {
+// antd `ModalProps` -> BUI `BAIModalProps` (§6: a type-only antd import is
+// still an antd import). The render was already `BAIModal`.
+interface SessionStatusDetailModalProps extends BAIModalProps {
   sessionFrgmt: SessionStatusDetailModalFragment$key;
 }
 
@@ -69,7 +74,6 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
 
@@ -107,97 +111,81 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
       width={450}
       {...modalProps}
     >
-      <Descriptions size="small" column={1}>
-        <Descriptions.Item styles={{}} label={t('session.SessionName')}>
-          <Typography.Text ellipsis copyable>
-            {session.name}
-          </Typography.Text>
-        </Descriptions.Item>
+      {/* antd `Descriptions size="small" column={1}` -> Astryx MetadataList.
+          PILOT-DECISION: `size="small"` and `Descriptions.Item span` have no
+          MetadataList equivalent (MAPPING.md §4) and are dropped; the nested
+          "Predicate checks" Descriptions collapses into a labeled item. */}
+      <MetadataList columns="single">
+        <MetadataListItem label={t('session.SessionName')}>
+          <BAICopyableText maxLines={1}>{session.name ?? ''}</BAICopyableText>
+        </MetadataListItem>
         {statusData?.kernel ? (
-          <Descriptions.Item label={t('session.KernelExitCode')}>
+          <MetadataListItem label={t('session.KernelExitCode')}>
             {statusData.kernel.exit_code}
-          </Descriptions.Item>
+          </MetadataListItem>
         ) : null}
         {statusData?.session ? (
-          <Descriptions.Item label={t('session.SessionStatus')}>
+          <MetadataListItem label={t('session.SessionStatus')}>
             {statusData.session?.status}
-          </Descriptions.Item>
+          </MetadataListItem>
         ) : null}
         {statusData?.scheduler ? (
           <>
-            <Descriptions.Item label={t('session.LastTry')}>
+            <MetadataListItem label={t('session.LastTry')}>
               {dayjs(statusData.scheduler?.last_try).format('lll')}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('session.TotalRetries')}>
+            </MetadataListItem>
+            <MetadataListItem label={t('session.TotalRetries')}>
               {statusData.scheduler?.retries}
-            </Descriptions.Item>
+            </MetadataListItem>
             {statusData.scheduler?.msg && (
-              <Descriptions.Item label={t('session.Message')}>
+              <MetadataListItem label={t('session.Message')}>
                 {statusData.scheduler?.msg}
-              </Descriptions.Item>
+              </MetadataListItem>
             )}
-            <Descriptions.Item>
-              <Descriptions
-                title={t('session.PredicateChecks')}
-                style={{ marginTop: token.marginSM }}
-              >
-                <Descriptions.Item>
-                  <BAIFlex
-                    direction="column"
-                    gap="md"
-                    style={{ marginLeft: token.marginSM }}
-                    align="stretch"
-                  >
-                    {_.map(statusData.scheduler?.failed_predicates, (p) => {
-                      return (
-                        <BAIFlex gap="xs" align="start">
-                          <CloseCircleOutlined
-                            style={{
-                              color: token.colorError,
-                              fontSize: 16,
-                              marginTop: 4,
-                              flexShrink: 0,
-                            }}
-                          />
-                          <BAIFlex direction="column" align="stretch">
-                            <Typography.Text>{p.name}</Typography.Text>
-                            <Typography.Text
-                              type="secondary"
-                              style={{ maxWidth: 350 }}
-                            >
-                              {p.msg}
-                            </Typography.Text>
-                          </BAIFlex>
-                        </BAIFlex>
-                      );
-                    })}
-                    {_.map(statusData.scheduler?.passed_predicates, (p) => {
-                      return (
-                        <BAIFlex gap="xs" align="start">
-                          <CheckCircleOutlined
-                            style={{
-                              color: token.colorSuccess,
-                              fontSize: 16,
-                              marginTop: 4,
-                              flexShrink: 0,
-                            }}
-                          />
-                          <BAIFlex direction="column" align="stretch">
-                            <Typography.Text>{p.name}</Typography.Text>
-                            <Typography.Text
-                              type="secondary"
-                              style={{ maxWidth: 350 }}
-                            >
-                              {p.msg}
-                            </Typography.Text>
-                          </BAIFlex>
-                        </BAIFlex>
-                      );
-                    })}
-                  </BAIFlex>
-                </Descriptions.Item>
-              </Descriptions>
-            </Descriptions.Item>
+            <MetadataListItem label={t('session.PredicateChecks')}>
+              <BAIFlex direction="column" gap="md" align="stretch">
+                {_.map(statusData.scheduler?.failed_predicates, (p) => {
+                  return (
+                    <BAIFlex gap="xs" align="start" key={p.name}>
+                      <CircleX
+                        style={{
+                          color: 'var(--color-error)',
+                          marginTop: 4,
+                          flexShrink: 0,
+                        }}
+                        size={16}
+                      />
+                      <BAIFlex direction="column" align="stretch">
+                        <Text>{p.name}</Text>
+                        <Text color="secondary" xstyle={styles.predicateMsg}>
+                          {p.msg}
+                        </Text>
+                      </BAIFlex>
+                    </BAIFlex>
+                  );
+                })}
+                {_.map(statusData.scheduler?.passed_predicates, (p) => {
+                  return (
+                    <BAIFlex gap="xs" align="start" key={p.name}>
+                      <CircleCheck
+                        style={{
+                          color: 'var(--color-success)',
+                          marginTop: 4,
+                          flexShrink: 0,
+                        }}
+                        size={16}
+                      />
+                      <BAIFlex direction="column" align="stretch">
+                        <Text>{p.name}</Text>
+                        <Text color="secondary" xstyle={styles.predicateMsg}>
+                          {p.msg}
+                        </Text>
+                      </BAIFlex>
+                    </BAIFlex>
+                  );
+                })}
+              </BAIFlex>
+            </MetadataListItem>
           </>
         ) : null}
         {statusData?.error
@@ -207,26 +195,26 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                   {(userRole === 'superadmin' ||
                     !baiClient._config.hideAgents) &&
                     collection?.agent_id && (
-                      <Descriptions.Item label={t('session.AgentId')}>
+                      <MetadataListItem label={t('session.AgentId')}>
                         {collection?.agent_id}
-                      </Descriptions.Item>
+                      </MetadataListItem>
                     )}
-                  <Descriptions.Item label={t('dialog.error.Error')} span={2}>
-                    <Tag color="red">{collection.name}</Tag>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t('session.Message')} span={2}>
+                  <MetadataListItem label={t('dialog.error.Error')}>
+                    <Badge variant="error" label={collection.name} />
+                  </MetadataListItem>
+                  <MetadataListItem label={t('session.Message')}>
                     {collection.repr}
-                  </Descriptions.Item>
+                  </MetadataListItem>
                   {collection?.traceback && (
-                    <Descriptions.Item label={t('session.Traceback')} span={2}>
+                    <MetadataListItem label={t('session.Traceback')}>
                       <pre>{collection?.traceback}</pre>
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                 </Fragment>
               );
             })
           : null}
-      </Descriptions>
+      </MetadataList>
     </BAIModal>
   );
 };

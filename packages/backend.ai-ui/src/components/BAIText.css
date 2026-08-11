@@ -1,0 +1,90 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIText> (to-astryx phase 3, ticket A). Imported by the
+ component itself (P17), so the rules travel with it and cannot rot in an app
+ stylesheet.
+
+ JUSTIFICATION for per-component CSS (the policy asks for one). Three of antd
+ `Typography.Text`'s decorations have NO Astryx counterpart and no theme knob:
+
+   `keyboard` (9 sites)  Astryx `Kbd` takes a `keys: string` shortcut spec
+                         ("mod+k") and renders ITS OWN glyphs. Our call sites
+                         pass arbitrary children (a token, a path fragment),
+                         so `Kbd` cannot carry them — the box is rebuilt here.
+   `mark` (4 sites)      no Astryx equivalent at all (MAPPING §3.4: "NONE —
+                         self-build").
+   `code` box padding    Astryx `Code` styles the glyph run; the surrounding
+                         chip padding antd drew is added back so the 16 `code`
+                         sites keep their footprint.
+
+ The copy-control row is layout, not decoration: the text must still measure
+ its own ellipsis box, so the control is a sibling in an inline flex row.
+
+ Every value is an Astryx token (P19 — names checked against the built theme's
+ declared variables, `react/src/astryx-theme/built/backendai-default-built.css`).
+ No `var(--x, literal)` fallbacks: a wrong name must fail visibly, not silently
+ resolve to a literal.
+
+ UNLAYERED on purpose, matching BAIAlert.css / BAILink.css: these rules
+ decorate our own elements and must outrank Astryx's `@layer astryx-base`.
+*/
+
+/* Text + copy control (and/or the expand link) on one baseline. */
+.bai-text-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* The copy glyph rides with the text; it must not stretch the row. */
+.bai-text-row > .bai-text-copy {
+  flex-shrink: 0;
+}
+
+/* antd `Typography.Text keyboard` — the <kbd> chip. */
+.bai-text-kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15em 0.4em;
+  font-family: var(--font-family-code);
+  font-size: 0.9em;
+  background-color: var(--color-background-muted);
+  border: 1px solid var(--color-border-emphasized);
+  border-radius: var(--radius-inner);
+  box-shadow: 0 2px 0 var(--color-border);
+}
+
+/*
+ The light-bordered variant used on the dark notification surface, where the
+ chip sits on an inverted background and must borrow the surrounding color.
+ antd expressed it as an inline `rgba(255,255,255,0.6)` border; the token
+ counterpart on an inverted surface is the on-dark text color at the same
+ role.
+*/
+.bai-text-kbd--light {
+  color: inherit;
+  margin: 0;
+  background-color: transparent;
+  border-color: var(--color-on-dark);
+  box-shadow: none;
+}
+
+/* antd `Typography.Text mark` — the highlighter. */
+.bai-text-mark {
+  padding: 0 0.2em;
+  background-color: var(--color-warning-muted);
+  color: inherit;
+  border-radius: var(--radius-none);
+}
+
+/* antd's inline `code` chip footprint around Astryx `Code`'s glyph styling. */
+.bai-text-code {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  max-width: 100%;
+}

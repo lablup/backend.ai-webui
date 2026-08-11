@@ -1,0 +1,218 @@
+{
+ "light": {
+  "theme": "light",
+  "vars": {
+   "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+   "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
+   "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+   "--color-icon-primary": "light-dark(#141414, #FFFFFF)",
+   "--color-icon-secondary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+   "--color-icon-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+   "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), #262626)",
+   "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
+   "--color-background-popover": "light-dark(#FFFFFF, #1F1F1F)",
+   "--radius-container": "8px",
+   "--radius-element": "8px",
+   "--text-heading-1-size": "38px",
+   "--text-heading-2-size": "30px",
+   "--text-heading-3-size": "1.5rem",
+   "--text-heading-4-size": "1.25rem",
+   "--text-heading-5-size": "16px",
+   "--text-body-leading": "1.5714",
+   "--text-label-leading": "1.5714",
+   "--text-code-leading": "1.5714",
+   "--font-size-3xl": "30px",
+   "--size-element-sm": "24px",
+   "--size-element-md": "32px",
+   "--shadow-med": "0 6px 16px 0 light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.016)), 0 3px 6px -4px light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.024)), 0 9px 28px 8px light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.01))",
+   "--shadow-high": "0 6px 16px 0 light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.016)), 0 3px 6px -4px light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.024)), 0 9px 28px 8px light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.01))"
+  },
+  "rendered": {
+   "text.body": "14px / lh 21.9996px / w 400",
+   "heading.1": "38px / lh 50.6654px / w 600",
+   "heading.2": "30px / lh 42px / w 600",
+   "heading.3": "24px / lh 33.8832px / w 700",
+   "heading.4": "20px / lh 28.572px / w 700",
+   "heading.5": "16px / lh 26.6672px / w 600"
+  },
+  "headingSites": [
+   "H5 \"Notifications\" 16px/26.6672px/600 rgb(20, 20, 20)"
+  ],
+  "page": [
+   "siderItem: 16px/25.1424px/400 color=rgb(20, 20, 20) bg=rgba(0, 0, 0, 0) radius=20px",
+   "breadcrumb(antd): 14px/22px/400 color=rgb(20, 20, 20) bg=rgba(0, 0, 0, 0) radius=0px",
+   "body: 16px/24px/400 color=rgb(0, 0, 0) bg=rgb(247, 247, 246) radius=0px",
+   "button.sm: 14px/21.9996px/500 color=rgba(0, 0, 0, 0.45) bg=rgb(255, 255, 255) radius=9999px"
+  ],
+  "lineRhythm": {
+   "breadcrumbAntd": "22px",
+   "astryxText": "21.9996px",
+   "bodyLineHeight": "24px"
+  },
+  "dialogs": {
+   "create-user": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "8px",
+    "shadow": "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   },
+   "create-project": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "8px",
+    "shadow": "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   },
+   "create-folder": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "8px",
+    "shadow": "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   },
+   "create-policy": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(255, 255, 255)",
+    "radius": "8px",
+    "shadow": "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   }
+  },
+  "headingSitesStart": [
+   "H5 \"Notifications\" 16px/26.6672px/600"
+  ]
+ },
+ "dark": {
+  "theme": "dark",
+  "vars": {
+   "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+   "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
+   "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+   "--color-icon-primary": "light-dark(#141414, #FFFFFF)",
+   "--color-icon-secondary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+   "--color-icon-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+   "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), #262626)",
+   "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
+   "--color-background-popover": "light-dark(#FFFFFF, #1F1F1F)",
+   "--radius-container": "8px",
+   "--radius-element": "8px",
+   "--text-heading-1-size": "38px",
+   "--text-heading-2-size": "30px",
+   "--text-heading-3-size": "1.5rem",
+   "--text-heading-4-size": "1.25rem",
+   "--text-heading-5-size": "16px",
+   "--text-body-leading": "1.5714",
+   "--text-label-leading": "1.5714",
+   "--text-code-leading": "1.5714",
+   "--font-size-3xl": "30px",
+   "--size-element-sm": "24px",
+   "--size-element-md": "32px",
+   "--shadow-med": "0 6px 16px 0 light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.016)), 0 3px 6px -4px light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.024)), 0 9px 28px 8px light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.01))",
+   "--shadow-high": "0 6px 16px 0 light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.016)), 0 3px 6px -4px light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.024)), 0 9px 28px 8px light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.01))"
+  },
+  "rendered": {
+   "text.body": "14px / lh 21.9996px / w 400",
+   "heading.1": "38px / lh 50.6654px / w 600",
+   "heading.2": "30px / lh 42px / w 600",
+   "heading.3": "24px / lh 33.8832px / w 700",
+   "heading.4": "20px / lh 28.572px / w 700",
+   "heading.5": "16px / lh 26.6672px / w 600"
+  },
+  "headingSites": [
+   "H5 \"Notifications\" 16px/26.6672px/600 rgb(255, 255, 255)"
+  ],
+  "page": [
+   "siderItem: 16px/25.1424px/400 color=rgb(255, 255, 255) bg=rgba(0, 0, 0, 0) radius=20px",
+   "breadcrumb(antd): 14px/22px/400 color=rgb(255, 255, 255) bg=rgba(0, 0, 0, 0) radius=0px",
+   "body: 16px/24px/400 color=rgb(255, 255, 255) bg=rgb(25, 25, 25) radius=0px",
+   "button.sm: 14px/21.9996px/500 color=rgba(255, 255, 255, 0.45) bg=rgb(20, 20, 20) radius=9999px"
+  ],
+  "lineRhythm": {
+   "breadcrumbAntd": "22px",
+   "astryxText": "21.9996px",
+   "bodyLineHeight": "24px"
+  },
+  "dialogs": {
+   "create-user": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(31, 31, 31)",
+    "radius": "8px",
+    "shadow": "rgba(255, 255, 255, 0.016) 0px 6px 16px 0px, rgba(255, 255, 255, 0.024) 0px 3px 6px -4px, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   },
+   "create-project": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(31, 31, 31)",
+    "radius": "8px",
+    "shadow": "rgba(255, 255, 255, 0.016) 0px 6px 16px 0px, rgba(255, 255, 255, 0.024) 0px 3px 6px -4px, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   },
+   "create-folder": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(31, 31, 31)",
+    "radius": "8px",
+    "shadow": "rgba(255, 255, 255, 0.016) 0px 6px 16px 0px, rgba(255, 255, 255, 0.024) 0px 3px 6px -4px, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   },
+   "create-policy": {
+    "cls": "astryx-dialog standard xixxii4",
+    "bg": "rgb(31, 31, 31)",
+    "radius": "8px",
+    "shadow": "rgba(255, 255, 255, 0.016) 0px 6px 16px 0px, rgba(255, 255, 255, 0.024) 0px 3px 6px -4px, ",
+    "dialogPaddingInline": "24px",
+    "dialogPaddingBlockStart": "16px",
+    "slotPaddings": [
+     "16px 24px 16px 24px"
+    ],
+    "innerPadding": "16px 24px",
+    "titleFont": "30px/600"
+   }
+  },
+  "headingSitesStart": [
+   "H5 \"Notifications\" 16px/26.6672px/600"
+  ]
+ }
+}

@@ -1,0 +1,52 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAILink> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+ No `.ant-*` selector here — the rules apply to the link element directly, so
+ nothing dies when antd leaves (P6).
+
+ Token mapping (P19-checked):
+   token.colorLink        -> var(--color-text-accent)
+   token.colorLinkHover   -> var(--color-accent)  (antd derived a hover step
+                             from the link seed; Astryx's solid accent is the
+                             hover-weight counterpart — PILOT-DECISION, the
+                             hand-rolled palette derivation goes away)
+   token.colorTextDisabled -> var(--color-text-disabled)
+*/
+.bai-link-hover {
+  text-decoration: none;
+  color: var(--color-text-accent);
+}
+
+.bai-link-hover:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/*
+ QA3 — make the hover underline actually visible in table name cells.
+
+ `text-decoration` propagates to in-flow *inline* descendants only; it stops
+ dead at a block-level box. Astryx `Link` always wraps its children in a
+ `Text` span, and `Text` with `maxLines` / truncation renders that span as
+ `display: block`. So the underline was being painted on a link box whose
+ only content is a block child that refuses to inherit it — the anchor was
+ underlined, nothing on screen was. Name cells are exactly the case that hits
+ this, because every one of them truncates.
+
+ `text-decoration: inherit` forces the descendants to mirror whatever the link
+ currently declares — `none` at rest, `underline` on hover — so the rule needs
+ no `:hover` twin and can never get out of step with the state above.
+ `:where()` keeps specificity at zero so a call site can still opt out.
+*/
+.bai-link-hover :where(span, div, p, b, strong, em, code) {
+  text-decoration: inherit;
+}
+
+.bai-link-disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}

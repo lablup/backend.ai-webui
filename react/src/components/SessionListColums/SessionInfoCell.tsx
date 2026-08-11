@@ -3,22 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionInfoCellFragment$key } from '../../__generated__/SessionInfoCellFragment.graphql';
+import { Form, type FormInstance } from '../../form-engine';
 import {
   // useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
-import { EditOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Form,
-  type FormInstance,
-  Input,
-  Typography,
-  theme,
-} from 'antd';
+import { AstryxFormTextInput } from '../astryxFormControls';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePen } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -53,7 +49,6 @@ const SessionInfoCell: React.FC<{
   onRename?: () => void;
 }> = ({ sessionFrgmt, sessionNameList, onRename }) => {
   const baiClient = useSuspendedBackendaiClient();
-  const { token } = theme.useToken();
   const session = useFragment(
     graphql`
       fragment SessionInfoCellFragment on ComputeSession {
@@ -142,37 +137,55 @@ const SessionInfoCell: React.FC<{
             }),
           ]}
         >
-          <Input
-            autoFocus
-            onPressEnter={() => save()}
-            onKeyUp={(e) => {
+          {/* The inline rename field. `onEnter` / `onKeyDown` / `hasAutoFocus`
+              are on the SHARED adapter now (D10 fold-back), so this no longer
+              needs a local copy of the two `Form.Item` contracts. */}
+          <AstryxFormTextInput
+            label={t('session.launcher.SessionName')}
+            hasAutoFocus
+            onEnter={save}
+            onKeyDown={(e) => {
               if (e.key === 'Escape') setEditing(false);
             }}
           />
         </Form.Item>
       ) : (
         <BAIFlex style={{ maxWidth: 250 }}>
-          <Typography.Text
-            ellipsis={{
-              tooltip: { overlayInnerStyle: { width: 'max-content' } },
-            }}
-            style={{ opacity: isPendingRename ? 0.5 : 1 }}
+          {/* `ellipsis={{tooltip}}` -> `maxLines` + `hasTruncateTooltip`
+              (MAPPING §3.4); the tooltip's `overlayInnerStyle` width override
+              is dropped — Astryx's truncation tooltip sizes itself. */}
+          <Text
+            maxLines={1}
+            hasTruncateTooltip
+            color={isPendingRename ? 'secondary' : undefined}
           >
             {optimisticName}
-          </Typography.Text>
+          </Text>
           {editable && (
-            <Button
-              loading={isPendingRename}
-              type="text"
-              icon={<EditOutlined />}
-              style={{ color: token.colorLink }}
+            // MAPPING §3.3: icon-only -> `IconButton`. The required `label`
+            // gives the control its first accessible name.
+            // QA-FINDINGS Q-37 — the `colorLink` glyph tint is RESTORED (the
+            // earlier "dropped (P5, closed variant enum)" note is superseded).
+            // Legacy was `Button type="text" style={{ color: token.colorLink }}`
+            // and this is the session list's own rename control, the sibling of
+            // the drawer's rename the report names. `--color-text-accent`
+            // resolves to `colorLink` on this route; see
+            // `packages/backend.ai-ui/src/styles/actionAccent.css`.
+            <IconButton
+              className="bai-action-accent"
+              isLoading={isPendingRename}
+              variant="ghost"
+              size="sm"
+              icon={<SquarePen size="1em" />}
+              label={t('button.Edit')}
+              tooltip={t('button.Edit')}
               onClick={() => {
                 formRef.current?.setFieldsValue({
                   name: session.name,
                 });
                 setEditing(true);
               }}
-            ></Button>
+            />
           )}
         </BAIFlex>
       )}

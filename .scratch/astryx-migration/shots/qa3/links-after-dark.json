@@ -1,0 +1,218 @@
+[
+  {
+    "route": "data-vfolders",
+    "theme": "dark",
+    "links": [
+      {
+        "text": "1234567",
+        "before": {
+          "tag": "a",
+          "hasBaiHover": true,
+          "linkDecoration": "none",
+          "linkColor": "rgb(190, 94, 6)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "none"
+        },
+        "after": {
+          "tag": "a",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(190, 94, 6)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "underline"
+        },
+        "underlines": true
+      }
+    ]
+  },
+  {
+    "route": "admin-data",
+    "theme": "dark",
+    "links": [
+      {
+        "text": "1234567",
+        "before": {
+          "tag": "a",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "underline"
+        },
+        "after": {
+          "tag": "a",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "underline"
+        },
+        "underlines": true
+      }
+    ]
+  },
+  {
+    "route": "project-data",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 1
+  },
+  {
+    "route": "agents",
+    "theme": "dark",
+    "links": [
+      {
+        "text": "i-000002be",
+        "before": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "none",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "none"
+        },
+        "after": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "underline"
+        },
+        "underlines": true
+      }
+    ]
+  },
+  {
+    "route": "sessions",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 1
+  },
+  {
+    "route": "admin-sessions",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 1
+  },
+  {
+    "route": "deployments",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 1
+  },
+  {
+    "route": "reservoir",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 1
+  },
+  {
+    "route": "users",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 10
+  },
+  {
+    "route": "projects",
+    "theme": "dark",
+    "links": [
+      {
+        "text": "local:volume1",
+        "before": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "none",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "div",
+          "innerDisplay": "flex",
+          "innerDecoration": "none"
+        },
+        "after": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "div",
+          "innerDisplay": "flex",
+          "innerDecoration": "underline"
+        },
+        "underlines": true
+      }
+    ]
+  },
+  {
+    "route": "environment",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 20
+  },
+  {
+    "route": "resource-policy",
+    "theme": "dark",
+    "links": [
+      {
+        "text": "local:volume1",
+        "before": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "div",
+          "innerDisplay": "flex",
+          "innerDecoration": "underline"
+        },
+        "after": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "div",
+          "innerDisplay": "flex",
+          "innerDecoration": "underline"
+        },
+        "underlines": true
+      }
+    ]
+  },
+  {
+    "route": "rbac",
+    "theme": "dark",
+    "status": "no-link-cell",
+    "rows": 0
+  },
+  {
+    "route": "storage-proxy",
+    "theme": "dark",
+    "links": [
+      {
+        "text": "local:volume1",
+        "before": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "none",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "none"
+        },
+        "after": {
+          "tag": "button",
+          "hasBaiHover": true,
+          "linkDecoration": "underline",
+          "linkColor": "rgb(3, 135, 191)",
+          "innerTag": "span",
+          "innerDisplay": "block",
+          "innerDecoration": "underline"
+        },
+        "underlines": true
+      }
+    ]
+  }
+]

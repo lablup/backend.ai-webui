@@ -1,17 +1,39 @@
 ---
 name: react-form
 description: >
-  Use when writing or editing components that use `antd` `Form`/`Form.Item`,
-  adding `rules` validators, extracting grouped `*FormItems`, or migrating
-  `setValue` callback props to `onChange`. Covers `initialValues` vs
-  `defaultValue`, required markers, and cross-field validation.
+  Use when writing or editing components that use the self-hosted `Form` /
+  `Form.Item` from `../form-engine`, adding `rules` validators, extracting
+  grouped `*FormItems`, or migrating `setValue` callback props to `onChange`.
+  Covers `initialValues` vs `defaultValue`, required markers, and cross-field
+  validation.
 ---
 
 # React Form Patterns
 
-Patterns for `antd` forms in backend.ai-webui, distilled from
-`FolderCreateModal.tsx`, `UserSettingModal.tsx`,
-`ResourceAllocationFormItems.tsx`, and FR-1720 / FR-701 / FR-1260 / FR-1671.
+Patterns for forms in backend.ai-webui, distilled from `FolderCreateModal.tsx`,
+`UserSettingModal.tsx`, `ResourceAllocationFormItems.tsx`, and
+FR-1720 / FR-701 / FR-1260 / FR-1671.
+
+## Where `Form` comes from
+
+Always import from the **`form-engine` alias module**, never from a UI library:
+
+```tsx
+import { Form, FormInstance } from '../form-engine';   // react/src/**
+import { Form } from 'backend.ai-ui';                  // BUI re-exports it too
+```
+
+The engine is self-hosted at `packages/backend.ai-ui/src/form-engine/`
+(to-astryx ticket 35). Its API is **deliberately antd-identical** — `<Form>`,
+`<Form.Item>`, `Form.useForm()`, `Form.List`, `Form.Provider`, `Form.useWatch`
+and `Form.Item.useStatus` all behave as the antd equivalents did, which is why
+the guidance below survived the migration unchanged. See
+`.claude/rules/antd-v6-props.md` for why the prop surface is shaped that way.
+
+What did change is the **DOM**: `Form.Item` is `BAIFormItem`, so items render
+`[data-bai-form-item]` attributes rather than `.ant-form-item*` classes.
+`packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx` carries the full
+old-class → new-attribute mapping table if you need to port a selector.
 
 ## Activation Triggers
 
@@ -23,10 +45,10 @@ Patterns for `antd` forms in backend.ai-webui, distilled from
 
 ## Gotchas
 
-- **`defaultValue` on `Form.Item` silently overrides** antd's controlled value (FR-1260 #3976). Always use `<Form initialValues={...}>`.
+- **`defaultValue` on `Form.Item` silently overrides** the controlled value the engine injects (FR-1260 #3976). Always use `<Form initialValues={...}>`.
 - **`required` prop is a visual marker**, not a validation rule by itself. Pair with explicit `rules={[{ required: true, message: t('...') }]}` or a validator that rejects empty values.
 - **`validateFields()` on every `onChange`** causes render storms. Trigger validation only on dependent-field changes and only when the target field has a value (see FolderCreateModal's `usage_mode` handler).
-- **`Form.useForm()` + `useRef<FormInstance>` in the same form** race — antd binds to only one. Pick one per form.
+- **`Form.useForm()` + `useRef<FormInstance>` in the same form** race — the engine binds to only one. Pick one per form.
 - **`initialValues` is shallow-merged.** Nested objects replace entirely; `{ a: { b: 1 } }` does NOT merge with `{ a: { c: 2 } }`.
 - **`warningOnly: true` validators don't block submit** — `validateFields()` still resolves. Useful for soft nudges; don't rely on them as required rules.
 - **`dependencies={[...]}` re-runs the CURRENT item's validator**, not the dependent field's. If both need cross-validation, put validators on both sides.
@@ -65,7 +87,8 @@ state naturally unmounts with the modal.
 ## 2. `initialValues` — never `defaultValue` on `Form.Item`
 
 FR-1260 (#3976) removed `defaultValue` from `Form.Item` because it conflicts
-with the controlled value antd injects. Always set initial values on `<Form>`.
+with the controlled value the form engine injects. Always set initial values on
+`<Form>`.
 
 ```tsx
 // ❌ Bad — stale value once the form is controlled
@@ -102,8 +125,8 @@ const mergedInitialValues = {
 
 ## 3. Validators: Prefer `rules` over manual validation in handlers
 
-Use antd's `rules` array for every validation concern — pattern, length,
-required, cross-field, async. The handler just calls `validateFields()`.
+Use the `rules` array for every validation concern — pattern, length, required,
+cross-field, async. The handler just calls `validateFields()`.
 
 ### 3.1 Cross-field validator via `({ getFieldValue })`
 
@@ -205,10 +228,22 @@ label shows the indicator — otherwise the UI lies.
 
 ### 4.2 Hide the default `*` marker when the label layout differs
 
-```tsx
-// Custom label styling — hide the default `::after` asterisk
-.ant-form-item-label > label::after { display: none !important; }
+Prefer the props — `requiredMark={false}` (or `'optional'`, or a function) on
+`<Form>`, and `colon={false}` for the trailing colon. Both are already wired to
+the engine's own suppression rules.
+
+Only reach for CSS when a single item needs to deviate, and target the engine's
+data attributes (the asterisk is `::before` on the label; `::after` is the
+colon):
+
+```css
+/* Custom label styling — hide the required asterisk on one item */
+[data-bai-form-item-label][data-bai-form-item-required]::before {
+  display: none;
+}
 ```
+
+Do **not** write `.ant-form-item-*` selectors — that DOM no longer exists.
 
 ### 4.3 `requiredMark={false}` at the `<Form>` level
 
@@ -236,7 +271,8 @@ type HiddenFormItemsType =
 ## 6. `onChange` Callback Convention (not `setValue`)
 
 FR-1720 (#4849) standardized this. Always expose `onChange` on component-level
-callback props — matches Ant Design and HTML form conventions.
+callback props — matches the form engine's own contract and HTML form
+conventions.
 
 ```tsx
 // ❌

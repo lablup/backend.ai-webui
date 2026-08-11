@@ -28,7 +28,7 @@ async function addComparePane(
     .getByRole('button')
     .nth(2);
   await compareButton.click();
-  await expect(page.getByPlaceholder('Type your message here...')).toHaveCount(
+  await expect(page.getByLabel('Type your message here...')).toHaveCount(
     expectedCount,
     { timeout: 10000 },
   );
@@ -39,7 +39,7 @@ async function addComparePane(
  * Uses nth() on all "Type your message here..." inputs.
  */
 function getChatInput(page: Page, index: number) {
-  return page.getByPlaceholder('Type your message here...').nth(index);
+  return page.getByLabel('Type your message here...').nth(index);
 }
 
 /**
@@ -128,7 +128,7 @@ test.describe(
       await getChatInput(page, 0).fill('Synchronized message text');
 
       // Verify the text appears in the second pane's input in real time
-      await expect(getChatInput(page, 1)).toHaveValue(
+      await expect(getChatInput(page, 1)).toHaveText(
         'Synchronized message text',
         {
           timeout: 10000,
@@ -234,7 +234,11 @@ test.describe(
       // send below can race the endpoint/model switch and dispatch against
       // a stale ('custom') model before React has settled on
       // 'gpt-mock-model-b'.
-      await expect(getChatInput(page, 1)).toBeEnabled({ timeout: 10000 });
+      await expect(getChatInput(page, 1)).toHaveAttribute(
+        'contenteditable',
+        'true',
+        { timeout: 10000 },
+      );
       await expect(
         secondChatCardHeader.getByText('gpt-mock-model-b'),
       ).toBeVisible({ timeout: 10000 });
@@ -252,7 +256,7 @@ test.describe(
       await getChatInput(page, 0).fill('Multi-endpoint test');
 
       // Verify the text propagates to the second pane
-      await expect(getChatInput(page, 1)).toHaveValue('Multi-endpoint test', {
+      await expect(getChatInput(page, 1)).toHaveText('Multi-endpoint test', {
         timeout: 10000,
       });
 
@@ -316,7 +320,7 @@ test.describe(
       await setSync(page, 0, false);
 
       // The input is cleared when sync is toggled (by design per the spec)
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 5000 });
 
       // Click the text input of the first pane and type isolated text
       await getChatInput(page, 0).click();
@@ -324,15 +328,12 @@ test.describe(
 
       // Verify "Isolated pane text" does NOT appear in the second pane's input
       // Use a small timeout since we expect it NOT to propagate
-      await expect(getChatInput(page, 1)).not.toHaveValue(
-        'Isolated pane text',
-        {
-          timeout: 3000,
-        },
-      );
+      await expect(getChatInput(page, 1)).not.toHaveText('Isolated pane text', {
+        timeout: 3000,
+      });
 
       // The first pane's input shows the isolated text
-      await expect(getChatInput(page, 0)).toHaveValue('Isolated pane text');
+      await expect(getChatInput(page, 0)).toHaveText('Isolated pane text');
     });
 
     test("Turning off sync clears the synced pane's input", async ({
@@ -352,7 +353,7 @@ test.describe(
       await getChatInput(page, 0).fill('Pre-disable text');
 
       // Verify the text propagated to the second pane
-      await expect(getChatInput(page, 1)).toHaveValue('Pre-disable text', {
+      await expect(getChatInput(page, 1)).toHaveText('Pre-disable text', {
         timeout: 10000,
       });
 
@@ -360,7 +361,7 @@ test.describe(
       await setSync(page, 0, false);
 
       // The first pane's input is cleared when sync is disabled
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 10000 });
     });
 
     test('Sending from an unsynced pane does not trigger send in other panes', async ({
@@ -379,7 +380,7 @@ test.describe(
       await setSync(page, 0, false);
 
       // Wait for input to clear after sync toggle
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 5000 });
 
       // Type directly in the first pane's input (isolated)
       await getChatInput(page, 0).click();
@@ -424,12 +425,12 @@ test.describe(
       await setSync(page, 0, false);
 
       // Wait for input to clear
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 5000 });
 
       // Type in the first pane — should NOT propagate
       await getChatInput(page, 0).click();
       await getChatInput(page, 0).fill('Not synced text');
-      await expect(getChatInput(page, 1)).not.toHaveValue('Not synced text', {
+      await expect(getChatInput(page, 1)).not.toHaveText('Not synced text', {
         timeout: 3000,
       });
 
@@ -437,14 +438,14 @@ test.describe(
       await setSync(page, 0, true);
 
       // Input is cleared upon toggling sync back on
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 10000 });
 
       // Type re-synced text in the first pane
       await getChatInput(page, 0).click();
       await getChatInput(page, 0).fill('Re-synced text');
 
       // Verify the text appears in the second pane's input
-      await expect(getChatInput(page, 1)).toHaveValue('Re-synced text', {
+      await expect(getChatInput(page, 1)).toHaveText('Re-synced text', {
         timeout: 10000,
       });
     });

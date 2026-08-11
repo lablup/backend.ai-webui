@@ -111,13 +111,22 @@ import { useBAIPaginationOptionStateOnSearchParam }
 
 const {
   baiPaginationOption,       // { limit, first, offset }  — for GraphQL variables
-  tablePaginationOption,     // { pageSize, current }      — for antd table
+  tablePaginationOption,     // { pageSize, current }      — BAIAstryxPaginationConfig
   setTablePaginationOption,  // partial updater
 } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
 ```
 
-Internally it uses `parseAsInteger.withDefault(initial)` on `current`/`pageSize`
-with `history: 'replace'`. Don't duplicate this anywhere.
+`tablePaginationOption` feeds `BAITableAstryx`'s `pagination` prop, typed
+`BAIAstryxPaginationConfig` — the `{ pageSize, current, total, onChange }`
+shape is unchanged from the antd era, only the type name moved.
+
+Internally the hook uses `parseAsInteger.withDefault(initial)` on
+`current`/`pageSize` with `history: 'replace'`. Don't duplicate this anywhere.
+
+For the GraphQL side, page-number pagination means **`limit` + `offset`** —
+`baiPaginationOption` also carries `first` (the same number) for cursor-mode
+connections, and mixing the two is a runtime error on V2 connections. See
+`.claude/rules/graphql-pagination.md`.
 
 ## 4. Pair URL state with `useDeferredValue`
 
@@ -126,7 +135,7 @@ while the next page loads, defer the variables:
 
 ```tsx
 const queryVariables = {
-  first: baiPaginationOption.first,
+  limit: baiPaginationOption.limit,
   offset: baiPaginationOption.offset,
   filter: mergeFilterValues([queryParams.filter, statusFilter]),
   order: queryParams.order || '-created_at',
@@ -227,7 +236,8 @@ so consumers never have to defend against out-of-range strings.
 - Ephemeral local state (modal open driven by button click, hover, selection in a form) → `useState`
 - Global UI state that applies across routes (sidebar collapsed) → `jotai`
 - Server/GraphQL state → Relay
-- Form draft values → antd Form
+- Form draft values → the self-hosted form engine's `Form` store
+  (`import { Form } from '../form-engine'`)
 
 URL state is for: what someone else pasting the URL should see.
 

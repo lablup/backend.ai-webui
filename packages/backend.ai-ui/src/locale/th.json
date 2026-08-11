@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "การดำเนินการล้มเหลว",
     "ErrorOccurred": "เกิดข้อผิดพลาด"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "ไม่พบผลลัพธ์",
+    "Search": "ค้นหา"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "เลือกโดเมน"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
@@ -260,6 +267,9 @@
     "StrategyType": "กลยุทธ์",
     "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",
@@ -451,14 +461,18 @@
     "Step": "ขั้นตอน"
   },
   "comp:BAITable": {
+    "Apply": "ใช้",
+    "Cancel": "ยกเลิก",
     "CollapseAll": "ยุบทั้งหมด",
     "ExpandAll": "ขยายทั้งหมด",
     "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
     "ExpandOptions": "ตัวเลือกการขยาย",
+    "ExpandRow": "ขยายแถว",
     "Export": "ส่งออก",
     "ExportCSV": "ส่งออก CSV",
     "GoToFirstPage": "ไปยังหน้าแรก",
     "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
+    "Pagination": "การแบ่งหน้า",
     "SearchTableColumn": "คอลัมน์ตารางค้นหา",
     "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
     "SettingTable": "การตั้งค่าตาราง"
@@ -526,8 +540,10 @@
     "MoreOptions": "ตัวเลือกเพิ่มเติม",
     "Name": "ชื่อ",
     "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
+    "Path": "Path",
     "PleaseEnterAFileName": "กรุณากรอกชื่อไฟล์",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
+    "RenameFile": "Rename",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
     "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
     "Size": "ขนาด",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
+  "form": {
+    "Optional": "(ไม่จำเป็น)",
+    "validateMessages": {
+      "Default": "ฟิลด์ ${label} ไม่ผ่านเงื่อนไขการตรวจสอบ",
+      "Required": "กรุณากรอก ${label}",
+      "Whitespace": "${label} ไม่สามารถเป็นช่องว่างได้",
+      "array": {
+        "Len": "ต้องมี ${len} ${label}",
+        "Max": "มีได้สูงสุด ${max} ${label}",
+        "Min": "ต้องมีอย่างน้อย ${min} ${label}",
+        "Range": "จำนวน ${label} ต้องอยู่ในช่วง ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} ต้องมี ${len} ตัว",
+        "Max": "ค่าสูงสุด ${label} คือ ${max}",
+        "Min": "ค่าต่ำสุด ${label} คือ ${min}",
+        "Range": "${label} ต้องมีค่า ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} ไม่ตรงกับรูปแบบ ${pattern}"
+      },
+      "string": {
+        "Len": "${label} ต้องมี ${len} ตัวอักษร",
+        "Max": "${label} มีได้สูงสุด ${max} ตัวอักษร",
+        "Min": "${label} ต้องมีอย่างน้อย ${min} ตัวอักษร",
+        "Range": "${label} ต้องมี ${min}-${max} ตัวอักษร"
+      },
+      "types": {
+        "Email": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Number": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Object": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "String": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Url": "${label} ไม่ใช่ ${type} ที่ถูกต้อง"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
+    "Increase": "Increase",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
+    "Select": "Select",
     "TotalItems": "รวม {{total}} รายการ",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
       "Collapse": "ทรุด",
+      "Confirm": "Confirm",
       "Copied": "คัดลอกแล้ว",
+      "Copy": "คัดลอก",
       "CopyAll": "คัดลอกทั้งหมด",
       "Create": "สร้าง",
       "Delete": "ลบ",

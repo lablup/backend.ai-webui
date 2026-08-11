@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form, type FormItemProps } from '../form-engine';
 import { VFolder } from './VFolderSelect';
 import VFolderTable, {
   AliasMap,
@@ -9,7 +11,6 @@ import VFolderTable, {
   VFolderTableProps,
   vFolderAliasNameRegExp,
 } from './VFolderTable';
-import { App, Form, type FormItemProps, Input } from 'antd';
 import { useEventNotStable } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -83,7 +84,12 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
           },
         ]}
       >
-        <Input />
+        {/* A HIDDEN Form.Item — this control is never rendered; it exists
+            only so `mount_id_map` has a registered field to validate. The
+            three hidden siblings below already use a bare `<div />` for the
+            same job, so the antd `Input` becomes one too rather than
+            importing a control nobody sees. */}
+        <div />
       </Form.Item>
       {/* The mounts field has been deprecated but is retained for backward compatibility */}
       <Form.Item hidden name="mounts">

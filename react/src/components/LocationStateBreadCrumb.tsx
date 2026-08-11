@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../hooks';
-import { Breadcrumb } from 'antd';
+import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -29,22 +29,26 @@ const LocationStateBreadCrumb = () => {
   const { t } = useTranslation();
   return (
     locationState?.from && (
-      <Breadcrumb
-        items={[
-          {
-            title: locationState.from.label || locationState.from.pathname,
-            onClick: (e) => {
-              e.preventDefault();
-              locationState.from?.pathname &&
-                webuiNavigate(locationState.from?.pathname);
-            },
-            href: locationState.from.pathname,
-          },
-          {
-            title: t('session.launcher.StartNewSession'),
-          },
-        ]}
-      />
+      // antd `Breadcrumb items` → Astryx `Breadcrumbs` + `BreadcrumbItem`
+      // children (MAPPING §4). The first crumb keeps its
+      // `href` + `preventDefault` router navigation; the trailing crumb is
+      // the current page (`isCurrent`), which antd expressed by omitting
+      // `href`.
+      <Breadcrumbs>
+        <BreadcrumbItem
+          href={locationState.from.pathname}
+          onClick={(e) => {
+            e.preventDefault();
+            locationState.from?.pathname &&
+              webuiNavigate(locationState.from?.pathname);
+          }}
+        >
+          {locationState.from.label || locationState.from.pathname}
+        </BreadcrumbItem>
+        <BreadcrumbItem isCurrent>
+          {t('session.launcher.StartNewSession')}
+        </BreadcrumbItem>
+      </Breadcrumbs>
     )
   );
 };

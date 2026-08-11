@@ -5,7 +5,8 @@
 import { VFolderLazyViewV2Query } from '../__generated__/VFolderLazyViewV2Query.graphql';
 import { useWebUINavigate } from '../hooks';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -44,7 +45,8 @@ const VFolderLazyViewV2: React.FC<VFolderLazyViewV2Props> = ({
         <BAIFlex align="center" gap="xs">
           <VFolderNodeIdenticonV2 vfolderNodeIdenticonFrgmt={vfolderNode} />
           {clickable ? (
-            <Typography.Link
+            // p3-a D3: pure-`onClick` -> Astryx `Link` (link-styled button).
+            <Link
               onClick={() => {
                 webuiNavigate({
                   pathname: location.pathname,
@@ -55,9 +57,9 @@ const VFolderLazyViewV2: React.FC<VFolderLazyViewV2Props> = ({
               }}
             >
               {vfolderNode.metadata?.name}
-            </Typography.Link>
+            </Link>
           ) : (
-            <Typography.Text>{vfolderNode.metadata?.name}</Typography.Text>
+            <Text>{vfolderNode.metadata?.name}</Text>
           )}
         </BAIFlex>
       )}

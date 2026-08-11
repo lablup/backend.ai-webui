@@ -1,0 +1,649 @@
+{
+ "header": {
+  "route": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/start",
+  "overlays": [
+   {
+    "slug": "notification-drawer",
+    "tag": "dialog",
+    "cls": "astryx-drawer end xixxii4 x1ghz6dp x1717udv x7ab17h x9f619 xdt5ytf x10xzikg x1kcpxr7 xb3r6",
+    "size": "280x1000",
+    "pos": "1320,0",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "0px",
+    "shadow": "none",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": null,
+    "body": null,
+    "footer": null,
+    "title": "\"Notifications\" 12px/600/rgb(235, 224, 218)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   },
+   {
+    "slug": "user-menu",
+    "tag": "div",
+    "cls": "astryx-item balanced center x78zum5 x6s0dn4 x1txdalj x1n2onr6 x15406qy xkvfbh3 xlr8y92 x1w",
+    "size": "292x32",
+    "pos": "1292,348",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "8px",
+    "shadow": "none",
+    "pad": "6px 8px 6px 8px",
+    "backdropRule": null,
+    "header": null,
+    "body": null,
+    "footer": null,
+    "title": null,
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   },
+   {
+    "slug": "project-select",
+    "tag": "div",
+    "cls": "x9f619 xuyqlj2 x1odjw0f x9epnlk x1hc1fzr x1ey1afo",
+    "size": "270x200",
+    "pos": "332,82",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "shadow": "none",
+    "pad": "4px 4px 4px 4px",
+    "backdropRule": null,
+    "header": null,
+    "body": null,
+    "footer": null,
+    "title": null,
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "p-data": {
+  "route": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/data",
+  "overlays": [
+   {
+    "slug": "create-folder",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "650x441",
+    "pos": "475,280",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 48
+    },
+    "body": {
+     "pad": "0px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 328
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "1px rgb(48, 48, 48)",
+     "h": 65
+    },
+    "title": "\"Create a new storage folder\" 20px/600/rgb(235, 224, 218)",
+    "formItemGap": 0,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   },
+   {
+    "slug": "table-settings",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "400x132",
+    "pos": "600,434",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": null,
+    "body": {
+     "pad": "16px 16px 0px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "16px/400/24px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 68
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "16px/400/24px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 64
+    },
+    "title": "\"Move to trash bin\" 20px/600/rgb(235, 224, 218)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   },
+   {
+    "slug": "row-delete-confirm",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "400x132",
+    "pos": "600,434",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": null,
+    "body": {
+     "pad": "16px 16px 0px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "16px/400/24px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 68
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "16px/400/24px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 64
+    },
+    "title": "\"Move to trash bin\" 20px/600/rgb(235, 224, 218)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "p-deployments": {
+  "route": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/deployments",
+  "overlays": [
+   {
+    "slug": "create-deployment",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "520x608",
+    "pos": "540,196",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "1px rgb(48, 48, 48)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 49
+    },
+    "body": {
+     "pad": "16px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 494
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "1px rgb(48, 48, 48)",
+     "h": 65
+    },
+    "title": "\"Create Deployment\" 20px/600/rgb(235, 224, 218)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   },
+   {
+    "slug": "table-settings",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "420x523",
+    "pos": "590,239",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 70
+    },
+    "body": {
+     "pad": "0px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 388
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "1px rgb(48, 48, 48)",
+     "h": 65
+    },
+    "title": "\"Table Settings\" 20px/600/rgb(235, 224, 218)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "a-users": {
+  "route": "admin/users",
+  "overlays": [
+   {
+    "slug": "create-user",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "520x750",
+    "pos": "540,125",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "1px rgb(48, 48, 48)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 49
+    },
+    "body": {
+     "pad": "16px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 636
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "1px rgb(48, 48, 48)",
+     "h": 65
+    },
+    "title": "\"Create User\" 20px/600/rgb(223, 226, 236)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "a-environment": {
+  "route": "admin/environment",
+  "overlays": []
+ },
+ "a-resource-policy": {
+  "route": "admin/resource-policy",
+  "overlays": [
+   {
+    "slug": "create-policy",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "800x750",
+    "pos": "400,125",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "1px rgb(48, 48, 48)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 49
+    },
+    "body": {
+     "pad": "16px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 636
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "1px rgb(48, 48, 48)",
+     "h": 65
+    },
+    "title": "\"Create Keypair Resource Policy\" 20px/600/rgb(223, 226, 236)",
+    "formItemGap": 0,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "a-project": {
+  "route": "admin/project",
+  "overlays": [
+   {
+    "slug": "create-project",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "520x750",
+    "pos": "540,125",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "1px rgb(48, 48, 48)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 49
+    },
+    "body": {
+     "pad": "16px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 636
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "1px rgb(48, 48, 48)",
+     "h": 65
+    },
+    "title": "\"Create Project\" 20px/600/rgb(223, 226, 236)",
+    "formItemGap": -62,
+    "requiredMarks": 9,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "a-agent": {
+  "route": "admin/agent",
+  "overlays": [
+   {
+    "slug": "agent-detail-drawer",
+    "tag": "dialog",
+    "cls": "astryx-drawer end xixxii4 x1ghz6dp x1717udv x7ab17h x9f619 xdt5ytf x10xzikg x1kcpxr7 xb3r6",
+    "size": "800x1000",
+    "pos": "800,0",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "0px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": null,
+    "body": null,
+    "footer": null,
+    "title": "\"Agent Info\" 12px/600/rgb(223, 226, 236)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": [
+     {
+      "cls": "astryx-badge green x3nfvp2 x6s0dn4 xl56j7k xzye2dw x1grt7ep ",
+      "bg": "rgba(132, 201, 128, 0.24)",
+      "size": "49x20"
+     },
+     {
+      "cls": "",
+      "bg": "rgba(255, 255, 255, 0.08)",
+      "size": "368x10"
+     },
+     {
+      "cls": "",
+      "bg": "rgba(255, 255, 255, 0.08)",
+      "size": "368x10"
+     },
+     {
+      "cls": "",
+      "bg": "rgba(255, 255, 255, 0.08)",
+      "size": "368x20"
+     },
+     {
+      "cls": "",
+      "bg": "rgba(255, 255, 255, 0.08)",
+      "size": "368x20"
+     },
+     {
+      "cls": "",
+      "bg": "rgba(255, 255, 255, 0.25)",
+      "size": "51x20"
+     }
+    ]
+   }
+  ]
+ },
+ "a-scheduler": {
+  "route": "admin/scheduler",
+  "overlays": []
+ },
+ "a-settings": {
+  "route": "admin/settings",
+  "overlays": [
+   {
+    "slug": "overlay-network-config",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "1440x232",
+    "pos": "80,384",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "1px rgb(48, 48, 48)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 49
+    },
+    "body": {
+     "pad": "16px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 118
+    },
+    "footer": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "1px rgb(48, 48, 48)",
+     "h": 65
+    },
+    "title": "\"Overlay Network settingsAn overlay netwo\" 20px/600/rgb(223, 226, 236)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "a-branding": {
+  "route": "admin/branding",
+  "overlays": [
+   {
+    "slug": "color-picker",
+    "tag": "div",
+    "cls": "ant-popover-content",
+    "size": "234x236",
+    "pos": "619,472",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "shadow": "none",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": null,
+    "body": null,
+    "footer": null,
+    "title": null,
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "a-maintenance": {
+  "route": "admin/maintenance",
+  "overlays": [
+   {
+    "slug": "maintenance-action",
+    "tag": "div",
+    "cls": "x9f619 xuyqlj2 x1odjw0f x9epnlk x1hc1fzr x1ey1afo",
+    "size": "270x200",
+    "pos": "332,82",
+    "bg": "rgba(0, 0, 0, 0)",
+    "radius": "0px",
+    "shadow": "none",
+    "pad": "4px 4px 4px 4px",
+    "backdropRule": null,
+    "header": null,
+    "body": null,
+    "footer": null,
+    "title": null,
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": []
+   }
+  ]
+ },
+ "m-usersettings": {
+  "route": "usersettings",
+  "overlays": [
+   {
+    "slug": "user-pref",
+    "tag": "dialog",
+    "cls": "astryx-dialog standard xixxii4 x1bpp3o7 x1717udv x10xzikg xvuvksw xuacgfc x1kcpxr7 xdt5ytf",
+    "size": "1100x309",
+    "pos": "250,346",
+    "bg": "rgb(20, 20, 20)",
+    "radius": "12px",
+    "shadow": "oklch(0 0 0 / 0.5) 0px 4px 6px 0px, oklch(0 0 0 / 0.7) 0px 12px 24px 0px, oklch(1 0 0 / 0.15) 0px 0px 0px 1px ",
+    "pad": "0px 0px 0px 0px",
+    "backdropRule": null,
+    "header": {
+     "pad": "0px 0px 0px 0px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "1px rgb(48, 48, 48)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 49
+    },
+    "body": {
+     "pad": "16px 16px 16px 16px",
+     "gap": "normal",
+     "bg": "rgba(0, 0, 0, 0)",
+     "color": "rgb(255, 255, 255)",
+     "font": "14px/400/22px",
+     "borderBottom": "0px rgb(255, 255, 255)",
+     "borderTop": "0px rgb(255, 255, 255)",
+     "h": 260
+    },
+    "footer": null,
+    "title": "\"My Keypair Management\" 20px/600/rgb(235, 224, 218)",
+    "formItemGap": null,
+    "requiredMarks": 0,
+    "lightSurfaces": [
+     {
+      "cls": "astryx-banner card info x78zum5 x1cy8zhl x1txdalj x8o8v82 x1",
+      "bg": "rgba(158, 183, 255, 0.24)",
+      "size": "1068x52"
+     }
+    ]
+   }
+  ]
+ }
+}

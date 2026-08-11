@@ -1,0 +1,69 @@
+{
+  "light": {
+    "appliedTheme": "light",
+    "tooltip": {
+      "rect": {
+        "w": 0,
+        "h": 0
+      },
+      "background-color": "rgba(0, 0, 0, 0.85)",
+      "color": "rgb(255, 255, 255)",
+      "border-radius": "8px",
+      "font-size": "14px"
+    },
+    "primaryRest": {
+      "bg": "rgb(255, 122, 0)",
+      "color": "rgb(255, 255, 255)",
+      "label": "Start Session"
+    },
+    "primaryHover": {
+      "bg": "rgb(255, 122, 0)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "tabCount": 5,
+    "tabRest": {
+      "color": "rgba(0, 0, 0, 0.65)",
+      "bg": "rgba(0, 0, 0, 0.04)",
+      "label": "Interactive11Interactive"
+    },
+    "tabHover": {
+      "color": "rgb(255, 122, 0)",
+      "bg": "rgba(0, 0, 0, 0.04)"
+    },
+    "copyIcon": null
+  },
+  "dark": {
+    "appliedTheme": "dark",
+    "tooltip": {
+      "rect": {
+        "w": 93,
+        "h": 31
+      },
+      "background-color": "rgb(66, 66, 66)",
+      "color": "rgb(255, 255, 255)",
+      "border-radius": "8px",
+      "font-size": "14px"
+    },
+    "primaryRest": {
+      "bg": "rgb(190, 94, 6)",
+      "color": "rgb(255, 255, 255)",
+      "label": "Start Session"
+    },
+    "primaryHover": {
+      "bg": "rgb(190, 94, 6)",
+      "color": "rgb(255, 255, 255)"
+    },
+    "tabCount": 5,
+    "tabRest": {
+      "color": "rgba(255, 255, 255, 0.65)",
+      "bg": "rgba(255, 255, 255, 0.08)",
+      "label": "Interactive11Interactive"
+    },
+    "tabHover": {
+      "color": "rgb(190, 94, 6)",
+      "bg": "rgba(255, 255, 255, 0.08)"
+    },
+    "copyIcon": null
+  },
+  "pageErrors": []
+}

@@ -6,18 +6,19 @@ import {
   AutoScalingRuleListNodesFragment$data,
   AutoScalingRuleListNodesFragment$key,
 } from '../__generated__/AutoScalingRuleListNodesFragment.graphql';
-import { DeleteFilled } from '@ant-design/icons';
-import { Tag, Tooltip, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import type { BAITableProps } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -52,14 +53,14 @@ const renderCondition = (
     return (
       <BAIFlex direction="column" gap={'xxs'}>
         <BAIFlex gap={'xs'}>
-          <Tag>{tagLabel}</Tag>
+          <Badge label={tagLabel} />
           {' < '}
           {minThreshold}
         </BAIFlex>
         <BAIFlex gap={'xs'}>
           {maxThreshold}
           {' < '}
-          <Tag>{tagLabel}</Tag>
+          <Badge label={tagLabel} />
         </BAIFlex>
       </BAIFlex>
     );
@@ -69,8 +70,10 @@ const renderCondition = (
     return (
       <BAIFlex gap={'xs'}>
         {maxThreshold}
-        <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
-        <Tag>{tagLabel}</Tag>
+        <Tooltip content={t('autoScalingRule.MaxThreshold')}>
+          <span>{'<'}</span>
+        </Tooltip>
+        <Badge label={tagLabel} />
       </BAIFlex>
     );
   }
@@ -78,8 +81,10 @@ const renderCondition = (
   if (minThreshold != null) {
     return (
       <BAIFlex gap={'xs'}>
-        <Tag>{tagLabel}</Tag>
-        <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
+        <Badge label={tagLabel} />
+        <Tooltip content={t('autoScalingRule.MinThreshold')}>
+          <span>{'<'}</span>
+        </Tooltip>
         {minThreshold}
       </BAIFlex>
     );
@@ -143,8 +148,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
   );
 
   return (
-    <BAITable<AutoScalingRuleNode>
-      scroll={{ x: 'max-content' }}
+    <BAITableAstryx<AutoScalingRuleNode>
       rowKey="id"
       columns={[
         {
@@ -188,7 +192,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
                   {
                     key: 'delete',
                     title: t('button.Delete'),
-                    icon: <DeleteFilled />,
+                    icon: <Trash2 size="1em" />,
                     type: 'danger',
                     disabled: isEndpointDestroying || !isOwnedByCurrentUser,
                     onClick: () => onDeleteRule(row.id, row.metricName ?? ''),
@@ -233,8 +237,8 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
             const sign = hasMin && hasMax ? '±' : hasMax ? '+' : '−';
             return (
               <BAIFlex gap={'xs'}>
-                <Typography.Text>{sign}</Typography.Text>
-                <Typography.Text>{Math.abs(row.stepSize)}</Typography.Text>
+                <Text>{sign}</Text>
+                <Text>{Math.abs(row.stepSize)}</Text>
               </BAIFlex>
             );
           },
@@ -289,7 +293,6 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: t('autoScalingRule.CreatedAt'),
           dataIndex: 'createdAt',
           sorter: true,
-          sortDirections: ['descend', 'ascend'],
           render: (_text, row) => (
             <span>
               {row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-'}
@@ -315,7 +318,6 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           ),
         },
       ]}
-      showSorterTooltip={false}
       dataSource={autoScalingRules}
       {...tableProps}
     />

@@ -3,7 +3,6 @@ packages:
   - packages/*
 
 catalog:
-  "@ant-design/icons": ^6.3.2
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.4
@@ -25,9 +24,6 @@ catalog:
   "@types/react-relay": ^18.2.1
   "@types/relay-runtime": ^19.0.3
   "@types/relay-test-utils": ^19.0.0
-  ahooks: ^3.9.7
-  antd: ^6.5.0
-  antd-style: ^3.7.1
   babel-jest: ^30.3.0
   babel-plugin-react-compiler: ^1.0.0
   big.js: ^7.0.1
@@ -46,10 +42,15 @@ catalog:
   jest-environment-jsdom: ^30.3.0
   jsonc-eslint-parser: ^2.4.2
   lodash-es: ^4.18.1
-  lucide-react: ^0.552.0
+  # ^1.18: single-major convergence with @astryxdesign/theme-neutral@0.3.0,
+  # whose hard dependency is lucide-react ^1.18.0 (to-astryx ticket 07). All
+  # 78 icon names the app imports exist in both 0.552 and 1.x (measured);
+  # converging up dedupes the two installed majors into one instance.
+  lucide-react: ^1.18.0
   marked: ^16.4.2
   prettier: ^3.9.4
   prettier-plugin-sort-json: ^4.2.0
+  qrcode.react: ^4.2.0
   react: ^19.2.7
   react-copy-to-clipboard: ^5.1.1
   react-dom: ^19.2.7
@@ -80,10 +81,26 @@ minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
   - nuqs@2.9.2
+  # Astryx foundation (to-astryx, ticket 01): 0.3.0 published 2026-08-05,
+  # inside the 7-day window at adoption time. Remove after 2026-08-12.
+  - "@astryxdesign/core@0.3.0"
+  - "@astryxdesign/theme-neutral@0.3.0"
+  - "@astryxdesign/cli@0.3.0"
+  # Astryx Lab canary (to-astryx, ticket 18): MIGRATION-SPEC §1-④ decided
+  # canary adoption with an exact pin; canary releases never age past the
+  # quarantine window by design, so the exclusion is permanent while the
+  # pin exists. Tarball-verified build (MAPPING.md header).
+  - "@astryxdesign/lab@0.3.0-canary.12db2a1"
 minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 
 allowBuilds:
+  # `false` on purpose for both @astryxdesign entries: each postinstall only
+  # prints an `astryx init` nudge (non-interactive, always exits 0) — no build
+  # output is needed. Without an entry here pnpm 11's verifyDepsBeforeRun
+  # aborts every `pnpm run <script>` with ERR_PNPM_IGNORED_BUILDS.
+  "@astryxdesign/cli": false
+  "@astryxdesign/core": false
   bufferutil: true
   core-js: true
   core-js-pure: true
@@ -114,7 +131,7 @@ overrides:
   mermaid: ^11.15.0 # HTML/CSS injection + DoS (alerts #379–382)
   serialize-javascript: ^7.0.5 # RCE via RegExp.flags, CPU DoS (#279, #386)
   "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
-  "uuid@^13": ^13.0.1 # buffer bounds check (#374) — @lobehub/ui pulls 13.0.0
+  "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
   dompurify: ^3.4.12 # align transitives with catalog bump
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
@@ -135,8 +152,6 @@ overrides:
 
 patchedDependencies:
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
-  "@lobehub/fluent-emoji@2.0.0": react/patches/lobehub__fluent-emoji@2.0.0.patch
-  "@rc-component/form": react/patches/@rc-component__form.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
   portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

@@ -4,7 +4,7 @@
  */
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BrandingSettingList from '../components/BrandingSettingList';
-import { Skeleton } from 'antd';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
@@ -29,7 +29,7 @@ const BrandingPage: React.FC = () => {
         },
       ]}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {curTabKey === 'branding' && (
           <BAIErrorBoundary>
             <BrandingSettingList />

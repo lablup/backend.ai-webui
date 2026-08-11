@@ -1,0 +1,499 @@
+{
+  "light": {
+    "clickErr": "locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('tbody a').first()\u001b[22m\n",
+    "drawerButtons": [
+      {
+        "label": "Go Back",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Collapse",
+        "color": "rgba(0, 0, 0, 0.45)",
+        "accent": false
+      },
+      {
+        "label": "Notifications",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Dark mode",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Help",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Refresh",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Sort by name",
+        "color": "rgba(0, 0, 0, 0.65)",
+        "accent": false
+      },
+      {
+        "label": "Sort by createdAt",
+        "color": "rgba(0, 0, 0, 0.65)",
+        "accent": false
+      },
+      {
+        "label": "Sort by updatedAt",
+        "color": "rgba(0, 0, 0, 0.65)",
+        "accent": false
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(255, 77, 79)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Go to previous page",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 1",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 2",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 3",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 4",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 5",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 8",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Go to next page",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      },
+      {
+        "label": "Table Setting",
+        "color": "rgb(20, 20, 20)",
+        "accent": false
+      }
+    ],
+    "checkErr": "locator.click: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('tbody input[type=\"checkbox\"]').first()\u001b[22m\n",
+    "afterSelect": [
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(2, 141, 242)",
+        "accent": true
+      }
+    ]
+  },
+  "dark": {
+    "clickErr": "locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('tbody a').first()\u001b[22m\n",
+    "drawerButtons": [
+      {
+        "label": "Go Back",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Collapse",
+        "color": "rgba(255, 255, 255, 0.45)",
+        "accent": false
+      },
+      {
+        "label": "Notifications",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Light mode",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Help",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Refresh",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Sort by name",
+        "color": "rgba(255, 255, 255, 0.65)",
+        "accent": false
+      },
+      {
+        "label": "Sort by createdAt",
+        "color": "rgba(255, 255, 255, 0.65)",
+        "accent": false
+      },
+      {
+        "label": "Sort by updatedAt",
+        "color": "rgba(255, 255, 255, 0.65)",
+        "accent": false
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Deactivate",
+        "color": "rgb(190, 61, 63)",
+        "accent": false
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Go to previous page",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 1",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 2",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 3",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 4",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 5",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Go to page 8",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Go to next page",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      },
+      {
+        "label": "Table Setting",
+        "color": "rgb(255, 255, 255)",
+        "accent": false
+      }
+    ],
+    "checkErr": "locator.click: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('tbody input[type=\"checkbox\"]').first()\u001b[22m\n",
+    "afterSelect": [
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      },
+      {
+        "label": "Copy",
+        "color": "rgb(3, 135, 191)",
+        "accent": true
+      }
+    ]
+  },
+  "pageErrors": []
+}

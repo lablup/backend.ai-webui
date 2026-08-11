@@ -1,19 +1,26 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
+ (`BAITableAstryx`, Astryx engine). Cells and satellites are Astryx:
+ `BAINameActionCellAstryx`, `Badge` + the ticket-13 status lookup, `Text`,
+ `BAICopyableText`, `BAIModalAstryx` (host-quota modal), `BAISkeletonAstryx`.
+*/
 import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';
 import {
   VFolderNodesV2Fragment$data,
   VFolderNodesV2Fragment$key,
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import { theme } from '../theme-shim';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -25,40 +32,49 @@ import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModal
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import BAINameActionCell from './astryx-bui/BAINameActionCellAstryx';
+import type { BAINameActionCellAstryxAction } from './astryx-bui/BAINameActionCellAstryx';
+import BAIQuestionIconWithTooltip from './astryx-bui/BAIQuestionIconWithTooltipAstryx';
+import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  DeleteFilled,
-  DeleteOutlined,
-  QuestionCircleOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Modal, Skeleton, theme, Tooltip, Typography } from 'antd';
-import {
-  filterOutNullAndUndefined,
   BAIAlertIconWithTooltip,
-  BAIEndpointsIcon,
-  BAILink,
-  BAIRestoreIcon,
-  BAIShareAltIcon,
-  BAIUnmountAfterClose,
-  BAIUserUnionIcon,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
-  BAIFlex,
-  BAINameActionCell,
-  BAIText,
+  BAIUnmountAfterClose,
+  StorageUsageBadge,
+  badgeVariantForStatus,
+  filterOutNullAndUndefined,
   toLocalId,
   useErrorMessageResolver,
-  BAITag,
-  StorageUsageBadge,
+  useToggle,
 } from 'backend.ai-ui';
-import type { BAINameActionCellAction } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import {
+  RocketIcon,
+  RotateCcwIcon,
+  Share2Icon,
+  Trash2Icon,
+  TrashIcon,
+  UserIcon,
+  UsersIcon,
+} from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
+/**
+ * Legacy antd `Tag` colour map — kept ONLY for the unconverted V1
+ * `VFolderNodeDescription` import; converted call sites in this area use
+ * `badgeVariantForStatus('vfolder', …)` from the ticket-13 lookup instead.
+ */
 export const statusTagColor = {
   // V2 UPPERCASE enum values (VFolderOperationStatus)
   // mountable
@@ -71,9 +87,6 @@ export const statusTagColor = {
   // error
   DELETE_ERROR: 'error',
   // Legacy V1 kebab-case values emitted by `VirtualFolderNode.status`.
-  // Kept alongside V2 keys so consumers that still read V1 status (e.g.
-  // `VFolderNodeDescription`) continue to get a color mapping and do not
-  // need to normalize the status before indexing.
   ready: 'warning',
   performing: 'warning',
   cloning: 'warning',
@@ -137,97 +150,101 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const navigate = useWebUINavigate();
 
   const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
   const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
   const isDeleted = isDeletedCategory(vfolder?.vfolderStatus);
 
   const vfolderId = toLocalId(vfolder.id ?? '');
+  const folderPath = generateFolderPath(vfolderId);
 
-  const actions: BAINameActionCellAction[] = filterOutNullAndUndefined([
-    // Start Service (model folders only, active only)
-    isModelFolder && !isDeleted
-      ? {
-          key: 'start-service',
-          title: t('modelService.DeployAsService'),
-          icon: <BAIEndpointsIcon />,
-          // Use `action` (not `onClick`) so the state update that mounts
-          // `<VFolderDeployModal>` (which suspends on its Relay query)
-          // runs inside `startTransition` — the page stays interactive
-          // instead of falling into its Suspense fallback. The button
-          // itself shows a loading spinner until the modal renders.
-          action: async () => {
-            onStartServiceFallback(vfolderId);
-          },
-        }
-      : null,
-    // Share (active folders only)
-    !isDeleted
-      ? {
-          key: 'share',
-          title: t('button.Share'),
-          icon: <BAIShareAltIcon />,
-          onClick: onShare,
-        }
-      : null,
-    // Move to trash (active folders only)
-    !isDeleted
-      ? {
-          key: 'delete',
-          title: t('data.folders.MoveToTrash'),
-          icon: <DeleteOutlined />,
-          type: 'danger' as const,
-          // TODO(needs-backend): V2 `VFolder` does not expose a per-user
-          // action permission (legacy `VirtualFolderNode.permissions` had
-          // `delete_vfolder`). `accessControl.permission` is a mount-level
-          // enum (RO/RW/RW_DELETE), not an entity-level action permission,
-          // so it cannot gate this button. Enable unconditionally and let
-          // the backend reject unauthorized requests until a proper field
-          // is exposed on `VFolder`.
-          disabled: isPipelineFolder,
-          disabledReason: isPipelineFolder
-            ? t('data.folders.CannotDeletePipelineFolder')
-            : t('data.folders.NoDeletePermission'),
-          popConfirm: {
+  const actions: Array<BAINameActionCellAstryxAction> =
+    filterOutNullAndUndefined([
+      // Start Service (model folders only, active only)
+      isModelFolder && !isDeleted
+        ? {
+            key: 'start-service',
+            title: t('modelService.DeployAsService'),
+            icon: <RocketIcon />,
+            // Use `action` (not `onClick`) so the state update that mounts
+            // `<VFolderDeployModal>` (which suspends on its Relay query)
+            // runs inside `startTransition` — the page stays interactive
+            // instead of falling into its Suspense fallback. The button
+            // itself shows a loading spinner until the modal renders.
+            action: async () => {
+              onStartServiceFallback(vfolderId);
+            },
+          }
+        : null,
+      // Share (active folders only)
+      !isDeleted
+        ? {
+            key: 'share',
+            title: t('button.Share'),
+            icon: <Share2Icon />,
+            onClick: onShare,
+          }
+        : null,
+      // Move to trash (active folders only)
+      !isDeleted
+        ? {
+            key: 'delete',
             title: t('data.folders.MoveToTrash'),
-            description: vfolder?.metadata?.name,
-            okText: t('button.Confirm'),
-            okButtonProps: { danger: true },
-            onConfirm: onDelete,
-          },
-        }
-      : null,
-    // Restore (deleted folders only)
-    isDeleted
-      ? {
-          key: 'restore',
-          title: t('data.folders.Restore'),
-          icon: <BAIRestoreIcon />,
-          disabled:
-            vfolder?.vfolderStatus !== 'DELETE_PENDING' || isPipelineFolder,
-          disabledReason: isPipelineFolder
-            ? t('data.folders.CannotRestorePipelineFolder')
-            : undefined,
-          popConfirm: {
+            icon: <TrashIcon />,
+            type: 'danger' as const,
+            // TODO(needs-backend): V2 `VFolder` does not expose a per-user
+            // action permission (legacy `VirtualFolderNode.permissions` had
+            // `delete_vfolder`). `accessControl.permission` is a mount-level
+            // enum (RO/RW/RW_DELETE), not an entity-level action permission,
+            // so it cannot gate this button. Enable unconditionally and let
+            // the backend reject unauthorized requests until a proper field
+            // is exposed on `VFolder`.
+            disabled: isPipelineFolder,
+            disabledReason: isPipelineFolder
+              ? t('data.folders.CannotDeletePipelineFolder')
+              : t('data.folders.NoDeletePermission'),
+            confirm: {
+              title: t('data.folders.MoveToTrash'),
+              description: vfolder?.metadata?.name ?? undefined,
+              confirmLabel: t('button.Confirm'),
+              cancelLabel: t('button.Cancel'),
+              onConfirm: onDelete,
+            },
+          }
+        : null,
+      // Restore (deleted folders only)
+      isDeleted
+        ? {
+            key: 'restore',
             title: t('data.folders.Restore'),
-            description: vfolder?.metadata?.name,
-            okText: t('button.Confirm'),
-            onConfirm: onRestore,
-          },
-        }
-      : null,
-    // Delete from trash bin (deleted folders only)
-    isDeleted
-      ? {
-          key: 'delete-forever',
-          title: t('data.folders.Delete'),
-          icon: <DeleteFilled />,
-          type: 'danger' as const,
-          disabled: vfolder?.vfolderStatus !== 'DELETE_PENDING',
-          onClick: onDeleteForever,
-        }
-      : null,
-  ]);
+            icon: <RotateCcwIcon />,
+            disabled:
+              vfolder?.vfolderStatus !== 'DELETE_PENDING' || isPipelineFolder,
+            disabledReason: isPipelineFolder
+              ? t('data.folders.CannotRestorePipelineFolder')
+              : undefined,
+            confirm: {
+              title: t('data.folders.Restore'),
+              description: vfolder?.metadata?.name ?? undefined,
+              confirmLabel: t('button.Confirm'),
+              cancelLabel: t('button.Cancel'),
+              onConfirm: onRestore,
+            },
+          }
+        : null,
+      // Delete from trash bin (deleted folders only)
+      isDeleted
+        ? {
+            key: 'delete-forever',
+            title: t('data.folders.Delete'),
+            icon: <Trash2Icon />,
+            type: 'danger' as const,
+            disabled: vfolder?.vfolderStatus !== 'DELETE_PENDING',
+            onClick: onDeleteForever,
+          }
+        : null,
+    ]);
 
   return (
     <BAINameActionCell
@@ -238,7 +255,10 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
         />
       }
       title={vfolder.metadata?.name}
-      to={generateFolderPath(vfolderId)}
+      to={`${folderPath.pathname}?${folderPath.search}`}
+      onTitleClick={() => {
+        navigate(folderPath);
+      }}
       actions={actions}
       showActions="always"
     />
@@ -292,16 +312,29 @@ const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
           : t('data.usage.Insufficient');
 
   return (
-    <BAIFlex gap={'xs'} align="center">
+    <HStack gap={2} align="center">
       {usage ? (
+        // Astryx Tooltip needs an interactive child (P8): the badge is
+        // wrapped in an unstyled button carrying the status as its name.
         <Tooltip
-          title={t('data.usage.HostStatusTooltip', { status: usageLabel })}
+          content={t('data.usage.HostStatusTooltip', { status: usageLabel })}
         >
-          <StorageUsageBadge percent={usagePercent} />
+          <button
+            type="button"
+            aria-label={usageLabel}
+            style={{
+              all: 'unset',
+              cursor: 'help',
+              display: 'inline-flex',
+              alignItems: 'center',
+            }}
+          >
+            <StorageUsageBadge percent={usagePercent} />
+          </button>
         </Tooltip>
       ) : null}
-      <Typography.Text>{host}</Typography.Text>
-    </BAIFlex>
+      <Text>{host}</Text>
+    </HStack>
   );
 };
 
@@ -391,30 +424,28 @@ interface HostQuotaModalProps {
 const HostQuotaModal: React.FC<HostQuotaModalProps> = ({ open, onCancel }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
+  // PILOT-DECISION: the antd modal put a help-tooltip icon INSIDE the title
+  // JSX; Astryx `DialogHeader.title` is a plain string (P2), so the help icon
+  // moves next to the body content instead.
   return (
-    <Modal
-      open={open}
-      onCancel={onCancel}
-      footer={null}
-      title={
-        <BAIFlex gap={'xs'} align="center">
-          {t('data.QuotaPerStorageVolume')}
-          <Tooltip title={t('data.HostDetails')}>
-            <QuestionCircleOutlined
-              style={{ color: token.colorTextDescription }}
-            />
-          </Tooltip>
-        </BAIFlex>
-      }
+    <BAIModal
+      isOpen={open}
+      onOpenChange={(next) => {
+        if (!next) onCancel();
+      }}
+      title={t('data.QuotaPerStorageVolume')}
       width={640}
-      destroyOnHidden
     >
-      <Suspense fallback={<Skeleton active />}>
-        <HostQuotaModalContent />
-      </Suspense>
-    </Modal>
+      <VStack align="stretch" gap={3}>
+        <HStack justify="end">
+          <BAIQuestionIconWithTooltip title={t('data.HostDetails')} />
+        </HStack>
+        <Suspense fallback={<BAISkeleton rows={3} />}>
+          <HostQuotaModalContent />
+        </Suspense>
+      </VStack>
+    </BAIModal>
   );
 };
 
@@ -434,7 +465,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
@@ -445,8 +475,8 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
 
   // Row-level hard-delete reuses the same modal as the bulk toolbar
   // (typed-input confirmation is required for irreversible deletion). Soft
-  // delete is handled inline via the row action's Popconfirm — no per-row
-  // state needed here.
+  // delete is handled inline via the row action's confirm popover — no
+  // per-row state needed here.
   const [purgingVFolders, setPurgingVFolders] = useState<
     Array<VFolderNodeInList>
   >([]);
@@ -548,15 +578,15 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
       node: vfolder?.notificationFrgmt ?? null,
       description: getErrorMessage(error).replace(/\(ids[\s\S]*$/, ''),
       extraDescription: !_.isEmpty(occupiedSession) ? (
-        <BAIFlex direction="column" align="stretch">
-          <Typography.Text style={{ color: token.colorTextDescription }}>
-            {t('data.folders.MountedSessions')}
-          </Typography.Text>
+        <VStack align="stretch">
+          <Text color="secondary">{t('data.folders.MountedSessions')}</Text>
           {_.map(occupiedSession, (sessionId) => (
-            <BAILink
+            <Link
               key={sessionId}
+              href="#"
               style={{ fontWeight: 'normal' }}
-              onClick={() => {
+              onClick={(e: React.MouseEvent) => {
+                e.preventDefault();
                 navigate({
                   pathname: buildProjectPath('session', { scope: 'project' }),
                   search: new URLSearchParams({
@@ -566,22 +596,20 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               }}
             >
               {sessionId}
-            </BAILink>
+            </Link>
           ))}
-        </BAIFlex>
+        </VStack>
       ) : null,
     });
   };
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         resizable
-        showSorterTooltip={false}
         rowKey={(record) => record.id}
         size="small"
         dataSource={filteredVFolders}
-        scroll={{ x: 'max-content' }}
         columns={[
           {
             key: 'name',
@@ -665,15 +693,10 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             dataIndex: 'vfolderStatus',
             render: (status: string) => {
               return (
-                <BAITag
-                  color={
-                    status
-                      ? statusTagColor[status as keyof typeof statusTagColor]
-                      : undefined
-                  }
-                >
-                  {status}
-                </BAITag>
+                <Badge
+                  variant={badgeVariantForStatus('vfolder', status)}
+                  label={status}
+                />
               );
             },
             sorter: isEnableSorter('status'),
@@ -681,12 +704,12 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           {
             key: 'host',
             title: (
-              <BAIFlex gap={'xs'} align="center">
+              <HStack gap={2} align="center">
                 {t('data.Host')}
                 <HostQuotaTrigger
                   onOpen={() => setIsHostQuotaModalOpen(true)}
                 />
-              </BAIFlex>
+              </HStack>
             ),
             dataIndex: 'host',
             render: (host: string | null | undefined) => (
@@ -711,17 +734,15 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             dataIndex: ['accessControl', 'ownershipType'],
             render: (type: string) => {
               return type === 'USER' ? (
-                <BAIFlex gap={'xs'}>
-                  <Typography.Text>{t('data.User')}</Typography.Text>
-                  <UserOutlined style={{ color: token.colorTextTertiary }} />
-                </BAIFlex>
+                <HStack gap={2}>
+                  <Text>{t('data.User')}</Text>
+                  <UserIcon size="1em" />
+                </HStack>
               ) : (
-                <BAIFlex gap={'xs'}>
-                  <Typography.Text>{t('data.Project')}</Typography.Text>
-                  <BAIUserUnionIcon
-                    style={{ color: token.colorTextTertiary }}
-                  />
-                </BAIFlex>
+                <HStack gap={2}>
+                  <Text>{t('data.Project')}</Text>
+                  <UsersIcon size="1em" />
+                </HStack>
               );
             },
             // V2 `VFolderOrderField` does not expose ownership_type.
@@ -807,7 +828,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             // V2 `VFolderOrderField` does not expose quota_scope_id.
             sorter: isEnableSorter('quota_scope_id'),
             render: (value: string) =>
-              value ? <BAIText copyable>{value}</BAIText> : '-',
+              value ? <BAICopyableText>{value}</BAICopyableText> : '-',
           },
           {
             key: 'last_used',
@@ -861,10 +882,10 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
       {/* Local Suspense around the lazily-mounted modal so its initial
           `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
           Suspense fallback and blank the data page. The mount is triggered
-          from a `BAINameActionCell` action (transition), but
-          `BAIUnmountAfterClose` defers the mount via `useLayoutEffect` —
-          that state update is no longer inside the transition, so we still
-          need an explicit Suspense boundary here. */}
+          from a name-cell action (transition), but `BAIUnmountAfterClose`
+          defers the mount via `useLayoutEffect` — that state update is no
+          longer inside the transition, so we still need an explicit Suspense
+          boundary here. */}
       <Suspense fallback={null}>
         <BAIUnmountAfterClose>
           <VFolderDeployModal

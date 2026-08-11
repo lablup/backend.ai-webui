@@ -1,0 +1,276 @@
+{
+  "phase": "after",
+  "banner": {
+    "light": {
+      "appliedTheme": "light",
+      "geometry": {
+        "headerAlignItems": "flex-start",
+        "root": {
+          "x": 264,
+          "y": 120,
+          "w": 1312,
+          "h": 117.9,
+          "cy": 178.9
+        },
+        "icon": {
+          "x": 280,
+          "y": 132,
+          "w": 20,
+          "h": 20,
+          "cy": 142
+        },
+        "content": {
+          "x": 308,
+          "y": 132,
+          "w": 1146,
+          "h": 93.9,
+          "cy": 178.9
+        },
+        "end": {
+          "x": 1454,
+          "y": 128,
+          "w": 106,
+          "h": 24,
+          "cy": 140
+        },
+        "endLabels": [
+          "Edit",
+          "Dismiss"
+        ],
+        "contentSlots": [
+          {
+            "x": 308,
+            "y": 132,
+            "w": 1146,
+            "h": 0,
+            "cy": 132,
+            "fontSize": "14px",
+            "color": "rgb(0, 69, 140)",
+            "len": 0,
+            "head": ""
+          },
+          {
+            "x": 308,
+            "y": 132,
+            "w": 1146,
+            "h": 93.9,
+            "cy": 178.9,
+            "fontSize": "12px",
+            "color": "rgb(0, 69, 140)",
+            "len": 19,
+            "head": "adlfjkasdfasdfhello"
+          }
+        ],
+        "endOffsetBelowContentTop": 0
+      }
+    },
+    "dark": {
+      "appliedTheme": "dark",
+      "geometry": {
+        "headerAlignItems": "flex-start",
+        "root": {
+          "x": 264,
+          "y": 120,
+          "w": 1312,
+          "h": 117.9,
+          "cy": 178.9
+        },
+        "icon": {
+          "x": 280,
+          "y": 132,
+          "w": 20,
+          "h": 20,
+          "cy": 142
+        },
+        "content": {
+          "x": 308,
+          "y": 132,
+          "w": 1146,
+          "h": 93.9,
+          "cy": 178.9
+        },
+        "end": {
+          "x": 1454,
+          "y": 128,
+          "w": 106,
+          "h": 24,
+          "cy": 140
+        },
+        "endLabels": [
+          "Edit",
+          "Dismiss"
+        ],
+        "contentSlots": [
+          {
+            "x": 308,
+            "y": 132,
+            "w": 1146,
+            "h": 0,
+            "cy": 132,
+            "fontSize": "14px",
+            "color": "rgb(199, 211, 255)",
+            "len": 0,
+            "head": ""
+          },
+          {
+            "x": 308,
+            "y": 132,
+            "w": 1146,
+            "h": 93.9,
+            "cy": 178.9,
+            "fontSize": "12px",
+            "color": "rgb(199, 211, 255)",
+            "len": 19,
+            "head": "adlfjkasdfasdfhello"
+          }
+        ],
+        "endOffsetBelowContentTop": 0
+      }
+    }
+  },
+  "createFolder": {
+    "triggerFound": 1,
+    "url": "https://to-astryx.backend-ai-webui.localhost:1357/project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/data",
+    "light": {
+      "formW": 562,
+      "items": [
+        {
+          "label": "Usage Mode",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 597,
+          "gapBeforeText": 0,
+          "gapAfterText": 109.3
+        },
+        {
+          "label": "Folder name",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 598,
+          "gapBeforeText": 0,
+          "gapAfterText": 108.3
+        },
+        {
+          "label": "Location",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 574,
+          "gapBeforeText": 0,
+          "gapAfterText": 132.3
+        },
+        {
+          "label": "Type",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 550,
+          "gapBeforeText": 0,
+          "gapAfterText": 156.3
+        },
+        {
+          "label": "Mount Permission",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 634,
+          "gapBeforeText": 0,
+          "gapAfterText": 72.3
+        }
+      ]
+    },
+    "dark": {
+      "formW": 562,
+      "items": [
+        {
+          "label": "Usage Mode",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 597,
+          "gapBeforeText": 0,
+          "gapAfterText": 109.3
+        },
+        {
+          "label": "Folder name",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 598,
+          "gapBeforeText": 0,
+          "gapAfterText": 108.3
+        },
+        {
+          "label": "Location",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 574,
+          "gapBeforeText": 0,
+          "gapAfterText": 132.3
+        },
+        {
+          "label": "Type",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 550,
+          "gapBeforeText": 0,
+          "gapAfterText": 156.3
+        },
+        {
+          "label": "Mount Permission",
+          "labelColPct": 33.3,
+          "labelColX": 519,
+          "labelColW": 187.3,
+          "dataAlign": "left",
+          "textAlign": "start",
+          "controlColX": 706.3,
+          "textX": 519,
+          "textRight": 634,
+          "gapBeforeText": 0,
+          "gapAfterText": 72.3
+        }
+      ]
+    }
+  },
+  "pageErrors": []
+}

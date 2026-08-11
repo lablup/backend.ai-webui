@@ -1,0 +1,23 @@
+{
+  "light-rgSettingModal": {
+    "dialogs": 1,
+    "spinbuttons": 5,
+    "unitsText": 6
+  },
+  "light-domainStep": "TimeoutError: locator.click: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('table tbody tr').first().locator('a, [role=\"button\"]').fi",
+  "light-weightModal": {
+    "dialogs": 1,
+    "spinbuttons": 5
+  },
+  "dark-rgSettingModal": {
+    "dialogs": 1,
+    "spinbuttons": 5,
+    "unitsText": 6
+  },
+  "dark-domainStep": "TimeoutError: locator.click: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('table tbody tr').first().locator('a, [role=\"button\"]').fi",
+  "dark-weightModal": {
+    "dialogs": 1,
+    "spinbuttons": 5
+  },
+  "pageErrors": []
+}

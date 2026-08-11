@@ -8,10 +8,12 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { SessionResources } from '../pages/SessionLauncherPage';
 import { EnvironmentImage } from './ImageList';
-import { List, Typography } from 'antd';
+import { List, ListItem } from '@astryxdesign/core/List';
+import { Pagination } from '@astryxdesign/core/Pagination';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ImageInstallModalInterface extends BAIModalProps {
@@ -29,6 +31,10 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification } = useSetBAINotification();
   const painKiller = usePainKiller();
+  // antd List `pagination` -> standalone Astryx Pagination (MAPPING.md §4
+  // List: built-in pagination has no destination); page size 5 as before.
+  const [listPage, setListPage] = useState(1);
+  const LIST_PAGE_SIZE = 5;
   if (!modalProps.open) return null;
 
   const mapImages = () => {
@@ -174,35 +180,48 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         {hasInstalledImage ? t('environment.InstalledImagesAreExcluded') : null}
         <BAIFlex
           direction="column"
-          align="start"
+          align="stretch"
           style={{
             width: '100%',
           }}
         >
-          <List
-            size="small"
-            dataSource={imagesToInstall.map(
+          {(() => {
+            const imageNames = imagesToInstall.map(
               (image) =>
                 `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`,
-            )}
-            style={{
-              width: '100%',
-            }}
-            renderItem={(item) => (
-              <List.Item>
-                <Typography.Text strong>{item}</Typography.Text>
-              </List.Item>
-            )}
-            pagination={{
-              pageSize: 5,
-              showTotal: (total) => t('general.TotalItems', { total }),
-            }}
-          />
+            );
+            const pagedNames = imageNames.slice(
+              (listPage - 1) * LIST_PAGE_SIZE,
+              listPage * LIST_PAGE_SIZE,
+            );
+            return (
+              <>
+                <List density="compact" hasDividers>
+                  {pagedNames.map((item) => (
+                    <ListItem key={item} label={item} />
+                  ))}
+                </List>
+                {imageNames.length > LIST_PAGE_SIZE ? (
+                  // PILOT-DECISION: antd's `showTotal` ("Total N items")
+                  // becomes Pagination variant="count" (x-y of N) —
+                  // equivalent information, Astryx's own phrasing.
+                  <Pagination
+                    page={listPage}
+                    onChange={setListPage}
+                    totalItems={imageNames.length}
+                    pageSize={LIST_PAGE_SIZE}
+                    variant="count"
+                    size="sm"
+                  />
+                ) : null}
+              </>
+            );
+          })()}
         </BAIFlex>
-        <Typography.Text>
+        <Text>
           {t('environment.DescSignificantInstallTime')}&nbsp;
           {t('dialog.ask.DoYouWantToProceed')}
-        </Typography.Text>
+        </Text>
       </BAIFlex>
     </BAIModal>
   );

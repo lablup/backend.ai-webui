@@ -1,0 +1,71 @@
+{
+  "sessionOwner": [
+    {
+      "text": "a한국어가능_cde",
+      "imgs": 0
+    },
+    {
+      "text": "Select…",
+      "imgs": 0
+    },
+    {
+      "text": "Select…",
+      "imgs": 0
+    },
+    {
+      "text": "Select…",
+      "imgs": 0
+    }
+  ],
+  "envSearch": {
+    "afterTyping": {
+      "optionCount": 2,
+      "markCount": 0,
+      "imgs": 2,
+      "texts": [
+        "Pythonmultiarch",
+        "Python"
+      ]
+    },
+    "filterValueTerm": {
+      "optionCount": 1,
+      "text": "LanguagePythonmultiarch"
+    }
+  },
+  "theme": "dark",
+  "darkEnvTrigger": {
+    "text": "Python Python\tmultiarch",
+    "color": "rgb(255, 255, 255)",
+    "imgs": 0
+  },
+  "tokenizer": {
+    "found": 1,
+    "placeholder": "Search…",
+    "ariaLabel": null,
+    "afterComma": {
+      "tokenTexts": [
+        "8080",
+        "8080"
+      ],
+      "inputValue": ""
+    },
+    "afterSpace": {
+      "tokenTexts": [
+        "80809090",
+        "8080",
+        "9090"
+      ],
+      "inputValue": ""
+    },
+    "afterEnter": {
+      "tokenTexts": [
+        "808090907070",
+        "8080",
+        "9090",
+        "7070"
+      ],
+      "inputValue": ""
+    }
+  },
+  "pageErrors": []
+}

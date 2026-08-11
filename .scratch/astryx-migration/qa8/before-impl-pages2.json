@@ -1,0 +1,525 @@
+{
+  "phase": "before",
+  "D": {
+    "url": "https://to-astryx.backend-ai-webui.localhost:1357/admin/rbac",
+    "rowNames": [
+      "project-c1c80fc9-memberproject-c1c80fc9-",
+      "preset_project_adminpreset_project_admin",
+      "project-c1c80fc9-adminproject-c1c80fc9-a",
+      "preset_project_memberpreset_project_memb",
+      "preset_project_memberpreset_project_memb",
+      "preset_project_adminpreset_project_admin",
+      "project-85a721b9-memberproject-85a721b9-",
+      "project-85a721b9-adminproject-85a721b9-a",
+      "user-463da6acDeactivateDeactivate Roleus",
+      "preset_userDeactivateDeactivate Rolepres"
+    ],
+    "openedA": {
+      "present": true,
+      "drawerCount": 2,
+      "openAttr": true,
+      "rect": {
+        "x": 800,
+        "w": 800,
+        "h": 1000
+      },
+      "transform": "matrix(1, 0, 0, 1, 0, 0)",
+      "opacity": "1",
+      "visibility": "visible",
+      "title": "project-c1c80fc9-memberbutton.Copy",
+      "bodyLen": 342,
+      "bodyHead": "SourceSystemStatusActiveCreated At2026-07-30 08:11:33Updated At2026-07"
+    },
+    "exitSamples": [
+      {
+        "t": 0,
+        "present": true,
+        "drawerCount": 2,
+        "openAttr": true,
+        "rect": {
+          "x": 800,
+          "w": 800,
+          "h": 1000
+        },
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "project-c1c80fc9-memberbutton.Copy",
+        "bodyLen": 342,
+        "bodyHead": "SourceSystemStatusActiveCreated At2026-07-30 08:11:33Updated At2026-07"
+      },
+      {
+        "t": 64,
+        "present": true,
+        "drawerCount": 2,
+        "openAttr": true,
+        "rect": {
+          "x": 800,
+          "w": 800,
+          "h": 1000
+        },
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "project-c1c80fc9-memberbutton.Copy",
+        "bodyLen": 342,
+        "bodyHead": "SourceSystemStatusActiveCreated At2026-07-30 08:11:33Updated At2026-07"
+      },
+      {
+        "t": 125,
+        "present": true,
+        "drawerCount": 2,
+        "openAttr": true,
+        "rect": {
+          "x": 800,
+          "w": 800,
+          "h": 1000
+        },
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "project-c1c80fc9-memberbutton.Copy",
+        "bodyLen": 342,
+        "bodyHead": "SourceSystemStatusActiveCreated At2026-07-30 08:11:33Updated At2026-07"
+      },
+      {
+        "t": 182,
+        "present": true,
+        "drawerCount": 2,
+        "openAttr": true,
+        "rect": {
+          "x": 800,
+          "w": 800,
+          "h": 1000
+        },
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "RBAC Role Infobutton.Copy",
+        "bodyLen": 0,
+        "bodyHead": ""
+      },
+      {
+        "t": 464,
+        "present": true,
+        "drawerCount": 2,
+        "openAttr": true,
+        "rect": {
+          "x": 800,
+          "w": 800,
+          "h": 1000
+        },
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "RBAC Role Infobutton.Copy",
+        "bodyLen": 0,
+        "bodyHead": ""
+      },
+      {
+        "t": 565,
+        "present": true,
+        "drawerCount": 2,
+        "openAttr": true,
+        "rect": {
+          "x": 800,
+          "w": 800,
+          "h": 1000
+        },
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "RBAC Role Infobutton.Copy",
+        "bodyLen": 0,
+        "bodyHead": ""
+      },
+      {
+        "t": 628,
+        "present": true,
+        "drawerCount": 2,
+        "openAttr": true,
+        "rect": {
+          "x": 800,
+          "w": 800,
+          "h": 1000
+        },
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "opacity": "1",
+        "visibility": "visible",
+        "title": "RBAC Role Infobutton.Copy",
+        "bodyLen": 0,
+        "bodyHead": ""
+      },
+      {
+        "t": 689,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 773,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 875,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 977,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 1032,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 1088,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 1142,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 1209,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 1266,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 1321,
+        "present": false,
+        "drawerCount": 2
+      },
+      {
+        "t": 1392,
+        "present": false,
+        "drawerCount": 2
+      }
+    ],
+    "emptyWhileOpenFrames": 4,
+    "firstEmptyBodyAt": 182,
+    "firstFallbackTitleAt": null,
+    "firstSlideAt": null,
+    "afterClose": {
+      "present": false,
+      "drawerCount": 2
+    },
+    "roleBAt300ms": {
+      "present": true,
+      "drawerCount": 2,
+      "openAttr": true,
+      "rect": {
+        "x": 800,
+        "w": 800,
+        "h": 1000
+      },
+      "transform": "matrix(1, 0, 0, 1, 0, 0)",
+      "opacity": "1",
+      "visibility": "visible",
+      "title": "project-c1c80fc9-adminbutton.Copy",
+      "bodyLen": 342,
+      "bodyHead": "SourceSystemStatusActiveCreated At2026-07-30 08:11:33Updated At2026-07"
+    },
+    "roleBSettled": {
+      "present": true,
+      "drawerCount": 2,
+      "openAttr": true,
+      "rect": {
+        "x": 800,
+        "w": 800,
+        "h": 1000
+      },
+      "transform": "matrix(1, 0, 0, 1, 0, 0)",
+      "opacity": "1",
+      "visibility": "visible",
+      "title": "project-c1c80fc9-adminbutton.Copy",
+      "bodyLen": 342,
+      "bodyHead": "SourceSystemStatusActiveCreated At2026-07-30 08:11:33Updated At2026-07"
+    },
+    "roleATitle": "project-c1c80fc9-memberbutton.Copy",
+    "roleBDiffersFromA": true,
+    "afterCloseB": {
+      "present": false,
+      "drawerCount": 2
+    }
+  },
+  "F": {
+    "triggerFound": 1,
+    "registrySection": {
+      "found": true,
+      "controlCol": {
+        "role": "control col",
+        "tag": "div",
+        "cls": "",
+        "rect": {
+          "x": 564,
+          "y": 916,
+          "w": 472,
+          "h": 64
+        },
+        "display": "flex",
+        "width": "472px",
+        "marginRight": "0px",
+        "minWidth": "0px"
+      },
+      "fields": [
+        {
+          "role": "field 0",
+          "tag": "div",
+          "cls": "astryx-field x78zum5 xdt5ytf x5lhr3w",
+          "rect": {
+            "x": 564,
+            "y": 916,
+            "w": 228,
+            "h": 32
+          },
+          "display": "flex",
+          "width": "228px",
+          "marginRight": "0px",
+          "minWidth": "0px"
+        },
+        {
+          "role": "field 1",
+          "tag": "div",
+          "cls": "astryx-field x78zum5 xdt5ytf x5lhr3w",
+          "rect": {
+            "x": 564,
+            "y": 948,
+            "w": 228,
+            "h": 32
+          },
+          "display": "flex",
+          "width": "228px",
+          "marginRight": "0px",
+          "minWidth": "0px"
+        }
+      ],
+      "inputs": [
+        {
+          "role": "input 0",
+          "tag": "input",
+          "cls": "x1lliihq x98rzlu xeuugli xc342km xng3xce x1717udv x9ynric xj",
+          "rect": {
+            "x": 573,
+            "y": 921,
+            "w": 202,
+            "h": 22
+          },
+          "display": "block",
+          "width": "202px",
+          "marginRight": "0px",
+          "minWidth": "0px",
+          "placeholder": "Registry"
+        },
+        {
+          "role": "input 1",
+          "tag": "input",
+          "cls": "x1lliihq x98rzlu xeuugli xc342km xng3xce x1717udv x9ynric xj",
+          "rect": {
+            "x": 573,
+            "y": 953,
+            "w": 210,
+            "h": 22
+          },
+          "display": "block",
+          "width": "210px",
+          "marginRight": "0px",
+          "minWidth": "0px",
+          "placeholder": "Project"
+        }
+      ],
+      "fieldDeltaY": 32,
+      "sameRow": false,
+      "overflowPx": -244
+    }
+  },
+  "G": {
+    "triggerFound": 1,
+    "rest": {
+      "menuW": 0,
+      "menuH": 0,
+      "menuOpen": false,
+      "popoverOpen": false,
+      "ariaExpanded": "false"
+    },
+    "clickTimeline": [
+      {
+        "t": 0,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 46,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "false"
+      },
+      {
+        "t": 197,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 363,
+        "menuW": 0,
+        "menuH": 0,
+        "menuOpen": false,
+        "popoverOpen": false,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 465,
+        "menuW": 0,
+        "menuH": 0,
+        "menuOpen": false,
+        "popoverOpen": false,
+        "ariaExpanded": "false"
+      },
+      {
+        "t": 618,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 716,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 835,
+        "menuW": 0,
+        "menuH": 0,
+        "menuOpen": false,
+        "popoverOpen": false,
+        "ariaExpanded": "false"
+      },
+      {
+        "t": 931,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 1042,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 1172,
+        "menuW": 0,
+        "menuH": 0,
+        "menuOpen": false,
+        "popoverOpen": false,
+        "ariaExpanded": "false"
+      },
+      {
+        "t": 1259,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 1343,
+        "menuW": 0,
+        "menuH": 0,
+        "menuOpen": false,
+        "popoverOpen": false,
+        "ariaExpanded": "false"
+      },
+      {
+        "t": 1524,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 1626,
+        "menuW": 0,
+        "menuH": 0,
+        "menuOpen": false,
+        "popoverOpen": false,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 1764,
+        "menuW": 0,
+        "menuH": 0,
+        "menuOpen": false,
+        "popoverOpen": false,
+        "ariaExpanded": "true"
+      },
+      {
+        "t": 1906,
+        "menuW": 143,
+        "menuH": 72,
+        "menuOpen": true,
+        "popoverOpen": true,
+        "ariaExpanded": "true"
+      }
+    ],
+    "afterClickSettled": {
+      "menuW": 0,
+      "menuH": 0,
+      "menuOpen": false,
+      "popoverOpen": false,
+      "ariaExpanded": "true"
+    },
+    "openedAtAnyPoint": true,
+    "stillOpenAt2s": false,
+    "afterSecondClick": {
+      "menuW": 0,
+      "menuH": 0,
+      "menuOpen": false,
+      "popoverOpen": false,
+      "ariaExpanded": "false"
+    },
+    "afterEnter": {
+      "menuW": 143,
+      "menuH": 72,
+      "menuOpen": true,
+      "popoverOpen": true,
+      "ariaExpanded": "true"
+    },
+    "afterEscape": {
+      "menuW": 0,
+      "menuH": 0,
+      "menuOpen": false,
+      "popoverOpen": false,
+      "ariaExpanded": "false"
+    }
+  },
+  "pageErrors": []
+}

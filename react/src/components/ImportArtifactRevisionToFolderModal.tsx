@@ -5,23 +5,27 @@
 import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
 import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
 import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import FolderCreateModalV2 from './FolderCreateModalV2';
-import { useToggle } from 'ahooks';
-import { Alert, App, Form, FormInstance, Popconfirm, theme } from 'antd';
+import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
 import {
   BAIButton,
-  BAIModalProps,
-  BAIVFolderSelectRef,
-  BAIModal,
   BAIFlex,
-  BAIVFolderSelect,
-  toGlobalId,
+  BAIModal,
+  BAIModalProps,
+  BAIVFolderSelectAstryx,
+  BAIVFolderSelectAstryxRef,
   convertToUUID,
-  useBAILogger,
-  toLocalId,
   mergeFilterValues,
+  toGlobalId,
+  toLocalId,
+  useBAILogger,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
@@ -66,7 +70,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const formRef =
     useRef<FormInstance<ImportArtifactRevisionToFolderModalInput>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isOpenCreateModal, { toggle: toggleIsOpenCreateModal }] =
     useToggle(false);
 
@@ -235,10 +239,11 @@ const ImportArtifactRevisionToFolderModal = ({
           validateTrigger={['onChange', 'onBlur']}
         >
           <BAIFlex direction="column" align="stretch">
-            <Alert
-              type="warning"
+            {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`,
+                `showIcon` dropped (Banner always renders its status icon). */}
+            <Banner
+              status="warning"
               title={t('importArtifactRevisionToFolderModal.OverwriteWarning')}
-              showIcon
               style={{ marginBottom: token.marginMD }}
             />
             <Form.Item
@@ -254,8 +259,12 @@ const ImportArtifactRevisionToFolderModal = ({
             >
               <BAIFlex gap="xs" align="center">
                 <Form.Item name="vfolderId" noStyle>
-                  <BAIVFolderSelect
+                  <BAIVFolderSelectAstryx
                     ref={vfolderSelectRef}
+                    label={t(
+                      'importArtifactRevisionToFolderModal.FolderMountForModelStore',
+                    )}
+                    isLabelHidden
                     excludeDeleted
                     // model-store-exclusive project folders only
                     filter={mergeFilterValues([
@@ -274,7 +283,12 @@ const ImportArtifactRevisionToFolderModal = ({
                     }}
                   />
                 ) : (
-                  <Popconfirm
+                  // antd `Popconfirm` → `BAIPopconfirmAstryx` (MAPPING §2
+                  // "NONE" → Popover + buttons). Switching the current project
+                  // is reversible, so it stays in the anchored-confirmation
+                  // tier rather than escalating to an AlertDialog
+                  // (`.claude/rules/destructive-confirmation.md`).
+                  <BAIPopconfirm
                     title={t(
                       'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
                     )}
@@ -311,7 +325,7 @@ const ImportArtifactRevisionToFolderModal = ({
                     }}
                   >
                     <BAIButton icon={<PlusIcon />} />
-                  </Popconfirm>
+                  </BAIPopconfirm>
                 )}
               </BAIFlex>
             </Form.Item>

@@ -1,0 +1,162 @@
+{
+  "clusterModeBlock": {
+    "labelTag": "LABEL",
+    "labelCls": "",
+    "labelRect": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "holderTag": "DIV",
+    "holderHTML": "<div class=\"astryx-stack vertical gap-4 x78zum5 xdt5ytf xty4p9g xtx9w7w x1qjc9v5\" data-direction=\"vertical\" data-gap=\"4\"><h5 class=\"astryx-heading level-5 primary x1tgivj0 xsgqta0 xo3gurs xno150v x1lliihq\" data-level=\"5\" data-color=\"primary\">Resource Allocation</h5><div data-bai-form-item=\"\" data-layout=\"vertical\" style=\"margin-bottom: var(--bai-form-item-margin-bottom, var(--spacing-6, 24px));\"><div data-bai-form-item-row=\"\"><div data-bai-form-item-label-col=\"\"><label for=\"resourceGroup\" data-bai-form-item-label=\"\" data-bai-form-item-required=\"\" data-required-mark=\"optional\" title=\"Resource Group\" style=\"color: var(--bai-form-item-label-color, var(--color-text-primary, rgba(0,0,0,0.88))); font-size: var(--bai-form-item-label-font-size, var(--font-size-base, 14px)); height: auto;\">Resource Group</label></div><div data-bai-form-item-control=\"\"><div data-bai-form-item-control-input=\"\" style=\"min-height: 32px;\"><div data-bai-form-item-control-input-content=\"\"><div class=\"astryx-field x78zum5 xdt5ytf\"><label for=\"_r_1gf_\" class=\"astryx-field-label x78zum5 x6s0dn4 xzye2dw x9ynric xcr08ib x1kq96og x1e4wzip xv1l7n4 x1ypdohk xng3xce xzpqnlu xjm9jq1 x1o0tod xkdpibf xb3r6kr x1717udv x47corl x10l6tqk x13vifvy x87ps6o xuxw1ft x1i1rx1s\">Select</label><div class=\"x78zum5 xdt5ytf xc8icb0\"><div class=\"astryx-selector input md x9f619 x1vjfegm x1litavf x1y0btm7 xvy26l8 x6q1khz x1832zxr xvdfih8 x10xzikg x12zzom9 xuedmi6 x12w9bfk xlr8y92 x1gnnqk1 x12y27fx xuihb5h x1a2a7pz x1n2onr6 x78zum5 x6s0dn4 x1qughib x1txdalj xh8yej3 xce4md1 xrrkdod x9ynric xcr08ib xdk3u5w x1kq96og x1tgivj0 x1ypdohk x1ueg"
+  },
+  "launcherSelectors": [
+    {
+      "idx": 0,
+      "label": null,
+      "triggerText": "a한국어가능_cde",
+      "trigger": {
+        "x": 345,
+        "y": 19,
+        "w": 102,
+        "h": 22,
+        "top": 19,
+        "bottom": 41
+      },
+      "labelRect": null,
+      "fieldRect": {
+        "x": 332,
+        "y": 14,
+        "w": 152,
+        "h": 32,
+        "top": 14,
+        "bottom": 46
+      },
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "4px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_1l8_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 0,
+        "selectedText": null,
+        "selectedRect": null,
+        "zIndexAndPos": "fixed / auto"
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversLabel": false,
+        "panelTopMinusTriggerBottom": -41,
+        "selectedCyMinusTriggerCy": null
+      }
+    }
+  ],
+  "dataSelectors": [
+    {
+      "idx": 0,
+      "label": null,
+      "triggerText": "a한국어가능_cde",
+      "trigger": {
+        "x": 345,
+        "y": 19,
+        "w": 102,
+        "h": 22,
+        "top": 19,
+        "bottom": 41
+      },
+      "labelRect": null,
+      "fieldRect": {
+        "x": 332,
+        "y": 14,
+        "w": 152,
+        "h": 32,
+        "top": 14,
+        "bottom": 46
+      },
+      "panel": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0,
+          "top": 0,
+          "bottom": 0
+        },
+        "marginBlockStart": "0px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_5p_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;",
+        "hasSearchInput": false,
+        "optionCount": 3,
+        "selectedText": "10",
+        "selectedRect": {
+          "y": 0,
+          "h": 0,
+          "cy": 0
+        },
+        "zIndexAndPos": "fixed / auto"
+      },
+      "verdict": {
+        "panelCoversTrigger": false,
+        "panelCoversLabel": false,
+        "panelTopMinusTriggerBottom": -41,
+        "selectedCyMinusTriggerCy": -30
+      }
+    },
+    {
+      "idx": 1,
+      "label": null,
+      "triggerText": "10",
+      "trigger": {
+        "x": 1349,
+        "y": 561,
+        "w": 30,
+        "h": 22,
+        "top": 561,
+        "bottom": 583
+      },
+      "labelRect": null,
+      "fieldRect": {
+        "x": 1336,
+        "y": 560,
+        "w": 80,
+        "h": 24,
+        "top": 560,
+        "bottom": 584
+      },
+      "panel": {
+        "rect": {
+          "x": 1336,
+          "y": 554,
+          "w": 80,
+          "h": 98,
+          "top": 554,
+          "bottom": 652
+        },
+        "marginBlockStart": "-29.9844px",
+        "inlineStyle": "position-anchor: --astryx-layer-_r_5p_; position-area: self-block-end span-self-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline; margin-block-start: -29.9844px;",
+        "hasSearchInput": false,
+        "optionCount": 3,
+        "selectedText": "10",
+        "selectedRect": {
+          "y": 558,
+          "h": 30,
+          "cy": 573
+        },
+        "zIndexAndPos": "fixed / auto"
+      },
+      "verdict": {
+        "panelCoversTrigger": true,
+        "panelCoversLabel": false,
+        "panelTopMinusTriggerBottom": -29,
+        "selectedCyMinusTriggerCy": 1
+      }
+    }
+  ],
+  "pageErrors": []
+}

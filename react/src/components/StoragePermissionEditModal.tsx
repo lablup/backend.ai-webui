@@ -2,34 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import {
   PERMISSION_DISPLAY_MAP,
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
-import { App, Checkbox, Divider, Tooltip, Typography, theme } from 'antd';
-import { createStyles } from 'antd-style';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import {
+  CheckboxList,
+  CheckboxListItem,
+} from '@astryxdesign/core/CheckboxList';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// `.ant-modal-title` shrinks to its content by default, so an inner flex's
-// `width: 100%` resolves against a content-sized parent and the title grows
-// past the modal instead of truncating. Forcing the title to fill the header
-// gives the inner flex a definite width so the name ellipsizes (same fix as
-// FolderExplorerModalV2). `padding-inline-end` then reserves room for the
-// absolutely-positioned close (X) button so the trailing `)` never collides
-// with it.
-const useStyles = createStyles(({ css, token }) => ({
-  modalHeader: css`
-    .ant-modal-title {
-      width: 100%;
-      padding-inline-end: ${token.marginXL}px;
-    }
-  `,
-}));
-
+// to-astryx phase 3 / ticket B: the co-located `.ant-modal-title` override is
+// gone with the antd modal. Astryx's `DialogHeader` already gives the title
+// slot `flex: 1; min-width: 0` beside a laid-out (not absolutely positioned)
+// close button, so the inner flex has a definite width and the name ellipsizes
+// without any scoped CSS.
 /**
  * One entity whose permissions are being edited. `id` is the opaque key the
  * caller uses to fan out the save (domain name / project gid / KRP name);
@@ -73,8 +68,6 @@ const StoragePermissionEditModal: React.FC<Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { message, modal } = App.useApp();
 
   // Single target → prefill its current permissions. Bulk (multiple targets)
@@ -140,10 +133,10 @@ const StoragePermissionEditModal: React.FC<Props> = ({
       title
     ) : (
       <BAIFlex align="center" style={{ width: '100%', minWidth: 0 }}>
-        <Typography.Text style={{ flexShrink: 0 }}>
+        <Text style={{ flexShrink: 0 }}>
           {`${t('storageHost.permission.EditPermissionsAction')} (`}
-        </Typography.Text>
-        <Tooltip title={targets[0]?.name}>
+        </Text>
+        <Tooltip content={targets[0]?.name}>
           <span
             style={{
               flex: '0 1 auto',
@@ -156,14 +149,14 @@ const StoragePermissionEditModal: React.FC<Props> = ({
             {targets[0]?.name}
           </span>
         </Tooltip>
-        <Typography.Text style={{ flexShrink: 0 }}>{')'}</Typography.Text>
+        <Text style={{ flexShrink: 0 }}>{')'}</Text>
       </BAIFlex>
     );
 
   return (
     <BAIModal
       {...baiModalProps}
-      className={styles.modalHeader}
+      className="storage-permission-edit-modal-header"
       title={resolvedTitle}
       open={open}
       destroyOnHidden
@@ -175,42 +168,43 @@ const StoragePermissionEditModal: React.FC<Props> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="xs">
         <BAIFlex justify="between" align="center">
-          <Checkbox
-            indeterminate={indeterminate}
-            checked={allSelected}
-            onChange={(e: CheckboxChangeEvent) => {
-              setEditedKeys(e.target.checked ? [...permissionKeys] : []);
+          {/* MAPPING §4: `checked` -> `value`, `indeterminate` ->
+              `value="indeterminate"`, `onChange(e)` -> `onChange(checked, e)`,
+              and the children become the required `label` string. */}
+          <CheckboxInput
+            label={t('storageHost.permission.All')}
+            value={indeterminate ? 'indeterminate' : allSelected}
+            onChange={(checked) => {
+              setEditedKeys(checked ? [...permissionKeys] : []);
             }}
-          >
-            {t('storageHost.permission.All')}
-          </Checkbox>
-          <Typography.Text type="secondary">
+          />
+          <Text color="secondary">
             {selectedCount} / {totalCount}
-          </Typography.Text>
+          </Text>
         </BAIFlex>
-        <Divider style={{ margin: 0 }} />
-        <Typography.Text
-          type="secondary"
-          style={{ fontSize: token.fontSizeSM }}
-        >
-          {t('storageHost.permission.Permissions')}
-        </Typography.Text>
-        <Checkbox.Group
+        <Divider />
+        {/* `Checkbox.Group` -> `CheckboxList`, whose required `label` is the
+            heading this section used to render as a separate `Text` — so the
+            heading IS the group's accessible name now instead of a
+            visually-adjacent string with no programmatic association. */}
+        <CheckboxList
+          label={t('storageHost.permission.Permissions')}
+          density="compact"
+          width="100%"
           value={editedKeys}
-          onChange={(values) => setEditedKeys(values as string[])}
-          style={{ width: '100%' }}
+          onChange={(values) => setEditedKeys(values)}
         >
-          <BAIFlex direction="column" align="start" gap="xs">
-            {permissionKeys.map((permKey) => {
-              const display = PERMISSION_DISPLAY_MAP[permKey];
-              return (
-                <Checkbox key={permKey} value={permKey}>
-                  {display ? t(display.labelKey) : permKey}
-                </Checkbox>
-              );
-            })}
-          </BAIFlex>
-        </Checkbox.Group>
+          {permissionKeys.map((permKey) => {
+            const display = PERMISSION_DISPLAY_MAP[permKey];
+            return (
+              <CheckboxListItem
+                key={permKey}
+                value={permKey}
+                label={display ? t(display.labelKey) : permKey}
+              />
+            );
+          })}
+        </CheckboxList>
       </BAIFlex>
     </BAIModal>
   );

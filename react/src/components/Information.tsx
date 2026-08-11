@@ -2,28 +2,26 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { newLineToBrElement } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DescriptionLabel from './DescriptionLabel';
-import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Card } from '@astryxdesign/core/Card';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Icon } from '@astryxdesign/core/Icon';
 import {
-  Descriptions,
-  Tag,
-  Card,
-  theme,
-  DescriptionsProps,
-  Spin,
-  Row,
-  Col,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Overlay } from '@astryxdesign/core/Overlay';
+import { Spinner } from '@astryxdesign/core/Spinner';
 import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
+import { Check, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface InformationProps {}
 const Information: React.FC<InformationProps> = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const baiClient = useSuspendedBackendaiClient();
 
@@ -51,234 +49,189 @@ const Information: React.FC<InformationProps> = () => {
     };
   }
 
-  const columnSetting: DescriptionsProps['column'] = {
-    xxl: 4,
-    xl: 4,
-    lg: 2,
-    md: 1,
-    sm: 1,
-    xs: 1,
-  };
-
   return (
-    <BAIFlex direction="column" align="stretch" style={{ gap: token.margin }}>
-      <Row gutter={[token.margin, token.margin]}>
-        <Col xs={24} xxl={12}>
-          <Card
-            style={{
-              height: '100%',
-            }}
-          >
-            <Descriptions
-              title={t('information.Core')}
-              bordered
-              column={columnSetting}
+    <BAIFlex direction="column" align="stretch" gap="lg">
+      {/* PILOT-DECISION: antd's per-Descriptions `column` breakpoint map
+          (xxl/xl/lg/md/sm/xs) has no Astryx destination (MAPPING §3.9 —
+          Astryx has no breakpoint system). MetadataList's default single-
+          column flow is adopted everywhere in this area instead (same
+          decision as tickets 16/18: "drop the column map"). */}
+      <Grid columns={{ minWidth: 360, max: 2 }} gap={4}>
+        <Card>
+          <MetadataList title={t('information.Core')}>
+            <MetadataListItem label={t('information.ManagerVersion')}>
+              <BAIFlex direction="column" gap="xxs" align="start">
+                Backend.AI {baiClient.managerVersion}
+                <BAIDoubleTag
+                  values={[
+                    t('information.Installation'),
+                    baiClient.managerVersion,
+                  ]}
+                />
+              </BAIFlex>
+            </MetadataListItem>
+            <MetadataListItem label={t('information.APIVersion')}>
+              {baiClient.apiVersion}
+            </MetadataListItem>
+          </MetadataList>
+        </Card>
+        <Card>
+          <MetadataList title={t('information.Security')}>
+            <MetadataListItem
+              label={t('information.DefaultAdministratorAccountChanged')}
+              icon={
+                <DescriptionLabel
+                  subtitle={t(
+                    'information.DescDefaultAdministratorAccountChanged',
+                  )}
+                />
+              }
             >
-              <Descriptions.Item
-                label={
-                  <DescriptionLabel title={t('information.ManagerVersion')} />
-                }
-              >
-                <BAIFlex
-                  direction="column"
-                  style={{ gap: token.marginXXS }}
-                  align="start"
-                >
-                  Backend.AI {baiClient.managerVersion}
-                  <BAIDoubleTag
-                    values={[
-                      t('information.Installation'),
-                      baiClient.managerVersion,
-                    ]}
-                  />
-                  {/* TODO: get manager_version_latest  */}
-                  {/* <DoubleTag
-                label={t("information.LatestRelease")}
-                value={"manager_version_latest"}
-              /> */}
-                </BAIFlex>
-              </Descriptions.Item>
-              <Descriptions.Item
-                label={<DescriptionLabel title={t('information.APIVersion')} />}
-              >
-                {baiClient.apiVersion}
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
-        </Col>
-        <Col xs={24} xxl={12}>
-          <Card>
-            <Descriptions
-              title={t('information.Security')}
-              bordered
-              column={columnSetting}
+              {/* TODO: accountChanged  */}
+              {true ? (
+                <Icon icon={Check} label="Yes" size="sm" />
+              ) : (
+                <Icon
+                  icon={TriangleAlert}
+                  label="No"
+                  color="warning"
+                  size="sm"
+                />
+              )}
+            </MetadataListItem>
+            <MetadataListItem
+              label={t('information.UsesSSL')}
+              icon={
+                <DescriptionLabel subtitle={t('information.DescUsesSSL')} />
+              }
             >
-              <Descriptions.Item
-                label={
-                  <DescriptionLabel
-                    title={t('information.DefaultAdministratorAccountChanged')}
-                    subtitle={t(
-                      'information.DescDefaultAdministratorAccountChanged',
-                    )}
-                  />
-                }
-              >
-                {/* TODO: accountChanged  */}
-                {true ? (
-                  <CheckOutlined title="Yes" />
-                ) : (
-                  <WarningOutlined
-                    style={{ color: token.colorWarning }}
-                    title="No"
-                  />
-                )}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label={
-                  <DescriptionLabel
-                    title={t('information.UsesSSL')}
-                    subtitle={t('information.DescUsesSSL')}
-                  />
-                }
-              >
-                {baiClient?._config.endpoint.startsWith('https:') ? (
-                  <CheckOutlined title="Yes" />
-                ) : (
-                  <WarningOutlined
-                    style={{ color: token.colorWarning }}
-                    title="No"
-                  />
-                )}
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
-        </Col>
-      </Row>
+              {baiClient?._config.endpoint.startsWith('https:') ? (
+                <Icon icon={Check} label="Yes" size="sm" />
+              ) : (
+                <Icon
+                  icon={TriangleAlert}
+                  label="No"
+                  color="warning"
+                  size="sm"
+                />
+              )}
+            </MetadataListItem>
+          </MetadataList>
+        </Card>
+      </Grid>
 
       <Card>
-        <Descriptions
-          title={t('information.Component')}
-          bordered
-          column={{ xxl: 4, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
-        >
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t('information.DockerVersion')}
-                subtitle={t('information.DescDockerVersion')}
-              />
+        <MetadataList title={t('information.Component')}>
+          <MetadataListItem
+            label={t('information.DockerVersion')}
+            icon={
+              <DescriptionLabel subtitle={t('information.DescDockerVersion')} />
             }
           >
-            <Tag>{t('information.Compatible')}</Tag>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
+            <Badge label={t('information.Compatible')} variant="neutral" />
+          </MetadataListItem>
+          <MetadataListItem
+            label={t('information.PostgreSQLVersion')}
+            icon={
               <DescriptionLabel
-                title={t('information.PostgreSQLVersion')}
                 subtitle={t('information.DescPostgreSQLVersion')}
               />
             }
           >
-            <Tag>{t('information.Compatible')}</Tag>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t('information.ETCDVersion')}
-                subtitle={t('information.DescETCDVersion')}
-              />
+            <Badge label={t('information.Compatible')} variant="neutral" />
+          </MetadataListItem>
+          <MetadataListItem
+            label={t('information.ETCDVersion')}
+            icon={
+              <DescriptionLabel subtitle={t('information.DescETCDVersion')} />
             }
           >
-            <Tag>{t('information.Compatible')}</Tag>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t('information.RedisVersion')}
-                subtitle={newLineToBrElement(t('information.DescRedisVersion'))}
-              />
+            <Badge label={t('information.Compatible')} variant="neutral" />
+          </MetadataListItem>
+          <MetadataListItem
+            label={t('information.RedisVersion')}
+            icon={
+              // PILOT-DECISION: `newLineToBrElement` produced a `<br/>`-joined
+              // ReactNode; the tooltip icon's `title` is plain `string`
+              // (P2), so the line-break formatting is dropped here.
+              <DescriptionLabel subtitle={t('information.DescRedisVersion')} />
             }
           >
-            <Tag>{t('information.Compatible')}</Tag>
-          </Descriptions.Item>
-        </Descriptions>
+            <Badge label={t('information.Compatible')} variant="neutral" />
+          </MetadataListItem>
+        </MetadataList>
       </Card>
       <Card>
-        <Spin spinning={isLoadingLicenseInfo}>
-          <Descriptions
-            title={t('information.License')}
-            bordered
-            column={{
-              xxl: 2,
-              xl: 2,
-              lg: 2,
-              md: 1,
-              sm: 1,
-              xs: 1,
-            }}
-          >
-            <Descriptions.Item
-              label={
+        <Overlay
+          isOpen={isLoadingLicenseInfo}
+          scrim="light"
+          content={<Spinner label={t('general.Loading')} />}
+        >
+          <MetadataList title={t('information.License')}>
+            <MetadataListItem
+              label={t('information.IsLicenseValid')}
+              icon={
                 <DescriptionLabel
-                  title={t('information.IsLicenseValid')}
                   subtitle={t('information.DescIsLicenseValid')}
                 />
               }
             >
               {licenseInfo.valid ? (
-                <CheckOutlined />
+                <Icon
+                  icon={Check}
+                  label={t('information.IsLicenseValid')}
+                  size="sm"
+                />
               ) : (
-                <WarningOutlined style={{ color: token.colorWarning }} />
+                <Icon
+                  icon={TriangleAlert}
+                  label={t('information.IsLicenseValid')}
+                  color="warning"
+                  size="sm"
+                />
               )}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={
-                <DescriptionLabel
-                  title={t('information.LicenseType')}
-                  subtitle={newLineToBrElement(
-                    t('information.DescLicenseType'),
-                  )}
-                />
+            </MetadataListItem>
+            <MetadataListItem
+              label={t('information.LicenseType')}
+              icon={
+                <DescriptionLabel subtitle={t('information.DescLicenseType')} />
               }
             >
-              <Tag>
-                {licenseInfo.type === 'fixed'
-                  ? t('information.FixedLicense')
-                  : t('information.DynamicLicense')}
-              </Tag>
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={
-                <DescriptionLabel
-                  title={t('information.Licensee')}
-                  subtitle={t('information.DescLicensee')}
-                />
+              <Badge
+                label={
+                  licenseInfo.type === 'fixed'
+                    ? t('information.FixedLicense')
+                    : t('information.DynamicLicense')
+                }
+                variant="neutral"
+              />
+            </MetadataListItem>
+            <MetadataListItem
+              label={t('information.Licensee')}
+              icon={
+                <DescriptionLabel subtitle={t('information.DescLicensee')} />
               }
             >
-              <Tag>{licenseInfo.licensee}</Tag>
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={
-                <DescriptionLabel
-                  title={t('information.LicenseKey')}
-                  subtitle={t('information.DescLicenseKey')}
-                />
+              <Badge label={licenseInfo.licensee} variant="neutral" />
+            </MetadataListItem>
+            <MetadataListItem
+              label={t('information.LicenseKey')}
+              icon={
+                <DescriptionLabel subtitle={t('information.DescLicenseKey')} />
               }
             >
-              <Tag>{licenseInfo.key}</Tag>
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={
-                <DescriptionLabel
-                  title={t('information.Expiration')}
-                  subtitle={t('information.DescExpiration')}
-                />
+              <Badge label={licenseInfo.key} variant="neutral" />
+            </MetadataListItem>
+            <MetadataListItem
+              label={t('information.Expiration')}
+              icon={
+                <DescriptionLabel subtitle={t('information.DescExpiration')} />
               }
             >
-              <Tag>{licenseInfo.expiration}</Tag>
-            </Descriptions.Item>
-          </Descriptions>
-        </Spin>
+              <Badge label={licenseInfo.expiration} variant="neutral" />
+            </MetadataListItem>
+          </MetadataList>
+        </Overlay>
       </Card>
     </BAIFlex>
   );

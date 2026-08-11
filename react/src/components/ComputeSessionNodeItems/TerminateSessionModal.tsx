@@ -7,15 +7,25 @@ import {
   TerminateSessionModalFragment$key,
 } from '../../__generated__/TerminateSessionModalFragment.graphql';
 import { TerminateSessionModalRefetchQuery } from '../../__generated__/TerminateSessionModalRefetchQuery.graphql';
+import { App } from '../../app-shim';
 import { requestLocalProxyToken } from '../../helper/localProxyToken';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
-import { App, Card, Checkbox, type ModalProps, Typography } from 'antd';
-import { createStyles } from 'antd-style';
-import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
+import BAICopyableText from '../astryx-bui/BAICopyableText';
+import { Card } from '@astryxdesign/core/Card';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import * as stylex from '@stylexjs/stylex';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  BAIModal,
+  type BAIModalProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,8 +36,10 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
+// antd `ModalProps` -> BUI `BAIModalProps` (§6: a type-only antd import is
+// still an antd import). The render was already `BAIModal`.
 interface TerminateSessionModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   sessionFrgmts?: TerminateSessionModalFragment$key;
@@ -36,15 +48,19 @@ interface TerminateSessionModalProps extends Omit<
 
 // Cannot destroy sessions in scheduled/preparing/pulling/prepared/creating/terminating/error status
 
-const useStyle = createStyles(({ css, token }) => {
-  return {
-    custom: css`
-      ul {
-        list-style-type: circle;
-        padding-left: ${token.paddingMD}px;
-      }
-    `,
-  };
+// antd-style `createStyles` (`.custom ul { ... }`) -> StyleX applied directly
+// on the <ul> elements (P17: keep replacement CSS component-scoped).
+const styles = stylex.create({
+  warningList: {
+    listStyleType: 'circle',
+    paddingLeft: 20,
+  },
+  // antd `Typography.Paragraph type="danger"` — Astryx TextColor has no
+  // danger hue (MAPPING.md §3.4); the semantic error token is applied
+  // directly. `--color-error` is a declared Astryx variable (P19-checked).
+  dangerText: {
+    color: 'var(--color-error)',
+  },
 });
 
 type KernelType = NonNullableNodeOnEdges<
@@ -222,7 +238,6 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
   'use memo';
   const openTerminateModal = false;
   const { t } = useTranslation();
-  const { styles } = useStyle();
   const sessions = useFragment(
     graphql`
       fragment TerminateSessionModalFragment on ComputeSessionNode
@@ -361,40 +376,36 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
       }}
       {...modalProps}
     >
-      <BAIFlex
-        className={styles.custom}
-        direction="column"
-        align="stretch"
-        gap={'xs'}
-      >
-        <Typography.Text>
-          {t('userSettings.SessionTerminationDialog')}
-        </Typography.Text>
-        <Typography.Text mark>
+      <BAIFlex direction="column" align="stretch" gap={'xs'}>
+        <Text>{t('userSettings.SessionTerminationDialog')}</Text>
+        {/* PILOT-DECISION: antd `Typography.Text mark` (yellow highlight) has
+            no Astryx destination (MAPPING.md §3.4 — NONE); emphasis is kept
+            via semibold weight instead. */}
+        <Text weight="semibold">
           {sessions?.length === 1
             ? sessions?.[0]?.name
             : `${sessions?.length} sessions`}
-        </Typography.Text>
-        <Checkbox
-          checked={isForce}
-          onChange={(e) => {
-            setIsForce(e.target.checked);
+        </Text>
+        <CheckboxInput
+          label={t('button.ForceTerminate')}
+          value={isForce}
+          onChange={(checked) => {
+            setIsForce(checked);
           }}
-        >
-          {t('button.ForceTerminate')}
-        </Checkbox>
+        />
         {isForce && (
-          <Card>
-            <Typography.Paragraph type="danger">
+          <Card variant="muted">
+            <Text as="p" display="block" xstyle={styles.dangerText}>
               {t('session.ForceTerminateWarningMsg')}
-            </Typography.Paragraph>
-            <ul>
+            </Text>
+            <ul {...stylex.props(styles.warningList)}>
               <li>{t('session.ForceTerminateWarningMsg2')}</li>
               <li>{t('session.ForceTerminateWarningMsg3')}</li>
             </ul>
             {userRole === 'superadmin' && (
-              <>
-                <Card type="inner" title={t('session.ContainerToCleanUp')}>
+              <Card variant="default">
+                <BAIFlex direction="column" align="stretch" gap="xs">
+                  <Heading level={5}>{t('session.ContainerToCleanUp')}</Heading>
                   {_.map(
                     _.groupBy(
                       _.compact(
@@ -408,12 +419,12 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                       return (
                         <React.Fragment key={agentId}>
                           {agentId}
-                          <ul>
+                          <ul {...stylex.props(styles.warningList)}>
                             {kernels.map((k) => (
                               <li key={k.container_id}>
-                                <Typography.Text copyable>
-                                  {k.container_id}
-                                </Typography.Text>
+                                <BAICopyableText>
+                                  {k.container_id ?? ''}
+                                </BAICopyableText>
                               </li>
                             ))}
                           </ul>
@@ -421,8 +432,8 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                       );
                     },
                   )}
-                </Card>
-              </>
+                </BAIFlex>
+              </Card>
             )}
           </Card>
         )}

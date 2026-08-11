@@ -1,0 +1,51 @@
+{
+  "tag": "before",
+  "viewports": {
+    "default": {
+      "hasComposer": false,
+      "composer": null,
+      "sendBtn": null,
+      "chain": [],
+      "cardCount": 4
+    },
+    "short": {
+      "hasComposer": false,
+      "composer": null,
+      "sendBtn": null,
+      "chain": [],
+      "cardCount": 4
+    }
+  },
+  "errors": [
+    "[console] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Geist:wght@500&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked.",
+    "[console] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Geist:wght@500&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Geist:wght@500&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked.",
+    "[console] Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Geist:wght@500&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback. The action has been blocked.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects.",
+    "[console] Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. The GraphQL server likely violated the globally unique id requirement by returning the same id for different objects."
+  ]
+}

@@ -1,0 +1,687 @@
+{
+  "admin-users": {
+    "light": {
+      "appliedTheme": "light",
+      "tabs": [
+        {
+          "i": 0,
+          "rest": {
+            "label": "UsersUsers",
+            "selected": "selected",
+            "color": "rgb(20, 20, 20)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 62,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          },
+          "hover": {
+            "label": "UsersUsers",
+            "selected": "selected",
+            "color": "rgb(20, 20, 20)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 62,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          }
+        },
+        {
+          "i": 1,
+          "rest": {
+            "label": "CredentialsCredentia",
+            "selected": null,
+            "color": "rgba(0, 0, 0, 0.65)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 100,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          },
+          "hover": {
+            "label": "CredentialsCredentia",
+            "selected": null,
+            "color": "rgba(0, 0, 0, 0.65)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 100,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          }
+        }
+      ]
+    },
+    "dark": {
+      "appliedTheme": "dark",
+      "tabs": [
+        {
+          "i": 0,
+          "rest": {
+            "label": "UsersUsers",
+            "selected": "selected",
+            "color": "rgb(255, 255, 255)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 62,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          },
+          "hover": {
+            "label": "UsersUsers",
+            "selected": "selected",
+            "color": "rgb(255, 255, 255)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 62,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          }
+        },
+        {
+          "i": 1,
+          "rest": {
+            "label": "CredentialsCredentia",
+            "selected": null,
+            "color": "rgba(255, 255, 255, 0.65)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 100,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          },
+          "hover": {
+            "label": "CredentialsCredentia",
+            "selected": null,
+            "color": "rgba(255, 255, 255, 0.65)",
+            "bg": "rgba(0, 0, 0, 0)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 100,
+              "h": 32
+            },
+            "topAtCentre": "span.x1agbcgv"
+          }
+        }
+      ]
+    }
+  },
+  "session": {
+    "light": {
+      "appliedTheme": "light",
+      "tabs": [
+        {
+          "i": 0,
+          "rest": {
+            "label": "All11All11",
+            "selected": "selected",
+            "color": "rgb(255, 122, 0)",
+            "bg": "rgb(255, 255, 255)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 92,
+              "h": 36
+            },
+            "topAtCentre": "span.astryx-badge"
+          },
+          "hover": {
+            "label": "All11All11",
+            "selected": "selected",
+            "color": "rgb(255, 122, 0)",
+            "bg": "rgb(255, 255, 255)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 92,
+              "h": 36
+            },
+            "topAtCentre": "span.astryx-badge"
+          }
+        },
+        {
+          "i": 1,
+          "rest": {
+            "label": "Interactive11Interac",
+            "selected": null,
+            "color": "rgba(0, 0, 0, 0.65)",
+            "bg": "rgba(0, 0, 0, 0.04)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 147,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          },
+          "hover": {
+            "label": "Interactive11Interac",
+            "selected": null,
+            "color": "rgb(255, 122, 0)",
+            "bg": "rgba(0, 0, 0, 0.04)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 147,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          }
+        },
+        {
+          "i": 2,
+          "rest": {
+            "label": "BatchBatch",
+            "selected": null,
+            "color": "rgba(0, 0, 0, 0.65)",
+            "bg": "rgba(0, 0, 0, 0.04)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 72,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          },
+          "hover": {
+            "label": "BatchBatch",
+            "selected": null,
+            "color": "rgb(255, 122, 0)",
+            "bg": "rgba(0, 0, 0, 0.04)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 72,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          }
+        },
+        {
+          "i": 3,
+          "rest": {
+            "label": "InferenceInference",
+            "selected": null,
+            "color": "rgba(0, 0, 0, 0.65)",
+            "bg": "rgba(0, 0, 0, 0.04)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 97,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          },
+          "hover": {
+            "label": "InferenceInference",
+            "selected": null,
+            "color": "rgb(255, 122, 0)",
+            "bg": "rgba(0, 0, 0, 0.04)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 97,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          }
+        }
+      ]
+    },
+    "dark": {
+      "appliedTheme": "dark",
+      "tabs": [
+        {
+          "i": 0,
+          "rest": {
+            "label": "All11All11",
+            "selected": "selected",
+            "color": "rgb(190, 94, 6)",
+            "bg": "rgb(20, 20, 20)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 92,
+              "h": 36
+            },
+            "topAtCentre": "span.astryx-badge"
+          },
+          "hover": {
+            "label": "All11All11",
+            "selected": "selected",
+            "color": "rgb(190, 94, 6)",
+            "bg": "rgb(20, 20, 20)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 92,
+              "h": 36
+            },
+            "topAtCentre": "span.astryx-badge"
+          }
+        },
+        {
+          "i": 1,
+          "rest": {
+            "label": "Interactive11Interac",
+            "selected": null,
+            "color": "rgba(255, 255, 255, 0.65)",
+            "bg": "rgba(255, 255, 255, 0.08)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 147,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          },
+          "hover": {
+            "label": "Interactive11Interac",
+            "selected": null,
+            "color": "rgb(190, 94, 6)",
+            "bg": "rgba(255, 255, 255, 0.08)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 147,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          }
+        },
+        {
+          "i": 2,
+          "rest": {
+            "label": "BatchBatch",
+            "selected": null,
+            "color": "rgba(255, 255, 255, 0.65)",
+            "bg": "rgba(255, 255, 255, 0.08)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 72,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          },
+          "hover": {
+            "label": "BatchBatch",
+            "selected": null,
+            "color": "rgb(190, 94, 6)",
+            "bg": "rgba(255, 255, 255, 0.08)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 72,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          }
+        },
+        {
+          "i": 3,
+          "rest": {
+            "label": "InferenceInference",
+            "selected": null,
+            "color": "rgba(255, 255, 255, 0.65)",
+            "bg": "rgba(255, 255, 255, 0.08)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 97,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          },
+          "hover": {
+            "label": "InferenceInference",
+            "selected": null,
+            "color": "rgb(190, 94, 6)",
+            "bg": "rgba(255, 255, 255, 0.08)",
+            "overlayHoverVar": "transparent",
+            "zIndex": "auto",
+            "isolation": "auto",
+            "before": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "after": {
+              "content": "none",
+              "bg": "rgba(0, 0, 0, 0)",
+              "zIndex": "auto",
+              "inset": "auto"
+            },
+            "rect": {
+              "w": 97,
+              "h": 36
+            },
+            "topAtCentre": "div."
+          }
+        }
+      ]
+    }
+  },
+  "pageErrors": []
+}

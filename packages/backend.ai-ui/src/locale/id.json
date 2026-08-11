@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Eksekusi gagal",
     "ErrorOccurred": "Terjadi kesalahan"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Tidak ada hasil",
+    "Search": "Pencarian"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Container"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
@@ -260,6 +267,9 @@
     "StrategyType": "Strategi",
     "Tags": "Tag",
     "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
@@ -451,14 +461,18 @@
     "Step": "Langkah"
   },
   "comp:BAITable": {
+    "Apply": "Terapkan",
+    "Cancel": "Batal",
     "CollapseAll": "Ciutkan semua",
     "ExpandAll": "Perluas semua",
     "ExpandErrorsOnly": "Perluas hanya kesalahan",
     "ExpandOptions": "Opsi perluasan",
+    "ExpandRow": "Perluas baris",
     "Export": "Ekspor",
     "ExportCSV": "Ekspor CSV",
     "GoToFirstPage": "Ke halaman pertama",
     "InvalidPageNumber": "Nomor halaman tidak valid",
+    "Pagination": "Penomoran halaman",
     "SearchTableColumn": "Kolom Tabel Cari",
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
     "SettingTable": "Pengaturan Tabel"
@@ -526,8 +540,10 @@
     "MoreOptions": "Opsi lainnya",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Namanya telah berhasil diubah.",
     "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
     "Size": "Ukuran",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
+  "form": {
+    "Optional": "(optional)",
+    "validateMessages": {
+      "Default": "Kesalahan validasi untuk ${label}",
+      "Required": "Tolong masukkan ${label}",
+      "Whitespace": "${label} tidak boleh berupa karakter kosong",
+      "array": {
+        "Len": "Harus ${len} ${label}",
+        "Max": "Maksimal ${max} ${label}",
+        "Min": "Minimal ${min} ${label}",
+        "Range": "Jumlah ${label} harus di antara ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} harus sama dengan ${len}",
+        "Max": "${label} harus maksimal ${max}",
+        "Min": "${label} harus minimal ${min}",
+        "Range": "${label} harus di antara ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} tidak sesuai dengan pola ${pattern}"
+      },
+      "string": {
+        "Len": "${label} harus berupa ${len} karakter",
+        "Max": "${label} harus maksimal ${max} karakter",
+        "Min": "${label} harus minimal ${min} karakter",
+        "Range": "${label} harus diantara ${min}-${max} karakter"
+      },
+      "types": {
+        "Email": "${label} tidak valid ${type}",
+        "Number": "${label} tidak valid ${type}",
+        "Object": "${label} tidak valid ${type}",
+        "String": "${label} tidak valid ${type}",
+        "Url": "${label} tidak valid ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Batalkan semua pilihan",
     "File": "Berkas",
+    "Increase": "Increase",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",
+    "Select": "Select",
     "TotalItems": "Total {{total}} item",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Membatalkan",
       "Close": "Menutup",
       "Collapse": "Runtuh",
+      "Confirm": "Confirm",
       "Copied": "Disalin",
+      "Copy": "Salin",
       "CopyAll": "Salin semua",
       "Create": "Membuat",
       "Delete": "Menghapus",

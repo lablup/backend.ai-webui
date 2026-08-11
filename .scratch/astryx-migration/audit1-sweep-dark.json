@@ -1,0 +1,2907 @@
+{
+ "p-start": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/start",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div>div>div>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1312x107"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-banner card info x78zum5 x1txdalj x8o8v82 x1pzlopt x6s0dn4 xgcx",
+   "radius": "12px",
+   "border": "0px rgb(255, 255, 255)",
+   "shadow": "none",
+   "bg": "rgba(158, 183, 255, 0.24)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1037,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-dashboard": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/dashboard",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.orange.x3nfvp2",
+    "bg": "rgba(255, 162, 88, 0.24)",
+    "inline": null,
+    "size": "66x20"
+   },
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div>div",
+    "bg": "rgba(255, 255, 255, 0.08)",
+    "inline": "rgba(255, 255, 255, 0.08)",
+    "size": "120x21"
+   },
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.green.x3nfvp2",
+    "bg": "rgba(132, 201, 128, 0.24)",
+    "inline": null,
+    "size": "50x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 0,
+   "toolbarText": "Active Agents",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": -8,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 8px",
+   "headPad": "4px 8px 4px 8px",
+   "rowBorder": "0px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(184, 168, 159)",
+   "rowH": 103
+  },
+  "cardRhythm": null,
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1352,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-session": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/session",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nSession Name",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "All\nInteractive\nBatch\nInference\nUpload Sessions",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(235, 224, 218)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(184, 168, 159)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 624,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-session-start": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/session/start",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": null,
+   "toolbarText": null,
+   "rowCount": 7,
+   "pagerOverlapsLastRow": null,
+   "pagerCls": null,
+   "pagerPos": null,
+   "cellPad": "4px 8px 4px 12px",
+   "headPad": "4px 8px 4px 12px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgba(0, 0, 0, 0)",
+   "headFont": "14px/600/rgb(184, 168, 159)",
+   "rowH": 0
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x28"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 733,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-deployments": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/deployments",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Name\n\t\nRevision\n\t\nLifecycle\n\t\n",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Deployments",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 61,
+   "pagerCls": "",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(235, 224, 218)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(184, 168, 159)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 442,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-model-store": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/model-store",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": null,
+  "cardRhythm": null,
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 338,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-chat": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/chat",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": null,
+  "cardRhythm": null,
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 280,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-data": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/data",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.astryx-stack.vertical.gap-5>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nName\n\t\nStatu",
+    "bText": "1 - 7 of 7 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "table.astryx-base-table.xh8yej3.x1mwwwfo>tbody.astryx-table-body>tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>span.astryx-badge.warning.x3nfvp2",
+    "bg": "rgb(255, 206, 47)",
+    "inline": null,
+    "size": "56x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Active\n7\nTrash\n1",
+   "rowCount": 7,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgba(0, 0, 0, 0)",
+   "headFont": "14px/600/rgb(184, 168, 159)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1581,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-my-environment": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/my-environment",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "a": "div.astryx-stack.vertical.gap-4>div>div>div>div",
+    "b": "div.astryx-stack.vertical.gap-4>div>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Full image path\n\t\nControl\n\t\nRe",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": null,
+   "toolbarText": null,
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(235, 224, 218)",
+   "headBg": "rgba(0, 0, 0, 0)",
+   "headFont": "14px/600/rgb(184, 168, 159)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 447,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-agent-summary": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/agent-summary",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "ID\n\t\nArchitecture\n\t\nAllocation",
+    "bText": "1 - 1 of 1 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div>div",
+    "bg": "rgba(255, 255, 255, 0.08)",
+    "inline": "rgba(255, 255, 255, 0.08)",
+    "size": "120x21"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": null,
+   "toolbarText": null,
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(184, 168, 159)",
+   "rowH": 55
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 496,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-statistics": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/statistics",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1264x44"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 705,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "p-ai-agent": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/ai-agent",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.main-layout-main-content.overlay-style>div>div>div.astryx-stack.vertical.gap-4>div.astryx-skeleton.xprdx6m.x1j0df82",
+    "bg": "rgba(255, 255, 255, 0.18)",
+    "inline": null,
+    "size": "1312x16"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": null,
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 255,
+  "stillSkeleton": true,
+  "pageErrors": []
+ },
+ "pa-session": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/admin/session",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "a": "div.astryx-stack.vertical.gap-4>div>div>div>div",
+    "b": "div.astryx-stack.vertical.gap-4>div>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nSession Name",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.main-layout-main-content.overlay-style>div>div.main-layout-alert-wrapper>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1312x44"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Sessions",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(223, 226, 236)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-banner card info x78zum5 x1cy8zhl x1txdalj x8o8v82 x1pzlopt xgc",
+   "radius": "12px",
+   "border": "0px rgb(255, 255, 255)",
+   "shadow": "none",
+   "bg": "rgba(158, 183, 255, 0.24)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 634,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "pa-deployments": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/admin/deployments",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_22_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Name\n\t\nRevision\n\t\nLifecycle\n\t\n",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.main-layout-main-content.overlay-style>div>div.main-layout-alert-wrapper>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1312x44"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Deployments",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(223, 226, 236)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-banner card info x78zum5 x1cy8zhl x1txdalj x8o8v82 x1pzlopt xgc",
+   "radius": "12px",
+   "border": "0px rgb(255, 255, 255)",
+   "shadow": "none",
+   "bg": "rgba(158, 183, 255, 0.24)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 534,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "pa-data": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/admin/data",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1o_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nName\n\t\nStatu",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.main-layout-main-content.overlay-style>div>div.main-layout-alert-wrapper>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1312x44"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Active\nTrash",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(223, 226, 236)",
+   "headBg": "rgba(0, 0, 0, 0)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-banner card info x78zum5 x1cy8zhl x1txdalj x8o8v82 x1pzlopt xgc",
+   "radius": "12px",
+   "border": "0px rgb(255, 255, 255)",
+   "shadow": "none",
+   "bg": "rgba(158, 183, 255, 0.24)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 570,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "pa-users": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/admin/users",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1i_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "E-Mail\n\t\nUser ID\n\t\nUsername\n\t\n",
+    "bText": "1 - 2 of 2 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.main-layout-main-content.overlay-style>div>div.main-layout-alert-wrapper>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1312x44"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Users",
+   "rowCount": 2,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-banner card info x78zum5 x1cy8zhl x1txdalj x8o8v82 x1pzlopt xgc",
+   "radius": "12px",
+   "border": "0px rgb(255, 255, 255)",
+   "shadow": "none",
+   "bg": "rgba(158, 183, 255, 0.24)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1179,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-dashboard": {
+  "path": "admin/dashboard",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.orange.x3nfvp2",
+    "bg": "rgba(255, 162, 88, 0.24)",
+    "inline": null,
+    "size": "66x20"
+   },
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div>div",
+    "bg": "rgba(255, 255, 255, 0.08)",
+    "inline": "rgba(255, 255, 255, 0.08)",
+    "size": "120x21"
+   },
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.green.x3nfvp2",
+    "bg": "rgba(132, 201, 128, 0.24)",
+    "inline": null,
+    "size": "50x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 0,
+   "toolbarText": "Active Agents",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": -8,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 8px",
+   "headPad": "4px 8px 4px 8px",
+   "rowBorder": "0px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 103
+  },
+  "cardRhythm": null,
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1114,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-session": {
+  "path": "admin/session",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "a": "div.astryx-stack.vertical.gap-4>div>div>div>div",
+    "b": "div.astryx-stack.vertical.gap-4>div>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nSession Name",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": 32,
+   "toolbarText": "All\nInteractive\nBatch\nInference\nUpload Sessions",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(223, 226, 236)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 707,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-deployments": {
+  "path": "admin/deployments",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1t_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Name\n\t\nRevision\n\t\nLifecycle\n\t\n",
+    "bText": "1 - 1 of 1 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "table.astryx-base-table.xh8yej3.x1mwwwfo>tbody.astryx-table-body>tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>span.astryx-badge.info.x3nfvp2",
+    "bg": "rgb(109, 156, 254)",
+    "inline": null,
+    "size": "61x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Deployments\nModel Store Management\nPrometheus Preset\nDeploym",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 659,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-deployment-preset-new": {
+  "path": "admin/deployments/deployment-presets/new",
+  "settled": true,
+  "collide": [],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x28"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1265,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-data": {
+  "path": "admin/data",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.astryx-stack.vertical.gap-5>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div.astryx-stack.vertical.gap-3>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nName\n\t\nStatu",
+    "bText": "1 - 10 of 10 items\nItems per p",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "table.astryx-base-table.xh8yej3.x1mwwwfo>tbody.astryx-table-body>tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>span.astryx-badge.warning.x3nfvp2",
+    "bg": "rgb(255, 206, 47)",
+    "inline": null,
+    "size": "56x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Active\n10\nTrash\n2",
+   "rowCount": 10,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgba(0, 0, 0, 0)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 2125,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-users": {
+  "path": "admin/users",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "a": "div.astryx-stack.vertical.gap-4>div>div>div>div",
+    "b": "div.astryx-stack.vertical.gap-4>div>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nE-Mail\n\t\nUse",
+    "bText": "1 - 10 of 10 items\nItems per p",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Users\nCredentials",
+   "rowCount": 10,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 3721,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-environment": {
+  "path": "admin/environment",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_21_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nStatus\n\t\nFul",
+    "bText": "1 - 20 of 154 items\nItems per ",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "tbody.astryx-table-body>tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>span.astryx-badge.blue.x3nfvp2",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "75x20"
+   },
+   {
+    "path": "table.astryx-base-table.xh8yej3.x1mwwwfo>tbody.astryx-table-body>tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>span.astryx-badge.yellow.x3nfvp2",
+    "bg": "rgba(222, 180, 51, 0.24)",
+    "inline": null,
+    "size": "64x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": null,
+   "toolbarText": null,
+   "rowCount": 20,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgba(0, 0, 0, 0)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 41
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 5900,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-resource-policy": {
+  "path": "admin/resource-policy",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_23_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Name\n\t\nDefault For Unspecified",
+    "bText": "1 - 2 of 2 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Keypair Resource Policy\nUser Resource Policy\nProject Resourc",
+   "rowCount": 2,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 855,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-reservoir": {
+  "path": "admin/reservoir",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nName\n\t\nContr",
+    "bText": "0 - 0 of 0 items",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Reservoir Artifacts",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "1px 1px 1px 1px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(223, 226, 236)",
+   "headBg": "rgba(0, 0, 0, 0)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 54
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 449,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-scheduler": {
+  "path": "admin/scheduler",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "a": "div.astryx-stack.vertical.gap-4>div>div>div>div",
+    "b": "div.astryx-stack.vertical.gap-4>div>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Name\n\t\nAllocation\n\t\nResource W",
+    "bText": "1 - 1 of 1 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1264x44"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 24,
+   "toolbarText": "Resource Group",
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 823,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-agent": {
+  "path": "admin/agent",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1t_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "ID / Endpoint\n\t\nRegion\n\t\nStart",
+    "bText": "1 - 1 of 1 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.orange.x3nfvp2",
+    "bg": "rgba(255, 162, 88, 0.24)",
+    "inline": null,
+    "size": "67x20"
+   },
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div>div",
+    "bg": "rgba(255, 255, 255, 0.08)",
+    "inline": "rgba(255, 255, 255, 0.08)",
+    "size": "120x21"
+   },
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.green.x3nfvp2",
+    "bg": "rgba(132, 201, 128, 0.24)",
+    "inline": null,
+    "size": "50x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": null,
+   "toolbarText": null,
+   "rowCount": 1,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "0px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 103
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 819,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-project": {
+  "path": "admin/project",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_23_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Select all rows\n\t\nName\n\t\nDomai",
+    "bText": "1 - 5 of 5 items\nItems per pag",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "table.astryx-base-table.xh8yej3.x1mwwwfo>tbody.astryx-table-body>tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>span.astryx-badge.blue.x3nfvp2",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "101x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "Projects",
+   "rowCount": 5,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1722,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-settings": {
+  "path": "admin/settings",
+  "settled": true,
+  "collide": [],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div>div>span.astryx-text.body.secondary>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1040x44"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 2236,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-maintenance": {
+  "path": "admin/maintenance",
+  "settled": true,
+  "collide": [],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 927,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-diagnostics": {
+  "path": "admin/diagnostics",
+  "settled": true,
+  "collide": [],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.astryx-collapsible.balanced.xh8yej3>div.astryx-collapsible-content.balanced.xfsso4q>div>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.warning",
+    "bg": "rgba(216, 150, 20, 0.247)",
+    "inline": null,
+    "size": "1264x88"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 3950,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-rbac": {
+  "path": "admin/rbac",
+  "settled": true,
+  "collide": [
+   {
+    "parent": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_28_>div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div",
+    "a": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div",
+    "b": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div>div.astryx-stack.horizontal.gap-2",
+    "aText": "Role Name\n\t\nDescription\n\t\nScop",
+    "bText": "1 - 10 of 72 items\nItems per p",
+    "overlap": "1264x16"
+   }
+  ],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.blue.x3nfvp2",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "56x20"
+   },
+   {
+    "path": "table.astryx-base-table.xh8yej3.x1mwwwfo>tbody.astryx-table-body>tr.astryx-table-row.x139im0d.xe9uy6x>td.astryx-table-cell.compact.xu0wf1k>span.astryx-badge.green.x3nfvp2",
+    "bg": "rgba(132, 201, 128, 0.24)",
+    "inline": null,
+    "size": "51x20"
+   }
+  ],
+  "tableRhythm": {
+   "toolbarToTable": 36,
+   "toolbarText": "RBAC Management",
+   "rowCount": 10,
+   "pagerOverlapsLastRow": 16,
+   "pagerCls": "astryx-stack horizontal gap-2 x78zum5 x1q0g3np xak3so x1x7z4",
+   "pagerPos": "static",
+   "cellPad": "4px 8px 4px 24px",
+   "headPad": "4px 8px 4px 24px",
+   "rowBorder": "1px solid rgb(48, 48, 48)",
+   "headBg": "rgb(20, 20, 20)",
+   "headFont": "14px/600/rgb(165, 171, 185)",
+   "rowH": 37
+  },
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1954,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-branding": {
+  "path": "admin/branding",
+  "settled": true,
+  "collide": [],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div.astryx-card.default.x2kkz0m>div.astryx-stack.vertical.gap-4>div>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.warning",
+    "bg": "rgba(216, 150, 20, 0.247)",
+    "inline": null,
+    "size": "1264x44"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 3686,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "a-information": {
+  "path": "admin/information",
+  "settled": true,
+  "collide": [],
+  "clipped": [
+   {
+    "path": "div.css-dev-only-do-not-override-1pi45l5.ant-app.css-var-_r_1_>div>div.bai-sider-shell>nav.astryx-side-nav.x78zum5.xdt5ytf>div.x98rzlu.x1odjw0f.x6ikm8r",
+    "text": "Admin Settings\nOperations\nUsers\nProjects",
+    "dw": 0,
+    "dh": 71
+   }
+  ],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "dl.x1ghz6dp.x1717udv.xrvj5dj>dd.x1tgivj0.xjm74w1.xw6l6zx>div>div.astryx-stack.horizontal.gap-0.5>span.astryx-badge.blue.x3nfvp2",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "79x20"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Information",
+   "lastBottom": 948,
+   "footerTop": 887,
+   "overlap": 61,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 728,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "m-usersettings": {
+  "path": "usersettings",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-card default x2kkz0m x153u1i6 x7giv3 x1p8z4y0 x1de1mus xw28qpl ",
+   "radius": "12px",
+   "border": "1px rgb(48, 48, 48)",
+   "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0",
+   "bg": "rgb(20, 20, 20)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 2115,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "m-logs": {
+  "path": "logs",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": null,
+  "cardRhythm": null,
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 280,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "m-import": {
+  "path": "import",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [
+   {
+    "path": "div>div>div>div.x78zum5.xdt5ytf.xjb2p0i>div.astryx-banner.card.info",
+    "bg": "rgba(158, 183, 255, 0.24)",
+    "inline": null,
+    "size": "1312x107"
+   }
+  ],
+  "tableRhythm": null,
+  "cardRhythm": {
+   "cls": "astryx-banner card info x78zum5 x1txdalj x8o8v82 x1pzlopt x6s0dn4 xgcx",
+   "radius": "12px",
+   "border": "0px rgb(255, 255, 255)",
+   "shadow": "none",
+   "bg": "rgba(158, 183, 255, 0.24)",
+   "head": null,
+   "body": null
+  },
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1336x20"
+   },
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 1037,
+  "stillSkeleton": false,
+  "pageErrors": []
+ },
+ "m-unknown": {
+  "path": "definitely-not-a-route",
+  "settled": true,
+  "collide": [],
+  "clipped": [],
+  "misalign": [],
+  "lightSurfaces": [],
+  "tableRhythm": null,
+  "cardRhythm": null,
+  "metrics": {
+   "theme": "dark",
+   "bodyBg": "rgb(25, 25, 25)",
+   "textColor": "rgb(255, 255, 255)",
+   "content": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgba(0, 0, 0, 0)",
+    "size": "1360x1000"
+   },
+   "breadcrumb": null,
+   "header": {
+    "pad": "0px 24px 0px 24px",
+    "gap": "0px",
+    "bg": "rgb(232, 138, 40)",
+    "size": "1360x60"
+   },
+   "sider": {
+    "pad": "0px 0px 0px 0px",
+    "gap": "normal",
+    "bg": "rgb(20, 20, 20)",
+    "size": "240x1000"
+   }
+  },
+  "siderClip": {
+   "lastItem": "Statistics",
+   "lastBottom": 767,
+   "footerTop": 887,
+   "overlap": -120,
+   "navOverflowY": "hidden"
+  },
+  "textLen": 412,
+  "stillSkeleton": false,
+  "pageErrors": []
+ }
+}

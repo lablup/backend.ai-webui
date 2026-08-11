@@ -1,0 +1,26 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for the dynamic-step number inputs (to-astryx W2-D),
+ imported by `astryxNumberStepper.tsx` itself (P17).
+
+ Astryx `NumberInput` renders a native `<input type="number">` and exposes no
+ prop to suppress the browser's spinner. Leaving it visible next to the
+ explicit ladder controls would offer TWO steppers with different arithmetic —
+ the native one steps linearly by `step`, the ladder one jumps 1 -> 2 -> 4 ->
+ 8. These rules remove the native pair.
+
+ The selectors target native pseudo-elements of `input[type=number]`, never a
+ design-system class, so an Astryx bump cannot silently break them. No token is
+ involved, so there is no P19 surface here.
+*/
+.bai-number-stepper input[type='number']::-webkit-outer-spin-button,
+.bai-number-stepper input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bai-number-stepper input[type='number'] {
+  -moz-appearance: textfield;
+}

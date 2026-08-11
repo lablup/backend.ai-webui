@@ -1,0 +1,1267 @@
+{
+  "url": "http://127.0.0.1:9198/theme-probe/form.html?variant=bai&mode=dark",
+  "mode": "dark",
+  "errors": [],
+  "landmarks": [
+    {
+      "key": "div#root",
+      "tag": "div",
+      "text": "BAIFormItem (own visual + Form.Item noSt",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 1440,
+        "h": 962
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(255, 255, 255)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "div#bai",
+      "tag": "div",
+      "text": "BAIFormItem (own visual + Form.Item noSt",
+      "box": {
+        "x": 16,
+        "y": 16,
+        "w": 1408,
+        "h": 930
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "border-top-color",
+            "value": "rgb(238, 238, 238)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "h3:BAIFormItem (own visual + Form.Item noSt",
+      "tag": "h3",
+      "text": "BAIFormItem (own visual + Form.Item noSt",
+      "box": {
+        "x": 33,
+        "y": 33,
+        "w": 1374,
+        "h": 23
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 3,
+        "misses": []
+      }
+    },
+    {
+      "key": "form",
+      "tag": "form",
+      "text": "*Metric sourceKernel*Metric nameThe metr",
+      "box": {
+        "x": 33,
+        "y": 56,
+        "w": 1374,
+        "h": 841
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:*Metric source",
+      "tag": "label",
+      "text": "*Metric source",
+      "box": {
+        "x": 33,
+        "y": 56,
+        "w": 1374,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "span[role=img]",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 138,
+        "y": 59,
+        "w": 14,
+        "h": 14
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 3,
+        "misses": []
+      }
+    },
+    {
+      "key": "input#metricSource",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 45,
+        "y": 91,
+        "w": 1332,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~2",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1383,
+        "y": 96,
+        "w": 12,
+        "h": 12
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.25)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.25)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:*Metric name",
+      "tag": "label",
+      "text": "*Metric name",
+      "box": {
+        "x": 33,
+        "y": 142,
+        "w": 1374,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "input#metricName",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 33,
+        "y": 172,
+        "w": 1374,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 6,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "div#metricName_extra",
+      "tag": "div",
+      "text": "The metric the rule observes.",
+      "box": {
+        "x": 33,
+        "y": 204,
+        "w": 1374,
+        "h": 24
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 3,
+        "misses": []
+      }
+    },
+    {
+      "key": "label:*Condition",
+      "tag": "label",
+      "text": "*Condition",
+      "box": {
+        "x": 33,
+        "y": 252,
+        "w": 1374,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "span[role=img]~3",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 113,
+        "y": 255,
+        "w": 14,
+        "h": 14
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 3,
+        "misses": []
+      }
+    },
+    {
+      "key": "div#conditionMode",
+      "tag": "div",
+      "text": "Scale inScale outScale in & out",
+      "box": {
+        "x": 33,
+        "y": 282,
+        "w": 293,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 2,
+        "matched": 0,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:Scale in",
+      "tag": "label",
+      "text": "Scale in",
+      "box": {
+        "x": 33,
+        "y": 282,
+        "w": 82,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 5,
+        "matched": 2,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:Scale out",
+      "tag": "label",
+      "text": "Scale out",
+      "box": {
+        "x": 114,
+        "y": 282,
+        "w": 92,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:Scale in & out",
+      "tag": "label",
+      "text": "Scale in & out",
+      "box": {
+        "x": 204,
+        "y": 282,
+        "w": 121,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgb(22, 119, 255)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(22, 119, 255)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "input#minThreshold",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 106,
+        "y": 323,
+        "w": 1289,
+        "h": 30
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 2,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1406,
+        "y": 323,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~4",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1404,
+        "y": 327,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]~2",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1406,
+        "y": 338,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~5",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1404,
+        "y": 342,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "input#maxThreshold",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 45,
+        "y": 363,
+        "w": 1289,
+        "h": 30
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 2,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]~3",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1345,
+        "y": 363,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~6",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1342,
+        "y": 367,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]~4",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1345,
+        "y": 378,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~7",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1342,
+        "y": 382,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:*Step size",
+      "tag": "label",
+      "text": "*Step size",
+      "box": {
+        "x": 33,
+        "y": 418,
+        "w": 1374,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "span[role=img]~8",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 106,
+        "y": 421,
+        "w": 14,
+        "h": 14
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 3,
+        "misses": []
+      }
+    },
+    {
+      "key": "input#stepSize",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 45,
+        "y": 449,
+        "w": 1350,
+        "h": 30
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 2,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]~5",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1406,
+        "y": 449,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~9",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1404,
+        "y": 453,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]~6",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1406,
+        "y": 464,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~10",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1404,
+        "y": 468,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:*Rule name",
+      "tag": "label",
+      "text": "*Rule name",
+      "box": {
+        "x": 33,
+        "y": 504,
+        "w": 1374,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "input#ruleName",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 33,
+        "y": 534,
+        "w": 1374,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 6,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:Enabled",
+      "tag": "label",
+      "text": "Enabled",
+      "box": {
+        "x": 33,
+        "y": 590,
+        "w": 1374,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "button#enabled",
+      "tag": "button",
+      "text": null,
+      "box": {
+        "x": 33,
+        "y": 625,
+        "w": 44,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 5,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(22, 119, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-left-radius",
+            "value": "100px"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:*Cooldown (seconds)",
+      "tag": "label",
+      "text": "*Cooldown (seconds)",
+      "box": {
+        "x": 33,
+        "y": 676,
+        "w": 1374,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "input#cooldown",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 45,
+        "y": 707,
+        "w": 1350,
+        "h": 30
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 2,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]~7",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1406,
+        "y": 707,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~11",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1404,
+        "y": 711,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=button]~8",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1406,
+        "y": 722,
+        "w": 1,
+        "h": 15
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~12",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1404,
+        "y": 726,
+        "w": 7,
+        "h": 7
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.45)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "div[role=separator]",
+      "tag": "div",
+      "text": null,
+      "box": {
+        "x": 33,
+        "y": 762,
+        "w": 1374,
+        "h": 1
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(5, 5, 5, 0.06)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:*Key",
+      "tag": "label",
+      "text": "*Key",
+      "box": {
+        "x": 33,
+        "y": 787,
+        "w": 663,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "input#tags_0_key",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 33,
+        "y": 817,
+        "w": 663,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 6,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "label:Value",
+      "tag": "label",
+      "text": "Value",
+      "box": {
+        "x": 704,
+        "y": 787,
+        "w": 663,
+        "h": 22
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 4,
+        "misses": []
+      }
+    },
+    {
+      "key": "input#tags_0_value",
+      "tag": "input",
+      "text": null,
+      "box": {
+        "x": 704,
+        "y": 817,
+        "w": 663,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 6,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "button",
+      "tag": "button",
+      "text": null,
+      "box": {
+        "x": 1375,
+        "y": 815,
+        "w": 32,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 4,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~13",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 1384,
+        "y": 823,
+        "w": 14,
+        "h": 14
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "button:Add tag",
+      "tag": "button",
+      "text": "Add tag",
+      "box": {
+        "x": 33,
+        "y": 865,
+        "w": 1374,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 6,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "span[role=img]~14",
+      "tag": "span",
+      "text": null,
+      "box": {
+        "x": 683,
+        "y": 873,
+        "w": 14,
+        "h": 14
+      },
+      "tokens": {
+        "checked": 3,
+        "matched": 1,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          }
+        ]
+      }
+    },
+    {
+      "key": "button:Validate",
+      "tag": "button",
+      "text": "Validate",
+      "box": {
+        "x": 33,
+        "y": 897,
+        "w": 85,
+        "h": 32
+      },
+      "tokens": {
+        "checked": 6,
+        "matched": 3,
+        "misses": [
+          {
+            "prop": "color",
+            "value": "rgba(0, 0, 0, 0.88)"
+          },
+          {
+            "prop": "background-color",
+            "value": "rgb(255, 255, 255)"
+          },
+          {
+            "prop": "border-top-color",
+            "value": "rgb(217, 217, 217)"
+          }
+        ]
+      }
+    }
+  ]
+}

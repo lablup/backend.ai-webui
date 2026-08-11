@@ -1,0 +1,378 @@
+{
+  "light/environment": [
+    {
+      "labels": [
+        "ImagesImages",
+        "Resource PresetsResource",
+        "RegistriesRegistries"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 582,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/resources": [
+    {
+      "labels": [
+        "AgentAgent",
+        "StoragesStorages",
+        "Resource GroupResource G"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 558,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/resource-policy": [
+    {
+      "labels": [
+        "Keypair Resource PolicyK",
+        "User Resource PolicyUser",
+        "Project Resource PolicyP"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 810,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/statistics": [
+    {
+      "labels": [
+        "Allocation HistoryAlloca",
+        "User Session HistoryUser"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 586,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/users": [
+    {
+      "labels": [
+        "UsersUsers",
+        "CredentialsCredentials"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 440,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/project": [
+    {
+      "labels": [
+        "ProjectsProjects"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 356,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/maintenance": [
+    {
+      "labels": [
+        "MaintenanceMaintenance"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 386,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/settings": [
+    {
+      "labels": [
+        "ConfigurationsConfigurat"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 400,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/scheduler": [
+    {
+      "labels": [
+        "Fair Share SettingFair S"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 436,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/my-environment": [
+    {
+      "labels": [
+        "ImagesImages"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 347,
+      "borderBottom": "1px solid rgb(240, 240, 240)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "light/session": [
+    {
+      "labels": [
+        "AllAll",
+        "InteractiveInteractive",
+        "BatchBatch",
+        "InferenceInference",
+        "Upload SessionsUpload Se"
+      ],
+      "navX": 288,
+      "navW": 1264,
+      "navH": 36,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 766,
+      "borderBottom": "1px solid rgb(255, 122, 0)",
+      "paddingBlockEnd": "0px",
+      "spansParent": true
+    }
+  ],
+  "dark/environment": [
+    {
+      "labels": [
+        "ImagesImages",
+        "Resource PresetsResource",
+        "RegistriesRegistries"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 582,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/resources": [
+    {
+      "labels": [
+        "AgentAgent",
+        "StoragesStorages",
+        "Resource GroupResource G"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 558,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/resource-policy": [
+    {
+      "labels": [
+        "Keypair Resource PolicyK",
+        "User Resource PolicyUser",
+        "Project Resource PolicyP"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 810,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/statistics": [
+    {
+      "labels": [
+        "Allocation HistoryAlloca",
+        "User Session HistoryUser"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 586,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/users": [
+    {
+      "labels": [
+        "UsersUsers",
+        "CredentialsCredentials"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 440,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/project": [
+    {
+      "labels": [
+        "ProjectsProjects"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 356,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/maintenance": [
+    {
+      "labels": [
+        "MaintenanceMaintenance"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 386,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/settings": [
+    {
+      "labels": [
+        "ConfigurationsConfigurat"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 400,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/scheduler": [
+    {
+      "labels": [
+        "Fair Share SettingFair S"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 436,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/my-environment": [
+    {
+      "labels": [
+        "ImagesImages"
+      ],
+      "navX": 265,
+      "navW": 1310,
+      "navH": 57,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 347,
+      "borderBottom": "1px solid rgb(48, 48, 48)",
+      "paddingBlockEnd": "4px",
+      "spansParent": false
+    }
+  ],
+  "dark/session": [
+    {
+      "labels": [
+        "AllAll",
+        "InteractiveInteractive",
+        "BatchBatch",
+        "InferenceInference",
+        "Upload SessionsUpload Se"
+      ],
+      "navX": 288,
+      "navW": 1264,
+      "navH": 36,
+      "parentX": 288,
+      "parentW": 1264,
+      "lastTabRight": 766,
+      "borderBottom": "1px solid rgb(190, 94, 6)",
+      "paddingBlockEnd": "0px",
+      "spansParent": true
+    }
+  ]
+}

@@ -6,23 +6,16 @@ import { SFTPConnectionInfoModalFragment$key } from '../../__generated__/SFTPCon
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import { Alert, Descriptions, Typography } from 'antd';
-import { createStyles } from 'antd-style';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Heading } from '@astryxdesign/core/Heading';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-
-const useStyles = createStyles(({ css, token }) => ({
-  description: css`
-    .ant-descriptions-header {
-      margin-bottom: ${token.marginSM}px !important;
-    }
-    .ant-descriptions-item {
-      padding-bottom: ${token.paddingXXS}px !important;
-    }
-  `,
-}));
 
 type DirectAccessInfo = {
   kernel_role: string;
@@ -44,7 +37,6 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
@@ -117,20 +109,13 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
       okText={t('session.appLauncher.DownloadSSHKey')}
       onOk={readAndDownloadSSHKey}
     >
-      <BAIFlex
-        className={styles.description}
-        direction="column"
-        align="stretch"
-        gap="md"
-      >
-        <Alert
-          showIcon
-          type="info"
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Banner
+          status="info"
           title={<Trans i18nKey="session.SFTPDescription" />}
         />
-        <Alert
-          showIcon
-          type="warning"
+        <Banner
+          status="warning"
           title={
             <>
               <Trans i18nKey="session.SFTPExtraNotification" />
@@ -139,28 +124,26 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
           }
         />
 
-        <Descriptions
+        <MetadataList
           title={t('session.ConnectionInformation')}
-          column={1}
-          labelStyle={{ minWidth: 60 }}
+          columns="single"
+          label={{ position: 'start', width: 60 }}
         >
-          <Descriptions.Item label={t('session.User')}>work</Descriptions.Item>
-          <Descriptions.Item label={t('session.Host')}>
+          <MetadataListItem label={t('session.User')}>work</MetadataListItem>
+          <MetadataListItem label={t('session.Host')}>
             {displayHost}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.Port')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.Port')}>
             {displayPorts}
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </MetadataList>
         <BAIFlex
           direction="column"
           align="stretch"
           gap="sm"
           style={{ width: '100%' }}
         >
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('session.ConnectionExample')}
-          </Typography.Title>
+          <Heading level={5}>{t('session.ConnectionExample')}</Heading>
           <BAIFlex
             direction="column"
             align="stretch"

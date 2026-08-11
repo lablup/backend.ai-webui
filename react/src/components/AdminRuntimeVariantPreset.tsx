@@ -8,10 +8,9 @@ import type {
   RuntimeVariantPresetFilter,
   RuntimeVariantPresetOrderBy,
 } from '../__generated__/AdminRuntimeVariantPresetQuery.graphql';
+import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -30,7 +29,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { Trash2, Settings, PlusIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -243,7 +242,7 @@ const AdminRuntimeVariantPreset = ({
                         {
                           key: 'edit',
                           title: t('button.Edit'),
-                          icon: <SettingOutlined />,
+                          icon: <Settings size="1em" />,
                           onClick: () => {
                             const host = presetHostNodes.find(
                               (node) => node.id === record.id,
@@ -256,7 +255,7 @@ const AdminRuntimeVariantPreset = ({
                         {
                           key: 'delete',
                           title: t('button.Delete'),
-                          icon: <DeleteFilled />,
+                          icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => setDeletingPreset(record),
                         },

@@ -5,10 +5,10 @@
 import { UserFolderPermissionPanelQuery } from '../__generated__/UserFolderPermissionPanelQuery.graphql';
 import { UserFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanel_storageVolumeFrgmt.graphql';
 import KeypairResourcePolicyStoragePermissionTable from './KeypairResourcePolicyStoragePermissionTable';
-import { Typography, theme } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIAdminKeypairResourcePolicySelect,
-  BAIAlert,
+  BAIAdminKeypairResourcePolicySelectAstryx,
   BAICard,
   BAIFlex,
 } from 'backend.ai-ui';
@@ -37,7 +37,6 @@ const UserFolderPermissionPanel: React.FC<UserFolderPermissionPanelProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const storageVolume = useFragment(
     graphql`
@@ -68,38 +67,47 @@ const UserFolderPermissionPanel: React.FC<UserFolderPermissionPanelProps> = ({
 
   // Over-selecting (an 11th item) flips the select to an error state; the
   // table caps its fetched dataSource at `MAX_SELECTION` regardless.
+  // PILOT-DECISION: antd `type="danger"` has no Astryx TextColor equivalent
+  // (MAPPING §3.4) — the red tint drops; `type="supporting"` keeps the small
+  // font (was token.fontSizeSM). The select itself already flips to
+  // `status="error"` when over-selected, so the error state is not silent.
   const renderLimitMessage = (count: number) =>
     count > MAX_SELECTION ? (
-      <Typography.Text type="danger" style={{ fontSize: token.fontSizeSM }}>
+      <Text type="supporting" color="primary">
         {t('storageHost.permission.SelectionLimitExceeded', {
           max: MAX_SELECTION,
         })}
-      </Typography.Text>
+      </Text>
     ) : null;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
-      <BAIAlert
-        type="info"
-        showIcon
-        description={t('storageHost.permission.UserFolderPermissionsNote')}
+      {/* antd Alert type="info" showIcon description → Banner (MAPPING §4). */}
+      <Banner
+        status="info"
+        title={t('storageHost.permission.UserFolderPermissionsNote')}
       />
 
       <BAICard
         title={t('storageHost.permission.KeypairResourcePolicies')}
         extra={
           <BAIFlex direction="column" align="end" gap="xxs">
-            <BAIAdminKeypairResourcePolicySelect
-              mode="multiple"
-              maxTagCount="responsive"
+            <BAIAdminKeypairResourcePolicySelectAstryx
+              // The card title already prints "Keypair Resource Policies", so
+              // the field reuses it as its accessible name and hides it.
+              label={t('storageHost.permission.KeypairResourcePolicies')}
+              isLabelHidden
+              multiple
               value={selectedPolicyNames}
               onChange={(value) =>
                 setSelectedPolicyNames((value as string[]) ?? [])
               }
               status={
-                selectedPolicyNames.length > MAX_SELECTION ? 'error' : undefined
+                selectedPolicyNames.length > MAX_SELECTION
+                  ? { type: 'error' }
+                  : undefined
               }
-              style={{ width: 320 }}
+              width={320}
             />
             {renderLimitMessage(selectedPolicyNames.length)}
           </BAIFlex>

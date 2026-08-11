@@ -42,7 +42,7 @@ const meta: Meta<typeof BAIUserNodes> = {
 'totp_activated', 'created_at', 'modified_at', 'status'
 \`\`\`
 
-For inherited BAITable props, refer to [BAITable component](?path=/docs/table-baitable--docs).
+For inherited BAITableAstryx props, refer to [BAITableAstryx component](?path=/docs/table-baitable--docs).
 
 ## Usage with Relay Query
 
@@ -89,7 +89,7 @@ const { users } = useLazyLoadQuery(
     },
     loading: {
       control: { type: 'boolean' },
-      description: 'Shows loading skeleton (inherited from BAITable)',
+      description: 'Shows loading skeleton (inherited from BAITableAstryx)',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },

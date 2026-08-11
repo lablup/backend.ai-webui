@@ -18,7 +18,10 @@ vi.mock('backend.ai-ui', () => ({
   BAIFlex: ({ children }: { children: React.ReactNode }) => (
     <React.Fragment>{children}</React.Fragment>
   ),
-  BAIQuestionIconWithTooltip: () => null,
+}));
+
+vi.mock('../astryx-bui/BAIQuestionIconWithTooltipAstryx', () => ({
+  default: () => null,
 }));
 
 vi.mock('i18next', () => ({

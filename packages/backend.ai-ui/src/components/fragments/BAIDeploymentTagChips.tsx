@@ -1,6 +1,12 @@
+/*
+ to-astryx W2-D: antd `Tag` -> Astryx `Badge` (MAPPING §3.5 — not closable).
+ The chips carry no colour, so they land on the default `neutral` variant; the
+ interactive branch keeps its own `role="button"` / `tabIndex` / key handling,
+ which `Badge` passes through to the root element like antd's `Tag` did.
+*/
 import { BAIDeploymentTagChips_metadata$key } from '../../__generated__/BAIDeploymentTagChips_metadata.graphql';
 import BAIFlex from '../BAIFlex';
-import { Tag } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -61,27 +67,27 @@ const BAIDeploymentTagChips: React.FC<BAIDeploymentTagChipsProps> = ({
     <BAIFlex wrap="wrap" gap="xxs">
       {tags.map((tag) =>
         interactive ? (
-          <Tag
+          <Badge
             key={tag}
+            variant="neutral"
+            label={tag}
             role="button"
             tabIndex={0}
             style={{ cursor: 'pointer' }}
-            onClick={(e: React.MouseEvent<HTMLSpanElement>) => {
+            onClick={(e: React.MouseEvent<HTMLElement>) => {
               if (stopRowClick) e.stopPropagation();
               onTagClick?.(tag);
             }}
-            onKeyDown={(e: React.KeyboardEvent<HTMLSpanElement>) => {
+            onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 if (stopRowClick) e.stopPropagation();
                 onTagClick?.(tag);
               }
             }}
-          >
-            {tag}
-          </Tag>
+          />
         ) : (
-          <Tag key={tag}>{tag}</Tag>
+          <Badge key={tag} variant="neutral" label={tag} />
         ),
       )}
     </BAIFlex>

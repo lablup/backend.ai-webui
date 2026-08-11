@@ -10,7 +10,11 @@ import StorageHostResourcePanel from './StorageHostResourcePanel';
 import StorageHostSettingsPanel from './StorageHostSettingsPanel';
 import UserFolderPermissionPanel from './UserFolderPermissionPanel';
 import UserFolderPermissionPanelV2 from './UserFolderPermissionPanelV2';
-import { Empty, Skeleton, Tabs, Typography } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Text } from '@astryxdesign/core/Text';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -65,74 +69,61 @@ const StorageHostDetailDrawerContent: React.FC<
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFlex direction="column" align="start">
-        <Typography.Title level={3} style={{ margin: 0 }}>
-          {storageHostId}
-        </Typography.Title>
+        <Heading level={3}>{storageHostId}</Heading>
         {storageVolume?.path ? (
-          <Typography.Text type="secondary">
-            {storageVolume.path}
-          </Typography.Text>
+          <Text color="secondary">{storageVolume.path}</Text>
         ) : null}
       </BAIFlex>
       <StorageHostResourcePanel storageVolumeFrgmt={storageVolume} />
-      <Tabs
-        activeKey={activeTabKey}
-        onChange={(key: string) => setActiveTabKey(key as TabKey)}
-        items={[
-          {
-            key: 'projectFolderPermissions',
-            label: t('storageHost.tab.ProjectFolderPermissions'),
-            children: (
-              <ErrorBoundaryWithNullFallback>
-                <Suspense fallback={<Skeleton active />}>
-                  <ProjectFolderPermissionPanel
-                    storageVolumeFrgmt={storageVolume}
-                  />
-                </Suspense>
-              </ErrorBoundaryWithNullFallback>
-            ),
-          },
-          {
-            key: 'userFolderPermissions',
-            label: t('storageHost.tab.UserFolderPermissions'),
-            children: (
-              <ErrorBoundaryWithNullFallback>
-                <Suspense fallback={<Skeleton active />}>
-                  {supportsKeypairUserFilter ? (
-                    <UserFolderPermissionPanelV2
-                      storageVolumeFrgmt={storageVolume}
-                    />
-                  ) : (
-                    <UserFolderPermissionPanel
-                      storageVolumeFrgmt={storageVolume}
-                    />
-                  )}
-                </Suspense>
-              </ErrorBoundaryWithNullFallback>
-            ),
-          },
-          {
-            key: 'capacity',
-            label: t('storageHost.tab.CapacitySetting'),
-            children: isQuotaSupportedStorage ? (
-              <ErrorBoundaryWithNullFallback>
-                <Suspense fallback={<Skeleton active />}>
-                  <StorageHostSettingsPanel
-                    storageVolumeFrgmt={storageVolume}
-                  />
-                </Suspense>
-              </ErrorBoundaryWithNullFallback>
+      {/* antd Tabs → TabList + Tab (MAPPING §4): navigation only, panel is
+          self-rendered below. */}
+      <TabList
+        value={activeTabKey}
+        onChange={(key) => setActiveTabKey(key as TabKey)}
+      >
+        <Tab
+          value="projectFolderPermissions"
+          label={t('storageHost.tab.ProjectFolderPermissions')}
+        />
+        <Tab
+          value="userFolderPermissions"
+          label={t('storageHost.tab.UserFolderPermissions')}
+        />
+        <Tab value="capacity" label={t('storageHost.tab.CapacitySetting')} />
+      </TabList>
+      {activeTabKey === 'projectFolderPermissions' && (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<BAISkeletonAstryx />}>
+            <ProjectFolderPermissionPanel storageVolumeFrgmt={storageVolume} />
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      )}
+      {activeTabKey === 'userFolderPermissions' && (
+        <ErrorBoundaryWithNullFallback>
+          <Suspense fallback={<BAISkeletonAstryx />}>
+            {supportsKeypairUserFilter ? (
+              <UserFolderPermissionPanelV2 storageVolumeFrgmt={storageVolume} />
             ) : (
-              <BAICard styles={{ body: { paddingTop: 0 } }}>
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={t('storageHost.QuotaDoesNotSupported')}
-                />
-              </BAICard>
-            ),
-          },
-        ]}
-      />
+              <UserFolderPermissionPanel storageVolumeFrgmt={storageVolume} />
+            )}
+          </Suspense>
+        </ErrorBoundaryWithNullFallback>
+      )}
+      {activeTabKey === 'capacity' &&
+        (isQuotaSupportedStorage ? (
+          <ErrorBoundaryWithNullFallback>
+            <Suspense fallback={<BAISkeletonAstryx />}>
+              <StorageHostSettingsPanel storageVolumeFrgmt={storageVolume} />
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
+        ) : (
+          <BAICard styles={{ body: { paddingTop: 0 } }}>
+            <EmptyState
+              title={t('storageHost.QuotaDoesNotSupported')}
+              isCompact
+            />
+          </BAICard>
+        ))}
     </BAIFlex>
   );
 };

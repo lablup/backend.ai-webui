@@ -1,0 +1,126 @@
+{
+  "light": {
+    "banner": {
+      "t": "adlfjkasdfasdfhelloEditDismi",
+      "cls": "astryx-banner card info x78zum5 x1txdalj",
+      "x": 264,
+      "y": 120,
+      "w": 1312,
+      "h": 106.58,
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22px",
+      "padding": "12px 16px"
+    },
+    "bannerInner": {
+      "t": "",
+      "cls": "astryx-banner-icon info x78zum5 x6s0dn4 ",
+      "x": 280,
+      "y": 163.28,
+      "w": 20,
+      "h": 20,
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22px",
+      "padding": "0px"
+    },
+    "title": {
+      "t": "Create New Storage Folder",
+      "cls": "astryx-text large xl primary x1tgivj0 xf",
+      "x": 290.5,
+      "y": 344.45,
+      "w": 260,
+      "h": 28.23,
+      "fontSize": "20px",
+      "fontWeight": "600",
+      "lineHeight": "28.236px",
+      "padding": "0px"
+    },
+    "description": {
+      "t": "Create folders and upload fi",
+      "cls": "astryx-text supporting secondary xv1l7n4",
+      "x": 284,
+      "y": 400.58,
+      "w": 273,
+      "h": 60,
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "lineHeight": "20.0004px",
+      "padding": "0px"
+    },
+    "button": {
+      "t": "Create Folder",
+      "cls": "astryx-button primary lg x1n2onr6 x3nfvp",
+      "x": 284,
+      "y": 518.58,
+      "w": 273,
+      "h": 36,
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "20.0004px",
+      "padding": "8px 12px"
+    }
+  },
+  "dark": {
+    "banner": {
+      "t": "adlfjkasdfasdfhelloEditDismi",
+      "cls": "astryx-banner card info x78zum5 x1txdalj",
+      "x": 264,
+      "y": 120,
+      "w": 1312,
+      "h": 106.58,
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22px",
+      "padding": "12px 16px"
+    },
+    "bannerInner": {
+      "t": "",
+      "cls": "astryx-banner-icon info x78zum5 x6s0dn4 ",
+      "x": 280,
+      "y": 163.28,
+      "w": 20,
+      "h": 20,
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22px",
+      "padding": "0px"
+    },
+    "title": {
+      "t": "Create New Storage Folder",
+      "cls": "astryx-text large xl primary x1tgivj0 xf",
+      "x": 290.5,
+      "y": 344.45,
+      "w": 260,
+      "h": 28.23,
+      "fontSize": "20px",
+      "fontWeight": "600",
+      "lineHeight": "28.236px",
+      "padding": "0px"
+    },
+    "description": {
+      "t": "Create folders and upload fi",
+      "cls": "astryx-text supporting secondary xv1l7n4",
+      "x": 284,
+      "y": 400.58,
+      "w": 273,
+      "h": 60,
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "lineHeight": "20.0004px",
+      "padding": "0px"
+    },
+    "button": {
+      "t": "Create Folder",
+      "cls": "astryx-button primary lg x1n2onr6 x3nfvp",
+      "x": 284,
+      "y": 518.58,
+      "w": 273,
+      "h": 36,
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "20.0004px",
+      "padding": "8px 12px"
+    }
+  }
+}

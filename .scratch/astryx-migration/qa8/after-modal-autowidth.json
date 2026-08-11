@@ -1,0 +1,24 @@
+{
+  "openers": [
+    "ConfigurationsConfigurations",
+    "Config",
+    "Config"
+  ],
+  "dialogs": [
+    {
+      "title": "Overlay Network settingsAn overlay netwo",
+      "rendered": 301,
+      "cssWidth": "301px",
+      "maxWidth": "1440px",
+      "contentNeeds": 301
+    },
+    {
+      "title": "Scheduler settingsThe values in the sche",
+      "rendered": 288,
+      "cssWidth": "288px",
+      "maxWidth": "1440px",
+      "contentNeeds": 288
+    }
+  ],
+  "pageErrors": []
+}

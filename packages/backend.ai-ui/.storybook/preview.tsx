@@ -1,5 +1,6 @@
 import { storybookDarkTheme, storybookLightTheme } from './BackendAITheme';
 import { DocsContainer } from './DocsContainer';
+import './astryx.css';
 import { withGlobalProvider } from './decorators';
 import { localeItems } from './localeConfig';
 import type { Preview } from '@storybook/react-vite';

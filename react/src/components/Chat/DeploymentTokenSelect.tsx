@@ -7,21 +7,38 @@ import type {
   DeploymentTokenSelectQuery$data,
 } from '../../__generated__/DeploymentTokenSelectQuery.graphql';
 import WebUILink from '../WebUILink';
-import { SettingOutlined } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
-import { Input, Select, Tooltip, theme } from 'antd';
-import type { SelectProps } from 'antd';
+import { Code } from '@astryxdesign/core/Code';
+import type { SelectorOptionData } from '@astryxdesign/core/Selector';
+import { Selector } from '@astryxdesign/core/Selector';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
-  BAIText,
   filterOutNullAndUndefined,
   toGlobalId,
+  useControllableValue,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { castArray, maxBy } from 'lodash-es';
+import { maxBy } from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { useEffect, useEffectEvent } from 'react';
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+// PILOT-DECISION: the antd `SelectProps` extension is gone — this component
+// never used more than `value`/`onChange`/`style`/`disabled` from it (grepped
+// call sites: CustomModelForm, DeploymentSettingModal). Astryx `Selector`'s
+// own contract (required string `value`, `onChange(value)`) replaces it.
+interface DeploymentTokenSelectProps {
+  deploymentId?: string | null;
+  value?: string;
+  onChange?: (value: string) => void;
+  style?: CSSProperties;
+  disabled?: boolean;
+  loading?: boolean;
+}
 
 function getValidTokenOptions(
   deploymentData: DeploymentTokenSelectQuery$data['deployment'],
@@ -50,18 +67,13 @@ function getValidTokenOptions(
   );
 }
 
-interface DeploymentTokenSelectProps extends Omit<SelectProps, 'options'> {
-  deploymentId?: string | null;
-}
-
 const DeploymentTokenSelectWithQuery: React.FC<
   DeploymentTokenSelectProps & {
     deploymentId: string;
   }
-> = ({ deploymentId, style, ...props }) => {
+> = ({ deploymentId, style, loading, ...props }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token: themeToken } = theme.useToken();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
 
@@ -104,29 +116,32 @@ const DeploymentTokenSelectWithQuery: React.FC<
   // native tooltip (FR-3341).
   const validTokens = getValidTokenOptions(deployment);
   const noExpirationLabel = t('deployment.accessToken.NoExpiration');
-  const selectOptions = validTokens.map((item) => ({
-    // The raw token stays as the value the form submits.
+  // PILOT-DECISION: antd `Select.options[].label` accepted a `ReactNode`
+  // (a two-line token-tail + expiry row). Astryx `Selector`'s `label` is a
+  // required `string` (P2) — kept as the searchable/fallback text, with the
+  // rich two-line row moved to `renderOption` (MAPPING.md §3.1's "everything
+  // else" branch). The hover tooltip (full issued -> expiry timestamp) has
+  // no destination on a Selector option row and is dropped.
+  const selectOptions: SelectorOptionData[] = validTokens.map((item) => ({
     value: item.token,
-    label: (
-      <BAIFlex
-        title={`${item.issued.format('lll')} → ${item.expires?.format('lll') ?? noExpirationLabel}`}
-        gap="xs"
-        align="center"
-        style={{ overflow: 'hidden' }}
-      >
-        <BAIText code style={{ flexShrink: 0, margin: 0 }}>
-          …{item.token.slice(-6)}
-        </BAIText>
-        <BAIText
-          type="secondary"
-          ellipsis
-          style={{ flex: 1, minWidth: 0, fontSize: themeToken.fontSizeSM }}
+    label: `…${item.token.slice(-6)}`,
+  }));
+  const renderTokenOption = (option: SelectorOptionData) => {
+    const item = validTokens.find((v) => v.token === option.value);
+    if (!item) return option.label;
+    return (
+      <BAIFlex gap="xs" align="center" style={{ overflow: 'hidden' }}>
+        <Code style={{ flexShrink: 0 }}>…{item.token.slice(-6)}</Code>
+        <Text
+          color="secondary"
+          maxLines={1}
+          style={{ flex: 1, minWidth: 0, fontSize: 'var(--font-size-sm)' }}
         >
           {item.expires ? `~ ${item.expires.format('ll')}` : noExpirationLabel}
-        </BAIText>
+        </Text>
       </BAIFlex>
-    ),
-  }));
+    );
+  };
 
   // Default to the most recent valid token (latest created_at) when the field
   // is still empty. Applied once when tokens load; if the user clears the
@@ -146,32 +161,32 @@ const DeploymentTokenSelectWithQuery: React.FC<
   // Tokens — a convenient shortcut shown regardless of whether tokens exist.
   return (
     <BAIFlex gap="xs" align="center">
-      <Select
+      <Selector
+        label={t('chatui.SelectToken')}
+        isLabelHidden
         placeholder={t('chatui.SelectToken')}
         // Fixed width so the token field looks the same across panel sizes
         // instead of following CustomModelForm's responsive 100%/200px width,
         // while still shrinking to fit narrow screens (maxWidth + minWidth 0).
-        style={{
-          ...style,
-          width: 220,
-          maxWidth: '100%',
-          minWidth: 0,
-          fontWeight: 'normal',
-        }}
+        style={{ ...style, minWidth: 0 }}
+        width={220}
         options={selectOptions}
-        value={controllableValue}
-        onChange={(_, option) => {
-          setControllableValue(castArray(option)?.[0].value ?? '');
-        }}
-        {...props}
+        renderOption={renderTokenOption}
+        value={controllableValue || undefined}
+        onChange={(v) => setControllableValue(v)}
+        isDisabled={props.disabled}
+        isLoading={loading}
       />
       <WebUILink
         to={`/deployments/${deploymentId}#access-tokens`}
         aria-label={t('deployment.AccessTokenSettings')}
         style={{ flexShrink: 0, display: 'inline-flex' }}
       >
-        <Tooltip title={t('deployment.AccessTokenSettings')}>
-          <SettingOutlined style={{ color: themeToken.colorTextSecondary }} />
+        <Tooltip content={t('deployment.AccessTokenSettings')}>
+          <Settings
+            style={{ color: 'var(--color-text-secondary)' }}
+            size="1em"
+          />
         </Tooltip>
       </WebUILink>
     </BAIFlex>
@@ -183,16 +198,19 @@ const DeploymentTokenSelect: React.FC<DeploymentTokenSelectProps> = ({
   ...props
 }) => {
   'use memo';
+  const { t } = useTranslation();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
 
   if (!deploymentId) {
     return (
-      <Input
-        value={controllableValue}
-        onChange={(e) => setControllableValue(e.target.value)}
+      <TextInput
+        label={t('chatui.SelectToken')}
+        isLabelHidden
+        value={controllableValue ?? ''}
+        onChange={(v) => setControllableValue(v)}
         style={props.style}
-        disabled={props.disabled}
+        isDisabled={props.disabled}
       />
     );
   }

@@ -1,0 +1,43 @@
+{
+  "light": {
+    "env": [
+      {
+        "label": "Edit Minimum Image Resource Limit",
+        "color": "rgb(2, 141, 242)"
+      },
+      {
+        "label": "Manage Apps",
+        "color": "rgb(2, 141, 242)"
+      },
+      {
+        "label": "Edit Minimum Image Resource Limit",
+        "color": "rgb(2, 141, 242)"
+      },
+      {
+        "label": "Manage Apps",
+        "color": "rgb(2, 141, 242)"
+      }
+    ]
+  },
+  "dark": {
+    "env": [
+      {
+        "label": "Edit Minimum Image Resource Limit",
+        "color": "rgb(3, 135, 191)"
+      },
+      {
+        "label": "Manage Apps",
+        "color": "rgb(3, 135, 191)"
+      },
+      {
+        "label": "Edit Minimum Image Resource Limit",
+        "color": "rgb(3, 135, 191)"
+      },
+      {
+        "label": "Manage Apps",
+        "color": "rgb(3, 135, 191)"
+      }
+    ]
+  },
+  "pageErrors": []
+}

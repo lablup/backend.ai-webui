@@ -1,0 +1,95 @@
+{
+  "viewport": {
+    "w": 1600,
+    "h": 1000
+  },
+  "light": {
+    "folder-create-from-data": {
+      "triggerCount": 3,
+      "rows": [
+        {
+          "i": 0,
+          "anchorRect": {
+            "x": 1077,
+            "y": 285,
+            "w": 32,
+            "h": 32
+          },
+          "tip": {
+            "text": "Close",
+            "rect": {
+              "x": 1067.5,
+              "y": 251,
+              "w": 51,
+              "h": 30
+            },
+            "positionAnchor": "--astryx-layer-_r_7e_",
+            "positionArea": "self-block-start",
+            "insideDialog": true,
+            "atViewportOrigin": false
+          },
+          "deltaX": 0
+        },
+        {
+          "i": 1,
+          "anchorRect": {
+            "x": 1021.3,
+            "y": 371,
+            "w": 14,
+            "h": 14
+          },
+          "tip": {
+            "text": "Auto-mount folders are automatically mou",
+            "rect": {
+              "x": 878.3,
+              "y": 315,
+              "w": 300,
+              "h": 52
+            },
+            "positionAnchor": "--astryx-layer-_r_7v_",
+            "positionArea": "self-block-start",
+            "insideDialog": true,
+            "atViewportOrigin": false
+          },
+          "deltaX": 0
+        },
+        {
+          "i": 2,
+          "error": "TimeoutError: locator.hover: Timeout 4000ms exceeded."
+        }
+      ]
+    },
+    "folder-create-from-launcher": {
+      "skipped": "no create-folder button"
+    },
+    "table-settings": {
+      "triggerCount": 1,
+      "rows": [
+        {
+          "i": 0,
+          "anchorRect": {
+            "x": 962,
+            "y": 235.5,
+            "w": 32,
+            "h": 32
+          },
+          "tip": {
+            "text": "Close",
+            "rect": {
+              "x": 952.5,
+              "y": 201.5,
+              "w": 51,
+              "h": 30
+            },
+            "positionAnchor": "--astryx-layer-_r_6m_",
+            "positionArea": "self-block-start",
+            "insideDialog": true,
+            "atViewportOrigin": false
+          },
+          "deltaX": 0
+        }
+      ]
+    }
+  },
+  "pageErrors": []
+}

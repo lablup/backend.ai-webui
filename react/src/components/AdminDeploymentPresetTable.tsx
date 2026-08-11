@@ -6,12 +6,11 @@ import type {
   AdminDeploymentPresetTableFragment$data,
   AdminDeploymentPresetTableFragment$key,
 } from '../__generated__/AdminDeploymentPresetTableFragment.graphql';
-import { DeleteFilled } from '@ant-design/icons';
 import {
   BAIColumnType,
   BAINameActionCell,
   BAISessionClusterMode,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAIText,
   BooleanTag,
@@ -20,7 +19,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -132,7 +131,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
               {
                 key: 'delete',
                 title: t('button.Delete'),
-                icon: <DeleteFilled />,
+                icon: <Trash2 size="1em" />,
                 type: 'danger' as const,
                 onClick: () => onDelete?.(preset),
               },
@@ -258,11 +257,10 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey="id"
       dataSource={filteredPresets}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availablePresetSorterValues)[number]) || null,

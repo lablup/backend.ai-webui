@@ -2,12 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import {
   proxiesServingGroups,
   useSFTPProxyResourceGroupsQuery,
   useSFTPResourceGroups,
 } from '../hooks/useSFTPResourceGroups';
-import { App, Form, Skeleton, Typography } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Code } from '@astryxdesign/core/Code';
 import {
   BAIFlex,
   BAIListAlert,
@@ -114,7 +118,7 @@ const UpdateResourceGroupsModal: React.FC<UpdateResourceGroupsModalProps> = ({
               <Trans
                 i18nKey="storageProxy.ConfirmRemoveSFTPProxiesContent"
                 values={{ proxies: removed.join(', ') }}
-                components={{ code: <Typography.Text code /> }}
+                components={{ code: <Code>{''}</Code> }}
               />
             ),
             okText: t('button.Remove'),
@@ -164,14 +168,14 @@ const UpdateResourceGroupsModal: React.FC<UpdateResourceGroupsModalProps> = ({
           {/* The proxy options come from a Relay query that suspends, so wrap
               the whole Form.Item (not the select — that would break Form's
               value/onChange binding) in its own Suspense boundary. */}
-          <Suspense fallback={<Skeleton.Input active block />}>
-            <Form.Item
+          <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+            <BAIFormItem
               name="proxies"
               label={t('storageProxy.SFTPStorageProxies')}
               tooltip={t('storageProxy.SFTPStorageProxiesDescription')}
             >
               <BAIStorageProxySelect mode="multiple" allowClear />
-            </Form.Item>
+            </BAIFormItem>
           </Suspense>
         </Form>
       </BAIFlex>

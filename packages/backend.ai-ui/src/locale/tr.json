@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Yürütme başarısız oldu",
     "ErrorOccurred": "Bir hata oluştu"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Sonuç yok",
+    "Search": "Arama"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Etki Alanı Seçin"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Otomatik yenileme",
@@ -260,6 +267,9 @@
     "StrategyType": "Strateji",
     "Tags": "Etiketler",
     "UpdatedAt": "Güncellenme Tarihi"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",
@@ -451,14 +461,18 @@
     "Step": "Adım"
   },
   "comp:BAITable": {
+    "Apply": "Uygula",
+    "Cancel": "İptal",
     "CollapseAll": "Tümünü daralt",
     "ExpandAll": "Tümünü genişlet",
     "ExpandErrorsOnly": "Yalnızca hataları genişlet",
     "ExpandOptions": "Genişletme seçenekleri",
+    "ExpandRow": "Satırı genişlet",
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",
     "InvalidPageNumber": "Geçersiz sayfa numarası",
+    "Pagination": "Sayfalama",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SettingTable": "Masa Ayarları"
@@ -526,8 +540,10 @@
     "MoreOptions": "Daha fazla seçenek",
     "Name": "İsim",
     "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
+    "RenameFile": "Rename",
     "RenameSuccess": "İsim başarıyla değiştirildi.",
     "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
     "Size": "Boyut",
@@ -605,18 +621,62 @@
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
+  "form": {
+    "Optional": "(opsiyonel)",
+    "validateMessages": {
+      "Default": "Alan doğrulama hatası ${label}",
+      "Required": "${label} gerekli bir alan",
+      "Whitespace": "${label} sadece boşluk olamaz",
+      "array": {
+        "Len": "${label} sayısı ${len} olmalı",
+        "Max": "${label} sayısı en çok ${max} olmalı",
+        "Min": "${label} sayısı en az ${min} olmalı",
+        "Range": "${label} sayısı ${min}-${max} arası olmalı"
+      },
+      "number": {
+        "Len": "${label} ${len} olmalı",
+        "Max": "${label} en çok ${max} olmalı",
+        "Min": "${label} en az ${min} olmalı",
+        "Range": "${label} ${min}-${max} arası olmalı"
+      },
+      "pattern": {
+        "Mismatch": "${label} şu kalıpla eşleşmeli: ${pattern}"
+      },
+      "string": {
+        "Len": "${label} ${len} karakter olmalı",
+        "Max": "${label} en çok ${max} karakter olmalı",
+        "Min": "${label} en az ${min} karakter olmalı",
+        "Range": "${label} ${min}-${max} karakter arası olmalı"
+      },
+      "types": {
+        "Email": "${label} geçerli bir ${type} değil",
+        "Number": "${label} geçerli bir ${type} değil",
+        "Object": "${label} geçerli bir ${type} değil",
+        "String": "${label} geçerli bir ${type} değil",
+        "Url": "${label} geçerli bir ${type} değil"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Tüm seçimi kaldır",
     "File": "Dosya",
+    "Increase": "Increase",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
+    "Select": "Select",
     "TotalItems": "Total {{total}} öğeleri",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "İptal etmek",
       "Close": "Kapalı",
       "Collapse": "Yıkılmak",
+      "Confirm": "Confirm",
       "Copied": "Kopyalandı",
+      "Copy": "Kopyala",
       "CopyAll": "Hepsini kopyala",
       "Create": "Yaratmak",
       "Delete": "Silmek",

@@ -4,34 +4,34 @@
  */
 import { UserProfileSettingModalFragment$key } from '../__generated__/UserProfileSettingModalFragment.graphql';
 import { UserProfileSettingModalUpdateUserMutation } from '../__generated__/UserProfileSettingModalUpdateUserMutation.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModal';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import {
-  type ModalProps,
-  Input,
-  Form,
-  Switch,
-  type FormInstance,
-  App,
-  Tag,
-  Typography,
-} from 'antd';
+  AstryxFormSwitch,
+  AstryxFormTagsInput,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIModal,
-  BAISelect,
   BAIText,
+  type BAIModalProps,
   useErrorMessageResolver,
+  useToggle,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
+import { CircleAlert } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface Props extends ModalProps {
+// The antd `ModalProps` type import is replaced by BUI's own `BAIModalProps`
+// — the modal this component actually renders (P15: a type-only antd import
+// still keeps the module in the antd import graph).
+interface Props extends BAIModalProps {
   userFrgmt: UserProfileSettingModalFragment$key | null | undefined;
   currentClientIp?: string;
   onRequestClose: (success?: boolean) => void;
@@ -215,7 +215,32 @@ const UserProfileSettingModal: React.FC<Props> = ({
               }),
             ]}
           >
-            <Input autoComplete="off" />
+            {/* PILOT-DECISION 1: `autoComplete` is dropped on all three text
+                fields — `TextInputProps` is a closed surface with no
+                raw-attribute passthrough. The password fields lose only the
+                browser hint that this is a NEW password, not any validation
+                (the Form.Item rules are unchanged).
+
+                PILOT-DECISION 2: `Input.Password` -> `TextInput
+                type="password"` (MAPPING §3.6) drops antd's reveal-eye
+                toggle; Astryx's TextInput has no show/hide affordance and
+                rebuilding one is out of scope. Both password fields are
+                write-only here (they are never pre-filled), so nothing the
+                user cannot re-type is hidden from them.
+
+                HANDOFF (not ours to fix): the antd `Form.Item` LABELS in this
+                modal render at `rgb(20,20,20)` against the dialog's dark
+                surface, i.e. invisible — measured with
+                `.scratch/astryx-migration/p3-w2c-ab-account.mjs`. It is
+                PRE-EXISTING: the same probe against this file's
+                pre-conversion revision reproduces it exactly. The cause is
+                the header's reverse-theme region (this modal is opened from
+                the account menu) meeting the Astryx `Dialog` surface that
+                wave 1 introduced, while the antd Form layer still paints its
+                labels from the LIGHT antd theme — MAPPING §5's "a nested
+                <Theme> with no explicit `mode`" hazard. Fixing it belongs to
+                the modal/theme layer, not to this call site. */}
+            <AstryxFormTextInput label={t('webui.menu.FullName')} />
           </Form.Item>
           <Form.Item
             name="password"
@@ -227,7 +252,10 @@ const UserProfileSettingModal: React.FC<Props> = ({
               },
             ]}
           >
-            <Input.Password autoComplete="new-password" />
+            <AstryxFormTextInput
+              label={t('general.NewPassword')}
+              type="password"
+            />
           </Form.Item>
           <Form.Item
             name="passwordConfirm"
@@ -255,16 +283,19 @@ const UserProfileSettingModal: React.FC<Props> = ({
               }),
             ]}
           >
-            <Input.Password autoComplete="new-password" />
+            <AstryxFormTextInput
+              label={t('webui.menu.NewPasswordAgain')}
+              type="password"
+            />
           </Form.Item>
           <Form.Item
             name="allowed_client_ip"
             label={t('credential.AllowedClientIP')}
             extra={
               <>
-                <Typography.Text type="secondary">
+                <Text color="secondary">
                   {t('credential.AllowedClientIPHint')}
-                </Typography.Text>
+                </Text>
                 <br />
                 <BAIText
                   type="secondary"
@@ -308,20 +339,9 @@ const UserProfileSettingModal: React.FC<Props> = ({
             ]}
             style={{ marginBottom: 0 }}
           >
-            <BAISelect
-              mode="tags"
+            <AstryxFormTagsInput
               tokenSeparators={[',', ' ']}
-              tagRender={(props) => {
-                const isValid =
-                  _.isString(props.label) && isValidIPOrCidr(props.label);
-                return (
-                  <Tag color={!isValid ? 'red' : undefined} {...props}>
-                    {props.label}
-                  </Tag>
-                );
-              }}
-              open={false}
-              suffixIcon={null}
+              label={t('credential.AllowedClientIP')}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
             />
           </Form.Item>
@@ -331,9 +351,17 @@ const UserProfileSettingModal: React.FC<Props> = ({
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
             >
-              <Switch
-                loading={mutationToRemoveTotp.isPending}
-                onChange={(checked: boolean) => {
+              {/* MAPPING §4: `checked` -> `value` (coalesced by the local
+                  adapter below, since Form.Item injects `undefined` until the
+                  field is touched), `loading` -> `isLoading`. */}
+              {/* `isLoading` and the post-`onChange` side-effect slot
+                  (`onValueChange`) are on the SHARED adapter now — those two
+                  gaps were the whole reason for the local copy (D10
+                  fold-back). */}
+              <AstryxFormSwitch
+                label={t('webui.menu.TotpActivated')}
+                isLoading={mutationToRemoveTotp.isPending}
+                onValueChange={(checked: boolean) => {
                   if (checked) {
                     toggleTOTPActivateModal();
                   } else {
@@ -341,7 +369,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                       formRef.current?.setFieldValue('totp_activated', true);
                       modal.confirm({
                         title: t('totp.TurnOffTotp'),
-                        icon: <ExclamationCircleFilled />,
+                        icon: <CircleAlert size="1em" />,
                         content: t('totp.ConfirmTotpRemovalBody'),
                         okText: t('button.Yes'),
                         okType: 'danger',
