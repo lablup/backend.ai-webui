@@ -112,12 +112,14 @@ export function getValue(entity: any, path: InternalNamePath): any {
  * flow in from `Form.List` indices and caller-built arrays, so the engine
  * should not be the thing that trusts them (CodeQL `js/prototype-polluting-
  * assignment`).
+ *
+ * Written as explicit `===` comparisons rather than a `Set.has()` lookup on
+ * purpose: CodeQL recognises the former as a barrier guard and does not track
+ * through the latter, so the `Set` version left the alert standing even though
+ * the runtime behaviour was identical.
  */
-const UNSAFE_SEGMENTS: ReadonlySet<string> = new Set([
-  '__proto__',
-  'constructor',
-  'prototype',
-]);
+const isUnsafeSegment = (key: NamePathSegment): boolean =>
+  key === '__proto__' || key === 'constructor' || key === 'prototype';
 
 /**
  * Store `value` at `key` WITHOUT ever walking the prototype chain.
@@ -129,7 +131,7 @@ const UNSAFE_SEGMENTS: ReadonlySet<string> = new Set([
  * dropped, so a field genuinely named `constructor` still round-trips.
  */
 const safeAssign = (target: any, key: NamePathSegment, value: any): void => {
-  if (typeof key === 'string' && UNSAFE_SEGMENTS.has(key)) {
+  if (isUnsafeSegment(key)) {
     Object.defineProperty(target, key, {
       value,
       enumerable: true,
@@ -144,7 +146,7 @@ const safeAssign = (target: any, key: NamePathSegment, value: any): void => {
 /** Read a segment without falling through to the prototype chain. */
 const safeRead = (source: any, key: NamePathSegment): any => {
   if (source == null) return undefined;
-  if (typeof key === 'string' && UNSAFE_SEGMENTS.has(key)) {
+  if (isUnsafeSegment(key)) {
     return Object.prototype.hasOwnProperty.call(source, key)
       ? (Object.getOwnPropertyDescriptor(source, key)?.value as unknown)
       : undefined;
@@ -176,7 +178,11 @@ function internalSet(
   // rather than leaving `{ field: undefined }`.
   if (removeIfUndefined && value === undefined && restPath.length === 1) {
     const child = safeRead(clone, path);
-    if (child != null) delete child[restPath[0]];
+    const leaf = restPath[0];
+    // Guarded for the same reason as `safeAssign`: a computed `delete` on
+    // `__proto__` / `constructor` / `prototype` reaches the prototype chain.
+    // Nothing legitimate deletes those, so skipping is the whole behaviour.
+    if (child != null && !isUnsafeSegment(leaf)) delete child[leaf];
   } else {
     safeAssign(
       clone,

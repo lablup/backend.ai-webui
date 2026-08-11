@@ -325,6 +325,16 @@ const compileIgnore = (pattern) => {
         `exponentially: ${pattern}`,
     );
   }
+  // codeql[js/regex-injection] — `--ignore` is DOCUMENTED as taking a regex
+  // (see the usage block at the top of this file), so compiling one is the
+  // feature, not a lapse. CodeQL cannot tell "a flag the operator typed into
+  // their own terminal" from "untrusted input", and it never will here: this
+  // script is a hand-run migration gate, is not imported by the app, and is not
+  // invoked by any workflow (`.github/workflows/astryx-migration-gates.yml`
+  // references it in prose only). The realistic failure mode — a
+  // catastrophically backtracking pattern — is what the two checks above bound.
+  // Suppressed rather than "fixed" by downgrading the flag to substring
+  // matching, which would quietly remove a capability the tool advertises.
   return new RegExp(pattern);
 };
 
