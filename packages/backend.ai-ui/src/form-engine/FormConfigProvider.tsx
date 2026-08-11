@@ -22,8 +22,8 @@
  languages), so the engine is self-contained.
 
  The STRINGS were ported from Ant Design's locale files
- (https://github.com/ant-design/ant-design, MIT) by
- `.scratch/astryx-migration/extract-validate-messages.mjs` — same wording, so
+ (https://github.com/ant-design/ant-design, MIT) during the FR-3482
+ Astryx migration — same wording, so
  no user-visible text changed with the switch. The key shape is BUI's, not
  antd's: `packages/backend.ai-ui/i18n.schema.json` reads a lowercase key as a
  nested object and an uppercase key as a string leaf, hence `types.String`
@@ -131,7 +131,7 @@ export function useFormValidateMessages(): ValidateMessages {
 /**
  * The `requiredMark="optional"` suffix for the current language. antd read the
  * same string from `locale.Form.optional`; the catalog entry was ported from
- * antd by `.scratch/astryx-migration/extract-optional-label.mjs`.
+ * antd during the FR-3482 Astryx migration.
  */
 export function useFormOptionalLabel(): string {
   'use memo';

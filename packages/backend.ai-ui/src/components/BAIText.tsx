@@ -34,7 +34,7 @@
                                       same shape the pilot's BAICopyableText
                                       established.
 
- PILOT-DECISIONs recorded in `.scratch/astryx-migration/issues/p3-a-bui-primitives.md`.
+ PILOT-DECISIONs recorded in `.specs/FR-3482-astryx-migration/issues/p3-a-bui-primitives.md`.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIText.css';

@@ -104,7 +104,7 @@ export const THEME_NAME_REV = 10;
  *
  * `theme.getDesignToken()` run over the shipped `resources/theme.json` seeds
  * for the default family, light + `darkAlgorithm`
- * (`.scratch/astryx-migration/antd-neutral-tokens.mjs`):
+ * (measured during the FR-3482 Astryx migration):
  *
  *   colorBgLayout     #f5f5f5              / #000000
  *   colorBgContainer  #ffffff              / #141414
@@ -211,7 +211,7 @@ const ANTD_NEUTRAL_SURFACES = {
  * ## The legacy targets (measured, not guessed)
  *
  * `theme.getDesignToken()` over the shipped `resources/theme.json` seeds,
- * light + `darkAlgorithm` (`.scratch/astryx-migration/antd-neutral-tokens.mjs`).
+ * light + `darkAlgorithm` (measured during the FR-3482 Astryx migration).
  * `colorText` survives verbatim from `resources/theme.json:8,:43`; the rest are
  * antd's neutral constants, independent of the brand seed:
  *
@@ -554,7 +554,7 @@ const SIDE_NAV_DENSITY = {
       // have no StyleX counterpart and survive untouched; a dev-vs-prod census
       // of every `components:` key in this theme found no other casualty.
       // Mechanism and measurements: the `styles.navItem` comment in
-      // `BAIMenu.tsx`, and QA-FINDINGS Q-6.
+      // `BAIMenu.tsx`, and FR-3482 QA finding Q-6.
       borderRadius: '20px',
       fontSize: '16px',
     },
@@ -575,7 +575,7 @@ const SIDE_NAV_DENSITY = {
  * A user reported that the header's user-name menu "looks different from
  * before". Measured on `to-astryx` against an antd 6.5.0 oracle rebuilt
  * outside the repo from `origin/main:react/src/components/UserDropdownMenu.tsx`
- * (`.scratch/astryx-migration/qa4-menu-metrics.mjs`, 1600x1000, both modes):
+ * (measured during the FR-3482 Astryx migration, 1600x1000, both modes):
  *
  *   metric        legacy (antd)   before
  *   item padding  5px 12px        6px 8px
@@ -604,12 +604,12 @@ const SIDE_NAV_DENSITY = {
  * Blast radius, measured rather than assumed: the row element renders as
  * `class="astryx-item astryx-dropdown-menu-item"`, and `.astryx-item` on its
  * own is shared with other Astryx list surfaces — so the rule is keyed on the
- * dropdown-specific class. `.scratch/astryx-migration/qa4-blast-radius.mjs`
- * censuses every visible `.astryx-item` with a `Selector` open and with the
+ * dropdown-specific class. A census run during the FR-3482 Astryx migration
+ * checked every visible `.astryx-item` with a `Selector` open and with the
  * menu open: 9 rows, all of them `inDropdown: true`, and the Selector
  * contributes none.
  *
- * `maxHeight: 'none'` closes REGRESSION-CATALOG `O-16` ("a new unconditional
+ * `maxHeight: 'none'` closes FR-3482 regression finding `O-16` ("a new unconditional
  * `max-height: 300px; overflow-y: auto` — long user/action menus now scroll
  * where they used to grow"), which that audit ranked Low with "lift the cap
  * if it bites". It bites: the 10-row user menu is 352px of content in a 300px
@@ -638,7 +638,7 @@ const ANTD_DROPDOWN_DENSITY = {
 
 /**
  * HOVER + TOOLTIP PARITY — three reported defects, one shared mechanism
- * (QA-FINDINGS Q-8 / Q-9 / Q-10).
+ * (FR-3482 QA findings Q-8 / Q-9 / Q-10).
  *
  * ## The mechanism
  *
@@ -646,8 +646,7 @@ const ANTD_DROPDOWN_DENSITY = {
  * `background-image: linear-gradient(var(--color-overlay-hover),
  * var(--color-overlay-hover))` over whatever the element already had, and for
  * a `Tab` as an absolutely-positioned overlay span that is the tab's FIRST
- * child. Measured live (`.scratch/astryx-migration/qa8/probe-hover.mjs`,
- * `probe-tab-overlay.mjs`).
+ * child. Measured live during the FR-3482 Astryx migration.
  *
  * `--color-overlay-hover` is pinned to antd's `colorBgTextHover`
  * (`ANTD_NEUTRAL_SURFACES`), which is `rgba(0,0,0,0.06)` in light but

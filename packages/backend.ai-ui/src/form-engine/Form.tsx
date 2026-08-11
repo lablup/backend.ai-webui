@@ -15,8 +15,7 @@
  29 `<Form>` call sites that state nothing were laid out horizontally by antd
  and vertically by the engine, silently, and three of them
  (`FolderCreateModal`, `FolderCreateModalV2`, `QuotaSettingModal`) pair that
- silence with a `labelCol` span, which has no meaning in a vertical form. The
- census is in `.scratch/astryx-migration/form-prop-census.txt`.
+ silence with a `labelCol` span, which has no meaning in a vertical form.
  */
 import useForm, { FormStore } from './FormStore';
 import {

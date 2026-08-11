@@ -38,7 +38,7 @@ MORE CLI:
 
 Some antd patterns have no one-to-one Astryx component and are **not** allowed
 to be dropped ad hoc — they have a standing composition recipe in
-`.scratch/astryx-migration/CONVERSION-IDIOMS.md`. Read it before recording a
+`.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`. Read it before recording a
 PILOT-DECISION that gives up a layout capability. Currently:
 
 - **antd vertical tabs** (`tabPosition`/`tabPlacement="left" | "start"`) →

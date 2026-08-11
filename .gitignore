@@ -182,17 +182,7 @@ e2e/.agent-output/
 
 e2e/recordings/
 
-# Playwright storageState captured by the .scratch/astryx-migration probes.
-# The probe scripts, their JSON reports and their screenshots ARE committed
-# (that directory is the migration's evidence trail), but a storage state
-# holds a live `backendaiwebui.sessionid` for whichever backend the probe
-# logged into — a credential, not evidence.
-.scratch/**/*-state.json
-.scratch/**/state.json
-
-
-# qa8 probe screenshots. The probe SCRIPTS and their JSON reports stay tracked —
-# they are the reproducible evidence trail `astryx-migration-fix` §6 asks for, and
-# they are diffable text. The PNGs go to the PR description through the
-# image-upload flow instead of into the repository.
-.scratch/astryx-migration/qa8/*.png
+# Local scratch space — never committed (the FR-3482 migration's working
+# directory briefly lived here; its durable records moved to
+# .specs/FR-3482-astryx-migration/ in FR-3488).
+.scratch/

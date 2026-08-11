@@ -142,7 +142,7 @@ const SELECTION_COLUMN_KEY = '__xds_selection';
  * Width of that injected column: the 24px first-column inset Astryx applies to
  * a bleeding table + the 20px checkbox + the 8px trailing cell pad. Without it
  * the plugin's default 36px leaves 4px of content box and the checkbox
- * overhangs its own cell (QA-FINDINGS Q-14).
+ * overhangs its own cell (FR-3482 QA finding Q-14).
  */
 const SELECTION_COLUMN_WIDTH = 52;
 /** Marker field placed on the synthetic detail rows. */
@@ -707,7 +707,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
               ? null
               : String(value);
           // Body cells are clipped by the same wrapper the header above uses,
-          // and for the same reason one rung down (QA-FINDINGS Q-18).
+          // and for the same reason one rung down (FR-3482 QA finding Q-18).
           //
           // Astryx DOES clip at the cell — `overflowStyles.cell` sets
           // `overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
@@ -1033,10 +1033,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
    * width, and the default lands at 36px, of which the first-column inset takes
    * 24 and the trailing pad 8: the 20px checkbox is centred in the 4px that is
    * left and overhangs 8px each side. Measured on the sessions and admin-users
-   * tables (`.scratch/astryx-migration/qa8/probe-selcell.mjs`): checkbox left
+   * tables during the FR-3482 Astryx migration: checkbox left
    * 280 against a card content edge of 287, while the same table's first data
    * column starts at 288. That 7-8px is "첫 row의 시작점은 다듬어야" in the
-   * report (QA-FINDINGS Q-14).
+   * report (FR-3482 QA finding Q-14).
    *
    * 24 (inset) + 20 (checkbox) + 8 (trailing pad) = 52.
    */

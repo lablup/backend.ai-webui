@@ -20,7 +20,7 @@
  | `Typography.Text type="danger"`        | `Banner status="error"`              |
  | `BAIText code` inside `<BAITrans>`     | Astryx `Text type="code"`            |
 
- PILOT-DECISIONs (see .scratch/astryx-migration/issues/p3-b-modal-family.md):
+ PILOT-DECISIONs (see .specs/FR-3482-astryx-migration/issues/p3-b-modal-family.md):
 
  1. **The typed-confirm gate does not need a form engine.** The antd version
     reached for `Form` + `Form.useWatch` purely to observe one input, which is
