@@ -15,6 +15,7 @@ import BAIRadioGroup from '../components/BAIRadioGroup';
 import TerminateSessionModalV2 from '../components/TerminateSessionModalV2';
 import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -73,6 +74,11 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
+  // capability (26.7.0+). On older managers, restrict the property filter to
+  // a single condition so it emits a flat filter the backend accepts.
+  const supportsSubFilter = baiClient.supports('sub-filter');
 
   const [selectedSessionList, setSelectedSessionList] = useState<
     Array<ProjectSessionNode>
@@ -202,6 +208,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
             ]}
           />
           <BAIGraphQLPropertyFilter<SessionV2Filter>
+            singleCondition={!supportsSubFilter}
             filterProperties={[
               {
                 key: 'id',

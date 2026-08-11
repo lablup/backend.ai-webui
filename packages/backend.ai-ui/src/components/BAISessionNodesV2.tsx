@@ -157,7 +157,9 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   // `resourceAllocation` is the on-demand allocation (added in 26.8.0),
   // replacing the deprecated eager `resource.allocation`. Its `allocated`
   // slots persist after the session is freed or terminated, so finished
-  // sessions still show their resources.
+  // sessions still show their resources. It is version-gated with @since —
+  // pre-26.8 managers reject the field — so `resource.allocation` stays in
+  // the fragment as the fallback for those managers.
   const sessions = useFragment(
     graphql`
       fragment BAISessionNodesV2Fragment on SessionV2 @relay(plural: true) {
@@ -180,8 +182,22 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         }
         resource {
           resourceGroupName
+          allocation {
+            requested {
+              entries {
+                resourceType
+                quantity
+              }
+            }
+            used {
+              entries {
+                resourceType
+                quantity
+              }
+            }
+          }
         }
-        resourceAllocation {
+        resourceAllocation @since(version: "26.8.0") {
           requested {
             entries {
               resourceType
@@ -276,7 +292,9 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         title: t('comp:SessionV2Nodes.AIAccelerator'),
         render: (__, session) => {
           const occupied = acceleratorEntries(
-            getOccupiedEntries(session.resourceAllocation),
+            getOccupiedEntries(
+              session.resourceAllocation ?? session.resource?.allocation,
+            ),
           );
           if (occupied.length === 0) return '-';
           return occupied
@@ -289,7 +307,12 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         title: t('comp:SessionV2Nodes.CPU'),
         render: (__, session) =>
           formatCpu(
-            findEntry(getOccupiedEntries(session.resourceAllocation), 'cpu'),
+            findEntry(
+              getOccupiedEntries(
+                session.resourceAllocation ?? session.resource?.allocation,
+              ),
+              'cpu',
+            ),
           ),
       },
       {
@@ -297,7 +320,12 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         title: t('comp:SessionV2Nodes.Memory'),
         render: (__, session) =>
           formatMem(
-            findEntry(getOccupiedEntries(session.resourceAllocation), 'mem'),
+            findEntry(
+              getOccupiedEntries(
+                session.resourceAllocation ?? session.resource?.allocation,
+              ),
+              'mem',
+            ),
           ),
       },
       {

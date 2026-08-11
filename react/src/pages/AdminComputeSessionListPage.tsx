@@ -13,6 +13,7 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import TerminateSessionModalV2 from '../components/TerminateSessionModalV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -63,6 +64,11 @@ const AdminComputeSessionListPage = () => {
 
   const userRole = useCurrentUserRole();
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
+  // capability (26.7.0+). On older managers, restrict the property filter to
+  // a single condition so it emits a flat filter the backend accepts.
+  const supportsSubFilter = baiClient.supports('sub-filter');
   const { message } = App.useApp();
   const { logger } = useBAILogger();
 
@@ -211,6 +217,7 @@ const AdminComputeSessionListPage = () => {
             ]}
           />
           <BAIGraphQLPropertyFilter<SessionV2Filter>
+            singleCondition={!supportsSubFilter}
             filterProperties={[
               {
                 key: 'id',
