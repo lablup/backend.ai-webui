@@ -13,20 +13,20 @@ import { BAIProjectSettingModalCreateMutation } from '../../__generated__/BAIPro
 import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProjectSettingModalFragment.graphql';
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
+import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
 import { convertToBinaryUnit } from '../../helper';
 import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAICheckbox from '../BAICheckbox';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import { useBAIResourceSlots } from '../provider';
 import {
-  App,
-  Checkbox,
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  theme,
-} from 'antd';
+  AstryxFormNumberInput,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from '../astryxFormControls';
+import { useBAIResourceSlots } from '../provider';
+import { HStack } from '@astryxdesign/core/Stack';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {
@@ -68,7 +68,6 @@ const BAIProjectSettingModal = ({
   ...modalProps
 }: BAIProjectSettingModalProps) => {
   'use memo';
-  const { token } = theme.useToken();
   const { t } = useBAIi18n();
   const deferredOpen = useDeferredValue(modalProps.open);
   const { resourceSlots, deviceMetaData } = useBAIResourceSlots();
@@ -442,13 +441,18 @@ const BAIProjectSettingModal = ({
             },
           ]}
         >
-          <Input />
+          <AstryxFormTextInput
+            label={t('comp:BAIProjectSettingModal.ProjectName')}
+          />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Description')}
           name="description"
         >
-          <Input.TextArea rows={1} />
+          <AstryxFormTextArea
+            label={t('comp:BAIProjectSettingModal.Description')}
+            rows={1}
+          />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Domain')}
@@ -516,12 +520,12 @@ const BAIProjectSettingModal = ({
                     style={{ width: '100%' }}
                   />
                 ) : (
-                  <InputNumber
-                    style={{ width: '100%' }}
+                  <AstryxFormNumberInput
+                    label={resourceSlotKey}
                     min={0}
-                    suffix={
+                    units={
                       resourceSlots?.[resourceSlotKey as ResourceSlotName]
-                        ?.display_unit
+                        ?.display_unit ?? undefined
                     }
                   />
                 )}
@@ -555,43 +559,53 @@ const BAIProjectSettingModal = ({
             }),
           ]}
         >
-          <Form.Item
-            name="registry"
-            noStyle
-            rules={[
-              {
-                pattern: /^[a-zA-Z0-9.:/_-]*$/,
-                message: t('general.validation.LetterNumber:/-_dot'),
-              },
-            ]}
-          >
-            <Input
-              placeholder={t('comp:BAIProjectSettingModal.Registry')}
-              style={{
-                width: 'calc(50% - 8px)',
-                margin: 0,
-                marginRight: token.sizeXS,
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="project"
-            noStyle
-            rules={[
-              {
-                pattern: /^[a-zA-Z0-9./_-]*$/,
-                message: t('general.validation.LetterNumber:/-_dot'),
-              },
-            ]}
-          >
-            <Input
-              placeholder={t('comp:BAIProjectSettingModal.Project')}
-              style={{ width: 'calc(50% - 8px)' }}
-            />
-          </Form.Item>
+          {/* QA-FINDINGS Q-29: the two inputs need an explicit row.
+              Under antd these were `Input`s — `display: inline-block` — so two
+              of them at `calc(50% - 8px)` shared a line by pure inline flow,
+              and the gap was a `marginRight` on the first. `AstryxFormTextInput`
+              renders Astryx's `.astryx-field` wrapper, which is a BLOCK
+              (`display: flex`), so the same two widths simply stacked: measured
+              at y916 and y948, 32px apart, each still correctly 228px wide.
+              The widths were never the problem; the FLOW was. An `HStack` states
+              the row explicitly and owns the gap, so both fields go to
+              `width="100%"` of their half and the margin hack disappears. */}
+          <HStack gap={2} align="start" width="100%">
+            <Form.Item
+              name="registry"
+              noStyle
+              rules={[
+                {
+                  pattern: /^[a-zA-Z0-9.:/_-]*$/,
+                  message: t('general.validation.LetterNumber:/-_dot'),
+                },
+              ]}
+            >
+              <AstryxFormTextInput
+                label={t('comp:BAIProjectSettingModal.Registry')}
+                placeholder={t('comp:BAIProjectSettingModal.Registry')}
+                width="100%"
+              />
+            </Form.Item>
+            <Form.Item
+              name="project"
+              noStyle
+              rules={[
+                {
+                  pattern: /^[a-zA-Z0-9./_-]*$/,
+                  message: t('general.validation.LetterNumber:/-_dot'),
+                },
+              ]}
+            >
+              <AstryxFormTextInput
+                label={t('comp:BAIProjectSettingModal.Project')}
+                placeholder={t('comp:BAIProjectSettingModal.Project')}
+                width="100%"
+              />
+            </Form.Item>
+          </HStack>
         </Form.Item>
         <Form.Item valuePropName="checked" name="is_active">
-          <Checkbox>{t('comp:BAIProjectSettingModal.IsActive')}</Checkbox>
+          <BAICheckbox>{t('comp:BAIProjectSettingModal.IsActive')}</BAICheckbox>
         </Form.Item>
       </Form>
     </BAIModal>

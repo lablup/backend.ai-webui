@@ -247,7 +247,17 @@ test.describe(
           .filter({ hasText: '192.168.1.1' });
         await expect(tag).toBeVisible();
 
-        await tag.locator('.anticon-close').click();
+        // to-astryx final-B: was `.anticon-close` — a per-glyph class from
+        // `@ant-design/icons` that nothing in this app renders any more (the
+        // first-party icon shim emits `bai-icon`, and it never emitted
+        // glyph-specific names at all). The allowed-client-IP control is an
+        // Astryx `Tokenizer`; each token carries a real remove button whose
+        // accessible name is `Remove <value>` (measured on the live profile
+        // modal), so target that instead of any class.
+        // NOTE: the surrounding `.ant-modal` / `.ant-tag` selectors in this
+        // file are equally stale and belong to the separate `.ant-*` selector
+        // migration — deliberately left alone here.
+        await tag.getByRole('button', { name: /^Remove / }).click();
 
         await expect(tag).toBeHidden();
 

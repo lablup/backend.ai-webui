@@ -5,21 +5,29 @@
 import { AgentDetailDrawerFragment$key } from '../__generated__/AgentDetailDrawerFragment.graphql';
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import { Drawer, type DrawerProps, Skeleton } from 'antd';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { toLocalId, useBAILogger } from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useRefetchableFragment } from 'react-relay';
 
-interface AgentDetailDrawerProps extends DrawerProps {
+// PILOT-DECISION: props no longer extend antd `DrawerProps` (P1 grep — the
+// only consumer, AgentList, passes `agentNodeFrgmt`/`open`/`onRequestClose`).
+// antd `Drawer` → `BAIDrawerAstryx` (qa2-c), which wraps lab `Drawer` and
+// restores antd's header arrangement (`[X] title …… [extra]`, divider, padded
+// scrollable body) so `title`/`extra` are props again instead of a hand-rolled
+// first content row that collided with lab's floating close button.
+interface AgentDetailDrawerProps {
+  open?: boolean;
   onRequestClose?: () => void;
   agentNodeFrgmt?: AgentDetailDrawerFragment$key | null;
 }
 
 const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
+  open = false,
   onRequestClose,
   agentNodeFrgmt,
-  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -73,11 +81,12 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
   }, []);
 
   return (
-    <Drawer
-      title={t('agent.AgentInfo')}
-      size={800}
+    <BAIDrawer
+      open={open}
       onClose={onRequestClose}
-      {...drawerProps}
+      side="end"
+      size={800}
+      title={t('agent.AgentInfo')}
       extra={
         <AutoUpdateFetchKeyButton
           settingId="agent-detail"
@@ -102,12 +111,12 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
         />
       }
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {agent?.agentNodeFrgmt && (
           <AgentDetailDrawerContent agentNodeFrgmt={agent?.agentNodeFrgmt} />
         )}
       </Suspense>
-    </Drawer>
+    </BAIDrawer>
   );
 };
 

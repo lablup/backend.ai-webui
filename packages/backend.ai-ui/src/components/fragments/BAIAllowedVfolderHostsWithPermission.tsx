@@ -3,14 +3,13 @@ import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$k
 import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
 import { SemanticColor } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
-import { BAITable } from '../Table';
-import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
-import { theme } from 'antd';
+import { BAITableAstryx } from '../Table';
 import * as _ from 'lodash-es';
-import { LockIcon, LockOpenIcon } from 'lucide-react';
+import { CircleCheck, Ban, LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -134,7 +133,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
         onCancel={() => setStorageHost(null)}
         footer={null}
       >
-        <BAITable
+        <BAITableAstryx
           pagination={false}
           size="small"
           dataSource={_.map(
@@ -147,20 +146,22 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
                 permission,
               ) ? (
                 <BAIFlex justify="center">
-                  <CheckCircleFilled
+                  <CircleCheck
                     style={{
                       color: token.green5,
                       fontSize: token.fontSizeLG,
                     }}
+                    size="1em"
                   />
                 </BAIFlex>
               ) : (
                 <BAIFlex justify="center">
-                  <StopFilled
+                  <Ban
                     style={{
                       color: token.red5,
                       fontSize: token.fontSizeLG,
                     }}
+                    size="1em"
                   />
                 </BAIFlex>
               ),

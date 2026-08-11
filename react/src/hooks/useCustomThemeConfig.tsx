@@ -10,7 +10,7 @@ import {
 } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
-import { useSessionStorageState } from 'ahooks';
+import { useSessionStorageState } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent, useState } from 'react';
 

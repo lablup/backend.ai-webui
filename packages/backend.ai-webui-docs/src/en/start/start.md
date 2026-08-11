@@ -121,12 +121,18 @@ Experimental features may change or be removed in future updates.
 :::
 
 ![](../images/start_from_url_huggingface.png)
-<!-- TODO(screenshot): start_from_url_huggingface.png now shows helper text under the Model Folder field -->
 
 1. Enter the model in the **Hugging Face Model URL or ID** field. Both a model
    page URL such as `https://huggingface.co/openai/gpt-oss-20b` and a plain
    model ID such as `openai/gpt-oss-20b` are accepted. Addresses that point to
    a dataset, a space, or any other non-model page are rejected.
+
+   Once the field contains a valid model, the dialog looks it up on Hugging
+   Face after a short pause — a loading indicator shows while it checks — and
+   displays a preview card below the field before you start the import. The
+   card shows the model ID as a link to its Hugging Face page, the model's
+   task and library tags, its size, and when it was last updated.
+
 2. Optionally enter a **Revision** — the branch, tag, or commit of the model
    repository to download. Leave it empty to download the default revision. If
    the address you entered already contains a revision, that revision is used.

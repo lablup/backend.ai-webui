@@ -2,9 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import type { DiagnosticResult } from '../types/diagnostics';
-import { Alert, Skeleton, theme, Typography } from 'antd';
-import Paragraph from 'antd/lib/typography/Paragraph';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +17,7 @@ interface DiagnosticResultListProps {
   hidePassed?: boolean;
 }
 
-const severityToAlertType = {
+const severityToBannerStatus = {
   critical: 'error' as const,
   warning: 'warning' as const,
   info: 'info' as const,
@@ -33,7 +35,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
   const { token } = theme.useToken();
 
   if (loading) {
-    return <Skeleton active paragraph={{ rows: 2 }} />;
+    return <BAISkeletonAstryx rows={2} />;
   }
 
   // Separate issues from passed checks for visual grouping
@@ -45,10 +47,11 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       {issues.map((result) => (
-        <Alert
+        // antd `Alert` -> Astryx `Banner` (MAPPING §4): `type` -> `status`,
+        // `showIcon` dropped (Banner always shows the status icon).
+        <Banner
           key={result.id}
-          type={severityToAlertType[result.severity]}
-          showIcon
+          status={severityToBannerStatus[result.severity]}
           title={t(result.titleKey, result.interpolationValues)}
           description={
             <BAIFlex align="start" direction="column" gap={token.paddingXXS}>
@@ -56,9 +59,13 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
                 {t(result.descriptionKey, result.interpolationValues)}
               </span>
               {result.interpolationValues?.errorMessage && (
-                <Paragraph>
+                // antd `Typography.Paragraph` (deep-imported from
+                // `antd/lib/typography/Paragraph`) -> `Text as="p"
+                // display="block"`; the `<pre>` it wrapped is what actually
+                // formats the error, so nothing else is needed.
+                <Text as="p" display="block">
                   <pre>{result.interpolationValues.errorMessage}</pre>
-                </Paragraph>
+                </Text>
               )}
               {result.remediationKey && (
                 <span style={{ fontStyle: 'italic' }}>
@@ -75,11 +82,11 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
             size={token.fontSizeSM}
             style={{ color: token.colorSuccess, flexShrink: 0 }}
           />
-          <Typography.Text type="secondary">
+          <Text color="secondary">
             {t(result.titleKey, result.interpolationValues)}
             {' — '}
             {t(result.descriptionKey, result.interpolationValues)}
-          </Typography.Text>
+          </Text>
         </BAIFlex>
       ))}
     </BAIFlex>

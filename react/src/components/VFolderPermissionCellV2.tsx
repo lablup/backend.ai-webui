@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderPermissionCellV2Fragment$key } from '../__generated__/VFolderPermissionCellV2Fragment.graphql';
-import { Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,7 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
   vfolderFrgmt,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
 
   const vfolderData = useFragment(
@@ -53,17 +54,22 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
     };
   }, [vfolderData, t]);
 
+  // Ticket 16 — FRONTIER conversion (same pattern as the V1 cell): the
+  // external props are unchanged, only the internals move. antd
+  // `Typography.Text code` becomes Astryx `Text type="code"`, and
+  // `BAIFlex gap="xs"` becomes `HStack gap={2}` (BUI `xs` = 8px = step 2 by
+  // VALUE, per P9).
   return (
-    <BAIFlex gap={'xs'} {...props}>
-      <Typography.Text>{permissionInfo?.label}</Typography.Text>
-      <BAIFlex>
+    <HStack gap={2} {...props}>
+      <Text>{permissionInfo?.label}</Text>
+      <HStack>
         {_.map(permissionInfo?.icon, (tag) => (
-          <Typography.Text key={tag} code>
+          <Text key={tag} type="code">
             {_.toUpper(tag)}
-          </Typography.Text>
+          </Text>
         ))}
-      </BAIFlex>
-    </BAIFlex>
+      </HStack>
+    </HStack>
   );
 };
 

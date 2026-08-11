@@ -3,94 +3,27 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationState } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
+import './BAIMultiStepNotificationItem.css';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  DownOutlined,
-  ExclamationCircleOutlined,
-  LoadingOutlined,
-  MinusCircleOutlined,
-} from '@ant-design/icons';
-import { Button, List, Typography, theme } from 'antd';
-import { createStyles } from 'antd-style';
+import './BAINotificationListItem.css';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import {
+  CircleCheck,
+  Clock,
+  CircleX,
+  ChevronDown,
+  CircleAlert,
+  LoaderCircle,
+  CircleMinus,
+} from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SLIDE_DURATION = 300;
-
-const useStyles = createStyles(({ css, token }) => ({
-  stepSlider: css`
-    position: relative;
-    overflow: hidden;
-    height: 20px;
-  `,
-  stepSlide: css`
-    position: absolute;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    gap: ${token.marginXXS}px;
-    height: 20px;
-    transition:
-      transform ${SLIDE_DURATION}ms ease-in-out,
-      opacity ${SLIDE_DURATION}ms ease-in-out;
-  `,
-  // Visible position (center)
-  slideCenter: css`
-    transform: translateY(0);
-    opacity: 1;
-  `,
-  // Exited upward (out of view)
-  slideUp: css`
-    transform: translateY(-100%);
-    opacity: 0;
-  `,
-  // Waiting below (before entering)
-  slideDown: css`
-    transform: translateY(100%);
-    opacity: 0;
-  `,
-  // Instantly position without transition (used to place new element below before animating in)
-  noTransition: css`
-    transition: none !important;
-  `,
-  expandToggle: css`
-    cursor: pointer;
-    user-select: none;
-    &:hover {
-      opacity: 0.7;
-    }
-  `,
-  expandIcon: css`
-    transition: transform 0.2s ease;
-    font-size: 10px;
-  `,
-  expandIconOpen: css`
-    transform: rotate(0deg);
-  `,
-  expandIconClosed: css`
-    transform: rotate(-90deg);
-  `,
-  stepList: css`
-    overflow: hidden;
-    transition:
-      max-height 0.25s ease-in-out,
-      opacity 0.25s ease-in-out;
-  `,
-  stepListExpanded: css`
-    max-height: 200px;
-    opacity: 1;
-  `,
-  stepListCollapsed: css`
-    max-height: 0;
-    opacity: 0;
-  `,
-}));
 
 const StepIcon: React.FC<{
   status: string;
@@ -101,36 +34,40 @@ const StepIcon: React.FC<{
 
   if (status === 'resolved') {
     return (
-      <CheckCircleOutlined
+      <CircleCheck
         style={{ color: token.colorSuccess, fontSize: size }}
+        size="1em"
       />
     );
   }
   if (status === 'rejected') {
     return (
-      <CloseCircleOutlined
-        style={{ color: token.colorError, fontSize: size }}
-      />
+      <CircleX style={{ color: token.colorError, fontSize: size }} size="1em" />
     );
   }
   if (status === 'warned') {
     return (
-      <ExclamationCircleOutlined
+      <CircleAlert
         style={{ color: token.colorWarning, fontSize: size }}
+        size="1em"
       />
     );
   }
   if (status === 'pending') {
     return animated ? (
-      <LoadingOutlined style={{ color: token.colorInfo, fontSize: size }} />
+      <LoaderCircle
+        style={{ color: token.colorInfo, fontSize: size }}
+        size="1em"
+      />
     ) : (
-      <ClockCircleOutlined style={{ color: token.colorInfo, fontSize: size }} />
+      <Clock style={{ color: token.colorInfo, fontSize: size }} size="1em" />
     );
   }
   if (status === 'cancelled') {
     return (
-      <MinusCircleOutlined
+      <CircleMinus
         style={{ color: token.colorTextDisabled, fontSize: size }}
+        size="1em"
       />
     );
   }
@@ -157,7 +94,6 @@ const BAIMultiStepNotificationItem: React.FC<{
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { multiStep } = notification;
 
   const [expanded, setExpanded] = useState(false);
@@ -209,15 +145,15 @@ const BAIMultiStepNotificationItem: React.FC<{
 
   const overallIcon =
     overallStatus === 'completed' ? (
-      <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+      <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
     ) : overallStatus === 'failed' ? (
-      <CloseCircleOutlined style={{ color: token.colorError }} />
+      <CircleX style={{ color: token.colorError }} size="1em" />
     ) : overallStatus === 'warned' ? (
-      <ExclamationCircleOutlined style={{ color: token.colorWarning }} />
+      <CircleAlert style={{ color: token.colorWarning }} size="1em" />
     ) : overallStatus === 'cancelled' ? (
-      <MinusCircleOutlined style={{ color: token.colorTextDisabled }} />
+      <CircleMinus style={{ color: token.colorTextDisabled }} size="1em" />
     ) : (
-      <ClockCircleOutlined style={{ color: token.colorInfo }} />
+      <Clock style={{ color: token.colorInfo }} size="1em" />
     );
 
   const stepLabel =
@@ -248,8 +184,7 @@ const BAIMultiStepNotificationItem: React.FC<{
     (overallStatus === 'failed' || overallStatus === 'warned');
   const showCancel = onCancel != null && overallStatus === 'running';
   const actionButton = notification.extraData?.actionButton as
-    | { label: string; onClick: () => void }
-    | undefined;
+    { label: string; onClick: () => void } | undefined;
 
   // showDate is true when rendered inside the Drawer (detail view)
   const isDetailView = showDate === true;
@@ -264,7 +199,12 @@ const BAIMultiStepNotificationItem: React.FC<{
   const outgoingStepDef = outgoing != null ? steps[outgoing] : null;
 
   return (
-    <List.Item>
+    // PILOT-DECISION: antd `List.Item` -> a plain block carrying the 16px
+    // vertical padding and row hairline it supplied, moved into
+    // `BAINotificationListItem.css`. Astryx `ListItem` is a fixed
+    // label/description/start/end row and cannot hold this multi-row body
+    // (MAPPING §4 `List`).
+    <div className="bai-notification-list-item">
       <BAIFlex direction="column" align="stretch" gap={'xxs'}>
         {/* Header: icon + message */}
         <BAIFlex
@@ -274,9 +214,16 @@ const BAIMultiStepNotificationItem: React.FC<{
           style={{ paddingRight: token.paddingMD }}
         >
           <BAIFlex style={{ height: 22 }}>{overallIcon}</BAIFlex>
-          <Typography.Paragraph style={{ fontWeight: 500 }}>
+          {/* antd `Typography.Paragraph` -> `Text as="p" display="block"`;
+              antd's 1em paragraph margin is restated (Astryx's reset gives
+              block text none). */}
+          <Text
+            as="p"
+            display="block"
+            style={{ fontWeight: 500, marginBottom: '1em' }}
+          >
             {notification.message}
-          </Typography.Paragraph>
+          </Text>
         </BAIFlex>
 
         {/* Current step: icon + counter + animated label */}
@@ -284,7 +231,7 @@ const BAIMultiStepNotificationItem: React.FC<{
           direction="row"
           align="center"
           gap={'xxs'}
-          className={isDetailView ? styles.expandToggle : undefined}
+          className={isDetailView ? 'bai-step-expand-toggle' : undefined}
           onClick={isDetailView ? () => setExpanded((v) => !v) : undefined}
         >
           {overallStatus !== 'warned' && (
@@ -302,52 +249,54 @@ const BAIMultiStepNotificationItem: React.FC<{
             />
           )}
           {!isTerminal && (
-            <Typography.Text
+            <Text
+              color="secondary"
               style={{ fontSize: token.fontSizeSM, whiteSpace: 'nowrap' }}
-              type="secondary"
             >
               {currentStep + 1}/{totalSteps}
-            </Typography.Text>
+            </Text>
           )}
           {isTerminal ? (
-            <Typography.Text
-              style={{ fontSize: token.fontSizeSM }}
-              type="secondary"
-            >
+            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
               {stepLabel}
-            </Typography.Text>
+            </Text>
           ) : (
-            <div className={styles.stepSlider} style={{ flex: 1 }}>
+            <div className="bai-step-slider" style={{ flex: 1 }}>
               {outgoing != null && outgoingStepDef && (
                 <div
-                  className={`${styles.stepSlide} ${
-                    phase === 'ready' ? styles.slideCenter : styles.slideUp
+                  className={`bai-step-slide ${
+                    phase === 'ready'
+                      ? 'bai-step-slide-center'
+                      : 'bai-step-slide-up'
                   }`}
                 >
-                  <Typography.Text style={{ fontSize: token.fontSizeSM }}>
+                  <Text style={{ fontSize: token.fontSizeSM }}>
                     {outgoingStepDef.label}
-                  </Typography.Text>
+                  </Text>
                 </div>
               )}
               <div
-                className={`${styles.stepSlide} ${
+                className={`bai-step-slide ${
                   phase === 'ready'
-                    ? `${styles.slideDown} ${styles.noTransition}`
-                    : styles.slideCenter
+                    ? 'bai-step-slide-down bai-step-slide-no-transition'
+                    : 'bai-step-slide-center'
                 }`}
               >
-                <Typography.Text style={{ fontSize: token.fontSizeSM }}>
+                <Text style={{ fontSize: token.fontSizeSM }}>
                   {incomingStepDef?.label}
-                </Typography.Text>
+                </Text>
               </div>
             </div>
           )}
           {isDetailView && totalSteps > 1 && (
-            <DownOutlined
-              className={`${styles.expandIcon} ${
-                expanded ? styles.expandIconOpen : styles.expandIconClosed
+            <ChevronDown
+              className={`bai-step-expand-icon ${
+                expanded
+                  ? 'bai-step-expand-icon-open'
+                  : 'bai-step-expand-icon-closed'
               }`}
               style={{ color: token.colorTextSecondary }}
+              size="1em"
             />
           )}
         </BAIFlex>
@@ -355,8 +304,8 @@ const BAIMultiStepNotificationItem: React.FC<{
         {/* Expandable step list: Drawer only */}
         {isDetailView && (
           <div
-            className={`${styles.stepList} ${
-              expanded ? styles.stepListExpanded : styles.stepListCollapsed
+            className={`bai-step-list ${
+              expanded ? 'bai-step-list-expanded' : 'bai-step-list-collapsed'
             }`}
           >
             <BAIFlex
@@ -380,7 +329,7 @@ const BAIMultiStepNotificationItem: React.FC<{
                       animated={step.status === 'pending'}
                     />
                   </BAIFlex>
-                  <Typography.Text
+                  <Text
                     style={{
                       fontSize: token.fontSizeSM,
                       color:
@@ -390,7 +339,7 @@ const BAIMultiStepNotificationItem: React.FC<{
                     }}
                   >
                     {step.label}
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
               ))}
             </BAIFlex>
@@ -399,7 +348,7 @@ const BAIMultiStepNotificationItem: React.FC<{
 
         {/* Description: shown on failure/cancellation with detail message */}
         {isTerminal && notification.description && (
-          <Typography.Text
+          <Text
             style={{
               fontSize: token.fontSizeSM,
               color:
@@ -411,26 +360,21 @@ const BAIMultiStepNotificationItem: React.FC<{
             }}
           >
             {notification.description}
-          </Typography.Text>
+          </Text>
         )}
 
         {/* Buttons: retry / cancel / action */}
         <BAIFlex direction="row" align="end" gap={'xxs'} justify="end">
           <BAIFlex gap={'xxs'}>
-            {showRetry && (
-              <Button type="link" size="small" onClick={onRetry}>
-                {t('button.Retry')}
-              </Button>
-            )}
-            {showCancel && (
-              <Button type="link" size="small" onClick={onCancel}>
-                {t('button.Cancel')}
-              </Button>
-            )}
+            {/* antd `Button type="link"` -> Astryx `Link` (MAPPING §3.3).
+                With no `href` it renders a `<button>` with link styling.
+                `size="small"` has no Link equivalent and is dropped — Link
+                inherits the surrounding text size, which is what the antd
+                small link button approximated here. */}
+            {showRetry && <Link onClick={onRetry}>{t('button.Retry')}</Link>}
+            {showCancel && <Link onClick={onCancel}>{t('button.Cancel')}</Link>}
             {actionButton && (
-              <Button type="link" size="small" onClick={actionButton.onClick}>
-                {actionButton.label}
-              </Button>
+              <Link onClick={actionButton.onClick}>{actionButton.label}</Link>
             )}
           </BAIFlex>
         </BAIFlex>
@@ -451,14 +395,14 @@ const BAIMultiStepNotificationItem: React.FC<{
             )}
           {isDetailView && (
             <BAIFlex>
-              <Typography.Text type="secondary">
+              <Text color="secondary">
                 {dayjs(notification.created).format('lll')}
-              </Typography.Text>
+              </Text>
             </BAIFlex>
           )}
         </BAIFlex>
       </BAIFlex>
-    </List.Item>
+    </div>
   );
 };
 

@@ -11,7 +11,12 @@ import AutoUpdateFetchKeyButton, {
 } from './AutoUpdateFetchKeyButton';
 import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import SessionMetricGraph from './SessionMetricGraph';
-import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import type { ISODateString } from '@astryxdesign/core/Calendar';
+import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
+import type { DateRange } from '@astryxdesign/core/DateRangeInput';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { useUpdatableState, BAIFlex, filterOutEmpty } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -23,9 +28,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 interface UserSessionsMetricsProps {}
 
 const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { RangePicker } = DatePicker;
 
   const [usageFetchKey, updateUsageFetchKey] = useUpdatableState('first');
   const [isPendingUsageTransition, startUsageTransition] = useTransition();
@@ -130,14 +134,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
         columnSpan: windowWidth > 2160 ? 3 : 2,
         data: {
           content: (
-            <Suspense
-              fallback={
-                <Skeleton
-                  active
-                  style={{ padding: `0px ${token.marginMD}px` }}
-                />
-              }
-            >
+            <Suspense fallback={<BAISkeletonAstryx />}>
               <SessionMetricGraph
                 key={metric}
                 queryProps={{
@@ -192,56 +189,57 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFlex align="stretch" justify="between">
-        <RangePicker
-          allowClear={false}
-          showTime={{ format: 'HH:mm' }}
-          maxDate={dayjs()}
-          onChange={(_, [startDate, endDate]) => {
+        {/* MAPPING §3.13: antd `DatePicker.RangePicker` -> `DateRangeInput`,
+            which speaks ISO DATE strings (`{start, end}`), not dayjs. The
+            dayjs boundary is the `toDayRange` bridge below.
+            PILOT-DECISION: `showTime={{format:'HH:mm'}}` is dropped —
+            Astryx has `DateTimeInput` but no date-TIME range input, and this
+            filter's presets were already whole-day/relative spans. A picked
+            range now covers whole days (00:00:00 -> 23:59:59), which is what
+            the URL defaults already were. `maxDate={dayjs()}` -> `max`;
+            `allowClear={false}` -> `hasClear={false}`; the six antd presets
+            keep their labels, expressed as day-granular ranges. */}
+        <DateRangeInput
+          label={t('statistics.SelectPeriod')}
+          isLabelHidden
+          hasClear={false}
+          max={dayjs().format('YYYY-MM-DD') as ISODateString}
+          value={{
+            start: dayjs(startDate).format('YYYY-MM-DD') as ISODateString,
+            end: dayjs(endDate).format('YYYY-MM-DD') as ISODateString,
+          }}
+          onChange={(range: DateRange | null) => {
+            if (!range) return;
             startUsageTransition(() => {
-              setStartDate(startDate);
-              setEndDate(endDate);
+              setStartDate(dayjs(range.start).format('YYYY-MM-DD 00:00:00'));
+              setEndDate(dayjs(range.end).format('YYYY-MM-DD 23:59:59'));
             });
           }}
-          defaultValue={[dayjs(startDate), dayjs(endDate)]}
           presets={[
             {
               label: t('statistics.timeRange.Today'),
-              value: [dayjs().startOf('day'), dayjs().endOf('day')],
-            },
-            {
-              label: t('statistics.timeRange.LastHour'),
-              value: [
-                dayjs().subtract(1, 'hour'),
-                dayjs().subtract(1, 'second'),
-              ],
-            },
-            {
-              label: t('statistics.timeRange.Last3Hours'),
-              value: [
-                dayjs().subtract(3, 'hours'),
-                dayjs().subtract(1, 'second'),
-              ],
-            },
-            {
-              label: t('statistics.timeRange.Last12Hours'),
-              value: [
-                dayjs().subtract(12, 'hours'),
-                dayjs().subtract(1, 'second'),
-              ],
+              getRange: () => ({
+                start: dayjs().format('YYYY-MM-DD') as ISODateString,
+                end: dayjs().format('YYYY-MM-DD') as ISODateString,
+              }),
             },
             {
               label: t('statistics.timeRange.LastDay'),
-              value: [
-                dayjs().subtract(1, 'day'),
-                dayjs().subtract(1, 'second'),
-              ],
+              getRange: () => ({
+                start: dayjs()
+                  .subtract(1, 'day')
+                  .format('YYYY-MM-DD') as ISODateString,
+                end: dayjs().format('YYYY-MM-DD') as ISODateString,
+              }),
             },
             {
               label: t('statistics.timeRange.Last7Days'),
-              value: [
-                dayjs().subtract(7, 'days'),
-                dayjs().subtract(1, 'second'),
-              ],
+              getRange: () => ({
+                start: dayjs()
+                  .subtract(7, 'days')
+                  .format('YYYY-MM-DD') as ISODateString,
+                end: dayjs().format('YYYY-MM-DD') as ISODateString,
+              }),
             },
           ]}
         />
@@ -258,16 +256,18 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
         />
       </BAIFlex>
       {dayDiff > 30 && (
-        <Alert
-          showIcon
+        // antd `Alert` -> `Banner` (MAPPING §4). No `type` was passed, so the
+        // untyped antd default (`info`) becomes an explicit `status="info"`;
+        // `showIcon` is dropped (Banner always shows its status icon).
+        <Banner
+          status="info"
           title={t('statistics.prometheus.DataMissingInLowUsageDesc')}
         />
       )}
       {_.isEmpty(sortedMetricMetadata) ? (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('statistics.prometheus.NoMetricsToDisplay')}
-        />
+        // antd `Empty` -> `EmptyState`: `description` becomes the required
+        // `title`; `PRESENTED_IMAGE_SIMPLE` has no counterpart and is dropped.
+        <EmptyState title={t('statistics.prometheus.NoMetricsToDisplay')} />
       ) : (
         <BAIBoard
           movable
@@ -291,14 +291,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
                       data: {
                         ...originalItem.data,
                         content: (
-                          <Suspense
-                            fallback={
-                              <Skeleton
-                                active
-                                style={{ padding: `0px ${token.marginMD}px` }}
-                              />
-                            }
-                          >
+                          <Suspense fallback={<BAISkeletonAstryx />}>
                             <SessionMetricGraph
                               key={`${item.id}-${Date.now()}`}
                               queryProps={{

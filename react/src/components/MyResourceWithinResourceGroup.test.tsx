@@ -34,7 +34,9 @@ vi.mock('antd', () => ({
   },
 }));
 
-vi.mock('ahooks', () => ({
+// Only `useControllableValue` is pinned; the rest of `backend.ai-ui` stays real.
+vi.mock('backend.ai-ui', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('backend.ai-ui')>()),
   useControllableValue: () => ['free', vi.fn()],
 }));
 

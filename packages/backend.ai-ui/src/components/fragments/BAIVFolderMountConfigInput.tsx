@@ -1,10 +1,16 @@
+import { Form } from '../../form-engine';
+import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
+import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
-import BAIVFolderSelect from './BAIVFolderSelect';
-import { useControllableValue } from 'ahooks';
-import { Button, Form, Input, Skeleton, Tag, Tooltip, theme } from 'antd';
+import BAIVFolderSelectAstryx from './BAIVFolderSelectAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { XIcon } from 'lucide-react';
 import React, { Suspense } from 'react';
@@ -154,7 +160,7 @@ export const isVFolderMountConfigValid = (
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * Users pick vfolders with {@link BAIVFolderSelect} (in `row_id` mode, so the
+ * Users pick vfolders with {@link BAIVFolderSelectAstryx} (in `row_id` mode, so the
  * value is the vfolder UUID); each selected folder appears as a row below the
  * select where its mount destination (alias) and an optional subpath can be
  * edited. The alias input follows VFolderTable's rule (relative inputs are
@@ -200,7 +206,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     { defaultValue: [] },
   );
   const mountConfigs = value ?? [];
-  // `vfolderId` is the vfolder UUID; BAIVFolderSelect runs in `row_id` mode so
+  // `vfolderId` is the vfolder UUID; BAIVFolderSelectAstryx runs in `row_id` mode so
   // its value, options, and resolved name map are all keyed by the same UUID.
   const selectedIds = mountConfigs.map((entry) => entry.vfolderId);
 
@@ -213,11 +219,12 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <Suspense fallback={<Skeleton.Input active block />}>
-        <BAIVFolderSelect
-          mode="multiple"
-          allowClear
-          disabled={disabled}
+      <Suspense fallback={<Skeleton height={28} width="100%" />}>
+        <BAIVFolderSelectAstryx
+          multiple
+          label={t('comp:BAIVFolderSelect.SelectFolder')}
+          isLabelHidden
+          isDisabled={disabled}
           currentProjectId={currentProjectId}
           filter={filter}
           valuePropName="row_id"
@@ -227,7 +234,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             // resolve asynchronously after selection. `mountDestination` is the
             // raw alias and never depends on the name, so only `name` changes
             // here. The guard skips a redundant emit when every name is already
-            // set — this callback fires on every node-load of BAIVFolderSelect.
+            // set — this callback fires on every node-load of the select.
+            // P3C-3: this is now the ONLY source of entry names.
             let changed = false;
             const next = mountConfigs.map((entry) => {
               const resolved = nameMap[entry.vfolderId];
@@ -239,31 +247,20 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             });
             if (changed) setValue(next);
           }}
-          onChange={(ids, option) => {
-            // In `row_id` mode BAIVFolderSelect emits vfolder UUIDs directly.
+          onChange={(ids) => {
+            // In `row_id` mode the select emits vfolder UUIDs directly.
+            // P3C-3: the dropped `option` argument is not rebuilt — names come
+            // exclusively from `onResolvedNamesChange` above, which reports
+            // newly selected keys as well as pre-existing ones.
             const nextIds = _.castArray(ids ?? []);
-            const nameById: Record<string, string> = {};
-            _.castArray(option ?? []).forEach(
-              (opt: { label?: unknown; value?: string }) => {
-                if (opt?.value && _.isString(opt.label)) {
-                  nameById[opt.value] = opt.label;
-                }
-              },
-            );
             setValue(
               nextIds.map((id) => {
-                const resolvedName = nameById[id];
                 const existing = mountConfigs.find(
                   (entry) => entry.vfolderId === id,
                 );
-                if (existing) {
-                  return resolvedName && !existing.name
-                    ? { ...existing, name: resolvedName }
-                    : existing;
-                }
+                if (existing) return existing;
                 return {
                   vfolderId: id,
-                  name: resolvedName,
                   // Raw alias starts empty -> resolves to the default mount
                   // path (`${aliasBasePath}${name}`) at display time.
                   mountDestination: '',
@@ -350,18 +347,22 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   }
                   style={{ flex: 1, marginBottom: 0 }}
                 >
-                  <Input
-                    size="small"
-                    disabled={disabled}
+                  <TextInput
+                    label={t(
+                      'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
+                    )}
+                    isLabelHidden
+                    size="sm"
+                    isDisabled={disabled}
                     placeholder={t(
                       'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
                     )}
-                    value={aliasInput}
-                    onChange={(e) =>
+                    value={aliasInput ?? ''}
+                    onChange={(next) =>
                       setValue(
                         mountConfigs.map((m) =>
                           m.vfolderId === entry.vfolderId
-                            ? { ...m, mountDestination: e.target.value }
+                            ? { ...m, mountDestination: next }
                             : m,
                         ),
                       )
@@ -377,18 +378,22 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   }
                   style={{ flex: 1, marginBottom: 0 }}
                 >
-                  <Input
-                    size="small"
-                    disabled={disabled}
+                  <TextInput
+                    label={t(
+                      'comp:BAIVFolderMountConfigInput.SubpathPlaceholder',
+                    )}
+                    isLabelHidden
+                    size="sm"
+                    isDisabled={disabled}
                     placeholder={t(
                       'comp:BAIVFolderMountConfigInput.SubpathPlaceholder',
                     )}
-                    value={entry.subpath}
-                    onChange={(e) =>
+                    value={entry.subpath ?? ''}
+                    onChange={(next) =>
                       setValue(
                         mountConfigs.map((m) =>
                           m.vfolderId === entry.vfolderId
-                            ? { ...m, subpath: e.target.value }
+                            ? { ...m, subpath: next }
                             : m,
                         ),
                       )
@@ -396,9 +401,9 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   />
                 </Form.Item>
                 <Tooltip
-                  title={t('comp:BAIVFolderMountConfigInput.RemoveFolder')}
+                  content={t('comp:BAIVFolderMountConfigInput.RemoveFolder')}
                 >
-                  <Button
+                  <BAIButton
                     type="text"
                     size="small"
                     disabled={disabled}
@@ -435,7 +440,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             {t('comp:BAIVFolderMountConfigInput.AutoMountedFolders')}
           </BAIText>
           {autoMountedFolderNames.map((folderName) => (
-            <Tag key={folderName}>{folderName}</Tag>
+            <Badge key={folderName} variant="neutral" label={folderName} />
           ))}
         </BAIFlex>
       )}

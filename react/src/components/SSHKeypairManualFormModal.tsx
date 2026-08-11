@@ -2,9 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Form, type FormInstance, Input, Typography } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextArea } from './astryx-bui/astryxFormControls';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -49,37 +51,26 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
       destroyOnHidden={true}
       {...baiModalProps}
     >
+      {/* PILOT-DECISION: the antd `Input.TextArea` sites carried a hand-rolled
+          `backgroundColor: rgba(150,150,150,.1)` (mimicking
+          `.ant-typography pre`'s tint) — `AstryxFormTextArea` has no `style`
+          escape hatch, dropped; the textarea's own default surface stands
+          in. */}
       <Form ref={formRef} preserve={false} layout="vertical">
-        <Form.Item
+        <BAIFormItem
           name="pubkey"
-          label={
-            <Typography.Text strong>
-              {t('userSettings.PublicKey')}
-            </Typography.Text>
-          }
+          label={t('userSettings.PublicKey')}
           rules={[{ required: true, message: t('settings.InputRequired') }]}
         >
-          <Input.TextArea
-            rows={5}
-            // color of "ant-typography pre" class
-            style={{ backgroundColor: 'rgba(150, 150, 150, 0.1)' }}
-          />
-        </Form.Item>
-        <Form.Item
+          <AstryxFormTextArea label={t('userSettings.PublicKey')} rows={5} />
+        </BAIFormItem>
+        <BAIFormItem
           name="privkey"
-          label={
-            <Typography.Text strong>
-              {t('userSettings.PrivateKey')}
-            </Typography.Text>
-          }
+          label={t('userSettings.PrivateKey')}
           rules={[{ required: true, message: t('settings.InputRequired') }]}
         >
-          <Input.TextArea
-            rows={5}
-            // color of "ant-typography pre" class
-            style={{ backgroundColor: 'rgba(150, 150, 150, 0.1)' }}
-          />
-        </Form.Item>
+          <AstryxFormTextArea label={t('userSettings.PrivateKey')} rows={5} />
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

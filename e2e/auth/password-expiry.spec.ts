@@ -176,10 +176,11 @@ test(
     await page.getByRole('button', { name: 'Update' }).click();
 
     // Validation error message appears for the required password field.
-    // Ant Design 6 form validation messages use .ant-form-item-explain-error
-    // rather than role="alert".
+    // `ChangePasswordView.tsx` renders its fields via `BAIFormItem`, whose
+    // error line carries `data-bai-form-item-explain-error`
+    // (`BAIFormItem.tsx`; the same element also has `role="alert"`).
     await expect(
-      page.locator('.ant-form-item-explain-error').first(),
+      page.locator('[data-bai-form-item-explain-error]').first(),
     ).toBeVisible();
   },
 );

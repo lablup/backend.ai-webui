@@ -5,33 +5,35 @@
 import { VFolderNodeDescriptionFragment$key } from '../__generated__/VFolderNodeDescriptionFragment.graphql';
 import { VFolderNodeDescriptionPermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
+import { App } from '../app-shim';
 import { convertToDecimalUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
-import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
-import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  App,
-  Descriptions,
-  theme,
-  Typography,
-  type DescriptionsProps,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Selector } from '@astryxdesign/core/Selector';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import {
   filterOutEmpty,
   BAIUserUnionIcon,
   toLocalId,
   BAIFlex,
   useErrorMessageResolver,
-  BAISelect,
-  BAITag,
+  badgeVariantForStatus,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleCheck, CopyIcon, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -40,16 +42,19 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
-interface VFolderNodeDescriptionProps extends DescriptionsProps {
+// PILOT-DECISION: the props no longer extend antd `DescriptionsProps` (a
+// type-only antd import still keeps the module in the antd import graph, P15).
+// The sole consumer — `FolderExplorerModal` — passes only `vfolderNodeFrgmt`,
+// which is exactly what the V2 twin's interface already declares.
+interface VFolderNodeDescriptionProps {
   vfolderNodeFrgmt: VFolderNodeDescriptionFragment$key;
 }
 
 const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   vfolderNodeFrgmt,
-  ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -102,38 +107,38 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
 
   const vfolderId = toLocalId(vfolderNode.id);
 
-  const items: DescriptionsProps['items'] = filterOutEmpty([
+  const items = filterOutEmpty([
     !vfolderNode?.unmanaged_path && {
       key: 'path',
-      label: (
-        <Typography.Text
-          copyable={{
-            text: vfolderPath,
-          }}
-          style={{
-            color: token.colorTextLabel,
-          }}
-        >
-          {t('data.folders.Path')}
-        </Typography.Text>
+      // PILOT-DECISION (V2 precedent): the copy affordance moves from the
+      // LABEL to the VALUE — `MetadataListItem.label` is a plain string (P2).
+      label: t('data.folders.Path'),
+      children: (
+        <HStack gap={1} align="start" wrap="wrap">
+          <VirtualFolderPath vfolderNodeFrgmt={vfolderNode} />
+          <IconButton
+            label={t('sourceCodeViewer.Copy')}
+            tooltip={t('sourceCodeViewer.Copy')}
+            variant="ghost"
+            size="sm"
+            icon={<CopyIcon />}
+            onClick={() => {
+              void navigator.clipboard?.writeText(vfolderPath);
+            }}
+          />
+        </HStack>
       ),
-      children: <VirtualFolderPath vfolderNodeFrgmt={vfolderNode} />,
     },
     {
       key: 'status',
       label: t('data.folders.Status'),
       children: (
-        <BAITag
-          color={
-            vfolderNode.status
-              ? statusTagColor[
-                  vfolderNode.status as keyof typeof statusTagColor
-                ]
-              : undefined
-          }
-        >
-          {_.toUpper(vfolderNode.status || '')}
-        </BAITag>
+        // BAITag DISSOLVES into `Badge`; the variant comes from the global
+        // ticket-13 lookup, replacing the imported `statusTagColor` map.
+        <Badge
+          variant={badgeVariantForStatus('vfolder', vfolderNode.status)}
+          label={_.toUpper(vfolderNode.status || '')}
+        />
       ),
     },
     {
@@ -147,13 +152,15 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       children:
         vfolderNode?.ownership_type === 'user' ? (
           <BAIFlex gap={'xs'}>
-            <Typography.Text>{t('data.User')}</Typography.Text>
-            <UserOutlined style={{ color: token.colorTextTertiary }} />
+            <Text>{t('data.User')}</Text>
+            {/* The `colorTextTertiary` glyph tint is dropped — the V2 twin
+                renders these icons at inherited colour. */}
+            <User size="1em" />
           </BAIFlex>
         ) : (
           <BAIFlex gap={'xs'}>
-            <Typography.Text>{t('data.Project')}</Typography.Text>
-            <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
+            <Text>{t('data.Project')}</Text>
+            <BAIUserUnionIcon />
           </BAIFlex>
         ),
     },
@@ -162,9 +169,23 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
-        <BAISelect
-          defaultValue={
-            vfolderNode.permission === 'wd' ? 'rw' : vfolderNode.permission
+        // MAPPING §3.1: two static options, no remote source -> `Selector`.
+        // antd's uncontrolled `defaultValue` becomes a controlled `value` read
+        // from the fragment (the same source the default came from), and
+        // `popupMatchSelectWidth={false}` is dropped — Astryx sizes its own
+        // popup (MAPPING §3.1 lists it as having no destination).
+        // QA-FINDINGS Q-34 — `placement` also has to be named here (the V1
+        // twin of `VFolderNodeDescriptionV2`): with no search field and no
+        // placement, `Selector` overlays the selected option on the trigger and
+        // the row's label and value both vanish behind the panel.
+        <Selector
+          placement="below"
+          label={t('data.folders.MountPermission')}
+          isLabelHidden
+          value={
+            vfolderNode.permission === 'wd'
+              ? 'rw'
+              : (vfolderNode.permission ?? undefined)
           }
           options={[
             { value: 'ro', label: t('data.ReadOnly') },
@@ -204,7 +225,6 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
               },
             );
           }}
-          popupMatchSelectWidth={false}
         />
       ),
     },
@@ -215,7 +235,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
         vfolderNode?.user === currentUser?.uuid ||
         (baiClient.is_admin && vfolderNode?.group === currentProject?.id) ? (
           <BAIFlex justify="start">
-            <CheckCircleOutlined />
+            <CircleCheck size="1em" />
           </BAIFlex>
         ) : null,
     },
@@ -223,7 +243,10 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       key: 'user_email',
       label: t('data.User'),
       children: (
-        <Typography.Text copyable>{vfolderNode.user_email}</Typography.Text>
+        // MAPPING §3.4: `copyable` -> BAICopyableText.
+        <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
+          {vfolderNode.user_email ?? ''}
+        </BAICopyableText>
       ),
     },
     vfolderNode.group_name !== null && {
@@ -236,7 +259,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       label: t('data.folders.Cloneable'),
       children: vfolderNode.cloneable ? (
         <BAIFlex justify="start">
-          <CheckCircleOutlined />
+          <CircleCheck size="1em" />
         </BAIFlex>
       ) : null,
     },
@@ -259,20 +282,19 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
     },
   ]);
 
+  // antd `Descriptions bordered size="small"` -> `MetadataList
+  // columns="single"` (MAPPING §4: `bordered` / `size` have no destination and
+  // are DROPPED, defaults-first — the V2 twin already made this call). The
+  // `styles.content` word-break override goes with them: MetadataList wraps
+  // long values itself.
   return (
-    <Descriptions
-      bordered
-      column={1}
-      size="small"
-      items={items}
-      styles={{
-        content: {
-          wordBreak: 'break-word',
-          overflowWrap: 'break-word',
-        },
-      }}
-      {...props}
-    />
+    <MetadataList columns="single">
+      {items.map((item) => (
+        <MetadataListItem key={item.key} label={item.label as string}>
+          {item.children}
+        </MetadataListItem>
+      ))}
+    </MetadataList>
   );
 };
 

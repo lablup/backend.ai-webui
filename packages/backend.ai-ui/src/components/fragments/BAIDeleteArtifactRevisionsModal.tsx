@@ -4,6 +4,7 @@ import {
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key,
 } from '../../__generated__/BAIDeleteArtifactRevisionsModalArtifactRevisionFragment.graphql';
 import { BAIDeleteArtifactRevisionsModalCleanupVersionMutation } from '../../__generated__/BAIDeleteArtifactRevisionsModalCleanupVersionMutation.graphql';
+import { message } from '../../app-shim';
 import {
   convertToDecimalUnit,
   filterOutEmpty,
@@ -11,14 +12,17 @@ import {
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
+import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
+import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { BAIColumnsType, BAITable } from '../Table';
+import { BAIColumnsType, BAITableAstryx } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, message, Modal, theme, Tooltip, type ModalProps } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -31,13 +35,13 @@ export type BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey =
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
 
 export interface BAIDeleteArtifactRevisionsModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   selectedArtifactFrgmt: BAIDeleteArtifactRevisionsModalArtifactFragment$key | null;
   selectedArtifactRevisionFrgmt: BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
   onOk: (e: React.MouseEvent<HTMLElement>) => void;
-  onCancel: NonNullable<ModalProps['onCancel']>;
+  onCancel: NonNullable<BAIModalProps['onCancel']>;
 }
 
 const BAIDeleteArtifactRevisionsModal = ({
@@ -117,7 +121,7 @@ const BAIDeleteArtifactRevisionsModal = ({
   ];
   return (
     <BAIUnmountAfterClose>
-      <Modal
+      <BAIModal
         title={t('comp:BAIDeleteArtifactModal.RemoveVersions')}
         centered
         onOk={(e) => {
@@ -178,18 +182,19 @@ const BAIDeleteArtifactRevisionsModal = ({
         <BAIFlex direction="column" gap={'sm'} align="stretch">
           {filteredSelectedRevisions.length !==
           selectedArtifactRevision.length ? (
-            <Alert
+            <BAIAlert
               icon={
                 <Tooltip
-                  title={t(
+                  content={t(
                     'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
                 >
-                  <QuestionCircleFilled
+                  <CircleHelp
                     style={{
                       color: token.colorInfo,
                       marginRight: token.marginXS,
                     }}
+                    size="1em"
                   />
                 </Tooltip>
               }
@@ -204,7 +209,7 @@ const BAIDeleteArtifactRevisionsModal = ({
           {selectedArtifact && (
             <BAIArtifactDescriptions artifactFrgmt={selectedArtifact} />
           )}
-          <BAITable<ArtifactRevision>
+          <BAITableAstryx<ArtifactRevision>
             columns={filterOutEmpty(columns)}
             dataSource={filterOutNullAndUndefined(selectedArtifactRevision)}
             pagination={{
@@ -212,7 +217,7 @@ const BAIDeleteArtifactRevisionsModal = ({
             }}
           />
         </BAIFlex>
-      </Modal>
+      </BAIModal>
     </BAIUnmountAfterClose>
   );
 };

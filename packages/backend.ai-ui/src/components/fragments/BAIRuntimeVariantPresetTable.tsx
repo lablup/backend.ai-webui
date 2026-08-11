@@ -4,6 +4,7 @@ import {
 } from '../../__generated__/BAIRuntimeVariantPresetTableFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -11,14 +12,14 @@ import BooleanTag from '../BooleanTag';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Tooltip, theme } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 export type RuntimeVariantPresetNodeInList = NonNullable<
@@ -198,9 +199,12 @@ const BAIRuntimeVariantPresetTable = ({
         title: (
           <BAIFlex gap="xs" align="center">
             {t('comp:BAIRuntimeVariantPresetTable.Rank')}
-            <Tooltip title={t('comp:BAIRuntimeVariantPresetTable.RankTooltip')}>
-              <QuestionCircleOutlined
+            <Tooltip
+              content={t('comp:BAIRuntimeVariantPresetTable.RankTooltip')}
+            >
+              <CircleHelp
                 style={{ color: token.colorTextDescription }}
+                size="1em"
               />
             </Tooltip>
           </BAIFlex>
@@ -236,11 +240,10 @@ const BAIRuntimeVariantPresetTable = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availablePresetSorterValues)[number]) || null,

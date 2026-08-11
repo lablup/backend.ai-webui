@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+// FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
+// keep reading the antd form engine (locked SHIM decision).
+import { Form } from '../form-engine';
 import { preserveDotStartCase, getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -18,25 +22,52 @@ import { ImageTags } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Card } from '@astryxdesign/core/Card';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Heading } from '@astryxdesign/core/Heading';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  Descriptions,
-  Typography,
-  Row,
-  Col,
-  Divider,
-  Tag,
-  Alert,
-  Card,
-  Table,
-  Form,
-  theme,
-  Button,
-  App,
-} from 'antd';
-import { BAIAlert, BAICard, BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+import { BAICard, BAIDoubleTag, BAIFlex, BAITableAstryx } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CheckIcon, CopyIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+/**
+ * Copy-only affordance replacing antd `Typography.Text copyable` with no
+ * children (a bare copy icon that copies the full image name).
+ */
+const CopyValueIconButton: React.FC<{ value?: string; label: string }> = ({
+  value,
+  label,
+}) => {
+  'use memo';
+  const [copied, setCopied] = useState(false);
+  return (
+    <IconButton
+      variant="ghost"
+      size="sm"
+      icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
+      label={label}
+      tooltip={label}
+      isDisabled={copied}
+      onClick={() => {
+        void navigator.clipboard?.writeText(value ?? '');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }}
+    />
+  );
+};
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
@@ -44,7 +75,6 @@ const SessionLauncherPreview: React.FC<{
   const app = App.useApp();
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
@@ -57,21 +87,22 @@ const SessionLauncherPreview: React.FC<{
   return (
     <>
       {form.getFieldValue('bootstrap_script') && (
-        <BAIAlert
-          description={t('session.launcher.UsingBootstrapScriptInfo')}
-          ghostInfoBg={false}
-          action={
+        <Banner
+          status="info"
+          title={t('session.launcher.UsingBootstrapScriptInfo')}
+          endContent={
             <Button
-              size="small"
-              type="text"
+              size="sm"
+              variant="ghost"
+              label={t('notification.SeeDetail')}
               onClick={() => {
                 app.modal.info({
                   title: t('session.launcher.BootstrapScriptDetail'),
                   content: (
                     <BAIFlex direction="column" align="start">
-                      <Typography.Paragraph>
+                      <Text as="p" display="block">
                         {t('userSettings.BootstrapScriptDescription')}
-                      </Typography.Paragraph>
+                      </Text>
                       <SourceCodeView language={'shell'}>
                         {form.getFieldValue('bootstrap_script')}
                       </SourceCodeView>
@@ -80,12 +111,8 @@ const SessionLauncherPreview: React.FC<{
                   width: 800,
                 });
               }}
-            >
-              {t('notification.SeeDetail')}
-            </Button>
+            />
           }
-          type="info"
-          showIcon
         />
       )}
       <BAICard
@@ -104,69 +131,52 @@ const SessionLauncherPreview: React.FC<{
           onClickEditStep('sessionType');
         }}
       >
-        <Descriptions size="small" column={1}>
-          <Descriptions.Item label={t('session.SessionType')}>
+        <MetadataList columns="single">
+          <MetadataListItem label={t('session.SessionType')}>
             {form.getFieldValue('sessionType')}
-          </Descriptions.Item>
+          </MetadataListItem>
           {!_.isEmpty(form.getFieldValue('sessionName')) && (
-            <Descriptions.Item label={t('session.launcher.SessionName')}>
+            <MetadataListItem label={t('session.launcher.SessionName')}>
               {form.getFieldValue('sessionName')}
-            </Descriptions.Item>
+            </MetadataListItem>
           )}
           {sessionType === 'batch' && (
             <>
-              <Descriptions.Item
-                label={t('session.launcher.StartUpCommand')}
-                styles={{
-                  label: {
-                    whiteSpace: 'nowrap',
-                  },
-                  content: {
-                    overflow: 'auto',
-                    display: 'flex',
-                  },
-                }}
-              >
+              <MetadataListItem label={t('session.launcher.StartUpCommand')}>
                 {form.getFieldValue(['batch', 'command']) ? (
                   <SourceCodeView language="shell">
                     {form.getFieldValue(['batch', 'command'])}
                   </SourceCodeView>
                 ) : (
-                  <Typography.Text type="secondary">
-                    {t('general.None')}
-                  </Typography.Text>
+                  <Text color="secondary">{t('general.None')}</Text>
                 )}
-              </Descriptions.Item>
-              <Descriptions.Item label={t('session.launcher.SessionStartTime')}>
+              </MetadataListItem>
+              <MetadataListItem label={t('session.launcher.SessionStartTime')}>
                 {form.getFieldValue(['batch', 'scheduleDate']) ? (
                   dayjs(form.getFieldValue(['batch', 'scheduleDate'])).format(
                     'LLL (Z)',
                   )
                 ) : (
-                  <Typography.Text type="secondary">
-                    {t('general.None')}
-                  </Typography.Text>
+                  <Text color="secondary">{t('general.None')}</Text>
                 )}
-              </Descriptions.Item>
+              </MetadataListItem>
               {supportBatchTimeout ? (
-                <Descriptions.Item
+                <MetadataListItem
                   label={t('session.launcher.BatchJobTimeoutDuration')}
                 >
                   {form.getFieldValue(['batch', 'timeout']) ? (
-                    <Typography.Text>
+                    <Text>
                       {form.getFieldValue(['batch', 'timeout'])}
                       {form.getFieldValue(['batch', 'timeoutUnit']) || 's'}
-                    </Typography.Text>
+                    </Text>
                   ) : (
-                    <Typography.Text type="secondary">
-                      {t('general.None')}
-                    </Typography.Text>
+                    <Text color="secondary">{t('general.None')}</Text>
                   )}
-                </Descriptions.Item>
+                </MetadataListItem>
               ) : null}
             </>
           )}
-        </Descriptions>
+        </MetadataList>
       </BAICard>
       <SessionOwnerSetterPreviewCard
         onClickExtraButton={() => {
@@ -197,201 +207,172 @@ const SessionLauncherPreview: React.FC<{
           onClickEditStep('environment');
         }}
       >
-        <Descriptions size="small" column={1}>
-          <Descriptions.Item label={t('session.launcher.Project')}>
+        <MetadataList columns="single">
+          <MetadataListItem label={t('session.launcher.Project')}>
             {currentProject.name}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('general.Image')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('general.Image')}>
             {supportExtendedImageInfo ? (
-              <Row style={{ flexFlow: 'nowrap' }}>
-                <Col>
-                  <ImageMetaIcon
-                    image={
-                      form.getFieldValue('environments')?.version ||
-                      form.getFieldValue('environments')?.manual
-                    }
-                    style={{ marginRight: token.marginXS }}
-                  />
-                </Col>
-                <Col>
-                  <BAIFlex direction="row" wrap="wrap">
-                    {form.getFieldValue('environments')?.manual ? (
-                      <Typography.Text
-                        code
-                        style={{ wordBreak: 'break-all' }}
-                        copyable={{
-                          text: form.getFieldValue('environments')?.manual,
-                        }}
-                      >
-                        {form.getFieldValue('environments')?.manual}
-                      </Typography.Text>
-                    ) : (
-                      <>
-                        <Typography.Text>
-                          {tagAlias(
-                            form.getFieldValue('environments')?.image
-                              ?.base_image_name,
-                          )}
-                        </Typography.Text>
-                        <Divider type="vertical" />
-                        <Typography.Text>
-                          {form.getFieldValue('environments')?.image?.version}
-                        </Typography.Text>
-                        <Divider type="vertical" />
-                        <Typography.Text>
-                          {
-                            form.getFieldValue('environments')?.image
-                              ?.architecture
+              <BAIFlex direction="row" align="start" gap="xs" wrap="nowrap">
+                <ImageMetaIcon
+                  image={
+                    form.getFieldValue('environments')?.version ||
+                    form.getFieldValue('environments')?.manual
+                  }
+                />
+                <BAIFlex direction="row" wrap="wrap">
+                  {form.getFieldValue('environments')?.manual ? (
+                    <BAICopyableText type="code" wordBreak="break-all">
+                      {form.getFieldValue('environments')?.manual}
+                    </BAICopyableText>
+                  ) : (
+                    <>
+                      <Text>
+                        {tagAlias(
+                          form.getFieldValue('environments')?.image
+                            ?.base_image_name,
+                        )}
+                      </Text>
+                      <Divider orientation="vertical" />
+                      <Text>
+                        {form.getFieldValue('environments')?.image?.version}
+                      </Text>
+                      <Divider orientation="vertical" />
+                      <Text>
+                        {
+                          form.getFieldValue('environments')?.image
+                            ?.architecture
+                        }
+                      </Text>
+                      <Divider orientation="vertical" />
+                      {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
+                      <BAIFlex gap={'xxs'}>
+                        {_.map(
+                          form.getFieldValue('environments')?.image?.tags,
+                          (tag: { key: string; value: string }) => {
+                            const isCustomized = _.includes(
+                              tag.key,
+                              'customized_',
+                            );
+                            const tagValue = isCustomized
+                              ? _.find(
+                                  form.getFieldValue('environments')?.image
+                                    ?.labels,
+                                  {
+                                    key: 'ai.backend.customized-image.name',
+                                  },
+                                )?.value
+                              : tag.value;
+                            const aliasedTag = tagAlias(tag.key + tagValue);
+                            return _.isEqual(
+                              aliasedTag,
+                              preserveDotStartCase(tag.key + tagValue),
+                            ) || isCustomized ? (
+                              <BAIDoubleTag
+                                key={tag.key}
+                                values={[
+                                  {
+                                    label: tagAlias(tag.key),
+                                    color: isCustomized ? 'cyan' : 'blue',
+                                  },
+                                  {
+                                    label: tagValue,
+                                    color: isCustomized ? 'cyan' : 'blue',
+                                  },
+                                ]}
+                              />
+                            ) : (
+                              <Badge
+                                key={tag.key}
+                                variant={isCustomized ? 'cyan' : 'blue'}
+                                label={aliasedTag}
+                              />
+                            );
+                          },
+                        )}
+                        <CopyValueIconButton
+                          label={t('button.CopySomething', {
+                            name: t('general.Image'),
+                          })}
+                          value={
+                            getImageFullName(
+                              form.getFieldValue('environments')?.image,
+                            ) || form.getFieldValue('environments')?.version
                           }
-                        </Typography.Text>
-                        <Divider type="vertical" />
-                        {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                        <BAIFlex gap={'xxs'}>
-                          {_.map(
-                            form.getFieldValue('environments')?.image?.tags,
-                            (tag: { key: string; value: string }) => {
-                              const isCustomized = _.includes(
-                                tag.key,
-                                'customized_',
-                              );
-                              const tagValue = isCustomized
-                                ? _.find(
-                                    form.getFieldValue('environments')?.image
-                                      ?.labels,
-                                    {
-                                      key: 'ai.backend.customized-image.name',
-                                    },
-                                  )?.value
-                                : tag.value;
-                              const aliasedTag = tagAlias(tag.key + tagValue);
-                              return _.isEqual(
-                                aliasedTag,
-                                preserveDotStartCase(tag.key + tagValue),
-                              ) || isCustomized ? (
-                                <BAIDoubleTag
-                                  key={tag.key}
-                                  values={[
-                                    {
-                                      label: tagAlias(tag.key),
-                                      color: isCustomized ? 'cyan' : 'blue',
-                                    },
-                                    {
-                                      label: tagValue,
-                                      color: isCustomized ? 'cyan' : 'blue',
-                                    },
-                                  ]}
-                                />
-                              ) : (
-                                <Tag
-                                  key={tag.key}
-                                  color={isCustomized ? 'cyan' : 'blue'}
-                                >
-                                  {aliasedTag}
-                                </Tag>
-                              );
-                            },
-                          )}
-                          <Typography.Text
-                            style={{ color: token.colorPrimary }}
-                            copyable={{
-                              text:
-                                getImageFullName(
-                                  form.getFieldValue('environments')?.image,
-                                ) ||
-                                form.getFieldValue('environments')?.version,
-                            }}
-                          />
-                        </BAIFlex>
-                      </>
-                    )}
-                  </BAIFlex>
-                </Col>
-              </Row>
+                        />
+                      </BAIFlex>
+                    </>
+                  )}
+                </BAIFlex>
+              </BAIFlex>
             ) : (
-              <Row style={{ flexFlow: 'nowrap', gap: token.sizeXS }}>
-                <Col>
-                  <ImageMetaIcon
-                    image={
-                      form.getFieldValue('environments')?.version ||
-                      form.getFieldValue('environments')?.manual
-                    }
-                  />
-                </Col>
-                <Col>
-                  {/* {form.getFieldValue('environments').image} */}
-                  <BAIFlex direction="row" wrap="wrap">
-                    {form.getFieldValue('environments')?.manual ? (
-                      <Typography.Text
-                        code
-                        style={{ wordBreak: 'break-all' }}
-                        copyable={{
-                          text: form.getFieldValue('environments')?.manual,
-                        }}
-                      >
-                        {form.getFieldValue('environments')?.manual}
-                      </Typography.Text>
-                    ) : (
-                      <>
-                        <Typography.Text>
-                          {tagAlias(
-                            getBaseImage(
-                              form.getFieldValue('environments')?.version,
-                            ),
-                          )}
-                        </Typography.Text>
-                        <Divider type="vertical" />
-                        <Typography.Text>
-                          {getBaseVersion(
+              <BAIFlex direction="row" align="start" gap="xs" wrap="nowrap">
+                <ImageMetaIcon
+                  image={
+                    form.getFieldValue('environments')?.version ||
+                    form.getFieldValue('environments')?.manual
+                  }
+                />
+                <BAIFlex direction="row" wrap="wrap">
+                  {form.getFieldValue('environments')?.manual ? (
+                    <BAICopyableText type="code" wordBreak="break-all">
+                      {form.getFieldValue('environments')?.manual}
+                    </BAICopyableText>
+                  ) : (
+                    <>
+                      <Text>
+                        {tagAlias(
+                          getBaseImage(
                             form.getFieldValue('environments')?.version,
-                          )}
-                        </Typography.Text>
-                        <Divider type="vertical" />
-                        <Typography.Text>
-                          {
-                            form.getFieldValue('environments')?.image
-                              ?.architecture
-                          }
-                        </Typography.Text>
-                        <Divider type="vertical" />
-                        <ImageTags
-                          tag={form.getFieldValue([
-                            'environments',
-                            'image',
-                            'tag',
-                          ])}
-                          labels={
-                            form.getFieldValue('environments')?.image
-                              ?.labels as Array<{
-                              key: string;
-                              value: string;
-                            }>
-                          }
-                        />
-                        <Typography.Text
-                          style={{ color: token.colorPrimary }}
-                          copyable={{
-                            text:
-                              getImageFullName(
-                                form.getFieldValue('environments')?.image,
-                              ) || form.getFieldValue('environments')?.version,
-                          }}
-                        />
-                      </>
-                    )}
-                  </BAIFlex>
-                </Col>
-              </Row>
+                          ),
+                        )}
+                      </Text>
+                      <Divider orientation="vertical" />
+                      <Text>
+                        {getBaseVersion(
+                          form.getFieldValue('environments')?.version,
+                        )}
+                      </Text>
+                      <Divider orientation="vertical" />
+                      <Text>
+                        {
+                          form.getFieldValue('environments')?.image
+                            ?.architecture
+                        }
+                      </Text>
+                      <Divider orientation="vertical" />
+                      <ImageTags
+                        tag={form.getFieldValue([
+                          'environments',
+                          'image',
+                          'tag',
+                        ])}
+                        labels={
+                          form.getFieldValue('environments')?.image
+                            ?.labels as Array<{
+                            key: string;
+                            value: string;
+                          }>
+                        }
+                      />
+                      <CopyValueIconButton
+                        label={t('button.CopySomething', {
+                          name: t('general.Image'),
+                        })}
+                        value={
+                          getImageFullName(
+                            form.getFieldValue('environments')?.image,
+                          ) || form.getFieldValue('environments')?.version
+                        }
+                      />
+                    </>
+                  )}
+                </BAIFlex>
+              </BAIFlex>
             )}
-          </Descriptions.Item>
+          </MetadataListItem>
           {form.getFieldValue('envvars')?.length > 0 && (
-            <Descriptions.Item
-              label={t('session.launcher.EnvironmentVariable')}
-              styles={{
-                content: {
-                  display: 'flex',
-                },
-              }}
-            >
+            <MetadataListItem label={t('session.launcher.EnvironmentVariable')}>
               {form.getFieldValue('envvars')?.length ? (
                 <SourceCodeView language={'shell'}>
                   {_.map(
@@ -401,11 +382,11 @@ const SessionLauncherPreview: React.FC<{
                   ).join('\n')}
                 </SourceCodeView>
               ) : (
-                <Typography.Text type="secondary">-</Typography.Text>
+                <Text color="secondary">-</Text>
               )}
-            </Descriptions.Item>
+            </MetadataListItem>
           )}
-        </Descriptions>
+        </MetadataList>
       </BAICard>
       <BAICard
         title={t('session.launcher.ResourceAllocation')}
@@ -438,34 +419,29 @@ const SessionLauncherPreview: React.FC<{
               );
             },
           ) && (
-            <Alert
-              type="warning"
-              showIcon
+            <Banner
+              status="warning"
               title={t('session.launcher.EnqueueComputeSessionWarning')}
             />
           )}
           {(form.getFieldWarning(['cluster_size'] as any) as any[]).length >
             0 && (
-            <Alert
-              type="warning"
-              showIcon
+            <Banner
+              status="warning"
               title={
                 (form.getFieldWarning(['cluster_size'] as any) as string[])[0]
               }
             />
           )}
 
-          <Descriptions column={2}>
-            <Descriptions.Item label={t('general.ResourceGroup')} span={2}>
+          <MetadataList columns={2}>
+            <MetadataListItem label={t('general.ResourceGroup')}>
               {form.getFieldValue('resourceGroup') || (
-                <Typography.Text type="secondary">
-                  {t('general.None')}
-                </Typography.Text>
+                <Text color="secondary">{t('general.None')}</Text>
               )}
-            </Descriptions.Item>
-            <Descriptions.Item
+            </MetadataListItem>
+            <MetadataListItem
               label={t('session.launcher.ResourceAllocationPerContainer')}
-              span={2}
             >
               <BAIFlex
                 direction="row"
@@ -478,46 +454,47 @@ const SessionLauncherPreview: React.FC<{
                   // t('session.launcher.CustomAllocation')
                   ''
                 ) : (
-                  <Tag>{form.getFieldValue('allocationPreset')}</Tag>
+                  <Badge label={form.getFieldValue('allocationPreset')} />
                 )}
 
                 <ResourceNumbersOfSession
                   resource={form.getFieldValue('resource')}
                 />
               </BAIFlex>
-            </Descriptions.Item>
+            </MetadataListItem>
             {baiClient.supports('agent-select') &&
               !baiClient?._config?.hideAgents && (
-                <Descriptions.Item label={t('session.launcher.AgentNode')}>
+                <MetadataListItem label={t('session.launcher.AgentNode')}>
                   {_.castArray(form.getFieldValue('agent')).join(', ') ||
                     t('session.launcher.AutoSelect')}
-                </Descriptions.Item>
+                </MetadataListItem>
               )}
-            <Descriptions.Item label={t('session.launcher.NumberOfContainer')}>
+            <MetadataListItem label={t('session.launcher.NumberOfContainer')}>
               {form.getFieldValue('cluster_size') === 1
                 ? form.getFieldValue('num_of_sessions')
                 : form.getFieldValue('cluster_size')}
-            </Descriptions.Item>
-            <Descriptions.Item label={t('session.launcher.ClusterMode')}>
+            </MetadataListItem>
+            <MetadataListItem label={t('session.launcher.ClusterMode')}>
               {form.getFieldValue('cluster_mode') === 'single-node'
                 ? t('session.launcher.SingleNode')
                 : t('session.launcher.MultiNode')}
-            </Descriptions.Item>
-          </Descriptions>
-          <Card
-            size="small"
-            type="inner"
-            title={t('session.launcher.TotalAllocation')}
-          >
-            <BAIFlex direction="row" gap="xxs" wrap="wrap">
-              <ResourceNumbersOfSession
-                resource={form.getFieldValue('resource')}
-                containerCount={
-                  form.getFieldValue('cluster_size') === 1
-                    ? form.getFieldValue('num_of_sessions')
-                    : form.getFieldValue('cluster_size')
-                }
-              />
+            </MetadataListItem>
+          </MetadataList>
+          <Card padding={3}>
+            <BAIFlex direction="column" align="stretch" gap="xs">
+              <Heading level={6}>
+                {t('session.launcher.TotalAllocation')}
+              </Heading>
+              <BAIFlex direction="row" gap="xxs" wrap="wrap">
+                <ResourceNumbersOfSession
+                  resource={form.getFieldValue('resource')}
+                  containerCount={
+                    form.getFieldValue('cluster_size') === 1
+                      ? form.getFieldValue('num_of_sessions')
+                      : form.getFieldValue('cluster_size')
+                  }
+                />
+              </BAIFlex>
             </BAIFlex>
           </Card>
         </BAIFlex>
@@ -536,7 +513,7 @@ const SessionLauncherPreview: React.FC<{
       >
         <BAIFlex direction="column" align="stretch" gap={'xs'}>
           {form.getFieldValue('mount_ids')?.length > 0 ? (
-            <Table
+            <BAITableAstryx
               rowKey="name"
               size="small"
               pagination={false}
@@ -550,14 +527,9 @@ const SessionLauncherPreview: React.FC<{
                   title: t('session.launcher.FolderAlias'),
                   render: (value, record) => {
                     return _.isEmpty(value) ? (
-                      <Typography.Text
-                        type="secondary"
-                        style={{
-                          opacity: 0.7,
-                        }}
-                      >
+                      <Text color="placeholder">
                         {`/home/work/${record.name}`}
-                      </Typography.Text>
+                      </Text>
                     ) : (
                       value
                     );
@@ -571,27 +543,26 @@ const SessionLauncherPreview: React.FC<{
                   alias: form.getFieldValue('mount_id_map')?.[v],
                 };
               })}
-            ></Table>
+            />
           ) : (
-            <Alert
-              type="warning"
-              showIcon
+            <Banner
+              status="warning"
               title={t('session.launcher.NoFolderMounted')}
             />
           )}
           {form.getFieldValue('autoMountedFolderNames')?.length > 0 ? (
-            <Descriptions size="small">
-              <Descriptions.Item label={t('data.AutomountFolders')}>
+            <MetadataList columns="single">
+              <MetadataListItem label={t('data.AutomountFolders')}>
                 <BAIFlex gap="xs" wrap="wrap">
                   {_.map(
                     form.getFieldValue('autoMountedFolderNames'),
                     (name) => {
-                      return <Tag key={name}>{name}</Tag>;
+                      return <Badge key={name} label={name} />;
                     },
                   )}
                 </BAIFlex>
-              </Descriptions.Item>
-            </Descriptions>
+              </MetadataListItem>
+            </MetadataList>
           ) : null}
         </BAIFlex>
       </BAICard>
@@ -605,10 +576,9 @@ const SessionLauncherPreview: React.FC<{
           onClickEditStep('network');
         }}
       >
-        <Descriptions size="small">
-          <Descriptions.Item label={t('session.launcher.PreOpenPortTitle')}>
+        <MetadataList columns="single">
+          <MetadataListItem label={t('session.launcher.PreOpenPortTitle')}>
             <BAIFlex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
-              {/* {form.getFieldValue('environments').image} */}
               {_.sortBy(form.getFieldValue('ports'), (v) => parseInt(v)).map(
                 (v, idx) => (
                   <PortTag key={idx + v} value={v} style={{ margin: 0 }}>
@@ -619,13 +589,11 @@ const SessionLauncherPreview: React.FC<{
 
               {!_.isArray(form.getFieldValue('ports')) ||
               form.getFieldValue('ports')?.length === 0 ? (
-                <Typography.Text type="secondary">
-                  {t('general.None')}
-                </Typography.Text>
+                <Text color="secondary">{t('general.None')}</Text>
               ) : null}
             </BAIFlex>
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </MetadataList>
       </BAICard>
     </>
   );

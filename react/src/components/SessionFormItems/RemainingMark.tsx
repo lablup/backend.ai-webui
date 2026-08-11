@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { CaretDownOutlined } from '@ant-design/icons';
-import { theme } from 'antd';
+import { theme } from '../../theme-shim';
 import { BAIFlex } from 'backend.ai-ui';
+import { ChevronDown } from 'lucide-react';
 import React from 'react';
 
 const RemainingMark: React.FC = () => {
@@ -19,7 +19,7 @@ const RemainingMark: React.FC = () => {
         opacity: 0.5,
       }}
     >
-      <CaretDownOutlined />
+      <ChevronDown size="1em" />
     </BAIFlex>
   );
 };

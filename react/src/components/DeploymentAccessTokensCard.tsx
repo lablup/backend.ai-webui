@@ -6,18 +6,16 @@ import { DeploymentAccessTokensCardCreateMutation } from '../__generated__/Deplo
 import { DeploymentAccessTokensCardDeleteMutation } from '../__generated__/DeploymentAccessTokensCardDeleteMutation.graphql';
 import { DeploymentAccessTokensCardListQuery } from '../__generated__/DeploymentAccessTokensCardListQuery.graphql';
 import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
-import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
-import {
-  App,
-  DatePicker,
-  Form,
-  Select,
-  Skeleton,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { AstryxFormSelector } from './astryx-bui/astryxFormControls';
+import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
+import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAICard,
@@ -26,18 +24,19 @@ import {
   BAIFlex,
   BAIModal,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAIText,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
+  useControllableValue,
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { PlusIcon } from 'lucide-react';
+import { Trash2, CircleHelp, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -148,9 +147,10 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
         title={
           <BAIFlex gap="xs" align="center">
             {t('deployment.tab.AccessTokens')}
-            <Tooltip title={t('deployment.tab.description.AccessTokens')}>
-              <QuestionCircleOutlined
+            <Tooltip content={t('deployment.tab.description.AccessTokens')}>
+              <CircleHelp
                 style={{ color: token.colorTextDescription }}
+                size="1em"
               />
             </Tooltip>
           </BAIFlex>
@@ -162,27 +162,24 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
               value=""
               onChange={handleRefetch}
             />
-            <Tooltip
-              title={
-                !hasEndpointUrl
-                  ? t('deployment.accessToken.EndpointNotIssuedYet')
-                  : ''
-              }
+            {/* PILOT-DECISION (P18): the antd Tooltip that explained WHY the
+                disabled Create button is disabled ("endpoint not issued yet")
+                is dropped — Astryx forbids wrapping a disabled control in
+                Tooltip (disabled controls emit no hover events), and BAIButton
+                (frontier) has no `disabledMessage` slot to carry the reason. */}
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              disabled={isCreateDisabled}
+              onClick={() => setIsCreateModalOpen(true)}
             >
-              <BAIButton
-                type="primary"
-                icon={<PlusIcon />}
-                disabled={isCreateDisabled}
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                {t('deployment.accessToken.Create')}
-              </BAIButton>
-            </Tooltip>
+              {t('deployment.accessToken.Create')}
+            </BAIButton>
           </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <Suspense fallback={<Skeleton active />}>
+        <Suspense fallback={<BAISkeletonAstryx />}>
           <DeploymentAccessTokensTable
             deploymentId={deploymentId}
             fetchKey={deferredFetchKey}
@@ -247,24 +244,22 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
           width={520}
         >
           <BAIFlex direction="column" align="stretch" gap="sm">
-            <Typography.Text>
-              {t('deployment.accessToken.Created')}
-            </Typography.Text>
+            <Text>{t('deployment.accessToken.Created')}</Text>
             {createdToken ? (
               <BAIText copyable={{ text: createdToken.token }} ellipsis code>
                 {createdToken.token}
               </BAIText>
             ) : null}
             {createdToken?.expiresAt ? (
-              <Typography.Text type="secondary">
+              <Text color="secondary">
                 {`${t('deployment.accessToken.Expiration')}: ${dayjs(
                   createdToken.expiresAt,
                 ).format('ll LT')}`}
-              </Typography.Text>
+              </Text>
             ) : (
-              <Typography.Text type="secondary">
+              <Text color="secondary">
                 {t('deployment.accessToken.NoExpiration')}
-              </Typography.Text>
+              </Text>
             )}
           </BAIFlex>
         </BAIModal>
@@ -358,8 +353,7 @@ const DeploymentAccessTokensTable: React.FC<
 
   return (
     <>
-      <BAITable<AccessTokenNode>
-        scroll={{ x: 'max-content' }}
+      <BAITableAstryx<AccessTokenNode>
         rowKey="id"
         loading={isPendingRefetch || isDeletingToken}
         dataSource={accessTokens}
@@ -388,7 +382,7 @@ const DeploymentAccessTokensTable: React.FC<
                     {
                       key: 'delete',
                       title: t('deployment.accessToken.Delete'),
-                      icon: <DeleteFilled />,
+                      icon: <Trash2 size="1em" />,
                       type: 'danger',
                       disabled: isDeleteDisabled,
                       onClick: () =>
@@ -465,12 +459,48 @@ const DeploymentAccessTokensTable: React.FC<
 // Create Access Token modal — presets (7/30/90 days, custom, no expiration).
 // ---------------------------------------------------------------------------
 
-type ExpiryOption = 7 | 30 | 90 | 'custom' | 'none';
+// PILOT-DECISION: antd Select carried number values (7 | 30 | 90) directly;
+// Astryx Selector option values are strings, so the day presets become string
+// literals and are converted with `Number()` at the submit boundary. The
+// public `onRequestClose({ expiresAt })` contract is unchanged.
+type ExpiryOption = '7' | '30' | '90' | 'custom' | 'none';
 
 interface CreateAccessTokenFormValues {
   expiryOption: ExpiryOption;
   datetime: dayjs.Dayjs;
 }
+
+/**
+ * Inline value adapter between the antd form (which stores `datetime` as a
+ * dayjs instance — the submit boundary calls `.toISOString()`) and Astryx
+ * `DateTimeInput`, which speaks ISO strings. Conversion happens here so the
+ * form values keep their existing shape.
+ *
+ * PILOT-DECISION: antd DatePicker's explicit `format="YYYY-MM-DD HH:mm:ss"`
+ * display format is dropped — DateTimeInput renders its own locale-aware
+ * date + time fields; `hasSeconds` keeps second precision.
+ */
+const DayjsDateTimeInput: React.FC<{
+  value?: dayjs.Dayjs;
+  onChange?: (value: dayjs.Dayjs | undefined) => void;
+  label: string;
+}> = ({ value, onChange, label }) => {
+  'use memo';
+  return (
+    <DateTimeInput
+      label={label}
+      isLabelHidden
+      hasSeconds
+      width="100%"
+      value={
+        value?.isValid()
+          ? (value.format('YYYY-MM-DDTHH:mm:ss') as ISODateTimeString)
+          : undefined
+      }
+      onChange={(iso) => onChange?.(iso ? dayjs(iso) : undefined)}
+    />
+  );
+};
 
 interface CreateAccessTokenModalProps {
   open: boolean;
@@ -490,7 +520,7 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   // Form.useWatch re-renders this component when expiryOption changes,
   // replacing the Form.Item dependencies render-prop pattern which only
   // triggers re-validation (not re-render) when a dependency changes.
-  const expiryOption = Form.useWatch<ExpiryOption>('expiryOption', form) ?? 7;
+  const expiryOption = Form.useWatch<ExpiryOption>('expiryOption', form) ?? '7';
 
   const handleOk = () => {
     form
@@ -502,7 +532,9 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
         } else if (values.expiryOption === 'custom') {
           expiresAt = values.datetime.toISOString();
         } else {
-          expiresAt = dayjs().add(values.expiryOption, 'day').toISOString();
+          expiresAt = dayjs()
+            .add(Number(values.expiryOption), 'day')
+            .toISOString();
         }
         onRequestClose({ expiresAt });
       })
@@ -513,15 +545,15 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
 
   const options: Array<{ value: ExpiryOption; label: string }> = [
     {
-      value: 7,
+      value: '7',
       label: t('general.Days', { num: 7, defaultValue: '7 days' }),
     },
     {
-      value: 30,
+      value: '30',
       label: t('general.Days', { num: 30, defaultValue: '30 days' }),
     },
     {
-      value: 90,
+      value: '90',
       label: t('general.Days', { num: 90, defaultValue: '90 days' }),
     },
     {
@@ -550,28 +582,30 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
         form={form}
         layout="vertical"
         initialValues={{
-          expiryOption: 7 as ExpiryOption,
+          expiryOption: '7' as ExpiryOption,
           datetime: dayjs().add(7, 'day'),
         }}
         validateTrigger={['onChange', 'onBlur']}
       >
-        <Form.Item
+        <BAIFormItem
           name="expiryOption"
           label={t('deployment.accessToken.Expiration')}
           rules={[{ required: true }]}
         >
-          <Select<ExpiryOption>
-            style={{ width: 200 }}
+          <AstryxFormSelector
+            label={t('deployment.accessToken.Expiration')}
+            width={200}
             options={options}
             onChange={(value) => {
-              if (typeof value === 'number') {
-                form.setFieldValue('datetime', dayjs().add(value, 'day'));
+              const days = Number(value);
+              if (!Number.isNaN(days)) {
+                form.setFieldValue('datetime', dayjs().add(days, 'day'));
               }
             }}
           />
-        </Form.Item>
+        </BAIFormItem>
         {expiryOption === 'custom' && (
-          <Form.Item
+          <BAIFormItem
             name="datetime"
             label={t('deployment.accessToken.CustomExpiration')}
             rules={[
@@ -589,12 +623,10 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
               }),
             ]}
           >
-            <DatePicker
-              showTime
-              format="YYYY-MM-DD HH:mm:ss"
-              style={{ width: '100%' }}
+            <DayjsDateTimeInput
+              label={t('deployment.accessToken.CustomExpiration')}
             />
-          </Form.Item>
+          </BAIFormItem>
         )}
       </Form>
     </BAIModal>

@@ -1,9 +1,10 @@
 import { default as logo } from './RescanImages.svg?react';
-import Icon from '@ant-design/icons';
-import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import Icon, { CustomIconComponentProps } from './iconShim';
 
-interface BAIRescanImagesIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+interface BAIRescanImagesIconProps extends Omit<
+  CustomIconComponentProps,
+  'width' | 'height' | 'fill'
+> {
   'aria-label'?: string;
 }
 

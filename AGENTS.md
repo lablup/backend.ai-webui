@@ -37,7 +37,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Architecture
 
-This is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
+This is a **React web application** using React 19 + Astryx (`@astryxdesign/core`) + Relay 20 (GraphQL).
+
+**Astryx is the component system, and the only one.** New UI is written against Astryx
+directly (see the `ASTRYX` block below for the discover-don't-guess workflow). Ant Design
+is **gone** — removed on the `to-astryx` branch, down to the dependency itself: no
+`package.json` declares it, no source file imports it, and there is no antd
+`ConfigProvider` in the tree. antd is not a dependency of this workspace at
+all — the workspace pins its dependency versions exactly, so it cannot
+re-enter as a transitive dependency, and any `from 'antd'` import fails
+`tsc` immediately. It is not migration debt any more; it is a regression
+that will not compile.
 
 ### Key Technologies
 
@@ -45,7 +55,7 @@ This is a **React web application** using React 19 + Ant Design 6 + Relay 20 (Gr
 - **Component Library Build**: Vite (`packages/backend.ai-ui/`)
 - **Service Worker**: `vite-plugin-pwa` (Workbox under the hood), integrated into the Vite build
 - **Package Manager**: pnpm with workspace monorepo
-- **Styling**: Ant Design + antd-style
+- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Nothing injects `<style>` at runtime any more — `antd-style` went in to-astryx ticket 33, `@ant-design/icons` / `@ant-design/cssinjs` / `@ant-design/colors` in ticket 35, and antd's own cssinjs with the final switch.
 - **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
 - **GraphQL**: Relay compiler with projects for both `react/` and `packages/backend.ai-ui/`
 - **React Compiler**: babel-plugin-react-compiler in annotation mode (`'use memo'` directive)
@@ -136,13 +146,13 @@ Production build (`pnpm run build`) runs these steps sequentially:
 ### Key Libraries
 
 - **react** 19, **react-dom** 19 - UI framework
-- **antd** 6 - Ant Design component library
+- **@astryxdesign/core** 0.3 (+ `@astryxdesign/lab`, `@astryxdesign/theme-neutral`) - component system
 - **react-relay** 20, **relay-runtime** 20 - GraphQL client
 - **jotai** - Atomic state management
 - **i18next**, **react-i18next** - Internationalization
 - **vite** 6 + **@vitejs/plugin-react** - React app bundler and dev server
 - **vitest** 4 - Unit test runner (jsdom env)
-- **electron** 35 - Desktop app framework
+- **electron** 39 - Desktop app framework
 
 ### GraphQL/Relay Setup
 
@@ -180,7 +190,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 ### React Essentials (detail: `.github/instructions/react.instructions.md`, auto-loaded via applyTo)
 
 - Use `'use memo'` directive at the top of component bodies for React Compiler optimization. Never remove existing `'use memo'`.
-- Use `BAIButton` `action` prop for async operations (auto loading state). Prefer BAI components over Ant Design equivalents.
+- Use `BAIButton` `action` prop for async operations (auto loading state). Reach for Astryx first, then a `BAI*` wrapper when it adds real behaviour; never introduce a new Ant Design import.
 - Follow Relay fragment architecture: query orchestrator (useLazyLoadQuery) + fragment component (useFragment).
 - Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
 - Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
@@ -192,6 +202,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
+- **Astryx UI fixes**: `astryx-fix` skill (measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
 
 ### Terminology Precedence
 
@@ -219,3 +230,38 @@ When reviewing PRs (especially agent-generated ones), check:
 - No unintended scope creep (files changed beyond what the issue requires)
 - `TODO(needs-backend)` markers are properly placed with issue references
 - No hardcoded strings, magic numbers, or debug artifacts left behind
+
+<!-- ASTRYX:START -->
+Astryx v0.3.0 · 155 components
+CLI: run every command as `pnpm exec astryx <cmd>` (shown below as `astryx ...`).
+
+SETUP (once, in your app entry e.g. main.tsx) — without these, components render unstyled:
+  import "@astryxdesign/core/reset.css";
+  import "@astryxdesign/core/astryx.css";
+
+WORKFLOW — discover, don't guess. Before writing UI:
+1. `astryx build "<idea>"` — START HERE: returns a kit (closest [page] + [block]s + [component]s). No args = full playbook.
+2. `astryx template <name> [--skeleton]` — scaffold the [page]/[block]s it named, or study their layout. Templates are reference code.
+3. `astryx component <Name>` — props + examples for every component you use.
+
+RULES:
+- No <div> — components do all layout/spacing. Full page → AppShell; sidebar nav → SideNav.
+- Frame first: pick the shell (AppShell / Layout+LayoutPanel) and budget regions in px BEFORE writing content (`astryx docs layout`).
+- Dense data = rows (Table, List/Item) edge-to-edge — never Card-wrapped list items. Card = dashboard widgets, galleries, settings groups only.
+- Status → StatusDot/Token; Badge only for counts and enumerated states, never decoration.
+- Custom styling: component props first; else the xstyle prop / StyleX tokens (@astryxdesign/core/theme/tokens.stylex). No raw hex/px.
+- Tokens for every value (`astryx docs tokens`). Brand/accent via `astryx theme` — never override --color-* in :root.
+- SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `astryx component <Name>` / `astryx search "<thing>"`; don't hand-roll CSS.
+- MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `theme.useToken()` reads. Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine.
+
+MORE CLI:
+  search "<query>"   find any component / hook / doc / template / block
+  component --list   155 components by category
+  template --list    page + block recipes
+  docs <topic>       color, elevation, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling, theme, tokens, typography
+  swizzle <Name>     eject component source for deep customization
+  upgrade --apply    run after any @astryxdesign/core bump
+<!-- ASTRYX:END -->
+The ASTRYX block above is `astryx init --features agents` output (run from `react/`, where the StyleX compiler is detected) in **StyleX mode**, plus the project-specific MIGRATION RELAXATION line. Canonical generated copy: `react/AGENTS.md`. Re-run the init from `react/` on every `@astryxdesign/core` bump and re-sync this block (keeping the relaxation line).
+
+The block's `pnpm exec astryx <cmd>` assumes you are **inside `react/`**. `@astryxdesign/cli` is a devDependency of that workspace only, so the root `node_modules/.bin` has no `astryx` binary — and `pnpm exec` resolves binaries, not package scripts, so it fails at the root with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL`. **From the repository root, run `pnpm run astryx <cmd>` instead** (root `package.json` proxies it to the same CLI). Both forms take identical arguments.

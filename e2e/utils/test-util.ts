@@ -391,31 +391,39 @@ export async function fillOutVaadinGridCellFilter(
   await nameInput.fill(inputValue);
 }
 
+/**
+ * `BAIPropertyFilter` / `BAIGraphQLPropertyFilter` (to-astryx ticket 28) are
+ * built on Astryx `PowerSearch`. A committed filter is a token whose remove
+ * control carries `aria-label="Remove {label}"`
+ * (`t('@astryx.token.remove', {label})`, `Token.tsx` / locales/en.json), and
+ * whose label follows `"<Field>: <operator> <value>"` (`PowerSearch.tsx`
+ * `tokenizerValue` -> `displayLabel`). "name" has no `defaultOperator`
+ * override on the vfolder pages this targets, so it uses the BUI default
+ * `ilike` = "contains".
+ */
 export async function removeSearchButton(page: Page, folderName: string) {
   try {
-    const filterChip = page
+    const removeButton = page
       .getByTestId('vfolder-filter')
-      .locator('div')
-      .filter({ hasText: `Name: ${folderName}` })
-      .locator('svg')
-      .first();
+      .getByRole('button', { name: `Remove Name: contains ${folderName}` });
 
-    // Only try to click if the filter chip exists
-    if (await filterChip.isVisible({ timeout: 1000 })) {
-      await filterChip.click();
+    // Only try to click if the filter token exists
+    if (await removeButton.isVisible({ timeout: 1000 })) {
+      await removeButton.click();
     }
   } catch {
-    // Silently ignore if filter chip doesn't exist
+    // Silently ignore if filter token doesn't exist
     // This prevents cascading failures when the filter was already removed
   }
 }
 
 export async function clearAllFilters(page: Page) {
   try {
-    // Find all filter chips in the vfolder-filter component
+    // Every token's remove button carries an aria-label starting with
+    // "Remove " (see `removeSearchButton` above).
     const filterChips = page
       .getByTestId('vfolder-filter')
-      .locator('.ant-tag-close-icon');
+      .getByRole('button', { name: /^Remove / });
 
     // Get count of filter chips
     const count = await filterChips.count();
@@ -436,7 +444,15 @@ export async function clearAllFilters(page: Page) {
 }
 
 /**
- * Select a property filter and search for a value in BAIPropertyFilter component
+ * Select a property filter and search for a value in a `BAIPropertyFilter` /
+ * `BAIGraphQLPropertyFilter` component (to-astryx ticket 28 rebuilt both on
+ * Astryx `PowerSearch`: a single typeahead that, for a field with no
+ * pre-filled value, opens an edit popover (Field/Operator/Value) on
+ * selection — `PowerSearch.tsx` `handleTokenizerChange`). The `data-testid`
+ * lands on `PowerSearch`'s own root (`data-testid={testId}`,
+ * `PowerSearch.tsx`), which contains exactly one `role="combobox"` (the
+ * typeahead), so scoping through it stays unambiguous regardless of any
+ * per-page `label` override.
  * @param page - Playwright Page object
  * @param propertyName - Name of the property to filter by (e.g., 'Name', 'Status')
  * @param searchValue - Value to search for
@@ -450,48 +466,36 @@ export async function selectPropertyFilter(
 ) {
   const filterContainer = page.getByTestId(testId);
 
-  // The BAIPropertyFilter is inside .ant-space-compact with two .ant-select elements
-  // 1. Property selector (first .ant-select in Space.Compact)
-  // 2. Search input (AutoComplete, second .ant-select in Space.Compact)
+  // Open the typeahead and pick the field.
+  const searchBar = filterContainer.getByRole('combobox').first();
+  await searchBar.click();
+  await page.getByRole('option', { name: propertyName, exact: true }).click();
 
-  // Click the first Select in the Space.Compact (property selector)
-  const propertySelect = filterContainer
-    .locator('.ant-space-compact')
-    .locator('.ant-select')
-    .first();
-  await propertySelect.click();
-
-  // Select the property option from the visible dropdown. Ant Design keeps
-  // closed dropdowns mounted but hidden, so scope the option lookup to the
-  // currently open popup to avoid clicking a stale/hidden orphan.
-  await page
-    .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-    .getByRole('option', { name: propertyName })
-    .first()
-    .click();
-
-  // Fill in the search value in the AutoComplete input
-  // It's the second .ant-select in the Space.Compact
-  const searchInput = filterContainer
-    .locator('.ant-space-compact')
-    .locator('.ant-select')
-    .last()
-    .locator('input[role="combobox"]');
-  await searchInput.fill(searchValue);
-
-  // Click search button
-  await page.getByRole('button', { name: 'search' }).click();
+  // Fill the Value control in the edit popover it opens. The value editor's
+  // accessible name is "Value" (`t('@astryx.powersearch.valueEditor.value')`)
+  // regardless of which control renders it: free-text fields render a
+  // `TextInput` (`role="textbox"`, commits via the popover's Apply button);
+  // strict-selection fields render a `Selector` (`role="combobox"`, commits
+  // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
+  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
+  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await valueTextbox.fill(searchValue);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  } else {
+    await page.getByRole('combobox', { name: 'Value' }).click();
+    await page.getByRole('option', { name: searchValue, exact: true }).click();
+  }
 }
 
 /**
- * Locates the table refresh button (BAIFetchKeyButton, ReloadOutlined icon).
+ * Locates the table refresh button (BAIFetchKeyButton). The icon is lucide
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
+ * carries the native `title="Refresh"` attribute instead
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
  * Clicking it bumps the list's fetchKey, forcing a network-only refetch.
  */
 export function getTableRefreshButton(page: Page) {
-  return page
-    .locator('button')
-    .filter({ has: page.locator('.anticon-reload') })
-    .first();
+  return page.locator('button[title="Refresh"]').first();
 }
 
 /**

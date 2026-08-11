@@ -53,7 +53,7 @@ const meta: Meta<typeof BAIArtifactTable> = {
 - **Registry**: Registry name and URL (hidden by default)
 - **Source**: Source repository link (hidden by default)
 
-For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
+For other props (loading, pagination, etc.), refer to [BAITableAstryx](?path=/docs/table-baitable--docs).
         `,
       },
     },

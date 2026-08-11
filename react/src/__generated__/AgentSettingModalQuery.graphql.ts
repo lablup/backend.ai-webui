@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<16c489e5b11d027acbb51266d2272c70>>
+ * @generated SignedSource<<755983d5d15f37d2c967c457a499fe57>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AgentSettingModalQuery$variables = Record<PropertyKey, never>;
 export type AgentSettingModalQuery$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"BAIAdminResourceGroupSelect_resourceGroupsFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment">;
 };
 export type AgentSettingModalQuery = {
   response: AgentSettingModalQuery$data;
@@ -37,7 +37,7 @@ return {
       {
         "args": null,
         "kind": "FragmentSpread",
-        "name": "BAIAdminResourceGroupSelect_resourceGroupsFragment"
+        "name": "BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment"
       }
     ],
     "type": "Query",
@@ -149,23 +149,23 @@ return {
           "filter"
         ],
         "handle": "connection",
-        "key": "BAIAdminResourceGroupSelect_resourceGroups",
+        "key": "BAIAdminResourceGroupSelectAstryx_resourceGroups",
         "kind": "LinkedHandle",
         "name": "resourceGroups"
       }
     ]
   },
   "params": {
-    "cacheID": "cde03dadbfc6ce076a4fad8dcc7fb9ff",
+    "cacheID": "ebc854af736faab3a5ce918fea0a58c7",
     "id": null,
     "metadata": {},
     "name": "AgentSettingModalQuery",
     "operationKind": "query",
-    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  resourceGroups(first: 10) @since(version: \"26.1.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment on Query {\n  resourceGroups(first: 10) @since(version: \"26.1.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e12febf36d56aa90e33f3478ec22cf80";
+(node as any).hash = "5fe6fc2d2ea87c315bb039beccef845a";
 
 export default node;

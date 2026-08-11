@@ -7,11 +7,10 @@ import type {
   UserResourcePolicyV2OrderBy,
   UserResourcePolicyV2Query as UserResourcePolicyV2QueryType,
 } from '../__generated__/UserResourcePolicyV2Query.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicyV2SettingModal from './UserResourcePolicyV2SettingModal';
-import { DeleteFilled } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -25,7 +24,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -268,7 +267,7 @@ const UserResourcePolicyV2 = ({
                         {
                           key: 'delete',
                           title: t('button.Delete'),
-                          icon: <DeleteFilled />,
+                          icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => {
                             setDeletingPolicyName(record.name);

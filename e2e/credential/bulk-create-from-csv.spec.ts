@@ -358,9 +358,10 @@ test.describe(
       });
       // Anchor off the visible "Password" form label rather than the password
       // input's internal class, so the locator stays unambiguous even if another
-      // password input is added later.
+      // password input is added later. `BulkCreateUserFromCSVModal.tsx` renders
+      // this field via `BAIFormItem` (`[data-bai-form-item]`).
       const defaultPasswordInput = dialog
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ has: page.getByText('Password', { exact: true }) })
         .locator('input');
       await defaultPasswordInput.fill('Password!23');

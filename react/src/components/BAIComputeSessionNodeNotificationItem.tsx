@@ -9,18 +9,18 @@ import {
   useSetBAINotification,
 } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
-import { useUpdateEffect } from 'ahooks';
-import { theme } from 'antd';
 import {
   BAIFlex,
   BAILink,
   BAINotificationItem,
   BAIText,
   toLocalId,
+  useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';

@@ -10,13 +10,13 @@ import {
 import { Page } from '@playwright/test';
 
 /**
- * Locates the BAIFetchKeyButton (refresh/reload button) by the ReloadOutlined icon.
+ * Locates the BAIFetchKeyButton (refresh/reload button). The icon is lucide
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
+ * carries the native `title="Refresh"` attribute instead
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
  */
 function getTableRefreshButton(page: Page) {
-  return page
-    .locator('button')
-    .filter({ has: page.locator('.anticon-reload') })
-    .first();
+  return page.locator('button[title="Refresh"]').first();
 }
 
 /**
@@ -104,7 +104,10 @@ async function firstActionableVFolderName(
   page: Page,
   pattern: RegExp,
   skip: Set<string>,
-  action: { buttonName: 'Move to trash bin' | 'Delete'; requireEnabled: boolean },
+  action: {
+    buttonName: 'Move to trash bin' | 'Delete';
+    requireEnabled: boolean;
+  },
 ): Promise<string | null> {
   // Require the phase's action button ("Move to trash bin" on Active, "Delete"
   // on Trash — BAINameActionCell labels buttons with their action title) to

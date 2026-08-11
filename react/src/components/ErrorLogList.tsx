@@ -4,27 +4,27 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
-import {
-  DeleteFilled,
-  SearchOutlined,
-  SettingOutlined,
-  LoadingOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Button, Typography, Alert, Checkbox, Input, theme } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIFlex,
   BAIModal,
-  BAITable,
-  useUpdatableState,
+  BAITableAstryx,
   BAIUnmountAfterClose,
+  type BAIColumnsType,
+  useToggle,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Trash2, Search, Settings, RotateCw } from 'lucide-react';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,7 +57,7 @@ const ErrorLogList: React.FC<{
   const [isPendingReset, startResetTransition] = useTransition();
 
   useSuspendedBackendaiClient(); // TODO: remove this after react routing is stable. This is for remove flickering when browser reload
-  const columns: ColumnsType<LogType> = [
+  const columns: BAIColumnsType<LogType> = [
     {
       title: t('logs.TimeStamp'),
       dataIndex: 'formattedTimeStamp',
@@ -212,7 +212,7 @@ const ErrorLogList: React.FC<{
   return (
     <BAIFlex direction="column" align="stretch" gap={'xs'}>
       <BAIFlex direction="row" justify="between" wrap="wrap" gap={'xs'}>
-        <Typography.Text>{t('logs.UpTo3000Logs')}</Typography.Text>
+        <Text>{t('logs.UpTo3000Logs')}</Text>
         <BAIFlex
           direction="row"
           gap={'xs'}
@@ -220,66 +220,55 @@ const ErrorLogList: React.FC<{
           style={{ flexShrink: 1 }}
         >
           <BAIFlex gap={'xs'}>
-            <Input
-              allowClear
-              prefix={<SearchOutlined />}
+            <TextInput
+              label={t('logs.SearchLogs')}
+              isLabelHidden
+              hasClear
+              startIcon={Search}
               placeholder={t('logs.SearchLogs')}
-              onChange={(e) => {
-                startSearchTransition(() => setLogSearch(e.target.value));
+              value={logSearch}
+              onChange={(value) => {
+                startSearchTransition(() => setLogSearch(value));
               }}
-              style={{
-                width: 200,
-              }}
+              width={200}
             />
-            <Checkbox
-              onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
-            >
-              {t('logs.ShowOnlyError')}
-            </Checkbox>
+            <CheckboxInput
+              label={t('logs.ShowOnlyError')}
+              value={checkedShowOnlyError}
+              onChange={(checked) => setCheckedShowOnlyError(checked)}
+            />
           </BAIFlex>
           <BAIFlex gap={'xs'}>
             <Button
-              icon={<ReloadOutlined />}
-              loading={isPendingRefreshTransition}
+              icon={<RotateCw size="1em" />}
+              isLoading={isPendingRefreshTransition}
+              label={t('button.Refresh')}
               onClick={() => {
                 startRefreshTransition(() => checkUpdateKey());
               }}
-            >
-              {t('button.Refresh')}
-            </Button>
+            />
             <Button
-              danger
-              icon={<DeleteFilled />}
+              variant="destructive"
+              icon={<Trash2 size="1em" />}
+              label={t('button.ClearLogs')}
               onClick={() => {
                 setIsOpenClearLogsModal(true);
               }}
-            >
-              {t('button.ClearLogs')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         pagination={{
           showSizeChanger: false,
-          style: {
-            marginBottom: 0,
-          },
         }}
-        loading={
-          isPendingSearchTransition
-            ? {
-                indicator: <LoadingOutlined />,
-              }
-            : false
-        }
-        scroll={{
-          x: 'max-content',
-          y:
-            _.filter(filteredLogData, (log) => log.isError).length === 0
-              ? undefined
-              : 'calc(100vh - 400px)',
-        }}
+        // PILOT-DECISION (ticket 25 §4): the Astryx engine dims the rows while
+        // a refetch is in flight but has no spinner slot, so the antd
+        // `{ indicator }` object collapses to a boolean.
+        loading={isPendingSearchTransition}
+        // PILOT-DECISION (ticket 25 §5): `scroll.y` — a fixed body height with
+        // a sticky header — is DROPPED. This log list now scrolls with the
+        // page instead of inside its own viewport-height box.
         dataSource={
           checkedShowOnlyError
             ? _.filter(filteredLogData, (log) => {
@@ -304,9 +293,11 @@ const ErrorLogList: React.FC<{
           paddingBottom: token.paddingXS,
         }}
       >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
+        <IconButton
+          icon={<Settings size="1em" />}
+          label={t('logs.ColumnSettings', 'Column settings')}
+          tooltip={t('logs.ColumnSettings', 'Column settings')}
+          variant="ghost"
           onClick={() => {
             toggleColumnSettingModal();
           }}
@@ -328,7 +319,7 @@ const ErrorLogList: React.FC<{
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenClearLogsModal(false)}
       >
-        <Alert title={t('dialog.warning.CannotBeUndone')} type="warning" />
+        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
       </BAIModal>
       <BAIUnmountAfterClose>
         <TableColumnsSettingModal

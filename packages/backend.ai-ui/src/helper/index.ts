@@ -1,23 +1,20 @@
-import { theme } from 'antd';
-import { SorterResult } from 'antd/es/table/interface';
+import { theme } from '../theme-shim';
 import Big from 'big.js';
 import * as _ from 'lodash-es';
 
-export function transformSorterToOrderString<T = any>(
-  sorter: SorterResult<T> | Array<SorterResult<T>>,
-) {
-  if (Array.isArray(sorter)) {
-    return _.compact(
-      _.map(sorter, (s) =>
-        s.order ? `${s.order === 'descend' ? '-' : ''}${s.field}` : undefined,
-      ),
-    ).join(',');
-  } else {
-    return sorter.order
-      ? `${sorter.order === 'descend' ? '-' : ''}${sorter.field}`
-      : undefined;
-  }
-}
+export * from './astryxTagVariant';
+
+/*
+ to-astryx TICKET 30-D — `transformSorterToOrderString` was removed here.
+
+ It adapted the `sorter` argument of antd `Table.onChange` into the Backend.AI
+ `-field` order string, and the antd `BAITable` was its only caller. With that
+ engine deleted the function had no consumer left (the Astryx engine builds
+ the order string directly from `TableSortState` in `BAITableAstryx`), and its
+ `SorterResult` parameter was the SOLE antd import in this module — which the
+ import-graph gate ranks as a 606-file taint hub. Dropping it makes
+ `helper/index.ts` antd-free.
+*/
 
 export function parseValueWithUnit(str: string): [number, string | undefined] {
   const match = str?.match(/^(\d+(?:\.\d+)?|\.\d+)\s*([a-zA-Z%]*)$/);
@@ -479,11 +476,7 @@ export * from './newLineToBrElement';
 export * from './useDebouncedDeferredValue';
 
 export type SemanticColor =
-  | 'success'
-  | 'info'
-  | 'warning'
-  | 'error'
-  | 'default';
+  'success' | 'info' | 'warning' | 'error' | 'default';
 
 export const useSemanticColorMap = (): Record<SemanticColor, string> => {
   const { token } = theme.useToken();

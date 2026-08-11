@@ -1,9 +1,10 @@
 import { default as logo } from './Models.svg?react';
-import Icon from '@ant-design/icons';
-import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import Icon, { CustomIconComponentProps } from './iconShim';
 
-interface BAIModelsIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+interface BAIModelsIconProps extends Omit<
+  CustomIconComponentProps,
+  'width' | 'height' | 'fill'
+> {
   'aria-label'?: string;
 }
 

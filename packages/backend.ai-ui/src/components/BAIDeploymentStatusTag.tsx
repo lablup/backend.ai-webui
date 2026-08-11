@@ -1,8 +1,7 @@
-import { SemanticColor, useSemanticColorMap } from '../helper';
+import { SemanticColor } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import BAITag from './BAITag';
-import { LoadingOutlined } from '@ant-design/icons';
-import type { TagProps } from 'antd';
+import BAITag, { type BAITagProps } from './BAITag';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 
 export type BAIDeploymentStatus =
@@ -91,7 +90,10 @@ const deploymentStatusI18nMap: Record<BAIDeploymentStatus, string> = {
   READY: 'comp:BAIDeploymentStatusTag.Ready',
 };
 
-export interface BAIDeploymentStatusTagProps extends Omit<TagProps, 'color'> {
+export interface BAIDeploymentStatusTagProps extends Omit<
+  BAITagProps,
+  'color'
+> {
   /**
    * The deployment-level status to display. Consolidates lifecycle (e.g.
    * `DEPLOYING`, `STOPPED`, `TERMINATED`) and health (e.g. `HEALTHY`,
@@ -111,15 +113,22 @@ const BAIDeploymentStatusTag: React.FC<BAIDeploymentStatusTagProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const semanticColorMap = useSemanticColorMap();
 
   return (
     <BAITag
       {...tagProps}
       icon={
-        isDeploymentInProgress(status) ? <LoadingOutlined spin /> : undefined
+        isDeploymentInProgress(status) ? (
+          <LoaderCircle className="bai-icon-spin" size="1em" />
+        ) : undefined
       }
-      color={semanticColorMap[deploymentStatusSemanticMap[status]]}
+      // The SEMANTIC NAME, not a resolved hex. `BAITag` now routes `color`
+      // through the repo-global Astryx lookup (`badgeVariantForTagColor`),
+      // whose closed `Badge` variant enum cannot express an arbitrary colour —
+      // handing it `useSemanticColorMap()`'s hex would silently drop every
+      // status to `neutral` (astryxTagVariant policy class 5). The lookup
+      // accepts BUI `SemanticColor` values directly (policy class 6).
+      color={deploymentStatusSemanticMap[status]}
     >
       {t(deploymentStatusI18nMap[status])}
     </BAITag>

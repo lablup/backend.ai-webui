@@ -7,27 +7,27 @@ import { useWebUINavigate } from '../../hooks';
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
+import { theme } from '../../theme-shim';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
-import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
+import DeploymentSelectAstryx, {
+  DeploymentSelectAstryxProps,
+} from './DeploymentSelectAstryx';
 import ModelSelect from './ModelSelect';
 import {
-  CloseOutlined,
-  ControlOutlined,
-  MoreOutlined,
-} from '@ant-design/icons';
-import {
-  Dropdown,
-  Button,
-  theme,
-  type MenuProps,
-  Popover,
-  Tooltip,
-} from 'antd';
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Popover } from '@astryxdesign/core/Popover';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
+  X,
+  SlidersHorizontal,
+  EllipsisVertical,
   ScaleIcon,
   EraserIcon,
   ToggleRightIcon,
@@ -45,17 +45,17 @@ interface SyncSwitchProps {
 
 const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   return (
     <>
-      <Tooltip title={t('chatui.SyncInput')}>
-        <Button
-          type="text"
+      <Tooltip content={t('chatui.SyncInput')}>
+        <IconButton
+          variant="ghost"
           icon={sync ? <ToggleRightIcon /> : <ToggleLeftIcon />}
+          label={t('chatui.SyncInput')}
           onClick={() => onClick(!sync)}
           style={{
             marginLeft: 8,
-            color: sync ? token.colorPrimary : undefined,
+            color: sync ? 'var(--color-accent)' : undefined,
           }}
         />
       </Tooltip>
@@ -71,7 +71,7 @@ interface ChatHeaderProps {
   modelId: string;
   onChangeModel: (modelId: string) => void;
   deploymentFrgmt?: ChatHeader_Deployment$key | null;
-  onChangeDeployment: DeploymentSelectProps['onChange'];
+  onChangeDeployment: DeploymentSelectAstryxProps['onChange'];
   agents: AIAgent[];
   agent?: AIAgent;
   onChangeAgent: (agent: AIAgent) => void;
@@ -136,9 +136,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   // Relay ID.
   const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
 
-  const items: MenuProps['items'] = filterOutEmpty([
+  // PILOT-DECISION: antd `danger` (red text on the "Delete Chatting Session"
+  // item) has no destination on Astryx `DropdownMenuItemData` (no color/
+  // variant field, closed shape) — dropped (P5: closed enum, no colour
+  // escape hatch).
+  const items: DropdownMenuOption[] = filterOutEmpty([
     showCompareMenuItem && {
-      key: 'compare',
       label: t('chatui.CompareWithOtherModels'),
       icon: <ScaleIcon />,
       onClick: () => {
@@ -153,10 +156,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       },
     },
     showCompareMenuItem && {
-      type: 'divider',
+      type: 'divider' as const,
     },
     {
-      key: 'clear',
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
@@ -164,13 +166,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       },
     },
     closable && {
-      type: 'divider',
+      type: 'divider' as const,
     },
     closable && {
-      key: 'close',
-      danger: true,
       label: t('chatui.DeleteChattingSession'),
-      icon: <CloseOutlined />,
+      icon: <X size="1em" />,
       onClick: () => {
         onRemoveChat?.();
       },
@@ -218,16 +218,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         )}
         {!agentBinding?.endpoint_url && (
-          <DeploymentSelect
+          <DeploymentSelectAstryx
             fetchKey={fetchKey}
-            loading={isPendingDeploymentTransition}
+            isLoading={isPendingDeploymentTransition}
             onChange={(id) => {
               startDeploymentTransition(() => {
                 onChangeDeployment?.(id);
               });
             }}
             value={deploymentId}
-            popupMatchSelectWidth={false}
             showDetailPageButton
           />
         )}
@@ -267,42 +266,47 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               }}
             />
           }
-          trigger="click"
-          placement="bottomLeft"
+          placement="below"
+          alignment="start"
           style={{
             padding: token.paddingXS,
           }}
         >
-          <Tooltip title={t('chatui.chat.parameter.Title')}>
-            <Button
-              type="text"
+          <Tooltip content={t('chatui.chat.parameter.Title')}>
+            <IconButton
+              variant="ghost"
+              label={t('chatui.chat.parameter.Title')}
               icon={
-                <ControlOutlined
+                <SlidersHorizontal
                   style={{
-                    color: usingParameters ? token.colorPrimary : undefined,
+                    color: usingParameters ? 'var(--color-accent)' : undefined,
                   }}
+                  size="1em"
                 />
               }
             />
           </Tooltip>
         </Popover>
         {cloneable && (
-          <Tooltip title={t('chatui.CreateCompareChat')}>
-            <Button
-              type="text"
+          <Tooltip content={t('chatui.CreateCompareChat')}>
+            <IconButton
+              variant="ghost"
+              label={t('chatui.CreateCompareChat')}
               onClick={() => onAddChat?.()}
               icon={<ArrowRightLeftIcon />}
             />
           </Tooltip>
         )}
-        <Dropdown menu={{ items }} trigger={['click']}>
-          <Button
-            type="text"
-            onClick={(e) => e.preventDefault()}
-            icon={<MoreOutlined />}
-            style={{ color: token.colorTextSecondary }}
-          />
-        </Dropdown>
+        <DropdownMenu
+          items={items}
+          button={{
+            variant: 'ghost',
+            icon: <EllipsisVertical size="1em" />,
+            label: t('button.MoreActions'),
+            isIconOnly: true,
+            style: { color: token.colorTextSecondary },
+          }}
+        />
       </BAIFlex>
     </BAIFlex>
   );

@@ -1,7 +1,7 @@
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIFlex from './BAIFlex';
+import { Switch } from '@astryxdesign/core/Switch';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Switch } from 'antd';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAIFetchKeyButton> = {
@@ -313,7 +313,15 @@ export const CountdownBorder: Story = {
     return (
       <BAIFlex direction="column" gap="md" align="start">
         <BAIFlex gap="sm" align="center">
-          <Switch checked={showBorder} onChange={setShowBorder} />
+          {/* Astryx Switch requires a `label`; the adjacent <span> already
+              carries the visible description, so the label is kept but
+              visually hidden rather than duplicated. */}
+          <Switch
+            label="Show countdown border"
+            isLabelHidden
+            value={showBorder}
+            onChange={setShowBorder}
+          />
           <span>
             <code>showCountdownBorder</code>: {String(showBorder)}
           </span>

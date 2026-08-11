@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SFTPServerButtonFragment$key } from '../__generated__/SFTPServerButtonFragment.graphql';
+import { App } from '../app-shim';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -19,8 +20,9 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
-import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Image, Space, Tooltip } from 'antd';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
@@ -29,6 +31,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Ellipsis } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -131,20 +134,27 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
   });
 
   return (
-    <Tooltip title={getTooltipTitle()}>
-      <Space.Compact>
+    // P18 caveat, unchanged from the antd original: the tooltip explains why
+    // the control is disabled, and a disabled control swallows hover events.
+    // It stays on the GROUP (never disabled itself), which is what made it
+    // reachable under antd too. `Space.Compact` -> `ButtonGroup` (MAPPING §4).
+    <Tooltip content={getTooltipTitle()}>
+      <ButtonGroup label={t('data.explorer.RunSSH/SFTPserver')}>
         <BAIButton
           disabled={
             _.isEmpty(sftpScalingGroupByCurrentProject) ||
             !systemSSHImage ||
             !hasAccessPermission
           }
+          // MAPPING §5: antd `Image preview={false}` is not a Thumbnail or a
+          // Lightbox — with the preview off it is a plain 18px inline glyph,
+          // so it becomes a bare <img>. Nothing antd contributed is lost.
           icon={
-            <Image
-              width="18px"
+            <img
+              width="18"
+              height="18"
               src="/resources/icons/sftp.png"
               alt="SSH / SFTP"
-              preview={false}
             />
           }
           action={async () => {
@@ -179,35 +189,39 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
         >
           {showTitle && t('data.explorer.RunSSH/SFTPserver')}
         </BAIButton>
-        <Dropdown
-          disabled={
-            _.isEmpty(sftpScalingGroupByCurrentProject) ||
-            !systemSSHImage ||
-            !hasAccessPermission
-          }
-          trigger={['click']}
-          menu={{
-            items: [
-              {
-                key: 'custom',
-                label: t('import.StartWithOptions'),
-                onClick: () => {
-                  const launcherValue = createSftpLauncherValue();
-                  const params = new URLSearchParams();
-                  params.set('formValues', JSON.stringify(launcherValue));
-                  params.set('step', '4');
-                  webuiNavigate({
-                    pathname: buildProjectPath('session/start'),
-                    search: params.toString(),
-                  });
-                },
-              },
-            ],
+        {/* MAPPING §3.7: a click-triggered `Dropdown menu={{items}}` with an
+            icon-only child button -> `DropdownMenu` and its own `button`
+            slot, which also gives the trigger the accessible name antd's
+            bare icon button never had. */}
+        <DropdownMenu
+          button={{
+            label: t('import.StartWithOptions'),
+            icon: <Ellipsis size="1em" />,
+            isIconOnly: true,
+            isDisabled:
+              _.isEmpty(sftpScalingGroupByCurrentProject) ||
+              !systemSSHImage ||
+              !hasAccessPermission,
           }}
-        >
-          <BAIButton icon={<EllipsisOutlined />} />
-        </Dropdown>
-      </Space.Compact>
+          hasChevron={false}
+          alignment="end"
+          items={[
+            {
+              label: t('import.StartWithOptions'),
+              onClick: () => {
+                const launcherValue = createSftpLauncherValue();
+                const params = new URLSearchParams();
+                params.set('formValues', JSON.stringify(launcherValue));
+                params.set('step', '4');
+                webuiNavigate({
+                  pathname: buildProjectPath('session/start'),
+                  search: params.toString(),
+                });
+              },
+            },
+          ]}
+        />
+      </ButtonGroup>
     </Tooltip>
   );
 };

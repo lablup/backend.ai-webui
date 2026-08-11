@@ -1,9 +1,10 @@
 import { default as logo } from './Dashboard.svg?react';
-import Icon from '@ant-design/icons';
-import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import Icon, { CustomIconComponentProps } from './iconShim';
 
-interface BAIDashboardIconProps
-  extends Omit<CustomIconComponentProps, 'width' | 'height' | 'fill'> {
+interface BAIDashboardIconProps extends Omit<
+  CustomIconComponentProps,
+  'width' | 'height' | 'fill'
+> {
   'aria-label'?: string;
 }
 

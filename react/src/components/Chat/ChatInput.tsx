@@ -2,12 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import ChatSender, {
-  AttachmentChangeInfo,
-  ChatAttachmentsProps,
-} from './ChatSender';
-import type { AttachmentsProps } from '@ant-design/x';
-import { theme } from 'antd';
+import { theme } from '../../theme-shim';
+import ChatSender, { type ChatSenderProps } from './ChatSender';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { isEmpty, isEqual, isUndefined } from 'lodash-es';
@@ -21,12 +17,12 @@ import React, {
 } from 'react';
 
 const synchronizedMessageState = atom<string>('');
-const synchronizedAttachmentState = atom<AttachmentsProps['items']>();
+const synchronizedAttachmentState = atom<File[] | undefined>();
 const chatSubmitKeyInfoState = atom<{ id: string; key: string } | undefined>(
   undefined,
 );
 
-interface ChatInputProps extends ChatAttachmentsProps {
+interface ChatInputProps extends Pick<ChatSenderProps, 'dropContainerRef'> {
   sync: boolean;
   input: string;
   setInput: (input: string) => void;
@@ -52,10 +48,18 @@ const ChatInput: React.FC<ChatInputProps> = ({
     borderTop: `1px solid ${token.colorBorderSecondary}`,
     paddingBlock: token.paddingContentVertical,
     paddingInline: token.paddingContentHorizontal,
+    // The composer is the one row that must never be compressed — it is the
+    // page's primary control. Every other row in the chat column (the message
+    // list) is scrollable, so it absorbs the shrink instead. `maxHeight` caps
+    // the attachment drawer so a large attachment set scrolls rather than
+    // starving the transcript on a short viewport.
+    flexShrink: 0,
+    maxHeight: '60%',
+    overflowY: 'auto',
   };
 
   const [isOpenAttachments, setIsOpenAttachments] = useState(false);
-  const [files, setFiles] = useState<AttachmentsProps['items']>([]);
+  const [files, setFiles] = useState<File[]>([]);
 
   const [synchronizedMessage, setSynchronizedMessage] = useAtom(
     synchronizedMessageState,
@@ -87,9 +91,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     }
   }, [synchronizedMessage, setInput, sync]);
 
-  const setFilesFromInputAttachment = (
-    inputAttachment: AttachmentsProps['items'],
-  ) => {
+  const setFilesFromInputAttachment = (inputAttachment: File[] | undefined) => {
     if (!isUndefined(inputAttachment) && !isEqual(files, inputAttachment)) {
       setFiles(inputAttachment);
       setIsOpenAttachments(true);
@@ -105,13 +107,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   useEffect(() => {
     if (!isUndefined(submitKey) && (input || !isEmpty(files))) {
-      // Convert files to File array
-      const fileArray =
-        files
-          ?.map((file) => file.originFileObj as File)
-          .filter((file): file is File => file != null) || [];
-
-      onSendMessage(input, fileArray.length > 0 ? fileArray : undefined);
+      onSendMessage(input, isEmpty(files) ? undefined : files);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitKey]);
@@ -132,13 +128,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleInputSubmit = useCallback(() => {
     if (input || !isEmpty(files)) {
-      // Convert files to File array
-      const fileArray =
-        files
-          ?.map((file) => file.originFileObj as File)
-          .filter((file): file is File => file != null) || [];
-
-      onSendMessage(input, fileArray.length > 0 ? fileArray : undefined);
+      onSendMessage(input, isEmpty(files) ? undefined : files);
 
       setTimeout(() => {
         setInput('');
@@ -167,20 +157,15 @@ const ChatInput: React.FC<ChatInputProps> = ({
     submitId,
   ]);
 
-  const handleAttachmentChange = useCallback(
-    (attachment: string, info: AttachmentChangeInfo) => {
-      const fileList = info.fileList;
-      setFiles(fileList);
-
-      if (attachment === 'prefix') {
-        setIsOpenAttachments(true);
-      }
+  const handleFilesChange = useCallback(
+    (nextFiles: File[]) => {
+      setFiles(nextFiles);
 
       if (sync) {
-        setSynchronizedAttachment(fileList);
+        setSynchronizedAttachment(nextFiles);
       }
     },
-    [sync, setFiles, setIsOpenAttachments, setSynchronizedAttachment],
+    [sync, setFiles, setSynchronizedAttachment],
   );
 
   const handleAttachmentOpenChange = useCallback(
@@ -192,20 +177,22 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <>
-      <BAIFlex style={ChatInputStyle} direction="column" align="center">
+      {/* `align="stretch"`: the Astryx composer sizes to its content, so a
+          centered row would collapse it to the width of whatever is typed.
+          The legacy `Sender` was width:100% by default and hid this. */}
+      <BAIFlex style={ChatInputStyle} direction="column" align="stretch">
         <ChatSender
           disabled={disabled}
-          placeholder="Say something..."
           autoFocus
           value={input}
-          items={files}
+          files={files}
           openAttachment={isOpenAttachments}
           dropContainerRef={dropContainerRef}
           loading={isStreaming}
           onInputChange={handleInputChange}
           onInputSubmit={handleInputSubmit}
           onInputCancel={handleInputCancel}
-          onAttachmentChange={handleAttachmentChange}
+          onFilesChange={handleFilesChange}
           onAttachmentOpenChange={handleAttachmentOpenChange}
         />
       </BAIFlex>

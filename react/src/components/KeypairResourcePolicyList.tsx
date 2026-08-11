@@ -9,38 +9,41 @@ import {
   KeypairResourcePolicyListQuery$data,
 } from '../__generated__/KeypairResourcePolicyListQuery.graphql';
 import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
-import {
-  DeleteFilled,
-  InfoCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { App, Button, Tooltip } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   useUpdatableState,
   filterOutEmpty,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
   BAIDeleteConfirmModal,
   BAIQuestionIconWithTooltip,
+  type BAIColumnsType,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, Info, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+/**
+ * antd `AnyObject` (`antd/es/_util/type`) restated locally: a type-only antd
+ * import still holds this module — and everything downstream of it — inside
+ * the antd import graph (MAPPING §6 / P15), and the declaration is one line.
+ */
+type AnyObject = Record<PropertyKey, any>;
 
 type KeypairResourcePolicies = NonNullable<
   KeypairResourcePolicyListQuery$data['keypair_resource_policies']
@@ -109,7 +112,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     }
   `);
 
-  const columns: ColumnsType<KeypairResourcePolicies> = filterOutEmpty([
+  const columns: BAIColumnsType<KeypairResourcePolicies> = filterOutEmpty([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -124,7 +127,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'info',
               title: t('button.Info'),
-              icon: <InfoCircleOutlined />,
+              icon: <Info size="1em" />,
               onClick: () => {
                 startInfoModalOpenTransition(() => {
                   setCurrentResourcePolicy(row || null);
@@ -142,7 +145,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);
@@ -338,9 +341,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     <BAIFlex direction="column" align="stretch" gap="sm" {...props}>
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
         <BAIFlex gap={'xs'}>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              icon={<ReloadOutlined />}
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
+              icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {
                 startRefetchTransition(() =>
@@ -360,14 +363,12 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
-        columns={columns as ColumnType<AnyObject>[]}
+      <BAITableAstryx
+        columns={columns as BAIColumnType<AnyObject>[]}
         dataSource={
           keypair_resource_policies as readonly AnyObject[] | undefined
         }
         rowKey="name"
-        scroll={{ x: 'max-content' }}
-        showSorterTooltip={false}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

@@ -35,11 +35,9 @@ test.describe.parallel(
         await expect(
           page.getByTestId('webui-breadcrumb').getByText('Start'),
         ).toBeHidden();
+        await expect(page.getByRole('link', { name: 'Sessions' })).toBeHidden();
         await expect(
-          page.getByRole('menuitem', { name: 'Sessions' }),
-        ).toBeHidden();
-        await expect(
-          page.getByRole('menuitem', { name: 'Deployments' }),
+          page.getByRole('link', { name: 'Deployments' }),
         ).toBeHidden();
 
         // check if the pages show 404 content when accessed directly
@@ -66,10 +64,10 @@ test.describe.parallel(
           page.getByRole('link', { name: 'Start', exact: true }),
         ).toBeVisible({ timeout: 15_000 });
         await expect(
-          page.getByRole('menuitem', { name: 'Sessions' }),
+          page.getByRole('link', { name: 'Sessions' }),
         ).toBeVisible();
         await expect(
-          page.getByRole('menuitem', { name: 'Deployments' }),
+          page.getByRole('link', { name: 'Deployments' }),
         ).toBeVisible();
       },
     );
@@ -91,8 +89,8 @@ test.describe.parallel(
         await loginAsAdmin(page, request);
 
         // Step 2: Go to Environments page and find an uninstalled image
-        await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
-        await page.getByRole('menuitem', { name: 'Environments' }).click();
+        await page.getByRole('link', { name: 'Admin Settings' }).click();
+        await page.getByRole('link', { name: 'Environments' }).click();
 
         // Wait for the table to load and have data (excluding measure rows and placeholder)
         await page.waitForSelector(

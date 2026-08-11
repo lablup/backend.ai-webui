@@ -7,11 +7,17 @@ import {
   UserStatusV2,
 } from '../__generated__/UpdateUsersModalBulkUpdateMutation.graphql';
 import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalFragment.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { App, Form, InputNumber, theme } from 'antd';
-import { FormInstance } from 'antd/lib';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTagsInput,
+} from './astryx-bui/astryxFormControls';
 import {
   BAIDomainSelect,
   BAIFlex,
@@ -192,52 +198,58 @@ const UpdateUsersModal = ({
         <Form ref={formRef} layout="vertical" preserve={false}>
           <Suspense
             fallback={
-              <Form.Item label={t('credential.Domain')}>
+              <BAIFormItem label={t('credential.Domain')}>
                 <BAISelect loading />
-              </Form.Item>
+              </BAIFormItem>
             }
           >
-            <Form.Item name="domain_name" label={t('credential.Domain')}>
+            <BAIFormItem name="domain_name" label={t('credential.Domain')}>
               <BAIDomainSelect
                 onChange={() => {
                   formRef.current?.setFieldValue('group_ids', []);
                 }}
                 allowClear
               />
-            </Form.Item>
+            </BAIFormItem>
           </Suspense>
           <Suspense
             fallback={
-              <Form.Item label={t('credential.Projects')}>
+              <BAIFormItem label={t('credential.Projects')}>
                 <BAISelect loading />
-              </Form.Item>
+              </BAIFormItem>
             }
           >
-            <Form.Item noStyle dependencies={['domain_name']}>
-              {({ getFieldValue }) => (
-                <Form.Item
-                  name="group_ids"
-                  label={t('credential.Projects')}
-                  validateStatus={
-                    !getFieldValue('domain_name') ? 'warning' : undefined
-                  }
-                  help={
-                    !getFieldValue('domain_name')
-                      ? t('credential.validation.PleaseSelectDomain')
-                      : undefined
-                  }
-                >
-                  <ProjectSelect
-                    mode="multiple"
-                    domain={getFieldValue('domain_name')}
-                    disableDefaultFilter
-                    disabled={!getFieldValue('domain_name')}
-                  />
-                </Form.Item>
-              )}
-            </Form.Item>
+            <BAIFormItem noStyle dependencies={['domain_name']}>
+              {(form) => {
+                // BAIFormItem render-prop children receive `unknown` (antd
+                // typed this as FormInstance); narrow it back.
+                const { getFieldValue } =
+                  form as FormInstance<UpdateUsersFormValues>;
+                return (
+                  <BAIFormItem
+                    name="group_ids"
+                    label={t('credential.Projects')}
+                    validateStatus={
+                      !getFieldValue('domain_name') ? 'warning' : undefined
+                    }
+                    help={
+                      !getFieldValue('domain_name')
+                        ? t('credential.validation.PleaseSelectDomain')
+                        : undefined
+                    }
+                  >
+                    <ProjectSelect
+                      mode="multiple"
+                      domain={getFieldValue('domain_name')}
+                      disableDefaultFilter
+                      disabled={!getFieldValue('domain_name')}
+                    />
+                  </BAIFormItem>
+                );
+              }}
+            </BAIFormItem>
           </Suspense>
-          <Form.Item name="status" label={t('credential.UserStatus')}>
+          <BAIFormItem name="status" label={t('credential.UserStatus')}>
             <BAISelect
               options={[
                 {
@@ -258,22 +270,22 @@ const UpdateUsersModal = ({
                 },
               ]}
             />
-          </Form.Item>
+          </BAIFormItem>
           <Suspense
             fallback={
-              <Form.Item label={t('resourcePolicy.ResourcePolicy')}>
+              <BAIFormItem label={t('resourcePolicy.ResourcePolicy')}>
                 <BAISelect loading />
-              </Form.Item>
+              </BAIFormItem>
             }
           >
-            <Form.Item
+            <BAIFormItem
               name="resource_policy"
               label={t('resourcePolicy.ResourcePolicy')}
             >
               <UserResourcePolicySelect allowClear />
-            </Form.Item>
+            </BAIFormItem>
           </Suspense>
-          <Form.Item
+          <BAIFormItem
             name="container_uid"
             label={t('credential.ContainerUID')}
             tooltip={t('credential.ContainerUIDTooltip')}
@@ -285,13 +297,13 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <InputNumber
-              style={{ width: '100%' }}
+            <AstryxFormNumberInput
+              label={t('credential.ContainerUID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BAIFormItem>
+          <BAIFormItem
             name="container_main_gid"
             label={t('credential.ContainerGID')}
             tooltip={t('credential.ContainerGIDTooltip')}
@@ -303,13 +315,13 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <InputNumber
-              style={{ width: '100%' }}
+            <AstryxFormNumberInput
+              label={t('credential.ContainerGID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BAIFormItem>
+          <BAIFormItem
             name="container_gids"
             label={t('credential.ContainerSupplementaryGIDs')}
             tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
@@ -370,16 +382,14 @@ const UpdateUsersModal = ({
               }),
             ]}
           >
-            <BAISelect
-              mode="tags"
+            <AstryxFormTagsInput
               tokenSeparators={[',', ' ']}
-              open={false}
-              suffixIcon={null}
+              label={t('credential.ContainerSupplementaryGIDs')}
               placeholder={t(
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}
             />
-          </Form.Item>
+          </BAIFormItem>
         </Form>
       </BAIFlex>
     </BAIModal>

@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "실행 오류",
     "ErrorOccurred": "문제가 발생했습니다."
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "결과 없음",
+    "Search": "검색"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "도메인 선택"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
@@ -260,6 +267,9 @@
     "StrategyType": "전략",
     "Tags": "태그",
     "UpdatedAt": "수정 시각"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
@@ -451,14 +461,18 @@
     "Step": "세부단계"
   },
   "comp:BAITable": {
+    "Apply": "적용",
+    "Cancel": "취소",
     "CollapseAll": "모두 닫기",
     "ExpandAll": "모두 열기",
     "ExpandErrorsOnly": "오류만 펼치기",
     "ExpandOptions": "펼치기 옵션",
+    "ExpandRow": "행 펼치기",
     "Export": "내보내기",
     "ExportCSV": "CSV로 내보내기",
     "GoToFirstPage": "첫 페이지로 이동하기",
     "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
+    "Pagination": "페이지 나누기",
     "SearchTableColumn": "표시할 열 검색",
     "SelectColumnToDisplay": "표시할 열 선택",
     "SettingTable": "표 설정"
@@ -526,8 +540,10 @@
     "MoreOptions": "더 많은 옵션",
     "Name": "이름",
     "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
+    "Path": "Path",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
+    "RenameFile": "Rename",
     "RenameSuccess": "이름이 변경되었습니다.",
     "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 삭제되었습니다.",
     "Size": "크기",
@@ -594,21 +610,73 @@
     "UserID": "사용자 ID",
     "Username": "사용자 이름"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "클릭하여 경로 선택",
+    "SelectAPath": "경로 선택",
+    "SelectAPathInFolder": "{{folderName}} 폴더에서 경로 선택",
+    "SelectFolderFirst": "폴더를 먼저 선택하세요",
+    "SelectThisLocation": "이 위치 선택",
+    "SelectedPath": "선택된 경로"
+  },
   "error": {
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
+  "form": {
+    "Optional": "(선택사항)",
+    "validateMessages": {
+      "Default": "필드 유효성 검사 오류 ${label}",
+      "Required": "${label} 값을 입력해 주세요",
+      "Whitespace": "${label} 비워둘 수 없습니다",
+      "array": {
+        "Len": "${len}이어야 합니다 ${label}",
+        "Max": "최대 ${max}이어야 합니다 ${label}",
+        "Min": "최소 ${min}이어야 합니다 ${label}",
+        "Range": "${label} ${min}-${max} 사이어야 합니다"
+      },
+      "number": {
+        "Len": "${label} 값은 ${len}이어야 합니다",
+        "Max": "${label} 최댓값은 ${max}입니다",
+        "Min": "${label} 최솟값은 ${min}입니다",
+        "Range": "${label} 값은 ${min}-${max} 사이어야 합니다"
+      },
+      "pattern": {
+        "Mismatch": "${label} ${pattern} 패턴과 일치하지 않습니다"
+      },
+      "string": {
+        "Len": "${label} ${len}글자여야 합니다",
+        "Max": "${label} ${max}글자 이하여야 합니다",
+        "Min": "${label} 적어도 ${min}글자 이상이어야 합니다",
+        "Range": "${label} ${min}-${max}글자 사이어야 합니다"
+      },
+      "types": {
+        "Email": "${label} 유효하지 않은 ${type}",
+        "Number": "${label} 유효하지 않은 ${type}",
+        "Object": "${label} 유효하지 않은 ${type}",
+        "String": "${label} 유효하지 않은 ${type}",
+        "Url": "${label} 유효하지 않은 ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "선택 취소",
     "File": "파일",
+    "Increase": "Increase",
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
+    "Select": "Select",
     "TotalItems": "총 {{total}} 항목",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "취소",
       "Close": "닫기",
       "Collapse": "접기",
+      "Confirm": "Confirm",
       "Copied": "복사됨",
+      "Copy": "복사",
       "CopyAll": "모두 복사",
       "Create": "생성",
       "Delete": "삭제",

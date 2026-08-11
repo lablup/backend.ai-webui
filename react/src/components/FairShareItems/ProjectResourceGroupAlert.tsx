@@ -1,19 +1,23 @@
 import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
 import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
-import { Alert, AlertProps } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface ProjectResourceGroupAlertProps extends AlertProps {
+// `style` is the only key any call site passes — see the note in
+// DomainResourceGroupAlert.tsx for why `AlertProps` is not re-exported here.
+interface ProjectResourceGroupAlertProps {
   projectFairShareFrgmt: ProjectResourceGroupAlertFragment$key;
   isModalOpen: boolean;
+  style?: CSSProperties;
 }
 
 const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
   projectFairShareFrgmt,
   isModalOpen,
-  ...alertProps
+  ...bannerProps
 }) => {
   'use memo';
 
@@ -54,13 +58,12 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
   }
 
   return (
-    <Alert
-      type="warning"
+    <Banner
+      status="warning"
       title={t('fairShare.ProjectNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,
       })}
-      showIcon
-      {...alertProps}
+      {...bannerProps}
     />
   );
 };

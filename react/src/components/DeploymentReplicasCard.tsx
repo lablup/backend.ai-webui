@@ -11,6 +11,7 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -20,8 +21,10 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { HistoryOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Skeleton, Tooltip, Typography, theme } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAICard,
@@ -30,7 +33,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIId,
   BAIQuestionIconWithTooltip,
-  BAITable,
+  BAITableAstryx,
   BAITag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -43,6 +46,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { History, CircleHelp } from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
@@ -118,9 +122,10 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
       title={
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.Replicas')}
-          <Tooltip title={t('deployment.tab.description.Replicas')}>
-            <QuestionCircleOutlined
+          <Tooltip content={t('deployment.tab.description.Replicas')}>
+            <CircleHelp
               style={{ color: token.colorTextDescription }}
+              size="1em"
             />
           </Tooltip>
         </BAIFlex>
@@ -128,7 +133,7 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
       styles={{ body: { paddingTop: 0 } }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<Skeleton active />}>
+        <Suspense fallback={<BAISkeletonAstryx />}>
           <DeploymentReplicasCardContent
             deploymentFrgmt={deploymentFrgmt}
             deploymentId={deploymentId}
@@ -362,10 +367,10 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         <BAIFlex align="center" gap="xs">
           <ReplicaStatusTag status={toReplicaTagStatus(value)} />
           {supportsRouteSchedulingHistory && (
-            <Tooltip title={t('route.RouteSchedulingHistory')}>
+            <Tooltip content={t('route.RouteSchedulingHistory')}>
               <BAIButton
                 type="link"
-                icon={<HistoryOutlined />}
+                icon={<History size="1em" />}
                 size="small"
                 style={{ padding: 0 }}
                 action={async () => {
@@ -444,7 +449,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       render: (_: unknown, record: ReplicaNode) => {
         const session = record.sessionV2;
         if (!session?.id) {
-          return <Typography.Text type="secondary">—</Typography.Text>;
+          return <Text color="secondary">—</Text>;
         }
         const name = session.metadata?.name;
         if (!name) {
@@ -460,9 +465,9 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
               {name}
             </BAILink>
             &nbsp;
-            <Typography.Text type="secondary">
+            <Text color="secondary">
               (<BAIId globalId={session.id} type="secondary" />)
-            </Typography.Text>
+            </Text>
           </>
         );
       },
@@ -480,11 +485,11 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       render: (_: unknown, record: ReplicaNode) => {
         const revision = record.revision;
         if (!revision?.id) {
-          return <Typography.Text type="secondary">—</Typography.Text>;
+          return <Text color="secondary">—</Text>;
         }
         return (
           <>
-            <Typography.Link
+            <Link
               onClick={() =>
                 setDrawerRevisionFrgmt(
                   revision as DeploymentRevisionDetail_revision$key,
@@ -494,11 +499,11 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
               {revision.revisionNumber != null
                 ? `#${revision.revisionNumber}`
                 : '-'}
-            </Typography.Link>
+            </Link>
             &nbsp;
-            <Typography.Text type="secondary">
+            <Text color="secondary">
               (<BAIId globalId={revision.id} type="secondary" />)
-            </Typography.Text>
+            </Text>
           </>
         );
       },
@@ -566,13 +571,12 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
           }}
         />
       </BAIFlex>
-      <BAITable<ReplicaNode>
+      <BAITableAstryx<ReplicaNode>
         rowKey={(record) => record.id}
         dataSource={replicas}
         columns={columns}
         loading={isPending}
         size="small"
-        scroll={{ x: 'max-content' }}
         tableSettings={{
           columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

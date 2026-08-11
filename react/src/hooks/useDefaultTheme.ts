@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useBAISettingUserState } from './useBAISetting';
 import { useRawCustomThemeConfig } from './useCustomThemeConfig';
-import { App } from 'antd';
 import * as _ from 'lodash-es';
 import { useEffectEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';

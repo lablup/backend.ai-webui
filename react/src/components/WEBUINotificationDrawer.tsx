@@ -8,28 +8,38 @@ import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
-import { MoreOutlined } from '@ant-design/icons';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import {
-  Drawer,
-  List,
-  type DrawerProps,
-  theme,
-  Button,
-  Segmented,
-  Badge,
-  Dropdown,
-} from 'antd';
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { VStack } from '@astryxdesign/core/Stack';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
 import { BAIFlex } from 'backend.ai-ui';
+import { EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type NotificationCategory = 'all' | 'in progress';
-interface Props extends DrawerProps {}
+
+// PILOT-DECISION: props no longer extend antd `DrawerProps`. The only consumer
+// (`BAINotificationButton`) passes `open` + `onClose`, so that is the whole
+// public surface; the antd spellings are kept and mapped onto the lab Drawer.
+interface Props {
+  /** Whether the drawer is open. antd Drawer's `open`. */
+  open?: boolean;
+  /** Close request handler (Escape, close button). */
+  onClose?: () => void;
+}
 
 export const DRAWER_WIDTH = 280;
-const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
+const WEBUINotificationDrawer: React.FC<Props> = ({
+  open = false,
+  onClose,
+}) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const webuiNavigate = useWebUINavigate();
 
@@ -45,111 +55,123 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
     [notifications],
   );
 
+  const visibleNotifications =
+    selectedCategory === 'all' ? notifications : inProgressNotifications;
+
   return (
-    <Drawer
+    // antd `mask={false}` -> lab `hasScrim={false}`: this drawer is a
+    // non-modal inspector — the page behind it stays interactive, which is
+    // what `BAIContentWithDrawerArea`'s margin-style layout depends on.
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
+      side="end"
       size={DRAWER_WIDTH}
+      hasScrim={false}
       title={t('notification.Notifications')}
-      mask={false}
-      className="webui-notification-drawer"
-      styles={{
-        // mask: { backgroundColor: 'transparent' },
-        body: {
-          padding: 0,
-          paddingLeft: token.paddingContentHorizontalSM,
-          paddingRight: token.paddingContentHorizontalSM,
-        },
-        header: {
-          // @ts-ignore
-          '-webkit-app-region': 'drag',
-        },
-        wrapper: {
-          padding: 0,
-        },
-      }}
-      // style={{
-      //   boxShadow: 'none !important',
-      // }}
-      // comment out the following line because list item
+      // antd's `styles.body` was `padding: 0` plus
+      // `paddingContentHorizontalSM` (16px) on the inline axis — restored on
+      // `.webui-notification-drawer-body` instead of the shared 24px budget.
+      hasBodyPadding={false}
+      bodyClassName="webui-notification-drawer-body"
+      // Electron: the frameless window's drag handle is the drawer header.
+      headerClassName="webui-notification-drawer-header"
+      // MAPPING §3.7: `Dropdown menu={{items}}` + an icon-only trigger ->
+      // `DropdownMenu` with its `button` slot. antd's per-item `danger` red
+      // tint is dropped (ticket 18 decision 2 — the item variant enum is
+      // closed).
+      //
+      // qa2-c: this used to sit in a hand-rolled first content row, which had
+      // to reserve 32px on the inline end so lab `Drawer`'s FLOATING close
+      // button (absolutely positioned, top-trailing) did not swallow the More
+      // button's hit box. `BAIDrawerAstryx` turns that floating button off and
+      // renders the close affordance inside the header at antd's `start`
+      // placement, so the reserve — and the overlap — are gone.
       extra={
-        <Dropdown
-          trigger={['click']}
-          menu={{
-            items: [
-              {
-                key: 'clear-all',
-                label: t('notification.ClearNotifications'),
-                danger: true,
-                onClick: clearAllNotifications,
-              },
-            ],
+        <DropdownMenu
+          button={{
+            label: t('button.More'),
+            icon: <EllipsisVertical size="1em" />,
+            isIconOnly: true,
+            variant: 'ghost',
+            isDisabled: notifications.length === 0,
           }}
-        >
-          <Button
-            type="text"
-            icon={<MoreOutlined />}
-            disabled={notifications.length === 0}
-          />
-        </Dropdown>
+          hasChevron={false}
+          items={[
+            {
+              label: t('notification.ClearNotifications'),
+              onClick: clearAllNotifications,
+            },
+          ]}
+        />
       }
-      {...drawerProps}
     >
-      <List
-        itemLayout="vertical"
-        dataSource={
-          selectedCategory === 'all' ? notifications : inProgressNotifications
-        }
-        header={
-          <BAIFlex justify="end">
-            <Segmented
-              value={selectedCategory}
-              onChange={(value) =>
-                setSelectedCategory(value as NotificationCategory)
+      <VStack gap={2} align="stretch">
+        {/* PILOT-DECISION: antd `List` (`dataSource` + `renderItem` + `header`)
+            becomes a plain `VStack` map. Astryx `List`/`ListItem` is a
+            `<ul>`-shaped component for label/description rows; the three
+            notification items are rich cards with their own action rows, and
+            "don't place interactive elements inside an interactive list item"
+            is an explicit Astryx rule. Nothing antd's List contributed here
+            (it had no pagination, no dividers, no item meta) is lost, and it
+            keeps this file decoupled from how the item components render. */}
+        <BAIFlex justify="end">
+          <SegmentedControl
+            value={selectedCategory}
+            onChange={(value) =>
+              setSelectedCategory(value as NotificationCategory)
+            }
+            size="sm"
+            label={t('notification.Notifications')}
+          >
+            <SegmentedControlItem value="all" label={t('general.All')} />
+            <SegmentedControlItem
+              value="in progress"
+              label={t('general.InProgress')}
+              // `SegmentedControlItem.label` is a required STRING (P2), so
+              // antd's `<Badge dot>` wrapper around the label cannot ride
+              // along. The dot moves into the `icon` slot as a `StatusDot`,
+              // which is the same "there is activity" signal with an
+              // accessible name attached.
+              icon={
+                inProgressNotifications.length > 0 ? (
+                  <StatusDot variant="accent" label={t('general.InProgress')} />
+                ) : undefined
               }
-              options={[
-                {
-                  value: 'all',
-                  // icon: 'All
-                  label: t('general.All'),
-                },
-                {
-                  value: 'in progress',
-                  label: (
-                    <Badge dot={inProgressNotifications.length > 0}>
-                      {t('general.InProgress')}
-                    </Badge>
-                  ),
-                },
-              ]}
             />
-          </BAIFlex>
-        }
-        rowKey={(item) => item.key}
-        renderItem={(item) =>
-          item.node ? (
-            <BAINodeNotificationItem
-              notification={item}
-              nodeFrgmt={item.node || null}
-              showDate
-            />
-          ) : item.multiStep ? (
-            <BAIMultiStepNotificationItem
-              notification={item}
-              onRetry={item.onRetry ?? undefined}
-              onCancel={item.onCancel ?? undefined}
-              showDate
-            />
-          ) : (
-            <BAIGeneralNotificationItem
-              notification={item}
-              onClickAction={() => {
-                item.to && webuiNavigate(item.to);
-              }}
-              showDate
-            />
-          )
-        }
-      />
-    </Drawer>
+          </SegmentedControl>
+        </BAIFlex>
+        <VStack gap={2} align="stretch">
+          {visibleNotifications.map((item) =>
+            item.node ? (
+              <BAINodeNotificationItem
+                key={item.key}
+                notification={item}
+                nodeFrgmt={item.node || null}
+                showDate
+              />
+            ) : item.multiStep ? (
+              <BAIMultiStepNotificationItem
+                key={item.key}
+                notification={item}
+                onRetry={item.onRetry ?? undefined}
+                onCancel={item.onCancel ?? undefined}
+                showDate
+              />
+            ) : (
+              <BAIGeneralNotificationItem
+                key={item.key}
+                notification={item}
+                onClickAction={() => {
+                  item.to && webuiNavigate(item.to);
+                }}
+                showDate
+              />
+            ),
+          )}
+        </VStack>
+      </VStack>
+    </BAIDrawer>
   );
 };
 

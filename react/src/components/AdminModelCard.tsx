@@ -10,6 +10,7 @@ import type {
   ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardQuery.graphql';
+import { App } from '../app-shim';
 import {
   convertFirstOrderByToString,
   convertToOrderBy,
@@ -17,11 +18,13 @@ import {
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { DeleteFilled, ExclamationCircleFilled } from '@ant-design/icons';
-import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIColumnType,
@@ -32,8 +35,8 @@ import {
   BAILink,
   BAINameActionCell,
   BAISelectionLabel,
-  BAIStorageHostSelect,
-  BAITable,
+  BAIStorageHostSelectAstryx,
+  BAITableAstryx,
   type BAITableSettings,
   BAIText,
   BAITag,
@@ -47,7 +50,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, CircleAlert, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -244,7 +247,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger' as const,
               onClick: () => handleDeleteModelCard(modelCard),
             },
@@ -257,9 +260,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Title'),
       render: (_, record) =>
         record.metadata?.title ? (
-          <Typography.Text ellipsis style={{ maxWidth: 200 }}>
+          <Text maxLines={1} style={{ maxWidth: 200 }}>
             {record.metadata.title}
-          </Typography.Text>
+          </Text>
         ) : (
           '-'
         ),
@@ -344,10 +347,13 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
                 renderInput: ({ onAddCondition }) => (
-                  <BAIStorageHostSelect
+                  <BAIStorageHostSelectAstryx
+                    // The filter row already prints the property label.
+                    label={t('import.StorageHost')}
+                    isLabelHidden
                     value={null}
                     onChange={(value) =>
-                      // Single-select mode (no `mode` prop) always emits a
+                      // Single-select mode (no `multiple` prop) always emits a
                       // single value.
                       onAddCondition(value as string | undefined)
                     }
@@ -376,7 +382,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 onClearSelection={() => setSelectedModelCards([])}
               />
               <BAIButton
-                icon={<DeleteFilled style={{ color: token.colorError }} />}
+                icon={<Trash2 style={{ color: token.colorError }} size="1em" />}
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />
@@ -397,11 +403,10 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable<ModelCardNode>
+      <BAITableAstryx<ModelCardNode>
         rowKey="id"
         dataSource={modelCards as ModelCardNode[]}
         columns={columns}
-        scroll={{ x: 'max-content' }}
         loading={isRefetching}
         order={order}
         rowSelection={{
@@ -477,39 +482,41 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         extraContent={
           <BAIFlex direction="column" align="stretch" gap="xs">
             <BAIFlex align="start" gap="xs">
-              <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
-                <Checkbox
-                  checked={alsoDeleteFolder}
-                  onChange={(e) => setAlsoDeleteFolder(e.target.checked)}
+              <Tooltip
+                content={t('adminModelCard.AlsoDeleteModelFolderTooltip')}
+              >
+                {/* The adjacent visible text is the checkbox label now —
+                    CheckboxInput renders it itself. */}
+                <CheckboxInput
+                  label={t('adminModelCard.AlsoDeleteModelFolder')}
+                  value={alsoDeleteFolder}
+                  onChange={(checked) => setAlsoDeleteFolder(checked)}
                 />
               </Tooltip>
-              <span>
-                {t('adminModelCard.AlsoDeleteModelFolder')}
-                {deletingModelCard?.vfolder && (
-                  <span style={{ marginLeft: token.marginXXS }}>
-                    {'('}
-                    <VFolderNodeIdenticonV2
-                      vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
-                      style={{
-                        verticalAlign: 'middle',
-                        marginInline: token.marginXXS,
-                      }}
-                    />
-                    <BAILink
-                      to={generateFolderPath(deletingModelCard.vfolderId)}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {deletingModelCard.vfolder.metadata.name}
-                    </BAILink>
-                    {')'}
-                  </span>
-                )}
-              </span>
+              {deletingModelCard?.vfolder && (
+                <span>
+                  {'('}
+                  <VFolderNodeIdenticonV2
+                    vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
+                    style={{
+                      verticalAlign: 'middle',
+                      marginInline: token.marginXXS,
+                    }}
+                  />
+                  <BAILink
+                    to={generateFolderPath(deletingModelCard.vfolderId)}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {deletingModelCard.vfolder.metadata.name}
+                  </BAILink>
+                  {')'}
+                </span>
+              )}
             </BAIFlex>
             {alsoDeleteFolder && (
               <BAIAlert
                 type="error"
-                icon={<ExclamationCircleFilled />}
+                icon={<CircleAlert size="1em" />}
                 showIcon
                 description={t(
                   'adminModelCard.AlsoDeleteModelFolderCascadeWarning',
@@ -598,18 +605,22 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         extraContent={
           <BAIFlex direction="column" align="stretch" gap="xs">
             <BAIFlex align="center" gap="xs">
-              <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
-                <Checkbox
-                  checked={alsoDeleteFoldersBulk}
-                  onChange={(e) => setAlsoDeleteFoldersBulk(e.target.checked)}
+              <Tooltip
+                content={t('adminModelCard.AlsoDeleteModelFolderTooltip')}
+              >
+                {/* The adjacent visible text is the checkbox label now —
+                    CheckboxInput renders it itself. */}
+                <CheckboxInput
+                  label={t('adminModelCard.AlsoDeleteModelFolders')}
+                  value={alsoDeleteFoldersBulk}
+                  onChange={(checked) => setAlsoDeleteFoldersBulk(checked)}
                 />
               </Tooltip>
-              <span>{t('adminModelCard.AlsoDeleteModelFolders')}</span>
             </BAIFlex>
             {alsoDeleteFoldersBulk && (
               <BAIAlert
                 type="error"
-                icon={<ExclamationCircleFilled />}
+                icon={<CircleAlert size="1em" />}
                 showIcon
                 description={t(
                   'adminModelCard.AlsoDeleteModelFoldersCascadeWarning',
@@ -666,18 +677,17 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                             )?.name ?? f.cardId;
                           return (
                             <div key={f.cardId}>
-                              <Typography.Text strong>
-                                {cardName}
-                              </Typography.Text>
-                              <Typography.Text type="secondary">
-                                {' — '}
-                              </Typography.Text>
-                              <Typography.Text
-                                type="danger"
-                                style={{ fontSize: token.fontSizeSM }}
-                              >
+                              <Text weight="semibold">{cardName}</Text>
+                              <Text color="secondary">{' — '}</Text>
+                              {/* PILOT-DECISION: antd `type="danger"` has no
+                                  Astryx TextColor equivalent — the red tint is
+                                  dropped; `type="supporting"` keeps the small
+                                  font (was token.fontSizeSM) and the failure
+                                  context is already carried by the warning
+                                  notification. */}
+                              <Text type="supporting" color="primary">
                                 {f.message}
-                              </Typography.Text>
+                              </Text>
                             </div>
                           );
                         })}

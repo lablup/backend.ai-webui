@@ -213,7 +213,7 @@ export class AdminModelCardPage {
       name: 'Change Project',
     });
     const plusButton = modal
-      .locator('.ant-form-item')
+      .locator('[data-bai-form-item]')
       .filter({ hasText: 'Model Storage Folder' })
       .getByRole('button');
 
@@ -277,7 +277,7 @@ export class AdminModelCardPage {
       .toBeVisible({ timeout: 5000 })
       .catch(() => {});
     await folderDialog
-      .locator('.ant-form-item')
+      .locator('[data-bai-form-item]')
       .filter({ hasText: 'Folder name' })
       .getByRole('textbox')
       .fill(folderName);
@@ -292,7 +292,7 @@ export class AdminModelCardPage {
     // re-open the VFolder dropdown and explicitly select the newly-created folder by name.
     // This ensures the form field has the correct VirtualFolderNode GlobalID value.
     const vfolderFormItem = modal
-      .locator('.ant-form-item')
+      .locator('[data-bai-form-item]')
       .filter({ hasText: 'Model Storage Folder' });
 
     // Wait briefly for the refetch to complete before re-opening the dropdown
@@ -344,7 +344,7 @@ export class AdminModelCardPage {
       // In antd v6 with BAISelect, clicking the .ant-select-content container reliably
       // opens the dropdown (clicking the raw combobox input does not open it).
       const vfolderFormItem = modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Model Storage Folder' });
       await vfolderFormItem.locator('.ant-select-content').click();
       // Wait for the VFolder query to load options (BAIVFolderSelect uses network-only fetch on open)
@@ -372,63 +372,63 @@ export class AdminModelCardPage {
       // In antd v6, Form.Item tooltip icons contribute to the accessible name.
       // Use the form item container to locate the textbox by label text instead.
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Author' })
         .getByRole('textbox')
         .fill(fields.author);
     }
     if (fields.title) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Title' })
         .getByRole('textbox')
         .fill(fields.title);
     }
     if (fields.modelVersion) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Model Version' })
         .getByRole('textbox')
         .fill(fields.modelVersion);
     }
     if (fields.description) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Description' })
         .getByRole('textbox')
         .fill(fields.description);
     }
     if (fields.task) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Task' })
         .getByRole('textbox')
         .fill(fields.task);
     }
     if (fields.category) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Category' })
         .getByRole('textbox')
         .fill(fields.category);
     }
     if (fields.architecture) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Architecture' })
         .getByRole('textbox')
         .fill(fields.architecture);
     }
     if (fields.license) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'License' })
         .getByRole('textbox')
         .fill(fields.license);
     }
     if (fields.readme) {
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'README.md' })
         .getByRole('textbox')
         .fill(fields.readme);
@@ -437,7 +437,7 @@ export class AdminModelCardPage {
     const accessLevel = fields.accessLevel ?? 'Private';
     // In antd v6, use the .ant-select-content to open the dropdown reliably.
     await modal
-      .locator('.ant-form-item')
+      .locator('[data-bai-form-item]')
       .filter({ hasText: 'Access Level' })
       .locator('.ant-select-content')
       .click();

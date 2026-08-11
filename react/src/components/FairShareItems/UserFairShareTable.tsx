@@ -6,20 +6,22 @@ import {
   UserFairShareTableFragment$data,
   UserFairShareTableFragment$key,
 } from '../../__generated__/UserFairShareTableFragment.graphql';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { theme } from '../../theme-shim';
+import { Divider } from '@astryxdesign/core/Divider';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITable,
+  BAITableAstryx,
+  BAIText,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -125,7 +127,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => {
                 onOpenWeightSetting?.(record);
               },
@@ -156,17 +158,14 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       dataIndex: ['spec', 'weight'],
       render: (weight, record) => (
         <BAIFlex gap="xxs">
-          <Typography.Text>
+          <BAIText>
             {_.isNil(weight)
               ? '-'
               : toFixedFloorWithoutTrailingZeros(weight, 1)}
-          </Typography.Text>
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: token.fontSizeSM }}
-          >
+          </BAIText>
+          <BAIText type="secondary" style={{ fontSize: token.fontSizeSM }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-          </Typography.Text>
+          </BAIText>
         </BAIFlex>
       ),
     },
@@ -210,15 +209,15 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
                   {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
+                    <Divider orientation="vertical" style={{ margin: 0 }} />
                   )}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
+                      <BAIText type="secondary">
                         / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      </BAIText>
                     }
                   />
                 </BAIFlex>
@@ -245,9 +244,8 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         rowKey={'userUuid'}
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         dataSource={userFairShares || []}
         columns={columns}

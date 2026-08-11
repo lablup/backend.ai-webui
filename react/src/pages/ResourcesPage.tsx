@@ -6,8 +6,8 @@ import AgentList from '../components/AgentList';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useTabQuerySnapshot } from '../hooks';
-import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
@@ -21,6 +21,9 @@ const tabParser = parseAsStringLiteral([
   'resourceGroup',
 ]).withDefault('agents');
 
+// QA2-A: folded the hand-inlined `Card` + `VStack` + `TabList` copy back onto
+// `BAICard tabList`, which now renders the strip as the card's header chrome
+// (full-bleed rail, tab label on the body inset). See `AgentSummaryPage`.
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
@@ -31,21 +34,12 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       activeTabKey={currentTab}
       onTabChange={onTabChange}
       tabList={[
-        {
-          key: 'agents',
-          label: t('agent.Agent'),
-        },
-        {
-          key: 'storages',
-          label: t('general.StorageProxies'),
-        },
-        {
-          key: 'resourceGroup',
-          label: t('general.ResourceGroup'),
-        },
+        { key: 'agents', label: t('agent.Agent') },
+        { key: 'storages', label: t('general.StorageProxies') },
+        { key: 'resourceGroup', label: t('general.ResourceGroup') },
       ]}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {currentTab === 'agents' && (
           <BAIErrorBoundary>
             <AgentList />

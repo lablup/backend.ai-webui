@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Error de ejecución",
     "ErrorOccurred": "Se produjo un error"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Sin resultados",
+    "Search": "Buscar"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Seleccionar registro de contenedores"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Seleccionar dominio"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Actualización automática",
@@ -260,6 +267,9 @@
     "StrategyType": "Estrategia",
     "Tags": "Etiquetas",
     "UpdatedAt": "Actualizado en"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Se actualizará(n) el(los) siguiente(s) proyecto(s).",
@@ -451,14 +461,18 @@
     "Step": "Paso"
   },
   "comp:BAITable": {
+    "Apply": "Aplicar",
+    "Cancel": "Cancelar",
     "CollapseAll": "Contraer todo",
     "ExpandAll": "Expandir todo",
     "ExpandErrorsOnly": "Expandir solo errores",
     "ExpandOptions": "Opciones de expansión",
+    "ExpandRow": "Expandir fila",
     "Export": "Exportar",
     "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir a la primera página",
     "InvalidPageNumber": "Número de página no válido",
+    "Pagination": "Paginación",
     "SearchTableColumn": "Columnas de la tabla de búsqueda",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SettingTable": "Configuración de tabla"
@@ -526,8 +540,10 @@
     "MoreOptions": "Más opciones",
     "Name": "Nombre",
     "NoUploadPermissionForHost": "No tiene permiso de carga para este host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Ingrese el nombre de la carpeta.",
+    "RenameFile": "Rename",
     "RenameSuccess": "El nombre ha sido cambiado con éxito.",
     "SelectedItemsDeletedSuccessfully": "Los archivos y carpetas seleccionados se han eliminado correctamente.",
     "Size": "Tamaño",
@@ -594,21 +610,73 @@
     "UserID": "ID de usuario",
     "Username": "Nombre de usuario"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Haga clic para seleccionar una ruta",
+    "SelectAPath": "Seleccionar una ruta",
+    "SelectAPathInFolder": "Seleccionar una ruta en {{folderName}}",
+    "SelectFolderFirst": "Seleccione primero una carpeta",
+    "SelectThisLocation": "Seleccionar esta ubicación",
+    "SelectedPath": "Seleccionado"
+  },
   "error": {
     "UnknownError": "Ocurrió un error desconocido. \nPor favor intente de nuevo."
   },
+  "form": {
+    "Optional": "(opcional)",
+    "validateMessages": {
+      "Default": "Error de validación del campo ${label}",
+      "Required": "Por favor, rellena ${label}",
+      "Whitespace": "${label} no puede ser un carácter en blanco",
+      "array": {
+        "Len": "Debe ser ${len} ${label}",
+        "Max": "Como máximo ${max} ${label}",
+        "Min": "Al menos ${min} ${label}",
+        "Range": "El valor de ${label} debe estar entre ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} debe ser igual a ${len}",
+        "Max": "${label} valor máximo es ${max}",
+        "Min": "${label} valor mínimo es ${min}",
+        "Range": "${label} debe ser entre ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} no coincide con el patrón ${pattern}"
+      },
+      "string": {
+        "Len": "${label} debe tener ${len} caracteres",
+        "Max": "${label} debe tener hasta ${max} caracteres",
+        "Min": "${label} debe tener al menos ${min} caracteres",
+        "Range": "${label} debe tener entre ${min}-${max} caracteres"
+      },
+      "types": {
+        "Email": "${label} no es un ${type} válido",
+        "Number": "${label} no es un ${type} válido",
+        "Object": "${label} no es un ${type} válido",
+        "String": "${label} no es un ${type} válido",
+        "Url": "${label} no es un ${type} válido"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Deseleccionar todo",
     "File": "Archivo",
+    "Increase": "Increase",
     "NSelected": "{{count}} seleccionado",
     "Optional": "Opcional",
     "Project": "Proyecto",
+    "Select": "Select",
     "TotalItems": "Total {{total}} elementos",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancelar",
       "Close": "Cerca",
       "Collapse": "Colapsar",
+      "Confirm": "Confirm",
       "Copied": "Copiado",
+      "Copy": "Copiar",
       "CopyAll": "Copiar todo",
       "Create": "Crear",
       "Delete": "Borrar",

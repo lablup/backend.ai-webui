@@ -7,6 +7,7 @@ import {
   ComputeSessionListPageQuery$data,
   ComputeSessionListPageQuery$variables,
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
+import { App } from '../app-shim';
 import ActionItemContent from '../components/ActionItemContent';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
@@ -25,18 +26,14 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import {
-  Alert,
-  App,
-  Badge,
-  Button,
-  Col,
-  Grid,
-  Row,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { useBAIBreakpoint } from '../theme-shim';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlertIconWithTooltip,
   BAICard,
@@ -48,6 +45,7 @@ import {
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
+  PRIMARY_TAG_VARIANT,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -81,6 +79,15 @@ const CARD_MIN_HEIGHT = 200;
 const NOT_FINISHED_STATUS_FILTER =
   'status != "TERMINATED" & status != "CANCELLED"';
 
+const styles = stylex.create({
+  // antd `Typography.Text style={{maxWidth:120, wordBreak:'keep-all'}}` — the
+  // title only renders on >=lg, where maxWidth was always 120.
+  actionCardTitle: {
+    maxWidth: 120,
+    wordBreak: 'keep-all',
+  },
+});
+
 const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
@@ -90,7 +97,6 @@ const ComputeSessionListPage = () => {
   const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webUINavigate = useWebUINavigate();
@@ -292,28 +298,29 @@ const ComputeSessionListPage = () => {
   const compute_session_nodes = computeSessionNodeResult.ok
     ? computeSessionNodeResult.value
     : null;
-  const { lg } = Grid.useBreakpoint();
+  // Responsive policy R3 (ticket 14): the render tree branches on `lg`
+  // (the action card is unmounted below lg), so the JS hook stays; the antd
+  // Row/Col track layout becomes an Astryx 24-column Grid whose spans are
+  // picked from the same booleans (asymmetric split — the uniform minWidth
+  // model does not apply here).
+  const { lg, xl } = useBAIBreakpoint();
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Row gutter={[16, 16]} align={'stretch'}>
+      <Grid columns={24} gap={4}>
         {lg && (
-          <Col xs={24} lg={8} xl={4} style={{ display: 'flex' }}>
+          <GridSpan columns={xl ? 4 : 8}>
             <BAICard
               style={{
                 width: '100%',
+                height: '100%',
               }}
             >
               <ActionItemContent
                 title={
-                  <Typography.Text
-                    style={{
-                      maxWidth: lg ? 120 : undefined,
-                      wordBreak: 'keep-all',
-                    }}
-                  >
+                  <Text xstyle={styles.actionCardTitle}>
                     {t('start.CreateASession')}
-                  </Typography.Text>
+                  </Text>
                 }
                 buttonText={t('start.button.StartSession')}
                 icon={<BAISessionsIcon />}
@@ -324,10 +331,10 @@ const ComputeSessionListPage = () => {
                 }}
               />
             </BAICard>
-          </Col>
+          </GridSpan>
         )}
 
-        <Col xs={24} lg={16} xl={20} style={{ display: 'flex' }}>
+        <GridSpan columns={lg ? (xl ? 20 : 16) : 24}>
           <ErrorBoundary
             fallbackRender={() => {
               return (
@@ -358,20 +365,21 @@ const ComputeSessionListPage = () => {
               <ConfigurableResourceCard
                 style={{
                   width: '100%',
+                  height: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
                 fetchKey={deferredFetchKey}
               />
             </Suspense>
           </ErrorBoundary>
-        </Col>
-      </Row>
+        </GridSpan>
+      </Grid>
       <BAICard
         variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
           <BAILink to={buildProjectPath('session/start')}>
-            <Button type="primary">{t('start.button.StartSession')}</Button>
+            <Button variant="primary" label={t('start.button.StartSession')} />
           </BAILink>
         }
         styles={{
@@ -420,20 +428,21 @@ const ComputeSessionListPage = () => {
                     // @ts-ignore
                     (sessionCounts[key]?.count || 0) > 0 && (
                       <Badge
-                        // @ts-ignore
-                        count={sessionCounts[key].count}
-                        color={
+                        // PILOT-DECISION: antd count Badge (brand color when
+                        // active, gray otherwise) -> Astryx Badge pill.
+                        // Arbitrary token colors are inexpressible (P5);
+                        // active maps to PRIMARY_TAG_VARIANT (policy class 4),
+                        // inactive to `neutral`. Font/padding tweaks dropped
+                        // (defaults-first).
+                        variant={
                           queryParams.type === key
-                            ? token.colorPrimary
-                            : token.colorTextDisabled
+                            ? PRIMARY_TAG_VARIANT
+                            : 'neutral'
                         }
-                        size="small"
-                        showZero
-                        style={{
-                          paddingRight: token.paddingXS,
-                          paddingLeft: token.paddingXS,
-                          fontSize: 10,
-                        }}
+                        label={
+                          // @ts-ignore
+                          sessionCounts[key].count
+                        }
                       />
                     )
                   }
@@ -504,17 +513,14 @@ const ComputeSessionListPage = () => {
                     count={selectedSessionList.length}
                     onClearSelection={() => setSelectedSessionList([])}
                   />
-                  <Tooltip
-                    title={t('session.TerminateSession')}
-                    placement="topLeft"
-                  >
-                    <Button
-                      icon={<PowerOffIcon color={token.colorError} />}
-                      onClick={() => {
-                        setOpenTerminateModal(true);
-                      }}
-                    />
-                  </Tooltip>
+                  <IconButton
+                    label={t('session.TerminateSession')}
+                    tooltip={t('session.TerminateSession')}
+                    icon={<PowerOffIcon color="var(--color-error)" />}
+                    onClick={() => {
+                      setOpenTerminateModal(true);
+                    }}
+                  />
                 </>
               )}
               <AutoUpdateFetchKeyButton
@@ -648,11 +654,7 @@ const ComputeSessionListPage = () => {
               }
             />
           ) : (
-            <Alert
-              type="error"
-              showIcon
-              title={t('error.FailedToLoadTableData')}
-            />
+            <Banner status="error" title={t('error.FailedToLoadTableData')} />
           )}
         </BAIFlex>
       </BAICard>

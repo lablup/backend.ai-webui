@@ -74,7 +74,7 @@ test.describe(
         // "Cluster mode" form item alongside the radio group; there is no
         // separate "Cluster size" label in the new UI.
         const clusterSizeInput = page
-          .locator('.ant-form-item')
+          .locator('[data-bai-form-item]')
           .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
@@ -104,7 +104,7 @@ test.describe(
       await multiNodeLabel.click();
 
       const clusterSizeInput = page
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       const warningMessage = page.getByText(
@@ -142,7 +142,7 @@ test.describe(
 
       // Verify warning is initially visible (Multi Node + size 1)
       const clusterSizeInput = page
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       await expect(clusterSizeInput).toHaveValue('1');
@@ -222,7 +222,7 @@ test.describe(
 
         // Cluster size should still be 1 (mode switch does not reset size)
         const clusterSizeInput = page
-          .locator('.ant-form-item')
+          .locator('[data-bai-form-item]')
           .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
@@ -258,7 +258,7 @@ test.describe(
         // ClusterModeFormItems (FR-2381) renders the spinbutton inside the
         // "Cluster mode" form item; there is no separate "Cluster size" label.
         const clusterSizeInput = page
-          .locator('.ant-form-item')
+          .locator('[data-bai-form-item]')
           .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
@@ -287,7 +287,7 @@ test.describe(
 
       // Set cluster size to 2 via direct input
       const clusterSizeInput = page
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       await clusterSizeInput.fill('2');

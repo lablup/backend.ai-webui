@@ -8,8 +8,18 @@ import LegacyRolePermissionTab from './LegacyRolePermissionTab';
 import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
-import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
+import {
+  badgeVariantForStatus,
+  badgeVariantForTagColor,
+  toLocalId,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,98 +68,83 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
 
   return (
     <>
-      <Descriptions
-        column={2}
-        bordered
-        size="small"
-        style={{ marginBottom: 16 }}
-      >
-        <Descriptions.Item label={t('rbac.Source')}>
-          <Tag color={role.source === 'SYSTEM' ? 'default' : 'green'}>
-            {role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
-          </Tag>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('rbac.Status')}>
-          <Tag
-            color={
-              role.status === 'ACTIVE'
-                ? 'green'
-                : role.status === 'INACTIVE'
-                  ? 'orange'
-                  : 'red'
+      {/* antd `Descriptions` -> `MetadataList` (MAPPING §4). `bordered`,
+          `size="small"` and per-item `span` have no destination and are
+          dropped — the project-wide decision established in tickets 15/18.
+          The two `span={2}` full-width rows keep their content; they simply
+          flow in the 2-column grid like every other row. */}
+      <MetadataList columns={2} label={{ position: 'start', width: 160 }}>
+        <MetadataListItem label={t('rbac.Source')}>
+          {/* Tag -> Badge through the repo-global lookup (ticket 13); no
+              per-file colour map. */}
+          <Badge
+            variant={badgeVariantForStatus('role', role.source ?? undefined)}
+            label={
+              role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')
             }
-          >
-            {role.status === 'ACTIVE' ? t('rbac.Active') : t('rbac.Inactive')}
-          </Tag>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('general.CreatedAt')}>
+          />
+        </MetadataListItem>
+        <MetadataListItem label={t('rbac.Status')}>
+          <Badge
+            variant={badgeVariantForStatus('role', role.status ?? undefined)}
+            label={
+              role.status === 'ACTIVE' ? t('rbac.Active') : t('rbac.Inactive')
+            }
+          />
+        </MetadataListItem>
+        <MetadataListItem label={t('general.CreatedAt')}>
           {role.createdAt
             ? dayjs(role.createdAt).format('YYYY-MM-DD HH:mm:ss')
             : '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('general.UpdatedAt')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('general.UpdatedAt')}>
           {role.updatedAt
             ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
             : '-'}
-        </Descriptions.Item>
-        {supportsAutoAssign && (
-          <Descriptions.Item label={t('rbac.AutoAssign')} span={2}>
-            <Tag color={role.autoAssign ? 'green' : 'default'}>
-              {role.autoAssign ? t('general.Active') : t('general.Inactive')}
-            </Tag>
-          </Descriptions.Item>
-        )}
-        <Descriptions.Item label={t('rbac.RoleDescription')} span={2}>
+        </MetadataListItem>
+        {supportsAutoAssign ? (
+          <MetadataListItem label={t('rbac.AutoAssign')}>
+            <Badge
+              variant={badgeVariantForTagColor(
+                role.autoAssign ? 'green' : 'default',
+              )}
+              label={
+                role.autoAssign ? t('general.Active') : t('general.Inactive')
+              }
+            />
+          </MetadataListItem>
+        ) : null}
+        <MetadataListItem label={t('rbac.RoleDescription')}>
           {role.description || '-'}
-        </Descriptions.Item>
-      </Descriptions>
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        items={[
-          ...(supportsDetailedPermissions
-            ? [
-                {
-                  key: 'detailedPermissions',
-                  label: t('rbac.Permissions'),
-                  children: (
-                    <Suspense fallback={<Skeleton active />}>
-                      <RolePermissionDetailTab roleNodeFrgmt={role} />
-                    </Suspense>
-                  ),
-                },
-              ]
-            : [
-                {
-                  key: 'scopes',
-                  label: t('rbac.RoleScopes'),
-                  children: (
-                    <Suspense fallback={<Skeleton active />}>
-                      <LegacyRoleScopeTab roleId={toLocalId(role.id)} />
-                    </Suspense>
-                  ),
-                },
-                {
-                  key: 'permissions',
-                  label: t('rbac.Permissions'),
-                  children: (
-                    <Suspense fallback={<Skeleton active />}>
-                      <LegacyRolePermissionTab roleId={toLocalId(role.id)} />
-                    </Suspense>
-                  ),
-                },
-              ]),
-          {
-            key: 'assignments',
-            label: t('rbac.RoleAssignments'),
-            children: (
-              <Suspense fallback={<Skeleton active />}>
-                <RoleAssignmentTab roleNodeFrgmt={role} />
-              </Suspense>
-            ),
-          },
-        ]}
-      />
+        </MetadataListItem>
+      </MetadataList>
+      {/* antd `Tabs` -> `TabList` + `Tab` (MAPPING §4): navigation only, the
+          panel is rendered by this component below the bar. */}
+      <TabList value={activeTab} onChange={setActiveTab}>
+        {supportsDetailedPermissions ? (
+          <Tab value="detailedPermissions" label={t('rbac.Permissions')} />
+        ) : (
+          <>
+            <Tab value="scopes" label={t('rbac.RoleScopes')} />
+            <Tab value="permissions" label={t('rbac.Permissions')} />
+          </>
+        )}
+        <Tab value="assignments" label={t('rbac.RoleAssignments')} />
+      </TabList>
+      <Suspense fallback={<BAISkeletonAstryx />}>
+        {activeTab === 'detailedPermissions' && (
+          <RolePermissionDetailTab roleNodeFrgmt={role} />
+        )}
+        {activeTab === 'scopes' && (
+          <LegacyRoleScopeTab roleId={toLocalId(role.id)} />
+        )}
+        {activeTab === 'permissions' && (
+          <LegacyRolePermissionTab roleId={toLocalId(role.id)} />
+        )}
+        {activeTab === 'assignments' && (
+          <RoleAssignmentTab roleNodeFrgmt={role} />
+        )}
+      </Suspense>
     </>
   );
 };

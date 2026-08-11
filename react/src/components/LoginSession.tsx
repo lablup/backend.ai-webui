@@ -7,10 +7,9 @@ import type {
   LoginSessionQuery as LoginSessionQueryType,
 } from '../__generated__/LoginSessionQuery.graphql';
 import type { LoginSessionRevokeMutation } from '../__generated__/LoginSessionRevokeMutation.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import { LogoutOutlined } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -24,6 +23,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { LogOut } from 'lucide-react';
 import { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -215,7 +215,7 @@ const LoginSession = ({
                         {
                           key: 'revoke',
                           title: t('loginSession.RevokeSession'),
-                          icon: <LogoutOutlined />,
+                          icon: <LogOut size="1em" />,
                           type: 'danger' as const,
                           popConfirm: {
                             title: t('loginSession.RevokeSessionConfirm'),

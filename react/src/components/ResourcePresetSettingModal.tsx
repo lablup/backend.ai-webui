@@ -12,11 +12,17 @@ import {
   ResourcePresetSettingModalModifyByIdMutation,
 } from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form, type FormInstance, Input, InputNumber } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTextInput,
+} from './astryxFormControls';
 import {
   BAIDynamicUnitInputNumber,
   BAIModal,
@@ -266,7 +272,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               }
         }
       >
-        <Form.Item
+        <BAIFormItem
           label={t('resourcePreset.PresetName')}
           name="name"
           rules={[
@@ -290,20 +296,23 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             },
           ]}
         >
-          <Input disabled={!!resourcePreset} />
-        </Form.Item>
+          <AstryxFormTextInput
+            label={t('resourcePreset.PresetName')}
+            disabled={!!resourcePreset}
+          />
+        </BAIFormItem>
         <ErrorBoundary
           fallbackRender={() => (
-            <Form.Item
+            <BAIFormItem
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
               <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
-            </Form.Item>
+            </BAIFormItem>
           )}
         >
           {baiClient?.supports('resource-presets-per-resource-group') && (
-            <Form.Item
+            <BAIFormItem
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
@@ -316,10 +325,10 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               ) : (
                 <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
               )}
-            </Form.Item>
+            </BAIFormItem>
           )}
         </ErrorBoundary>
-        <Form.Item
+        <BAIFormItem
           label={t('resourcePreset.ResourcePreset')}
           required
           layout="vertical"
@@ -329,7 +338,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             (resourceSlotKeys, index) => (
               <Fragment key={index}>
                 {_.map(resourceSlotKeys, (resourceSlotKey) => (
-                  <Form.Item
+                  <BAIFormItem
                     label={
                       _.get(mergedResourceSlots, resourceSlotKey)
                         ?.description || resourceSlotKey
@@ -369,23 +378,29 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                         defaultUnit="g"
                       />
                     ) : (
-                      <InputNumber
-                        stringMode
+                      // PILOT-DECISION: antd InputNumber `stringMode`
+                      // (big-number safety) has no NumberInput equivalent
+                      // (MAPPING.md §3.17) and is dropped — slot counts stay
+                      // well inside float precision. `suffix` -> `units`.
+                      <AstryxFormNumberInput
+                        label={
+                          _.get(mergedResourceSlots, resourceSlotKey)
+                            ?.description || resourceSlotKey
+                        }
                         min={resourceSlotKey === 'cpu' ? 1 : 0}
                         step={_.includes(resourceSlotKey, '.shares') ? 0.1 : 1}
-                        suffix={
+                        units={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.display_unit
                         }
-                        style={{ width: '100%' }}
                       />
                     )}
-                  </Form.Item>
+                  </BAIFormItem>
                 ))}
               </Fragment>
             ),
           )}
-          <Form.Item
+          <BAIFormItem
             label={t('resourcePreset.SharedMemory')}
             name="shared_memory"
             dependencies={[['resource_slots', 'mem']]}
@@ -415,8 +430,8 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               style={{ width: '100%' }}
               defaultUnit="g"
             />
-          </Form.Item>
-        </Form.Item>
+          </BAIFormItem>
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

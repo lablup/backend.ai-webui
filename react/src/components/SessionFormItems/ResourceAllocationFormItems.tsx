@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
+import { Form } from '../../form-engine';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
@@ -20,6 +21,7 @@ import {
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
+import { theme } from '../../theme-shim';
 import AgentSelect from '../AgentSelect';
 import {
   Image,
@@ -29,8 +31,17 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
-import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
+// FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
+// `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
+// and every control and every piece of chrome below is Astryx now.
+import { Card } from '@astryxdesign/core/Card';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   useEventNotStable,
@@ -40,6 +51,7 @@ import {
   BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp, RotateCw } from 'lucide-react';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -149,6 +161,49 @@ interface ResourceAllocationFormItemsProps {
     validator: (rule: unknown, value: number) => Promise<void>;
   }>;
 }
+
+/**
+ * Cluster-mode segmented control — the twin of the one in
+ * `ClusterModeFormItems`, declared locally for the same reason: each option
+ * carries a help tooltip that the shared `AstryxFormSegmented` option shape
+ * does not model. The two `Form.Item` contracts are honoured inline.
+ */
+const ClusterModeSegmented: React.FC<{
+  label: string;
+  isDisabled?: boolean;
+  onValueChange: () => void;
+  items: Array<{ value: string; label: string; tooltip: React.ReactNode }>;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ label, isDisabled, onValueChange, items, value, onChange }) => {
+  'use memo';
+  return (
+    <SegmentedControl
+      label={label}
+      isDisabled={isDisabled}
+      value={value ?? items[0]?.value ?? ''}
+      onChange={(next) => {
+        onChange?.(next);
+        onValueChange();
+      }}
+    >
+      {items.map((item) => (
+        <SegmentedControlItem
+          key={item.value}
+          value={item.value}
+          label={item.label}
+          icon={
+            <Tooltip content={item.tooltip}>
+              <CircleHelp size="1em" />
+            </Tooltip>
+          }
+        />
+      ))}
+    </SegmentedControl>
+  );
+};
 
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
@@ -673,6 +728,9 @@ const ResourceAllocationFormItems: React.FC<
           />
         </Form.Item>
       ) : null}
+      {/* MAPPING §5.1: antd `Card` -> Astryx `Card`, a bare container. This
+          call site passes no `title`/`extra`/`tabList`, so nothing needs
+          composing around it — only the bottom margin, which stays. */}
       <Card style={{ marginBottom: token.margin }}>
         <Form.Item
           shouldUpdate={(prev, cur) =>
@@ -1449,13 +1507,17 @@ const ResourceAllocationFormItems: React.FC<
               </Form.Item>
             </Suspense>
             <Form.Item noStyle>
-              <Button
-                loading={isPendingAgentList}
+              {/* MAPPING §3.3: icon-only, no children -> `IconButton`, whose
+                  required `label` finally names this refresh control. */}
+              <IconButton
+                isLoading={isPendingAgentList}
                 onClick={() => {
                   startAgentListTransition(() => updateAgentFetchKey());
                 }}
-                icon={<ReloadOutlined />}
-              ></Button>
+                icon={<RotateCw size="1em" />}
+                label={t('button.Refresh')}
+                tooltip={t('button.Refresh')}
+              />
             </Form.Item>
           </BAIFlex>
         </Form.Item>
@@ -1469,53 +1531,49 @@ const ResourceAllocationFormItems: React.FC<
           {({ getFieldValue }) => {
             return (
               <>
-                <Row gutter={token.marginMD}>
-                  <Col xs={24}>
-                    {/* <Col xs={24} lg={12}> */}
-                    <Form.Item name={'cluster_mode'} required noStyle>
-                      <Radio.Group
-                        onChange={() => {
-                          form.validateFields().catch(() => {});
-                        }}
-                        disabled={
-                          !supportMultiAgents &&
-                          !_.isEqual(_.castArray(getFieldValue('agent')), [
-                            'auto',
-                          ])
-                        }
-                      >
-                        <Radio.Button value="multi-node">
-                          {t('session.launcher.MultiNode')}
-                          <Tooltip
-                            title={
-                              <Trans
-                                i18nKey={'session.launcher.DescMultiNode'}
-                              />
-                            }
-                          >
-                            <QuestionCircleOutlined
-                              style={{ marginLeft: token.marginXXS }}
+                {/* RESPONSIVE-POLICY: `Row gutter` + two full-width
+                    `Col xs={24}` is a single column with a gap — not a grid.
+                    MAPPING §3.9 keeps only the breakpoint-free shapes, and
+                    this one is `VStack gap`. No `xs`-driven reflow is lost:
+                    both columns already spanned the full 24.
+                    The Radio.Group -> SegmentedControl move mirrors
+                    `ClusterModeFormItems` exactly (same PILOT-DECISION: the
+                    per-option help tooltip becomes the item's `icon`, since
+                    `SegmentedControlItem.label` is a required string). */}
+                <VStack gap={5} align="stretch">
+                  <Form.Item name={'cluster_mode'} required noStyle>
+                    <ClusterModeSegmented
+                      label={t('session.launcher.ClusterMode')}
+                      isDisabled={
+                        !supportMultiAgents &&
+                        !_.isEqual(_.castArray(getFieldValue('agent')), [
+                          'auto',
+                        ])
+                      }
+                      onValueChange={() => {
+                        form.validateFields().catch(() => {});
+                      }}
+                      items={[
+                        {
+                          value: 'multi-node',
+                          label: t('session.launcher.MultiNode'),
+                          tooltip: (
+                            <Trans i18nKey={'session.launcher.DescMultiNode'} />
+                          ),
+                        },
+                        {
+                          value: 'single-node',
+                          label: t('session.launcher.SingleNode'),
+                          tooltip: (
+                            <Trans
+                              i18nKey={'session.launcher.DescSingleNode'}
                             />
-                          </Tooltip>
-                        </Radio.Button>
-                        <Radio.Button value="single-node">
-                          {t('session.launcher.SingleNode')}
-                          <Tooltip
-                            title={
-                              <Trans
-                                i18nKey={'session.launcher.DescSingleNode'}
-                              />
-                            }
-                          >
-                            <QuestionCircleOutlined
-                              style={{ marginLeft: token.marginXXS }}
-                            />
-                          </Tooltip>
-                        </Radio.Button>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24}>
+                          ),
+                        },
+                      ]}
+                    />
+                  </Form.Item>
+                  <>
                     <Form.Item
                       noStyle
                       shouldUpdate={(prev, next) =>
@@ -1699,8 +1757,8 @@ const ResourceAllocationFormItems: React.FC<
                         );
                       }}
                     </Form.Item>
-                  </Col>
-                </Row>
+                  </>
+                </VStack>
               </>
             );
           }}

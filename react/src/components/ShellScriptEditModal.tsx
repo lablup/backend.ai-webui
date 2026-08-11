@@ -2,21 +2,19 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
-import { DeleteFilled, DownOutlined } from '@ant-design/icons';
-import {
-  App,
-  Button,
-  Dropdown,
-  Form,
-  Popconfirm,
-  Select,
-  Space,
-  Typography,
-} from 'antd';
+import BAIFormItem from './BAIFormItem';
+import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Selector } from '@astryxdesign/core/Selector';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIModal,
   BAIModalProps,
@@ -26,6 +24,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Trash2, ChevronDown } from 'lucide-react';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -49,7 +48,6 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
   const { logger } = useBAILogger();
   const { message } = App.useApp();
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
-  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const { getErrorMessage } = useErrorMessageResolver();
   const [rcfileNames, setRcfileNames] = useState<string>('.bashrc');
   const [script, setScript] = useState<string>('');
@@ -202,78 +200,72 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       footer={
         <BAIFlex justify="between" style={{ width: '100%' }}>
           <BAIFlex>
-            <Space.Compact>
-              <Button
-                type="default"
-                danger
+            <ButtonGroup label={t('button.Reset')}>
+              <IconButton
+                icon={<Trash2 size="1em" />}
+                label={t('button.Delete')}
+                tooltip={t('button.Delete')}
+                variant="destructive"
                 onClick={() => {
                   setIsDeleteConfirmOpen(true);
                 }}
-              >
-                <DeleteFilled />
-              </Button>
-              <Popconfirm
-                open={isResetConfirmOpen}
+              />
+              {/* PILOT-DECISION: antd's `Popconfirm` wrapping a single-item
+                  `Dropdown` (menu -> confirm, both anchored to one chevron
+                  trigger) collapses into one confirm popover directly on the
+                  chevron — a one-item menu behind a confirm dialog is pure
+                  indirection (simplicity policy, same precedent as
+                  SettingItem.tsx's Reset control). */}
+              <BAIPopconfirmAstryx
                 title={t('dialog.title.LetsDouble-Check')}
                 description={t('dialog.ask.DoYouWantToResetChanges')}
-                okButtonProps={{ danger: true }}
+                isDanger
                 onConfirm={() => {
                   setScript('');
-                  setIsResetConfirmOpen(false);
                 }}
-                onCancel={() => setIsResetConfirmOpen(false)}
               >
-                <Dropdown
-                  menu={{
-                    items: [
-                      {
-                        key: 'reset',
-                        label: t('button.Reset'),
-                        onClick: () => {
-                          setIsResetConfirmOpen(true);
-                        },
-                        danger: true,
-                      },
-                    ],
-                  }}
-                >
-                  <Button type="default" danger icon={<DownOutlined />} />
-                </Dropdown>
-              </Popconfirm>
-            </Space.Compact>
+                <IconButton
+                  icon={<ChevronDown size="1em" />}
+                  label={t('button.Reset')}
+                  tooltip={t('button.Reset')}
+                  variant="destructive"
+                />
+              </BAIPopconfirmAstryx>
+            </ButtonGroup>
           </BAIFlex>
           <BAIFlex gap={'sm'}>
             <Button
               key="cancel"
+              variant="secondary"
+              label={t('button.Cancel')}
               onClick={() => onRequestClose()}
-              style={{ width: 'fit-content' }}
-            >
-              {t('button.Cancel')}
-            </Button>
-            <Space.Compact>
+              width="fit-content"
+            />
+            <ButtonGroup label={t('button.SaveAndClose')}>
               <Button
                 key="submit"
-                type="primary"
+                variant="primary"
+                label={t('button.SaveAndClose')}
                 onClick={() => {
                   saveScript();
                 }}
-              >
-                {t('button.SaveAndClose')}
-              </Button>
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'save',
-                      label: t('button.SaveWithoutClose'),
-                      onClick: () => saveScript({ closeAfter: false }),
-                    },
-                  ],
+              />
+              <DropdownMenu
+                button={{
+                  icon: <ChevronDown size="1em" />,
+                  isIconOnly: true,
+                  label: t('button.MoreSaveOptions', 'More save options'),
+                  variant: 'primary',
                 }}
-              >
-                <Button type="primary" icon={<DownOutlined />} />
-              </Dropdown>
-            </Space.Compact>
+                hasChevron={false}
+                items={[
+                  {
+                    label: t('button.SaveWithoutClose'),
+                    onClick: () => saveScript({ closeAfter: false }),
+                  },
+                ]}
+              />
+            </ButtonGroup>
           </BAIFlex>
         </BAIFlex>
       }
@@ -282,19 +274,29 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
         {shellInfo === 'bootstrap' && (
-          <Typography.Text>
-            {t('userSettings.BootstrapScriptDescription')}
-          </Typography.Text>
+          <Text>{t('userSettings.BootstrapScriptDescription')}</Text>
         )}
         {shellInfo === 'userconfig' && (
-          <Form.Item
+          // Not a bound Form field (no `name` — the antd original didn't
+          // give it one either, driving `rcfileNames`/`script` state by
+          // hand); `BAIFormItem` here is purely the label layout.
+          <BAIFormItem
             style={{
               marginBottom: 0,
             }}
             label={t('userSettings.UserConfigScript')}
           >
-            <Select
-              defaultValue={'.bashrc'}
+            <Selector
+              label={t('userSettings.UserConfigScript')}
+              isLabelHidden
+              value={rcfileNames}
+              options={[
+                '.bashrc',
+                '.zshrc',
+                '.tmux.conf.local',
+                '.vimrc',
+                '.Renviron',
+              ]}
               onChange={(value) => {
                 const selectedScript = _.find(userConfigScript, {
                   path: value,
@@ -302,16 +304,9 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                 setScript(selectedScript?.data || '');
                 setRcfileNames(value);
               }}
-              options={[
-                { value: '.bashrc' },
-                { value: '.zshrc' },
-                { value: '.tmux.conf.local' },
-                { value: '.vimrc' },
-                { value: '.Renviron' },
-              ]}
-              style={{ width: '200px' }}
+              width={200}
             />
-          </Form.Item>
+          </BAIFormItem>
         )}
         <BAICodeEditor
           onChange={(value) => setScript(value)}

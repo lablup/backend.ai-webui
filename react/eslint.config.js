@@ -9,14 +9,8 @@ import jsoncParser from 'jsonc-eslint-parser';
 // without duplicating these entries.
 const restrictedImportPatterns = [
   { group: ['backend.ai-ui/*', '!backend.ai-ui/dist'] },
-  { group: ['@lobehub/fluent-emoji'] },
 ];
 const restrictedImportPaths = [
-  {
-    name: 'antd-style',
-    importNames: ['useThemeMode'],
-    message: "Use 'src/hooks/useThemeMode' instead.",
-  },
   {
     name: 'react-router-dom',
     importNames: ['useNavigate', 'Navigate'],
@@ -78,16 +72,18 @@ export default [
         },
       ],
       // CSP: a raw <style> element carries no nonce and is dropped by a strict
-      // `style-src 'nonce-...'` policy. Use createGlobalStyle / createStyles
-      // from 'antd-style' (nonce'd via the <StyleProvider> in DefaultProviders)
-      // for dynamic/global CSS, or import an external .css file (covered by
-      // `style-src 'self'`) for static CSS.
+      // `style-src 'nonce-...'` policy. Import a co-located .css file instead
+      // (bundled, same-origin, covered by `style-src 'self'`) — to-astryx
+      // ticket 33 retired the antd-style escape hatch this rule used to point
+      // at. Values that must vary at runtime go through CSS custom properties
+      // set inline or via `element.style.setProperty` (CSSOM writes are not
+      // intercepted by CSP).
       'no-restricted-syntax': [
         'error',
         {
           selector: "JSXOpeningElement[name.name='style']",
           message:
-            "Direct <style> elements are forbidden (CSP nonce safety). Use createGlobalStyle/createStyles from 'antd-style', or import an external .css file.",
+            'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
         },
       ],
     },
@@ -148,6 +144,15 @@ export default [
   },
 
   {
-    ignores: ['**/__generated__/**', 'build/**', '**/*.tsx_', '**/*.ts_'],
+    ignores: [
+      '**/__generated__/**',
+      'build/**',
+      '**/*.tsx_',
+      '**/*.ts_',
+      // `astryx theme build` artifacts (see src/astryx-theme/built/index.ts).
+      // verify.sh byte-compares them against the CLI output, so linters must
+      // not touch them (same policy as prettierignore/.gitattributes).
+      'src/astryx-theme/built/bai-r*',
+    ],
   },
 ];

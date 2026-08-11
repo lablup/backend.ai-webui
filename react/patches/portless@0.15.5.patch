@@ -1,0 +1,121 @@
+diff --git a/dist/chunk-SLEZT6EJ.js b/dist/chunk-SLEZT6EJ.js
+index 76791c619bf72a8c5b99eb2f086e150b3cef9466..aa70d525911377cf699dc5d3619a76a8c5ccf1cd 100644
+--- a/dist/chunk-SLEZT6EJ.js
++++ b/dist/chunk-SLEZT6EJ.js
+@@ -1027,33 +1027,106 @@ var RouteStore = class _RouteStore {
+     try {
+       const raw = fs3.readFileSync(this.routesPath, "utf-8");
+       let parsed;
++      let corruptReason;
+       try {
+         parsed = JSON.parse(raw);
++        if (!Array.isArray(parsed)) {
++          corruptReason = "expected array";
++        }
+       } catch {
+-        this.onWarning?.(`Corrupted routes file (invalid JSON): ${this.routesPath}`);
+-        return [];
++        corruptReason = "invalid JSON";
+       }
+-      if (!Array.isArray(parsed)) {
+-        this.onWarning?.(`Corrupted routes file (expected array): ${this.routesPath}`);
+-        return [];
++      if (corruptReason) {
++        // A corrupt routes file must never be silently downgraded to "no routes
++        // at all": the caller (addRoute/removeRoute) would then persist only its
++        // own route and wipe every other live process's registration. Keep the
++        // damaged file for inspection, recover the last good snapshot if we have
++        // one, and otherwise fail loudly so the caller aborts instead of
++        // clobbering.
++        this.onWarning?.(`Corrupted routes file (${corruptReason}): ${this.routesPath}`);
++        try {
++          fs3.copyFileSync(this.routesPath, `${this.routesPath}.corrupt-${Date.now()}`);
++        } catch {
++        }
++        const recovered = this.readBackup();
++        if (recovered) {
++          this.onWarning?.(`Recovered routes from ${this.routesPath}.bak`);
++          parsed = recovered;
++        } else {
++          const corruptError = new Error(
++            `Corrupted routes file (${corruptReason}): ${this.routesPath}`
++          );
++          corruptError.code = "PORTLESS_CORRUPT_ROUTES";
++          throw corruptError;
++        }
+       }
+       const routes = parsed.filter(isValidRoute);
+       const alive = routes.filter((r) => r.pid === 0 || this.isProcessAlive(r.pid));
+       if (persistCleanup && alive.length !== routes.length) {
+         try {
+-          fs3.writeFileSync(this.routesPath, JSON.stringify(alive, null, 2), {
+-            mode: FILE_MODE
+-          });
++          this.saveRoutes(alive);
+         } catch {
+         }
+       }
+       return alive;
++    } catch (err) {
++      // Propagate corruption: returning [] here is exactly what let a damaged
++      // file wipe every registered route.
++      if (err instanceof Error && err.code === "PORTLESS_CORRUPT_ROUTES") {
++        throw err;
++      }
++      // ENOENT (routes.json doesn't exist yet) genuinely means "no routes".
++      // Any other read failure (e.g. EACCES on a temporarily-unreadable file)
++      // must not be silently downgraded to an empty, writable route set --
++      // that is the exact global-wipe bug this patch fixes for corruption,
++      // just triggered by a permissions blip instead of truncation.
++      if (err instanceof Error && err.code === "ENOENT") {
++        return [];
++      }
++      throw err;
++    }
++  }
++  /**
++   * Last known-good snapshot, written alongside every successful save. Used to
++   * recover when routes.json itself is unreadable.
++   */
++  readBackup() {
++    const backupPath = `${this.routesPath}.bak`;
++    try {
++      if (!fs3.existsSync(backupPath)) {
++        return null;
++      }
++      const parsed = JSON.parse(fs3.readFileSync(backupPath, "utf-8"));
++      return Array.isArray(parsed) ? parsed : null;
+     } catch {
+-      return [];
++      return null;
+     }
+   }
+   saveRoutes(routes) {
+-    fs3.writeFileSync(this.routesPath, JSON.stringify(routes, null, 2), { mode: FILE_MODE });
++    const tmpPath = `${this.routesPath}.tmp-${process.pid}`;
++    try {
++      const serialized = JSON.stringify(routes, null, 2);
++      // Write to a temp file and rename: rename is atomic within a filesystem,
++      // so a reader (or a process killed mid-write) can never observe a
++      // half-written routes.json. This is the root fix — the unpatched
++      // writeFileSync truncates in place, and an interrupted write left a
++      // corrupt file that the next registration silently reset to a single
++      // route, wiping every other dev server's registration.
++      fs3.writeFileSync(tmpPath, serialized, { mode: FILE_MODE });
++      fs3.renameSync(tmpPath, this.routesPath);
++      // Keep a known-good snapshot for `readBackup()` recovery.
++      try {
++        fs3.writeFileSync(`${this.routesPath}.bak`, serialized, { mode: FILE_MODE });
++        fixOwnership(`${this.routesPath}.bak`);
++      } catch {
++      }
++    } catch (err) {
++      try {
++        fs3.rmSync(tmpPath, { force: true });
++      } catch {
++      }
++      throw err;
++    }
+     fixOwnership(this.routesPath);
+   }
+   /**

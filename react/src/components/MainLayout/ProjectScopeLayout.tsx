@@ -11,7 +11,8 @@ import {
 import { getRouteScopeAndKey } from '../../hooks/useRouteScope';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import ProjectScopeErrorState from './ProjectScopeErrorState';
-import { Button } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { Icon } from '@astryxdesign/core/Icon';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -98,17 +99,17 @@ const ProjectScopeLayout: React.FC = () => {
         projectName={projectName}
         featureKey={getRouteScopeAndKey(location.pathname).featureKey}
         extra={
+          // Same shape as Page404/ForbiddenPage: antd's `iconPosition="end"`
+          // has no Astryx counterpart — the trailing slot is `endContent`.
           <Button
-            type="primary"
-            size="large"
-            icon={<ArrowRightIcon size="1em" />}
-            iconPosition="end"
+            variant="primary"
+            size="lg"
+            endContent={<Icon icon={ArrowRightIcon} />}
+            label={t('projectSelect.GoToProject', { project: ownProject })}
             onClick={() =>
               webuiNavigate(buildPath('project', 'session', ownProject))
             }
-          >
-            {t('projectSelect.GoToProject', { project: ownProject })}
-          </Button>
+          />
         }
       />
     );

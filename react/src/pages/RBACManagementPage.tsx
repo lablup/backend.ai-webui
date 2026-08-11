@@ -10,6 +10,7 @@ import {
   RoleFilter,
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
+import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
 import RoleFormModal, { RBAC_ELEMENT_TYPES } from '../components/RoleFormModal';
@@ -20,8 +21,6 @@ import RoleNodes, {
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { DeleteFilled } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIButton,
   BAICard,
@@ -30,7 +29,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
-  BAIUserSelect,
+  BAIUserSelectAstryx,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -38,7 +37,7 @@ import {
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
-import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
@@ -275,18 +274,23 @@ const RBACManagementPage: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition }) => (
-                    <BAIUserSelect
+                    <BAIUserSelectAstryx
                       valuePropName="id"
                       value={null}
+                      label={t('rbac.AssignedUser')}
+                      isLabelHidden
                       onChange={(value, option) =>
                         // The picker emits the user UUID; forward the option
-                        // label (email) so the condition tag stays readable.
+                        // label (email) so the condition tag stays readable
+                        // (P3C-1 keeps the 2nd argument on this sibling).
                         onAddCondition(
                           value as string | undefined,
-                          option?.label,
+                          Array.isArray(option)
+                            ? option[0]?.label
+                            : option?.label,
                         )
                       }
-                      style={{ minWidth: 200 }}
+                      width={200}
                     />
                   ),
                 },
@@ -378,7 +382,7 @@ const RBACManagementPage: React.FC = () => {
                                 {
                                   key: 'purge',
                                   title: t('rbac.PurgeRole'),
-                                  icon: <DeleteFilled />,
+                                  icon: <Trash2 size="1em" />,
                                   type: 'danger' as const,
                                   onClick: () => handlePurgeRole(role),
                                 },

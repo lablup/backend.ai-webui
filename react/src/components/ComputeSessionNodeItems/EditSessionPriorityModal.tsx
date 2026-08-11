@@ -4,7 +4,10 @@
  */
 import { EditSessionPriorityModalFragment$key } from '../../__generated__/EditSessionPriorityModalFragment.graphql';
 import { EditSessionPriorityModalMutation } from '../../__generated__/EditSessionPriorityModalMutation.graphql';
-import { App, Form, FormInstance, InputNumber, Typography } from 'antd';
+import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
+import { AstryxFormNumberInput } from '../astryxFormControls';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIBulkEditFormItem,
   BAIFlex,
@@ -136,7 +139,6 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
       onOk={handleOk}
       onCancel={() => onRequestClose()}
       confirmLoading={isInFlight}
-      destroyOnHidden
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="md">
@@ -163,16 +165,17 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
                 )}
               />
             ) : (
-              <Typography.Text>{filteredSessions[0]?.name}</Typography.Text>
+              <Text>{filteredSessions[0]?.name}</Text>
             )}
           </Form.Item>
           {isBulkEdit ? (
             <BAIBulkEditFormItem label={t('session.Priority')} name="priority">
-              <InputNumber
+              <AstryxFormNumberInput
+                label={t('session.Priority')}
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}
-                precision={0}
-                style={{ width: '100%' }}
+                step={1}
+                isIntegerOnly
               />
             </BAIBulkEditFormItem>
           ) : (
@@ -186,11 +189,12 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
                 },
               ]}
             >
-              <InputNumber
+              <AstryxFormNumberInput
+                label={t('session.Priority')}
                 min={SESSION_PRIORITY_MIN}
                 max={SESSION_PRIORITY_MAX}
-                precision={0}
-                style={{ width: '100%' }}
+                step={1}
+                isIntegerOnly
               />
             </Form.Item>
           )}

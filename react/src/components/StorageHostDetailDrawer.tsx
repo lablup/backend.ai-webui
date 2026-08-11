@@ -4,13 +4,20 @@
  */
 import { StorageHostDetailDrawerFragment$key } from '../__generated__/StorageHostDetailDrawerFragment.graphql';
 import StorageHostDetailDrawerContent from './StorageHostDetailDrawerContent';
-import { Drawer, type DrawerProps, Skeleton } from 'antd';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { BAIFetchKeyButton } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface StorageHostDetailDrawerProps extends Omit<DrawerProps, 'title'> {
+// PILOT-DECISION: no longer extends antd `DrawerProps` (P1 grep — the only
+// consumer, StorageProxyList, passes `open`/`storageVolumeFrgmt`/
+// `onRefetchParentList`/`onRequestClose`). antd `Drawer` → lab `Drawer`
+// (MAPPING §2 LAB), same shape as the AgentDetailDrawer/
+// DeploymentRevisionDetailDrawer precedent (ticket 18): `open`→`isOpen`.
+interface StorageHostDetailDrawerProps {
+  open?: boolean;
   storageVolumeFrgmt?: StorageHostDetailDrawerFragment$key | null;
   /**
    * Callback to refetch the parent list query. The detail drawer reads the
@@ -24,10 +31,10 @@ interface StorageHostDetailDrawerProps extends Omit<DrawerProps, 'title'> {
 }
 
 const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
+  open = false,
   storageVolumeFrgmt,
   onRefetchParentList,
   onRequestClose,
-  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -50,11 +57,12 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
   };
 
   return (
-    <Drawer
-      title={t('storageHost.StorageHostInfo')}
-      size={900}
+    <BAIDrawer
+      open={open}
       onClose={onRequestClose}
-      {...drawerProps}
+      side="end"
+      size={900}
+      title={t('storageHost.StorageHostInfo')}
       extra={
         <BAIFetchKeyButton
           loading={isPendingRefetch}
@@ -63,14 +71,14 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
         />
       }
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {storageVolume?.storageVolumeFrgmt ? (
           <StorageHostDetailDrawerContent
             storageVolumeFrgmt={storageVolume.storageVolumeFrgmt}
           />
         ) : null}
       </Suspense>
-    </Drawer>
+    </BAIDrawer>
   );
 };
 

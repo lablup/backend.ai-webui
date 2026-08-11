@@ -7,7 +7,7 @@ import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
-import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
+import { AstryxSecondaryTheme } from '../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -15,7 +15,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { MenuKeys } from '../hooks/useWebUIMenuItems';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
-import { AppstoreAddOutlined } from '@ant-design/icons';
 import {
   filterOutEmpty,
   BAIFlex,
@@ -27,6 +26,7 @@ import {
   BAIAlert,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Grid2x2Plus } from 'lucide-react';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -217,16 +217,24 @@ const StartPage: React.FC = () => {
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
       data: {
+        // The deployment card takes the SECONDARY accent. This was
+        // `ThemeSecondaryProvider`, an antd `ConfigProvider` overriding
+        // `colorPrimary` — dead since `ActionItemContent` became Astryx.
+        // `AstryxSecondaryTheme` is the counterpart that reaches the Astryx
+        // `Button` again (ticket 02). The card's title/icon colours still come
+        // from the app-level theme-shim token object, which is not
+        // per-subtree, so they keep the brand accent — recorded in
+        // MERGE-CHECKLIST as a known partial-fidelity item.
         content: (
-          <ThemeSecondaryProvider>
+          <AstryxSecondaryTheme>
             <ActionItemContent
               title={t('start.StartDeployment')}
               description={t('start.StartDeploymentDesc')}
               buttonText={t('start.button.StartDeployment')}
-              icon={<AppstoreAddOutlined />}
+              icon={<Grid2x2Plus size="1em" />}
               onClick={() => webuiNavigate(buildProjectPath('deployments'))}
             />
-          </ThemeSecondaryProvider>
+          </AstryxSecondaryTheme>
         ),
       },
     },

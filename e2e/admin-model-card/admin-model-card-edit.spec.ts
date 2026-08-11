@@ -62,7 +62,7 @@ test.describe(
 
       // Select Access Level (required field). Access level options are "Private" (INTERNAL) and "Public".
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Access Level' })
         .locator('.ant-select-content')
         .click();
@@ -78,7 +78,7 @@ test.describe(
       // In antd v6, Form.Item tooltip icons contribute to the accessible name.
       // Use the form item container to locate the textbox by label text.
       await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Title' })
         .getByRole('textbox')
         .fill('Original Title');
@@ -198,7 +198,7 @@ test.describe(
       // Clear the Title field and type a new value.
       // In antd v6, tooltip icons alter the accessible name — use form item container.
       const titleInput = modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Title' })
         .getByRole('textbox');
       await titleInput.clear();
@@ -207,7 +207,7 @@ test.describe(
       // Change Access Level to Public. The form is long, so scroll the field into view
       // before opening the dropdown to ensure the option is also within the viewport.
       const accessLevelFormItem = modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Access Level' });
       await accessLevelFormItem.scrollIntoViewIfNeeded();
       await accessLevelFormItem.locator('.ant-select-content').click();
@@ -311,7 +311,7 @@ test.describe(
       // Change the Title to a value that should not be saved.
       // In antd v6, tooltip icons alter the accessible name — use form item container.
       const titleInput = modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .filter({ hasText: 'Title' })
         .getByRole('textbox');
       await titleInput.clear();

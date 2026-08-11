@@ -1,11 +1,12 @@
 'use memo';
 
 import BAIButton from './BAIButton';
+import BAICheckbox from './BAICheckbox';
 import BAIDeleteConfirmModal from './BAIDeleteConfirmModal';
 import BAIFlex from './BAIFlex';
-import { DeleteFilled, FolderOutlined } from '@ant-design/icons';
+import BAITag from './BAITag';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Checkbox, Space, Tag } from 'antd';
+import { Trash2, Folder } from 'lucide-react';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAIDeleteConfirmModal> = {
@@ -55,7 +56,11 @@ export const SingleItem: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete Item
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -82,7 +87,11 @@ export const SingleItemWithInput: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete (Confirm Required)
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -111,7 +120,11 @@ export const WithTarget: Story = {
     const itemName = 'gpu-large-preset';
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete Resource Preset
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -150,7 +163,11 @@ export const MultipleItems: Story = {
     ];
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete 5 Items
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -181,7 +198,11 @@ export const ManyItems: Story = {
     }));
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete 50 Items
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -210,37 +231,41 @@ export const CustomRenderedItems: Story = {
       {
         key: '1',
         label: (
-          <Space>
-            <FolderOutlined />
+          <BAIFlex gap="xs" align="center">
+            <Folder size="1em" />
             <span>shared-dataset</span>
-            <Tag color="blue">Public</Tag>
-          </Space>
+            <BAITag color="blue">Public</BAITag>
+          </BAIFlex>
         ),
       },
       {
         key: '2',
         label: (
-          <Space>
-            <FolderOutlined />
+          <BAIFlex gap="xs" align="center">
+            <Folder size="1em" />
             <span>model-weights-v2</span>
-            <Tag color="red">Private</Tag>
-          </Space>
+            <BAITag color="red">Private</BAITag>
+          </BAIFlex>
         ),
       },
       {
         key: '3',
         label: (
-          <Space>
-            <FolderOutlined />
+          <BAIFlex gap="xs" align="center">
+            <Folder size="1em" />
             <span>training-logs</span>
-            <Tag color="green">Archived</Tag>
-          </Space>
+            <BAITag color="green">Archived</BAITag>
+          </BAIFlex>
         ),
       },
     ];
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete Folders
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -271,7 +296,11 @@ export const WithExtraContent: Story = {
     ];
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Purge Users
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -279,8 +308,8 @@ export const WithExtraContent: Story = {
           items={items}
           extraContent={
             <BAIFlex direction="column" align="start">
-              <Checkbox>Also delete shared folders</Checkbox>
-              <Checkbox>Terminate running sessions</Checkbox>
+              <BAICheckbox>Also delete shared folders</BAICheckbox>
+              <BAICheckbox>Terminate running sessions</BAICheckbox>
             </BAIFlex>
           }
           onOk={() => setOpen(false)}
@@ -304,7 +333,11 @@ export const Reversible: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Revoke User
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -340,7 +373,11 @@ export const ReversibleMultipleItems: Story = {
     ];
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Revoke 3 Users
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -373,7 +410,11 @@ export const LongTitle: Story = {
       'cr.backend.ai/testing/aimet:1.22.2-tf24-py38-cuda11.1-customized_274887c86af24173aa004423019dfcc5@x86_64';
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete Image
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -404,7 +445,11 @@ export const PlainItems: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Remove Permission
         </BAIButton>
         <BAIDeleteConfirmModal
@@ -481,7 +526,11 @@ export const EmptyItems: Story = {
     const [open, setOpen] = useState(false);
     return (
       <>
-        <BAIButton danger icon={<DeleteFilled />} onClick={() => setOpen(true)}>
+        <BAIButton
+          danger
+          icon={<Trash2 size="1em" />}
+          onClick={() => setOpen(true)}
+        >
           Delete (No Selection)
         </BAIButton>
         <BAIDeleteConfirmModal

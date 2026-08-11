@@ -16,9 +16,11 @@ import {
 } from '../../__generated__/FairShareListQuery.graphql';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
+import { theme } from '../../theme-shim';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from '../AutoUpdateFetchKeyButton';
+import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
   DomainFairShare,
@@ -37,9 +39,10 @@ import UserFairShareTable, {
   UserFairShare,
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { Alert, Skeleton, Steps, theme, Tooltip, Typography } from 'antd';
-import { createStyles } from 'antd-style';
-import { StepsProps } from 'antd/lib';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Step, Stepper } from '@astryxdesign/lab';
 import {
   BAIQuestionIconWithTooltip,
   BAIBackButton,
@@ -47,14 +50,13 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAISelectionLabel,
-  BAIText,
   BAIUnmountAfterClose,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Ban, ChartNoAxesCombined, SquarePenIcon } from 'lucide-react';
+import { ChartNoAxesCombined, SquarePenIcon } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
@@ -70,16 +72,6 @@ import {
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-const useStyles = createStyles(({ css, token }) => ({
-  step: css`
-    .ant-steps-item-finish,
-    .ant-steps-item-finish .ant-steps-panel-arrow > path {
-      background-color: ${token.colorBgContainerDisabled} !important;
-      fill: ${token.colorBgContainerDisabled} !important;
-    }
-  `,
-}));
 
 type FairShareStepKey = 'resource-group' | 'domain' | 'project' | 'user';
 
@@ -97,14 +89,34 @@ export type FairShareFilterVariables = {
   projectFilter?: RGProjectFairShareFilter;
   userFilter?: RGUserFairShareFilter;
 };
-type StepItem = NonNullable<StepsProps['items']>[number];
+/**
+ * PILOT-DECISION: antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2, verdict
+ * LAB; the canary is already in the graph for `Drawer`). `Step.label` and
+ * `Step.description` are required STRINGS (P2), so each antd `title` — a
+ * `BAIFlex` of "<section name>" plus a truncated "(<selected value>)" — splits
+ * into exactly those two slots. That is the split the mapping prescribes for
+ * ReactNode labels, and it drops the hand-built ellipsis/tooltip because
+ * `Step` truncates its own description.
+ *
+ * Also dropped with the antd component: `type="panel"` (the arrow-chevron
+ * panel skin, which has no Astryx counterpart — `Stepper` draws a progress
+ * track), the per-item `icon={<Ban />}` on unreachable steps (`isDisabled`
+ * already communicates it, and `Step` owns its indicator), and
+ * `styles.itemTitle`. `FairShareList.css` existed ONLY to repaint
+ * `.ant-steps-item-finish`, so it dies with the component (P6).
+ */
+type StepItem = {
+  key: FairShareStepKey;
+  label: string;
+  description?: string;
+  onClick?: () => void;
+};
 
 const FairShareList: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
 
   const [selectedRows, setSelectedRows] = useState<
     Array<DomainFairShare | ProjectFairShare | UserFairShare>
@@ -352,39 +364,13 @@ const FairShareList: React.FC = () => {
   )?.node;
   const selectedProjectName = project?.basicInfo?.name || '';
 
-  const stepItems: Array<StepItem & { key: FairShareStepKey }> = [
+  const stepItems: Array<StepItem> = [
     {
       key: 'resource-group',
-      title: (
-        <BAIFlex gap="xxs" align="end">
-          <BAIText
-            style={{
-              fontSize: 'inherit',
-              color: 'inherit',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-            }}
-          >
-            {t('fairShare.ResourceGroup')}
-          </BAIText>
-          {deferredStepQueryParams.resourceGroup && (
-            <BAIText
-              type="secondary"
-              ellipsis={{
-                tooltip: {
-                  title: deferredStepQueryParams.resourceGroup,
-                },
-              }}
-              style={{
-                maxWidth: '100%',
-                minWidth: 0,
-              }}
-            >
-              {`(${deferredStepQueryParams.resourceGroup})`}
-            </BAIText>
-          )}
-        </BAIFlex>
-      ),
+      label: t('fairShare.ResourceGroup'),
+      description: deferredStepQueryParams.resourceGroup
+        ? `(${deferredStepQueryParams.resourceGroup})`
+        : undefined,
       onClick: () => {
         setStepQueryParams({
           resourceGroup: null,
@@ -395,35 +381,10 @@ const FairShareList: React.FC = () => {
     },
     {
       key: 'domain',
-      title: (
-        <BAIFlex gap="xxs" align="end">
-          <BAIText
-            style={{
-              fontSize: 'inherit',
-              color: 'inherit',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-            }}
-          >
-            {t('fairShare.Domain')}
-          </BAIText>
-          <BAIText
-            type="secondary"
-            ellipsis={{
-              tooltip: {
-                title: deferredStepQueryParams.domain,
-              },
-            }}
-            style={{
-              minWidth: 0,
-              flex: 1,
-            }}
-          >
-            {deferredStepQueryParams.domain &&
-              `(${deferredStepQueryParams.domain})`}
-          </BAIText>
-        </BAIFlex>
-      ),
+      label: t('fairShare.Domain'),
+      description: deferredStepQueryParams.domain
+        ? `(${deferredStepQueryParams.domain})`
+        : undefined,
       onClick: () => {
         setStepQueryParams({
           domain: null,
@@ -433,40 +394,17 @@ const FairShareList: React.FC = () => {
     },
     {
       key: 'project',
-      title: (
-        <BAIFlex gap="xxs" align="end">
-          <BAIText
-            style={{
-              fontSize: 'inherit',
-              color: 'inherit',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-            }}
-          >
-            {t('fairShare.Project')}
-          </BAIText>
-          <BAIText
-            type="secondary"
-            ellipsis={{
-              tooltip: { title: selectedProjectName },
-            }}
-            style={{
-              minWidth: 0,
-              flex: 1,
-            }}
-          >
-            {deferredStepQueryParams.project && `(${selectedProjectName})`}
-          </BAIText>
-        </BAIFlex>
-      ),
-
+      label: t('fairShare.Project'),
+      description: deferredStepQueryParams.project
+        ? `(${selectedProjectName})`
+        : undefined,
       onClick: () => {
         setStepQueryParams({
           project: null,
         });
       },
     },
-    { key: 'user', title: t('fairShare.User') },
+    { key: 'user', label: t('fairShare.User') },
   ];
 
   const getNavigateTo = () => {
@@ -522,12 +460,11 @@ const FairShareList: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      <Alert
-        type="warning"
+      <Banner
+        status="warning"
         title={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
           resourceGroup: selectedResourceGroupNode?.name || '',
         })}
-        showIcon
         style={{
           display:
             !selectedResourceGroupNode?.name ||
@@ -545,33 +482,34 @@ const FairShareList: React.FC = () => {
           />
         </Suspense>
       )}
-      <Alert type="info" title={t('fairShare.step.Description')} showIcon />
-      <Steps
-        className={styles.step}
-        type="panel"
-        current={stepItems.findIndex((item) => item.key === currentStep)}
-        onChange={() => {
+      <Banner status="info" title={t('fairShare.step.Description')} />
+      <Stepper
+        label={t('fairShare.step.Description')}
+        activeStep={stepItems.findIndex((item) => item.key === currentStep)}
+        onStepClick={(index) => {
+          // antd fired `onChange` (reset filters/paging) AND the per-item
+          // `onClick` (clear that level's query params); `Stepper` has one
+          // callback, so both run here.
           setQueryParams({
             order: null,
             filter: null,
           });
           setTablePaginationOption({ current: 1 });
+          stepItems[index]?.onClick?.();
         }}
-        items={_.map(stepItems, (item, idx) => ({
-          ...item,
-          disabled:
-            idx > stepItems.findIndex((item) => item.key === currentStep),
-          icon:
-            idx > stepItems.findIndex((item) => item.key === currentStep) ? (
-              <Ban />
-            ) : undefined,
-        }))}
-        styles={{
-          itemTitle: {
-            overflow: 'hidden',
-          },
-        }}
-      />
+      >
+        {_.map(stepItems, (item, idx) => (
+          <Step
+            key={item.key}
+            step={idx}
+            label={item.label}
+            description={item.description}
+            isDisabled={
+              idx > stepItems.findIndex((step) => step.key === currentStep)
+            }
+          />
+        ))}
+      </Stepper>
 
       <BAIFlex direction="column" align="stretch" gap="xs">
         <FairShareListTitle
@@ -633,8 +571,9 @@ const FairShareList: React.FC = () => {
                   onClearSelection={() => setSelectedRows([])}
                 />
                 <Tooltip
-                  title={t('general.ShowUsageGraph')}
-                  placement="topLeft"
+                  content={t('general.ShowUsageGraph')}
+                  placement="above"
+                  alignment="start"
                 >
                   <BAIButton
                     icon={
@@ -645,7 +584,11 @@ const FairShareList: React.FC = () => {
                     }}
                   />
                 </Tooltip>
-                <Tooltip title={t('general.BulkEdit')} placement="topLeft">
+                <Tooltip
+                  content={t('general.BulkEdit')}
+                  placement="above"
+                  alignment="start"
+                >
                   <BAIButton
                     icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                     onClick={() => {
@@ -667,7 +610,7 @@ const FairShareList: React.FC = () => {
           </BAIFlex>
         </BAIFlex>
 
-        <Suspense fallback={<Skeleton active />}>
+        <Suspense fallback={<BAISkeletonAstryx />}>
           {currentStep === 'resource-group' && (
             <ResourceGroupFairShareTable
               resourceGroupNodeFragment={
@@ -691,9 +634,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: resourceGroups?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({
@@ -741,9 +681,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: domainFairShares?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({
@@ -791,9 +728,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: projectFairShares?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({
@@ -832,9 +766,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: userFairShares?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({
@@ -922,7 +853,12 @@ const FairShareListTitle: React.FC<{
   return (
     <BAIFlex gap={'xs'}>
       {currentStep !== 'resource-group' && <BAIBackButton to={navigateTo} />}
-      <Typography.Title level={4} style={{ margin: 0 }}>
+      {/* antd `Typography.Title level={4}` (20px) -> Astryx `Heading`
+          (MAPPING §4: every `level` is a visual decision, not a rename).
+          `level={2}` was the 20px rung of Astryx's own ramp; on the restored
+          antd ramp (`ANTD_ALIGN_TOKENS`, 38/30/24/20/16) 20px is heading-4,
+          and heading-2 is 30px. */}
+      <Heading level={4} style={{ margin: 0 }}>
         {currentStep === 'resource-group'
           ? t('fairShare.ResourceGroup')
           : currentStep === 'domain'
@@ -930,7 +866,7 @@ const FairShareListTitle: React.FC<{
             : currentStep === 'project'
               ? t('fairShare.Project')
               : t('fairShare.User')}
-      </Typography.Title>
+      </Heading>
       <BAIQuestionIconWithTooltip
         style={{
           fontSize: token.fontSizeHeading4,

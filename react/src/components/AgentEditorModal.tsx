@@ -2,6 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+// `Form` state engine stays (SHIM); visuals are BAIFormItem.
+import { Form } from '../form-engine';
 import {
   AgentEndpointBinding,
   AgentProfile,
@@ -12,28 +15,26 @@ import {
   ToolPermission,
   useAIAgent,
 } from '../hooks/useAIAgent';
+import BAIFormItem from './BAIFormItem';
 import {
-  App,
-  Alert,
-  Divider,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  Switch,
-  Typography,
-} from 'antd';
+  AstryxFormSegmented,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Code } from '@astryxdesign/core/Code';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
   generateRandomString,
 } from 'backend.ai-ui';
+import { isEmpty, map, split, trim } from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-
-const { TextArea } = Input;
 
 type ConnectionType = 'backendai' | 'external';
 
@@ -53,12 +54,30 @@ interface AgentFormValues {
   apiKey: string;
 }
 
-const TOOL_PERMISSIONS: ToolPermission[] = [
-  'always_allow',
-  'ask_once',
-  'ask_always',
-  'never_allow',
-];
+// PILOT-DECISION: antd `Select mode="tags"` (free-entry chip input, no
+// dropdown — `open={false}`) maps to Astryx `Tokenizer` (MAPPING.md §3.1),
+// which is a real composition (`SearchSource`, `tokenSeparators` has no
+// equivalent). Simplified to a comma-separated `TextInput` for this single
+// low-stakes field (agent catalog tags) — simplicity policy.
+const AgentTagsInput: React.FC<{
+  value?: string[];
+  onChange?: (value: string[]) => void;
+}> = ({ value, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <AstryxFormTextInput
+      label={t('aiAgent.Tags')}
+      placeholder={t('aiAgent.TagsPlaceholder')}
+      value={(value ?? []).join(', ')}
+      onChange={(text) =>
+        onChange?.(
+          map(split(text, /[,\s]+/), trim).filter((tag) => !isEmpty(tag)),
+        )
+      }
+    />
+  );
+};
 
 interface AgentEditorModalProps extends Omit<
   BAIModalProps,
@@ -240,9 +259,8 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
       {...modalProps}
     >
       {isBuiltin && (
-        <Alert
-          type="info"
-          showIcon
+        <Banner
+          status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.BuiltinReadonlyTitle')}
           description={t('aiAgent.BuiltinReadonlyDescription')}
@@ -254,32 +272,27 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
         preserve={false}
         initialValues={initialValues}
       >
-        <Form.Item
+        <BAIFormItem
           label={t('aiAgent.Name')}
           name="name"
           rules={[{ required: true, message: t('aiAgent.NameRequired') }]}
         >
-          <Input />
-        </Form.Item>
+          <AstryxFormTextInput label={t('aiAgent.Name')} />
+        </BAIFormItem>
 
-        <Form.Item label={t('aiAgent.Icon')} name="icon">
-          <Input placeholder="🤖" />
-        </Form.Item>
+        <BAIFormItem label={t('aiAgent.Icon')} name="icon">
+          <AstryxFormTextInput label={t('aiAgent.Icon')} placeholder="🤖" />
+        </BAIFormItem>
 
-        <Form.Item label={t('aiAgent.Description')} name="description">
-          <TextArea rows={2} />
-        </Form.Item>
+        <BAIFormItem label={t('aiAgent.Description')} name="description">
+          <AstryxFormTextArea label={t('aiAgent.Description')} rows={2} />
+        </BAIFormItem>
 
-        <Form.Item label={t('aiAgent.Tags')} name="tags">
-          <Select
-            mode="tags"
-            tokenSeparators={[',', ' ']}
-            open={false}
-            suffixIcon={null}
-          />
-        </Form.Item>
+        <BAIFormItem label={t('aiAgent.Tags')} name="tags">
+          <AgentTagsInput />
+        </BAIFormItem>
 
-        <Form.Item
+        <BAIFormItem
           label={t('aiAgent.SystemPrompt')}
           name="systemPrompt"
           rules={[
@@ -287,52 +300,58 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
           ]}
           tooltip={t('aiAgent.SystemPromptTooltip')}
         >
-          <TextArea rows={6} />
-        </Form.Item>
+          <AstryxFormTextArea label={t('aiAgent.SystemPrompt')} rows={6} />
+        </BAIFormItem>
 
-        <Form.Item
+        <BAIFormItem
           label={t('aiAgent.Instructions')}
           name="instructions"
           tooltip={t('aiAgent.InstructionsTooltip')}
         >
-          <TextArea rows={3} />
-        </Form.Item>
+          <AstryxFormTextArea label={t('aiAgent.Instructions')} rows={3} />
+        </BAIFormItem>
 
-        <Form.Item
+        <BAIFormItem
           label={t('aiAgent.PreferredModelId')}
           name="preferredModelId"
           tooltip={t('aiAgent.PreferredModelIdTooltip')}
         >
-          <Input placeholder={t('aiAgent.PreferredModelIdPlaceholder')} />
-        </Form.Item>
+          <AstryxFormTextInput
+            label={t('aiAgent.PreferredModelId')}
+            placeholder={t('aiAgent.PreferredModelIdPlaceholder')}
+          />
+        </BAIFormItem>
 
-        <Divider titlePlacement="left">{t('aiAgent.Connection')}</Divider>
+        {/* PILOT-DECISION: antd `Divider titlePlacement="left"` — the label
+            position (as opposed to centered) has no destination on Astryx
+            `Divider` (MAPPING.md §4 — `orientation="left"|"right"` is NONE).
+            The label itself (`children`) survives. */}
+        <Divider>{t('aiAgent.Connection')}</Divider>
 
-        <Form.Item label={t('aiAgent.ConnectionType')} name="connectionType">
-          <Radio.Group>
-            <Radio.Button value="backendai">
-              {t('aiAgent.BackendAIEndpoint')}
-            </Radio.Button>
-            <Radio.Button value="external">
-              {t('aiAgent.ExternalEndpoint')}
-            </Radio.Button>
-          </Radio.Group>
-        </Form.Item>
+        <BAIFormItem label={t('aiAgent.ConnectionType')} name="connectionType">
+          <AstryxFormSegmented
+            label={t('aiAgent.ConnectionType')}
+            options={[
+              { value: 'backendai', label: t('aiAgent.BackendAIEndpoint') },
+              { value: 'external', label: t('aiAgent.ExternalEndpoint') },
+            ]}
+          />
+        </BAIFormItem>
 
         {connectionType === 'backendai' && (
           <>
-            <Form.Item label={t('aiAgent.EndpointName')} name="endpoint">
-              <Input />
-            </Form.Item>
-            <Form.Item label={t('aiAgent.EndpointId')} name="endpointId">
-              <Input />
-            </Form.Item>
+            <BAIFormItem label={t('aiAgent.EndpointName')} name="endpoint">
+              <AstryxFormTextInput label={t('aiAgent.EndpointName')} />
+            </BAIFormItem>
+            <BAIFormItem label={t('aiAgent.EndpointId')} name="endpointId">
+              <AstryxFormTextInput label={t('aiAgent.EndpointId')} />
+            </BAIFormItem>
           </>
         )}
 
         {connectionType === 'external' && (
           <>
-            <Form.Item
+            <BAIFormItem
               label={t('aiAgent.EndpointUrl')}
               name="endpointUrl"
               rules={[
@@ -353,110 +372,131 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
                 },
               ]}
             >
-              <Input placeholder="https://api.example.com/v1" />
-            </Form.Item>
-            <Form.Item label={t('aiAgent.ApiKey')} name="apiKey">
-              <Input.Password
-                autoComplete="new-password"
+              <AstryxFormTextInput
+                label={t('aiAgent.EndpointUrl')}
+                placeholder="https://api.example.com/v1"
+              />
+            </BAIFormItem>
+            <BAIFormItem label={t('aiAgent.ApiKey')} name="apiKey">
+              <AstryxFormTextInput
+                label={t('aiAgent.ApiKey')}
+                type="password"
                 placeholder={t('aiAgent.ApiKeyPlaceholder')}
               />
-            </Form.Item>
+            </BAIFormItem>
           </>
         )}
 
-        <Divider titlePlacement="left">{t('aiAgent.ToolConfig')}</Divider>
-        <Alert
-          type="info"
-          showIcon
+        <Divider>{t('aiAgent.ToolConfig')}</Divider>
+        <Banner
+          status="info"
           style={{ marginBottom: 16 }}
           title={t('aiAgent.ToolCallingComingSoonTitle')}
           description={t('aiAgent.ToolCallingComingSoonDescription')}
         />
 
-        <Form.Item label={t('aiAgent.EnabledTools')}>
-          <Select
-            mode="tags"
-            value={toolConfig.enabledTools ?? []}
-            open={false}
-            suffixIcon={null}
-            disabled
-          />
-        </Form.Item>
-        <Form.Item label={t('aiAgent.DisabledTools')}>
-          <Select
-            mode="tags"
-            value={toolConfig.disabledTools ?? []}
-            open={false}
-            suffixIcon={null}
-            disabled
-          />
-        </Form.Item>
-        <Form.Item label={t('aiAgent.ToolPermissionOverrides')}>
+        {/* PILOT-DECISION: these fields are all `disabled` in the original —
+            non-editable catalog display, not real form-bound inputs (no
+            `name`). Simplified to plain read-only `ReadOnlyField` rows
+            instead of disabled Select/InputNumber/Switch controls
+            (simplicity policy — a disabled interactive control that can
+            never be interacted with is just a styled label). */}
+        <ReadOnlyField
+          label={t('aiAgent.EnabledTools')}
+          value={
+            toolConfig.enabledTools?.length
+              ? toolConfig.enabledTools.join(', ')
+              : undefined
+          }
+          placeholder={t('aiAgent.NotConfigured')}
+        />
+        <ReadOnlyField
+          label={t('aiAgent.DisabledTools')}
+          value={
+            toolConfig.disabledTools?.length
+              ? toolConfig.disabledTools.join(', ')
+              : undefined
+          }
+          placeholder={t('aiAgent.NotConfigured')}
+        />
+        <BAIFormItem label={t('aiAgent.ToolPermissionOverrides')}>
           <ToolPermissionsTable
             permissions={toolConfig.toolPermissionOverrides ?? {}}
           />
-        </Form.Item>
+        </BAIFormItem>
 
-        <Divider titlePlacement="left">{t('aiAgent.ModelPreferences')}</Divider>
+        <Divider>{t('aiAgent.ModelPreferences')}</Divider>
 
-        <Form.Item label={t('aiAgent.MinContextWindow')}>
-          <InputNumber
-            value={modelPreferences.minContextWindow ?? undefined}
-            style={{ width: '100%' }}
-            disabled
-            placeholder={t('aiAgent.NotConfigured')}
-          />
-        </Form.Item>
+        <ReadOnlyField
+          label={t('aiAgent.MinContextWindow')}
+          value={modelPreferences.minContextWindow ?? undefined}
+          placeholder={t('aiAgent.NotConfigured')}
+        />
         <BAIFlex gap="md" align="center">
-          <Typography.Text>{t('aiAgent.RequiresToolCalling')}</Typography.Text>
+          <Text>{t('aiAgent.RequiresToolCalling')}</Text>
           <Switch
-            checked={modelPreferences.requiresToolCalling ?? false}
-            disabled
+            value={modelPreferences.requiresToolCalling ?? false}
+            label={t('aiAgent.RequiresToolCalling')}
+            isLabelHidden
+            isDisabled
           />
         </BAIFlex>
         <BAIFlex gap="md" align="center" style={{ marginTop: 8 }}>
-          <Typography.Text>{t('aiAgent.RequiresVision')}</Typography.Text>
-          <Switch checked={modelPreferences.requiresVision ?? false} disabled />
+          <Text>{t('aiAgent.RequiresVision')}</Text>
+          <Switch
+            value={modelPreferences.requiresVision ?? false}
+            label={t('aiAgent.RequiresVision')}
+            isLabelHidden
+            isDisabled
+          />
         </BAIFlex>
 
-        <Divider titlePlacement="left">
-          {t('aiAgent.SettingsOverrides')}
-        </Divider>
+        <Divider>{t('aiAgent.SettingsOverrides')}</Divider>
 
-        <Form.Item label={t('aiAgent.MaxIterations')}>
-          <InputNumber
-            value={settingsOverrides.maxIterations ?? undefined}
-            style={{ width: '100%' }}
-            disabled
-            placeholder={t('aiAgent.NotConfigured')}
-          />
-        </Form.Item>
-        <Form.Item label={t('aiAgent.MaxToolCalls')}>
-          <InputNumber
-            value={settingsOverrides.maxToolCalls ?? undefined}
-            style={{ width: '100%' }}
-            disabled
-            placeholder={t('aiAgent.NotConfigured')}
-          />
-        </Form.Item>
-        <Form.Item label={t('aiAgent.DefaultTimeoutSeconds')}>
-          <InputNumber
-            value={settingsOverrides.defaultTimeout ?? undefined}
-            style={{ width: '100%' }}
-            disabled
-            placeholder={t('aiAgent.NotConfigured')}
-          />
-        </Form.Item>
-        <Form.Item label={t('aiAgent.ContextCompressionThreshold')}>
-          <InputNumber
-            value={settingsOverrides.contextCompressionThreshold ?? undefined}
-            style={{ width: '100%' }}
-            disabled
-            placeholder={t('aiAgent.NotConfigured')}
-          />
-        </Form.Item>
+        <ReadOnlyField
+          label={t('aiAgent.MaxIterations')}
+          value={settingsOverrides.maxIterations ?? undefined}
+          placeholder={t('aiAgent.NotConfigured')}
+        />
+        <ReadOnlyField
+          label={t('aiAgent.MaxToolCalls')}
+          value={settingsOverrides.maxToolCalls ?? undefined}
+          placeholder={t('aiAgent.NotConfigured')}
+        />
+        <ReadOnlyField
+          label={t('aiAgent.DefaultTimeoutSeconds')}
+          value={settingsOverrides.defaultTimeout ?? undefined}
+          placeholder={t('aiAgent.NotConfigured')}
+        />
+        <ReadOnlyField
+          label={t('aiAgent.ContextCompressionThreshold')}
+          value={settingsOverrides.contextCompressionThreshold ?? undefined}
+          placeholder={t('aiAgent.NotConfigured')}
+        />
       </Form>
     </BAIModal>
+  );
+};
+
+interface ReadOnlyFieldProps {
+  label: string;
+  value?: React.ReactNode;
+  placeholder?: string;
+}
+
+const ReadOnlyField: React.FC<ReadOnlyFieldProps> = ({
+  label,
+  value,
+  placeholder,
+}) => {
+  'use memo';
+  const hasValue = value !== undefined && value !== null && value !== '';
+  return (
+    <BAIFormItem label={label}>
+      <Text color={hasValue ? undefined : 'secondary'}>
+        {hasValue ? value : placeholder}
+      </Text>
+    </BAIFormItem>
   );
 };
 
@@ -473,27 +513,15 @@ const ToolPermissionsTable: React.FC<ToolPermissionsTableProps> = ({
   const entries = Object.entries(permissions);
 
   if (entries.length === 0) {
-    return (
-      <Typography.Text type="secondary">
-        {t('aiAgent.NoToolPermissions')}
-      </Typography.Text>
-    );
+    return <Text color="secondary">{t('aiAgent.NoToolPermissions')}</Text>;
   }
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       {entries.map(([tool, permission]) => (
         <BAIFlex key={tool} gap="sm" align="center" justify="between">
-          <Typography.Text code>{tool}</Typography.Text>
-          <Select
-            value={permission}
-            options={TOOL_PERMISSIONS.map((p) => ({
-              label: p,
-              value: p,
-            }))}
-            disabled
-            style={{ minWidth: 160 }}
-          />
+          <Code>{tool}</Code>
+          <Text color="secondary">{permission}</Text>
         </BAIFlex>
       ))}
     </BAIFlex>

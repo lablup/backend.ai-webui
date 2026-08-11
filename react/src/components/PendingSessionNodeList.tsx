@@ -7,18 +7,21 @@ import {
   PendingSessionNodeListQuery$data,
   PendingSessionNodeListQuery$variables,
 } from '../__generated__/PendingSessionNodeListQuery.graphql';
+import { Form } from '../form-engine';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
-import { Button, Form, Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlert,
+  BAIButton,
   BAIFlex,
   BAISelectionLabel,
   BAIUnmountAfterClose,
@@ -40,6 +43,7 @@ type PendingSessionNode = NonNullableNodeOnEdges<
 const PendingSessionNodeList: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   // Editing priority is only safe on managers that sequence all pending
   // workloads in a single scheduling tick (BA-6788, backend.ai#12668,
@@ -151,9 +155,13 @@ const PendingSessionNodeList: React.FC = () => {
                 count={selectedSessionList.length}
                 onClearSelection={() => setSelectedSessionList([])}
               />
-              <Tooltip title={t('button.Settings')} placement="topLeft">
-                <Button
-                  icon={<SettingsIcon />}
+              <Tooltip
+                content={t('button.Settings')}
+                placement="above"
+                alignment="start"
+              >
+                <BAIButton
+                  icon={<SettingsIcon style={{ color: token.colorInfo }} />}
                   onClick={() => {
                     setOpenBulkEditPriorityModal(true);
                   }}

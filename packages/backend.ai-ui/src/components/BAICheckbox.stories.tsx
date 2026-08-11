@@ -1,9 +1,10 @@
 'use memo';
 
+import { Form } from '../form-engine';
+import BAIButton from './BAIButton';
 import BAICheckbox from './BAICheckbox';
 import BAIFlex from './BAIFlex';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Form } from 'antd';
 
 const meta: Meta<typeof BAICheckbox> = {
   title: 'Input/BAICheckbox',
@@ -46,11 +47,11 @@ const FormErrorExample = () => {
             Toggle me to clear the error
           </BAICheckbox>
         </Form.Item>
-        <Button
+        <BAIButton
           onClick={() => form.setFields([{ name: 'agree', errors: [''] }])}
         >
           Mark field as error
-        </Button>
+        </BAIButton>
       </BAIFlex>
     </Form>
   );
