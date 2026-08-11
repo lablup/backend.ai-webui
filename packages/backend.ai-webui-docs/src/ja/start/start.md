@@ -123,12 +123,18 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 :::
 
 ![](../images/start_from_url_huggingface.png)
-<!-- TODO(screenshot): start_from_url_huggingface.png now shows helper text under the Model Folder field -->
 
 1. **Hugging Face モデルの URL または ID**フィールドにモデルを入力します。
    `https://huggingface.co/openai/gpt-oss-20b`のようなモデルページのURLと、
    `openai/gpt-oss-20b`のようなモデルIDのどちらも使用できます。データセットや
    スペースなど、モデル以外のページのアドレスは受け付けられません
+
+   フィールドに有効なモデルを入力すると、しばらくしてダイアログが Hugging Face
+   でモデルを照会し（確認中はローディング表示が出ます）、インポートを開始する
+   前にフィールドの下にプレビューカードを表示します。カードには、Hugging Face
+   のモデルページへのリンクになったモデルID、モデルのタスクおよびライブラリの
+   タグ、サイズ、更新日時が表示されます
+
 2. 必要に応じて**Revision**にダウンロードするモデルリポジトリのブランチ、タグ、
    またはコミットを入力します。空欄のままにするとデフォルトのリビジョンが
    ダウンロードされます。入力したアドレスにリビジョンが含まれている場合は、その

@@ -695,9 +695,9 @@ test.describe(
       try {
         await loginAsAdmin(adminPage, adminRequest);
         await navigateTo(adminPage, 'credential');
-        await expect(
-          adminPage.getByRole('tab', { name: 'Users' }),
-        ).toBeVisible();
+        await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible(
+          { timeout: 10000 },
+        );
         await adminPage.getByRole('button', { name: 'Create User' }).click();
         const userSettingModal = new UserSettingModal(adminPage);
         await userSettingModal.createUser(

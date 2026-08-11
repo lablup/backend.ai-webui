@@ -114,12 +114,18 @@ Markdown 뱃지 코드를 복사하여 프로젝트 문서에 바로 실행 링�
 :::
 
 ![](../images/start_from_url_huggingface.png)
-<!-- TODO(screenshot): start_from_url_huggingface.png now shows helper text under the Model Folder field -->
 
 1. **Hugging Face 모델 URL 또는 ID** 필드에 모델을 입력합니다.
    `https://huggingface.co/openai/gpt-oss-20b`와 같은 모델 페이지 URL과
    `openai/gpt-oss-20b`와 같은 모델 ID를 모두 사용할 수 있습니다. 데이터셋,
    스페이스 등 모델이 아닌 페이지의 주소는 허용되지 않습니다.
+
+   필드에 유효한 모델을 입력하면 잠시 후 대화상자가 Hugging Face에서 모델을
+   조회합니다. 확인하는 동안 로딩 표시가 나타나며, 가져오기를 시작하기 전에
+   필드 아래에 미리보기 카드를 표시합니다. 카드에는 Hugging Face 페이지로
+   연결되는 모델 ID 링크, 모델의 작업 및 라이브러리 태그, 크기,
+   수정일이 표시됩니다.
+
 2. 필요한 경우 **리비전**에 다운로드할 모델 저장소의 브랜치, 태그 또는 커밋을
    입력합니다. 비워 두면 기본 리비전을 다운로드하며, 입력한 주소에 리비전이
    포함되어 있으면 해당 리비전을 사용합니다.

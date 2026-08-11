@@ -220,6 +220,13 @@ test.describe(
       // In Ant Design 6, use role-based selector for dialog
       const modal = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modal).toBeVisible();
+      // Gate on the always-rendered Add button rather than the first app
+      // form-item: an image whose `ai.backend.service-ports` label is absent
+      // legitimately opens the modal with zero apps, and the baseline count
+      // must stay valid in that case.
+      await expect(
+        modal.getByRole('button', { name: 'Add', exact: true }),
+      ).toBeVisible();
       // ManageAppsModal.tsx renders one un-`noStyle` outer `BAIFormItem` per
       // app row (`[data-bai-form-item]`); the 3 nested per-field
       // BAIFormItems inside it are all `noStyle` and render no DOM of their
@@ -252,7 +259,38 @@ test.describe(
         await page.getByRole('button', { name: 'OK' }).nth(1).click();
       }
 
-      // Verify app is added
+      // Verify app is added. Reopening the modal picks up whatever row
+      // reference the list currently holds; a click made before the
+      // post-submit refetch resolves captures the *pre-add* row and (since
+      // the modal is `destroyOnHidden`) freezes on stale data rather than
+      // updating in place. Poll the full reopen+read+close cycle — not just
+      // an assertion on an already-open modal — until the refetch lands.
+      const openManageAppsModalAndCountApps = async () => {
+        await firstRow
+          .locator('.ant-table-cell')
+          .nth(controlColumnIndex)
+          .getByRole('button', { name: 'appstore' })
+          .click();
+        const dialog = page.getByRole('dialog', { name: /Manage Apps/i });
+        await expect(dialog).toBeVisible();
+        // `[data-bai-form-item]`, not main's `.ant-form-item`: this helper
+        // arrives with the main merge, and that class does not exist on this
+        // branch (antd is gone; `scripts/antd-zero-gate.sh` asserts it), so the
+        // locator would match nothing and this poll would compare a constant 0.
+        const count = await dialog.locator('[data-bai-form-item]').count();
+        await dialog.getByRole('button', { name: 'Cancel' }).click();
+        await expect(dialog).toBeHidden();
+        return count;
+      };
+      await expect
+        .poll(openManageAppsModalAndCountApps, {
+          message: 'Waiting for the added app row to appear after refetch',
+          timeout: 20000,
+        })
+        .toBe(numberOfAppsBeforeAdd + 1);
+
+      // Reopen once more now that the refetched data is confirmed fresh, to
+      // assert on the added row's field values and perform cleanup.
       await firstRow
         .locator('.ant-table-cell')
         .nth(controlColumnIndex)
@@ -264,6 +302,11 @@ test.describe(
       // Retry the count assertion: the freshly-reopened modal renders its
       // app form-items asynchronously, so a one-shot `.count()` can read the
       // old total before the added row mounts (flaky off by one).
+      //
+      // The selector stays `[data-bai-form-item]`: main's `.ant-form-item`
+      // class does not exist on this branch — antd is gone and
+      // `scripts/antd-zero-gate.sh` asserts it — so that locator would match
+      // nothing and the assertion would fail on an empty set.
       await expect(modalAfterAdd.locator('[data-bai-form-item]')).toHaveCount(
         numberOfAppsBeforeAdd + 1,
       );
