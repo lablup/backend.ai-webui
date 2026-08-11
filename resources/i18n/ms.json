@@ -2810,6 +2810,7 @@
       "ConfirmAndRun": "Saya periksa dan saya akan mulakan",
       "ConnectUrlIsNotValid": "URL Sambung tidak sah.",
       "DownloadSSHKey": "Muat turun Kunci SSH",
+      "FailedToStartAppService": "Gagal memulakan perkhidmatan aplikasi.",
       "LaunchingApp": "Menjalankan aplikasi {{appName}}.",
       "NoExistingConnectionExample": "Tiada Contoh Sambungan untuk disalin.",
       "OpenVSCodeRemote": "Buka Kod Visual Studio tempatan",

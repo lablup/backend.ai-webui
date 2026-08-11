@@ -2810,6 +2810,7 @@
       "ConfirmAndRun": "Tarkistin ja aloitan",
       "ConnectUrlIsNotValid": "Yhteyden URL-osoite ei kelpaa.",
       "DownloadSSHKey": "Lataa SSH-avain",
+      "FailedToStartAppService": "Sovelluspalvelun käynnistäminen epäonnistui.",
       "LaunchingApp": "Käynnistetään {{appName}}-sovellusta.",
       "NoExistingConnectionExample": "Ei yhteyttä Kopioitava esimerkki.",
       "OpenVSCodeRemote": "Avaa paikallinen Visual Studio Code",

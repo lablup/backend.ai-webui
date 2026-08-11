@@ -200,7 +200,7 @@ export const useBackendAIAppLauncher = (
     const response = await sendRequest(rqst);
     if (response === undefined) {
       throw new AppLaunchError(
-        'Proxy configurator is not responding.',
+        t('session.launcher.ProxyConfiguratorNotResponding'),
         'configuring',
       );
     }
@@ -243,8 +243,11 @@ export const useBackendAIAppLauncher = (
       );
 
       if (tokenResponse === undefined) {
+        // The manager answered but without a token payload. This is NOT the
+        // proxy configurator (v1 `/conf`) case — the AppProxy coordinator has
+        // not been contacted at this point in the flow (FR-3478).
         throw new AppLaunchError(
-          'Proxy configurator is not responding.',
+          t('session.appLauncher.FailedToStartAppService'),
           'configuring',
         );
       }
@@ -267,15 +270,18 @@ export const useBackendAIAppLauncher = (
         throw new AppLaunchError(
           t('session.appLauncher.SessionNotAccessible'),
           'configuring',
-          err instanceof Error ? err : undefined,
+          err,
         );
       }
+      // The Backend.AI client rejects with a plain object
+      // (`{ statusCode, title, msg, error_code, ... }`), never an Error, so
+      // resolve the manager's own message instead of pattern-matching on
+      // `instanceof Error` — that check made every start-service failure
+      // surface as "Proxy configurator is not responding." (FR-3478).
       throw new AppLaunchError(
-        err instanceof Error
-          ? err.message
-          : 'Proxy configurator is not responding.',
+        getErrorMessage(err, t('session.appLauncher.FailedToStartAppService')),
         'configuring',
-        err instanceof Error ? err : undefined,
+        err,
       );
     }
   };
@@ -800,9 +806,19 @@ export const useBackendAIAppLauncher = (
             };
           },
           rejected: (error: any) => {
+            // Prefer the original rejection payload (manager problem+json with
+            // statusCode/error_code/traceback) over the AppLaunchError wrapper
+            // stack, which carries no diagnostic information (FR-3478).
+            const original = error?.originalError;
+            const extraDescription =
+              original instanceof Error
+                ? original.stack
+                : original
+                  ? JSON.stringify(original, null, 2)
+                  : error?.stack || JSON.stringify(error, null, 2);
             return {
               description: getErrorMessage(error),
-              extraDescription: error?.stack || JSON.stringify(error, null, 2),
+              extraDescription,
               duration: 0, // Persistent error notification
             };
           },
@@ -1102,17 +1118,35 @@ function isSessionNotFoundError(err: unknown): boolean {
 // Custom error class for app launch errors
 class AppLaunchError extends Error {
   stage: 'detecting' | 'configuring' | 'requesting' | 'connecting';
-  originalError?: Error;
+  // The Backend.AI client rejects with a plain object, not an Error
+  // (see `_wrapWithPromise` in packages/backend.ai-client), so this must be
+  // `unknown` — typing it `Error` silently dropped the manager's payload
+  // (statusCode/error_code/traceback) at wrap time (FR-3478).
+  originalError?: unknown;
+  statusCode?: number;
+  errorCode?: string;
 
   constructor(
     message: string,
     stage: 'detecting' | 'configuring' | 'requesting' | 'connecting',
-    originalError?: Error,
+    originalError?: unknown,
   ) {
     super(message);
     this.name = 'AppLaunchError';
     this.stage = stage;
     this.originalError = originalError;
+    if (originalError && typeof originalError === 'object') {
+      const { statusCode, error_code } = originalError as {
+        statusCode?: unknown;
+        error_code?: unknown;
+      };
+      if (typeof statusCode === 'number') {
+        this.statusCode = statusCode;
+      }
+      if (typeof error_code === 'string') {
+        this.errorCode = error_code;
+      }
+    }
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, AppLaunchError);

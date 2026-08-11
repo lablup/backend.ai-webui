@@ -2798,6 +2798,7 @@
       "ConfirmAndRun": "I checked and I'll start",
       "ConnectUrlIsNotValid": "Connect URL is not valid.",
       "DownloadSSHKey": "Download SSH Key",
+      "FailedToStartAppService": "Failed to start the app service.",
       "LaunchingApp": "Starting {{appName}} app.",
       "NoExistingConnectionExample": "No Connection Example to be copied.",
       "OpenVSCodeRemote": "Open local Visual Studio Code",

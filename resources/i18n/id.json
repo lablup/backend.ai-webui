@@ -2813,6 +2813,7 @@
       "ConfirmAndRun": "Saya sudah memeriksa dan saya akan mulai",
       "ConnectUrlIsNotValid": "URL koneksi tidak valid.",
       "DownloadSSHKey": "Unduh Kunci SSH",
+      "FailedToStartAppService": "Gagal memulai layanan aplikasi.",
       "LaunchingApp": "Menjalankan aplikasi {{appName}}.",
       "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
       "OpenVSCodeRemote": "Buka kode Visual Studio lokal",
