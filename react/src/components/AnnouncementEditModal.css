@@ -4,7 +4,7 @@
 
  Co-located styles for AnnouncementEditModal. The markdown-preview typography
  that used to live here is gone — Astryx `Markdown` styles its own output
- (FR-3494). What remains is the formatting toolbar bar above the editor.
+ (FR-3494). What remains is the formatting toolbar above the editor.
 */
 
 .announcement-toolbar {
