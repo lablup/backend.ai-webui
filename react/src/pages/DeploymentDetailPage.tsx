@@ -79,8 +79,11 @@ const DeploymentDetailPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
-  // This shared page serves three URL spaces (/deployments/:id,
-  // /admin-deployments/:id, /project-admin-deployments/:id). Per ADR-0001 the
+  // This shared page serves three URL spaces
+  // (/project/:projectName/deployments/:deploymentId,
+  // /admin/deployments/:deploymentId and
+  // /project/:projectName/admin/deployments/:deploymentId — see routes.tsx).
+  // Per ADR-0001 the
   // PAGE decides the project context: on the super-admin URL space there is
   // no ambient project (`null` — no mismatch alert, no switch-project
   // shortcut, and the Add-revision CTA is not suppressed); elsewhere the

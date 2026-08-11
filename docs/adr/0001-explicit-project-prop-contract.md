@@ -137,13 +137,20 @@ narrowing helper for the loosely-typed ambient value).
     the context via `useIsSuperAdminScopedPage()`: `null` on the admin URL
     space (no mismatch alert, no `SwitchToProjectButton` shortcut, and the
     Add-revision CTA is no longer suppressed), narrowed ambient elsewhere.
-  - `EditableVFolderNameV2` and `VFolderNodeDescriptionV2` (ownership/role
-    gating — required `project: ProjectContextOrNull`; rename and
-    mount-permission editing are gated on the folder owner, the
-    `superadmin` effective role, or a page-decided project matching the
-    folder's own `ownership.projectId`; `null` simply never matches the
-    project branch, so super-admin abilities no longer flicker with header
-    state).
+  - `EditableVFolderNameV2` and `VFolderNodeDescriptionV2` — ownership/role
+    gating. The two gates are NOT the same condition:
+    - **Rename** (`EditableVFolderNameV2`) needs the folder owner or the
+      `superadmin` role. No project is involved, so the component reads
+      `isSuperAdmin` from `useCurrentUserProjectRoles()` directly.
+    - **Mount-permission editing** (`VFolderNodeDescriptionV2`) additionally
+      admits an admin OF THE PROJECT THAT OWNS THE FOLDER — checked against
+      the folder's own `ownership.projectId`, never a page-supplied one.
+      Domain admins are excluded: they hold no implicit per-project
+      ownership rights.
+    Neither consults `useEffectiveAdminRole`, whose target project comes
+    from the ambient value — which is why the `project` prop dropped out of
+    both gates entirely, and why super-admin abilities no longer flicker
+    with header state.
   - The globally-mounted `FolderExplorerModalV2` (see the route-derivation
     exception below) now keys `useMergedAllowedStorageHostPermission` to
     the folder's own ownership project when the folder is project-owned;
