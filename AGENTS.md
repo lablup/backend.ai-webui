@@ -2,36 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Essential Commands
+## Commands worth knowing (the rest are standard `package.json` scripts)
 
-### Development
-
-- `pnpm run dev` - Start development environment (TypeScript watch + Relay watch + React dev server under Portless on `*.localhost:1355`)
-
-### Build and Production
-
-- `pnpm run build` - Full production build (cleans `build/web/`, copies resources, builds React via Vite with `vite-plugin-pwa` service worker generation, builds workspace packages)
-- `pnpm run build:react-only` - Build only React app via Vite
-- `pnpm run relay` - Compile GraphQL queries with Relay compiler
-
-### Quality Control
-
-- `pnpm run lint` - Run ESLint (exits with 0 to not break builds)
-- `pnpm run lint-fix` - Auto-fix ESLint issues
-- `pnpm run format` - Check code formatting with Prettier
-- `pnpm run format-fix` - Auto-fix code formatting
-
-### Testing
-
-- `pnpm run test` - Run Vitest tests (root: `scripts/`, `src/`)
-- `pnpm run test` (in `/react` directory) - Run React-specific Vitest tests (`pnpm run vitest:watch` for watch mode)
-- E2E tests (`/e2e/`) use Playwright; require full Backend.AI cluster running first
-
-### Electron App
-
-- `pnpm run electron:d` - Run Electron app in development mode
-- `make clean && make dep` - Prepare dependencies for Electron
-- `make mac` / `make win` / `make linux` - Build platform-specific apps
+- `pnpm run dev` - dev environment (TypeScript watch + Relay watch + React dev server under Portless on `*.localhost:1355`)
+- `pnpm run relay` - compile GraphQL queries (`relay:watch` for watch mode)
+- `bash scripts/verify.sh` - the verification harness (see Core Guidelines)
+- `make i18n` - extract translation strings
+- E2E tests (`/e2e/`, Playwright) require a full Backend.AI cluster running first
 
 ## Architecture Overview
 
@@ -49,65 +26,13 @@ re-enter as a transitive dependency, and any `from 'antd'` import fails
 `tsc` immediately. It is not migration debt any more; it is a regression
 that will not compile.
 
-### Key Technologies
-
-- **React Build**: Vite 6 (`@vitejs/plugin-react`) with `vite-plugin-pwa`, `vite-plugin-svgr`, `vite-plugin-node-polyfills`
-- **Component Library Build**: Vite (`packages/backend.ai-ui/`)
-- **Service Worker**: `vite-plugin-pwa` (Workbox under the hood), integrated into the Vite build
-- **Package Manager**: pnpm with workspace monorepo
-- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Nothing injects `<style>` at runtime any more — `antd-style` went in to-astryx ticket 33, `@ant-design/icons` / `@ant-design/cssinjs` / `@ant-design/colors` in ticket 35, and antd's own cssinjs with the final switch.
-- **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
-- **GraphQL**: Relay compiler with projects for both `react/` and `packages/backend.ai-ui/`
-- **React Compiler**: babel-plugin-react-compiler in annotation mode (`'use memo'` directive)
-- **Testing**: Vitest for unit tests (jsdom env), Playwright for E2E tests
-- **Linting**: ESLint 9 (flat config) + Prettier, pre-commit hooks via Husky + lint-staged
-- **Electron**: Desktop app wrapper with built-in websocket proxy
-- **Storybook**: @storybook/react-vite for `backend.ai-ui` component library
-
-### Project Structure
-
-```
-react/                  # Main React application (Vite)
-  src/                  # Application source code
-    components/         # React UI components
-    pages/              # Page-level components
-    hooks/              # Custom React hooks
-    helper/             # Utility functions
-    __generated__/      # Relay compiler output
-  vite.config.ts        # Vite + plugins (PWA / svgr / node-polyfills) configuration
-  vitest.config.ts      # Vitest configuration (unit tests)
-packages/               # Monorepo workspace packages
-  backend.ai-ui/        # Shared React component library (Vite build)
-  backend.ai-webui-docs/# User manual documentation
-  eslint-config-bai/    # Shared ESLint configuration
-src/                    # Utilities and websocket proxy
-  lib/                  # Backend.AI client library (ESM/Node.js)
-  wsproxy/              # WebSocket proxy for desktop app
-resources/              # Static assets, i18n files (22 languages), themes
-data/                   # GraphQL schema files (schema.graphql, client-directives.graphql)
-e2e/                    # Playwright E2E tests
-electron-app/           # Electron desktop app source
-configs/                # Environment-specific config files
-scripts/                # Build and dev utility scripts
-```
-
-### Build Pipeline
-
-Production build (`pnpm run build`) runs these steps sequentially:
-
-1. Clean and create `build/web/` output directory
-2. Copy `index.html`, `resources/`, `manifest/`, config files
-3. `pnpm run -r --stream build` builds all workspace packages:
-   - React app (Vite) → `react/build/` → copied to `build/web/`
-   - Service worker (`sw.js`) generated by `vite-plugin-pwa` during the React build
-   - backend.ai-ui (Vite) → `packages/backend.ai-ui/dist/`
+Tech stack, dependencies, and directory layout are what the manifests and the tree say —
+read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list here.
 
 ### Development Workflow
 
 1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server under [Portless](https://github.com/vercel-labs/portless)). Portless is a `devDependency`, no global install needed; `dev.mjs` auto-starts the daemon on port 1355 (HTTPS by default).
 2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355`; otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
-3. **Testing**: Vitest unit tests + Playwright E2E tests
-4. **Linting**: ESLint 9 (flat config) + Prettier with pre-commit hooks via Husky
 
 # Additional Workflow Description
 
@@ -126,14 +51,9 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **Tool Requirements**:
   - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`.
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
-  - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The full command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`).
-    - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; the Graphite MCP server has been removed, and a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata now lives on GitHub itself (Stacks REST API, Stack Map UI), so there is no external metadata service to keep in sync — and no class of "GitHub looks right but the stack tool never learned the parent" failures.
-    - Use standard `git add` / `git commit` for staging and committing — each stack branch should hold a deliberate, logical set of changes. Create stack branches with `gh stack init <branch>` (first layer) and `gh stack add <branch>` (next layers). Branch names are used verbatim (e.g. `feat/FR-1234-title`); there is no prefix mechanism.
-    - **Open and update PRs with `gh stack submit --auto`.** PRs are created as drafts by default; pass `--open` to mark them ready for review. For a genuinely single, unstacked PR, plain `git push` + `gh pr create` is acceptable.
-    - When rebasing a stack onto updated parents, use `gh stack rebase` — or `gh stack sync`, which also fetches, reconciles the remote stack in both directions, pushes, and syncs PR state. Do not hand-`git rebase` individual stack branches. On a conflict the command exits with code 3 and restores every branch to its pre-rebase state; resolve the conflict, then run `gh stack rebase --continue` (or `--abort`).
-    - Agent (non-interactive) rules: always pass `--json` to `gh stack view` and `--auto` to `gh stack submit` — without them an interactive TUI opens. If local and remote stacks have diverged, `gh stack sync` in a non-interactive terminal aborts safely and prints `ℹ Sync aborted` with exit 0 — check for that string and surface it instead of assuming the sync happened.
-    - Merging needs no special tool: GitHub enforces bottom-up merge order server-side (a PR can merge only when every PR below it is approved with passing checks). After a lower PR merges, run `gh stack sync --prune` to restack the remainder and drop merged branches.
-    - When checking out a PR for review (e.g. for an agent session), land on the PR's actual **branch**, not a detached HEAD. For stacked PRs use `gh stack checkout <PR-number|PR-URL|stack-number>` (it fetches the remote stack and sets it up locally); otherwise use `gh pr checkout <N>` or a worktree on the head branch (`git worktree add <path> <head-branch>`) — never check out a bare commit SHA. Verify with `git status` that it reports `On branch <name>`.
+  - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`) and the project conventions (naming, draft→ready lifecycle, bottom-up merge, sync/rebase/conflict loops, non-interactive agent rules) in the `fw:stacked-pr-workflow` skill — load both before stack work.
+    - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata lives on GitHub itself.
+    - Open and update PRs with `gh stack submit --auto` (drafts by default; `--open` to mark ready). For a genuinely single, unstacked PR, plain `git push` + `gh pr create` is acceptable.
 - Follow the GitHub Stacked PRs strategy. Write work by appropriately stacking individual PRs.
 - When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
 
@@ -143,26 +63,6 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - Multiple environments supported via `configs/` directory
 - Electron app config: `build/electron-app/app/config.toml`
 
-### Key Libraries
-
-- **react** 19, **react-dom** 19 - UI framework
-- **@astryxdesign/core** 0.3 (+ `@astryxdesign/lab`, `@astryxdesign/theme-neutral`) - component system
-- **react-relay** 20, **relay-runtime** 20 - GraphQL client
-- **jotai** - Atomic state management
-- **i18next**, **react-i18next** - Internationalization
-- **vite** 6 + **@vitejs/plugin-react** - React app bundler and dev server
-- **vitest** 4 - Unit test runner (jsdom env)
-- **electron** 39 - Desktop app framework
-
-### GraphQL/Relay Setup
-
-- Schema files in `/data/` (`schema.graphql`, `client-directives.graphql`)
-- Relay compiler configured for two projects: `react` and `backend.ai-ui`
-- Config: `/relay.config.js` (extends `/relay-base.config.js`)
-- Generated types output to `react/src/__generated__/` and `packages/backend.ai-ui/src/__generated__/`
-- Run `pnpm run relay` to compile GraphQL queries
-- Run `pnpm run relay:watch` for watch mode during development
-
 ### Internationalization
 
 - JSON translation files in `resources/i18n/` (22 languages supported)
@@ -170,12 +70,6 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **BUI** components (`packages/backend.ai-ui/src/**`) use `useBAIi18n()` / `<BAITrans>` — they bind explicitly to BUI's own i18next instance, bypassing React Context lookup. Direct imports of `useTranslation` / `Trans` / `withTranslation` / `Translation` / `I18nextProvider` from `react-i18next` inside BUI are blocked by ESLint (FR-2986).
 - Backend.AI UI package has own locale files in `packages/backend.ai-ui/src/locale/`
 - Run `make i18n` to extract translation strings
-
-### Build Output
-
-- Production build: `build/web/` (contains React build + service worker + static assets)
-- Electron app: `build/electron-app/` (created by `make dep`)
-- Component library: `packages/backend.ai-ui/dist/`
 
 ## Important Notes
 
