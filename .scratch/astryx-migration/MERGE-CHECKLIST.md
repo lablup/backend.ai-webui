@@ -130,9 +130,12 @@ to this commit.
   build, tsconfig, lint or prettier scope, so it would have sat there importing
   an uninstalled package indefinitely.
 - **the `visual-harness` job** in `.github/workflows/astryx-migration-gates.yml`,
-  which drove that harness. `scripts/migration-gates/visual-compare.mjs`
-  **stays** — it compares two arbitrary URLs and is the tool for any future
-  before/after.
+  which drove that harness — and, later, the whole workflow plus
+  `scripts/migration-gates/visual-compare.mjs` and `report.sh` with it. The
+  visual comparer had been kept "for any future before/after", but nothing
+  called it, and the informational workflow only ever triggered on
+  `to-astryx`, which this merge retires. Automated verification past the
+  antd-zero gate was judged to have stopped earning its keep (2026-08-11).
 - **the `@rc-component/motion` `transitionend` auto-completer** in
   `packages/backend.ai-ui/setupTests.ts`, a MutationObserver on every class
   mutation in every BUI test, for animations nothing produces any more.
@@ -342,7 +345,7 @@ git restore --source=main pnpm-lock.yaml && pnpm install
 ```
 
 The push needs the `workflow` scope, because
-`.github/workflows/astryx-migration-gates.yml` changed:
+`.github/workflows/astryx-migration-gates.yml` is **deleted**:
 
 ```bash
 gh auth refresh -s workflow
@@ -350,8 +353,15 @@ gh auth refresh -s workflow
 
 ### After merge
 
-`astryx-migration-gates.yml` is still marked INFORMATIONAL and still only
-triggers on `to-astryx`. Now that the gate is green, the follow-up is to make
-`scripts/antd-zero-gate.sh` a **blocking** check on `main` — that is what turns
-"antd is gone" into "antd cannot come back", and it is the only thing standing
-between this migration and a slow reintroduction.
+The informational gates workflow is gone — it only ever triggered on
+`to-astryx`, and it always exited 0. What survives is the part that protects the
+invariant rather than reporting on it: `scripts/antd-zero-gate.sh` (+ its
+`antd-import-graph.mjs` part-c resolver), `astryx-token-gate.mjs` and
+`ant-selector-gate.mjs`, all reachable from the `astryx-migration-fix` skill's
+verification bar.
+
+The follow-up is unchanged and is now the ONLY automated defence: make
+`scripts/antd-zero-gate.sh` a **blocking** check on `main`. That is what turns
+"antd is gone" into "antd cannot come back", and with the informational
+workflow retired there is nothing else standing between this migration and a
+slow reintroduction.
