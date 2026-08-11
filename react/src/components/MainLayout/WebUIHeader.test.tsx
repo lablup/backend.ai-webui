@@ -27,6 +27,13 @@ vi.mock('../../hooks', () => ({
   }),
 }));
 
+// The header paints its band against the resolved app mode, which normally
+// comes from `ThemeModeProvider` at the app root. Nothing under test depends
+// on the value, so pin it instead of mounting the provider.
+vi.mock('../../hooks/useThemeMode', () => ({
+  useThemeMode: () => ({ isDarkMode: false }),
+}));
+
 // The selector block under test — stubbed so this test only asserts WHETHER
 // the header mounts it, not what it renders.
 vi.mock('./WebUIHeaderProjectSelect', () => ({
