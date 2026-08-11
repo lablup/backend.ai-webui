@@ -11,8 +11,8 @@
  2. `tooltip.open === false` -> `valueDisplay="none"`.
 
  The overlay's *position* is asserted as the percentage it writes, which is
- the same formula Astryx uses for its own marks — jsdom has no layout, so the
- live probe (.scratch/astryx-migration/final-a-probe.mjs) is what confirms the
+ the same formula Astryx uses for its own marks — jsdom has no layout, so a
+ live probe run during the FR-3482 Astryx migration is what confirmed the
  two land on the same pixel.
 */
 import '../../__test__/matchMedia.mock.js';

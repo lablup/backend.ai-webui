@@ -230,8 +230,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
 
                 HANDOFF (not ours to fix): the antd `Form.Item` LABELS in this
                 modal render at `rgb(20,20,20)` against the dialog's dark
-                surface, i.e. invisible — measured with
-                `.scratch/astryx-migration/p3-w2c-ab-account.mjs`. It is
+                surface, i.e. invisible — measured live during the FR-3482
+                Astryx migration. It is
                 PRE-EXISTING: the same probe against this file's
                 pre-conversion revision reproduces it exactly. The cause is
                 the header's reverse-theme region (this modal is opened from

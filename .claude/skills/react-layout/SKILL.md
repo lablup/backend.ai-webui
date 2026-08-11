@@ -30,7 +30,7 @@ been actively removed across 2025.
 - **Hardcoded px breaks theming.** Admin primary colors (FR-1785 #4816) and dark mode rely on tokens. `padding: 8` compiles but diverges visually across themes.
 - **`antd-style` / `createStyles` are gone (to-astryx ticket 33).** Prefer inline `style={{ padding: token.paddingSM }}` when tokens suffice; for pseudo-class / descendant selectors, add a co-located `.css` file next to the component and import it there (P17).
 - **Table overflow is no longer your problem — and `scroll` is a no-op.** Astryx's own scroll wrapper owns horizontal overflow inside `BAITableAstryx`, so `scroll={{ x: 'max-content' }}` is accepted and ignored. Don't add it to new tables; see `react-relay-table`.
-- **Responsive layout is CSS-side, not viewport-keyed props.** Reach for Astryx `Grid columns={{ minWidth, max }}` first; only use `useBAIBreakpoint()` when the branch is genuinely JS logic. See `.scratch/astryx-migration/RESPONSIVE-POLICY.md` for the recipes and the `minWidth` sizing table.
+- **Responsive layout is CSS-side, not viewport-keyed props.** Reach for Astryx `Grid columns={{ minWidth, max }}` first; only use `useBAIBreakpoint()` when the branch is genuinely JS logic. See `.specs/FR-3482-astryx-migration/RESPONSIVE-POLICY.md` for the recipes and the `minWidth` sizing table.
 
 ## 1. `BAIFlex` is the layout primitive
 
@@ -146,7 +146,7 @@ the title line-height.
 
 The policy is **CSS-side first**: let the grid reflow on container width rather
 than branching in JS on viewport breakpoints. Full recipes and the reasoning
-live in `.scratch/astryx-migration/RESPONSIVE-POLICY.md`.
+live in `.specs/FR-3482-astryx-migration/RESPONSIVE-POLICY.md`.
 
 ### 4.1 Dashboard-style grid — Astryx `Grid`
 

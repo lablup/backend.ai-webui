@@ -32,7 +32,7 @@
  | `styles.{header,body,footer,…}`    | inline styles on the matching Astryx slot           |
  | `.ant-modal-*` CSS (BAIModal.css)  | deleted — the slots are Astryx's own                |
 
- ## PILOT-DECISIONs (recorded in .scratch/astryx-migration/issues/p3-b-modal-family.md)
+ ## PILOT-DECISIONs (recorded in .specs/FR-3482-astryx-migration/issues/p3-b-modal-family.md)
 
  1. **`draggable` is dropped.** Astryx `Dialog` is a native `<dialog>` in the
     CSS top layer; `react-draggable` moved antd's positioned wrapper, which no

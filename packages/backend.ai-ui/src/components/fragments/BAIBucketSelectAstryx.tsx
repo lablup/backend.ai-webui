@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  BAIBucketSelectAstryx — ticket-27 Astryx sibling of the antd
- `BAIBucketSelect` (Relay-paginated, id-valued select, see
- `.scratch/astryx-migration/shots/26/CONVERSION-BRIEF.md` §2.B).
+ `BAIBucketSelect` (Relay-paginated, id-valued select, following pattern B
+ of the recipe used across the Astryx migration).
 
  FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
  `BAIBucketSelect` is NOT touched by this file. It keeps serving every

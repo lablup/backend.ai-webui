@@ -22,7 +22,7 @@
  │ green as a live oracle. With antd gone the antd row is dropped and    │
  │ the engine row is a plain regression suite — the assertions are       │
  │ unchanged and carry the oracle's verdict forward.                     │
- │ See `.scratch/astryx-migration/issues/34-form-engine.md`.             │
+ │ See `.specs/FR-3482-astryx-migration/issues/34-form-engine.md`.        │
  └───────────────────────────────────────────────────────────────────────┘
 
  SPELLING NOTE for this directory. Several modules here are behavioural ports

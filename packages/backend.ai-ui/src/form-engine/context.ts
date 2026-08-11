@@ -126,8 +126,8 @@ export const FormConfigContext = React.createContext<FormConfig>({});
 /**
  * What antd carries on its own `FormContext` — the per-form visual settings a
  * `Form.Item` inherits unless it states its own. Everything here is a real
- * `<Form>` prop with a call site in this repo (see
- * `.scratch/astryx-migration/form-prop-census.txt`); the ones with none
+ * `<Form>` prop with a call site in this repo (confirmed by a call-site
+ * census during the FR-3482 Astryx migration); the ones with none
  * (`feedbackIcons`, `classNames`, `styles`, `variant`) are deliberately absent.
  */
 export interface FormItemLayoutContextValue {

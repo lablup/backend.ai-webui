@@ -197,7 +197,7 @@ const UserDropdownMenu: React.FC<{
           context and inherited `color-scheme: dark` + the on-dark tokens, so
           the Downloads / About / My Account dialogs rendered at
           `rgb(20,20,20)` in LIGHT mode with equally dark labels on top
-          (`.scratch/astryx-migration/shots/p3-w3b/measure-before.json`). That
+          (measured live during the FR-3482 Astryx migration). That
           fix moved the wrapper here — but `DropdownMenu` renders its trigger
           and its `[popover]` PANEL as SIBLINGS, so the panel was still inside
           the wrapper and kept resolving `color-scheme: dark` in both app
@@ -231,7 +231,7 @@ const UserDropdownMenu: React.FC<{
         // stopped growing at 300. `menuWidth={300}` made that a fixed 300px
         // panel, so this menu painted ~120px of empty gutter (measured on an
         // antd 6.5.0 oracle rendering the SAME item strings: legacy 181.4px
-        // vs 300px — `.scratch/astryx-migration/qa4-menu-metrics.mjs`).
+        // vs 300px, measured during the FR-3482 Astryx migration).
         //
         // `fit-content(300px)` is the CSS spelling of exactly that pair —
         // `min(max-content, max(min-content, 300px))` — so the panel sizes to

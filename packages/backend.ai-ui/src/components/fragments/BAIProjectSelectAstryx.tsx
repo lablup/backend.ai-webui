@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  BAIProjectSelectAstryx — ticket-27 Astryx sibling of `BAIProjectSelect`,
- built on `BAIComplexSelect` (ticket 26). See
- `.scratch/astryx-migration/shots/26/CONVERSION-BRIEF.md` §2.B for the recipe
- this file follows (copy of `BAIUserSelectAstryx.tsx`, the worked example).
+ built on `BAIComplexSelect` (ticket 26), following pattern B of the
+ recipe used across the Astryx migration (copy of `BAIUserSelectAstryx.tsx`,
+ the worked example).
 
  FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
  `BAIProjectSelect` is NOT touched by this change. It keeps serving every

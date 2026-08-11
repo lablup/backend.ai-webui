@@ -200,7 +200,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
-- **Astryx migration QA**: `astryx-qa-finding` skill (turn a QA observation into a measured, de-duplicated row in `.scratch/astryx-migration/QA-FINDINGS.md`) and `astryx-migration-fix` skill (theme-defaults-first fix procedure, known traps, verification bar)
+- **Astryx migration QA**: `astryx-qa-finding` skill (turn a QA observation into a measured, de-duplicated finding row) and `astryx-migration-fix` skill (theme-defaults-first fix procedure, known traps, verification bar)
 
 ### Terminology Precedence
 

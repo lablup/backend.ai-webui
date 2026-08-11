@@ -60,7 +60,7 @@ interface SettingPageProps {
   // component now renders. `TabList` genuinely has no side orientation, but
   // the missing capability was never "tabs on the left"; it was "settings
   // shell", and Layout provides it. See
-  // `.scratch/astryx-migration/CONVERSION-IDIOMS.md`.
+  // `.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`.
   // `tabDirection` stays dropped: the vertical shell is now the only layout,
   // and no call site ever asked for the horizontal one.
   showChangedOptionFilter?: boolean;

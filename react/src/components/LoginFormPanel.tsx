@@ -195,7 +195,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           // `DialogHeader` gives the title slot the full 352px content width
           // instead, which turned that inert declaration into a live one and
           // pushed the logo to x=93. Measured on the antd 6.5.0 oracle
-          // (`.scratch/astryx-migration/qa4-oracle-logo.mjs`, both modes):
+          // during the FR-3482 Astryx migration (both modes):
           // logo x = 24 from the dialog edge, right gap 162.5, `centred:
           // false`.
           <div
