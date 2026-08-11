@@ -11,16 +11,14 @@ import AgentResources from './AgentNodeItems/AgentResources';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAICopyableText from './astryx-bui/BAICopyableText';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIDoubleTag,
   BAIFlex,
   BAIIntervalView,
+  BAIMetadataList,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -100,14 +98,9 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         <AgentActionButtons agentNodeFrgmt={agent} size="lg" />
       </BAIFlex>
 
-      {/* antd Descriptions bordered → MetadataList (MAPPING §4). `bordered` /
-          per-item `span` have no destination and are dropped (PILOT-DECISION,
-          established ticket 15/18 project-wide); the `md`-driven column count
-          survives via useBAIBreakpoint (R3). */}
-      <MetadataList
-        columns={md ? 2 : 1}
-        label={{ position: 'start', width: md ? 160 : 120 }}
-      >
+      {/* SUPERSEDED (FR-3496): `bordered` now has a destination — BAIMetadataList.
+          Still dropped: per-item `span`. Column count is `md`-driven (R3). */}
+      <BAIMetadataList bordered columns={md ? 2 : 1}>
         <MetadataListItem label={t('agent.ResourceGroup')}>
           {agent?.scaling_group}
         </MetadataListItem>
@@ -157,7 +150,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
             )}
           </BAIFlex>
         </MetadataListItem>
-      </MetadataList>
+      </BAIMetadataList>
 
       {/* antd Tabs → TabList + Tab (MAPPING §4): navigation only, panel is
           self-rendered below. */}
