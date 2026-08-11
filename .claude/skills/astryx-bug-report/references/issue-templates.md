@@ -1,9 +1,15 @@
 # Issue description templates
 
-Both templates are Markdown — `$FW_JIRA create --desc` converts them to ADF.
+All three templates are Markdown — `$FW_JIRA create --desc` converts them to ADF.
 Keep the headings; drop a bullet only when it is genuinely not applicable.
 Unknown values are written as `Unknown`, never omitted silently, so triage can
 see what still needs chasing.
+
+| Category | Template | Issue type | Label |
+|---|---|---|---|
+| Visual | [Visual report](#visual-report-astryx-visual) | Bug | `astryx-visual` |
+| Behavioral | [Behavioral report](#behavioral-report-astryx-behavior) | Bug | `astryx-behavior` |
+| Discussion | [Discussion](#discussion-astryx-discussion) | Task | `astryx-discussion` |
 
 ---
 
@@ -102,6 +108,76 @@ Optional, hedged, ≤3 lines. No fix proposal.
 
 ---
 
+## Discussion (`astryx-discussion`)
+
+Filed as a **Task**, not a Bug. The issue exists to get an answer; it is done
+when the team has decided, not when code changed.
+
+```markdown
+## Question
+
+Should boolean settings on Admin → Configurations be switches, or is the
+checkbox the intended control?
+
+## Where
+
+- **Page**: `/admin/configurations` (menu: Admin → Configurations)
+- **Component** (if identified): `CheckboxInput` via `BAIConfigItem` (`react/src/components/…`)
+- **Recurs in**: Admin → Resource Policy uses a switch for the same kind of
+  on/off setting — 2 screens differ. (Or `this screen only` / `Unknown`.)
+
+## Current behaviour
+
+Each boolean row renders a checkbox with the label to its right. Toggling it
+saves immediately, with no confirm step.
+
+## Why this is being raised
+
+The two admin screens disagree, so an admin toggling settings across both sees
+two different affordances for the same kind of change.
+
+## Proposal
+
+Optional — present only when the reporter had one. State it as one option, not
+as a decision:
+
+> Use a switch for every immediate-effect boolean, and keep checkboxes for
+> booleans that are only applied on Save.
+
+## Options considered
+
+Optional. When the reporter (or the intake round) surfaced more than one way
+out, list them plainly — no recommendation, no scoring.
+
+1. Switch everywhere.
+2. Checkbox everywhere.
+3. Split by whether the change applies immediately.
+
+## Impact if it stays as-is
+
+Cosmetic inconsistency / confusing but workable / actively causes mistakes.
+
+## Environment
+
+- **Mode**: light / dark / both
+- **Build**: `main` @ 2026-08-11 (or release v26.4.8-rc.3)
+
+Only when the observation is mode- or version-specific; a design question
+usually is not, and `Unknown` is fine here.
+
+## Evidence
+
+- Screenshot: `~/Desktop/config-booleans.png` (to be attached in Jira)
+- Legacy comparison: none
+
+## Notes
+
+Optional, ≤3 lines. Prior art, a linked decision, an "asked in the 8/11 sync"
+pointer. Not an answer to the question.
+```
+
+---
+
 ## Field notes
 
 - **Where / Reachable** is the section that decides whether the issue is
@@ -115,6 +191,17 @@ Optional, hedged, ≤3 lines. No fix proposal.
   importers.
 - **Impact** is inferred, not asked. Three values only: blocks the task /
   workaround exists / cosmetic.
+- **Question** (discussion) is the one field that may never be `Unknown` — an
+  issue that does not ask anything cannot be closed by answering it. If the
+  intake round did not produce one, you are probably holding a Bug report or a
+  vent, not a discussion; re-check Step 1 before filing.
+- **Why this is being raised** is what turns a preference into a decidable
+  question. "Two admin screens disagree" is decidable; "I don't like it" is not.
+- **Proposal / Options considered** stay descriptive. Recording that the
+  reporter would prefer a switch is capture; arguing that a switch is correct is
+  the decision, and this skill does not make it.
+- A discussion carries **no Expected section**. If you find yourself writing
+  one, the expectation is settled and the issue is a Bug.
 - **Missing** — when a required field survived the one intake round unanswered,
   add a line at the top: `**Missing:** expected behaviour — ask <reporter>.` and
   put `needs-info` in the labels.

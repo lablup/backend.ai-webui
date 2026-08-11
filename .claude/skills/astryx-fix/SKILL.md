@@ -2,7 +2,9 @@
 name: astryx-fix
 description: >
   Standing rules for fixing a visual or behavioural regression on the Astryx
-  UI: measure before you fix, theme-defaults-first (with the exact
+  UI: check the tracked issue's assignee before starting (proceed only when it
+  is you or nobody — claim an unassigned one, stop and report when someone else
+  holds it), measure before you fix, theme-defaults-first (with the exact
   THEME_NAME_REV bump + `astryx theme build` artifact regeneration + wrapper
   and mirror updates), Astryx-canonical composition over hand-rolled CSS,
   `astryx component <Name>` discovery over guessing, tokens-only enforced by
@@ -21,6 +23,63 @@ source file imports it, and the workspace pins exact dependency versions so
 nothing reintroduces it transitively. A `from 'antd'` import is not migration
 debt; it fails `tsc` immediately, which is what keeps it out. Everything below
 assumes `@astryxdesign/core` is the only component system.
+
+## Before anything — the assignee gate
+
+**Run this first, before §0.** Two people measuring, branching and PR-ing the
+same regression is the one waste this skill can prevent outright, and it is only
+preventable *before* the work, not after.
+
+The gate applies whenever the fix is tied to a tracked issue — a `FR-XXXX` key
+in the request, in the branch name, in a linked GitHub issue, or the issue you
+were handed.
+
+```bash
+FW_JIRA=$(find ~/.claude/plugins -path '*fw*/skills/jira-workflow/scripts/jira.sh' 2>/dev/null | head -1)
+
+$FW_JIRA myself                       # → {accountId, name, email}
+$FW_JIRA get FR-XXXX | jq '{key, status, assignee, summary}'
+```
+
+`assignee` comes back as a **display name**, and literally `"Unassigned"` when
+the field is empty. Compare it against `myself`'s `name` (the account the CLI is
+authenticated as *is* "you" — do not infer identity from the git author or the
+branch name).
+
+| `assignee` | What to do |
+|---|---|
+| **You** | Proceed to §0. |
+| **`Unassigned`** | Claim it, then proceed: `$FW_JIRA update FR-XXXX --assignee me`. Say in your reply that you assigned it to yourself. |
+| **Someone else** | **Stop.** Report, do not fix. |
+
+### When someone else holds it
+
+Do **not** measure, reproduce, branch, edit, or open a PR — stopping after
+"just a quick look" still means two people looked. Instead, reply with:
+
+- the holder's name, the issue's current status, and the key as a link
+  (`https://lablup.atlassian.net/browse/FR-XXXX` — `get` returns no URL field);
+- one line on what you were about to do, so they can judge overlap;
+- the choices: hand it back and pick something else / ask the holder / take it
+  over / file a separate issue for the part that is genuinely distinct.
+
+**Reassignment is the user's call, not yours.** Never run
+`--assignee me` on an issue held by someone else. An explicit "그래도 진행해" /
+"take it over" from the user unblocks you — record in your reply that you
+proceeded on their instruction, and leave the assignee field alone unless they
+also asked you to change it.
+
+### Edge cases
+
+- **The key does not resolve, or the CLI errors.** Resolve toward stopping: say
+  the check failed and ask, rather than treating an error as "Unassigned".
+- **Status is Done / Closed.** Cheap signal that the fix already landed — check
+  before redoing it, whoever the assignee is.
+- **No tracked issue at all** (an ad-hoc "이거 좀 고쳐줘"). No gate; proceed. If
+  the fix will end up in a PR, find or file the issue first — `astryx-bug-report`
+  handles the filing, and then this gate applies to what it created.
+- **Several issues in one request.** Gate each one. A blocked issue does not
+  block the others; do the ones you hold and report the rest.
 
 ## 0. Measure before you fix
 
@@ -233,6 +292,11 @@ Terminology.
 
 ## Related
 
+- `astryx-bug-report` — the capture-only counterpart, and where an untracked
+  regression gets its issue before this skill's assignee gate can apply. Its
+  `astryx-discussion` Tasks are not fix-ready until the team has answered them.
+- `fw:jira-workflow` — full `$FW_JIRA` command reference (`myself`, `get`,
+  `update --assignee me`).
 - `dev-server`, `webui-connection-info` — running the app and logging in.
 - `.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`,
   `.specs/FR-3482-astryx-migration/RESPONSIVE-POLICY.md` — ratified conversion
