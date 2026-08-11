@@ -51,7 +51,7 @@ runs:
       run: |
         echo "Step: Running React tests with coverage..." >> ../coverage-steps.log
         echo "Coverage output will be saved to: react/coverage/" >> ../coverage-steps.log
-        pnpm run test --coverage --coverageDirectory=coverage 2>&1 | tee -a ../coverage-steps.log
+        pnpm run test --coverage 2>&1 | tee -a ../coverage-steps.log
         echo "React tests completed" >> ../coverage-steps.log
 
     # Step 4: Run backend.ai-ui tests with coverage
