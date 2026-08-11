@@ -14,10 +14,10 @@
 
  NOTE on spelling: antd class names are written WITHOUT their leading dot
  throughout this file's prose. CSS comments — unlike JS ones — survive
- minification into the shipped stylesheet, and `scripts/antd-zero-gate.sh`
- part (b) reads a literal dotted antd class in `build/web` as evidence that
- antd is back. That signature is worth keeping sharp, so the comments give
- way, not the gate.
+ minification into the shipped stylesheet, and antd is no longer a
+ dependency of this repo at all, so there is nothing left in `build/web`
+ for a literal dotted antd class to be evidence of. The convention below
+ is now prose hygiene, not an enforcement requirement.
 
  What survives is `ghost`, because it is the one thing the wrapper genuinely
  owned and Astryx cannot express (P5: `Selector` has `variant`, not a colour

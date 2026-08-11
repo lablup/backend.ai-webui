@@ -47,8 +47,8 @@
      `fix_antd.css`) so the rules survive antd's removal; the CLASS NAMES are
      ours as of to-astryx final-B — see `src/icons/iconShim.tsx` for why the
      borrowed antd icon class name had to go. (Spelled out rather than quoted:
-     a CSS comment can survive minification into the bundle, and quoting it
-     would re-arm `scripts/antd-zero-gate.sh` part (b) against our own CSS.) */
+     this is a purely descriptive note, not a live check — antd is no
+     longer a dependency of this repo, so there is nothing left to re-arm.) */
   .bai-icon {
     display: inline-block;
     color: inherit;

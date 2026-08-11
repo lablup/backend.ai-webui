@@ -29,13 +29,14 @@
  * Through ticket 30 the wrapper kept antd's own `anticon` / `anticon-spin`
  * class names, because the host's `fix_antd.css` baseline and a handful of
  * selectors still keyed on them. Nothing outside this repo's own first-party
- * CSS reads them any more — and keeping antd's name made
- * `scripts/antd-zero-gate.sh` part (b) permanently red: its `anticon` bundle
- * signature is a HIGH-confidence trace of `@ant-design/icons`, so our own
- * output was indistinguishable from a real antd reintroduction. Renaming to a
- * first-party name restores that signature's meaning: it may now fire only if
- * someone actually pulls `@ant-design/icons` back in. The gate's pattern list
- * is deliberately unchanged.
+ * CSS reads them any more — and keeping antd's name in a shipped CSS class
+ * would have been misleading on its own terms: `anticon` is a
+ * HIGH-confidence signature of `@ant-design/icons`, so our own output was
+ * indistinguishable from a real antd reintroduction by inspection. Renaming
+ * to a first-party name restores that signature's meaning: a literal
+ * `anticon` class in the bundle again would mean someone actually pulled
+ * `@ant-design/icons` back in — which, with antd removed from the
+ * dependency graph entirely, `tsc` would already have refused to compile.
  *
  * Type parity with `@ant-design/icons/lib/components/Icon` is deliberate:
  * `CustomIconComponentProps`, `IconBaseProps`, and `IconComponentProps`

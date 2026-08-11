@@ -15,9 +15,9 @@
  The input is typed STRUCTURALLY (`BAINotificationSource`, the subset of
  `NotificationState` this adapter actually reads) rather than as a type-only
  import of `NotificationState` from the hook module. A type-only import is
- erased at runtime, but the P15 import-graph gate
- (`scripts/migration-gates/antd-import-graph.mjs`) is static and counts it as
- an edge — and the gate's judgement is the one this directory must satisfy.
+ erased at runtime, but during the Astryx migration a static P15
+ import-graph check counted it as a real edge regardless, so structural
+ typing was the one guaranteed-safe choice — and it is kept that way.
  `NotificationState` satisfies `BAINotificationSource` structurally, so the
  call site type-checks with no cast.
 
