@@ -253,12 +253,23 @@ test.describe(
         // The widget may show CPU/RAM statistics when the admin user has resource quota allocated
         // in the resource group, or show an empty state ("No resource data available") when no
         // quota is assigned. The skeleton loader disappears once data has been fetched either way.
-        await expect(widget.locator('.ant-skeleton')).not.toBeVisible({
+        // `MyResourceWithinResourceGroup.tsx` renders `BAISkeletonAstryx` while
+        // loading, tagged `data-testid="my-resource-skeleton"` (Astryx
+        // `Skeleton` has no default class to anchor on); the "paragraph"
+        // variant renders several boxes sharing that testid, hence `.first()`.
+        await expect(
+          widget.getByTestId('my-resource-skeleton').first(),
+        ).not.toBeVisible({
           timeout: WIDGET_TIMEOUT,
         });
 
-        // 4. Verify a "Used" / "Free" segmented control is present
-        const segmentedControl = widget.locator('.ant-segmented');
+        // 4. Verify a "Used" / "Free" segmented control is present.
+        // `SegmentedControl` (`@astryxdesign/core/SegmentedControl`) is a
+        // `role="radiogroup"` with `label="Used/Free"` (composed from the two
+        // option labels — `MyResourceWithinResourceGroup.tsx`).
+        const segmentedControl = widget.getByRole('radiogroup', {
+          name: 'Used/Free',
+        });
         await expect(segmentedControl).toBeVisible();
         await expect(segmentedControl.getByText('Used')).toBeVisible();
         await expect(segmentedControl.getByText('Free')).toBeVisible();
@@ -275,25 +286,28 @@ test.describe(
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Locate the segmented control
-        const segmentedControl = widget.locator('.ant-segmented');
+        // 2. Locate the segmented control (Astryx `SegmentedControl`,
+        // `role="radiogroup"`, `label="Used/Free"` — see the previous test).
+        const segmentedControl = widget.getByRole('radiogroup', {
+          name: 'Used/Free',
+        });
         await expect(segmentedControl).toBeVisible();
 
         // 3. Click the "Used" segment
-        await segmentedControl.getByText('Used').click();
+        await segmentedControl.getByRole('radio', { name: 'Used' }).click();
 
         // 4. Verify the "Used" segment is now selected
         await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Used');
+          segmentedControl.getByRole('radio', { name: 'Used' }),
+        ).toBeChecked();
 
         // 5. Click the "Free" segment
-        await segmentedControl.getByText('Free').click();
+        await segmentedControl.getByRole('radio', { name: 'Free' }).click();
 
         // 6. Verify the "Free" segment is now selected
         await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Free');
+          segmentedControl.getByRole('radio', { name: 'Free' }),
+        ).toBeChecked();
       });
     });
 
@@ -327,21 +341,26 @@ test.describe(
             .filter({ hasText: 'Agent Statistics' });
           await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 2. Verify a "Used" / "Free" segmented toggle is present
-          const segmentedControl = widget.locator('.ant-segmented');
+          // 2. Verify a "Used" / "Free" segmented toggle is present.
+          // `AgentStats.tsx` renders Astryx `SegmentedControl`
+          // (`role="radiogroup"`, `label="Used/Free"`, composed from the two
+          // option labels).
+          const segmentedControl = widget.getByRole('radiogroup', {
+            name: 'Used/Free',
+          });
           await expect(segmentedControl).toBeVisible();
 
           // 3. Click the "Free" segment and verify it becomes selected
-          await segmentedControl.getByText('Free').click();
+          await segmentedControl.getByRole('radio', { name: 'Free' }).click();
           await expect(
-            segmentedControl.locator('.ant-segmented-item-selected'),
-          ).toContainText('Free');
+            segmentedControl.getByRole('radio', { name: 'Free' }),
+          ).toBeChecked();
 
           // 4. Click the "Used" segment and verify it becomes selected
-          await segmentedControl.getByText('Used').click();
+          await segmentedControl.getByRole('radio', { name: 'Used' }).click();
           await expect(
-            segmentedControl.locator('.ant-segmented-item-selected'),
-          ).toContainText('Used');
+            segmentedControl.getByRole('radio', { name: 'Used' }),
+          ).toBeChecked();
         });
 
         test('Admin can manually refresh the Agent Stats widget', async ({

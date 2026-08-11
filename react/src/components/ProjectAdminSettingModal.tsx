@@ -5,9 +5,12 @@
 import { ProjectAdminSettingModalAssignMutation } from '../__generated__/ProjectAdminSettingModalAssignMutation.graphql';
 import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSettingModalQuery.graphql';
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Alert, App, Form, FormInstance, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIFlex,
@@ -15,8 +18,8 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAITable,
-  BAIUserSelect,
+  BAITableAstryx,
+  BAIUserSelectAstryx,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -232,7 +235,7 @@ const ProjectAdminSettingModal = ({
         <BAIFlex align="center">
           {t('project.SetProjectAdmin')}
           {role && (
-            <Tooltip title={t('project.ViewRBACPermissions')}>
+            <Tooltip content={t('project.ViewRBACPermissions')}>
               <BAIButton
                 type="text"
                 size="small"
@@ -258,12 +261,10 @@ const ProjectAdminSettingModal = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Alert type="info" showIcon title={t('project.DescSetProjectAdmin')} />
-        <Alert
-          type="warning"
-          showIcon
-          title={t('project.DescRevokeProjectAdmin')}
-        />
+        {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`, `showIcon`
+            dropped (Banner always renders its status icon). */}
+        <Banner status="info" title={t('project.DescSetProjectAdmin')} />
+        <Banner status="warning" title={t('project.DescRevokeProjectAdmin')} />
         <Form ref={formRef}>
           <BAIFlex gap="xs" align="start">
             <Suspense
@@ -279,13 +280,12 @@ const ProjectAdminSettingModal = ({
                 ]}
                 style={{ flex: 1, marginBottom: 0 }}
               >
-                <BAIUserSelect
-                  mode="multiple"
+                <BAIUserSelectAstryx
+                  multiple
                   valuePropName="id"
-                  maxTagCount="responsive"
-                  style={{ width: '100%' }}
+                  label={t('rbac.SelectUsers')}
+                  isLabelHidden
                   placeholder={t('rbac.SelectUsers')}
-                  aria-label={t('rbac.SelectUsers')}
                 />
               </Form.Item>
             </Suspense>
@@ -294,7 +294,7 @@ const ProjectAdminSettingModal = ({
             </BAIButton>
           </BAIFlex>
         </Form>
-        <BAITable
+        <BAITableAstryx
           rowKey="id"
           size="small"
           dataSource={assignments}
@@ -314,7 +314,7 @@ const ProjectAdminSettingModal = ({
               key: 'control',
               title: t('general.Control'),
               render: (__, record) => (
-                <Tooltip title={t('project.RevokeProjectAdmin')}>
+                <Tooltip content={t('project.RevokeProjectAdmin')}>
                   <BAIButton
                     type="text"
                     size="small"

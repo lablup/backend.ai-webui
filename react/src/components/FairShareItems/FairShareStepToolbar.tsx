@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from '../AutoUpdateFetchKeyButton';
-import { theme, Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIFlex,
@@ -59,7 +60,11 @@ const FairShareStepToolbar: React.FC<FairShareStepToolbarProps> = ({
               count={selection.selectedCount}
               onClearSelection={selection.onClearSelection}
             />
-            <Tooltip title={t('general.ShowUsageGraph')} placement="topLeft">
+            <Tooltip
+              content={t('general.ShowUsageGraph')}
+              placement="above"
+              alignment="start"
+            >
               <BAIButton
                 icon={
                   <ChartNoAxesCombined style={{ color: token.colorInfo }} />
@@ -67,7 +72,11 @@ const FairShareStepToolbar: React.FC<FairShareStepToolbarProps> = ({
                 onClick={selection.onShowUsage}
               />
             </Tooltip>
-            <Tooltip title={t('general.BulkEdit')} placement="topLeft">
+            <Tooltip
+              content={t('general.BulkEdit')}
+              placement="above"
+              alignment="start"
+            >
               <BAIButton
                 icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                 onClick={selection.onBulkEdit}

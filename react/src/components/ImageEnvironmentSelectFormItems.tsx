@@ -6,8 +6,11 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
+import { Form } from '../form-engine';
 import {
+  compareImageVersions,
   getImageFullName,
+  isPrivateImage,
   localeCompare,
   parseImageString,
   preserveDotStartCase,
@@ -18,21 +21,28 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { theme } from '../theme-shim';
 // @ts-ignore
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
 import {
-  Divider,
-  Form,
-  Input,
-  RefSelectProps,
-  Select,
-  Tag,
-  theme,
-  Typography,
-} from 'antd';
-import { BAIDoubleTag, BAIFlex, BAISelect } from 'backend.ai-ui';
+  badgeVariantForTagColor,
+  BAIDoubleTag,
+  BAIFlex,
+  BAISelect,
+  // `BAISelect` was rebuilt on Astryx in wave 2 and still accepts antd's
+  // children option API — it flattens the element tree by reading PROPS, never
+  // the element type. So `Select.Option` / `Select.OptGroup` are replaced by
+  // BUI's own render-null carriers, and the rich JSX option rows below (image
+  // icon + highlighted name + metadata badges) stay exactly as they are.
+  BAISelectOptionItem as SelectOption,
+  BAISelectOptionGroup as SelectOptGroup,
+  BAIText,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -68,33 +78,6 @@ interface ImageEnvironmentSelectFormItemsProps {
   searchPrefill?: string;
 }
 
-function compareVersions(version1: string, version2: string): number {
-  const v1 = version1.split('.').map(Number);
-  const v2 = version2.split('.').map(Number);
-
-  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
-    const num1 = v1[i] || 0;
-    const num2 = v2[i] || 0;
-
-    if (num1 > num2) {
-      return 1;
-    } else if (num1 < num2) {
-      return -1;
-    }
-  }
-
-  return 0;
-}
-
-const isPrivateImage = (image: Image) => {
-  return _.some(image?.labels, (label) => {
-    return (
-      label?.key === 'ai.backend.features' &&
-      label?.value?.split(' ').includes('private')
-    );
-  });
-};
-
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate, searchPrefill }) => {
@@ -114,8 +97,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
-  const envSelectRef = useRef<RefSelectProps>(null);
-  const versionSelectRef = useRef<RefSelectProps>(null);
+  // antd `RefSelectProps` restated as the one method these two refs ever
+  // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
+  // `Selector` exposes no imperative handle), so `.focus()` below has already
+  // been a no-op since wave 2; the optional-chained call keeps that harmless
+  // and the declarations keep compiling without antd.
+  type SelectFocusHandle = { focus: () => void };
+  const envSelectRef = useRef<SelectFocusHandle>(null);
+  const versionSelectRef = useRef<SelectFocusHandle>(null);
   const [envSelectOpen, setEnvSelectOpen] = useState<boolean | undefined>(
     searchPrefill ? true : undefined,
   );
@@ -231,7 +220,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   prefix: environmentName.split('/').slice(1, -1).join('/'),
                   images: images.sort(
                     (a, b) =>
-                      compareVersions(
+                      compareImageVersions(
                         // latest version comes first
                         b?.tag?.split('-')?.[0] ?? '',
                         a?.tag?.split('-')?.[0] ?? '',
@@ -420,7 +409,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         className="image-environment-select-form-item"
         name={['environments', 'environment']}
         label={
-          <Typography.Text
+          <BAIText
             copyable={{
               text: getImageFullName(
                 form.getFieldValue(['environments', 'image']),
@@ -429,7 +418,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           >
             {t('session.launcher.Environments')} /{' '}
             {t('session.launcher.Version')}
-          </Typography.Text>
+          </BAIText>
         }
         rules={[
           {
@@ -493,7 +482,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           }
         >
           {fullNameMatchedImage ? (
-            <Select.Option
+            <SelectOption
               value={
                 supportExtendedImageInfo
                   ? fullNameMatchedImage?.namespace
@@ -516,11 +505,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 />
                 {getImageFullName(fullNameMatchedImage)}
               </BAIFlex>
-            </Select.Option>
+            </SelectOption>
           ) : (
             _.map(imageGroups, (group) => {
               return (
-                <Select.OptGroup key={group.groupName} label={group.groupName}>
+                <SelectOptGroup key={group.groupName} label={group.groupName}>
                   {_.map(group.environmentGroups, (environmentGroup) => {
                     const firstImage = environmentGroup.images[0];
                     const currentMetaImageInfo =
@@ -537,12 +526,17 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       )
                     ) {
                       extraFilterValues.push(environmentGroup.prefix);
+                      // antd `Tag color` → Astryx `Badge variant` through the
+                      // repo-global lookup (ticket 13). Never a raw hue/hex.
                       environmentPrefixTag = (
-                        <Tag color="purple">
-                          <TextHighlighter keyword={environmentSearch}>
-                            {environmentGroup.prefix}
-                          </TextHighlighter>
-                        </Tag>
+                        <Badge
+                          variant={badgeVariantForTagColor('purple')}
+                          label={
+                            <TextHighlighter keyword={environmentSearch}>
+                              {environmentGroup.prefix}
+                            </TextHighlighter>
+                          }
+                        />
                       );
                     }
 
@@ -555,22 +549,30 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           label.color
                         ) {
                           extraFilterValues.push(label.tag);
+                          // `label.color` is a runtime-arbitrary string from
+                          // the image metadata JSON; the lookup normalises it
+                          // and falls back to `neutral` for anything it does
+                          // not recognise (ticket 13 §5).
                           return (
-                            <Tag color={label.color} key={label.tag}>
-                              <TextHighlighter
-                                keyword={environmentSearch}
-                                key={label.tag}
-                              >
-                                {label.tag}
-                              </TextHighlighter>
-                            </Tag>
+                            <Badge
+                              key={label.tag}
+                              variant={badgeVariantForTagColor(label.color)}
+                              label={
+                                <TextHighlighter
+                                  keyword={environmentSearch}
+                                  key={label.tag}
+                                >
+                                  {label.tag}
+                                </TextHighlighter>
+                              }
+                            />
                           );
                         }
                         return null;
                       },
                     );
                     return (
-                      <Select.Option
+                      <SelectOption
                         key={environmentGroup.environmentName}
                         value={environmentGroup.environmentName}
                         filterValue={
@@ -609,10 +611,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             {tagsFromMetaImageInfoLabel}
                           </BAIFlex>
                         </BAIFlex>
-                      </Select.Option>
+                      </SelectOption>
                     );
                   })}
-                </Select.OptGroup>
+                </SelectOptGroup>
               );
             })
           )}
@@ -676,9 +678,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       }}
                     >
                       {t('session.launcher.Version')}
-                      <Divider type="vertical" />
+                      <Divider orientation="vertical" />
                       {t('session.launcher.Architecture')}
-                      <Divider type="vertical" />
+                      <Divider orientation="vertical" />
                       {t('session.launcher.Tags')}
                     </BAIFlex>
                     <Divider style={{ margin: '8px 0' }} />
@@ -773,7 +775,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       }
                     }
                     return (
-                      <Select.Option
+                      <SelectOption
                         key={image?.id}
                         value={getImageFullName(image)}
                         filterValue={[
@@ -829,14 +831,19 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                       ]}
                                     />
                                   ) : (
-                                    <Tag
+                                    <Badge
                                       key={tag.key}
-                                      color={isCustomized ? 'cyan' : 'blue'}
-                                    >
-                                      <TextHighlighter keyword={versionSearch}>
-                                        {aliasedTag}
-                                      </TextHighlighter>
-                                    </Tag>
+                                      variant={badgeVariantForTagColor(
+                                        isCustomized ? 'cyan' : 'blue',
+                                      )}
+                                      label={
+                                        <TextHighlighter
+                                          keyword={versionSearch}
+                                        >
+                                          {aliasedTag}
+                                        </TextHighlighter>
+                                      }
+                                    />
                                   );
                                 },
                               )}
@@ -866,7 +873,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             </BAIFlex>
                           </BAIFlex>
                         )}
-                      </Select.Option>
+                      </SelectOption>
                     );
                   },
                 )}
@@ -884,8 +891,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
             : 'none',
         }}
       >
-        <Input
-          allowClear
+        {/* antd `Input allowClear` → `AstryxFormTextInput hasClear`
+            (MAPPING §3.6). The handler already read the value rather than the
+            event, which the adapter now guarantees. */}
+        <AstryxFormTextInput
+          label={t('session.launcher.ManualImageName')}
+          hasClear
           onChange={(value) => {
             if (!_.isEmpty(value)) {
               form.setFieldsValue({
@@ -901,7 +912,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
-        <Input />
+        <AstryxFormTextInput label={t('session.launcher.Environments')} />
       </Form.Item>
     </>
   );

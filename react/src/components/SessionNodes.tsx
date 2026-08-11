@@ -16,20 +16,20 @@ import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
-import { Tooltip } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIColumnType,
   BAIFlex,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAISessionAgentIds,
   BAIAppIcon,
   BAINameActionCell,
   BAISessionTypeTag,
   BAISessionClusterMode,
-  BAITag,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -207,6 +207,18 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         key: 'status',
         title: t('session.Status'),
         dataIndex: 'status',
+        // QA-FINDINGS Q-35 — a column that declares neither `width` nor
+        // `minWidth` is handed `proportional(1)`, i.e. a STRICT 1/N equal share
+        // of the table, and the cell clips (`overflow: hidden`) rather than
+        // pushing back. The worst real cell here is `PENDING` + `#n` + the
+        // "Queue Position" tooltip label, which needs 124px of content box;
+        // the equal share gives 120px minus 8/8 cell padding = 104px, so the
+        // tag was cut mid-glyph on `/admin-session` at every width and on
+        // `/session` below 1600. antd's engine measured content and grew the
+        // column, so the column definition itself is byte-identical to legacy's
+        // — the fallback is what changed. 140 = 124 content + the 16px of cell
+        // padding the engine does not add on its own.
+        minWidth: 140,
         render: (__, session) => {
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
@@ -318,16 +330,16 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           return (
             <BAIFlex gap="xs" wrap="wrap">
               {dependeeNodes?.map((node) => (
-                <Tooltip key={node?.row_id} title={t('session.DependsOn')}>
-                  <BAITag>→ {node?.name}</BAITag>
+                <Tooltip key={node?.row_id} content={t('session.DependsOn')}>
+                  <Badge label={`→ ${node?.name}`} />
                 </Tooltip>
               ))}
               {dependentNodes?.map((node) => (
                 <Tooltip
                   key={node?.row_id}
-                  title={t('session.DependedByOthers')}
+                  content={t('session.DependedByOthers')}
                 >
-                  <BAITag>← {node?.name}</BAITag>
+                  <Badge label={`← ${node?.name}`} />
                 </Tooltip>
               ))}
             </BAIFlex>
@@ -375,13 +387,12 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         resizable
         rowKey={'id'}
         size="small"
         dataSource={filteredSessions}
         columns={columns}
-        scroll={{ x: 'max-content' }}
         onChangeOrder={(order) => {
           onChangeOrder?.(
             (order as (typeof availableSessionSorterValues)[number]) || null,

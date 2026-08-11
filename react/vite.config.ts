@@ -1,3 +1,4 @@
+import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
 import { execSync } from 'node:child_process';
@@ -13,6 +14,7 @@ import {
 import { createRequire } from 'node:module';
 import {
   basename,
+  delimiter,
   dirname,
   extname,
   isAbsolute,
@@ -658,6 +660,26 @@ export default defineConfig(({ command, mode }) => {
   // `isDevTypecheckEnabled` definition above.
   const runTypeChecker = command !== 'serve' || isDevTypecheckEnabled;
 
+  // vite-plugin-checker's build mode spawns a bare `tsc` with a PATH built by
+  // npm-run-path, which PREPENDS every ancestor `node_modules/.bin` of cwd
+  // that is not already literally on PATH. In a git worktree under
+  // `.claude/worktrees/<name>/` that walk-up passes through the MAIN
+  // checkout's `<repo>/node_modules/.bin`, whose root TypeScript (~5.5.4)
+  // cannot parse some modern dependency `.d.ts` (296 parse errors inside
+  // gpt-tokenizer@3.4.0 alone) — while this workspace's own `.bin` entries,
+  // already placed on PATH by pnpm, are skipped by npm-run-path's dedupe and
+  // stay BEHIND the prepended ancestors. Net effect: `pnpm run
+  // build:react-only` inside a worktree type-checks with the wrong compiler
+  // and fails. Removing react/'s own `.bin` from the inherited PATH makes
+  // npm-run-path re-prepend it at the very front (the walk-up starts at
+  // `react/`), so the spawned `tsc` is always react/'s TypeScript (~6.0.3).
+  if (runTypeChecker && command === 'build' && process.env.PATH) {
+    const ownBinDir = join(__dirname, 'node_modules', '.bin');
+    process.env.PATH = process.env.PATH.split(delimiter)
+      .filter((entry) => entry !== ownBinDir)
+      .join(delimiter);
+  }
+
   // Say it out loud. A dev server with no type checker looks identical to one
   // with a passing checker — both just print "ready in Nms" — so without this
   // line it is easy to read silence as "no type errors".
@@ -793,8 +815,8 @@ export default defineConfig(({ command, mode }) => {
       //   `nuqs/adapters/react-router/v6` (the only nuqs entry that ships the
       //   adapter). Listing these saves the optimizer a discover-and-reload
       //   cycle the first time the source scan reaches them. Pure deep-import
-      //   conveniences with no separate entry (e.g. `antd/es/locale/ko_KR`)
-      //   are NOT listed — the entries scan picks them up automatically.
+      //   conveniences with no separate entry are NOT listed — the entries
+      //   scan picks them up automatically.
       // - Do NOT list anything in `exclude` below (`backend.ai-ui`,
       //   `backend.ai-client`, `i18next`, `react-i18next`).
       // - When a new heavy top-level dep starts being imported on the first
@@ -804,10 +826,6 @@ export default defineConfig(({ command, mode }) => {
         'react-dom',
         'react-dom/client',
         'react-router-dom',
-        'antd',
-        'antd-style',
-        '@ant-design/icons',
-        '@ant-design/colors',
         'jotai',
         'react-relay',
         'relay-runtime',
@@ -816,7 +834,6 @@ export default defineConfig(({ command, mode }) => {
         'nuqs/adapters/react-router/v6',
         'dayjs',
         'lodash',
-        'ahooks',
       ],
       exclude: [
         'backend.ai-ui',
@@ -955,6 +972,35 @@ export default defineConfig(({ command, mode }) => {
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
       // transforms (see reviewOverlay.ts).
       devReviewOverlayPlugin(),
+
+      // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),
+      // wired DIRECTLY via `@stylexjs/unplugin` (sole peer: `unplugin` — no
+      // vite peer) instead of `@astryxdesign/build/vite`, which declares peer
+      // `vite ^8`. The plugin sets `enforce: 'pre'` internally, so StyleX
+      // sees raw TSX ahead of @vitejs/plugin-react, and the React Compiler /
+      // babel-plugin-relay see StyleX-compiled output. It only processes
+      // files that literally import `@stylexjs/stylex`, so Astryx's
+      // precompiled dist/ is never re-transformed.
+      stylexVite({
+        // Unlayered output: StyleX's own `:not(#\#)` priority ladder orders
+        // rules inside the sheet, and unlayered CSS outranks every named
+        // layer — which is exactly what makes `xstyle` overrides beat
+        // Astryx's `@layer astryx-base` component styles. With `true` the
+        // output would land in `@layer priority1..N`, which sits before
+        // `astryx-base` in react/src/index.css's order statement and LOSES.
+        useCSSLayers: false,
+        // MANDATORY. Without this the plugin appends its CSS to "whichever
+        // .css asset rollup emitted first", which in a code-split app can be
+        // a lazy route's stylesheet — silently putting every authored style
+        // behind that route boundary. Pin it to the entry stylesheet.
+        // scripts/verify.sh guards this with a sentinel check on the emitted
+        // entry CSS (see check_stylex_injection there).
+        cssInjectionTarget: (fileName: string) =>
+          /assets\/index-[^/]*\.css$/.test(fileName),
+        // Anchor class-name hashing to the repo root so hashes stay stable
+        // across react/ and (future) packages/backend.ai-ui builds.
+        unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
+      }),
 
       react({
         babel: (id) => {

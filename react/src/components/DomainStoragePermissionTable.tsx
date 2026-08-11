@@ -11,17 +11,17 @@ import {
   buildAllowedHostsPayload,
   parseAllowedHosts,
 } from '../helper/storageHostPermission';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Typography, theme } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -47,9 +47,7 @@ export interface DomainStoragePermissionTableProps extends BAITableProps<DomainR
    * derived from it internally; null/undefined yields an empty key list.
    */
   permissionFrgmt:
-    | DomainStoragePermissionTable_permissionFrgmt$key
-    | null
-    | undefined;
+    DomainStoragePermissionTable_permissionFrgmt$key | null | undefined;
   /** Called after a successful save so the parent can refetch the domain. */
   onSaved?: () => void;
 }
@@ -156,9 +154,8 @@ const DomainStoragePermissionTable: React.FC<
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         locale={{ emptyText: t('storageHost.permission.NoDomainSelected') }}
         rowKey="name"
@@ -174,12 +171,12 @@ const DomainStoragePermissionTable: React.FC<
             render: (name: string) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
-                    ellipsis={{ tooltip: name }}
-                    style={{ maxWidth: 160 }}
-                  >
+                  // antd `ellipsis={{ tooltip: name }}` -> `maxLines={1}`;
+                  // Astryx shows the full text in a tooltip on truncation by
+                  // default (MAPPING §3.4 `ellipsis` row).
+                  <Text maxLines={1} style={{ maxWidth: 160 }}>
                     {name}
-                  </Typography.Text>
+                  </Text>
                 }
                 showActions="always"
                 actions={[
@@ -201,10 +198,11 @@ const DomainStoragePermissionTable: React.FC<
               align: 'center' as const,
               render: () =>
                 enabledSet.has(permKey) ? (
-                  <CheckCircleOutlined style={{ color: token.purple5 }} />
+                  <CircleCheck style={{ color: token.purple5 }} size="1em" />
                 ) : (
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextDisabled }}
+                    size="1em"
                   />
                 ),
             };

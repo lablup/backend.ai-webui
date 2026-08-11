@@ -1,8 +1,9 @@
+import { useEventListener } from 'backend.ai-ui';
+
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useEventListener } from 'ahooks';
 
 /**
  * useKeyboardShortcut
@@ -46,7 +47,13 @@ const useKeyboardShortcut = (
     return false;
   };
 
-  const isModalOpen = () => document.querySelector('.ant-modal');
+  // `dialog[open]` covers every modal in the app (`BAIModal`, the app-shim's
+  // imperative confirm/alert dialogs) — they are native `<dialog>` elements
+  // opened with `showModal()`. The `.ant-modal` alternative that used to sit
+  // beside it is gone with antd: nothing renders that class any more, so
+  // keeping it would only make the selector look like it covers a case it
+  // cannot.
+  const isModalOpen = () => document.querySelector('dialog[open]');
 
   /**
    * Handles the keydown event, invoking the handler if conditions are met.
@@ -74,7 +81,7 @@ const useKeyboardShortcut = (
     handler(event);
   };
 
-  // Use ahooks' useEventListener for global keyboard event management
+  // BUI's `useEventListener` handles the global keydown subscription.
   useEventListener('keydown', handleKeyDown);
 };
 

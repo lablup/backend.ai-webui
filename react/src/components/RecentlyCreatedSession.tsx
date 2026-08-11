@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
+import { theme } from '../theme-shim';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
-import { theme } from 'antd';
 import {
   filterOutNullAndUndefined,
   toLocalId,

@@ -47,16 +47,42 @@ For each component:
 
 ---
 
+## Storybook Configuration Files (Do Not Recreate)
+
+> **`.storybook/main.ts` and `.storybook/preview.tsx` already exist and are
+> already configured.** Never scaffold or overwrite them with generic
+> boilerplate while creating or updating a story — read them first if you need
+> to check a setting, and add only the key you actually need.
+
+A few repo-specific facts worth knowing before you touch a story file:
+
+- `typescript.reactDocgen` is set to `false` in `main.ts` (avoids a
+  "Cannot convert a symbol to a string" build error). This means **argTypes
+  are never auto-derived from TypeScript types** — every `argTypes` entry in a
+  story must be written out by hand, per the templates below.
+- `main.ts` also registers `@storybook/addon-docs`, `@storybook/addon-onboarding`,
+  and `@vueless/storybook-dark-mode`, plus a `staticDirs` list (fonts, icons)
+  and an `Introduction.mdx` entry — none of that needs touching for a
+  component story.
+- `preview.tsx`'s decorator is `withGlobalProvider` from `./decorators`, which
+  mounts Astryx's theme, `BAIConfigProvider` (locale), and the app-shim
+  around every story. There is **no** antd `ConfigProvider` — antd is not a
+  dependency of this project — so don't add one when writing a story-level
+  decorator either; use `BAIConfigProvider` if a story genuinely needs its own
+  provider override.
+
+---
+
 ## CREATE Mode (No Story Exists)
 
 When the story file doesn't exist:
 
 1. **Analyze Component**: Extract props, types, and functionality
-2. **Identify BAI-Specific Props**: Distinguish from inherited Ant Design props
+2. **Identify BAI-Specific Props**: Distinguish them from props inherited from the base the wrapper extends
 3. **Generate Story File**: Create `.stories.tsx` following CSF 3 format
 4. **Create Stories**: Generate Default story with `args` and comparison stories with `render`
 
-**IMPORTANT:** Stories should ONLY demonstrate BAI-specific features, NOT Ant Design's original functionality.
+**IMPORTANT:** Stories should ONLY demonstrate what *this wrapper* adds — not the behavior it merely forwards to the component it wraps.
 
 ---
 
@@ -103,18 +129,39 @@ status: {
 
 ## Identifying BAI-Specific Props
 
-```typescript
-// Example: BAIAlert.tsx
-export interface BAIAlertProps extends AlertProps {
-  ghostInfoBg?: boolean;  // BAI-specific: NOT in AlertProps
-}
-// AlertProps (message, type, closable, showIcon, etc.) are NOT BAI-specific
-```
+First find out **what the component extends**. Per
+`.claude/rules/component-props-extension.md` the base is whatever the wrapper
+actually renders, and it varies:
+
+| Base | Example |
+|---|---|
+| An Astryx primitive's props | `BAITabListProps extends Omit<TabListProps, 'ref'>` (`@astryxdesign/core/TabList`) |
+| A DOM props type | `BAICardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' \| 'color' \| 'children'>` |
+| Another BUI wrapper's props | `BAIListAlertProps extends Omit<BAIAlertProps, 'description'>` |
+| A third-party props type | `BAILinkProps extends Omit<LinkProps, 'to'>` (react-router-dom) |
+| **Nothing — standalone** | `BAIAlertProps`, `BAIBadgeProps`, `BAIModalProps` |
+
+That last row is common and matters here. Several wrappers restate a frozen,
+antd-**shaped** prop surface inline so hundreds of call sites kept compiling
+through the Astryx migration — the vocabulary outlived the library
+(`.claude/rules/component-props-extension.md`). `BAIAlertProps`, for instance, is a
+standalone interface that declares `type`, `title`, `message` (documented as the
+deprecated alias for `title`), `showIcon`, `closable`, `banner`, `action` and
+`ghostInfoBg` itself — none of them "inherited".
 
 **Decision criteria:**
-1. Is this prop defined in the BAI component's own interface (not inherited)? → BAI-specific
-2. Does this prop have modified behavior compared to Ant Design? → BAI-specific
-3. Is this prop just passed through to Ant Design unchanged? → NOT BAI-specific
+1. Is the prop the reason this wrapper exists — a behavior, layout or default
+   the base doesn't have? → **document it fully**
+2. Does the wrapper change the prop's meaning versus the base (renamed,
+   narrowed, re-typed)? → **document it fully**
+3. Is the prop forwarded to the base unchanged? → not story-worthy
+4. Is the prop accepted-and-ignored (a compatibility no-op, e.g. `BAIAlert`'s
+   `ghostInfoBg` since the Astryx conversion, or `BAIModal`'s `centered` /
+   `draggable`)? → **say so in one line** and do not build a story that
+   pretends to demonstrate it
+
+Read the component's file header before writing: the migration records these
+decisions as `PILOT-DECISION` notes right there.
 
 ---
 
@@ -124,24 +171,32 @@ Check existing story files' `title` values to determine the correct category. Us
 
 | Category | Components | Title Pattern |
 |----------|------------|---------------|
-| Alert | BAIAlert, BAIAlertIconWithTooltip | `Alert/[Name]` |
+| Alert | BAIAlert, BAIAlertIconWithTooltip, BAIListAlert | `Alert/[Name]` |
+| Badge | BAIBadge, BAIAuditLogStatusTag, BAISchedulingResultBadge | `Badge/[Name]` |
 | Board | BAIBoardItemTitle | `Board/[Name]` |
 | Button | BAIButton, BAIBackButton, BAIFetchKeyButton | `Button/[Name]` |
 | Card | BAICard | `Card/[Name]` |
 | Filter | BAIPropertyFilter, BAIGraphQLPropertyFilter | `Filter/[Name]` |
 | Flex | BAIFlex | `Flex/[Name]` |
-| Input | DynamicUnitInputNumber, DynamicUnitInputNumberWithSlider | `Input/[Name]` |
+| Input | BAICheckbox, BAIUncontrolledInput, BAIDynamicUnitInputNumber, BAIDynamicStepInputNumber, BAIDynamicUnitInputNumberWithSlider | `Input/[Name]` |
 | Link | BAILink | `Link/[Name]` |
-| Modal | BAIModal, BAIConfirmModalWithInput | `Modal/[Name]` |
+| Modal | BAIModal, BAIDeleteConfirmModal, BAIBulkErrorModal | `Modal/[Name]` |
+| Navigation | BAITabList | `Navigation/[Name]` |
 | Notification | BAINotificationItem | `Notification/[Name]` |
 | Row | BAIRowWrapWithDividers | `Row/[Name]` |
-| Select | BAISelect | `Select/[Name]` |
-| Statistic | BAIStatistic, BAINumberWithUnit, BAIResourceNumberWithIcon, BAIProgressWithLabel | `Statistic/[Name]` |
-| Tag | BAITag, BooleanTag, BAIDoubleTag | `Tag/[Name]` |
-| Text | BAIText, BAITextHighlighter | `Text/[Name]` |
+| Select | BAISelect, BAIComplexSelect, BAIAllowedHostNamesSelect, BAIProjectResourceGroupSelect | `Select/[Name]` |
+| Statistic | BAIStatistic, BAINumberWithUnit, BAIResourceNumberWithIcon, BAIProgressWithLabel, ResourceStatistics, TotalFooter | `Statistic/[Name]` |
+| Table | BAITableAstryx, BAINameActionCell | `Table/[Name]` |
+| Tag | BAITag, BAIBooleanTag, BAIDoubleTag, BAITagList | `Tag/[Name]` |
+| Text | BAIId, BAIText, BAITextHighlighter | `Text/[Name]` |
+| Tooltip | BAIQuestionIconWithTooltip | `Tooltip/[Name]` |
+| Utility | BAIIntervalView, BAIUnmountAfterClose | `Utility/[Name]` |
 | Relay Fragment | (components using GraphQL fragments) | `Fragments/[Name]` |
 
-If no existing category fits, create a new one following the `[Category]/[Name]` pattern.
+If no existing category fits, create a new one following the `[Category]/[Name]`
+pattern. Grep the existing `title:` values first — a couple of one-off
+categories (`Components/`, `Data Display/` vs `DataDisplay/`) exist by accident;
+don't propagate them.
 
 ---
 
@@ -149,75 +204,107 @@ If no existing category fits, create a new one following the `[Category]/[Name]`
 
 Create the story file at the same location as the component: `BAIButton.tsx` → `BAIButton.stories.tsx`
 
+This template mirrors the shipped `BAIListAlert.stories.tsx` — a wrapper that
+specializes another BUI component (`Omit<BAIAlertProps, 'description'>`) and
+adds two props of its own.
+
 ```typescript
-import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
+import BAIListAlert from './BAIListAlert';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta: Meta<typeof BAIAlert> = {
-  title: 'Components/BAIAlert',
-  component: BAIAlert,
+const meta: Meta<typeof BAIListAlert> = {
+  title: 'Alert/BAIListAlert',
+  component: BAIListAlert,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component: `
-**BAIAlert** extends [Ant Design Alert](https://ant.design/components/alert).
+**BAIListAlert** extends **BAIAlert**.
+
+It renders a standardized \`ul\` list inside the alert description — used to
+summarize a list of items (e.g. selected resources) inside a modal. The list
+scrolls vertically once it exceeds \`maxHeight\`, so the modal never grows
+unbounded.
 
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`ghostInfoBg\` | \`boolean\` | \`true\` | Info alerts use container background |
+| \`items\` | \`Array<{ key?: React.Key; content: ReactNode }>\` | — | List entries rendered as \`li\` elements |
+| \`maxHeight\` | \`CSSProperties['maxHeight']\` | \`165\` | Max height before the list scrolls |
 
-For all other props, refer to [Ant Design Alert](https://ant.design/components/alert).
+For all other props, refer to **BAIAlert**.
         `,
       },
     },
   },
   argTypes: {
-    // BAI-specific props - document fully
-    ghostInfoBg: {
-      control: { type: 'boolean' },
-      description: 'When true, info alerts use container background',
+    // Props this wrapper adds - document fully
+    items: {
+      control: false,
+      description: 'List entries rendered as li elements',
       table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'true' },
+        type: { summary: 'Array<{ key?: React.Key; content: ReactNode }>' },
       },
     },
+    maxHeight: {
+      control: { type: 'number' },
+      description: 'Maximum height of the list before it scrolls vertically',
+      table: {
+        type: { summary: "CSSProperties['maxHeight']" },
+        defaultValue: { summary: '165' },
+      },
+    },
+    // Inherited props that only appear because Default uses them
+    type: { table: { disable: true } },
+    title: { table: { disable: true } },
+    showIcon: { table: { disable: true } },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof BAIAlert>;
+type Story = StoryObj<typeof BAIListAlert>;
 
 // Default story: Use args for interactive Controls
 export const Default: Story = {
   name: 'Basic',
   args: {
     type: 'info',
-    message: 'Informational alert with ghost background',
+    title: 'The following projects will be updated',
     showIcon: true,
-    ghostInfoBg: true,  // BAI-specific prop MUST be included
+    items: [
+      { key: 'a', content: 'project-alpha' },
+      { key: 'b', content: 'project-beta' },
+    ],
   },
 };
 
 // Comparison story: Use render for multiple components
-export const GhostInfoBackground: Story = {
+export const ScrollThreshold: Story = {
   render: () => (
-    <BAIFlex direction="column" gap="md">
-      <BAIAlert type="info" message="Ghost enabled (default)" ghostInfoBg={true} showIcon />
-      <BAIAlert type="info" message="Ghost disabled" ghostInfoBg={false} showIcon />
+    <BAIFlex direction="column" gap="md" align="stretch">
+      <BAIListAlert type="info" title="Fits" items={shortItems} showIcon />
+      <BAIListAlert type="info" title="Scrolls" items={longItems} maxHeight={80} showIcon />
     </BAIFlex>
   ),
 };
 ```
 
+**Note on external doc links.** Older stories in the repo still link out to
+`ant.design`. Don't copy those links into new stories and drop them when you
+touch an existing one — antd is not a dependency and its docs no longer
+describe what the component does. Point at the BUI component it extends, or at
+the Astryx component (`pnpm exec astryx component <Name>`), instead.
+
 ### For Relay Fragment Components
 
 ```typescript
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import RelayResolver from '../../tests/RelayResolver';
+// `packages/backend.ai-ui/src/tests/RelayResolver.tsx` — from a component in
+// `src/components/` that is `'../tests/RelayResolver'`; adjust for depth.
+import RelayResolver from '../tests/RelayResolver';
 
 const QueryResolver = () => {
   const { data_node } = useLazyLoadQuery<ComponentStoriesQuery>(
@@ -249,30 +336,40 @@ export const Default: Story = {
 
 1. **Default story**: Use `args` to enable interactive Controls, MUST include BAI-specific props
 2. **Comparison stories**: Use `render` for layouts with multiple components
-3. **ArgTypes**: Document BAI-specific props fully. Ant Design props used in Default `args` should remain visible (not hidden)
+3. **ArgTypes**: Document the wrapper's own props fully. Inherited props that only appear in the table because `Default` passes them can be hidden with `table: { disable: true }` — that is what the shipped stories do
 4. **No redundant `name`**: Only use when different from export name (e.g., `Default` → `name: 'Basic'`)
-5. **Use BAIFlex**: Not Ant Design's `Space` component
+5. **Use `BAIFlex` for story layout** — never a raw `<div>` with inline flex, and never `<Space>` (it left with antd). For a row of buttons that reads as one control, Astryx's `ButtonGroup` is the equivalent
 6. **UPDATE preserves**: When updating, preserve existing stories and descriptions
 
 ---
 
-## Common Mistake: Creating Stories for Ant Design Props
+## Common Mistake: Creating Stories for Forwarded Props
+
+A story earns its place by showing something the wrapper *decides*. A story
+that just varies a prop the wrapper hands straight to its base is documenting
+someone else's component.
 
 ```typescript
-// ❌ BAD: Stories for Ant Design features
-export const AllTypes: Story = { ... };  // 'type' is Ant Design prop
-export const Closable: Story = { ... };  // 'closable' is Ant Design prop
+// ❌ BAD: a story per value of a forwarded prop
+export const AllTypes: Story = { ... };   // BAIListAlert forwards `type` to BAIAlert
+export const Closable: Story = { ... };   // ditto `closable`
 
-// GOOD: Only stories for BAI-specific props
-export const GhostInfoBackground: Story = {
+// ✅ GOOD: a story for behavior this component owns
+export const ScrollThreshold: Story = {
   render: () => (
-    <BAIFlex direction="column" gap="md">
-      <BAIAlert type="info" message="Ghost enabled" ghostInfoBg={true} />
-      <BAIAlert type="info" message="Ghost disabled" ghostInfoBg={false} />
+    <BAIFlex direction="column" gap="md" align="stretch">
+      <BAIListAlert type="info" title="Fits" items={shortItems} />
+      <BAIListAlert type="info" title="Scrolls" items={longItems} maxHeight={80} />
     </BAIFlex>
   ),
 };
 ```
+
+Worse still is a story for a prop that is **accepted-and-ignored**. Several
+wrappers keep compatibility no-ops (`BAIAlert`'s `ghostInfoBg` since the Astryx
+conversion; `BAIModal`'s `centered`, `draggable`, `zIndex`, `getContainer`, …).
+A story toggling one of those renders two identical panes and reads as a bug.
+Note the prop as a no-op in the description table and move on.
 
 ---
 
@@ -280,10 +377,11 @@ export const GhostInfoBackground: Story = {
 
 | Story File | Reference For |
 |------------|---------------|
-| `BAIFlex.stories.tsx` | Ant Design extension with BAI-specific props |
-| `BAICard.stories.tsx` | Ant Design Card extension |
+| `BAIListAlert.stories.tsx` | Wrapper specializing another BUI component (`Omit<BAIAlertProps, …>`) |
+| `BAITabList.stories.tsx` | Wrapper over an Astryx primitive (`Omit<TabListProps, 'ref'>`) |
+| `BAICard.stories.tsx` | Hand-restated frozen prop surface (the escape hatch in `component-props-extension.md`) |
 | `BAIPropertyFilter.stories.tsx` | Complex component with interactive stories |
-| `BAIGraphQLPropertyFilter.stories.tsx` | BAI-specific component (not extending Ant Design) |
+| `BAIGraphQLPropertyFilter.stories.tsx` | Relay-backed component (`Fragments/` category, `RelayResolver`) |
 
 Located in `packages/backend.ai-ui/src/components/`.
 

@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import TextHighlighter from './TextHighlighter';
-import { Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAISelect,
@@ -136,7 +136,7 @@ const StorageSelect: React.FC<Props> = ({
             <BAIFlex align="center">
               {vhostInfo?.volume_info?.[host]?.usage && (
                 <Tooltip
-                  title={t('data.usage.HostStatusTooltip', {
+                  content={t('data.usage.HostStatusTooltip', {
                     status: usageLabel,
                   })}
                 >

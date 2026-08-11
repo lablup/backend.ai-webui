@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Yürütme başarısız oldu",
     "ErrorOccurred": "Bir hata oluştu"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Sonuç yok",
+    "Search": "Arama"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Etki Alanı Seçin"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Otomatik yenileme",
@@ -261,6 +268,9 @@
     "Tags": "Etiketler",
     "UpdatedAt": "Güncellenme Tarihi"
   },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
@@ -355,6 +365,62 @@
     "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "CreatePreset": "Ön Ayar Oluştur",
+    "DefaultValue": "Varsayılan Değer",
+    "DefaultValuePlaceholder": "örn. 1",
+    "Description": "Açıklama",
+    "DescriptionPlaceholder": "Bu parametrenin neyi kontrol ettiğini ve çıkarım davranışını nasıl etkilediğini açıklayın.",
+    "EditPreset": "Ön Ayarı Düzenle",
+    "Key": "Anahtar",
+    "KeyPlaceholder": "örn. TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Anahtar zorunludur.",
+    "Name": "Ad",
+    "NamePlaceholder": "örn. Tensor Parallel Size",
+    "NameRequired": "Ad zorunludur.",
+    "PresetCreated": "Çalışma zamanı varyantı ön ayarı oluşturuldu.",
+    "PresetTarget": "Ön Ayar Hedefi",
+    "PresetTargetArgs": "Komut Satırı Argümanı",
+    "PresetTargetEnv": "Ortam Değişkeni",
+    "PresetTargetRequired": "Ön ayar hedefi zorunludur.",
+    "PresetUpdated": "Çalışma zamanı varyantı ön ayarı güncellendi.",
+    "Rank": "Sıra",
+    "RankTooltip": "Aynı çalışma zamanı varyantının ön ayarları arasında görüntüleme sırası. Düşük değerler önce görünür.",
+    "Required": "Zorunlu",
+    "RequiredTooltip": "Bu ön ayar parametresinin bir dağıtım revizyonu oluşturulurken sağlanması gerekip gerekmediği.",
+    "RuntimeVariant": "Çalışma Zamanı Varyantı",
+    "RuntimeVariantRequired": "Çalışma zamanı varyantı zorunludur.",
+    "ValueType": "Değer Türü",
+    "ValueTypeBool": "Boole",
+    "ValueTypeFlag": "Bayrak",
+    "ValueTypeFloat": "Ondalık Sayı",
+    "ValueTypeInt": "Tam Sayı",
+    "ValueTypeRequired": "Değer türü zorunludur.",
+    "ValueTypeStr": "Metin"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "CreatedAt": "Oluşturulma tarihi",
+    "DefaultValue": "Varsayılan Değer",
+    "Description": "Açıklama",
+    "Key": "Anahtar",
+    "ModifiedAt": "Değiştirilme tarihi",
+    "Name": "Ad",
+    "Optional": "İsteğe Bağlı",
+    "PresetTarget": "Ön Ayar Hedefi",
+    "PresetTargetArgs": "Komut Satırı Argümanı",
+    "PresetTargetEnv": "Ortam Değişkeni",
+    "Rank": "Sıra",
+    "RankTooltip": "Aynı çalışma zamanı varyantının ön ayarları arasında görüntüleme sırası. Düşük değerler önce görünür.",
+    "Required": "Zorunlu",
+    "RuntimeVariant": "Çalışma Zamanı Varyantı",
+    "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
+    "ValueType": "Değer Türü",
+    "ValueTypeBool": "Boole",
+    "ValueTypeFlag": "Bayrak",
+    "ValueTypeFloat": "Ondalık Sayı",
+    "ValueTypeInt": "Tam Sayı",
+    "ValueTypeStr": "Metin"
+  },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Çalışma Zamanı Varyantını Seç"
   },
@@ -395,14 +461,18 @@
     "Step": "Adım"
   },
   "comp:BAITable": {
+    "Apply": "Uygula",
+    "Cancel": "İptal",
     "CollapseAll": "Tümünü daralt",
     "ExpandAll": "Tümünü genişlet",
     "ExpandErrorsOnly": "Yalnızca hataları genişlet",
     "ExpandOptions": "Genişletme seçenekleri",
+    "ExpandRow": "Satırı genişlet",
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",
     "InvalidPageNumber": "Geçersiz sayfa numarası",
+    "Pagination": "Sayfalama",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SettingTable": "Masa Ayarları"
@@ -470,8 +540,10 @@
     "MoreOptions": "Daha fazla seçenek",
     "Name": "İsim",
     "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
+    "RenameFile": "Rename",
     "RenameSuccess": "İsim başarıyla değiştirildi.",
     "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
     "Size": "Boyut",
@@ -538,21 +610,73 @@
     "UserID": "Kullanıcı Kimliği",
     "Username": "Kullanıcı Adı"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Yol seçmek için tıklayın",
+    "SelectAPath": "Bir yol seçin",
+    "SelectAPathInFolder": "{{folderName}} içinde bir yol seçin",
+    "SelectFolderFirst": "Önce bir klasör seçin",
+    "SelectThisLocation": "Bu konumu seç",
+    "SelectedPath": "Seçildi"
+  },
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
+  "form": {
+    "Optional": "(opsiyonel)",
+    "validateMessages": {
+      "Default": "Alan doğrulama hatası ${label}",
+      "Required": "${label} gerekli bir alan",
+      "Whitespace": "${label} sadece boşluk olamaz",
+      "array": {
+        "Len": "${label} sayısı ${len} olmalı",
+        "Max": "${label} sayısı en çok ${max} olmalı",
+        "Min": "${label} sayısı en az ${min} olmalı",
+        "Range": "${label} sayısı ${min}-${max} arası olmalı"
+      },
+      "number": {
+        "Len": "${label} ${len} olmalı",
+        "Max": "${label} en çok ${max} olmalı",
+        "Min": "${label} en az ${min} olmalı",
+        "Range": "${label} ${min}-${max} arası olmalı"
+      },
+      "pattern": {
+        "Mismatch": "${label} şu kalıpla eşleşmeli: ${pattern}"
+      },
+      "string": {
+        "Len": "${label} ${len} karakter olmalı",
+        "Max": "${label} en çok ${max} karakter olmalı",
+        "Min": "${label} en az ${min} karakter olmalı",
+        "Range": "${label} ${min}-${max} karakter arası olmalı"
+      },
+      "types": {
+        "Email": "${label} geçerli bir ${type} değil",
+        "Number": "${label} geçerli bir ${type} değil",
+        "Object": "${label} geçerli bir ${type} değil",
+        "String": "${label} geçerli bir ${type} değil",
+        "Url": "${label} geçerli bir ${type} değil"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Tüm seçimi kaldır",
     "File": "Dosya",
+    "Increase": "Increase",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
+    "Select": "Select",
     "TotalItems": "Total {{total}} öğeleri",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "İptal etmek",
       "Close": "Kapalı",
       "Collapse": "Yıkılmak",
+      "Confirm": "Confirm",
       "Copied": "Kopyalandı",
+      "Copy": "Kopyala",
       "CopyAll": "Hepsini kopyala",
       "Create": "Yaratmak",
       "Delete": "Silmek",

@@ -12,7 +12,6 @@ import FairShareStepToolbar from './FairShareStepToolbar';
 import ResourceGroupFairShareTable, {
   availableResourceGroupSorterValues,
 } from './ResourceGroupFairShareTable';
-import { theme } from 'antd';
 import { BAIFlex, INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -32,7 +31,6 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const {
     baiPaginationOption,
@@ -141,9 +139,6 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
           pageSize: tablePaginationOption.pageSize,
           total: resourceGroups?.count || 0,
           current: tablePaginationOption.current,
-          style: {
-            marginRight: token.marginXS,
-          },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

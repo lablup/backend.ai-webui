@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<13efb19dc006774b70041837087ca54d>>
+ * @generated SignedSource<<45bed0a13d68f126e076a9a681554f8a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,9 +11,10 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type FairShareListProjectNameQuery$variables = {
   projectId: string;
+  skipProject: boolean;
 };
 export type FairShareListProjectNameQuery$data = {
-  readonly project: {
+  readonly project?: {
     readonly basicInfo: {
       readonly name: string;
     };
@@ -30,6 +31,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "projectId"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "skipProject"
   }
 ],
 v1 = [
@@ -65,16 +71,23 @@ return {
     "name": "FairShareListProjectNameQuery",
     "selections": [
       {
-        "alias": "project",
-        "args": (v1/*: any*/),
-        "concreteType": "ProjectV2",
-        "kind": "LinkedField",
-        "name": "projectV2",
-        "plural": false,
+        "condition": "skipProject",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v2/*: any*/)
-        ],
-        "storageKey": null
+          {
+            "alias": "project",
+            "args": (v1/*: any*/),
+            "concreteType": "ProjectV2",
+            "kind": "LinkedField",
+            "name": "projectV2",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ]
       }
     ],
     "type": "Query",
@@ -87,37 +100,44 @@ return {
     "name": "FairShareListProjectNameQuery",
     "selections": [
       {
-        "alias": "project",
-        "args": (v1/*: any*/),
-        "concreteType": "ProjectV2",
-        "kind": "LinkedField",
-        "name": "projectV2",
-        "plural": false,
+        "condition": "skipProject",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v2/*: any*/),
           {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
+            "alias": "project",
+            "args": (v1/*: any*/),
+            "concreteType": "ProjectV2",
+            "kind": "LinkedField",
+            "name": "projectV2",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "637f33f2c71333884872e567250d1783",
+    "cacheID": "6f6afb69073b1f80e8f437c48bd932e5",
     "id": null,
     "metadata": {},
     "name": "FairShareListProjectNameQuery",
     "operationKind": "query",
-    "text": "query FairShareListProjectNameQuery(\n  $projectId: UUID!\n) {\n  project: projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    id\n  }\n}\n"
+    "text": "query FairShareListProjectNameQuery(\n  $projectId: UUID!\n  $skipProject: Boolean!\n) {\n  project: projectV2(projectId: $projectId) @skip(if: $skipProject) {\n    basicInfo {\n      name\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "614756e2216a9a3301c7e2448ce0f421";
+(node as any).hash = "691dcf5b91504b0f3d261fc5633cb3ba";
 
 export default node;

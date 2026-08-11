@@ -6,7 +6,7 @@ navTitle: Start
 
 The Start page provides quick access to frequently used WebUI features through
 action cards. Each card represents a common workflow such as creating storage
-folders, launching sessions, starting model services, or importing projects from
+folders, launching sessions, deploying models, or importing projects from
 external URLs.
 
 ![](../images/start_page.png)
@@ -32,13 +32,13 @@ The Start page displays the following action cards by default:
 - **Start Batch Session**: Create a batch session for predefined files or
   scheduled tasks. Enter the command, set the date and time, and run the session
   on demand.
-- **Start Model Service**: Select a trained model to share with others by
-  creating a model service endpoint.
+- **Start Deployment**: Share a trained model with others by creating a
+  deployment.
 - **Start From URL**: Import your project and code from various environments
   such as GitHub, GitLab, or Jupyter Notebooks via URL.
 
 :::note
-Depending on the server configuration, some cards such as the model service card
+Depending on the server configuration, some cards such as the deployment card
 may not be available. If you want to use these features, please contact your
 system administrator.
 :::
@@ -46,7 +46,10 @@ system administrator.
 ## Start from URL
 
 The **Start From URL** card allows you to import and run projects directly from
-external sources. Clicking the card opens a dialog with three tabs.
+external sources. Clicking the card opens a dialog with one tab per import
+source: **Import Notebook**, **Import GitHub Repository**, and
+**Import GitLab Repository**. An additional **Import Hugging Face Model** tab
+appears when the experimental Hugging Face import is turned on.
 
 ### Import notebook
 
@@ -104,6 +107,68 @@ when starting a session.
 3. Select a **Storage Host** where the repository will be saved
 4. Optionally set the **Folder Usage Mode** (General or Models)
 5. Click **Get To Folder** to clone the repository into a new storage folder
+
+### Import Hugging Face Model
+
+The **Import Hugging Face Model** tab downloads a model from Hugging Face into
+one of your model folders, so you can later mount it in a compute session or
+serve it as a deployment.
+
+:::warning[Experimental feature]
+This tab is hidden until you turn on **Import from Hugging Face** in the
+**Experimental features** section of the [User Settings](#user-settings) page.
+Experimental features may change or be removed in future updates.
+:::
+
+![](../images/start_from_url_huggingface.png)
+
+1. Enter the model in the **Hugging Face Model URL or ID** field. Both a model
+   page URL such as `https://huggingface.co/openai/gpt-oss-20b` and a plain
+   model ID such as `openai/gpt-oss-20b` are accepted. Addresses that point to
+   a dataset, a space, or any other non-model page are rejected.
+
+   Once the field contains a valid model, the dialog looks it up on Hugging
+   Face after a short pause — a loading indicator shows while it checks — and
+   displays a preview card below the field before you start the import. The
+   card shows the model ID as a link to its Hugging Face page, the model's
+   task and library tags, its size, and when it was last updated.
+
+2. Optionally enter a **Revision** — the branch, tag, or commit of the model
+   repository to download. Leave it empty to download the default revision. If
+   the address you entered already contains a revision, that revision is used.
+3. Optionally enter a **Hugging Face Token**. A token is required for gated or
+   private models.
+4. Select the **Model Folder** to download into. As the helper text under the
+   field notes, only model folders in the current project that you can mount
+   with write permission are listed — the download session writes into the
+   folder, so folders you can only mount read-only are excluded. The buttons
+   next to the selector let you open the selected folder, create a new model
+   folder, and refresh the list. When creating a new folder here, set its
+   mount permission to read & write: a folder created with read-only mount
+   permission cannot receive the download, and a warning tells you to create
+   one with read & write mount permission instead.
+5. Click **Download Model To Folder**.
+
+The dialog closes and Backend.AI starts a batch session that performs the
+download. Because the download runs inside that session, you can follow its
+progress on the Sessions page; the model is ready once the session finishes
+successfully. If the session fails, the download did not complete and the
+model is not ready to use.
+
+The model is stored in a subfolder named after the model, inside the folder you
+selected — `openai/gpt-oss-20b`, for example, is downloaded to `gpt-oss-20b/`.
+Several models can therefore share a single model folder.
+
+:::warning
+The token is passed to the download session as the `HF_TOKEN` environment
+variable and can be viewed by administrators. Use a read-only token.
+:::
+
+:::note
+The tab downloads into model folders, so it is only available when the
+deployment feature is enabled for your account. Large models take a long time
+to download and consume the storage quota of the target folder.
+:::
 
 ## Customizing card layout
 

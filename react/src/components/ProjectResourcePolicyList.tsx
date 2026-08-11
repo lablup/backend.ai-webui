@@ -8,6 +8,7 @@ import {
   ProjectResourcePolicyListQuery$data,
 } from '../__generated__/ProjectResourcePolicyListQuery.graphql';
 import { ProjectResourcePolicySettingModalFragment$key } from '../__generated__/ProjectResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import {
   bytesToGB,
   localeCompare,
@@ -17,22 +18,21 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
-import { DeleteFilled, ReloadOutlined } from '@ant-design/icons';
-import { App, Button, Tooltip } from 'antd';
-import type { ColumnType } from 'antd/es/table';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   useUpdatableState,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -100,7 +100,7 @@ const ProjectResourcePolicyList: React.FC<
     }
   `);
 
-  const columns = filterOutEmpty<ColumnType<ProjectResourcePolicies>>([
+  const columns = filterOutEmpty<BAIColumnType<ProjectResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -123,7 +123,7 @@ const ProjectResourcePolicyList: React.FC<
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);
@@ -221,9 +221,9 @@ const ProjectResourcePolicyList: React.FC<
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
         <BAIFlex gap={'xs'}>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              icon={<ReloadOutlined />}
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
+              icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {
                 startRefetchTransition(() =>
@@ -243,12 +243,10 @@ const ProjectResourcePolicyList: React.FC<
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
-        showSorterTooltip={false}
         columns={columns}
         dataSource={filterOutNullAndUndefined(project_resource_policies)}
-        scroll={{ x: 'max-content' }}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

@@ -10,10 +10,11 @@
  * supports.
  *
  * Keep this list in sync with the translation files under
- * `resources/i18n/*.json`. Sync with the BUI locale map is enforced at
- * compile time: `helper/bui-language.ts` declares
- * `buiLanguages satisfies Record<SupportedLanguage, …>`, so adding or
- * removing a language in only one of the two places is a type error.
+ * `resources/i18n/*.json`. Sync with the BUI locale map needs no enforcement:
+ * `helper/bui-language.ts` DERIVES `buiLanguages` from this array, so the two
+ * cannot drift. (It used to be a hand-written map of 21 antd locale bundles
+ * guarded by a `satisfies Record<SupportedLanguage, …>` clause; the bundles
+ * went away with the antd ConfigProvider layer.)
  */
 export const SUPPORTED_LANGUAGES = [
   'en',

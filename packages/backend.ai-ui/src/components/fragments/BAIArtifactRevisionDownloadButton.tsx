@@ -1,6 +1,6 @@
 import { BAIArtifactRevisionDownloadButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDownloadButtonFragment.graphql';
+import { theme } from '../../theme-shim';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
-import { theme } from 'antd';
 import * as _ from 'lodash-es';
 import { Download } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';

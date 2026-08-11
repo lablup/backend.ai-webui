@@ -4,9 +4,10 @@
  */
 import { useCurrentMenuKey } from '../hooks/useRouteScope';
 import { useCurrentLanguage } from './DefaultProviders';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, type ButtonProps } from 'antd';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 // Languages the hosted user manual (https://webui.docs.backend.ai) is
@@ -117,9 +118,19 @@ const TabMatchingTable: Record<string, Record<string, string>> = {
   },
 };
 
-interface WEBUIHelpButtonProps extends ButtonProps {}
+// PILOT-DECISION: antd `Button type="text" icon href target="_blank"` →
+// Astryx `IconButton variant="ghost"` + `window.open` (MAPPING §3.3).
+// `IconButton` has no `href` (it renders a <button>), and MAPPING's `href`
+// branch (`Link`) would drop the header's icon-button chrome. The anchor
+// affordances (middle-click, "copy link address") are lost; the click
+// behaviour and the new-tab target are identical.
+// P1 grep: the only consumer (WebUIHeader) passes `data-testid` alone.
+interface WEBUIHelpButtonProps {
+  'data-testid'?: string;
+}
 const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   'use memo';
+  const { t } = useTranslation();
   const [lang] = useCurrentLanguage();
   const location = useLocation();
 
@@ -152,11 +163,13 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
   const URL = manualURL + (tabTarget ?? URLMatchingTable[matchingKey] ?? '');
 
   return (
-    <Button
-      icon={<QuestionCircleOutlined />}
-      type="text"
-      target="_blank"
-      href={URL}
+    <IconButton
+      variant="ghost"
+      label={t('webui.menu.Help')}
+      icon={<CircleHelp size="1em" />}
+      onClick={() => {
+        window.open(URL, '_blank', 'noopener noreferrer');
+      }}
       {...props}
     />
   );

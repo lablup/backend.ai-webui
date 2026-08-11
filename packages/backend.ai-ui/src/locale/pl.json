@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Wykonanie nie powiodło się",
     "ErrorOccurred": "Wystąpił błąd"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Brak wyników",
+    "Search": "Wyszukiwanie"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Wybierz rejestr kontenerów"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Wybierz domenę"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
@@ -261,6 +268,9 @@
     "Tags": "Tagi",
     "UpdatedAt": "Zaktualizowano"
   },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Poniższe projekty zostaną zaktualizowane.",
     "ProjectResourcePolicy": "Polityka zasobów projektu",
@@ -355,6 +365,62 @@
     "To": "Status docelowy",
     "UpdatedAt": "Zaktualizowano"
   },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "CreatePreset": "Utwórz ustawienie wstępne",
+    "DefaultValue": "Wartość domyślna",
+    "DefaultValuePlaceholder": "np. 1",
+    "Description": "Opis",
+    "DescriptionPlaceholder": "Opisz, czym steruje ten parametr i jak wpływa na zachowanie wnioskowania.",
+    "EditPreset": "Edytuj ustawienie wstępne",
+    "Key": "Klucz",
+    "KeyPlaceholder": "np. TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Klucz jest wymagany.",
+    "Name": "Nazwa",
+    "NamePlaceholder": "np. Tensor Parallel Size",
+    "NameRequired": "Nazwa jest wymagana.",
+    "PresetCreated": "Ustawienie wstępne wariantu środowiska uruchomieniowego zostało utworzone.",
+    "PresetTarget": "Cel ustawienia wstępnego",
+    "PresetTargetArgs": "Argument wiersza poleceń",
+    "PresetTargetEnv": "Zmienna środowiskowa",
+    "PresetTargetRequired": "Cel ustawienia wstępnego jest wymagany.",
+    "PresetUpdated": "Ustawienie wstępne wariantu środowiska uruchomieniowego zostało zaktualizowane.",
+    "Rank": "Ranga",
+    "RankTooltip": "Kolejność wyświetlania wśród ustawień wstępnych tego samego wariantu środowiska uruchomieniowego. Niższe wartości pojawiają się pierwsze.",
+    "Required": "Wymagany",
+    "RequiredTooltip": "Określa, czy ten parametr ustawienia wstępnego musi zostać podany podczas tworzenia rewizji wdrożenia.",
+    "RuntimeVariant": "Wariant środowiska uruchomieniowego",
+    "RuntimeVariantRequired": "Wariant środowiska uruchomieniowego jest wymagany.",
+    "ValueType": "Typ wartości",
+    "ValueTypeBool": "Wartość logiczna",
+    "ValueTypeFlag": "Flaga",
+    "ValueTypeFloat": "Liczba zmiennoprzecinkowa",
+    "ValueTypeInt": "Liczba całkowita",
+    "ValueTypeRequired": "Typ wartości jest wymagany.",
+    "ValueTypeStr": "Ciąg znaków"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "CreatedAt": "Data utworzenia",
+    "DefaultValue": "Wartość domyślna",
+    "Description": "Opis",
+    "Key": "Klucz",
+    "ModifiedAt": "Data modyfikacji",
+    "Name": "Nazwa",
+    "Optional": "Opcjonalny",
+    "PresetTarget": "Cel ustawienia wstępnego",
+    "PresetTargetArgs": "Argument wiersza poleceń",
+    "PresetTargetEnv": "Zmienna środowiskowa",
+    "Rank": "Ranga",
+    "RankTooltip": "Kolejność wyświetlania wśród ustawień wstępnych tego samego wariantu środowiska uruchomieniowego. Niższe wartości pojawiają się pierwsze.",
+    "Required": "Wymagany",
+    "RuntimeVariant": "Wariant środowiska uruchomieniowego",
+    "RuntimeVariantId": "ID wariantu środowiska uruchomieniowego",
+    "ValueType": "Typ wartości",
+    "ValueTypeBool": "Wartość logiczna",
+    "ValueTypeFlag": "Flaga",
+    "ValueTypeFloat": "Liczba zmiennoprzecinkowa",
+    "ValueTypeInt": "Liczba całkowita",
+    "ValueTypeStr": "Ciąg znaków"
+  },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Wybierz wariant środowiska uruchomieniowego"
   },
@@ -395,14 +461,18 @@
     "Step": "Krok"
   },
   "comp:BAITable": {
+    "Apply": "Zastosuj",
+    "Cancel": "Anuluj",
     "CollapseAll": "Zwiń wszystko",
     "ExpandAll": "Rozwiń wszystko",
     "ExpandErrorsOnly": "Rozwiń tylko błędy",
     "ExpandOptions": "Opcje rozwijania",
+    "ExpandRow": "Rozwiń wiersz",
     "Export": "Eksportuj",
     "ExportCSV": "Eksportuj do CSV",
     "GoToFirstPage": "Przejdź do pierwszej strony",
     "InvalidPageNumber": "Nieprawidłowy numer strony",
+    "Pagination": "Paginacja",
     "SearchTableColumn": "Wyszukaj kolumny tabeli",
     "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
     "SettingTable": "Ustawienia tabeli"
@@ -470,8 +540,10 @@
     "MoreOptions": "Więcej opcji",
     "Name": "Nazwa",
     "NoUploadPermissionForHost": "Nie masz uprawnień do przesyłania plików na ten host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Nazwa została pomyślnie zmieniona.",
     "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
     "Size": "Rozmiar",
@@ -538,21 +610,73 @@
     "UserID": "ID użytkownika",
     "Username": "Nazwa użytkownika"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Kliknij, aby wybrać ścieżkę",
+    "SelectAPath": "Wybierz ścieżkę",
+    "SelectAPathInFolder": "Wybierz ścieżkę w {{folderName}}",
+    "SelectFolderFirst": "Najpierw wybierz folder",
+    "SelectThisLocation": "Wybierz tę lokalizację",
+    "SelectedPath": "Wybrano"
+  },
   "error": {
     "UnknownError": "Wystąpił nieznany błąd. \nSpróbuj ponownie."
   },
+  "form": {
+    "Optional": "(opcjonalne)",
+    "validateMessages": {
+      "Default": "Błąd walidacji dla pola ${label}",
+      "Required": "Pole ${label} jest wymagane",
+      "Whitespace": "Pole ${label} nie może być puste",
+      "array": {
+        "Len": "${label} musi posiadać ${len} elementów",
+        "Max": "${label} musi posiadać maksymalnie ${max} elementów",
+        "Min": "${label} musi posiadać co najmniej ${min} elementów",
+        "Range": "${label} musi posiadać między ${min} a ${max} elementów"
+      },
+      "number": {
+        "Len": "${label} musi mieć wartość o długości ${len}",
+        "Max": "${label} musi mieć wartość mniejszą lub równą ${max}",
+        "Min": "${label} musi mieć wartość większą lub równą ${min}",
+        "Range": "${label} musi mieć wartość pomiędzy ${min} a ${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} nie posiada wartości zgodnej ze wzorem ${pattern}"
+      },
+      "string": {
+        "Len": "${label} musi posiadać ${len} znaków",
+        "Max": "${label} musi posiadać maksymalnie ${max} znaków",
+        "Min": "${label} musi posiadać co namniej ${min} znaków",
+        "Range": "${label} musi posiadać między ${min} a ${max} znaków"
+      },
+      "types": {
+        "Email": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "Number": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "Object": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "String": "${label} nie posiada poprawnej wartości dla typu ${type}",
+        "Url": "${label} nie posiada poprawnej wartości dla typu ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Odznacz wszystko",
     "File": "Plik",
+    "Increase": "Increase",
     "NSelected": "{{count}}",
     "Optional": "Opcjonalne",
     "Project": "Projekt",
+    "Select": "Select",
     "TotalItems": "Total {{total}}",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Anulować",
       "Close": "Zamknąć",
       "Collapse": "Zawalić się",
+      "Confirm": "Confirm",
       "Copied": "Skopiowano",
+      "Copy": "Kopiuj",
       "CopyAll": "Kopiuj wszystko",
       "Create": "Tworzyć",
       "Delete": "Usuwać",

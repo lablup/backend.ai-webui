@@ -145,7 +145,7 @@ const BAIVFolderSelect = forwardRef<BAIVFolderSelectRef, Props>(
       },
     }));
 
-    return <BAISelect /* ... */ />;
+    return <BAIComplexSelect /* ... */ />;
   }
 );
 ```

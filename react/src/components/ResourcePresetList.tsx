@@ -8,25 +8,26 @@ import {
   ResourcePresetListQuery$data,
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
+import { App } from '../app-shim';
 import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
-import { ReloadOutlined, DeleteFilled } from '@ant-design/icons';
-import { Tooltip, Button, App, TableColumnsType } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAINumberWithUnit,
   useUpdatableState,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { RotateCw, Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -83,7 +84,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       }
     `);
 
-  const columns: TableColumnsType<ResourcePreset> = filterOutEmpty([
+  const columns: BAIColumnsType<ResourcePreset> = filterOutEmpty([
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
@@ -106,7 +107,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingPresetName(record?.name ?? null);
@@ -163,33 +164,30 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           wrap="wrap"
           style={{ flexShrink: 1 }}
         >
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              icon={<ReloadOutlined />}
-              loading={isRefetchPending}
-              onClick={() => {
-                startRefetchTransition(() => {
-                  updateResourcePresetsFetchKey();
-                });
-              }}
-            />
-          </Tooltip>
-          <BAIButton
-            type="primary"
+          <IconButton
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            icon={<RotateCw size="1em" />}
+            isLoading={isRefetchPending}
+            onClick={() => {
+              startRefetchTransition(() => {
+                updateResourcePresetsFetchKey();
+              });
+            }}
+          />
+          <Button
+            variant="primary"
             icon={<PlusIcon />}
+            label={t('resourcePreset.CreatePreset')}
             onClick={() => {
               setIsCreating(true);
             }}
-          >
-            {t('resourcePreset.CreatePreset')}
-          </BAIButton>
+          />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey={'name'}
         dataSource={filterOutNullAndUndefined(resource_presets)}
-        scroll={{ x: 'max-content' }}
-        showSorterTooltip={false}
         columns={columns}
       />
       <BAIDeleteConfirmModal

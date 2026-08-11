@@ -16,7 +16,6 @@ import ProjectFairShareTable, {
 } from './ProjectFairShareTable';
 import ResourceGroupSchedulerTypeAlert from './ResourceGroupSchedulerTypeAlert';
 import UsageBucketModal from './UsageBucketModal';
-import { theme } from 'antd';
 import {
   BAIFlex,
   BAIUnmountAfterClose,
@@ -45,7 +44,6 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [selectedRows, setSelectedRows] = useState<Array<ProjectFairShare>>([]);
   const [selectedSingleRow, setSelectedSingleRow] =
@@ -197,9 +195,6 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
           pageSize: tablePaginationOption.pageSize,
           total: projectFairShares?.count || 0,
           current: tablePaginationOption.current,
-          style: {
-            marginRight: token.marginXS,
-          },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

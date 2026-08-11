@@ -6,21 +6,23 @@ import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -136,7 +138,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => {
                 onOpenWeightSetting?.(record);
               },
@@ -159,19 +161,16 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       render: (weight, record) => {
         return (
           <BAIFlex gap="xxs">
-            <Typography.Text>
+            <Text>
               {_.isNil(weight)
                 ? '-'
                 : toFixedFloorWithoutTrailingZeros(weight, 1)}
-            </Typography.Text>
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
+            </Text>
+            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
               {record.spec.usesDefault
                 ? `(${t('fairShare.UsingDefault')})`
                 : ''}
-            </Typography.Text>
+            </Text>
           </BAIFlex>
         );
       },
@@ -216,15 +215,15 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
                   {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
+                    <Divider orientation="vertical" />
                   )}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
+                      <Text color="secondary">
                         / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      </Text>
                     }
                   />
                 </BAIFlex>
@@ -250,9 +249,8 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   ];
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey={'domainName'}
-      scroll={{ x: 'max-content' }}
       {...tableProps}
       dataSource={domain || []}
       columns={columns}

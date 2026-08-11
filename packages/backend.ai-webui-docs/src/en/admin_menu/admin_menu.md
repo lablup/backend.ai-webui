@@ -38,13 +38,14 @@ user belongs.
 
 ![](../images/user_detail_dialog.png)
 
-Click the settings (gear) icon in the user's **Email** column row to update information of a user who
+Click the **Edit** (pencil) icon in the user's **Email** column row to change the settings of a user who
 already exists. User's name, password, activation state, etc. can be changed. User ID (email) cannot be changed.
+Click **Save** to apply your changes.
 
 ![](../images/user_update_dialog.png)
 
 
-The user create/update dialog contains the following fields:
+The user create/edit dialog contains the following fields:
 
 - **E-Mail**: The user's email address, used as the login ID. Cannot be changed after creation.
 - **Username**: A unique identifier for the user (up to 64 characters).
@@ -75,13 +76,19 @@ The user create/update dialog contains the following fields:
 - **Resource Policy**: Select the user resource policy
   to which the user belongs. For more information about user resource policies, please
   refer to the [user resource policy](#user-resource-policy) section.
-- **Domain**: The domain to which the user belongs. This field is shown in both the create and update dialogs.
+- **Domain**: The domain to which the user belongs. This field is shown in both the create and edit dialogs.
 - **Projects**: Select one or more projects for the user to belong to. The available projects depend on the domain shown in the dialog.
 - **Allowed Client IPs**: Restrict which IP addresses can access the system using this user account. Enter IP addresses or CIDR notation (e.g., `10.20.30.40`, `10.20.30.0/24`). If left empty, access from any IP is allowed.
 - **Container UID**: The numeric User ID assigned to processes inside the container. This is useful when the container needs to match a specific UID for file permission purposes.
 - **Container GID**: The default numeric Group ID assigned to processes inside the container.
 - **Supplementary GID**: Additional numeric Group IDs assigned to container processes. Enter multiple GIDs separated by commas.
 - **Main Access Key**: (Edit only) Select the main access key used for API authentication among the user's keypairs.
+
+In the Users list, columns that hold several values — **Allowed Client IPs** and **Supplementary GID** —
+show the first value inline and collapse the rest behind a `+N` tag. Hover over the tag to see the
+complete list without widening the column.
+
+Filters, sorting, and other view state persist when you switch tabs, and copying the URL lets you reopen or share the exact same view.
 
 <a id="bulk-create-users"></a>
 
@@ -155,10 +162,12 @@ The CSV file must use UTF-8 encoding. The first row must be a header row. Header
 
 - **email**: The user's email address, used as the login ID.
 - **username**: A unique username for the user.
-- **password**: The initial password. The same password rules apply as for single user creation (at least 8 characters with at least 1 alphabet, special character, and number).
+
+A file that is missing one of these two columns is rejected, and the dialog explains which column is missing.
 
 **Optional columns:**
 
+- **password**: The initial password. The same password rules apply as for single user creation (at least 8 characters with at least 1 alphabet, special character, and number). A password is still required for every account, but it does not have to come from the file — see the note below.
 - **full_name**: The user's display name.
 - **role**: The user's role (`user`, `admin`, or `superadmin`). Defaults to `user` if omitted.
 - **status**: The user's initial status (`active` or `inactive`). Defaults to `active` if omitted.
@@ -170,6 +179,11 @@ The CSV file must use UTF-8 encoding. The first row must be a header row. Header
 
 #### Uploading and reviewing
 
+The left side of the dialog holds a **Defaults** panel. Any value you set there fills in the matching
+field for every row that leaves it blank, so you do not have to repeat it in each CSV cell. The panel
+covers **Domain**, **Project**, **Resource Policy**, **Password**, **Password change required**, and
+**Description**. Fields you leave alone read `No default`.
+
 After selecting your CSV file, the dialog shows a preview table listing all rows with the following indicators:
 
 - Rows with valid data are shown normally.
@@ -178,13 +192,50 @@ After selecting your CSV file, the dialog shows a preview table listing all rows
 
 ![](../images/bulk_create_user_csv_modal.png)
 
+:::note
+A CSV without a `password` column — for example a file exported from the Users list — loads
+normally. The rows simply show a per-row `Password is required.` error, and the create button stays
+disabled while any row carries one. Enter a password in the **Defaults** panel and the preview updates
+live: the errors clear and the button enables, with no need to re-upload the file.
+:::
+
 #### Creating the users
 
-Once you have reviewed the preview and confirmed that all rows are valid, click **Create** to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.
+Once you have reviewed the preview and confirmed that all rows are valid, click **Create N user(s)** to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.
 
 :::warning
 If some rows fail, only the successful rows result in new accounts. Failed rows are reported individually. Correct the source CSV and re-upload to create the remaining accounts.
 :::
+
+<a id="bulk-edit-users"></a>
+
+### Bulk edit users
+
+When several accounts need the same change — moving them to another domain or project, switching their
+resource policy, or setting the container UID/GID — you can edit them in one pass instead of opening each
+user in turn.
+
+1. Select the users you want to change with the row checkboxes in the Users list.
+2. A selection count appears in the toolbar. Click the edit (pencil) button next to it.
+3. The **Bulk Edit Users** dialog opens.
+
+![](../images/bulk_edit_users_modal.png)
+
+An alert at the top of the dialog lists every user the change will be applied to, by email address, so
+you can confirm the selection before committing. The alert also warns that setting a UID or GID may
+restrict the use of folder mounts that were created earlier.
+
+The dialog exposes the following fields. A field you leave untouched is not changed on any of the
+selected users:
+
+- **Domain**: Move the selected users to another domain. Changing it clears the **Projects** selection.
+- **Projects**: Assign the selected users to one or more projects. A domain must be selected first.
+- **User Status**: Set the accounts to Active, Inactive, Inactive (include keypair), or Before Verification.
+- **Resource Policy**: Apply a user resource policy to every selected account.
+- **Container UID**, **Container GID**, **Supplementary GID**: Set the numeric IDs assigned to processes inside the container.
+
+When the operation finishes, a message reports how many of the selected users were updated. Any account
+that could not be changed is reported separately with its own error.
 
 <a id="inactivate-user-account"></a>
 
@@ -278,13 +329,15 @@ Inactive panel at the bottom.
 <!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
 Like in Users tab, you can use the inline buttons in the keypair's row to view or
-update keypair details. Click the info icon button to see specific details of the keypair.
+edit keypair details. Click the info icon button to see specific details of the keypair.
 If necessary, you can copy the secret key by clicking the copy button.
 
 ![](../images/keypair_detail_dialog.png)
 
-You can modify the resource policy and rate limit of the keypair by clicking the `Setting (Gear)` button.
-Please keep in mind that if the 'Rate Limit' value is small, API operations such as login may be blocked.
+You can change the resource policy and rate limit of the keypair by clicking the **Edit** (pencil) button
+in the keypair's row. The dialog is titled **Edit Keypair Resource Policy**; click **Save** to apply your
+changes. Please keep in mind that if the **Rate Limit** value is small, API operations such as login may
+be blocked.
 
 ![](../images/keypair_update_dialog.png)
 
@@ -297,18 +350,51 @@ However, you cannot permanently delete a keypair if it is currently being used a
 ![](../images/keypair_delete_confirmation.png)
 <!-- TODO: Re-capture keypair_delete_confirmation.png — shows the old UI. -->
 
-If you
-accidentally deleted a keypair, you can re-create keypair for the user by
-clicking the `+ ADD CREDENTIAL` button at the upper right corner.
+<a id="bulk-activate-deactivate-credentials"></a>
 
-The Rate Limit field is where you specify the maximum number of requests that
-can be sent to the Backend.AI server in 15 minutes. For example, if set to 1000,
-and the keypair sends more than 1000 API requests in 15 minutes, and the server
-throws an error and does not accept the request. It is recommended to use the
-default value and increase it when the API request frequency goes up high
-according to the user's pattern.
+### Activate or deactivate several credentials at once
+
+Instead of working through the rows one by one, you can change the status of many keypairs in a single
+step:
+
+1. Select the keypairs with the row checkboxes.
+2. A selection count appears in the toolbar, followed by a status button — **Deactivate** on the Active
+   tab, **Activate** on the Inactive tab.
+3. Click the button. A confirmation dialog states how many credentials are affected and what the change
+   means for their owners.
+4. Confirm to apply the change.
+
+![](../images/credential_bulk_deactivate.png)
+
+If only part of the batch succeeds, the result message reports the number of credentials that were
+changed and the number that failed. The selection is cleared whenever you switch tabs, change the
+filter, sort the table, or move to another page.
+
+<a id="create-credential"></a>
+
+### Create a credential
+
+If you accidentally deleted a keypair, you can create a new one for the user by clicking the
+**Create Credential** button at the upper right corner.
 
 ![](../images/add_keypair_dialog.png)
+
+The dialog contains the following fields:
+
+- **User**: A searchable select listing the existing user accounts. Start typing to narrow the list, then
+  pick the account the new keypair belongs to. Because the account is chosen from the list, it is no
+  longer possible to submit an address that does not belong to a real user.
+- **Resource Policy**: The keypair resource policy to apply to the new keypair.
+- **Rate Limit (for 15 min.)**: The maximum number of requests that can be sent to the Backend.AI server
+  in 15 minutes. For example, if set to 1000 and the keypair sends more than 1000 API requests in 15
+  minutes, the server throws an error and does not accept the request. It is recommended to use the
+  default value and increase it when the API request frequency goes up high according to the user's
+  pattern.
+
+   The maximum accepted value is 50000. Entering a larger number shows the validation message
+   `Rate Limit should be greater than zero and below 50000.` and blocks the submission, so the value you
+   typed is never silently reduced. A value of 100 or less is accepted but shows a warning, because a
+   small rate limit can block operations such as login.
 
 <a id="share-project-storage-folders-with-project-members"></a>
 
@@ -350,7 +436,7 @@ also displayed in the Permission panel.
 
 ### Admin deployments page
 
-Administrators and superadmins can access the Admin Deployments page at `/admin-deployments`, which provides a cross-project view of every deployment in the cluster. The **Project** column is available in the deployment list but is hidden by default; you can enable it using the column settings.
+Administrators and superadmins can access the Admin Deployments page at `/admin/deployments`, which provides a cross-project view of every deployment in the cluster. The **Project** column is available in the deployment list but is hidden by default; you can enable it using the column settings.
 
 ![](../images/admin_serving_page.png)
 
@@ -362,8 +448,15 @@ The Admin Deployments page has up to four tabs:
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
 
 :::note
-Each individual admin deployment has its own dedicated route at `/admin-deployments/:id`. When you open a deployment from the Admin Deployments page, the URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
+Each individual admin deployment has its own address under the Admin Deployments page,
+`/admin/deployments/<deployment id>`. When you open a deployment from the Admin Deployments page, the
+URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
 :::
+
+The refresh control at the top right of the deployment list carries an auto-refresh interval dropdown.
+The list reloads every 15 seconds until you pick a different interval, or **Off**, from the dropdown;
+while auto-refresh is on, a countdown border fills around the control to show when the next reload is
+due. Your choice is remembered for this list in this browser.
 
 #### Deployment detail page
 
@@ -407,8 +500,8 @@ You can narrow the list using the property filter bar at the top, which supports
 
 - **Name**: Filter by the model card's name (string match).
 - **Domain**: Filter by the owning domain (string match).
-- **Project**: Filter by the owning project's UUID.
-- **Storage Host**: Filter by the storage host of the linked folder, using the equals or not-equals operator with a custom value.
+- **Project**: Filter by the owning project's UUID. The value is checked before the filter is applied, so a malformed identifier is rejected with a message instead of returning an empty list.
+- **Storage Host**: Filter by the storage host of the linked folder. Instead of typing a value, pick the host from a dropdown of the hosts registered on this cluster; the equals and not-equals operators are both available.
 
 Edit and delete action icons are shown directly in the **Name** cell of each row.
 
@@ -463,7 +556,7 @@ The same behavior applies to **bulk deletion** (the label becomes **Also delete 
 
 Backend.AI lets administrators define reusable **Prometheus query presets** that auto-scaling rules and other monitoring features can reference by name. A preset bundles a metric name, a PromQL query template, an optional time window, and optional filter / group labels so operators do not have to retype the same query for every rule.
 
-The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin-deployments?tab=prometheus-preset`).
+The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin/deployments?tab=prometheus-preset`).
 
 :::note[Superadmin only: live preview in the Auto Scaling Rule editor]
 When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
@@ -488,6 +581,11 @@ The preset table lists all Prometheus query presets across the cluster. Each row
 
 You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
 
+Because a Prometheus query can be expensive to evaluate, the refresh control on this tab offers longer
+auto-refresh intervals than the other admin lists — 30 seconds, 1 minute, 5 minutes, and 10 minutes.
+Auto-refresh is **Off** until you choose one of them, and your choice is remembered for this tab in this
+browser.
+
 <a id="prometheus-preset-column-settings"></a>
 
 ### Column settings persistence
@@ -506,7 +604,7 @@ The modal contains the following fields:
 
 - **Name**: The preset's unique name. Must be unique across all Prometheus query presets.
 - **Description**: A free-form description shown alongside the preset in selectors.
-- **Category**: An optional category for grouping related presets. Leave empty for **No category**.
+- **Category**: An optional category for grouping related presets. This is a dropdown listing the categories defined on the server, not a free-text field; leave it empty for **No category**. While the category list is still loading, the field shows a loading indicator and the rest of the form stays usable.
 - **Metric Name**: The metric label that consumers (for example, auto-scaling rules) will display.
 - **Query Template**: The PromQL expression to execute. As you type, a **live preview** area below the field shows what value the template returns against your Prometheus instance, so you can verify the template works before saving. The preview is debounced and updates automatically as you edit.
 - **Time Window**: The default range-vector window, for example `5m`. Leave empty if the query does not use a range vector.
@@ -514,6 +612,12 @@ The modal contains the following fields:
 - **Group Labels**: Optional list of labels to group the query result by.
 
 Click **Create** to save the preset. On success, the preset appears in the list and a confirmation toast is shown.
+
+:::note
+The dialog starts from a clean slate every time you open it. Values you typed in a previous session —
+or the values of a preset you were editing a moment ago — never carry over into the next **Create Preset**
+or **Edit Preset** dialog.
+:::
 
 <a id="prometheus-preset-edit"></a>
 
@@ -560,7 +664,7 @@ Each preset stores the following deployment defaults:
 - **Basic Info**: Name, description, runtime variant, and image.
 - **Runtime Parameters**: Serving-framework parameters for vLLM or SGLang runtimes (not shown for the Custom runtime).
 - **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
-- **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+- **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
 - **Model & Execution**: Startup command, bootstrap script, and environment variables.
 - **Model Definition** (optional): Model name, model path, service configuration (port, startup command, pre-start actions), Health Check, and metadata.
 - **Deployment**: Replica count, revision history limit, and the *Open to Public* visibility default.
@@ -595,7 +699,7 @@ Additional columns are hidden by default and can be shown using the column-setti
       * **Runtime Parameters** (appears only when a non-Custom runtime such as **vLLM** or **SGLang** is selected): The serving framework parameters for this preset, organized in tabs — for example, **Model Loading**, **Resource Memory**, and **Serving Performance**. Required parameters are marked with a red asterisk (★) next to the label, and the save button stays disabled until every required parameter is filled in — including required parameters on tabs you have not visited yet.
       * **Image** (required): The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`), which helps distinguish images by CPU architecture on mixed-architecture clusters.
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
-   - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+   - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
    - **Deployment**:
       * **Replica Count** (required): Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
@@ -621,7 +725,7 @@ If a required field is missing or invalid, the **Create Preset** button stays di
 2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog.
 3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
 
-![](../images/deployment_preset_edit_modal.png)
+![](../images/deployment_preset_edit_wizard.png)
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 
@@ -683,14 +787,26 @@ You can also confirm that all resource policies are set to default in the Resour
 
 ![](../images/credentials.png)
 
-To modify resource policies, click the `Setting (Gear)` in the Name column of the
-default policy group. In the Update Resource Policy dialog, every option is
-editable except for Policy Name, which serves as the primary key for
-distinguishing resource policies in the list. Uncheck the Unlimited checkbox
+The keypair resource policy table lists the following columns. Two of them describe how the policy is
+applied rather than what it limits:
+
+- **Name**: The policy name. The cell also exposes the inline **Info**, **Edit**, and **Delete** actions.
+- **Default For Unspecified**: How the policy behaves when a session requests no explicit CPU or memory.
+  `UNLIMITED` allows usage up to the agent node's capacity, while `LIMITED` denies resources unless they
+  are set explicitly. In most cases `UNLIMITED` is recommended. Hover the question mark in the column
+  header for the same explanation in the UI.
+- **Resource Policy**: The resource slots the policy grants.
+- **Concurrent Sessions**, **Cluster Size**, **Idle Timeout**, **Max Session Lifetime**, **Storage Nodes**,
+  **Max Pending Session Count**, **Max Concurrent SFTP Sessions**: The individual limits described below.
+- **Created At**: The timestamp when the policy was created.
+
+To change a resource policy, click the **Edit** (pencil) action in the Name column of the policy. In the
+**Edit Keypair Resource Policy** dialog, every option is editable except for the policy name, which serves
+as the primary key for distinguishing resource policies in the list. Uncheck the Unlimited checkbox
 at the bottom of CPU, RAM, and fGPU, and set the resource limits to the desired
 values. Ensure that the allocated resources are less than the total hardware
 capacity. In this case, set CPU, RAM, and fGPU to 2, 4, and 1 respectively.
-Click the OK button to apply the updated resource policy.
+Click **Save** to apply the changed resource policy.
 
 ![](../images/update_resource_policy.png)
 
@@ -717,7 +833,7 @@ About details of each option in resource policy dialog, see the description belo
     from running indefinitely.
   - Max Pending Session Count: Maximum number of compute sessions that can be in
     the `PENDING` status simultaneously.
-  - Concurrent Jobs: Maximum number of concurrent compute session per keypair.
+  - Concurrent Sessions: Maximum number of concurrent compute session per keypair.
     If this value is set to 3, for example, users bound to this resource policy
     cannot create more than 3 compute sessions simultaneously. (max value: 100)
   - Idle timeout (sec.): Configurable period of time during which the user can
@@ -739,11 +855,11 @@ policy has been updated.
 
 ![](../images/keypair_resource_policy_update_check.png)
 
-You can create a new resource policy by clicking the `+ Create` button. Each setting
+You can create a new resource policy by clicking the **Create Policy** button. Each setting
 value is the same as described above.
 
 To create a resource policy and associate it with a keypair, go to the
-Credentials tab of the Users page, click the gear button located in the
+Credentials tab of the Users page, click the **Edit** (pencil) action located in the
 Name column of the desired keypair, and click the Select Policy field to
 choose it.
 
@@ -783,7 +899,18 @@ Count Per Model Session and Max Customized Image Count.
 
 ![](../images/user_resource_policy_list.png)
 
-To create a new user resource policy, click the `Create` button.
+The table shows the following columns: **Name** (with the inline **Edit** and **Delete** actions),
+**Max Folder Count**, **Max Concurrent Logins**, **Max Session Count Per Model Session**,
+**Max Quota Scope Size**, **Max Customized Image Count**, and **Created At**. Use the column-settings
+control to hide the columns you do not need; your choice is kept per browser.
+
+Filtering, sorting, and paging are all evaluated on the server, so the tab stays responsive on clusters
+with many policies. Add a condition with the property filter above the table to narrow the list by
+**Name**, **Created At**, **Max Folder Count**, **Max Concurrent Logins**,
+**Max Session Count Per Model Session**, or **Max Customized Image Count**; click a column header to
+change the sort order; and use the pager below the table to move through the results.
+
+To create a new user resource policy, click the **Create** button.
 
 ![](../images/create_user_resource_policy.png)
 
@@ -793,7 +920,10 @@ To create a new user resource policy, click the `Create` button.
   If set to Unlimited, it is displayed as "∞".
 - Max Folder Size: The maximum size of the user's storage space. If
   user's storage space exceeds this value, user cannot create a new data
-  folder. If set to Unlimited, it is displayed as "∞".
+  folder. If set to Unlimited, it is displayed as "∞". In the list this limit appears as
+  **Max Quota Scope Size**, shown with the unit that fits the configured value.
+- Max Concurrent Logins: The maximum number of concurrent login sessions allowed for the user.
+  If set to Unlimited, it is displayed as "∞".
 - Max Session Count Per Model Session: The maximum number of available sessions per model
   service created by a user. Increasing this value can put a heavy load on the session
   scheduler and potentially lead to system downtime, so please caution when
@@ -803,8 +933,9 @@ To create a new user resource policy, click the `Create` button.
   user cannot create a new customized image. If you want to know more about customized
   images, please refer to the [My Environments](#my-environments) section.
 
-To update, click the `Setting (Gear)` button in the Name column. To delete, click the trash can
-button.
+To change an existing policy, click the **Edit** (pencil) action in the Name column; the dialog is titled
+**Edit User Resource Policy** and its submit button reads **Save**. To delete one, click the **Delete**
+(trash can) action.
 
 :::note
 Changing a resource policy may affect all users who use that policy, so use
@@ -827,7 +958,7 @@ resource policy.
 ![](../images/project_resource_policy_list.png)
 <!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
-To create a new project resource policy, click the `+ Create` button at the top right of the table.
+To create a new project resource policy, click the **Create Policy** button at the top right of the table.
 
 ![](../images/create_project_resource_policy.png)
 
@@ -844,8 +975,9 @@ The meaning of each field is similar to the user resource policy. The difference
 project resource policy is applied to the project folders, while the user resource policy is
 applied to the user folders.
 
-If you want to make changes, click the `Setting (Gear)` button in the Name column. Resource policy
-names cannot be edited. Deletion can be done by clicking the trash can icon button.
+If you want to make changes, click the **Edit** (pencil) action in the Name column; the dialog is titled
+**Edit Project Resource Policy** and its submit button reads **Save**. Resource policy
+names cannot be edited. Deletion can be done by clicking the **Delete** (trash can) action.
 
 :::note
 Changing a resource policy may affect all users who use that policy,
@@ -869,7 +1001,8 @@ Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Ex
 
 ## Unified view for pending sessions
 
-The Admin Session page provides a unified view of all pending sessions within a
+The Admin Session page has two tabs. **Sessions** lists every compute session in the cluster, and
+**Pending Sessions** provides a unified view of all pending sessions within a
 selected resource group. The index number displayed next to the status indicates the queue position in
 which the session will be created once sufficient resources become available.
 
@@ -877,6 +1010,18 @@ which the session will be created once sufficient resources become available.
 
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
+
+On the **Sessions** tab, the property filter offers the following conditions:
+
+- **Project**: Choose the project from a searchable dropdown of the projects on this cluster. Because the
+  project is picked from the list, you do not have to look up its identifier; the resulting filter tag
+  shows the project's name.
+- **Session Name**, **Resource Group**, **Agent**, **Owner Email**: Narrow the list by text match.
+
+Both tabs refresh on their own: **Sessions** every 15 seconds and **Pending Sessions** every 10 seconds.
+Use the interval dropdown next to the refresh button to pick a different cadence, or **Off** to stop
+automatic reloading. While auto-refresh is on, a countdown border fills around the control so you can
+see when the next reload is due. Each tab remembers its own choice in this browser.
 
 ## Fair share scheduler
 
@@ -920,10 +1065,31 @@ resource group.
 
 ![](../images/fair_share_scheduler_warning.png)
 
+<a id="fair-share-resource-group-warnings"></a>
+
+The page also warns when the entity you are looking at cannot actually use the resource group you drilled
+into. Because the check is made against the domain or project you selected on the way down, the warning
+follows your current position in the hierarchy instead of reflecting a stale selection:
+
+- On the **Domain** step, a warning icon appears next to any domain for which the selected resource group
+  is not allowed. Hovering the icon explains that the group may still be allowed in the domain's
+  sub-projects.
+- On the **Project** step, the same icon marks projects for which the selected resource group is not
+  allowed.
+- On the **User** step, a warning states that users under the selected project cannot use the selected
+  resource group.
+
+The matching alert is repeated inside the weight setting modal, so the mismatch is visible at the moment
+you edit a weight rather than only in the table.
+
 At each step, the following common features are available:
 
 - **Pagination**: Navigate through results with configurable page size.
-- **Auto-refresh**: Data refreshes automatically every 7 seconds. A manual refresh button is also available.
+- **Auto-refresh**: The refresh button carries an interval dropdown. Because a Fair Share query is
+  expensive, the offered intervals are longer than elsewhere — 30 seconds, 1 minute, 5 minutes, and 10
+  minutes — and auto-refresh is **Off** until you pick one. While it is on, a countdown border fills
+  around the control to show when the next reload is due, and your choice is remembered in this browser.
+  The button also works as a manual refresh at any time.
 
 ### Resource group
 
@@ -1084,10 +1250,12 @@ The image list displays additional columns for more detailed image information:
 - **Version**: The version tag of the image.
 - **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
 
-You can select multiple uninstalled images and click the `Install` button to install them on available agent nodes in bulk.
+You can select multiple uninstalled images and click the **Install Image** button to install them on
+available agent nodes in bulk. The confirmation dialog's own button reads **Install**.
 
 You can change the minimum resource requirements for each image by clicking the
-`Setting (Gear)` in the `Controls` panel. Each image has hardware and resource
+**Edit** (pencil) action in the `Controls` panel, which opens the
+**Edit Minimum Image Resource Limit** dialog. Each image has hardware and resource
 requirements for minimal operation. (For example, for GPU-only images, there
 must be a minimum allocated GPU.) The default value for the minimum resource
 amount is provided as embedded in the image's metadata. If an attempt is made to
@@ -1135,7 +1303,7 @@ Backend.AI among the images stored in the registry is not updated.
 
 ![](../images/image_registries_page.png)
 
-You can add your own private docker registry by clicking the `+ Add Registry`
+You can add your own private docker registry by clicking the **Add Registry**
 button. The registry creation dialog contains the following fields:
 
 - **Registry Name**: A unique name for the registry (up to 50 characters). Must match the prefix used in image names stored in the registry.
@@ -1186,8 +1354,8 @@ Additional configuration notes:
   required for Backend.AI to query the GitLab API for image metadata during
   rescan operations.
 
-You can also update the information of an existing registry, except the
-Registry Name.
+You can also change the settings of an existing registry, except the
+Registry Name, from the **Edit Registry** dialog.
 
 After creating a registry and updating the image metadata, users still cannot
 use the images immediately. You must enable the registry by toggling the
@@ -1210,10 +1378,10 @@ of currently defined resource presets.
 ![](../images/resource_preset_list.png)
 
 You can set resources such as CPU, RAM, fGPU, etc. to be provided by the
-resource preset by clicking the `Setting (Gear)` (cogwheel) in the Name column.
-Create or Modify Resource Preset modal shows fields of the resources currently available.
-Depending on your server's settings, certain resources may not be visible.
-After setting the resources with the desired values, save it and check if the corresponding preset is displayed
+resource preset by clicking the **Edit** (pencil) action in the Name column.
+The **Create Resource Preset** / **Edit Resource Preset** modal shows fields of the resources currently
+available. Depending on your server's settings, certain resources may not be visible.
+After setting the resources with the desired values, click **Save** and check if the corresponding preset is displayed
 when creating a compute session. If available resources are less
 than the amount of resources defined in the preset, the corresponding preset
 would not be shown.
@@ -1227,7 +1395,7 @@ The resource preset dialog includes:
 
 ![](../images/modify_resource_preset_dialog.png)
 
-You can also create a resource preset by clicking the `+ Create Presets` button in the
+You can also create a resource preset by clicking the **Create Preset** button in the
 right top of the Resource Presets tab. You cannot create the same resource
 preset name that already exists, since it is the key value for distinguishing
 each resource preset.
@@ -1241,8 +1409,8 @@ each resource preset.
 
 Superadmins can view the list of agent nodes, currently connected to
 Backend.AI, by visiting the Resources page. You can check agent node's IP,
-connecting time, actual resources currently in use, etc. The WebUI does
-not provide the function to manipulate agent nodes.
+connecting time, actual resources currently in use, etc. From the agent's detail
+drawer you can also change its schedulable status and control the agent service itself.
 
 <a id="query-agent-nodes"></a>
 
@@ -1250,17 +1418,48 @@ not provide the function to manipulate agent nodes.
 
 ![](../images/agent_list.png)
 
-You can also see the exact resource usage for the agent node by clicking
-the note icon in the Control panel.
+Use the **Connected** / **Terminated** selector to switch between agents that are currently connected and
+agents that have been connected once and then terminated or disconnected. The Terminated list can be used
+as a reference for node management; if it is empty, then no disconnection or termination has occurred.
+
+![](../images/terminated_agent_list.png)
+
+You can narrow the list with the property filter, which supports **ID**, **Endpoint**, and
+**Schedulable**. The list reloads every 15 seconds; use the interval dropdown next to the refresh button
+to choose 30 seconds, 1 minute, or 5 minutes instead, or **Off** to stop automatic reloading. Because a
+cluster-wide agent query is heavy, 15 seconds is the shortest interval offered here.
+
+Click an agent's ID to open the **Agent Info** drawer, which shows the exact resource usage for that
+node. The drawer has its own refresh control with an interval dropdown; auto-refresh is **Off** until you
+pick an interval.
 
 ![](../images/detailed_agent_node_usage_information.png)
 
-On Terminated tab, you can check the information of the agents that has been
-connected once and then terminated or disconnected. It can be used as a
-reference for node management. If the list is empty, then it means
-that there's no disconnection or termination occurred.
+<a id="control-agent-service"></a>
 
-![](../images/terminated_agent_list.png)
+#### Start, stop, or restart an agent
+
+The Agent Info drawer holds a group of action buttons for the agent service itself:
+
+- **Start Agent**: Brings the agent service back up. Available only while the agent is not `ALIVE`.
+- **Stop Agent**: Shuts the agent service down. Available only while the agent is `ALIVE`.
+- **Restart Agent**: Restarts the agent service.
+
+![](../images/agent_watcher_actions.png)
+
+Each action opens a confirmation dialog that names the affected agent and warns that running sessions on
+this agent may be affected. Confirm to send the request; a message reports that the start, stop, or
+restart has been requested, and the agent's status is re-read afterwards.
+
+:::warning
+These actions act on the agent service on the node, not on a single session. Stopping or restarting an
+agent affects every compute session currently running on it. Make sure the node is drained — or that you
+accept the impact — before confirming.
+:::
+
+   The request is relayed to the agent's watcher daemon. If the watcher is unreachable, or the node is
+   not managed in a way that allows the operation, the WebUI reports the failure returned by the agent
+   instead of the success message.
 
 <a id="set-schedulable-status-of-agent-nodes"></a>
 
@@ -1268,8 +1467,8 @@ that there's no disconnection or termination occurred.
 
 You may want to prevent new compute sessions from being scheduled to an Agent
 service without stopping it. In this case, you can disable the Schedulable
-status of the Agent. Then, you can block the creation of a new session while
-preserving the existing sessions on the Agent.
+status of the Agent from the **Settings** button in the Agent Info drawer. Then, you can block the
+creation of a new session while preserving the existing sessions on the Agent.
 
 ![](../images/agent_settings.png)
 
@@ -1292,15 +1491,15 @@ possible in Resource Group tab of the Resource page.
 
 <a id="scheduling-methods"></a>
 
-You can edit a resource group by clicking the `Setting (Gear)` in the Control
-panel. In the Select scheduler field, you can choose the scheduling method for
+You can edit a resource group by clicking the **Edit** (pencil) action in the Name column, which opens
+the **Edit Resource Group** dialog. In the **Scheduler** field, you can choose the scheduling method for
 creating a compute session. Currently, there are four types: `FIFO`, `LIFO`,
 `DRF`, and `FAIR_SHARE`. `FIFO` and `LIFO` are scheduling methods creating the first- or the
 last-enqueued compute session in the job queue. `DRF` stands for Dominant Resource
 Fairness, and it aims to provide resources as fair as possible for each user.
 `FAIR_SHARE` allocates compute resources based on historical usage patterns. For
 more details, refer to the [Fair Share Scheduler](#fair-share-scheduler) section.
-You can deactivate a resource policy by turning off Active Status.
+You can deactivate a resource group by turning off **Active**. Click **Save** to apply your changes.
 
 ![](../images/modify_resource_group.png)
 
@@ -1310,6 +1509,12 @@ The resource group edit dialog contains the following additional fields:
 - **Allowed session types**: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.
 - **App Proxy Server Address**: Sets the App Proxy address for the resource group's Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager.
 - **App Proxy API Token**: The API token for authenticating with the App Proxy server.
+- **SFTP Storage Proxies**: The storage proxies used when users in this resource group transfer files to
+  their folders over SFTP. The field is available to superadmins and is pre-filled with the proxies that
+  currently serve this resource group. Saving synchronizes only this group's membership — it is added to
+  the proxies you selected and removed from the ones you cleared, and every other resource group on those
+  proxies is left untouched. When no proxy is selected for a group, that group is not restricted to a
+  particular proxy.
 - **Active**: Toggle the active status of the resource group.
 - **Public**: When enabled, the resource group is visible to all users.
 - **Pending timeout**:
@@ -1324,11 +1529,33 @@ The resource group edit dialog contains the following additional fields:
   HOL). If no value is specified, the global value in Etcd will be used (`num
 retries to skip`, default three times).
 
-You can create a new resource policy by clicking the `+ Create` button.
-Likewise other creating options, you cannot create a resource policy with the name
+You can create a new resource group by clicking the **Create Resource Group** button.
+Likewise other creating options, you cannot create a resource group with the name
 that already exists, since name is the key value.
 
 ![](../images/create_resource_group.png)
+
+<a id="bulk-edit-resource-groups"></a>
+
+### Edit several resource groups at once
+
+Settings that apply the same way to a set of resource groups can be changed in one pass:
+
+1. Select the resource groups with the row checkboxes. (The checkboxes are available to superadmins.)
+2. A selection count appears in the toolbar. Click the **Bulk Edit** (gear) button next to it.
+3. The **Bulk Edit Resource Groups** dialog opens.
+
+![](../images/bulk_edit_resource_groups_modal.png)
+
+An alert at the top of the dialog lists every resource group that will be changed. Below it sits the
+**SFTP Storage Proxies** field, pre-filled with the union of the proxies that already serve any of the
+selected groups.
+
+- Selecting a proxy puts **every** selected resource group on that proxy.
+- Clearing a proxy removes the selected resource groups from it. Because this takes SFTP access away, the
+  dialog asks you to confirm before the change is applied, naming the proxies involved.
+
+Resource groups you did not select keep their existing proxy assignments in either case.
 
 <a id="storages"></a>
 
@@ -1340,6 +1567,10 @@ By using this feature, admin can easily manage and monitor the exact amount of s
 
 ![](../images/storage_list.png)
 <!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
+
+The refresh control above the list carries an auto-refresh interval dropdown. Auto-refresh is **Off**
+until you pick an interval; while it is on, a countdown border fills around the control to show when the
+next reload is due, and your choice is remembered for this tab in this browser.
 
 To manage a storage host, click the storage host name in the Storages list. This opens the **Storage Host
 Detail Drawer**, where capacity (quota) and folder permissions are configured.
@@ -1385,7 +1616,13 @@ You can select multiple rows (using the row checkboxes) in the Domains, Projects
 
 #### User folder permissions
 
-User folder permissions are the permissions configured in the keypair resource policy. When you select a user with the user selector on the right, only the keypair resource policies assigned to that user's keypairs are filtered and shown. The **Assigned Keypairs** column shows the user's main access key.
+User folder permissions are the permissions configured in the keypair resource policy. To narrow the list
+to one person, add a **User** condition in the filter bar above the table: the value is a searchable
+dropdown of user accounts rather than a free-text box, so you pick the account instead of typing an
+address. Only the keypair resource policies assigned to that user's keypairs are then shown, and the
+resulting filter tag displays the user's email address. The **Assigned Keypairs** column shows the user's
+main access key; it is only shown while a user is selected. Picking another user replaces the existing
+condition instead of adding a second one.
 
 ![](../images/user_folder_permission_tab.png)
 <!-- TODO: Capture screenshot of user_folder_permission_tab.png — User Folder Permissions tab with the user selector and the Assigned Keypair column. -->
@@ -1564,23 +1801,66 @@ then it overrides configured value in system settings.
 
 ## Server management
 
-Go to the Maintenance page and you will see some buttons to manage the server.
-
-- RECALCULATE USAGE: Occasionally, due to unstable network connections or
-  container management problem of Docker daemon, there may be a case where the
-  resource occupied by Backend.AI does not match the resource actually used by
-  the container. In this case, click the RECALCULATE USAGE button to manually
-  correct the resource occupancy.
-- RESCAN IMAGES: Update image meta information from all registered Docker
-  registries. It can be used when a new image is pushed to a
-  Backend.AI-connected docker registry.
+Go to the Maintenance page and you will see the server management actions, grouped by purpose. A search
+bar at the top of the page filters the list when you are looking for a specific entry.
 
 ![](../images/maintenance_page.png)
+
+**Fix**
+
+- **Match usage database with current state**: Occasionally, due to unstable network connections or
+  container management problem of Docker daemon, there may be a case where the
+  resource occupied by Backend.AI does not match the resource actually used by
+  the container. In this case, click **Recalculate Usage** to manually
+  correct the resource occupancy.
+
+**Images / Environment**
+
+- **Rescan image list from repository**: Click **Rescan Images** to update image meta information from
+  all registered Docker registries. It can be used when a new image is pushed to a
+  Backend.AI-connected docker registry. The scan can take a long time; progress is reported in the
+  notification area.
+
+**Announcement**
+
+- **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
+  to every user at the top of the page. See the [System announcement](#system-announcement) section below.
 
 :::note
 We will continue to add other settings needed for management, such as
 removing unused images or registering periodic maintenance schedules.
 :::
+
+<a id="system-announcement"></a>
+
+### System announcement
+
+Superadmins can publish a short message that every user sees as a banner at the top of the page — for
+example, a planned maintenance window. The announcement is written in Markdown and is managed entirely
+from the WebUI, whether or not one has been published before.
+
+Open the editor in either of two ways:
+
+- From the Maintenance page, click **Edit Announcement** in the **System announcement** row. This works
+  even when no announcement exists yet, so it is the way to publish the first one.
+- From the announcement banner itself on the start page, when one is already published.
+
+![](../images/announcement_edit_modal.png)
+
+The **Edit Announcement** dialog is split into two panes:
+
+- **Message**: A Markdown editor with a formatting toolbar. The toolbar provides Heading (H1–H3), Bold,
+  Italic, Strikethrough, Quote, Code, Link, Image, Bullet List, and Numbered List. Each button applies
+  to the current selection, or inserts a placeholder you can type over.
+- **Preview**: A live rendering of the message exactly as users will see it, updated as you type.
+
+The footer holds three actions:
+
+- **Publish**: Saves the message and makes the banner visible to all users. The button stays disabled
+  while the message is empty, because an empty announcement cannot be published.
+- **Cancel**: Closes the dialog without saving.
+- **Delete**: Removes the published announcement so the banner disappears for everyone. A confirmation
+  dialog appears first. The action is unavailable when nothing is currently published.
 
 <a id="detailed-information"></a>
 
@@ -1595,6 +1875,48 @@ This page is only for showing current information.
 :::
 
 ![](../images/information_page.png)
+
+<a id="manage-projects"></a>
+
+## Manage projects
+
+Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
+activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
+
+<a id="set-project-admin"></a>
+
+### Set project admins
+
+Instead of locating the project's role on the RBAC Management page, you can manage a project's
+administrators directly from the project list.
+
+1. Locate the project in the Projects list.
+2. Click the **Set Project Admin** (shield) action in the row. The action is unavailable for Model Store
+   projects.
+3. The **Set Project Admin** dialog opens.
+
+![](../images/set_project_admin_modal.png)
+
+The dialog contains:
+
+- An information alert explaining that granting project admin permission automatically adds the project
+  to the user's allowed project list, so the user can access the project afterwards.
+- A **Search and select users** field where you can pick one or more accounts, followed by an **Add**
+  button that grants them project admin permission.
+- A table of the users who currently hold the permission, showing each user's email and ID, with a
+  **Revoke admin permission** action at the end of the row.
+
+The dialog stays open after each change, so you can grant and revoke several people in one sitting. If
+only part of a batch succeeds, the failures are reported per user.
+
+:::warning
+Revoking project admin permission does **not** remove the project from the user's allowed project list.
+To take away access to the project as well, remove it from that list manually — see
+[Browse and manage users](#create-and-update-users).
+:::
+
+For the full role and permission model behind this shortcut, and for the equivalent flow on the RBAC
+Management page, refer to the [Grant Project Admin authority](#grant-project-admin) section.
 
 ## RBAC management
 
@@ -1621,6 +1943,11 @@ The diagnostics are organized into the following collapsible sections, each show
 - **Storage Proxy**: Checks the storage volume list together with the storage proxy's reachability and usage metrics.
 - **Endpoint Connectivity**: Validates that the API endpoint is reachable and that a connection can be established.
 - **Web Server Configuration**: Validates the `config.toml` settings, including URL formatting, SSL/protocol consistency, and connection mode.
+
+When **Show only failed items** is enabled and every check passes, the page does not go blank: it shows a
+placeholder reading `No failed items. All diagnostics passed.`, so a clean result is unmistakable.
+
+![](../images/diagnostics_empty_state.png)
 
 :::tip
 When troubleshooting a connection problem, enable **Show only failed items** and click `Re-run Diagnostics` first — it surfaces just the checks that need attention.

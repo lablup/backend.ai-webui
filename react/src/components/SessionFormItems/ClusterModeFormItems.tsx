@@ -2,18 +2,69 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../../form-engine';
 import { convertToBinaryUnit } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Form, Radio, Tooltip, theme } from 'antd';
+// FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
+// again since ticket 35). The CONTROLS are Astryx now.
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+
+/**
+ * The cluster-mode segmented control. A local adapter rather than the shared
+ * `AstryxFormSegmented`, because each option carries a help tooltip that the
+ * shared option shape does not model. The two `Form.Item` contracts are
+ * honoured inline: `value` is coalesced and the change handler takes the
+ * VALUE.
+ */
+const ClusterModeSegmented: React.FC<{
+  label: string;
+  isDisabled?: boolean;
+  onValueChange: () => void;
+  items: Array<{ value: string; label: string; tooltip: React.ReactNode }>;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ label, isDisabled, onValueChange, items, value, onChange }) => {
+  'use memo';
+  return (
+    <SegmentedControl
+      label={label}
+      isDisabled={isDisabled}
+      value={value ?? items[0]?.value ?? ''}
+      onChange={(next) => {
+        onChange?.(next);
+        onValueChange();
+      }}
+    >
+      {items.map((item) => (
+        <SegmentedControlItem
+          key={item.value}
+          value={item.value}
+          label={item.label}
+          icon={
+            <Tooltip content={item.tooltip}>
+              <CircleHelp size="1em" />
+            </Tooltip>
+          }
+        />
+      ))}
+    </SegmentedControl>
+  );
+};
 
 interface ClusterModeFormItemsProps {
   remaining?: RemainingSlots;
@@ -33,7 +84,6 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
   'use memo';
   const form = Form.useFormInstance();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const baiClient = useSuspendedBackendaiClient();
   const supportMultiAgents = baiClient.supports('multi-agents');
@@ -51,41 +101,42 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
         return (
           <>
             <BAIFlex direction="column" align="stretch">
+              {/* MAPPING §3.10: `Radio.Group` whose children are
+                  `Radio.Button` -> `SegmentedControl` + `SegmentedControlItem`.
+                  PILOT-DECISION: `SegmentedControlItem.label` is a required
+                  STRING (P2), so the per-option help tooltip cannot stay
+                  inside the label. It moves to the item's `icon` slot — the
+                  same `CircleHelp` glyph and the same `Trans` copy, now
+                  leading the label instead of trailing it (the only visual
+                  change) and with the manual `marginLeft` gone, since the
+                  slot owns its spacing. */}
               <Form.Item name={'cluster_mode'} required noStyle>
-                <Radio.Group
-                  onChange={() => {
-                    form.validateFields().catch(() => undefined);
-                  }}
-                  disabled={
+                <ClusterModeSegmented
+                  label={t('session.launcher.ClusterMode')}
+                  isDisabled={
                     !supportMultiAgents &&
                     !_.isEqual(_.castArray(getFieldValue('agent')), ['auto'])
                   }
-                >
-                  <Radio.Button value="multi-node">
-                    {t('session.launcher.MultiNode')}
-                    <Tooltip
-                      title={
+                  onValueChange={() => {
+                    form.validateFields().catch(() => undefined);
+                  }}
+                  items={[
+                    {
+                      value: 'multi-node',
+                      label: t('session.launcher.MultiNode'),
+                      tooltip: (
                         <Trans i18nKey={'session.launcher.DescMultiNode'} />
-                      }
-                    >
-                      <QuestionCircleOutlined
-                        style={{ marginLeft: token.marginXXS }}
-                      />
-                    </Tooltip>
-                  </Radio.Button>
-                  <Radio.Button value="single-node">
-                    {t('session.launcher.SingleNode')}
-                    <Tooltip
-                      title={
+                      ),
+                    },
+                    {
+                      value: 'single-node',
+                      label: t('session.launcher.SingleNode'),
+                      tooltip: (
                         <Trans i18nKey={'session.launcher.DescSingleNode'} />
-                      }
-                    >
-                      <QuestionCircleOutlined
-                        style={{ marginLeft: token.marginXXS }}
-                      />
-                    </Tooltip>
-                  </Radio.Button>
-                </Radio.Group>
+                      ),
+                    },
+                  ]}
+                />
               </Form.Item>
               <Form.Item
                 noStyle

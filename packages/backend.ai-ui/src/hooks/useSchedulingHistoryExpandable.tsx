@@ -1,7 +1,10 @@
-import BAIFlex from '../components/BAIFlex';
 import { SchedulingResult } from '../components/BAISchedulingResultBadge';
 import { useBAIi18n } from './useBAIi18n';
-import { Dropdown, theme, Tooltip } from 'antd';
+import {
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
+import { HStack } from '@astryxdesign/core/Stack';
 import * as _ from 'lodash-es';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import * as React from 'react';
@@ -57,10 +60,10 @@ export interface UseSchedulingHistoryExpandableResult {
   onExpandedRowsChange: (expandedKeys: readonly React.Key[]) => void;
   /**
    * Header content for the expand-icon column: a kebab (vertical ellipsis)
-   * hover menu offering the three view actions (expand all / collapse all /
+   * menu offering the three view actions (expand all / collapse all /
    * expand errors only). It reads as an action menu, not a stateful toggle, so
    * there is no "active" indication. `null` when no row in the current data set
-   * is expandable. Per-row rows keep Ant Design's default +/- expand icon.
+   * is expandable. Individual rows keep the table's default +/- expand icon.
    */
   expandColumnTitle: React.ReactNode;
 }
@@ -90,7 +93,6 @@ export const useSchedulingHistoryExpandable = <
 ): UseSchedulingHistoryExpandableResult => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
 
   const mode = options?.mode ?? DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE;
 
@@ -132,12 +134,7 @@ export const useSchedulingHistoryExpandable = <
     'errors-only': t('comp:BAITable.ExpandErrorsOnly'),
   };
 
-  const menuItems = (
-    ['expand-all', 'collapse-all', 'errors-only'] as const
-  ).map((m) => ({ key: m, label: modeLabel[m] }));
-
-  const onMenuClick = ({ key }: { key: string }) => {
-    const next = key as SchedulingHistoryExpandMode;
+  const applyMode = (next: SchedulingHistoryExpandMode) => {
     // Apply eagerly so the uncontrolled case (no onModeChange) still reacts. In
     // the controlled case onModeChange updates `mode`, and the `[mode]` effect
     // re-applies the same (idempotent) keys — a harmless redundant set.
@@ -145,44 +142,46 @@ export const useSchedulingHistoryExpandable = <
     options?.onModeChange?.(next);
   };
 
+  // A kebab (vertical ellipsis) ACTION menu — `DropdownMenuItemData` carries no
+  // selected/checked state and none is wanted here: the three modes read as
+  // actions you trigger, not a stateful toggle (the antd `Dropdown` it replaced
+  // deliberately passed no `selectedKeys` for the same reason).
+  const menuItems: Array<DropdownMenuOption> = (
+    ['expand-all', 'collapse-all', 'errors-only'] as const
+  ).map((m) => ({
+    label: modeLabel[m],
+    onClick: () => applyMode(m),
+  }));
+
   const expandColumnTitle =
     expandableRowKeys.length > 0 ? (
-      // Center the trigger in the header cell so it lines up with the
-      // per-row expand icons, which Ant Design centers in their column.
-      <BAIFlex justify="center">
-        <Dropdown
-          // Click (not hover) so the menu is operable by keyboard (Enter/Space
-          // on the focused trigger) and by touch, not mouse-only.
-          trigger={['click']}
-          // A kebab (vertical ellipsis) action menu — no `selectedKeys`, so no
-          // item is shown as "active". The three modes read as actions you
-          // trigger, not a stateful toggle.
-          menu={{
-            items: menuItems,
-            onClick: onMenuClick,
+      // Center the trigger in the header cell so it lines up with the per-row
+      // expand icons, which the table centers in their column.
+      <HStack justify="center">
+        {/* PILOT-DECISION (to-astryx final-B): antd `Dropdown` + `Tooltip` +
+            hand-rolled bare `<button>` -> Astryx `DropdownMenu` with a `button`
+            config, the same composition `BAINameActionCell` already uses for
+            its overflow kebab. The bare button carried its own reset styles and
+            a `colorTextSecondary` fix-up; the ghost icon-only `Button` Astryx
+            renders supplies focus ring, hit area and hover/pressed states that
+            the hand-rolled trigger never had. `trigger={['click']}` is dropped
+            because click IS DropdownMenu's only trigger. The tooltip moves onto
+            `button.tooltip` (and doubles as the accessible name via `label`),
+            so `comp:BAITable.ExpandOptions` and its locale entries stay in
+            use. `hasChevron={false}` keeps the kebab from growing a caret. */}
+        <DropdownMenu
+          items={menuItems}
+          button={{
+            variant: 'ghost',
+            size: 'sm',
+            isIconOnly: true,
+            icon: <EllipsisVerticalIcon size="1em" />,
+            label: t('comp:BAITable.ExpandOptions'),
+            tooltip: t('comp:BAITable.ExpandOptions'),
           }}
-        >
-          {/* Tooltip (not aria-label) surfaces the affordance on hover for
-              sighted users; screen-reader support is out of scope for this
-              feature. Keeps `comp:BAITable.ExpandOptions` (+ its locale
-              entries) in use. */}
-          <Tooltip title={t('comp:BAITable.ExpandOptions')}>
-            <button
-              type="button"
-              style={{
-                cursor: 'pointer',
-                border: 'none',
-                background: 'transparent',
-                padding: 0,
-                display: 'inline-flex',
-                color: token.colorTextSecondary,
-              }}
-            >
-              <EllipsisVerticalIcon size={token.fontSizeLG} />
-            </button>
-          </Tooltip>
-        </Dropdown>
-      </BAIFlex>
+          hasChevron={false}
+        />
+      </HStack>
     ) : null;
 
   return {

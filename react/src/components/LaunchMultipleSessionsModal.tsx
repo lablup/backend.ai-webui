@@ -3,18 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 'use memo';
+import { Form, FormInstance } from '../form-engine';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import { theme } from '../theme-shim';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
+import { AstryxFormNumberInput } from './astryxFormControls';
 import {
-  Descriptions,
-  Form,
-  FormInstance,
-  InputNumber,
-  theme,
-  Typography,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIModal,
@@ -62,13 +62,13 @@ const ClusterModeSummary: React.FC<{
       ? t('session.launcher.SingleNodeShort')
       : t('session.launcher.MultiNodeShort');
   return (
-    <Typography.Text>
+    <Text>
       {label}
       &nbsp;
-      <Typography.Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
+      <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
         ({clusterSize})
-      </Typography.Text>
-    </Typography.Text>
+      </Text>
+    </Text>
   );
 };
 
@@ -124,9 +124,10 @@ const LaunchMultipleSessionsModal: React.FC<
         preserve={false}
       >
         <BAIFlex direction="column" align="stretch" gap="md">
-          <Typography.Paragraph style={{ marginBottom: 0 }}>
+          {/* antd `Typography.Paragraph` → `Text as="p" display="block"`. */}
+          <Text as="p" display="block" style={{ marginBottom: 0 }}>
             {t('session.launcher.LaunchMultipleSessionsDescription')}
-          </Typography.Paragraph>
+          </Text>
 
           <Form.Item
             name="count"
@@ -211,12 +212,16 @@ const LaunchMultipleSessionsModal: React.FC<
             ]}
             style={{ marginBottom: 0 }}
           >
-            <InputNumber
+            {/* antd `InputNumber` → `AstryxFormNumberInput` (MAPPING §3.17):
+                `suffix` → `units` (a genuinely better fit), `precision={0}` →
+                `isIntegerOnly`, and `style={{width:'100%'}}` is the adapter's
+                default `width`. */}
+            <AstryxFormNumberInput
+              label={t('session.launcher.LaunchMultipleSessionsSessionCount')}
               min={MIN_COUNT}
-              precision={0}
+              isIntegerOnly
               step={1}
-              style={{ width: '100%' }}
-              suffix={t('session.launcher.Sessions')}
+              units={t('session.launcher.Sessions')}
             />
           </Form.Item>
 
@@ -228,26 +233,26 @@ const LaunchMultipleSessionsModal: React.FC<
               const count = getFieldValue('count') ?? DEFAULT_COUNT;
               const totalContainers = count * safeClusterSize;
               return (
-                <Descriptions
-                  column={1}
-                  size="small"
-                  colon={false}
-                  styles={{ label: { width: 160 } }}
+                // antd `Descriptions` → `MetadataList` (MAPPING §4):
+                // `column={1}` → `columns="single"`, `styles.label.width` →
+                // `label.width`; `size="small"` and `colon={false}` have no
+                // destination (MetadataList renders no colon anyway).
+                <MetadataList
+                  columns="single"
+                  label={{ position: 'start', width: 160 }}
                 >
-                  <Descriptions.Item label={t('general.ResourceGroup')}>
+                  <MetadataListItem label={t('general.ResourceGroup')}>
                     {resourceGroup || (
-                      <Typography.Text type="secondary">
-                        {t('general.None')}
-                      </Typography.Text>
+                      <Text color="secondary">{t('general.None')}</Text>
                     )}
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t('session.launcher.ClusterMode')}>
+                  </MetadataListItem>
+                  <MetadataListItem label={t('session.launcher.ClusterMode')}>
                     <ClusterModeSummary
                       clusterMode={clusterMode}
                       clusterSize={safeClusterSize}
                     />
-                  </Descriptions.Item>
-                  <Descriptions.Item
+                  </MetadataListItem>
+                  <MetadataListItem
                     label={t(
                       'session.launcher.LaunchMultipleSessionsPerSession',
                     )}
@@ -263,8 +268,8 @@ const LaunchMultipleSessionsModal: React.FC<
                         containerCount={safeClusterSize}
                       />
                     </BAIFlex>
-                  </Descriptions.Item>
-                  <Descriptions.Item
+                  </MetadataListItem>
+                  <MetadataListItem
                     label={t('session.launcher.LaunchMultipleSessionsTotal')}
                   >
                     <BAIFlex
@@ -278,8 +283,8 @@ const LaunchMultipleSessionsModal: React.FC<
                         containerCount={totalContainers}
                       />
                     </BAIFlex>
-                  </Descriptions.Item>
-                </Descriptions>
+                  </MetadataListItem>
+                </MetadataList>
               );
             }}
           </Form.Item>

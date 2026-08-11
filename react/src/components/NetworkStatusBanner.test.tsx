@@ -19,7 +19,7 @@
  */
 import NetworkStatusBanner from './NetworkStatusBanner';
 import { render, screen, waitFor } from '@testing-library/react';
-import { useNetwork } from 'ahooks';
+import { useNetwork } from 'backend.ai-ui';
 import { Provider as JotaiProvider, createStore } from 'jotai';
 import {
   type MockedFunction,
@@ -41,14 +41,19 @@ vi.mock('../hooks', () => ({
   }),
 }));
 
-// Keep the rest of ahooks (useDebounce) real; only `useNetwork` is driven.
-vi.mock('ahooks', async () => {
-  const actual = await vi.importActual<typeof import('ahooks')>('ahooks');
+// Keep the rest of `backend.ai-ui` (notably `useDebounce`) real; only
+// `useNetwork` is driven.
+vi.mock('backend.ai-ui', async () => {
+  const actual =
+    await vi.importActual<typeof import('backend.ai-ui')>('backend.ai-ui');
   return { ...actual, useNetwork: vi.fn() };
 });
 
-// Deterministic translations: assert on the raw key.
-vi.mock('react-i18next', () => ({
+// Deterministic translations: assert on the raw key. The mock has to be
+// partial — `backend.ai-ui`'s locale bootstrap (pulled in by the
+// `importActual` above) needs the real `initReactI18next`.
+vi.mock('react-i18next', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-i18next')>()),
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 

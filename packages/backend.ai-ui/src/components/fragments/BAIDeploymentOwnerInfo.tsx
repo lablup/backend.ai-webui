@@ -1,6 +1,17 @@
+/*
+ to-astryx W2-D: antd `Tooltip` -> Astryx `Tooltip` (`title` -> `content`,
+ MAPPING §4) and antd `Typography.Text` -> Astryx `Text` / `BAIText`.
+
+ The truncating cell keeps `BAIText` rather than a bare `Text`: it passes
+ `ellipsis={{ tooltip: false }}`, i.e. "clamp but do NOT add your own
+ tooltip" — the outer Tooltip already carries the full owner detail — and
+ `BAIText` is where that antd-shaped ellipsis config is translated.
+*/
 import { BAIDeploymentOwnerInfo_deployment$key } from '../../__generated__/BAIDeploymentOwnerInfo_deployment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { Tooltip, Typography } from 'antd';
+import BAIText from '../BAIText';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -40,7 +51,7 @@ const BAIDeploymentOwnerInfo: React.FC<BAIDeploymentOwnerInfoProps> = ({
   const username = deployment?.creator?.basicInfo?.username ?? '';
 
   if (!email) {
-    return <Typography.Text type="secondary">-</Typography.Text>;
+    return <Text color="secondary">-</Text>;
   }
 
   const tooltipLines = [
@@ -53,11 +64,11 @@ const BAIDeploymentOwnerInfo: React.FC<BAIDeploymentOwnerInfoProps> = ({
 
   return (
     <Tooltip
-      title={<span style={{ whiteSpace: 'pre-line' }}>{tooltipLines}</span>}
+      content={<span style={{ whiteSpace: 'pre-line' }}>{tooltipLines}</span>}
     >
-      <Typography.Text ellipsis={{ tooltip: false }} style={{ maxWidth: 200 }}>
+      <BAIText ellipsis={{ tooltip: false }} style={{ maxWidth: 200 }}>
         {email}
-      </Typography.Text>
+      </BAIText>
     </Tooltip>
   );
 };

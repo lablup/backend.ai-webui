@@ -17,7 +17,6 @@ import UserFairShareTable, {
   UserFairShare,
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { theme } from 'antd';
 import {
   BAIFlex,
   BAIUnmountAfterClose,
@@ -46,7 +45,6 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [selectedRows, setSelectedRows] = useState<Array<UserFairShare>>([]);
   const [selectedSingleRow, setSelectedSingleRow] =
@@ -218,9 +216,6 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
           pageSize: tablePaginationOption.pageSize,
           total: userFairShares?.count || 0,
           current: tablePaginationOption.current,
-          style: {
-            marginRight: token.marginXS,
-          },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

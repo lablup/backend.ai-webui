@@ -6,8 +6,8 @@ import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailD
 import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { Drawer, Skeleton } from 'antd';
-import { DrawerProps } from 'antd/lib';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
@@ -15,12 +15,23 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
-interface SessionDetailDrawerProps extends DrawerProps {
+// PILOT-DECISION: props no longer extend antd `DrawerProps` (a type-only antd
+// import still blocks the P15 gate). All three consumers
+// (SessionDetailAndContainerLogOpenerLegacy, RecentlyCreatedSession,
+// DeploymentReplicasCard) pass exactly `open` / `sessionId` / `onClose`, so
+// the explicit interface below is the whole live surface. antd spellings are
+// kept and mapped internally (`open` -> `isOpen`).
+interface SessionDetailDrawerProps {
+  /** Whether the drawer is open. antd Drawer's `open`. */
+  open?: boolean;
+  /** Close request handler (Escape, scrim click, close button). */
+  onClose?: () => void;
   sessionId?: string;
 }
 const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   sessionId,
-  ...drawerProps
+  open = false,
+  onClose,
 }) => {
   const { t } = useTranslation();
   useSuspendedBackendaiClient();
@@ -60,9 +71,12 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   }, []);
 
   return (
-    <Drawer
-      title={t('session.SessionInfo')}
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
+      side="end"
       size={800}
+      title={t('session.SessionInfo')}
       extra={
         <AutoUpdateFetchKeyButton
           settingId="session-detail"
@@ -76,9 +90,8 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
           }}
         />
       }
-      {...drawerProps}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {sessionId && (
           <SessionDetailContent
             id={sessionId}
@@ -87,7 +100,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
           />
         )}
       </Suspense>
-    </Drawer>
+    </BAIDrawer>
   );
 };
 

@@ -956,6 +956,9 @@ export class Client {
       // conditions on their replicas (e.g. traffic status). backend #12805
       // (BA-6849 "support nested replica deployment filters"). FR-3332.
       this._features['deployment-replica-nested-filter'] = true;
+      // BA-6809 / backend PR #12708 — RuntimeVariantPreset.runtimeVariant
+      // nested field (DataLoader-resolved name/description). FR-3256.
+      this._features['runtime-variant-preset-runtime-variant-field'] = true;
     }
   }
 

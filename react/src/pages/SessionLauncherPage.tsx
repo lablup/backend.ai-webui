@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import DatePickerISO from '../components/DatePickerISO';
 import EnvVarFormList, {
   sanitizeSensitiveEnv,
@@ -33,6 +34,16 @@ import SessionTemplateModal from '../components/SessionTemplateModal';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
+import BAIPopconfirmAstryx from '../components/astryx-bui/BAIPopconfirmAstryx';
+import {
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormSwitch,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from '../components/astryxFormControls';
+import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
@@ -42,57 +53,52 @@ import {
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-import './SessionLauncherPage.css';
+import { theme, useBAIBreakpoint } from '../theme-shim';
+import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { Card } from '@astryxdesign/core/Card';
+import { Divider } from '@astryxdesign/core/Divider';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
+import { Heading } from '@astryxdesign/core/Heading';
+// FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
+// self-hosted replacement is parked (see form-engine/engine.ts). Everything
+// INSIDE the items is Astryx as of wave 3: the controls go through the shared
+// `astryxFormControls` adapters, and `Steps` is the lab `Stepper`, which is a
+// real dependency now (`@astryxdesign/lab@0.3.0-canary.12db2a1`, already in
+// the graph for Drawer/Tour and for `EduAppLauncher`'s own Stepper).
+import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Step, Stepper } from '@astryxdesign/lab';
+import * as stylex from '@stylexjs/stylex';
 import {
-  DoubleRightOutlined,
-  EllipsisOutlined,
-  LeftOutlined,
-  PlayCircleFilled,
-  PlayCircleOutlined,
-  QuestionCircleOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
-import { useDebounceFn, useToggle } from 'ahooks';
-import {
-  App,
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Divider,
-  Dropdown,
-  Form,
-  Grid,
-  Input,
-  InputNumber,
-  Popconfirm,
-  Radio,
-  Row,
-  Select,
-  Space,
-  Steps,
-  Switch,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
-import type { StepsProps } from 'antd';
-import {
-  filterOutEmpty,
   BAIFlex,
-  useErrorMessageResolver,
-  BAIButton,
-  generateRandomString,
-  useBAILogger,
+  BAIIntervalView,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
-  useUpdatableState,
-  BAIIntervalView,
   ResourceTypeIcon,
+  filterOutEmpty,
+  generateRandomString,
+  useBAILogger,
+  useDebounceFn,
+  useErrorMessageResolver,
+  useToggle,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
+import {
+  ChevronsRight,
+  Ellipsis,
+  ChevronLeft,
+  CirclePlay,
+  CircleHelp,
+  ChevronRight,
+} from 'lucide-react';
 import {
   parseAsInteger,
   parseAsJson,
@@ -198,11 +204,79 @@ export type AppOption = {
 export type SessionLauncherStepKey =
   'sessionType' | 'environment' | 'storage' | 'network' | 'review';
 
-type StepItem = NonNullable<StepsProps['items']>[number];
+/**
+ * antd `StepsProps['items'][number]`, restated as the three fields this page
+ * actually sets. `status` was assigned per item at render time (see the
+ * Stepper below) and has no lab counterpart, so it is not part of the shape.
+ */
+type StepItem = {
+  title: string;
+  icon?: React.ReactNode;
+};
 
 interface StepPropsWithKey extends StepItem {
   key: SessionLauncherStepKey;
 }
+
+/**
+ * Step-section container: Astryx `Card` + `Heading` composition replacing the
+ * antd `Card title` (MAPPING.md §5.1). `hidden` keeps the original
+ * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
+ * form state across steps (the form engine requirement).
+ */
+const StepCard: React.FC<{
+  title?: React.ReactNode;
+  hidden?: boolean;
+  children?: React.ReactNode;
+}> = ({ title, hidden, children }) => {
+  'use memo';
+  return (
+    <Card style={{ display: hidden ? 'none' : undefined }}>
+      <VStack gap={4} align="stretch">
+        {title ? <Heading level={5}>{title}</Heading> : null}
+        {children}
+      </VStack>
+    </Card>
+  );
+};
+
+/**
+ * The session-type chooser, as a `Form.Item` child.
+ *
+ * Local rather than another entry in `astryxFormControls` because the shape it
+ * needs — `RadioListItem label` + `description` — is the only place in the app
+ * that wants a description under each radio; every other converted radio group
+ * is label-only and already served by `AstryxFormRadioList`.
+ */
+const SessionTypeRadioList: React.FC<{
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ value, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <RadioList
+      value={value ?? ''}
+      onChange={(next) => onChange?.(next)}
+      label={t('session.launcher.SessionType')}
+      isLabelHidden
+      orientation="vertical"
+    >
+      <RadioListItem
+        value="interactive"
+        label={t('session.launcher.InteractiveMode')}
+        description={t('session.launcher.InteractiveModeDesc')}
+      />
+      <RadioListItem
+        value="batch"
+        label={t('session.launcher.BatchMode')}
+        description={t('session.launcher.BatchModeDesc')}
+      />
+    </RadioList>
+  );
+};
 
 const SessionLauncherPage = () => {
   const app = App.useApp();
@@ -291,7 +365,7 @@ const SessionLauncherPage = () => {
 
   const { t } = useTranslation();
 
-  const screens = Grid.useBreakpoint();
+  const screens = useBAIBreakpoint();
 
   const [form] = Form.useForm<SessionLauncherFormValue>();
 
@@ -381,7 +455,7 @@ const SessionLauncherPage = () => {
     },
     {
       title: t('session.launcher.ConfirmAndLaunch'),
-      icon: <PlayCircleFilled />,
+      icon: <CirclePlay size="1em" />,
       // @ts-ignore
       key: 'review',
     },
@@ -531,19 +605,13 @@ const SessionLauncherPage = () => {
           style={{ flex: 1, maxWidth: 700 }}
         >
           <BAIFlex direction="row" justify="between">
-            <Typography.Title level={4} style={{ marginTop: 0 }}>
-              {t('session.launcher.StartNewSession')}
-            </Typography.Title>
+            <Heading level={4}>{t('session.launcher.StartNewSession')}</Heading>
             <BAIFlex direction="row" gap={'sm'}>
               <Button
-                type="link"
-                // icon={<BlockOutlined />}
-                // disabled
-                style={{ paddingRight: 0, paddingLeft: 0 }}
+                variant="ghost"
+                label={t('session.launcher.RecentHistory')}
                 onClick={() => toggleIsOpenTemplateModal()}
-              >
-                {t('session.launcher.RecentHistory')}
-              </Button>
+              />
             </BAIFlex>
           </BAIFlex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
@@ -567,44 +635,29 @@ const SessionLauncherPage = () => {
                 // style={{  }}
               >
                 {/* Step 0 fields */}
-                <Card
+                <StepCard
                   title={t('session.launcher.SessionType')}
-                  style={{
-                    display:
-                      currentStepKey === 'sessionType' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'sessionType'}
                 >
                   <Form.Item name="sessionType">
-                    <Radio.Group
-                      options={[
-                        {
-                          label: (
-                            <>
-                              <Typography.Text code>
-                                {t('session.launcher.InteractiveMode')}
-                              </Typography.Text>{' '}
-                              <Typography.Text type="secondary">
-                                {t('session.launcher.InteractiveModeDesc')}
-                              </Typography.Text>
-                            </>
-                          ),
-                          value: 'interactive',
-                        },
-                        {
-                          label: (
-                            <>
-                              <Typography.Text code>
-                                {t('session.launcher.BatchMode')}
-                              </Typography.Text>{' '}
-                              <Typography.Text type="secondary">
-                                {t('session.launcher.BatchModeDesc')}
-                              </Typography.Text>
-                            </>
-                          ),
-                          value: 'batch',
-                        },
-                      ]}
-                    />
+                    {/* antd `Radio.Group options=` with ReactNode labels ->
+                        Astryx `RadioList` + `RadioListItem`.
+                        PILOT-DECISION: this uses the RAW controls rather than
+                        the shared `AstryxFormRadioList`, because the two-part
+                        antd label ("<mode name> <one-sentence description>")
+                        splits cleanly onto `RadioListItem`'s `label` +
+                        `description` pair, and the adapter exposes only
+                        `endContent`. Routed through `endContent` the sentences
+                        overlapped their own labels (measured, both
+                        orientations) — `description` is the slot the shape
+                        actually asks for, and it stacks the sentence under the
+                        mode name.
+                        `Text type="code"` on the mode name is DROPPED: `label`
+                        and `description` are plain STRINGS (P2), and a prose
+                        mode name was never code anyway.
+                        `value`/`onChange` are injected by `Form.Item`, so they
+                        are coalesced here the way the shared adapters do. */}
+                    <SessionTypeRadioList />
                   </Form.Item>
                   <SessionNameFormItem />
                   <Form.Item
@@ -612,17 +665,14 @@ const SessionLauncherPage = () => {
                     label="Bootstrap Script"
                     hidden
                   >
-                    <Input />
+                    <AstryxFormTextInput label="Bootstrap Script" />
                   </Form.Item>
-                </Card>
+                </StepCard>
 
                 {sessionType === 'batch' && (
-                  <Card
+                  <StepCard
                     title={t('session.launcher.BatchModeConfig')}
-                    style={{
-                      display:
-                        currentStepKey === 'sessionType' ? 'block' : 'none',
-                    }}
+                    hidden={currentStepKey !== 'sessionType'}
                   >
                     <Form.Item
                       label={t('session.launcher.StartUpCommand')}
@@ -634,7 +684,14 @@ const SessionLauncherPage = () => {
                         },
                       ]}
                     >
-                      <Input.TextArea autoSize />
+                      {/* antd `Input.TextArea autoSize` -> the shared
+                          `AstryxFormTextArea`. `autoSize` has no destination —
+                          Astryx `TextArea` takes a fixed `rows` — so the field
+                          keeps the component default height instead of growing
+                          with the command. */}
+                      <AstryxFormTextArea
+                        label={t('session.launcher.StartUpCommand')}
+                      />
                     </Form.Item>
                     <Form.Item
                       noStyle
@@ -686,10 +743,20 @@ const SessionLauncherPage = () => {
                                       name={['batch', 'enabled']}
                                       valuePropName="checked"
                                     >
-                                      <Checkbox
-                                        onChange={(e) => {
+                                      {/* antd `Checkbox` with an inline text
+                                          child -> `AstryxFormCheckbox`, whose
+                                          `label` renders that same inline
+                                          text. The handler moves from the DOM
+                                          event (`e.target.checked`) to
+                                          `onValueChange`, the adapter's
+                                          explicit side-effect slot — the
+                                          `onChange` slot itself belongs to
+                                          `Form.Item`. */}
+                                      <AstryxFormCheckbox
+                                        label={t('session.launcher.Enable')}
+                                        onValueChange={(checked) => {
                                           if (
-                                            e.target.checked &&
+                                            checked &&
                                             _.isEmpty(
                                               form.getFieldValue([
                                                 'batch',
@@ -703,9 +770,7 @@ const SessionLauncherPage = () => {
                                                 .add(2, 'minutes')
                                                 .toISOString(),
                                             );
-                                          } else if (
-                                            e.target.checked === false
-                                          ) {
+                                          } else if (checked === false) {
                                             form.setFieldValue(
                                               ['batch', 'scheduleDate'],
                                               undefined,
@@ -715,9 +780,7 @@ const SessionLauncherPage = () => {
                                             ['batch', 'scheduleDate'],
                                           ]);
                                         }}
-                                      >
-                                        {t('session.launcher.Enable')}
-                                      </Checkbox>
+                                      />
                                     </Form.Item>
                                     <Form.Item
                                       noStyle
@@ -842,9 +905,10 @@ const SessionLauncherPage = () => {
                                   name={['batch', 'timeoutEnabled']}
                                   valuePropName="checked"
                                 >
-                                  <Checkbox
-                                    onChange={(e) => {
-                                      if (e.target.checked === false) {
+                                  <AstryxFormCheckbox
+                                    label={t('session.launcher.Enable')}
+                                    onValueChange={(checked) => {
+                                      if (checked === false) {
                                         form.setFieldValue(
                                           ['batch', 'timeout'],
                                           undefined,
@@ -854,9 +918,7 @@ const SessionLauncherPage = () => {
                                         ['batch', 'timeout'],
                                       ]);
                                     }}
-                                  >
-                                    {t('session.launcher.Enable')}
-                                  </Checkbox>
+                                  />
                                 </Form.Item>
                                 <Form.Item
                                   noStyle
@@ -870,7 +932,22 @@ const SessionLauncherPage = () => {
                                       ]) !== true;
                                     return (
                                       <>
-                                        <Space.Compact>
+                                        {/* antd `Space.Compact` (weld the
+                                            number field and its unit select
+                                            into one control) -> Astryx
+                                            `InputGroup`, the documented
+                                            destination for the input flavour
+                                            of Compact (MAPPING §"Space"). */}
+                                        <InputGroup
+                                          label={t(
+                                            'session.launcher.BatchJobTimeoutDuration',
+                                          )}
+                                          // `BAIFormItem` already renders the
+                                          // visible label above; without this
+                                          // the group printed it a second time
+                                          // inside the field (measured).
+                                          isLabelHidden
+                                        >
                                           <Form.Item
                                             name={['batch', 'timeout']}
                                             label={t(
@@ -893,12 +970,23 @@ const SessionLauncherPage = () => {
                                               },
                                             ]}
                                           >
-                                            <InputNumber
+                                            {/* antd `InputNumber` ->
+                                                `AstryxFormNumberInput`.
+                                                `style.width:'100%'` becomes
+                                                the adapter's `width` default.
+                                                The cross-field revalidation
+                                                stays on `onChange`: the form
+                                                engine COMPOSES a child's own
+                                                trigger handler after its own
+                                                (`originTriggerFunc` in
+                                                `form-engine/Field.tsx`), so
+                                                both run. */}
+                                            <AstryxFormNumberInput
+                                              label={t(
+                                                'session.launcher.BatchJobTimeoutDuration',
+                                              )}
                                               disabled={disabled}
                                               min={1}
-                                              style={{
-                                                width: '100%',
-                                              }}
                                               onChange={() => {
                                                 form.validateFields([
                                                   ['batch', 'timeoutUnit'],
@@ -937,10 +1025,32 @@ const SessionLauncherPage = () => {
                                               }),
                                             ]}
                                           >
-                                            <Select
-                                              tabIndex={-1}
+                                            {/* antd `Select options=` (five
+                                                static string options) ->
+                                                `AstryxFormSelector`, the
+                                                plain-`Selector` branch of
+                                                MAPPING §3.1. `tabIndex={-1}`
+                                                is DROPPED: it took the unit
+                                                select out of the tab order, so
+                                                a keyboard user could never
+                                                reach it.
+                                                The accessible name repeats the
+                                                group's own label: Astryx
+                                                requires one on BOTH halves of
+                                                what antd drew as a single
+                                                compact control, and there is no
+                                                localized "Unit" string in any
+                                                of the 22 catalogues to name the
+                                                right-hand half with (P8 — reuse
+                                                an existing string rather than
+                                                add a key needing 22
+                                                translations). */}
+                                            <AstryxFormSelector
+                                              label={t(
+                                                'session.launcher.BatchJobTimeoutDuration',
+                                              )}
                                               disabled={disabled}
-                                              style={{ width: 100 }}
+                                              width={100}
                                               options={[
                                                 {
                                                   label: t('time.Sec'),
@@ -965,7 +1075,7 @@ const SessionLauncherPage = () => {
                                               ]}
                                             />
                                           </Form.Item>
-                                        </Space.Compact>
+                                        </InputGroup>
                                       </>
                                     );
                                   }}
@@ -976,7 +1086,7 @@ const SessionLauncherPage = () => {
                         }}
                       </Form.Item>
                     ) : null}
-                  </Card>
+                  </StepCard>
                 )}
 
                 {(currentUserRole === 'admin' ||
@@ -990,7 +1100,7 @@ const SessionLauncherPage = () => {
                 )}
 
                 {sessionType === 'inference' && (
-                  <Card title="Inference Mode Configuration">
+                  <StepCard title="Inference Mode Configuration">
                     <Form.Item
                       name={['inference', 'vFolderName']}
                       label={t('session.launcher.ModelStorageToMount')}
@@ -1000,22 +1110,27 @@ const SessionLauncherPage = () => {
                         },
                       ]}
                     >
-                      <Select />
+                      {/* An OPTIONLESS antd `<Select />` — a placeholder left
+                          behind when the `VFolderSelect` below was commented
+                          out. It converts to an equally optionless
+                          `AstryxFormSelector`; there is nothing to preserve
+                          but the empty control. */}
+                      <AstryxFormSelector
+                        label={t('session.launcher.ModelStorageToMount')}
+                        options={[]}
+                      />
                       {/* <VFolderSelect
                           filter={(vf) => vf.usage_mode === 'model'}
                           autoSelectDefault
                           /> */}
                     </Form.Item>
-                  </Card>
+                  </StepCard>
                 )}
 
                 {/* Step Start*/}
-                <Card
+                <StepCard
                   title={t('session.launcher.Environments')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'environment'}
                 >
                   <ErrorBoundary
                     fallbackRender={() => {
@@ -1032,13 +1147,10 @@ const SessionLauncherPage = () => {
                       }}
                     />
                   </Form.Item>
-                </Card>
-                <Card
+                </StepCard>
+                <StepCard
                   title={t('session.launcher.ResourceAllocation')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'environment'}
                 >
                   <ResourceAllocationFormItems
                     enableAgentSelect={
@@ -1048,19 +1160,16 @@ const SessionLauncherPage = () => {
                     enableResourcePresets
                     showRemainingWarning
                   />
-                </Card>
-                <Card
+                </StepCard>
+                <StepCard
                   title={t('session.launcher.HPCOptimization')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'environment'}
                 >
                   <Form.Item noStyle>
                     <BAIFlex direction="row" gap={'sm'}>
-                      <Typography.Text>
+                      <Text>
                         {t('session.launcher.SwitchOpenMPoptimization')}
-                      </Typography.Text>
+                      </Text>
                       <Form.Item
                         label={t('session.launcher.SwitchOpenMPoptimization')}
                         name={['hpcOptimization', 'autoEnabled']}
@@ -1068,9 +1177,14 @@ const SessionLauncherPage = () => {
                         required
                         noStyle
                       >
-                        <Switch
-                          checkedChildren={'ON'}
-                          unCheckedChildren={'OFF'}
+                        {/* antd `Switch` -> the shared `AstryxFormSwitch`.
+                            `checkedChildren`/`unCheckedChildren` (the ON/OFF
+                            text inside the track) have no Astryx destination
+                            and are DROPPED — the adjacent `Text` above already
+                            names what the toggle controls, and the thumb
+                            position carries the state. */}
+                        <AstryxFormSwitch
+                          label={t('session.launcher.SwitchOpenMPoptimization')}
                           onChange={(checked) => {
                             if (checked) {
                               form.setFieldsValue({
@@ -1109,76 +1223,95 @@ const SessionLauncherPage = () => {
                         'autoEnabled',
                       ]);
                       return (
-                        <Row
-                          gutter={token.marginMD}
+                        // Responsive policy R1 (ticket 14): antd
+                        // `Row gutter` + `Col xs={24} sm={12}` -> Astryx Grid
+                        // (2-up from 576px -> minWidth 280, max 2).
+                        // W2A-17: a `Grid` child defaults to `min-width: auto`,
+                        // so a 100%-wide field pushes its track past the
+                        // container. `width="100%"` on the grid plus
+                        // `minWidth: 0` on every direct child is the standing
+                        // fix (it also replaces the `flex: 1` these items
+                        // carried over from their old `Col` wrappers, which a
+                        // grid item ignores).
+                        <AstryxGrid
+                          columns={{ minWidth: 280, max: 2 }}
+                          gap={4}
+                          width="100%"
                           style={{
                             display: enabled ? 'none' : undefined,
                             marginTop: token.marginMD,
                           }}
                         >
-                          <Col xs={24} sm={12}>
-                            <Form.Item
-                              style={{ flex: 1 }}
+                          <Form.Item
+                            style={{ minWidth: 0 }}
+                            label={t('session.launcher.NumOpenMPthreads')}
+                            name={['hpcOptimization', 'OMP_NUM_THREADS']}
+                            // antd `InputNumber stringMode` kept the stored
+                            // value a STRING; these two fields are spread
+                            // straight into the session's `environ` dict
+                            // (`useStartSession`), where a number would be an
+                            // invalid env value. Astryx's `NumberInput` emits
+                            // `number | null`, so the string contract moves to
+                            // the item's own `getValueFromEvent`.
+                            getValueFromEvent={(value) =>
+                              _.isNil(value) ? value : String(value)
+                            }
+                            tooltip={
+                              <>
+                                {t('session.launcher.OpenMPOptimization')}
+                                <Trans
+                                  i18nKey={
+                                    'session.launcher.DescOpenMPOptimization'
+                                  }
+                                />
+                              </>
+                            }
+                            required
+                          >
+                            <AstryxFormNumberInput
                               label={t('session.launcher.NumOpenMPthreads')}
-                              name={['hpcOptimization', 'OMP_NUM_THREADS']}
-                              tooltip={
-                                <>
-                                  {t('session.launcher.OpenMPOptimization')}
-                                  <Trans
-                                    i18nKey={
-                                      'session.launcher.DescOpenMPOptimization'
-                                    }
-                                  />
-                                </>
-                              }
-                              required
-                            >
-                              <InputNumber
-                                min={1}
-                                max={1000}
-                                step={1}
-                                stringMode
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} sm={12}>
-                            <Form.Item
-                              style={{ flex: 1 }}
+                              min={1}
+                              max={1000}
+                              step={1}
+                              isIntegerOnly
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            style={{ minWidth: 0 }}
+                            label={t('session.launcher.NumOpenBLASthreads')}
+                            name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
+                            getValueFromEvent={(value) =>
+                              _.isNil(value) ? value : String(value)
+                            }
+                            tooltip={
+                              <>
+                                {t('session.launcher.OpenMPOptimization')}
+                                <Trans
+                                  i18nKey={
+                                    'session.launcher.DescOpenMPOptimization'
+                                  }
+                                />
+                              </>
+                            }
+                            required
+                          >
+                            <AstryxFormNumberInput
                               label={t('session.launcher.NumOpenBLASthreads')}
-                              name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
-                              tooltip={
-                                <>
-                                  {t('session.launcher.OpenMPOptimization')}
-                                  <Trans
-                                    i18nKey={
-                                      'session.launcher.DescOpenMPOptimization'
-                                    }
-                                  />
-                                </>
-                              }
-                              required
-                            >
-                              <InputNumber
-                                min={1}
-                                max={1000}
-                                step={1}
-                                stringMode
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                          </Col>
-                        </Row>
+                              min={1}
+                              max={1000}
+                              step={1}
+                              isIntegerOnly
+                            />
+                          </Form.Item>
+                        </AstryxGrid>
                       );
                     }}
                   </Form.Item>
-                </Card>
+                </StepCard>
                 {/* Step Start*/}
-                <Card
+                <StepCard
                   title={t('webui.menu.Data&Storage')}
-                  style={{
-                    display: currentStepKey === 'storage' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'storage'}
                 >
                   <Form.Item noStyle dependencies={['owner']}>
                     {({ getFieldValue }) => {
@@ -1207,17 +1340,15 @@ const SessionLauncherPage = () => {
                       );
                     }}
                   </Form.Item>
-                </Card>
+                </StepCard>
 
                 {/* Step Start*/}
-                <Card
+                <StepCard
                   title={t('session.launcher.Network')}
-                  style={{
-                    display: currentStepKey === 'network' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'network'}
                 >
                   <PortSelectFormItem />
-                </Card>
+                </StepCard>
 
                 {/* Step Start*/}
                 {currentStepKey === 'review' && (
@@ -1231,7 +1362,10 @@ const SessionLauncherPage = () => {
 
                 <BAIFlex direction="row" justify="between">
                   <BAIFlex gap={'sm'}>
-                    <Popconfirm
+                    {/* Reversible action -> anchored one-click confirm
+                        (BAIPopconfirmAstryx, gap component 08); the typed
+                        confirm modal stays reserved for irreversible flows. */}
+                    <BAIPopconfirmAstryx
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
                       onConfirm={() => {
@@ -1244,23 +1378,21 @@ const SessionLauncherPage = () => {
                         setIsQueryReset(true);
                       }}
                       icon={
-                        <QuestionCircleOutlined
-                          style={{ color: token.colorError }}
+                        <CircleHelp
+                          style={{ color: 'var(--color-error)' }}
+                          size="1em"
                         />
                       }
                       okText={t('button.Reset')}
-                      okButtonProps={{
-                        danger: true,
-                      }}
+                      isDanger
                     >
-                      <Button
-                        danger
-                        type="link"
-                        style={{ paddingRight: 0, paddingLeft: 0 }}
-                      >
-                        {t('button.Reset')}
-                      </Button>
-                    </Popconfirm>
+                      {/* PILOT-DECISION: antd `Button danger type="link"` (red
+                          text link) -> Astryx ghost Button. A ghost+destructive
+                          combination is inexpressible in the closed variant
+                          enum (P5); the danger signal moves to the confirm
+                          popover. */}
+                      <Button variant="ghost" label={t('button.Reset')} />
+                    </BAIPopconfirmAstryx>
                     {/* {currentStep === steps.length - 1 && (
                       <Button
                         icon={<SaveOutlined />}
@@ -1282,76 +1414,96 @@ const SessionLauncherPage = () => {
                   >
                     {currentStep > 0 && (
                       <Button
+                        label={t('button.Previous')}
+                        icon={<ChevronLeft size="1em" />}
                         onClick={() => {
                           setCurrentStep(currentStep - 1);
                         }}
-                        icon={<LeftOutlined />}
-                      >
-                        {t('button.Previous')}
-                      </Button>
+                      />
                     )}
                     {currentStep === steps.length - 1 ? (
                       <Tooltip
-                        title={
+                        content={
                           hasError
                             ? t('session.launcher.PleaseCompleteForm')
                             : undefined
                         }
+                        isEnabled={hasError}
                       >
-                        <Space.Compact>
-                          <BAIButton
-                            type="primary"
-                            icon={<PlayCircleOutlined />}
-                            disabled={hasError}
-                            action={() => performLaunch(1)}
-                          >
-                            {t('session.launcher.Launch')}
-                          </BAIButton>
-                          <Dropdown
-                            trigger={['click']}
-                            disabled={hasError}
-                            menu={{
-                              items: [
-                                {
-                                  key: 'batch',
-                                  label: t(
-                                    'session.launcher.LaunchMultipleSessions',
-                                  ),
-                                  onClick: () => {
-                                    setIsLaunchMultipleSessionsModalOpen(true);
-                                  },
-                                },
-                              ],
+                        {/* antd `Space.Compact` + Dropdown split button ->
+                            Astryx ButtonGroup + DropdownMenu (MAPPING.md
+                            §5.3). The dropdown owns its own trigger button. */}
+                        <ButtonGroup label={t('session.launcher.Launch')}>
+                          <Button
+                            variant="primary"
+                            icon={<CirclePlay size="1em" />}
+                            isDisabled={hasError}
+                            label={t('session.launcher.Launch')}
+                            clickAction={() => performLaunch(1)}
+                          />
+                          <DropdownMenu
+                            hasChevron={false}
+                            button={{
+                              variant: 'primary',
+                              icon: <Ellipsis size="1em" />,
+                              isIconOnly: true,
+                              isDisabled: hasError,
+                              label: t(
+                                'session.launcher.LaunchMultipleSessions',
+                              ),
                             }}
-                          >
-                            <BAIButton
-                              type="primary"
-                              icon={<EllipsisOutlined />}
-                              disabled={hasError}
-                            />
-                          </Dropdown>
-                        </Space.Compact>
+                            items={[
+                              {
+                                label: t(
+                                  'session.launcher.LaunchMultipleSessions',
+                                ),
+                                onClick: () => {
+                                  setIsLaunchMultipleSessionsModalOpen(true);
+                                },
+                              },
+                            ]}
+                          />
+                        </ButtonGroup>
                       </Tooltip>
                     ) : (
+                      // PILOT-DECISION: antd `type="primary" ghost` (outlined
+                      // primary) has no Astryx variant; `secondary` is the
+                      // closest closed-enum destination (P5).
+                      //
+                      // The trailing chevron goes in `endContent`, NOT in
+                      // `children`. Astryx `Button` lays out
+                      // `icon | label | endContent` as three slots and renders
+                      // `children` INSIDE the label slot — a truncating text
+                      // span. An `<svg>` dropped in there is an inline
+                      // replaced element inside that span, so the chevron
+                      // broke onto a second line inside a 32px-tall button
+                      // (measured: 55x32 box, glyph clipped below the text).
+                      // `endContent` is the documented slot for "trailing
+                      // icon or badge" and inherits the variant's color.
                       <Button
-                        type="primary"
-                        ghost
+                        variant="secondary"
+                        label={t('button.Next')}
+                        endContent={<ChevronRight size="1em" />}
                         onClick={() => {
                           setCurrentStep(currentStep + 1);
                         }}
-                      >
-                        {t('button.Next')} <RightOutlined />
-                      </Button>
+                      />
                     )}
                     {currentStep !== steps.length - 1 && (
+                      // Same `endContent` fix. `ghost` rather than the default
+                      // `secondary`: legacy had TWO emphasis levels here
+                      // (Next = `primary ghost`, Skip = plain default), and
+                      // leaving both on `secondary` collapsed them into two
+                      // identical grey blocks. Within the closed variant enum,
+                      // secondary-over-ghost restores that ordering.
                       <Button
+                        variant="ghost"
+                        label={t('session.launcher.SkipToConfirmAndLaunch')}
+                        endContent={<ChevronsRight size="1em" />}
                         onClick={() => {
                           setCurrentStep(steps.length - 1);
                         }}
-                      >
-                        {t('session.launcher.SkipToConfirmAndLaunch')}
-                        <DoubleRightOutlined />
-                      </Button>
+                      />
                     )}
                   </BAIFlex>
                 </BAIFlex>
@@ -1365,18 +1517,35 @@ const SessionLauncherPage = () => {
             data-test-id="neo-session-launcher-tour-step"
             style={{ position: 'sticky', top: 80 }}
           >
-            <Steps
-              size="small"
+            {/* antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2 LAB; same
+                call W2A-15 made for `FairShareList` and ticket 23 for
+                `EduAppLauncher`).
+                - `current` -> `activeStep`, `onChange` -> `onStepClick`.
+                - The per-item `status: 'process' | 'wait'` mapping is DROPPED:
+                  lab derives completed / active / upcoming from `activeStep`,
+                  and its `status` is a SEMANTIC enum (accent/success/warning/
+                  error) layered on top. `process`/`wait` said nothing that
+                  `activeStep` does not already say.
+                - `size="small"` has no counterpart; `density` is the nearest
+                  axis and `compact` is the small rung.
+                - `Step.label` is a required STRING, which every step title
+                  here already is. */}
+            <Stepper
               orientation="vertical"
-              current={currentStep}
-              onChange={(nextCurrent) => {
+              density="compact"
+              activeStep={currentStep}
+              // `Stepper.label` names the whole sequence for assistive tech;
+              // antd's `Steps` had none. Reuses the page's own existing title
+              // string rather than adding a key across 22 catalogues (P8).
+              label={t('session.launcher.StartNewSession')}
+              onStepClick={(nextCurrent) => {
                 setCurrentStep(nextCurrent);
               }}
-              items={_.map(steps, (s, idx) => ({
-                ...s,
-                status: idx === currentStep ? 'process' : 'wait',
-              }))}
-            />
+            >
+              {_.map(steps, (s, idx) => (
+                <Step key={s.key} step={idx} label={s.title} icon={s.icon} />
+              ))}
+            </Stepper>
           </BAIFlex>
         )}
       </BAIFlex>
@@ -1501,6 +1670,14 @@ type FormOrResourceRequired = {
   showDividers?: boolean;
 };
 
+const unifiedChipStyles = stylex.create({
+  description: {
+    minWidth: 0,
+    whiteSpace: 'normal',
+    overflowWrap: 'anywhere',
+  },
+});
+
 // Renders a unified-memory accelerator as "<device description>" with the same
 // explanatory tooltip as the launcher's accelerator field. Kept as a separate
 // component so a long description wraps gracefully: the icon + text wrap as a
@@ -1518,7 +1695,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
   const lineHeightPx = token.fontSize * token.lineHeight;
   return (
     <Tooltip
-      title={t('session.launcher.UnifiedAcceleratorMemoryNote', {
+      content={t('session.launcher.UnifiedAcceleratorMemoryNote', {
         description,
       })}
     >
@@ -1533,15 +1710,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
         <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeightPx }}>
           <ResourceTypeIcon type={type} showTooltip={false} />
         </BAIFlex>
-        <Typography.Text
-          style={{
-            minWidth: 0,
-            whiteSpace: 'normal',
-            overflowWrap: 'anywhere',
-          }}
-        >
-          {description}
-        </Typography.Text>
+        <Text xstyle={unifiedChipStyles.description}>{description}</Text>
       </BAIFlex>
     </Tooltip>
   );

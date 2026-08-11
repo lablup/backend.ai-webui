@@ -4,7 +4,7 @@ description: >
   Use when creating a `*Nodes` component bound to a Relay fragment, wiring a
   page to one with `customizeColumns` / URL state / pagination, adding row
   selection and bulk actions, or setting up CSV export. Covers the query
-  orchestrator + fragment split and `BAITable` conventions.
+  orchestrator + fragment split and `BAITableAstryx` conventions.
 ---
 
 # Relay Fragment Tables
@@ -44,6 +44,10 @@ Also consult:
 - **`fixed: true` + `required: true` on the primary column** means users can't hide it or scroll it off-screen. Apply only to the identifying column (email / name / id).
 - **`exportKey` is required when `dataIndex` doesn't match the GraphQL field name.** Without it, CSV export writes `undefined` for computed columns (e.g. `project` column exporting `project_name`).
 - **`availableXxxSorterKeys` is the single source of truth.** Adding a sortable column means updating the const array AND the column's `sorter: isEnableSorter('key')`.
+- **The component is `BAITableAstryx`; `BAITable` no longer exists.** What survived under the old names are *types*: `BAITableProps` is an alias of `BAIAstryxTableProps`, and `BAIColumnType` / `BAIColumnsType` / `BAITableSettings` live in the engine-neutral `tableTypes` module. Prefer the `BAIAstryx*` spellings in new code.
+- **`scroll` is accepted and ignored.** Astryx's own scroll wrapper owns overflow, so `scroll={{ x: 'max-content' }}` is now a no-op carried over from antd. Don't add it to new tables.
+- **A column with no `dataIndex` gets `undefined` as its render value.** rc-table used to pass the whole record as the first argument in that case; `BAITableAstryx` deliberately does not. Write `render: (_value, row) => …` — the record is always the second argument.
+- **Multi-level headers are flattened.** Astryx's table has one header row, so a `BAIColumnGroupType`'s title is rendered as a muted caption above each child header rather than as a spanning `<th>`.
 
 ## 1. Two-file architecture: orchestrator vs `*Nodes`
 
@@ -53,7 +57,7 @@ Page/*Management component (orchestrator)       `*Nodes` component (fragment)
 ├── nuqs URL state (order, filter, status)      ├── Exports `UserNodeInList` type
 ├── useBAIPaginationOptionStateOnSearchParam    ├── Owns `baseColumns`
 ├── Passes `usersFrgmt={edges.map(node)}`       ├── Applies `customizeColumns?(base)`
-├── Passes `customizeColumns={…}`               ├── Renders <BAITable>
+├── Passes `customizeColumns={…}`               ├── Renders <BAITableAstryx>
 └── Passes pagination / selection props         └── Emits `onChangeOrder`
 ```
 
@@ -64,8 +68,12 @@ the orchestrator. This is what makes `customizeColumns` composable.
 ## 2. Fragment Component Skeleton
 
 ```tsx
-import { BAITable, BAIColumnType, BAITableProps, filterOutNullAndUndefined }
-  from '..';
+import {
+  BAITableAstryx,
+  BAIAstryxTableProps,
+  BAIColumnType,
+  filterOutNullAndUndefined,
+} from '..';
 
 export type UserNodeInList = NonNullable<BAIUserNodesFragment$data[number]>;
 
@@ -81,7 +89,7 @@ const isEnableSorter = (key: string) =>
   _.includes(availableUserSorterKeys, key);
 
 interface BAIUserNodesProps extends Omit<
-  BAITableProps<UserNodeInList>,
+  BAIAstryxTableProps<UserNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
   usersFrgmt: BAIUserNodesFragment$key;
@@ -130,13 +138,12 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
   const allColumns = customizeColumns ? customizeColumns(baseColumns) : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       resizable
       rowKey="id"
       size="small"
       dataSource={filterOutNullAndUndefined(users)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) =>
         onChangeOrder?.((order as (typeof availableUserSorterValues)[number]) || null)
       }
@@ -190,10 +197,13 @@ When a consumer needs to inject an action column mid-table, use
 ## 4. Orchestrator Wiring (full example)
 
 ```tsx
+import { theme } from '../theme-shim';   // NOT 'antd' — see react.instructions.md
+import { useTranslation } from 'react-i18next';
+
 const UserManagement: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = theme.useToken();   // same { token, hashId, theme } shape as antd's
 
   // URL state (see react-url-state)
   const [queryParams, setQueryParams] = useQueryStates({
@@ -208,7 +218,9 @@ const UserManagement: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables = {
-    first: baiPaginationOption.limit,
+    // Page-number pagination is offset mode: `limit` + `offset`, never `first`.
+    // See `.claude/rules/graphql-pagination.md`.
+    limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
     filter: mergeFilterValues([queryParams.filter, statusFilter]),
     order: queryParams.order || '-created_at',   // fall back in variables, not URL
@@ -219,9 +231,9 @@ const UserManagement: React.FC = () => {
   const { user_nodes } = useLazyLoadQuery<UserManagementQuery>(
     graphql`
       query UserManagementQuery(
-        $first: Int, $offset: Int, $filter: String, $order: String
+        $limit: Int, $offset: Int, $filter: String, $order: String
       ) {
-        user_nodes(first: $first, offset: $offset, filter: $filter, order: $order) {
+        user_nodes(limit: $limit, offset: $offset, filter: $filter, order: $order) {
           count
           edges {
             node {
@@ -253,7 +265,6 @@ const UserManagement: React.FC = () => {
         { ...base[0], render: renderEmailWithActions },
         ...base.slice(1),
       ]}
-      scroll={{ x: 'max-content' }}
       pagination={{
         pageSize: tablePaginationOption.pageSize,
         total: user_nodes?.count || 0,
@@ -354,7 +365,7 @@ matches the actual query.
 ## 8. Column Visibility / Export
 
 `tableSettings.columnOverrides` + `exportSettings` plug into the column-settings
-modal baked into `BAITable` (FR-1315, FR-1443). Persist overrides per-page
+modal baked into `BAITableAstryx` (FR-1315, FR-1443). Persist overrides per-page
 under a stable key:
 
 ```tsx
@@ -389,4 +400,6 @@ from `dataIndex`:
 - [ ] `loading` on the table binds to deferred-variable equality, not manual state.
 - [ ] Column overrides persist with a unique page key.
 - [ ] CSV `exportKey` set when differs from `dataIndex`.
-- [ ] `scroll={{ x: 'max-content' }}` set on the table.
+- [ ] Renders `BAITableAstryx` (not `BAITable`), and extends `BAIAstryxTableProps`.
+- [ ] No `scroll={{ x: 'max-content' }}` — it is accepted and ignored.
+- [ ] Offset pagination passes `limit` + `offset` (never `first` + `offset`).

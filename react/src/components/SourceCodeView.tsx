@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import CopyButton from './Chat/CopyButton';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
-import { theme } from 'antd';
-import { createStyles } from 'antd-style';
+import './SourceCodeView.css';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 
 interface SourceCodeViewProps {
@@ -13,23 +13,6 @@ interface SourceCodeViewProps {
   language: string;
   style?: React.CSSProperties;
 }
-
-const useStyles = createStyles(({ token }) => ({
-  codeBlock: {
-    '& .shiki.github-light': {
-      margin: '0 !important',
-      padding: `${token.paddingSM}px !important`,
-    },
-    '& .shiki.github-dark': {
-      margin: '0 !important',
-      padding: `${token.paddingSM}px !important`,
-    },
-    '& pre': {
-      whiteSpace: 'pre',
-      wordBreak: 'normal',
-    },
-  },
-}));
 
 const CodeHead = ({
   lang,
@@ -75,7 +58,6 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
   style,
 }) => {
   'use memo';
-  const { styles } = useStyles();
   const { token } = theme.useToken();
 
   return (
@@ -95,7 +77,6 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
         lang={language}
         extra={
           <CopyButton
-            type="text"
             copyable={{ text: children ?? '' }}
             style={{
               display: 'block',
@@ -104,7 +85,7 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
         }
       />
       <div
-        className={styles.codeBlock}
+        className="source-code-view-block"
         style={{
           paddingTop: 0,
           borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,

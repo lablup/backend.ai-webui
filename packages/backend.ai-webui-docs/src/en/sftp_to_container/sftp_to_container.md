@@ -25,27 +25,34 @@ connection between the local proxy and the WebUI app is initialized, so the
 SSH/SFTP icon must be clicked again.
 :::
 
-Next, a dialog containing SSH/SFTP connection information will be pop up.
-Remember the address (especially the assigned port) written in the SFTP URL and
-click the download link to save the `id_container` file on the local machine.
-This file is an automatically generated SSH private key. Instead of using the
-link, you can also download the `id_container` file located under
-`/home/work/` with your web terminal or Jupyter Notebook. The auto-generated
-SSH key may change when new session is created. In that case, it must be
-downloaded again.
+Next, a dialog containing SSH/SFTP connection information pops up. The
+dialog shows the **User**, **Host**, and **Port** to connect to, ready-made
+`sftp`, `scp`, and `rsync` example commands, and a **Download SSH Key** button
+that saves the `id_container` file on the local machine. This file is an
+automatically generated SSH private key. Instead of using the button, you can
+also download the `id_container` file located under `/home/work/` with your web
+terminal or Jupyter Notebook. The auto-generated SSH key may change when new
+session is created. In that case, it must be downloaded again.
 
 ![](../images/SSH_SFTP_connection.png)
 
 ![](../images/sftp_app.png)
 
+Always take the connection address from the **Host** and **Port** fields of this
+dialog. The values depend on how you use Backend.AI. If the connection information cannot be
+resolved, the dialog does not open at all and an error notification explains the
+reason — see [Connection Errors](#connection-errors).
+
 To SSH connect to the compute session with the downloaded SSH private key, you
 run the following command in the shell environment. You should write the
-path to the downloaded `id_container` file after `-i` option and the
-assigned port number after `-p` option. The user inside the compute session is
+path to the downloaded `id_container` file after `-i` option, the port number
+from the dialog after `-p` option, and the host from the dialog as the
+connection address. The user inside the compute session is
 usually set to `work`, but if your session uses other account, the `work`
-part in `work@127.0.0.1` should be changed to the actual session account.  If
+part in `work@<host>` should be changed to the actual session account. If
 you run the command correctly, you can see that SSH connection is made to the
-compute session and you are welcomed by the container's shell environment.
+compute session and you are welcomed by the container's shell environment. Replace the
+host and port in the transcript below with the values shown in your own dialog.
 
 ```shellsession
 $ ssh \
@@ -88,6 +95,32 @@ permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
 
 ![](../images/bad_permissions.png)
 :::
+
+<a id="connection-errors"></a>
+
+### Connection Errors
+
+The SSH/SFTP connection information is resolved through the App Proxy of the
+resource group that runs the session. When that step fails, no connection dialog
+opens and a notification reports the reason instead. The message tells you which
+part of the path failed:
+
+- **Proxy is not ready yet. Check proxy settings for detail.**: The WebUI could
+  not reach the App Proxy, or the proxy did not return any connection
+  information. The proxy may still be starting up, so wait a few seconds and
+  click the SSH/SFTP icon again. If the message keeps appearing, the App Proxy
+  is not reachable from your machine — for example it is blocked by a firewall,
+  or it is served over a different protocol than the WebUI itself. Ask your
+  administrator to check the **App Proxy Server Address** of the resource group.
+- **Proxy direct TCP connection is not supported yet**: The App Proxy answered,
+  but it does not offer the direct TCP connection that SSH/SFTP requires.
+  Web-based apps such as Jupyter Notebook and Terminal still work on the same
+  session. Ask your administrator to enable a TCP-capable App Proxy for the
+  resource group.
+- **The app cannot be launched due to an invalid URL.**: The App Proxy returned
+  an address that the WebUI cannot interpret. Click the SSH/SFTP icon again, and
+  if the message persists, report it to your administrator together with the
+  name of the session's resource group.
 
 <a id="for-windows-filezilla"></a>
 
@@ -151,19 +184,22 @@ Link: https://aka.ms/vscode-remote/download/extension
 
 After installing the extension, you should configure the SSH connection for the
 compute session. In the VSCode Remote Connection dialog, click the copy icon button
-to copy the Visual Studio Code remote SSH password. Also, remember the port number.
+to copy the Visual Studio Code remote SSH password. Also, remember the host and
+the port number shown in the dialog.
 
 ![](../images/download_ssh_key.png)
 
 Then, set the SSH config file. Edit the `~/.ssh/config` file (for Linux/Mac)
 or `C:\Users\[user name]\.ssh\config` (for Windows) and add the following block.
+Enter the host and the port number from the dialog in the `Hostname` and `Port`
+lines.
 For convenience, we set the hostname to `bai-vscode`. It can be changed to any alias.
 
 ```
 Host bai-vscode
 User work
+# write down the host and the port number that you remembered
 Hostname 127.0.0.1
-# write down the port number that you remembered
 Port 49335
 StrictHostKeyChecking no
 UserKnownHostsFile /dev/null

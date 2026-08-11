@@ -1,5 +1,19 @@
+/*
+ to-astryx W2-D: antd `Typography.Text` -> Astryx `Text`, and antd `List.Item`
+ -> a plain `<div>`.
+
+ PILOT-DECISION: `List.Item` is NOT mapped onto Astryx's `ListItem`. Astryx's
+ item is a structured ROW (`label` / `description` / `startContent` /
+ `endContent`) — a different anatomy from the stacked title / description /
+ action / footer block this component composes itself. And antd's `List.Item`
+ rendered a bare `<div class="ant-list-item">` here anyway: the notification
+ items are rendered by the notification STACK, never inside a `<List>`, so
+ there was no list semantics to preserve. The div carries a `bai-notification-item`
+ class so the stack keeps a stable hook.
+*/
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { List, Typography, theme } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import React, { type ReactNode } from 'react';
 
 export interface BAINotificationItemStyles {
@@ -40,14 +54,14 @@ const BAINotificationItem: React.FC<BAINotificationItemProps> = ({
     typographyStyle?: React.CSSProperties,
   ) => {
     return isPrimitiveContent(content) ? (
-      <Typography.Text style={typographyStyle}>{content}</Typography.Text>
+      <Text style={typographyStyle}>{content}</Text>
     ) : (
       content
     );
   };
 
   return (
-    <List.Item>
+    <div className="bai-notification-item">
       <BAIFlex direction="column" align="stretch" gap="xxs">
         {title && (
           <div
@@ -92,7 +106,7 @@ const BAINotificationItem: React.FC<BAINotificationItemProps> = ({
           </div>
         )}
       </BAIFlex>
-    </List.Item>
+    </div>
   );
 };
 

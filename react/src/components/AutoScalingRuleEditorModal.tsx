@@ -9,24 +9,23 @@ import {
 } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoScalingRuleEditorModalPresetsQuery.graphql';
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  App,
-  AutoComplete,
-  Form,
-  FormInstance,
-  InputNumber,
-  Radio,
-  Select,
-  Skeleton,
-  Typography,
-  theme,
-} from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
+  AstryxFormNumberInput,
+  AstryxFormSegmented,
+  AstryxFormSelector,
+  AstryxFormTextInput,
+  type AstryxFormSelectorOptions,
+} from './astryxFormControls';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIModal,
@@ -177,12 +176,15 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   type PresetOption = {
     label: string;
     value: string;
-    description?: string | null;
   };
 
   // Group presets by category name for optgroup display.
   // Presets without a category are shown in a flat list at the end.
-  const presetOptions: DefaultOptionType[] = React.useMemo(() => {
+  // antd `DefaultOptionType` (a type-only antd import, §6) -> Astryx's own
+  // `SelectorOptionType` union, reached through the adapter's
+  // `AstryxFormSelectorOptions`. antd's `<OptGroup>`-shaped `{label, options}`
+  // becomes Astryx's `{type: 'section', title, options}`.
+  const presetOptions: AstryxFormSelectorOptions = React.useMemo(() => {
     const sorted = _.orderBy(presetNodes, ['rank'], ['asc']);
     const withCategory = sorted.filter((p) => p.category?.name);
     const withoutCategory = sorted.filter((p) => !p.category?.name);
@@ -190,12 +192,12 @@ const AutoScalingRuleEditorModalContent: React.FC<{
     const toOption = (preset: (typeof sorted)[number]): PresetOption => ({
       label: preset.name,
       value: preset.id,
-      description: preset.description,
     });
 
     const grouped = _.groupBy(withCategory, (p) => p.category!.name);
     const groupOptions = Object.entries(grouped).map(([catName, presets]) => ({
-      label: catName,
+      type: 'section' as const,
+      title: catName,
       options: presets.map(toOption),
     }));
 
@@ -258,8 +260,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         tooltip={t('autoScalingRule.MetricSourceTooltip')}
         rules={[{ required: true }]}
       >
-        <Select
+        <AstryxFormSelector
+          label={t('autoScalingRule.MetricSource')}
           onChange={(value) => {
+            if (!value) return;
             setSelectedMetricSource(value);
             // Clear metricName whenever source changes (issue: stale name from previous source)
             formRef.current?.setFieldsValue({ metricName: undefined });
@@ -300,7 +304,17 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         />
       </Form.Item>
 
-      {/* Metric Name (KERNEL / INFERENCE_FRAMEWORK) — always mounted so validateFields includes it */}
+      {/* Metric Name (KERNEL / INFERENCE_FRAMEWORK) — always mounted so validateFields includes it.
+          PILOT-DECISION: antd `AutoComplete` -> `AstryxFormTextInput`.
+          MAPPING §3.15 is explicit that free-text AutoComplete does NOT map to
+          `Typeahead` (which commits `T | null` and cannot keep a typed
+          string), and free text is REQUIRED here: `METRIC_NAMES_MAP` has an
+          EMPTY list for `INFERENCE_FRAMEWORK`, so a `Selector` would leave that
+          source unfillable. The suggestion dropdown is therefore dropped; the
+          known names are surfaced in the placeholder instead of being rebuilt
+          as `TextInput` + `Popover`, so nothing is lost from view and no new
+          i18n string is introduced. The `onSearch` client-side filter goes with
+          it. */}
       <Form.Item
         label={t('autoScalingRule.MetricName')}
         name={'metricName'}
@@ -308,31 +322,28 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         tooltip={t('autoScalingRule.MetricNameTooltip')}
         rules={[{ required: !isPrometheus }]}
       >
-        <AutoComplete
-          placeholder={t('autoScalingRule.MetricName')}
-          options={_.map(nameOptions, (name) => ({
-            label: name,
-            value: name,
-          }))}
-          showSearch={{
-            onSearch: (text) => {
-              const source = (formRef.current?.getFieldValue('metricSource') ||
-                'KERNEL') as keyof typeof METRIC_NAMES_MAP;
-              setNameOptions(
-                _.filter(METRIC_NAMES_MAP[source] || [], (name) =>
-                  name.includes(text),
-                ),
-              );
-            },
-          }}
+        <AstryxFormTextInput
+          label={t('autoScalingRule.MetricName')}
+          placeholder={
+            nameOptions.length > 0
+              ? nameOptions.join(', ')
+              : t('autoScalingRule.MetricName')
+          }
           allowClear
-          popupMatchSelectWidth={false}
         />
       </Form.Item>
 
       {/* Prometheus Preset (PROMETHEUS only) */}
       {isPrometheus && (
         <>
+          {/* antd `showSearch.filterOption` -> `hasSearch`: Astryx `Selector`
+              filters on the option label itself, which is exactly what the
+              predicate did.
+              PILOT-DECISION: the per-option `description` line under each
+              preset name is DROPPED (P26-3 / MAPPING §3.1 — Astryx option data
+              carries `value`/`label`/`icon` only, and rich option rows need the
+              ComplexSelector track this static list does not warrant). The
+              category grouping survives as a Selector `section`. */}
           <Form.Item
             label={`${t('autoScalingRule.MetricName')} (${t('autoScalingRule.PrometheusPreset')})`}
             name="prometheusQueryPresetId"
@@ -352,9 +363,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               ) : undefined
             }
           >
-            <Select
+            <AstryxFormSelector
+              label={t('autoScalingRule.PrometheusPreset')}
               onChange={(value) => {
-                setSelectedPresetId(value);
+                setSelectedPresetId(value ?? undefined);
                 const preset = presetNodes.find((p) => p.id === value);
                 if (preset) {
                   // Auto-fill metricName
@@ -374,29 +386,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 }
               }}
               placeholder={t('autoScalingRule.SelectPrometheusPreset')}
-              showSearch={{
-                filterOption: (input, option) =>
-                  String(option?.label ?? '')
-                    .toLowerCase()
-                    .includes(input.toLowerCase()),
-              }}
+              hasSearch
               options={presetOptions}
-              optionRender={(option) => (
-                <BAIFlex direction="column" align="start">
-                  {option.label}
-                  {option.data.description && (
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: token.fontSizeSM }}
-                      ellipsis
-                    >
-                      {option.data.description}
-                    </Typography.Text>
-                  )}
-                </BAIFlex>
-              )}
-              allowClear
-              onClear={() => setSelectedPresetId(undefined)}
+              hasClear
             />
           </Form.Item>
         </>
@@ -408,35 +400,40 @@ const AutoScalingRuleEditorModalContent: React.FC<{
         required
         tooltip={t('autoScalingRule.ConditionTooltip')}
       >
-        <Form.Item name={'conditionMode'} noStyle>
-          <Radio.Group
-            optionType="button"
-            onChange={(e) => {
-              setConditionMode(e.target.value as ConditionMode);
-            }}
-            style={{ marginBottom: token.marginSM }}
-            options={[
-              {
-                label: t('autoScalingRule.ScaleIn'),
-                value: 'scale_in',
-              },
-              {
-                label: t('autoScalingRule.ScaleOut'),
-                value: 'scale_out',
-              },
-              {
-                label: t('autoScalingRule.ScaleInAndOut'),
-                value: 'scale_in_out',
-              },
-            ]}
-          />
-        </Form.Item>
+        {/* antd `Radio.Group optionType="button"` -> `SegmentedControl` via
+            the form adapter (MAPPING §3.10). `onChange` takes the VALUE, not
+            the event (P3), and the `marginBottom` moves to a wrapper because
+            Astryx controls take no `style` escape hatch for layout. */}
+        <div style={{ marginBottom: token.marginSM }}>
+          <Form.Item name={'conditionMode'} noStyle>
+            <AstryxFormSegmented
+              label={t('autoScalingRule.Condition')}
+              onChange={(value) => {
+                setConditionMode(value as ConditionMode);
+              }}
+              options={[
+                {
+                  label: t('autoScalingRule.ScaleIn'),
+                  value: 'scale_in',
+                },
+                {
+                  label: t('autoScalingRule.ScaleOut'),
+                  value: 'scale_out',
+                },
+                {
+                  label: t('autoScalingRule.ScaleInAndOut'),
+                  value: 'scale_in_out',
+                },
+              ]}
+            />
+          </Form.Item>
+        </div>
 
         {conditionMode === 'scale_in' && (
           <BAIFlex align="center" gap="xs">
-            <Typography.Text style={{ flexShrink: 0 }}>
+            <Text style={{ flexShrink: 0 }}>
               {t('autoScalingRule.Metric')} {'<'}
-            </Typography.Text>
+            </Text>
             <Form.Item
               name={'threshold'}
               noStyle
@@ -452,9 +449,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 },
               ]}
             >
-              <InputNumber
+              <AstryxFormNumberInput
+                label={t('autoScalingRule.MinThreshold')}
                 placeholder={t('autoScalingRule.MinThreshold')}
-                style={{ flex: 1, width: '100%' }}
                 min={0}
               />
             </Form.Item>
@@ -478,24 +475,24 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                 },
               ]}
             >
-              <InputNumber
+              <AstryxFormNumberInput
+                label={t('autoScalingRule.MaxThreshold')}
                 placeholder={t('autoScalingRule.MaxThreshold')}
-                style={{ flex: 1, width: '100%' }}
                 min={0}
               />
             </Form.Item>
-            <Typography.Text style={{ flexShrink: 0 }}>
+            <Text style={{ flexShrink: 0 }}>
               {'<'} {t('autoScalingRule.Metric')}
-            </Typography.Text>
+            </Text>
           </BAIFlex>
         )}
 
         {conditionMode === 'scale_in_out' && (
           <BAIFlex direction="column" gap={'xs'} align="stretch">
             <BAIFlex align="center" gap="xs">
-              <Typography.Text style={{ flexShrink: 0 }}>
+              <Text style={{ flexShrink: 0 }}>
                 {t('autoScalingRule.Metric')} {'<'}
-              </Typography.Text>
+              </Text>
               <Form.Item
                 name={'minThreshold'}
                 noStyle
@@ -511,9 +508,9 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                   },
                 ]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('autoScalingRule.MinThreshold')}
                   placeholder={t('autoScalingRule.MinThreshold')}
-                  style={{ flex: 1, width: '100%' }}
                   min={0}
                 />
               </Form.Item>
@@ -546,58 +543,71 @@ const AutoScalingRuleEditorModalContent: React.FC<{
                   }),
                 ]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('autoScalingRule.MaxThreshold')}
                   placeholder={t('autoScalingRule.MaxThreshold')}
-                  style={{ flex: 1, width: '100%' }}
                   min={0}
                 />
               </Form.Item>
-              <Typography.Text style={{ flexShrink: 0 }}>
+              <Text style={{ flexShrink: 0 }}>
                 {'<'} {t('autoScalingRule.Metric')}
-              </Typography.Text>
+              </Text>
             </BAIFlex>
           </BAIFlex>
         )}
       </Form.Item>
 
       {/* Step Size */}
+      {/* PILOT-DECISION: antd `InputNumber prefix` (the ±/+/− sign) has no
+          `NumberInput` destination — `startIcon` takes an icon COMPONENT, not
+          text (MAPPING §3.17). The sign moves next to the field as its own
+          `Text`, the same shape the threshold rows above already use, so the
+          information stays on screen without a per-component CSS block. The
+          field's `name`/`rules` move to a `noStyle` inner item (antd's own
+          pattern for a decorated control, already used by Condition above);
+          errors still surface on the outer item through `NoStyleItemContext`. */}
       <Form.Item
         label={t('autoScalingRule.StepSize')}
-        name={'stepSize'}
+        required
         tooltip={t('autoScalingRule.StepSizeTooltip')}
-        rules={[
-          { required: true },
-          {
-            type: 'number',
-            min: 1,
-            max: SIGNED_32BIT_MAX_INT,
-          },
-          {
-            validator: (_, value) => {
-              if (value % 1 !== 0) {
-                return Promise.reject(
-                  new Error(t('error.OnlyPositiveIntegersAreAllowed')),
-                );
-              }
-              return Promise.resolve();
-            },
-          },
-        ]}
       >
-        <InputNumber
-          min={1}
-          step={1}
-          style={{ width: '100%' }}
-          prefix={
-            <Typography.Text type="secondary">
-              {conditionMode === 'scale_in_out'
-                ? '±'
-                : conditionMode === 'scale_out'
-                  ? '+'
-                  : '−'}
-            </Typography.Text>
-          }
-        />
+        <BAIFlex align="center" gap="xs">
+          <Text color="secondary" style={{ flexShrink: 0 }}>
+            {conditionMode === 'scale_in_out'
+              ? '±'
+              : conditionMode === 'scale_out'
+                ? '+'
+                : '−'}
+          </Text>
+          <Form.Item
+            name={'stepSize'}
+            noStyle
+            rules={[
+              { required: true },
+              {
+                type: 'number',
+                min: 1,
+                max: SIGNED_32BIT_MAX_INT,
+              },
+              {
+                validator: (_, value) => {
+                  if (value % 1 !== 0) {
+                    return Promise.reject(
+                      new Error(t('error.OnlyPositiveIntegersAreAllowed')),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <AstryxFormNumberInput
+              label={t('autoScalingRule.StepSize')}
+              min={1}
+              step={1}
+            />
+          </Form.Item>
+        </BAIFlex>
       </Form.Item>
 
       {/* Cooldown Sec. */}
@@ -623,15 +633,13 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           },
         ]}
       >
-        <InputNumber
+        {/* antd `InputNumber suffix` (a unit string) -> `NumberInput units`
+            (MAPPING §3.17 — the one place Astryx is better than antd here). */}
+        <AstryxFormNumberInput
+          label={t('autoScalingRule.CoolDownSeconds')}
           min={1}
           step={1}
-          style={{ width: '100%' }}
-          suffix={
-            <Typography.Text type="secondary">
-              {t('autoScalingRule.Seconds')}
-            </Typography.Text>
-          }
+          units={t('autoScalingRule.Seconds')}
         />
       </Form.Item>
 
@@ -658,10 +666,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           },
         ]}
       >
-        <InputNumber
+        <AstryxFormNumberInput
+          label={t('autoScalingRule.MinReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}
-          style={{ width: '100%' }}
         />
       </Form.Item>
 
@@ -688,10 +696,10 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           },
         ]}
       >
-        <InputNumber
+        <AstryxFormNumberInput
+          label={t('autoScalingRule.MaxReplicas')}
           min={0}
           max={SIGNED_32BIT_MAX_INT}
-          style={{ width: '100%' }}
         />
       </Form.Item>
     </Form>
@@ -902,7 +910,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
       confirmLoading={isInflightCreate || isInflightUpdate}
     >
       <ErrorBoundaryWithNullFallback>
-        <React.Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
+        <React.Suspense fallback={<BAISkeletonAstryx rows={6} />}>
           <AutoScalingRuleEditorModalContent
             autoScalingRule={autoScalingRule ?? null}
             formRef={

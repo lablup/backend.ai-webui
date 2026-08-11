@@ -9,8 +9,9 @@ import {
   chatPageQueryMockResponse,
   chatCardQueryMockResponse,
   chatCardQueryNullUrlMockResponse,
-  endpointSelectQueryMockResponse,
-  endpointSelectValueQueryMockResponse,
+  deploymentSelectQueryMockResponse,
+  deploymentSelectValueQueryMockResponse,
+  deploymentTokenSelectQueryMockResponse,
   makeSseResponse,
   modelsApiMockResponse,
   MOCK_MODEL_ID,
@@ -50,10 +51,8 @@ test.describe(
         timeout: 10000,
       });
 
-      // Verify the text input area with placeholder "Type your message here..." is visible
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+      // Verify the composer input (accessible name "Type your message here...") is visible
+      await expect(page.getByLabel('Type your message here...')).toBeVisible({
         timeout: 10000,
       });
 
@@ -71,7 +70,7 @@ test.describe(
       await setupChatPage(page, request);
 
       // Wait for the chat input to be ready
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type and send the message
@@ -90,7 +89,7 @@ test.describe(
       });
 
       // Input should be cleared after sending
-      await expect(chatInput).toHaveValue('');
+      await expect(chatInput).toHaveText('');
     });
 
     test('User can send a follow-up message in the same conversation (multi-turn)', async ({
@@ -100,7 +99,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // First turn: type and send "What is Backend.AI?"
@@ -144,7 +143,7 @@ test.describe(
       request,
     }) => {
       // FIXME: The stop button never becomes visible because the mock SSE response
-      // completes synchronously before the @ant-design/x Sender component can switch
+      // completes synchronously before the Astryx ChatComposer can switch
       // to the loading/stop state. A real slow streaming endpoint would be needed to
       // test this behavior reliably.
       // Setup with a slow streaming response
@@ -155,10 +154,12 @@ test.describe(
 
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       await page.route('**/v1/models', async (route) => {
@@ -185,7 +186,7 @@ test.describe(
 
       await navigateTo(page, 'chat');
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type and send a message to trigger streaming
@@ -214,8 +215,13 @@ test.describe(
       // The streaming indicator should disappear
       await expect(stopButton.first()).not.toBeVisible({ timeout: 10000 });
 
-      // The input area should become editable again
-      await expect(chatInput).toBeEnabled({ timeout: 10000 });
+      // The input area should become editable again. The Astryx composer input
+      // is a contenteditable div, not a form control, so its enabled/disabled
+      // state lives in the `contenteditable` attribute rather than anywhere
+      // `toBeEnabled` can read.
+      await expect(chatInput).toHaveAttribute('contenteditable', 'true', {
+        timeout: 10000,
+      });
 
       // No error alert should be visible
       await expect(
@@ -230,7 +236,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Send a message and wait for the reply
@@ -257,7 +263,7 @@ test.describe(
       await expect(page.getByText('Hello from mock!')).not.toBeVisible();
 
       // Input area is still enabled
-      await expect(chatInput).toBeEnabled();
+      await expect(chatInput).toHaveAttribute('contenteditable', 'true');
     });
   },
 );
@@ -287,7 +293,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type "Hello" and press Enter
@@ -328,7 +334,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type a distinctive message and press Enter
@@ -370,7 +376,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // First session: send "First session message" and wait for reply
@@ -436,7 +442,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Send "Hello" and wait for reply to create a history entry
@@ -492,7 +498,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // First session
@@ -560,7 +566,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Send a message to create and save a session
@@ -626,10 +632,12 @@ test.describe(
 
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       await page.route('**/v1/models', async (route) => {
@@ -651,7 +659,7 @@ test.describe(
 
       await navigateTo(page, 'chat');
 
-      const chatInput = page.getByPlaceholder('Type your message here...');
+      const chatInput = page.getByLabel('Type your message here...');
       await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type "Trigger an error" and press Enter
@@ -684,10 +692,12 @@ test.describe(
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
         ChatCardQuery: (vars) =>
-          chatCardQueryNullUrlMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+          chatCardQueryNullUrlMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       await page.route('**/v1/models', async (route) => {
@@ -702,9 +712,7 @@ test.describe(
       await navigateTo(page, 'chat');
 
       // Wait for the chat card to render
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+      await expect(page.getByLabel('Type your message here...')).toBeVisible({
         timeout: 10000,
       });
 
@@ -717,8 +725,8 @@ test.describe(
 
       // The text input should be disabled
       await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeDisabled({
+        page.getByLabel('Type your message here...'),
+      ).toHaveAttribute('contenteditable', 'false', {
         timeout: 10000,
       });
     });
@@ -740,10 +748,12 @@ test.describe(
 
       await setupGraphQLMocks(page, {
         ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
+        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+        DeploymentSelectValueQuery: (vars) =>
+          deploymentSelectValueQueryMockResponse(vars.deploymentId),
+        DeploymentTokenSelectQuery: (vars) =>
+          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
       });
 
       // Models API returns HTTP 401 to trigger an error notification
@@ -759,24 +769,26 @@ test.describe(
       await navigateTo(page, 'chat');
 
       // Wait for page to load
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+      await expect(page.getByLabel('Type your message here...')).toBeVisible({
         timeout: 10000,
       });
 
-      // An Ant Design error message notification should appear
+      // An error surfaces via either the (unmigrated) antd message toast or
+      // the BAINotificationStack (to-astryx ticket 29 rewire — error notices
+      // carry `data-status="error"` on their item root).
       await expect(
         page
           .locator('.ant-message-error')
-          .or(page.locator('.ant-notification-notice-error'))
+          .or(
+            page.locator(
+              '[data-testid="bai-notification-stack"] [data-status="error"]',
+            ),
+          )
           .first(),
       ).toBeVisible({ timeout: 15000 });
 
       // The chat card is still rendered (no crash)
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible();
+      await expect(page.getByLabel('Type your message here...')).toBeVisible();
     });
   },
 );
@@ -805,9 +817,7 @@ test.describe(
       await setupChatPage(page, request);
 
       // Wait for the chat card to be ready
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+      await expect(page.getByLabel('Type your message here...')).toBeVisible({
         timeout: 10000,
       });
 
@@ -822,7 +832,7 @@ test.describe(
       await compareButton.first().click();
 
       // A second ChatCard should now be visible
-      const chatInputs = page.getByPlaceholder('Type your message here...');
+      const chatInputs = page.getByLabel('Type your message here...');
       await expect(chatInputs).toHaveCount(2, { timeout: 10000 });
 
       // The sync toggle should be visible in both panes (only shown when closable/multi-pane)
@@ -843,9 +853,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+      await expect(page.getByLabel('Type your message here...')).toBeVisible({
         timeout: 10000,
       });
 
@@ -859,11 +867,12 @@ test.describe(
       await compareButton.first().click();
 
       // Verify two panes are visible
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toHaveCount(2, {
-        timeout: 10000,
-      });
+      await expect(page.getByLabel('Type your message here...')).toHaveCount(
+        2,
+        {
+          timeout: 10000,
+        },
+      );
 
       // In the second pane, click the "More" menu button
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
@@ -880,11 +889,12 @@ test.describe(
         .click();
 
       // Only one pane remains
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toHaveCount(1, {
-        timeout: 10000,
-      });
+      await expect(page.getByLabel('Type your message here...')).toHaveCount(
+        1,
+        {
+          timeout: 10000,
+        },
+      );
 
       // The sync toggle is no longer visible (single pane has no sync toggle)
       // In single pane mode, the ChatCard header has:
@@ -902,9 +912,7 @@ test.describe(
       // Setup: login, install mocks, navigate to /chat
       await setupChatPage(page, request);
 
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+      await expect(page.getByLabel('Type your message here...')).toBeVisible({
         timeout: 10000,
       });
 
@@ -922,17 +930,19 @@ test.describe(
           .nth(compareButtonIndex);
         await compareButton.click();
         // Wait for the new pane to appear before clicking again
-        await expect(
-          page.getByPlaceholder('Type your message here...'),
-        ).toHaveCount(i + 2, { timeout: 10000 });
+        await expect(page.getByLabel('Type your message here...')).toHaveCount(
+          i + 2,
+          { timeout: 10000 },
+        );
       }
 
       // Verify 11 chat cards are visible (the maximum allowed)
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toHaveCount(11, {
-        timeout: 10000,
-      });
+      await expect(page.getByLabel('Type your message here...')).toHaveCount(
+        11,
+        {
+          timeout: 10000,
+        },
+      );
 
       // The "Compare" button should no longer be visible (cloneable = false when count > 10)
       // With 11 panes, the card head has:
@@ -949,9 +959,7 @@ test.describe(
       // Setup with two endpoints available
       await setupChatPageWithTwoEndpoints(page, request);
 
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+      await expect(page.getByLabel('Type your message here...')).toBeVisible({
         timeout: 10000,
       });
 
@@ -965,11 +973,12 @@ test.describe(
       await compareButton.first().click();
 
       // Verify two panes are visible
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toHaveCount(2, {
-        timeout: 10000,
-      });
+      await expect(page.getByLabel('Type your message here...')).toHaveCount(
+        2,
+        {
+          timeout: 10000,
+        },
+      );
 
       // In the second pane, open the endpoint selector dropdown
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
@@ -1031,9 +1040,7 @@ test.describe('Chat Parameters', { tag: ['@chat', '@functional'] }, () => {
     // Setup: login, install mocks, navigate to /chat
     await setupChatPage(page, request);
 
-    await expect(
-      page.getByPlaceholder('Type your message here...'),
-    ).toBeVisible({
+    await expect(page.getByLabel('Type your message here...')).toBeVisible({
       timeout: 10000,
     });
 
@@ -1057,7 +1064,7 @@ test.describe('Chat Parameters', { tag: ['@chat', '@functional'] }, () => {
     await expect(temperatureLabel.first()).toBeVisible({ timeout: 10000 });
 
     // Close the popover by clicking somewhere outside of it (e.g., the chat message area)
-    await page.getByPlaceholder('Type your message here...').click();
+    await page.getByLabel('Type your message here...').click();
 
     // Verify the popover closed — check that its inner content is hidden
     // (ant-popover-container stays in DOM; check the inner content div instead)

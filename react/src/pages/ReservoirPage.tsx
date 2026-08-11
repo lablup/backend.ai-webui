@@ -17,9 +17,16 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useToggle } from 'ahooks';
-import { theme, Col, Row, Statistic, Card, Button, Tooltip } from 'antd';
+import { theme } from '../theme-shim';
+import { Button } from '@astryxdesign/core/Button';
+import { Card } from '@astryxdesign/core/Card';
+import { Grid } from '@astryxdesign/core/Grid';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Stat } from '@astryxdesign/lab';
 import {
+  // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
+  BAIImportArtifactModal,
   BAIActivateArtifactsModal,
   BAIActivateArtifactsModalArtifactsFragmentKey,
   BAIArtifactTable,
@@ -29,14 +36,13 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIHuggingFaceIcon,
-  // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
-  BAIImportArtifactModal,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
   BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   toLocalId,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -233,30 +239,36 @@ const ReservoirPage: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Row gutter={[16, 16]}>
-        <Col xs={12} sm={8} lg={6} xl={4}>
-          <Card
-            size="small"
-            variant="borderless"
-            hoverable
-            style={{
-              cursor: 'pointer',
-              border: `1px solid ${token.colorPrimary}`,
-            }}
-          >
-            <Statistic
-              title="MODEL"
-              value={total?.count}
-              prefix={<Brain size={16} />}
-              styles={{
-                content: {
-                  color: token.colorPrimary,
-                },
-              }}
-            />
-          </Card>
-        </Col>
-      </Row>
+      {/* antd `Row gutter={[16,16]}` + a single `Col xs={12} sm={8} lg={6}
+          xl={4}` -> Astryx `Grid` on the RESPONSIVE-POLICY R1 recipe: the
+          widest antd step is `xl={4}` (6-up from 1200px), so minWidth 200 /
+          max 6, gutter 16 -> gap 4. W2A-17: grid children take `width: 100%`
+          and `minWidth: 0` so a filled track cannot push past its column. */}
+      <Grid columns={{ minWidth: 200, max: 6 }} gap={4} width="100%">
+        {/* antd `Statistic` -> lab `Stat` (MAPPING §2 LAB; the canary is
+            already in the graph for Drawer/Stepper/Tour).
+            PILOT-DECISION: `Stat` has no `prefix` slot and no per-value color,
+            so the `Brain` glyph moves INTO the ReactNode `value` beside the
+            number, and the primary tint on both the number and the card border
+            is DROPPED (P19 theme-defaults-first — `Stat` already gives the
+            value display emphasis, and a hand-painted `1px solid colorPrimary`
+            was antd-era chrome).
+            `hoverable` + `cursor: 'pointer'` also go: the click handler that
+            justified them (`handleStatisticCardClick`) is commented out, so
+            the affordance was promising an interaction the card does not
+            have. */}
+        <Card style={{ minWidth: 0 }}>
+          <Stat
+            label="MODEL"
+            value={
+              <HStack gap={1} align="center">
+                <Brain size={16} />
+                {total?.count}
+              </HStack>
+            }
+          />
+        </Card>
+      </Grid>
       <BAICard
         activeTabKey={'artifacts'}
         tabList={[
@@ -357,34 +369,41 @@ const ReservoirPage: React.FC = () => {
                     count={selectedArtifactIdList.length}
                     onClearSelection={() => setSelectedArtifactIdList([])}
                   />
-                  <Tooltip
-                    title={
+                  {/* antd `Tooltip` wrapping an icon-only `Button` ->
+                      `IconButton`, which requires `label` and renders the
+                      tooltip itself, so the wrapper disappears and the button
+                      finally has an accessible name. */}
+                  <IconButton
+                    variant="secondary"
+                    label={
                       mode === 'ALIVE'
                         ? t('reservoirPage.Deactivate')
                         : t('reservoirPage.Activate')
                     }
-                  >
-                    <Button
-                      icon={
-                        mode === 'ALIVE' ? (
-                          <BanIcon style={{ color: token.colorError }} />
-                        ) : (
-                          <UndoIcon style={{ color: token.colorInfo }} />
-                        )
+                    tooltip={
+                      mode === 'ALIVE'
+                        ? t('reservoirPage.Deactivate')
+                        : t('reservoirPage.Activate')
+                    }
+                    icon={
+                      mode === 'ALIVE' ? (
+                        <BanIcon style={{ color: token.colorError }} />
+                      ) : (
+                        <UndoIcon style={{ color: token.colorInfo }} />
+                      )
+                    }
+                    onClick={() => {
+                      if (mode === 'ALIVE') {
+                        setSelectedArtifacts(
+                          selectedArtifactIdList.flatMap((arr) => arr.data),
+                        );
+                      } else {
+                        setSelectedRestoreArtifacts(
+                          selectedArtifactIdList.flatMap((arr) => arr.data),
+                        );
                       }
-                      onClick={() => {
-                        if (mode === 'ALIVE') {
-                          setSelectedArtifacts(
-                            selectedArtifactIdList.flatMap((arr) => arr.data),
-                          );
-                        } else {
-                          setSelectedRestoreArtifacts(
-                            selectedArtifactIdList.flatMap((arr) => arr.data),
-                          );
-                        }
-                      }}
-                    />
-                  </Tooltip>
+                    }}
+                  />
                 </BAIFlex>
               )}
               <AutoUpdateFetchKeyButton
@@ -407,14 +426,15 @@ const ReservoirPage: React.FC = () => {
                 <>
                   {/* TODO(needs-backend): HuggingFace registry token setting button is hidden
                      until storage-proxy applies DB config via Redis stateful state sharing. */}
-                  {/* <Tooltip title={t('button.Settings')}>
-                    <Button
-                      icon={<Settings size={16} />}
-                      onClick={() => toggleHuggingFaceSettingModal()}
-                    />
-                  </Tooltip> */}
+                  {/* <IconButton
+                        variant="secondary"
+                        label={t('button.Settings')}
+                        tooltip={t('button.Settings')}
+                        icon={<Settings size={16} />}
+                        onClick={() => toggleHuggingFaceSettingModal()}
+                      /> */}
                   <Button
-                    type="primary"
+                    variant="primary"
                     icon={
                       <BAIHuggingFaceIcon
                         style={{
@@ -422,10 +442,9 @@ const ReservoirPage: React.FC = () => {
                         }}
                       />
                     }
+                    label={t('reservoirPage.FromHuggingFace')}
                     onClick={() => toggleOpenHuggingFaceModal()}
-                  >
-                    {t('reservoirPage.FromHuggingFace')}
-                  </Button>
+                  />
                 </>
               )}
             </BAIFlex>

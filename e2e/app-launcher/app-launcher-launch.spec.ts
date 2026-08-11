@@ -221,13 +221,17 @@ test.describe(
 
       // 2. Wait for notification to appear with progress indicator
       const notificationContainer = sharedPage
-        .locator('.ant-notification-notice')
+        .locator(
+          '[data-testid="bai-notification-stack"] [data-notification-key]',
+        )
         .last();
       await expect(notificationContainer).toBeVisible({ timeout: 10000 });
 
       // 3. Wait for "Prepared" status in notification
       const preparedNotification = sharedPage
-        .locator('.ant-notification-notice')
+        .locator(
+          '[data-testid="bai-notification-stack"] [data-notification-key]',
+        )
         .filter({ hasText: 'Prepared' });
       await expect(preparedNotification).toBeVisible({ timeout: 60000 });
 
@@ -298,13 +302,17 @@ test.describe(
 
         // 2. Wait for notification to appear
         const notificationContainer = sharedPage
-          .locator('.ant-notification-notice')
+          .locator(
+            '[data-testid="bai-notification-stack"] [data-notification-key]',
+          )
           .last();
         await expect(notificationContainer).toBeVisible({ timeout: 10000 });
 
         // 3. Wait for "Prepared" status in notification
         const preparedNotification = sharedPage
-          .locator('.ant-notification-notice')
+          .locator(
+            '[data-testid="bai-notification-stack"] [data-notification-key]',
+          )
           .filter({ hasText: 'Prepared' });
         await expect(preparedNotification).toBeVisible({ timeout: 60000 });
 
@@ -369,13 +377,17 @@ test.describe(
 
         // 2. Wait for notification to appear
         const notificationContainer = sharedPage
-          .locator('.ant-notification-notice')
+          .locator(
+            '[data-testid="bai-notification-stack"] [data-notification-key]',
+          )
           .last();
         await expect(notificationContainer).toBeVisible({ timeout: 10000 });
 
         // 3. Wait for "Prepared" status in notification
         const preparedNotification = sharedPage
-          .locator('.ant-notification-notice')
+          .locator(
+            '[data-testid="bai-notification-stack"] [data-notification-key]',
+          )
           .filter({ hasText: 'Prepared' });
         await expect(preparedNotification).toBeVisible({ timeout: 60000 });
 
@@ -442,13 +454,17 @@ test.describe(
 
         // 2. Wait for notification to appear
         const notificationContainer = sharedPage
-          .locator('.ant-notification-notice')
+          .locator(
+            '[data-testid="bai-notification-stack"] [data-notification-key]',
+          )
           .last();
         await expect(notificationContainer).toBeVisible({ timeout: 10000 });
 
         // 3. Wait for "Prepared" status in notification
         const preparedNotification = sharedPage
-          .locator('.ant-notification-notice')
+          .locator(
+            '[data-testid="bai-notification-stack"] [data-notification-key]',
+          )
           .filter({ hasText: 'Prepared' });
         await expect(preparedNotification).toBeVisible({ timeout: 60000 });
 
@@ -681,7 +697,9 @@ test.describe(
 
         // 5. The backend error message must surface in the launch notification.
         const errorNotification = sharedPage
-          .locator('.ant-notification-notice')
+          .locator(
+            '[data-testid="bai-notification-stack"] [data-notification-key]',
+          )
           .filter({ hasText: 'Worker not available.' });
         await expect(errorNotification).toBeVisible({ timeout: 30000 });
 

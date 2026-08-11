@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import AgentList from './AgentList';
-import { theme } from 'antd';
 import { BAIBoardItemTitle, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,0 +1,102 @@
+/* Styles owned by BAIBoard (to-astryx ticket 15). Imported by the component
+   itself (P17), replacing the antd-style `createStyles` block. The selectors
+   target @cloudscape-design/board-components internals (the `.bai_board_*`
+   names come from the cloudscape build config), NOT `.ant-*` — so nothing
+   here dies when antd leaves (P6).
+
+   Every custom property is checked against the declared Astryx variable set
+   (P19; enforced by scripts/migration-gates/astryx-token-gate.mjs). Token
+   mapping decisions:
+     token.borderRadius        -> var(--radius-container)  (board items are
+                                  card-shaped surfaces; Astryx card radius)
+     token.colorSplit          -> var(--color-background-muted)
+     token.colorPrimaryHover
+       + opacity 0.3           -> var(--color-accent-muted) (PILOT-DECISION:
+                                  the muted accent token IS the alpha-tinted
+                                  accent; the hand-rolled opacity goes away)
+     token.colorTextQuaternary -> var(--color-icon-disabled) (handle glyphs)
+     token.padding / XS        -> var(--spacing-4) / var(--spacing-2)
+     token.colorBgContainer    -> var(--color-background-surface)
+     token.colorBorderSecondary-> var(--color-border)
+     token.colorError/Warning  -> var(--color-error) / var(--color-warning)
+     token.margin              -> var(--spacing-4)
+     token.lineWidth (1px)     -> var(--border-width) */
+
+.bai-board .bai_board_placeholder {
+  border-radius: var(--radius-container) !important;
+}
+.bai-board .bai_board_placeholder--active {
+  background-color: var(--color-background-muted) !important;
+}
+.bai-board .bai_board_placeholder--hover {
+  background-color: var(--color-accent-muted) !important;
+}
+.bai-board .bai_board_handle button span {
+  color: var(--color-icon-disabled) !important;
+  padding-left: 5px !important;
+}
+.bai-board .bai_board_header {
+  padding: 0 !important;
+  padding-top: calc(var(--spacing-4) - var(--border-width)) !important;
+  padding-left: var(--spacing-2) !important;
+}
+.bai-board .bai_board_resizer button span {
+  color: var(--color-icon-disabled) !important;
+}
+.bai-board
+  .bai_board_container-override
+  > div:first-child
+  > div:nth-child(2)
+  > div:first-child {
+  padding: 0 !important;
+}
+/*
+ * Upstream renders the drag/resize "active" outline as a ::before pseudo
+ * on .container-override.active (content only set on the active variant,
+ * so the pseudo is invisible at rest). Two corrections:
+ *  1. radius — upstream hardcodes 16px; align with the board-item radius.
+ *  2. stacking — the pseudo has implicit z-index 0, so the sticky
+ *     BAIBoardItemTitle (z-index 50) paints over the outline near the top.
+ *     Lift it above the title and keep it click-through.
+ */
+.bai-board .bai_board_container-override::before {
+  border-radius: var(--radius-container) !important;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.bai-board-disable-resize .bai_board_resizer {
+  display: none !important;
+}
+
+.bai-board-disable-move .bai_board_handle {
+  display: none !important;
+}
+.bai-board-disable-move .bai_board_header {
+  display: none !important;
+}
+
+.bai-board-item > div:first-child {
+  border-radius: var(--radius-container) !important;
+  background-color: var(--color-background-surface) !important;
+  border: var(--border-width) solid var(--color-border) !important;
+}
+
+.bai-board-item:has([data-bai-board-item-status='error']) > div:first-child {
+  border-color: var(--color-error) !important;
+}
+
+.bai-board-item:has([data-bai-board-item-status='warning']) > div:first-child {
+  border-color: var(--color-warning) !important;
+}
+
+.bai-board-item > div:first-child > div:first-child > div:first-child {
+  margin-bottom: var(--spacing-4);
+  background-color: var(--color-background-surface) !important;
+  position: absolute;
+  z-index: 1;
+}
+
+.bai-board-item-disable-border > div:first-child {
+  border: none !important;
+}

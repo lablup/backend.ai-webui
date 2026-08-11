@@ -16,7 +16,6 @@ import FairShareStepToolbar from './FairShareStepToolbar';
 import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import ResourceGroupSchedulerTypeAlert from './ResourceGroupSchedulerTypeAlert';
 import UsageBucketModal from './UsageBucketModal';
-import { theme } from 'antd';
 import {
   BAIFlex,
   BAIUnmountAfterClose,
@@ -43,7 +42,6 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [selectedRows, setSelectedRows] = useState<Array<DomainFairShare>>([]);
   const [selectedSingleRow, setSelectedSingleRow] =
@@ -191,9 +189,6 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
           pageSize: tablePaginationOption.pageSize,
           total: domainFairShares?.count || 0,
           current: tablePaginationOption.current,
-          style: {
-            marginRight: token.marginXS,
-          },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

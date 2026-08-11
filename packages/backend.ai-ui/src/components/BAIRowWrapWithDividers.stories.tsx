@@ -1,7 +1,10 @@
+import BAIButton from './BAIButton';
+import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
+import BAITag from './BAITag';
+import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Card, Tag, Button, Typography } from 'antd';
 
 /**
  * BAIRowWrapWithDividers creates a flexible wrapping layout with automatic vertical dividers.
@@ -201,14 +204,19 @@ export const WithTags: Story = {
   name: 'TagsLayout',
   render: () => (
     <BAIRowWrapWithDividers columnGap={16} rowGap={8}>
-      <Tag color="blue">React</Tag>
-      <Tag color="green">TypeScript</Tag>
-      <Tag color="orange">Storybook</Tag>
-      <Tag color="red">Ant Design</Tag>
-      <Tag color="purple">Frontend</Tag>
-      <Tag color="cyan">UI Components</Tag>
-      <Tag color="geekblue">Responsive</Tag>
-      <Tag color="magenta">Layout</Tag>
+      <BAITag color="blue">React</BAITag>
+      <BAITag color="green">TypeScript</BAITag>
+      <BAITag color="orange">Storybook</BAITag>
+      {/* This entry predates the astryx migration and named the library the
+          tag itself is demonstrating a rename target of; keep the tag but
+          drop the now-inapplicable "Ant Design" label. */}
+      <BAITag color="red">UI Library</BAITag>
+      <BAITag color="purple">Frontend</BAITag>
+      <BAITag color="cyan">UI Components</BAITag>
+      {/* geekblue/magenta have no direct Astryx Badge hue; BAITag's shared
+          astryxTagVariant lookup already folds them into blue/pink. */}
+      <BAITag color="geekblue">Responsive</BAITag>
+      <BAITag color="magenta">Layout</BAITag>
     </BAIRowWrapWithDividers>
   ),
   parameters: {
@@ -255,21 +263,36 @@ export const WithInset: Story = {
   name: 'DividerInset',
   args: {
     children: [
-      <Card key="1" size="small" style={{ width: 150 }}>
-        <Typography.Text strong>Card 1</Typography.Text>
+      <BAICard
+        key="1"
+        size="small"
+        style={{ width: 150 }}
+        styles={{ body: { paddingTop: 0 } }}
+      >
+        <BAIText strong>Card 1</BAIText>
         <br />
-        <Typography.Text type="secondary">Content here</Typography.Text>
-      </Card>,
-      <Card key="2" size="small" style={{ width: 150 }}>
-        <Typography.Text strong>Card 2</Typography.Text>
+        <BAIText type="secondary">Content here</BAIText>
+      </BAICard>,
+      <BAICard
+        key="2"
+        size="small"
+        style={{ width: 150 }}
+        styles={{ body: { paddingTop: 0 } }}
+      >
+        <BAIText strong>Card 2</BAIText>
         <br />
-        <Typography.Text type="secondary">More content</Typography.Text>
-      </Card>,
-      <Card key="3" size="small" style={{ width: 150 }}>
-        <Typography.Text strong>Card 3</Typography.Text>
+        <BAIText type="secondary">More content</BAIText>
+      </BAICard>,
+      <BAICard
+        key="3"
+        size="small"
+        style={{ width: 150 }}
+        styles={{ body: { paddingTop: 0 } }}
+      >
+        <BAIText strong>Card 3</BAIText>
         <br />
-        <Typography.Text type="secondary">Even more</Typography.Text>
-      </Card>,
+        <BAIText type="secondary">Even more</BAIText>
+      </BAICard>,
     ],
     columnGap: 16,
     rowGap: 12,
@@ -290,12 +313,12 @@ export const ButtonGroup: Story = {
   name: 'ButtonGroup',
   render: () => (
     <BAIRowWrapWithDividers columnGap={12} rowGap={8}>
-      <Button>Save</Button>
-      <Button>Cancel</Button>
-      <Button type="primary">Submit</Button>
-      <Button danger>Delete</Button>
-      <Button type="dashed">Draft</Button>
-      <Button type="link">View Details</Button>
+      <BAIButton>Save</BAIButton>
+      <BAIButton>Cancel</BAIButton>
+      <BAIButton type="primary">Submit</BAIButton>
+      <BAIButton danger>Delete</BAIButton>
+      <BAIButton type="dashed">Draft</BAIButton>
+      <BAIButton type="link">View Details</BAIButton>
     </BAIRowWrapWithDividers>
   ),
   parameters: {
@@ -365,19 +388,17 @@ export const MixedContent: Story = {
   name: 'MixedContent',
   render: () => (
     <BAIRowWrapWithDividers columnGap={20} rowGap={16}>
-      <Tag color="processing">Status: Active</Tag>
-      <Button size="small" type="primary">
+      <BAITag color="processing">Status: Active</BAITag>
+      <BAIButton size="small" type="primary">
         Edit
-      </Button>
+      </BAIButton>
       <BAIFlex gap="xs">
-        <Typography.Text strong>Score:</Typography.Text>
-        <Typography.Text>95/100</Typography.Text>
+        <BAIText strong>Score:</BAIText>
+        <BAIText>95/100</BAIText>
       </BAIFlex>
-      <Button size="small">View Details</Button>
-      <Tag color="success">Verified</Tag>
-      <Typography.Text type="secondary">
-        Last updated: 2 hours ago
-      </Typography.Text>
+      <BAIButton size="small">View Details</BAIButton>
+      <BAITag color="success">Verified</BAITag>
+      <BAIText type="secondary">Last updated: 2 hours ago</BAIText>
     </BAIRowWrapWithDividers>
   ),
   parameters: {

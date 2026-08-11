@@ -19,11 +19,11 @@ import {
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Tooltip, Typography, theme } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIFetchKeyButton,
@@ -31,14 +31,15 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAIUnmountAfterClose,
   toLocalId,
   useFetchKey,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -336,7 +337,7 @@ const ProjectStoragePermissionTable: React.FC<
                 onClearSelection={() => setSelectedRowKeys([])}
               />
               <Tooltip
-                title={t('storageHost.permission.EditPermissionsAction')}
+                content={t('storageHost.permission.EditPermissionsAction')}
               >
                 <BAIButton
                   icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
@@ -356,9 +357,8 @@ const ProjectStoragePermissionTable: React.FC<
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         locale={{
           // No domain picked yet vs. a domain picked that simply has no
@@ -409,12 +409,12 @@ const ProjectStoragePermissionTable: React.FC<
             render: (_value: ProjectRow, row: ProjectRow) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
+                  <BAIText
                     ellipsis={{ tooltip: row.basicInfo?.name }}
                     style={{ maxWidth: 160 }}
                   >
                     {row.basicInfo?.name}
-                  </Typography.Text>
+                  </BAIText>
                 }
                 showActions="always"
                 actions={[
@@ -440,19 +440,21 @@ const ProjectStoragePermissionTable: React.FC<
                 // granted on neither → gray.
                 if (enabledKeysOf(row).has(permKey)) {
                   return (
-                    <CheckCircleOutlined
+                    <CircleCheck
                       style={{ color: token.colorSuccess }}
+                      size="1em"
                     />
                   );
                 }
                 if (domainPermissions.has(permKey)) {
                   return (
-                    <CheckCircleOutlined style={{ color: token.purple5 }} />
+                    <CircleCheck style={{ color: token.purple5 }} size="1em" />
                   );
                 }
                 return (
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextDisabled }}
+                    size="1em"
                   />
                 );
               },

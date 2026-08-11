@@ -3,11 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { TensorboardPathModalFragment$key } from '../../__generated__/TensorboardPathModalFragment.graphql';
+import { App } from '../../app-shim';
+import { Form } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
-import { App, Form, Input, Typography } from 'antd';
+import { AstryxFormTextInput } from '../astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { Text } from '@astryxdesign/core/Text';
+// FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
+// form engine (locked SHIM decision).
 import {
-  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -103,9 +108,9 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" gap="md" align="stretch">
-        <Typography.Paragraph>
+        <Text as="p" display="block">
           {t('session.InputTensorboardPath')}
-        </Typography.Paragraph>
+        </Text>
 
         <Form
           form={form}
@@ -115,13 +120,19 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
           }}
         >
           <Form.Item name="tensorboardPath">
-            <Input placeholder={t('session.DefaultTensorboardPath')} />
+            <AstryxFormTextInput
+              label={t('session.TensorboardPath')}
+              placeholder={t('session.DefaultTensorboardPath')}
+            />
           </Form.Item>
         </Form>
 
-        <BAIButton type="primary" size="large" action={handleSubmit}>
-          {t('session.UseThisPath')}
-        </BAIButton>
+        <Button
+          variant="primary"
+          size="lg"
+          label={t('session.UseThisPath')}
+          clickAction={handleSubmit}
+        />
       </BAIFlex>
     </BAIModal>
   );

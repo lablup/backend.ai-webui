@@ -1,53 +1,15 @@
-import type { Locale } from 'antd/es/locale';
-import deDE from 'antd/locale/de_DE';
-import elGR from 'antd/locale/el_GR';
-import enUS from 'antd/locale/en_US';
-import esES from 'antd/locale/es_ES';
-import fiFI from 'antd/locale/fi_FI';
-import frFR from 'antd/locale/fr_FR';
-import idID from 'antd/locale/id_ID';
-import itIT from 'antd/locale/it_IT';
-import jaJP from 'antd/locale/ja_JP';
-import koKR from 'antd/locale/ko_KR';
-import mnMN from 'antd/locale/mn_MN';
-import msMY from 'antd/locale/ms_MY';
-import plPL from 'antd/locale/pl_PL';
-import ptBR from 'antd/locale/pt_BR';
-import ptPT from 'antd/locale/pt_PT';
-import ruRU from 'antd/locale/ru_RU';
-import thTH from 'antd/locale/th_TH';
-import trTR from 'antd/locale/tr_TR';
-import viVN from 'antd/locale/vi_VN';
-import zhCN from 'antd/locale/zh_CN';
-import zhTW from 'antd/locale/zh_TW';
-
-export const antdLocaleMap: Record<string, Locale> = {
-  en: enUS,
-  ko: koKR,
-  ja: jaJP,
-  'zh-CN': zhCN,
-  'zh-TW': zhTW,
-  de: deDE,
-  fr: frFR,
-  es: esES,
-  pt: ptPT,
-  'pt-BR': ptBR,
-  it: itIT,
-  ru: ruRU,
-  pl: plPL,
-  el: elGR,
-  fi: fiFI,
-  tr: trTR,
-  th: thTH,
-  vi: viVN,
-  id: idID,
-  ms: msMY,
-  mn: mnMN,
-};
-
-export const getAntdLocale = (locale: string): Locale =>
-  antdLocaleMap[locale] ?? enUS;
-
+/**
+ * The locale toolbar's language list.
+ *
+ * This file used to also export `antdLocaleMap` / `getAntdLocale` — 21
+ * `antd/locale/*` bundles keyed by language, which `decorators.tsx` fed to
+ * `BAIConfigProvider`'s antd `ConfigProvider` leg so antd's built-in strings
+ * (pagination, date picker) followed the story's locale. The to-astryx final
+ * switch removed that provider; `BAILocale` now carries only `lang`, and BUI's
+ * own catalogs plus Astryx's `InternationalizationProvider` cover every string
+ * a story renders. The list below is unchanged and stays the single source for
+ * the toolbar (`preview.tsx`).
+ */
 export const localeItems = [
   { value: 'en', title: 'English' },
   { value: 'ko', title: '한국어' },

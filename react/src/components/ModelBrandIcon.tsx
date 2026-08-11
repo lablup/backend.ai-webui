@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { findBrandIconLoader } from '../helper/modelBrandIcons';
-import { RobotOutlined } from '@ant-design/icons';
-import type { IconType } from '@lobehub/icons/es/types';
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
+import type { BrandIconType } from './brandIcons/createBrandIcon';
+import { Bot } from 'lucide-react';
 import React, { Suspense, use } from 'react';
 
 export interface ModelBrandIconProps {
@@ -15,9 +15,9 @@ export interface ModelBrandIconProps {
   className?: string;
 }
 
-const iconCache = new Map<Function | string, Promise<IconType | null>>();
+const iconCache = new Map<Function | string, Promise<BrandIconType | null>>();
 
-function getIconPromise(modelName: string): Promise<IconType | null> {
+function getIconPromise(modelName: string): Promise<BrandIconType | null> {
   const loader = findBrandIconLoader(modelName);
   const cacheKey = loader ?? modelName.toLowerCase();
 
@@ -41,7 +41,7 @@ const DefaultIcon: React.FC<{
   'use memo';
   const { token } = theme.useToken();
   return (
-    <RobotOutlined
+    <Bot
       className={className}
       style={{
         fontSize: size,
@@ -49,6 +49,7 @@ const DefaultIcon: React.FC<{
         flexShrink: 0,
         ...style,
       }}
+      size="1em"
     />
   );
 };
@@ -58,7 +59,7 @@ const DefaultIcon: React.FC<{
  * Separated to avoid "component created during render" lint error.
  */
 const ResolvedIcon: React.FC<{
-  icon: IconType;
+  icon: BrandIconType;
   size: number;
   style?: React.CSSProperties;
   className?: string;
@@ -102,7 +103,7 @@ const SuspendingIcon: React.FC<{
 };
 
 /**
- * Displays a brand SVG icon for a known model via @lobehub/icons,
+ * Displays a brand SVG icon for a known model via `brandIcons/generated`,
  * or a generic robot icon as fallback.
  * Uses internal Suspense boundary so loading never propagates to parent.
  */

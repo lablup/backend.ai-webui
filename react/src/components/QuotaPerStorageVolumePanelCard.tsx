@@ -7,9 +7,13 @@ import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaP
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import BAIProgress from './BAIProgress';
 import StorageSelect from './StorageSelect';
-import { Col, Empty, Row, Skeleton, theme, Typography } from 'antd';
+import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
@@ -118,9 +122,10 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
 
   if (!selectedVolumeInfo?.capabilities?.includes('quota')) {
     return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={t('storageHost.QuotaDoesNotSupported')}
+      // antd `Empty` → `EmptyState` (MAPPING §4); the simple placeholder
+      // illustration is dropped and `description` becomes the required title.
+      <EmptyState
+        title={t('storageHost.QuotaDoesNotSupported')}
         style={{ margin: 'auto 25px' }}
       />
     );
@@ -147,9 +152,13 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
     : 0;
 
   return (
-    <Row gutter={[24, 16]}>
-      <Col
-        span={12}
+    // antd `Row gutter={[24,16]}` + two `Col span={12}` → Astryx `Grid` with a
+    // 24-track budget and `GridSpan span={12}` (MAPPING §3.9). No breakpoint
+    // props were in play, so this is a straight translation; gutter 24/16px
+    // becomes columnGap step 6 / rowGap step 4 (step n = 4n px).
+    <Grid columns={24} columnGap={6} rowGap={4}>
+      <GridSpan
+        columns={12}
         style={{
           borderRight: `1px solid ${token.colorBorderSecondary}`,
         }}
@@ -157,15 +166,12 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
         <BAIProgress
           title={
             <BAIFlex direction="column" align="start">
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: token.fontSizeSM }}
-              >
+              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
                 {t('data.Project')}
-              </Typography.Text>
-              <Typography.Text style={{ fontSize: token.fontSize }}>
+              </Text>
+              <Text style={{ fontSize: token.fontSize }}>
                 {currentProject?.name}
-              </Typography.Text>
+              </Text>
             </BAIFlex>
           }
           percent={projectPercent}
@@ -180,21 +186,18 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
               : `${convertToDecimalUnit(_.toString(projectHardLimitBytes), 'g')?.displayValue}`
           }
         />
-      </Col>
-      <Col span={12}>
+      </GridSpan>
+      <GridSpan columns={12}>
         <BAIProgress
           percent={userPercent}
           title={
             <BAIFlex direction="column" align="start">
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: token.fontSizeSM }}
-              >
+              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
                 {t('data.User')}
-              </Typography.Text>
-              <Typography.Text style={{ fontSize: token.fontSize }}>
+              </Text>
+              <Text style={{ fontSize: token.fontSize }}>
                 {baiClient?.full_name}
-              </Typography.Text>
+              </Text>
             </BAIFlex>
           }
           used={
@@ -210,8 +213,8 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
                   ?.displayValue
           }
         />
-      </Col>
-    </Row>
+      </GridSpan>
+    </Grid>
   );
 };
 
@@ -251,7 +254,9 @@ const QuotaPerStorageVolumePanelCard: React.FC<
         showSearch
         style={{ alignSelf: 'flex-start', minWidth: 240 }}
       />
-      <Suspense fallback={<Skeleton active paragraph={{ rows: 0 }} />}>
+      {/* antd `Skeleton paragraph={{rows: 0}}` (title bar only) →
+          `BAISkeletonAstryx rows={0}`; `active` is always-on behaviour. */}
+      <Suspense fallback={<BAISkeleton rows={0} />}>
         <QuotaScopeContent selectedVolumeInfo={selectedVolumeInfo} />
       </Suspense>
     </BAIFlex>

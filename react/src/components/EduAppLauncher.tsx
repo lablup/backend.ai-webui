@@ -13,7 +13,10 @@ import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackend
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
-import { Alert, Button, Steps, Typography } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Link } from '@astryxdesign/core/Link';
+import { Step, Stepper } from '@astryxdesign/lab';
 import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
 import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -767,6 +770,13 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   const STEP_SESSION = 0;
   const STEP_LAUNCH = 1;
   let currentStep = STEP_SESSION;
+  // PILOT-DECISION: antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2 LAB).
+  // antd's per-item lifecycle enum (`wait|process|finish|error`) has NO
+  // counterpart: lab derives completed/active/upcoming from the parent's
+  // `activeStep`, and its `status` is a SEMANTIC enum (accent/success/
+  // warning/error) layered on top. So only the error state survives as an
+  // explicit status; `wait`/`process`/`finish` are expressed by `activeStep`,
+  // which is what `currentStep` already carries.
   let stepStatuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
     'wait',
     'wait',
@@ -876,60 +886,62 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         title={t('eduapi.AppLaunch')}
         style={{ width: '100%', maxWidth: 560 }}
       >
-        <Steps
+        <Stepper
           orientation="vertical"
-          current={currentStep}
-          items={[
-            {
-              title: t('eduapi.PreparingSession'),
-              status: stepStatuses[0],
-            },
-            {
-              title: t('eduapi.LaunchingAppStep'),
-              status: stepStatuses[1],
-            },
-          ]}
-        />
+          activeStep={currentStep}
+          label={t('eduapi.AppLaunch')}
+        >
+          <Step
+            step={0}
+            label={t('eduapi.PreparingSession')}
+            status={stepStatuses[0] === 'error' ? 'error' : undefined}
+          />
+          <Step
+            step={1}
+            label={t('eduapi.LaunchingAppStep')}
+            status={stepStatuses[1] === 'error' ? 'error' : undefined}
+          />
+        </Stepper>
         {stage.name === 'error' && errorTitle ? (
-          <Alert
+          <Banner
             style={{ marginTop: 16 }}
-            type="error"
-            showIcon
+            status="error"
             title={errorTitle}
             description={
               <span style={{ whiteSpace: 'pre-line' }}>{errorDetail}</span>
             }
-            action={
+            endContent={
               <Button
-                size="small"
-                danger
+                size="sm"
+                variant="destructive"
                 onClick={() => window.location.reload()}
-              >
-                {t('eduapi.RefreshPage')}
-              </Button>
+                label={t('eduapi.RefreshPage')}
+              />
             }
           />
         ) : null}
         {stage.name === 'done' ? (
-          <Alert
+          <Banner
             style={{ marginTop: 16 }}
-            type="success"
-            showIcon
+            status="success"
             title={t('eduapi.LaunchCompleted')}
-            description={
-              // Always render a clickable link to the app URL. The
-              // best-effort `window.open` in `handleLaunchSuccess` may have
-              // been blocked by the browser's popup blocker (the call is
-              // not directly tied to a user gesture); a single click on
-              // this link is a fresh user gesture and is guaranteed to
-              // open the new tab.
-              <Typography.Link
+            // Always render a clickable link to the app URL. The best-effort
+            // `window.open` in `handleLaunchSuccess` may have been blocked by
+            // the browser's popup blocker (the call is not directly tied to a
+            // user gesture); a single click on this link is a fresh user
+            // gesture and is guaranteed to open the new tab.
+            //
+            // POLISH-3 item 1: it is the banner's ACTION, so it belongs in
+            // `endContent` (Banner's "Action button" anatomy slot) rather
+            // than in the description column.
+            endContent={
+              <Link
                 href={stage.appConnectUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {t('eduapi.OpenAppInNewWindow')}
-              </Typography.Link>
+              </Link>
             }
           />
         ) : null}

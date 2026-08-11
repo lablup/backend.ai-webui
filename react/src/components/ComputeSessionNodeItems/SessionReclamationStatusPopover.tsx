@@ -6,10 +6,13 @@ import { SessionReclamationStatusPopoverFragment$key } from '../../__generated__
 import { toFixedFloorWithoutTrailingZeros } from '../../helper';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import type { IdleChecks } from './SessionIdleChecks';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Badge, Divider, Popover, Typography, theme } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
+import { HoverCard } from '@astryxdesign/core/HoverCard';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
+import { Text } from '@astryxdesign/core/Text';
 import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -82,24 +85,27 @@ export function getOverallReclamation(
   return pick(entries, (entry) => RECLAMATION_SEVERITY[entry.color]);
 }
 
-/** Badge color token and status label for each reclamation color. */
+/**
+ * Astryx `StatusDot` variant and status label for each reclamation color.
+ * (astryx ticket 17: antd `Badge color={token}` dots became `StatusDot`s, so
+ * the map now carries the closed-enum variant instead of a theme token.)
+ */
 export const useReclamationColorMap = (): Record<
   ReclamationColor,
-  { token: string; label: string }
+  { variant: 'success' | 'warning' | 'error'; label: string }
 > => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   return {
     red: {
-      token: token.colorError,
+      variant: 'error',
       label: t('session.ReclamationStatusAtRisk'),
     },
     orange: {
-      token: token.colorWarning,
+      variant: 'warning',
       label: t('session.ReclamationStatusWarning'),
     },
     green: {
-      token: token.colorSuccess,
+      variant: 'success',
       label: t('session.ReclamationStatusSafe'),
     },
   };
@@ -121,7 +127,6 @@ const SessionReclamationStatusPopover: React.FC<
 > = ({ sessionFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const colorMap = useReclamationColorMap();
 
@@ -147,15 +152,17 @@ const SessionReclamationStatusPopover: React.FC<
     extra;
 
   return (
-    <Popover
-      mouseEnterDelay={0}
+    // antd hover-triggered Popover (mouseEnterDelay 0) -> Astryx HoverCard
+    // (MAPPING.md §3.7: hover trigger branch; Astryx Popover is click-only).
+    <HoverCard
+      delay={0}
       content={
         <BAIFlex direction="column" align="stretch" gap="xxs">
-          <Typography.Text>
+          <Text>
             {thresholdsCheckOperator === 'or'
               ? t('session.ReclamationStatusConditionAnyDesc')
               : t('session.ReclamationStatusConditionAllDesc')}
-          </Typography.Text>
+          </Text>
           {_.map(resources, (resource, key) => {
             const deviceName = ['cpu_util', 'mem'].includes(key)
               ? _.split(key, '_')[0]
@@ -168,11 +175,14 @@ const SessionReclamationStatusPopover: React.FC<
               : undefined;
             return (
               <BAIFlex key={key} gap="xxs" align="center">
-                <Badge color={resourceMeta?.token ?? token.colorTextDisabled} />
-                <Typography.Text>
+                <StatusDot
+                  variant={resourceMeta?.variant ?? 'neutral'}
+                  label={resourceMeta?.label ?? '-'}
+                />
+                <Text>
                   {`${mergedResourceSlots?.[deviceName]?.human_readable_name ?? deviceName} ${resourceMeta?.label ?? '-'}`}
-                </Typography.Text>
-                <Typography.Text type="secondary">
+                </Text>
+                <Text color="secondary">
                   {t('session.ReclamationStatusCurrentVsThreshold', {
                     current:
                       util >= 0
@@ -180,29 +190,31 @@ const SessionReclamationStatusPopover: React.FC<
                         : '-',
                     threshold,
                   })}
-                </Typography.Text>
+                </Text>
               </BAIFlex>
             );
           })}
-          <Divider style={{ margin: `${token.marginXXS}px 0` }} />
-          <Typography.Text type="secondary">
+          <Divider />
+          <Text color="secondary">
             {t('session.ReclamationStatusLegendTitle')}
-          </Typography.Text>
+          </Text>
           {RECLAMATION_LEGENDS.map(({ color, descKey }) => (
             <BAIFlex key={color} gap="xxs" align="center">
-              <Badge color={colorMap[color].token} />
-              <Typography.Text>
-                {`${colorMap[color].label}: ${t(descKey)}`}
-              </Typography.Text>
+              <StatusDot
+                variant={colorMap[color].variant}
+                label={colorMap[color].label}
+              />
+              <Text>{`${colorMap[color].label}: ${t(descKey)}`}</Text>
             </BAIFlex>
           ))}
         </BAIFlex>
       }
     >
-      <InfoCircleOutlined
-        style={{ color: token.colorTextSecondary, cursor: 'pointer' }}
+      <Info
+        style={{ color: 'var(--color-text-secondary)', cursor: 'pointer' }}
+        size="1em"
       />
-    </Popover>
+    </HoverCard>
   );
 };
 

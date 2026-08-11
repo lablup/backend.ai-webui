@@ -42,14 +42,19 @@ vi.mock('react-i18next', async (importOriginal) => {
   };
 });
 
-// Stub only the antd ColorPicker: jsdom can't drive its popover UI, and the
-// subject under test is ThemeAccentColorPicker's write logic (setSchemeAccent),
-// not antd internals. The stub exposes the change/clear callbacks as buttons.
-vi.mock('antd', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('antd')>();
+// Stub only `BAIColorPicker`: jsdom can't drive a popover + native colour
+// input, and the subject under test is ThemeAccentColorPicker's write logic
+// (setSchemeAccent), not the widget's internals. The stub exposes the
+// change/clear callbacks as buttons.
+//
+// `onChangeComplete` now takes the hex STRING directly — antd's `Color`
+// object (and the `.toHexString()` every call site immediately did to it)
+// went away with the antd `ColorPicker`; see BAIColorPicker's header.
+vi.mock('backend.ai-ui', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...actual,
-    ColorPicker: ({
+    BAIColorPicker: ({
       'data-testid': testId,
       value,
       onChangeComplete,
@@ -57,14 +62,14 @@ vi.mock('antd', async (importOriginal) => {
     }: {
       'data-testid'?: string;
       value?: unknown;
-      onChangeComplete?: (color: { toHexString: () => string }) => void;
+      onChangeComplete?: (hex: string) => void;
       onClear?: () => void;
     }) => (
       <div data-testid={testId}>
         <span data-testid={`${testId}-value`}>{String(value)}</span>
         <button
           data-testid={`${testId}-change`}
-          onClick={() => onChangeComplete?.({ toHexString: () => '#123456' })}
+          onClick={() => onChangeComplete?.('#123456')}
         />
         <button data-testid={`${testId}-clear`} onClick={() => onClear?.()} />
       </div>

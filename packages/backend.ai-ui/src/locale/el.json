@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
     "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Δεν βρέθηκαν αποτελέσματα",
+    "Search": "Αναζήτηση"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Επιλέξτε τομέα"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
@@ -261,6 +268,9 @@
     "Tags": "Ετικέτες",
     "UpdatedAt": "Ενημερώθηκε"
   },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Τα ακόλουθα έργα θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",
@@ -355,6 +365,62 @@
     "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "CreatePreset": "Δημιουργία Προεπιλογής",
+    "DefaultValue": "Προεπιλεγμένη Τιμή",
+    "DefaultValuePlaceholder": "π.χ., 1",
+    "Description": "Περιγραφή",
+    "DescriptionPlaceholder": "Περιγράψτε τι ελέγχει αυτή η παράμετρος και πώς επηρεάζει τη συμπεριφορά συμπερασμού.",
+    "EditPreset": "Επεξεργασία Προεπιλογής",
+    "Key": "Κλειδί",
+    "KeyPlaceholder": "π.χ., TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Το κλειδί είναι υποχρεωτικό.",
+    "Name": "Όνομα",
+    "NamePlaceholder": "π.χ., Tensor Parallel Size",
+    "NameRequired": "Το όνομα είναι υποχρεωτικό.",
+    "PresetCreated": "Η προεπιλογή χρόνου εκτέλεσης δημιουργήθηκε.",
+    "PresetTarget": "Στόχος Προεπιλογής",
+    "PresetTargetArgs": "Όρισμα Γραμμής Εντολών",
+    "PresetTargetEnv": "Μεταβλητή Περιβάλλοντος",
+    "PresetTargetRequired": "Ο στόχος προεπιλογής είναι υποχρεωτικός.",
+    "PresetUpdated": "Η προεπιλογή χρόνου εκτέλεσης ενημερώθηκε.",
+    "Rank": "Κατάταξη",
+    "RankTooltip": "Σειρά εμφάνισης μεταξύ προεπιλογών του ίδιου χρόνου εκτέλεσης. Χαμηλότερες τιμές εμφανίζονται πρώτες.",
+    "Required": "Απαιτούμενο",
+    "RequiredTooltip": "Αν αυτή η παράμετρος προεπιλογής πρέπει να παρέχεται κατά τη δημιουργία μιας αναθεώρησης ανάπτυξης.",
+    "RuntimeVariant": "Χρόνος Εκτέλεσης",
+    "RuntimeVariantRequired": "Ο χρόνος εκτέλεσης είναι υποχρεωτικός.",
+    "ValueType": "Τύπος Τιμής",
+    "ValueTypeBool": "Λογική Τιμή",
+    "ValueTypeFlag": "Σημαία",
+    "ValueTypeFloat": "Δεκαδικός",
+    "ValueTypeInt": "Ακέραιος",
+    "ValueTypeRequired": "Ο τύπος τιμής είναι υποχρεωτικός.",
+    "ValueTypeStr": "Συμβολοσειρά"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "CreatedAt": "Ημερομηνία δημιουργίας",
+    "DefaultValue": "Προεπιλεγμένη Τιμή",
+    "Description": "Περιγραφή",
+    "Key": "Κλειδί",
+    "ModifiedAt": "Τελευταία τροποποίηση",
+    "Name": "Όνομα",
+    "Optional": "Προαιρετικό",
+    "PresetTarget": "Στόχος Προεπιλογής",
+    "PresetTargetArgs": "Όρισμα Γραμμής Εντολών",
+    "PresetTargetEnv": "Μεταβλητή Περιβάλλοντος",
+    "Rank": "Κατάταξη",
+    "RankTooltip": "Σειρά εμφάνισης μεταξύ προεπιλογών του ίδιου χρόνου εκτέλεσης. Χαμηλότερες τιμές εμφανίζονται πρώτες.",
+    "Required": "Απαιτούμενο",
+    "RuntimeVariant": "Χρόνος Εκτέλεσης",
+    "RuntimeVariantId": "ID Χρόνου Εκτέλεσης",
+    "ValueType": "Τύπος Τιμής",
+    "ValueTypeBool": "Λογική Τιμή",
+    "ValueTypeFlag": "Σημαία",
+    "ValueTypeFloat": "Δεκαδικός",
+    "ValueTypeInt": "Ακέραιος",
+    "ValueTypeStr": "Συμβολοσειρά"
+  },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Επιλογή παραλλαγής χρόνου εκτέλεσης"
   },
@@ -395,14 +461,18 @@
     "Step": "Βήμα"
   },
   "comp:BAITable": {
+    "Apply": "Εφαρμογή",
+    "Cancel": "Άκυρο",
     "CollapseAll": "Σύμπτυξη όλων",
     "ExpandAll": "Ανάπτυξη όλων",
     "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
     "ExpandOptions": "Επιλογές ανάπτυξης",
+    "ExpandRow": "Ανάπτυξη γραμμής",
     "Export": "Εξαγωγή",
     "ExportCSV": "Εξαγωγή CSV",
     "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",
     "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
+    "Pagination": "Σελιδοποίηση",
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
     "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
     "SettingTable": "Ρυθμίσεις πίνακα"
@@ -470,8 +540,10 @@
     "MoreOptions": "Περισσότερες επιλογές",
     "Name": "Ονομα",
     "NoUploadPermissionForHost": "Δεν έχετε άδεια μεταφόρτωσης για αυτόν τον κεντρικό χώρο αποθήκευσης.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",
     "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
     "Size": "Μέγεθος",
@@ -538,21 +610,73 @@
     "UserID": "Αναγνωριστικό χρήστη",
     "Username": "Όνομα χρήστη"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Κάντε κλικ για να επιλέξετε διαδρομή",
+    "SelectAPath": "Επιλέξτε διαδρομή",
+    "SelectAPathInFolder": "Επιλέξτε διαδρομή στο {{folderName}}",
+    "SelectFolderFirst": "Επιλέξτε πρώτα έναν φάκελο",
+    "SelectThisLocation": "Επιλέξτε αυτή τη θέση",
+    "SelectedPath": "Επιλεγμένο"
+  },
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
+  "form": {
+    "Optional": "(προαιρετικό)",
+    "validateMessages": {
+      "Default": "Σφάλμα επικύρωσης πεδίου για ${label}",
+      "Required": "Παρακαλώ εισάγετε ${label}",
+      "Whitespace": "Το ${label} δεν μπορεί να είναι κενός χαρακτήρας",
+      "array": {
+        "Len": "Πρέπει να είναι ${len} ${label}",
+        "Max": "Το πολύ ${max} ${label}",
+        "Min": "Τουλάχιστον ${min} ${label}",
+        "Range": "Το ποσό του ${label} πρέπει να είναι μεταξύ ${min}-${max}"
+      },
+      "number": {
+        "Len": "Το ${label} πρέπει να είναι ίσο με ${len}",
+        "Max": "Το ${label} πρέπει να είναι το πολύ ${max}",
+        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min}",
+        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "Το ${label} δεν ταιριάζει με το μοτίβο ${pattern}"
+      },
+      "string": {
+        "Len": "Το ${label} πρέπει να είναι ${len} χαρακτήρες",
+        "Max": "Το ${label} πρέπει να είναι το πολύ ${max} χαρακτήρες",
+        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min} χαρακτήρες",
+        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max} χαρακτήρων"
+      },
+      "types": {
+        "Email": "Το ${label} δεν είναι έγκυρο ${type}",
+        "Number": "Το ${label} δεν είναι έγκυρο ${type}",
+        "Object": "Το ${label} δεν είναι έγκυρο ${type}",
+        "String": "Το ${label} δεν είναι έγκυρο ${type}",
+        "Url": "Το ${label} δεν είναι έγκυρο ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Αποεπιλογή όλων",
     "File": "Αρχείο",
+    "Increase": "Increase",
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
+    "Select": "Select",
     "TotalItems": "Σύνολο {{total}} στοιχεία",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Ματαίωση",
       "Close": "Κοντά",
       "Collapse": "Κατάρρευση",
+      "Confirm": "Confirm",
       "Copied": "Αντιγράφηκε",
+      "Copy": "Αντιγραφή",
       "CopyAll": "Αντιγράψτε όλα",
       "Create": "Δημιουργώ",
       "Delete": "Διαγράφω",

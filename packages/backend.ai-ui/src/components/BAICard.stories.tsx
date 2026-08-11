@@ -1,7 +1,8 @@
+import BAIButton from './BAIButton';
 import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
+import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Space, Typography } from 'antd';
 
 const meta: Meta<typeof BAICard> = {
   title: 'Card/BAICard',
@@ -12,7 +13,7 @@ const meta: Meta<typeof BAICard> = {
     docs: {
       description: {
         component: `
-**BAICard** is an enhanced version of Ant Design's Card component, specifically designed for Backend.AI applications. It provides additional features including:
+**BAICard** keeps an Ant Design \`Card\`-shaped prop surface (\`title\`, \`extra\`, \`tabList\`, \`status\`, ...) for call-site compatibility, but renders through Astryx's \`Card\` primitive internally. It provides additional features including:
 
 - **Status-based styling**: Visual indicators for success, error, warning, and default states
 - **Integrated action buttons**: Extra buttons with automatic icons based on status
@@ -20,7 +21,7 @@ const meta: Meta<typeof BAICard> = {
 - **Tab integration**: Built-in support for tabbed content
 - **Consistent design**: Follows Backend.AI design system guidelines
 
-The component extends all standard Ant Design Card properties while adding Backend.AI-specific enhancements for better user experience and visual consistency across the platform.
+The component accepts all standard Ant Design Card properties while adding Backend.AI-specific enhancements for better user experience and visual consistency across the platform.
 
 ## Props
 
@@ -146,14 +147,18 @@ type Story = StoryObj<typeof BAICard>;
 
 const sampleContent = (
   <div>
-    <Typography.Paragraph>
-      This is sample content for the BAI Card component. It demonstrates how
-      content is displayed within the card body.
-    </Typography.Paragraph>
-    <Space>
-      <Button type="primary">Primary Action</Button>
-      <Button>Secondary Action</Button>
-    </Space>
+    {/* antd Typography.Paragraph has no direct Astryx equivalent; BAIText
+        wrapped in a block element reproduces the same paragraph layout. */}
+    <div>
+      <BAIText>
+        This is sample content for the BAI Card component. It demonstrates how
+        content is displayed within the card body.
+      </BAIText>
+    </div>
+    <BAIFlex gap="xs" align="center">
+      <BAIButton type="primary">Primary Action</BAIButton>
+      <BAIButton>Secondary Action</BAIButton>
+    </BAIFlex>
   </div>
 );
 
@@ -212,7 +217,7 @@ export const WithExtra: Story = {
   name: 'ExtraContent',
   args: {
     title: 'Card with Extra',
-    extra: <Button type="link">More</Button>,
+    extra: <BAIButton type="link">More</BAIButton>,
     children: sampleContent,
   },
 };
@@ -280,9 +285,9 @@ export const SmallSize: Story = {
     title: 'Small Card',
     size: 'small',
     children: (
-      <Typography.Paragraph style={{ margin: 0 }}>
-        This is a small-sized card with reduced padding.
-      </Typography.Paragraph>
+      <div style={{ margin: 0 }}>
+        <BAIText>This is a small-sized card with reduced padding.</BAIText>
+      </div>
     ),
   },
 };
@@ -319,12 +324,12 @@ export const ComplexExtra: Story = {
   args: {
     title: 'Card with Complex Extra',
     extra: (
-      <Space>
-        <Button size="small">Edit</Button>
-        <Button size="small" type="primary">
+      <BAIFlex gap="xs" align="center">
+        <BAIButton size="small">Edit</BAIButton>
+        <BAIButton size="small" type="primary">
           Save
-        </Button>
-      </Space>
+        </BAIButton>
+      </BAIFlex>
     ),
     children: sampleContent,
   },
@@ -366,9 +371,11 @@ export const CustomStyles: Story = {
       },
     },
     children: (
-      <Typography.Paragraph style={{ color: 'white', margin: 0 }}>
-        This card has custom gradient background and white text.
-      </Typography.Paragraph>
+      <div style={{ margin: 0 }}>
+        <BAIText style={{ color: 'white' }}>
+          This card has custom gradient background and white text.
+        </BAIText>
+      </div>
     ),
   },
 };

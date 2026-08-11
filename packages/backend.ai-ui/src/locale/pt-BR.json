@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Falha na execução",
     "ErrorOccurred": "Ocorreu um erro"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Sem resultados",
+    "Search": "Pesquisar"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Selecionar registro de contêiner"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Selecionar Domínio"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
@@ -267,6 +274,9 @@
     "Tags": "Tag",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
@@ -361,6 +371,62 @@
     "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "CreatePreset": "Criar Predefinição",
+    "DefaultValue": "Valor Padrão",
+    "DefaultValuePlaceholder": "ex. 1",
+    "Description": "Descrição",
+    "DescriptionPlaceholder": "Descreva o que este parâmetro controla e como ele afeta o comportamento da inferência.",
+    "EditPreset": "Editar Predefinição",
+    "Key": "Chave",
+    "KeyPlaceholder": "ex. TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "A chave é obrigatória.",
+    "Name": "Nome",
+    "NamePlaceholder": "ex. Tensor Parallel Size",
+    "NameRequired": "O nome é obrigatório.",
+    "PresetCreated": "A predefinição de variante de runtime foi criada.",
+    "PresetTarget": "Destino da Predefinição",
+    "PresetTargetArgs": "Argumento de Linha de Comando",
+    "PresetTargetEnv": "Variável de Ambiente",
+    "PresetTargetRequired": "O destino da predefinição é obrigatório.",
+    "PresetUpdated": "A predefinição de variante de runtime foi atualizada.",
+    "Rank": "Classificação",
+    "RankTooltip": "Ordem de exibição entre predefinições da mesma variante de runtime. Valores menores aparecem primeiro.",
+    "Required": "Obrigatório",
+    "RequiredTooltip": "Indica se este parâmetro da predefinição deve ser fornecido ao criar uma revisão de implantação.",
+    "RuntimeVariant": "Variante de Runtime",
+    "RuntimeVariantRequired": "A variante de runtime é obrigatória.",
+    "ValueType": "Tipo de Valor",
+    "ValueTypeBool": "Booleano",
+    "ValueTypeFlag": "Sinalizador",
+    "ValueTypeFloat": "Decimal",
+    "ValueTypeInt": "Inteiro",
+    "ValueTypeRequired": "O tipo de valor é obrigatório.",
+    "ValueTypeStr": "Texto"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "CreatedAt": "Data de criação",
+    "DefaultValue": "Valor Padrão",
+    "Description": "Descrição",
+    "Key": "Chave",
+    "ModifiedAt": "Modificado em",
+    "Name": "Nome",
+    "Optional": "Opcional",
+    "PresetTarget": "Destino da Predefinição",
+    "PresetTargetArgs": "Argumento de Linha de Comando",
+    "PresetTargetEnv": "Variável de Ambiente",
+    "Rank": "Classificação",
+    "RankTooltip": "Ordem de exibição entre predefinições da mesma variante de runtime. Valores menores aparecem primeiro.",
+    "Required": "Obrigatório",
+    "RuntimeVariant": "Variante de Runtime",
+    "RuntimeVariantId": "ID da Variante de Runtime",
+    "ValueType": "Tipo de Valor",
+    "ValueTypeBool": "Booleano",
+    "ValueTypeFlag": "Sinalizador",
+    "ValueTypeFloat": "Decimal",
+    "ValueTypeInt": "Inteiro",
+    "ValueTypeStr": "Texto"
+  },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "Selecionar variante de execução"
   },
@@ -401,14 +467,18 @@
     "Step": "Etapa"
   },
   "comp:BAITable": {
+    "Apply": "Aplicar",
+    "Cancel": "Cancelar",
     "CollapseAll": "Recolher tudo",
     "ExpandAll": "Expandir tudo",
     "ExpandErrorsOnly": "Expandir somente erros",
     "ExpandOptions": "Opções de expansão",
+    "ExpandRow": "Expandir linha",
     "Export": "Exportar",
     "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir para a primeira página",
     "InvalidPageNumber": "Número de página inválido",
+    "Pagination": "Paginação",
     "SearchTableColumn": "Pesquisar colunas da tabela",
     "SelectColumnToDisplay": "Selecione colunas para exibir",
     "SettingTable": "Configurações da tabela"
@@ -476,8 +546,10 @@
     "MoreOptions": "Mais opções",
     "Name": "Nome",
     "NoUploadPermissionForHost": "Você não tem permissão de upload para este host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
+    "RenameFile": "Rename",
     "RenameSuccess": "O nome foi alterado com sucesso.",
     "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
     "Size": "Tamanho",
@@ -544,21 +616,73 @@
     "UserID": "ID do usuário",
     "Username": "Nome de usuário"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Clique para selecionar um caminho",
+    "SelectAPath": "Selecionar um caminho",
+    "SelectAPathInFolder": "Selecionar um caminho em {{folderName}}",
+    "SelectFolderFirst": "Selecione primeiro uma pasta",
+    "SelectThisLocation": "Selecionar esta localização",
+    "SelectedPath": "Selecionado"
+  },
   "error": {
     "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
   },
+  "form": {
+    "Optional": "(opcional)",
+    "validateMessages": {
+      "Default": "Erro ${label} na validação de campo",
+      "Required": "Por favor, insira ${label}",
+      "Whitespace": "${label} não pode ser um carácter vazio",
+      "array": {
+        "Len": "Deve ser ${len} ${label}",
+        "Max": "No máximo ${max} ${label}",
+        "Min": "No mínimo ${min} ${label}",
+        "Range": "A quantidade de ${label} deve estar entre ${min} e ${max}"
+      },
+      "number": {
+        "Len": "${label} deve ser igual à ${len}",
+        "Max": "O valor máximo de ${label} é ${max}",
+        "Min": "O valor mínimo de ${label} é ${min}",
+        "Range": "${label} deve estar entre ${min} e ${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} não se encaixa no padrão ${pattern}"
+      },
+      "string": {
+        "Len": "${label} deve possuir ${len} caracteres",
+        "Max": "${label} deve possuir no máximo ${max} caracteres",
+        "Min": "${label} deve possuir ao menos ${min} caracteres",
+        "Range": "${label} deve possuir entre ${min} e ${max} caracteres"
+      },
+      "types": {
+        "Email": "${label} não é um ${type} válido",
+        "Number": "${label} não é um ${type} válido",
+        "Object": "${label} não é um ${type} válido",
+        "String": "${label} não é um ${type} válido",
+        "Url": "${label} não é um ${type} válido"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Desmarcar tudo",
     "File": "Arquivo",
+    "Increase": "Increase",
     "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
     "Project": "Projeto",
+    "Select": "Select",
     "TotalItems": "Total {{total}} itens",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancelar",
       "Close": "Fechar",
       "Collapse": "Colapso",
+      "Confirm": "Confirm",
       "Copied": "Copiado",
+      "Copy": "Copiar",
       "CopyAll": "Copie tudo",
       "Create": "Criar",
       "Delete": "Excluir",

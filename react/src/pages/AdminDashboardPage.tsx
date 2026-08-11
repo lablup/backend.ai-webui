@@ -11,6 +11,7 @@ import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -18,7 +19,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { Skeleton, theme } from 'antd';
+import { theme } from '../theme-shim';
 import {
   filterOutEmpty,
   INITIAL_FETCH_KEY,
@@ -108,7 +109,9 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeletonAstryx
+                style={{ padding: `0px ${token.marginMD}px` }}
+              />
             }
           >
             <SessionCountDashboardItem
@@ -150,8 +153,7 @@ const AdminDashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <Skeleton
-                  active
+                <BAISkeletonAstryx
                   style={{ padding: `0px ${token.marginMD}px` }}
                 />
               }
@@ -176,7 +178,9 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeletonAstryx
+                style={{ padding: `0px ${token.marginMD}px` }}
+              />
             }
           >
             <ActiveAgents

@@ -5,7 +5,6 @@
 import ChatMessage from './ChatMessage';
 import type { ChatMessagePlacement } from './ChatMessageContainer';
 import { UIMessage } from '@ai-sdk/react';
-import Compact from 'antd/es/space/Compact';
 
 interface UserChatMessageProps {
   message: UIMessage;
@@ -25,7 +24,7 @@ export const UserChatMessage: React.FC<UserChatMessageProps> = ({
       placement={{ ...placement, right: true }}
       isStreaming={isStreaming}
       enableExtraHover={true}
-      extra={<Compact>{null}</Compact>}
+      extra={null}
       avatar={'🧑‍🦰'}
     />
   );

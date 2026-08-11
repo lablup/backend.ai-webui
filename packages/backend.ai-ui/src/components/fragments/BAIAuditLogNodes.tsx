@@ -10,7 +10,7 @@ import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import dayjs from 'dayjs';
@@ -208,13 +208,12 @@ const BAIAuditLogNodes = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       resizable
       rowKey="id"
       size="small"
       dataSource={filterOutNullAndUndefined(auditLogs)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableAuditLogSorterValues)[number]) || null,

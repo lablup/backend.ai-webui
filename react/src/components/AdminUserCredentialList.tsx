@@ -10,21 +10,20 @@ import {
   AdminUserCredentialListQuery$variables,
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
+import { App } from '../app-shim';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
-import {
-  DeleteFilled,
-  InfoCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAIPropertyFilter,
   BAINameActionCell,
@@ -34,10 +33,19 @@ import {
   useUpdatableState,
   BAIText,
   INITIAL_FETCH_KEY,
+  PRIMARY_TAG_VARIANT,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
+import {
+  Trash2,
+  Info,
+  RotateCw,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import { useDeferredValue, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -330,7 +338,7 @@ const AdminUserCredentialList: React.FC = () => {
                 onClearSelection={() => setSelectedKeypairs([])}
               />
               {queryParams.activeType === 'active' ? (
-                <Tooltip title={t('credential.Deactivate')}>
+                <Tooltip content={t('credential.Deactivate')}>
                   <BAIButton
                     icon={<BanIcon style={{ color: token.colorError }} />}
                     loading={isBulkUpdating}
@@ -338,7 +346,7 @@ const AdminUserCredentialList: React.FC = () => {
                   />
                 </Tooltip>
               ) : (
-                <Tooltip title={t('credential.Activate')}>
+                <Tooltip content={t('credential.Activate')}>
                   <BAIButton
                     icon={<UndoIcon style={{ color: token.colorInfo }} />}
                     loading={isBulkUpdating}
@@ -348,13 +356,13 @@ const AdminUserCredentialList: React.FC = () => {
               )}
             </BAIFlex>
           )}
-          <Tooltip title={t('button.Refresh')}>
-            <Button
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
               loading={deferredFetchKey !== fetchKey}
               onClick={() => {
                 updateFetchKey();
               }}
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
             />
           </Tooltip>
           <BAIButton
@@ -368,9 +376,8 @@ const AdminUserCredentialList: React.FC = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable<Keypair>
+      <BAITableAstryx<Keypair>
         rowKey={'id'}
-        scroll={{ x: 'max-content' }}
         loading={deferredQueryVariables !== queryVariables}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
         rowSelection={{
@@ -408,7 +415,7 @@ const AdminUserCredentialList: React.FC = () => {
                 {
                   key: 'info',
                   title: t('button.Info'),
-                  icon: <InfoCircleOutlined />,
+                  icon: <Info size="1em" />,
                   onClick: () => {
                     startInfoModalOpenTransition(() => {
                       setKeypairInfoModalFrgmt(record);
@@ -532,7 +539,7 @@ const AdminUserCredentialList: React.FC = () => {
                       {
                         key: 'delete',
                         title: t('button.Delete'),
-                        icon: <DeleteFilled />,
+                        icon: <Trash2 size="1em" />,
                         type: 'danger' as const,
                         onClick: () => {
                           setDeletingKeypair(record);
@@ -556,11 +563,11 @@ const AdminUserCredentialList: React.FC = () => {
             render: (isAdmin) =>
               isAdmin ? (
                 <BAIFlex gap="xs">
-                  <Tag color={token.colorPrimary}>admin</Tag>
-                  <Tag color="green">user</Tag>
+                  <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
+                  <Badge variant="green" label="user" />
                 </BAIFlex>
               ) : (
-                <Tag color="green">user</Tag>
+                <Badge variant="green" label="user" />
               ),
             sorter: true,
           },
@@ -589,59 +596,40 @@ const AdminUserCredentialList: React.FC = () => {
           {
             key: 'allocation',
             title: t('credential.Allocation'),
-            render: (record: Keypair) => {
+            // No `dataIndex` on this column, so the record comes from
+            // `render`'s SECOND argument (Astryx/antd `(value, record)`).
+            render: (_value, record: Keypair) => {
+              // PILOT-DECISION: antd rendered these as one Typography.Text
+              // with a nested secondary-colored/smaller-font unit label,
+              // spaced via inline `marginLeft`. Astryx `Text` has no `style`
+              // prop (only `xstyle`/`stylex.create()`), so the pair becomes
+              // two Text nodes in a BAIFlex row with a small gap instead of a
+              // manual margin (defaults-first / simplicity policy).
               return (
-                <BAIFlex direction="column" align="start">
-                  <Typography.Text>
-                    {record.concurrency_used}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
+                <BAIFlex direction="column" align="start" gap="xxs">
+                  <BAIFlex gap="xxs" align="baseline">
+                    <Text>{record.concurrency_used}</Text>
+                    <Text type="supporting" color="secondary">
                       {t('credential.Sessions')}
-                    </Typography.Text>
-                  </Typography.Text>
-                  <Typography.Text
-                    style={{
-                      fontSize: token.fontSizeSM,
-                    }}
-                  >
-                    {record.rate_limit}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
+                    </Text>
+                  </BAIFlex>
+                  <BAIFlex gap="xxs" align="baseline">
+                    <Text type="supporting">{record.rate_limit}</Text>
+                    <Text type="supporting" color="secondary">
                       {t('credential.ReqPer15Min')}
-                    </Typography.Text>
-                  </Typography.Text>
-                  <Typography.Text
-                    style={{
-                      fontSize: token.fontSizeSM,
-                    }}
-                  >
-                    {record.num_queries}
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        marginLeft: token.marginXXS,
-                        fontSize: token.fontSizeSM,
-                      }}
-                    >
+                    </Text>
+                  </BAIFlex>
+                  <BAIFlex gap="xxs" align="baseline">
+                    <Text type="supporting">{record.num_queries}</Text>
+                    <Text type="supporting" color="secondary">
                       {t('credential.Queries')}
-                    </Typography.Text>
-                  </Typography.Text>
+                    </Text>
+                  </BAIFlex>
                 </BAIFlex>
               );
             },
           },
         ])}
-        showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: keypair_list?.total_count || 0,

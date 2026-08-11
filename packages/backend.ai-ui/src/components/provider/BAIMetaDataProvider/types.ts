@@ -25,8 +25,7 @@ export type KnownAcceleratorResourceSlotName =
   (typeof knownAcceleratorResourceSlotNames)[number];
 
 export type ResourceSlotName =
-  | BaseResourceSlotName
-  | KnownAcceleratorResourceSlotName;
+  BaseResourceSlotName | KnownAcceleratorResourceSlotName;
 
 /**
  * A single label entry attached to an image in `image_metadata.json`.

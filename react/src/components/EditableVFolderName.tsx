@@ -1,28 +1,55 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Phase 3 (wave 2 A) — rebuilt on Astryx, following `EditableVFolderNameV2`
+ (ticket 16) line for line. This is the V1 (`VirtualFolderNode`) twin of that
+ component; the two stay deliberately identical in shape so the eventual
+ deletion of V1 is a pure removal.
+
+ antd `Typography.Text/Title editable` is verdict NONE in MAPPING.md §3.4
+ (`editable` is one of the "behaviour delivered by antd Typography itself"
+ props), so the edit affordance is hand-rolled: display text (Astryx
+ `Text`/`Heading`) plus a pencil `IconButton`, switching to the antd form
+ ENGINE with an Astryx `TextInput` while editing.
+
+ FRONTIER: the sole JSX consumer, `FolderExplorerHeader`, belongs to another
+ partition and still passes the antd-shaped surface
+ (`component={Typography.Title}`, `level`, `ellipsis`,
+ `editable={{triggerType}}`, `inputProps={{size}}`). Those props are therefore
+ ACCEPTED and translated or ignored here rather than removed, so that file
+ stays at zero diff and can adopt `variant="title"` on its own schedule.
+
+ PILOT-DECISIONs:
+ - The antd `editable` CONFIG object (`triggerType`, `onStart`/`onEnd`/
+   `onCancel`) collapses to a boolean + a pencil trigger, exactly as V2 did.
+   Clicking the text itself no longer starts editing — the affordance is the
+   button. `onStart`/`onEnd`/`onCancel` are covered by the existing
+   `onEditStart`/`onEditEnd` props, which the consumer already passes.
+ - antd `Input suffix` (the corner-down-left glyph) has no Astryx `TextInput`
+   equivalent (§3.6) and is dropped; `size` likewise has no adapter surface.
+   Max-length enforcement stays in the validation rules.
+ - `component`/`GetProps` polymorphism is replaced by `variant: 'text'|'title'`
+   (a `level` prop, or an explicitly passed `component`, both imply `'title'`).
+*/
 import { EditableVFolderNameFragment$key } from '../__generated__/EditableVFolderNameFragment.graphql';
 import { EditableVFolderNameRefetchQuery } from '../__generated__/EditableVFolderNameRefetchQuery.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import BAIFormItem from './BAIFormItem';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import {
-  theme,
-  Form,
-  Input,
-  App,
-  GetProps,
-  Typography,
-  InputProps,
-} from 'antd';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Heading, Text } from '@astryxdesign/core/Text';
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
-import { CornerDownLeftIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import { PencilIcon } from 'lucide-react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -34,30 +61,35 @@ import {
 type EditableVFolderNameProps = {
   vfolderFrgmt: EditableVFolderNameFragment$key;
   enableLink?: boolean;
-  inputProps?: InputProps;
+  /** `'title'` renders an Astryx `Heading`; `'text'` a body `Text`. */
+  variant?: 'text' | 'title';
+  /** antd allowed a config object; only truthiness is read now. */
+  editable?: boolean | { triggerType?: Array<string> };
   onEditEnd?: () => void;
   onEditStart?: () => void;
-} & (
-  | ({ component?: typeof Typography.Text } & Omit<
-      GetProps<typeof Typography.Text>,
-      'children' | 'component'
-    >)
-  | ({ component: typeof Typography.Title } & Omit<
-      GetProps<typeof Typography.Title>,
-      'children' | 'component'
-    >)
-);
+  style?: React.CSSProperties;
+  /**
+   * Legacy antd surface, kept so the unmigrated consumer compiles unchanged
+   * (frontier rule). `component` and `level` only select `variant="title"`;
+   * `ellipsis` is always on (Astryx truncates with `maxLines`); `inputProps`
+   * carried an antd `Input` `size` that `AstryxFormTextInput` does not expose.
+   */
+  component?: unknown;
+  level?: 1 | 2 | 3 | 4 | 5;
+  ellipsis?: boolean;
+  inputProps?: unknown;
+};
 
 const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
-  component: Component = Typography.Text,
   vfolderFrgmt,
   editable: editableOfProps,
   style,
   enableLink = true,
+  variant,
+  component,
+  level,
   onEditEnd,
   onEditStart,
-  inputProps,
-  ...otherProps
 }) => {
   'use memo';
   const vfolder = useFragment(
@@ -84,84 +116,75 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
   const relayEnv = useRelayEnvironment();
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [isEditing, setIsEditing] = useState(false);
 
   const isEditingAllowed =
-    editableOfProps &&
+    !!editableOfProps &&
     (userInfo.uuid === vfolder.user || currentProject?.id === vfolder.group) &&
     !isDeletedCategory(vfolder.status);
 
   const isPendingRenameMutation =
     renameMutation.isPending || optimisticName !== vfolder.name;
 
-  // focus back to the text component after editing for better UX related to keyboard shortcuts
-  const textRef = useRef<HTMLElement>(null);
-  const focusFallback = () => {
-    setTimeout(() => {
-      textRef.current?.focus();
-    }, 0);
+  const displayedName = isPendingRenameMutation ? optimisticName : vfolder.name;
+  const isTitle = variant === 'title' || !!level || !!component;
+
+  const nameNode = isTitle ? (
+    <Heading level={level ?? 3} maxLines={1}>
+      {displayedName}
+    </Heading>
+  ) : (
+    <Text
+      maxLines={1}
+      hasTruncateTooltip
+      color={isPendingRenameMutation ? 'secondary' : undefined}
+    >
+      {displayedName}
+    </Text>
+  );
+
+  const stopEditing = () => {
+    setIsEditing(false);
+    onEditEnd?.();
   };
 
   return (
     <>
       {(!isEditing || isPendingRenameMutation) && (
-        <Component
-          ref={textRef}
-          tabIndex={-1}
-          editable={
-            isEditingAllowed && !isPendingRenameMutation
-              ? {
-                  onStart: () => {
-                    setIsEditing(true);
-                    onEditStart?.();
-                  },
-                  onEnd: () => {
-                    setIsEditing(false);
-                    onEditEnd?.();
-                  },
-                  onCancel: () => {
-                    setIsEditing(false);
-                    onEditEnd?.();
-                  },
-                  triggerType: ['icon'],
-                  ...(!_.isBoolean(editableOfProps) ? editableOfProps : {}),
-                }
-              : false
-          }
-          style={{
-            // after editing, focus this element, remove outline
-            outline: 'none',
-            ...style,
-            color: isPendingRenameMutation
-              ? token.colorTextTertiary
-              : style?.color,
-          }}
-          title={vfolder.name || undefined}
-          {...otherProps}
-        >
-          {enableLink && !isEditing && (
-            <BAILink
-              type="hover"
-              to={generateFolderPath(toLocalId(vfolder?.id))}
-            >
-              {isPendingRenameMutation ? optimisticName : vfolder.name}
+        <HStack gap={1} align="center" style={{ minWidth: 0, ...style }}>
+          {enableLink ? (
+            // The router link stays BUI's `BAILink` (react-router `to`), which
+            // is what the V1 component already used; Astryx's `Link as=` slot
+            // is href-first and cannot take a react-router `To` object.
+            <BAILink type="hover" to={generateFolderPath(toLocalId(vfolder?.id))}>
+              {nameNode}
             </BAILink>
+          ) : (
+            nameNode
           )}
-          {!enableLink &&
-            (isPendingRenameMutation ? optimisticName : vfolder.name)}
-        </Component>
+          {isEditingAllowed && !isPendingRenameMutation ? (
+            <IconButton
+              label={t('button.Edit')}
+              tooltip={t('button.Edit')}
+              icon={<PencilIcon />}
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setIsEditing(true);
+                onEditStart?.();
+              }}
+            />
+          ) : null}
+        </HStack>
       )}
       {isEditing && !isPendingRenameMutation && (
         <Form
           onFinish={(values) => {
-            setIsEditing(false);
-            focusFallback();
+            stopEditing();
             if (values.vfolderName === vfolder.name) {
-              onEditEnd?.();
               return;
             }
             setOptimisticName(values.vfolderName);
@@ -172,7 +195,6 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
               },
               {
                 onSuccess: () => {
-                  onEditEnd?.();
                   message.success(t('data.folders.FileRenamed'));
                   return fetchQuery<EditableVFolderNameRefetchQuery>(
                     relayEnv,
@@ -190,7 +212,6 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
                   ).toPromise();
                 },
                 onError: (error) => {
-                  onEditEnd?.();
                   const errorMessage = getErrorMessage(error);
                   if (
                     errorMessage.includes(
@@ -213,59 +234,39 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
             flex: 1,
           }}
         >
-          <Form.Item
-            name="vfolderName"
-            rules={[
-              {
-                max: 64,
-                message: t('data.FolderNameTooLong'),
-                type: 'string',
-              },
-              {
-                required: true,
-                message: t('data.FolderNameRequired'),
-              },
-              {
-                pattern: /^[a-zA-Z0-9-_.]+$/,
-                message: t('data.AllowsLettersNumbersAnd-_Dot'),
-              },
-              // TODO: (Priority low) implement async validator to check existing folder names
-              // {
-              //   validator: (__, value) => {
-              //     if (_.includes(existingNames, value)) {
-              //       return Promise.reject(t('data.FolderAlreadyExists'));
-              //     }
-              //     return Promise.resolve();
-              //   },
-              // },
-            ]}
-            style={{
-              margin: 0,
+          {/* Escape cancels editing; keydown bubbles from the TextInput. */}
+          <span
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                stopEditing();
+              }
             }}
           >
-            <Input
-              size="small"
-              suffix={
-                <CornerDownLeftIcon
-                  style={{
-                    fontSize: '0.8em',
-                    color: token.colorTextTertiary,
-                  }}
-                />
-              }
-              autoFocus
-              onKeyDown={(e) => {
-                // when press escape key, cancel editing
-                if (e.key === 'Escape') {
-                  e.stopPropagation();
-                  setIsEditing(false);
-                  focusFallback();
-                  onEditEnd?.();
-                }
+            <BAIFormItem
+              name="vfolderName"
+              rules={[
+                {
+                  max: 64,
+                  message: t('data.FolderNameTooLong'),
+                  type: 'string',
+                },
+                {
+                  required: true,
+                  message: t('data.FolderNameRequired'),
+                },
+                {
+                  pattern: /^[a-zA-Z0-9-_.]+$/,
+                  message: t('data.AllowsLettersNumbersAnd-_Dot'),
+                },
+              ]}
+              style={{
+                margin: 0,
               }}
-              {...inputProps}
-            />
-          </Form.Item>
+            >
+              <AstryxFormTextInput label={t('data.Foldername')} hasAutoFocus />
+            </BAIFormItem>
+          </span>
         </Form>
       )}
     </>

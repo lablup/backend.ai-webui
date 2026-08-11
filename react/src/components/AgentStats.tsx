@@ -2,18 +2,24 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceSlotsDetails } from '../hooks/backendai';
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
-import { useControllableValue } from 'ahooks';
-import { Segmented, Skeleton, theme, Typography } from 'antd';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Heading } from '@astryxdesign/core/Text';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  ResourceStatistics,
   convertToNumber,
   processMemoryValue,
-  ResourceStatistics,
+  useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTransition, ReactNode } from 'react';
@@ -167,33 +173,31 @@ const AgentStats: React.FC<AgentStatsProps> = ({
     >
       <BAIBoardItemTitle
         title={
-          <Typography.Text
-            style={{
-              fontSize: token.fontSizeHeading5,
-              fontWeight: token.fontWeightStrong,
-            }}
-          >
-            {t('agentStats.AgentStats')}
-          </Typography.Text>
+          // antd Typography.Text styled to fontSizeHeading5 (16px) +
+          // fontWeightStrong. On the restored antd type ramp 16px is
+          // heading-5; `level={3}` tracked the same 16px back when Astryx's
+          // own ramp put 17px there.
+          <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
         }
         tooltip={t('agentStats.AgentStatsDescription')}
         extra={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Segmented<Exclude<AgentStatsProps['displayType'], undefined>>
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-                {
-                  value: 'free',
-                  label: t('dashboard.Free'),
-                },
-              ]}
+            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+                composed from the two existing option labels to avoid adding new
+                i18n keys while page tickets run in parallel. */}
+            <SegmentedControl
+              size="sm"
+              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
-              onChange={(v) => setDisplayType(v)}
-            />
+              onChange={(v) =>
+                setDisplayType(
+                  v as Exclude<AgentStatsProps['displayType'], undefined>,
+                )
+              }
+            >
+              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
+              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
+            </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || isRefetching}
@@ -218,7 +222,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         }
       />
       {resourceSlotsDetails.isLoading ? (
-        <Skeleton active />
+        <BAISkeletonAstryx />
       ) : (
         <ResourceStatistics
           resourceData={agentStatsData}

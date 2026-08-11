@@ -17,16 +17,16 @@ FR-1673 (#4628), FR-1511 (#4331), FR-1685/1695 (#4656/#4664), and FR-617 (#3294)
 - Creating a new modal or drawer component
 - Adding a form inside a modal/drawer
 - Stale state on reopen, or animation jank on close
-- Questions about `BAIUnmountAfterClose`, `destroyOnHidden`, or
-  `afterOpenChange` vs `afterClose`
+- Questions about `BAIUnmountAfterClose`, or `afterOpenChange` vs `afterClose`
 - Routing a modal's open state via URL / id state
 
 ## Gotchas
 
 - **`BAIUnmountAfterClose` requires a SINGLE child** (`React.Children.only`). Wrap one modal/drawer per wrapper — not a fragment, not two siblings.
 - **The wrapper chains `afterClose` / `afterOpenChange`**, so your child's callback still runs. Don't duplicate unmount logic on both sides.
-- **`destroyOnHidden` (antd) unmounts synchronously** and skips the exit animation. It is NOT a substitute for `BAIUnmountAfterClose`.
-- **Drawer uses `afterOpenChange(open: boolean)`**, Modal uses `afterClose()` (no arg). Don't assume the same signature.
+- **`BAIUnmountAfterClose` only works on a child that fires `afterClose` or `afterOpenChange`.** `BAIModal` does; the project's drawer shell (`BAIDrawerAstryx`) does **not** — see §8. Wrapping a drawer in it is a silent no-op that leaves the child mounted forever.
+- **`BAIModal` unmounts its children whenever it is closed** — `destroyOnHidden` / `destroyOnClose` are unconditionally on (BAIModal PILOT-DECISION 3) and both props are accepted-and-ignored. Passing them changes nothing; `BAIUnmountAfterClose` is still what unmounts the *component you wrote*, including its hooks and Relay queries.
+- **`BAIModal.afterClose` fires from an effect on the `open` transition**, one frame earlier than antd fired it. `BAIUnmountAfterClose` subscribes to it and works unchanged; only hand-written timing assumptions are affected.
 - **`modal.confirm({ onOk: async () => { ... } })`**: the loader is shown while pending and rethrows on rejection — always wrap in try/catch inside `onOk`.
 - **id-state + `useTransition`**: use `open={!!idState || isPending}` so the modal paints during the transition instead of waiting for the heavy query to resolve.
 - **URL-driven modal open (FR-1846 #4921)** still needs `BAIUnmountAfterClose` — reloading while open otherwise reopens with stale query/form state.
@@ -70,12 +70,25 @@ chains them.
 </BAIUnmountAfterClose>
 ```
 
-### Do NOT use `destroyOnHidden` as a substitute
+### `destroyOnHidden` is no longer a choice — and it isn't the same thing
 
-`destroyOnHidden` (antd) unmounts immediately, skipping the close animation.
-`BAIUnmountAfterClose` is the project-wide answer. `destroyOnHidden` is OK for
-a modal with **only** refs-based forms when the flash is acceptable — in practice
-we default to the wrapper.
+Historically `destroyOnHidden` / `destroyOnClose` were antd `Modal` props you
+could opt into, and this skill used to warn against them. That decision is now
+made for you: `BAIModal` renders **no children at all while closed**
+(PILOT-DECISION 3 in `BAIModal.tsx`), which is stricter than antd's default.
+Both props are still accepted for call-site compatibility and do nothing.
+
+That does **not** make `BAIUnmountAfterClose` redundant, because the two unmount
+different trees:
+
+| | What it unmounts |
+|---|---|
+| `BAIModal`'s built-in behaviour | the modal's **children** — the body content you passed |
+| `BAIUnmountAfterClose` | **your `*Modal` component itself** — its `useState`, its `useLazyLoadQuery`, its `<Form>` instance |
+
+State that lives in the wrapper component (form values, a selected id, an
+in-flight mutation's local state) sits *above* the children and survives a
+close. Wrapping is what resets it. Keep wrapping.
 
 ## 2. `onRequestClose` — the project's close-callback convention
 
@@ -101,8 +114,9 @@ interface FolderCreateModalProps extends BAIModalProps {
 ```
 
 When a modal MUST surface both buttons' intent (e.g. delete flow with different
-follow-up), keep the antd-native `onOk` / `onCancel` pair — PurgeUsersModal
-does this.
+follow-up), keep the `onOk` / `onCancel` pair — these are real `BAIModal` props
+(the surface is antd-`Modal`-shaped by design, see
+`.claude/rules/component-props-extension.md`). PurgeUsersModal does this.
 
 ## 3. Open State: by-id beats by-boolean
 
@@ -159,11 +173,16 @@ URL state. Use `useQueryStates` with `parseAsString` — see `react-url-state`.
 
 ## 4. `afterOpenChange` vs `afterClose`
 
+Both are `BAIModal` props. They no longer ride on a CSS transition-end event —
+`BAIModal` fires them from an effect on the `open` transition, so they land a
+frame earlier than antd did. Treat them as "open flipped", not "the animation
+literally finished".
+
 | Hook | Fires when | Use for |
 |---|---|---|
-| `afterOpenChange(true)` | After open animation ends | One-shot setup (e.g. `validateFields()` if `initialValidate`) |
-| `afterOpenChange(false)` | After close animation ends | Reset local state not in the form |
-| `afterClose` | Modal only, after close anim | Cleanup callback for non-Drawer modals |
+| `afterOpenChange(true)` | Right after `open` flips to `true` | One-shot setup (e.g. `validateFields()` if `initialValidate`) |
+| `afterOpenChange(false)` | Right after `open` flips to `false` | Reset local state not in the form |
+| `afterClose` | Same transition, no argument | Cleanup callback; this is the one `BAIUnmountAfterClose` subscribes to |
 
 ```tsx
 <BAIModal
@@ -178,13 +197,15 @@ URL state. Use `useQueryStates` with `parseAsString` — see `react-url-state`.
 
 When using `BAIUnmountAfterClose`, your `afterClose`/`afterOpenChange` still run.
 
-## 5. Confirmation Dialogs: `App.useModal()` for ad-hoc
+## 5. Confirmation Dialogs: `modal.confirm()` for ad-hoc
 
-Don't build a `<Modal open>` component for a one-shot "Are you sure?" prompt.
-Use `modal.confirm()` from `App.useApp()`.
+Don't build a `<BAIModal open>` component for a one-shot "Are you sure?"
+prompt. Use `modal.confirm()` from the app-shim's `App.useApp()`.
 
 ```tsx
-const { modal } = App.useApp();
+import { App } from '../app-shim';   // NOT 'antd' — see react-async-actions §2
+
+const { modal } = App.useApp();      // { message, modal }
 
 const handleRemoveShare = () => {
   modal.confirm({
@@ -203,14 +224,22 @@ When the confirmation needs rich content / form / mutation with multi-stage
 feedback → then build a proper `*Modal` component.
 
 Reusable confirmation helpers that exist:
-- `BAIConfirmModalWithInput` — confirm by typing a token
-- `BAIDeleteConfirmModal` — dangerous delete flow with double-check
+- `BAIDeleteConfirmModal` (`backend.ai-ui`) — the delete/destructive flow.
+  `requireConfirmInput` adds the type-the-name gate; `reversible` keeps the
+  same layout but drops the input and the "cannot be undone" warning.
+- `BAIDeleteConfirmModalAstryx` — the `react/src` variant of the same.
+- `BAIPopconfirmAstryx` — anchored confirm for reversible, low-impact actions.
+
+`BAIConfirmModalWithInput` no longer exists; `BAIDeleteConfirmModal` absorbed
+it. Which tier a given action belongs in is decided by
+`.claude/rules/destructive-confirmation.md` — read that before choosing.
 
 ## 6. Modal Footer: prefer built-in props, custom `footer` is a last resort
 
-**Default: use the modal's built-in OK/Cancel props.** `BAIModal` (and antd
-`Modal`) already render a standard OK + Cancel footer wired to `onOk` /
-`onCancel`. Customize it through props before reaching for a custom `footer`:
+**Default: use the modal's built-in OK/Cancel props.** `BAIModal` already
+renders a standard OK + Cancel footer wired to `onOk` / `onCancel` (it builds
+the footer itself, on Astryx `LayoutFooter` + `Button`). Customize it through
+props before reaching for a custom `footer`:
 
 | Need | Prop |
 |---|---|
@@ -255,9 +284,11 @@ layout, for example:
 - A footer that must include **non-button content** (a hint, a checkbox like
   "auto-activate after create", a status badge).
 
-If you do override `footer`, use `BAIFlex` for layout (not `<Space>`), keep
-the primary action rightmost, and use `BAIButton.action` on the submit button
-so loading state is automatic. Never pair `action` with `onClick`.
+If you do override `footer`, use `BAIFlex` for layout, keep the primary action
+rightmost, and use `BAIButton.action` on the submit button so loading state is
+automatic. Never pair `action` with `onClick`. (`<Space>` no longer exists —
+it left with antd. For a row of buttons that should read as one control,
+Astryx's `ButtonGroup` is the equivalent; for plain spacing use `BAIFlex gap`.)
 
 ```tsx
 footer={
@@ -334,11 +365,29 @@ Inside the body, wrap Relay content in `<Suspense fallback={<Skeleton active />}
 
 ## 8. Drawer Specifics
 
-Drawers follow the same rules with two additions:
+The project's drawer shell is **`BAIDrawerAstryx`**
+(`react/src/components/astryx-bui/BAIDrawerAstryx.tsx`, conventionally imported
+as `BAIDrawer`). It wraps `Drawer` from `@astryxdesign/lab` and re-creates the
+header row (close button + title + `extra`) that antd's `Drawer` used to draw,
+so every detail drawer reads the same way.
 
-- Use `afterOpenChange(false)` to detect close (no `afterClose`).
-- Wrap in `BAIUnmountAfterClose` when the drawer owns form / Relay state, same
-  as modals — the wrapper handles `afterOpenChange` interception.
+Its surface is intentionally small — `open`, `onClose`, `title`, `extra`,
+`label`, `size`, `side`, `hasScrim`, `hasBodyPadding`, `bodyClassName`,
+`headerClassName`:
+
+- **There is no `afterOpenChange` and no `afterClose`.** The old advice to
+  detect close via `afterOpenChange(false)` no longer applies.
+- **Therefore `BAIUnmountAfterClose` does nothing useful around a drawer.** The
+  wrapper unmounts only when the child calls one of those two callbacks; with
+  no callback it never fires, and the drawer stays mounted. No drawer in the
+  repo is wrapped in it today. To reset a drawer's state, unmount it yourself
+  from the parent — the id-state pattern of §3 does this naturally:
+  `{selectedId ? <BAIDrawer open onClose={() => setSelectedId(null)} … /> : null}`.
+- `label` is required-ish: lab's `Drawer` needs a non-empty accessible name.
+  It defaults to `title` when the title is a plain string, so pass `label`
+  explicitly whenever `title` is JSX.
+- Body padding is a boolean (`hasBodyPadding`), not a `styles.body` object.
+  Pass `hasBodyPadding={false}` and pad inside the content instead.
 
 ## 9. Cross-Modal Communication
 
@@ -353,17 +402,17 @@ Avoid `useEffect`-driven coordination between sibling modals. Instead:
 - **`react-form`** — forms inside modals (validators, required markers)
 - **`react-url-state`** — opening a modal from URL query params
 - **`react-async-actions`** — submit button and feedback inside modal footer
-- **`react-component-basics`** — `BAIModalProps` / `BAIDrawerProps` extension pattern
+- **`.claude/rules/component-props-extension.md`** — `BAIModalProps` / `BAIDrawerProps` extension pattern
 - **`react-suspense-fetching`** — when the modal body owns a Relay query
 
 ## 10. Verification Checklist
 
-- [ ] Modals with forms or Relay queries are wrapped in `BAIUnmountAfterClose`.
+- [ ] Modals with forms or Relay queries are wrapped in `BAIUnmountAfterClose` (modals only — it is a no-op on `BAIDrawer`; unmount drawers from the parent).
 - [ ] Record-bound modals use id-state for `open` (not a separate boolean).
 - [ ] Primary submit button uses `BAIButton.action` (not `loading={…}`).
 - [ ] `onRequestClose` convention used instead of split `onOk`/`onCancel` when no distinct success-vs-cancel path is needed.
-- [ ] Simple confirmations use `modal.confirm()` from `App.useApp()`, not an inline `<Modal>`.
+- [ ] Simple confirmations use `modal.confirm()` from the app-shim's `App.useApp()`, not an inline `<BAIModal>`.
 - [ ] OK / Cancel are wired through `onOk` / `onCancel` / `okText` / `cancelText` / `okButtonProps` props — custom `footer` only when those genuinely cannot express the layout (extra button, non-button content).
 - [ ] Submit pending state goes through `confirmLoading` (bound to the mutation's `isInFlight` / `isPending`), not a hand-rolled `loading` button.
-- [ ] When a custom `footer` is justified, it uses `BAIFlex` (not `<Space>`) and the submit button uses `BAIButton.action`.
+- [ ] When a custom `footer` is justified, it uses `BAIFlex` (or Astryx `ButtonGroup`) and the submit button uses `BAIButton.action`.
 - [ ] No `useEffect` chains between parent and modal — prefer lifted state + `onRequestClose`.

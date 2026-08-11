@@ -4,9 +4,11 @@
  */
 import { AgentLifeCycleControlModalFragment$key } from '../__generated__/AgentLifeCycleControlModalFragment.graphql';
 import { AgentLifeCycleControlModalRefetchQuery } from '../__generated__/AgentLifeCycleControlModalRefetchQuery.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { App, theme, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIModal,
@@ -145,7 +147,7 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
       width={400}
     >
       <BAIFlex direction="column" align="stretch" gap="xs">
-        <Typography.Text>{t('agent.WatcherActionWarning')}</Typography.Text>
+        <Text>{t('agent.WatcherActionWarning')}</Text>
         <div
           role="list"
           style={{

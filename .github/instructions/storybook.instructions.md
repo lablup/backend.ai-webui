@@ -345,10 +345,12 @@ export const BatchType: Story = {
 
 ### Pattern E: Form Integration
 
-Use for components that work with Ant Design Form:
+Use for components that work with `Form` / `Form.Item`.
+
+The form engine is **self-hosted** at `packages/backend.ai-ui/src/form-engine/`, with a deliberately antd-identical API — `Form.Item`, `Form.List`, `Form.useForm()`, `Form.useWatch()` and `Form.Item.useStatus()` all resolve to the engine. `Form.Item` **is** `BAIFormItem`, so it renders `[data-bai-form-item]` attributes rather than `.ant-form-item*` classes; assert on those if a story test inspects the DOM. Import from `backend.ai-ui` (the package re-exports it), or from `'../form-engine'` inside `packages/backend.ai-ui/src` — never from `antd`, which is not a dependency.
 
 ```typescript
-import { Form } from 'antd';
+import { Form } from '../form-engine';
 
 const renderWithFormItem = ({ value, ...args }: ComponentProps) => {
   return (
@@ -490,17 +492,50 @@ const sampleData: DataType[] = [
 
 ### Global Decorators (in preview.tsx)
 
+The real decorator lives in `./decorators.tsx` and is wired into `preview.tsx`
+as a single entry, `withGlobalProvider`. There is no antd `ConfigProvider` in
+this tree — antd is not a dependency of this project. `withGlobalProvider`
+mounts Astryx's own `Theme` provider, then the theme-shim, `BAIConfigProvider`
+(locale only now), the form engine's config provider, and the app-shim
+(`message`/`modal`) provider, in that order:
+
 ```typescript
 // packages/backend.ai-ui/.storybook/preview.tsx
-decorators: [
-  (Story) => (
-    <ConfigProvider>
-      <div style={{ padding: '16px' }}>
-        <Story />
-      </div>
-    </ConfigProvider>
-  ),
-],
+import { withGlobalProvider } from './decorators';
+import type { Preview } from '@storybook/react-vite';
+
+const preview: Preview = {
+  tags: ['autodocs'],
+  decorators: [withGlobalProvider],
+  // ...
+};
+```
+
+```typescript
+// packages/backend.ai-ui/.storybook/decorators.tsx (simplified)
+import { BAIAppProvider } from '../src/app-shim';
+import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
+import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
+import { ThemeShimProvider } from '../src/theme-shim';
+import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
+
+const GlobalConfigProvider = ({ locale, isDarkMode, seedToken, children }) => (
+  <AstryxThemeProvider theme={astryxBrandTheme} mode={isDarkMode ? 'dark' : 'light'}>
+    <ThemeShimProvider mode={isDarkMode ? 'dark' : 'light'} seeds={seedToken}>
+      <BAIConfigProvider locale={{ lang: locale }}>
+        <FormConfigProvider>
+          <BAIAppProvider>{children}</BAIAppProvider>
+        </FormConfigProvider>
+      </BAIConfigProvider>
+    </ThemeShimProvider>
+  </AstryxThemeProvider>
+);
+
+export const withGlobalProvider: Decorator = (Story, context) => (
+  <StorybookProvider {...context.globals}>
+    <Story />
+  </StorybookProvider>
+);
 ```
 
 ### Story-Level Decorators
@@ -562,8 +597,9 @@ From `BAIText.stories.tsx`:
 
 ```typescript
 /**
- * BAIText extends Ant Design's Typography.Text with additional features
- * for better text handling and customization.
+ * BAIText keeps an Ant Design Typography.Text-shaped prop surface (`type`,
+ * `strong`, `ellipsis`, `copyable`, `code`, `keyboard`, ...) for call-site
+ * compatibility, but renders through Astryx's `Text` primitive internally.
  *
  * Key features:
  * - Monospace font support via `monospace` prop
@@ -580,6 +616,8 @@ const meta: Meta<typeof BAIText> = {
   // ...
 };
 ```
+
+Note the framing. antd is not a dependency — `BAITextProps` extends `Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'children'>` and the component renders `@astryxdesign/core/Text`. The antd names in the description are **history**: the prop surface was deliberately kept antd-shaped so the several hundred existing call sites needed no edit. When a story description touches that vocabulary, describe it as a shape that was kept and point at `.claude/rules/component-props-extension.md` — never as a library the component is built on.
 
 ### Best Practices
 

@@ -5,7 +5,6 @@
 import { VFolderNodeIdenticonV2Fragment$key } from '../__generated__/VFolderNodeIdenticonV2Fragment.graphql';
 import { createAvatar } from '@dicebear/core';
 import * as shapes from '@dicebear/shapes';
-import { theme } from 'antd';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -18,7 +17,6 @@ const VFolderNodeIdenticonV2: React.FC<VFolderNodeIdenticonV2Props> = ({
   vfolderNodeIdenticonFrgmt,
   style,
 }) => {
-  const { token } = theme.useToken();
   const vfolder = useFragment(
     graphql`
       fragment VFolderNodeIdenticonV2Fragment on VFolder {
@@ -38,7 +36,8 @@ const VFolderNodeIdenticonV2: React.FC<VFolderNodeIdenticonV2Props> = ({
         height: '1em',
         borderWidth: 0.5,
         borderStyle: 'solid',
-        borderColor: token.colorBorder,
+        // Astryx theme var (ticket 16) — replaces `token.colorBorder`.
+        borderColor: 'var(--color-border)',
         userSelect: 'none',
         ...style,
       }}

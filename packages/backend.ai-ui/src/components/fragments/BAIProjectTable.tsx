@@ -2,13 +2,13 @@ import {
   BAIProjectTableFragment$data,
   BAIProjectTableFragment$key,
 } from '../../__generated__/BAIProjectTableFragment.graphql';
-import { toLocalId } from '../../helper';
+import { badgeVariantForTagColor, toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAIText from '../BAIText';
-import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
+import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
-import { Tag } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -118,12 +118,14 @@ const BAIProjectTable = ({
       key: 'type',
       title: t('comp:BAIProjectTable.Type'),
       dataIndex: 'type',
-      render: (value) =>
-        value === 'GENERAL' ? (
-          <Tag>{value}</Tag>
-        ) : (
-          <Tag color="blue">{value}</Tag>
-        ),
+      // to-astryx W2-D: antd `Tag` -> Astryx `Badge`; the `blue` hue goes
+      // through the repo-global lookup (MAPPING §3.5).
+      render: (value) => (
+        <Badge
+          variant={badgeVariantForTagColor(value === 'GENERAL' ? null : 'blue')}
+          label={value}
+        />
+      ),
     },
     {
       key: 'total_resource_slots',
@@ -198,8 +200,7 @@ const BAIProjectTable = ({
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;
 
   return (
-    <BAITable<ProjectInList>
-      scroll={{ x: 'max-content' }}
+    <BAITableAstryx<ProjectInList>
       {...tableProps}
       rowKey={(record) => record.id}
       dataSource={projects}

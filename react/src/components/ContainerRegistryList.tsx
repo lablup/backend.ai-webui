@@ -8,6 +8,7 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -15,30 +16,34 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Switch } from '@astryxdesign/core/Switch';
 import {
-  DeleteFilled,
-  ReloadOutlined,
-  SettingOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Button, Switch, Tag, Tooltip, App } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
-import {
-  filterOutNullAndUndefined,
-  BAIButton,
-  BAITable,
-  BAIFlex,
-  BAIPropertyFilter,
   BAIDeleteConfirmModal,
+  BAIFlex,
   BAINameActionCell,
+  BAIPropertyFilter,
+  BAITableAstryx,
+  INITIAL_FETCH_KEY,
+  badgeVariantForTagColor,
+  filterOutNullAndUndefined,
+  type BAIColumnType,
+  type BAIColumnsType,
   useBAILogger,
   useFetchKey,
-  INITIAL_FETCH_KEY,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import {
+  Trash2,
+  RotateCw,
+  Settings,
+  RefreshCw,
+  PlusIcon,
+  SquarePenIcon,
+} from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -263,7 +268,7 @@ const ContainerRegistryList: React.FC<{
       .catch(handleReScanError);
   };
 
-  const columns: ColumnsType<ContainerRegistry> = [
+  const columns: BAIColumnsType<ContainerRegistry> = [
     {
       key: 'registry_name',
       title: t('registry.RegistryName'),
@@ -286,7 +291,7 @@ const ContainerRegistryList: React.FC<{
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingRegistry(record);
@@ -295,7 +300,7 @@ const ContainerRegistryList: React.FC<{
             {
               key: 'rescan',
               title: t('maintenance.RescanImages'),
-              icon: <SyncOutlined />,
+              icon: <RefreshCw size="1em" />,
               onClick: () => {
                 record.registry_name &&
                   rescanImage(record.registry_name, record.project);
@@ -320,7 +325,14 @@ const ContainerRegistryList: React.FC<{
       title: t('registry.Project'),
       dataIndex: 'project',
       render: (value) => {
-        return <Tag key={value || ''}>{value || ''}</Tag>;
+        // Uncolored antd Tag -> neutral Astryx Badge (Tag lookup policy).
+        return value ? (
+          <Badge
+            key={value}
+            variant={badgeVariantForTagColor(undefined)}
+            label={value}
+          />
+        ) : null;
       },
     },
     {
@@ -342,14 +354,21 @@ const ContainerRegistryList: React.FC<{
           record.registry_name,
         );
         return (
+          // antd Switch checked/loading/disabled -> Astryx Switch
+          // value/isLoading/isDisabled; `label` is required, hidden here
+          // because the column header already names the control (P2).
           <Switch
-            checked={
+            label={t('general.Enabled')}
+            isLabelHidden
+            value={
               inFlightHostName === record.id + deferredFetchKey
                 ? !isEnabled
                 : isEnabled
             }
-            disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
-            loading={
+            isDisabled={
+              deferredFetchKey !== fetchKey || isInFlightDomainMutation
+            }
+            isLoading={
               (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
               inFlightHostName === record.id + deferredFetchKey
             }
@@ -441,30 +460,27 @@ const ContainerRegistryList: React.FC<{
           }}
         />
         <BAIFlex gap="xs">
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={deferredFetchKey !== fetchKey}
-              icon={<ReloadOutlined />}
-              onClick={() => {
-                updateFetchKey();
-              }}
-            />
-          </Tooltip>
-          <BAIButton
-            type="primary"
+          <IconButton
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            isLoading={deferredFetchKey !== fetchKey}
+            icon={<RotateCw size="1em" />}
+            onClick={() => {
+              updateFetchKey();
+            }}
+          />
+          <Button
+            variant="primary"
             icon={<PlusIcon />}
+            label={t('registry.AddRegistry')}
             onClick={() => {
               setIsNewModalOpen(true);
             }}
-          >
-            {t('registry.AddRegistry')}
-          </BAIButton>
+          />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey={(record) => record.id}
-        scroll={{ x: 'max-content' }}
-        showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: container_registry_nodes?.count ?? 0,
@@ -478,9 +494,10 @@ const ContainerRegistryList: React.FC<{
             }
           },
           extraContent: (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
+            <IconButton
+              variant="ghost"
+              icon={<Settings size="1em" />}
+              label={t('table.SettingTable')}
               onClick={() => {
                 toggleColumnSettingModal();
               }}
@@ -499,7 +516,7 @@ const ContainerRegistryList: React.FC<{
           _.filter(
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          ) as ColumnType<AnyObject>[]
+          ) as BAIColumnType<ContainerRegistry>[]
         }
       />
       <ContainerRegistryEditorModal

@@ -3,9 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useDebounce, useNetwork } from 'ahooks';
-import { Alert } from 'antd';
-import { createStyles } from 'antd-style';
+import { Banner } from '@astryxdesign/core/Banner';
+import { useDebounce, useNetwork } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,25 +14,21 @@ const isDisplayedNetworkStatusState = atom(false);
 const REACHABILITY_PROBE_INTERVAL_MS = 5_000;
 const REACHABILITY_PROBE_TIMEOUT_MS = 5_000;
 
-const useStyles = createStyles(({ token, css }) => ({
-  borderError: css`
-    border-bottom: 1px solid ${token.colorErrorBorder} !important;
-    padding-left: ${token.marginLG}px;
-    padding-right: ${token.marginLG}px;
-  `,
-  borderWarning: css`
-    border-bottom: 1px solid ${token.colorWarningBorder} !important;
-    padding-left: ${token.marginLG}px;
-    padding-right: ${token.marginLG}px;
-  `,
-}));
+// PILOT-DECISION: antd `Alert banner` → Astryx `Banner container="section"`
+// (MAPPING §4: `type`→`status`, `banner`→`container="section"`,
+// `closable={{onClose}}`→`isDismissable`+`onDismiss`). The `createStyles`
+// block that painted a coloured bottom border and the header's horizontal
+// padding is DELETED, not translated: `container="section"` already renders
+// the full-bleed page-level shape, and Astryx status colours are closed
+// enums with no border escape hatch (P5). Dropping it also removes a P6
+// hazard — the block's `!important` border override targeted antd's own
+// alert box.
 const NetworkStatusBanner = () => {
   'use memo';
   const { t } = useTranslation();
   const network = useNetwork();
   const client = useSuspendedBackendaiClient();
   const setDisplayedStatus = useSetAtom(isDisplayedNetworkStatusState);
-  const { styles } = useStyles();
   const [showSoftTimeoutAlert, setShowSoftTimeoutAlert] = useState(false);
   const [dismissSoftTimeoutAlert, setDismissSoftTimeoutAlert] = useState(false);
   const [endpointUnreachable, setEndpointUnreachable] = useState(false);
@@ -120,22 +115,20 @@ const NetworkStatusBanner = () => {
   return (
     <>
       {shouldOpenOfflineAlert && (
-        <Alert
+        <Banner
           title={t('webui.YouAreOffline')}
-          className={styles.borderError}
-          type="error"
-          banner
+          status="error"
+          container="section"
         />
       )}
       {shouldOpenSoftAlert && (
-        <Alert
+        <Banner
           title={t('webui.NetworkSoftTimeout')}
-          className={styles.borderWarning}
-          banner
-          closable={{
-            onClose: () => {
-              setDismissSoftTimeoutAlert(true);
-            },
+          status="warning"
+          container="section"
+          isDismissable
+          onDismiss={() => {
+            setDismissSoftTimeoutAlert(true);
           }}
         />
       )}

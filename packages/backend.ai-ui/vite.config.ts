@@ -1,26 +1,36 @@
 import react from '@vitejs/plugin-react';
-import glob from 'fast-glob';
-import { dirname, resolve, basename } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
 import svgr from 'vite-plugin-svgr';
 
+import { peerDependencies } from './package.json';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Rollup matches `external` strings exactly, so bare names left subpaths like
+// `react-dom/client` bundled — a second renderer that blank-screens consumers
+// on any other React patch (#8595). i18next / react-i18next are dependencies
+// rather than peers, so they stay bundled and keep BUI's i18n isolated.
+const peerDependencyPatterns = Object.keys(peerDependencies).map(
+  // `.` is the only regex metacharacter an npm package name can hold.
+  (name) => new RegExp(`^${name.replaceAll('.', '\\.')}(/.*)?$`),
+);
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
-  const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
+  // Single entry. There used to be one extra entry per language
+  // (`src/locale/en_US.ts` → `dist/locale/en_US.js`, the `./dist/locale/*`
+  // package export), but those modules existed only to re-export
+  // `antd/es/locale/*` bundles for antd's `ConfigProvider locale` prop. The
+  // to-astryx final switch removed that provider, the 21 modules and the
+  // package export together — BUI's OWN translation catalogs are the JSONs in
+  // `src/locale/`, which are bundled into this entry, not published as one.
   const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
   };
-  // Add locale entries
-  localeFiles.forEach((file) => {
-    const name = basename(file, '.ts');
-    if (name === 'index') return;
-    entries[`locale/${name}`] = resolve(__dirname, file);
-  });
 
   return {
     resolve: {
@@ -36,16 +46,7 @@ export default defineConfig(({ mode }) => {
         formats: ['es'],
       },
       rollupOptions: {
-        external: [
-          'react',
-          'react-dom',
-          'react-router-dom',
-          'relay-runtime',
-          'antd',
-          'antd-style',
-          'graphql',
-          // i18next and react-i18next are bundled to isolate BUI's i18n instance from the host app
-        ],
+        external: peerDependencyPatterns,
       },
       sourcemap: true,
       outDir: 'dist',
@@ -75,6 +76,8 @@ export default defineConfig(({ mode }) => {
         insertTypesEntry: true,
         compilerOptions: {
           preserveSymlinks: false,
+          rootDir: 'src',
+          paths: {}
         },
       }),
       svgr(),

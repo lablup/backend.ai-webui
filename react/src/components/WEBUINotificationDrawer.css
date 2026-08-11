@@ -2,8 +2,34 @@
  * Static global styles for <WEBUINotificationDrawer>. Extracted from an inline
  * <style> element (forbidden under strict CSP); a same-origin stylesheet is
  * covered by `style-src 'self'` and needs no nonce.
+ *
+ * to-astryx phase 3 wave 2 (partition C): the drawer moved from antd `Drawer`
+ * to the lab `Drawer`, so the old `ant-drawer-*` selectors are gone (P6 —
+ * they would still compile and silently stop applying).
+ *
+ * What survives is the ELECTRON affordance, which is the only reason this
+ * file exists. The frameless Electron window makes the drawer's header row
+ * draggable (`-webkit-app-region: drag`) while its interactive children stay
+ * clickable (`no-drag`). qa2-c moved the drawer onto `BAIDrawerAstryx`, which
+ * DOES render a header row (antd's arrangement restored), so the class below
+ * is handed to it via `headerClassName` instead of being put on a hand-rolled
+ * first content row.
+ *
+ * Padding: the antd body used `paddingContentHorizontalSM` (16px) on the
+ * inline axis and 0 on the block axis. `BAIDrawerAstryx` is given
+ * `hasBodyPadding={false}` so this budget (`--spacing-4` = 16px) is the only
+ * one applied.
  */
-.ant-drawer-header-title .ant-drawer-close,
-.ant-drawer-header .ant-drawer-extra {
+.webui-notification-drawer-body {
+  padding-inline: var(--spacing-4);
+  padding-block: var(--spacing-4) 0;
+}
+
+.webui-notification-drawer-header {
+  -webkit-app-region: drag;
+}
+
+.webui-notification-drawer-header button,
+.webui-notification-drawer-header [role='button'] {
   -webkit-app-region: no-drag;
 }

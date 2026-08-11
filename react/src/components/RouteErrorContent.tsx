@@ -3,7 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useThemeMode } from '../hooks/useThemeMode';
-import { Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 
@@ -120,27 +122,30 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
           </BAIFlex>
         ) : null}
 
-        <Typography.Title
-          level={4}
-          style={{
-            margin: 0,
-            textAlign: 'center',
-            fontSize: token.fontSizeHeading3,
-            letterSpacing: '-0.015em',
-            lineHeight: 1.32,
-            maxWidth: 560,
-          }}
+        {/* antd `Typography.Title level={4}` overridden to
+            `fontSize: token.fontSizeHeading3`, i.e. the headline RENDERED at
+            24px. The letter-spacing / line-height hand-tuning is still dropped
+            (Astryx's heading scale is theme-owned), but the SIZE is restored:
+            on the antd type ramp (`ANTD_ALIGN_TOKENS`) 24px is heading-3.
+            `level={4}` was the ticket-24 choice against Astryx's own ramp and
+            now renders 20px. `justify="center"` replaces `textAlign`. */}
+        <Heading
+          level={3}
+          justify="center"
+          style={{ margin: 0, maxWidth: 560 }}
         >
           {title}
-        </Typography.Title>
+        </Heading>
 
         {description ? (
-          <Typography.Text
-            type="secondary"
-            style={{ marginTop: token.marginSM, textAlign: 'center' }}
+          <Text
+            color="secondary"
+            justify="center"
+            display="block"
+            style={{ marginTop: token.marginSM }}
           >
             {description}
-          </Typography.Text>
+          </Text>
         ) : null}
 
         {extra ? (

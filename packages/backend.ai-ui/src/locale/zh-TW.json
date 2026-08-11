@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "執行錯誤",
     "ErrorOccurred": "發生錯誤"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "無結果",
+    "Search": "搜索"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "選擇網域"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動重新整理",
@@ -261,6 +268,9 @@
     "Tags": "標籤",
     "UpdatedAt": "更新時間"
   },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "下列專案將會更新。",
     "ProjectResourcePolicy": "專案資源政策",
@@ -355,6 +365,62 @@
     "To": "目標狀態",
     "UpdatedAt": "更新時間"
   },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "CreatePreset": "建立預設",
+    "DefaultValue": "預設值",
+    "DefaultValuePlaceholder": "例如：1",
+    "Description": "描述",
+    "DescriptionPlaceholder": "描述此參數控制的內容及其對推論行為的影響。",
+    "EditPreset": "編輯預設",
+    "Key": "鍵",
+    "KeyPlaceholder": "例如：TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "鍵為必填項。",
+    "Name": "名稱",
+    "NamePlaceholder": "例如：Tensor Parallel Size",
+    "NameRequired": "名稱為必填項。",
+    "PresetCreated": "執行環境預設已建立。",
+    "PresetTarget": "預設目標",
+    "PresetTargetArgs": "命令列引數",
+    "PresetTargetEnv": "環境變數",
+    "PresetTargetRequired": "預設目標為必填項。",
+    "PresetUpdated": "執行環境預設已更新。",
+    "Rank": "排名",
+    "RankTooltip": "同一執行環境變體的預設間的顯示順序，值越小排越前。",
+    "Required": "必填",
+    "RequiredTooltip": "建立部署修訂版本時是否必須提供此預設參數。",
+    "RuntimeVariant": "執行環境變體",
+    "RuntimeVariantRequired": "執行環境變體為必填項。",
+    "ValueType": "值類型",
+    "ValueTypeBool": "布林值",
+    "ValueTypeFlag": "旗標",
+    "ValueTypeFloat": "浮點數",
+    "ValueTypeInt": "整數",
+    "ValueTypeRequired": "值類型為必填項。",
+    "ValueTypeStr": "字串"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "CreatedAt": "建立日期",
+    "DefaultValue": "預設值",
+    "Description": "描述",
+    "Key": "鍵",
+    "ModifiedAt": "修改日期",
+    "Name": "名稱",
+    "Optional": "選填",
+    "PresetTarget": "預設目標",
+    "PresetTargetArgs": "命令列引數",
+    "PresetTargetEnv": "環境變數",
+    "Rank": "排名",
+    "RankTooltip": "同一執行環境變體的預設間的顯示順序，值越小排越前。",
+    "Required": "必填",
+    "RuntimeVariant": "執行環境變體",
+    "RuntimeVariantId": "執行環境變體 ID",
+    "ValueType": "值類型",
+    "ValueTypeBool": "布林值",
+    "ValueTypeFlag": "旗標",
+    "ValueTypeFloat": "浮點數",
+    "ValueTypeInt": "整數",
+    "ValueTypeStr": "字串"
+  },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "選擇執行階段變體"
   },
@@ -395,14 +461,18 @@
     "Step": "步驟"
   },
   "comp:BAITable": {
+    "Apply": "套用",
+    "Cancel": "取消",
     "CollapseAll": "收合全部",
     "ExpandAll": "展開全部",
     "ExpandErrorsOnly": "僅展開錯誤",
     "ExpandOptions": "展開選項",
+    "ExpandRow": "展開列",
     "Export": "匯出",
     "ExportCSV": "匯出 CSV",
     "GoToFirstPage": "跳到第一頁",
     "InvalidPageNumber": "無效的頁碼",
+    "Pagination": "分頁",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SettingTable": "表設置"
@@ -470,8 +540,10 @@
     "MoreOptions": "更多選項",
     "Name": "姓名",
     "NoUploadPermissionForHost": "您沒有此儲存主機的上傳權限。",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "請輸入文件夾名稱。",
+    "RenameFile": "Rename",
     "RenameSuccess": "該名稱已成功更改。",
     "SelectedItemsDeletedSuccessfully": "選定的文件和文件夾已成功刪除。",
     "Size": "尺寸",
@@ -538,21 +610,73 @@
     "UserID": "使用者 ID",
     "Username": "使用者名稱"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "點擊選擇路徑",
+    "SelectAPath": "選擇路徑",
+    "SelectAPathInFolder": "在 {{folderName}} 中選擇路徑",
+    "SelectFolderFirst": "請先選擇資料夾",
+    "SelectThisLocation": "選擇此位置",
+    "SelectedPath": "已選擇"
+  },
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
   },
+  "form": {
+    "Optional": "（可選）",
+    "validateMessages": {
+      "Default": "字段驗證錯誤${label}",
+      "Required": "請輸入${label}",
+      "Whitespace": "${label}不能為空字符",
+      "array": {
+        "Len": "須為${len}個${label}",
+        "Max": "最多${max}個${label}",
+        "Min": "最少${min}個${label}",
+        "Range": "${label}數量須在${min}-${max}之間"
+      },
+      "number": {
+        "Len": "${label}必須等於${len}",
+        "Max": "${label}最大值為${max}",
+        "Min": "${label}最小值為${min}",
+        "Range": "${label}須在${min}-${max}之間"
+      },
+      "pattern": {
+        "Mismatch": "${label}與模式不匹配${pattern}"
+      },
+      "string": {
+        "Len": "${label}須為${len}個字符",
+        "Max": "${label}最多${max}個字符",
+        "Min": "${label}最少${min}個字符",
+        "Range": "${label}須在${min}-${max}字符之間"
+      },
+      "types": {
+        "Email": "${label}不是一個有效的${type}",
+        "Number": "${label}不是一個有效的${type}",
+        "Object": "${label}不是一個有效的${type}",
+        "String": "${label}不是一個有效的${type}",
+        "Url": "${label}不是一個有效的${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "取消全選",
     "File": "檔案",
+    "Increase": "Increase",
     "NSelected": "{{count}}選擇",
     "Optional": "選填",
     "Project": "專案",
+    "Select": "Select",
     "TotalItems": "總計{{total}}項目",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "取消",
       "Close": "關閉",
       "Collapse": "坍塌",
+      "Confirm": "Confirm",
       "Copied": "已複製",
+      "Copy": "複製",
       "CopyAll": "複製全部",
       "Create": "創造",
       "Delete": "刪除",

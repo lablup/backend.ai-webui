@@ -1,6 +1,6 @@
+import BAIComplexSelect, { BAILabeledValue } from './BAIComplexSelect';
 import BAIGraphQLPropertyFilter from './BAIGraphQLPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Select } from 'antd';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
 
@@ -28,6 +28,8 @@ New in this version:
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
+
+> **to-astryx ticket 28** — the engine is now Astryx \`PowerSearch\`. The prop contract and the emitted filter object are unchanged, but the antd chrome (property/operator \`Select\`s, \`AutoComplete\`, \`DatePicker\`, closable \`Tag\`s, reset button) is replaced by PowerSearch's typeahead, tokens and built-in clear. Three behaviours moved: \`renderInput\` controls stage a value that the popover's Apply button commits, per-property \`placeholder\` is dropped (PowerSearch has one control-level placeholder), and \`rule.validate\` is advisory — a violating token is reported through the error status instead of being refused. **to-astryx ticket 32** refreshed these stories: the \`renderInput\` demos below now use \`BAIComplexSelect\` (Astryx-native) instead of antd \`Select\`, matching what a migrated call site actually renders.
 
 **GraphQL Filter Object Examples:**
 \`\`\`javascript
@@ -889,16 +891,22 @@ export const WithRenderInput: Story = {
         type: 'string',
         defaultOperator: 'equals',
         renderInput: ({ onAddCondition }) => (
-          <Select
+          <BAIComplexSelect
+            label="Storage Host"
+            isLabelHidden
             placeholder="Select storage host"
-            style={{ minWidth: 180 }}
-            value={null}
+            width={180}
+            hasSearch={false}
             options={[
               { label: 'local:volume1', value: 'local:volume1' },
               { label: 'local:volume2', value: 'local:volume2' },
               { label: 'nfs:data', value: 'nfs:data' },
             ]}
-            onChange={(next) => onAddCondition(next ?? undefined)}
+            value={null}
+            onChange={(next) => {
+              const labeled = next as BAILabeledValue | null;
+              onAddCondition(labeled?.value);
+            }}
           />
         ),
       },
@@ -973,19 +981,17 @@ export const WithCustomType: Story = {
         type: 'uuid',
         fixedOperator: 'equals',
         renderInput: ({ onAddCondition }) => (
-          <Select
-            showSearch
+          <BAIComplexSelect
+            label="Owner"
+            isLabelHidden
             placeholder="Select owner"
-            style={{ minWidth: 220 }}
-            value={null}
-            optionFilterProp="label"
+            width={220}
             options={sampleOwnerOptions}
-            onChange={(next) =>
-              onAddCondition(
-                next ?? undefined,
-                sampleOwnerOptions.find((o) => o.value === next)?.label,
-              )
-            }
+            value={null}
+            onChange={(next) => {
+              const labeled = next as BAILabeledValue | null;
+              onAddCondition(labeled?.value, labeled?.label);
+            }}
           />
         ),
       },

@@ -3,8 +3,9 @@ name: react-async-actions
 description: >
   Use when wiring an async button (submit, delete, save, toggle), batch
   mutation, or showing success/error feedback. Covers `BAIButton.action`,
-  `Promise.allSettled` + `_.groupBy`, `App.useApp()` (message/modal),
-  `upsertNotification` for long-running work, and `updateFetchKey()` for refresh.
+  `Promise.allSettled` + `_.groupBy`, the app-shim's `App.useApp()`
+  (message/modal — there is no `notification` on it), `upsertNotification` for
+  long-running work, and `updateFetchKey()` for refresh.
 ---
 
 # Async Action Handling
@@ -19,7 +20,7 @@ creation notification, FR-1630 (#4484) invitation error handling.
 - Wiring an async button (submit, delete, save, toggle)
 - Batch operations across selected items
 - Showing success/error feedback after a mutation
-- Deciding between `message`, `notification`, and `modal.error`
+- Deciding between `message`, `upsertNotification`, and `modal.error`
 - Recovering / displaying structured errors from backend calls
 
 ## Gotchas
@@ -27,7 +28,9 @@ creation notification, FR-1630 (#4484) invitation error handling.
 - **`BAIButton action={async () => { doWork(); }}`** drops loading state — the inner promise isn't returned. Either `await doWork()` or `return doWork()`.
 - **`action` + `onClick` on the same `BAIButton`**: `onClick` fires first and synchronously; `action`'s loading state only covers the async half. Don't combine.
 - **Menu item `onClick` returning a Promise**: you MUST `resolve()` in every branch including errors — the menu spinner only clears on settle.
-- **`App.useApp()` returns `{}` when called outside `<App>` context.** The root `ConfigProvider` + `<App>` must be in place; otherwise `message.success` is a no-op.
+- **`App.useApp()` returns `{ message, modal }` — no `notification`.** Destructuring `notification` from it yields `undefined` and blows up at call time. Notifications live behind jotai in `useBAINotification.tsx`; use `useSetBAINotification()` instead (§5).
+- **`App.useApp()` never returns `{}`.** It hands back a module-level constant, so it works anywhere, provider or not. What must be mounted is **`<BAIAppProvider>`, once at the app root** (`react/src/components/DefaultProviders.tsx`) — it owns Astryx's `LayerProvider` (the toast viewport) and the imperative-modal host. Without it the calls are silently swallowed because there is nowhere to render.
+- **`message.loading` throws on purpose.** Astryx's Toast has no loading concept and the repo had zero call sites, so the app-shim keeps the gap loud rather than faking it. For pending feedback use `BAIButton.action` (§1) or `upsertNotification` (§5).
 - **`Promise.allSettled` returns `{ status, value|reason }`.** Use `_.groupBy(results, 'status')` for typed access — don't hand-roll `.filter(r => r.status === 'fulfilled')`.
 - **`upsertNotification` with the same `key` replaces** the previous entry (intended for progress updates). Different keys create separate entries; forgetting this creates ghost notifications.
 - **`useErrorMessageResolver.getErrorMessage`** only resolves structured `ESMClientErrorResponse`. Raw `Error` / network failures fall through to `.message`.
@@ -110,27 +113,61 @@ actions={[{
 Note the **always resolve** pattern — the menu's loading state only clears when
 the promise settles, so never throw out of the handler without resolving.
 
-## 2. `App.useApp()` — never import modal/message/notification directly
+## 2. `message` / `modal` come from the app-shim
 
 ```tsx
-const { message, modal, notification } = App.useApp();
+import { App } from '../app-shim';   // NOT 'antd' — antd is not installed
+
+const { message, modal } = App.useApp();
 ```
 
-Why: direct imports don't pick up the app's theme/context. This was swept
-repo-wide in multiple 2025 PRs.
+`packages/backend.ai-ui/src/app-shim/` is the project's own replacement for
+antd's `App` (host alias: `react/src/app-shim/`, ~116 call sites). It keeps
+antd's call shape — `message.success(content, duration?, onClose?)`,
+`modal.confirm({ title, content, onOk })` — on top of Astryx's `LayerProvider`
+and `useToast`, which is why the migration was a pure import swap. Adjust the
+`../` depth to your file.
+
+`App.useApp()` returns a module-level constant, so **it works outside any
+provider** — there is no `<App>` context to be missing. What must exist is
+`<BAIAppProvider>` mounted once at the app root; it owns the toast viewport and
+the imperative-modal host that these calls render into.
+
+The named exports work too — `import { message, modal } from '../app-shim'` is
+legitimate, and the shim's own tests use it. `App.useApp()` remains the
+convention in components purely because it is what the ~116 existing call sites
+read like; there is no context to lose by importing directly.
 
 | Use | Helper | Example |
 |---|---|---|
-| Confirmation prompt | `modal.confirm` | before delete |
-| Destructive error with details | `modal.error` | backend returned structured failure |
+| Confirmation prompt | `modal.confirm` | before a reversible action |
+| Destructive delete prompt | `BAIDeleteConfirmModal` | see `.claude/rules/destructive-confirmation.md` |
+| Error with details | `modal.error` | backend returned structured failure |
 | Inline success | `message.success` | save/update succeeded |
 | Inline error | `message.error` | mutation failed |
-| Background task update | `notification` / `upsertNotification` | folder creation, session start (multi-stage) |
+| Background task update | `upsertNotification` | folder creation, session start (multi-stage) |
 
-### 2.1 `message.success` over `message.info` on success
+`modal` also exposes `info` / `success` / `warning`, and every `modal.*` call
+returns a thenable that resolves when the dialog closes.
+
+### 2.1 There is no `notification` on `App.useApp()`
+
+antd's `App` returned `{ message, modal, notification }`; the shim returns
+`{ message, modal }`. Notifications were already isolated behind a jotai store
+before the migration, so they were deliberately left out of the shim's
+contract. Reach for `useSetBAINotification()` (§5) instead — destructuring
+`notification` here gets you `undefined`.
+
+### 2.2 `message.success` over `message.info` on success
 
 If it's an "it worked" confirmation, use `message.success`. `message.info` is
 reserved for neutral advisory.
+
+This still matters even though Astryx's Toast is only two-tone underneath
+(`info` / `error`): `success` and `warning` collapse onto `info` with a leading
+glyph inside the shim. Keep calling the semantically correct one — the
+collapsing is an implementation detail that a future Astryx Toast extension is
+expected to undo.
 
 ## 3. Batch operations: `Promise.allSettled` + `_.groupBy`
 
@@ -204,6 +241,8 @@ operations), push an entry into the global notification store instead of
 spinning a `message`:
 
 ```tsx
+import { useSetBAINotification } from '../hooks/useBAINotification';
+
 const { upsertNotification } = useSetBAINotification();
 
 upsertNotification({

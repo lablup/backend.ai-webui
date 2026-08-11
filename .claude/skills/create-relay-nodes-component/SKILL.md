@@ -1,7 +1,7 @@
 ---
 name: create-relay-nodes-component
 description: |
-  Generate Relay-based Nodes components with BAITable integration following
+  Generate Relay-based Nodes components with BAITableAstryx integration following
   established patterns (BAIUserNodes, SessionNodes, BAISchedulingHistoryNodes, BAIRouteNodes).
   Automatically creates component file with GraphQL fragment, type definitions,
   column configurations, and customization patterns. Minimal user input required -
@@ -16,7 +16,7 @@ allowed-tools: Read, Write, Glob, Grep, AskUserQuestion
 This skill generates reusable Relay-based Nodes components that:
 
 - Follow established patterns from BAISchedulingHistoryNodes, BAIRouteNodes, BAISessionHistorySubStepNodes
-- Integrate seamlessly with BAITable for data display
+- Integrate seamlessly with BAITableAstryx for data display
 - Use Relay fragments for efficient GraphQL data fetching
 - Support column customization via `customizeColumns` pattern
 - Include sorting with `disableSorter` toggle and table features out of the box
@@ -202,10 +202,10 @@ import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 // destination, swap to: `import { useTranslation } from 'react-i18next';`
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
+  BAIAstryxTableProps,
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
-  BAITableProps,
+  BAITableAstryx,
 } from '../Table';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -237,7 +237,7 @@ const isEnableSorter = (key: string) => {
 
 export interface {ComponentName}Props
   extends Omit<
-    BAITableProps<{Entity}InList>,
+    BAIAstryxTableProps<{Entity}InList>,
     'dataSource' | 'columns' | 'onChangeOrder'
   > {
   {fragmentProp}: {ComponentName}Fragment$key;
@@ -308,11 +308,10 @@ const {ComponentName} = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(data)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof available{Entity}SorterValues)[number]) || null,
@@ -439,7 +438,7 @@ Generated components follow the **Relay Fragment Architecture**:
 │   - baseColumns + customizeColumns  │
 │   - disableSorter toggle            │
 │   - onClickXxx callback props       │
-│   - Renders BAITable                │
+│   - Renders BAITableAstryx          │
 └─────────────────────────────────────┘
 ```
 
@@ -493,7 +492,7 @@ customizeColumns={(baseColumns) => {
 1. **Column Keys**
    - Always use **camelCase** keys matching GraphQL field names
    - `convertToOrderBy()` handles conversion to `UPPER_SNAKE_CASE` for Strawberry `OrderBy` inputs
-   - Never use UPPER_SNAKE_CASE in column keys — that breaks `BAITable` order matching
+   - Never use UPPER_SNAKE_CASE in column keys — that breaks `BAITableAstryx` order matching
 
 2. **Fragment Fields**
    - Only request fields you'll actually display

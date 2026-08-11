@@ -6,14 +6,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { theme, Typography } from 'antd';
-import { RcFile } from 'antd/es/upload';
-import {
-  BAIFlex,
-  BAILink,
-  toLocalId,
-  useConnectedBAIClient,
-} from 'backend.ai-ui';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { BAILink, toLocalId, useConnectedBAIClient } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
@@ -22,6 +17,19 @@ import PQueue from 'p-queue';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as tus from 'tus-js-client';
+
+/**
+ * antd/rc-upload `RcFile`, restated locally (MAPPING §6 — a type-only antd
+ * import still keeps the file in the antd import graph, P15). The shape is
+ * verbatim: rc-upload's `interface RcFile extends File { uid: string }` plus
+ * antd's `readonly lastModifiedDate: Date`. Declared structurally so it stays
+ * mutually assignable with BUI's own (still antd-typed) `onUpload` signature
+ * while that side of the frontier catches up.
+ */
+export interface RcFile extends File {
+  uid: string;
+  readonly lastModifiedDate: Date;
+}
 
 type uploadStartFunction = (callbacks?: {
   onProgress?: (
@@ -78,7 +86,6 @@ const FileUploadManager: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification, closeNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
@@ -132,22 +139,19 @@ const FileUploadManager: React.FC = () => {
               onChange: {
                 pending: {
                   description: (
-                    <BAIFlex direction="column" align="start">
-                      <Typography.Text>
+                    <VStack align="start">
+                      <Text>
                         {t('explorer.UploadingFiles')} ( {uploadedFilesCount} /{' '}
                         {totalUploadedFilesCount} )
-                      </Typography.Text>
-                      <Typography.Text
-                        ellipsis
-                        type="secondary"
-                        style={{
-                          fontSize: token.fontSizeSM,
-                          maxWidth: '300px',
-                        }}
+                      </Text>
+                      <Text
+                        maxLines={1}
+                        type="supporting"
+                        style={{ maxWidth: '300px' }}
                       >
                         {fileName}
-                      </Typography.Text>
-                    </BAIFlex>
+                      </Text>
+                    </VStack>
                   ),
                 },
               },

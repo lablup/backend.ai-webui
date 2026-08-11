@@ -81,17 +81,18 @@ async function deactivateKeypair(
   accessKey: string,
 ) {
   const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
-  // Make sure we're on the Active tab
-  await modal
-    .locator('label')
-    .filter({ hasText: /^Active$/ })
-    .click();
+  // Make sure we're on the Active tab. `BAIRadioGroup` (the Active/Inactive
+  // toggle) renders on Astryx `SegmentedControl` since ticket 10 — a real
+  // `<button role="radio">`, not antd's `<label>`-wrapped radio.
+  await modal.getByRole('radio', { name: 'Active', exact: true }).click();
   const row = modal
     .locator('tbody tr:not(.ant-table-measure-row)')
     .filter({ hasText: accessKey });
   await expect(row).toBeVisible();
-  // Click the Deactivate (dangerous) button in that row
-  await row.locator('td').nth(1).locator('button.ant-btn-dangerous').click();
+  // Click the Deactivate button in that row (`IconButton` with
+  // `label={t('credential.Deactivate')}`, `variant="destructive"` —
+  // `MyKeypairManagementModal.tsx`).
+  await row.getByRole('button', { name: 'Deactivate' }).click();
   await expect(
     page.getByText('Are you sure you want to deactivate this keypair?'),
   ).toBeVisible();
@@ -106,13 +107,15 @@ async function deleteInactiveKeypair(
 ) {
   const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
   // Make sure we're on the Inactive tab
-  await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+  await modal.getByRole('radio', { name: 'Inactive' }).click();
   const row = modal
     .locator('tbody tr:not(.ant-table-measure-row)')
     .filter({ hasText: accessKey });
   await expect(row).toBeVisible();
-  // Click the Delete Keypair (dangerous) button in the Controls cell of that row
-  await row.locator('td').nth(1).locator('button.ant-btn-dangerous').click();
+  // Click the Delete Keypair button in the Controls cell of that row
+  // (`IconButton` with `label={t('credential.DeleteKeypair')}` —
+  // `MyKeypairManagementModal.tsx`).
+  await row.getByRole('button', { name: 'Delete Keypair' }).click();
   const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
   await expect(deleteDialog).toBeVisible();
   await deleteDialog
@@ -353,7 +356,7 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
       // Click the Inactive radio button
-      await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+      await modal.getByRole('radio', { name: 'Inactive' }).click();
 
       // Verify the Inactive radio is now checked
       await expect(
@@ -374,16 +377,13 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
 
       // Switch to Inactive
-      await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+      await modal.getByRole('radio', { name: 'Inactive' }).click();
       await expect(
         modal.getByRole('radio', { name: 'Inactive' }),
       ).toBeChecked();
 
       // Switch back to Active
-      await modal
-        .locator('label')
-        .filter({ hasText: /^Active$/ })
-        .click();
+      await modal.getByRole('radio', { name: 'Active', exact: true }).click();
       await expect(
         modal.getByRole('radio', { name: 'Active', exact: true }),
       ).toBeChecked();
@@ -528,18 +528,20 @@ test.describe(
           .filter({ hasText: createdAccessKey });
         await expect(nonMainRow).toBeVisible({ timeout: 10000 });
 
-        // Click the Set as Main button (first non-dangerous button in Controls cell)
-        await nonMainRow
-          .locator('td')
-          .nth(1)
-          .locator('button:not(.ant-btn-dangerous)')
-          .first()
-          .click();
+        // Click the Set as Main button. `MyKeypairManagementModal.tsx` wraps
+        // it in `BAIPopconfirmAstryx` (built on Astryx `Popover`, ticket 08
+        // gap component); the trigger is an `IconButton` with
+        // `label={t('credential.SetAsMain')}`, so it's addressable by its
+        // accessible name directly (no more "first non-dangerous button in
+        // the cell" positional guess).
+        await nonMainRow.getByRole('button', { name: 'Set as Main' }).click();
 
-        // Verify Popconfirm appears
-        const visiblePopconfirm = page.locator(
-          '.ant-popover:not(.ant-popover-hidden) .ant-popconfirm-buttons',
-        );
+        // Verify Popconfirm appears. `Popover`'s content defaults to
+        // `role="dialog"`, `aria-label={title}` — here "Set as Main"
+        // (`BAIPopconfirmAstryx.tsx`).
+        const visiblePopconfirm = page.getByRole('dialog', {
+          name: 'Set as Main',
+        });
         await expect(visiblePopconfirm).toBeVisible({ timeout: 8000 });
 
         // Click Cancel
@@ -610,11 +612,7 @@ test.describe(
           .locator('tbody tr:not(.ant-table-measure-row)')
           .filter({ hasText: deactivatedAccessKey });
         await expect(newKeypairRow).toBeVisible({ timeout: 10000 });
-        await newKeypairRow
-          .locator('td')
-          .nth(1)
-          .locator('button.ant-btn-dangerous')
-          .click();
+        await newKeypairRow.getByRole('button', { name: 'Deactivate' }).click();
 
         // Verify Popconfirm appears
         await expect(
@@ -665,11 +663,7 @@ test.describe(
         await expect(nonMainRow).toBeVisible({ timeout: 10000 });
 
         // Click Deactivate button in the Controls cell
-        await nonMainRow
-          .locator('td')
-          .nth(1)
-          .locator('button.ant-btn-dangerous')
-          .click();
+        await nonMainRow.getByRole('button', { name: 'Deactivate' }).click();
         await expect(
           page.getByText('Are you sure you want to deactivate this keypair?'),
         ).toBeVisible();
@@ -748,7 +742,7 @@ test.describe(
         await deactivateKeypair(page, restoredAccessKey);
 
         // Switch to Inactive tab
-        await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+        await modal.getByRole('radio', { name: 'Inactive' }).click();
         await expect(
           modal.getByRole('radio', { name: 'Inactive' }),
         ).toBeChecked();
@@ -772,21 +766,12 @@ test.describe(
         await expect(targetRow).toBeVisible();
 
         await expect(async () => {
-          // Use aria-label from Tooltip to find the Restore button
-          const restoreBtn = targetRow
-            .getByRole('button', { name: /undo/i })
-            .first();
-          if ((await restoreBtn.count()) > 0) {
-            await restoreBtn.click({ timeout: 3000 });
-          } else {
-            // Fallback: click the first non-dangerous button
-            await targetRow
-              .locator('td')
-              .nth(1)
-              .locator('button:not(.ant-btn-dangerous)')
-              .first()
-              .click({ timeout: 3000 });
-          }
+          // `MyKeypairManagementModal.tsx` wraps this in `BAIPopconfirmAstryx`;
+          // the trigger is an `IconButton` with `label={t('credential.Restore')}`
+          // = "Restore" (not antd's icon-derived "undo" aria-label).
+          await targetRow
+            .getByRole('button', { name: 'Restore' })
+            .click({ timeout: 3000 });
           await expect(page.getByText(/restore this keypair/i)).toBeVisible({
             timeout: 3000,
           });
@@ -803,10 +788,7 @@ test.describe(
         ).toBeHidden({ timeout: 10000 });
 
         // Switch to Active tab and verify keypair is restored
-        await modal
-          .locator('label')
-          .filter({ hasText: /^Active$/ })
-          .click();
+        await modal.getByRole('radio', { name: 'Active', exact: true }).click();
         await expect(
           modal.getByRole('radio', { name: 'Active', exact: true }),
         ).toBeChecked();
@@ -842,7 +824,7 @@ test.describe(
         await deactivateKeypair(page, createdAccessKey);
 
         // Switch to Inactive tab
-        await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+        await modal.getByRole('radio', { name: 'Inactive' }).click();
         await expect(
           modal.getByRole('radio', { name: 'Inactive' }),
         ).toBeChecked();
@@ -853,20 +835,10 @@ test.describe(
           .filter({ hasText: createdAccessKey });
         await expect(targetRow).toBeVisible({ timeout: 10000 });
 
-        // Click the Restore button in the Controls cell
-        const restoreBtn = targetRow
-          .getByRole('button', { name: /undo/i })
-          .first();
-        if ((await restoreBtn.count()) > 0) {
-          await restoreBtn.click();
-        } else {
-          await targetRow
-            .locator('td')
-            .nth(1)
-            .locator('button:not(.ant-btn-dangerous)')
-            .first()
-            .click();
-        }
+        // Click the Restore button in the Controls cell (`IconButton` with
+        // `label={t('credential.Restore')}` = "Restore" — see the earlier
+        // "User can restore a deactivated keypair" test).
+        await targetRow.getByRole('button', { name: 'Restore' }).click();
 
         // Wait for Popconfirm and click Cancel
         await expect(page.getByText(/restore this keypair/i)).toBeVisible({
@@ -915,7 +887,7 @@ test.describe(
       await deactivateKeypair(page, deleteTargetKey);
 
       // Switch to Inactive tab
-      await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+      await modal.getByRole('radio', { name: 'Inactive' }).click();
       await expect(
         modal.getByRole('radio', { name: 'Inactive' }),
       ).toBeChecked();
@@ -929,11 +901,7 @@ test.describe(
         .locator('tbody tr:not(.ant-table-measure-row)')
         .filter({ hasText: deleteTargetKey });
       await expect(targetRow).toBeVisible();
-      await targetRow
-        .locator('td')
-        .nth(1)
-        .locator('button.ant-btn-dangerous')
-        .click();
+      await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
 
       // Verify the Delete Keypair confirmation dialog appears
       const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
@@ -981,7 +949,7 @@ test.describe(
         // Switch to Inactive tab. The table's data source updates via a
         // deferred transition, so immediately after switching it can still
         // show the previous (Active) tab's rows — and a stale Active row
-        // (which also has an `.ant-btn-dangerous` Deactivate button) could
+        // (which also has a destructive-styled Deactivate button) could
         // be mistaken for a seeded inactive keypair. Synchronize on the
         // actual Inactive query (`myKeypairs` with `isActive: false`)
         // completing instead of polling row counts, so a slow request
@@ -993,7 +961,7 @@ test.describe(
             postData.includes('"isActive":false')
           );
         });
-        await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+        await modal.getByRole('radio', { name: 'Inactive' }).click();
         await expect(
           modal.getByRole('radio', { name: 'Inactive' }),
         ).toBeChecked();
@@ -1003,11 +971,11 @@ test.describe(
         // previous (Active) dataset until the Inactive query result commits,
         // so right after the click the rows in the DOM can still be genuine
         // (non-placeholder, non-measure-row) Active `<tr>`s — and those carry
-        // an `.ant-btn-dangerous` button (Deactivate/disabled-Ban) too, so a
+        // a destructive-styled button (Deactivate/disabled-Ban) too, so a
         // bare row-count check can be fooled into treating one as a seeded
         // inactive keypair. The Controls cell follows the *rendered dataset*
         // (it is keyed off the deferred filter in MyKeypairManagementModal),
-        // so the Restore (undo) icon only ever appears on genuinely-committed
+        // so the "Restore" button only ever appears on genuinely-committed
         // Inactive rows — which makes it a reliable settle signal. Poll until
         // the table reaches a stable Inactive state: either genuinely empty,
         // or its first row is an actual Inactive row. The row count is
@@ -1054,7 +1022,7 @@ test.describe(
         try {
           await expect(async () => {
             await firstControlsCell
-              .locator('button.ant-btn-dangerous')
+              .getByRole('button', { name: 'Delete Keypair' })
               .click({ timeout: 3000 });
             await expect(deleteDialog).toBeVisible({ timeout: 5000 });
           }).toPass({ timeout: 30000 });
@@ -1092,18 +1060,14 @@ test.describe(
       await deactivateKeypair(page, cancelTestKey);
 
       // Switch to Inactive tab
-      await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+      await modal.getByRole('radio', { name: 'Inactive' }).click();
 
       // Find the target row and click Delete Keypair
       const targetRow = modal
         .locator('tbody tr:not(.ant-table-measure-row)')
         .filter({ hasText: cancelTestKey });
       await expect(targetRow).toBeVisible();
-      await targetRow
-        .locator('td')
-        .nth(1)
-        .locator('button.ant-btn-dangerous')
-        .click();
+      await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
 
       const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
       await expect(deleteDialog).toBeVisible();
@@ -1125,11 +1089,7 @@ test.describe(
       ).toBeVisible({ timeout: 5000 });
 
       // Cleanup: delete the test keypair
-      await targetRow
-        .locator('td')
-        .nth(1)
-        .locator('button.ant-btn-dangerous')
-        .click();
+      await targetRow.getByRole('button', { name: 'Delete Keypair' }).click();
       await expect(deleteDialog).toBeVisible();
       await deleteDialog
         .getByRole('textbox', { name: 'Please type "Permanently' })

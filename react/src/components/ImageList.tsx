@@ -7,38 +7,45 @@ import {
   ImageListQuery$data,
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
+import { App } from '../app-shim';
 import { getImageFullName } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import BAISelectionLabel from './astryx-bui/BAISelectionLabel';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  AppstoreOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  VerticalAlignBottomOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Button, Tag, theme, Tooltip, Typography } from 'antd';
-import type { ColumnType } from 'antd/es/table';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
   BAIFlex,
   BAIPropertyFilter,
-  BAISelectionLabel,
-  BAITable,
   BAIResourceNumberWithIcon,
-  useFetchKey,
+  BAITableAstryx,
   INITIAL_FETCH_KEY,
+  badgeVariantForTagColor,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  type BAIColumnType,
+  useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import {
+  LayoutGrid,
+  RotateCw,
+  Settings,
+  ArrowDownToLine,
+  SquarePenIcon,
+} from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Key, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -173,29 +180,43 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     image_nodes?.edges?.map((edge) => edge?.node) ?? [],
   );
 
-  const columns: Array<ColumnType<EnvironmentImage>> = filterOutEmpty([
+  const columns: Array<BAIColumnType<EnvironmentImage>> = filterOutEmpty([
     {
       title: t('environment.Status'),
       dataIndex: 'installed',
       key: 'installed',
+      // antd `Tag color="gold"` -> Astryx Badge via the repo-global Tag
+      // lookup (ticket 13 policy): gold -> yellow.
       render: (_text, row) =>
         row?.id && installingImages.includes(row.id) ? (
-          <Tag color="gold">{t('environment.Installing')}</Tag>
+          <Badge
+            variant={badgeVariantForTagColor('gold')}
+            label={t('environment.Installing')}
+          />
         ) : row?.installed ? (
-          <Tag color="gold">{t('environment.Installed')}</Tag>
+          <Badge
+            variant={badgeVariantForTagColor('gold')}
+            label={t('environment.Installed')}
+          />
         ) : null,
     },
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
-      render: (row) => (
-        <Typography.Text
-          copyable={{
-            text: getImageFullName(row) || '',
-          }}
-        >
+      // The record arrives as `render`'s SECOND argument — this column is
+      // computed and has no `dataIndex`, so the first argument (the cell
+      // value) is `undefined`. Reading the row off the first argument is an
+      // rc-table quirk that `BAITableAstryx` does not reproduce; taking it
+      // from the second is the Astryx/antd `(value, record, index)` contract.
+      render: (_value, row) => (
+        // `maxLines={1}` for the same reason as the Digest column below:
+        // Astryx's table cell is `white-space: nowrap; overflow: hidden`, so an
+        // untruncated path is CLIPPED rather than wrapped as it was under antd.
+        // One line plus Astryx's built-in truncation tooltip keeps the whole
+        // value reachable and keeps the copy control inside the cell.
+        <BAICopyableText maxLines={1} copyLabel={t('sourceCodeViewer.Copy')}>
           {getImageFullName(row) || ''}
-        </Typography.Text>
+        </BAICopyableText>
       ),
       // Computed (`getImageFullName`) — not orderable on the server.
       width: token.screenXS,
@@ -243,9 +264,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       dataIndex: 'digest',
       key: 'digest',
       render: (_text, row) => (
-        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
-          {row.digest}
-        </Typography.Text>
+        // antd `Text ellipsis={{tooltip}} maxWidth 200` -> Astryx Text
+        // maxLines (truncate tooltip built in); width lives on the BAIFlex
+        // wrapper because Astryx Text has no style/width prop.
+        <BAIFlex style={{ maxWidth: 200 }} align="stretch">
+          <Text maxLines={1}>{row.digest ?? ''}</Text>
+        </BAIFlex>
       ),
     },
     {
@@ -281,26 +305,35 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             e.stopPropagation();
           }}
         >
-          <Button
-            type="text"
-            icon={
-              <SquarePenIcon
-                style={{
-                  color: token.colorInfo,
-                }}
-              />
-            }
+          {/* PILOT-DECISION: antd text Buttons with token.colorInfo-tinted
+              icons -> Astryx ghost IconButtons. IconButton's variant enum is
+              closed, so the info-blue icon tint is dropped (P5/P11);
+              accessible labels reuse the modal titles they open (P8).
+              QA-FINDINGS Q-37 — SUPERSEDED for the colour half. The report
+              "/admin/environment 페이지의 control 버튼 색상이 default 입니다"
+              is precisely this drop: measured rgb(20,20,20) light /
+              rgb(255,255,255) dark against antd's `colorInfo` #028DF2/#0387BF.
+              The closed enum still has no colour slot, but `className` does:
+              `--color-text-accent` on this route resolves through
+              `AstryxAdminTheme` to #028DF2/#0387bf, i.e. `colorInfo` exactly,
+              so the class restores the tint without a per-route read. The
+              `type="text"` hover wash (`colorBgTextHover` rgba(0,0,0,0.06)) is
+              already what Astryx's ghost `:hover` paints, so it is untouched.
+              See `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            icon={<SquarePenIcon />}
+            label={t('environment.ModifyMinimumImageResourceLimit')}
+            tooltip={t('environment.ModifyMinimumImageResourceLimit')}
             onClick={() => setManagingResourceLimit(row)}
           />
-          <Button
-            type="text"
-            icon={
-              <AppstoreOutlined
-                style={{
-                  color: token.colorInfo,
-                }}
-              />
-            }
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            icon={<LayoutGrid size="1em" />}
+            label={t('environment.ManageApps')}
+            tooltip={t('environment.ManageApps')}
             onClick={() => {
               setManagingApp(row);
             }}
@@ -416,20 +449,24 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 onClearSelection={() => setSelectedRows([])}
               />
             ) : null}
-            <Tooltip title={t('button.Refresh')}>
-              <Button
-                icon={<ReloadOutlined />}
-                loading={isPendingRefreshTransition}
-                onClick={() => {
-                  setSelectedRows([]);
-                  startRefreshTransition(() => updateFetchKey());
-                }}
-              />
-            </Tooltip>
-
+            <IconButton
+              label={t('button.Refresh')}
+              tooltip={t('button.Refresh')}
+              icon={<RotateCw size="1em" />}
+              isLoading={isPendingRefreshTransition}
+              onClick={() => {
+                setSelectedRows([]);
+                startRefreshTransition(() => updateFetchKey());
+              }}
+            />
+            {/* PILOT-DECISION: the hand-painted primary button
+                (style backgroundColor token.colorPrimary) becomes Astryx
+                `Button variant="primary"` — the brand accent comes from the
+                theme layer, not an inline style (P5). */}
             <Button
-              icon={<VerticalAlignBottomOutlined />}
-              style={{ backgroundColor: token.colorPrimary, color: 'white' }}
+              variant="primary"
+              icon={<ArrowDownToLine size="1em" />}
+              label={t('environment.InstallImage')}
               onClick={() => {
                 if (selectedRows.length === 0) {
                   message.error(t('environment.NoImagesAreSelected'));
@@ -441,15 +478,12 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 }
                 message.error(t('environment.AlreadyInstalledImage'));
               }}
-            >
-              {t('environment.InstallImage')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
-        <BAITable
+        <BAITableAstryx
           resizable
           rowKey="id"
-          scroll={{ x: 'max-content' }}
           pagination={{
             total: image_nodes?.count ?? undefined,
             ...tablePaginationOption,
@@ -457,9 +491,10 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               setTablePaginationOption({ current: page, pageSize });
             },
             extraContent: (
-              <Button
-                type="text"
-                icon={<SettingOutlined />}
+              <IconButton
+                variant="ghost"
+                icon={<Settings size="1em" />}
+                label={t('table.SettingTable')}
                 onClick={() => {
                   toggleColumnSettingModal();
                 }}
@@ -479,8 +514,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           onChangeOrder={(order) => {
             setQueryParams({
               order: order as
-                | (typeof availableImageSorterValues)[number]
-                | null,
+                (typeof availableImageSorterValues)[number] | null,
             });
             setTablePaginationOption({ current: 1 });
           }}
@@ -503,7 +537,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               }
             },
           })}
-          showSorterTooltip={false}
         />
       </BAIFlex>
       <ManageImageResourceLimitModal

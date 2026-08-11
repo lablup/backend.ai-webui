@@ -9,16 +9,19 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
-import { type TableColumnsType, Tag, theme, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Text } from '@astryxdesign/core/Text';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,
+  BAIColumnsType,
   BAIFlex,
   BAILink,
   BAIPureStorageIcon,
-  BAITable,
+  BAITableAstryx,
   BAIProgressWithLabel,
   BAIDoubleTag,
   BAIUnmountAfterClose,
@@ -31,6 +34,12 @@ import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+// Feeds BAIDoubleTag only, which still renders an antd `<Tag color>`
+// internally (frontier, unconverted — 16 consumers across the app). Legacy
+// antd color-preset strings are kept for that reason; the repo-global
+// `storageBackend` domain lookup (astryxTagVariant.ts, ticket 13) was
+// pre-built for this exact data and becomes the source of truth once
+// BAIDoubleTag itself is rebuilt on Astryx Badge.
 const backendType = {
   xfs: {
     color: 'blue',
@@ -128,7 +137,7 @@ const StorageProxyList = () => {
     },
   );
 
-  const columns: TableColumnsType<StorageVolume> = [
+  const columns: BAIColumnsType<StorageVolume> = [
     {
       title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
@@ -144,7 +153,7 @@ const StorageProxyList = () => {
             >
               {value}
             </BAILink>
-            <Typography.Text type="secondary">{record.path}</Typography.Text>
+            <Text color="secondary">{record.path}</Text>
           </BAIFlex>
         );
       },
@@ -203,7 +212,7 @@ const StorageProxyList = () => {
               strokeColor={color}
               width={120}
             />
-            <Typography.Text style={{ fontSize: token.fontSizeSM }}>
+            <Text size="xsm">
               {usage.used_bytes
                 ? convertToDecimalUnit(usage.used_bytes, baseUnit)?.numberFixed
                 : '-'}
@@ -212,7 +221,7 @@ const StorageProxyList = () => {
                 ? convertToDecimalUnit(usage.capacity_bytes, baseUnit)
                     ?.displayValue
                 : '-'}
-            </Typography.Text>
+            </Text>
           </>
         );
       },
@@ -226,9 +235,7 @@ const StorageProxyList = () => {
         return (
           <BAIFlex gap="xxs" align="start" wrap="wrap">
             {_.map(value, (item) => (
-              <Tag key={item} color="blue">
-                {item}
-              </Tag>
+              <Badge key={item} variant="blue" label={item} />
             ))}
           </BAIFlex>
         );
@@ -269,10 +276,9 @@ const StorageProxyList = () => {
           }}
         />
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         resizable
         size="small"
-        scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={filterOutNullAndUndefined(storage_volume_list?.items)}
         columns={columns}

@@ -2,7 +2,6 @@ import { BAIPullingArtifactRevisionAlertStoriesQuery } from '../../__generated__
 import RelayResolver from '../../tests/RelayResolver';
 import BAIPullingArtifactRevisionAlert from './BAIPullingArtifactRevisionAlert';
 import { Meta, StoryObj } from '@storybook/react-vite';
-import { App } from 'antd';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -62,13 +61,7 @@ const meta: Meta<typeof BAIPullingArtifactRevisionAlert> = {
       description: 'Optional callback after successful cancellation',
     },
   },
-  decorators: [
-    (Story) => (
-      <App>
-        <Story />
-      </App>
-    ),
-  ],
+  decorators: [(Story) => <Story />],
 };
 
 export default meta;

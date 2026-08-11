@@ -3,9 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTokenCount } from '../../hooks/useTokenizer';
+import BAIQuestionIconWithTooltipAstryx from '../astryx-bui/BAIQuestionIconWithTooltipAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
 import { UIMessage } from 'ai';
-import { Typography, Tag, Divider } from 'antd';
-import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { map, last } from 'lodash-es';
 import React, { useEffect, useState } from 'react';
@@ -56,8 +59,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
     lastAssistantMessage?.role === 'assistant'
       ? (
           lastAssistantMessage?.metadata as
-            | { outputTokens?: number }
-            | undefined
+            { outputTokens?: number } | undefined
         )?.outputTokens
       : undefined;
   const lastAssistantTokenCount =
@@ -91,18 +93,22 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
 
   return (
     <BAIFlex justify="end" align="end">
-      <Tag style={{ margin: 0 }}>
-        <span>
-          <Typography.Text>{tokenPerSecond.toFixed(1)}</Typography.Text>{' '}
-          <Typography.Text type="secondary">TPS</Typography.Text>
-        </span>{' '}
-        <Divider orientation="vertical" />
-        <span>
-          <Typography.Text>{totalTokenCount}</Typography.Text>{' '}
-          <Typography.Text type="secondary"> tokens</Typography.Text>
-        </span>
-        <BAIQuestionIconWithTooltip title={t('chatui.TokenCounterTooltip')} />
-      </Tag>
+      <Badge
+        variant="neutral"
+        style={{ margin: 0 }}
+        label={
+          <BAIFlex gap="xxs" align="center">
+            <Text>{tokenPerSecond.toFixed(1)}</Text>
+            <Text color="secondary">TPS</Text>
+            <Divider orientation="vertical" />
+            <Text>{totalTokenCount}</Text>
+            <Text color="secondary">tokens</Text>
+            <BAIQuestionIconWithTooltipAstryx
+              title={t('chatui.TokenCounterTooltip')}
+            />
+          </BAIFlex>
+        }
+      />
     </BAIFlex>
   );
 };

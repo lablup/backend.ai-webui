@@ -2,8 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
-import { Alert, Form, Select, Skeleton } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Selector } from '@astryxdesign/core/Selector';
 import { useUpdatableState, BAIFlex, BAIFetchKeyButton } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useTransition } from 'react';
@@ -40,17 +43,23 @@ const AllocationHistory: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Alert showIcon title={t('statistics.UsageHistoryNote')} type="info" />
+      <Banner status="info" title={t('statistics.UsageHistoryNote')} />
       <BAIFlex gap={'sm'} justify="between">
         <Form.Item
           label={t('statistics.SelectPeriod')}
           style={{ marginBottom: 0 }}
         >
-          <Select
-            popupMatchSelectWidth={false}
+          {/* antd `Select` (2 static options, no form binding) -> Astryx
+              `Selector`. `label` is required and `isLabelHidden` keeps the
+              `Form.Item` label the only one rendered (flip recipe).
+              `popupMatchSelectWidth={false}` has no destination — Astryx sizes
+              its popup to the trigger. */}
+          <Selector
+            label={t('statistics.SelectPeriod')}
+            isLabelHidden
             options={periodOptions}
             value={selectedPeriod}
-            onChange={(value) => setSelectedPeriod(value)}
+            onChange={(value) => setSelectedPeriod(value as Period)}
           />
         </Form.Item>
         <BAIFetchKeyButton
@@ -63,7 +72,7 @@ const AllocationHistory: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         <AllocationHistoryStatistics
           period={selectedPeriod || '1D'}
           fetchKey={usageFetchKey}
