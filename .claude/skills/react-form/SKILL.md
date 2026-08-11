@@ -372,7 +372,7 @@ the slider's props and validate via `rules`.
 
 - **`react-modal-drawer`** — form-in-modal patterns (`BAIUnmountAfterClose`, `onRequestClose`)
 - **`react-async-actions`** — submit button `BAIButton.action`, error resolution, notifications
-- **`react-component-basics`** — file skeleton and prop-interface conventions
+- **`.github/instructions/react.instructions.md`** — file skeleton and prop-interface conventions
 - **`react-layout`** — form footer and field-row layout with `BAIFlex`
 
 ## 10. Verification Checklist
