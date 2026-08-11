@@ -403,7 +403,13 @@ export const WithinForm: Story = {
             />
           </Form.Item>
           <BAIFlex direction="column" align="start" gap="sm">
-            <BAIButton type="primary" htmlType="submit">
+            {/* `BAIButton` deliberately does not expose antd's `htmlType`
+                (PILOT-DECISION in `BAIButton.tsx`), and Astryx `Button`
+                defaults its native `type` to `'button'` — so a bare click would
+                never submit. This form already holds an instance, so driving it
+                directly is the engine-native equivalent and keeps the `rules`
+                validation in the loop. */}
+            <BAIButton type="primary" onClick={() => form.submit()}>
               Submit
             </BAIButton>
             {submitted && (

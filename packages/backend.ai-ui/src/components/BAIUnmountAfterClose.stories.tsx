@@ -392,6 +392,7 @@ export const RealWorldExample: Story = {
   render: () => {
     const [open, setOpen] = useState(false);
     const [createdSessions, setCreatedSessions] = useState<string[]>([]);
+    const [form] = Form.useForm();
 
     const handleCreate = (values: { sessionName: string; image: string }) => {
       setCreatedSessions((prev) => [
@@ -415,6 +416,7 @@ export const RealWorldExample: Story = {
             footer={null}
           >
             <Form
+              form={form}
               layout="vertical"
               onFinish={handleCreate}
               initialValues={{
@@ -447,7 +449,13 @@ export const RealWorldExample: Story = {
               </Form.Item>
 
               <Form.Item>
-                <BAIButton type="primary" htmlType="submit" block>
+                {/* `BAIButton` deliberately does not expose antd's `htmlType`
+                    (PILOT-DECISION in `BAIButton.tsx`), and Astryx `Button`
+                    defaults its native `type` to `'button'` — so a bare click
+                    would never submit. Driving the form instance directly is
+                    the engine-native equivalent and keeps validation in the
+                    loop. */}
+                <BAIButton type="primary" block onClick={() => form.submit()}>
                   Create Session
                 </BAIButton>
               </Form.Item>
