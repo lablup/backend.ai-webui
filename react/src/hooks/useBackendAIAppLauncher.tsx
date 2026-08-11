@@ -809,13 +809,23 @@ export const useBackendAIAppLauncher = (
             // Prefer the original rejection payload (manager problem+json with
             // statusCode/error_code/traceback) over the AppLaunchError wrapper
             // stack, which carries no diagnostic information (FR-3478).
+            // `requestParameters` is omitted: it echoes the raw start-service
+            // request body — login_session_token and possibly secret-bearing
+            // app envs/args — which must not appear in the copyable
+            // notification details.
             const original = error?.originalError;
             const extraDescription =
               original instanceof Error
                 ? original.stack
-                : original
-                  ? JSON.stringify(original, null, 2)
-                  : error?.stack || JSON.stringify(error, null, 2);
+                : original && typeof original === 'object'
+                  ? JSON.stringify(
+                      _.omit(original, 'requestParameters'),
+                      null,
+                      2,
+                    )
+                  : original
+                    ? JSON.stringify(original, null, 2)
+                    : error?.stack || JSON.stringify(error, null, 2);
             return {
               description: getErrorMessage(error),
               extraDescription,
