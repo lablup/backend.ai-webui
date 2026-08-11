@@ -8,7 +8,6 @@ import EnvironmentPage from './EnvironmentPage';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -136,9 +135,9 @@ const renderPage = (search: string) => {
   render(
     <MemoryRouter initialEntries={[`/admin/environment${search}`]}>
       <NuqsTestingAdapter searchParams={search} onUrlUpdate={onUrlUpdate}>
-        <App>
+        <>
           <EnvironmentPage />
-        </App>
+        </>
       </NuqsTestingAdapter>
     </MemoryRouter>,
   );

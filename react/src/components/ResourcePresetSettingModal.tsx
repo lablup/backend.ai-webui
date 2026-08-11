@@ -12,7 +12,6 @@ import {
   ResourcePresetSettingModalModifyByIdMutation,
 } from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
-import { ResourcePresetSettingModalResourceGroupQuery } from '../__generated__/ResourcePresetSettingModalResourceGroupQuery.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
@@ -24,60 +23,35 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import {
-  BAIAdminResourceGroupSelect,
   BAIDynamicUnitInputNumber,
   BAIModal,
   BAIModalProps,
+  BAIResourceGroupSelect,
+  BAIResourceGroupSelectProps,
   BAISelect,
-  BAISelectProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Fragment, Suspense, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useMutation,
-} from 'react-relay';
-
-type ResourceGroupSelectProps = Omit<
-  BAISelectProps,
-  'options' | 'labelInValue'
->;
-
-const ResourceGroupSelectContent: React.FC<ResourceGroupSelectProps> = (
-  props,
-) => {
-  'use memo';
-  const queryRef =
-    useLazyLoadQuery<ResourcePresetSettingModalResourceGroupQuery>(
-      graphql`
-        query ResourcePresetSettingModalResourceGroupQuery {
-          ...BAIAdminResourceGroupSelect_resourceGroupsFragment
-        }
-      `,
-      {},
-      { fetchPolicy: 'store-and-network' },
-    );
-  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
-};
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 /**
  * Resource groups a preset may be bound to, listed at ADMIN scope — no project
  * involved. A resource preset has no project dimension in the manager
  * (`resource_presets` has no group column; its only relation is to one
  * `ScalingGroupRow`, and a null `scaling_group_name` means the preset is
- * global), so the options must not be narrowed by any project. Spreading
- * `props` keeps the value/onChange pair `Form.Item` injects into its direct
- * child from being swallowed by the Suspense boundary.
+ * global), so the options must not be narrowed by any project.
+ * `BAIResourceGroupSelect` queries `scaling_groups` unscoped, which is
+ * exactly that list. Spreading `props` keeps the value/onChange pair
+ * `BAIFormItem` injects into its direct child from being swallowed by the
+ * Suspense boundary.
  */
-const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = (props) => {
+const ResourceGroupSelect: React.FC<BAIResourceGroupSelectProps> = (props) => {
   'use memo';
   return (
     <Suspense fallback={<BAISelect {...props} loading disabled />}>
-      <ResourceGroupSelectContent {...props} />
+      <BAIResourceGroupSelect {...props} />
     </Suspense>
   );
 };

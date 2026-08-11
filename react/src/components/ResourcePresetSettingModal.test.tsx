@@ -8,7 +8,6 @@ import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
@@ -103,9 +102,9 @@ const renderModal = () => {
   );
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <App>
+      <>
         <ResourcePresetSettingModal open onRequestClose={vi.fn()} />
-      </App>
+      </>
     </RelayEnvironmentProvider>,
   );
   return { environment };

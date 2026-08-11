@@ -8,7 +8,6 @@ import ImageList from './ImageList';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { Suspense, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
@@ -138,11 +137,11 @@ const renderList = (
   render(
     <RelayEnvironmentProvider environment={environment}>
       <NuqsTestingAdapter searchParams="">
-        <App>
+        <>
           <Suspense fallback={null}>
             <ImageList project={project} onChangeProject={onChangeProject} />
           </Suspense>
-        </App>
+        </>
       </NuqsTestingAdapter>
     </RelayEnvironmentProvider>,
   );
@@ -278,11 +277,11 @@ describe('ImageList project scope contract (ADR-0001, FR-3415)', () => {
     render(
       <RelayEnvironmentProvider environment={environment}>
         <NuqsTestingAdapter searchParams="">
-          <App>
+          <>
             <Suspense fallback={null}>
               <Harness />
             </Suspense>
-          </App>
+          </>
         </NuqsTestingAdapter>
       </RelayEnvironmentProvider>,
     );

@@ -8,7 +8,6 @@ import ImageInstallModal from './ImageInstallModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { useState } from 'react';
 
@@ -299,14 +298,14 @@ const renderModal = (
 ) => {
   const onRequestClose = vi.fn();
   render(
-    <App>
+    <>
       <ImageInstallModal
         open
         selectedRows={images}
         setInstallingImages={setInstallingImages}
         onRequestClose={onRequestClose}
       />
-    </App>,
+    </>,
   );
   return { onRequestClose, setInstallingImages };
 };
@@ -680,7 +679,7 @@ describe('ImageInstallModal exit animation + state reset (FR-3415)', () => {
     const [open, setOpen] = useState(true);
     const [, setInstallingImages] = useState<string[]>([]);
     return (
-      <App>
+      <>
         <button
           data-testid="reopen-install-modal"
           type="button"
@@ -696,7 +695,7 @@ describe('ImageInstallModal exit animation + state reset (FR-3415)', () => {
             onRequestClose={() => setOpen(false)}
           />
         </BAIUnmountAfterClose>
-      </App>
+      </>
     );
   };
 

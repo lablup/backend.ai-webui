@@ -7,7 +7,6 @@ import type { ImportArtifactRevisionToFolderModalTestQuery } from '../__generate
 import ImportArtifactRevisionToFolderModal from './ImportArtifactRevisionToFolderModal';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -132,11 +131,11 @@ const renderModal = (groups: Array<GroupMock>) => {
   );
   render(
     <RelayEnvironmentProvider environment={environment}>
-      <App>
+      <>
         <Suspense fallback={null}>
           <TestRenderer />
         </Suspense>
-      </App>
+      </>
     </RelayEnvironmentProvider>,
   );
   return { environment };
