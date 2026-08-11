@@ -215,7 +215,13 @@ test.describe(
       // In Ant Design 6, use role-based selector for dialog
       const modal = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modal).toBeVisible();
-      await expect(modal.locator('.ant-form-item').first()).toBeVisible();
+      // Gate on the always-rendered Add button rather than the first app
+      // form-item: an image whose `ai.backend.service-ports` label is absent
+      // legitimately opens the modal with zero apps, and the baseline count
+      // must stay valid in that case.
+      await expect(
+        modal.getByRole('button', { name: 'Add', exact: true }),
+      ).toBeVisible();
       const numberOfAppsBeforeAdd = await modal
         .locator('.ant-form-item')
         .count();
