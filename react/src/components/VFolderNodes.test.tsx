@@ -10,7 +10,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { App } from 'antd';
 import * as _ from 'lodash-es';
 import { Suspense } from 'react';
 import {
@@ -250,11 +249,11 @@ const renderTable = (noDeployTooltip?: string) => {
     <MemoryRouter>
       <RelayEnvironmentProvider environment={environment}>
         <QueryClientProvider client={queryClient}>
-          <App>
+          <>
             <Suspense fallback={null}>
               <TestRenderer noDeployTooltip={noDeployTooltip} />
             </Suspense>
-          </App>
+          </>
         </QueryClientProvider>
       </RelayEnvironmentProvider>
     </MemoryRouter>,
