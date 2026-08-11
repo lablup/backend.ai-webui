@@ -8,9 +8,10 @@
 // Hybrid mock spec, same convention as add-revision-command-shell.spec.ts:
 // a real login + real navigation to the wizard's create page render the
 // actual form, while the page-internal GraphQL operations (runtime variant
-// list, resource slot types, image select, create mutation) are stubbed by
-// operation name so the wizard's `readsVfolderConfigFiles` branching and the
-// outgoing mutation payload are both under deterministic test control.
+// list + selected-variant point lookup, resource slot types, image select,
+// create mutation) are stubbed by operation name so the wizard's
+// `readsVfolderConfigFiles` branching and the outgoing mutation payload are
+// both under deterministic test control.
 //
 // Behaviors asserted:
 //   1. Service Configuration is shown for the (mocked) `custom` variant, with
@@ -36,9 +37,15 @@ import {
   adminPresetImageSelectMocks,
   adminPresetResourceSlotTypesMock,
   adminPresetRuntimeVariantsMock,
-  MOCK_IMAGE_CANONICAL_NAME,
+  adminPresetSelectedRuntimeVariantMock,
+  MOCK_IMAGE_OPTION_LABEL,
 } from './mocking/admin-preset-mock';
-import { test, expect, type Locator, type Page } from '@playwright/test';
+import {
+  test,
+  expect,
+  type APIRequestContext,
+  type Page,
+} from '@playwright/test';
 
 type Capture = { input: any };
 
@@ -84,33 +91,34 @@ async function installPresetFlagOverride(page: Page): Promise<void> {
 }
 
 /**
- * Select an option in a virtualized `BAISelect`-backed field, given the
- * search `<input>` itself as a `Locator` (rather than a CSS id string like
- * `deployment-fixtures.ts`'s `selectRevisionModalOption` expects). Needed
- * because `AdminDeploymentPresetSettingPageContent.tsx`'s `ImageSelectField`
- * wrapper only destructures `value`/`onChange` from its props, so it never
- * forwards the `id` Form.Item auto-injects — `#imageId` does not exist in the
- * DOM, and the visible "Select Image" text is a sibling placeholder node, not
- * the input's `placeholder` attribute. Same virtualized-option-row-has-zero-
- * width workaround (ArrowDown + Enter, not a direct option click).
+ * Select an option in a `BAIComplexSelect`-backed field (here: the Image
+ * select, `BAIAdminImageSelectAstryx`). The Astryx ComplexSelector's field
+ * trigger is a plain `<button>` whose accessible name is the field label
+ * (`aria-haspopup="dialog"`, NOT a combobox); its popup is a `role="dialog"`
+ * (aria-labelled with the same field label) hosting a search `TextInput` with
+ * `role="combobox"` named "Search" and a `role="listbox"` of plain, clickable
+ * `role="option"` rows — so the option is clicked directly.
  */
-async function selectByLocator(
+async function selectComplexSelectOption(
   page: Page,
-  input: Locator,
-  optionName: string,
+  fieldLabel: string,
+  optionLabel: string,
 ): Promise<void> {
-  await input.click();
-  await input.fill(optionName);
-  const dropdown = page
-    .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-    .first();
-  await expect(dropdown).toBeVisible({ timeout: 10000 });
+  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
+  await expect(popup).toBeVisible({ timeout: 10000 });
+  // Narrow the (server-side) search to the wanted option, then click it.
+  await popup
+    .getByRole('combobox', { name: 'Search', exact: true })
+    .fill(optionLabel);
+  const option = popup.getByRole('option', { name: optionLabel, exact: true });
+  await expect(option).toBeVisible({ timeout: 15000 });
+  await option.click();
+  await expect(popup).toBeHidden({ timeout: 5000 });
+  // The trigger renders the selected label once the selection committed.
   await expect(
-    dropdown.getByRole('option', { name: optionName }).first(),
-  ).toBeAttached({ timeout: 15000 });
-  await input.press('ArrowDown');
-  await input.press('Enter');
-  await expect(dropdown).toBeHidden({ timeout: 5000 });
+    page.getByRole('button', { name: fieldLabel, exact: true }),
+  ).toContainText(optionLabel, { timeout: 10000 });
 }
 
 /**
@@ -124,7 +132,7 @@ async function selectByLocator(
  */
 async function setupPresetCreatePage(
   page: Page,
-  request: any,
+  request: APIRequestContext,
 ): Promise<{ capture: Capture }> {
   const capture: Capture = { input: null };
   await installPresetFlagOverride(page);
@@ -132,6 +140,8 @@ async function setupPresetCreatePage(
   await setupGraphQLMocks(page, {
     AdminDeploymentPresetSettingPageRuntimeVariantsQuery:
       adminPresetRuntimeVariantsMock(),
+    AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery:
+      adminPresetSelectedRuntimeVariantMock(),
     AdminDeploymentPresetSettingPageResourceSlotTypesQuery:
       adminPresetResourceSlotTypesMock(),
     ...adminPresetImageSelectMocks(),
@@ -140,36 +150,43 @@ async function setupPresetCreatePage(
   });
 
   await navigateTo(page, 'admin/deployments/deployment-presets/new');
-  await expect(page.locator('#name')).toBeVisible({ timeout: 15000 });
+  const nameInput = page.getByRole('textbox', { name: 'Name', exact: true });
+  await expect(nameInput).toBeVisible({ timeout: 15000 });
 
-  await page.locator('#name').fill(`e2e-fr3474-preset-${Date.now()}`);
+  await nameInput.fill(`e2e-fr3474-preset-${Date.now()}`);
 
-  // The dropdown option row renders with a computed width of 0 (same idiom
-  // as `selectRevisionModalOption`'s documented antd quirk), so a direct
-  // `.click()` times out waiting for visibility — use keyboard navigation
-  // instead. Only one option exists (the mock resolves exactly one variant).
-  await page.locator('#runtimeVariantId').click();
-  await expect(
-    page.getByRole('option', { name: 'custom', exact: true }),
-  ).toBeAttached({ timeout: 10000 });
-  await page.locator('#runtimeVariantId').press('ArrowDown');
-  await page.locator('#runtimeVariantId').press('Enter');
+  // The Runtime field is an Astryx Selector: its trigger is a plain <button>
+  // named by the field label, and the popup hosts plain, clickable
+  // `role="option"` rows. Only one option exists (the mock resolves exactly
+  // one variant).
+  await page.getByRole('button', { name: 'Runtime', exact: true }).click();
+  const customOption = page.getByRole('option', {
+    name: 'custom',
+    exact: true,
+  });
+  await expect(customOption).toBeVisible({ timeout: 10000 });
+  await customOption.click();
 
   // Service Configuration only renders once the variant resolves as
   // config-reading; wait for it before touching cpu/mem/image so field order
-  // doesn't race the Select's async re-render.
+  // doesn't race the selection's async re-render.
   await expect(
     page.getByText('Service Configuration', { exact: true }),
   ).toBeVisible({ timeout: 10000 });
 
-  await page.locator('#cpu').fill('4');
-  await page.locator('#mem').fill('16');
-  const imageInput = page
-    .locator('.ant-form-item', {
-      has: page.getByText('Image', { exact: true }),
-    })
-    .getByRole('combobox');
-  await selectByLocator(page, imageInput, MOCK_IMAGE_CANONICAL_NAME);
+  // The fixed cpu/mem quantity inputs live in the Resources card. The CPU
+  // input is named by the slot type's displayName ("CPU"); the mem input is a
+  // BAIDynamicUnitInputNumber, which (with no label/placeholder of its own)
+  // falls back to BUI's generic "Select" accessible name — scope both to the
+  // card to keep the queries unambiguous.
+  const resourcesCard = page.locator('#preset-form-card-resources');
+  await resourcesCard
+    .getByRole('spinbutton', { name: 'CPU', exact: true })
+    .fill('4');
+  await resourcesCard
+    .getByRole('spinbutton', { name: 'Select', exact: true })
+    .fill('16');
+  await selectComplexSelectOption(page, 'Image', MOCK_IMAGE_OPTION_LABEL);
 
   return { capture };
 }
@@ -187,12 +204,13 @@ test.describe(
       await setupPresetCreatePage(page, request);
 
       // 1. Start Command and Port are present but optional — same as the
-      //    Add-Revision modal (BA-6613).
+      //    Add-Revision modal (BA-6613). The command control is labeled
+      //    "Command" in the default Shell mode.
       await expect(
-        page.locator('#modelDefinition_models_0_service_startCommand'),
+        page.getByRole('textbox', { name: 'Command', exact: true }),
       ).toBeVisible();
       await expect(
-        page.locator('#modelDefinition_models_0_service_port'),
+        page.getByRole('spinbutton', { name: 'Port', exact: true }),
       ).toBeVisible();
 
       // 2. No Basic/Advanced toggle: Execution radios + Shell input are
@@ -205,16 +223,17 @@ test.describe(
       await expect(
         page.getByRole('radio', { name: 'Exec', exact: true }),
       ).toBeVisible();
-      const shellInputPrefill = page.locator(
-        '#modelDefinition_models_0_service_shell',
-      );
+      const shellInputPrefill = page.getByRole('textbox', {
+        name: 'Shell',
+        exact: true,
+      });
       await expect(shellInputPrefill).toBeVisible();
       await expect(shellInputPrefill).toHaveValue('/bin/bash');
 
-      // 3. Switch to Exec → Shell input hides, command relabels.
+      // 3. Switch to Exec → Shell input unmounts, command relabels.
       await page.getByRole('radio', { name: 'Exec', exact: true }).click();
       await expect(
-        page.locator('#modelDefinition_models_0_service_shell'),
+        page.getByRole('textbox', { name: 'Shell', exact: true }),
       ).toHaveCount(0);
       await expect(page.getByText('Command (argv)')).toBeVisible();
     });
@@ -227,58 +246,61 @@ test.describe(
 
       // Shell is visible immediately (no Advanced toggle) — override the
       // default shell.
-      const shellInput = page.locator(
-        '#modelDefinition_models_0_service_shell',
-      );
+      const shellInput = page.getByRole('textbox', {
+        name: 'Shell',
+        exact: true,
+      });
       await expect(shellInput).toBeVisible();
       await shellInput.fill('/bin/zsh');
       await shellInput.blur();
 
       const rawCommand = 'python -m server --arg "a b" && echo done';
       await page
-        .locator('#modelDefinition_models_0_service_startCommand')
+        .getByRole('textbox', { name: 'Command', exact: true })
         .fill(rawCommand);
-      await page.locator('#modelDefinition_models_0_service_port').fill('8000');
+      await page
+        .getByRole('spinbutton', { name: 'Port', exact: true })
+        .fill('8000');
 
       // Health Check — enable and fill all 6 required detail fields.
       await page
-        .locator('#modelDefinition_models_0_service_enableHealthCheck')
+        .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
         .check();
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_path')
+        .getByRole('textbox', { name: 'Path', exact: true })
         .fill('/health');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_interval')
+        .getByRole('spinbutton', { name: 'Interval', exact: true })
         .fill('10');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_maxRetries')
+        .getByRole('spinbutton', { name: 'Max Retries', exact: true })
         .fill('5');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_maxWaitTime')
+        .getByRole('spinbutton', { name: 'Max Wait Time', exact: true })
         .fill('15');
       await page
-        .locator(
-          '#modelDefinition_models_0_service_healthCheck_expectedStatusCode',
-        )
+        .getByRole('spinbutton', { name: 'Status Code', exact: true })
         .fill('200');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_initialDelay')
+        .getByRole('spinbutton', { name: 'Startup Grace Period', exact: true })
         .fill('3');
 
       // Pre-Start Actions — add one row.
       await page.getByRole('button', { name: 'Add Pre-Start Action' }).click();
       await page
-        .locator('#modelDefinition_models_0_service_preStartActions_0_action')
+        .getByRole('textbox', { name: 'Action', exact: true })
         .fill('warm_cache');
       await page
-        .locator('#modelDefinition_models_0_service_preStartActions_0_args')
+        .getByRole('textbox', { name: 'Args (JSON)', exact: true })
         .fill('{"size": 128}');
 
       // Deployment Defaults — replicaCount is required with no default.
-      await page.locator('#replicaCount').fill('1');
+      await page
+        .getByRole('spinbutton', { name: 'Replica Count', exact: true })
+        .fill('1');
 
       // Skip Step 2 (all optional) straight to Review, then submit.
-      await page.getByText('Skip to Review', { exact: true }).click();
+      await page.getByRole('button', { name: 'Skip to Review' }).click();
       await page.getByRole('button', { name: 'Create', exact: true }).click();
 
       await expect.poll(() => capture.input, { timeout: 15000 }).not.toBeNull();
@@ -313,31 +335,31 @@ test.describe(
       // related blank submits `modelDefinition: null` instead, which is a
       // different (also correct) case this test isn't about.
       await page
-        .locator('#modelDefinition_models_0_service_enableHealthCheck')
+        .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
         .check();
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_path')
+        .getByRole('textbox', { name: 'Path', exact: true })
         .fill('/health');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_interval')
+        .getByRole('spinbutton', { name: 'Interval', exact: true })
         .fill('10');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_maxRetries')
+        .getByRole('spinbutton', { name: 'Max Retries', exact: true })
         .fill('5');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_maxWaitTime')
+        .getByRole('spinbutton', { name: 'Max Wait Time', exact: true })
         .fill('15');
       await page
-        .locator(
-          '#modelDefinition_models_0_service_healthCheck_expectedStatusCode',
-        )
+        .getByRole('spinbutton', { name: 'Status Code', exact: true })
         .fill('200');
       await page
-        .locator('#modelDefinition_models_0_service_healthCheck_initialDelay')
+        .getByRole('spinbutton', { name: 'Startup Grace Period', exact: true })
         .fill('3');
 
-      await page.locator('#replicaCount').fill('1');
-      await page.getByText('Skip to Review', { exact: true }).click();
+      await page
+        .getByRole('spinbutton', { name: 'Replica Count', exact: true })
+        .fill('1');
+      await page.getByRole('button', { name: 'Skip to Review' }).click();
       await page.getByRole('button', { name: 'Create', exact: true }).click();
 
       await expect.poll(() => capture.input, { timeout: 15000 }).not.toBeNull();

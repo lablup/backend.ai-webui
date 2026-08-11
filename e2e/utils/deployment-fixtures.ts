@@ -316,12 +316,21 @@ async function uploadDeploymentFixtureFiles(
   };
 
   const modal = await openExplorer();
-  const uploadButton = await modal.getUploadButton();
-  await uploadButton.click();
+  // The Astryx file explorer's upload affordance is a DropdownMenu: a trigger
+  // button labeled "Upload" that opens a menu with "Upload Files" /
+  // "Upload Folder" items (role="menuitem"). Scope the trigger to the
+  // explorer dialog (identified by the folder-name heading) so background
+  // page content can never shadow it.
+  const explorerDialog = page
+    .getByRole('dialog')
+    .filter({ hasText: folderName });
+  await explorerDialog
+    .getByRole('button', { name: 'Upload', exact: true })
+    .click();
 
   const [fileChooser] = await Promise.all([
     page.waitForEvent('filechooser'),
-    page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+    page.getByRole('menuitem', { name: 'Upload Files' }).click(),
   ]);
   // `options.yamlContent` swaps in a caller-provided model-definition.yaml
   // body (e.g. a partial fixture defining only `start_command`, to exercise
@@ -390,11 +399,11 @@ async function uploadDeploymentFixtureFiles(
  *  - The preset's name must resolve to exactly one preset under the Add
  *    Revision modal's server-side "contains" search — i.e. no OTHER preset
  *    name contains it as a substring AND no other preset shares the exact
- *    same name. {@link selectRevisionModalOption}'s settle gate keys on the
- *    "Total 1 items" footer, so a name matching two or more presets (common:
+ *    same name. {@link selectRevisionModalOption} clicks the option row
+ *    matched by name, so a name matching two or more presets (common:
  *    Backend.AI clusters carry same-named presets, one per runtime variant)
- *    would hang the search. Both conditions collapse to a single count check
- *    (see the filter below).
+ *    could select the wrong row. Both conditions collapse to a single count
+ *    check (see the filter below).
  *
  * The match is deterministic: candidates are ordered by rank then name, so
  * repeated runs against the same cluster always pick the same preset.
@@ -435,7 +444,7 @@ async function findCompatiblePreset(
         ) &&
         // The name must resolve to EXACTLY ONE preset under the modal's
         // server-side "contains" search, or selectRevisionModalOption's
-        // "Total 1 items" settle gate never fires. Counting the names that
+        // click-by-name could land on the wrong row. Counting the names that
         // contain p.name catches both failure modes at once: a longer name
         // that has p.name as a substring, AND another preset sharing p.name
         // verbatim (Backend.AI clusters routinely carry same-named presets —
@@ -645,58 +654,44 @@ export async function cleanupDeploymentFixtures(
 }
 
 /**
- * Searches an Add Revision modal combobox (`#revisionPresetId` /
- * `#modelFolderId`) and selects `optionName` — which must be unique on the
- * cluster, as every provisioned `e2e-dfx-*` name is — via keyboard.
+ * Searches an Add Revision modal select (field label "Preset" /
+ * "Model Folder") and selects `optionName` — which must be unique on the
+ * cluster, as every provisioned `e2e-dfx-*` name is.
  *
- * Why keyboard, and why the extra gates (all confirmed by live DOM
- * investigation on these two Selects):
- *  - Both Selects search SERVER-side (`filterOption: false` plus a
- *    searchAction-driven refetch in BAIAvailablePresetSelect /
- *    BAIVFolderSelect), so after typing, the option list and its
- *    "Total N items" footer only narrow once the search round-trip lands.
- *    Until then the footer still shows the unfiltered count and Enter can
- *    land on a stale highlighted row — or on nothing at all (observed live
- *    as a missing `.ant-select-selection-item` after the dropdown closed).
- *    Because the searched name is unique, the search is settled exactly when
- *    the footer reads "Total 1 items"; only then is Enter trustworthy.
- *  - The virtualized option rows render with a computed width of 0, so both
- *    `.click()` and `.click({ force: true })` fail even though the option is
- *    attached and correctly labeled — ArrowDown + Enter selects the sole
- *    settled result without depending on the row's bounding box. (ArrowDown
- *    is a no-op when the single option is already highlighted, and activates
- *    it when antd did not auto-highlight.)
- *  - The raw `#…` input's value is not where antd renders the selection.
- *    antd v6's single-mode Select renders the selected label inside
- *    `.ant-select-content` (the `.ant-select-selection-item` element of
- *    antd v5 now only exists in multiple mode — confirmed against
- *    @rc-component/select's SingleContent). The closing assertion reads that
- *    container, which proves the intended option (not some other row) was
- *    selected.
+ * Both fields are `BAIComplexSelect`-backed (BAIAvailablePresetSelectAstryx /
+ * BAIVFolderSelectAstryx): the Astryx ComplexSelector's field trigger is a
+ * plain `<button>` whose accessible name is the field label
+ * (`aria-haspopup="dialog"`, NOT a combobox), and its popup is a
+ * `role="dialog"` (aria-labelled with the same field label) hosting a search
+ * `TextInput` with `role="combobox"` named "Search" plus a `role="listbox"`
+ * of plain, clickable `role="option"` rows.
+ *
+ * Both selects search SERVER-side (the search text drives a refetch), so
+ * after typing, the row for `optionName` only exists once the search
+ * round-trip lands — waiting for that row and clicking it by name is the
+ * settle gate AND the selection in one step (a click on the named row cannot
+ * land on a stale neighbor the way blind keyboard-Enter could). The option
+ * name is matched as a substring because the rows carry extra content in
+ * their accessible name (e.g. the folder id in the description slot). The
+ * closing assertion reads the trigger, which renders the selected label once
+ * the selection committed.
  */
 export async function selectRevisionModalOption(
   page: Page,
-  inputSelector: string,
+  fieldLabel: string,
   optionName: string,
 ): Promise<void> {
-  await page.locator(inputSelector).click();
-  await page.locator(inputSelector).fill(optionName);
-  const dropdown = page
-    .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-    .first();
-  await expect(dropdown).toBeVisible({ timeout: 10000 });
-  await expect(dropdown.getByText('Total 1 items')).toBeVisible({
-    timeout: 15000,
-  });
+  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
+  await expect(popup).toBeVisible({ timeout: 10000 });
+  await popup
+    .getByRole('combobox', { name: 'Search', exact: true })
+    .fill(optionName);
+  const option = popup.getByRole('option', { name: optionName }).first();
+  await expect(option).toBeVisible({ timeout: 15000 });
+  await option.click();
+  await expect(popup).toBeHidden({ timeout: 5000 });
   await expect(
-    dropdown.getByRole('option', { name: optionName }).first(),
-  ).toBeAttached({ timeout: 15000 });
-  await page.locator(inputSelector).press('ArrowDown');
-  await page.locator(inputSelector).press('Enter');
-  await expect(dropdown).toBeHidden({ timeout: 5000 });
-  await expect(
-    page
-      .locator('.ant-select', { has: page.locator(inputSelector) })
-      .locator('.ant-select-content'),
+    page.getByRole('button', { name: fieldLabel, exact: true }),
   ).toContainText(optionName, { timeout: 5000 });
 }

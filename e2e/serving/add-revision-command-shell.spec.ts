@@ -48,7 +48,13 @@ import {
   runtimeVariantSelectMocks,
   variantDefaultModelDefinitionMock,
 } from './mocking/add-revision-mock';
-import { test, expect, type Locator, type Page } from '@playwright/test';
+import {
+  test,
+  expect,
+  type APIRequestContext,
+  type Locator,
+  type Page,
+} from '@playwright/test';
 
 // Records the outgoing addModelRevision `input` for payload assertions.
 type Capture = { input: any };
@@ -70,7 +76,7 @@ type Capture = { input: any };
  */
 async function setupCommandScenario(
   page: Page,
-  request: any,
+  request: APIRequestContext,
   deploymentName: string,
   options: { withModelFolder?: boolean } = {},
 ): Promise<{ modal: Locator; capture: Capture; folderName?: string }> {
@@ -132,14 +138,16 @@ test.describe(
       try {
         const { modal } = await setupCommandScenario(page, request, name);
 
-        // 1. Service Configuration section + the Start Command input are shown
-        //    for the custom (config-reading) variant. Assert on the command
-        //    input (`#startCommand`), not the label text whose <label> also
-        //    wraps a tooltip icon.
+        // 1. Service Configuration section + the command input are shown for
+        //    the custom (config-reading) variant. Assert on the labeled
+        //    command control ("Command" in Shell mode) rather than the
+        //    Form.Item label text, whose <label> also wraps a tooltip icon.
         await expect(
           modal.getByText('Service Configuration', { exact: true }),
         ).toBeVisible();
-        await expect(modal.locator('#startCommand').first()).toBeVisible();
+        await expect(
+          modal.getByRole('textbox', { name: 'Command', exact: true }),
+        ).toBeVisible();
 
         // 2. No Basic/Advanced toggle: the Execution radios (Shell/Exec) and
         //    the Shell input are visible immediately, pre-filled with the
@@ -150,14 +158,19 @@ test.describe(
         await expect(
           modal.getByRole('radio', { name: 'Exec', exact: true }),
         ).toBeVisible();
-        const shellInput = modal.locator('#shell');
+        const shellInput = modal.getByRole('textbox', {
+          name: 'Shell',
+          exact: true,
+        });
         await expect(shellInput).toBeVisible();
         await expect(shellInput).toHaveValue('/bin/bash');
 
         // 2b. Execution defaults to Shell → the command control is a
         //     multi-line TextArea (shell scripts span lines) and the shell
         //     helper (operators allowed) is shown.
-        await expect(modal.locator('textarea#startCommand')).toBeVisible();
+        await expect(
+          modal.getByRole('textbox', { name: 'Command', exact: true }),
+        ).toHaveJSProperty('tagName', 'TEXTAREA');
         await expect(
           modal.getByText(
             'Runs through the shell (e.g. bash -c "..."), so shell operators (; && | $VAR, redirection, etc.) work.',
@@ -165,20 +178,31 @@ test.describe(
           ),
         ).toBeVisible();
 
-        // 3. Switch Execution to Exec → the Shell input is hidden and the
+        // 3. Switch Execution to Exec → the Shell input is unmounted and the
         //    command field is relabeled "Command (argv)". Non-exact text match:
         //    the Form.Item <label> wraps a tooltip icon so its text node is not
         //    exactly "Command (argv)"; the string is distinctive enough that a
         //    substring match is unambiguous.
         await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
-        await expect(modal.locator('#shell')).toHaveCount(0);
+        await expect(
+          modal.getByRole('textbox', { name: 'Shell', exact: true }),
+        ).toHaveCount(0);
         await expect(modal.getByText('Command (argv)')).toBeVisible();
 
-        // 3b. Exec swaps the command control to a single-line Input (argv is one
-        //     token vector, not a script) and switches the helper text to warn
-        //     that shell operators are NOT interpreted.
-        await expect(modal.locator('input#startCommand')).toBeVisible();
-        await expect(modal.locator('textarea#startCommand')).toHaveCount(0);
+        // 3b. Exec swaps the command control to a single-line input (argv is
+        //     one token vector, not a script) — the accessible name flips from
+        //     "Command" to "Command (argv)" and the element from TEXTAREA to
+        //     INPUT — and switches the helper text to warn that shell
+        //     operators are NOT interpreted.
+        const execCommand = modal.getByRole('textbox', {
+          name: 'Command (argv)',
+          exact: true,
+        });
+        await expect(execCommand).toBeVisible();
+        await expect(execCommand).toHaveJSProperty('tagName', 'INPUT');
+        await expect(
+          modal.getByRole('textbox', { name: 'Command', exact: true }),
+        ).toHaveCount(0);
         await expect(
           modal.getByText(
             'Runs directly as arguments, without a shell — operators (; && | $VAR, redirection, etc.) are treated as literal text. Separate arguments with spaces; quote ones containing spaces (e.g. --name "my model").',
@@ -205,7 +229,7 @@ test.describe(
 
         // Leave Start Command empty. Provide the other required fields —
         // selecting the deterministically-provisioned model folder by name.
-        await selectRevisionModalOption(page, '#modelFolderId', folderName!);
+        await selectRevisionModalOption(page, 'Model Folder', folderName!);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
         await disableAutoApply(modal);
 
@@ -256,14 +280,19 @@ test.describe(
         // A command with a quoted argument + a shell operator: it must be sent
         // VERBATIM (no client-side tokenization / re-quoting).
         const rawCommand = 'python -m server --arg "a b" && echo done';
-        await modal.locator('#startCommand').first().fill(rawCommand);
+        await modal
+          .getByRole('textbox', { name: 'Command', exact: true })
+          .fill(rawCommand);
 
         // Leave Execution/Shell untouched — Shell mode + /bin/bash are the
         // form's initial values, no toggle needed to reach them.
-        const shellInput = modal.locator('#shell');
+        const shellInput = modal.getByRole('textbox', {
+          name: 'Shell',
+          exact: true,
+        });
         await expect(shellInput).toHaveValue('/bin/bash');
 
-        await selectRevisionModalOption(page, '#modelFolderId', folderName!);
+        await selectRevisionModalOption(page, 'Model Folder', folderName!);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
         await disableAutoApply(modal);
         await submitAddRevision(modal);
@@ -300,25 +329,27 @@ test.describe(
         folderName = setup.folderName;
         const { modal, capture } = setup;
 
-        // Select the model folder FIRST — before touching the Shell
-        // AutoComplete — so that field's open suggestion dropdown never overlaps
-        // the folder select's option list.
-        await selectRevisionModalOption(page, '#modelFolderId', folderName!);
+        // Select the model folder first, then fill the plain text fields.
+        await selectRevisionModalOption(page, 'Model Folder', folderName!);
 
-        await modal.locator('#startCommand').first().fill('run-server');
+        await modal
+          .getByRole('textbox', { name: 'Command', exact: true })
+          .fill('run-server');
         // Shell mode is the default (visible without a toggle), prefilled
         // with /bin/bash; override it with a non-default shell so the
-        // submitted `shell` is the chosen value. The Shell field is an
-        // AutoComplete text input (`#shell`); filling it sets the form
-        // value directly. Do NOT click a suggestion option — selecting one
-        // clears the combobox's displayed search text.
-        const shellInput = modal.locator('#shell');
+        // submitted `shell` is the chosen value. The Shell field is a plain
+        // Astryx TextInput (the antd AutoComplete suggestion dropdown is gone;
+        // known shells are surfaced in the placeholder instead), so filling it
+        // sets the form value directly.
+        const shellInput = modal.getByRole('textbox', {
+          name: 'Shell',
+          exact: true,
+        });
         await expect(shellInput).toBeVisible();
         await shellInput.fill('/bin/zsh');
         await expect(shellInput).toHaveValue('/bin/zsh');
-        // Blur the AutoComplete so its value commits to the antd Form and its
-        // suggestion dropdown closes before the next interaction (Tab keeps the
-        // modal open, unlike Escape).
+        // Release focus before the next interaction (the value itself commits
+        // on change; Tab/blur keeps the modal open, unlike Escape).
         await shellInput.blur();
 
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
@@ -358,12 +389,14 @@ test.describe(
         folderName = setup.folderName;
         const { modal, capture } = setup;
 
-        await modal.locator('#startCommand').first().fill('run-server');
+        await modal
+          .getByRole('textbox', { name: 'Command', exact: true })
+          .fill('run-server');
         // Exec is visible without a toggle → no shell wrapping (shell
         // submitted as null).
         await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
 
-        await selectRevisionModalOption(page, '#modelFolderId', folderName!);
+        await selectRevisionModalOption(page, 'Model Folder', folderName!);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
         await disableAutoApply(modal);
         await submitAddRevision(modal);
@@ -394,15 +427,22 @@ test.describe(
       try {
         const { modal } = await setupCommandScenario(page, request, name);
 
-        // The field lives inside the collapsed "Advanced Settings" panel and
-        // is not rendered/visible until the panel is expanded.
+        // The field lives inside the collapsed "Advanced Settings" panel.
+        // Astryx Collapsible keeps collapsed content MOUNTED (display:none),
+        // so assert on visibility, not existence.
         await expect(
-          modal.getByLabel('Model Definition File Path'),
-        ).toHaveCount(0);
+          modal.getByRole('textbox', {
+            name: 'Model Definition File Path',
+            exact: true,
+          }),
+        ).not.toBeVisible();
 
-        await modal.getByText('Advanced Settings', { exact: true }).click();
+        await modal.getByRole('button', { name: 'Advanced Settings' }).click();
 
-        const modelDefPath = modal.getByLabel('Model Definition File Path');
+        const modelDefPath = modal.getByRole('textbox', {
+          name: 'Model Definition File Path',
+          exact: true,
+        });
         await expect(modelDefPath).toBeVisible({ timeout: 10000 });
 
         // It is optional (no required marker) and accepts free text.

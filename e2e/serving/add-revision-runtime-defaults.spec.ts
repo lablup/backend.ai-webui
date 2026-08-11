@@ -53,11 +53,16 @@ import {
   runtimeVariantSelectMocks,
   variantDefaultModelDefinitionMock,
 } from './mocking/add-revision-mock';
-import { test, expect, type Page } from '@playwright/test';
+import {
+  test,
+  expect,
+  type APIRequestContext,
+  type Page,
+} from '@playwright/test';
 
 async function loginWithVariantMocks(
   page: Page,
-  request: any,
+  request: APIRequestContext,
   extraMocks: Record<
     string,
     (vars: Record<string, any>) => Record<string, any>
@@ -89,13 +94,16 @@ test.describe(
         const modal = await openAddRevisionAdvanced(page);
         await selectRuntimeVariant(page, modal, 'custom');
 
-        // reads=true → Service Configuration section + the Start Command input
-        // are shown. Assert on the command input (`#startCommand`) rather than
-        // the label text, whose <label> also wraps a tooltip icon.
+        // reads=true → Service Configuration section + the command input are
+        // shown. Assert on the labeled command control ("Command" in the
+        // default Shell mode) rather than the Form.Item label text, whose
+        // <label> also wraps a tooltip icon.
         await expect(
           modal.getByText('Service Configuration', { exact: true }),
         ).toBeVisible();
-        await expect(modal.locator('#startCommand').first()).toBeVisible();
+        await expect(
+          modal.getByRole('textbox', { name: 'Command', exact: true }),
+        ).toBeVisible();
 
         // Runtime-parameter presets are hidden for a config-reading variant.
         await expect(
@@ -141,9 +149,10 @@ test.describe(
         );
 
         // The "default start command will be applied" warning note appears
-        // (rendered as the Runtime select's warning-only validation message).
+        // (rendered as the Runtime select's warning-only validation message,
+        // in the form item's warning explain slot).
         await expect(
-          modal.locator('.ant-form-item-explain-warning').filter({
+          modal.locator('[data-bai-form-item-explain-warning]').filter({
             hasText:
               'The default start command for the selected inference runtime will be applied automatically.',
           }),
@@ -178,9 +187,12 @@ test.describe(
         const modal = await openAddRevisionAdvanced(page);
         await selectRuntimeVariant(page, modal, 'custom');
 
-        // The Start Command input carries the DB default command as its
-        // placeholder (display-only) — NOT as its value.
-        const startCommand = modal.locator('#startCommand').first();
+        // The command input carries the DB default command as its placeholder
+        // (display-only) — NOT as its value.
+        const startCommand = modal.getByRole('textbox', {
+          name: 'Command',
+          exact: true,
+        });
         await expect(startCommand).toHaveAttribute(
           'placeholder',
           MOCK_DB_DEFAULT_COMMAND,
@@ -189,16 +201,17 @@ test.describe(
         await expect(startCommand).toHaveValue('');
 
         // The Port input's placeholder is the DB default port (as a string).
-        await expect(modal.locator('#port').first()).toHaveAttribute(
-          'placeholder',
-          String(MOCK_DB_DEFAULT_PORT),
-        );
+        await expect(
+          modal.getByRole('spinbutton', { name: 'Port', exact: true }),
+        ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_PORT));
 
         // The health-check "Max Retries" placeholder is the DB default (shown
         // once Health Check is enabled).
-        await modal.getByText('Enable Health Check', { exact: true }).click();
+        await modal
+          .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
+          .check();
         await expect(
-          modal.locator('#healthCheck_maxRetries').first(),
+          modal.getByRole('spinbutton', { name: 'Max Retries', exact: true }),
         ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_MAX_RETRIES), {
           timeout: 10000,
         });
@@ -247,7 +260,7 @@ test.describe(
 
         // Selecting the folder triggers the modal's `model-definition.yaml` read;
         // its parsed values become the high-priority placeholder layer.
-        await selectRevisionModalOption(page, '#modelFolderId', folderName);
+        await selectRevisionModalOption(page, 'Model Folder', folderName);
 
         // Guard: the vfolder fixture values must actually DIFFER from the DB
         // mock, otherwise the override below would pass vacuously.
@@ -258,7 +271,10 @@ test.describe(
         // Command placeholder flips from the DB default to the vfolder command
         // (display-only — the value stays empty). Generous timeout absorbs the
         // vfolder download + parse round-trip.
-        const startCommand = modal.locator('#startCommand').first();
+        const startCommand = modal.getByRole('textbox', {
+          name: 'Command',
+          exact: true,
+        });
         await expect(startCommand).toHaveAttribute(
           'placeholder',
           MOCK_VFOLDER_COMMAND,
@@ -267,17 +283,19 @@ test.describe(
         await expect(startCommand).toHaveValue('');
 
         // Port placeholder = the vfolder port, overriding the DB default port.
-        await expect(modal.locator('#port').first()).toHaveAttribute(
-          'placeholder',
-          String(MOCK_VFOLDER_PORT),
-          { timeout: 10000 },
-        );
+        await expect(
+          modal.getByRole('spinbutton', { name: 'Port', exact: true }),
+        ).toHaveAttribute('placeholder', String(MOCK_VFOLDER_PORT), {
+          timeout: 10000,
+        });
 
         // Health-check "Max Retries" placeholder = the vfolder max_retries,
         // overriding the DB default (shown once Health Check is enabled).
-        await modal.getByText('Enable Health Check', { exact: true }).click();
+        await modal
+          .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
+          .check();
         await expect(
-          modal.locator('#healthCheck_maxRetries').first(),
+          modal.getByRole('spinbutton', { name: 'Max Retries', exact: true }),
         ).toHaveAttribute('placeholder', String(MOCK_VFOLDER_MAX_RETRIES), {
           timeout: 10000,
         });
@@ -321,7 +339,7 @@ test.describe(
         await createDeploymentAndOpenPage(page, name);
         const modal = await openAddRevisionAdvanced(page);
         await selectRuntimeVariant(page, modal, 'custom');
-        await selectRevisionModalOption(page, '#modelFolderId', folderName);
+        await selectRevisionModalOption(page, 'Model Folder', folderName);
 
         // Guard: same vacuous-pass concern as the full-override test.
         expect(MOCK_VFOLDER_COMMAND).not.toBe(MOCK_DB_DEFAULT_COMMAND);
@@ -329,7 +347,10 @@ test.describe(
         expect(MOCK_VFOLDER_MAX_RETRIES).not.toBe(MOCK_DB_DEFAULT_MAX_RETRIES);
 
         // Command: the yaml defines it, so it overrides the DB baseline.
-        const startCommand = modal.locator('#startCommand').first();
+        const startCommand = modal.getByRole('textbox', {
+          name: 'Command',
+          exact: true,
+        });
         await expect(startCommand).toHaveAttribute(
           'placeholder',
           MOCK_VFOLDER_COMMAND,
@@ -338,17 +359,19 @@ test.describe(
 
         // Port: the yaml omits it, so the placeholder stays the DB baseline
         // — NOT the (irrelevant, never-uploaded) vfolder port constant.
-        await expect(modal.locator('#port').first()).toHaveAttribute(
-          'placeholder',
-          String(MOCK_DB_DEFAULT_PORT),
-          { timeout: 10000 },
-        );
+        await expect(
+          modal.getByRole('spinbutton', { name: 'Port', exact: true }),
+        ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_PORT), {
+          timeout: 10000,
+        });
 
         // Health-check max_retries: same field-by-field fallback, the yaml
         // omits `health_check` entirely.
-        await modal.getByText('Enable Health Check', { exact: true }).click();
+        await modal
+          .getByRole('checkbox', { name: 'Enable Health Check', exact: true })
+          .check();
         await expect(
-          modal.locator('#healthCheck_maxRetries').first(),
+          modal.getByRole('spinbutton', { name: 'Max Retries', exact: true }),
         ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_MAX_RETRIES), {
           timeout: 10000,
         });
@@ -375,7 +398,10 @@ test.describe(
         const modal = await openAddRevisionAdvanced(page);
         await selectRuntimeVariant(page, modal, 'custom');
 
-        const startCommand = modal.locator('#startCommand').first();
+        const startCommand = modal.getByRole('textbox', {
+          name: 'Command',
+          exact: true,
+        });
         await expect(startCommand).toHaveAttribute(
           'placeholder',
           MOCK_DB_DEFAULT_COMMAND,
@@ -386,8 +412,11 @@ test.describe(
         // Path. Its value must NOT feed back into the placeholders of the
         // command fields above it (the lower field is deliberately excluded
         // from the placeholder read).
-        await modal.getByText('Advanced Settings', { exact: true }).click();
-        const modelDefPath = modal.getByLabel('Model Definition File Path');
+        await modal.getByRole('button', { name: 'Advanced Settings' }).click();
+        const modelDefPath = modal.getByRole('textbox', {
+          name: 'Model Definition File Path',
+          exact: true,
+        });
         await expect(modelDefPath).toBeVisible({ timeout: 10000 });
         await modelDefPath.fill('some-other-definition.yaml');
 

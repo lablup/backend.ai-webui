@@ -8,12 +8,16 @@
  * intercepted by operation name via `setupGraphQLMocks`:
  *
  *   - AdminDeploymentPresetSettingPageRuntimeVariantsQuery
- *       feeds the plain (non-virtualized) Runtime <Select> a single
- *       deterministic `custom` variant so the wizard's Service Configuration
- *       section is deterministically shown.
+ *       feeds the Runtime selector (a plain Astryx Selector fed from this
+ *       page-level list query) a single deterministic `custom` variant so the
+ *       wizard's Service Configuration section is deterministically shown.
+ *   - AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery
+ *       point lookup (`runtimeVariant(id:)`) the page fires for the currently
+ *       selected variant id; stubbed to the same node for determinism.
  *   - AdminDeploymentPresetSettingPageResourceSlotTypesQuery
  *       supplies cpu/mem resource slot type metadata for the Resources card.
- *   - BAIAdminImageSelectPaginatedQuery / BAIAdminImageSelectValueQuery
+ *   - BAIAdminImageSelectAstryxPaginatedQuery /
+ *     BAIAdminImageSelectAstryxValueQuery
  *       feed the Image select a single deterministic image.
  *   - AdminDeploymentPresetSettingPageCreateMutation
  *       returns a canned success shape and lets a spec capture the outgoing
@@ -28,28 +32,51 @@
 export const MOCK_RUNTIME_VARIANT_UUID = '44444444-4444-4444-4444-444444444444';
 export const MOCK_IMAGE_UUID = '55555555-5555-5555-5555-555555555555';
 export const MOCK_CREATED_PRESET_UUID = '66666666-6666-6666-6666-666666666666';
+/**
+ * Canonical name WITHOUT the `@<architecture>` suffix: BAIAdminImageSelectAstryx
+ * composes each option label as `${canonicalName}@${architecture}`, so a
+ * canonical name that already embeds `@x86_64` would render doubled
+ * (`...@x86_64@x86_64`) and no option would match the expected label.
+ */
 export const MOCK_IMAGE_CANONICAL_NAME =
-  'cr.backend.ai/testing/mock-fr3474:1.0@x86_64';
+  'cr.backend.ai/testing/mock-fr3474:1.0';
+export const MOCK_IMAGE_ARCHITECTURE = 'x86_64';
+/** The option label the Image select renders for the mocked image. */
+export const MOCK_IMAGE_OPTION_LABEL = `${MOCK_IMAGE_CANONICAL_NAME}@${MOCK_IMAGE_ARCHITECTURE}`;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Runtime variant (plain <Select>, single non-paginated response)
+// Runtime variant (page-level list query + selected-value point lookup)
 // ─────────────────────────────────────────────────────────────────────────────
+
+function buildRuntimeVariantNode() {
+  return {
+    __typename: 'RuntimeVariant',
+    id: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),
+    name: 'custom',
+    readsVfolderConfigFiles: true,
+  };
+}
 
 export function adminPresetRuntimeVariantsMock() {
   return () => ({
     runtimeVariants: {
-      edges: [
-        {
-          node: {
-            __typename: 'RuntimeVariant',
-            id: btoa(`RuntimeVariant:${MOCK_RUNTIME_VARIANT_UUID}`),
-            name: 'custom',
-            readsVfolderConfigFiles: true,
-          },
-        },
-      ],
+      edges: [{ node: buildRuntimeVariantNode() }],
     },
   });
+}
+
+/**
+ * `AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery` handler: the
+ * page point-looks-up the currently selected variant (`runtimeVariant(id:)`)
+ * so the selection resolves even when it falls outside the capped list query.
+ * The query `@skip`s while nothing is selected (`skip: true`); return a null
+ * variant in that case so the empty selection resolves cleanly.
+ */
+export function adminPresetSelectedRuntimeVariantMock() {
+  return (variables: Record<string, any>) =>
+    variables?.skip
+      ? { runtimeVariant: null }
+      : { runtimeVariant: buildRuntimeVariantNode() };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -97,7 +124,7 @@ function buildImageNode() {
     id: btoa(`ImageV2:${MOCK_IMAGE_UUID}`),
     identity: {
       canonicalName: MOCK_IMAGE_CANONICAL_NAME,
-      architecture: 'x86_64',
+      architecture: MOCK_IMAGE_ARCHITECTURE,
     },
   };
 }
@@ -105,10 +132,13 @@ function buildImageNode() {
 export function adminPresetImageSelectMocks() {
   const node = buildImageNode();
   return {
-    BAIAdminImageSelectPaginatedQuery: () => ({
+    BAIAdminImageSelectAstryxPaginatedQuery: () => ({
       adminImagesV2: { count: 1, edges: [{ node }] },
     }),
-    BAIAdminImageSelectValueQuery: (variables: Record<string, any>) =>
+    // The value query `@skip`s while nothing is selected (`skipSelected:
+    // true`); return a null connection in that case so the empty selection
+    // resolves cleanly.
+    BAIAdminImageSelectAstryxValueQuery: (variables: Record<string, any>) =>
       variables?.skipSelected
         ? { adminImagesV2: null }
         : { adminImagesV2: { edges: [{ node }] } },

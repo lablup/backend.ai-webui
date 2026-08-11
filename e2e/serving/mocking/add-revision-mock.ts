@@ -7,7 +7,8 @@
  * render with zero page-mock brittleness, and ONLY the modal-internal GraphQL
  * operations are intercepted by operation name via `setupGraphQLMocks`:
  *
- *   - BAIRuntimeVariantSelectPaginatedQuery / BAIRuntimeVariantSelectValueQuery
+ *   - BAIRuntimeVariantSelectAstryxPaginatedQuery /
+ *     BAIRuntimeVariantSelectAstryxValueQuery
  *       feed the Runtime select a single deterministic variant so the modal's
  *       `readsVfolderConfigFiles` branching is under test control regardless of
  *       what the live backend's schema exposes (the 26.8.0-gated field is not
@@ -87,12 +88,14 @@ export function runtimeVariantSelectMocks(
 ) {
   const node = buildRuntimeVariantNode(name, reads, omitReadsFlag);
   return {
-    BAIRuntimeVariantSelectPaginatedQuery: () => ({
+    BAIRuntimeVariantSelectAstryxPaginatedQuery: () => ({
       runtimeVariants: { count: 1, edges: [{ node }] },
     }),
     // The value query `@skip`s when nothing is selected (`skip: true`); return
     // a null variant in that case so the empty selection resolves cleanly.
-    BAIRuntimeVariantSelectValueQuery: (variables: Record<string, any>) =>
+    BAIRuntimeVariantSelectAstryxValueQuery: (
+      variables: Record<string, any>,
+    ) =>
       variables?.skip ? { runtimeVariant: null } : { runtimeVariant: node },
   };
 }

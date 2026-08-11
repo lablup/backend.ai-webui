@@ -88,78 +88,91 @@ export async function openAddRevisionAdvanced(page: Page): Promise<Locator> {
     .getByRole('button', { name: 'Add Revision', exact: true })
     .first()
     .click();
-  const modal = page.locator('.ant-modal');
+  // BAIModal renders a native <dialog>; its accessible name is the whole
+  // title row (title text + the Segmented mode labels), so match the dialog
+  // by contained text rather than by name.
+  const modal = page.getByRole('dialog').filter({ hasText: 'Add Revision' });
   await modal.waitFor({ state: 'visible' });
   // Switch Preset → Advanced (Custom) mode via the header Segmented control.
   await modal.getByText('Advanced Mode', { exact: true }).click();
-  // The Model Folder select is the first field of the Custom form; wait for it
-  // so we know the Advanced form has mounted before driving fields.
-  await modal.locator('#modelFolderId').waitFor({ state: 'visible' });
+  // The Model Folder select is the first field of the Custom form; its
+  // ComplexSelector trigger is a plain <button> named by the field label.
+  // Wait for it so we know the Advanced form has mounted before driving
+  // fields.
+  await modal
+    .getByRole('button', { name: 'Model Folder', exact: true })
+    .waitFor({ state: 'visible' });
   return modal;
 }
 
 /**
  * Select the (single, mocked) runtime variant in the modal's Runtime select.
- * The option rows are virtualized (0-width), so use keyboard navigation rather
- * than clicking an option row — the same idiom as
- * `deployment-fixtures.selectRevisionModalOption`.
+ * The Astryx `BAIComplexSelect` popup is a `role="dialog"` (aria-labelled with
+ * the field label) that hosts a `role="listbox"` of plain, clickable
+ * `role="option"` rows, so the option is clicked directly — no keyboard
+ * workaround needed.
  */
 export async function selectRuntimeVariant(
   page: Page,
   modal: Locator,
   optionLabel: string,
 ): Promise<void> {
-  const rv = modal.locator('#runtimeVariantId');
-  await rv.click();
-  const dropdown = page
-    .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-    .first();
-  await expect(dropdown).toBeVisible({ timeout: 10000 });
-  await expect(dropdown.getByText(optionLabel, { exact: true })).toBeVisible({
-    timeout: 10000,
+  await modal.getByRole('button', { name: 'Runtime', exact: true }).click();
+  const popup = page.getByRole('dialog', { name: 'Runtime', exact: true });
+  await expect(popup).toBeVisible({ timeout: 10000 });
+  const option = popup.getByRole('option', {
+    name: optionLabel,
+    exact: true,
   });
-  await rv.press('ArrowDown');
-  await rv.press('Enter');
-  // Confirm the selection committed by waiting for the dropdown to close. The
-  // combobox input holds the (now-cleared) search text rather than the value,
-  // and the selection item is rendered by BAIRuntimeVariantSelect only after
-  // its value query resolves — so the dropdown closing is the reliable sync
-  // point. The caller then asserts the downstream section that
+  await expect(option).toBeVisible({ timeout: 10000 });
+  await option.click();
+  // Confirm the selection committed by waiting for the popup to close
+  // (single-select commit closes the popover), then for the trigger to show
+  // the selected label. The caller then asserts the downstream section that
   // `runtimeVariantMap` drives (Service Configuration for reads=true, the
   // Runtime Parameters warning for reads=false).
-  await expect(dropdown).toBeHidden({ timeout: 10000 });
+  await expect(popup).toBeHidden({ timeout: 10000 });
+  await expect(
+    modal.getByRole('button', { name: 'Runtime', exact: true }),
+  ).toContainText(optionLabel, { timeout: 10000 });
 }
 
 /**
  * Fill the manually-entered image name (Custom mode). Requires
- * `allowManualImageNameForSession` config on (set via `modifyConfigToml`) so the
- * `#environments_manual` input is visible. Clicking the input first closes any
- * open select dropdown WITHOUT pressing Escape (Escape closes the whole modal).
+ * `allowManualImageNameForSession` config on (set via `modifyConfigToml`) so
+ * the "Image Name (Manual)" input is visible. Clicking the input first closes
+ * any open select popup WITHOUT pressing Escape (Escape closes the whole
+ * modal).
  */
 export async function fillManualImageName(
   modal: Locator,
   reference: string,
 ): Promise<void> {
-  const manual = modal.locator('#environments_manual');
+  const manual = modal.getByRole('textbox', {
+    name: 'Image Name (Manual)',
+    exact: true,
+  });
   await manual.waitFor({ state: 'visible', timeout: 30000 });
   await manual.scrollIntoViewIfNeeded();
   await manual.click();
   await manual.fill(reference);
   await expect(manual).toHaveValue(reference, { timeout: 10000 });
-  // Blur to fire the Input's onChange so the antd form commits
-  // `environments.manual` AND recomputes the Version dropdown's `required`
-  // flag (it is required ONLY while `environments.manual` is empty). Without
-  // this, `validateFields()` on submit can race the required recompute and
-  // fail on a still-"required" empty Version field — silently blocking the
-  // mutation (no toast, no visible error after the modal closes).
+  // The Astryx TextInput commits `environments.manual` to the form on every
+  // change (no blur needed for that), but blur anyway to release focus before
+  // the next interaction.
   await manual.blur();
-  // The Version dropdown's required asterisk must clear before we submit.
-  // Its Form.Item is the one labelled "Environments" / holding `#environments_version`.
-  const versionRequiredMark = modal
-    .locator('.ant-form-item')
-    .filter({ has: modal.locator('#environments_version') })
-    .locator('.ant-form-item-required');
-  await expect(versionRequiredMark).toHaveCount(0, { timeout: 10000 });
+  // The Environments/Version dropdown is required ONLY while
+  // `environments.manual` is empty; the required recompute must land before
+  // we submit, or `validateFields()` can race it and fail on a
+  // still-"required" empty field — silently blocking the mutation (no toast,
+  // no visible error after the modal closes). The form engine marks a
+  // required item's label with `[data-bai-form-item-required]`; wait for the
+  // "Environments / Version" item's marker to clear.
+  const environmentsRequiredMark = modal
+    .locator('[data-bai-form-item]')
+    .filter({ hasText: 'Environments / Version' })
+    .locator('[data-bai-form-item-required]');
+  await expect(environmentsRequiredMark).toHaveCount(0, { timeout: 10000 });
 }
 
 /** Uncheck "Apply immediately after adding" so no replica is spun up. */
