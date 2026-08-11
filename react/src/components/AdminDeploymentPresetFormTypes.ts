@@ -14,7 +14,7 @@ export type PreStartActionFormValue = {
 
 export type ModelHealthCheckFormValue = {
   // Optional at the type level even though the UI marks it required when
-  // Health Check is enabled — that's an antd `rules` (form-validation)
+  // Health Check is enabled — that's a form-engine `rules` (form-validation)
   // concern, not a TypeScript one, and both DeploymentAddRevisionModal.tsx
   // and this form's initial/unfilled state have it genuinely absent.
   path?: string;

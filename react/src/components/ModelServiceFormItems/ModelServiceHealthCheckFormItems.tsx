@@ -136,6 +136,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   rules={[{ required: true }]}
                   style={{ flex: 1, minWidth: 160 }}
                 >
+                  {/* Backend `expected_status_code` is `gt=100`, hence 101. */}
                   <AstryxFormNumberInput
                     label={t(
                       'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',

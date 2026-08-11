@@ -25,11 +25,11 @@ import { formatShellCommand } from './parseCliCommand';
 export const DEFAULT_MODEL_SERVICE_SHELL = '/bin/bash';
 
 /**
- * Suggestion offered in the Shell input. Rendered via `AutoComplete`, so the
- * user can still type a custom shell path/binary — but the backend's own
- * logic assumes `/bin/bash` is present in the image, and letting users pick
- * another shell risks a launch failure if that binary isn't there, so only
- * the one assumption the backend actually makes is suggested.
+ * Suggestion surfaced as the Shell input's placeholder (the user types the
+ * path/binary directly) — the backend's own logic assumes `/bin/bash` is
+ * present in the image, and steering users toward another shell risks a
+ * launch failure if that binary isn't there, so only the one assumption the
+ * backend actually makes is suggested.
  */
 export const COMMAND_SHELL_OPTIONS: Array<{ value: string }> = [
   { value: DEFAULT_MODEL_SERVICE_SHELL },

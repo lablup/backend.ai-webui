@@ -203,6 +203,8 @@ const ServiceConfigurationFormItems: React.FC<
         tooltip={t('modelService.PortTooltip')}
         style={{ marginBottom: 0 }}
       >
+        {/* Backend `PresetModelServiceConfigInput.port` is `gt=1` exclusive,
+            hence min 2. */}
         <AstryxFormNumberInput
           label={t('modelService.Port')}
           min={2}
