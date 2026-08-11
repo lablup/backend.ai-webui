@@ -8,7 +8,6 @@ import FolderExplorerModalV2 from './FolderExplorerModalV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -251,7 +250,7 @@ const renderModal = ({
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <App>
+          <>
             <Suspense fallback={null}>
               <FolderExplorerModalV2
                 vfolderID={VFOLDER_UUID.replaceAll('-', '')}
@@ -259,7 +258,7 @@ const renderModal = ({
                 onRequestClose={vi.fn()}
               />
             </Suspense>
-          </App>
+          </>
         </MemoryRouter>
       </QueryClientProvider>
     </RelayEnvironmentProvider>,

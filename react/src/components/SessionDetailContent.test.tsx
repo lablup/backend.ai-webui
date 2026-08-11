@@ -8,7 +8,6 @@ import { ProjectContextOrNull } from '../types/projectContext';
 import SessionDetailContent from './SessionDetailContent';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -154,11 +153,11 @@ const renderSessionDetail = (project: ProjectContextOrNull) => {
   render(
     <RelayEnvironmentProvider environment={environment}>
       <MemoryRouter>
-        <App>
+        <>
           <Suspense fallback={null}>
             <SessionDetailContent id="session-row-id" project={project} />
           </Suspense>
-        </App>
+        </>
       </MemoryRouter>
     </RelayEnvironmentProvider>,
   );

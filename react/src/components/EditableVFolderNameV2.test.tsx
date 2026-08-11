@@ -9,7 +9,6 @@ import EditableVFolderNameV2 from './EditableVFolderNameV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -125,7 +124,7 @@ const TestRenderer: React.FC<{ project: ProjectContextOrNull }> = ({
       vfolderNodeFrgmt={data.vfolderV2}
       project={project}
       enableLink={false}
-      editable={{ triggerType: ['icon'] }}
+      editable
     />
   );
 };
@@ -159,11 +158,11 @@ const renderName = ({
   render(
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
-        <App>
+        <>
           <Suspense fallback={null}>
             <TestRenderer project={project} />
           </Suspense>
-        </App>
+        </>
       </QueryClientProvider>
     </RelayEnvironmentProvider>,
   );

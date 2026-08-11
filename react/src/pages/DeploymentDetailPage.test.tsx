@@ -7,7 +7,6 @@ import '../../__test__/resizeObserver.mock.js';
 import DeploymentDetailPage from './DeploymentDetailPage';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import { App } from 'antd';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -201,7 +200,7 @@ const renderPage = () => {
   render(
     <RelayEnvironmentProvider environment={environment}>
       <MemoryRouter initialEntries={['/deployments/deployment-0000']}>
-        <App>
+        <>
           <Suspense fallback={null}>
             <Routes>
               <Route
@@ -210,7 +209,7 @@ const renderPage = () => {
               />
             </Routes>
           </Suspense>
-        </App>
+        </>
       </MemoryRouter>
     </RelayEnvironmentProvider>,
   );
