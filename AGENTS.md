@@ -89,6 +89,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
 - Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
 - Use Jotai for global state, Relay for GraphQL state.
+- Comment only what the code cannot say — ≤2 lines by default; the reasoning behind a change goes in the commit body and the PR, not the source file (`.claude/rules/comment-density.md`). The long justification blocks already in the tree are migration-era history: trim a file's blocks when you edit it, don't sweep.
 
 ### On-Demand Skills (loaded only when needed)
 

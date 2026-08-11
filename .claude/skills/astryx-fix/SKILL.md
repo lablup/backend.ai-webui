@@ -227,9 +227,16 @@ Terminology.
   evidence) — that's the durable home for patterns worth reusing across
   multiple fixes.
 - **A deliberate capability drop** stays a `// PILOT-DECISION:` comment at the
-  call site explaining *why*, so the next reader does not "fix" it back.
+  call site explaining *why*, so the next reader does not "fix" it back — in
+  one or two lines, not an essay.
 - **A superseded idiom** is marked superseded where it's documented, not
   deleted, so history stays legible.
+- **Keep it out of the source file.** The mechanism goes in the commit body,
+  the measurements in the PR description (§8), a reusable recipe in
+  `CONVERSION-IDIOMS.md`. The comment at the fix site carries the one sentence
+  that stops someone reverting it, plus the FR number. See
+  `.claude/rules/comment-density.md` — this skill used to be one of the main
+  producers of 40-line justification blocks.
 
 ## 8. Ship it — branch, commit, PR
 

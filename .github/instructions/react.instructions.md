@@ -82,6 +82,9 @@ inherited call sites needed no edit when their internals were rebuilt on Astryx.
   does something.
 - Conventions for extending a wrapped component's props (`Omit<>` + `...rest`):
   `.claude/rules/component-props-extension.md`.
+- Those file-header notes are for **reading**, not a template to match when you write. New
+  comments follow `.claude/rules/comment-density.md`: only what the code cannot say, ≤2
+  lines by default, with the reasoning in the commit body and the PR instead.
 
 ## Relay
 
