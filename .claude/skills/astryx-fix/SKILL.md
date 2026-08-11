@@ -245,9 +245,17 @@ tree. Do this without being asked again; the request to fix the regression is
 the request to ship it. Two things still need an explicit ask: marking the PR
 **ready for review**, and **merging** it.
 
-1. **Branch.** `FR-XXXX` off `main` (the dev URL derives from it —
-   `https://fr-XXXX.localhost:1355`). If the fix was made on `main`, branch
-   first and carry the changes over.
+1. **Branch.** `FR-XXXX` — the dev URL derives from it
+   (`https://fr-XXXX.localhost:1355`). Base it on **what the fix actually
+   depends on**, which decides the shape of step 5 too:
+   - depends only on `main` → branch off `main`, single PR;
+   - depends on work still in review on another branch → branch off **that**
+     branch and stack (`AGENTS.md`: "Follow the GitHub Stacked PRs strategy"),
+     so the PR's base is the branch below, not `main`.
+
+   Basing a dependent fix on `main` puts unrelated commits in its diff and
+   makes it unmergeable until the branch below lands. If the fix was made on
+   `main`, branch first and carry the changes over.
 
 2. **Delete the scratch.** Probe scripts, harness pages, screenshots dumped in
    the repo root — none of it belongs in the diff. `git status` should show

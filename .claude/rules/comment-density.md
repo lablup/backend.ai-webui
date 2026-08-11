@@ -26,12 +26,15 @@ obligation to justify, with no budget, gets satisfied maximally.
 Measured on `react/src` + `packages/backend.ai-ui/src` (tests excluded) when
 this rule was written:
 
+Every share below is **comment ÷ (comment + code)**, counting non-blank lines.
+
 ```
-comment lines 24,719 / code lines 159,747      = 13.4%
-mean comment block                             = 4.2 lines
-antd/migration-flavoured blocks: 20% of blocks = 41% of all comment lines
-  ...at a mean of                                8.7 lines each
-worst files: backendAiTheme.ts 68% (791/365), antdParity.ts 82% (183/40)
+comment 24,719 / (24,719 + code 159,747 = 184,466 total)   = 13.4%
+mean comment block                                         = 4.2 lines
+antd/migration-flavoured blocks: 20% of blocks             = 41% of comment lines
+  ...at a mean of                                            8.7 lines each
+worst files: backendAiTheme.ts 791/(791+365)               = 68%
+             antdParity.ts     183/(183+40)                = 82%
 ```
 
 So the problem was never "a few too many comments" — it was one *genre* of
