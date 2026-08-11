@@ -42,7 +42,7 @@ describe('buildAstryxOverrides', () => {
     (lng) => {
       const overrides = buildAstryxOverrides(i18n, lng);
       expect(overrides).toBeDefined();
-      const catalog = overrides![lng];
+      const catalog = overrides![lng]!;
       expect(Object.keys(catalog)).toHaveLength(UPSTREAM_KEYS.length);
       expect(
         Object.values(catalog).every((v) => typeof v === 'string' && v !== ''),
@@ -51,7 +51,7 @@ describe('buildAstryxOverrides', () => {
   );
 
   it('keys the catalog by the full "@astryx.*" key Astryx looks up', () => {
-    const catalog = buildAstryxOverrides(i18n, 'ko')!.ko;
+    const catalog = buildAstryxOverrides(i18n, 'ko')!.ko!;
     expect(catalog['@astryx.table.noData']).toBe('데이터 없음');
     expect(catalog['@astryx.pagination.next']).toBe('다음 페이지로 이동');
   });
