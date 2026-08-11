@@ -913,11 +913,11 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                     )}
                   >
                     <BAIFlex direction="column" align="stretch" gap="xs">
-                      {fields.map((field) => (
-                        <BAIFlex key={field.key} gap="xs" align="start">
+                      {fields.map(({ key, name, ...restField }) => (
+                        <BAIFlex key={key} gap="xs" align="start">
                           <Form.Item
-                            {...field}
-                            name={[field.name, 'value']}
+                            {...restField}
+                            name={[name, 'value']}
                             style={{ marginBottom: 0, flex: 1 }}
                             rules={[
                               {
@@ -938,8 +938,8 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                             />
                           </Form.Item>
                           <Form.Item
-                            {...field}
-                            name={[field.name, 'label']}
+                            {...restField}
+                            name={[name, 'label']}
                             style={{ marginBottom: 0, flex: 1 }}
                             rules={[
                               {
@@ -964,7 +964,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                             danger
                             icon={<Trash2 />}
                             aria-label={t('general.button.Delete')}
-                            onClick={() => remove(field.name)}
+                            onClick={() => remove(name)}
                           />
                         </BAIFlex>
                       ))}
