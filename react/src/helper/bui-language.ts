@@ -13,6 +13,7 @@
 // `BAITrans`), so the host has no reason to hold a second copy. See
 // FR-2986 / packages/backend.ai-ui/src/hooks/useBAIi18n.ts.
 import type { SupportedLanguage } from './resolveInitialLanguage';
+import type { BAILocale } from 'backend.ai-ui';
 import de_DE from 'backend.ai-ui/dist/locale/de_DE';
 import el_GR from 'backend.ai-ui/dist/locale/el_GR';
 import en_US from 'backend.ai-ui/dist/locale/en_US';
@@ -63,4 +64,4 @@ export const buiLanguages = {
   vi: vi_VN,
   'zh-CN': zh_CN,
   'zh-TW': zh_TW,
-} satisfies Record<SupportedLanguage, typeof en_US>;
+} satisfies Record<SupportedLanguage, BAILocale>;
