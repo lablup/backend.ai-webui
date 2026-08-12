@@ -153,5 +153,4 @@ overrides:
 patchedDependencies:
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
-  portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch
