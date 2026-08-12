@@ -27,7 +27,7 @@
  | `confirmLoading`                   | `Button.isLoading`                                  |
  | `cancelText`/`cancelButtonProps`   | `Button variant="secondary"`                        |
  | `footer` node / `null` / render fn | `LayoutFooter` (or nothing)                         |
- | `loading`                          | `Skeleton` in place of the body                     |
+ | `loading`                          | `BAISkeletonAstryx` in place of the body            |
  | `maskClosable` / `keyboard`        | `Dialog.purpose` (`info` / `form` / `required`)     |
  | `styles.{header,body,footer,…}`    | inline styles on the matching Astryx slot           |
  | `.ant-modal-*` CSS (BAIModal.css)  | deleted — the slots are Astryx's own                |
@@ -68,6 +68,7 @@
  that reproduces none of it.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import BAISkeletonAstryx from './BAISkeletonAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -77,7 +78,6 @@ import {
   LayoutFooter,
   LayoutHeader,
 } from '@astryxdesign/core/Layout';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack } from '@astryxdesign/core/Stack';
 import {
   SquareStack,
@@ -240,7 +240,7 @@ export interface BAIModalProps {
   bodyProps?: React.HTMLAttributes<HTMLDivElement> & {
     ref?: React.Ref<HTMLDivElement>;
   };
-  /** Renders a `Skeleton` in place of the body. */
+  /** Renders a 4-row paragraph skeleton in place of the body. */
   loading?: boolean;
 
   /* ---------------------------------------------------------------- footer */
@@ -755,7 +755,13 @@ const BAIModal: React.FC<BAIModalProps> = ({
                 className={classNames?.body ?? bodyProps?.className}
                 style={{ ...styles?.body, ...bodyProps?.style }}
               >
-                {loading ? <Skeleton height={120} /> : children}
+                {/* antd rendered `title={false} paragraph={{rows: 4}}` here —
+                    the header already carries the title (FR-3514). */}
+                {loading ? (
+                  <BAISkeletonAstryx hasTitle={false} rows={4} />
+                ) : (
+                  children
+                )}
               </div>
             </LayoutContent>
           )

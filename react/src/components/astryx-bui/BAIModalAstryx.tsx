@@ -27,11 +27,12 @@
    is set. Accepted and ignored.
  - `destroyOnHidden` is a no-op: this wrapper already renders nothing when
    closed, which is stricter than antd's default.
- - `loading` (antd renders a skeleton body) is mapped to rendering the
-   `Skeleton` primitive in place of the body.
+ - `loading` (antd renders a skeleton body) is mapped to `BAISkeletonAstryx`
+   in antd's modal shape (`title={false}`, 4 paragraph rows) — FR-3514.
  - `afterOpenChange` fires from an effect on `open`, not from a real
    transition-end event, so it lands a frame earlier than antd's.
 */
+import BAISkeletonAstryx from './BAISkeletonAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
 import type { DialogProps } from '@astryxdesign/core/Dialog';
@@ -42,7 +43,6 @@ import {
   LayoutFooter,
   LayoutHeader,
 } from '@astryxdesign/core/Layout';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack } from '@astryxdesign/core/Stack';
 import { XIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
@@ -87,7 +87,7 @@ export interface BAIModalAstryxProps extends Omit<
   onAction?: () => void | Promise<unknown>;
   /** Full footer override; suppresses the generated action row. */
   footer?: React.ReactNode;
-  /** Renders a Skeleton in place of the body. */
+  /** Renders a 4-row paragraph skeleton in place of the body. */
   isLoading?: boolean;
   /**
    * Fired once each time the dialog transitions to open. Astryx `Dialog` has
@@ -206,7 +206,13 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
         content={
           <LayoutContent>
             <div ref={bodyRef} style={{ minHeight: '100%' }}>
-              {isLoading ? <Skeleton height={120} /> : children}
+              {/* antd rendered `title={false} paragraph={{rows: 4}}` here —
+                  the header already carries the title (FR-3514). */}
+              {isLoading ? (
+                <BAISkeletonAstryx hasTitle={false} rows={4} />
+              ) : (
+                children
+              )}
             </div>
           </LayoutContent>
         }

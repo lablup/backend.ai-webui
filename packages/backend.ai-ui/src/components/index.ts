@@ -10,6 +10,12 @@ export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
 export { default as BAICard } from './BAICard';
 export type { BAICardProps, BAICardTabItem } from './BAICard';
+export { default as BAISkeletonAstryx } from './BAISkeletonAstryx';
+export type {
+  BAISkeletonAstryxProps,
+  BAISkeletonVariant,
+  BAISkeletonSize,
+} from './BAISkeletonAstryx';
 export { default as BAITabList } from './BAITabList';
 export type { BAITabListProps } from './BAITabList';
 export { default as BAICompactGroup } from './BAICompactGroup';
