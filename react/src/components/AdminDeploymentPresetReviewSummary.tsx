@@ -7,7 +7,6 @@ import { resolvesReadsVfolderConfigFiles } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { theme } from '../theme-shim';
 import type {
   AdminDeploymentPresetFormValue,
   ModelServiceFormValue,
@@ -43,12 +42,21 @@ import { useTranslation } from 'react-i18next';
 // and is DROPPED everywhere below — the Astryx default density is the design.
 
 const BASIC_INFO_FIELDS = ['name', 'runtimeVariantId', 'imageId'] as const;
-const RESOURCES_FIELDS = ['cpu', 'mem', 'clusterMode', 'clusterSize'] as const;
+const RESOURCES_FIELDS = [
+  'cpu',
+  'mem',
+  'clusterMode',
+  'clusterSize',
+  'resourceOpts',
+] as const;
 const DEPLOYMENT_FIELDS = ['replicaCount'] as const;
+// `environ` and `resourceOpts` are Form.Lists whose rows carry their own
+// required rules, so they report errors under the list's own name.
 const STEP2_FIELDS = [
   'startupCommand',
   'bootstrapScript',
   'modelDefinition',
+  'environ',
 ] as const;
 
 interface PresetReviewSummaryProps {
@@ -80,7 +88,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   /**
    * FR-3481: mirrors the input form's placement of Service

@@ -786,9 +786,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       'clusterMode',
       'clusterSize',
       'replicaCount',
+      'resourceOpts',
     ]),
-    stepHasError(['startupCommand', 'bootstrapScript']) ||
-      errorFieldNames.includes('modelDefinition'),
+    stepHasError([
+      'startupCommand',
+      'bootstrapScript',
+      'modelDefinition',
+      'environ',
+    ]),
     reviewHasError,
   ];
 
