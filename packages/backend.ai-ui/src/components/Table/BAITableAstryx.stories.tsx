@@ -206,12 +206,12 @@ export const HorizontalScroll: Story = {
     },
   },
   render: () => (
-    <div style={{ width: 560, border: '1px dashed #999' }}>
+    <div style={{ width: 560 }}>
       <BAITableAstryx
         scroll={{ x: 'max-content' }}
         columns={scrollColumns}
         dataSource={scrollData}
-        pagination={false}
+        pagination={{ total: scrollData.length, pageSize: 10 }}
       />
     </div>
   ),
