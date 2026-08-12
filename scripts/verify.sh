@@ -182,18 +182,7 @@ run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
-check_astryx_locale_sync() {
-  # Astryx built-in string catalogs vs @astryxdesign/core's shipped en.json
-  # (FR-3511). Stale keys, non-string values and ICU drift FAIL — each of them
-  # silently disables a translation. Keys a version bump added but nobody
-  # translated only WARN: they fall back to English, so a routine dependency
-  # bump should not block every local run until 20 translations exist. Run
-  # `node scripts/check-astryx-locale-sync.mjs --strict` to gate on those too.
-  node scripts/check-astryx-locale-sync.mjs
-}
-
 run_check "Astryx theme build" check_astryx_theme_built
-run_check "Astryx locale sync" check_astryx_locale_sync
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row

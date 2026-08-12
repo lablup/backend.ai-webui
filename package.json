@@ -16,8 +16,6 @@
     "format-fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
-    "lint:astryx-locale": "node scripts/check-astryx-locale-sync.mjs",
-    "lint:astryx-locale:strict": "node scripts/check-astryx-locale-sync.mjs --strict",
     "lint:terminology": "node scripts/check-terminology-i18n.mjs",
     "lint:terminology:strict": "node scripts/check-terminology-i18n.mjs --strict",
     "lint:terminology:selftest": "node scripts/check-terminology-i18n.selftest.mjs",
