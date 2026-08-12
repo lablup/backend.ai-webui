@@ -194,7 +194,6 @@ overrides:
 patchedDependencies:
   '@cloudscape-design/board-components@3.0.176': 06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98
   ansi_up@6.0.6: 99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459
-  portless@0.15.5: 161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6
   relay-runtime@20.1.1: cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6
 
 importers:
@@ -345,7 +344,7 @@ importers:
         version: 3.1.14
       portless:
         specifier: ^0.15.5
-        version: 0.15.5(patch_hash=161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6)
+        version: 0.15.5
       prettier:
         specifier: 'catalog:'
         version: 3.9.5
@@ -20462,7 +20461,7 @@ snapshots:
       base64-js: 1.5.1
       xmlbuilder: 15.1.1
 
-  portless@0.15.5(patch_hash=161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6): {}
+  portless@0.15.5: {}
 
   possible-typed-array-names@1.1.0: {}
 

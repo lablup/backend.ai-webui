@@ -8,9 +8,9 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { MediaTheme } from '@astryxdesign/core/theme';
-import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -56,16 +56,16 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
     return n.backgroundTask?.status === 'pending';
   });
 
-  // TRAP: the media context must stay OFF the `Tooltip` and off the drawer.
-  // Astryx renders both as inline SIBLINGS of the trigger, not through a
-  // portal, so a wrapper reaches their panels too — measured, that pinned
-  // `color-scheme: dark` on the tooltip in both app modes and produced white
-  // text on a white bubble.
+  // TRAP (measured, twice). `Tooltip` and the drawer render as inline SIBLINGS
+  // of the trigger, not through a portal, so a `MediaTheme` wrapper reaches
+  // their panels too — that pinned `color-scheme: dark` on the tooltip in both
+  // app modes and gave white text on a white bubble.
   //
-  // The tooltip CONTENT's `mode="dark"` below is CONSTANT on purpose: the theme
-  // pins the bubble to antd's `colorBgSpotlight` (dark in both schemes,
-  // `ANTD_HOVER_PARITY`), so it does not follow the app polarity. Only the
-  // trigger is band chrome. QA-FINDINGS Q-10.
+  // So the band context sits on the trigger BUTTON via `data-astryx-media`
+  // (MediaTheme's own mechanism, at element scope), and only the tooltip
+  // CONTENT is wrapped. That content's `mode="dark"` is CONSTANT, not the
+  // app's opposite: `ANTD_HOVER_PARITY` pins the bubble to `colorBgSpotlight`
+  // (`rgba(0,0,0,0.85)` / `#424242`), dark in BOTH schemes. QA-FINDINGS Q-10.
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 
   return (
@@ -75,8 +75,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
       <Tooltip
         content={
           <MediaTheme mode="dark">
-            {t('notification.Notifications')}{' '}
-            <BAIText keyboardWithLightBorder>{']'}</BAIText>
+            {t('notification.Notifications')} <Kbd keys="]" />
           </MediaTheme>
         }
         placement="start"

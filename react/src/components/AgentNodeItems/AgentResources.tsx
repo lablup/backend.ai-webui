@@ -8,12 +8,10 @@ import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
 import { Grid } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
   BAIFlex,
+  BAIMetadataList,
   BAIText,
   convertToBinaryUnit,
   convertToDecimalUnit,
@@ -64,11 +62,9 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
 
   return (
     <>
-      {/* antd Descriptions bordered column={1} → MetadataList (MAPPING §4).
-          `bordered`/`labelStyle` have no destination and are dropped
-          (PILOT-DECISION, project-wide). Content is block-level (progress
-          grids), so the label sits above rather than beside it. */}
-      <MetadataList columns="single" label={{ position: 'top' }}>
+      {/* SUPERSEDED (FR-3497): `bordered` now has a destination — BAIMetadataList,
+          which implies side labels. Still dropped: `labelStyle` word-break. */}
+      <BAIMetadataList bordered columns="single">
         <MetadataListItem label={t('agent.ResourceAllocation')}>
           {/* antd Row gutter={[16,16]} + Col xs={24} sm={12} (uniform 2-up
               from 576px) → Grid columns={{minWidth:280, max:2}} gap={4}
@@ -401,7 +397,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
             </Grid>
           )}
         </MetadataListItem>
-      </MetadataList>
+      </BAIMetadataList>
       <AgentDetailModal
         agentNodeFrgmt={agent}
         open={openInfoModal}

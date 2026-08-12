@@ -47,21 +47,15 @@ export interface DeploymentSettingModalProps extends BAIModalProps {
   onRequestClose: (success: boolean) => void;
 }
 
-// Bridge for `BAIFormItem name="openToPublic" valuePropName="checked"`: antd
-// injects `checked` + `onChange`, Astryx CheckboxInput wants `value` +
-// value-first `onChange`. The read-only-in-edit-mode explanation moves from
-// the antd "Tooltip around a span around a disabled Checkbox" hack to
-// CheckboxInput's own `disabledMessage`, which is Astryx's sanctioned way to
-// explain a disabled control (external tooltips never fire on disabled
-// controls; disabledMessage keeps the control focusable via aria-disabled so
-// the reason stays discoverable).
+// Bridge for `BAIFormItem name="openToPublic" valuePropName="checked"`: the
+// form engine injects `checked` + `onChange`, Astryx CheckboxInput wants
+// `value` + value-first `onChange`.
 const PublicCheckbox: React.FC<{
   checked?: boolean;
   onChange?: (next: boolean) => void;
   label: string;
   disabled?: boolean;
-  disabledMessage?: string;
-}> = ({ checked, onChange, label, disabled, disabledMessage }) => {
+}> = ({ checked, onChange, label, disabled }) => {
   'use memo';
   return (
     <CheckboxInput
@@ -69,7 +63,6 @@ const PublicCheckbox: React.FC<{
       value={checked ?? false}
       onChange={(next) => onChange?.(next)}
       isDisabled={disabled}
-      disabledMessage={disabledMessage}
     />
   );
 };
@@ -364,24 +357,25 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           </BAIFormItem>
           {/* TODO(needs-backend): the manager currently rejects changes to
               openToPublic after a deployment is created, so the field is
-              forced read-only in edit mode. Drop the `disabled` +
-              `disabledMessage` once the backend supports updating this
-              setting. */}
+              forced read-only in edit mode. Drop the `disabled` prop and the
+              `extra` note once the backend supports updating this setting. */}
           <BAIFormItem
+            name="openToPublic"
+            valuePropName="checked"
             label={t('deployment.OpenToPublic')}
             tooltip={t('deployment.OpenToPublicTooltip')}
+            // The constraint is field-level metadata, not an explanation of a
+            // disabled control: it already holds while creating, when nothing
+            // is disabled yet. So it sits in the same `extra` slot as Resource
+            // Group's identical note above instead of CheckboxInput's
+            // `disabledMessage`, which only surfaces on hover of an
+            // already-disabled control and so never reached create mode.
+            extra={t('deployment.OpenToPublicCannotBeChanged')}
           >
-            <BAIFormItem name="openToPublic" valuePropName="checked" noStyle>
-              <PublicCheckbox
-                label={t('deployment.Public')}
-                disabled={!!deployment}
-                disabledMessage={
-                  deployment
-                    ? t('deployment.OpenToPublicCannotBeChanged')
-                    : undefined
-                }
-              />
-            </BAIFormItem>
+            <PublicCheckbox
+              label={t('deployment.Public')}
+              disabled={!!deployment}
+            />
           </BAIFormItem>
         </Form>
       </Suspense>
