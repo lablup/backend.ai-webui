@@ -29,7 +29,10 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
     <Form.Item
       label={t('modelService.PreStartActions')}
       tooltip={t('modelService.PreStartActionsTooltip')}
-      style={{ marginBottom: 0, marginTop: token.marginMD }}
+      // antd's Collapse panel used to supply the section's bottom padding;
+      // the flat Astryx Collapsible doesn't, so keep an explicit gap below
+      // the add button before whatever section follows.
+      style={{ marginBottom: token.marginMD, marginTop: token.marginMD }}
     >
       <Form.List name={[...namePrefix, 'preStartActions']}>
         {(fields, { add, remove }) => (

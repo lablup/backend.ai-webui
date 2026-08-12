@@ -6,6 +6,7 @@ import { Form } from '../../form-engine';
 import type { FormInstance } from '../../form-engine';
 import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../../hooks';
+import { theme } from '../../theme-shim';
 import {
   AstryxFormNumberInput,
   AstryxFormRadioList,
@@ -48,6 +49,7 @@ const ServiceConfigurationFormItems: React.FC<
 > = ({ namePrefix, placeholders }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const supportsCommandShell = baiClient.supports(
     'model-service-command-string',
@@ -201,7 +203,10 @@ const ServiceConfigurationFormItems: React.FC<
         name={[...namePrefix, 'port']}
         label={t('modelService.Port')}
         tooltip={t('modelService.PortTooltip')}
-        style={{ marginBottom: 0 }}
+        // antd's Collapse panel used to supply the section's bottom padding;
+        // the flat Astryx Collapsible doesn't, so the last field keeps an
+        // explicit gap before whatever section follows.
+        style={{ marginBottom: token.marginMD }}
       >
         {/* Backend `PresetModelServiceConfigInput.port` is `gt=1` exclusive,
             hence min 2. */}
