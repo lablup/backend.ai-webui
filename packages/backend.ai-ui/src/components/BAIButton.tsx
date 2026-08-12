@@ -44,7 +44,13 @@
  pure-`onClick` router/mutation actions with no `href` — no `BAIButton` call
  site in the repo passes `href` at all — so `Link` would mean a
  destination-less `<a>`, exactly what D3 rejected for `BAILink`. `ghost` keeps
- button semantics and the low-emphasis look.
+ button semantics and the low-emphasis look. **Amended (FR-3524): the element
+ choice stands, the COLOUR half does not.** `ghost` alone made `type="link"`
+ and `type="text"` pixel-identical (`--color-text-primary`), so link actions
+ lost antd's `colorLink` tint; `.bai-action-accent` (Q-37,
+ `--color-text-accent`) puts it back — the same token `BAILink` already paints.
+ antd v6's colour axis is respected: an explicit `color="default"` keeps the
+ neutral tint, and `danger` still wins outright.
 
  PILOT-DECISION — **`type="dashed"` (5 sites) becomes `variant="secondary"`.**
  MAPPING §3.3: "no equivalent -> `variant="secondary"`, record the decision".
@@ -146,17 +152,27 @@ const BAIButton: React.FC<BAIButtonProps> = ({
   onClick,
   title,
   style,
+  className,
   ...restProps
 }) => {
   const emphasis = type ?? antdVariant;
-  const variant =
-    danger || antdColor === 'danger'
-      ? 'destructive'
-      : emphasis === 'primary' || emphasis === 'solid'
-        ? 'primary'
-        : emphasis === 'text' || emphasis === 'link'
-          ? 'ghost'
-          : 'secondary';
+  const isDanger = danger || antdColor === 'danger';
+  const variant = isDanger
+    ? 'destructive'
+    : emphasis === 'primary' || emphasis === 'solid'
+      ? 'primary'
+      : emphasis === 'text' || emphasis === 'link'
+        ? 'ghost'
+        : 'secondary';
+
+  // FR-3524: `link` and `text` both land on `ghost`, so only this class keeps a
+  // link action distinguishable from a plain one. `color="default"` opts out.
+  const isLinkTinted =
+    !isDanger && emphasis === 'link' && antdColor !== 'default';
+  const resolvedClassName =
+    [className, isLinkTinted ? 'bai-action-accent' : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
   const { t } = useBAIi18n();
   // antd allowed an icon-only button with NO accessible name at all; Astryx
@@ -172,6 +188,7 @@ const BAIButton: React.FC<BAIButtonProps> = ({
 
   const shared = {
     ...restProps,
+    className: resolvedClassName,
     variant,
     size: size ? SIZE_MAP[size] : undefined,
     isLoading: loading,

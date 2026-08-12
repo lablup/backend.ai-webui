@@ -36,6 +36,40 @@ describe('BAIButton', () => {
     });
   });
 
+  // FR-3524 — `link` and `text` both resolve to `variant="ghost"`, so the
+  // accent class is the only thing left that tells a link action apart.
+  describe('Link tint', () => {
+    it.each([{ type: 'link' } as const, { variant: 'link' } as const])(
+      'tints %o with the accent class',
+      (props) => {
+        render(<BAIButton {...props}>Edit</BAIButton>);
+        expect(screen.getByRole('button')).toHaveClass('bai-action-accent');
+      },
+    );
+
+    it('keeps a caller className alongside the tint', () => {
+      render(
+        <BAIButton type="link" className="custom-class">
+          Edit
+        </BAIButton>,
+      );
+      const button = screen.getByRole('button');
+      expect(button).toHaveClass('custom-class');
+      expect(button).toHaveClass('bai-action-accent');
+    });
+
+    it.each([
+      { type: 'text' } as const,
+      { type: 'link', color: 'default' } as const,
+      { variant: 'link', color: 'default' } as const,
+      { type: 'link', danger: true } as const,
+      { variant: 'link', color: 'danger' } as const,
+    ])('leaves %o untinted', (props) => {
+      render(<BAIButton {...props}>Action</BAIButton>);
+      expect(screen.getByRole('button')).not.toHaveClass('bai-action-accent');
+    });
+  });
+
   describe('onClick Handler', () => {
     it('should call onClick handler when clicked', async () => {
       const onClick = vi.fn();
