@@ -256,6 +256,20 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const selectedUuid = watchedRuntimeVariantId
     ? convertToUUID(watchedRuntimeVariantId)
     : '';
+  const paginatedRuntimeVariantList =
+    runtimeVariants?.edges
+      ?.map((e) => e?.node)
+      ?.filter((n): n is NonNullable<typeof n> => Boolean(n)) ?? [];
+  // The point-lookup below only exists to resolve a selected variant that
+  // fell outside the capped list. Skip it whenever the selection IS already
+  // in the list (every dropdown pick is) — otherwise each runtime change
+  // fires a page-suspending network query and the whole page flashes its
+  // Suspense fallback.
+  const selectedVariantInList =
+    !!watchedRuntimeVariantId &&
+    paginatedRuntimeVariantList.some(
+      (rt) => toLocalId(rt.id) === watchedRuntimeVariantId,
+    );
   const { runtimeVariant: selectedRuntimeVariantLookup } =
     useLazyLoadQuery<AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery>(
       graphql`
@@ -270,8 +284,13 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           }
         }
       `,
-      { id: selectedUuid, skip: !selectedUuid },
-      { fetchPolicy: selectedUuid ? 'store-or-network' : 'store-only' },
+      { id: selectedUuid, skip: !selectedUuid || selectedVariantInList },
+      {
+        fetchPolicy:
+          selectedUuid && !selectedVariantInList
+            ? 'store-or-network'
+            : 'store-only',
+      },
     );
 
   const { resourceSlotTypes } =
@@ -302,10 +321,6 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       { fetchPolicy: 'store-or-network' },
     );
 
-  const paginatedRuntimeVariantList =
-    runtimeVariants?.edges
-      ?.map((e) => e?.node)
-      ?.filter((n): n is NonNullable<typeof n> => Boolean(n)) ?? [];
   // Append the point-looked-up selected variant when it fell outside the
   // capped/unordered list above, so every consumer of this list (the Runtime
   // Select's options, and the readsVfolderConfigFiles derivation at submit
