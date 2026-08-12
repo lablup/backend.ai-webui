@@ -1,3 +1,4 @@
+import { devReviewOverlayPlugin } from './vite-plugins/reviewOverlay';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
@@ -28,8 +29,6 @@ import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
-
-import { devReviewOverlayPlugin } from './vite-plugins/reviewOverlay';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, '..');
@@ -745,9 +744,14 @@ export default defineConfig(({ command, mode }) => {
         // imports that start with `src/`, not ones like `backend.ai-ui/src/`.
         { find: /^src\//, replacement: reactSrc + '/' },
 
-        // backend.ai-ui workspace package, dev-aliased to source (matches
-        // craco.config.cjs:413-425).
+        // backend.ai-ui workspace package, dev-aliased to source so HMR
+        // tracks it without a BUI rebuild. `locale/*` is the published
+        // export-map alias for dist/locale/* and gets the same treatment.
         { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
+        {
+          find: /^backend\.ai-ui\/locale(\/|$)/,
+          replacement: buiSrc + '/locale$1',
+        },
         { find: /^backend\.ai-ui$/, replacement: buiSrc },
 
         // backend.ai-client workspace package, dev-aliased to source so HMR

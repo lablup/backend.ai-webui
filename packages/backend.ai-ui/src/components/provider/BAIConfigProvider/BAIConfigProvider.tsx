@@ -107,7 +107,7 @@ const BAIConfigProvider = ({
   // is what Astryx passes to `IntlMessageFormat`, so plurals, numbers and
   // dates inside Astryx components were being formatted as English in a
   // Korean session. The chrome-string catalog rides on the host-passed
-  // `BAILocale.astryxLocale` (`backend.ai-ui/dist/locale/*`), the same flow
+  // `BAILocale.astryxLocale` (`backend.ai-ui/locale/*`), the same flow
   // that used to carry `antdLocale`.
   //
   // `dir` is passed explicitly (rather than left to Astryx's own derivation)

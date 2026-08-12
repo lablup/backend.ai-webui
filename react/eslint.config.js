@@ -8,7 +8,11 @@ import jsoncParser from 'jsonc-eslint-parser';
 // below can re-declare the rule (flat-config rule configs replace, not merge)
 // without duplicating these entries.
 const restrictedImportPatterns = [
-  { group: ['backend.ai-ui/*', '!backend.ai-ui/dist'] },
+  // `locale` is a published export-map alias (→ dist/locale/*), not a deep
+  // reach into package internals.
+  {
+    group: ['backend.ai-ui/*', '!backend.ai-ui/dist', '!backend.ai-ui/locale'],
+  },
 ];
 const restrictedImportPaths = [
   {

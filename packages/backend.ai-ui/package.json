@@ -27,7 +27,7 @@
       "import": "./dist/backend.ai-ui.js",
       "types": "./dist/index.d.ts"
     },
-    "./dist/locale/*": {
+    "./locale/*": {
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
     },
