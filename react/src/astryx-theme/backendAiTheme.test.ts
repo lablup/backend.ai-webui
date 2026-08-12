@@ -98,6 +98,44 @@ describe('backendAiTheme', () => {
     });
   });
 
+  describe('tooltip is an on-dark surface (FR-3527)', () => {
+    // The bubble is pinned dark in BOTH schemes, but its own `color-scheme`
+    // still follows the app, so `light-dark()` tokens resolved inside it pick
+    // the PAGE slot and content that sets its own colour painted near-black on
+    // the dark bubble. Nothing else guards this pin: dropping it only changes
+    // the theme name, so regenerating the artifacts makes every other check
+    // pass again while the unreadable text comes back.
+    const base = backendAiBrandTheme.components?.['tooltip']?.base as
+      Record<string, string> | undefined;
+
+    it.each([
+      '--color-text-primary',
+      '--color-icon-primary',
+      '--color-accent',
+    ] as const)('pins %s to the on-dark colour', (prop) => {
+      expect(base?.[prop]).toBe('var(--color-on-dark)');
+    });
+
+    it('keeps antd colorBgSpotlight as the bubble', () => {
+      expect(base?.backgroundColor).toBe(
+        'light-dark(rgba(0,0,0,0.85), #424242)',
+      );
+      expect(base?.color).toBe('#FFFFFF');
+    });
+
+    it('does NOT set color-scheme — it would destroy the bubble', () => {
+      // `light-dark()` resolves against the element's OWN computed
+      // `color-scheme`, and the background above is declared on that same
+      // element. Measured live (FR-3527): adding `color-scheme: dark` makes the
+      // LIGHT-mode bubble opaque #424242 instead of 85%-black, losing both antd
+      // parity and the translucency. So this pin is deliberately three tokens
+      // and NOT `MediaTheme mode="dark"`'s four-part on-dark set — the tokens
+      // it leaves page-resolved are documented residue, not an oversight.
+      expect(base?.colorScheme).toBeUndefined();
+      expect(base?.['color-scheme']).toBeUndefined();
+    });
+  });
+
   describe('theme name numbering', () => {
     it('is deterministic and encodes rev/family/role', () => {
       const name = computeThemeName();

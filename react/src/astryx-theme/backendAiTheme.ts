@@ -739,8 +739,23 @@ const ANTD_HOVER_PARITY = {
       // its `color-scheme` still follows the app, so every `light-dark()` token
       // inside resolves against the PAGE surface: in light mode a `<p>` from a
       // `<Trans>` painted `--color-text-primary` #141414 on a #262626 bubble
-      // (1.20:1). `color` only reaches what inherits, so pin the same three
-      // tokens `MediaTheme mode="dark"` sets instead of wrapping call sites.
+      // (1.20:1). `color` only reaches what inherits, so pin the tokens.
+      //
+      // This is THREE of the four things `MediaTheme mode="dark"` sets — NOT
+      // parity with it. The fourth, `color-scheme: dark`, is deliberately
+      // absent: `light-dark()` resolves against the element's own
+      // `color-scheme` and the background above sits on this same element, so
+      // setting it turns the LIGHT bubble opaque #424242 instead of 85% black
+      // (measured). Tokens outside this set therefore stay page-resolved, and
+      // content that needs them still wraps in `MediaTheme` — removing
+      // `SiderToggleButton`'s wrapper makes its `Kbd` rgba(0,0,0,0.65) on
+      // rgba(0,0,0,0.06) over the near-black bubble in light (measured).
+      //
+      // COUPLING: this element also carries Astryx's `styles.container`, whose
+      // `background-color` IS `var(--color-text-primary)`. If the `@layer`
+      // order ever slips the bubble paints #ffffff under #FFFFFF text —
+      // invisible, not merely off. `verify.sh`'s `cssInjectionTarget` sentinel
+      // is what keeps that latent.
       '--color-text-primary': 'var(--color-on-dark)',
       '--color-icon-primary': 'var(--color-on-dark)',
       '--color-accent': 'var(--color-on-dark)',

@@ -150,7 +150,7 @@ none.
      `ANTD_BOX_SHADOW_SECONDARY`, …). BUI cannot import from `react/src`, so the
      measured tables live there and are re-exported.
 
-2. **Bump `THEME_NAME_REV`** (`backendAiTheme.ts`, currently **10**) whenever
+2. **Bump `THEME_NAME_REV`** (`backendAiTheme.ts`, currently **12**) whenever
    the *static recipe* changes, and add any new keys to the seed-hash array.
    The theme's `name` **is** its identity — it becomes the `data-astryx-theme`
    attribute, and when two `defineTheme()` calls share a name the **first
