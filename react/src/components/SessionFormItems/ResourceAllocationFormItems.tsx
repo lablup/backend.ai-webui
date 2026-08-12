@@ -347,7 +347,13 @@ const ResourceAllocationFormItems: React.FC<
         allocationPreset: 'auto-select',
       });
     }
-    if (supportedAcceleratorTypesInRGByImage?.length === 0) {
+    if (
+      supportedAcceleratorTypesInRGByImage?.length === 0 &&
+      // `currentImage` is a watched value and lags the store by a render, so
+      // read the image fresh — a restore that just cleared it must not be read
+      // as an image that supports nothing.
+      form.getFieldValue(['environments', 'image'])
+    ) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
