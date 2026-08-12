@@ -141,7 +141,9 @@ export async function login(
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
   // Expand the endpoint section if it's not already visible
-  const endpointInput = page.getByLabel('Endpoint');
+  // exact: true — the login page also renders 'Endpoint History' and
+  // 'About Endpoint' controls whose accessible names substring-match.
+  const endpointInput = page.getByLabel('Endpoint', { exact: true });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
