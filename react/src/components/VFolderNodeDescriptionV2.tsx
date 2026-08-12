@@ -10,7 +10,9 @@
 
  PILOT-DECISIONs:
  - The copy affordance on the "Path" LABEL moves next to the path VALUE:
-   `MetadataListItem.label` is a plain string (P2).
+   `MetadataListItem.label` is a plain string (P2). FR-3517: it carries a
+   visible label there, so its target is distinguishable from the segment
+   copies it now sits beside.
  - The disabled 'rw' option's inline Tooltip is dropped — Astryx `Selector`
    options take string labels; the client-side guard in `onChange` still
    blocks the restricted transition.
@@ -25,6 +27,7 @@ import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles'
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
 import {
   MetadataList,
   MetadataListItem,
@@ -44,6 +47,7 @@ import * as _ from 'lodash-es';
 import {
   CircleCheckIcon,
   CircleXIcon,
+  CopyIcon,
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -155,9 +159,19 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'path',
       label: t('data.folders.Path'),
       children: (
-        <HStack gap={1} align="start" wrap="wrap">
+        <HStack gap={3} align="start" wrap="wrap">
           <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />
-          <BAIText copyable={{ text: vfolderPath }} />
+          <Button
+            label={t('button.CopySomething', {
+              name: t('data.folders.Path'),
+            })}
+            variant="ghost"
+            size="sm"
+            icon={<CopyIcon />}
+            onClick={() => {
+              void navigator.clipboard?.writeText(vfolderPath);
+            }}
+          />
         </HStack>
       ),
     },
