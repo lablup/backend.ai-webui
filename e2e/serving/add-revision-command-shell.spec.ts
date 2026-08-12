@@ -179,15 +179,17 @@ test.describe(
         ).toBeVisible();
 
         // 3. Switch Execution to Exec → the Shell input is unmounted and the
-        //    command field is relabeled "Command (argv)". Non-exact text match:
-        //    the Form.Item <label> wraps a tooltip icon so its text node is not
-        //    exactly "Command (argv)"; the string is distinctive enough that a
-        //    substring match is unambiguous.
+        //    command field is relabeled "Command (argv)". Assert on the labeled
+        //    command control by role+name: a text match on "Command (argv)"
+        //    strict-mode-violates because it resolves to BOTH the BAIFormItem
+        //    <label> and the Astryx control's own internal field label.
         await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
         await expect(
           modal.getByRole('textbox', { name: 'Shell', exact: true }),
         ).toHaveCount(0);
-        await expect(modal.getByText('Command (argv)')).toBeVisible();
+        await expect(
+          modal.getByRole('textbox', { name: 'Command (argv)', exact: true }),
+        ).toBeVisible();
 
         // 3b. Exec swaps the command control to a single-line input (argv is
         //     one token vector, not a script) — the accessible name flips from

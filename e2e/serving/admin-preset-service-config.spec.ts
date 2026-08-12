@@ -158,8 +158,11 @@ async function setupPresetCreatePage(
   // The Runtime field is an Astryx Selector: its trigger is a plain <button>
   // named by the field label, and the popup hosts plain, clickable
   // `role="option"` rows. Only one option exists (the mock resolves exactly
-  // one variant).
-  await page.getByRole('button', { name: 'Runtime', exact: true }).click();
+  // one variant). Unlike the Add-Revision modal's Runtime select, this
+  // BAIFormItem carries a tooltip, whose help glyph contributes " info" to the
+  // trigger's accessible name — so the button is named "Runtime info", not
+  // just "Runtime".
+  await page.getByRole('button', { name: 'Runtime info', exact: true }).click();
   const customOption = page.getByRole('option', {
     name: 'custom',
     exact: true,
@@ -230,12 +233,17 @@ test.describe(
       await expect(shellInputPrefill).toBeVisible();
       await expect(shellInputPrefill).toHaveValue('/bin/bash');
 
-      // 3. Switch to Exec → Shell input unmounts, command relabels.
+      // 3. Switch to Exec → Shell input unmounts, command relabels. Assert on
+      //    the labeled command control by role+name: a text match on "Command
+      //    (argv)" strict-mode-violates because it resolves to BOTH the
+      //    BAIFormItem <label> and the Astryx control's own internal field label.
       await page.getByRole('radio', { name: 'Exec', exact: true }).click();
       await expect(
         page.getByRole('textbox', { name: 'Shell', exact: true }),
       ).toHaveCount(0);
-      await expect(page.getByText('Command (argv)')).toBeVisible();
+      await expect(
+        page.getByRole('textbox', { name: 'Command (argv)', exact: true }),
+      ).toBeVisible();
     });
 
     test('Admin creates a preset carrying Service Configuration, Health Check, and a Pre-Start Action', async ({
