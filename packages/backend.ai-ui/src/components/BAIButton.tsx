@@ -44,13 +44,8 @@
  pure-`onClick` router/mutation actions with no `href` — no `BAIButton` call
  site in the repo passes `href` at all — so `Link` would mean a
  destination-less `<a>`, exactly what D3 rejected for `BAILink`. `ghost` keeps
- button semantics and the low-emphasis look. **Amended (FR-3524): the element
- choice stands, the COLOUR half does not.** `ghost` alone made `type="link"`
- and `type="text"` pixel-identical (`--color-text-primary`), so link actions
- lost antd's `colorLink` tint; `.bai-action-accent` (Q-37,
- `--color-text-accent`) puts it back — the same token `BAILink` already paints.
- antd v6's colour axis is respected: an explicit `color="default"` keeps the
- neutral tint, and `danger` still wins outright.
+ button semantics and the low-emphasis look. Amended by FR-3524: the element
+ choice stands, but the colour comes from `.bai-action-accent`, not `ghost`.
 
  PILOT-DECISION — **`type="dashed"` (5 sites) becomes `variant="secondary"`.**
  MAPPING §3.3: "no equivalent -> `variant="secondary"`, record the decision".
@@ -114,11 +109,12 @@ export interface BAIButtonProps extends Omit<
   variant?: 'filled' | 'outlined' | 'solid' | 'dashed' | 'text' | 'link';
   /**
    * antd v6's colour axis (`default | primary | danger | blue | purple | …`),
-   * which pairs with `variant`. Astryx `Button` has a closed 4-value `variant`
-   * enum and no colour slot (P5), so only `danger` carries meaning here — it
-   * is folded into the same resolution as the `danger` boolean; everything
-   * else is accepted and ignored rather than silently mapped to a hue Astryx
-   * does not have. Two live call sites pass `color="default"`.
+   * which pairs with `variant`. Two values are load-bearing: `danger` resolves
+   * to `variant="destructive"` (identical to the `danger` boolean), and
+   * `default` opts a `type`/`variant="link"` button out of the accent tint.
+   * Every other value is accepted and ignored — Astryx `Button` has a closed
+   * 4-value `variant` enum with no colour slot (P5), so there is no hue to map
+   * them onto.
    */
   color?: string;
   /**

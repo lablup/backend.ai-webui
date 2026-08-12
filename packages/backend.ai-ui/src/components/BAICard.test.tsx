@@ -189,6 +189,37 @@ describe('BAICard', () => {
       expect(button).toBeInTheDocument();
     });
 
+    // FR-3524: the extra action is a `type="link"` BAIButton, so it carries
+    // `.bai-action-accent` — except on error/warning cards, where BAICard
+    // passes `color="default"` so the glyph keeps carrying the status.
+    it.each(['default', 'success'] as const)(
+      'should tint the extra action on a %s status card',
+      (status) => {
+        render(
+          <BAICard title="Card" status={status} extraButtonTitle="Action">
+            Content
+          </BAICard>,
+        );
+        expect(screen.getByRole('button', { name: /Action/i })).toHaveClass(
+          'bai-action-accent',
+        );
+      },
+    );
+
+    it.each(['error', 'warning'] as const)(
+      'should leave the extra action untinted on a %s status card',
+      (status) => {
+        render(
+          <BAICard title="Card" status={status} extraButtonTitle="Action">
+            Content
+          </BAICard>,
+        );
+        expect(screen.getByRole('button', { name: /Action/i })).not.toHaveClass(
+          'bai-action-accent',
+        );
+      },
+    );
+
     it('should render ReactNode as extraButtonTitle', () => {
       render(
         <BAICard
