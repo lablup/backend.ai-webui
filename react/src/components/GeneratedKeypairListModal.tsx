@@ -77,7 +77,10 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
   return (
     <BAIModal
       title={t('credential.NewCredentialCreated')}
-      width={600}
+      // 600 left the three columns at 200px each, one of which cannot fit an
+      // access key plus its copy button; 780 clears the table's natural width
+      // so the default view needs no horizontal scroll (FR-3519).
+      width={780}
       destroyOnHidden
       okText={t('button.Download')}
       onOk={handleDownload}
@@ -98,10 +101,13 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
           title={t('credential.GeneratedKeypairWarning')}
         />
         <BAIText>{t('credential.GeneratedKeypairInfo')}</BAIText>
+        {/* No `scroll` prop: BAITableAstryx accepts and ignores it, so the
+            antd-era `x: 'max-content'` never sized these columns and its
+            presence only suggested otherwise. Astryx's scroll wrapper owns
+            overflow; column floors come from `minWidth`. */}
         <BAITableAstryx<KeypairType>
           size="small"
-          style={{ overflowX: 'auto' }}
-          scroll={{ x: 'max-content', y: 500 }}
+          resizable
           pagination={false}
           dataSource={keypairData}
           rowKey={(record) => record?.keypair?.accessKey ?? ''}
@@ -121,6 +127,10 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
               title: t('credential.AccessKey'),
               dataIndex: ['keypair', 'accessKey'],
               key: 'access_key',
+              // Widest cell in the table: 20 monospace chars plus the copy
+              // button. Without a floor it takes an equal third and clips the
+              // button, since `<td>` is `overflow: hidden` (FR-3519).
+              minWidth: 240,
               render: (value) => (
                 <BAIText copyable monospace>
                   {value}
