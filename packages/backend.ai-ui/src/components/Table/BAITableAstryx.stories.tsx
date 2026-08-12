@@ -32,10 +32,11 @@ const meta: Meta<typeof BAITableAstryx> = {
 - **Server-side pagination** — a custom bottom bar (not antd's pager)
 
 - **Horizontal scroll** via antd-shaped \`scroll={{ x }}\` — width-less columns take their content's intrinsic width (FR-3500)
+- **Vertical scroll** via \`scroll={{ y }}\` — the body is capped at \`y\` and the header row sticks (FR-3500)
 
 ## Dropped vs BAITable (see ticket 25 "Feature matrix" for the full list)
-- \`scroll.y\` (sticky-header body scroll)
 - \`loading\` dims rows but shows no spinner
+- \`scroll.y\`'s sticky header loses its bottom rule while scrolled (a collapsed-border rule cannot travel with a sticky cell)
 - Column groups (\`columns[].children\`) are flattened, not spanned
 - Row virtualization (deferred, explicit product decision)
         `,
@@ -195,6 +196,12 @@ const scrollData = [
   },
 ];
 
+// Enough rows in the same shape to overflow a 240px body cap.
+const verticalScrollData = Array.from({ length: 15 }, (_unused, index) => ({
+  ...scrollData[index % scrollData.length],
+  key: `n${index + 1}`,
+}));
+
 export const Default: Story = {
   name: 'Basic Table',
   parameters: {
@@ -232,6 +239,28 @@ export const HorizontalScroll: Story = {
         columns={scrollColumns}
         dataSource={scrollData}
         pagination={{ total: scrollData.length, pageSize: 10 }}
+      />
+    </div>
+  ),
+};
+
+export const VerticalScroll: Story = {
+  name: 'Vertical Scroll (scroll.y)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`scroll={{ x: 'max-content', y: 240 }}` — the shape an `x`+`y` call site passes. `y` caps the scroll container at 240px and sticks the header row over an opaque base, so all 15 rows render inside a fixed-height body instead of growing the page. Both axes scroll in the same container: the `Name` column stays pinned while scrolling sideways, and its header stays put while scrolling down.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ width: 560 }}>
+      <BAITableAstryx
+        scroll={{ x: 'max-content', y: 240 }}
+        columns={scrollColumns}
+        dataSource={verticalScrollData}
+        pagination={{ total: verticalScrollData.length, pageSize: 20 }}
       />
     </div>
   ),
