@@ -1,4 +1,4 @@
-import { BAILocale, baiLocales, i18n } from '../../../locale';
+import { BAILocale, i18n } from '../../../locale';
 import { type BAIClient, BAIClientProvider } from '../BAIClientProvider';
 import {
   InternationalizationProvider,
@@ -106,9 +106,9 @@ const BAIConfigProvider = ({
   // on its `'en'` context default. This is not only about strings: the locale
   // is what Astryx passes to `IntlMessageFormat`, so plurals, numbers and
   // dates inside Astryx components were being formatted as English in a
-  // Korean session. The chrome-string catalog rides on `BAILocale.astryxLocale`
-  // (`locale/astryx/*.json`), resolved from `baiLocales` when the host passes
-  // only `lang`.
+  // Korean session. The chrome-string catalog rides on the host-passed
+  // `BAILocale.astryxLocale` (`backend.ai-ui/dist/locale/*`), the same flow
+  // that used to carry `antdLocale`.
   //
   // `dir` is passed explicitly (rather than left to Astryx's own derivation)
   // only to keep it in one place; `getLocaleDirection` is the same helper the
@@ -117,10 +117,8 @@ const BAIConfigProvider = ({
   // host still owns `<html dir>`. No RTL locale ships in `resources/i18n`
   // today, so the two cannot currently disagree.
   const astryxLang = locale?.lang ?? 'en';
-  const astryxCatalog =
-    locale?.astryxLocale ?? baiLocales[astryxLang]?.astryxLocale;
-  const astryxOverrides = astryxCatalog
-    ? { [astryxLang]: astryxCatalog }
+  const astryxOverrides = locale?.astryxLocale
+    ? { [astryxLang]: locale.astryxLocale }
     : undefined;
 
   return (

@@ -2,34 +2,65 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// The `locale` value handed to `<BAIConfigProvider>`, keyed by language code.
+// Per-language `BAILocale` modules from the BUI package, keyed by language
+// code. `BAIConfigProvider` consumes these via the `locale` prop — `lang`
+// drives BUI's i18next instance / dayjs / Astryx's locale, and
+// `astryxLocale` carries the Astryx chrome-string catalog (the same flow
+// that carried `antdLocale` in the antd era).
 //
-// This used to be 21 hand-written imports of `backend.ai-ui/dist/locale/*` —
-// per-language modules that re-exported antd's own `Locale` bundles so antd's
-// `ConfigProvider` could localize its built-in strings (pagination labels,
-// date-picker month names). The to-astryx final switch removed the antd
-// ConfigProvider layer, so those bundles, that package export and the
-// `BAILocale.antdLocale` field are all gone; `BAILocale` now carries only
-// `lang`, and BUI forwards it to the three runtimes that still need it (BUI's
-// i18next instance, dayjs, Astryx's `InternationalizationProvider`).
-//
-// BUI's own translation JSONs are NOT re-exported here either. BUI components
+// BUI's own translation JSONs are NOT re-exported here. BUI components
 // access them via BUI's internal i18next instance (`useBAIi18n` /
 // `BAITrans`), so the host has no reason to hold a second copy. See
 // FR-2986 / packages/backend.ai-ui/src/hooks/useBAIi18n.ts.
-import {
-  SUPPORTED_LANGUAGES,
-  type SupportedLanguage,
-} from './resolveInitialLanguage';
-import type { BAILocale } from 'backend.ai-ui';
+import type { SupportedLanguage } from './resolveInitialLanguage';
+import de_DE from 'backend.ai-ui/dist/locale/de_DE';
+import el_GR from 'backend.ai-ui/dist/locale/el_GR';
+import en_US from 'backend.ai-ui/dist/locale/en_US';
+import es_ES from 'backend.ai-ui/dist/locale/es_ES';
+import fi_FI from 'backend.ai-ui/dist/locale/fi_FI';
+import fr_FR from 'backend.ai-ui/dist/locale/fr_FR';
+import id_ID from 'backend.ai-ui/dist/locale/id_ID';
+import it_IT from 'backend.ai-ui/dist/locale/it_IT';
+import ja_JP from 'backend.ai-ui/dist/locale/ja_JP';
+import ko_KR from 'backend.ai-ui/dist/locale/ko_KR';
+import mn_MN from 'backend.ai-ui/dist/locale/mn_MN';
+import ms_MY from 'backend.ai-ui/dist/locale/ms_MY';
+import pl_PL from 'backend.ai-ui/dist/locale/pl_PL';
+import pt_BR from 'backend.ai-ui/dist/locale/pt_BR';
+import pt_PT from 'backend.ai-ui/dist/locale/pt_PT';
+import ru_RU from 'backend.ai-ui/dist/locale/ru_RU';
+import th_TH from 'backend.ai-ui/dist/locale/th_TH';
+import tr_TR from 'backend.ai-ui/dist/locale/tr_TR';
+import vi_VN from 'backend.ai-ui/dist/locale/vi_VN';
+import zh_CN from 'backend.ai-ui/dist/locale/zh_CN';
+import zh_TW from 'backend.ai-ui/dist/locale/zh_TW';
 
 // languages which are supported by backend.ai-ui.
-//
-// Derived from `SUPPORTED_LANGUAGES` rather than restated, so the two lists
-// cannot drift — the hand-written map this replaces needed a `satisfies
-// Record<SupportedLanguage, …>` clause to get the same guarantee, and that
-// guarantee is now structural. The `Record` annotation keeps the lookup in
-// `DefaultProviders` exhaustively typed.
-export const buiLanguages = Object.fromEntries(
-  SUPPORTED_LANGUAGES.map((lang) => [lang, { lang } satisfies BAILocale]),
-) as Record<SupportedLanguage, BAILocale>;
+// The `satisfies` clause below is a compile-time guard that keeps this map
+// in exact two-way sync with `SUPPORTED_LANGUAGES` in
+// `helper/resolveInitialLanguage.ts` (a missing key or an extra key is a
+// type error). Type-only import, so the Vitest mock of this module is
+// unaffected.
+export const buiLanguages = {
+  de: de_DE,
+  el: el_GR,
+  en: en_US,
+  es: es_ES,
+  fi: fi_FI,
+  fr: fr_FR,
+  id: id_ID,
+  it: it_IT,
+  ja: ja_JP,
+  ko: ko_KR,
+  mn: mn_MN,
+  ms: ms_MY,
+  pl: pl_PL,
+  'pt-BR': pt_BR,
+  pt: pt_PT,
+  ru: ru_RU,
+  th: th_TH,
+  tr: tr_TR,
+  vi: vi_VN,
+  'zh-CN': zh_CN,
+  'zh-TW': zh_TW,
+} satisfies Record<SupportedLanguage, typeof en_US>;

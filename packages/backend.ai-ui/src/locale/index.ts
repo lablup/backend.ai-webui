@@ -1,45 +1,24 @@
 import de from './de.json';
-import de_DE from './de_DE';
 import el from './el.json';
-import el_GR from './el_GR';
 import en from './en.json';
-import en_US from './en_US';
 import es from './es.json';
-import es_ES from './es_ES';
 import fi from './fi.json';
-import fi_FI from './fi_FI';
 import fr from './fr.json';
-import fr_FR from './fr_FR';
 import id from './id.json';
-import id_ID from './id_ID';
 import it from './it.json';
-import it_IT from './it_IT';
 import ja from './ja.json';
-import ja_JP from './ja_JP';
 import ko from './ko.json';
-import ko_KR from './ko_KR';
 import mn from './mn.json';
-import mn_MN from './mn_MN';
 import ms from './ms.json';
-import ms_MY from './ms_MY';
 import pl from './pl.json';
-import pl_PL from './pl_PL';
 import pt_BR from './pt-BR.json';
 import pt from './pt.json';
-import pt_BR_locale from './pt_BR';
-import pt_PT from './pt_PT';
 import ru from './ru.json';
-import ru_RU from './ru_RU';
 import th from './th.json';
-import th_TH from './th_TH';
 import tr from './tr.json';
-import tr_TR from './tr_TR';
 import vi from './vi.json';
-import vi_VN from './vi_VN';
 import zh_CN from './zh-CN.json';
 import zh_TW from './zh-TW.json';
-import zh_CN_locale from './zh_CN';
-import zh_TW_locale from './zh_TW';
 import { createInstance, type i18n as I18nInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -228,40 +207,13 @@ if (import.meta.hot) {
 /**
  * The locale a host hands `<BAIConfigProvider locale={…}>`.
  *
- * `astryxLocale` is the flat `@astryx.*` → string catalog for the language
- * (`./astryx/*.json`, carried by the per-language modules `ko_KR.ts`, …).
- * Hosts normally pass only `lang`; `BAIConfigProvider` resolves the catalog
- * from `baiLocales` and feeds it to Astryx's `InternationalizationProvider`.
+ * `astryxLocale` is the flat `@astryx.*` → string catalog for the language.
+ * The per-language modules under this directory (`ko_KR.ts`, …, published as
+ * the `backend.ai-ui/dist/locale/*` package export) each bundle their
+ * `./astryx/*.json` catalog into this shape — the host imports one and passes
+ * it whole, exactly like the antd-era `antdLocale` flow this replaces.
  */
 export interface BAILocale {
   lang: string;
   astryxLocale?: Record<string, string>;
 }
-
-/**
- * Every `BAILocale` BUI ships, keyed by language code. Internal to the
- * package — the astryx catalogs are not part of the public API.
- */
-export const baiLocales: Record<string, BAILocale> = {
-  de: de_DE,
-  el: el_GR,
-  en: en_US,
-  es: es_ES,
-  fi: fi_FI,
-  fr: fr_FR,
-  id: id_ID,
-  it: it_IT,
-  ja: ja_JP,
-  ko: ko_KR,
-  mn: mn_MN,
-  ms: ms_MY,
-  pl: pl_PL,
-  'pt-BR': pt_BR_locale,
-  pt: pt_PT,
-  ru: ru_RU,
-  th: th_TH,
-  tr: tr_TR,
-  vi: vi_VN,
-  'zh-CN': zh_CN_locale,
-  'zh-TW': zh_TW_locale,
-};
