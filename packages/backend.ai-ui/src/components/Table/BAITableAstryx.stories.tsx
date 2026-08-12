@@ -195,6 +195,26 @@ const scrollData = [
   },
 ];
 
+export const Default: Story = {
+  name: 'Basic Table',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Basic table with sample data. `department` and `email` are hidden by default (`defaultHidden: true`) — open the settings gear to reveal them.',
+      },
+    },
+  },
+  args: {
+    columns: sampleColumns,
+    dataSource: sampleData,
+    pagination: {
+      total: sampleData.length,
+      pageSize: 10,
+    },
+  },
+};
+
 export const HorizontalScroll: Story = {
   name: 'Horizontal Scroll (scroll.x)',
   parameters: {
@@ -215,26 +235,6 @@ export const HorizontalScroll: Story = {
       />
     </div>
   ),
-};
-
-export const Default: Story = {
-  name: 'Basic Table',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Basic table with sample data. `department` and `email` are hidden by default (`defaultHidden: true`) — open the settings gear to reveal them.',
-      },
-    },
-  },
-  args: {
-    columns: sampleColumns,
-    dataSource: sampleData,
-    pagination: {
-      total: sampleData.length,
-      pageSize: 10,
-    },
-  },
 };
 
 export const WithColumnSettings: Story = {
