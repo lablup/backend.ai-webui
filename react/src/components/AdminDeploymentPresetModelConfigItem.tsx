@@ -77,24 +77,23 @@ const ModelConfigItem: React.FC<{
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   /**
-   * BA-7210 / FR-3481 (26.9.0+, `preset-model-config-type`): the server
-   * genuinely resolves an omitted name/modelPath from the runtime variant
-   * baseline / model mount destination at revision resolution, so on these
-   * managers name/modelPath become truly optional. Older managers don't do
-   * that resolution — omitting them there is the kind of deployment that
-   * tends to fail at runtime — so the UI keeps requiring both, and also
-   * nests Service Configuration/Health Check/Pre-Start Actions here (instead
-   * of independently in Step 1 — see AdminDeploymentPresetSettingPageContent
-   * .tsx) since they can only be submitted together with a real
-   * name/modelPath. Rendered above Metadata to match the pre-FR-3205 field
-   * order.
+   * BA-7210 / FR-3481 (26.9.0+, `preset-model-config-type`): legacy managers
+   * (without the capability) can only submit Service Configuration/Health
+   * Check/Pre-Start Actions together with a real name/modelPath, so those
+   * sections nest here (instead of independently in Step 1 — see
+   * AdminDeploymentPresetSettingPageContent.tsx), rendered above Metadata to
+   * match the pre-FR-3205 field order.
    */
   const supportsNullableModelDefinition = baiClient.supports(
     'preset-model-config-type',
   );
 
-  // Rendered only when the model-definition switch is ON; sub-fields are
-  // required here unless the manager supports inheriting them (see above).
+  // Rendered only when the model-definition switch is ON. Name/path are
+  // nullable server-side on 26.9.0+ (BA-7210 inherits them from the runtime
+  // variant baseline), but the FE requires both on every manager anyway —
+  // a deliberate UI-only tightening: enabling the model definition without
+  // naming a model is the kind of deployment that tends to fail at runtime,
+  // so the form blocks it up front rather than letting it reach the server.
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFlex gap="md" wrap="wrap">
@@ -102,13 +101,8 @@ const ModelConfigItem: React.FC<{
           name={modelField('name')}
           label={t('adminDeploymentPreset.modelDef.ModelName')}
           style={{ flex: 1, minWidth: 160 }}
-          tooltip={
-            supportsNullableModelDefinition
-              ? t('adminDeploymentPreset.modelDef.ModelNameInheritTooltip')
-              : undefined
-          }
-          required={!supportsNullableModelDefinition}
-          rules={supportsNullableModelDefinition ? [] : [{ required: true }]}
+          required
+          rules={[{ required: true }]}
         >
           <AstryxFormTextInput
             label={t('adminDeploymentPreset.modelDef.ModelName')}
@@ -121,13 +115,8 @@ const ModelConfigItem: React.FC<{
           name={modelField('modelPath')}
           label={t('adminDeploymentPreset.modelDef.ModelPath')}
           style={{ flex: 2, minWidth: 200 }}
-          tooltip={
-            supportsNullableModelDefinition
-              ? t('adminDeploymentPreset.modelDef.ModelPathInheritTooltip')
-              : undefined
-          }
-          required={!supportsNullableModelDefinition}
-          rules={supportsNullableModelDefinition ? [] : [{ required: true }]}
+          required
+          rules={[{ required: true }]}
         >
           <AstryxFormTextInput
             label={t('adminDeploymentPreset.modelDef.ModelPath')}
