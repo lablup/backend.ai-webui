@@ -472,6 +472,7 @@
     "ExportCSV": "Vie CSV",
     "GoToFirstPage": "Siirry ensimmäiselle sivulle",
     "InvalidPageNumber": "Virheellinen sivunumero",
+    "NoDataToDisplay": "Ei näytettäviä tietoja",
     "Pagination": "Sivutus",
     "SearchTableColumn": "Hakutaulukon sarakkeet",
     "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",

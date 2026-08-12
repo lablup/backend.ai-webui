@@ -472,6 +472,7 @@
     "ExportCSV": "Eksport CSV",
     "GoToFirstPage": "Pergi ke halaman pertama",
     "InvalidPageNumber": "Nombor halaman tidak sah",
+    "NoDataToDisplay": "Tiada data untuk dipaparkan",
     "Pagination": "Penomboran halaman",
     "SearchTableColumn": "Lajur jadual carian",
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",

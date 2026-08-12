@@ -472,6 +472,7 @@
     "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",
     "InvalidPageNumber": "Số trang không hợp lệ",
+    "NoDataToDisplay": "Không có dữ liệu để hiển thị",
     "Pagination": "Phân trang",
     "SearchTableColumn": "Các cột bảng tìm kiếm",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
