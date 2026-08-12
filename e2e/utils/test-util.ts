@@ -163,7 +163,9 @@ export async function login(
   const maxAttempts = 3;
   const retryDelayMs = 5000;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    await page.getByLabel('Login', { exact: true }).click();
+    // The Astryx login button carries no aria-label — its accessible name
+    // is its text content, so locate it by role, not label.
+    await page.getByRole('button', { name: 'Login', exact: true }).click();
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
         timeout: 30000,
