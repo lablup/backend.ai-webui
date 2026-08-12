@@ -600,8 +600,10 @@ export interface BAISelectOptionProps {
   value?: BAISelectOption['value'];
   disabled?: boolean;
   /**
-   * Extra text folded into the option's search key, on top of the flattened
-   * children. antd's `optionFilterProp="filterValue"` convention.
+   * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call
+   * sites. Search matches the option's visible text only — Astryx renders the
+   * option label on the trigger too, so a search key folded into it leaks
+   * there (FR-3499).
    */
   filterValue?: string;
   /** The option row. May be rich JSX — it survives via `renderOption`. */
