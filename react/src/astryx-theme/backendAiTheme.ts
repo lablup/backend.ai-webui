@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 11;
+export const THEME_NAME_REV = 12;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -735,6 +735,15 @@ const ANTD_HOVER_PARITY = {
     base: {
       backgroundColor: 'light-dark(rgba(0,0,0,0.85), #424242)',
       color: '#FFFFFF',
+      // TRAP (measured, FR-3527). The bubble is pinned dark in both schemes but
+      // its `color-scheme` still follows the app, so every `light-dark()` token
+      // inside resolves against the PAGE surface: in light mode a `<p>` from a
+      // `<Trans>` painted `--color-text-primary` #141414 on a #262626 bubble
+      // (1.20:1). `color` only reaches what inherits, so pin the same three
+      // tokens `MediaTheme mode="dark"` sets instead of wrapping call sites.
+      '--color-text-primary': 'var(--color-on-dark)',
+      '--color-icon-primary': 'var(--color-on-dark)',
+      '--color-accent': 'var(--color-on-dark)',
     },
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
