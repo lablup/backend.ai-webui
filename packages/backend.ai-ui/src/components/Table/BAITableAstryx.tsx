@@ -38,11 +38,12 @@
    sticky          column-level `fixed: 'left' | 'right' | true`
    expansion       antd `expandedRowRender` (local plugin, see below)
    cellRow         antd `onCell` / `onRow` escape hatches (local plugin)
+   scrollX         x mode's per-column `max-width` release (local plugin)
 
  Astryx's canonical plugin order is columnSettings -> sort -> tree ->
  selection -> pagination, with unknown names appended in insertion order — so
- `resize` / `sticky` / `cellRow` / `expansion` run last, which is what they
- want (they read the FINAL column list).
+ `resize` / `sticky` / `scrollX` / `cellRow` / `expansion` run last, which is
+ what they want (they read the FINAL column list).
 
  Pagination is deliberately NOT the `useTablePagination` plugin: BUI's tables
  are server-paginated (the data is already sliced) and BUI renders its own
@@ -62,9 +63,11 @@
  - **`loading`** — antd dims the existing rows under a centred spinner. Astryx
    has no table loading state; the dim + `pointer-events: none` wrapper is
    reproduced, the spinner is not.
- - **`scroll`** is accepted and ignored — Astryx's own scroll wrapper already
-   handles horizontal overflow. `scroll.y` (sticky-header body scrolling) is
-   DROPPED.
+ - **`scroll.x`** IS wired, as rc-table wires it: width-less columns drop their
+   proportional width so their content defines them, and the table switches to
+   `table-layout: auto` with `width: <x>; min-width: 100%`. Columns with a
+   numeric/resized width stay pixel-fixed and keep truncating.
+   **`scroll.y`** (sticky-header body scrolling) is still not implemented.
  - **Column-level `fixed`** IS wired, via `useTableStickyColumns` — 40 of the
    74 call sites use it. antd pins per column; Astryx pins a contiguous RUN
    from each edge, so the adapter derives the run from the LEADING
@@ -161,6 +164,28 @@ const isDetailRow = (item: unknown): item is Record<string, unknown> =>
   typeof item === 'object' &&
   DETAIL_ROW_MARKER in (item as Record<string, unknown>);
 
+/** x-mode cell styles; module-scope so unstyled cells keep a stable identity. */
+const X_HEADER_RELEASE: React.CSSProperties = {
+  width: 'auto',
+  maxWidth: 'none',
+};
+const X_BODY_RELEASE: React.CSSProperties = { maxWidth: 'none' };
+
+const releaseCellClip = <
+  P extends { htmlProps: { style?: React.CSSProperties } },
+>(
+  props: P,
+  release: React.CSSProperties,
+): P => ({
+  ...props,
+  htmlProps: {
+    ...props.htmlProps,
+    style: props.htmlProps.style
+      ? { ...props.htmlProps.style, ...release }
+      : release,
+  },
+});
+
 /* -------------------------------------------------------------------------- */
 /* Public prop contract                                                        */
 /* -------------------------------------------------------------------------- */
@@ -228,7 +253,7 @@ export interface BAIAstryxTableProps<RecordType extends AnyRecord = AnyRecord> {
   loading?: boolean;
   /** Kept for prop parity with `BAITable`; behaves like `loading` here. */
   spinnerLoading?: boolean;
-  /** Drag-to-resize column borders. */
+  /** Drag-to-resize column borders. Defaults to on; pass `false` to opt out. */
   resizable?: boolean;
   /** Backend.AI order string, e.g. `-created_at`. */
   order?: string | null;
@@ -263,8 +288,11 @@ export interface BAIAstryxTableProps<RecordType extends AnyRecord = AnyRecord> {
   isStriped?: boolean;
   hasHover?: boolean;
   textOverflow?: 'wrap' | 'truncate';
-  /** Accepted and ignored — Astryx's scroll wrapper owns overflow. */
-  scroll?: unknown;
+  /**
+   * antd `scroll`. `x` is wired — see the file-header PILOT-DECISION for the
+   * semantics; `y` is accepted for parity but NOT implemented yet.
+   */
+  scroll?: { x?: number | string | true; y?: number | string };
   /**
    * Hide the header row. Astryx's `Table` has no such prop (its header carries
    * the sort controls and the select-all checkbox), so this is done in CSS:
@@ -404,7 +432,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   size = 'small',
   loading,
   spinnerLoading,
-  resizable = false,
+  resizable = true,
   order,
   onChangeOrder,
   rowSelection,
@@ -420,6 +448,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   isStriped,
   hasHover = true,
   textOverflow = 'truncate',
+  scroll,
   showHeader = true,
   className,
   style,
@@ -427,6 +456,17 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   'use memo';
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
+
+  // rc-table's own mapping of `scroll.x` onto the table's CSS width.
+  const scrollXWidth =
+    scroll?.x == null
+      ? undefined
+      : scroll.x === true
+        ? 'auto'
+        : typeof scroll.x === 'number'
+          ? `${scroll.x}px`
+          : scroll.x;
+  const isScrollX = scrollXWidth !== undefined;
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -690,21 +730,27 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
         </span>
       );
 
+      // x mode: a width-less column carries NO width so its content sizes it;
+      // `column.minWidth` is deliberately ignored there (FR-3500).
+      const astryxWidth =
+        numericWidth != null
+          ? pixel(numericWidth)
+          : isScrollX
+            ? undefined
+            : proportional(
+                1,
+                typeof column.minWidth === 'number'
+                  ? { minWidth: column.minWidth }
+                  : undefined,
+              );
+
       built.push({
         key,
         header,
         align: toAstryxAlign(column.align),
         sortable: column.sorter ? { sortKey: sortKeyOf(column, key) } : false,
         resizable: resizable,
-        width:
-          numericWidth != null
-            ? pixel(numericWidth)
-            : proportional(
-                1,
-                typeof column.minWidth === 'number'
-                  ? { minWidth: column.minWidth }
-                  : undefined,
-              ),
+        width: astryxWidth,
         renderCell: (item) => {
           if (isDetailRow(item)) return null;
           const record = item as RecordType;
@@ -767,6 +813,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   }, [
     flatColumns,
     columnWidths,
+    isScrollX,
     resizable,
     hasExpandable,
     expandable,
@@ -903,6 +950,21 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [flatColumns, onRow, rowIndexByKey, rowKey],
+  );
+
+  /* ---- x-mode per-column max-width release ------------------------------- */
+
+  // Astryx clips cells with `max-width: 0`; x mode releases width-LESS columns
+  // only, so pixel/resized columns keep truncating (the header release also
+  // cancels the stray % width `resolveColumnWidths` hands width-less columns).
+  const scrollXPlugin: TablePlugin<AnyRow> = useMemo(
+    () => ({
+      transformHeaderCell: (props, column) =>
+        column.width != null ? props : releaseCellClip(props, X_HEADER_RELEASE),
+      transformBodyCell: (props, column) =>
+        column.width != null ? props : releaseCellClip(props, X_BODY_RELEASE),
+    }),
+    [],
   );
 
   /* ---- sorting ----------------------------------------------------------- */
@@ -1077,6 +1139,8 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     }
     if (resizable) next.resize = resizePlugin;
     next.sticky = stickyPlugin;
+    // Before `cellRow`, so a consumer's `onCell` style still has the last word.
+    if (isScrollX) next.scrollX = scrollXPlugin;
     next.cellRow = cellRowPlugin;
     if (hasExpandable) next.expansion = expansionPlugin;
     return next;
@@ -1089,6 +1153,8 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     resizable,
     resizePlugin,
     stickyPlugin,
+    isScrollX,
+    scrollXPlugin,
     cellRowPlugin,
     hasExpandable,
     expansionPlugin,
@@ -1157,15 +1223,14 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           // its pagination bar by 24px.
           'bai-table-astryx-dim-layer',
           !showHeader && 'bai-table-astryx-no-header',
+          isScrollX && 'bai-table-astryx-scroll-x',
         )}
         style={
-          isDimmed
-            ? {
-                opacity: 0.5,
-                pointerEvents: 'none',
-                transition: 'opacity .2s ease',
-              }
-            : { transition: 'opacity .2s ease' }
+          {
+            transition: 'opacity .2s ease',
+            ...(isDimmed ? { opacity: 0.5, pointerEvents: 'none' } : null),
+            ...(isScrollX ? { '--bai-table-scroll-x': scrollXWidth } : null),
+          } as React.CSSProperties
         }
       >
         <Table<AnyRow>

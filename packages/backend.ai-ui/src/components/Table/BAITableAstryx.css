@@ -78,3 +78,18 @@
     min-width: 0;
   }
 }
+
+@layer components {
+  /*
+   antd `scroll={{ x }}` as rc-table writes it: `width: <x>; min-width: 100%`.
+   `table-layout: auto` is required for content-driven widths — the switch
+   rc-table itself makes for 'max-content' (ant-design#25227).
+  */
+  .bai-table-astryx-scroll-x table {
+    table-layout: auto;
+    width: var(--bai-table-scroll-x);
+    /* !important: BaseTable writes a structural inline min-width whenever any
+       pixel column exists (the injected selection column is pixel 52). */
+    min-width: 100% !important;
+  }
+}
