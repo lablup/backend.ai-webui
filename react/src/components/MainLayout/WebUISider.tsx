@@ -30,6 +30,8 @@ import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { useTheme } from '@astryxdesign/core/theme';
+import { colorVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import {
   filterOutEmpty,
   useHover,
@@ -40,6 +42,17 @@ import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+
+const styles = stylex.create({
+  // `Link`'s own `color` lands on the inner `Text` too, so a rest/hover pair
+  // needs `color="inherit"` plus this override on the anchor. FR-3512.
+  footerLink: {
+    color: {
+      default: colorVars['--color-text-secondary'],
+      ':hover': colorVars['--color-text-accent'],
+    },
+  },
+});
 
 interface WebUISiderProps {
   collapsed?: boolean;
@@ -275,13 +288,8 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       }
       footer={
         props.collapsed ? undefined : (
-          // PILOT-DECISION: the footer used to be a `Typography.Text
-          // type="secondary"` wrapping a `<div class="terms-of-use">` with
-          // three `Typography.Link type="secondary"` entries at a hand-set
-          // 11px. Astryx `Link` has no `type="secondary"` and no font-size
-          // prop (closed enums, P5), so the links take the default link
-          // treatment and the block keeps only its `supporting` text tone.
-          // The `data-testid`s are preserved — the e2e suite anchors on them.
+          // Chrome-level block: links stay at `supporting` size and secondary
+          // tone at rest, taking the accent only on hover. FR-3512.
           <VStack
             gap={2}
             align="center"
@@ -292,6 +300,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             <HStack gap={1} justify="center" wrap="wrap">
               <Link
                 data-testid="button-terms-of-service"
+                type="supporting"
+                color="inherit"
+                xstyle={styles.footerLink}
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
@@ -303,6 +314,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               <Text type="supporting">·</Text>
               <Link
                 data-testid="button-privacy-policy"
+                type="supporting"
+                color="inherit"
+                xstyle={styles.footerLink}
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
@@ -314,6 +328,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
               <Text type="supporting">·</Text>
               <Link
                 data-testid="button-about-backend-ai"
+                type="supporting"
+                color="inherit"
+                xstyle={styles.footerLink}
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
@@ -327,6 +344,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                   <Text type="supporting">·</Text>
                   <Link
                     data-testid="button-leave-service"
+                    type="supporting"
+                    color="inherit"
+                    xstyle={styles.footerLink}
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
@@ -338,7 +358,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
                 </>
               )}
             </HStack>
-            <Text type="supporting" as="div">
+            <Text type="supporting" size="xsm" as="div">
               <address className="sidebar-footer">
                 {themeConfig?.branding?.companyName || 'Lablup Inc.'}
                 &nbsp;
