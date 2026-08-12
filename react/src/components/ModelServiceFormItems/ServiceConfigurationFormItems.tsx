@@ -68,7 +68,9 @@ const ServiceConfigurationFormItems: React.FC<
           on older managers only the plain command input below is
           shown. */}
       {supportsCommandShell && (
-        <BAIFlex gap="sm" align="start">
+        // The Collapsible supplies no gap between its trigger and content;
+        // give the first row one explicitly.
+        <BAIFlex gap="sm" align="start" style={{ marginTop: token.marginSM }}>
           <Form.Item
             name={[...namePrefix, 'execution']}
             label={t('modelService.Execution')}
