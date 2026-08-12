@@ -827,8 +827,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   // gap) and restore a normal field gap before the Image field.
                   <div
                     style={{
+                      // Bottom gap comes from the component itself.
                       marginTop: -token.margin,
-                      marginBottom: token.marginLG,
                     }}
                   >
                     <Suspense fallback={<BAISkeleton />}>

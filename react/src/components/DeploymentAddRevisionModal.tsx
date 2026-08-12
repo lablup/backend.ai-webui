@@ -2161,7 +2161,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 return null;
               }
               return (
-                <div style={{ marginBottom: token.marginMD }}>
+                // No extra bottom margin: ServiceConfigurationFormItems owns
+                // its own section-end gap.
+                <div>
                   <ServiceConfigurationFormItems
                     namePrefix={[]}
                     placeholders={{
