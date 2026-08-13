@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 14;
+export const THEME_NAME_REV = 15;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -748,6 +748,10 @@ const ANTD_HOVER_PARITY = {
     base: {
       backgroundColor: 'light-dark(rgba(0,0,0,0.85), #424242)',
       color: '#FFFFFF',
+      // Pin the alignment so the bubble never inherits `text-align` from its
+      // trigger's context — a `<button>` trigger (SegmentedControl) leaks its
+      // UA-default `center` down to the popover text. FR-3537.
+      textAlign: 'start',
     },
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
