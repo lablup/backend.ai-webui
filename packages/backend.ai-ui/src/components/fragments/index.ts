@@ -62,6 +62,8 @@ export type {
   BAIActivateArtifactsModalProps,
   BAIActivateArtifactsModalArtifactsFragmentKey,
 } from './BAIActivateArtifactsModal';
+export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
 export { default as BAIAdminResourceGroupSelectAstryx } from './BAIAdminResourceGroupSelectAstryx';
 export type { BAIAdminResourceGroupSelectAstryxProps } from './BAIAdminResourceGroupSelectAstryx';
 export {
