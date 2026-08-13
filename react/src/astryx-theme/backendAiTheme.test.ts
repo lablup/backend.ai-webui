@@ -98,6 +98,22 @@ describe('backendAiTheme', () => {
     });
   });
 
+  describe('a Selector listbox is a page surface (FR-3505)', () => {
+    // `field` is the only ancestor the trigger and the popup panel share, so
+    // deleting this spread silently hands the header band's inverted wash back
+    // to every option row — and only changes the theme name, which regenerating
+    // the artifacts makes green again.
+    const base = backendAiBrandTheme.components?.['field']?.base as
+      Record<string, string> | undefined;
+
+    it.each(['--color-overlay-hover', '--color-overlay-pressed'] as const)(
+      'pins %s to the page token it restores',
+      (prop) => {
+        expect(base?.[prop]).toBe(backendAiBrandTheme.tokens?.[prop]);
+      },
+    );
+  });
+
   describe('theme name numbering', () => {
     it('is deterministic and encodes rev/family/role', () => {
       const name = computeThemeName();

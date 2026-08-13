@@ -57,6 +57,11 @@ export interface WebUIHeaderProps extends BAIFlexProps {
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
+  // The brand band is a REVERSED surface: its content polarity is the opposite
+  // of the app's, so it is "on dark" in light mode and "on light" in dark.
+  const bandMediaMode = isDarkMode ? 'light' : 'dark';
+  const bandOverlays =
+    ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'];
   const { t } = useTranslation();
   const currentDomainName = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
@@ -142,85 +147,24 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         backgroundColor: token.Layout?.headerBg,
         paddingRight: token.marginLG,
         paddingLeft: token.marginLG,
-        // The inherited text colour for everything on the band that is NOT an
-        // Astryx component declaring its own (the antd-engine `ProjectSelect`
-        // value, bare `currentColor` glyphs).
-        //
-        // This was `token.colorBgBase`, which is how legacy spelled "white":
-        // antd's `colorBgBase` is `#fff` in light mode, so the header text came
-        // out pure white. The shim maps `colorBgBase -> --color-background-body`
-        // (the correct role mapping), and this theme pins that to the legacy
-        // PAGE backdrop `#F7F7F6` — so the same expression now resolves to an
-        // off-white grey, which is the greying users reported. `--color-on-dark`
-        // is the Astryx token that actually means "content on a dark/inverted
-        // surface" and is `#ffffff` in both modes, matching both the legacy
-        // rendering and `--color-on-accent`, already pinned white for the same
-        // reason. The band's BACKGROUND is unchanged in both modes by design.
-        color: 'var(--color-on-dark)',
-        // The neutral hover/pressed washes, resolved against the APP scheme —
-        // which is why they are declared HERE, on the band root, and not inside
-        // the `MediaTheme mode="dark"` below (QA-FINDINGS Q-20).
-        //
-        // Every control on this band sits inside that `MediaTheme`, because the
-        // band is a dark surface in both app modes. `--color-overlay-hover` is
-        // `light-dark(rgba(0,0,0,0.06), #262626)`, so inside a forced-dark
-        // subtree it ALWAYS takes the opaque `#262626` branch and every header
-        // button hovers to a near-black block on the brand-orange band.
-        //
-        // Legacy resolved the band against the INVERTED mode
-        // (`ReverseThemeProvider`), giving `#262626` in light and antd's default
-        // `rgba(0,0,0,0.06)` in dark. Declaring the pair on this element, which
-        // is OUTSIDE the `MediaTheme`, lets `light-dark()` pick against the page
-        // scheme; the resolved colour then inherits into the subtree as a plain
-        // value, so the forced dark context can no longer re-resolve it.
-        //
-        // The pair is indexed in JS, not with `light-dark()`: a custom
-        // property holding `light-dark(a, b)` is substituted at USE time by the
-        // consuming element, and every consumer here is inside that forced-dark
-        // subtree — so the dark slot would win in both app modes regardless of
-        // where the property is declared (measured). Legacy's
-        // `ReverseThemeProvider` also picked its token set in JS.
-        //
-        // The measured pair lives in the theme shim next to the other antd
-        // parity tables (P19: no literal here).
-        ...ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'],
+        // The inherited colour for band content that declares none of its own
+        // (bare `currentColor` glyphs). Inverts with the app mode, like the
+        // `MediaTheme`s below.
+        color: isDarkMode ? 'var(--color-on-light)' : 'var(--color-on-dark)',
+        // Declared HERE, outside the `MediaTheme`s, and indexed in JS: the pair
+        // must resolve against the APP scheme, but a custom property holding
+        // `light-dark(a, b)` is substituted at USE time by consumers that sit
+        // inside a forced-scheme subtree (measured, QA-FINDINGS Q-20).
+        ...bandOverlays,
       }}
       className="bai-webui-header"
     >
       <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
-        {/* The header paints itself with the brand accent, so its contents
-            need the opposite polarity from the page.
-
-            This was `AstryxReverseTheme` — a nested `<Theme>` carrying the
-            INVERTED RESOLVED MODE, the direct translation of antd's
-            `ReverseThemeProvider` (a ConfigProvider with the flipped
-            algorithm). That reproduces legacy's mechanism but not legacy's
-            RESULT: a full theme flip resolves `--color-text-primary` to the
-            other mode's ordinary body text — Astryx's dark-mode grey
-            `#EBE0DA` (measured) — whereas antd's flipped algorithm gave
-            `rgba(255,255,255,0.85)`, which over `#FF9729` renders as
-            ≈`rgb(255,239,223)`, i.e. white. Users read the difference as the
-            header text having gone grey.
-
-            `MediaTheme` is the Astryx primitive for this case and it is a
-            different thing from a theme flip: it declares the SURFACE
-            LUMINANCE the content sits on, and its `defaultOnDarkTokens`
-            (see `@astryxdesign/core/theme/onMediaTokens`) map
-            `--color-text-primary` and `--color-icon-primary` to
-            `var(--color-on-dark)` — pure white — on top of the
-            `color-scheme: dark` flip. That is exactly "white text and icons
-            on the accent band", expressed as a token context rather than a
-            per-component colour. It is also the same fix the sider's tooltip
-            took in c97189e60.
-
-            `mode="dark"` is CONSTANT, not derived from the app mode: the
-            orange band is a dark surface in both light and dark mode, so its
-            content is "on dark" in both. That is what makes the header text
-            white in both modes, which is the requested behaviour — the band's
-            BACKGROUND is deliberately untouched.
-
-            It renders `display: contents`, so it costs no layout. */}
-        <MediaTheme mode="dark">
+        {/* `MediaTheme` declares the SURFACE LUMINANCE its content sits on —
+            not a theme flip — so it maps `--color-text-primary` /
+            `--color-icon-primary` onto `--color-on-{dark,light}`. It renders
+            `display: contents`, so it costs no layout. */}
+        <MediaTheme mode={bandMediaMode}>
           {!gridBreakpoint.sm && (
             <IconButton
               icon={<MenuIcon size="1em" />}
@@ -249,6 +193,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             style={{
               minWidth: 100,
               maxWidth: gridBreakpoint.lg ? undefined : 150,
+              // Lands on the Selector TRIGGER, re-declaring the band wash the
+              // theme's `field` entry neutralises for the popup panel below it
+              // (FR-3505). Inline, so it wins there and only there.
+              ...bandOverlays,
             }}
             loading={isProjectChanging}
             disabled={isProjectChanging}
@@ -366,7 +314,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             their glyphs come out white instead of the dark theme's grey.
             Both are plain `IconButton`s — they open no floating surface, so a
             shared wrapper has nothing to leak into. */}
-        <MediaTheme mode="dark">
+        <MediaTheme mode={bandMediaMode}>
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
         </MediaTheme>
