@@ -789,6 +789,68 @@ const ANTD_HOVER_PARITY = {
   },
 };
 
+/**
+ * `variant:link` — a real Astryx custom variant for antd's `Button type="link"`
+ * (FR-3524). `astryx docs theme` §"Custom Variants": any `prop:value` key whose
+ * value is not built-in becomes a new variant, and `astryx theme build` emits
+ * the module augmentation that makes `<Button variant="link" />` type-check.
+ *
+ * ## Why a variant and not a class
+ *
+ * The first cut of FR-3524 attached `.bai-action-accent` inside `BAIButton`.
+ * That restores the colour, but it is reachable only through the wrapper, and it
+ * cannot answer the second half of the report — "hover 하면 박스가 생기고 차지하는
+ * 영역이 크다". A variant is reachable from a raw Astryx `<Button>` (which is
+ * what `SessionLauncherPage`'s "최근 기록" control is), keeps the value in the
+ * theme so `AstryxAdminTheme`'s blue accent and a runtime `resources/theme.json`
+ * rebrand both follow it, and needs no unlayered-CSS specificity hack.
+ *
+ * ## What each declaration is doing
+ *
+ * The load-bearing fact, read off `Button.tsx`: the component composes
+ * `variants[variant]`, and for a custom variant that lookup is `undefined`. So a
+ * `link` button gets `styles.base` + `sizeStyles[size]` and NOTHING else. Two
+ * consequences drive this recipe:
+ *
+ *   1. The hover wash is gone for FREE. `backgroundImage: {':hover': …}` lives
+ *      only inside the four built-in variant objects, so there is no gradient to
+ *      suppress and no `--color-overlay-hover: transparent` to declare. That is
+ *      the "박스가 생긴다" half, answered by construction rather than by an
+ *      override. `textDecoration` on `:hover` supplies the affordance instead —
+ *      antd's link buttons had no box either.
+ *   2. Everything the built-in variants DO declare has to be restated here, or
+ *      it is simply absent — hence `backgroundColor` (no variant means no
+ *      declared fill at all) and the whole focus ring. Dropping the focus ring
+ *      would be an a11y regression, so it is copied from the built-in recipe
+ *      verbatim, `--button-focus-offset` included.
+ *
+ * `paddingInline`/`paddingBlock`/`height` come from `styles.base` +
+ * `sizeStyles`, which no variant can opt out of at the StyleX layer; the theme
+ * layer (`@layer astryx-theme`) outranks `astryx-base`, so zeroing them here is
+ * what shrinks the control from a 32px-tall button box to its text.
+ */
+const LINK_BUTTON_VARIANT = {
+  // The same token `.bai-action-accent` uses, for the same reason: it already
+  // resolves to antd's `colorLink` on brand routes and `colorInfo` under
+  // `AstryxAdminTheme`, so one declaration covers both with no branching.
+  color: 'var(--color-text-accent)',
+  backgroundColor: 'transparent',
+  // Inline footprint: shed the control padding and the 32px `--size-element-md`
+  // so the button occupies roughly the space of its own text.
+  paddingInline: '0',
+  paddingBlock: '0',
+  height: 'auto',
+  ':hover': {
+    textDecoration: 'underline',
+  },
+  // Restated because a custom variant inherits no focus ring — see above.
+  '--button-focus-offset': '3px',
+  ':focus-visible': {
+    outline: '2px solid var(--color-accent)',
+    outlineOffset: 'var(--button-focus-offset)',
+  },
+};
+
 export interface BrandSeedPair {
   /** Light-scheme seed, as declared in theme.json. */
   light: string;
@@ -1040,6 +1102,12 @@ export function buildBackendAiTheme(
       ...ANTD_DROPDOWN_DENSITY,
       ...FIELD_PAGE_OVERLAYS,
       ...ANTD_HOVER_PARITY,
+      // Merged explicitly: ANTD_HOVER_PARITY already owns `button`, so a plain
+      // spread would drop its filled-variant hover overrides.
+      button: {
+        ...ANTD_HOVER_PARITY.button,
+        'variant:link': LINK_BUTTON_VARIANT,
+      },
     },
   });
 
