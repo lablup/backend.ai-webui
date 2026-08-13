@@ -31,9 +31,12 @@ const meta: Meta<typeof BAITableAstryx> = {
 - **Sorting** via \`order\`/\`onChangeOrder\` order strings (unchanged from \`BAITable\`)
 - **Server-side pagination** — a custom bottom bar (not antd's pager)
 
+- **Horizontal scroll** via antd-shaped \`scroll={{ x }}\` — width-less columns take their content's intrinsic width (FR-3500)
+- **Vertical scroll** via \`scroll={{ y }}\` — the body is capped at \`y\` and the header row sticks (FR-3500)
+
 ## Dropped vs BAITable (see ticket 25 "Feature matrix" for the full list)
-- \`scroll.y\` (sticky-header body scroll)
 - \`loading\` dims rows but shows no spinner
+- \`scroll.y\`'s sticky header loses its bottom rule while scrolled (a collapsed-border rule cannot travel with a sticky cell)
 - Column groups (\`columns[].children\`) are flattened, not spanned
 - Row virtualization (deferred, explicit product decision)
         `,
@@ -62,6 +65,11 @@ const meta: Meta<typeof BAITableAstryx> = {
       control: { type: 'text' },
       description:
         'Sort order string (e.g. "name" ascending, "-name" descending)',
+    },
+    scroll: {
+      control: { type: 'object' },
+      description:
+        'antd-shaped `{ x?, y? }` — `x` sizes the table from its content, `y` caps the body height with a sticky header',
     },
   },
 };
@@ -161,6 +169,44 @@ const sampleData = [
   },
 ];
 
+// The FR-3500 shape: long unwrapped resource labels in width-less columns,
+// inside a container far narrower than the content (the dashboard card).
+const scrollColumns: BAIColumnsType<any> = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    width: 120,
+    fixed: 'left',
+  },
+  { title: 'Allocation', dataIndex: 'allocation', key: 'allocation' },
+  { title: 'Usage', dataIndex: 'usage', key: 'usage' },
+  { title: 'Status', dataIndex: 'status', key: 'status' },
+];
+
+const scrollData = [
+  {
+    key: 'a1',
+    name: 'agent-node-with-a-deliberately-long-name-01',
+    allocation: 'CPU 126.9 / 128 cores · MEM 972.3 / 1024 GiB',
+    usage: 'CPU 87% (111.4 cores) · MEM 63% (645.1 GiB) · GPU 4/8 (fGPU 3.5)',
+    status: 'ALIVE (schedulable)',
+  },
+  {
+    key: 'a2',
+    name: 'agent-node-02',
+    allocation: 'CPU 12 / 64 cores · MEM 96 / 512 GiB',
+    usage: 'CPU 12% (7.7 cores) · MEM 18% (92.2 GiB) · GPU 0/4 (fGPU 0)',
+    status: 'ALIVE (schedulable)',
+  },
+];
+
+// Enough rows in the same shape to overflow a 240px body cap.
+const verticalScrollData = Array.from({ length: 15 }, (_unused, index) => ({
+  ...scrollData[index % scrollData.length],
+  key: `n${index + 1}`,
+}));
+
 export const Default: Story = {
   name: 'Basic Table',
   parameters: {
@@ -179,6 +225,50 @@ export const Default: Story = {
       pageSize: 10,
     },
   },
+};
+
+export const HorizontalScroll: Story = {
+  name: 'Horizontal Scroll (scroll.x)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "antd-shaped `scroll={{ x: 'max-content' }}` inside a 560px container: width-less columns (Allocation / Usage / Status) take their content's intrinsic width and the table scrolls horizontally; the pixel-width `Name` column stays 120px and still truncates. Without `scroll.x` the same table squeezes every column into the container and clips the labels (FR-3500).",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ width: 560 }}>
+      <BAITableAstryx
+        scroll={{ x: 'max-content' }}
+        columns={scrollColumns}
+        dataSource={scrollData}
+        pagination={{ total: scrollData.length, pageSize: 10 }}
+      />
+    </div>
+  ),
+};
+
+export const VerticalScroll: Story = {
+  name: 'Vertical Scroll (scroll.y)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`scroll={{ x: 'max-content', y: 240 }}` — the shape an `x`+`y` call site passes. `y` caps the scroll container at 240px and sticks the header row over an opaque base, so all 15 rows render inside a fixed-height body instead of growing the page. Both axes scroll in the same container: the `Name` column stays pinned while scrolling sideways, and its header stays put while scrolling down.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ width: 560 }}>
+      <BAITableAstryx
+        scroll={{ x: 'max-content', y: 240 }}
+        columns={scrollColumns}
+        dataSource={verticalScrollData}
+        pagination={{ total: verticalScrollData.length, pageSize: 20 }}
+      />
+    </div>
+  ),
 };
 
 export const WithColumnSettings: Story = {
