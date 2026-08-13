@@ -452,6 +452,14 @@ const BAINameActionCellAstryx: React.FC<BAINameActionCellAstryxProps> = ({
                 <DropdownMenuItem
                   key={action.key}
                   label={action.title}
+                  // FR-3423: a disabled action must still explain itself once
+                  // it overflows here, or a narrow viewport turns "disabled
+                  // with a reason" into "disabled for no visible reason". A
+                  // disabled row swallows hover, so the reason goes in the
+                  // item's own `description` slot rather than a tooltip.
+                  description={
+                    action.disabled ? action.disabledReason : undefined
+                  }
                   icon={action.icon}
                   isDisabled={action.disabled}
                   onClick={() => runMenuAction(action)}
@@ -461,6 +469,14 @@ const BAINameActionCellAstryx: React.FC<BAINameActionCellAstryxProps> = ({
                 <DropdownMenuItem
                   key={action.key}
                   label={action.title}
+                  // FR-3423: a disabled action must still explain itself once
+                  // it overflows here, or a narrow viewport turns "disabled
+                  // with a reason" into "disabled for no visible reason". A
+                  // disabled row swallows hover, so the reason goes in the
+                  // item's own `description` slot rather than a tooltip.
+                  description={
+                    action.disabled ? action.disabledReason : undefined
+                  }
                   icon={action.icon}
                   isDisabled={action.disabled}
                   onClick={() => runMenuAction(action)}

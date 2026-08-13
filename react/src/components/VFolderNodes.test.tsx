@@ -5,6 +5,7 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import type { VFolderNodesTestQuery } from '../__generated__/VFolderNodesTestQuery.graphql';
+import type { ProjectContextOrNull } from '../types/projectContext';
 import VFolderNodes from './VFolderNodes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
@@ -129,12 +130,19 @@ vi.mock('./FolderExplorerOpener', () => ({
 const { mockDeployModalOpen } = vi.hoisted(() => ({
   mockDeployModalOpen: vi.fn(),
 }));
-vi.mock('./VFolderDeployModal', () => ({
-  default: (props: { open: boolean; vfolderId?: string }) => {
-    mockDeployModalOpen(props.open, props.vfolderId);
-    return null;
-  },
-}));
+vi.mock('./VFolderDeployModal', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./VFolderDeployModal')>();
+  return {
+    default: (props: { open: boolean; vfolderId?: string }) => {
+      mockDeployModalOpen(props.open, props.vfolderId);
+      return null;
+    },
+    // `VFolderNodes` preloads the modal's query (render-as-you-fetch), so the
+    // real query document has to survive the mock — `useQueryLoader` produces
+    // no reference without it, and the modal would never mount.
+    VFolderDeployQuery: actual.VFolderDeployQuery,
+  };
+});
 
 vi.mock('./DeploymentSettingModal', () => ({
   default: () => null,
@@ -156,9 +164,10 @@ vi.mock('./SharedFolderPermissionInfoModal', () => ({
 
 const VFOLDER_GLOBAL_ID = btoa('VirtualFolderNode:folder-0000');
 
-const TestRenderer: React.FC<{ noDeployTooltip?: string }> = ({
-  noDeployTooltip,
-}) => {
+const TestRenderer: React.FC<{
+  noDeployTooltip?: string;
+  project?: ProjectContextOrNull;
+}> = ({ noDeployTooltip, project = null }) => {
   const data = useLazyLoadQuery<VFolderNodesTestQuery>(
     graphql`
       query VFolderNodesTestQuery @relay_test_operation {
@@ -178,7 +187,7 @@ const TestRenderer: React.FC<{ noDeployTooltip?: string }> = ({
   return (
     <VFolderNodes
       vfoldersFrgmt={vfolders}
-      project={null}
+      project={project}
       noDeployTooltip={noDeployTooltip}
     />
   );
@@ -213,7 +222,10 @@ class ImmediateWidthResizeObserver {
   disconnect() {}
 }
 
-const renderTable = (noDeployTooltip?: string) => {
+const renderTable = (
+  noDeployTooltip?: string,
+  project: ProjectContextOrNull = null,
+) => {
   globalThis.ResizeObserver =
     ImmediateWidthResizeObserver as unknown as typeof ResizeObserver;
 
@@ -251,7 +263,10 @@ const renderTable = (noDeployTooltip?: string) => {
         <QueryClientProvider client={queryClient}>
           <>
             <Suspense fallback={null}>
-              <TestRenderer noDeployTooltip={noDeployTooltip} />
+              <TestRenderer
+                noDeployTooltip={noDeployTooltip}
+                project={project}
+              />
             </Suspense>
           </>
         </QueryClientProvider>
@@ -273,7 +288,10 @@ describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)
     const deployButton = await screen.findByRole('button', {
       name: 'modelService.DeployAsService',
     });
-    expect(deployButton).toBeDisabled();
+    // Astryx keeps a disabled-with-tooltip control FOCUSABLE, so it marks it
+    // `aria-disabled` rather than `disabled` — otherwise the browser would
+    // swallow the hover that reveals the reason.
+    expect(deployButton).toHaveAttribute('aria-disabled', 'true');
 
     await user.hover(deployButton);
     expect(
@@ -303,8 +321,9 @@ describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)
       await screen.findByRole('button', { name: 'More actions' }),
     );
 
+    // The reason rides the menu row's own `description` slot: a disabled row
+    // swallows hover, so it has to be visible without one.
     const deployItem = await screen.findByText('modelService.DeployAsService');
-    await user.hover(deployItem);
     expect(
       await screen.findByText('data.folders.CannotDeployFromAdminMenu'),
     ).toBeInTheDocument();
@@ -318,7 +337,10 @@ describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)
 
   it('keeps the deploy action enabled and fires its handler when noDeployTooltip is absent', async () => {
     const user = userEvent.setup();
-    renderTable();
+    // A project is required for the modal to mount at all (FR-3410): a
+    // deployment is always created inside one. This is the user Data page's
+    // shape — project present, no `noDeployTooltip`.
+    renderTable(undefined, { id: 'project-0000', name: 'default' });
 
     const deployButton = await screen.findByRole('button', {
       name: 'modelService.DeployAsService',
