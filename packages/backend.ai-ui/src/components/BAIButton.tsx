@@ -45,7 +45,10 @@
  site in the repo passes `href` at all — so `Link` would mean a
  destination-less `<a>`, exactly what D3 rejected for `BAILink`. `ghost` keeps
  button semantics and the low-emphasis look. Amended by FR-3524: the element
- choice stands, but the colour comes from `.bai-action-accent`, not `ghost`.
+ choice stands, but the paint comes from the theme's `variant:link` custom
+ variant (`backendAiTheme.ts`), which also drops the hover box and the control
+ box. Icon-only `type="link"` stays on `ghost` + `.bai-action-accent`, whose
+ square hit target the inline footprint would collapse.
 
  PILOT-DECISION — **`type="dashed"` (5 sites) becomes `variant="secondary"`.**
  MAPPING §3.3: "no equivalent -> `variant="secondary"`, record the decision".
@@ -153,20 +156,30 @@ const BAIButton: React.FC<BAIButtonProps> = ({
 }) => {
   const emphasis = type ?? antdVariant;
   const isDanger = danger || antdColor === 'danger';
+  const isIconOnly = !!icon && (children === undefined || children === null);
+
+  // FR-3524: a link action must read as one. `color="default"` opts out.
+  const isLinkTinted =
+    !isDanger && emphasis === 'link' && antdColor !== 'default';
+  // Icon-only keeps `ghost` + the class: the theme variant strips padding and
+  // the control height, which would shrink a square hit target to its glyph.
+  const useLinkVariant = isLinkTinted && !isIconOnly;
+
   const variant = isDanger
     ? 'destructive'
     : emphasis === 'primary' || emphasis === 'solid'
       ? 'primary'
-      : emphasis === 'text' || emphasis === 'link'
-        ? 'ghost'
-        : 'secondary';
+      : useLinkVariant
+        ? 'link'
+        : emphasis === 'text' || emphasis === 'link'
+          ? 'ghost'
+          : 'secondary';
 
-  // FR-3524: `link` and `text` both land on `ghost`, so only this class keeps a
-  // link action distinguishable from a plain one. `color="default"` opts out.
-  const isLinkTinted =
-    !isDanger && emphasis === 'link' && antdColor !== 'default';
   const resolvedClassName =
-    [className, isLinkTinted ? 'bai-action-accent' : undefined]
+    [
+      className,
+      isLinkTinted && !useLinkVariant ? 'bai-action-accent' : undefined,
+    ]
       .filter(Boolean)
       .join(' ') || undefined;
 
@@ -175,7 +188,6 @@ const BAIButton: React.FC<BAIButtonProps> = ({
   // requires one (P8). Prefer whatever name the call site already wrote
   // (`aria-label`, then `title`, which antd rendered as the native tooltip),
   // then the button's own text, and only then the generic placeholder.
-  const isIconOnly = !!icon && (children === undefined || children === null);
   const label =
     nodeToAccessibleLabel(children) ||
     (restProps['aria-label'] ?? '') ||

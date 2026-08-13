@@ -36,18 +36,22 @@ describe('BAIButton', () => {
     });
   });
 
-  // FR-3524 — `link` and `text` both resolve to `variant="ghost"`, so the
-  // accent class is the only thing left that tells a link action apart.
-  describe('Link tint', () => {
+  // FR-3524 — a text link action resolves to the theme's `variant:link` custom
+  // variant, which `themeProps` reflects as `data-variant`/the `link` class.
+  describe('Link variant', () => {
     it.each([{ type: 'link' } as const, { variant: 'link' } as const])(
-      'tints %o with the accent class',
+      'resolves %o to the link variant',
       (props) => {
         render(<BAIButton {...props}>Edit</BAIButton>);
-        expect(screen.getByRole('button')).toHaveClass('bai-action-accent');
+        const button = screen.getByRole('button');
+        expect(button).toHaveAttribute('data-variant', 'link');
+        expect(button).toHaveClass('link');
+        // The variant carries the paint now — the class must not double up.
+        expect(button).not.toHaveClass('bai-action-accent');
       },
     );
 
-    it('keeps a caller className alongside the tint', () => {
+    it('keeps a caller className alongside the variant', () => {
       render(
         <BAIButton type="link" className="custom-class">
           Edit
@@ -55,18 +59,37 @@ describe('BAIButton', () => {
       );
       const button = screen.getByRole('button');
       expect(button).toHaveClass('custom-class');
-      expect(button).toHaveClass('bai-action-accent');
+      expect(button).toHaveAttribute('data-variant', 'link');
     });
 
     it.each([
       { type: 'text' } as const,
       { type: 'link', color: 'default' } as const,
       { variant: 'link', color: 'default' } as const,
+    ])('leaves %o on ghost', (props) => {
+      render(<BAIButton {...props}>Action</BAIButton>);
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('data-variant', 'ghost');
+      expect(button).not.toHaveClass('bai-action-accent');
+    });
+
+    it.each([
       { type: 'link', danger: true } as const,
       { variant: 'link', color: 'danger' } as const,
-    ])('leaves %o untinted', (props) => {
+    ])('leaves %o destructive', (props) => {
       render(<BAIButton {...props}>Action</BAIButton>);
-      expect(screen.getByRole('button')).not.toHaveClass('bai-action-accent');
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('data-variant', 'destructive');
+      expect(button).not.toHaveClass('bai-action-accent');
+    });
+
+    // The inline footprint would collapse a square hit target to its glyph, so
+    // icon-only link buttons stay on ghost + the accent class.
+    it('keeps an icon-only link button on ghost + the accent class', () => {
+      render(<BAIButton type="link" icon={<span>i</span>} title="Info" />);
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('data-variant', 'ghost');
+      expect(button).toHaveClass('bai-action-accent');
     });
   });
 

@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r23-default-brand-hv7b7uv theme — built by `pnpm exec astryx theme build`
+ * bai-r24-default-brand-hv7b7uv theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR23DefaultBrandHv7b7uvTheme } from './bai-r23-default-brand-hv7b7uv';
- *   import './bai-r23-default-brand-hv7b7uv.css';
+ *   import { baiR24DefaultBrandHv7b7uvTheme } from './bai-r24-default-brand-hv7b7uv';
+ *   import './bai-r24-default-brand-hv7b7uv.css';
  */
-export const baiR23DefaultBrandHv7b7uvTheme = {
-  name: 'bai-r23-default-brand-hv7b7uv',
+export const baiR24DefaultBrandHv7b7uvTheme = {
+  name: 'bai-r24-default-brand-hv7b7uv',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -215,7 +215,7 @@ export const baiR23DefaultBrandHv7b7uvTheme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r23-default-brand-hv7b7uv"],
+  __localTokenLineage: ["neutral","bai-r24-default-brand-hv7b7uv"],
   components: {
     "heading": {
       "level:1": {
@@ -344,6 +344,21 @@ export const baiR23DefaultBrandHv7b7uvTheme = {
       "variant:secondary": {
         "--color-neutral": "var(--color-background-surface)",
         "border": "1px solid var(--color-border-emphasized)"
+      },
+      "variant:link": {
+        "color": "var(--color-text-accent)",
+        "backgroundColor": "transparent",
+        "paddingInline": "0",
+        "paddingBlock": "0",
+        "height": "auto",
+        ":hover": {
+          "textDecoration": "underline"
+        },
+        "--button-focus-offset": "3px",
+        ":focus-visible": {
+          "outline": "2px solid var(--color-accent)",
+          "outlineOffset": "var(--button-focus-offset)"
+        }
       }
     },
     "badge": {
