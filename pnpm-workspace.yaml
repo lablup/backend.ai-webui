@@ -151,7 +151,7 @@ overrides:
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
+  "@astryxdesign/lab@0.3.0-canary.12db2a1": react/patches/@astryxdesign__lab@0.3.0-canary.12db2a1.patch
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
-  portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

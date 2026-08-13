@@ -472,6 +472,7 @@
     "ExportCSV": "匯出 CSV",
     "GoToFirstPage": "跳到第一頁",
     "InvalidPageNumber": "無效的頁碼",
+    "NoDataToDisplay": "暫無資料",
     "Pagination": "分頁",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "選擇要顯示的列",

@@ -472,6 +472,7 @@
     "ExportCSV": "Ekspor CSV",
     "GoToFirstPage": "Ke halaman pertama",
     "InvalidPageNumber": "Nomor halaman tidak valid",
+    "NoDataToDisplay": "Tidak ada data untuk ditampilkan",
     "Pagination": "Penomoran halaman",
     "SearchTableColumn": "Kolom Tabel Cari",
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",

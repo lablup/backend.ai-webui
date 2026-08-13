@@ -472,6 +472,7 @@
     "ExportCSV": "Экспорт в CSV",
     "GoToFirstPage": "Перейти на первую страницу",
     "InvalidPageNumber": "Неверный номер страницы",
+    "NoDataToDisplay": "Нет данных для отображения",
     "Pagination": "Разбиение на страницы",
     "SearchTableColumn": "Поиск таблицы столбцов",
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",

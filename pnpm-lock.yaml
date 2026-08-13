@@ -192,9 +192,9 @@ overrides:
   lodash: ^4.18.0
 
 patchedDependencies:
+  '@astryxdesign/lab@0.3.0-canary.12db2a1': 0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08
   '@cloudscape-design/board-components@3.0.176': 06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98
   ansi_up@6.0.6: 99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459
-  portless@0.15.5: 161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6
   relay-runtime@20.1.1: cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6
 
 importers:
@@ -345,7 +345,7 @@ importers:
         version: 3.1.14
       portless:
         specifier: ^0.15.5
-        version: 0.15.5(patch_hash=161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6)
+        version: 0.15.5
       prettier:
         specifier: 'catalog:'
         version: 3.9.5
@@ -717,7 +717,7 @@ importers:
         version: 0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@astryxdesign/lab':
         specifier: 0.3.0-canary.12db2a1
-        version: 0.3.0-canary.12db2a1(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@astryxdesign/theme-neutral':
         specifier: 0.3.0
         version: 0.3.0(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
@@ -958,7 +958,7 @@ importers:
     devDependencies:
       '@astryxdesign/cli':
         specifier: 0.3.0
-        version: 0.3.0(8681d4eefeacb7448bddfd79b6dea792)
+        version: 0.3.0(7899de1701eda587c13ad081945d384b)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.29.7
@@ -11333,7 +11333,7 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@astryxdesign/cli@0.3.0(8681d4eefeacb7448bddfd79b6dea792)':
+  '@astryxdesign/cli@0.3.0(7899de1701eda587c13ad081945d384b)':
     dependencies:
       commander: 12.1.0
       gpt-tokenizer: 3.4.0
@@ -11342,7 +11342,7 @@ snapshots:
       zod: 4.4.3
     optionalDependencies:
       '@astryxdesign/core': 0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@astryxdesign/lab': 0.3.0-canary.12db2a1(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@astryxdesign/lab': 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@astryxdesign/theme-neutral': 0.3.0(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
     transitivePeerDependencies:
       - '@babel/preset-env'
@@ -11355,7 +11355,7 @@ snapshots:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@astryxdesign/lab@0.3.0-canary.12db2a1(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@astryxdesign/lab@0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@astryxdesign/core': 0.3.0(@stylexjs/stylex@0.19.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@stylexjs/stylex': 0.19.0
@@ -20462,7 +20462,7 @@ snapshots:
       base64-js: 1.5.1
       xmlbuilder: 15.1.1
 
-  portless@0.15.5(patch_hash=161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6): {}
+  portless@0.15.5: {}
 
   possible-typed-array-names@1.1.0: {}
 

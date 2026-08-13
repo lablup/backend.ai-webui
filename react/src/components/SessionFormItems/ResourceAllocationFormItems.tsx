@@ -347,7 +347,14 @@ const ResourceAllocationFormItems: React.FC<
         allocationPreset: 'auto-select',
       });
     }
-    if (supportedAcceleratorTypesInRGByImage?.length === 0) {
+    // Write only on an actual change: `setFieldsValue` rebuilds `resource`,
+    // so `Form.useWatch(['resource'])` returns a new reference and re-triggers
+    // this effect. Unguarded, that self-feeding loop never settles and starves
+    // React's transition lanes, freezing every `useDeferredValue` on the page.
+    if (
+      supportedAcceleratorTypesInRGByImage?.length === 0 &&
+      currentResourceValue?.accelerator !== 0
+    ) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
@@ -411,11 +418,17 @@ const ResourceAllocationFormItems: React.FC<
       ? currentAcceleratorType
       : _.first(_.keys(acceleratorSlotsInRG));
 
-    form.setFieldsValue({
-      resource: {
-        acceleratorType: nextAcceleratorType || currentAcceleratorType,
-      },
-    });
+    const resolvedAcceleratorType =
+      nextAcceleratorType || currentAcceleratorType;
+    // Write only on an actual change — see the accelerator effect above for
+    // why an unconditional `setFieldsValue` here never settles.
+    if (resolvedAcceleratorType !== currentAcceleratorType) {
+      form.setFieldsValue({
+        resource: {
+          acceleratorType: resolvedAcceleratorType,
+        },
+      });
+    }
     // The accelerator type may have changed; clear the accelerator field if
     // the resolved type is a unified slot.
     syncUnifiedAcceleratorIfNeeded();

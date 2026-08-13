@@ -95,6 +95,8 @@ import {
   isColumnVisible,
   renderColumnTitle,
 } from './tableTypes';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Icon } from '@astryxdesign/core/Icon';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
@@ -117,7 +119,13 @@ import type {
 import { Text } from '@astryxdesign/core/Text';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { ChevronDown, ChevronRight, FileDown, Settings } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  FileDown,
+  Inbox,
+  Settings,
+} from 'lucide-react';
 import React, { useMemo, useState, type ReactNode } from 'react';
 
 /** Internal row shape Astryx's generic constraint requires. */
@@ -230,9 +238,13 @@ export interface BAIAstryxTableProps<RecordType extends AnyRecord = AnyRecord> {
   tableSettings?: BAITableSettings;
   exportSettings?: BAIExportSettings;
   expandable?: BAIAstryxExpandable<RecordType>;
-  /** Rendered in place of the body when `dataSource` is empty. */
+  /**
+   * Rendered in place of the body when `dataSource` is empty. A string is
+   * wrapped in the default `EmptyState` (icon + padding); any other node is
+   * rendered as-is; `false` renders nothing.
+   */
   emptyState?: ReactNode | false;
-  /** antd parity shim — only `emptyText` is honoured. */
+  /** antd parity shim — only `emptyText` is honoured, same wrapping rules. */
   locale?: { emptyText?: ReactNode };
   /** antd `onRow` — only the returned handlers/style/className are applied. */
   onRow?: (
@@ -1107,6 +1119,24 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
 
   const hasBottomBar = isPagerVisible || !!tableSettings || !!exportSettings;
 
+  // Astryx's built-in empty state reads from ITS OWN message catalog
+  // (`@astryx.table.noData`), which ships en/fr only — hence English under a
+  // Korean UI. Owning the node moves the copy onto BUI's catalog and restores
+  // the icon. `false` opts out; a ReactNode override passes through unwrapped.
+  const resolvedEmptyState = emptyState ?? locale?.emptyText;
+  const emptyStateNode =
+    resolvedEmptyState === false ? (
+      false
+    ) : resolvedEmptyState == null || typeof resolvedEmptyState === 'string' ? (
+      <EmptyState
+        isCompact
+        icon={<Icon icon={Inbox} size="lg" color="secondary" />}
+        title={resolvedEmptyState ?? String(t('comp:BAITable.NoDataToDisplay'))}
+      />
+    ) : (
+      resolvedEmptyState
+    );
+
   return (
     <div className={className} style={style}>
       {/* PILOT-DECISION: antd's loading overlay (dim + centred spinner over the
@@ -1151,7 +1181,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           isStriped={isStriped}
           hasHover={hasHover}
           textOverflow={textOverflow}
-          emptyState={emptyState ?? locale?.emptyText}
+          emptyState={emptyStateNode}
           rowCount={total || undefined}
           rowIndexStart={
             pagination !== false
