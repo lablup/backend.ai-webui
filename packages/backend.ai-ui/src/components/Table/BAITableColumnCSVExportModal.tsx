@@ -26,7 +26,7 @@
    half-empty one.
  - The Export button uses Astryx `Button.clickAction` (native async + loading)
    in place of `BAIButton`'s `action` prop; the close-on-success is ours, the
-   same way `BAIModalAstryx` does it.
+   same way the pilot modal did it.
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';

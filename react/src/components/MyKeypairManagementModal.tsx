@@ -474,7 +474,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                     </BAIText>
                     {value === mainAccessKey && (
                       // Astryx `Tooltip` anchors to an interactive child (see
-                      // `BAIQuestionIconWithTooltipAstryx`) — this decorative
+                      // `BAIQuestionIconWithTooltip`) — this decorative
                       // status icon gets the same unstyled-button wrapper.
                       <Tooltip content={t('credential.MainAccessKey')}>
                         <button

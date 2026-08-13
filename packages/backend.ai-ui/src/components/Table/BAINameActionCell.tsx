@@ -126,8 +126,8 @@ const ACTIONS_GAP = 2;
  *
  * PILOT-DECISION (to-astryx W2-D): MAPPING §2 grades `Popconfirm` as **NONE** —
  * "compose `Popover` + buttons, or escalate to `AlertDialog`". This is the
- * compose branch, and it is the same shape the pilot's
- * `BAINameActionCellAstryx` already shipped, so the two implementations agree.
+ * compose branch — the same shape the pilot
+ * cell shipped before the FR-3533 fold.
  * What changes against antd: the confirm/cancel pair is a real `HStack` of
  * `Button`s inside the popover body rather than antd's built-in footer, and
  * `okButtonProps.danger` maps onto `variant="destructive"`. What is preserved:

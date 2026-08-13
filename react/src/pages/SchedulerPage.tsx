@@ -47,7 +47,7 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
             // antd `Tooltip title=` -> Astryx `Tooltip content=`. The trigger
             // has to be an interactive element for the hint to be
             // keyboard-reachable, so the bare lucide glyph gets the same reset
-            // `<button>` wrapper `BAIQuestionIconWithTooltipAstryx` uses.
+            // `<button>` wrapper the question-icon tooltip pattern uses.
             <Tooltip
               content={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
             >

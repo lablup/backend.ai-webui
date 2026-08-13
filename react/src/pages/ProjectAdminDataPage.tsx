@@ -20,7 +20,6 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
-import '../components/baiNameActionCellDanger.css';
 import {
   BAIVFolderDeleteButtonV2Astryx as BAIVFolderDeleteButtonV2,
   BAISkeleton,

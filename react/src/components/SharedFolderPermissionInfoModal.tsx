@@ -16,7 +16,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import './baiNameActionCellDanger.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {

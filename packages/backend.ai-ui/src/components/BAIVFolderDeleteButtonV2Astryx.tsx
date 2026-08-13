@@ -19,7 +19,6 @@
    icon-only and relied on a wrapping Tooltip for its name.
 */
 import { BAIVFolderDeleteButtonV2AstryxFragment$key } from '../__generated__/BAIVFolderDeleteButtonV2AstryxFragment.graphql';
-import './BAIVFolderDeleteButtonAstryx.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { TrashIcon } from 'lucide-react';
 import React from 'react';
