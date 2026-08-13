@@ -13,7 +13,11 @@ export type PreStartActionFormValue = {
 };
 
 export type ModelHealthCheckFormValue = {
-  path: string;
+  // Optional at the type level even though the UI marks it required when
+  // Health Check is enabled — that's an antd `rules` (form-validation)
+  // concern, not a TypeScript one, and both DeploymentAddRevisionModal.tsx
+  // and this form's initial/unfilled state have it genuinely absent.
+  path?: string;
   interval?: number;
   maxRetries?: number;
   maxWaitTime?: number;

@@ -13,13 +13,14 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../astryxFormControls';
+import type { ServiceFormNamePrefix } from './types';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ServiceConfigurationFormItemsProps {
-  namePrefix: Array<string | number>;
+  namePrefix: ServiceFormNamePrefix;
   supportsCommandShell: boolean;
   /**
    * Start Command validation. The revision modal leaves the command optional
@@ -27,9 +28,12 @@ export interface ServiceConfigurationFormItemsProps {
    * (`[{ required: true }]`) since a preset is a reusable template.
    */
   commandRules?: (RuleObject | RuleRender)[];
-  commandPlaceholder?: string;
   portRules?: (RuleObject | RuleRender)[];
-  portPlaceholder?: string;
+  /** Per-field placeholder text, grouped to match ModelServiceHealthCheckFormItems. */
+  placeholders?: Partial<{
+    command: string;
+    port: string;
+  }>;
 }
 
 // Shared between DeploymentAddRevisionModal.tsx (namePrefix: []) and
@@ -47,9 +51,8 @@ const ServiceConfigurationFormItems: React.FC<
   namePrefix,
   supportsCommandShell,
   commandRules = [{ whitespace: true }],
-  commandPlaceholder,
   portRules,
-  portPlaceholder,
+  placeholders,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -236,13 +239,13 @@ const ServiceConfigurationFormItems: React.FC<
                 // tokenized on submit.
                 <AstryxFormTextInput
                   label={commandLabel}
-                  placeholder={commandPlaceholder}
+                  placeholder={placeholders?.command}
                 />
               ) : isExec ? (
                 // Exec: argv example, no shell operators.
                 <AstryxFormTextInput
                   label={commandLabel}
-                  placeholder={commandPlaceholder}
+                  placeholder={placeholders?.command}
                 />
               ) : (
                 // PILOT-DECISION: antd `autoSize={{ minRows: 2 }}`
@@ -250,7 +253,7 @@ const ServiceConfigurationFormItems: React.FC<
                 // equivalent — fixed `rows={2}` instead.
                 <AstryxFormTextArea
                   label={commandLabel}
-                  placeholder={commandPlaceholder}
+                  placeholder={placeholders?.command}
                   rows={2}
                 />
               )}
@@ -269,7 +272,7 @@ const ServiceConfigurationFormItems: React.FC<
           label={t('modelService.Port')}
           min={2}
           max={65535}
-          placeholder={portPlaceholder}
+          placeholder={placeholders?.port}
         />
       </Form.Item>
     </Collapsible>
