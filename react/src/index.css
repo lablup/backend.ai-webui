@@ -43,9 +43,19 @@
 .astryx-button-group .astryx-button.secondary {
   border-width: 0 !important;
 }
-.astryx-button-group .astryx-button.secondary:not(:first-child) {
+/* Every member of a ringed group gets the same divider — a mixed group
+   (ghost-rendered disabled members between secondaries) otherwise alternates
+   Astryx's faint default divider with the emphasized one. */
+.astryx-button-group:has(.astryx-button.secondary)
+  .astryx-button:not(:first-child) {
   border-inline-start-width: 1px !important;
   border-inline-start-style: solid !important;
+  border-inline-start-color: var(--color-border-emphasized) !important;
+}
+
+/* A solid primary group's divider is Astryx's `--color-on-accent` (white),
+   which cuts the fill too hard — soften it to the secondary border color. */
+.astryx-button-group .astryx-button.primary:not(:first-child) {
   border-inline-start-color: var(--color-border-emphasized) !important;
 }
 
