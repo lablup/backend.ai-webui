@@ -7,12 +7,10 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { Overlay } from '@astryxdesign/core/Overlay';
 import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
-import { Copy } from 'lucide-react';
+import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -73,19 +71,11 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
           >
             {data?.ssh_public_key}
           </pre>
-          <IconButton
-            icon={<Copy size="1em" />}
-            label={t('button.Copy')}
-            tooltip={t('button.Copy')}
-            variant="ghost"
-            size="sm"
-            style={{ marginTop: token.margin }}
-            onClick={() => {
-              if (data?.ssh_public_key) {
-                void navigator.clipboard?.writeText(data.ssh_public_key);
-              }
-            }}
-          />
+          {data?.ssh_public_key ? (
+            <BAIFlex style={{ marginTop: token.margin }}>
+              <BAIText copyable={{ text: data.ssh_public_key }} />
+            </BAIFlex>
+          ) : null}
         </BAIFlex>
         <Text weight="semibold">{t('userSettings.PrivateKey')}</Text>
         <BAIFlex direction="row" align="start" justify="between">
@@ -108,19 +98,11 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
               {t('userSettings.SSHKeypairGenerationWarning')}
             </Text>
           </BAIFlex>
-          <IconButton
-            icon={<Copy size="1em" />}
-            label={t('button.Copy')}
-            tooltip={t('button.Copy')}
-            variant="ghost"
-            size="sm"
-            style={{ marginTop: token.margin }}
-            onClick={() => {
-              if (data?.ssh_private_key) {
-                void navigator.clipboard?.writeText(data.ssh_private_key);
-              }
-            }}
-          />
+          {data?.ssh_private_key ? (
+            <BAIFlex style={{ marginTop: token.margin }}>
+              <BAIText copyable={{ text: data.ssh_private_key }} />
+            </BAIFlex>
+          ) : null}
         </BAIFlex>
       </Overlay>
     </BAIModal>
