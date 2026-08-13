@@ -12,7 +12,7 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextArea,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';

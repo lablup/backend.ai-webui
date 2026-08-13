@@ -64,7 +64,7 @@ export interface BAIExampleProps {
 ```tsx
 // (1) Astryx base — BAIPopconfirmAstryx wraps Astryx `Popover`; `content` is
 //     Omitted because this component OWNS the popover content.
-//     react/src/components/astryx-bui/BAIPopconfirmAstryx.tsx
+//     packages/backend.ai-ui/src/components/BAIPopconfirmAstryx.tsx
 import type { PopoverProps } from '@astryxdesign/core/Popover';
 
 export interface BAIPopconfirmAstryxProps extends Omit<
@@ -79,7 +79,7 @@ export interface BAIPopconfirmAstryxProps extends Omit<
 // (1) Astryx base — BAIBadgeCountAstryx wraps Astryx `Badge`.
 //     NOTE: `BadgeProps` here is ASTRYX's, not antd's. It is the only live
 //     `BadgeProps` in the repo.
-//     react/src/components/astryx-bui/BAIBadgeCountAstryx.tsx
+//     packages/backend.ai-ui/src/components/BAIBadgeCountAstryx.tsx
 import type { BadgeProps } from '@astryxdesign/core/Badge';
 
 export interface BAIBadgeCountAstryxProps extends Omit<

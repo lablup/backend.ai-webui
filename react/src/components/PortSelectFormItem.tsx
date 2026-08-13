@@ -4,7 +4,7 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { AstryxFormTagsInput } from './astryx-bui/astryxFormControls';
+import { AstryxFormTagsInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { badgeVariantForTagColor } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

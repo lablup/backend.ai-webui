@@ -11,7 +11,7 @@ import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
   AstryxFormSelector,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIQuestionIconWithTooltip,

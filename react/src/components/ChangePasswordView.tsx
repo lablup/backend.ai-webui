@@ -8,7 +8,7 @@ import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIModal, ESMClientErrorResponse } from 'backend.ai-ui';

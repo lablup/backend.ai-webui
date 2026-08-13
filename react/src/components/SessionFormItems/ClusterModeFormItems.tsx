@@ -8,7 +8,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import InputNumberWithSlider from '../InputNumberWithSlider';
-import BAISegmentedControlItemAstryx from '../astryx-bui/BAISegmentedControlItemAstryx';
+import { BAISegmentedControlItemAstryx } from 'backend.ai-ui';
 import RemainingMark from './RemainingMark';
 // FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS are Astryx now.

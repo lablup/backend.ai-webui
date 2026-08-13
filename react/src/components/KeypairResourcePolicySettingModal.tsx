@@ -24,7 +24,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormSelector,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Card } from '@astryxdesign/core/Card';
 import { Icon } from '@astryxdesign/core/Icon';
 import { HStack } from '@astryxdesign/core/Stack';

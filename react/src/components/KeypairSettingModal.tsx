@@ -9,7 +9,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
-import { AstryxFormNumberInput } from './astryx-bui/astryxFormControls';
+import { AstryxFormNumberInput } from './astryxFormControls';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import {
   BAIModal,

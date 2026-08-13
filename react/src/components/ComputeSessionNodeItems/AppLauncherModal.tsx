@@ -18,7 +18,7 @@ import {
 import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
-} from '../astryx-bui/astryxFormControls';
+} from '../astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';

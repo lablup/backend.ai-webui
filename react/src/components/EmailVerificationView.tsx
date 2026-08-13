@@ -7,7 +7,7 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import React, { useEffect, useState } from 'react';

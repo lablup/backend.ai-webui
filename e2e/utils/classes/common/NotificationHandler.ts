@@ -4,7 +4,7 @@ import { expect, Locator, Page } from '@playwright/test';
  * NotificationHandler class for managing `BAINotificationStack` notices in
  * E2E tests (to-astryx ticket 29 rewire — antd `notification` -> Astryx
  * `Banner`-based stack,
- * `react/src/components/astryx-bui/BAINotificationStackAstryx.tsx`).
+ * `packages/backend.ai-ui/src/components/BAINotificationStackAstryx.tsx`).
  *
  * Handles notification interactions including:
  * - Waiting for notifications to appear/disappear
@@ -112,7 +112,7 @@ export class NotificationHandler {
     const notification = this.getNotificationByIndex(index);
     // `Banner`'s title/description are plain unlabelled `<div>`s, so the
     // headline gets an explicit anchor
-    // (`react/src/components/astryx-bui/BAINotificationStackAstryx.tsx`).
+    // (`packages/backend.ai-ui/src/components/BAINotificationStackAstryx.tsx`).
     const message = notification.getByTestId('notification-title');
     return await message.textContent().then((text) => text || '');
   }

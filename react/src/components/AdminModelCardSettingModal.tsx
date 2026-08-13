@@ -18,7 +18,7 @@ import {
   AstryxFormTextArea,
   AstryxFormTagsInput,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';

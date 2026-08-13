@@ -26,7 +26,7 @@ import {
   loginConfigState,
 } from '../hooks/useWebUIConfig';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Spinner } from '@astryxdesign/core/Spinner';

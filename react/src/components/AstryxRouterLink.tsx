@@ -13,7 +13,7 @@
  Keeping the anchor real matters: it is what preserves middle-click,
  "open in new tab" and "copy link address" through the SPA router.
 */
-import WebUILink from '../WebUILink';
+import WebUILink from './WebUILink';
 import React from 'react';
 
 export interface AstryxRouterLinkProps extends Omit<

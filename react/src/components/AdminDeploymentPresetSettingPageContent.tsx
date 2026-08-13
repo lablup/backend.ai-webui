@@ -39,7 +39,7 @@ import {
   AstryxFormSwitch,
   AstryxFormTextArea,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Step, Stepper } from '@astryxdesign/lab';

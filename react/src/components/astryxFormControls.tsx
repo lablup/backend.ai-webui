@@ -11,7 +11,7 @@
  Two copies of this module grew in parallel: the pilot's
  (`components/astryxFormControls.tsx`, ported in ticket 10 and extended by
  tickets 16/17/19/23) and the page-group tickets'
- (`components/astryx-bui/astryxFormControls.tsx`, ticket 18, extended by 20).
+ (`components/astryxFormControls.tsx`, ticket 18, extended by 20).
  They exported the SAME seven component names with quietly different prop
  surfaces — `allowClear` vs `hasClear`, `number | string | null` vs
  `number | null`, one with `startIcon`/`onValueChange`, the other with
@@ -21,7 +21,7 @@
  drifted further with every page migrated.
 
  This file is now the single implementation, carrying the UNION of both prop
- surfaces. `astryx-bui/astryxFormControls.tsx` re-exports it verbatim so the
+ surfaces. `astryxFormControls.tsx` re-exports it verbatim so the
  ~30 call sites on that path keep working; new code should import from here.
 
  ## THREE deltas make raw Astryx controls unusable as direct `Form.Item`

@@ -29,7 +29,7 @@ import {
   TOTPActivateForm,
   type TOTPActivateFormData,
 } from './TOTPActivateModal';
-import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import {

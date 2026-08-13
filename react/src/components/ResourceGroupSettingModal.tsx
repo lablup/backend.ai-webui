@@ -26,7 +26,7 @@ import {
   AstryxFormSwitch,
   AstryxFormTextArea,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {

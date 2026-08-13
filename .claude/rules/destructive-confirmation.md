@@ -21,8 +21,7 @@ This convention was applied project-wide in FR-2479 ("standardize confirmation U
 | Tier | Use | Where |
 |---|---|---|
 | Irreversible | `BAIDeleteConfirmModal` + `requireConfirmInput` | `backend.ai-ui` (`packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx`) |
-| Irreversible (react-app variant) | `BAIDeleteConfirmModalAstryx` | `react/src/components/astryx-bui/BAIDeleteConfirmModalAstryx.tsx` |
-| Reversible — anchored | `BAIPopconfirmAstryx` | `react/src/components/astryx-bui/BAIPopconfirmAstryx.tsx` |
+| Reversible — anchored | `BAIPopconfirmAstryx` | `backend.ai-ui` (`packages/backend.ai-ui/src/components/BAIPopconfirmAstryx.tsx`) |
 | Reversible — inside a table row | `BAINameActionCell` action's `popConfirm` | `packages/backend.ai-ui/src/components/Table/BAINameActionCell.tsx` |
 | Reversible — imperative | `App.useApp().modal.confirm({ … })` | the **app-shim**, `packages/backend.ai-ui/src/app-shim/` |
 
@@ -102,7 +101,7 @@ const [deletingTarget, setDeletingTarget] = useState<Row | null>(null);
 ### ✅ Correct — anchored confirm for a reversible action
 
 ```tsx
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { BAIPopconfirmAstryx } from 'backend.ai-ui';
 
 <BAIPopconfirmAstryx
   title={t('dialog.ask.DoYouWantToInactivateSomething', { name: row.name })}
@@ -155,8 +154,8 @@ Soft-delete / trash-bin flows count as reversible **only if** the UI actually ex
 
 ## Related
 
-- `BAIDeleteConfirmModal` — `packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx` (react-app variant: `react/src/components/astryx-bui/BAIDeleteConfirmModalAstryx.tsx`)
-- `BAIPopconfirmAstryx` — `react/src/components/astryx-bui/BAIPopconfirmAstryx.tsx`
+- `BAIDeleteConfirmModal` — `packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx`
+- `BAIPopconfirmAstryx` — `packages/backend.ai-ui/src/components/BAIPopconfirmAstryx.tsx`
 - `BAINameActionCell` / `BAIPopconfirmConfig` — `packages/backend.ai-ui/src/components/Table/BAINameActionCell.tsx`
 - App shim (`App.useApp()`, `message`, `modal`) — `packages/backend.ai-ui/src/app-shim/`
 - `component-props-extension.md` — the frozen antd-v6-shaped prop vocabulary section explains why `okButtonProps.danger` and friends still carry antd names on these surfaces

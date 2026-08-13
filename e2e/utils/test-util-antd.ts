@@ -29,7 +29,7 @@ export async function findColumnIndex(
 // `[data-testid="bai-notification-stack"]`; its title/description are plain
 // `<div>`s with no class of their own, so they carry explicit
 // `data-testid="notification-title"` / `"notification-description"` anchors
-// (`react/src/components/astryx-bui/BAINotificationStackAstryx.tsx`).
+// (`packages/backend.ai-ui/src/components/BAINotificationStackAstryx.tsx`).
 function getFirstNotification(page: Page) {
   return page
     .locator('[data-testid="bai-notification-stack"] [data-notification-key]')

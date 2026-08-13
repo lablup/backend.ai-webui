@@ -12,7 +12,7 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSwitch } from './astryx-bui/astryxFormControls';
+import { AstryxFormSwitch } from './astryxFormControls';
 import {
   BAIAdminResourceGroupSelectAstryx,
   BAIModal,
