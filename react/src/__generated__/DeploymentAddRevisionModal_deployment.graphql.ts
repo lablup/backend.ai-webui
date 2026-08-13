@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<95e0808826d9776f88b532ca12c8ef36>>
+ * @generated SignedSource<<d4ecf4b413818268650241f51cf10ff4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,12 +19,6 @@ export type DeploymentAddRevisionModal_deployment$data = {
   } | null | undefined;
   readonly id: string;
   readonly metadata: {
-    readonly projectId: string;
-    readonly projectV2: {
-      readonly basicInfo: {
-        readonly name: string;
-      };
-    } | null | undefined;
     readonly resourceGroupName: string;
   };
   readonly " $fragmentType": "DeploymentAddRevisionModal_deployment";
@@ -60,42 +54,6 @@ const node: ReaderFragment = {
           "args": null,
           "kind": "ScalarField",
           "name": "resourceGroupName",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "projectId",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "ProjectV2",
-          "kind": "LinkedField",
-          "name": "projectV2",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ProjectBasicInfo",
-              "kind": "LinkedField",
-              "name": "basicInfo",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "name",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
           "storageKey": null
         }
       ],
@@ -140,6 +98,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "1161ecbbfeb7e49d6c28a281ce6481c4";
+(node as any).hash = "614548b7fde80b4972dfb192b893b832";
 
 export default node;
