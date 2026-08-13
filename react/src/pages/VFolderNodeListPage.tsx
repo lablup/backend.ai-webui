@@ -41,7 +41,13 @@ import {
 import * as _ from 'lodash-es';
 import { RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
+import React, {
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -188,10 +194,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  useEffect(() => {
+  // An eslint suppression here made the React Compiler skip this whole
+  // component, so `queryVariables` lost memoization and any re-render (e.g. row
+  // selection) flashed the deferred-comparison loading states (FR-3510).
+  const refetchOnInvitationChange = useEffectEvent(() => {
     updateFetchKey();
-    // Update fetchKey when invitation count changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+  useEffect(() => {
+    refetchOnInvitationChange();
   }, [invitations.length]);
 
   const { vfolder_nodes, ...folderCounts } =
