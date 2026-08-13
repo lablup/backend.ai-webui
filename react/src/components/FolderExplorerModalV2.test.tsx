@@ -296,10 +296,15 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     expect(sftpButton).toBeDisabled();
 
     // The page-provided reason surfaces on hover.
-    fireEvent.mouseEnter(fileBrowserButton.closest('.ant-space-compact')!);
+    // antd `Space.Compact` -> Astryx `ButtonGroup` (`role="group"`). The
+    // tooltip stays on the GROUP because a disabled button swallows hover.
+    fireEvent.mouseEnter(fileBrowserButton.closest('[role="group"]')!);
+    // Both launch buttons carry the same page-provided reason, so the text
+    // appears twice — one tooltip per ButtonGroup.
     expect(
-      await screen.findByText('data.CannotLaunchSessionInAdminMenu'),
-    ).toBeInTheDocument();
+      (await screen.findAllByText('data.CannotLaunchSessionInAdminMenu'))
+        .length,
+    ).toBeGreaterThan(0);
 
     // Ownership-mismatch alert is suppressed even though the ambient decoy
     // differs from the folder's project.

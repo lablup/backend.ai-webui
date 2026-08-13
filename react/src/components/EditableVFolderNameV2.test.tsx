@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { Suspense } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import {
   graphql,
   RelayEnvironmentProvider,
@@ -156,23 +157,26 @@ const renderName = ({
     defaultOptions: { queries: { retry: false } },
   });
   render(
-    <RelayEnvironmentProvider environment={environment}>
-      <QueryClientProvider client={queryClient}>
-        <>
+    // The name renders as a router `Link` when `enableLink` is on, and the
+    // component calls `useWebUINavigate()` unconditionally.
+    <MemoryRouter>
+      <RelayEnvironmentProvider environment={environment}>
+        <QueryClientProvider client={queryClient}>
           <Suspense fallback={null}>
             <TestRenderer project={project} />
           </Suspense>
-        </>
-      </QueryClientProvider>
-    </RelayEnvironmentProvider>,
+        </QueryClientProvider>
+      </RelayEnvironmentProvider>
+    </MemoryRouter>,
   );
 };
 
 const findEditTrigger = async () => {
   await screen.findByText('test-folder');
-  // antd Typography renders the rename trigger with the
-  // `ant-typography-edit` class when `editable` resolves truthy.
-  return document.querySelector('.ant-typography-edit');
+  // The rename trigger is a pencil `IconButton` whose accessible name is
+  // `button.Edit` (raw key — see the `react-i18next` mock above). It is
+  // rendered only when the gate resolves truthy.
+  return screen.queryByRole('button', { name: 'button.Edit' });
 };
 
 describe('EditableVFolderNameV2 rename gate (ADR-0001, FR-3413)', () => {
