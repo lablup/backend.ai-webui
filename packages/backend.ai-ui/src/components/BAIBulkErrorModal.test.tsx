@@ -52,7 +52,7 @@ describe('BAIBulkErrorModal', () => {
       />,
     );
 
-    // Caller-defined column headers (BAITable renders a hidden measurement
+    // Caller-defined column headers (BAITableAstryx renders a hidden measurement
     // header alongside the visible one, so use getAllByText)
     expect(screen.getAllByText('Target').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Error Message').length).toBeGreaterThan(0);

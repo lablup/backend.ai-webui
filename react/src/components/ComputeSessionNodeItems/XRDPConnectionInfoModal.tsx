@@ -2,7 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Alert, Descriptions, Typography } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Link } from '@astryxdesign/core/Link';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -24,23 +29,17 @@ const XRDPConnectionInfoModal: React.FC<XRDPConnectionInfoModalProps> = ({
   return (
     <BAIModal title={t('session.XRDPconnection')} footer={null} {...modalProps}>
       <BAIFlex direction="column" align="stretch" gap="md">
-        <Alert
-          title={t('session.UseYourFavoriteMSTSCApp')}
-          type="info"
-          showIcon
-        />
-        <Descriptions
-          column={1}
-          bordered
-          size="small"
+        <Banner status="info" title={t('session.UseYourFavoriteMSTSCApp')} />
+        <MetadataList
+          columns="single"
           title={t('session.ConnectionInformation')}
         >
-          <Descriptions.Item label="RDP URL">
-            <Typography.Link href={rdpUrl} target="_blank">
+          <MetadataListItem label="RDP URL">
+            <Link href={rdpUrl} target="_blank">
               {rdpUrl}
-            </Typography.Link>
-          </Descriptions.Item>
-        </Descriptions>
+            </Link>
+          </MetadataListItem>
+        </MetadataList>
       </BAIFlex>
     </BAIModal>
   );

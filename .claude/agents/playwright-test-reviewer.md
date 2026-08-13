@@ -15,7 +15,7 @@ Before reviewing, read these project files as the source of truth:
 
 - `e2e/E2E-TEST-NAMING-GUIDELINES.md` — naming conventions
 - `e2e/utils/test-util.ts` — available auth/navigation helpers
-- `e2e/utils/test-util-antd.ts` — Ant Design-specific utilities
+- `e2e/utils/test-util-antd.ts` — legacy component-locator utilities (form items, menu items, cards, tabs, notifications); some helpers still target antd-era classes that are dead code now that antd is not a dependency of this project — treat those as candidates for role-based/`data-*` migration, not as current UI truth
 - `.claude/agents/playwright-test-healer.md` — anti-patterns and best practices (networkidle, waitForTimeout, fallback logic, modal locators, icon locators)
 
 ## Workflow

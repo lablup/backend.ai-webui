@@ -5,21 +5,25 @@
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
 import AnnouncementEditModal from './AnnouncementEditModal';
-import { useToggle } from 'ahooks';
-import { Button, theme } from 'antd';
-import { BAIAlert, BAIAlertProps, BAIUnmountAfterClose } from 'backend.ai-ui';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Markdown } from '@astryxdesign/core/Markdown';
+import { BAIUnmountAfterClose, useToggle } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';
-import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface Props extends BAIAlertProps {}
-const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
+// `showIcon` is accepted and ignored — Banner always renders its status icon.
+// The announcement has no severity in the data model, hence a fixed `info`.
+interface Props {
+  showIcon?: boolean;
+  closable?: boolean;
+}
+const AnnouncementAlert: React.FC<Props> = ({ closable }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const userRole = useCurrentUserRole();
   const isSuperAdmin = userRole === 'superadmin';
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
@@ -31,38 +35,31 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
   // settings or this alert's own Edit button) can see and manage it.
   return announcement.enabled && !_.isEmpty(announcement.message) ? (
     <>
-      <BAIAlert
+      <Banner
+        status="info"
+        isDismissable={closable}
+        // Keep the body in `description`, not `title`: Banner centres its
+        // header on `description == null && hasActions`, which misaligns the
+        // icon and Edit button against a multi-line announcement (FR-3482).
+        title={null}
         description={
-          <div style={{ marginBottom: token.marginSM * -1 }}>
-            <Markdown
-              options={{
-                overrides: {
-                  p: {
-                    props: {
-                      style: { marginTop: 0, marginBottom: token.marginSM },
-                    },
-                  },
-                },
-              }}
-            >
-              {/* trailing <p> collapses the last paragraph's bottom margin */}
-              {announcement.message + '<p></p>'}
-            </Markdown>
-          </div>
+          // Must be the same renderer as the editor preview (FR-3402); the
+          // banner sits under an h2, so markdown `#` starts at h3.
+          <Markdown density="compact" headingLevelStart={3} autolink="gfm">
+            {announcement.message}
+          </Markdown>
         }
-        action={
+        endContent={
           isSuperAdmin ? (
             <Button
-              type="text"
-              size="small"
-              icon={<SquarePenIcon />}
+              variant="ghost"
+              size="sm"
+              icon={<SquarePenIcon size="1em" />}
+              label={t('button.Edit')}
               onClick={toggleEditModal}
-            >
-              {t('button.Edit')}
-            </Button>
+            />
           ) : undefined
         }
-        {...otherProps}
       />
       {isSuperAdmin && (
         <BAIUnmountAfterClose>

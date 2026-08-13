@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
     "ErrorOccurred": "Алдаа гарлаа"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Үр дүн олдсонгүй",
+    "Search": "Хайх"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Домен сонгох"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
@@ -260,6 +267,9 @@
     "StrategyType": "Стратеги",
     "Tags": "Шошго",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
@@ -451,14 +461,19 @@
     "Step": "Алхам"
   },
   "comp:BAITable": {
+    "Apply": "Хэрэглэх",
+    "Cancel": "Цуцлах",
     "CollapseAll": "Бүгдийг хураах",
     "ExpandAll": "Бүгдийг дэлгэх",
     "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
     "ExpandOptions": "Дэлгэх сонголтууд",
+    "ExpandRow": "Мөрийг дэлгэх",
     "Export": "Экспорт",
     "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",
     "InvalidPageNumber": "Хуудасны дугаар буруу байна",
+    "NoDataToDisplay": "Харуулах өгөгдөл алга",
+    "Pagination": "Хуудаслалт",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
     "SettingTable": "Хүснэгтийн тохиргоо"
@@ -526,8 +541,10 @@
     "MoreOptions": "Нэмэлт сонголтууд",
     "Name": "Нэр",
     "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
     "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
     "Size": "Хэмжээ",
@@ -594,21 +611,73 @@
     "UserID": "Хэрэглэгчийн ID",
     "Username": "Хэрэглэгчийн нэр"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Зам сонгохын тулд дарна уу",
+    "SelectAPath": "Зам сонгох",
+    "SelectAPathInFolder": "{{folderName}} хавтаснаас зам сонгох",
+    "SelectFolderFirst": "Эхлээд хавтас сонгоно уу",
+    "SelectThisLocation": "Энэ байршлыг сонгох",
+    "SelectedPath": "Сонгогдсон"
+  },
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
+  "form": {
+    "Optional": "(сонголттой)",
+    "validateMessages": {
+      "Default": "${label}-ийн талбарын баталгаажуулалтын алдаа",
+      "Required": "${label} оруулна уу",
+      "Whitespace": "${label} нь хоосон тэмдэгт байж болохгүй",
+      "array": {
+        "Len": "${len} ${label} байх ёстой",
+        "Max": "Хамгийн ихдээ ${max} ${label}",
+        "Min": "Дор хаяж ${мин} ${label}",
+        "Range": "${label}-н хэмжээ ${min}-${max} хооронд байх ёстой"
+      },
+      "number": {
+        "Len": "${label} нь ${len}-тэй тэнцүү байх ёстой",
+        "Max": "${label} дээд тал нь ${max} байх ёстой",
+        "Min": "${label} хамгийн багадаа ${min} байх ёстой",
+        "Range": "${label} ${min}-${max} хооронд байх ёстой"
+      },
+      "pattern": {
+        "Mismatch": "${label} нь ${pattern} загвартай тохирохгүй байна"
+      },
+      "string": {
+        "Len": "${label} ${len} тэмдэгттэй байх ёстой",
+        "Max": "${label} нь ${max} хүртэлх тэмдэгттэй байх ёстой",
+        "Min": "${label} хамгийн багадаа ${min} тэмдэгттэй байх ёстой",
+        "Range": "${label} ${min}-${max} тэмдэгтийн хооронд байх ёстой"
+      },
+      "types": {
+        "Email": "${label} нь хүчинтэй ${type} биш",
+        "Number": "${label} нь хүчинтэй ${type} биш",
+        "Object": "${label} нь хүчинтэй ${type} биш",
+        "String": "${label} нь хүчинтэй ${type} биш",
+        "Url": "${label} нь хүчинтэй ${type} биш"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Бүгдийг сонголтоос хасах",
     "File": "Файл",
+    "Increase": "Increase",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
+    "Select": "Select",
     "TotalItems": "Нийт {{total}} зүйлүүд",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
       "Collapse": "Сүйрэл",
+      "Confirm": "Confirm",
       "Copied": "Хуулсан",
+      "Copy": "Хуулах",
       "CopyAll": "Бүгдийг хуулбарлах",
       "Create": "Шуүгиан дэгдээх",
       "Delete": "Эдгээх",

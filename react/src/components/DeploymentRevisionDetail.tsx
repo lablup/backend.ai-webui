@@ -5,46 +5,46 @@
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { formatShellCommand } from '../helper/parseCliCommand';
+import { useBAIBreakpoint } from '../theme-shim';
+// Co-located CSS (P17): keeps long values (model paths, image refs, shell
+// commands) wrapping inside their MetadataList cell instead of overflowing
+// the drawer, and provides the spinner animation for the "Applying" badge
+// (previously antd's `.anticon-spin`).
+import './DeploymentRevisionDetail.css';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Descriptions, Grid, Typography } from 'antd';
-import { createStyles } from 'antd-style';
-import { DescriptionsItemType } from 'antd/es/descriptions';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIId,
   BAIResourceNumberWithIcon,
-  BAITag,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-const renderFallback = () => (
-  <Typography.Text type="secondary">-</Typography.Text>
-);
+const renderFallback = () => <Text color="secondary">-</Text>;
 
-const useStyles = createStyles(({ css }) => ({
-  // antd applies the `style` prop to the Descriptions root only, so setting
-  // `table-layout: fixed` there is a no-op. Pin the actual <table> to the
-  // container width with a fixed layout so the columns stay bounded and long
-  // values (model paths, image refs, shell commands) wrap or scroll inside
-  // their cell instead of widening the table past the drawer's right edge.
-  // `!important` is required because antd's own table style otherwise keeps
-  // the layout `auto`, letting content blow the table out to its intrinsic
-  // width.
-  descriptions: css`
-    .ant-descriptions-view table {
-      table-layout: fixed !important;
-      width: 100% !important;
-    }
-  `,
-}));
+/**
+ * MetadataList item descriptor. Mirrors the antd `DescriptionsItemType`
+ * shape this file used before conversion, minus `span` (items flow in
+ * order — see the PILOT-DECISION at the render site).
+ */
+interface RevisionDetailItem {
+  key: string;
+  label: string;
+  children: React.ReactNode;
+}
 
 const DeploymentRevisionDetail: React.FC<{
   revisionFrgmt: DeploymentRevisionDetail_revision$key;
@@ -59,8 +59,7 @@ const DeploymentRevisionDetail: React.FC<{
 }> = ({ revisionFrgmt, status = 'none', mergeRevisionInfo = false }) => {
   'use memo';
   const { t } = useTranslation();
-  const { styles } = useStyles();
-  const screens = Grid.useBreakpoint();
+  const screens = useBAIBreakpoint();
 
   const revision = useFragment(
     graphql`
@@ -216,20 +215,13 @@ const DeploymentRevisionDetail: React.FC<{
       ? `${imageCanonicalName}@${imageArchitecture}`
       : imageCanonicalName;
 
-  const descriptionsProps = {
-    bordered: true,
-    column: screens.md ? 2 : 1,
-    className: styles.descriptions,
-    styles: {
-      label: { width: screens.md ? 160 : 120, wordBreak: 'keep-all' as const },
-      content: {
-        wordBreak: 'break-word' as const,
-        overflowWrap: 'anywhere' as const,
-      },
-    },
-  } as const;
-
-  const baseItems: DescriptionsItemType[] = filterOutEmpty([
+  // PILOT-DECISION: antd Descriptions `bordered`, per-item `span`, and the
+  // `styles.label/content` word-break objects have no MetadataList
+  // destination. `bordered` is dropped (Astryx's flat list is the design),
+  // items flow in source order without spanning, and the content wrapping
+  // rules moved to the co-located CSS file. Label width survives via the
+  // `label={{ position, width }}` prop.
+  const baseItems: RevisionDetailItem[] = filterOutEmpty([
     mergeRevisionInfo
       ? {
           key: 'revision',
@@ -248,12 +240,19 @@ const DeploymentRevisionDetail: React.FC<{
                   </BAIFlex>
                 ) : null}
                 {status === 'current' && (
-                  <BAITag color="success">{t('deployment.Current')}</BAITag>
+                  <Badge variant="success" label={t('deployment.Current')} />
                 )}
                 {status === 'deploying' && (
-                  <BAITag color="warning" icon={<LoadingOutlined spin />}>
-                    {t('deployment.Applying')}
-                  </BAITag>
+                  <Badge
+                    variant="warning"
+                    icon={
+                      <LoaderCircle
+                        className="deployment-revision-detail-spin"
+                        size="1em"
+                      />
+                    }
+                    label={t('deployment.Applying')}
+                  />
                 )}
               </BAIFlex>
             ) : (
@@ -263,7 +262,6 @@ const DeploymentRevisionDetail: React.FC<{
       : {
           key: 'revision-number',
           label: t('deployment.RevisionNumber'),
-          span: screens.md ? 2 : 1,
           children:
             revision.revisionNumber != null ? (
               <BAIText>{`#${revision.revisionNumber}`}</BAIText>
@@ -274,17 +272,23 @@ const DeploymentRevisionDetail: React.FC<{
     !mergeRevisionInfo && {
       key: 'revision-id',
       label: t('modelService.RevisionID'),
-      span: screens.md ? 2 : 1,
       children: revision.id ? (
         <BAIFlex gap="xs" align="center">
           <BAIId globalId={revision.id} style={{ maxWidth: '100%' }} />
           {status === 'current' && (
-            <BAITag color="success">{t('deployment.Current')}</BAITag>
+            <Badge variant="success" label={t('deployment.Current')} />
           )}
           {status === 'deploying' && (
-            <BAITag color="warning" icon={<LoadingOutlined spin />}>
-              {t('deployment.Applying')}
-            </BAITag>
+            <Badge
+              variant="warning"
+              icon={
+                <LoaderCircle
+                  className="deployment-revision-detail-spin"
+                  size="1em"
+                />
+              }
+              label={t('deployment.Applying')}
+            />
           )}
         </BAIFlex>
       ) : (
@@ -329,9 +333,9 @@ const DeploymentRevisionDetail: React.FC<{
               // Shared memory is part of the resource allocation, not a
               // standalone setting — show it as secondary text beneath the
               // resource chips (FR-3005).
-              <Typography.Text type="secondary">
+              <Text color="secondary">
                 {`(${t('resourcePreset.SharedMemory')} ${shmemValue})`}
-              </Typography.Text>
+              </Text>
             )}
           </BAIFlex>
         ) : (
@@ -345,15 +349,11 @@ const DeploymentRevisionDetail: React.FC<{
         <BAIFlex direction="column" align="start">
           <FolderLink vfolderNodeFragment={mountConfig.vfolder} />
           {mountConfig.mountDestination && (
-            <Typography.Text type="secondary">
-              {mountConfig.mountDestination}
-            </Typography.Text>
+            <Text color="secondary">{mountConfig.mountDestination}</Text>
           )}
         </BAIFlex>
       ) : mountConfig?.vfolderId ? (
-        <Typography.Text type="secondary">
-          {mountConfig.vfolderId}
-        </Typography.Text>
+        <Text color="secondary">{mountConfig.vfolderId}</Text>
       ) : (
         renderFallback()
       ),
@@ -378,17 +378,15 @@ const DeploymentRevisionDetail: React.FC<{
                 {mount.vfolder ? (
                   <FolderLink vfolderNodeFragment={mount.vfolder} />
                 ) : (
-                  <Typography.Text type="secondary">
-                    {mount.vfolderId}
-                  </Typography.Text>
+                  <Text color="secondary">{mount.vfolderId}</Text>
                 )}
                 <BAIFlex gap="xs" align="center" wrap="wrap">
                   {mount.mountDestination && (
-                    <Typography.Text type="secondary">
-                      {mount.mountDestination}
-                    </Typography.Text>
+                    <Text color="secondary">{mount.mountDestination}</Text>
                   )}
-                  {mount.mountPerm && <BAITag>{mount.mountPerm}</BAITag>}
+                  {mount.mountPerm && (
+                    <Badge variant="neutral" label={mount.mountPerm} />
+                  )}
                 </BAIFlex>
               </BAIFlex>
             ))}
@@ -396,7 +394,6 @@ const DeploymentRevisionDetail: React.FC<{
         ) : (
           renderFallback()
         ),
-      span: 2,
     },
     {
       key: 'runtime-variant',
@@ -406,14 +403,13 @@ const DeploymentRevisionDetail: React.FC<{
     {
       key: 'runtime-preset-values',
       label: t('modelService.RuntimeParamTitle'),
-      span: 2,
       children:
         presetValues.length > 0 ? (
           <BAIFlex direction="column" align="start" gap="xxs">
             {presetValues.map((preset) => (
-              <Typography.Text key={preset.presetId}>
+              <Text key={preset.presetId}>
                 {`- ${preset.label}: ${preset.value}`}
-              </Typography.Text>
+              </Text>
             ))}
           </BAIFlex>
         ) : (
@@ -430,18 +426,12 @@ const DeploymentRevisionDetail: React.FC<{
       ) : (
         renderFallback()
       ),
-      span: 2,
     },
     {
       key: 'image',
       label: t('deployment.Image'),
       children: imageFullName ? (
-        <Typography.Text
-          copyable={{ text: imageFullName }}
-          style={{ wordBreak: 'break-all' }}
-        >
-          {imageFullName}
-        </Typography.Text>
+        <BAIText copyable>{imageFullName}</BAIText>
       ) : (
         renderFallback()
       ),
@@ -450,9 +440,9 @@ const DeploymentRevisionDetail: React.FC<{
       key: 'cluster-mode',
       label: t('deployment.ClusterMode'),
       children: clusterConfig ? (
-        <Typography.Text>
+        <Text>
           {clusterConfig.mode} / {clusterConfig.size}
-        </Typography.Text>
+        </Text>
       ) : (
         renderFallback()
       ),
@@ -481,15 +471,14 @@ const DeploymentRevisionDetail: React.FC<{
         ) : (
           renderFallback()
         ),
-      span: 2,
     },
   ]);
 
   const rawModels = revision.modelDefinition?.models;
   const models = filterOutNullAndUndefined(rawModels);
-  const modelItems: DescriptionsItemType[] = models.flatMap((model, idx) => {
+  const modelItems: RevisionDetailItem[] = models.flatMap((model, idx) => {
     const prefix = models.length > 1 ? `[${idx}] ` : '';
-    const items: DescriptionsItemType[] = filterOutEmpty([
+    const items: RevisionDetailItem[] = filterOutEmpty([
       {
         key: `model-name-${idx}`,
         label: `${prefix}${t('modelStore.ModelName')}`,
@@ -521,7 +510,6 @@ const DeploymentRevisionDetail: React.FC<{
               ) : (
                 renderFallback()
               ),
-              span: 2,
             },
             {
               key: `model-port-${idx}`,
@@ -554,7 +542,6 @@ const DeploymentRevisionDetail: React.FC<{
                 ) : (
                   renderFallback()
                 ),
-              span: 2,
             },
             ...(model.service.healthCheck
               ? ([
@@ -596,19 +583,26 @@ const DeploymentRevisionDetail: React.FC<{
                       model.service.healthCheck.expectedStatusCode ??
                       renderFallback(),
                   },
-                ] as DescriptionsItemType[])
+                ] as RevisionDetailItem[])
               : []),
-          ] as DescriptionsItemType[])
+          ] as RevisionDetailItem[])
         : []),
     ]);
     return items;
   });
 
   return (
-    <Descriptions
-      {...descriptionsProps}
-      items={[...baseItems, ...modelItems]}
-    />
+    <MetadataList
+      className="deployment-revision-detail-metadata"
+      columns={screens.md ? 2 : 1}
+      label={{ position: 'start', width: screens.md ? 160 : 120 }}
+    >
+      {[...baseItems, ...modelItems].map((item) => (
+        <MetadataListItem key={item.key} label={item.label}>
+          {item.children}
+        </MetadataListItem>
+      ))}
+    </MetadataList>
   );
 };
 

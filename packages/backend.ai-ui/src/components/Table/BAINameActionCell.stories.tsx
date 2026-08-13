@@ -3,16 +3,8 @@ import { BAIConfigProvider } from '../provider';
 import { BAIClient } from '../provider/BAIClientProvider';
 import BAINameActionCell from './BAINameActionCell';
 import type { BAINameActionCellAction } from './BAINameActionCell';
-import {
-  CopyOutlined,
-  DeleteOutlined,
-  FolderOutlined,
-  ShareAltOutlined,
-} from '@ant-design/icons';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
-import { SquarePenIcon } from 'lucide-react';
+import { Copy, Trash, Folder, Share2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -21,8 +13,8 @@ const mockClientPromise = Promise.resolve(mockClient);
 const mockAnonymousClientFactory = () => mockClient;
 
 const locales = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
+  en: { lang: 'en' },
+  ko: { lang: 'ko' },
 } as const;
 
 const meta: Meta<typeof BAINameActionCell> = {
@@ -145,19 +137,19 @@ const sampleActions: BAINameActionCellAction[] = [
   {
     key: 'share',
     title: 'Share',
-    icon: <ShareAltOutlined />,
+    icon: <Share2 size="1em" />,
     onClick: () => console.log('Share clicked'),
   },
   {
     key: 'copy',
     title: 'Copy',
-    icon: <CopyOutlined />,
+    icon: <Copy size="1em" />,
     onClick: () => console.log('Copy clicked'),
   },
   {
     key: 'delete',
     title: 'Delete',
-    icon: <DeleteOutlined />,
+    icon: <Trash size="1em" />,
     type: 'danger',
     onClick: () => console.log('Delete clicked'),
   },
@@ -173,7 +165,7 @@ export const Default: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'My Project Folder',
     actions: sampleActions,
   },
@@ -188,7 +180,7 @@ export const WithNavigation: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Navigable Folder',
     to: '/folders/123',
     actions: sampleActions.slice(0, 2),
@@ -204,7 +196,7 @@ export const AlwaysShowActions: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Always Visible Actions',
     actions: sampleActions,
     showActions: 'always',
@@ -220,18 +212,78 @@ export const WithDisabledAction: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Has Disabled Action',
     actions: [
       ...sampleActions.slice(0, 2),
       {
         key: 'restore',
         title: 'Restore',
-        icon: <CopyOutlined />,
+        icon: <Copy size="1em" />,
         disabled: true,
         disabledReason: 'Cannot restore pipeline folders',
       },
     ],
+  },
+};
+
+export const DisabledActionInOverflowMenu: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A disabled action keeps its reason after it collapses into the ' +
+          'overflow menu. The visible icon button explains itself with a ' +
+          'tooltip; the menu row cannot carry one (Astryx types ' +
+          '`DropdownMenuItemData.label` as a plain string), so the reason is ' +
+          'folded into the label instead. Narrow the container to compare ' +
+          'the two. See FR-3423.',
+      },
+    },
+  },
+  render: () => {
+    const [width, setWidth] = React.useState(400);
+    return (
+      <div>
+        <div style={{ marginBottom: 16 }}>
+          <label>
+            Container width: {width}px
+            <input
+              type="range"
+              min={120}
+              max={600}
+              value={width}
+              onChange={(e) => setWidth(Number(e.target.value))}
+              style={{ marginLeft: 8, width: 200 }}
+            />
+          </label>
+        </div>
+        <div
+          style={{
+            width,
+            border: '1px solid #d9d9d9',
+            padding: '8px 12px',
+            borderRadius: 4,
+          }}
+        >
+          <BAINameActionCell
+            icon={<Folder size="1em" />}
+            title="model-weights"
+            showActions="always"
+            actions={[
+              ...sampleActions,
+              {
+                key: 'start-service',
+                title: 'Deploy as service',
+                icon: <Copy size="1em" />,
+                disabled: true,
+                disabledReason: "Create deployments from a project's Data page",
+              },
+            ]}
+          />
+        </div>
+      </div>
+    );
   },
 };
 
@@ -244,7 +296,7 @@ export const LongTitle: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title:
       'This is a very long folder name that should be truncated with ellipsis when the column is narrow',
     actions: sampleActions,
@@ -293,7 +345,7 @@ export const ResponsiveOverflow: Story = {
           }}
         >
           <BAINameActionCell
-            icon={<FolderOutlined />}
+            icon={<Folder size="1em" />}
             title="Resize to see overflow"
             actions={sampleActions}
             showActions="always"
@@ -338,7 +390,7 @@ export const ResponsiveOverflowWithLink: Story = {
           }}
         >
           <BAINameActionCell
-            icon={<FolderOutlined />}
+            icon={<Folder size="1em" />}
             title="This is a long navigable folder name for ellipsis testing"
             to="/folders/123"
             actions={sampleActions}
@@ -360,7 +412,7 @@ export const MenuOnlyActions: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Some actions are menu-only',
     actions: [
       {
@@ -372,20 +424,20 @@ export const MenuOnlyActions: Story = {
       {
         key: 'share',
         title: 'Share',
-        icon: <ShareAltOutlined />,
+        icon: <Share2 size="1em" />,
         onClick: () => console.log('Share clicked'),
       },
       {
         key: 'copy',
         title: 'Copy',
-        icon: <CopyOutlined />,
+        icon: <Copy size="1em" />,
         showInMenu: 'always',
         onClick: () => console.log('Copy clicked'),
       },
       {
         key: 'delete',
         title: 'Delete',
-        icon: <DeleteOutlined />,
+        icon: <Trash size="1em" />,
         type: 'danger',
         showInMenu: 'always',
         onClick: () => console.log('Delete clicked'),
@@ -405,7 +457,7 @@ export const CopyableName: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Copyable Folder Name',
     actions: sampleActions.slice(0, 2),
     copyable: true,
@@ -422,7 +474,7 @@ export const CopyableNameWithLink: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Navigable Copyable Folder',
     to: '/folders/123',
     actions: sampleActions.slice(0, 2),
@@ -440,7 +492,7 @@ export const CopyableNameWithAlwaysVisibleActions: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Copyable With Always Actions',
     actions: sampleActions.slice(0, 2),
     copyable: true,
@@ -457,7 +509,7 @@ export const TitleOnly: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'No actions, title only',
   },
 };
@@ -472,13 +524,13 @@ export const AsyncAction: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'With Async Action',
     actions: [
       {
         key: 'deploy',
         title: 'Deploy (takes 2s)',
-        icon: <CopyOutlined />,
+        icon: <Copy size="1em" />,
         action: () => new Promise((resolve) => setTimeout(resolve, 2000)),
       },
     ],

@@ -1,34 +1,37 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — modal shell converted to `BAIModalAstryx` (the unsaved-changes
+ dialog below was already Astryx from the app-shim migration). PILOT-DECISION:
+ the antd modal's JSX title ("Edit File — name (size)") splits into the
+ Astryx `DialogHeader`'s string `title` + `subtitle` (P2). `keyboard={false}`
+ is replaced by the dirty-check on `onOpenChange` — Escape now routes through
+ the same unsaved-changes confirmation instead of being disabled outright.
+*/
+import { App } from '../app-shim';
 import { loadMonacoEditor } from '../helper/monacoEditor';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
+import type { RcFile } from './FileUploadManager';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Skeleton, App, theme } from 'antd';
-import { RcFile } from 'antd/es/upload';
 import {
-  BAIFlex,
-  BAIModal,
-  BAIModalProps,
   VFolderFile,
   convertToDecimalUnit,
   useConnectedBAIClient,
   useErrorMessageResolver,
-  BAIText,
-  BAIAlert,
-  BAIButton,
 } from 'backend.ai-ui';
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MonacoEditor = React.lazy(() =>
@@ -37,16 +40,33 @@ const MonacoEditor = React.lazy(() =>
   })),
 );
 
+/**
+ * The file shape `FileUploadManager.uploadFiles` accepts.
+ *
+ * This was a local restatement of `import { RcFile } from 'antd/es/upload'` —
+ * a deep antd SUBPATH import that rendered nothing but kept this module in the
+ * import graph (P15), and that a `from 'antd'` grep does not catch. It was
+ * declared here rather than shared because `FileUploadManager` still owned the
+ * antd type at the time, with a note that both sides should settle on one type
+ * once it shed `antd/es/upload`. It has, so they do: `RcFile` is now imported
+ * from the upload manager itself, which is where the producer of the contract
+ * lives. The shape is unchanged (`File` + rc-upload's `uid` + the deprecated
+ * `lastModifiedDate` it stamps on every file).
+ */
+type UploadableFile = RcFile;
+
 interface VFolderTextFileEditorModalProps extends Omit<
   BAIModalProps,
-  'children' | 'title' | 'onCancel' | 'onOk' | 'confirmLoading'
+  'children' | 'title' | 'isOpen' | 'onOpenChange' | 'onAction'
 > {
+  /** App-level contract, kept: the explorer passes `open`. */
+  open?: boolean;
   targetVFolderId: string;
   currentPath: string;
   fileInfo: VFolderFile | null;
   onRequestClose: (success?: boolean) => void;
   uploadFiles: (
-    files: RcFile[],
+    files: UploadableFile[],
     vfolderId: string,
     currentPath: string,
   ) => Promise<void>;
@@ -97,10 +117,9 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
 
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const baiClient = useConnectedBAIClient();
   const { getErrorMessage } = useErrorMessageResolver();
-  const { token } = theme.useToken();
   const { upsertNotification } = useSetBAINotification();
 
   const queryClient = useQueryClient();
@@ -109,6 +128,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   const abortControllerRef = useRef<AbortController | null>(null);
   const disposablesRef = useRef<{ dispose(): void }[]>([]);
   const [isDirty, setIsDirty] = useState(false);
+  const [isUnsavedConfirmOpen, setIsUnsavedConfirmOpen] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -162,7 +182,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
       });
       const file = new File([blob], fileInfo.name, {
         type: detectedMimeTypeRef.current,
-      }) as RcFile;
+      }) as UploadableFile;
 
       // Workaround: tus-js-client skips PATCH requests for 0-byte files,
       // immediately calling onSuccess without uploading any data.
@@ -222,90 +242,115 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
     },
   });
 
-  const handleRequestClose = useCallback(() => {
+  const handleRequestClose = () => {
     if (!isDirty) {
       onRequestClose();
       return;
     }
-    const confirmInstance = modal.confirm({
-      title: t('data.explorer.EditFileUnsavedChangesTitle', {
-        fileName: fileInfo?.name,
-      }),
-      content: t('data.explorer.EditFileUnsavedChangesDescription'),
-      icon: null,
-      okText: t('button.Save'),
-      cancelText: t('button.Cancel'),
-      footer: (_, { OkBtn, CancelBtn }) => (
-        <BAIFlex justify="end" gap="xs">
-          <CancelBtn />
-          <BAIButton
-            onClick={() => {
-              confirmInstance.destroy();
-              onRequestClose();
+    setIsUnsavedConfirmOpen(true);
+  };
+
+  // TICKET-11 gap rewrite (answers/07 §5): antd modal.confirm's 3-button
+  // `footer` render-prop (Save / Don't Save / Cancel + `.destroy()`) has no
+  // shim/Astryx analog — AlertDialog is a fixed 2-button footer. This is the
+  // one bespoke dialog: a controlled Astryx Dialog with a hand-built footer,
+  // same composition technique as the shim's ReactNode branch.
+  const closeUnsavedConfirm = () => setIsUnsavedConfirmOpen(false);
+  const unsavedConfirmDialog = (
+    <Dialog
+      isOpen={isUnsavedConfirmOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          closeUnsavedConfirm();
+        }
+      }}
+      purpose="form"
+    >
+      <Layout
+        header={
+          <DialogHeader
+            title={t('data.explorer.EditFileUnsavedChangesTitle', {
+              fileName: fileInfo?.name,
+            })}
+            onOpenChange={(open) => {
+              if (!open) {
+                closeUnsavedConfirm();
+              }
             }}
-          >
-            {t('button.DontSave')}
-          </BAIButton>
-          <OkBtn />
-        </BAIFlex>
-      ),
-      onOk: () => {
-        saveMutation.mutate();
-      },
-    });
-  }, [isDirty, modal, t, fileInfo?.name, onRequestClose, saveMutation]);
+          />
+        }
+        content={
+          <LayoutContent>
+            {t('data.explorer.EditFileUnsavedChangesDescription')}
+          </LayoutContent>
+        }
+        footer={
+          <LayoutFooter>
+            <HStack justify="end" gap={2} align="center">
+              <Button
+                label={t('button.Cancel')}
+                variant="secondary"
+                onClick={closeUnsavedConfirm}
+              />
+              <Button
+                label={t('button.DontSave')}
+                variant="secondary"
+                onClick={() => {
+                  closeUnsavedConfirm();
+                  onRequestClose();
+                }}
+              />
+              <Button
+                label={t('button.Save')}
+                variant="primary"
+                onClick={() => {
+                  closeUnsavedConfirm();
+                  saveMutation.mutate();
+                }}
+              />
+            </HStack>
+          </LayoutFooter>
+        }
+      />
+    </Dialog>
+  );
 
   const skeletonWithPadding = (
-    <Skeleton
-      active
+    <BAISkeleton
+      rows={3}
       style={{
         alignSelf: 'start',
-        paddingInline: token.paddingContentHorizontal,
-        paddingBlock: token.paddingContentVertical,
+        paddingInline: 'var(--spacing-4)',
+        paddingBlock: 'var(--spacing-3)',
       }}
     />
   );
+  const fileSizeSuffix =
+    fileInfo && fileInfo.size > 0
+      ? ` (${convertToDecimalUnit(fileInfo.size, 'auto')?.displayValue})`
+      : '';
   return (
     <BAIModal
       width={'100%'}
-      destroyOnHidden
-      okText={t('button.Save')}
-      cancelText={t('button.Cancel')}
-      keyboard={false}
-      {...modalProps}
-      title={
-        <>
-          {t('data.explorer.EditFile')}
-          {fileInfo && (
-            <BAIText type="secondary" style={{ fontWeight: 'normal' }}>
-              - {fileInfo.name}
-              {fileInfo.size > 0 &&
-                ` (${convertToDecimalUnit(fileInfo.size, 'auto')?.displayValue})`}
-            </BAIText>
-          )}
-        </>
-      }
-      onCancel={() => handleRequestClose()}
-      onOk={() => saveMutation.mutate()}
-      confirmLoading={saveMutation.isPending}
-      okButtonProps={{ disabled: !!loadError }}
-      styles={{
-        body: {
-          paddingBlock: 0,
-          paddingInline: 0,
-        },
+      maxHeight={'95vh'}
+      title={t('data.explorer.EditFile')}
+      subtitle={fileInfo ? `${fileInfo.name}${fileSizeSuffix}` : undefined}
+      actionLabel={t('button.Save')}
+      cancelLabel={t('button.Cancel')}
+      isActionLoading={saveMutation.isPending}
+      isActionDisabled={!!loadError}
+      onAction={() => saveMutation.mutate()}
+      isOpen={modalProps.open}
+      onOpenChange={(next) => {
+        if (!next) handleRequestClose();
       }}
+      {...modalProps}
     >
-      <BAIFlex
-        direction="column"
-        gap="md"
-        style={{ height: 'calc(100vh - 180px)' }}
-      >
+      <VStack gap={5} align="stretch" style={{ height: 'calc(100vh - 220px)' }}>
         <Suspense fallback={skeletonWithPadding}>
           {loadError ? (
-            <BAIAlert
-              type="error"
-              showIcon
+            <Banner
+              status="error"
               title={t('data.explorer.FailedToLoadFile')}
               description={t('data.explorer.FailedToLoadFileDescription')}
             />
@@ -402,7 +447,8 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
             />
           )}
         </Suspense>
-      </BAIFlex>
+      </VStack>
+      {unsavedConfirmDialog}
     </BAIModal>
   );
 };

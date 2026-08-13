@@ -8,38 +8,44 @@ import {
   ResourceGroupListQuery$data,
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteFilled,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Tag, Tooltip, theme } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import {
-  useUpdatableState,
-  filterOutEmpty,
-  filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
-  BAIFlex,
+  BAIColumnsType,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
+  BAIFlex,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAISelectionLabel,
+  BAITableAstryx,
   BAIUnmountAfterClose,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  useToggle,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
+import {
+  Check,
+  X,
+  Trash2,
+  Info,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -147,7 +153,7 @@ const ResourceGroupList: React.FC = () => {
       }
     `);
 
-  const columns: ColumnsType<ResourceGroup> = filterOutEmpty([
+  const columns: BAIColumnsType<ResourceGroup> = filterOutEmpty([
     {
       key: 'name',
       title: t('resourceGroup.Name'),
@@ -160,7 +166,7 @@ const ResourceGroupList: React.FC = () => {
             {
               key: 'info',
               title: t('button.Info'),
-              icon: <InfoCircleOutlined />,
+              icon: <Info size="1em" />,
               onClick: () => {
                 setSelectedResourceGroup(record);
                 toggleOpenInfoModal();
@@ -244,7 +250,7 @@ const ResourceGroupList: React.FC = () => {
                   {
                     key: 'delete',
                     title: t('button.Delete'),
-                    icon: <DeleteFilled />,
+                    icon: <Trash2 size="1em" />,
                     type: 'danger' as const,
                     onClick: () => {
                       setSelectedResourceGroupName(record?.name || '');
@@ -268,9 +274,9 @@ const ResourceGroupList: React.FC = () => {
       dataIndex: 'is_public',
       render: (value) => {
         return value ? (
-          <CheckOutlined style={{ color: token.colorSuccess }} />
+          <Check style={{ color: token.colorSuccess }} size="1em" />
         ) : (
-          <CloseOutlined style={{ color: token.colorTextSecondary }} />
+          <X style={{ color: token.colorTextSecondary }} size="1em" />
         );
       },
     },
@@ -293,9 +299,7 @@ const ResourceGroupList: React.FC = () => {
         return proxies.length > 0 ? (
           <BAIFlex gap="xxs" wrap="wrap">
             {_.map(proxies, (proxy) => (
-              <Tag key={proxy} color="blue">
-                {proxy}
-              </Tag>
+              <Badge key={proxy} variant="blue" label={proxy} />
             ))}
           </BAIFlex>
         ) : (
@@ -352,12 +356,14 @@ const ResourceGroupList: React.FC = () => {
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
-              <Tooltip title={t('general.BulkEdit')}>
-                <BAIButton
-                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                  onClick={() => setOpenSFTPModal(true)}
-                />
-              </Tooltip>
+              {/* antd Tooltip + icon-only BAIButton → IconButton with its own
+                  `tooltip` (ticket 15/18 idiom: never-disabled icon trigger). */}
+              <IconButton
+                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                label={t('general.BulkEdit')}
+                tooltip={t('general.BulkEdit')}
+                onClick={() => setOpenSFTPModal(true)}
+              />
             </BAIFlex>
           )}
           <BAIFetchKeyButton
@@ -379,11 +385,10 @@ const ResourceGroupList: React.FC = () => {
         </BAIFlex>
       </BAIFlex>
 
-      <BAITable
+      <BAITableAstryx
         rowKey={'name'}
         resizable
         size="small"
-        scroll={{ x: 'max-content' }}
         columns={columns}
         dataSource={filterOutNullAndUndefined(scaling_groups)}
         loading={isActiveTypePending}

@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Ошибка выполнения",
     "ErrorOccurred": "Произошла ошибка"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Нет результатов",
+    "Search": "Поиск"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Выберите реестр контейнеров"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Выберите домен"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
@@ -260,6 +267,9 @@
     "StrategyType": "Стратегия",
     "Tags": "Теги",
     "UpdatedAt": "Обновлено"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Будут обновлены следующие проекты.",
@@ -451,14 +461,19 @@
     "Step": "Шаг"
   },
   "comp:BAITable": {
+    "Apply": "Применить",
+    "Cancel": "Отмена",
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
     "ExpandErrorsOnly": "Развернуть только ошибки",
     "ExpandOptions": "Параметры разворачивания",
+    "ExpandRow": "Развернуть строку",
     "Export": "Экспорт",
     "ExportCSV": "Экспорт в CSV",
     "GoToFirstPage": "Перейти на первую страницу",
     "InvalidPageNumber": "Неверный номер страницы",
+    "NoDataToDisplay": "Нет данных для отображения",
+    "Pagination": "Разбиение на страницы",
     "SearchTableColumn": "Поиск таблицы столбцов",
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
     "SettingTable": "Настройки таблицы"
@@ -526,8 +541,10 @@
     "MoreOptions": "Дополнительные параметры",
     "Name": "Имя",
     "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Имя было успешно изменено.",
     "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
     "Size": "Размер",
@@ -594,21 +611,73 @@
     "UserID": "ID пользователя",
     "Username": "Имя пользователя"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Нажмите, чтобы выбрать путь",
+    "SelectAPath": "Выбрать путь",
+    "SelectAPathInFolder": "Выбрать путь в {{folderName}}",
+    "SelectFolderFirst": "Сначала выберите папку",
+    "SelectThisLocation": "Выбрать это расположение",
+    "SelectedPath": "Выбрано"
+  },
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
+  "form": {
+    "Optional": "(необязательно)",
+    "validateMessages": {
+      "Default": "Ошибка проверки поля ${label}",
+      "Required": "Пожалуйста, введите ${label}",
+      "Whitespace": "${label} не может быть пустым",
+      "array": {
+        "Len": "Количество элементов ${label} должно быть равно ${len}",
+        "Max": "Количество элементов ${label} должно быть меньше или равно ${max}",
+        "Min": "Количество элементов ${label} должно быть больше или равно ${min}",
+        "Range": "Количество элементов ${label} должно быть между ${min} и ${max}"
+      },
+      "number": {
+        "Len": "${label} должна быть равна ${len}",
+        "Max": "${label} должна быть меньше или равна ${max}",
+        "Min": "${label} должна быть больше или равна ${min}",
+        "Range": "${label} должна быть между ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} не соответствует шаблону ${pattern}"
+      },
+      "string": {
+        "Len": "${label} должна быть ${len} символов",
+        "Max": "${label} должна быть меньше или равна ${max} символов",
+        "Min": "${label} должна быть больше или равна ${min} символов",
+        "Range": "Длина ${label} должна быть между ${min}-${max} символами"
+      },
+      "types": {
+        "Email": "${label} не является типом ${type}",
+        "Number": "${label} не является типом ${type}",
+        "Object": "${label} не является типом ${type}",
+        "String": "${label} не является типом ${type}",
+        "Url": "${label} не является типом ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Снять выделение",
     "File": "Файл",
+    "Increase": "Increase",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",
+    "Select": "Select",
     "TotalItems": "Total {{total}} элементы",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Отмена",
       "Close": "Закрывать",
       "Collapse": "Крах",
+      "Confirm": "Confirm",
       "Copied": "Скопировано",
+      "Copy": "Копировать",
       "CopyAll": "Копировать все",
       "Create": "Создавать",
       "Delete": "Удалить",

@@ -3,47 +3,43 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
+import { Form } from '../form-engine';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { Badge } from '@astryxdesign/core/Badge';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  Button,
-  Descriptions,
-  Form,
-  Input,
-  Space,
-  TableProps,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
-import {
-  BAIButton,
   BAIUserUnionIcon,
   BAIFlex,
   BAILink,
-  BAITable,
+  BAITableAstryx,
   useEventNotStable,
   useUpdatableState,
+  type BAIColumnsType,
+  type BAITableProps,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { CircleHelp, RotateCw, User, PlusIcon } from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
@@ -75,7 +71,10 @@ export interface AliasMap {
 
 type DataIndex = keyof VFolder;
 
-export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
+export interface VFolderTableProps extends Omit<
+  BAITableProps<VFolder>,
+  'rowKey'
+> {
   showAliasInput?: boolean;
   selectedRowKeys?: VFolderKey[];
   onChangeSelectedRowKeys?: (
@@ -171,7 +170,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [aliasMap, internalForm, aliasBasePath]);
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
 
@@ -376,26 +374,21 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
-  const columns: ColumnsType<VFolder> = [
+  const columns: BAIColumnsType<VFolder> = [
     {
       title: (
         <BAIFlex direction="row" gap="xxs">
-          <Typography.Text>{t('data.folders.Name')}</Typography.Text>
+          <Text>{t('data.folders.Name')}</Text>
           {showAliasInput && (
-            <>
-              <Typography.Text
-                type="secondary"
-                style={{ fontWeight: 'normal' }}
+            <Text type="supporting" weight="normal">
+              ({t('session.launcher.FolderAlias')}{' '}
+              <Tooltip
+                content={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
               >
-                ({t('session.launcher.FolderAlias')}{' '}
-                <Tooltip
-                  title={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
-                >
-                  <QuestionCircleOutlined />
-                </Tooltip>
-                )
-              </Typography.Text>
-            </>
+                <CircleHelp size="1em" />
+              </Tooltip>
+              )
+            </Text>
           )}
         </BAIFlex>
       ),
@@ -455,77 +448,86 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                   );
 
                   return (
-                    <Form.Item
-                      name={getRowKey(record)}
-                      rules={[
-                        {
-                          // required: true,
-                          type: 'string',
-                          pattern: vFolderAliasNameRegExp,
-                          message: t('session.launcher.FolderAliasInvalid'),
-                        },
-                        {
-                          type: 'string',
-                          validator: async (_rule, value) => {
-                            if (
-                              value &&
-                              _.some(
-                                allAliasPathMap,
-                                (path, k) =>
-                                  k !== getRowKey(record) && // not current row
-                                  path ===
-                                    inputToAliasPath(getRowKey(record), value),
-                              )
-                            ) {
-                              return Promise.reject(
-                                t('session.launcher.FolderAliasOverlapping'),
-                              );
-                            }
-                            return Promise.resolve();
+                    // Keeps a click inside the alias field from toggling the
+                    // row's selection. This used to live inside a local
+                    // `AliasInput` adapter; the field itself is the SHARED
+                    // adapter now (D10 fold-back), so the guard moved out to
+                    // where it belongs — around the whole form item.
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Form.Item
+                        name={getRowKey(record)}
+                        rules={[
+                          {
+                            // required: true,
+                            type: 'string',
+                            pattern: vFolderAliasNameRegExp,
+                            message: t('session.launcher.FolderAliasInvalid'),
                           },
-                        },
-                        {
-                          type: 'string',
-                          validator: async (_rule, value) => {
-                            const aliasPath = inputToAliasPath(
-                              getRowKey(record),
-                              value,
-                            );
-                            if (
-                              value &&
-                              _.map(
-                                autoMountedFolderNames,
-                                // `n` is the name of the auto mounted folder. It cannot be empty.
-                                (n) => inputToAliasPath('', n),
-                              ).includes(aliasPath)
-                            ) {
-                              return Promise.reject(
-                                t(
-                                  'session.launcher.FolderAliasOverlappingToAutoMount',
-                                ),
-                              );
-                            }
-                            return Promise.resolve();
+                          {
+                            type: 'string',
+                            validator: async (_rule, value) => {
+                              if (
+                                value &&
+                                _.some(
+                                  allAliasPathMap,
+                                  (path, k) =>
+                                    k !== getRowKey(record) && // not current row
+                                    path ===
+                                      inputToAliasPath(
+                                        getRowKey(record),
+                                        value,
+                                      ),
+                                )
+                              ) {
+                                return Promise.reject(
+                                  t('session.launcher.FolderAliasOverlapping'),
+                                );
+                              }
+                              return Promise.resolve();
+                            },
                           },
-                        },
-                      ]}
-                      // dependencies={[getRowKey(record)]}
-                      extra={inputToAliasPath(
-                        record.name,
-                        internalForm.getFieldValue(getRowKey(record)),
-                      )}
-                    >
-                      <Input
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        placeholder={t('session.launcher.FolderAlias')}
-                        allowClear
-                        onChange={() => {
-                          handleAliasUpdate();
-                        }}
-                      ></Input>
-                    </Form.Item>
+                          {
+                            type: 'string',
+                            validator: async (_rule, value) => {
+                              const aliasPath = inputToAliasPath(
+                                getRowKey(record),
+                                value,
+                              );
+                              if (
+                                value &&
+                                _.map(
+                                  autoMountedFolderNames,
+                                  // `n` is the name of the auto mounted folder. It cannot be empty.
+                                  (n) => inputToAliasPath('', n),
+                                ).includes(aliasPath)
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.FolderAliasOverlappingToAutoMount',
+                                  ),
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                        // dependencies={[getRowKey(record)]}
+                        extra={inputToAliasPath(
+                          record.name,
+                          internalForm.getFieldValue(getRowKey(record)),
+                        )}
+                      >
+                        {/* `onValueChange` fires after `Form.Item`'s injected
+                          `onChange` — that side-effect slot is what the local
+                          adapter existed for (D10 fold-back). */}
+                        <AstryxFormTextInput
+                          label={t('session.launcher.FolderAlias')}
+                          placeholder={t('session.launcher.FolderAlias')}
+                          hasClear
+                          onValueChange={handleAliasUpdate}
+                        />
+                      </Form.Item>
+                    </div>
                   );
                 }}
               </Form.Item>
@@ -553,13 +555,15 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           <BAIFlex direction="column">
             {record.ownership_type === 'user' ? (
               <BAIFlex gap={'xs'}>
-                <Typography.Text>{t('data.User')}</Typography.Text>
-                <UserOutlined style={{ color: token.colorTextTertiary }} />
+                <Text>{t('data.User')}</Text>
+                {/* The `colorTextTertiary` glyph tint is dropped (P5) — the
+                    V2 twin renders these icons at inherited colour. */}
+                <User size="1em" />
               </BAIFlex>
             ) : (
               <BAIFlex gap={'xs'}>
-                <Typography.Text>{t('data.Project')}</Typography.Text>
-                <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
+                <Text>{t('data.Project')}</Text>
+                <BAIUserUnionIcon />
               </BAIFlex>
             )}
           </BAIFlex>
@@ -569,7 +573,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       //   value === 'group' ? (
       //     <GroupOutlined />
       //   ) : value === 'user' ? (
-      //     <UserOutlined />
+      //     <User size="1em" />
       //   ) : value ? (
       //     value
       //   ) : (
@@ -631,38 +635,47 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap={'xs'}>
       <BAIFlex direction="row" gap="xs" justify="between">
-        <Input
+        {/* MAPPING §3.6: a bare `Input` -> `TextInput`; `onChange` takes the
+            VALUE, `allowClear` -> `hasClear`, and the required `label` is
+            hidden because the placeholder plus the surrounding table already
+            name it. */}
+        <TextInput
+          label={t('data.SearchByName')}
+          isLabelHidden
           value={searchKey}
-          onChange={(e) => setSearchKey(e.target.value)}
-          allowClear
+          onChange={(next) => setSearchKey(next)}
+          hasClear
           placeholder={t('data.SearchByName')}
+          width="100%"
         />
-        <Space.Compact>
-          <Tooltip title={t('data.CreateANewStorageFolder')}>
-            <BAIButton
-              icon={<PlusIcon />}
-              onClick={() => {
-                setIsOpenCreateModal(true);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={isPendingRefetch}
-              icon={<ReloadOutlined />}
-              onClick={() => {
-                startRefetchTransition(() => {
-                  updateFetchKey();
-                });
-              }}
-            />
-          </Tooltip>
-        </Space.Compact>
+        {/* `Space.Compact` -> `ButtonGroup`; the Tooltip+icon-Button pairs
+            collapse into `IconButton`s that own their tooltip and accessible
+            name (MAPPING §3.3). */}
+        <ButtonGroup label={t('data.Folders')}>
+          <IconButton
+            icon={<PlusIcon />}
+            label={t('data.CreateANewStorageFolder')}
+            tooltip={t('data.CreateANewStorageFolder')}
+            onClick={() => {
+              setIsOpenCreateModal(true);
+            }}
+          />
+          <IconButton
+            isLoading={isPendingRefetch}
+            icon={<RotateCw size="1em" />}
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            onClick={() => {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          />
+        </ButtonGroup>
       </BAIFlex>
       <Form form={internalForm} component={false}>
-        <BAITable
+        <BAITableAstryx
           // size="small"
-          scroll={{ x: 'max-content' }}
           rowKey={getRowKey}
           rowSelection={{
             selectedRowKeys,
@@ -671,44 +684,37 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               handleAliasUpdate();
             },
           }}
-          showSorterTooltip={false}
           columns={columns}
           dataSource={displayingFolders}
-          onRow={(record) => {
-            return {
-              onClick: (event) => {
-                const target = event.target as HTMLElement;
-                // allow click on selection column
-                if (target?.classList?.contains('ant-table-selection-column')) {
-                  event.stopPropagation();
-                  selectedRowKeys.includes(getRowKey(record))
-                    ? setSelectedRowKeys(
-                        selectedRowKeys.filter((k) => k !== getRowKey(record)),
-                      )
-                    : setSelectedRowKeys([
-                        ...selectedRowKeys,
-                        getRowKey(record),
-                      ]);
-                }
-              },
-            };
-          }}
+          // PILOT-DECISION (ticket 30-D): the old `onRow` handler existed only
+          // to re-implement "clicking the padding of antd's selection column
+          // toggles the row" by sniffing that column's antd class name. The
+          // class no longer exists on the Astryx engine, and the
+          // Astryx checkbox column handles its own clicks, so the handler is
+          // dropped rather than re-pointed at a design-system internal.
           {...tableProps}
         />
       </Form>
       {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
         <>
-          <Descriptions size="small">
-            <Descriptions.Item label={t('data.AutomountFolders')}>
-              {_.map(autoMountedFolderNames, (name) => {
-                return <Tag key={name}>{name}</Tag>;
-              })}
-            </Descriptions.Item>
-          </Descriptions>
+          {/* antd `Descriptions size="small"` -> `MetadataList` (MAPPING §4;
+              `size` has no destination and is dropped). Each auto-mounted
+              folder name was a colourless `<Tag>`, i.e. Astryx's default
+              `neutral` Badge. */}
+          <MetadataList columns="single">
+            <MetadataListItem label={t('data.AutomountFolders')}>
+              <BAIFlex gap="xxs" wrap="wrap">
+                {_.map(autoMountedFolderNames, (name) => {
+                  return <Badge key={name} label={name} />;
+                })}
+              </BAIFlex>
+            </MetadataListItem>
+          </MetadataList>
         </>
       ) : null}
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         onRequestClose={(result) => {
           setIsOpenCreateModal(false);
           if (result) {

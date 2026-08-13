@@ -5,7 +5,8 @@
 import { VFolderLazyViewQuery } from '../__generated__/VFolderLazyViewQuery.graphql';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, toGlobalId, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -39,13 +40,16 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
         <BAIFlex align="center" gap="xs">
           <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder_node} />
           {clickable ? (
-            <Typography.Link
+            // p3-a D3: a pure-`onClick` link renders link-styled button
+            // semantics on Astryx `Link` (antd emitted a destination-less
+            // `<a>`), which is what this folder-explorer opener actually is.
+            <Link
               onClick={() => openFolderExplorer(toLocalId(vfolder_node.id))}
             >
               {vfolder_node.name}
-            </Typography.Link>
+            </Link>
           ) : (
-            <Typography.Text>{vfolder_node.name}</Typography.Text>
+            <Text>{vfolder_node.name}</Text>
           )}
         </BAIFlex>
       )}

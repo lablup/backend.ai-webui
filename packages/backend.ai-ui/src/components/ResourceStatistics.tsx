@@ -1,9 +1,10 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
-import { Empty, theme } from 'antd';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import React from 'react';
 
 interface ResourceData {
@@ -69,10 +70,13 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
 
   if (!hasResources) {
     return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={t('comp:ResourceStatistics.NoResourcesData') || ''}
-      />
+      // to-astryx W2-D: antd `Empty` -> Astryx `EmptyState` (MAPPING §4).
+      // `description` -> the REQUIRED `title` string, and
+      // `image={Empty.PRESENTED_IMAGE_SIMPLE}` is dropped: Astryx has no
+      // preset illustration set (`icon` takes a node you choose), and the
+      // simple preset was antd's "no illustration, just the frame" option —
+      // which is what `EmptyState` renders with no `icon`.
+      <EmptyState title={t('comp:ResourceStatistics.NoResourcesData') || ''} />
     );
   }
 

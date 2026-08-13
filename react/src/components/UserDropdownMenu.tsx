@@ -9,36 +9,33 @@ import {
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import { useThemeMode } from '../hooks/useThemeMode';
+import { useBAIBreakpoint } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
-  UserOutlined,
-  MailOutlined,
-  SecurityScanOutlined,
-  ExclamationCircleOutlined,
-  LockOutlined,
-  FileTextOutlined,
-  LogoutOutlined,
-  SettingOutlined,
-  DownloadOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Grid,
-  MenuProps,
-  Typography,
-  theme,
-} from 'antd';
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
 import {
   BAIUnmountAfterClose,
   filterOutEmpty,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import {
+  User,
+  Mail,
+  ShieldCheck,
+  CircleAlert,
+  Lock,
+  FileText,
+  LogOut,
+  Settings,
+  Download,
+} from 'lucide-react';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -47,15 +44,28 @@ const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
 );
 
+// PILOT-DECISION: antd `Dropdown menu={{items}} trigger={['click']}` →
+// Astryx `DropdownMenu items` (MAPPING §3.7 — the `menu={{items}}` branch;
+// `placement="bottomRight"` splits into `placement="below" alignment="end"`).
+// Astryx `DropdownMenu` OWNS its trigger button (`button` prop), so the
+// `buttonRender` escape hatch — whose only caller wrapped the trigger in
+// `ReverseThemeProvider` — is dropped: the trigger carries the band's on-dark
+// media context on itself (`button['data-astryx-media']`), which is also what
+// keeps the panel out of it — see the call site.
+// P7: the per-item `data-testid`s are dropped (Astryx `DropdownMenuItemData`
+// has no passthrough). The e2e suite clicks these rows by TEXT
+// (`getByText('My Account')`, `getByText('Log Out')`) and only anchors on
+// `user-dropdown-button`, which rides on `DropdownMenu`'s own `data-testid`
+// prop — see the call site for why it cannot go inside `button`.
 const UserDropdownMenu: React.FC<{
-  buttonRender?: (defaultButton: React.ReactNode) => React.ReactNode;
   style?: CSSProperties;
-}> = ({ buttonRender = (btn) => btn, style }) => {
+}> = ({ style }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
-  const screens = Grid.useBreakpoint();
+  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
+  const screens = useBAIBreakpoint();
+  const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
@@ -104,76 +114,52 @@ const UserDropdownMenu: React.FC<{
       ? (user?.basicInfo?.fullName ?? '')
       : userInfo.email;
 
-  const items: MenuProps['items'] = filterOutEmpty([
+  // The three leading rows (name / email / role) are read-only identity
+  // display; antd expressed that with `disabled` + a `cursor: default` style
+  // override. `isDisabled` keeps the same non-interactive semantics — the
+  // cursor/colour overrides have no destination (P5, closed enums).
+  const items: DropdownMenuOption[] = filterOutEmpty<DropdownMenuOption>([
     {
-      'data-testid': 'dropdown-user-name',
-      label: <Typography.Text>{displayName}</Typography.Text>,
-      key: 'userFullName',
-      icon: <UserOutlined />,
-      disabled: true,
-      style: {
-        color: token.colorText,
-        cursor: 'default',
-      },
+      label: displayName,
+      icon: <User size="1em" />,
+      isDisabled: true,
     },
     {
-      'data-testid': 'dropdown-user-email',
       label: userInfo.email,
-      key: 'userEmail',
-      icon: <MailOutlined />,
-      disabled: true,
-      style: {
-        cursor: 'default',
-      },
+      icon: <Mail size="1em" />,
+      isDisabled: true,
     },
+    { type: 'divider' },
     {
-      type: 'divider',
+      label: userRole ?? '',
+      icon: <ShieldCheck size="1em" />,
+      isDisabled: true,
     },
+    { type: 'divider' },
     {
-      'data-testid': 'dropdown-user-role',
-      label: userRole,
-      key: 'userRole',
-      icon: <SecurityScanOutlined />,
-      disabled: true,
-      style: {
-        cursor: 'default',
-      },
-    },
-    {
-      type: 'divider',
-    },
-    {
-      'data-testid': 'dropdown-about-backend-ai',
       label: t('webui.menu.AboutBackendAI'),
-      key: 'description',
-      icon: <ExclamationCircleOutlined />,
+      icon: <CircleAlert size="1em" />,
       onClick: () => {
         toggleAboutBAIModal();
       },
     },
     {
-      'data-testid': 'dropdown-my-account',
       label: t('webui.menu.MyAccount'),
-      key: 'userProfileSetting',
-      icon: <LockOutlined />,
+      icon: <Lock size="1em" />,
       onClick: () => {
         setIsOpenUserSettingModal(true);
       },
     },
     {
-      'data-testid': 'dropdown-preferences',
       label: t('webui.menu.Preferences'),
-      key: 'preferences',
-      icon: <SettingOutlined />,
+      icon: <Settings size="1em" />,
       onClick: () => {
         webuiNavigate('/usersettings?tab=general');
       },
     },
     {
-      'data-testid': 'dropdown-logs-errors',
       label: t('webui.menu.LogsErrors'),
-      key: 'logs',
-      icon: <FileTextOutlined />,
+      icon: <FileText size="1em" />,
       onClick: () => {
         webuiNavigate('/usersettings?tab=logs');
       },
@@ -181,15 +167,12 @@ const UserDropdownMenu: React.FC<{
     (baiClient._config.allowAppDownloadPanel ||
       baiClient._config.allowCLIDownloadPanel) && {
       label: t('summary.Downloads'),
-      key: 'downloads',
-      icon: <DownloadOutlined />,
+      icon: <Download size="1em" />,
       onClick: () => toggleDownloadModal(),
     },
     {
-      'data-testid': 'dropdown-logout',
       label: t('webui.menu.LogOut'),
-      key: 'logout',
-      icon: <LogoutOutlined />,
+      icon: <LogOut size="1em" />,
       onClick: () => {
         const event: CustomEvent = new CustomEvent('backend-ai-logout');
         document.dispatchEvent(event);
@@ -199,79 +182,118 @@ const UserDropdownMenu: React.FC<{
 
   return (
     <>
-      <Dropdown
-        menu={{ items }}
-        trigger={['click']}
-        styles={{
-          root: {
-            maxWidth: 300,
-          },
+      {/* antd wrapped a `<User>` glyph in a 17px `Avatar` purely to give it a
+          light disc behind it; Astryx `Avatar` renders images/initials and
+          takes no children (MAPPING §4), so the trigger uses the bare lucide
+          icon as the Button's `icon`. On < lg the label collapses to the icon
+          (`isIconOnly`), which is what the old `screens.lg &&` children
+          expression did. */}
+      {/* Only the TRIGGER sits on the orange header band, so only the trigger
+          takes the on-dark media context — and it takes it on the element
+          itself rather than through a wrapper.
+
+          History: `WebUIHeader` used to declare `<MediaTheme mode="dark">`
+          around the WHOLE `<UserDropdownMenu>`. Because Astryx `Dialog` is a
+          native, NON-portalled `<dialog>` (measured: `showModal()` on an
+          in-place element), every modal below was a DOM descendant of that
+          context and inherited `color-scheme: dark` + the on-dark tokens, so
+          the Downloads / About / My Account dialogs rendered at
+          `rgb(20,20,20)` in LIGHT mode with equally dark labels on top
+          (measured live during the FR-3482 Astryx migration). That
+          fix moved the wrapper here — but `DropdownMenu` renders its trigger
+          and its `[popover]` PANEL as SIBLINGS, so the panel was still inside
+          the wrapper and kept resolving `color-scheme: dark` in both app
+          modes: a `rgb(48,48,48)` menu with white text on a white page
+          (measured, light AND dark). The menu is a floating page surface, not
+          band chrome; it has to follow the APP's mode like every other menu in
+          the app.
+
+          A wrapper only exists to share a context between siblings, and here
+          exactly one element needs it. `data-astryx-media` IS what `MediaTheme`
+          renders (`<div data-astryx-media={mode} style="display:contents">`;
+          the theme CSS keys the on-dark token block off that attribute), and
+          `BaseProps` explicitly admits `data-*`, so declaring it on the trigger
+          is the same primitive at element scope — and stops at the trigger.
+
+          `data-testid` still belongs on `DropdownMenu` itself, NOT inside
+          `button`: the component renders `<Button {...button} …
+          data-testid={testId} />` — its own prop is applied AFTER the spread,
+          so a `data-testid` passed inside `button` is overwritten with
+          `undefined` and the attribute disappears from the DOM entirely. The
+          whole e2e suite waits on `[data-testid="user-dropdown-button"]` —
+          `loginAsAdmin` in `e2e/utils/test-util.ts` blocks on it. (Note the
+          asymmetry: `data-astryx-media` is NOT re-declared by `DropdownMenu`,
+          so the spread carries it through unharmed.) */}
+      <DropdownMenu
+        data-testid="user-dropdown-button"
+        placement="below"
+        alignment="end"
+        // Legacy was `styles={{ root: { maxWidth: 300 } }}` — a CAP, not a
+        // width: antd's dropdown shrink-wrapped to its widest row and only
+        // stopped growing at 300. `menuWidth={300}` made that a fixed 300px
+        // panel, so this menu painted ~120px of empty gutter (measured on an
+        // antd 6.5.0 oracle rendering the SAME item strings: legacy 181.4px
+        // vs 300px, measured during the FR-3482 Astryx migration).
+        //
+        // `fit-content(300px)` is the CSS spelling of exactly that pair —
+        // `min(max-content, max(min-content, 300px))` — so the panel sizes to
+        // its content and stops at legacy's cap. `menuWidth` is typed
+        // `number | string` and lands on the popover's `width`, which is the
+        // element legacy's `styles.root` also sized.
+        menuWidth="fit-content(300px)"
+        button={{
+          // The band is a REVERSED surface: its content polarity is the
+          // opposite of the app's (FR-3502). Scoped to the trigger, never the
+          // overlays below — Astryx renders those as inline siblings.
+          'data-astryx-media': isDarkMode ? 'light' : 'dark',
+          variant: 'ghost',
+          icon: <User size="1em" />,
+          isIconOnly: !screens.lg,
+          label: _.truncate(displayName, { length: 30 }),
+          style,
         }}
-        placement="bottomRight"
-      >
-        {buttonRender(
-          <Button
-            type="text"
-            data-testid="user-dropdown-button"
-            style={{
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: -2,
-              fontSize: token.fontSizeLG,
-              ...style,
-            }}
-            icon={
-              <Avatar
-                size={17}
-                style={{
-                  backgroundColor: token.colorBgBase,
-                }}
-              >
-                <UserOutlined style={{ color: token.colorPrimary }} />
-              </Avatar>
-            }
-          >
-            {screens.lg && _.truncate(displayName, { length: 30 })}
-          </Button>,
-        )}
-      </Dropdown>
-      <ErrorBoundaryWithNullFallback>
-        <Suspense>
-          {isOpenUserSettingModal && (
-            <BAIUnmountAfterClose>
-              <UserProfileSettingModal
-                totpSupported={isTOTPSupported}
-                userFrgmt={user}
-                currentClientIp={currentClientIp}
-                open={isOpenUserSettingModal}
-                onRequestClose={() => {
-                  setIsOpenUserSettingModal(false);
-                }}
-                onRequestRefresh={() => {
-                  startRefetchTransition(() => {
-                    updateFetchKey();
-                  });
-                }}
-              />
-            </BAIUnmountAfterClose>
-          )}
-        </Suspense>
-        <BAIUnmountAfterClose>
-          <DownloadModal
-            open={isDownloadModalOpen}
-            onRequestClose={() => toggleDownloadModal()}
-          />
-        </BAIUnmountAfterClose>
-        <BAIUnmountAfterClose>
-          <AboutBackendAIModal
-            open={isOpenAboutBAIModal}
-            onRequestClose={toggleAboutBAIModal}
-          />
-        </BAIUnmountAfterClose>
-      </ErrorBoundaryWithNullFallback>
+        items={items}
+      />
+      {/* The overlays are page-level surfaces but still DOM descendants of the
+          band row, which sets an inherited `color` for its own content;
+          `display: contents` + `--color-text-primary` re-establishes the page
+          text colour without adding a layout box. */}
+      <div style={{ display: 'contents', color: 'var(--color-text-primary)' }}>
+        <ErrorBoundaryWithNullFallback>
+          <Suspense>
+            {isOpenUserSettingModal && (
+              <BAIUnmountAfterClose>
+                <UserProfileSettingModal
+                  totpSupported={isTOTPSupported}
+                  userFrgmt={user}
+                  currentClientIp={currentClientIp}
+                  open={isOpenUserSettingModal}
+                  onRequestClose={() => {
+                    setIsOpenUserSettingModal(false);
+                  }}
+                  onRequestRefresh={() => {
+                    startRefetchTransition(() => {
+                      updateFetchKey();
+                    });
+                  }}
+                />
+              </BAIUnmountAfterClose>
+            )}
+          </Suspense>
+          <BAIUnmountAfterClose>
+            <DownloadModal
+              open={isDownloadModalOpen}
+              onRequestClose={() => toggleDownloadModal()}
+            />
+          </BAIUnmountAfterClose>
+          <BAIUnmountAfterClose>
+            <AboutBackendAIModal
+              open={isOpenAboutBAIModal}
+              onRequestClose={toggleAboutBAIModal}
+            />
+          </BAIUnmountAfterClose>
+        </ErrorBoundaryWithNullFallback>
+      </div>
     </>
   );
 };

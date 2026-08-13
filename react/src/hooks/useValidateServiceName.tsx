@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { type FormItemProps } from 'antd';
-import type { RuleObject } from 'antd/es/form';
+import type { FormItemProps, RuleObject } from '../form-engine';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 

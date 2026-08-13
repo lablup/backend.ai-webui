@@ -1,6 +1,6 @@
+import type { RuleObject } from '../form-engine';
 import { useValidateSessionName } from './useValidateSessionName';
 import { renderHook } from '@testing-library/react';
-import type { RuleObject } from 'antd/es/form';
 
 // Mock react-i18next to return translation keys
 vi.mock('react-i18next', () => ({

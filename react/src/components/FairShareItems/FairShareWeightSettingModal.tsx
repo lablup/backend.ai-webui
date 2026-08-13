@@ -12,11 +12,18 @@ import { FairShareWeightSettingModal_ModifyUserWeightMutation } from '../../__ge
 import { FairShareWeightSettingModal_ProjectFragment$key } from '../../__generated__/FairShareWeightSettingModal_ProjectFragment.graphql';
 import { FairShareWeightSettingModal_ResourceGroupFragment$key } from '../../__generated__/FairShareWeightSettingModal_ResourceGroupFragment.graphql';
 import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated__/FairShareWeightSettingModal_UserFragment.graphql';
+import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
+import { theme } from '../../theme-shim';
+import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTextInput,
+} from '../astryxFormControls';
 import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { Alert, App, Form, Input, InputNumber, Skeleton, theme } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { Banner } from '@astryxdesign/core/Banner';
 import {
   BAIQuestionIconWithTooltip,
   BAIBulkEditFormItem,
@@ -513,14 +520,13 @@ const FairShareWeightSettingModal: React.FC<
       }}
       onOk={handleOk}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {resourceGroup && resourceGroup?.scheduler?.type !== 'FAIR_SHARE' && (
-          <Alert
-            type="warning"
+          <Banner
+            status="warning"
             title={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
               resourceGroup: resourceGroup?.name || '',
             })}
-            showIcon
             style={{ marginBottom: token.marginMD }}
           />
         )}
@@ -547,10 +553,9 @@ const FairShareWeightSettingModal: React.FC<
             style={{ marginBottom: token.marginMD }}
           />
         )}
-        <Alert
-          type="info"
+        <Banner
+          status="info"
           title={t('fairShare.FairShareSettingDescription')}
-          showIcon
           style={{ marginBottom: token.marginMD }}
         />
         <Form
@@ -564,7 +569,10 @@ const FairShareWeightSettingModal: React.FC<
             required
             hidden
           >
-            <Input disabled />
+            <AstryxFormTextInput
+              label={t('fairShare.ResourceGroup')}
+              disabled
+            />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Domain')}
@@ -580,11 +588,11 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <Input disabled />
+              <AstryxFormTextInput label={t('fairShare.Domain')} disabled />
             )}
           </Form.Item>
           <Form.Item label={t('fairShare.Project')} name="projectId" hidden>
-            <Input />
+            <AstryxFormTextInput label={t('fairShare.Project')} />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Name')}
@@ -600,7 +608,7 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <Input disabled />
+              <AstryxFormTextInput label={t('fairShare.Name')} disabled />
             )}
           </Form.Item>
           <Form.Item
@@ -609,7 +617,7 @@ const FairShareWeightSettingModal: React.FC<
             required={editTarget === 'user'}
             hidden
           >
-            <Input disabled />
+            <AstryxFormTextInput label={t('fairShare.User')} disabled />
           </Form.Item>
           <Form.Item
             label={t('fairShare.Email')}
@@ -624,7 +632,7 @@ const FairShareWeightSettingModal: React.FC<
                 )}
               />
             ) : (
-              <Input disabled />
+              <AstryxFormTextInput label={t('fairShare.Email')} disabled />
             )}
           </Form.Item>
           {isBulkEdit ? (
@@ -640,7 +648,11 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <InputNumber min={0} step={0.1} style={{ width: '100%' }} />
+              <AstryxFormNumberInput
+                label={t('fairShare.Weight')}
+                min={0}
+                step={0.1}
+              />
             </BAIBulkEditFormItem>
           ) : (
             <Form.Item
@@ -654,7 +666,11 @@ const FairShareWeightSettingModal: React.FC<
               }
               name="weight"
             >
-              <InputNumber min={0} step={0.1} style={{ width: '100%' }} />
+              <AstryxFormNumberInput
+                label={t('fairShare.Weight')}
+                min={0}
+                step={0.1}
+              />
             </Form.Item>
           )}
         </Form>

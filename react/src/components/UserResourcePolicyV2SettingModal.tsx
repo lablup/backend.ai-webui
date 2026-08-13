@@ -11,18 +11,18 @@ import {
   UpdateUserResourcePolicyInput,
   UserResourcePolicyV2SettingModalModifyMutation,
 } from '../__generated__/UserResourcePolicyV2SettingModalModifyMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
-  Form,
-  Input,
-  Alert,
-  App,
-  InputNumber,
-  theme,
-  FormInstance,
-} from 'antd';
+  AstryxFormNumberInput,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
@@ -210,10 +210,9 @@ const UserResourcePolicyV2SettingModal: React.FC<
       }
       {...baiModalProps}
     >
-      <Alert
+      <Banner
         title={t('storageHost.BeCarefulToSetUserResourcePolicy')}
-        type="warning"
-        showIcon
+        status="warning"
         style={{ marginBottom: token.marginMD }}
       />
       <Form
@@ -222,7 +221,7 @@ const UserResourcePolicyV2SettingModal: React.FC<
         initialValues={initialValues}
         preserve={false}
       >
-        <Form.Item
+        <BAIFormItem
           label={t('resourcePolicy.Name')}
           name="name"
           required
@@ -236,8 +235,11 @@ const UserResourcePolicyV2SettingModal: React.FC<
             },
           ]}
         >
-          <Input disabled={!!userResourcePolicy} />
-        </Form.Item>
+          <AstryxFormTextInput
+            label={t('resourcePolicy.Name')}
+            disabled={!!userResourcePolicy}
+          />
+        </BAIFormItem>
         <BAIFlex
           direction="column"
           align="stretch"
@@ -250,10 +252,10 @@ const UserResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxFolderCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <InputNumber
+            <AstryxFormNumberInput
+              label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
-              style={{ width: '100%' }}
             />
           </FormItemWithUnlimited>
           <FormItemWithUnlimited
@@ -262,12 +264,12 @@ const UserResourcePolicyV2SettingModal: React.FC<
             label={t('storageHost.MaxFolderSize')}
             style={{ width: '100%', margin: 0 }}
           >
-            <InputNumber
+            <AstryxFormNumberInput
+              label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
               max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
-              suffix="GB"
-              style={{ width: '100%' }}
+              units="GB"
             />
           </FormItemWithUnlimited>
           <FormItemWithUnlimited
@@ -276,39 +278,39 @@ const UserResourcePolicyV2SettingModal: React.FC<
             label={t('resourcePolicy.MaxConcurrentLogins')}
             style={{ width: '100%', margin: 0 }}
           >
-            <InputNumber
+            <AstryxFormNumberInput
+              label={t('resourcePolicy.MaxConcurrentLogins')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
-              style={{ width: '100%' }}
             />
           </FormItemWithUnlimited>
         </BAIFlex>
-        <Form.Item
+        <BAIFormItem
           name={'max_session_count_per_model_session'}
           label={t('resourcePolicy.MaxSessionCountPerModelSession')}
           rules={[
             { required: true, message: t('data.explorer.ValueRequired') },
           ]}
         >
-          <InputNumber
+          <AstryxFormNumberInput
+            label={t('resourcePolicy.MaxSessionCountPerModelSession')}
             min={0}
             max={SIGNED_32BIT_MAX_INT}
-            style={{ width: '100%' }}
           />
-        </Form.Item>
-        <Form.Item
+        </BAIFormItem>
+        <BAIFormItem
           name={'max_customized_image_count'}
           label={t('resourcePolicy.MaxCustomizedImageCount')}
           rules={[
             { required: true, message: t('data.explorer.ValueRequired') },
           ]}
         >
-          <InputNumber
+          <AstryxFormNumberInput
+            label={t('resourcePolicy.MaxCustomizedImageCount')}
             min={0}
             max={SIGNED_32BIT_MAX_INT}
-            style={{ width: '100%' }}
           />
-        </Form.Item>
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

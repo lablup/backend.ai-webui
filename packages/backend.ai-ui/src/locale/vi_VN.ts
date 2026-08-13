@@ -1,9 +1,9 @@
-import { BAILocale } from '.';
-import vi_VN from 'antd/es/locale/vi_VN';
+import type { BAILocale } from '.';
+import astryxLocale from './astryx/vi.json';
 
 const localeValue: BAILocale = {
   lang: 'vi',
-  antdLocale: vi_VN,
+  astryxLocale,
 };
 
 export default localeValue;

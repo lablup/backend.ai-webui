@@ -7,19 +7,16 @@ import {
   ResourceLimitInput,
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { compareNumberWithUnits } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormNumberInput } from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Grid } from '@astryxdesign/core/Grid';
 import {
-  Form,
-  type FormInstance,
-  message,
-  InputNumber,
-  Row,
-  Col,
-  Alert,
-  theme,
-} from 'antd';
-import {
+  BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,
@@ -43,7 +40,7 @@ const ManageImageResourceLimitModal: React.FC<
 > = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
@@ -141,34 +138,42 @@ const ManageImageResourceLimitModal: React.FC<
       okText={t('button.Save')}
       {...BAIModalProps}
     >
-      <Alert
-        type="info"
-        showIcon
-        style={{ marginBottom: token.marginMD }}
-        title={t('environment.ResourceLimitAppliesToNewSessionsOnly')}
-      />
-      <Form
-        ref={formRef}
-        layout="vertical"
-        initialValues={_.fromPairs(
-          _.map(image?.resource_limits ?? [], (item) => [item?.key, item?.min]),
-        )}
-      >
-        <Row gutter={[24, 16]}>
-          {_.map(
-            _.chunk(image?.resource_limits ?? [], 2),
-            (resourceLimitChunk, index) => (
-              <Fragment key={index}>
-                {_.map(resourceLimitChunk, (resourceLimit) => {
-                  const key = _.get(resourceLimit, 'key', '');
+      {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon`
+          dropped (Banner shows its icon by default). Margin becomes the
+          BAIFlex column gap. */}
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Banner
+          status="info"
+          title={t('environment.ResourceLimitAppliesToNewSessionsOnly')}
+        />
+        <Form
+          ref={formRef}
+          layout="vertical"
+          initialValues={_.fromPairs(
+            _.map(image?.resource_limits ?? [], (item) => [
+              item?.key,
+              item?.min,
+            ]),
+          )}
+        >
+          {/* antd Row gutter={[24,16]} + Col span={12} (no breakpoint props)
+              -> Astryx Grid columns={2} (MAPPING.md §3.9; responsive policy
+              R-fixed: the original was a fixed 2-up grid). */}
+          <Grid columns={2} columnGap={6} rowGap={4} align="start">
+            {_.map(
+              _.chunk(image?.resource_limits ?? [], 2),
+              (resourceLimitChunk, index) => (
+                <Fragment key={index}>
+                  {_.map(resourceLimitChunk, (resourceLimit) => {
+                    const key = _.get(resourceLimit, 'key', '');
 
-                  if (!key) {
-                    return null;
-                  }
+                    if (!key) {
+                      return null;
+                    }
 
-                  return (
-                    <Col span={12} key={key} style={{ alignSelf: 'start' }}>
-                      <Form.Item
+                    return (
+                      <BAIFormItem
+                        key={key}
                         label={
                           _.get(mergedResourceSlots, key)?.description ||
                           _.upperCase(key)
@@ -213,28 +218,33 @@ const ManageImageResourceLimitModal: React.FC<
                             style={{ width: '100%' }}
                           />
                         ) : (
-                          <InputNumber
+                          // antd InputNumber `suffix` -> Astryx NumberInput
+                          // `units` (MAPPING.md §3.17), via the Form adapter.
+                          <AstryxFormNumberInput
+                            label={
+                              _.get(mergedResourceSlots, key)?.description ||
+                              _.upperCase(key)
+                            }
                             min={
                               key === 'cpu'
                                 ? DEFAULT_MIN_CPU
                                 : DEFAULT_MIN_OTHER
                             }
                             step={_.includes(key, '.shares') ? 0.1 : 1}
-                            style={{ width: '100%' }}
-                            suffix={
+                            units={
                               mergedResourceSlots?.[key]?.display_unit || ''
                             }
                           />
                         )}
-                      </Form.Item>
-                    </Col>
-                  );
-                })}
-              </Fragment>
-            ),
-          )}
-        </Row>
-      </Form>
+                      </BAIFormItem>
+                    );
+                  })}
+                </Fragment>
+              ),
+            )}
+          </Grid>
+        </Form>
+      </BAIFlex>
     </BAIModal>
   );
 };

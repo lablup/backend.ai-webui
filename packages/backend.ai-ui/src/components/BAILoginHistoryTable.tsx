@@ -1,7 +1,7 @@
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAITag,
   filterOutEmpty,
@@ -179,13 +179,12 @@ const BAILoginHistoryTable = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       resizable
       rowKey="id"
       size="small"
       dataSource={filterOutNullAndUndefined(loginHistory)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableLoginHistorySorterValues)[number]) || null,

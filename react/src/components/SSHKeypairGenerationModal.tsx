@@ -4,9 +4,13 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Spin, Typography, theme } from 'antd';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import { theme } from '../theme-shim';
+import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { Button } from '@astryxdesign/core/Button';
+import { Overlay } from '@astryxdesign/core/Overlay';
+import { Spinner } from '@astryxdesign/core/Spinner';
+import { Text } from '@astryxdesign/core/Text';
+import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -39,40 +43,43 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
       title={t('userSettings.SSHKeypairGeneration')}
       closeIcon={false}
       footer={[
-        <Popconfirm
+        <BAIPopconfirmAstryx
           key="close"
           title={t('button.Confirm')}
           description={t('userSettings.ClearSSHKeypairInput')}
           onConfirm={onRequestClose}
         >
-          <Button>{t('button.Close')}</Button>
-        </Popconfirm>,
+          <Button variant="secondary" label={t('button.Close')} />
+        </BAIPopconfirmAstryx>,
       ]}
       {...baiModalProps}
     >
-      <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
-        <Typography.Text strong>{t('userSettings.PublicKey')}</Typography.Text>
+      <Overlay
+        isOpen={!!isRefreshModalPending}
+        scrim="light"
+        content={<Spinner />}
+      >
+        <Text weight="semibold">{t('userSettings.PublicKey')}</Text>
         <BAIFlex direction="row" align="start" justify="between">
-          <Typography.Paragraph>
-            <pre
-              style={{
-                width: 430,
-                maxHeight: 100,
-                overflowY: 'scroll',
-                scrollbarWidth: 'none', // Firefox
-              }}
-            >
-              {data?.ssh_public_key}
-            </pre>
-          </Typography.Paragraph>
-          <Typography.Text
-            copyable={{ text: data?.ssh_public_key }}
-            style={{ marginTop: token.margin }}
-          />
+          <pre
+            style={{
+              width: 430,
+              maxHeight: 100,
+              overflowY: 'scroll',
+              scrollbarWidth: 'none', // Firefox
+            }}
+          >
+            {data?.ssh_public_key}
+          </pre>
+          {data?.ssh_public_key ? (
+            <BAIFlex style={{ marginTop: token.margin }}>
+              <BAIText copyable={{ text: data.ssh_public_key }} />
+            </BAIFlex>
+          ) : null}
         </BAIFlex>
-        <Typography.Text strong>{t('userSettings.PrivateKey')}</Typography.Text>
+        <Text weight="semibold">{t('userSettings.PrivateKey')}</Text>
         <BAIFlex direction="row" align="start" justify="between">
-          <Typography.Paragraph>
+          <BAIFlex direction="column" align="start" style={{ flex: 1 }}>
             <pre
               style={{
                 width: 430,
@@ -83,16 +90,21 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
             >
               {data?.ssh_private_key}
             </pre>
-            <Typography.Text type="danger">
+            {/* PILOT-DECISION: antd `Typography.Text type="danger"` has no
+                Astryx TextColor equivalent (MAPPING §3.4) — same drop as
+                AdminModelCard.tsx: red tint dropped, `type="supporting"`
+                keeps the small caption size. */}
+            <Text type="supporting" color="primary">
               {t('userSettings.SSHKeypairGenerationWarning')}
-            </Typography.Text>
-          </Typography.Paragraph>
-          <Typography.Text
-            copyable={{ text: data?.ssh_private_key }}
-            style={{ marginTop: token.margin }}
-          />
+            </Text>
+          </BAIFlex>
+          {data?.ssh_private_key ? (
+            <BAIFlex style={{ marginTop: token.margin }}>
+              <BAIText copyable={{ text: data.ssh_private_key }} />
+            </BAIFlex>
+          ) : null}
         </BAIFlex>
-      </Spin>
+      </Overlay>
     </BAIModal>
   );
 };

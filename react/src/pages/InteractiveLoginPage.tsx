@@ -5,8 +5,12 @@
 import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { Button, Card, Descriptions } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -51,35 +55,23 @@ const Children = () => {
       justify="center"
       style={{ position: 'fixed', inset: 0, zIndex: 10001 }}
     >
-      <Card title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
+      <BAICard title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
         <BAIFlex direction="column" gap={'sm'} align="stretch">
           {t('interactiveLogin.ConfirmLoginMessage', {
             username: userInfo.username,
             email: userInfo.email,
           })}
-          <Descriptions
-            column={1}
-            bordered
-            items={[
-              {
-                label: t('interactiveLogin.ServiceName'),
-                children: name,
-              },
-              // {
-              //   label: '서비스 설명',
-              //   children: (
-              //     <BAIFlex style={{ maxWidth: 400 }}>
-              //       Backend.AI FastTrack는 Backend.AI를 이용한 MLOps 서비스
-              //       입니다.
-              //     </BAIFlex>
-              //   ),
-              // },
-              {
-                label: 'URL',
-                children: callback ? new URL(callback).origin : '-',
-              },
-            ]}
-          />
+          {/* antd `Descriptions` -> `MetadataList` (MAPPING §4).
+              `bordered` has no destination (project-wide PILOT-DECISION since
+              ticket 20); `column={1}` becomes `columns="single"`. */}
+          <MetadataList columns="single">
+            <MetadataListItem label={t('interactiveLogin.ServiceName')}>
+              {name}
+            </MetadataListItem>
+            <MetadataListItem label="URL">
+              {callback ? new URL(callback).origin : '-'}
+            </MetadataListItem>
+          </MetadataList>
           <BAIFlex
             direction="row"
             justify="between"
@@ -90,7 +82,8 @@ const Children = () => {
               globalThis?.backendaiclient?._config
                 ?.enableInteractiveLoginAccountSwitch ? (
                 <Button
-                  size="large"
+                  size="lg"
+                  label={t('interactiveLogin.UseAnotherAccount')}
                   onClick={() => {
                     const event: CustomEvent = new CustomEvent(
                       'backend-ai-logout',
@@ -102,26 +95,23 @@ const Children = () => {
                     );
                     document.dispatchEvent(event);
                   }}
-                >
-                  {t('interactiveLogin.UseAnotherAccount')}
-                </Button>
+                />
               ) : (
                 <div></div>
               )
             }
             <Button
-              size="large"
-              type="primary"
+              size="lg"
+              variant="primary"
+              label={t('login.Login')}
               onClick={() => {
                 //redirect to callback
                 window.location.href = callback || '';
               }}
-            >
-              {t('login.Login')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   );
 };

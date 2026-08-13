@@ -5,22 +5,22 @@
 import { DeploymentSettingModalCreateMutation } from '../__generated__/DeploymentSettingModalCreateMutation.graphql';
 import { DeploymentSettingModalUpdateMutation } from '../__generated__/DeploymentSettingModalUpdateMutation.graphql';
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
+import { ProjectContext } from '../types/projectContext';
+import BAIFormItem from './BAIFormItem';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  App,
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Skeleton,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+  AstryxFormNumberInput,
+  AstryxFormTagsInput,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIButton,
   BAIFlex,
@@ -41,14 +41,62 @@ interface FormValues {
   resourceGroup: string;
 }
 
-export interface DeploymentSettingModalProps extends BAIModalProps {
-  /** When provided → update mode; when null/undefined → create mode. */
-  deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
+/**
+ * Explicit project prop contract (ADR-0001), expressed as a discriminated
+ * union rather than a runtime check: the page decides the project context and
+ * this modal never reads the ambient current project.
+ *
+ * - **Create** (`deploymentFrgmt` absent): a deployment is always created
+ *   inside one project, and creation is offered only from the project-scoped
+ *   user menu — so `project` is required and non-null. There is no in-modal
+ *   selector and no "missing project" error path; the create mutation's
+ *   `metadata.projectId` is exactly this project's id and the resource-group
+ *   options are scoped to it.
+ * - **Edit** (`deploymentFrgmt` present): the deployment already belongs to a
+ *   project, so `project` is not accepted at all.
+ */
+type DeploymentSettingModalProjectProps =
+  | {
+      /** Edit-only call site: no project is accepted. */
+      deploymentFrgmt: DeploymentSettingModal_deployment$key;
+      project?: never;
+    }
+  | {
+      /**
+       * Project-scoped call site: may open in create mode (fragment absent)
+       * or edit mode (fragment present), and therefore must supply a project.
+       */
+      deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
+      project: ProjectContext;
+    };
+
+export type DeploymentSettingModalProps = BAIModalProps & {
   onRequestClose: (success: boolean) => void;
-}
+} & DeploymentSettingModalProjectProps;
+
+// Bridge for `BAIFormItem name="openToPublic" valuePropName="checked"`: the
+// form engine injects `checked` + `onChange`, Astryx CheckboxInput wants
+// `value` + value-first `onChange`.
+const PublicCheckbox: React.FC<{
+  checked?: boolean;
+  onChange?: (next: boolean) => void;
+  label: string;
+  disabled?: boolean;
+}> = ({ checked, onChange, label, disabled }) => {
+  'use memo';
+  return (
+    <CheckboxInput
+      label={label}
+      value={checked ?? false}
+      onChange={(next) => onChange?.(next)}
+      isDisabled={disabled}
+    />
+  );
+};
 
 const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   deploymentFrgmt,
+  project,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -59,7 +107,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const { message } = App.useApp();
-  const { id: projectId, name: projectName } = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
 
   const deployment = useFragment(
@@ -154,15 +201,17 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             },
           });
         } else {
-          if (!projectId) {
-            message.error(t('general.ErrorOccurred'));
-            return;
-          }
+          // No "missing project" branch: the only props member that permits a
+          // create (fragment absent) requires a non-null `project`, so this is
+          // unreachable-by-construction rather than guarded at runtime. The
+          // assertion is needed only because `deploymentFrgmt` is an opaque
+          // fragment key, not a unit type, so TypeScript cannot use it as a
+          // discriminant to narrow the union here.
           commitCreate({
             variables: {
               input: {
                 metadata: {
-                  projectId,
+                  projectId: project!.id,
                   domainName: currentDomain,
                   name: values.name,
                   tags: values.tags?.length ? values.tags : null,
@@ -222,9 +271,10 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
       confirmLoading={isCreating || isUpdating}
       footer={
         <BAIFlex justify="end" gap="xs">
-          <Button onClick={() => onRequestClose(false)}>
-            {t('button.Cancel')}
-          </Button>
+          <Button
+            label={t('button.Cancel')}
+            onClick={() => onRequestClose(false)}
+          />
           <BAIButton
             type="primary"
             loading={isCreating || isUpdating}
@@ -235,7 +285,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         </BAIFlex>
       }
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         <Form<FormValues>
           form={form}
           layout="vertical"
@@ -258,51 +308,52 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           }
           style={{ marginTop: token.marginXS }}
         >
-          <Form.Item
+          <BAIFormItem
             name="name"
             label={t('deployment.DeploymentName')}
             tooltip={t('deployment.DeploymentNameTooltip')}
             rules={[{ required: true, message: t('deployment.NameRequired') }]}
           >
-            <Input placeholder={t('deployment.NamePlaceholder')} />
-          </Form.Item>
+            <AstryxFormTextInput
+              label={t('deployment.DeploymentName')}
+              placeholder={t('deployment.NamePlaceholder')}
+            />
+          </BAIFormItem>
           {deployment ? (
-            <Form.Item
+            <BAIFormItem
               label={t('modelStore.ResourceGroup')}
               tooltip={t('modelStore.ResourceGroupTooltip')}
               required
-              extra={
-                <Typography.Text type="warning">
-                  {t('deployment.ResourceGroupCannotBeChanged')}
-                </Typography.Text>
-              }
+              // PILOT-DECISION: the extra note used antd
+              // `Typography.Text type="warning"` — Astryx Text has no warning
+              // TextColor, and BAIFormItem's `extra` slot already renders in
+              // secondary color, so the warning tint is dropped and the plain
+              // string is passed (defaults-first; a Banner would over-signal a
+              // static informational note).
+              extra={t('deployment.ResourceGroupCannotBeChanged')}
             >
               {currentResourceGroup ? (
-                <Typography.Text>{currentResourceGroup}</Typography.Text>
+                <Text>{currentResourceGroup}</Text>
               ) : (
-                <Typography.Text type="secondary">—</Typography.Text>
+                <Text color="secondary">—</Text>
               )}
-            </Form.Item>
+            </BAIFormItem>
           ) : (
-            <Form.Item
+            <BAIFormItem
               name="resourceGroup"
               label={t('modelStore.ResourceGroup')}
               tooltip={t('modelStore.ResourceGroupTooltip')}
               rules={[{ required: true }]}
-              extra={
-                <Typography.Text type="warning">
-                  {t('deployment.ResourceGroupCannotBeChanged')}
-                </Typography.Text>
-              }
+              extra={t('deployment.ResourceGroupCannotBeChanged')}
             >
               <BAIProjectResourceGroupSelect
-                projectName={projectName ?? ''}
+                projectName={project?.name ?? ''}
                 autoSelectDefault
                 style={{ width: '100%' }}
               />
-            </Form.Item>
+            </BAIFormItem>
           )}
-          <Form.Item
+          <BAIFormItem
             name="replicaCount"
             label={t('deployment.DesiredReplicas')}
             tooltip={t('deployment.DesiredReplicasTooltip')}
@@ -313,45 +364,48 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               },
             ]}
           >
-            <InputNumber min={deployment ? 0 : 1} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormNumberInput
+              label={t('deployment.DesiredReplicas')}
+              min={deployment ? 0 : 1}
+            />
+          </BAIFormItem>
+          <BAIFormItem
             name="tags"
             label={t('deployment.Tags')}
             tooltip={t('deployment.TagsTooltip')}
           >
-            <Select
-              mode="tags"
+            {/* The shared adapter, not a local Tokenizer bridge: it is the
+                same component, and it carries `tokenSeparators`, which this
+                field's own placeholder ("Enter tags, separated by commas")
+                promises. */}
+            <AstryxFormTagsInput
+              label={t('deployment.Tags')}
               placeholder={t('deployment.TagsPlaceholder')}
-              tokenSeparators={[',', '\n']}
-              notFoundContent={null}
+              tokenSeparators={[',', ' ']}
             />
-          </Form.Item>
+          </BAIFormItem>
           {/* TODO(needs-backend): the manager currently rejects changes to
               openToPublic after a deployment is created, so the field is
-              forced read-only in edit mode. Drop the `disabled` + Tooltip
-              wrapping once the backend supports updating this setting. */}
-          <Form.Item
+              forced read-only in edit mode. Drop the `disabled` prop and the
+              `extra` note once the backend supports updating this setting. */}
+          <BAIFormItem
+            name="openToPublic"
+            valuePropName="checked"
             label={t('deployment.OpenToPublic')}
             tooltip={t('deployment.OpenToPublicTooltip')}
+            // The constraint is field-level metadata, not an explanation of a
+            // disabled control: it already holds while creating, when nothing
+            // is disabled yet. So it sits in the same `extra` slot as Resource
+            // Group's identical note above instead of CheckboxInput's
+            // `disabledMessage`, which only surfaces on hover of an
+            // already-disabled control and so never reached create mode.
+            extra={t('deployment.OpenToPublicCannotBeChanged')}
           >
-            <Tooltip
-              title={
-                deployment ? t('deployment.OpenToPublicCannotBeChanged') : ''
-              }
-            >
-              {/* Wrap with span so the Tooltip still receives mouseenter when
-                  the inner Checkbox is disabled (disabled controls swallow
-                  pointer events). */}
-              <span style={{ display: 'inline-block' }}>
-                <Form.Item name="openToPublic" valuePropName="checked" noStyle>
-                  <Checkbox disabled={!!deployment}>
-                    {t('deployment.Public')}
-                  </Checkbox>
-                </Form.Item>
-              </span>
-            </Tooltip>
-          </Form.Item>
+            <PublicCheckbox
+              label={t('deployment.Public')}
+              disabled={!!deployment}
+            />
+          </BAIFormItem>
         </Form>
       </Suspense>
     </BAIModal>

@@ -9,17 +9,17 @@ import {
   PERMISSION_DISPLAY_MAP,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Typography, theme } from 'antd';
 import {
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAIUnmountAfterClose,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -41,7 +41,8 @@ export interface KeypairResourcePolicyStoragePermissionTableProps extends BAITab
   /** Fragment for the storage host — its `id` is read internally. */
   storageVolumeFrgmt: KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt$key;
   /**
-   * Policy names picked via `BAIAdminKeypairResourcePolicySelect` (multi).
+   * Policy names picked via `BAIAdminKeypairResourcePolicySelectAstryx`
+   * (`multiple`).
    * Empty array keeps the query skipped. Passed as `filter.name.in` to
    * `adminKeypairResourcePoliciesV2` and as `name` to
    * `adminUpdateKeypairResourcePolicyV2` on save.
@@ -198,9 +199,8 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         rowKey="id"
         resizable={false}
@@ -219,12 +219,12 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
             ) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
+                  <BAIText
                     ellipsis={{ tooltip: row.name }}
                     style={{ maxWidth: 160 }}
                   >
                     {row.name}
-                  </Typography.Text>
+                  </BAIText>
                 }
                 showActions="always"
                 actions={[
@@ -255,10 +255,14 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
                   entry?.permissions.map(v2PermissionToKey) ?? [],
                 );
                 return enabled.has(permKey) ? (
-                  <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+                  <CircleCheck
+                    style={{ color: token.colorSuccess }}
+                    size="1em"
+                  />
                 ) : (
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextDisabled }}
+                    size="1em"
                   />
                 );
               },

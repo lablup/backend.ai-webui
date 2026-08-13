@@ -5,7 +5,7 @@
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import {
   BAIBoardItemTitle,
   BAIFlex,

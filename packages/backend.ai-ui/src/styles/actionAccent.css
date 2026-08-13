@@ -1,0 +1,91 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `.bai-action-accent` — QA-FINDINGS **Q-37**.
+
+ ## What this closes
+
+ Three QA reports say the same thing:
+
+   "세션 스케줄링 히스토리의 버튼, copy, info, rename 버튼 등 대부분의 버튼
+    색깔이 default 라서 클릭 가능한지 알기 힘듭니다"
+   "세션 디테일 드로어에서 i 가 클릭 가능한지 인식하기 어렵네요"
+   "/admin/environment 페이지의 control 버튼 색상이 default 입니다"
+
+ They are NOT one shared component. They are one repeated CALL-SITE decision,
+ recorded verbatim at eleven `// PILOT-DECISION: … tint is dropped (P5, closed
+ variant enum)` comments: each converted an antd `type="link"` (or `type="text"`
+ with an inline `color: token.colorInfo` glyph) into a bare Astryx
+ `IconButton variant="ghost"`. `variant` is a closed enum with no colour escape
+ hatch, so every one of them fell back to the ghost default —
+ `--color-text-primary`, measured `rgb(20,20,20)` in light and
+ `rgb(255,255,255)` in dark. Icon-only controls painted body-text black are
+ indistinguishable from static glyphs, which is exactly what was reported.
+
+ ## Why `--color-text-accent` is the right destination (measured, not assumed)
+
+ antd painted these two ways, and BOTH are route-dependent:
+
+   brand routes  `colorLink`  #FF7A00 / #BE5E06   (Typography `operationUnit`,
+                                                   `Button type="link"`)
+   admin routes  `colorInfo`  #028DF2 / #0387BF   (the inline icon tint)
+
+ Astryx's `--color-text-accent` already follows the route's role, because
+ `AutoAdminPrimaryColorProvider` (`react/src/components/MainLayout/MainLayout.tsx`)
+ wraps every non-project scope in `AstryxAdminTheme`, whose accent seed IS
+ theme.json's `colorInfo`. Measured on the running app, on the button element
+ itself (the admin theme is a SUBTREE `<Theme>`, so reading it off
+ `documentElement` gives the brand value and is the trap here):
+
+   session detail drawer  --color-text-accent: light-dark(#FF7A00, #be5e06)
+   /admin/environment     --color-text-accent: light-dark(#028DF2, #0387bf)
+
+ i.e. antd's `colorLink` and `colorInfo` respectively, exactly. One class
+ therefore restores both tints with no per-route branching and no hardcode, and
+ it keeps following a runtime `resources/theme.json` rebrand — which an inline
+ `token.colorInfo` read would not.
+
+ ## Why CSS at all, and why UNLAYERED
+
+ Same reasoning as `BAITabList.css`, one step shorter: `variant` is closed and
+ `IconButton` reflects only `variant`/`size` through `themeProps('button', …)`,
+ so a `defineTheme({ components })` override cannot express "this button, not
+ every ghost button" — it would repaint every ghost `IconButton` in the app,
+ including Close, pagination and table-settings controls that are correctly
+ neutral. `className` + design tokens is Astryx's own documented third route
+ (`astryx docs styling`) and the one used here. `swizzle` was not considered:
+ nothing about the component's behaviour changes, only its paint.
+
+ UNLAYERED on purpose, matching `BAIAlert.css` / `BAILink.css` / `BAIText.css`.
+ Astryx ships `astryx.css` entirely inside `@layer astryx-base`, and its
+ compiled StyleX atomics carry a `:not(#\#):not(#\#):not(#\#)` specificity boost
+ — `.x1tgivj0:not(#\#):not(#\#):not(#\#) { color: var(--color-text-primary) }`
+ is the exact rule being overridden. No selector specificity can beat that
+ inside the same layer, but an unlayered rule beats every named layer
+ regardless, so a plain single-class selector is enough and no `!important` is
+ needed. Consequence to respect: this file must never grow rules that are meant
+ to be overridable by Astryx.
+
+ ## Hover — deliberately NOT re-declared
+
+ Measured rest-vs-hover on a ghost `IconButton`: the ONLY computed property
+ Astryx changes is
+ `background-image: none -> linear-gradient(rgba(0,0,0,0.06), rgba(0,0,0,0.06))`
+ (`var(--color-overlay-hover)`), which is antd's `colorBgTextHover`
+ `rgba(0,0,0,0.06)` to the digit — the same wash antd's `type="text"` buttons
+ had. It survives untouched here, because this file sets `color` only. Adding a
+ second wash would double it.
+
+ What is genuinely NOT restored: antd's link buttons also brightened their text
+ to `colorLinkHover` (#FFB152 light / #6E3B0C dark) on hover. Astryx declares no
+ hover-accent token, and pinning those two literals would defeat the whole point
+ of routing through `--color-text-accent`. The background wash carries the hover
+ feedback instead. Recorded rather than rounded up to "matches legacy".
+
+ Disabled is left to Astryx too: its disabled recipe is `opacity: .5` (plus
+ `cursor`), not a colour swap, so the accent dims correctly without a guard.
+*/
+.bai-action-accent {
+  color: var(--color-text-accent);
+}

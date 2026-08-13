@@ -1,0 +1,48 @@
+diff --git a/dist/Tour/TourStep.js b/dist/Tour/TourStep.js
+index 19c803aa98debc29728cbc69065f9144adb67ca8..3719b7865f676a90877986778577d546d0123818 100644
+--- a/dist/Tour/TourStep.js
++++ b/dist/Tour/TourStep.js
+@@ -102,12 +102,13 @@ function TourHighlight({
+     if (el == null || typeof el.showPopover !== 'function') {
+       return;
+     }
+-    el.showPopover();
+-    return () => {
+-      if (el.isConnected && typeof el.hidePopover === 'function') {
+-        el.hidePopover();
+-      }
+-    };
++    // Promote exactly once, and never hide-then-reshow: top-layer order is
++    // promotion order, so a re-promotion (React StrictMode's dev double-invoke
++    // of this effect) would move the overlay ABOVE the callout and paint the
++    // spotlight dim over it. Detaching the node drops it from the top layer.
++    if (!el.matches(':popover-open')) {
++      el.showPopover();
++    }
+   }, []);
+   return /*#__PURE__*/_jsx("div", {
+     ref: ref,
+diff --git a/src/Tour/TourStep.tsx b/src/Tour/TourStep.tsx
+index 1b98f09f5a487a690dcc35315b25e55b82cd93e1..56fcd7bd60fb6b07318ec676a1afc08d7ca52ebd 100644
+--- a/src/Tour/TourStep.tsx
++++ b/src/Tour/TourStep.tsx
+@@ -168,12 +168,13 @@ function TourHighlight({
+     if (el == null || typeof el.showPopover !== 'function') {
+       return;
+     }
+-    el.showPopover();
+-    return () => {
+-      if (el.isConnected && typeof el.hidePopover === 'function') {
+-        el.hidePopover();
+-      }
+-    };
++    // Promote exactly once, and never hide-then-reshow: top-layer order is
++    // promotion order, so a re-promotion (React StrictMode's dev double-invoke
++    // of this effect) would move the overlay ABOVE the callout and paint the
++    // spotlight dim over it. Detaching the node drops it from the top layer.
++    if (!el.matches(':popover-open')) {
++      el.showPopover();
++    }
+   }, []);
+ 
+   return (

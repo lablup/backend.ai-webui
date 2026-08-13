@@ -48,7 +48,8 @@ declare module globalThis {
   var buildNumber: string;
   // Per-request CSP nonce, substituted into index.html by the web server
   // (`{{nonce}}`); empty string in local dev. Threaded into antd's
-  // ConfigProvider `csp` and antd-style's `<StyleProvider nonce>`.
+  // ConfigProvider `csp`, which is the only remaining runtime style injector
+  // since to-astryx ticket 33 retired antd-style's <StyleProvider>.
   // eslint-disable-next-line no-var
   var baiNonce: string;
   // eslint-disable-next-line no-var

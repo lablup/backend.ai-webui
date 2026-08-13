@@ -1,7 +1,7 @@
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAIText,
   filterOutEmpty,
@@ -133,13 +133,12 @@ const BAILoginSessionTable = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       resizable
       rowKey="id"
       size="small"
       dataSource={filterOutNullAndUndefined(loginSessions)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableLoginSessionSorterValues)[number]) || null,

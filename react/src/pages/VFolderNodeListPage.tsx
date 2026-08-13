@@ -14,29 +14,32 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
+import BAICard from '../components/astryx-bui/BAICardAstryx';
+import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
+import BAIVFolderDeleteButton from '../components/astryx-bui/BAIVFolderDeleteButtonAstryx';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
-import { useToggle } from 'ahooks';
-import { Badge, theme, Tooltip } from 'antd';
+import { toProjectContext } from '../types/projectContext';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIButton,
-  BAICard,
-  BAIFlex,
-  BAILink,
   BAIPropertyFilter,
-  BAIRestoreIcon,
-  BAISelectionLabel,
-  BAIVFolderDeleteButton,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,7 +93,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
@@ -224,7 +226,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
-                ...BAIVFolderDeleteButtonFragment
+                ...BAIVFolderDeleteButtonAstryxFragment
               }
             }
             count
@@ -261,32 +263,22 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     );
 
   return (
-    <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
+    <VStack align="stretch" gap={5} {...props}>
       <BAICard
-        variant="borderless"
         title={t('data.Folders')}
         extra={
-          <BAIButton
-            type="primary"
+          <Button
+            variant="primary"
+            label={t('data.CreateFolder')}
             onClick={() => {
               toggleCreateModal();
             }}
-          >
-            {t('data.CreateFolder')}
-          </BAIButton>
+          />
         }
-        styles={{
-          header: {
-            borderBottom: 'none',
-          },
-          body: {
-            paddingTop: 0,
-          },
-        }}
       >
         <BAITabs
           activeKey={queryParams.statusCategory}
-          onChange={(key) => {
+          onChange={(key: string) => {
             const storedQuery = queryMapRef.current[key] || {
               mode: 'all',
             };
@@ -305,14 +297,15 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           }}
           tabBarExtraContent={
             invitations.length > 0 ? (
-              <BAILink
-                type="hover"
-                onClick={() => {
+              <Link
+                href="#"
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
                   setInvitationOpen('true');
                 }}
               >
                 {`${t('data.invitation.PendingInvitations')} (${invitations.length})`}
-              </BAILink>
+              </Link>
             ) : undefined
           }
           items={_.map(
@@ -322,46 +315,32 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             },
             (label, key) => ({
               key,
-              label: (
-                <BAIFlex justify="center" gap={10}>
-                  {label}
-                  {
-                    // display badge only if count is greater than 0
+              // Astryx `Tab` takes a STRING label plus a native `endContent`
+              // slot, so the original's BAIFlex-wrapped JSX label is split in
+              // two. This also restores a correct `aria-label` on the tab.
+              label,
+              endContent:
+                // display badge only if count is greater than 0
+                // @ts-ignore
+                (folderCounts[key]?.count || 0) > 0 ? (
+                  // PILOT-DECISION: antd's Badge took an arbitrary `color`
+                  // (brand accent when selected, disabled grey otherwise)
+                  // plus explicit padding/fontSize. Astryx's Badge exposes
+                  // only a closed `variant` set.
+                  <Badge
                     // @ts-ignore
-                    (folderCounts[key]?.count || 0) > 0 && (
-                      <Badge
-                        // @ts-ignore
-                        count={folderCounts[key].count}
-                        color={
-                          queryParams.statusCategory === key
-                            ? token.colorPrimary
-                            : token.colorTextDisabled
-                        }
-                        size="small"
-                        showZero
-                        style={{
-                          paddingRight: token.paddingXS,
-                          paddingLeft: token.paddingXS,
-                          fontSize: 10,
-                        }}
-                      />
-                    )
-                  }
-                </BAIFlex>
-              ),
+                    label={folderCounts[key].count}
+                    variant={
+                      queryParams.statusCategory === key ? 'info' : 'neutral'
+                    }
+                  />
+                ) : undefined,
             }),
           )}
         />
-        <BAIFlex direction="column" align="stretch" gap={'sm'}>
-          <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-            <BAIFlex
-              gap={'sm'}
-              align="start"
-              style={{
-                flexShrink: 1,
-              }}
-              wrap="wrap"
-            >
+        <VStack align="stretch" gap={3}>
+          <HStack justify="between" wrap="wrap" gap={3}>
+            <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
               <BAIRadioGroup
                 optionType="button"
                 value={queryParams.mode}
@@ -393,8 +372,20 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   },
                 ])}
               />
+              {/* The BUI antd composite is replaced by Astryx `PowerSearch`.
+                  Same external contract (DSL string in, DSL string out) so
+                  the URL round-trip and the GraphQL variable are untouched. */}
               <BAIPropertyFilter
                 data-testid="vfolder-filter"
+                style={{ minWidth: 320, flex: 1 }}
+                label={t('settings.SearchPlaceholder')}
+                placeholder={t('data.SearchByName')}
+                applyLabel={t('button.Apply')}
+                // Free text with no field prefix becomes a `name ilike` token.
+                contentSearchFieldKey="name"
+                resultCount={t('general.TotalItems', {
+                  total: vfolder_nodes?.count ?? 0,
+                })}
                 filterProperties={[
                   {
                     key: 'name',
@@ -469,8 +460,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   setSelectedFolderList([]);
                 }}
               />
-            </BAIFlex>
-            <BAIFlex gap={'xs'}>
+            </HStack>
+            <HStack gap={2}>
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'active' && (
                   <>
@@ -478,14 +469,16 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       count={selectedFolderList.length}
                       onClearSelection={() => setSelectedFolderList([])}
                     />
-                    <Tooltip title={t('data.folders.MoveToTrash')}>
-                      <BAIVFolderDeleteButton
-                        vfolderFrgmt={selectedFolderList}
-                        onClick={() => {
-                          toggleDeleteModal();
-                        }}
-                      />
-                    </Tooltip>
+                    <BAIVFolderDeleteButton
+                      vfolderFrgmt={selectedFolderList}
+                      // P8: the accessible name is now on the control itself,
+                      // so the wrapping Tooltip that used to BE the name is
+                      // gone — the component owns both.
+                      label={t('data.folders.MoveToTrash')}
+                      onClick={() => {
+                        toggleDeleteModal();
+                      }}
+                    />
                   </>
                 )}
               {selectedFolderList.length > 0 &&
@@ -495,11 +488,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       count={selectedFolderList.length}
                       onClearSelection={() => setSelectedFolderList([])}
                     />
-                    <Tooltip title={t('data.folders.Restore')}>
-                      <BAIButton
-                        icon={
-                          <BAIRestoreIcon style={{ color: token.colorInfo }} />
-                        }
+                    <Tooltip content={t('data.folders.Restore')}>
+                      <IconButton
+                        // Astryx requires a real accessible name; the antd
+                        // original had none (only the wrapping tooltip).
+                        label={t('data.folders.Restore')}
+                        icon={<RotateCcwIcon />}
                         onClick={() => {
                           toggleRestoreModal();
                         }}
@@ -518,12 +512,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   updateFetchKey(newFetchKey);
                 }}
               />
-            </BAIFlex>
-          </BAIFlex>
+            </HStack>
+          </HStack>
           <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
             disableProjectFolderActions
+            project={toProjectContext(currentProject)}
             vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(vfolder_nodes?.edges, 'node'),
             )}
@@ -572,10 +567,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               onColumnOverridesChange: setColumnOverrides,
             }}
           />
-        </BAIFlex>
+        </VStack>
       </BAICard>
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValues={{
           usage_mode:
             queryParams.mode === 'model'
@@ -613,7 +609,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleRestoreModal();
         }}
       />
-    </BAIFlex>
+    </VStack>
   );
 };
 

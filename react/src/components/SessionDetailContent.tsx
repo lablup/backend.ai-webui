@@ -13,8 +13,9 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import { useBAIBreakpoint } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
@@ -34,41 +35,33 @@ import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  HistoryOutlined,
-  InfoCircleOutlined,
-  QuestionCircleOutlined,
-  WarningOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  Alert,
-  Button,
-  Descriptions,
-  Grid,
-  Select,
-  Skeleton,
-  Tabs,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
-import Title from 'antd/es/typography/Title';
-import {
-  filterOutNullAndUndefined,
-  BAISessionTypeTag,
-  toGlobalId,
-  UNSAFELazyUserEmailView,
-  useMemoizedJSONParse,
   BAIFlex,
   BAILink,
   BAISessionAgentIds,
   BAISessionClusterMode,
+  BAISessionTypeTag,
+  BAIText,
   INITIAL_FETCH_KEY,
-  BAIButton,
+  UNSAFELazyUserEmailView,
+  filterOutNullAndUndefined,
+  toGlobalId,
+  useMemoizedJSONParse,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { History, Info, CircleHelp, TriangleAlert } from 'lucide-react';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -108,18 +101,22 @@ const SessionDetailContent: React.FC<{
   id: string;
   sessionFrgmt?: SessionDetailContentFragment$key | null;
   fetchKey?: string;
-}> = ({ id, fetchKey, sessionFrgmt }) => {
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): the project context
+   * the PAGE decided on. Alert tier — with `null` (super-admin pages) the
+   * "not in your project" comparison is suppressed entirely; with a non-null
+   * project the alert renders exactly when the session belongs to a
+   * different project. This component never reads the ambient current
+   * project.
+   */
+  project: ProjectContextOrNull;
+}> = ({ id, fetchKey, sessionFrgmt, project }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { md } = Grid.useBreakpoint();
+  const { md } = useBAIBreakpoint();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const location = useLocation();
 
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project ID is required for SessionDetailContent');
-  }
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
@@ -131,9 +128,13 @@ const SessionDetailContent: React.FC<{
     useState<boolean>(false);
   const [openStatusDetailModal, setOpenStatusDetailModal] =
     useState<boolean>(false);
-  const [usageMonitorDisplayTarget, setUsageMonitorDisplayTarget] = useState<
-    'max' | 'avg' | 'current'
-  >('current');
+  // PILOT-DECISION (ticket 17): the usage-target antd Select rendered with
+  // `display: 'none'` (dead UI); it is removed instead of being ported to an
+  // Astryx Selector, and the display target stays at its only reachable value.
+  const usageMonitorDisplayTarget = 'current' as const;
+  const [activeTabKey, setActiveTabKey] = useState<'kernels' | 'auditLog'>(
+    'kernels',
+  );
   const [openCodeHighlighterModal, { toggle: toggleOpenCodeHighlighterModal }] =
     useToggle(false);
   const [
@@ -342,21 +343,16 @@ const SessionDetailContent: React.FC<{
 
   return session ? (
     <BAIFlex direction="column" gap={'lg'} align="stretch">
-      {resolvedProjectIdOfSession !== currentProject.id && (
-        <Alert title={t('session.NotInProject')} type="warning" showIcon />
+      {project !== null && resolvedProjectIdOfSession !== project.id && (
+        <Banner status="warning" title={t('session.NotInProject')} />
       )}
       {currentUser.uuid !== session?.user_id && (
-        <Alert
-          title={t('session.AnotherUserSession')}
-          type="warning"
-          showIcon
-        />
+        <Banner status="warning" title={t('session.AnotherUserSession')} />
       )}
       {imminentExpirationTime && imminentExpirationTime < 3600 && (
-        <Alert
+        <Banner
+          status="warning"
           title={t('session.IdleCheckExpirationWarning')}
-          type="warning"
-          showIcon
         />
       )}
       <BAIFlex direction="column" gap={'sm'} align="stretch">
@@ -371,15 +367,8 @@ const SessionDetailContent: React.FC<{
         >
           <EditableSessionName
             sessionFrgmt={session}
-            component={Title}
             level={3}
-            style={{
-              margin: 0,
-              lineHeight: '1.6em',
-              color: ['TERMINATED', 'CANCELLED'].includes(session.status || '')
-                ? token.colorTextTertiary
-                : undefined,
-            }}
+            dimmed={['TERMINATED', 'CANCELLED'].includes(session.status || '')}
             editable={
               !['TERMINATED', 'CANCELLED'].includes(session.status || '')
             }
@@ -387,118 +376,137 @@ const SessionDetailContent: React.FC<{
           <SessionActionButtons size={'large'} compact sessionFrgmt={session} />
         </BAIFlex>
 
-        <Descriptions
-          bordered
-          column={md ? 2 : 1}
-          labelStyle={{
-            wordBreak: 'keep-all',
-          }}
-        >
-          <Descriptions.Item label={t('session.SessionId')} span={md ? 2 : 1}>
-            <Typography.Text
-              ellipsis
-              copyable
-              style={{ fontFamily: 'monospace' }}
-            >
-              {session.row_id}
-            </Typography.Text>
-          </Descriptions.Item>
+        {/* antd `Descriptions bordered` -> Astryx MetadataList.
+            PILOT-DECISION (ticket 17): `bordered` and per-item `span` have no
+            MetadataList equivalent (MAPPING.md §4) and are dropped; JSX labels
+            (warning triangle / help icon) split so the label stays a plain
+            string and the icon affordance moves into the value cell (P2). */}
+        <MetadataList columns={md ? 2 : 1}>
+          <MetadataListItem label={t('session.SessionId')}>
+            <BAIText code copyable ellipsis={{ tooltip: true }}>
+              {session.row_id ?? ''}
+            </BAIText>
+          </MetadataListItem>
           {(userRole === 'admin' || userRole === 'superadmin') && (
-            <Descriptions.Item label={t('credential.UserID')} span={md ? 2 : 1}>
+            <MetadataListItem label={t('credential.UserID')}>
               {session.owner?.email ? (
                 session.owner.email
               ) : session.user_id ? (
-                <Suspense fallback={<Skeleton.Input size="small" active />}>
+                <Suspense
+                  fallback={<BAISkeletonAstryx variant="input" size="small" />}
+                >
                   <UNSAFELazyUserEmailView uuid={session.user_id} />
                 </Suspense>
               ) : (
                 '-'
               )}
-            </Descriptions.Item>
+            </MetadataListItem>
           )}
-          <Descriptions.Item label={t('session.Status')}>
+          <MetadataListItem label={t('session.Status')}>
             <BAIFlex>
               <SessionStatusTag
                 sessionFrgmt={session}
                 showInfo={!supportsSessionSchedulingHistory}
               />
+              {/* QA-FINDINGS Q-37 — both controls in this row were antd
+                  `type="link"` buttons (`Button` / `BAIButton`), i.e. painted
+                  `colorLink` #FF7A00. The conversion to `IconButton
+                  variant="ghost"` dropped the tint to `--color-text-primary`
+                  (measured rgb(20,20,20) light / rgb(255,255,255) dark),
+                  which is what "버튼 색깔이 default 라서 클릭 가능한지 알기
+                  힘듭니다" is describing. `.bai-action-accent` restores it
+                  through `--color-text-accent`, which resolves to exactly
+                  `colorLink` here and to `colorInfo` under the admin theme —
+                  see `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
               {!supportsSessionSchedulingHistory &&
               session?.status_data &&
               session?.status_data !== '{}' ? (
-                <Tooltip title={t('button.ClickForMoreDetails')}>
-                  <Button
-                    type="link"
-                    icon={<InfoCircleOutlined />}
-                    onClick={() => {
-                      setOpenStatusDetailModal(true);
-                    }}
-                  />
-                </Tooltip>
+                <IconButton
+                  className="bai-action-accent"
+                  variant="ghost"
+                  size="sm"
+                  icon={<Info size="1em" />}
+                  label={t('button.ClickForMoreDetails')}
+                  tooltip={t('button.ClickForMoreDetails')}
+                  onClick={() => {
+                    setOpenStatusDetailModal(true);
+                  }}
+                />
               ) : null}
               {supportsSessionSchedulingHistory && (
-                <Tooltip title={t('session.SessionSchedulingHistory')}>
-                  <BAIButton
-                    type="link"
-                    onClick={() => toggleOpenSessionSchedulingHistoryModal()}
-                    icon={<HistoryOutlined />}
-                  />
-                </Tooltip>
+                <IconButton
+                  className="bai-action-accent"
+                  variant="ghost"
+                  size="sm"
+                  icon={<History size="1em" />}
+                  label={t('session.SessionSchedulingHistory')}
+                  tooltip={t('session.SessionSchedulingHistory')}
+                  onClick={() => toggleOpenSessionSchedulingHistoryModal()}
+                />
               )}
             </BAIFlex>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.SessionType')}>
-            <BAISessionTypeTag sessionFrgmt={session} />
-            {session.type === 'batch' && session.startup_command && (
-              <Tooltip title={t('session.ViewStartupCommand')}>
-                <BAIButton
-                  type="link"
-                  icon={<InfoCircleOutlined />}
+          </MetadataListItem>
+          <MetadataListItem label={t('session.SessionType')}>
+            {/* QA-FINDINGS Q-36 — the `<dd>` a `MetadataListItem` renders is
+                `display: block`, so a tag and an icon button dropped in as
+                siblings are two inline-flex boxes sitting on the SAME TEXT
+                BASELINE, not on a shared centre line. Their content boxes have
+                different heights, so aligning their baselines puts their
+                centres 4px apart. The Status row above already avoids this by
+                wrapping its identical tag+IconButton pair in a `BAIFlex`
+                (default `align: center`), which replaces baseline alignment
+                with cross-axis centring; this row now does the same. Note this
+                is NOT a migration regression — antd's
+                `.ant-descriptions-item-content` was `display: table-cell` and
+                laid the same pair out on the same baseline, so legacy was 4px
+                off too. */}
+            <BAIFlex>
+              <BAISessionTypeTag sessionFrgmt={session} />
+              {/* QA-FINDINGS Q-37 — legacy `BAIButton type="link"`, so the
+                  accent here is a straight parity restoration. */}
+              {session.type === 'batch' && session.startup_command && (
+                <IconButton
+                  className="bai-action-accent"
+                  variant="ghost"
+                  size="sm"
+                  icon={<Info size="1em" />}
+                  label={t('session.ViewStartupCommand')}
+                  tooltip={t('session.ViewStartupCommand')}
                   onClick={() => toggleOpenCodeHighlighterModal()}
                 />
-              </Tooltip>
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.Environments')}>
+              )}
+            </BAIFlex>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.launcher.Environments')}>
             {session.kernel_nodes?.edges[0]?.node?.image ? (
               <ImageNodeSimpleTag
                 imageFrgmt={session.kernel_nodes?.edges[0]?.node?.image || null}
               />
             ) : session.row_id ? (
-              <Suspense fallback={<Skeleton.Input size="small" active />}>
+              <Suspense
+                fallback={<BAISkeletonAstryx variant="input" size="small" />}
+              >
                 <UNSAFELazySessionImageTag sessionId={session.row_id} />
               </Suspense>
             ) : null}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.MountedFolders')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.launcher.MountedFolders')}>
             <BAIFlex gap="xs" wrap="wrap">
               <MountedVFolderLinks sessionFrgmt={session} />
             </BAIFlex>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              hasResourceAllocationDifference ? (
-                <Tooltip title={t('session.AllocatedLessThanRequested')}>
-                  <BAIFlex
-                    gap="sm"
-                    justify="start"
-                    style={{
-                      color: token.colorWarning,
-                      width: 'min-content',
-                      minWidth: 80,
-                    }}
-                  >
-                    {t('session.launcher.ResourceAllocation')}
-                    <WarningOutlined />
-                  </BAIFlex>
-                </Tooltip>
-              ) : (
-                t('session.launcher.ResourceAllocation')
-              )
-            }
-          >
+          </MetadataListItem>
+          <MetadataListItem label={t('session.launcher.ResourceAllocation')}>
             <BAIFlex gap={'sm'} wrap="wrap" align="center">
-              <Tooltip title={t('session.ResourceGroup')}>
-                <Tag>{session.scaling_group}</Tag>
+              {hasResourceAllocationDifference && (
+                <Tooltip content={t('session.AllocatedLessThanRequested')}>
+                  <TriangleAlert
+                    size="1em"
+                    style={{ color: 'var(--color-warning)' }}
+                  />
+                </Tooltip>
+              )}
+              <Tooltip content={t('session.ResourceGroup')}>
+                <Badge label={session.scaling_group} />
               </Tooltip>
               <ResourceNumbersOfSession
                 resource={
@@ -510,89 +518,63 @@ const SessionDetailContent: React.FC<{
                 showDividers
               />
             </BAIFlex>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.Agent')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.Agent')}>
             <BAISessionAgentIds sessionFrgmt={session} />
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.Reservation')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.Reservation')}>
             <BAIFlex gap={'xs'} wrap={'wrap'}>
               <SessionReservation sessionFrgmt={session} />
             </BAIFlex>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.ClusterMode')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.ClusterMode')}>
             <BAISessionClusterMode sessionFrgmt={session} showSize />
-          </Descriptions.Item>
+          </MetadataListItem>
           {baiClient.supports('idle-checks-gql') &&
           session.status === 'RUNNING' &&
           imminentExpirationTime ? (
-            <Descriptions.Item
-              label={
-                <BAIFlex gap="xxs">
-                  {t('session.ReclamationStatus')}
-                  <Tooltip title={t('button.ClickForMoreDetails')}>
-                    <QuestionCircleOutlined
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setOpenIdleCheckDescriptionModal(true)}
-                    />
-                  </Tooltip>
-                </BAIFlex>
-              }
-              span={md ? 2 : 1}
-            >
-              <Suspense fallback={<Skeleton.Input active size="small" />}>
-                <SessionIdleChecks
-                  sessionNodeFrgmt={session}
-                  direction={md ? 'row' : 'column'}
-                />
-              </Suspense>
-            </Descriptions.Item>
-          ) : null}
-          <Descriptions.Item
-            label={
-              <BAIFlex direction="column" align="start" gap={token.marginSM}>
-                <Typography.Text
-                  style={{
-                    color: token.colorTextSecondary,
-                    wordBreak: 'keep-all',
-                  }}
+            <MetadataListItem label={t('session.ReclamationStatus')}>
+              <BAIFlex gap="xxs" align="start">
+                <Suspense
+                  fallback={<BAISkeletonAstryx variant="input" size="small" />}
                 >
-                  {t('session.ResourceUsage')}
-                </Typography.Text>
-                <Select
-                  size="small"
-                  popupMatchSelectWidth={false}
-                  style={{ width: '100%', display: 'none' }}
-                  variant="filled"
-                  defaultValue={'current'}
-                  options={[
-                    {
-                      label: t('session.CurrentUsage'),
-                      value: 'current',
-                    },
-                    {
-                      label: t('session.MaxUsage'),
-                      value: 'max',
-                    },
-                    {
-                      label: t('session.AverageUsage'),
-                      value: 'avg',
-                    },
-                  ]}
-                  onChange={(value: 'current' | 'max' | 'avg') => {
-                    setUsageMonitorDisplayTarget(value);
-                  }}
+                  <SessionIdleChecks
+                    sessionNodeFrgmt={session}
+                    direction={md ? 'row' : 'column'}
+                  />
+                </Suspense>
+                {/* QA-FINDINGS Q-37 — recorded honestly: this one is NOT a
+                    parity restoration. Legacy rendered a bare
+                    `<QuestionCircleOutlined style={{cursor:'pointer'}}>` in the
+                    Descriptions LABEL, at the label's inherited neutral colour,
+                    so antd never tinted it either. It gets the accent anyway
+                    because it is a real action affordance (opens
+                    `IdleCheckDescriptionModal`) and it now sits in the drawer's
+                    content column alongside the two ⓘ buttons above — leaving
+                    one of three identical `size="sm"` ghost glyphs black while
+                    the others are accent would read as an inconsistency rather
+                    than a distinction. The report "세션 디테일 드로어에서 i 가
+                    클릭 가능한지 인식하기 어렵네요" names this glyph class. */}
+                <IconButton
+                  className="bai-action-accent"
+                  variant="ghost"
+                  size="sm"
+                  icon={<CircleHelp size="1em" />}
+                  label={t('button.ClickForMoreDetails')}
+                  tooltip={t('button.ClickForMoreDetails')}
+                  onClick={() => setOpenIdleCheckDescriptionModal(true)}
                 />
               </BAIFlex>
-            }
-            span={md ? 2 : 1}
-          >
+            </MetadataListItem>
+          ) : null}
+          <MetadataListItem label={t('session.ResourceUsage')}>
             <SessionUsageMonitor
               sessionFrgmt={session}
               displayTarget={usageMonitorDisplayTarget}
             />
-          </Descriptions.Item>
+          </MetadataListItem>
           {(session.dependees?.count ?? 0) > 0 && (
-            <Descriptions.Item label={t('session.DependsOn')} span={2}>
+            <MetadataListItem label={t('session.DependsOn')}>
               <BAIFlex gap="xs" wrap="wrap">
                 {session.dependees?.edges
                   ?.map((edge) => edge?.node)
@@ -616,10 +598,10 @@ const SessionDetailContent: React.FC<{
                     );
                   })}
               </BAIFlex>
-            </Descriptions.Item>
+            </MetadataListItem>
           )}
           {(session.dependents?.count ?? 0) > 0 && (
-            <Descriptions.Item label={t('session.DependedByOthers')} span={2}>
+            <MetadataListItem label={t('session.DependedByOthers')}>
               <BAIFlex gap="xs" wrap="wrap">
                 {session.dependents?.edges
                   ?.map((edge) => edge?.node)
@@ -643,67 +625,65 @@ const SessionDetailContent: React.FC<{
                     );
                   })}
               </BAIFlex>
-            </Descriptions.Item>
+            </MetadataListItem>
           )}
-        </Descriptions>
+        </MetadataList>
       </BAIFlex>
-      <Tabs
-        defaultActiveKey="kernels"
-        onChange={(key) => {
-          if (key === 'auditLog' && session.row_id && !auditLogQueryRef) {
-            loadAuditLogQuery(
-              {
-                scope: {
-                  entity: [{ entityType: 'SESSION', entityId: session.row_id }],
+      {/* antd `Tabs` -> Astryx `TabList` + `Tab` (navigation only — the
+          panels are rendered below; MAPPING.md §4). */}
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <TabList
+          value={activeTabKey}
+          onChange={(key) => {
+            if (key === 'auditLog' && session.row_id && !auditLogQueryRef) {
+              loadAuditLogQuery(
+                {
+                  scope: {
+                    entity: [
+                      { entityType: 'SESSION', entityId: session.row_id },
+                    ],
+                  },
+                  orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+                  limit: baiPaginationOption.limit,
+                  offset: baiPaginationOption.offset,
                 },
-                orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-                limit: baiPaginationOption.limit,
-                offset: baiPaginationOption.offset,
-              },
-              { fetchPolicy: 'store-and-network' },
-            );
-          }
-        }}
-        items={[
-          {
-            key: 'kernels',
-            label: t('kernel.Kernels'),
-            children: (
-              <Suspense fallback={<Skeleton active />}>
-                <ConnectedKernelList
-                  kernelsFrgmt={filterOutNullAndUndefined(
-                    session.kernel_nodes?.edges.map((e) => e?.node),
-                  )}
-                  sessionFrgmtForLogModal={session}
+                { fetchPolicy: 'store-and-network' },
+              );
+            }
+            setActiveTabKey(key as 'kernels' | 'auditLog');
+          }}
+        >
+          <Tab value="kernels" label={t('kernel.Kernels')} />
+          {session.row_id ? (
+            <Tab value="auditLog" label={t('auditLog.AuditLog')} />
+          ) : null}
+        </TabList>
+        {activeTabKey === 'kernels' && (
+          <Suspense fallback={<BAISkeletonAstryx />}>
+            <ConnectedKernelList
+              kernelsFrgmt={filterOutNullAndUndefined(
+                session.kernel_nodes?.edges.map((e) => e?.node),
+              )}
+              sessionFrgmtForLogModal={session}
+            />
+          </Suspense>
+        )}
+        {activeTabKey === 'auditLog' && session.row_id && (
+          <BAIErrorBoundary>
+            {auditLogQueryRef ? (
+              <Suspense fallback={<BAISkeletonAstryx />}>
+                <ScopedAuditLog
+                  queryRef={auditLogQueryRef}
+                  onReload={reloadAuditLogQuery}
+                  tableSettings={{}}
                 />
               </Suspense>
-            ),
-          },
-          ...(session.row_id
-            ? [
-                {
-                  key: 'auditLog',
-                  label: t('auditLog.AuditLog'),
-                  children: (
-                    <BAIErrorBoundary>
-                      {auditLogQueryRef ? (
-                        <Suspense fallback={<Skeleton active />}>
-                          <ScopedAuditLog
-                            queryRef={auditLogQueryRef}
-                            onReload={reloadAuditLogQuery}
-                            tableSettings={{}}
-                          />
-                        </Suspense>
-                      ) : (
-                        <Skeleton active />
-                      )}
-                    </BAIErrorBoundary>
-                  ),
-                },
-              ]
-            : []),
-        ]}
-      />
+            ) : (
+              <BAISkeletonAstryx />
+            )}
+          </BAIErrorBoundary>
+        )}
+      </BAIFlex>
       <IdleCheckDescriptionModal
         open={openIdleCheckDescriptionModal}
         onCancel={() => setOpenIdleCheckDescriptionModal(false)}
@@ -715,13 +695,12 @@ const SessionDetailContent: React.FC<{
         title={t('session.StartupCommand')}
         footer={
           <Button
-            type="primary"
+            variant="primary"
+            label={t('button.Close')}
             onClick={() => {
               toggleOpenCodeHighlighterModal();
             }}
-          >
-            {t('button.Close')}
-          </Button>
+          />
         }
         onCancel={toggleOpenCodeHighlighterModal}
       />
@@ -737,12 +716,11 @@ const SessionDetailContent: React.FC<{
       />
     </BAIFlex>
   ) : (
-    <Alert
-      showIcon
+    <Banner
+      status="error"
       title={t('session.SessionNotFound')}
-      type="error"
       description={id}
-    ></Alert>
+    />
   );
 };
 

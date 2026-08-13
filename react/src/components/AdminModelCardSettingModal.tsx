@@ -5,36 +5,37 @@
 import type { AdminModelCardSettingModalCreateMutation } from '../__generated__/AdminModelCardSettingModalCreateMutation.graphql';
 import type { AdminModelCardSettingModalFragment$key } from '../__generated__/AdminModelCardSettingModalFragment.graphql';
 import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/AdminModelCardSettingModalUpdateMutation.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { useCurrentDomainValue } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useSwitchProject } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
+import BAIFormItem from './BAIFormItem';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import {
-  Alert,
-  App,
-  Form,
-  type FormInstance,
-  Input,
-  ModalProps,
-  Popconfirm,
-  Select,
-  Typography,
-} from 'antd';
+  AstryxFormSelector,
+  AstryxFormTextArea,
+  AstryxFormTagsInput,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIButton,
   BAIDomainSelect,
   BAIFlex,
   BAIModal,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
+  type BAIModalProps,
+  BAIVFolderSelectAstryx,
+  BAIVFolderSelectAstryxRef,
   toGlobalId,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import { startTransition, Suspense, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -56,9 +57,8 @@ type FormInputType = {
   accessLevel: string;
 };
 
-interface AdminModelCardSettingModalProps extends ModalProps {
+interface AdminModelCardSettingModalProps extends BAIModalProps {
   modelCardFrgmt?: AdminModelCardSettingModalFragment$key | null | undefined;
-  isModelStoreProject?: boolean;
   modelStoreProject?: {
     id: string | null | undefined;
     name: string | null | undefined;
@@ -68,7 +68,6 @@ interface AdminModelCardSettingModalProps extends ModalProps {
 
 const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   modelCardFrgmt,
-  isModelStoreProject,
   modelStoreProject,
   onRequestClose,
   ...modalProps
@@ -79,12 +78,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<FormInputType>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
-  const currentProject = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
-  const switchProject = useSwitchProject();
 
   const modelCard = useFragment(
     graphql`
@@ -120,6 +117,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   );
 
   const isEditMode = !!modelCard;
+
+  // `name` is nullable, so gate on the same condition `toProjectContext`
+  // applies — otherwise the form stays enabled while the context is null.
+  const modelStoreProjectContext = toProjectContext(modelStoreProject ?? {});
+  const isModelStoreProjectResolved = modelStoreProjectContext !== null;
 
   const [commitCreateModelCard, isCreateInFlight] =
     useMutation<AdminModelCardSettingModalCreateMutation>(graphql`
@@ -243,22 +245,24 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             onError: handleMutationError,
           });
         } else {
+          // Model cards are created ONLY in the resolved model-store project
+          // (ADR-0001 / FR-3410 — the silent ambient-project fallback was
+          // deleted). When the model-store project cannot be resolved, the
+          // form is replaced by the ProjectNotFound alert and the OK button
+          // is disabled, so this guard only narrows the type.
+          if (!modelStoreProjectContext) {
+            return;
+          }
           commitCreateModelCard({
             variables: {
               input: {
                 vfolderId: toLocalId(values.vfolderId),
-                // The model card must be created in the MODEL_STORE project — the
-                // same project that backs the VFolder selector above — not the
-                // admin's current compute project. When the admin is not currently
-                // in the model-store project, `currentProject.id` would write the
-                // card to the wrong project; `modelStoreProject.id` is the
-                // model-store-dedicated project. Falls back to the current project
-                // only if no model-store project is resolved.
+                // The model card must be created in the MODEL_STORE project —
+                // the same project that backs the VFolder selector above.
                 // TODO: model cards in the model-store project are slated to
                 // become global cards. Once a query that can look up cards across
                 // projects of multiple scopes is added, this will need to change.
-                modelStoreProjectId:
-                  modelStoreProject?.id ?? currentProject.id!,
+                modelStoreProjectId: modelStoreProjectContext.id,
                 domainName: values.domainName || null,
                 ...metadataInput,
               },
@@ -297,19 +301,18 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           ...modalProps.okButtonProps,
           loading: isCreateInFlight || isUpdateInFlight,
           disabled:
-            !modelStoreProject?.id || modalProps.okButtonProps?.disabled,
+            !isModelStoreProjectResolved || modalProps.okButtonProps?.disabled,
         }}
       >
-        {!modelStoreProject?.id ? (
-          <Alert
-            type="error"
-            showIcon
+        {!isModelStoreProjectResolved ? (
+          <Banner
+            status="error"
             title={t('modelStore.ProjectNotFound')}
             description={t('modelStore.ProjectNotFoundDescription')}
           />
         ) : (
           <Form ref={formRef} layout="vertical" initialValues={initialValues}>
-            <Form.Item
+            <BAIFormItem
               name="name"
               label={t('adminModelCard.Name')}
               tooltip={t('adminModelCard.NameTooltip')}
@@ -320,11 +323,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Name')} />
+            </BAIFormItem>
 
             {isEditMode ? (
-              <Form.Item label={t('adminModelCard.ModelStorageFolder')}>
+              <BAIFormItem label={t('adminModelCard.ModelStorageFolder')}>
                 <BAIFlex gap="xs" align="center">
                   {modelCard.vfolder && (
                     <VFolderNodeIdenticonV2
@@ -338,15 +341,25 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                     }
                   />
                 </BAIFlex>
-              </Form.Item>
+              </BAIFormItem>
             ) : (
-              <Form.Item
+              <BAIFormItem
                 label={t('adminModelCard.ModelStorageFolder')}
                 required
               >
                 <BAIFlex gap="xs" align="center">
-                  <Suspense fallback={<Input disabled style={{ flex: 1 }} />}>
-                    <Form.Item
+                  <Suspense
+                    fallback={
+                      <TextInput
+                        value=""
+                        label={t('adminModelCard.ModelStorageFolder')}
+                        isLabelHidden
+                        isDisabled
+                        style={{ flex: 1 }}
+                      />
+                    }
+                  >
+                    <BAIFormItem
                       name="vfolderId"
                       noStyle
                       rules={[
@@ -356,182 +369,160 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                         },
                       ]}
                     >
-                      <BAIVFolderSelect
+                      <BAIVFolderSelectAstryx
                         ref={vfolderSelectRef}
+                        label={t('adminModelCard.ModelStorageFolder')}
+                        isLabelHidden
                         excludeDeleted
                         filter='ownership_type == "group"'
                         currentProjectId={modelStoreProject?.id ?? undefined}
-                        style={{ flex: 1 }}
                       />
-                    </Form.Item>
+                    </BAIFormItem>
                   </Suspense>
-                  {isModelStoreProject ? (
-                    <BAIButton
-                      icon={<PlusIcon />}
-                      onClick={() => setIsOpenCreateFolderModal(true)}
-                    />
-                  ) : (
-                    <Popconfirm
-                      title={t(
-                        'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
-                      )}
-                      description={t(
-                        'importArtifactRevisionToFolderModal.ModelStoreProjectRequiredDescription',
-                      )}
-                      okText={t('button.ChangeProject')}
-                      cancelText={t('button.Cancel')}
-                      onConfirm={() => {
-                        if (modelStoreProject?.id && modelStoreProject?.name) {
-                          startTransition(() => {
-                            switchProject({
-                              projectId: modelStoreProject.id!,
-                              projectName: modelStoreProject.name!,
-                            });
-                            message.success(
-                              t(
-                                'importArtifactRevisionToFolderModal.CurrentProjectChangedSuccessfully',
-                              ),
-                            );
-                            setIsOpenCreateFolderModal(true);
-                          });
-                        } else {
-                          message.error(
-                            t(
-                              'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
-                            ),
-                          );
-                        }
-                      }}
-                    >
-                      <BAIButton icon={<PlusIcon />} />
-                    </Popconfirm>
-                  )}
+                  {/* The folder-creation modal below targets the model-store
+                      project explicitly (ADR-0001), so no ambient project
+                      switch is needed before opening it. */}
+                  <BAIButton
+                    icon={<PlusIcon />}
+                    onClick={() => setIsOpenCreateFolderModal(true)}
+                  />
                 </BAIFlex>
-              </Form.Item>
+              </BAIFormItem>
             )}
 
             {isEditMode ? (
-              <Form.Item label={t('adminModelCard.Domain')}>
-                <Typography.Text>{modelCard.domainName}</Typography.Text>
-              </Form.Item>
+              <BAIFormItem label={t('adminModelCard.Domain')}>
+                <Text>{modelCard.domainName}</Text>
+              </BAIFormItem>
             ) : (
               <Suspense
                 fallback={
-                  <Form.Item
+                  <BAIFormItem
                     name="domainName"
                     label={t('adminModelCard.Domain')}
                   >
-                    <Input disabled />
-                  </Form.Item>
+                    <AstryxFormTextInput
+                      label={t('adminModelCard.Domain')}
+                      disabled
+                    />
+                  </BAIFormItem>
                 }
               >
-                <Form.Item name="domainName" label={t('adminModelCard.Domain')}>
+                <BAIFormItem
+                  name="domainName"
+                  label={t('adminModelCard.Domain')}
+                >
                   <BAIDomainSelect />
-                </Form.Item>
+                </BAIFormItem>
               </Suspense>
             )}
 
-            <Form.Item
+            <BAIFormItem
               name="author"
               label={t('adminModelCard.Author')}
               tooltip={t('adminModelCard.AuthorTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Author')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="title"
               label={t('adminModelCard.Title')}
               tooltip={t('adminModelCard.TitleTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Title')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="modelVersion"
               label={t('adminModelCard.ModelVersion')}
               tooltip={t('adminModelCard.ModelVersionTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.ModelVersion')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="description"
               label={t('adminModelCard.Description')}
               tooltip={t('adminModelCard.DescriptionTooltip')}
             >
-              <Input.TextArea rows={3} />
-            </Form.Item>
+              <AstryxFormTextArea
+                label={t('adminModelCard.Description')}
+                rows={3}
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="task"
               label={t('adminModelCard.Task')}
               tooltip={t('adminModelCard.TaskTooltip')}
             >
-              <Input placeholder={t('adminModelCard.TaskPlaceholder')} />
-            </Form.Item>
+              <AstryxFormTextInput
+                label={t('adminModelCard.Task')}
+                placeholder={t('adminModelCard.TaskPlaceholder')}
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="category"
               label={t('adminModelCard.Category')}
               tooltip={t('adminModelCard.CategoryTooltip')}
             >
-              <Input placeholder={t('adminModelCard.CategoryPlaceholder')} />
-            </Form.Item>
+              <AstryxFormTextInput
+                label={t('adminModelCard.Category')}
+                placeholder={t('adminModelCard.CategoryPlaceholder')}
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="architecture"
               label={t('adminModelCard.Architecture')}
               tooltip={t('adminModelCard.ArchitectureTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.Architecture')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="framework"
               label={t('adminModelCard.Framework')}
               tooltip={t('adminModelCard.FrameworkTooltip')}
             >
-              {/* FR-3121: commit a framework on comma in addition to Enter. */}
-              <Select
-                mode="tags"
-                tokenSeparators={[',']}
+              <AstryxFormTagsInput
+                tokenSeparators={[',', ' ']}
+                label={t('adminModelCard.Framework')}
                 placeholder={t('adminModelCard.AddFramework')}
-                notFoundContent={null}
               />
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="label"
               label={t('adminModelCard.Label')}
               tooltip={t('adminModelCard.LabelTooltip')}
             >
-              {/* FR-3121: commit a label on comma in addition to Enter. */}
-              <Select
-                mode="tags"
-                tokenSeparators={[',']}
+              <AstryxFormTagsInput
+                tokenSeparators={[',', ' ']}
+                label={t('adminModelCard.Label')}
                 placeholder={t('adminModelCard.AddLabel')}
-                notFoundContent={null}
               />
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="license"
               label={t('adminModelCard.License')}
               tooltip={t('adminModelCard.LicenseTooltip')}
             >
-              <Input />
-            </Form.Item>
+              <AstryxFormTextInput label={t('adminModelCard.License')} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="readme"
               label={t('adminModelCard.Readme')}
               tooltip={t('adminModelCard.ReadmeTooltip')}
             >
-              <Input.TextArea rows={6} />
-            </Form.Item>
+              <AstryxFormTextArea label={t('adminModelCard.Readme')} rows={6} />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               name="accessLevel"
               label={t('adminModelCard.AccessLevel')}
               tooltip={t('adminModelCard.AccessLevelTooltip')}
@@ -542,7 +533,8 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 },
               ]}
             >
-              <Select
+              <AstryxFormSelector
+                label={t('adminModelCard.AccessLevel')}
                 options={[
                   {
                     value: 'INTERNAL',
@@ -554,12 +546,15 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                   },
                 ]}
               />
-            </Form.Item>
+            </BAIFormItem>
           </Form>
         )}
       </BAIModal>
+      {/* Model folders are created in the model-store project, never the
+          ambient one. */}
       <FolderCreateModalV2
         open={isOpenCreateFolderModal}
+        project={modelStoreProjectContext}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {

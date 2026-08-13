@@ -5,8 +5,8 @@
 import { FolderLink_vfolderNode$key } from '../__generated__/FolderLink_vfolderNode.graphql';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { FolderOutlined } from '@ant-design/icons';
 import { BAIFlex, BAILink, BAILinkProps } from 'backend.ai-ui';
+import { Folder } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderLinkBase extends BAILinkProps {
@@ -59,7 +59,7 @@ const FolderLink = ({
           style={{ flexShrink: 0, marginTop: '0.25em' }}
         />
       ) : showIcon ? (
-        <FolderOutlined style={{ flexShrink: 0, marginTop: '0.25em' }} />
+        <Folder style={{ flexShrink: 0, marginTop: '0.25em' }} size="1em" />
       ) : null}
       <BAILink
         to={generateFolderPath(folderId ?? vfolderNode?.row_id ?? '')}

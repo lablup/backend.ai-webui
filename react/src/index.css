@@ -1,3 +1,80 @@
+/* Astryx foundation (to-astryx ticket 01).
+   The `@layer` order statement MUST be the first rule in the global CSS so
+   Astryx's prebuilt layered sheets slot deterministically. Compiled StyleX
+   (`xstyle` / `stylex.props`) output is emitted UNLAYERED and therefore
+   outranks every named layer — which is what makes `xstyle` overrides win
+   over Astryx component base styles. During antd coexistence, do NOT add any
+   unlayered global reset (e.g. `antd/dist/reset.css`): unlayered globals
+   beat every Astryx layer and visibly break its components. */
+/* KEEP IN SYNC with `packages/backend.ai-ui/src/styles/backend.ai-ui.css`,
+   which repeats this list because BUI's own sheet is often the first layered
+   CSS in the bundle (ticket 30). Identical statements are idempotent; a
+   divergent one silently hands the order to whichever loads first. */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+/* Astryx Lab (canary, exact pin — MIGRATION-SPEC §1-④; to-astryx ticket 18):
+   layered styles for lab components (Drawer, Tour, Stepper, …). */
+@import '@astryxdesign/lab/lab.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
+/* FR-3506: secondary buttons are outlined (theme `variant:secondary`). Inside a
+   ButtonGroup the outline moves to the GROUP: per-member borders double at
+   seams and leave half-open chips when a disabled member renders ghost. The
+   ring is an inset outline (no layout change, follows the radius); members
+   drop their own border and keep only a 1px leading divider. `!important`
+   outranks production's unlayered StyleX copy (see BAISider.css). Horizontal
+   groups only; no vertical ButtonGroup exists in the app. */
+.astryx-button-group:has(.astryx-button.secondary) {
+  position: relative;
+  border-radius: var(--radius-element);
+}
+/* The ring must paint ABOVE the members — an inset outline/border on the
+   wrapper is covered by their opaque fills — so it is a generated overlay. */
+.astryx-button-group:has(.astryx-button.secondary)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-border-emphasized);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.astryx-button-group .astryx-button.secondary {
+  border-width: 0 !important;
+}
+/* Every member of a ringed group gets the same divider — a mixed group
+   (ghost-rendered disabled members between secondaries) otherwise alternates
+   Astryx's faint default divider with the emphasized one. */
+.astryx-button-group:has(.astryx-button.secondary)
+  .astryx-button:not(:first-child) {
+  border-inline-start-width: 1px !important;
+  border-inline-start-style: solid !important;
+  border-inline-start-color: var(--color-border-emphasized) !important;
+}
+
+/* A disabled member's wholesale `opacity: 0.5` dims its own divider with it,
+   so seam brightness alternates with the enabled members'. Inside a ringed
+   group the frame stays at full strength and the disabled state reads from
+   the glyph alone, via the disabled text token (icons follow currentColor). */
+.astryx-button-group:has(.astryx-button.secondary)
+  .astryx-button[aria-disabled='true'],
+.astryx-button-group:has(.astryx-button.secondary) .astryx-button:disabled {
+  opacity: 1 !important;
+  color: var(--color-text-disabled) !important;
+}
+
+/* A solid primary group's divider stays on-accent (white-family in BOTH
+   modes, like the label) but translucent — Astryx's opaque white cut the
+   fill too hard, and a theme-flipping grey reads as a foreign border. */
+.astryx-button-group .astryx-button.primary:not(:first-child) {
+  border-inline-start-color: color-mix(
+    in srgb,
+    var(--color-on-accent) 35%,
+    transparent
+  ) !important;
+}
+
 /* fix: match the icon size between Lucide and Ant.d icons */
 .lucide {
   width: 1em !important;

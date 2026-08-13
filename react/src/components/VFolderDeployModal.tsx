@@ -4,14 +4,17 @@
  */
 import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalMutation.graphql';
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
+import { ProjectContext } from '../types/projectContext';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Form, Space, theme, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAvailablePresetSelect,
+  BAIAvailablePresetSelectAstryx,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -21,16 +24,47 @@ import {
   useErrorMessageResolver,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
+import { Info } from 'lucide-react';
 import React, {
   Suspense,
-  useDeferredValue,
   useEffect,
   useEffectEvent,
   useRef,
   useState,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+} from 'react-relay';
+
+// TODO(needs-backend): FR-2599 — `deploymentRevisionPresets` currently has
+// no per-vfolder scope (`DeploymentRevisionPresetFilter` only supports
+// `name` and `runtimeVariantId`). The list below is project-wide. Once a
+// vfolder-compatibility scope is exposed (e.g. similar to
+// `modelCardAvailablePresets`), wire it in here.
+// ADR-0001 (FR-3410): this modal never reads the ambient current project — the
+// deploy target is exactly the `project` prop the page passes in.
+//
+// Exported so the opener can `loadQuery` it in the click event (render-as-you-
+// fetch). Operation name must match the generated artifact; the const name only
+// differs to avoid clashing with the imported generated type.
+export const VFolderDeployQuery = graphql`
+  query VFolderDeployModalQuery {
+    deploymentRevisionPresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+      edges {
+        node {
+          id
+          name
+          runtimeVariantId
+          ...DeploymentPresetDetailModalFragment
+        }
+      }
+    }
+  }
+`;
 
 export interface VFolderDeployModalProps extends Omit<
   BAIModalProps,
@@ -38,14 +72,30 @@ export interface VFolderDeployModalProps extends Omit<
 > {
   /** Domain close callback — wired to `onCancel` on the underlying `BAIModal`. */
   onClose: () => void;
+  /**
+   * Explicit project prop contract (ADR-0001). A deployment is always created
+   * inside one project, and every surface that can reach this modal — the user
+   * Data page and the project-admin Data page — is itself scoped to a project,
+   * so the prop is **required and non-null** and there is no in-modal
+   * selector. Openers without a project context must not offer the action.
+   *
+   * The folder's own owning project is deliberately not consulted: a mismatch
+   * between this project and a project-type folder's owner is a reporting
+   * concern (a future non-blocking alert), not a targeting one.
+   */
+  project: ProjectContext;
   /** Local UUID of the VFolder to deploy. */
-  vfolderId?: string;
+  vfolderId: string;
+  /** Preloaded query reference produced by the opener via `useQueryLoader`. */
+  queryRef: PreloadedQuery<VFolderDeployModalQuery>;
   onDeployed?: (deploymentId: string) => void;
 }
 
 const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   onClose,
+  project,
   vfolderId,
+  queryRef,
   onDeployed,
   // `open` and `afterClose` come in via `BAIModalProps` (the latter is
   // typically injected by `BAIUnmountAfterClose`'s `cloneElement`). We
@@ -64,55 +114,23 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const { token } = theme.useToken();
-  const { id: projectId, name: projectName } = useCurrentProjectValue();
 
-  // Loading UX: `useDeferredValue(open)` lets this modal stay mounted with
-  // `loading=true` (Ant Design skeleton) while the deferred re-render fetches
-  // fresh data in the background. The first synchronous render uses
-  // `store-only` so it never suspends; the deferred render upgrades to
-  // `store-and-network` and suspends only if the cache is empty. The parent
-  // wraps this component in `<Suspense>` to handle that first-time cache miss.
-  const deferredOpen = useDeferredValue(open);
-
-  // TODO(needs-backend): FR-2599 — `deploymentRevisionPresets` currently has
-  // no per-vfolder scope (`DeploymentRevisionPresetFilter` only supports
-  // `name` and `runtimeVariantId`). The list below is project-wide. Once a
-  // vfolder-compatibility scope is exposed (e.g. similar to
-  // `modelCardAvailablePresets`), wire it in here.
+  // Render-as-you-fetch: the request was already started by the opener's
+  // `loadQuery` in the click event, so there is no `open`-derived fetch policy
+  // here and no render-time variable derivation.
   const { deploymentRevisionPresets } =
-    useLazyLoadQuery<VFolderDeployModalQuery>(
-      graphql`
-        query VFolderDeployModalQuery {
-          deploymentRevisionPresets(
-            orderBy: [{ field: RANK, direction: "ASC" }]
-          ) {
-            edges {
-              node {
-                id
-                name
-                runtimeVariantId
-                ...DeploymentPresetDetailModalFragment
-              }
-            }
-          }
-        }
-      `,
-      {},
-      {
-        fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
-      },
-    );
+    usePreloadedQuery<VFolderDeployModalQuery>(VFolderDeployQuery, queryRef);
 
   const availablePresets =
     deploymentRevisionPresets?.edges
       ?.map((edge) => edge?.node)
       .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
-  // Fetch resource groups accessible to the current project. Uses the same
+  // Fetch resource groups accessible to the target project. Uses the same
   // React Query cache as BAIProjectResourceGroupSelect below, so no duplicate
   // network request is made — we only need the count here to decide whether
   // to render the selection UI or auto-deploy.
-  const { resourceGroups } = useProjectResourceGroups(projectName ?? '');
+  const { resourceGroups } = useProjectResourceGroups(project.name);
 
   const [commitDeploy, isInFlightDeploy] =
     useMutation<VFolderDeployModalMutation>(graphql`
@@ -127,7 +145,9 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       }
     `);
 
-  // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3)
+  // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3).
+  // The target project is always known (required prop), so the only inputs
+  // are how many presets and resource groups are available.
   const isAutoDeployScenario =
     availablePresets.length === 1 && resourceGroups.length === 1;
 
@@ -150,7 +170,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const selectedResourceGroup = Form.useWatch('resourceGroup', form);
 
   const handleDeploy = (): Promise<void> => {
-    if (!vfolderId || !projectId) return Promise.resolve();
+    if (!vfolderId) return Promise.resolve();
 
     const presetId = isAutoDeployScenario
       ? toLocalId(availablePresets[0]?.id)
@@ -170,7 +190,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
         variables: {
           vfolderId,
           input: {
-            projectId,
+            projectId: project.id,
             revisionPresetId: presetId,
             resourceGroup,
             desiredReplicaCount: 1,
@@ -272,13 +292,11 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       okButtonProps={{
         disabled:
           !vfolderId ||
-          !projectId ||
           !effectivePresetId ||
           !selectedResourceGroup ||
           noAvailablePresets,
       }}
       confirmLoading={isInFlightDeploy}
-      loading={deferredOpen !== open}
       {...modalProps}
       open={open}
       afterClose={afterClose}
@@ -286,9 +304,9 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       onCancel={onClose}
     >
       {noAvailablePresets && (
-        <Alert
-          type="info"
-          showIcon
+        // `type` -> `status`; `showIcon` dropped (Banner always shows it).
+        <Banner
+          status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={
             <Trans
@@ -315,26 +333,29 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAIAvailablePresetSelect
+            <BAIAvailablePresetSelectAstryx
+              label={t('modelStore.Preset')}
+              isLabelHidden
               value={effectivePresetId}
               onChange={(value) =>
                 setUserSelectedPresetId(value as string | undefined)
               }
-              style={{ flex: 1 }}
-              disabled={noAvailablePresets}
+              isDisabled={noAvailablePresets}
             />
-            <Space.Compact>
-              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
-                <Button
-                  icon={<InfoCircleOutlined />}
-                  disabled={!effectivePresetId || noAvailablePresets}
-                  onClick={() => {
-                    if (!effectivePresetId) return;
-                    setPresetDetailId(effectivePresetId);
-                  }}
-                />
-              </Tooltip>
-            </Space.Compact>
+            {/* MAPPING §3.3: an icon-only button is `IconButton`, which
+                carries its own tooltip and required accessible name — so both
+                the `Tooltip` wrapper and the single-child `Space.Compact`
+                (which welded nothing to anything) disappear. */}
+            <IconButton
+              icon={<Info size="1em" />}
+              label={t('modelService.DeploymentPresetDetail')}
+              tooltip={t('modelService.DeploymentPresetDetail')}
+              isDisabled={!effectivePresetId || noAvailablePresets}
+              onClick={() => {
+                if (!effectivePresetId) return;
+                setPresetDetailId(effectivePresetId);
+              }}
+            />
           </BAIFlex>
         </Form.Item>
         <Form.Item
@@ -344,7 +365,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           rules={[{ required: true }]}
         >
           <BAIProjectResourceGroupSelect
-            projectName={projectName ?? ''}
+            projectName={project.name}
             autoSelectDefault
             style={{ width: '100%' }}
             disabled={noAvailablePresets}

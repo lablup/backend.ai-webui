@@ -136,18 +136,26 @@ describe('BAILink', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
-    it('should block click interaction when link is disabled', async () => {
+    it('should mark a disabled link as non-interactive', () => {
       const onClick = vi.fn();
-      const user = userEvent.setup();
       render(
         <BAILink type="disabled" onClick={onClick}>
           Disabled Link
         </BAILink>,
       );
 
-      const link = screen.getByText('Disabled Link');
-      // userEvent respects pointer-events: none and blocks the click
-      await expect(user.click(link)).rejects.toThrow(/pointer-events/);
+      // Astryx `Link` renders its children inside a `Text` span, so the text
+      // node is one level below the element that owns the class (phase 3,
+      // ticket A). `closest` re-anchors the query (P7).
+      const link = screen.getByText('Disabled Link').closest('a, button');
+      // This used to click the link and assert that userEvent refused because
+      // of `pointer-events: none`. That assertion only worked while the rule
+      // was injected at runtime by antd-style's emotion cache: to-astryx
+      // ticket 33 moved it into BAILink.css, and Vite stubs `.css` imports
+      // under vitest, so jsdom never sees the declaration. What the component
+      // actually owns is the class — assert that, and let BAILink.css own the
+      // pointer-events rule.
+      expect(link).toHaveClass('bai-link-disabled');
       expect(onClick).not.toHaveBeenCalled();
     });
   });
@@ -246,9 +254,13 @@ describe('BAILink', () => {
     it('should have disabled state when type is disabled', () => {
       render(<BAILink type="disabled">Disabled Link</BAILink>);
 
-      const link = screen.getByText('Disabled Link');
-      // Ant Design adds ant-typography-disabled class for disabled Typography.Link
-      expect(link).toHaveClass('ant-typography-disabled');
+      const link = screen.getByText('Disabled Link').closest('a, button');
+      // Astryx `Link isDisabled` renders an href-less <a> that is out of the
+      // tab order and announces `aria-disabled` (its own docs); that pair is
+      // the contract now, not antd's `ant-typography-disabled` class.
+      expect(link).toHaveAttribute('aria-disabled', 'true');
+      expect(link).toHaveAttribute('tabindex', '-1');
+      expect(link).toHaveClass('bai-link-disabled');
     });
   });
 });

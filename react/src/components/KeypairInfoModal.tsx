@@ -4,13 +4,25 @@
  */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
-import { Descriptions, type ModalProps, Tag, Typography, theme } from 'antd';
-import { BAIFlex, BAIModal } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIModal,
+  type BAIModalProps,
+  PRIMARY_TAG_VARIANT,
+  badgeVariantForTagColor,
+  BAIText,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface KeypairInfoModalProps extends ModalProps {
+interface KeypairInfoModalProps extends BAIModalProps {
   keypairInfoModalFrgmt: KeypairInfoModalFragment$key | null;
   onRequestClose: () => void;
 }
@@ -20,8 +32,6 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
-  const { token } = theme.useToken();
-
   const keypair = useFragment(
     graphql`
       fragment KeypairInfoModalFragment on KeyPair {
@@ -61,77 +71,83 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   return (
     <BAIModal
       title={
-        <BAIFlex gap={'xs'}>
-          <Typography.Text style={{ fontSize: token.fontSizeHeading5 }}>
-            {t('credential.KeypairDetail')}
-          </Typography.Text>
+        <HStack gap={1} align="center">
+          {/* PILOT-DECISION: antd used `Typography.Text
+              style={{fontSize: token.fontSizeHeading5}}` to bump the title
+              past BAIModal's default title size. Astryx `Text` takes no
+              inline `style`/fontSize override (P5) — dropped, BAIModal's own
+              title styling is accepted as-is (defaults-first). */}
+          <Text>{t('credential.KeypairDetail')}</Text>
           {user?.main_access_key === keypair?.access_key && (
-            <Tag color={token.colorPrimary}>
-              {t('credential.MainAccessKey')}
-            </Tag>
+            <Badge
+              variant={PRIMARY_TAG_VARIANT}
+              label={t('credential.MainAccessKey')}
+            />
           )}
-        </BAIFlex>
+        </HStack>
       }
       onCancel={() => onRequestClose()}
       footer={null}
       {...modalProps}
     >
-      <Descriptions
-        title={t('credential.Information')}
-        size="small"
-        column={1}
-        labelStyle={{ width: '40%' }}
-      >
-        <Descriptions.Item label={t('credential.UserID')}>
-          {keypair?.user_id}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.AccessKey')}>
-          {keypair?.access_key}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.SecretKey')}>
-          <Typography.Text copyable={{ text: keypair?.secret_key ?? '' }}>
-            {keypair?.secret_key ? '********' : ''}
-          </Typography.Text>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.Permission')}>
-          {keypair?.is_admin ? (
-            <BAIFlex gap="xs">
-              <Tag color={token.colorPrimary}>admin</Tag>
-              <Tag color="green">user</Tag>
-            </BAIFlex>
-          ) : (
-            <Tag color="green">user</Tag>
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.CreatedAt')}>
-          {dayjs(keypair?.created_at).format('lll')}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.LastUsed')}>
-          {keypair?.last_used ? dayjs(keypair?.last_used).format('lll') : '-'}
-        </Descriptions.Item>
-      </Descriptions>
-      <br />
-      <Descriptions
-        title={t('credential.Allocation')}
-        size="small"
-        column={1}
-        labelStyle={{ width: '40%' }}
-      >
-        <Descriptions.Item label={t('credential.ResourcePolicy')}>
-          {keypair?.resource_policy}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.NumberOfQueries')}>
-          {keypair?.num_queries}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.ConcurrentSessions')}>
-          {keypair?.concurrency_used}
-        </Descriptions.Item>
-        <Descriptions.Item
-          label={`${t('credential.RateLimit')} ${t('credential.For900Seconds')}`}
+      {/* PILOT-DECISION: `<br />` between the two Descriptions blocks →
+          VStack gap (MetadataList has no built-in inter-list spacing). */}
+      <VStack align="stretch" gap={4}>
+        <MetadataList
+          title={t('credential.Information')}
+          label={{ position: 'start', width: '40%' }}
         >
-          {keypair?.rate_limit}
-        </Descriptions.Item>
-      </Descriptions>
+          <MetadataListItem label={t('credential.UserID')}>
+            {keypair?.user_id}
+          </MetadataListItem>
+          <MetadataListItem label={t('credential.AccessKey')}>
+            {keypair?.access_key}
+          </MetadataListItem>
+          <MetadataListItem label={t('credential.SecretKey')}>
+            <BAIText copyable={{ text: keypair?.secret_key ?? '' }}>
+              {keypair?.secret_key ? '********' : ''}
+            </BAIText>
+          </MetadataListItem>
+          <MetadataListItem label={t('credential.Permission')}>
+            {keypair?.is_admin ? (
+              <HStack gap={1}>
+                <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
+                <Badge
+                  variant={badgeVariantForTagColor('green')}
+                  label="user"
+                />
+              </HStack>
+            ) : (
+              <Badge variant={badgeVariantForTagColor('green')} label="user" />
+            )}
+          </MetadataListItem>
+          <MetadataListItem label={t('credential.CreatedAt')}>
+            {dayjs(keypair?.created_at).format('lll')}
+          </MetadataListItem>
+          <MetadataListItem label={t('credential.LastUsed')}>
+            {keypair?.last_used ? dayjs(keypair?.last_used).format('lll') : '-'}
+          </MetadataListItem>
+        </MetadataList>
+        <MetadataList
+          title={t('credential.Allocation')}
+          label={{ position: 'start', width: '40%' }}
+        >
+          <MetadataListItem label={t('credential.ResourcePolicy')}>
+            {keypair?.resource_policy}
+          </MetadataListItem>
+          <MetadataListItem label={t('credential.NumberOfQueries')}>
+            {keypair?.num_queries}
+          </MetadataListItem>
+          <MetadataListItem label={t('credential.ConcurrentSessions')}>
+            {keypair?.concurrency_used}
+          </MetadataListItem>
+          <MetadataListItem
+            label={`${t('credential.RateLimit')} ${t('credential.For900Seconds')}`}
+          >
+            {keypair?.rate_limit}
+          </MetadataListItem>
+        </MetadataList>
+      </VStack>
     </BAIModal>
   );
 };

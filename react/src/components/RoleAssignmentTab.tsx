@@ -8,12 +8,14 @@ import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
 } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
-import { DeleteFilled } from '@ant-design/icons';
-import { Alert, App, Tooltip, theme } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -22,7 +24,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
   toLocalId,
   useBAILogger,
@@ -30,7 +32,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { Trash2, PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -224,12 +226,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   return (
     <BAIFlex align="stretch" direction="column" gap="sm">
+      {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
       {isReadOnly && (
-        <Alert
-          type="warning"
-          showIcon
-          title={t('rbac.SystemRoleNoAssignments')}
-        />
+        <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
       )}
       <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
         <BAIGraphQLPropertyFilter<RoleAssignmentFilter>
@@ -255,9 +254,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
-              <Tooltip title={t('rbac.RevokeUser')}>
+              <Tooltip content={t('rbac.RevokeUser')}>
                 <BAIButton
-                  icon={<DeleteFilled style={{ color: token.colorError }} />}
+                  icon={
+                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                  }
                   onClick={() => {
                     const userIds = assignments
                       .filter((a) => selectedRowKeys.includes(a?.id ?? ''))
@@ -285,7 +286,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           )}
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
         dataSource={assignments}
         loading={isPendingRefetch}
@@ -334,7 +335,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                         {
                           key: 'delete',
                           title: t('rbac.RevokeUser'),
-                          icon: <DeleteFilled />,
+                          icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => handleBulkRevoke([record?.userId]),
                         },

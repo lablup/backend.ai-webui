@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FileBrowserButtonV2Fragment$key } from '../__generated__/FileBrowserButtonV2Fragment.graphql';
+import { App } from '../app-shim';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDefaultFileBrowserImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useProjectPath } from '../hooks/useRouteScope';
@@ -16,9 +16,12 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Image, Space, Tooltip } from 'antd';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
@@ -27,6 +30,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Ellipsis } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -34,12 +38,76 @@ import { graphql, useFragment } from 'react-relay';
 interface FileBrowserButtonV2Props extends BAIButtonProps {
   showTitle?: boolean;
   vfolderNodeFrgmt: FileBrowserButtonV2Fragment$key;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3412): the project the
+   * FileBrowser session is created in. With `null` the button renders
+   * disabled and shows the caller-provided `noProjectTooltip` — this
+   * component never knows WHY the project is absent.
+   */
+  project: ProjectContextOrNull;
+  noProjectTooltip?: string;
 }
+
 const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
   showTitle = true,
   vfolderNodeFrgmt,
+  project,
+  noProjectTooltip,
   ...buttonProps
 }) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  if (project === null) {
+    return (
+      <Tooltip content={noProjectTooltip} isEnabled={!!noProjectTooltip}>
+        <ButtonGroup label={t('data.explorer.ExecuteFileBrowser')}>
+          <BAIButton
+            icon={
+              <img
+                width="18px"
+                src="/resources/icons/filebrowser.svg"
+                alt="File Browser"
+                style={{
+                  filter: 'grayscale(100%)',
+                }}
+              />
+            }
+            {...buttonProps}
+            // After the spread: a caller must not re-enable this tier.
+            disabled
+          >
+            {showTitle && t('data.explorer.ExecuteFileBrowser')}
+          </BAIButton>
+          <IconButton
+            label={t('import.StartWithOptions')}
+            icon={<Ellipsis size="1em" />}
+            isDisabled
+          />
+        </ButtonGroup>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <FileBrowserButtonWithProject
+      showTitle={showTitle}
+      vfolderNodeFrgmt={vfolderNodeFrgmt}
+      project={project}
+      {...buttonProps}
+    />
+  );
+};
+
+interface FileBrowserButtonWithProjectProps extends BAIButtonProps {
+  showTitle: boolean;
+  vfolderNodeFrgmt: FileBrowserButtonV2Fragment$key;
+  project: ProjectContext;
+}
+
+const FileBrowserButtonWithProject: React.FC<
+  FileBrowserButtonWithProjectProps
+> = ({ showTitle, vfolderNodeFrgmt, project, ...buttonProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
@@ -50,15 +118,11 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project ID is required for FileBrowserButtonV2');
-  }
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
-      currentProject.id,
+      project.id,
       currentUserAccessKey,
     );
 
@@ -107,16 +171,25 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
     reuseIfExists: true,
   });
 
+  const tooltipTitle = getTooltipTitle();
+
   return (
-    <Tooltip title={getTooltipTitle()}>
-      <Space.Compact>
+    // antd `Tooltip title` → Astryx `Tooltip content` (MAPPING §4). The antd
+    // original rendered an empty tooltip when the title resolved to '';
+    // `isEnabled` expresses that intent instead.
+    <Tooltip content={tooltipTitle} isEnabled={!!tooltipTitle}>
+      {/* antd `Space.Compact` → `ButtonGroup` (MAPPING §4). */}
+      <ButtonGroup label={t('data.explorer.ExecuteFileBrowser')}>
         <BAIButton
           icon={
-            <Image
+            // antd `Image preview={false}` was a plain 18px raster with the
+            // lightbox switched off; Astryx's Image family (Thumbnail /
+            // Lightbox) is for previewable media, so a bare <img> is the
+            // faithful mapping here (PILOT-DECISION).
+            <img
               width="18px"
               src="/resources/icons/filebrowser.svg"
               alt="File Browser"
-              preview={false}
               style={
                 filebrowserImage
                   ? undefined
@@ -131,7 +204,11 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
             if (!filebrowserImage) {
               return;
             }
-            const fileBrowserFormValue = createFilebrowserLauncherValue();
+            const fileBrowserFormValue = {
+              ...createFilebrowserLauncherValue(),
+              // Pin the session to exactly the passed project (FR-3412).
+              projectName: project.name,
+            };
             await startSessionWithDefault(fileBrowserFormValue)
               .then((results) => {
                 if (results?.fulfilled && results.fulfilled.length > 0) {
@@ -164,31 +241,44 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
         >
           {showTitle && t('data.explorer.ExecuteFileBrowser')}
         </BAIButton>
-        <Dropdown
-          disabled={!filebrowserImage || !hasAccessPermission}
-          trigger={['click']}
-          menu={{
-            items: [
-              {
-                key: 'custom',
-                label: t('import.StartWithOptions'),
-                onClick: () => {
-                  const launcherValue = createFilebrowserLauncherValue();
-                  const params = new URLSearchParams();
-                  params.set('formValues', JSON.stringify(launcherValue));
-                  params.set('step', '4');
-                  webuiNavigate({
-                    pathname: buildProjectPath('session/start'),
-                    search: params.toString(),
-                  });
-                },
-              },
-            ],
+        {/* antd `Dropdown menu={{items}}` with a click trigger →
+            `DropdownMenu items` (MAPPING §3.7). The trigger moves from
+            `children` to the `button` slot, which is where the disabled state
+            and the accessible name now live. */}
+        <DropdownMenu
+          button={{
+            label: t('import.StartWithOptions'),
+            icon: <Ellipsis size="1em" />,
+            isIconOnly: true,
+            isDisabled: !filebrowserImage || !hasAccessPermission,
           }}
-        >
-          <BAIButton icon={<EllipsisOutlined />} />
-        </Dropdown>
-      </Space.Compact>
+          hasChevron={false}
+          items={[
+            {
+              label: t('import.StartWithOptions'),
+              onClick: () => {
+                const launcherValue = {
+                  ...createFilebrowserLauncherValue(),
+                  projectName: project.name,
+                };
+                const params = new URLSearchParams();
+                params.set('formValues', JSON.stringify(launcherValue));
+                params.set('step', '4');
+                webuiNavigate({
+                  // The launcher reads the project from the URL, not from
+                  // these form values. `scope` is required too: the launcher
+                  // route exists only in the project subtree.
+                  pathname: buildProjectPath('session/start', {
+                    scope: 'project',
+                    projectName: project.name,
+                  }),
+                  search: params.toString(),
+                });
+              },
+            },
+          ]}
+        />
+      </ButtonGroup>
     </Tooltip>
   );
 };

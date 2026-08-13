@@ -2,13 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MinusCircleOutlined } from '@ant-design/icons';
-import { AutoComplete, Form, FormItemProps, Input, InputRef } from 'antd';
-import { FormListProps } from 'antd/lib/form';
+import { Form, FormItemProps, FormListProps } from '../form-engine';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
-import React, { useRef } from 'react';
+import { CircleMinus, PlusIcon } from 'lucide-react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface EnvVarConfig {
@@ -36,7 +35,6 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
 }) => {
   'use memo';
   const { rules: externalRules, ...restFormItemProps } = formItemProps || {};
-  const inputRef = useRef<InputRef>(null);
   const { t } = useTranslation();
   const form = Form.useFormInstance();
 
@@ -64,7 +62,16 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
     );
   };
 
-  const getAutoCompleteOptions = () => {
+  /**
+   * PILOT-DECISION: this used to feed an antd `AutoComplete` dropdown of the
+   * still-unused optional variable names. MAPPING §3.15 gives free-text
+   * `AutoComplete` no Astryx destination (`Typeahead` commits `T | null` and
+   * cannot keep a typed string), and free text is mandatory here — the whole
+   * point of the field is arbitrary env var names. The names now surface as
+   * the field's PLACEHOLDER instead of a popup, which keeps them discoverable
+   * without rebuilding `TextInput` + `Popover`.
+   */
+  const getSuggestedVariableNames = () => {
     const currentValues = form.getFieldValue(props.name) || [];
     const usedVariables = _.map(
       _.filter(
@@ -85,10 +92,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
           !!env.variable &&
           !_.includes(usedVariables, env.variable),
       ),
-      (env) => ({
-        value: env.variable,
-        label: env.variable,
-      }),
+      (env) => env.variable,
     );
   };
 
@@ -131,7 +135,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
       {(fields, { add, remove }, { errors }) => {
         return (
           <BAIFlex direction="column" gap="xs" align="stretch">
-            {fields.map(({ key, name, ...restField }, index) => (
+            {fields.map(({ key, name, ...restField }) => (
               <BAIFlex key={key} direction="row" align="baseline" gap="xs">
                 <Form.Item
                   {...restField}
@@ -176,38 +180,22 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   ]}
                   {...restFormItemProps}
                 >
-                  {optionalEnvVars && getAutoCompleteOptions().length > 0 ? (
-                    <AutoComplete
-                      placeholder={t('session.launcher.EnvironmentVariable')}
-                      options={getAutoCompleteOptions()}
-                      onChange={() => {
-                        const fieldNames = fields.map((_field, index) => [
-                          props.name,
-                          index,
-                          'variable',
-                        ]);
-                        form.validateFields(fieldNames);
-                      }}
-                      filterOption={(inputValue, option) =>
-                        option?.value
-                          ?.toLowerCase()
-                          .indexOf(inputValue.toLowerCase()) !== -1
-                      }
-                    />
-                  ) : (
-                    <Input
-                      ref={index === fields.length - 1 ? inputRef : null}
-                      placeholder={t('session.launcher.EnvironmentVariable')}
-                      onChange={() => {
-                        const fieldNames = fields.map((_field, index) => [
-                          props.name,
-                          index,
-                          'variable',
-                        ]);
-                        form.validateFields(fieldNames);
-                      }}
-                    />
-                  )}
+                  <AstryxFormTextInput
+                    label={t('session.launcher.EnvironmentVariable')}
+                    placeholder={
+                      optionalEnvVars && getSuggestedVariableNames().length > 0
+                        ? getSuggestedVariableNames().join(', ')
+                        : t('session.launcher.EnvironmentVariable')
+                    }
+                    onChange={() => {
+                      const fieldNames = fields.map((_field, fieldIndex) => [
+                        props.name,
+                        fieldIndex,
+                        'variable',
+                      ]);
+                      form.validateFields(fieldNames);
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item
                   {...restField}
@@ -224,25 +212,27 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                   validateTrigger={['onChange', 'onBlur']}
                   dependencies={[[props.name, name, 'variable']]}
                 >
-                  <Input
+                  <AstryxFormTextInput
+                    label={t('session.launcher.EnvironmentVariableValue')}
                     placeholder={getPlaceholderForVariable(
                       form.getFieldValue([props.name, name, 'variable']),
                     )}
                   />
                 </Form.Item>
-                <MinusCircleOutlined onClick={() => remove(name)} />
+                <CircleMinus size="1em" onClick={() => remove(name)} />
               </BAIFlex>
             ))}
             <Form.Item noStyle>
               <BAIButton
                 type="dashed"
+                // PILOT-DECISION: the antd `InputRef.focus()` that jumped the
+                // caret into the row just added is DROPPED. Astryx uses a
+                // `handleRef` convention rather than `ref` + `InputRef`
+                // (MAPPING §6.2) and `AstryxFormTextInput` exposes no ref
+                // slot; the same call was already made for the select stack
+                // (P26-8).
                 onClick={() => {
                   add();
-                  setTimeout(() => {
-                    if (inputRef.current) {
-                      inputRef.current.focus();
-                    }
-                  }, 0);
                 }}
                 icon={<PlusIcon />}
                 block

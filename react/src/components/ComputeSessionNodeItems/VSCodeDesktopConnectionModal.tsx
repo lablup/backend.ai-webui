@@ -5,16 +5,16 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import { ReloadOutlined } from '@ant-design/icons';
-import { Descriptions, Skeleton, Typography } from 'antd';
+import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
 import {
-  BAIAlert,
-  BAIButton,
-  BAIFlex,
-  BAIModal,
-  BAIModalProps,
-  BAIText,
-} from 'backend.ai-ui';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+import { BAIFlex, BAIModal, BAIModalProps, BAIText } from 'backend.ai-ui';
+import { RotateCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const PASSWORD_FILE_PATH = '/home/work/.password';
@@ -70,69 +70,67 @@ const VSCodeDesktopConnectionModal: React.FC<
       {...modalProps}
     >
       <BAIFlex direction="column" gap="md" align="stretch">
-        <Typography.Paragraph>
+        <Text as="p" display="block">
           {t('session.VSCodeRemoteDescription')}
-        </Typography.Paragraph>
+        </Text>
 
         <BAIFlex direction="column" gap="xs" align="stretch">
-          <Typography.Text strong>
-            {t('session.ConnectionInformation')}
-          </Typography.Text>
+          <Text weight="semibold">{t('session.ConnectionInformation')}</Text>
           {status === 'success' ? (
-            <Descriptions
-              column={1}
-              bordered
-              size="small"
-              styles={{ label: { maxWidth: 210 } }}
+            <MetadataList
+              columns="single"
+              label={{ position: 'start', width: 210 }}
             >
-              <Descriptions.Item label={t('session.VSCodeRemotePasswordTitle')}>
-                <BAIText copyable monospace>
-                  {password}
+              <MetadataListItem label={t('session.VSCodeRemotePasswordTitle')}>
+                <BAIText code copyable>
+                  {password ?? ''}
                 </BAIText>
-              </Descriptions.Item>
-            </Descriptions>
+              </MetadataListItem>
+            </MetadataList>
           ) : status === 'pending' ? (
-            <Skeleton.Input active />
+            <BAISkeletonAstryx variant="input" />
           ) : (
-            <BAIAlert
-              type="warning"
-              showIcon
+            <Banner
+              status="warning"
               title={t('session.VSCodeRemotePasswordFetchError')}
               description={t(
                 'session.VSCodeRemotePasswordFetchErrorDescription',
               )}
-              action={
-                <BAIButton
-                  size="small"
-                  icon={<ReloadOutlined />}
-                  action={async () => {
+              endContent={
+                <Button
+                  size="sm"
+                  icon={<RotateCw size="1em" />}
+                  label={t('button.Retry')}
+                  clickAction={async () => {
                     await refetch();
                   }}
-                >
-                  {t('button.Retry')}
-                </BAIButton>
+                />
               }
             />
           )}
         </BAIFlex>
 
         <BAIFlex direction="column" gap="xs" align="stretch">
-          <Typography.Text>
-            {t('session.VSCodeRemotePasswordFallbackInstructions')}
-          </Typography.Text>
+          <Text>{t('session.VSCodeRemotePasswordFallbackInstructions')}</Text>
           <SourceCodeView language="shell">
             {`cat ${PASSWORD_FILE_PATH}`}
           </SourceCodeView>
         </BAIFlex>
 
-        <Typography.Text>
-          {t('session.VSCodeRemoteNoticeSSHConfig')}
-        </Typography.Text>
+        <Text>{t('session.VSCodeRemoteNoticeSSHConfig')}</Text>
         <SourceCodeView language="shell">{sshConfig}</SourceCodeView>
 
-        <BAIButton href={vscodeUri} target="_blank" type="primary" size="large">
-          {t('session.appLauncher.OpenVSCodeRemote')}
-        </BAIButton>
+        {/* PILOT-DECISION: antd Button `href`/`target` (anchor-button) has no
+            Astryx Button equivalent; the vscode:// deep link opens via
+            window.open instead. */}
+        <Button
+          variant="primary"
+          size="lg"
+          label={t('session.appLauncher.OpenVSCodeRemote')}
+          onClick={() => {
+            globalThis.open(vscodeUri, '_blank');
+          }}
+        />
       </BAIFlex>
     </BAIModal>
   );

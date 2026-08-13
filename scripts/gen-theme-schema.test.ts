@@ -91,7 +91,15 @@ describe('gen-theme-schema', () => {
     );
     const hasAntd = fs.existsSync(antdContextPath);
 
-    // Skip integration tests if antd is not installed (e.g., in CI without node_modules)
+    // Skip the integration block when antd's .d.ts files are not on disk.
+    //
+    // This started as a CI-without-node_modules guard. Since the to-astryx
+    // final switch it is the NORMAL state: antd is not a dependency any more,
+    // so this block skips everywhere, and the committed
+    // `resources/antdThemeConfig.schema.json` is a frozen artifact. The unit
+    // tests above (parseDefault / sortObjectKeys) still run and still cover
+    // the script's own logic. See the header of `gen-theme-schema.cjs` for how
+    // to regenerate deliberately.
     const describeIfAntd = hasAntd ? describe : describe.skip;
 
     describeIfAntd('with antd installed', () => {

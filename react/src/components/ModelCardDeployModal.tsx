@@ -4,14 +4,17 @@
  */
 import type { ModelCardDeployModalFragment$key } from '../__generated__/ModelCardDeployModalFragment.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Form, Space, theme, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAvailablePresetSelect,
+  BAIAvailablePresetSelectAstryx,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -21,6 +24,7 @@ import {
   useErrorMessageResolver,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
+import { Info } from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -70,7 +74,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
   // TODO(needs-backend): `availablePresets` here is the server-filtered list
-  // scoped to this specific model card. `BAIAvailablePresetSelect` below
+  // scoped to this specific model card. `BAIAvailablePresetSelectAstryx` below
   // fetches from the project-wide `deploymentRevisionPresets` because
   // `DeploymentRevisionPresetFilter` has no model-card-scoped filter yet.
   // Once that filter exists, plumb it through the select so the dropdown
@@ -272,9 +276,8 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
       onCancel={onClose}
     >
       {noAvailablePresets && (
-        <Alert
-          type="info"
-          showIcon
+        <Banner
+          status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={
             <Trans
@@ -301,26 +304,31 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAIAvailablePresetSelect
+            <BAIAvailablePresetSelectAstryx
+              label={t('modelStore.Preset')}
+              isLabelHidden
               value={effectivePresetId}
               onChange={(value) =>
                 setUserSelectedPresetId(value as string | undefined)
               }
-              style={{ flex: 1 }}
-              disabled={noAvailablePresets}
+              isDisabled={noAvailablePresets}
             />
-            <Space.Compact>
-              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
-                <Button
-                  icon={<InfoCircleOutlined />}
-                  disabled={!effectivePresetId || noAvailablePresets}
-                  onClick={() => {
-                    if (!effectivePresetId) return;
-                    setPresetDetailId(effectivePresetId);
-                  }}
-                />
-              </Tooltip>
-            </Space.Compact>
+            {/* `Space.Compact` wrapped a single child, so it welded nothing
+                together and is dropped rather than translated to an
+                `InputGroup`. The antd `Tooltip` + icon-only `Button` pair is
+                one Astryx `IconButton`, which owns the tooltip itself (and
+                keeps the button focusable while disabled, via
+                `aria-disabled`). */}
+            <IconButton
+              icon={<Info size="1em" />}
+              label={t('modelService.DeploymentPresetDetail')}
+              tooltip={t('modelService.DeploymentPresetDetail')}
+              isDisabled={!effectivePresetId || noAvailablePresets}
+              onClick={() => {
+                if (!effectivePresetId) return;
+                setPresetDetailId(effectivePresetId);
+              }}
+            />
           </BAIFlex>
         </Form.Item>
         <Form.Item

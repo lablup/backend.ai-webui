@@ -2,31 +2,27 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { ReloadOutlined } from '@ant-design/icons';
-import {
-  App,
-  Button,
-  Form,
-  FormInstance,
-  FormProps,
-  Input,
-  Space,
-  Tooltip,
-} from 'antd';
+import HuggingFaceModelPreview from './HuggingFaceModelPreview';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIButton,
   BAIFlex,
   BAISelect,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
+  BAIVFolderSelectAstryx,
+  BAIVFolderSelectAstryxRef,
   generateRandomString,
   safeDecodeUuid,
   toGlobalId,
@@ -34,7 +30,12 @@ import {
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import { CloudDownload, FolderOpenIcon, PlusIcon } from 'lucide-react';
+import {
+  RotateCw,
+  CloudDownload,
+  FolderOpenIcon,
+  PlusIcon,
+} from 'lucide-react';
 import { startTransition, Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -150,9 +151,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
     useStartSession();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
 
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
-  // id → name for selected folders, resolved by BAIVFolderSelect (and seeded
+  // id → name for selected folders, resolved by BAIVFolderSelectAstryx (and seeded
   // directly when a folder is created through FolderCreateModalV2). The name
   // is needed to build the download path under `/home/work/<folder>/`.
   const [folderNameMap, setFolderNameMap] = useState<Record<string, string>>(
@@ -257,14 +258,41 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             },
           ]}
         >
-          <Input placeholder="https://huggingface.co/openai/gpt-oss-20b" />
+          <AstryxFormTextInput
+            label={t('import.HuggingFaceModelUrlOrId')}
+            placeholder="https://huggingface.co/openai/gpt-oss-20b"
+          />
+        </Form.Item>
+        {/* The preview must stay mounted even while the input is
+            unparseable: `useDebounce` seeds its state with the current
+            value, so remounting on every unparseable→parseable transition
+            (`openai/` → `openai/g`) would fire an undebounced request at the
+            rate-limited API. `hidden` collapses the row to `display: none`,
+            so an empty input leaves no gap above the next field without
+            unmounting anything. */}
+        <Form.Item noStyle dependencies={['model']}>
+          {({
+            getFieldValue,
+          }: FormInstance<ImportHuggingFaceModelFormValues>) => {
+            const modelId = parseHuggingFaceModel(
+              getFieldValue('model') ?? '',
+            )?.modelId;
+            return (
+              <Form.Item hidden={!modelId}>
+                <HuggingFaceModelPreview modelId={modelId} />
+              </Form.Item>
+            );
+          }}
         </Form.Item>
         <Form.Item
           name="revision"
           label={t('import.HuggingFaceRevision')}
           rules={[{ type: 'string', max: 200 }]}
         >
-          <Input placeholder="main" />
+          <AstryxFormTextInput
+            label={t('import.HuggingFaceRevision')}
+            placeholder="main"
+          />
         </Form.Item>
         <Form.Item
           name="token"
@@ -272,7 +300,14 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           rules={[{ type: 'string', max: 512 }]}
           extra={t('import.HuggingFaceTokenAdminVisibleWarning')}
         >
-          <Input.Password autoComplete="off" />
+          {/* antd `Input.Password` → `TextInput type="password"`
+              (MAPPING §3.6). PILOT-DECISION: antd's built-in reveal toggle has
+              no Astryx counterpart and is dropped; `autoComplete="off"` has no
+              adapter prop, and the field is not a login credential. */}
+          <AstryxFormTextInput
+            label={t('import.HuggingFaceToken')}
+            type="password"
+          />
         </Form.Item>
         <Form.Item
           label={t('deployment.ModelFolder')}
@@ -293,8 +328,10 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   },
                 ]}
               >
-                <BAIVFolderSelect
+                <BAIVFolderSelectAstryx
                   ref={vfolderSelectRef}
+                  label={t('deployment.ModelFolder')}
+                  isLabelHidden
                   excludeDeleted
                   // The session writes into the folder, so a read-only mount
                   // fails. `mount_rw` covers read-only *shares* and hosts, but
@@ -304,7 +341,6 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   filter='usage_mode == "model" & permission != "ro"'
                   requiredPermission="mount_rw"
                   currentProjectId={currentProject.id ?? undefined}
-                  style={{ flex: 1 }}
                   onResolvedNamesChange={(nameMap) => {
                     setFolderNameMap((prev) => ({ ...prev, ...nameMap }));
                   }}
@@ -317,35 +353,42 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
               }: FormInstance<ImportHuggingFaceModelFormValues>) => {
                 const vfolderId = getFieldValue('vfolderId');
                 return (
-                  <Space.Compact>
-                    <Tooltip title={t('modelService.OpenFolder')}>
-                      <Button
-                        icon={<FolderOpenIcon />}
-                        disabled={!vfolderId}
-                        onClick={() => {
-                          if (vfolderId) {
-                            openFolderExplorer(toLocalId(vfolderId));
-                          }
-                        }}
-                      />
-                    </Tooltip>
-                    <Tooltip title={t('data.CreateANewStorageFolder')}>
-                      <Button
-                        icon={<PlusIcon />}
-                        onClick={() => setIsFolderCreateModalOpen(true)}
-                      />
-                    </Tooltip>
-                    <Tooltip title={t('button.Refresh')}>
-                      <Button
-                        icon={<ReloadOutlined />}
-                        onClick={() => {
-                          startTransition(() => {
-                            vfolderSelectRef.current?.refetch();
-                          });
-                        }}
-                      />
-                    </Tooltip>
-                  </Space.Compact>
+                  // antd `Space.Compact` of icon-only buttons → `ButtonGroup` +
+                  // `IconButton` (MAPPING §3.3). Each Tooltip-wrapped button
+                  // becomes an `IconButton` with a required accessible `label`
+                  // plus its own `tooltip` — the wrapping Tooltip is dropped
+                  // because Astryx forbids wrapping a disabled trigger (P18:
+                  // `IconButton` has no `disabledMessage`, so the disabled
+                  // "Open folder" action carries `tooltip` instead).
+                  <ButtonGroup label={t('deployment.ModelFolder')}>
+                    <IconButton
+                      icon={<FolderOpenIcon size="1em" />}
+                      label={t('modelService.OpenFolder')}
+                      tooltip={t('modelService.OpenFolder')}
+                      isDisabled={!vfolderId}
+                      onClick={() => {
+                        if (vfolderId) {
+                          openFolderExplorer(toLocalId(vfolderId));
+                        }
+                      }}
+                    />
+                    <IconButton
+                      icon={<PlusIcon size="1em" />}
+                      label={t('data.CreateANewStorageFolder')}
+                      tooltip={t('data.CreateANewStorageFolder')}
+                      onClick={() => setIsFolderCreateModalOpen(true)}
+                    />
+                    <IconButton
+                      icon={<RotateCw size="1em" />}
+                      label={t('button.Refresh')}
+                      tooltip={t('button.Refresh')}
+                      onClick={() => {
+                        startTransition(() => {
+                          vfolderSelectRef.current?.refetch();
+                        });
+                      }}
+                    />
+                  </ButtonGroup>
                 );
               }}
             </Form.Item>
@@ -372,6 +415,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
       </Form>
       <FolderCreateModalV2
         open={isFolderCreateModalOpen}
+        project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsFolderCreateModalOpen(false);
@@ -381,7 +425,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           }
           if (result?.id) {
             // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
+            // but BAIVFolderSelectAstryx's value query reads from `vfolder_nodes`
             // (`VirtualFolderNode`, Graphene). Both encode the same UUID but
             // with different `__typename:` prefixes, so re-encode to the
             // VirtualFolderNode global ID form before selecting it.

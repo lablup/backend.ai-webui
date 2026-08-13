@@ -139,19 +139,22 @@ is honored), which is exactly the prod delivery channel — making this a faithf
 `'unsafe-inline'` is unavoidable without patching libraries. The app **does** correctly
 nonce every style path it can control (these prove `'unsafe-inline'` is not laziness):
 
-- `react/src/components/DefaultProviders.tsx:298` — `ConfigProvider csp={{ nonce:
+- `react/src/components/DefaultProviders.tsx` — `ConfigProvider csp={{ nonce:
   globalThis.baiNonce }}` (antd cssinjs).
-- `react/src/components/DefaultProviders.tsx:366` — `<CacheProvider value=emotionGlobalCache>`
-  where `emotionGlobalCache = createCache({ key: 'css', nonce: globalThis.baiNonce })`
-  (lines 83-86) so `createGlobalStyle()` (which uses `@emotion/react`'s `Global`) inherits
-  the nonce.
-- `react/src/components/DefaultProviders.tsx:367` — `<StyleProvider nonce={globalThis.baiNonce}>`
-  for antd-style `createStyles`/`css`.
 - `react/src/index.tsx` — `ConfigProvider.config` `holderRender` wraps the detached
   static-method (`message`/`notification`/`Modal`) holder in `ConfigProvider csp={{ nonce }}`.
-- `packages/backend.ai-ui/src/components/BAIModal.tsx:319-324` — the scroll-unlock
+- `packages/backend.ai-ui/src/components/BAIModal.tsx` — the scroll-unlock
   `createElement('style')` sets `style.nonce = globalThis.baiNonce`.
 - `index.html:30` splash `<style nonce="{{nonce}}">`.
+
+to-astryx ticket 33 removed two entries that used to sit in this list: the
+`@emotion/react` `<CacheProvider>` (nonce for `createGlobalStyle`) and antd-style's
+`<StyleProvider nonce>` (nonce for `createStyles`). With the last `antd-style` call site
+gone, neither engine injects `<style>` on our behalf any more — the replacement rules ship
+as bundled same-origin stylesheets, which plain `style-src 'self'` already covers, and the
+`@emotion/*` dependencies were dropped from `react/package.json`. Values that must vary at
+runtime are written as CSS custom properties through the CSSOM
+(`element.style.setProperty`), which CSP does not intercept.
 
 Despite that, the following **un-nonced** injectors remain and FORCE `'unsafe-inline'`:
 
@@ -163,9 +166,10 @@ Despite that, the following **un-nonced** injectors remain and FORCE `'unsafe-in
 2. **antd's `@rc-component/util` `getScrollBarSize.js`** calls `updateCSS(css, randomId)`
    with a string key (not an options object), so `option.csp.nonce` is `undefined` and the
    measurement `<style>` is emitted without a nonce. Triggered by Modal/Drawer scroll-lock.
-3. **The `@emotion/css` singleton cache** (`key: 'css'`, no nonce, no runtime setter) seeds
-   antd-style's default `CacheManager` fallback cache AND backs `react-layout-kit`
-   (`BAIFlex`'s `FlexBasic`), emitting `<style data-emotion="css">` with no nonce.
+3. ~~**The `@emotion/css` singleton cache**~~ — GONE. It seeded antd-style's default
+   `CacheManager` fallback cache and backed `react-layout-kit` (`BAIFlex`'s `FlexBasic`);
+   to-astryx retired both (`react-layout-kit` with the lobehub removal in ticket 30,
+   `antd-style` in ticket 33), so no `<style data-emotion="css">` is emitted any more.
 
 Additionally, since the policy has **no separate `style-src-attr`**, browsers apply
 `style-src` to inline `style=` attributes too. `'unsafe-inline'` is what permits React
@@ -314,13 +318,12 @@ loader-injected scripts), and `script-src` needs no `'unsafe-inline'`.
 |---|---|---|
 | `@melloware/react-logviewer` (via `ContainerLogModal.tsx`) | bundled Rollup `style-inject` → `createElement('style')` at module eval | No `ref.nonce` path |
 | antd `@rc-component/util` `getScrollBarSize.js` | `updateCSS(css, randomId)` — string key, not options, so `option.csp.nonce` undefined | No (string-key call path) |
-| `@emotion/css` singleton (`key: 'css'`) | module-level `createEmotion`, backs antd-style fallback cache + `react-layout-kit`/`BAIFlex` | No runtime setter on the singleton |
 | Inline `style=` attributes (React `style={{}}`, recharts SVG, shiki tokens, react-virtuoso) | set on elements / `dangerouslySetInnerHTML` | N/A — governed by `style-src` since no `style-src-attr` |
 
-Going nonce-strict on styles would require forking the logviewer `styleInject`, patching
-`getScrollBarSize` to thread `option.csp`, and replacing the `@emotion/css` singleton with a
-per-app nonce-aware cache — none expose a runtime hook today. Out of scope for a
-no-library-patch CSP.
+Going nonce-strict on styles would require forking the logviewer `styleInject` and patching
+`getScrollBarSize` to thread `option.csp` — neither exposes a runtime hook today. Out of
+scope for a no-library-patch CSP. (The third blocker, the `@emotion/css` singleton, is gone
+with antd-style; see above.)
 
 ## Testing: build + serve locally
 
@@ -372,9 +375,9 @@ no-library-patch CSP.
   Track as a separate epic. (Note: `src/lib/webcomponents-loader.js` uses
   `trustedTypes.createPolicy`, but it is the legacy Polymer/Electron path and is not imported
   by the React app — it provides no coverage.)
-- **Drop `style-src 'unsafe-inline'`** only after patching/forking the three injectors above
-  to accept a nonce (logviewer `styleInject`, `getScrollBarSize` `option.csp`, a nonce-aware
-  `@emotion/css` cache) AND splitting `style-src-attr` to handle inline `style=` attributes.
+- **Drop `style-src 'unsafe-inline'`** only after patching/forking the two injectors above
+  to accept a nonce (logviewer `styleInject`, `getScrollBarSize` `option.csp`) AND splitting
+  `style-src-attr` to handle inline `style=` attributes.
   No security gain is realized until ALL injectors are nonced.
 - **Add `report-to` (with a `Reporting-Endpoints` header) and `report-uri`**, rolled out
   first as `Content-Security-Policy-Report-Only` for one release cycle. This is how a new
@@ -394,7 +397,7 @@ no-library-patch CSP.
 - `react/src/components/DefaultProviders.tsx:83-86,298,366-367` — `emotionGlobalCache`,
   `ConfigProvider csp`, `CacheProvider`, `StyleProvider nonce`.
 - `react/src/index.tsx` — `ConfigProvider.config` `holderRender` nonce for static holders.
-- `packages/backend.ai-ui/src/components/BAIModal.tsx:319-324` — scroll-unlock `<style>` nonce.
+- `packages/backend.ai-ui/src/components/BAIModal.tsx` — scroll-unlock `<style>` nonce.
 - `react/src/components/ComputeSessionNodeItems/ContainerLogModal.tsx` — the
   `@melloware/react-logviewer` consumer (un-nonced style injector).
 - `react/src/helper/monacoEditor.ts` — Monaco loader (un-nonced injected scripts →

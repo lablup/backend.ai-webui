@@ -1,0 +1,29 @@
+/* Astryx foundation for Storybook (to-astryx ticket 10, extended ticket 32).
+   Mirrors react/src/index.css: BUI components read tokens through the theme
+   shim, whose 'astryx'-verdict entries are probed live from this CSS cascade
+   (theme-neutral scope). Without these imports every probed token resolves
+   to 0/black in the preview iframe. The `@layer` order statement MUST come
+   first so Astryx's prebuilt layered sheets slot deterministically; do NOT
+   add any unlayered global reset here (it would outrank every Astryx layer).
+   KEEP IN SYNC with `src/styles/backend.ai-ui.css` and `react/src/index.css`
+   (identical layer list; two identical statements are idempotent). */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
+/* BUI's own stylesheet (ticket 30's `backend.ai-ui/styles.css` export). The
+   host app gets this for free through `src/index.ts`'s first-statement
+   import; Storybook's decorators import BUI components directly by path
+   (not through the barrel), so it never loaded on its own — the `.bai-icon`
+   baseline (ticket 30 §2) was silently missing from every story. */
+@import '../src/styles/backend.ai-ui.css';
+
+/* QA-FINDINGS Q-37 — `.bai-action-accent`, the shared accent tint on icon-only
+   action affordances. Same reason as the import above: the barrel that pulls
+   it into the app (`src/index.ts`) is not what Storybook loads, so without
+   this line `BAIText copyable`'s copy control renders at
+   `--color-text-primary` in the preview and at `--color-text-accent`
+   everywhere else. Deliberately unlayered — see the file's own header. */
+@import '../src/styles/actionAccent.css';

@@ -15,7 +15,7 @@ import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import dayjs from 'dayjs';
@@ -178,11 +178,10 @@ const BAIRouteSchedulingHistoryNodeTable = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(histories)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableRouteHistorySorterValues)[number]) || null,

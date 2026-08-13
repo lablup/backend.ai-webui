@@ -189,9 +189,12 @@ test.describe('Forgot password email modal', () => {
       // 2. Click Send without entering any email
       await page.getByRole('button', { name: 'Send' }).click();
 
-      // 3. Verify form validation error appears and no API call is attempted
+      // 3. Verify form validation error appears and no API call is attempted.
+      // `LoginFormPanel.tsx`'s `ChangePasswordEmailModal` renders its field
+      // via `BAIFormItem`, whose error line carries
+      // `data-bai-form-item-explain-error` (`BAIFormItem.tsx`).
       await expect(
-        page.locator('.ant-form-item-explain-error').first(),
+        page.locator('[data-bai-form-item-explain-error]').first(),
       ).toBeVisible({ timeout: 10_000 });
     },
   );
@@ -520,7 +523,7 @@ test.describe('Change password page', () => {
 
       // 3. Verify validation errors appear for all three fields
       await expect(
-        page.locator('.ant-form-item-explain-error').first(),
+        page.locator('[data-bai-form-item-explain-error]').first(),
       ).toBeVisible({ timeout: 10_000 });
     },
   );
@@ -552,7 +555,7 @@ test.describe('Change password page', () => {
       await page.getByRole('button', { name: 'Update' }).click();
       await expect(
         page
-          .locator('.ant-form-item-explain-error')
+          .locator('[data-bai-form-item-explain-error]')
           .filter({
             hasText:
               'At least 1 alphabet, 1 number and 1 special character is required with at least 8 chars.',

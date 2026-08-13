@@ -1,9 +1,13 @@
-import { BAILocale } from '.';
-import en_US from 'antd/es/locale/en_US';
+import type { BAILocale } from '.';
+import en from '@astryxdesign/core/locales/en.json';
 
+// Upstream ships {defaultMessage, description} entries; the override channel
+// takes flat strings. Imported from core, not copied — no second source.
 const localeValue: BAILocale = {
   lang: 'en',
-  antdLocale: en_US,
+  astryxLocale: Object.fromEntries(
+    Object.entries(en).map(([key, entry]) => [key, entry.defaultMessage]),
+  ),
 };
 
 export default localeValue;

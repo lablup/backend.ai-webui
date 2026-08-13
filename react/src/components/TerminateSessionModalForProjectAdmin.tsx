@@ -4,13 +4,18 @@
  */
 import { TerminateSessionModalForProjectAdminFragment$key } from '../__generated__/TerminateSessionModalForProjectAdminFragment.graphql';
 import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/TerminateSessionModalForProjectAdminMutation.graphql';
+import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { App, Checkbox, type ModalProps, theme, Typography } from 'antd';
-import { createStyles } from 'antd-style';
+import { theme } from '../theme-shim';
+import './TerminateSessionModalForProjectAdmin.css';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAICard,
   BAIFlex,
   BAIModal,
+  type BAIModalProps,
+  BAIText,
   filterOutNullAndUndefined,
   toLocalId,
 } from 'backend.ai-ui';
@@ -19,19 +24,11 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-const useStyle = createStyles(({ css, token }) => {
-  return {
-    custom: css`
-      ul {
-        list-style-type: circle;
-        padding-left: ${token.paddingMD}px;
-      }
-    `,
-  };
-});
-
+// The antd `ModalProps` type import is replaced by BUI's own `BAIModalProps`
+// — the modal this component actually renders. A type-only antd import still
+// keeps the module in the antd import graph (P15/MAPPING §6).
 export interface TerminateSessionModalForProjectAdminProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   /** Sessions to terminate. A single-element list terminates one session;
@@ -54,7 +51,6 @@ const TerminateSessionModalForProjectAdmin: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyle();
   const { message } = App.useApp();
   const userRole = useCurrentUserRole();
   const [isForce, setIsForce] = useState(false);
@@ -151,32 +147,36 @@ const TerminateSessionModalForProjectAdmin: React.FC<
       {...modalProps}
     >
       <BAIFlex
-        className={styles.custom}
+        className="terminate-session-modal-admin-list"
         direction="column"
         align="stretch"
         gap={'xs'}
       >
-        <Typography.Text>
-          {t('userSettings.SessionTerminationDialog')}
-        </Typography.Text>
-        <Typography.Text mark>
+        <Text>{t('userSettings.SessionTerminationDialog')}</Text>
+        {/* `Typography.Text mark` is MAPPING §3.4 **NONE** in Astryx core, but
+            BUI's `BAIText` already rebuilt the highlight chip in tokens
+            (p3-a), so the frontier wrapper is the right home for this one
+            prop rather than a second local reimplementation. */}
+        <BAIText mark>
           {sessions.length === 1
             ? (sessions[0]?.metadata?.name ?? '')
             : `${sessions.length} sessions`}
-        </Typography.Text>
-        <Checkbox
-          checked={isForce}
-          onChange={(e) => {
-            setIsForce(e.target.checked);
-          }}
-        >
-          {t('button.ForceTerminate')}
-        </Checkbox>
+        </BAIText>
+        {/* MAPPING §4: `checked` -> `value`, `onChange(e)` ->
+            `onChange(checked)`, children -> the required `label`. */}
+        <CheckboxInput
+          label={t('button.ForceTerminate')}
+          value={isForce}
+          onChange={(checked) => setIsForce(checked)}
+        />
         {isForce && (
           <BAICard styles={{ body: { padding: token.padding } }}>
-            <Typography.Paragraph type="danger">
+            {/* `Typography.Paragraph` -> `Text as="p" display="block"`; the
+                `danger` type resolves through the brand theme's custom
+                `color:danger` Text colour added in p3-a. */}
+            <Text as="p" display="block" color="danger">
               {t('session.ForceTerminateWarningMsg')}
-            </Typography.Paragraph>
+            </Text>
             <ul>
               <li>{t('session.ForceTerminateWarningMsg2')}</li>
               <li>{t('session.ForceTerminateWarningMsg3')}</li>
@@ -189,9 +189,9 @@ const TerminateSessionModalForProjectAdmin: React.FC<
                     <ul>
                       {kernels.map((kernel) => (
                         <li key={kernel?.id}>
-                          <Typography.Text copyable>
-                            {kernel?.resource?.containerId}
-                          </Typography.Text>
+                          <BAIText copyable>
+                            {kernel?.resource?.containerId ?? ''}
+                          </BAIText>
                         </li>
                       ))}
                     </ul>

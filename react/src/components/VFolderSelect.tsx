@@ -7,20 +7,21 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { toProjectContext } from '../types/projectContext';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { ReloadOutlined } from '@ant-design/icons';
-import { Button, Select, type SelectProps, Space, Tooltip } from 'antd';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Selector } from '@astryxdesign/core/Selector';
 import {
-  BAIButton,
   useUpdatableState,
   BAIFlex,
   toGlobalId,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { FolderOpenIcon, PlusIcon } from 'lucide-react';
+import { RotateCw, FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   startTransition,
@@ -100,7 +101,20 @@ const VFolderSelectFallbackProbe: React.FC<VFolderSelectFallbackProbeProps> = ({
   return null;
 };
 
-interface VFolderSelectProps extends SelectProps {
+/**
+ * PILOT-DECISION: the props no longer `extend SelectProps` (antd). Grepping
+ * `react/src` finds no live `<VFolderSelect>` — only the `VFolder` TYPE is
+ * imported (by VFolderTable and VFolderTableFormItem) and the one JSX use in
+ * `SessionLauncherPage` is commented out. So there is no call-site contract to
+ * preserve; the interface below is the controllable-state trio the component
+ * itself reads plus its own flags.
+ */
+interface VFolderSelectProps {
+  value?: string;
+  defaultValue?: string;
+  onChange?: (value: string, option?: unknown) => void;
+  placeholder?: string;
+  disabled?: boolean;
   autoSelectDefault?: boolean;
   showOpenButton?: boolean;
   showCreateButton?: boolean;
@@ -256,61 +270,66 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
           </Suspense>
         </ErrorBoundaryWithNullFallback>
       ) : null}
-      <Select
-        showSearch={{
-          optionFilterProp: 'label',
-        }}
-        {...selectProps}
-        value={value}
-        onChange={setValue}
-        onOpenChange={(open) => {
-          if (open) {
-            startTransition(() => {
-              checkUpdate();
-            });
-          }
-        }}
-        options={options}
+      {/* MAPPING §3.1: static option list, no remote source -> `Selector`
+          (`showSearch` -> `hasSearch`; `optionFilterProp: 'label'` is implicit
+          — Astryx searches the option labels).
+          PILOT-DECISION: antd's `onOpenChange` refresh-on-open is dropped —
+          `Selector` exposes no open-state callback. The explicit refresh
+          button beside it (`showRefreshButton`) already covers the intent, and
+          the query's `staleTime: 0` means any remount refetches. */}
+      <Selector
+        label={t('data.Foldername')}
+        isLabelHidden
+        hasSearch
+        placeholder={selectProps.placeholder}
+        isDisabled={selectProps.disabled}
+        value={value as string | undefined}
+        onChange={(next) => setValue(next)}
+        options={options as Array<{ label: string; value: string }>}
       />
-      <Space.Compact>
+      {/* `Space.Compact` -> `ButtonGroup`; each icon-only Button + Tooltip
+          pair collapses into one `IconButton` (MAPPING §3.3), whose required
+          `label` also serves as the tooltip. */}
+      <ButtonGroup label={t('data.Folders')}>
         {showOpenButton ? (
-          <Tooltip title={t('modelService.OpenFolder')}>
-            <Button
-              icon={<FolderOpenIcon />}
-              disabled={!value}
-              onClick={() => {
-                openFolderExplorer(_.toString(value));
-              }}
-            />
-          </Tooltip>
+          <IconButton
+            icon={<FolderOpenIcon />}
+            label={t('modelService.OpenFolder')}
+            tooltip={t('modelService.OpenFolder')}
+            isDisabled={!value}
+            onClick={() => {
+              openFolderExplorer(_.toString(value));
+            }}
+          />
         ) : null}
         {showCreateButton ? (
-          <Tooltip title={t('data.CreateANewStorageFolder')}>
-            <BAIButton
-              icon={<PlusIcon />}
-              variant="text"
-              onClick={() => {
-                setIsOpenCreateModal(true);
-              }}
-            />
-          </Tooltip>
+          <IconButton
+            icon={<PlusIcon />}
+            variant="ghost"
+            label={t('data.CreateANewStorageFolder')}
+            tooltip={t('data.CreateANewStorageFolder')}
+            onClick={() => {
+              setIsOpenCreateModal(true);
+            }}
+          />
         ) : null}
         {showRefreshButton ? (
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              icon={<ReloadOutlined />}
-              variant="text"
-              onClick={() => {
-                startTransition(() => {
-                  checkUpdate();
-                });
-              }}
-            />
-          </Tooltip>
+          <IconButton
+            icon={<RotateCw size="1em" />}
+            variant="ghost"
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            onClick={() => {
+              startTransition(() => {
+                checkUpdate();
+              });
+            }}
+          />
         ) : null}
-      </Space.Compact>
+      </ButtonGroup>
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsOpenCreateModal(false);

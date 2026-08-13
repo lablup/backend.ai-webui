@@ -2,34 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
+import { theme } from '../theme-shim';
+import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
-import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
-import {
-  BoldOutlined,
-  CodeOutlined,
-  FontSizeOutlined,
-  ItalicOutlined,
-  LinkOutlined,
-  OrderedListOutlined,
-  PictureOutlined,
-  StrikethroughOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Button } from '@astryxdesign/core/Button';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Markdown } from '@astryxdesign/core/Markdown';
+import { Text } from '@astryxdesign/core/Text';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  App,
-  Button,
-  Dropdown,
-  Skeleton,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
-import { createStyles } from 'antd-style';
 import {
   BAIModal,
   BAIModalProps,
@@ -37,162 +24,22 @@ import {
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
-// `rehype-katex` does not import the CSS file, so we need to import it manually.
-import 'katex/dist/katex.min.css';
+import {
+  Bold,
+  Code,
+  ALargeSmall,
+  Italic,
+  Link,
+  ListOrdered,
+  Image,
+  Strikethrough,
+  List,
+} from 'lucide-react';
 import { useCallback, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 
 type MonacoEditorInstance = Parameters<OnMount>[0];
 type MonacoNamespace = Parameters<OnMount>[1];
-
-const useStyles = createStyles(({ css, token }) => ({
-  // velog-style reading typography for the live preview: comfortable line
-  // height, bordered headings, accented blockquotes, GitHub-flavored tables.
-  markdownPreview: css`
-    color: ${token.colorText};
-    font-size: ${token.fontSize}px;
-    line-height: 1.7;
-    word-break: break-word;
-
-    & > *:first-child {
-      margin-top: 0;
-    }
-    & > *:last-child {
-      margin-bottom: 0;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin: 1.5em 0 0.75em;
-      font-weight: ${token.fontWeightStrong};
-      line-height: 1.4;
-    }
-    h1 {
-      font-size: 1.9em;
-      padding-bottom: 0.3em;
-      border-bottom: 1px solid ${token.colorBorderSecondary};
-    }
-    h2 {
-      font-size: 1.5em;
-      padding-bottom: 0.3em;
-      border-bottom: 1px solid ${token.colorBorderSecondary};
-    }
-    h3 {
-      font-size: 1.25em;
-    }
-    h4 {
-      font-size: 1em;
-    }
-
-    p {
-      margin: 0 0 1em;
-    }
-
-    a {
-      color: ${token.colorLink};
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-
-    img {
-      max-width: 100%;
-      border-radius: ${token.borderRadius}px;
-    }
-
-    /* Restore list markers: the global reset in resources/webui.css sets
-       \`ul { list-style-type: none }\`, which otherwise hides bullets here. */
-    ul,
-    ol {
-      margin: 0 0 1em;
-      padding-left: 1.6em;
-    }
-    ul {
-      list-style: disc;
-    }
-    ul ul {
-      list-style: circle;
-    }
-    ol {
-      list-style: decimal;
-    }
-    li {
-      margin: 0.25em 0;
-    }
-    li > p {
-      margin: 0;
-    }
-    li > input[type='checkbox'] {
-      margin-right: 0.4em;
-    }
-
-    blockquote {
-      margin: 0 0 1em;
-      padding: 0.4em 1em;
-      color: ${token.colorTextSecondary};
-      border-left: 4px solid ${token.colorPrimary};
-      background: ${token.colorFillQuaternary};
-      border-radius: ${token.borderRadiusSM}px;
-    }
-    blockquote > *:last-child {
-      margin-bottom: 0;
-    }
-
-    hr {
-      margin: 1.5em 0;
-      border: none;
-      border-top: 1px solid ${token.colorBorderSecondary};
-    }
-
-    /* Inline code only; fenced blocks are rendered by SyntaxHighlighter. */
-    :not(pre) > code {
-      padding: 0.15em 0.4em;
-      font-family: ${token.fontFamilyCode};
-      font-size: 0.9em;
-      background: ${token.colorFillSecondary};
-      border-radius: ${token.borderRadiusSM}px;
-    }
-    pre {
-      margin: 0 0 1em;
-      border-radius: ${token.borderRadius}px;
-      overflow: auto;
-    }
-
-    table {
-      width: 100%;
-      margin: 0 0 1em;
-      border-collapse: collapse;
-      font-size: 0.95em;
-    }
-    th,
-    td {
-      padding: ${token.paddingXS}px ${token.paddingSM}px;
-      border: 1px solid ${token.colorBorderSecondary};
-    }
-    th {
-      background: ${token.colorFillTertiary};
-      font-weight: ${token.fontWeightStrong};
-      text-align: left;
-    }
-  `,
-  toolbar: css`
-    padding: ${token.paddingXXS}px ${token.paddingXS}px;
-    border: 1px solid ${token.colorBorder};
-    border-bottom: none;
-    border-top-left-radius: ${token.borderRadius}px;
-    border-top-right-radius: ${token.borderRadius}px;
-    background: ${token.colorFillQuaternary};
-  `,
-}));
 
 // Height of the markdown editor. Sized relative to the viewport so the whole
 // editor + label + toolbar + validation message fits inside the modal body's
@@ -215,7 +62,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { message: appMessage, modal } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -250,11 +96,11 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   // nothing in-progress to lose.
   const isPristine = messageDraft === undefined;
 
-  // The live preview re-parses Markdown/GFM/math and re-highlights fenced code
-  // on every keystroke, which is expensive enough on a large announcement to
-  // make typing feel laggy. (The editor itself no longer round-trips through
-  // this state — see the `defaultValue` passed to MarkdownEditorField below —
-  // so deferring this is purely a responsiveness optimization, not a
+  // The live preview re-parses the whole Markdown document on every
+  // keystroke, which is expensive enough on a large announcement to make
+  // typing feel laggy. (The editor itself no longer round-trips through this
+  // state — see the `defaultValue` passed to MarkdownEditorField below — so
+  // deferring this is purely a responsiveness optimization, not a
   // correctness fix.)
   const previewMessage = useDeferredValue(message);
 
@@ -376,11 +222,11 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           gap="sm"
           style={{ width: '100%' }}
         >
-          {/* Delete clears the published announcement, placed at the footer's
-              bottom-left like other edit modals' destroy action. Disabled when
-              there is nothing stored to delete. Restore the Enabled checkbox
-              here once the backend can persist a disabled-but-present
-              announcement:
+          {/* Delete clears the stored announcement (published or draft),
+              placed at the footer's bottom-left like other edit modals'
+              destroy action. Disabled when there is nothing stored to
+              delete. Restore the Enabled checkbox here once the backend can
+              persist a disabled-but-present announcement:
           <Checkbox
             checked={enabled}
             onChange={(e) => setEnabledDraft(e.target.checked)}
@@ -389,23 +235,23 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           </Checkbox> */}
           <BAIFlex>
             <Button
-              type="text"
-              danger
-              disabled={
+              variant="destructive"
+              label={t('button.Delete')}
+              isDisabled={
                 isLoading ||
                 !announcement?.message?.trim() ||
                 isAnyMutationPending
               }
-              loading={deleteMutation.isPending}
+              isLoading={deleteMutation.isPending}
               onClick={confirmDelete}
-            >
-              {t('button.Delete')}
-            </Button>
+            />
           </BAIFlex>
           <BAIFlex gap="xs" align="center">
-            <Button onClick={() => onRequestClose()}>
-              {t('button.Cancel')}
-            </Button>
+            <Button
+              variant="secondary"
+              label={t('button.Cancel')}
+              onClick={() => onRequestClose()}
+            />
             {/* The backend has only one message + `enabled` slot, so there is
                 no way to hold a draft alongside a live announcement — saving
                 a draft would simply overwrite the live one with `enabled:
@@ -415,30 +261,29 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                 Publish (update it in place) and Delete. */}
             {!announcement?.enabled && supportsDraftSave && (
               <Button
-                variant="outlined"
-                color="primary"
-                disabled={isLoading || isMessageMissing || isAnyMutationPending}
-                loading={saveDraftMutation.isPending}
+                variant="secondary"
+                label={t('button.SaveDraft')}
+                isDisabled={
+                  isLoading || isMessageMissing || isAnyMutationPending
+                }
+                isLoading={saveDraftMutation.isPending}
                 onClick={handleSaveDraft}
-              >
-                {t('button.SaveDraft')}
-              </Button>
+              />
             )}
             <Button
-              type="primary"
-              disabled={isLoading || isMessageMissing || isAnyMutationPending}
-              loading={publishMutation.isPending}
+              variant="primary"
+              label={t('button.Publish')}
+              isDisabled={isLoading || isMessageMissing || isAnyMutationPending}
+              isLoading={publishMutation.isPending}
               onClick={handlePublish}
-            >
-              {t('button.Publish')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
       }
       {...modalProps}
     >
       {isLoading ? (
-        <Skeleton active />
+        <BAISkeletonAstryx rows={4} />
       ) : (
         <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
           <BAIFlex
@@ -447,9 +292,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             gap="xxs"
             style={{ flex: 1, minWidth: 0 }}
           >
-            <Typography.Text strong>
-              {t('summary.AnnouncementMessage')}
-            </Typography.Text>
+            <Text weight="semibold">{t('summary.AnnouncementMessage')}</Text>
             <MarkdownEditorField
               // The announcement query has no `staleTime` and shares its
               // cache key with the alert banner, so this modal frequently
@@ -467,9 +310,13 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               onChange={setMessageDraft}
             />
             {isMessageMissing && (
-              <Typography.Text type="danger">
+              // PILOT-DECISION: antd `Typography.Text type="danger"` has no
+              // Astryx TextColor equivalent (MAPPING §3.4) — same drop as
+              // AdminModelCard.tsx: red tint dropped, `type="supporting"`
+              // keeps the small caption size.
+              <Text type="supporting" color="primary">
                 {t('summary.AnnouncementMessageRequired')}
-              </Typography.Text>
+              </Text>
             )}
           </BAIFlex>
           <BAIFlex
@@ -478,11 +325,8 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             gap="xxs"
             style={{ flex: 1, minWidth: 0 }}
           >
-            <Typography.Text strong>
-              {t('summary.AnnouncementPreview')}
-            </Typography.Text>
+            <Text weight="semibold">{t('summary.AnnouncementPreview')}</Text>
             <div
-              className={styles.markdownPreview}
               style={{
                 border: `1px solid ${token.colorBorder}`,
                 borderRadius: token.borderRadius,
@@ -494,33 +338,10 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                 overflow: 'auto',
               }}
             >
-              <Markdown
-                remarkPlugins={[remarkGfm, remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-                components={{
-                  // Fenced code blocks: render through the shared shiki-based
-                  // highlighter (theme-aware). Inline code keeps the default
-                  // <code> and is styled via CSS.
-                  pre({ children }) {
-                    const codeElement = Array.isArray(children)
-                      ? children[0]
-                      : children;
-                    const className: string =
-                      // @ts-ignore - react-markdown passes the <code> element here
-                      codeElement?.props?.className ?? '';
-                    const match = /language-(\w+)/.exec(className);
-                    const content = String(
-                      // @ts-ignore
-                      codeElement?.props?.children ?? '',
-                    ).replace(/\n$/, '');
-                    return (
-                      <SyntaxHighlighter language={match?.[1] ?? 'txt'}>
-                        {content}
-                      </SyntaxHighlighter>
-                    );
-                  },
-                }}
-              >
+              {/* Must stay byte-identical to AnnouncementAlert's props — a
+                  preview that renders differently from the published banner
+                  is the whole of FR-3402. */}
+              <Markdown density="compact" headingLevelStart={3} autolink="gfm">
                 {previewMessage}
               </Markdown>
             </div>
@@ -543,7 +364,6 @@ const MarkdownEditorField: React.FC<{
   'use memo';
 
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const editorRef = useRef<MonacoEditorInstance | null>(null);
   const monacoRef = useRef<MonacoNamespace | null>(null);
 
@@ -605,102 +425,112 @@ const MarkdownEditorField: React.FC<{
 
   return (
     <BAIFlex direction="column" align="stretch" gap={0}>
-      <BAIFlex className={styles.toolbar} gap="xxs" align="center" wrap="wrap">
-        <Dropdown
-          trigger={['click']}
-          menu={{
-            items: [
-              { key: '1', label: 'H1' },
-              { key: '2', label: 'H2' },
-              { key: '3', label: 'H3' },
-            ],
-            onClick: ({ key }) => prependLines(`${'#'.repeat(Number(key))} `),
+      {/* PILOT-DECISION: antd's `Tooltip` wrapping a text-only `Button` per
+          toolbar action is replaced by `IconButton`'s own native `tooltip`
+          prop — one component instead of two, same hover hint (P8: `label`
+          supplies the accessible name; `tooltip` the visible hint). */}
+      <BAIFlex
+        className="announcement-toolbar"
+        gap="xxs"
+        align="center"
+        wrap="wrap"
+      >
+        <DropdownMenu
+          button={{
+            icon: <ALargeSmall size="1em" />,
+            isIconOnly: true,
+            label: t('summary.MarkdownHeading'),
+            variant: 'ghost',
+            size: 'sm',
+            tooltip: t('summary.MarkdownHeading'),
           }}
-        >
-          <Tooltip title={t('summary.MarkdownHeading')}>
-            <Button type="text" size="small" icon={<FontSizeOutlined />} />
-          </Tooltip>
-        </Dropdown>
-        <Tooltip title={t('summary.MarkdownBold')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<BoldOutlined />}
-            onClick={() => wrapSelection('**', '**', t('summary.MarkdownBold'))}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownItalic')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<ItalicOutlined />}
-            onClick={() => wrapSelection('*', '*', t('summary.MarkdownItalic'))}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownStrikethrough')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<StrikethroughOutlined />}
-            onClick={() =>
-              wrapSelection('~~', '~~', t('summary.MarkdownStrikethrough'))
-            }
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownQuote')}>
-          <Button
-            type="text"
-            size="small"
-            icon={
-              <span style={{ fontFamily: 'Georgia, serif', fontWeight: 700 }}>
-                &ldquo;
-              </span>
-            }
-            onClick={() => prependLines('> ')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownCode')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<CodeOutlined />}
-            onClick={() => wrapSelection('`', '`', 'code')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownLink')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<LinkOutlined />}
-            onClick={() =>
-              wrapSelection('[', '](https://)', t('summary.MarkdownLink'))
-            }
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownImage')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<PictureOutlined />}
-            onClick={() => wrapSelection('![', '](https://)', 'alt')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownBulletList')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<UnorderedListOutlined />}
-            onClick={() => prependLines('- ')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownNumberedList')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<OrderedListOutlined />}
-            onClick={() => prependLines('1. ')}
-          />
-        </Tooltip>
+          hasChevron={false}
+          items={[
+            { label: 'H1', onClick: () => prependLines('# ') },
+            { label: 'H2', onClick: () => prependLines('## ') },
+            { label: 'H3', onClick: () => prependLines('### ') },
+          ]}
+        />
+        <IconButton
+          icon={<Bold size="1em" />}
+          label={t('summary.MarkdownBold')}
+          tooltip={t('summary.MarkdownBold')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('**', '**', t('summary.MarkdownBold'))}
+        />
+        <IconButton
+          icon={<Italic size="1em" />}
+          label={t('summary.MarkdownItalic')}
+          tooltip={t('summary.MarkdownItalic')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('*', '*', t('summary.MarkdownItalic'))}
+        />
+        <IconButton
+          icon={<Strikethrough size="1em" />}
+          label={t('summary.MarkdownStrikethrough')}
+          tooltip={t('summary.MarkdownStrikethrough')}
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            wrapSelection('~~', '~~', t('summary.MarkdownStrikethrough'))
+          }
+        />
+        <IconButton
+          icon={
+            <span style={{ fontFamily: 'Georgia, serif', fontWeight: 700 }}>
+              &ldquo;
+            </span>
+          }
+          label={t('summary.MarkdownQuote')}
+          tooltip={t('summary.MarkdownQuote')}
+          variant="ghost"
+          size="sm"
+          onClick={() => prependLines('> ')}
+        />
+        <IconButton
+          icon={<Code size="1em" />}
+          label={t('summary.MarkdownCode')}
+          tooltip={t('summary.MarkdownCode')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('`', '`', 'code')}
+        />
+        <IconButton
+          icon={<Link size="1em" />}
+          label={t('summary.MarkdownLink')}
+          tooltip={t('summary.MarkdownLink')}
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            wrapSelection('[', '](https://)', t('summary.MarkdownLink'))
+          }
+        />
+        <IconButton
+          icon={<Image size="1em" />}
+          label={t('summary.MarkdownImage')}
+          tooltip={t('summary.MarkdownImage')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('![', '](https://)', 'alt')}
+        />
+        <IconButton
+          icon={<List size="1em" />}
+          label={t('summary.MarkdownBulletList')}
+          tooltip={t('summary.MarkdownBulletList')}
+          variant="ghost"
+          size="sm"
+          onClick={() => prependLines('- ')}
+        />
+        <IconButton
+          icon={<ListOrdered size="1em" />}
+          label={t('summary.MarkdownNumberedList')}
+          tooltip={t('summary.MarkdownNumberedList')}
+          variant="ghost"
+          size="sm"
+          onClick={() => prependLines('1. ')}
+        />
       </BAIFlex>
       <BAICodeEditor
         language="markdown"

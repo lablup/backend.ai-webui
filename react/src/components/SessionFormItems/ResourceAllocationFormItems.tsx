@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
+import { Form } from '../../form-engine';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
@@ -14,12 +15,13 @@ import {
   useResourceSlotsDetails,
 } from '../../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import {
   MergedResourceLimits,
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
+import { theme } from '../../theme-shim';
+import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
   Image,
@@ -27,10 +29,19 @@ import {
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
+import BAISegmentedControlItemAstryx from '../astryx-bui/BAISegmentedControlItemAstryx';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
-import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
+// FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
+// `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
+// and every control and every piece of chrome below is Astryx now.
+import { Card } from '@astryxdesign/core/Card';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
   useEventNotStable,
@@ -40,6 +51,7 @@ import {
   BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp, RotateCw } from 'lucide-react';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -122,6 +134,16 @@ export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
 
 interface ResourceAllocationFormItemsProps {
+  /**
+   * The project that scopes every project-dependent piece of this form
+   * fragment: the `accessible_scaling_groups(project_id:)` query, the
+   * resource-group select, and the resource limit / remaining / preset
+   * lookups. Required and non-null per ADR-0001 (form-fragment tier,
+   * FR-3411): this fragment never reads the ambient current project and
+   * never embeds a project selector — the parent owns any selector and
+   * passes the chosen/derived project down.
+   */
+  project: ProjectContext;
   enableAgentSelect?: boolean;
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
@@ -150,9 +172,68 @@ interface ResourceAllocationFormItemsProps {
   }>;
 }
 
+// FR-3531: hug the content instead of stretching to the parent's width.
+const clusterModeSegmentedStyles = stylex.create({
+  control: { alignSelf: 'flex-start' },
+  label: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: spacingVars['--spacing-1'],
+  },
+});
+
+/**
+ * Cluster-mode segmented control — the twin of the one in
+ * `ClusterModeFormItems`, declared locally for the same reason: each option
+ * carries a help tooltip that the shared `AstryxFormSegmented` option shape
+ * does not model. The two `Form.Item` contracts are honoured inline.
+ */
+const ClusterModeSegmented: React.FC<{
+  label: string;
+  isDisabled?: boolean;
+  onValueChange: () => void;
+  items: Array<{ value: string; label: string; tooltip: React.ReactNode }>;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ label, isDisabled, onValueChange, items, value, onChange }) => {
+  'use memo';
+  return (
+    <SegmentedControl
+      label={label}
+      isDisabled={isDisabled}
+      value={value ?? items[0]?.value ?? ''}
+      xstyle={clusterModeSegmentedStyles.control}
+      onChange={(next) => {
+        onChange?.(next);
+        onValueChange();
+      }}
+    >
+      {items.map((item) => (
+        // FR-3531: the help affordance is a small view that trails the label,
+        // not a leading `icon` — Astryx renders the `icon` slot first.
+        <BAISegmentedControlItemAstryx
+          key={item.value}
+          value={item.value}
+          label={
+            <span {...stylex.props(clusterModeSegmentedStyles.label)}>
+              {item.label}
+              <Tooltip content={item.tooltip}>
+                <CircleHelp size="1em" />
+              </Tooltip>
+            </span>
+          }
+        />
+      ))}
+    </SegmentedControl>
+  );
+};
+
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
 > = ({
+  project,
   enableAgentSelect = false,
   enableResourcePresets,
   forceImageMinValues = false,
@@ -175,10 +256,6 @@ const ResourceAllocationFormItems: React.FC<
   const [agentFetchKey, updateAgentFetchKey] = useUpdatableState('first');
   const [isPendingAgentList, startAgentListTransition] = useTransition();
 
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id || !currentProject.name) {
-    throw new Error('Project ID is required for ResourceAllocationFormItems');
-  }
   const currentResourceGroupInForm =
     Form.useWatch(['resourceGroup'], {
       form,
@@ -198,7 +275,7 @@ const ResourceAllocationFormItems: React.FC<
         }
       `,
       {
-        projectID: currentProject.id,
+        projectID: project.id,
       },
       {
         fetchPolicy: baiClient.supports('custom-accelerator-quantum-size')
@@ -210,6 +287,13 @@ const ResourceAllocationFormItems: React.FC<
   const currentResourceGroupInfo = _.find(
     accessible_scaling_groups,
     (group) => group?.name === currentResourceGroupInForm,
+  );
+  // Names of the resource groups accessible to the PASSED project. Handed to
+  // `useResourceLimitAndRemaining` so its "is this resource group valid?"
+  // guard is keyed off the `project` prop instead of the ambient current
+  // project's derived resource-group atom (ADR-0001).
+  const accessibleResourceGroupNames = _.compact(
+    _.map(accessible_scaling_groups, (group) => group?.name),
   );
   const currentResourceValue = Form.useWatch(['resource']);
   const currentImage = Form.useWatch(['environments', 'image'], {
@@ -227,10 +311,11 @@ const ResourceAllocationFormItems: React.FC<
 
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
-      currentProjectName: currentProject.name,
+      currentProjectName: project.name,
       currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
       currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
       currentImage: currentImage,
+      accessibleResourceGroupNames,
     });
 
   const [resourceSlots] = useResourceSlots();
@@ -292,7 +377,14 @@ const ResourceAllocationFormItems: React.FC<
         allocationPreset: 'auto-select',
       });
     }
-    if (supportedAcceleratorTypesInRGByImage?.length === 0) {
+    // Write only on an actual change: `setFieldsValue` rebuilds `resource`,
+    // so `Form.useWatch(['resource'])` returns a new reference and re-triggers
+    // this effect. Unguarded, that self-feeding loop never settles and starves
+    // React's transition lanes, freezing every `useDeferredValue` on the page.
+    if (
+      supportedAcceleratorTypesInRGByImage?.length === 0 &&
+      currentResourceValue?.accelerator !== 0
+    ) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
@@ -356,11 +448,17 @@ const ResourceAllocationFormItems: React.FC<
       ? currentAcceleratorType
       : _.first(_.keys(acceleratorSlotsInRG));
 
-    form.setFieldsValue({
-      resource: {
-        acceleratorType: nextAcceleratorType || currentAcceleratorType,
-      },
-    });
+    const resolvedAcceleratorType =
+      nextAcceleratorType || currentAcceleratorType;
+    // Write only on an actual change — see the accelerator effect above for
+    // why an unconditional `setFieldsValue` here never settles.
+    if (resolvedAcceleratorType !== currentAcceleratorType) {
+      form.setFieldsValue({
+        resource: {
+          acceleratorType: resolvedAcceleratorType,
+        },
+      });
+    }
     // The accelerator type may have changed; clear the accelerator field if
     // the resolved type is a unified slot.
     syncUnifiedAcceleratorIfNeeded();
@@ -621,7 +719,7 @@ const ResourceAllocationFormItems: React.FC<
         ]}
       >
         <BAIProjectResourceGroupSelect
-          projectName={currentProject.name}
+          projectName={project.name}
           autoSelectDefault={autoSelectFirstResourceGroup}
           showSearch
         />
@@ -673,6 +771,9 @@ const ResourceAllocationFormItems: React.FC<
           />
         </Form.Item>
       ) : null}
+      {/* MAPPING §5.1: antd `Card` -> Astryx `Card`, a bare container. This
+          call site passes no `title`/`extra`/`tabList`, so nothing needs
+          composing around it — only the bottom margin, which stays. */}
       <Card style={{ marginBottom: token.margin }}>
         <Form.Item
           shouldUpdate={(prev, cur) =>
@@ -1449,13 +1550,17 @@ const ResourceAllocationFormItems: React.FC<
               </Form.Item>
             </Suspense>
             <Form.Item noStyle>
-              <Button
-                loading={isPendingAgentList}
+              {/* MAPPING §3.3: icon-only, no children -> `IconButton`, whose
+                  required `label` finally names this refresh control. */}
+              <IconButton
+                isLoading={isPendingAgentList}
                 onClick={() => {
                   startAgentListTransition(() => updateAgentFetchKey());
                 }}
-                icon={<ReloadOutlined />}
-              ></Button>
+                icon={<RotateCw size="1em" />}
+                label={t('button.Refresh')}
+                tooltip={t('button.Refresh')}
+              />
             </Form.Item>
           </BAIFlex>
         </Form.Item>
@@ -1469,53 +1574,47 @@ const ResourceAllocationFormItems: React.FC<
           {({ getFieldValue }) => {
             return (
               <>
-                <Row gutter={token.marginMD}>
-                  <Col xs={24}>
-                    {/* <Col xs={24} lg={12}> */}
-                    <Form.Item name={'cluster_mode'} required noStyle>
-                      <Radio.Group
-                        onChange={() => {
-                          form.validateFields().catch(() => {});
-                        }}
-                        disabled={
-                          !supportMultiAgents &&
-                          !_.isEqual(_.castArray(getFieldValue('agent')), [
-                            'auto',
-                          ])
-                        }
-                      >
-                        <Radio.Button value="multi-node">
-                          {t('session.launcher.MultiNode')}
-                          <Tooltip
-                            title={
-                              <Trans
-                                i18nKey={'session.launcher.DescMultiNode'}
-                              />
-                            }
-                          >
-                            <QuestionCircleOutlined
-                              style={{ marginLeft: token.marginXXS }}
+                {/* RESPONSIVE-POLICY: `Row gutter` + two full-width
+                    `Col xs={24}` is a single column with a gap — not a grid.
+                    MAPPING §3.9 keeps only the breakpoint-free shapes, and
+                    this one is `VStack gap`. No `xs`-driven reflow is lost:
+                    both columns already spanned the full 24.
+                    The Radio.Group -> SegmentedControl move mirrors
+                    `ClusterModeFormItems` exactly. */}
+                <VStack gap={5} align="stretch">
+                  <Form.Item name={'cluster_mode'} required noStyle>
+                    <ClusterModeSegmented
+                      label={t('session.launcher.ClusterMode')}
+                      isDisabled={
+                        !supportMultiAgents &&
+                        !_.isEqual(_.castArray(getFieldValue('agent')), [
+                          'auto',
+                        ])
+                      }
+                      onValueChange={() => {
+                        form.validateFields().catch(() => {});
+                      }}
+                      items={[
+                        {
+                          value: 'multi-node',
+                          label: t('session.launcher.MultiNode'),
+                          tooltip: (
+                            <Trans i18nKey={'session.launcher.DescMultiNode'} />
+                          ),
+                        },
+                        {
+                          value: 'single-node',
+                          label: t('session.launcher.SingleNode'),
+                          tooltip: (
+                            <Trans
+                              i18nKey={'session.launcher.DescSingleNode'}
                             />
-                          </Tooltip>
-                        </Radio.Button>
-                        <Radio.Button value="single-node">
-                          {t('session.launcher.SingleNode')}
-                          <Tooltip
-                            title={
-                              <Trans
-                                i18nKey={'session.launcher.DescSingleNode'}
-                              />
-                            }
-                          >
-                            <QuestionCircleOutlined
-                              style={{ marginLeft: token.marginXXS }}
-                            />
-                          </Tooltip>
-                        </Radio.Button>
-                      </Radio.Group>
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24}>
+                          ),
+                        },
+                      ]}
+                    />
+                  </Form.Item>
+                  <>
                     <Form.Item
                       noStyle
                       shouldUpdate={(prev, next) =>
@@ -1699,8 +1798,8 @@ const ResourceAllocationFormItems: React.FC<
                         );
                       }}
                     </Form.Item>
-                  </Col>
-                </Row>
+                  </>
+                </VStack>
               </>
             );
           }}

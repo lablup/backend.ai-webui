@@ -3,8 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
+import { App } from '../../app-shim';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
+import { theme } from '../../theme-shim';
 import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
@@ -19,6 +21,8 @@ import {
 import { CustomModelForm } from './CustomModelForm';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Card } from '@astryxdesign/core/Card';
 import {
   convertToModelMessages,
   DefaultChatTransport,
@@ -26,9 +30,8 @@ import {
   streamText,
   wrapLanguageModel,
 } from 'ai';
-import { Alert, App, Card, type CardProps, theme } from 'antd';
-import { createStyles } from 'antd-style';
 import {
+  BAIFlex,
   BAILogger,
   toGlobalId,
   toLocalId,
@@ -36,13 +39,19 @@ import {
   useEventNotStable,
   useUpdatableState,
 } from 'backend.ai-ui';
-import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import React, { memo, useEffect, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
+// PILOT-DECISION: the antd `CardProps` extension is gone — grepping every
+// call site (ChatPage's PureChatCard usage, ModelCardChat) shows only
+// `style` was ever passed externally; `title`/`styles`/`className`/`ref`
+// were internal to this component. Astryx `Card` (MAPPING.md §5.1) is a bare
+// container, so the header/body split below is hand-composed instead of
+// threaded through Card's (nonexistent) `title`/`styles` slots.
+interface ChatCardProps {
+  style?: React.CSSProperties;
   chat: ChatData;
   onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
   onRemoveChat?: (chat: ChatData) => void;
@@ -58,19 +67,6 @@ interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
   fetchOnClient?: boolean;
   defaultDeploymentId?: string;
 }
-
-const useStyles = createStyles(({ token, css }) => ({
-  chatCard: css`
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  `,
-  alert: css`
-    margin-block: ${token.paddingContentVertical}px;
-    margin-inline: ${token.paddingContentHorizontal}px;
-  `,
-}));
 
 function readFileAsDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -229,9 +225,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   onAddChat,
   onSaveMessage,
   onClearMessage,
-  styles,
-  className,
-  ...otherCardProps
+  style,
 }) => {
   'use memo';
 
@@ -276,9 +270,6 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   // Consumers below address the deployment by its local UUID, as the chat
   // provider and the `deploymentId` URL param do.
   const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
-  const {
-    styles: { chatCard: chatCardStyle, alert: alertStyle },
-  } = useStyles();
 
   const { token } = theme.useToken();
 
@@ -482,36 +473,37 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   }, [setMessages, chat.messages]);
 
   return (
+    // PILOT-DECISION: Astryx `Card` is a bare container (MAPPING.md §5.1) —
+    // antd's `title`/`styles.header`/`styles.body` header-vs-body split is
+    // hand-composed below instead of routed through a generic BAICard
+    // wrapper (this page's exact anatomy — a full-bleed body, no card
+    // padding — doesn't fit the standard padded-header recipe). `ref` moves
+    // from the antd Card root to the Astryx Card root; both are plain
+    // `HTMLDivElement`s, so `getDropContainer` keeps working unchanged.
     <Card
-      {...otherCardProps}
-      variant="outlined"
-      className={classNames(chatCardStyle, className)}
-      styles={{
-        ...styles,
-        body: {
-          backgroundColor: token.colorFillQuaternary,
-          borderRadius: 0,
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 0,
-          height: '50%',
-          position: 'relative',
-          ...(!_.isFunction(styles) && styles?.body),
-        },
-        actions: {
-          paddingLeft: token.paddingContentHorizontal,
-          paddingRight: token.paddingContentHorizontal,
-          ...(!_.isFunction(styles) && styles?.actions),
-        },
-        header: {
+      ref={dropContainerRef}
+      padding={0}
+      variant="default"
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        ...style,
+      }}
+    >
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        style={{
           zIndex: 1,
           paddingInline: token.paddingContentHorizontal,
           paddingRight: token.paddingXS,
-          ...(!_.isFunction(styles) && styles?.header),
-        },
-      }}
-      title={
+          paddingBlock: token.paddingXS,
+          borderBottom: `1px solid ${token.colorBorderSecondary}`,
+        }}
+      >
         <ChatHeader
           // model
           models={models}
@@ -576,69 +568,85 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             });
           }}
         />
-      }
-      ref={dropContainerRef}
-    >
-      {baseURL && (deployment || agentEndpointUrl) && _.isEmpty(models) && (
-        <CustomModelForm
-          deploymentUrl={
-            agentEndpointUrl || deployment?.networkAccess.endpointUrl || ''
-          }
-          basePath={chat.provider.basePath}
-          token={effectiveApiKey}
-          deploymentId={deploymentId}
-          loading={isPendingUpdate || isLoadingModels}
-          hasNoDesiredReplicas={hasNoDesiredReplicas}
-          onSubmit={(data) => {
-            startUpdateTransition(() => {
-              updateFetchKey();
-              onUpdateChat?.({
-                ...chat,
-                provider: {
-                  ...chat.provider,
-                  basePath: data.basePath,
-                  apiKey: data.token,
-                },
+      </BAIFlex>
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        style={{
+          backgroundColor: token.colorFillQuaternary,
+          flex: 1,
+          padding: 0,
+          // `minHeight: 0` (not the old `height: '50%'`): this column owns the
+          // messages/composer height budget. Without it the message list's
+          // automatic minimum size is its min-content height, which lets the
+          // list push the composer past the card's `overflow: hidden` edge.
+          minHeight: 0,
+          position: 'relative',
+        }}
+      >
+        {baseURL && (deployment || agentEndpointUrl) && _.isEmpty(models) && (
+          <CustomModelForm
+            deploymentUrl={
+              agentEndpointUrl || deployment?.networkAccess.endpointUrl || ''
+            }
+            basePath={chat.provider.basePath}
+            token={effectiveApiKey}
+            deploymentId={deploymentId}
+            loading={isPendingUpdate || isLoadingModels}
+            hasNoDesiredReplicas={hasNoDesiredReplicas}
+            onSubmit={(data) => {
+              startUpdateTransition(() => {
+                updateFetchKey();
+                onUpdateChat?.({
+                  ...chat,
+                  provider: {
+                    ...chat.provider,
+                    basePath: data.basePath,
+                    apiKey: data.token,
+                  },
+                });
               });
-            });
-          }}
+            }}
+          />
+        )}
+        {!_.isEmpty(error?.message) ? (
+          <Banner
+            title={error?.message ?? ''}
+            status="error"
+            style={{
+              marginBlock: token.paddingContentVertical,
+              marginInline: token.paddingContentHorizontal,
+            }}
+          />
+        ) : null}
+        {!baseURL ? (
+          <Banner
+            title={t('error.InvalidBaseURL')}
+            status="error"
+            style={{
+              marginBlock: token.paddingContentVertical,
+              marginInline: token.paddingContentHorizontal,
+            }}
+          />
+        ) : null}
+        <ChatMessages
+          messages={messages}
+          input={input}
+          isStreaming={isStreaming}
+          startTime={startTime}
+          endTime={endTime}
         />
-      )}
-      {!_.isEmpty(error?.message) ? (
-        <Alert
-          title={error?.message}
-          type="error"
-          showIcon
-          className={alertStyle}
-          closable
+        <ChatInput
+          disabled={!baseURL || !!modelsError || isLoadingModels}
+          sync={chat.sync}
+          input={input}
+          setInput={setInput}
+          stop={stop}
+          onSendMessage={handleSendMessage}
+          isStreaming={isStreaming}
+          dropContainerRef={dropContainerRef}
         />
-      ) : null}
-      {!baseURL ? (
-        <Alert
-          title={t('error.InvalidBaseURL')}
-          type="error"
-          showIcon
-          className={alertStyle}
-          closable
-        />
-      ) : null}
-      <ChatMessages
-        messages={messages}
-        input={input}
-        isStreaming={isStreaming}
-        startTime={startTime}
-        endTime={endTime}
-      />
-      <ChatInput
-        disabled={!baseURL || !!modelsError || isLoadingModels}
-        sync={chat.sync}
-        input={input}
-        setInput={setInput}
-        stop={stop}
-        onSendMessage={handleSendMessage}
-        isStreaming={isStreaming}
-        dropContainerRef={dropContainerRef}
-      />
+      </BAIFlex>
     </Card>
   );
 };

@@ -13,20 +13,22 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
-import { useControllableValue } from 'ahooks';
-import { type TableProps, Tag, theme } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
 import {
-  BAIFlex,
-  BAIPropertyFilter,
-  BAIFlexProps,
-  INITIAL_FETCH_KEY,
-  mergeFilterValues,
-  BAIColumnType,
-  BAIDoubleTag,
-  filterOutEmpty,
   AgentNodeInList,
   BAIAgentTable,
+  BAIColumnType,
+  BAIDoubleTag,
+  BAIFlex,
+  BAIFlexProps,
+  BAIPropertyFilter,
+  BAITableProps,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
+  badgeVariantForStatus,
+  filterOutEmpty,
+  mergeFilterValues,
+  useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryStates } from 'nuqs';
@@ -39,7 +41,11 @@ type Agent = NonNullable<
 >['node'];
 
 interface AgentListProps {
-  tableProps?: Omit<TableProps, 'dataSource'>;
+  // `BAITableProps` keeps the antd-SHAPED contract (`dataSource`, not Astryx's
+  // `data`) on purpose — that is the ticket-25 migration seam. Since ticket
+  // 30-D it is an alias of the Astryx engine's own props type, and no antd
+  // declaration is reached (MAPPING §6).
+  tableProps?: Omit<BAITableProps<AgentNodeInList>, 'dataSource'>;
   headerProps?: BAIFlexProps;
   fetchKey?: string;
   onChangeFetchKey?: (key: string) => void;
@@ -52,7 +58,6 @@ const AgentList: React.FC<AgentListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
   const [currentAgentInfo, setCurrentAgentInfo] = useState<Agent | null>();
   const [queryParams, setQueryParams] = useQueryStates({
@@ -182,7 +187,14 @@ const AgentList: React.FC<AgentListProps> = ({
               ]}
             />
           ) : (
-            <Tag color={color}>{platform}</Tag>
+            // antd Tag → Badge (MAPPING §3.5), color routed through the
+            // repo-global `cloudPlatform` domain lookup (ticket 13) instead
+            // of the local platformData color map (kept above for
+            // BAIDoubleTag, a still-antd frontier component).
+            <Badge
+              variant={badgeVariantForStatus('cloudPlatform', platform)}
+              label={platform}
+            />
           )}
         </BAIFlex>
       );
@@ -300,9 +312,6 @@ const AgentList: React.FC<AgentListProps> = ({
           pageSize: tablePaginationOption.pageSize,
           total: agent_nodes?.count || 0,
           current: tablePaginationOption.current,
-          style: {
-            marginRight: token.marginXS,
-          },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

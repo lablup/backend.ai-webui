@@ -20,30 +20,35 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
+import BAICard from '../components/astryx-bui/BAICardAstryx';
+import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
+import BAISkeleton from '../components/astryx-bui/BAISkeletonAstryx';
+import BAIVFolderDeleteButtonV2 from '../components/astryx-bui/BAIVFolderDeleteButtonV2Astryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ProjectContext, toProjectContext } from '../types/projectContext';
 import { isDeletedCategory } from './VFolderNodeListPage';
-import { useToggle } from 'ahooks';
-import { Badge, Skeleton, theme, Tooltip } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIButton,
-  BAICard,
-  BAIFlex,
+  // Translating frontier (ticket 28): the GraphQL-object property filter is a
+  // BUI antd composite shared with unmigrated pages; it keeps its contract
+  // here until the PowerSearch generalization covers the object-filter DSL.
   BAIGraphQLPropertyFilter,
-  BAIPurgeIcon,
-  BAIRestoreIcon,
-  BAISelectionLabel,
-  BAIVFolderDeleteButtonV2,
+  INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  INITIAL_FETCH_KEY,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -98,16 +103,15 @@ function getUsageModeFilter(mode: (typeof modeValues)[number]) {
 }
 
 interface ProjectAdminDataContentProps {
-  projectId: string;
+  project: ProjectContext;
 }
 
 const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
-  projectId,
+  project,
 }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -174,7 +178,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   };
 
   const queryVariables = {
-    projectId,
+    projectId: project.id,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.first,
     filter: combinedFilter,
@@ -212,7 +216,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
-                ...BAIVFolderDeleteButtonV2Fragment
+                ...BAIVFolderDeleteButtonV2AstryxFragment
               }
             }
             count
@@ -245,7 +249,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
     <>
       <BAITabs
         activeKey={queryParams.statusCategory}
-        onChange={(key) => {
+        onChange={(key: string) => {
           const storedQuery = queryMapRef.current[key] || {
             mode: 'all',
           };
@@ -275,39 +279,24 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           const folderCount = folderCounts[key]?.count ?? 0;
           return {
             key,
-            label: (
-              <BAIFlex justify="center" gap={10}>
-                {label}
-                {folderCount > 0 && (
-                  <Badge
-                    count={folderCount}
-                    color={
-                      queryParams.statusCategory === key
-                        ? token.colorPrimary
-                        : token.colorTextDisabled
-                    }
-                    size="small"
-                    showZero
-                    style={{
-                      paddingRight: token.paddingXS,
-                      paddingLeft: token.paddingXS,
-                      fontSize: 10,
-                    }}
-                  />
-                )}
-              </BAIFlex>
-            ),
+            label,
+            endContent:
+              folderCount > 0 ? (
+                // PILOT-DECISION: antd's Badge took an arbitrary `color`;
+                // Astryx's Badge exposes only a closed `variant` set.
+                <Badge
+                  label={folderCount}
+                  variant={
+                    queryParams.statusCategory === key ? 'info' : 'neutral'
+                  }
+                />
+              ) : undefined,
           };
         })}
       />
-      <BAIFlex direction="column" align="stretch" gap={'sm'}>
-        <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-          <BAIFlex
-            gap={'sm'}
-            align="start"
-            style={{ flexShrink: 1 }}
-            wrap="wrap"
-          >
+      <VStack align="stretch" gap={3}>
+        <HStack justify="between" wrap="wrap" gap={3}>
+          <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
             <BAIRadioGroup
               optionType="button"
               value={queryParams.mode}
@@ -354,8 +343,8 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                 setSelectedFolderList([]);
               }}
             />
-          </BAIFlex>
-          <BAIFlex gap={'xs'}>
+          </HStack>
+          <HStack gap={2}>
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'active' && (
                 <>
@@ -363,14 +352,14 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <Tooltip title={t('data.folders.MoveToTrash')}>
-                    <BAIVFolderDeleteButtonV2
-                      vfolderFrgmt={selectedFolderList}
-                      onClick={() => {
-                        toggleDeleteModal();
-                      }}
-                    />
-                  </Tooltip>
+                  <BAIVFolderDeleteButtonV2
+                    vfolderFrgmt={selectedFolderList}
+                    // P8: the accessible name is now on the control itself.
+                    label={t('data.folders.MoveToTrash')}
+                    onClick={() => {
+                      toggleDeleteModal();
+                    }}
+                  />
                 </>
               )}
             {selectedFolderList.length > 0 &&
@@ -380,26 +369,25 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <Tooltip title={t('data.folders.Restore')}>
-                    <BAIButton
-                      icon={
-                        <BAIRestoreIcon style={{ color: token.colorInfo }} />
-                      }
+                  <Tooltip content={t('data.folders.Restore')}>
+                    <IconButton
+                      label={t('data.folders.Restore')}
+                      icon={<RotateCcwIcon />}
                       onClick={() => {
                         toggleRestoreModal();
                       }}
                     />
                   </Tooltip>
-                  <Tooltip title={t('data.folders.Delete')}>
-                    <BAIButton
-                      icon={
-                        <BAIPurgeIcon style={{ color: token.colorError }} />
-                      }
-                      onClick={() => {
-                        toggleDeleteForeverModal();
-                      }}
-                    />
-                  </Tooltip>
+                  <IconButton
+                    label={t('data.folders.Delete')}
+                    tooltip={t('data.folders.Delete')}
+                    icon={<Trash2Icon />}
+                    className="bai-name-action-cell-danger"
+                    variant="ghost"
+                    onClick={() => {
+                      toggleDeleteForeverModal();
+                    }}
+                  />
                 </>
               )}
             <AutoUpdateFetchKeyButton
@@ -413,20 +401,20 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                 updateFetchKey(newFetchKey);
               }}
             />
-            <BAIButton
-              type="primary"
+            <Button
+              variant="primary"
               icon={<PlusIcon />}
+              label={t('data.CreateFolder')}
               onClick={() => {
                 toggleCreateModal();
               }}
-            >
-              {t('data.CreateFolder')}
-            </BAIButton>
-          </BAIFlex>
-        </BAIFlex>
+            />
+          </HStack>
+        </HStack>
         <VFolderNodesV2
           order={queryParams.order}
           loading={deferredQueryVariables !== queryVariables}
+          project={project}
           vfoldersFrgmt={filterOutNullAndUndefined(
             _.map(projectVfolders?.edges, 'node'),
           )}
@@ -479,7 +467,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             onColumnOverridesChange: setColumnOverrides,
           }}
         />
-      </BAIFlex>
+      </VStack>
       <DeleteVFolderModalV2
         vfolderFrgmts={selectedFolderList}
         open={isOpenDeleteModal}
@@ -515,6 +503,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       />
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={project}
         folderType="project"
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
@@ -532,22 +521,16 @@ const ProjectAdminDataPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const currentProject = useCurrentProjectValue();
+  const project = toProjectContext(currentProject);
 
   return (
-    <BAICard
-      variant="borderless"
-      title={t('data.ProjectFolders')}
-      styles={{
-        header: { borderBottom: 'none' },
-        body: { paddingTop: 0 },
-      }}
-    >
+    <BAICard title={t('data.ProjectFolders')}>
       <BAIErrorBoundary>
-        <Suspense fallback={<Skeleton active />}>
-          {currentProject.id ? (
-            <ProjectAdminDataContent projectId={currentProject.id} />
+        <Suspense fallback={<BAISkeleton rows={4} />}>
+          {project ? (
+            <ProjectAdminDataContent project={project} />
           ) : (
-            <Skeleton active />
+            <BAISkeleton rows={4} />
           )}
         </Suspense>
       </BAIErrorBoundary>

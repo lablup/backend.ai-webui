@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "执行错误",
     "ErrorOccurred": "发生错误"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "无结果",
+    "Search": "搜索"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "选择容器镜像仓库"
   },
@@ -156,6 +160,9 @@
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "选择域"
+  },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自动刷新",
@@ -260,6 +267,9 @@
     "StrategyType": "策略",
     "Tags": "标签",
     "UpdatedAt": "更新时间"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下项目将被更新。",
@@ -451,14 +461,19 @@
     "Step": "步骤"
   },
   "comp:BAITable": {
+    "Apply": "应用",
+    "Cancel": "取消",
     "CollapseAll": "收起全部",
     "ExpandAll": "展开全部",
     "ExpandErrorsOnly": "仅展开错误",
     "ExpandOptions": "展开选项",
+    "ExpandRow": "展开行",
     "Export": "导出",
     "ExportCSV": "导出 CSV",
     "GoToFirstPage": "转到第一页",
     "InvalidPageNumber": "无效的页码",
+    "NoDataToDisplay": "暂无数据",
+    "Pagination": "分页",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "选择要显示的列",
     "SettingTable": "表设置"
@@ -526,8 +541,10 @@
     "MoreOptions": "更多选项",
     "Name": "姓名",
     "NoUploadPermissionForHost": "您没有此存储主机的上传权限。",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "请输入文件夹名称。",
+    "RenameFile": "Rename",
     "RenameSuccess": "该名称已成功更改。",
     "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
     "Size": "尺寸",
@@ -594,21 +611,73 @@
     "UserID": "用户 ID",
     "Username": "用户名"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "点击选择路径",
+    "SelectAPath": "选择路径",
+    "SelectAPathInFolder": "在 {{folderName}} 中选择路径",
+    "SelectFolderFirst": "请先选择文件夹",
+    "SelectThisLocation": "选择此位置",
+    "SelectedPath": "已选择"
+  },
   "error": {
     "UnknownError": "发生了未知错误。\n请重试。"
   },
+  "form": {
+    "Optional": "（可选）",
+    "validateMessages": {
+      "Default": "字段验证错误${label}",
+      "Required": "请输入${label}",
+      "Whitespace": "${label}不能为空字符",
+      "array": {
+        "Len": "须为${len}个${label}",
+        "Max": "最多${max}个${label}",
+        "Min": "最少${min}个${label}",
+        "Range": "${label}数量须在${min}-${max}之间"
+      },
+      "number": {
+        "Len": "${label}必须等于${len}",
+        "Max": "${label}最大值为${max}",
+        "Min": "${label}最小值为${min}",
+        "Range": "${label}须在${min}-${max}之间"
+      },
+      "pattern": {
+        "Mismatch": "${label}与模式不匹配${pattern}"
+      },
+      "string": {
+        "Len": "${label}须为${len}个字符",
+        "Max": "${label}最多${max}个字符",
+        "Min": "${label}最少${min}个字符",
+        "Range": "${label}须在${min}-${max}字符之间"
+      },
+      "types": {
+        "Email": "${label}不是一个有效的${type}",
+        "Number": "${label}不是一个有效的${type}",
+        "Object": "${label}不是一个有效的${type}",
+        "String": "${label}不是一个有效的${type}",
+        "Url": "${label}不是一个有效的${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "取消全选",
     "File": "文件",
+    "Increase": "Increase",
     "NSelected": "{{count}}选择",
     "Optional": "可选",
     "Project": "项目",
+    "Select": "Select",
     "TotalItems": "总计{{total}}项目",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "取消",
       "Close": "关闭",
       "Collapse": "坍塌",
+      "Confirm": "Confirm",
       "Copied": "已复制",
+      "Copy": "复制",
       "CopyAll": "复制全部",
       "Create": "创造",
       "Delete": "删除",

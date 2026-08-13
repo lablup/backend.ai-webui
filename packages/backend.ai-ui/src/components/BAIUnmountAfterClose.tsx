@@ -1,8 +1,23 @@
-import type { DrawerProps, ModalProps } from 'antd';
 import React, { useState, useEffect } from 'react';
 
+/**
+ * The slice of the child's props this wrapper reads and writes. It used to be
+ * `ModalProps | DrawerProps` imported from antd; the wrapper never needed the
+ * other ~40 keys, and typing it structurally is what lets an Astryx-backed
+ * `BAIModal` and a still-antd `Drawer` both flow through unchanged
+ * (to-astryx phase 3 / ticket B).
+ */
+export interface BAIUnmountAfterCloseChildProps {
+  /** Visibility flag — both antd `Modal`/`Drawer` and `BAIModal` use `open`. */
+  open?: boolean;
+  /** Fired once the modal has finished closing. */
+  afterClose?: () => void;
+  /** Drawer's equivalent, fired with the new visibility. */
+  afterOpenChange?: (open: boolean) => void;
+}
+
 interface BAIUnmountModalAfterCloseProps {
-  children: React.ReactElement<ModalProps | DrawerProps>;
+  children: React.ReactElement<BAIUnmountAfterCloseChildProps>;
 }
 
 /**
@@ -21,7 +36,7 @@ interface BAIUnmountModalAfterCloseProps {
  *
  * @example
  * <UnmountAfterClose>
- *   <Modal open={isOpen} afterClose={handleAfterClose} />
+ *   <BAIModal open={isOpen} afterClose={handleAfterClose} />
  * </UnmountAfterClose>
  */
 const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
@@ -56,12 +71,12 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   }
 
   // Preserve the original afterClose callback if it exists
-  const originalAfterClose = (childElement.props as ModalProps).afterClose;
+  const originalAfterClose = childElement.props.afterClose;
 
   // New handler to intercept afterClose
-  const handleModalAfterClose: ModalProps['afterClose'] = (...args) => {
+  const handleModalAfterClose = () => {
     if (originalAfterClose) {
-      originalAfterClose(...args);
+      originalAfterClose();
     }
     // Mark as closed after the exit animation completes
     setAfterClosed(true);
@@ -71,7 +86,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   const originalAfterOpenChange = childElement.props.afterOpenChange;
 
   // New handler to intercept afterOpenChange
-  const handleModalAfterOpenChange: DrawerProps['afterOpenChange'] = (open) => {
+  const handleModalAfterOpenChange = (open: boolean) => {
     if (originalAfterOpenChange) {
       originalAfterOpenChange(open);
     }

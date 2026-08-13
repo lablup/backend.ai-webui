@@ -10,20 +10,17 @@ import {
 } from '../__generated__/AutoScalingRuleEditorModalLegacyCreateMutation.graphql';
 import { AutoScalingRuleEditorModalLegacyFragment$key } from '../__generated__/AutoScalingRuleEditorModalLegacyFragment.graphql';
 import { AutoScalingRuleEditorModalLegacyModifyMutation } from '../__generated__/AutoScalingRuleEditorModalLegacyModifyMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import {
-  App,
-  AutoComplete,
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  Radio,
-  Select,
-  Space,
-  Typography,
-} from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+  AstryxFormNumberInput,
+  AstryxFormRadioList,
+  AstryxFormSelector,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -280,23 +277,25 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           name={'type'}
           rules={[{ required: true }]}
         >
-          <Radio.Group
+          {/* antd `Radio.Group` with `options` -> `RadioList` (MAPPING §3.10).
+              The `BAIFlex`-wrapped labels collapse to plain strings:
+              `RadioListItem.label` is a required STRING (P2) and the wrapper
+              added no content, only a flex box around one word. `onChange`
+              takes the VALUE, not the event (P3). */}
+          <AstryxFormRadioList
+            label={t('autoScalingRule.ScalingType')}
             options={[
               {
-                label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleOut')}</BAIFlex>
-                ),
+                label: t('autoScalingRule.ScaleOut'),
                 value: 'out',
               },
               {
-                label: (
-                  <BAIFlex gap={'xs'}>{t('autoScalingRule.ScaleIn')}</BAIFlex>
-                ),
+                label: t('autoScalingRule.ScaleIn'),
                 value: 'in',
               },
             ]}
-            onChange={(e) => {
-              e.target.value === 'in'
+            onChange={(value) => {
+              value === 'in'
                 ? formRef.current?.setFieldsValue({ max_replicas: 1 })
                 : formRef.current?.setFieldsValue({ min_replicas: 1 });
             }}
@@ -307,7 +306,8 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           name={'metric_source'}
           rules={[{ required: true }]}
         >
-          <Select
+          <AstryxFormSelector
+            label={t('autoScalingRule.MetricSource')}
             onChange={(value) => {
               // @ts-ignore
               setNameOptions(METRIC_NAMES_MAP[value] || []);
@@ -333,34 +333,30 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
         >
           {({ getFieldValue }: FormInstance<AutoScalingRuleInput>) => {
             return (
-              <Space.Compact
-                style={{
-                  width: '100%',
-                }}
-              >
+              // antd `Space.Compact` -> Astryx `InputGroup` (MAPPING §4):
+              // the welded row of metric name + comparator + threshold.
+              <InputGroup label={t('autoScalingRule.Condition')} isLabelHidden>
                 <Form.Item
                   name={'metric_name'}
                   rules={[{ required: true }]}
                   style={{ flex: 1 }}
                   noStyle
                 >
-                  <AutoComplete
-                    placeholder={t('autoScalingRule.MetricName')}
-                    options={_.map(nameOptions, (name) => ({
-                      label: name,
-                      value: name,
-                    }))}
-                    onSearch={(text) =>
-                      setNameOptions(
-                        _.filter(
-                          // @ts-ignore
-                          METRIC_NAMES_MAP[getFieldValue('metric_source')],
-                          (name) => name.includes(text),
-                        ),
-                      )
+                  {/* PILOT-DECISION: antd `AutoComplete` -> `TextInput`
+                      (MAPPING §3.15 — free-text AutoComplete has no Typeahead
+                      equivalent, and `INFERENCE_FRAMEWORK` ships an EMPTY name
+                      list so free text is required). Known names move to the
+                      placeholder rather than a rebuilt `TextInput` + `Popover`
+                      popup; the client-side `onSearch` filter goes with the
+                      dropdown. Same call as the V2 editor above. */}
+                  <AstryxFormTextInput
+                    label={t('autoScalingRule.MetricName')}
+                    placeholder={
+                      nameOptions.length > 0
+                        ? nameOptions.join(', ')
+                        : t('autoScalingRule.MetricName')
                     }
                     allowClear
-                    popupMatchSelectWidth={false}
                   />
                 </Form.Item>
                 <Form.Item
@@ -369,22 +365,19 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   rules={[{ required: true }]}
                   noStyle
                 >
-                  <Select
-                    style={{ width: 100 }}
+                  {/* PILOT-DECISION: antd `Select` with a ReactNode option
+                      label + `optionLabelProp="selectedLabel"` -> `Selector`.
+                      Astryx option labels are STRINGS (P2/P26-3) and there is
+                      no `optionLabelProp`, so the two-part row collapses to one
+                      string, `"<label> (<value>)"`, which carries both pieces
+                      the node did. `style={{width:100}}` -> `width={100}`. */}
+                  <AstryxFormSelector
+                    label={t('autoScalingRule.Comparator')}
+                    width={100}
                     options={_.map(COMPARATOR_LABELS, (label, value) => ({
-                      label: (
-                        <BAIFlex gap={'xs'}>
-                          {label}
-                          <Typography.Text type="secondary">
-                            ({value})
-                          </Typography.Text>
-                        </BAIFlex>
-                      ),
+                      label: `${label} (${value})`,
                       value,
-                      selectedLabel: label,
                     }))}
-                    optionLabelProp="selectedLabel"
-                    popupMatchSelectWidth={false}
                   />
                 </Form.Item>
                 <Form.Item
@@ -392,14 +385,20 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   rules={[{ required: true }]}
                   noStyle
                 >
-                  <Input
-                    suffix={
-                      getFieldValue('metric_source') === 'KERNEL' ? '%' : ''
+                  {/* antd `Input suffix` -> `InputGroup` is already the
+                      surrounding element, so the unit is expressed as the
+                      field's placeholder suffix instead of a second addon box
+                      (MAPPING §3.6: `TextInput` has no `suffix`). */}
+                  <AstryxFormTextInput
+                    label={t('autoScalingRule.Threshold')}
+                    placeholder={
+                      getFieldValue('metric_source') === 'KERNEL'
+                        ? `${t('autoScalingRule.Threshold')} (%)`
+                        : t('autoScalingRule.Threshold')
                     }
-                    placeholder={t('autoScalingRule.Threshold')}
                   />
                 </Form.Item>
-              </Space.Compact>
+              </InputGroup>
             );
           }}
         </Form.Item>
@@ -425,7 +424,11 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <InputNumber min={1} step={1} style={{ width: '100%' }} />
+          <AstryxFormNumberInput
+            label={t('autoScalingRule.StepSize')}
+            min={1}
+            step={1}
+          />
         </Form.Item>
         <Form.Item noStyle dependencies={['type']}>
           {({ getFieldValue }) => {
@@ -455,10 +458,10 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   },
                 ]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('autoScalingRule.MaxReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
-                  style={{ width: '100%' }}
                 />
               </Form.Item>
             ) : (
@@ -487,10 +490,10 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
                   },
                 ]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('autoScalingRule.MinReplicas')}
                   min={0}
                   max={SIGNED_32BIT_MAX_INT}
-                  style={{ width: '100%' }}
                 />
               </Form.Item>
             );
@@ -519,7 +522,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <InputNumber style={{ width: '100%' }} />
+          <AstryxFormNumberInput label={t('autoScalingRule.CoolDownSeconds')} />
         </Form.Item>
       </Form>
     </BAIModal>

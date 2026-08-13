@@ -3,12 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
+import { theme } from '../theme-shim';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
-import { ReloadOutlined } from '@ant-design/icons';
-import { Alert, Button, Result, theme, Typography } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';
+import { RotateCw, TriangleAlertIcon } from 'lucide-react';
 import React from 'react';
 import {
   ErrorBoundary,
@@ -104,17 +108,23 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
             justify="center"
             align="center"
           >
-            <Result
-              status="warning"
+            {/* PILOT-DECISION: antd `Result status="warning"` → Astryx
+                `EmptyState` (MAPPING §"Also COMPOSITION": `subTitle`→
+                `description`, `extra`→`actions`, `status="warning"`→ an icon
+                you choose). antd drew a warning illustration; the Astryx
+                equivalent is an explicit `icon`, so the lucide
+                `TriangleAlertIcon` stands in. */}
+            <EmptyState
+              icon={<TriangleAlertIcon size={40} />}
               title={
                 isLoginSessionExpiredError
                   ? t('errorBoundary.ExpiredLoginSessionTitle')
                   : t('errorBoundary.Title')
               }
-              extra={
+              actions={
                 <BAIFlex direction="column" gap="md">
                   <Button
-                    type="primary"
+                    variant="primary"
                     key="console"
                     onClick={() => {
                       // @ts-ignore
@@ -126,12 +136,13 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                         globalThis.location.reload();
                       }
                     }}
-                    icon={<ReloadOutlined />}
-                  >
-                    {isLoginSessionExpiredError
-                      ? t('errorBoundary.ExpiredLoginSessionReLogin')
-                      : t('errorBoundary.ReloadPage')}
-                  </Button>
+                    icon={<RotateCw size="1em" />}
+                    label={
+                      isLoginSessionExpiredError
+                        ? t('errorBoundary.ExpiredLoginSessionReLogin')
+                        : t('errorBoundary.ReloadPage')
+                    }
+                  />
                   {
                     // TODO: Include this to App Config
                     // @ts-ignore
@@ -142,28 +153,34 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                         align="center"
                         style={{ width: '100%' }}
                       >
-                        <Alert
-                          type="info"
+                        <Banner
+                          status="info"
+                          // POLISH-3 item 1: a Banner's action belongs in
+                          // `endContent` (Banner's own "Action button"
+                          // anatomy slot), not stacked on top of the
+                          // description column.
+                          endContent={
+                            <Button
+                              icon={<RotateCw size="1em" />}
+                              onClick={() => {
+                                resetErrorBoundary();
+                              }}
+                              label={t('errorBoundary.ResetErrorBoundary')}
+                            />
+                          }
                           description={
                             <BAIFlex
                               direction="column"
                               align="center"
                               gap={'md'}
                             >
-                              <Button
-                                type="default"
-                                icon={<ReloadOutlined />}
-                                onClick={() => {
-                                  resetErrorBoundary();
-                                }}
-                              >
-                                {t('errorBoundary.ResetErrorBoundary')}
-                              </Button>
                               <BAIFlex direction="column" gap="sm">
-                                <Typography.Text strong>
+                                <Text weight="semibold">
                                   {t('errorBoundary.ErrorMessage')}
-                                </Typography.Text>
-                                <Typography.Paragraph
+                                </Text>
+                                <Text
+                                  as="div"
+                                  display="block"
                                   style={{
                                     whiteSpace: 'pre-wrap',
                                     wordBreak: 'break-word',
@@ -201,16 +218,18 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                                       return JSON.stringify(error, null, 2);
                                     })()}
                                   </pre>
-                                </Typography.Paragraph>
+                                </Text>
 
                                 {/* Debug: Show only relevant error information */}
-                                <Typography.Text
-                                  strong
+                                <Text
+                                  weight="semibold"
                                   style={{ marginTop: token.marginXS }}
                                 >
                                   {t('errorBoundary.DebugInfo')}
-                                </Typography.Text>
-                                <Typography.Paragraph
+                                </Text>
+                                <Text
+                                  as="div"
+                                  display="block"
                                   style={{
                                     whiteSpace: 'pre-wrap',
                                     wordBreak: 'break-word',
@@ -237,17 +256,19 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                                       2,
                                     )}
                                   </pre>
-                                </Typography.Paragraph>
+                                </Text>
 
                                 {error instanceof Error && error.stack && (
                                   <>
-                                    <Typography.Text
-                                      strong
+                                    <Text
+                                      weight="semibold"
                                       style={{ marginTop: token.marginXS }}
                                     >
                                       {t('errorBoundary.StackTrace')}
-                                    </Typography.Text>
-                                    <Typography.Paragraph
+                                    </Text>
+                                    <Text
+                                      as="div"
+                                      display="block"
                                       style={{
                                         whiteSpace: 'pre-wrap',
                                         wordBreak: 'break-word',
@@ -260,7 +281,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                                       <pre style={{ margin: 0 }}>
                                         {(error as Error).stack}
                                       </pre>
-                                    </Typography.Paragraph>
+                                    </Text>
                                   </>
                                 )}
                               </BAIFlex>
@@ -273,7 +294,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                   }
                 </BAIFlex>
               }
-            ></Result>
+            />
           </BAIFlex>
         );
       }}
@@ -285,13 +306,13 @@ export default BAIErrorBoundary;
 export const ErrorView = () => {
   const { t } = useTranslation();
   return (
-    <Result
-      status="warning"
+    <EmptyState
+      icon={<TriangleAlertIcon size={40} />}
       title={t('errorBoundary.Title')}
-      extra={
+      actions={
         <BAIFlex direction="column" gap="md">
           <Button
-            type="primary"
+            variant="primary"
             key="console"
             onClick={() => {
               // @ts-ignore
@@ -302,12 +323,11 @@ export const ErrorView = () => {
                 globalThis.location.reload();
               }
             }}
-            icon={<ReloadOutlined />}
-          >
-            {t('errorBoundary.ReloadPage')}
-          </Button>
+            icon={<RotateCw size="1em" />}
+            label={t('errorBoundary.ReloadPage')}
+          />
         </BAIFlex>
       }
-    ></Result>
+    />
   );
 };

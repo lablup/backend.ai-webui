@@ -2,15 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
+import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
-import { CheckCircleOutlined } from '@ant-design/icons';
-import { App, Form, Input, theme, Typography } from 'antd';
-import {
-  BAIButton,
-  BAIFlex,
-  BAIModal,
-  ESMClientErrorResponse,
-} from 'backend.ai-ui';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { Text } from '@astryxdesign/core/Text';
+import { BAIFlex, BAIModal, ESMClientErrorResponse } from 'backend.ai-ui';
+import { CircleCheck } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -107,15 +109,16 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
         title={t('webui.menu.ChangePassword')}
         width={420}
         footer={
-          <BAIButton
-            type="primary"
-            block
-            action={async () => {
+          // BUI `BAIButton.action` is Astryx's native `clickAction`
+          // (wrapper policy: BAIButton DISSOLVES); `block` -> `width="100%"`.
+          <Button
+            variant="primary"
+            width="100%"
+            clickAction={async () => {
               await handleUpdatePassword();
             }}
-          >
-            {t('webui.menu.Update')}
-          </BAIButton>
+            label={t('webui.menu.Update')}
+          />
         }
         closable={false}
         mask={{ closable: false }}
@@ -127,7 +130,7 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
             preserve={false}
             style={{ width: '100%' }}
           >
-            <Form.Item
+            <BAIFormItem
               name="email"
               label={t('data.explorer.EnterEmailAddress')}
               rules={[
@@ -145,9 +148,12 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <Input autoFocus maxLength={64} />
-            </Form.Item>
-            <Form.Item
+              <AstryxFormTextInput
+                label={t('data.explorer.EnterEmailAddress')}
+                hasAutoFocus
+              />
+            </BAIFormItem>
+            <BAIFormItem
               name="password1"
               label={t('webui.menu.NewPassword')}
               rules={[
@@ -165,9 +171,12 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <Input.Password maxLength={64} />
-            </Form.Item>
-            <Form.Item
+              <AstryxFormTextInput
+                type="password"
+                label={t('webui.menu.NewPassword')}
+              />
+            </BAIFormItem>
+            <BAIFormItem
               name="password2"
               label={t('webui.menu.NewPasswordAgain')}
               rules={[
@@ -185,8 +194,11 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
                 },
               ]}
             >
-              <Input.Password maxLength={64} />
-            </Form.Item>
+              <AstryxFormTextInput
+                type="password"
+                label={t('webui.menu.NewPasswordAgain')}
+              />
+            </BAIFormItem>
           </Form>
         </BAIFlex>
       </BAIModal>
@@ -196,18 +208,22 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
         title={t('webui.menu.ChangePassword')}
         width={420}
         footer={
-          <BAIButton type="primary" block onClick={redirectToLoginPage}>
-            {t('button.Close')}
-          </BAIButton>
+          <Button
+            variant="primary"
+            width="100%"
+            onClick={redirectToLoginPage}
+            label={t('button.Close')}
+          />
         }
         closable={false}
         mask={{ closable: false }}
       >
         <BAIFlex gap="xs" align="center">
-          <CheckCircleOutlined
+          <CircleCheck
             style={{ color: token.colorSuccess, fontSize: token.fontSizeLG }}
+            size="1em"
           />
-          <Typography.Text>{t('login.PasswordChanged')}</Typography.Text>
+          <Text>{t('login.PasswordChanged')}</Text>
         </BAIFlex>
       </BAIModal>
 
@@ -216,9 +232,12 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
         title={t('login.InvalidChangePasswordToken')}
         width={420}
         footer={
-          <BAIButton type="primary" block onClick={redirectToLoginPage}>
-            {t('button.Close')}
-          </BAIButton>
+          <Button
+            variant="primary"
+            width="100%"
+            onClick={redirectToLoginPage}
+            label={t('button.Close')}
+          />
         }
         closable={false}
         mask={{ closable: false }}

@@ -15,21 +15,17 @@ import {
   RoleScopePermissionEditModal_scopesFragment$data,
   RoleScopePermissionEditModal_scopesFragment$key,
 } from '../__generated__/RoleScopePermissionEditModal_scopesFragment.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
 import {
   applyBulkPermissionCells,
   type BulkCellState,
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
-import {
-  App,
-  Empty,
-  Form,
-  type FormInstance,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIBulkEditFormItem,
   BAIBulkErrorModal,
@@ -40,7 +36,7 @@ import {
   BAIListAlert,
   BAIModal,
   type BAIModalProps,
-  BAITable,
+  BAITableAstryx,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
@@ -206,7 +202,6 @@ const RoleScopePermissionEditModal: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
 
@@ -710,10 +705,10 @@ const RoleScopePermissionEditModal: React.FC<
   ) => {
     if (!entity.supportedOperations.has(operation)) {
       return (
-        <Tooltip title={t('rbac.PermissionNotAssignable')}>
-          <Typography.Text type="secondary" style={{ padding: '0 8px' }}>
+        <Tooltip content={t('rbac.PermissionNotAssignable')}>
+          <Text color="secondary" style={{ padding: '0 8px' }}>
             -
-          </Typography.Text>
+          </Text>
         </Tooltip>
       );
     }
@@ -764,7 +759,7 @@ const RoleScopePermissionEditModal: React.FC<
       title: t('rbac.PermissionType'),
       fixed: 'left',
       render: (_value, entity) => (
-        <Typography.Text>{rbacTypeLabel(entity.entityType)}</Typography.Text>
+        <Text>{rbacTypeLabel(entity.entityType)}</Text>
       ),
     },
     ...operationGroups.map((group) => ({
@@ -803,17 +798,18 @@ const RoleScopePermissionEditModal: React.FC<
           {!isBulk && (
             // Single-scope edit: the edited scope's name as a small subtitle
             // (the title itself only carries the scope type).
-            <Typography.Text
-              type="secondary"
-              ellipsis={{ tooltip: displayName }}
-              style={{
-                fontSize: token.fontSizeSM,
-                fontWeight: 'normal',
-                maxWidth: '100%',
-              }}
+            // `type="secondary"` + `fontSizeSM` is Astryx's `supporting` type
+            // (MAPPING §3.4); `ellipsis={{tooltip}}` is `maxLines` +
+            // `hasTruncateTooltip`, which shows the tooltip only when clamped.
+            <Text
+              type="supporting"
+              weight="normal"
+              maxLines={1}
+              hasTruncateTooltip
+              style={{ maxWidth: '100%' }}
             >
               {displayName}
-            </Typography.Text>
+            </Text>
           )}
         </BAIFlex>
       }
@@ -848,9 +844,11 @@ const RoleScopePermissionEditModal: React.FC<
             />
           )}
           {entities.length === 0 ? (
-            <Empty description={t('rbac.NoPermissionsToDisplay')} />
+            // antd `Empty` -> `EmptyState`: `description` becomes the
+            // required `title` (MAPPING §4).
+            <EmptyState title={t('rbac.NoPermissionsToDisplay')} />
           ) : (
-            <BAITable
+            <BAITableAstryx
               rowKey="entityType"
               columns={columns}
               dataSource={entities}
@@ -858,7 +856,6 @@ const RoleScopePermissionEditModal: React.FC<
               resizable={false}
               bordered
               size="small"
-              scroll={{ x: 'max-content' }}
             />
           )}
         </BAIFlex>
@@ -872,17 +869,13 @@ const RoleScopePermissionEditModal: React.FC<
         alertDescription={
           <>
             {t('rbac.PermissionsPartialFailureDescription')}{' '}
-            <Typography.Text
-              style={{
-                color: token.colorTextSecondary,
-                fontSize: token.fontSizeSM,
-              }}
-            >
+            {/* `colorTextSecondary` + `fontSizeSM` is the `supporting` type. */}
+            <Text type="supporting">
               {t('rbac.PermissionsPartialFailureCounts', {
                 succeeded: succeededRequestCount,
                 failed: failedRequests.length,
               })}
-            </Typography.Text>
+            </Text>
           </>
         }
         dataSource={failedRequests}

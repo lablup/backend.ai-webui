@@ -9,46 +9,53 @@ import {
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
+import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import {
-  DeleteFilled,
-  EllipsisOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Space, theme } from 'antd';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  toLocalId,
+  BAIAdminUserV2Table,
+  BAIButton,
+  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
-  useBAILogger,
-  BAIFetchKeyButton,
-  BAIAdminUserV2Table,
-  UserV2InList,
-  availableUserV2SorterValues,
-  BAIButton,
-  BAISelectionLabel,
   BAINameActionCell,
+  BAISelectionLabel,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  UserV2InList,
+  availableUserV2SorterValues,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  toLocalId,
+  useBAILogger,
   useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
+import {
+  Trash2,
+  Ellipsis,
+  Info,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -216,7 +223,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           {
             key: 'info',
             title: t('credential.UserDetail'),
-            icon: <InfoCircleOutlined />,
+            icon: <Info size="1em" />,
             onClick: () => {
               setSelectedUserForInfoModal(findUserNode(record.id));
             },
@@ -288,7 +295,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           !isActive && {
             key: 'purge',
             title: t('credential.PermanentlyDelete'),
-            icon: <DeleteFilled />,
+            icon: <Trash2 size="1em" />,
             type: 'danger' as const,
             onClick: () => {
               if (record?.id) {
@@ -462,7 +469,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               />
               {queryParams.status === 'INACTIVE' && (
                 <BAIButton
-                  icon={<DeleteFilled style={{ color: token.colorError }} />}
+                  icon={
+                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                  }
                   onClick={togglePurgeUsersModal}
                 />
               )}
@@ -473,43 +482,64 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             value={fetchKey}
             onChange={updateFetchKey}
           />
-          <Space.Compact>
-            <BAIButton
-              type="primary"
-              icon={<PlusIcon />}
+          {/* ONE attached control, not two adjacent buttons.
+              `ButtonGroup` joins its children through CONTEXT, not through
+              wrappers or cloneElement: `ButtonGroupContext` tells each child
+              its position, and the child suppresses its own inner end-cap
+              radius and shared border accordingly (see `ButtonGroup.js` — "no
+              cloneElement or wrapper divs needed" — and `IS_LAST_ITEM` in
+              `Button.js`, which is why a trailing `[popover]` sibling does not
+              break the last-child detection).
+
+              Only Astryx `Button` / `IconButton` / `ToggleButton` read that
+              context. The primary action here was `BAIButton`, i.e. an antd
+              `Button` (`packages/backend.ai-ui/src/components/BAIButton.tsx`
+              wraps `antd`'s), which is invisible to the context and therefore
+              kept its own fully-rounded pill — the group rendered as a split
+              pair. `DropdownMenu` was already fine: it renders an Astryx
+              `Button` as its trigger, as a direct child.
+
+              So the fix is to make the primary child an Astryx `Button` too.
+              `variant="primary"` is the Astryx spelling of antd
+              `type="primary"`; `label` carries both the visible text and the
+              accessible name. */}
+          <ButtonGroup label={t('credential.CreateUser')}>
+            <Button
+              variant="primary"
+              icon={<PlusIcon size="1em" />}
+              label={t('credential.CreateUser')}
               onClick={() => {
                 setOpenCreateModal(true);
               }}
-            >
-              {t('credential.CreateUser')}
-            </BAIButton>
+            />
             {bailClient.supports('bulk-create-user') && (
-              <Dropdown
-                trigger={['click']}
-                menu={{
-                  items: [
-                    {
-                      key: 'bulk-create',
-                      label: t('credential.BulkCreateUser'),
-                      onClick: () => {
-                        setOpenBulkCreateModal(true);
-                      },
-                    },
-                    {
-                      key: 'bulk-create-csv',
-                      label: t('credential.BulkCreateUserFromCSV'),
-                      onClick: () => {
-                        setOpenBulkCreateCSVModal(true);
-                      },
-                    },
-                  ],
+              <DropdownMenu
+                button={{
+                  label: t('button.More'),
+                  variant: 'primary',
+                  isIconOnly: true,
+                  icon: <Ellipsis size="1em" />,
                 }}
-                placement="bottomRight"
-              >
-                <Button type="primary" icon={<EllipsisOutlined />} />
-              </Dropdown>
+                hasChevron={false}
+                placement="below"
+                alignment="end"
+                items={[
+                  {
+                    label: t('credential.BulkCreateUser'),
+                    onClick: () => {
+                      setOpenBulkCreateModal(true);
+                    },
+                  },
+                  {
+                    label: t('credential.BulkCreateUserFromCSV'),
+                    onClick: () => {
+                      setOpenBulkCreateCSVModal(true);
+                    },
+                  },
+                ]}
+              />
             )}
-          </Space.Compact>
+          </ButtonGroup>
         </BAIFlex>
       </BAIFlex>
       <BAIAdminUserV2Table
@@ -530,16 +560,39 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             {
               ...columns[0],
               render: renderEmailWithActions,
+              // This override is what puts the row's action buttons in the
+              // E-Mail cell, so it owns the width they need — not
+              // `BAIUserNodes`, whose plain email column is reused by tables
+              // that render no actions.
+              //
+              // Reported as "default email column width 가 좁아서 컨트롤 버튼이
+              // 모두 보이지 않음" (QA-FINDINGS Q-16). The column carries no
+              // width, so `BAITableAstryx` falls through to `proportional(1)`,
+              // whose documented minimum is 120px; with 21 columns that is
+              // 2452px against a 1600px viewport, so the flex share never
+              // activates and EVERY column pins to that 120px floor. 120 minus
+              // the cell's 16px padding leaves 104, minus
+              // `BAINameActionCell`'s 44px title reserve leaves 60 — and three
+              // 24px buttons with 2px gaps need 76, so all but one collapse
+              // into the overflow menu.
+              //
+              // Legacy sized this column to its content: the antd table ran
+              // `scroll={{ x: 'max-content' }}`, which puts rc-table in `auto`
+              // layout (`git show origin/main:packages/backend.ai-ui/src/
+              // components/BAIAdminUserV2Table.tsx`), and `BAITableAstryx`
+              // accepts-and-ignores `scroll` by PILOT-DECISION. 320 = 200px of
+              // email text + 8 gap + four 24px buttons with 2px gaps (102) +
+              // 16 padding. The table already scrolls, so this takes nothing
+              // from the other columns.
+              minWidth: 320,
             },
             ...columns.slice(1),
           ];
         }}
-        scroll={{ x: 'max-content' }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: adminUsersV2?.count || 0,
           current: tablePaginationOption.current,
-          style: { marginRight: token.marginXS },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

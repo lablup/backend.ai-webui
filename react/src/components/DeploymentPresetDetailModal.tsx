@@ -5,8 +5,19 @@
 import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
-import { Descriptions, Typography } from 'antd';
-import { BAICard, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { Heading } from '@astryxdesign/core/Heading';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAICard,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAIText,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -132,65 +143,47 @@ const DeploymentPresetDetailModal: React.FC<
       {...modalProps}
     >
       {!preset ? (
-        <Typography.Text type="secondary">
-          {t('modelService.PresetNotFound')}
-        </Typography.Text>
+        <Text color="secondary">{t('modelService.PresetNotFound')}</Text>
       ) : (
         <BAIFlex direction="column" align="stretch" gap="sm">
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {preset.name}
-          </Typography.Title>
+          {/* PILOT-DECISION: antd Descriptions `size="small"` has no
+              MetadataList equivalent — dropped throughout this modal;
+              Astryx's default density is the design. */}
+          <Heading level={5}>{preset.name}</Heading>
           {preset.description && (
-            <Typography.Text type="secondary">
-              {preset.description}
-            </Typography.Text>
+            <Text color="secondary">{preset.description}</Text>
           )}
           <BAICard
             size="small"
             title={t('adminDeploymentPreset.SectionImage')}
             styles={{ body: { paddingTop: 0 } }}
           >
-            <Descriptions
-              size="small"
-              column={1}
-              items={[
-                {
-                  label: t('adminDeploymentPreset.Image'),
-                  children: imageCanonicalName ? (
-                    <Typography.Text copyable>
-                      {imageCanonicalName}
-                    </Typography.Text>
-                  ) : (
-                    '-'
-                  ),
-                },
-                {
-                  label: t('adminDeploymentPreset.Runtime'),
-                  children:
-                    preset.runtimeVariant?.name ?? preset.runtimeVariantId,
-                },
-              ]}
-            />
+            <MetadataList columns={1}>
+              <MetadataListItem label={t('adminDeploymentPreset.Image')}>
+                {imageCanonicalName ? (
+                  <BAIText copyable>{imageCanonicalName}</BAIText>
+                ) : (
+                  '-'
+                )}
+              </MetadataListItem>
+              <MetadataListItem label={t('adminDeploymentPreset.Runtime')}>
+                {preset.runtimeVariant?.name ?? preset.runtimeVariantId}
+              </MetadataListItem>
+            </MetadataList>
           </BAICard>
           <BAICard
             size="small"
             title={t('adminDeploymentPreset.SectionCluster')}
             styles={{ body: { paddingTop: 0 } }}
           >
-            <Descriptions
-              size="small"
-              column={2}
-              items={[
-                {
-                  label: t('adminDeploymentPreset.ClusterMode'),
-                  children: preset.cluster?.clusterMode || '-',
-                },
-                {
-                  label: t('adminDeploymentPreset.ClusterSize'),
-                  children: preset.cluster?.clusterSize ?? '-',
-                },
-              ]}
-            />
+            <MetadataList columns={2}>
+              <MetadataListItem label={t('adminDeploymentPreset.ClusterMode')}>
+                {preset.cluster?.clusterMode || '-'}
+              </MetadataListItem>
+              <MetadataListItem label={t('adminDeploymentPreset.ClusterSize')}>
+                {preset.cluster?.clusterSize ?? '-'}
+              </MetadataListItem>
+            </MetadataList>
           </BAICard>
           <BAICard
             size="small"
@@ -214,18 +207,15 @@ const DeploymentPresetDetailModal: React.FC<
               />
               {(preset.resource?.resourceOpts?.filter((o) => o.name !== 'shmem')
                 .length ?? 0) > 0 && (
-                <Descriptions
-                  size="small"
-                  column={2}
-                  items={
-                    preset.resource?.resourceOpts
-                      ?.filter((opt) => opt.name !== 'shmem')
-                      .map((opt) => ({
-                        label: opt.name,
-                        children: opt.value,
-                      })) ?? []
-                  }
-                />
+                <MetadataList columns={2}>
+                  {(preset.resource?.resourceOpts ?? [])
+                    .filter((opt) => opt.name !== 'shmem')
+                    .map((opt) => (
+                      <MetadataListItem key={opt.name} label={opt.name}>
+                        {opt.value}
+                      </MetadataListItem>
+                    ))}
+                </MetadataList>
               )}
             </BAIFlex>
           </BAICard>
@@ -234,35 +224,26 @@ const DeploymentPresetDetailModal: React.FC<
             title={t('adminDeploymentPreset.SectionDeploymentDefaults')}
             styles={{ body: { paddingTop: 0 } }}
           >
-            <Descriptions
-              size="small"
-              column={2}
-              items={[
-                {
-                  label: t('adminDeploymentPreset.Replicas'),
-                  children: preset.deploymentDefaults?.replicaCount ?? '-',
-                },
-                {
-                  label: t('adminDeploymentPreset.RevisionHistoryLimit'),
-                  children:
-                    preset.deploymentDefaults?.revisionHistoryLimit ?? '-',
-                },
-                {
-                  label: t('adminDeploymentPreset.Strategy'),
-                  children:
-                    preset.deploymentDefaults?.deploymentStrategy ?? '-',
-                },
-                {
-                  label: t('adminDeploymentPreset.OpenToPublic'),
-                  children:
-                    preset.deploymentDefaults?.openToPublic != null
-                      ? preset.deploymentDefaults.openToPublic
-                        ? t('button.Yes')
-                        : t('button.No')
-                      : '-',
-                },
-              ]}
-            />
+            <MetadataList columns={2}>
+              <MetadataListItem label={t('adminDeploymentPreset.Replicas')}>
+                {preset.deploymentDefaults?.replicaCount ?? '-'}
+              </MetadataListItem>
+              <MetadataListItem
+                label={t('adminDeploymentPreset.RevisionHistoryLimit')}
+              >
+                {preset.deploymentDefaults?.revisionHistoryLimit ?? '-'}
+              </MetadataListItem>
+              <MetadataListItem label={t('adminDeploymentPreset.Strategy')}>
+                {preset.deploymentDefaults?.deploymentStrategy ?? '-'}
+              </MetadataListItem>
+              <MetadataListItem label={t('adminDeploymentPreset.OpenToPublic')}>
+                {preset.deploymentDefaults?.openToPublic != null
+                  ? preset.deploymentDefaults.openToPublic
+                    ? t('button.Yes')
+                    : t('button.No')
+                  : '-'}
+              </MetadataListItem>
+            </MetadataList>
           </BAICard>
           {hasServiceConfig && (
             <BAICard
@@ -270,60 +251,61 @@ const DeploymentPresetDetailModal: React.FC<
               title={t('adminDeploymentPreset.SectionHealthCheck')}
               styles={{ body: { paddingTop: 0 } }}
             >
-              <Descriptions
-                size="small"
-                column={isHealthCheckEnabled ? 2 : 1}
-                items={[
-                  {
-                    label: t(
-                      'adminDeploymentPreset.modelDef.EnableHealthCheck',
-                    ),
-                    children: isHealthCheckEnabled
-                      ? t('general.Enabled')
-                      : t('general.Disabled'),
-                  },
-                  ...(isHealthCheckEnabled
-                    ? [
-                        {
-                          label: t(
-                            'adminDeploymentPreset.modelDef.HealthCheckPath',
-                          ),
-                          children: healthCheck?.path ?? '-',
-                        },
-                        {
-                          label: t(
-                            'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                          ),
-                          children: healthCheck?.interval ?? '-',
-                        },
-                        {
-                          label: t(
-                            'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                          ),
-                          children: healthCheck?.maxRetries ?? '-',
-                        },
-                        {
-                          label: t(
-                            'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                          ),
-                          children: healthCheck?.maxWaitTime ?? '-',
-                        },
-                        {
-                          label: t(
-                            'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                          ),
-                          children: healthCheck?.expectedStatusCode ?? '-',
-                        },
-                        {
-                          label: t(
-                            'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                          ),
-                          children: healthCheck?.initialDelay ?? '-',
-                        },
-                      ]
-                    : []),
-                ]}
-              />
+              <MetadataList columns={isHealthCheckEnabled ? 2 : 1}>
+                <MetadataListItem
+                  label={t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
+                >
+                  {isHealthCheckEnabled
+                    ? t('general.Enabled')
+                    : t('general.Disabled')}
+                </MetadataListItem>
+                {isHealthCheckEnabled && (
+                  <>
+                    <MetadataListItem
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckPath',
+                      )}
+                    >
+                      {healthCheck?.path ?? '-'}
+                    </MetadataListItem>
+                    <MetadataListItem
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                      )}
+                    >
+                      {healthCheck?.interval ?? '-'}
+                    </MetadataListItem>
+                    <MetadataListItem
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                      )}
+                    >
+                      {healthCheck?.maxRetries ?? '-'}
+                    </MetadataListItem>
+                    <MetadataListItem
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                      )}
+                    >
+                      {healthCheck?.maxWaitTime ?? '-'}
+                    </MetadataListItem>
+                    <MetadataListItem
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                      )}
+                    >
+                      {healthCheck?.expectedStatusCode ?? '-'}
+                    </MetadataListItem>
+                    <MetadataListItem
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                      )}
+                    >
+                      {healthCheck?.initialDelay ?? '-'}
+                    </MetadataListItem>
+                  </>
+                )}
+              </MetadataList>
             </BAICard>
           )}
         </BAIFlex>

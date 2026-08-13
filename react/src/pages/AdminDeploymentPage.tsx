@@ -3,14 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type {
+  AdminDeploymentPresetQuery as AdminDeploymentPresetQueryType,
+  DeploymentRevisionPresetOrderBy,
+} from '../__generated__/AdminDeploymentPresetQuery.graphql';
+import type {
   AdminDeploymentQuery as AdminDeploymentQueryType,
   DeploymentFilter,
   DeploymentOrderBy,
 } from '../__generated__/AdminDeploymentQuery.graphql';
-import type {
-  AdminDeploymentPresetQuery as AdminDeploymentPresetQueryType,
-  DeploymentRevisionPresetOrderBy,
-} from '../__generated__/AdminDeploymentPresetQuery.graphql';
 import type {
   AdminModelCardQuery as AdminModelCardQueryType,
   ModelCardV2OrderBy,
@@ -40,14 +40,12 @@ import AdminRuntimeVariantPreset, {
   AdminRuntimeVariantPresetQuery,
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { Skeleton } from 'antd';
-import type { CardTabListType } from 'antd/es/card';
-import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { BAICard, type BAICardProps, filterOutEmpty } from 'backend.ai-ui';
 import {
   parseAsJson,
   parseAsString,
@@ -83,7 +81,7 @@ const DEPLOYMENT_RUNNING_FILTER: DeploymentFilter = {
 // (see below), these defaults are applied explicitly on tab switch and on the
 // initial load of each tab (in `loadTab`).
 const DEFAULT_ORDER_BY_TAB: Record<TabKey, string | null> = {
-  'deployments': null,
+  deployments: null,
   'model-store-management': null,
   'prometheus-preset': null,
   'deployment-presets': '-createdAt',
@@ -99,7 +97,6 @@ const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const currentProject = useCurrentProjectValue();
   const isPrometheusPresetSupported = baiClient.supports(
     'prometheus-query-preset',
   );
@@ -148,7 +145,12 @@ const AdminDeploymentPage: React.FC = () => {
       queryParams: { filter: queryParams.filter, order: queryParams.order },
       tablePaginationOption,
     };
-  }, [currentTab, queryParams.filter, queryParams.order, tablePaginationOption]);
+  }, [
+    currentTab,
+    queryParams.filter,
+    queryParams.order,
+    tablePaginationOption,
+  ]);
 
   // Every tab's query ref is owned here (not inside the tab component) so the
   // ref — and its already-fetched rows — survive the tab unmounting on a tab
@@ -304,14 +306,8 @@ const AdminDeploymentPage: React.FC = () => {
         }
         break;
       case 'model-store-management': {
-        const currentProjectId = currentProject.id;
-        // Reload when nothing is loaded yet or the active project changed (the
-        // query is scoped to `currentProjectId`).
-        if (
-          currentProjectId &&
-          (!modelCardQueryRef ||
-            modelCardQueryRef.variables.currentProjectId !== currentProjectId)
-        ) {
+        // No longer project-scoped, so loading once is enough.
+        if (!modelCardQueryRef) {
           loadModelCardQuery(
             {
               filter:
@@ -320,7 +316,6 @@ const AdminDeploymentPage: React.FC = () => {
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
-              currentProjectId,
             },
             { fetchPolicy: 'store-and-network' },
           );
@@ -367,8 +362,7 @@ const AdminDeploymentPage: React.FC = () => {
                 (params.filter as RuntimeVariantPresetFilter | null) ??
                 undefined,
               orderBy: convertToOrderBy<RuntimeVariantPresetOrderBy>(
-                params.order ??
-                  DEFAULT_ORDER_BY_TAB['runtime-variant-presets'],
+                params.order ?? DEFAULT_ORDER_BY_TAB['runtime-variant-presets'],
               ),
               limit,
               offset,
@@ -411,10 +405,12 @@ const AdminDeploymentPage: React.FC = () => {
   };
 
   // For entries that don't go through `onTabChange` — the initial mount, a full
-  // reload, or a direct `?tab=...` URL — load the active tab. Keyed on the
-  // project id so the project-scoped model-store tab reloads when the active
-  // project changes; a plain tab switch is already handled by `onTabChange`
-  // (render-as-you-fetch), so `currentTab` is intentionally not a dependency.
+  // reload, or a direct `?tab=...` URL — load the active tab. Mount-only:
+  // `/admin/deployments` is project-agnostic (ADR-0001, FR-3414), so the
+  // header selector is not mounted and there is no ambient project that could
+  // change underneath this page. A plain tab switch is already handled by
+  // `onTabChange` (render-as-you-fetch), so `currentTab` is intentionally not
+  // a dependency either.
   const loadActiveTab = useEffectEvent(() => {
     loadTab(
       currentTab,
@@ -424,9 +420,11 @@ const AdminDeploymentPage: React.FC = () => {
   });
   useEffect(() => {
     loadActiveTab();
-  }, [currentProject.id]);
+  }, []);
 
-  const tabItems: CardTabListType[] = filterOutEmpty([
+  // The antd `CardTabListType` import is replaced by the tab-item shape
+  // `BAICard` itself accepts — this array's only consumer.
+  const tabItems: NonNullable<BAICardProps['tabList']> = filterOutEmpty([
     {
       key: 'deployments',
       label: t('webui.menu.Deployments'),
@@ -456,7 +454,7 @@ const AdminDeploymentPage: React.FC = () => {
       onTabChange={onTabChange}
       tabList={tabItems}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {currentTab === 'deployments' && (
           <BAIErrorBoundary>
             {deploymentQueryRef ? (
@@ -469,7 +467,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -485,7 +483,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -501,7 +499,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -517,7 +515,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -533,7 +531,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}

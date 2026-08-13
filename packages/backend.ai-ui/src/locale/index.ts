@@ -19,7 +19,6 @@ import tr from './tr.json';
 import vi from './vi.json';
 import zh_CN from './zh-CN.json';
 import zh_TW from './zh-TW.json';
-import { Locale } from 'antd/es/locale';
 import { createInstance, type i18n as I18nInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -205,7 +204,16 @@ if (import.meta.hot) {
   );
 }
 
+/**
+ * The locale a host hands `<BAIConfigProvider locale={…}>`.
+ *
+ * `astryxLocale` is the flat `@astryx.*` → string catalog for the language.
+ * The per-language modules under this directory (`ko_KR.ts`, …, published as
+ * the `backend.ai-ui/locale/*` package export) each bundle their
+ * `./astryx/*.json` catalog into this shape — the host imports one and passes
+ * it whole, exactly like the antd-era `antdLocale` flow this replaces.
+ */
 export interface BAILocale {
   lang: string;
-  antdLocale: Locale;
+  astryxLocale?: Record<string, string>;
 }

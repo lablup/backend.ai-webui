@@ -9,6 +9,7 @@ import type {
   DeploymentOrderBy,
   DeploymentStatus,
 } from '../__generated__/AdminDeploymentQuery.graphql';
+import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -16,8 +17,8 @@ import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { DeleteFilled } from '@ant-design/icons';
-import { App, Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
@@ -37,7 +38,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -387,7 +388,7 @@ const AdminDeployment = ({
                             {
                               key: 'delete',
                               title: t('deployment.DeleteDeployment'),
-                              icon: <DeleteFilled />,
+                              icon: <Trash2 size="1em" />,
                               type: 'danger',
                               disabled: destroying,
                               onClick: () => setDeletingDeploymentId(record.id),
@@ -410,14 +411,12 @@ const AdminDeployment = ({
                         (n) => n.id === record.id,
                       )?.currentRevision?.revisionNumber;
                       if (revisionNumber == null) {
-                        return (
-                          <Typography.Text type="secondary">-</Typography.Text>
-                        );
+                        return <Text color="secondary">-</Text>;
                       }
                       return (
-                        <Typography.Link
+                        <Link
                           onClick={() => setDrawerRevisionId(record.id)}
-                        >{`#${revisionNumber}`}</Typography.Link>
+                        >{`#${revisionNumber}`}</Link>
                       );
                     },
                   };
@@ -440,9 +439,7 @@ const AdminDeployment = ({
                             }).toString(),
                           });
                         }}
-                        fallback={
-                          <Typography.Text type="secondary">-</Typography.Text>
-                        }
+                        fallback={<Text color="secondary">-</Text>}
                       />
                     ),
                   };
@@ -452,20 +449,25 @@ const AdminDeployment = ({
           }}
         />
       </BAIFlex>
-      <DeploymentSettingModal
-        open={!!editingDeployment}
-        deploymentFrgmt={editingDeployment ?? null}
-        onRequestClose={(success) => {
-          setEditingDeploymentId(null);
-          // A create adds a new row the offset query can't know about, so it
-          // needs a refetch. An update returns every field, so Relay merges
-          // the record by id into the store and the list reflects it without
-          // one.
-          if (success && editingDeployment === null) {
-            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-          }
-        }}
-      />
+      {/* Edit-only call site: the deployment already belongs to a project, so
+          the props union rejects a `project` here entirely (ADR-0001). That
+          member requires a non-null fragment, hence the guard. */}
+      {editingDeployment != null && (
+        <DeploymentSettingModal
+          open
+          deploymentFrgmt={editingDeployment}
+          onRequestClose={(success) => {
+            setEditingDeploymentId(null);
+            // A create adds a new row the offset query can't know about, so it
+            // needs a refetch. An update returns every field, so Relay merges
+            // the record by id into the store and the list reflects it without
+            // one.
+            if (success && editingDeployment === null) {
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+            }
+          }}
+        />
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}

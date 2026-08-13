@@ -10,10 +10,9 @@
  * supports.
  *
  * Keep this list in sync with the translation files under
- * `resources/i18n/*.json`. Sync with the BUI locale map is enforced at
- * compile time: `helper/bui-language.ts` declares
- * `buiLanguages satisfies Record<SupportedLanguage, …>`, so adding or
- * removing a language in only one of the two places is a type error.
+ * `resources/i18n/*.json`. The BUI locale map in `helper/bui-language.ts` is
+ * guarded against drift by its `satisfies Record<SupportedLanguage, …>`
+ * clause — a missing or extra key there is a type error.
  */
 export const SUPPORTED_LANGUAGES = [
   'en',

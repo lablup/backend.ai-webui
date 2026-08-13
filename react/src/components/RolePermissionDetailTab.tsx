@@ -5,7 +5,8 @@
 import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermissionDetailTabMatrixQuery.graphql';
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
 import ScopedRolePermissionCard from './ScopedRolePermissionCard';
-import { Empty, Skeleton } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
@@ -67,17 +68,18 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   if (role.totalScopes?.count === 0) {
     return (
       <BAICard styles={{ body: { paddingTop: 0 } }}>
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('rbac.NoScopesToDisplay')}
-        />
+        {/* antd `Empty` -> `EmptyState` (MAPPING §4): `description` becomes
+            the required `title`, and `PRESENTED_IMAGE_SIMPLE` is dropped —
+            EmptyState has no built-in illustration, only an optional custom
+            `icon` (same treatment as BulkCreateUserFromCSVModal). */}
+        <EmptyState title={t('rbac.NoScopesToDisplay')} />
       </BAICard>
     );
   }
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {_.map(scopeTypes, (scopeType) => (
           <ScopedRolePermissionCard
             key={scopeType}

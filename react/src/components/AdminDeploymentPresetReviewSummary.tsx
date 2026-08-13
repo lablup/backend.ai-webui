@@ -2,13 +2,28 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { FormInstance } from '../form-engine';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import { theme } from '../theme-shim';
 import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
-import { Button, Descriptions, Space, Tag, Typography, theme } from 'antd';
-import type { FormInstance } from 'antd';
-import { BAICard, BAIFlex, toLocalId } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Code } from '@astryxdesign/core/Code';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAICard,
+  BAIFlex,
+  badgeVariantForTagColor,
+  BAIText,
+  toLocalId,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +31,10 @@ import { useTranslation } from 'react-i18next';
 // ---------------------------------------------------------------------------
 // PresetReviewSummary — read-only summary of all form fields on the review step
 // ---------------------------------------------------------------------------
+
+// PILOT-DECISION: antd `Descriptions column={n} size="small"` converts to
+// `MetadataList columns={n}`; `size="small"` has no MetadataList equivalent
+// and is DROPPED everywhere below — the Astryx default density is the design.
 
 const BASIC_INFO_FIELDS = ['name', 'runtimeVariantId', 'imageId'] as const;
 const RESOURCES_FIELDS = ['cpu', 'mem', 'clusterMode', 'clusterSize'] as const;
@@ -71,8 +90,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
 
   const editLink = (stepIndex: number, cardId: string) => (
     <Button
-      type="link"
-      size="small"
+      variant="ghost"
+      size="sm"
+      label={t('button.Edit')}
       onClick={() => {
         onGoToStep(stepIndex);
         setTimeout(() => {
@@ -81,9 +101,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 50);
       }}
-    >
-      {t('button.Edit')}
-    </Button>
+    />
   );
 
   return (
@@ -98,43 +116,39 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.BasicInfo')}
         extra={editLink(0, 'preset-form-card-basic')}
       >
-        <Descriptions column={1} size="small">
-          <Descriptions.Item label={t('adminDeploymentPreset.Name')}>
-            <Typography.Text strong>{values.name || '-'}</Typography.Text>
-          </Descriptions.Item>
+        <MetadataList columns={1}>
+          <MetadataListItem label={t('adminDeploymentPreset.Name')}>
+            <Text weight="semibold">{values.name || '-'}</Text>
+          </MetadataListItem>
           {values.description && (
-            <Descriptions.Item label={t('adminDeploymentPreset.Description')}>
+            <MetadataListItem label={t('adminDeploymentPreset.Description')}>
               {values.description}
-            </Descriptions.Item>
+            </MetadataListItem>
           )}
-          <Descriptions.Item label={t('adminDeploymentPreset.Runtime')}>
+          <MetadataListItem label={t('adminDeploymentPreset.Runtime')}>
             {runtimeName || '-'}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('adminDeploymentPreset.Image')}>
             {imageReference ? (
-              <Typography.Text
-                code
-                style={{ wordBreak: 'break-all' }}
-                copyable={{ text: imageReference }}
-              >
+              <BAIText code copyable style={{ wordBreak: 'break-all' }}>
                 {imageReference}
-              </Typography.Text>
+              </BAIText>
             ) : (
               '-'
             )}
-          </Descriptions.Item>
+          </MetadataListItem>
           {runtimeParamRows.length > 0 && (
-            <Descriptions.Item label={t('modelService.RuntimeParamTitle')}>
+            <MetadataListItem label={t('modelService.RuntimeParamTitle')}>
               <BAIFlex direction="column" align="start" gap="xxs">
                 {runtimeParamRows.map((r) => (
-                  <Typography.Text key={r.key}>
+                  <Text key={r.key}>
                     - {r.label}: {r.value}
-                  </Typography.Text>
+                  </Text>
                 ))}
               </BAIFlex>
-            </Descriptions.Item>
+            </MetadataListItem>
           )}
-        </Descriptions>
+        </MetadataList>
       </BAICard>
 
       {/* Resources */}
@@ -147,8 +161,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.Resources')}
         extra={editLink(0, 'preset-form-card-resources')}
       >
-        <Descriptions column={1} size="small">
-          <Descriptions.Item label={t('adminDeploymentPreset.ResourceSlots')}>
+        <MetadataList columns={1}>
+          <MetadataListItem label={t('adminDeploymentPreset.ResourceSlots')}>
             <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
               <ResourceNumbersOfSession
                 resource={
@@ -164,33 +178,33 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                 }
               />
             </BAIFlex>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.ResourceOpts')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('adminDeploymentPreset.ResourceOpts')}>
             {values.resourceOpts?.some((o) => o.name?.trim()) ? (
               <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
                 {values.resourceOpts
                   .filter((o) => o.name?.trim())
                   .map((o, i) => (
-                    <Typography.Text key={`${o.name?.trim()}-${i}`} code>
+                    <Code key={`${o.name?.trim()}-${i}`}>
                       {o.name?.trim()}: {o.value?.trim() || '-'}
-                    </Typography.Text>
+                    </Code>
                   ))}
               </BAIFlex>
             ) : (
               '-'
             )}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.ClusterMode')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('adminDeploymentPreset.ClusterMode')}>
             {values.clusterMode === 'SINGLE_NODE'
               ? t('adminDeploymentPreset.SingleNode')
               : values.clusterMode === 'MULTI_NODE'
                 ? t('adminDeploymentPreset.MultiNode')
                 : '-'}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.ClusterSize')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('adminDeploymentPreset.ClusterSize')}>
             {values.clusterSize != null ? values.clusterSize : '-'}
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </MetadataList>
       </BAICard>
 
       {/* Deployment */}
@@ -203,23 +217,23 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.Deployment')}
         extra={editLink(0, 'preset-form-card-deployment')}
       >
-        <Descriptions column={2} size="small">
-          <Descriptions.Item label={t('adminDeploymentPreset.Replicas')}>
+        <MetadataList columns={2}>
+          <MetadataListItem label={t('adminDeploymentPreset.Replicas')}>
             {values.replicaCount ?? '-'}
-          </Descriptions.Item>
-          <Descriptions.Item
+          </MetadataListItem>
+          <MetadataListItem
             label={t('adminDeploymentPreset.RevisionHistoryLimit')}
           >
             {values.revisionHistoryLimit ?? '-'}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.OpenToPublic')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('adminDeploymentPreset.OpenToPublic')}>
             {values.openToPublic == null
               ? '-'
               : values.openToPublic
                 ? t('button.Yes')
                 : t('button.No')}
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </MetadataList>
       </BAICard>
 
       {/* Model & Execution */}
@@ -230,8 +244,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.ModelAndExecution')}
         extra={editLink(1, 'preset-form-card-model')}
       >
-        <Descriptions column={1} size="small">
-          <Descriptions.Item label={t('adminDeploymentPreset.StartupCommand')}>
+        <MetadataList columns={1}>
+          <MetadataListItem label={t('adminDeploymentPreset.StartupCommand')}>
             {values.startupCommand ? (
               <SourceCodeView language="shell">
                 {values.startupCommand}
@@ -239,8 +253,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             ) : (
               '-'
             )}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.BootstrapScript')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('adminDeploymentPreset.BootstrapScript')}>
             {values.bootstrapScript ? (
               <SourceCodeView language="shell">
                 {values.bootstrapScript}
@@ -248,8 +262,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             ) : (
               '-'
             )}
-          </Descriptions.Item>
-          <Descriptions.Item
+          </MetadataListItem>
+          <MetadataListItem
             label={t('adminDeploymentPreset.EnvironmentVariables')}
           >
             {values.environ?.length ? (
@@ -262,8 +276,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             ) : (
               '-'
             )}
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </MetadataList>
         {values.modelDefinition?.enabled &&
         values.modelDefinition?.models?.length ? (
           <BAIFlex
@@ -272,42 +286,39 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             gap="xs"
             style={{ marginTop: token.marginSM }}
           >
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
+            <Text type="supporting">
               {t('adminDeploymentPreset.ModelDefinition')}
-            </Typography.Text>
+            </Text>
             {values.modelDefinition.models.filter(Boolean).map((m, i) => (
               <BAICard key={i} size="small" title={m.name}>
-                <Descriptions column={1} size="small">
-                  <Descriptions.Item
+                <MetadataList columns={1}>
+                  <MetadataListItem
                     label={t('adminDeploymentPreset.modelDef.ModelPath')}
                   >
-                    <Typography.Text code style={{ wordBreak: 'break-all' }}>
+                    <Code style={{ wordBreak: 'break-all' }}>
                       {m.modelPath || '-'}
-                    </Typography.Text>
-                  </Descriptions.Item>
+                    </Code>
+                  </MetadataListItem>
                   {m.service?.port != null && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Port')}
                     >
                       {m.service.port}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {/* `shell` is not surfaced in this form (no-op on the list
                       `startCommand` path); see AdminDeploymentPresetModelConfigItem. */}
                   {m.service?.startCommand && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.StartCommand')}
                     >
                       <SourceCodeView language="shell">
                         {m.service.startCommand}
                       </SourceCodeView>
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {(m.service?.preStartActions?.length ?? 0) > 0 && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t(
                         'adminDeploymentPreset.modelDef.PreStartActions',
                       )}
@@ -315,17 +326,13 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.service?.preStartActions
                         ?.filter(Boolean)
                         .map((a, ai) => (
-                          <Typography.Text
-                            key={ai}
-                            code
-                            style={{ display: 'block' }}
-                          >
+                          <Code key={ai} style={{ display: 'block' }}>
                             {a?.action}
-                          </Typography.Text>
+                          </Code>
                         ))}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
-                  <Descriptions.Item
+                  <MetadataListItem
                     label={t(
                       'adminDeploymentPreset.modelDef.EnableHealthCheck',
                     )}
@@ -333,146 +340,152 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     {m.service?.enableHealthCheck
                       ? t('general.Enabled')
                       : t('general.Disabled')}
-                  </Descriptions.Item>
+                  </MetadataListItem>
                   {m.service?.enableHealthCheck && (
                     <>
                       {m.service.healthCheck?.path && (
-                        <Descriptions.Item
+                        <MetadataListItem
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckPath',
                           )}
                         >
-                          <Typography.Text code>
-                            {m.service.healthCheck.path}
-                          </Typography.Text>
-                        </Descriptions.Item>
+                          <Code>{m.service.healthCheck.path}</Code>
+                        </MetadataListItem>
                       )}
                       {m.service.healthCheck?.interval != null && (
-                        <Descriptions.Item
+                        <MetadataListItem
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckInterval',
                           )}
                         >
                           {m.service.healthCheck.interval}
-                        </Descriptions.Item>
+                        </MetadataListItem>
                       )}
                       {m.service.healthCheck?.maxRetries != null && (
-                        <Descriptions.Item
+                        <MetadataListItem
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                           )}
                         >
                           {m.service.healthCheck.maxRetries}
-                        </Descriptions.Item>
+                        </MetadataListItem>
                       )}
                       {m.service.healthCheck?.maxWaitTime != null && (
-                        <Descriptions.Item
+                        <MetadataListItem
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                           )}
                         >
                           {m.service.healthCheck.maxWaitTime}
-                        </Descriptions.Item>
+                        </MetadataListItem>
                       )}
                       {m.service.healthCheck?.expectedStatusCode != null && (
-                        <Descriptions.Item
+                        <MetadataListItem
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                           )}
                         >
                           {m.service.healthCheck.expectedStatusCode}
-                        </Descriptions.Item>
+                        </MetadataListItem>
                       )}
                       {m.service.healthCheck?.initialDelay != null && (
-                        <Descriptions.Item
+                        <MetadataListItem
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                           )}
                         >
                           {m.service.healthCheck.initialDelay}
-                        </Descriptions.Item>
+                        </MetadataListItem>
                       )}
                     </>
                   )}
                   {m.metadata?.title && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Title')}
                     >
                       {m.metadata.title}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {m.metadata?.author && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Author')}
                     >
                       {m.metadata.author}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {m.metadata?.version && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Version')}
                     >
                       {m.metadata.version}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {m.metadata?.description && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Description')}
                     >
                       {m.metadata.description}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {m.metadata?.task && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Task')}
                     >
                       {m.metadata.task}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {m.metadata?.category && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Category')}
                     >
                       {m.metadata.category}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {m.metadata?.architecture && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Architecture')}
                     >
                       {m.metadata.architecture}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
                   {(m.metadata?.framework?.length ?? 0) > 0 && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Framework')}
                     >
-                      <Space size="small" wrap>
+                      <HStack gap={2} wrap="wrap">
                         {m.metadata!.framework!.map((f, fi) => (
-                          <Tag key={fi}>{f}</Tag>
+                          <Badge
+                            key={fi}
+                            variant={badgeVariantForTagColor('default')}
+                            label={f}
+                          />
                         ))}
-                      </Space>
-                    </Descriptions.Item>
+                      </HStack>
+                    </MetadataListItem>
                   )}
                   {(m.metadata?.label?.length ?? 0) > 0 && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Label')}
                     >
-                      <Space size="small" wrap>
+                      <HStack gap={2} wrap="wrap">
                         {m.metadata!.label!.map((l, li) => (
-                          <Tag key={li}>{l}</Tag>
+                          <Badge
+                            key={li}
+                            variant={badgeVariantForTagColor('default')}
+                            label={l}
+                          />
                         ))}
-                      </Space>
-                    </Descriptions.Item>
+                      </HStack>
+                    </MetadataListItem>
                   )}
                   {m.metadata?.license && (
-                    <Descriptions.Item
+                    <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.License')}
                     >
                       {m.metadata.license}
-                    </Descriptions.Item>
+                    </MetadataListItem>
                   )}
-                </Descriptions>
+                </MetadataList>
               </BAICard>
             ))}
           </BAIFlex>

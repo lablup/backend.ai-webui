@@ -6,21 +6,23 @@ import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
 } from '../../__generated__/ProjectFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
 import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -130,7 +132,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => {
                 onOpenWeightSetting?.(record);
               },
@@ -152,17 +154,14 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       dataIndex: ['spec', 'weight'],
       render: (weight, record) => (
         <BAIFlex gap="xxs">
-          <Typography.Text>
+          <Text>
             {_.isNil(weight)
               ? '-'
               : toFixedFloorWithoutTrailingZeros(weight, 1)}
-          </Typography.Text>
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: token.fontSizeSM }}
-          >
+          </Text>
+          <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-          </Typography.Text>
+          </Text>
         </BAIFlex>
       ),
     },
@@ -205,16 +204,12 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
               entries,
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
-                  {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
-                  )}
+                  {index > 0 && <Divider orientation="vertical" />}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
-                        / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      <Text color="secondary">/ {t('fairShare.DayUnit')}</Text>
                     }
                   />
                 </BAIFlex>
@@ -241,9 +236,8 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         rowKey={'id'}
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         dataSource={projectFairShares || []}
         columns={columns}

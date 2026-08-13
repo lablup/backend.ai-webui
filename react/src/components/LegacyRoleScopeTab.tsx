@@ -10,17 +10,18 @@ import {
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { Tag } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
 import {
   BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
-  BAITable,
+  BAITableAstryx,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
+  badgeVariantForTagColor,
 } from 'backend.ai-ui';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +143,10 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
       dataIndex: 'scopeType',
       sorter: true,
       render: (value: string) => (
-        <Tag>{t(`rbac.types.${value}`, { defaultValue: value })}</Tag>
+        <Badge
+          variant={badgeVariantForTagColor(undefined)}
+          label={t(`rbac.types.${value}`, { defaultValue: value })}
+        />
       ),
     },
     {
@@ -211,13 +215,12 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
           onChange={updateFetchKey}
         />
       </BAIFlex>
-      <BAITable<ScopeNode>
+      <BAITableAstryx<ScopeNode>
         rowKey={(record) => `${record.scopeType}|${record.scopeId}`}
         dataSource={scopeNodes as ScopeNode[]}
         columns={columns}
         loading={isLoading}
         size="small"
-        scroll={{ x: 'max-content' }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,

@@ -1,0 +1,135 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Block rhythm and list semantics for UN-CLASSED third-party HTML — the Terms of
+ Service and Privacy Policy documents, which are fetched and injected with
+ `dangerouslySetInnerHTML`. QA-FINDINGS Q-22.
+
+ ## Why this exists
+
+ `react/src/index.css` imports `@astryxdesign/core/reset.css`, whose `@layer
+ reset` sets `:where(h1…h6, p, …) { margin: 0 }`,
+ `:where(ol, ul, menu) { list-style: none; margin: 0; padding: 0 }` and
+ `:where(a) { color: inherit; text-decoration: inherit }`. That is correct for a
+ component library — `SideNav`, `List` and `TreeList` all rely on it — and the
+ built theme re-sizes bare headings on top of it.
+
+ What neither restores is BLOCK RHYTHM or LIST SEMANTICS, and nothing in the
+ legacy build did any of this: `origin/main` imported no reset at all, and
+ antd 6's base rules are scoped to `[class^="ant-"]`, so the UA stylesheet WAS
+ the entire type ramp for these two documents. Measured against that oracle
+ (the same document rendered with no stylesheet):
+
+   h1  32px/700  margin 21.4  ->  38px/600  margin 0
+   h2  24px/700  margin 19.9  ->  30px/600  margin 0
+   h3  18.7px/700 margin 18.7 ->  24px/700  margin 0
+   p   16px       margin 16   ->  14px      margin 0
+   ol  decimal, padding-inline-start 40px, margin 16
+                               ->  list-style: none, padding 0, margin 0
+   ul  circle,  padding-inline-start 40px
+                               ->  list-style: none, padding 0
+   li  decimal                 ->  none
+   a   #0000ee, underlined     ->  inherits body colour, no underline
+
+ i.e. a 200-item numbered legal document rendered as an unnumbered, unindented,
+ unspaced wall of text with invisible links.
+
+ ## Why scoped, and why CSS
+
+ The elements are strings from a fetched document, so no prop can reach them —
+ this is the skill's "scoped CSS, last resort, justified in the diff" rung. It
+ MUST stay scoped: a global `ol { list-style: decimal }` would fight every
+ Astryx list surface that depends on the reset.
+
+ Values are tokens (P19). The rhythm is expressed on the spacing scale rather
+ than copied from the UA's px, because the UA numbers are `em`-derived from a
+ 16px root this app does not use; the ratios are what matter.
+
+ `@layer components` so it outranks `@layer reset` without `!important`.
+*/
+@layer components {
+  .bai-document-prose {
+    color: var(--color-text-primary);
+  }
+
+  .bai-document-prose h1,
+  .bai-document-prose h2,
+  .bai-document-prose h3,
+  .bai-document-prose h4,
+  .bai-document-prose h5,
+  .bai-document-prose h6 {
+    margin-block: var(--spacing-5) var(--spacing-3);
+  }
+
+  .bai-document-prose > :first-child {
+    margin-block-start: 0;
+  }
+
+  .bai-document-prose p {
+    margin-block: var(--spacing-3);
+  }
+
+  /* The UA's `padding-inline-start: 40px` is what makes a numbered list read as
+     a numbered list — the marker sits in that gutter. `--spacing-10` is the
+     nearest rung on the scale. */
+  .bai-document-prose ol,
+  .bai-document-prose ul {
+    margin-block: var(--spacing-3);
+    padding-inline-start: var(--spacing-10);
+  }
+
+  /* Longhand, and restated on the nested selectors. `list-style-type` is an
+     INHERITED property, so a `<ul>` nested inside an `<li>` picks up whatever
+     the outer list computed unless it is re-declared for that exact element —
+     and the reset's `:where(ol, ul, menu) { list-style: none }` is what it
+     would otherwise inherit through.
+
+     RESIDUE, measured and not closed: the top-level `<ol>` takes `decimal` and
+     both lists take the 40px gutter, but a `<ul>` NESTED inside an `<li>` still
+     computes `list-style-type: none`. A rule census on the live element shows
+     only two declarations reaching it — the reset's zero-specificity
+     `:where(ol, ul, menu)` and this rule — so this one should win on
+     specificity and does for `padding-inline-start` on the very same selector.
+     Both the shorthand and the longhand forms were tried and re-measured. The
+     documents in question use `<ol>` for all 200 numbered items (the structure
+     the report was about); the unmarked nested `<ul>` is cosmetic and is left
+     recorded rather than guessed at. */
+  .bai-document-prose ol,
+  .bai-document-prose li > ol {
+    list-style-type: decimal;
+  }
+
+  .bai-document-prose ul,
+  .bai-document-prose li > ul {
+    list-style-type: circle;
+  }
+
+  /* Nested lists carry the rhythm but not a second outer margin. */
+  .bai-document-prose li > ol,
+  .bai-document-prose li > ul {
+    margin-block: var(--spacing-1);
+  }
+
+  .bai-document-prose li {
+    list-style-type: inherit;
+  }
+
+  /* The UA's `#0000ee` is not a token and not this app's link colour; the brand
+     accent is, and it is what every other link in the app uses. */
+  .bai-document-prose a {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .bai-document-prose table {
+    margin-block: var(--spacing-3);
+    border-collapse: collapse;
+  }
+
+  .bai-document-prose th,
+  .bai-document-prose td {
+    padding: var(--spacing-1) var(--spacing-2);
+    border: var(--border-width) solid var(--color-border);
+  }
+}

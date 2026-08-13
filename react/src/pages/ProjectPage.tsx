@@ -11,6 +11,7 @@ import {
   ProjectPageQuery$data,
   ProjectPageQuery$variables,
 } from '../__generated__/ProjectPageQuery.graphql';
+import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ProjectAdminSettingModal, {
   ProjectAdminSettingQuery,
@@ -18,11 +19,8 @@ import ProjectAdminSettingModal, {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { DeleteFilled } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, theme, Tooltip } from 'antd';
+import { theme } from '../theme-shim';
 import {
-  availableProjectSorterValues,
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
@@ -35,17 +33,20 @@ import {
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIUnmountAfterClose,
-  filterOutEmpty,
   INITIAL_FETCH_KEY,
+  availableProjectSorterValues,
+  filterOutEmpty,
   isValidUUID,
   mergeFilterValues,
   type ProjectInList,
   useBAILogger,
   useErrorMessageResolver,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
+  Trash2,
   BanIcon,
   PlusIcon,
   ShieldUserIcon,
@@ -453,12 +454,15 @@ const ProjectPage = () => {
                   count={selectedProjectList.length}
                   onClearSelection={() => setSelectedProjectList([])}
                 />
-                <Tooltip title={t('project.BulkEdit')}>
-                  <BAIButton
-                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                    onClick={toggleBulkEditModal}
-                  />
-                </Tooltip>
+                {/* antd `Tooltip title=` wrapper dropped: `BAIButton` now
+                    forwards `title` to Astryx's own `tooltip` prop AND uses it
+                    as the icon-only button's accessible name, so the wrapper
+                    was a second, weaker channel for the same string. */}
+                <BAIButton
+                  title={t('project.BulkEdit')}
+                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                  onClick={toggleBulkEditModal}
+                />
               </>
             )}
             <BAIFetchKeyButton
@@ -575,7 +579,7 @@ const ProjectPage = () => {
                                   {
                                     key: 'purge',
                                     title: t('project.Purge'),
-                                    icon: <DeleteFilled />,
+                                    icon: <Trash2 size="1em" />,
                                     type: 'danger' as const,
                                     disabled: isModelStore,
                                     onClick: () => {

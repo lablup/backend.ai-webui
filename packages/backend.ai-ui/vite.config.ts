@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react';
 import glob from 'fast-glob';
-import { dirname, resolve, basename } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -22,11 +22,14 @@ const peerDependencyPatterns = Object.keys(peerDependencies).map(
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
+  // One entry per language module on top of the main entry: `ko_KR.ts` →
+  // `dist/locale/ko_KR.js`, published as the `./locale/*` package export
+  // the host's `bui-language.ts` imports (the antd-era `BAILocale` flow, now
+  // carrying `astryxLocale` instead of `antdLocale` — FR-3511).
   const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
   const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
   };
-  // Add locale entries
   localeFiles.forEach((file) => {
     const name = basename(file, '.ts');
     if (name === 'index') return;

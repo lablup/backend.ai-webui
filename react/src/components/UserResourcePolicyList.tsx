@@ -8,6 +8,7 @@ import {
   UserResourcePolicyListQuery$data,
 } from '../__generated__/UserResourcePolicyListQuery.graphql';
 import { UserResourcePolicySettingModalFragment$key } from '../__generated__/UserResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import {
   bytesToGB,
   localeCompare,
@@ -16,22 +17,21 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
-import { DeleteFilled, ReloadOutlined } from '@ant-design/icons';
-import { App, Button, Tooltip } from 'antd';
-import type { ColumnType } from 'antd/es/table';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   useUpdatableState,
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -95,7 +95,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     }
   `);
 
-  const columns = filterOutEmpty<ColumnType<UserResourcePolicies>>([
+  const columns = filterOutEmpty<BAIColumnType<UserResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -118,7 +118,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);
@@ -222,9 +222,9 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
         <BAIFlex gap={'xs'}>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              icon={<ReloadOutlined />}
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
+              icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {
                 startRefetchTransition(() =>
@@ -244,12 +244,10 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
-        showSorterTooltip={false}
         columns={columns}
         dataSource={filterOutNullAndUndefined(user_resource_policies)}
-        scroll={{ x: 'max-content' }}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

@@ -421,23 +421,6 @@ Revoking a login session signs it out immediately. If you revoke the login
 session you are currently using, you have to log in again.
 :::
 
-<a id="auto-refresh-interval"></a>
-
-### Refreshing the list
-
-The refresh button above the table reloads the list on demand. Click the arrow
-next to it to open the **Auto Refresh** menu and choose how often the list
-reloads by itself:
-
-- **Off** (the initial setting)
-- **5s**, **10s**, **15s**, **30s**, or **60s**
-
-While auto-refresh is on, the selected interval is shown on the button and a
-border fills around it as the next reload approaches. Your choice is remembered
-for this list and still applies the next time you open the tab. Every list in
-the WebUI keeps its own interval, so turning auto-refresh on here does not
-change any other page.
-
 <a id="login-history-tab"></a>
 
 ## Login History tab
@@ -493,7 +476,3 @@ Use the filter above the table to narrow down the list:
 
 Use the pagination controls below the table to move between pages and to change
 how many rows are shown per page.
-
-The refresh button and its auto-refresh interval menu work the same way as on
-the Login Sessions tab — see [Refreshing the list](#auto-refresh-interval). This
-list keeps its own interval, separate from the Login Sessions list.

@@ -20,10 +20,13 @@ export type {
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
 } from './BAIImportArtifactModal';
-export { default as BAIObjectStorageSelect } from './BAIObjectStorageSelect';
-export type { BAIObjectStorageSelectProps } from './BAIObjectStorageSelect';
-export { default as BAIBucketSelect } from './BAIBucketSelect';
-export type { BAIBucketSelectProps } from './BAIBucketSelect';
+export { default as BAIObjectStorageSelectAstryx } from './BAIObjectStorageSelectAstryx';
+export type {
+  BAIObjectStorageSelectAstryxProps,
+  AstryxObjectStorageNode,
+} from './BAIObjectStorageSelectAstryx';
+export { default as BAIBucketSelectAstryx } from './BAIBucketSelectAstryx';
+export type { BAIBucketSelectAstryxProps } from './BAIBucketSelectAstryx';
 export { default as BAIPullingArtifactRevisionAlert } from './BAIPullingArtifactRevisionAlert';
 export type { BAIPullingArtifactRevisionAlertProps } from './BAIPullingArtifactRevisionAlert';
 export { default as BAIDeleteArtifactRevisionsModal } from './BAIDeleteArtifactRevisionsModal';
@@ -44,12 +47,12 @@ export { default as BAIArtifactRevisionDeleteButton } from './BAIArtifactRevisio
 export type { BAIArtifactRevisionDeleteButtonProps } from './BAIArtifactRevisionDeleteButton';
 export { default as BAIDeactivateArtifactsModal } from './BAIDeactivateArtifactsModal';
 export { default as BAISessionClusterMode } from './BAISessionClusterMode';
-export { default as BAIAdminSessionSelect } from './BAIAdminSessionSelect';
+export { default as BAIAdminSessionSelectAstryx } from './BAIAdminSessionSelectAstryx';
 export type {
-  BAIAdminSessionSelectProps,
-  BAIAdminSessionSelectRef,
-  SessionNode,
-} from './BAIAdminSessionSelect';
+  BAIAdminSessionSelectAstryxProps,
+  BAIAdminSessionSelectAstryxRef,
+  AstryxAdminSessionNode,
+} from './BAIAdminSessionSelectAstryx';
 export type {
   BAIDeactivateArtifactsModalProps,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,
@@ -61,8 +64,8 @@ export type {
 } from './BAIActivateArtifactsModal';
 export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
 export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
-export { default as BAIAdminResourceGroupSelect } from './BAIAdminResourceGroupSelect';
-export type { BAIAdminResourceGroupSelectProps } from './BAIAdminResourceGroupSelect';
+export { default as BAIAdminResourceGroupSelectAstryx } from './BAIAdminResourceGroupSelectAstryx';
+export type { BAIAdminResourceGroupSelectAstryxProps } from './BAIAdminResourceGroupSelectAstryx';
 export {
   default as BAIProjectTable,
   availableProjectSorterKeys,
@@ -71,12 +74,12 @@ export {
 export type { BAIProjectTableProps, ProjectInList } from './BAIProjectTable';
 export { default as BAIAllowedVfolderHostsWithPermission } from './BAIAllowedVfolderHostsWithPermission';
 export type { BAIAllowedVfolderHostsWithPermissionProps } from './BAIAllowedVfolderHostsWithPermission';
-export { default as BAIAdminContainerRegistrySelect } from './BAIAdminContainerRegistrySelect';
+export { default as BAIAdminContainerRegistrySelectAstryx } from './BAIAdminContainerRegistrySelectAstryx';
 export type {
-  BAIAdminContainerRegistrySelectProps,
-  BAIAdminContainerRegistrySelectRef,
-  ContainerRegistryNode,
-} from './BAIAdminContainerRegistrySelect';
+  BAIAdminContainerRegistrySelectAstryxProps,
+  BAIAdminContainerRegistrySelectAstryxRef,
+  AstryxContainerRegistryNode,
+} from './BAIAdminContainerRegistrySelectAstryx';
 export { default as BAIDomainSelect } from './BAIDomainSelect';
 export { default as BAIProjectSettingModal } from './BAIProjectSettingModal';
 export type { BAIProjectSettingModalFragmentKey } from './BAIProjectSettingModal';
@@ -90,13 +93,13 @@ export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
 export type { BAIProjectBulkEditModalProps } from './BAIProjectBulkEditModal';
 export { default as BAIAgentTable } from './BAIAgentTable';
 export type { BAIAgentTableProps, AgentNodeInList } from './BAIAgentTable';
-export { default as BAIVFolderSelect } from './BAIVFolderSelect';
+export { default as BAIVFolderSelectAstryx } from './BAIVFolderSelectAstryx';
 export type {
-  BAIVFolderSelectProps,
+  BAIVFolderSelectAstryxProps,
   VFolderNode,
-  BAIVFolderSelectRef,
   BAIVFolderPermission,
-} from './BAIVFolderSelect';
+  BAIVFolderSelectAstryxRef,
+} from './BAIVFolderSelectAstryx';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {
   inputToMountDestination,
@@ -109,61 +112,61 @@ export type {
   VFolderMountConfigStatusOptions,
   VFolderMountConfigEntryStatus,
 } from './BAIVFolderMountConfigInput';
-export { default as BAIProjectVfolderSelect } from './BAIProjectVfolderSelect';
+export { default as BAIProjectVfolderSelectAstryx } from './BAIProjectVfolderSelectAstryx';
 export type {
-  BAIProjectVfolderSelectProps,
-  BAIProjectVfolderSelectFilter,
+  BAIProjectVfolderSelectAstryxProps,
+  BAIProjectVfolderSelectAstryxFilter,
   ProjectVfolderNode,
-  BAIProjectVfolderSelectRef,
-} from './BAIProjectVfolderSelect';
-export { default as BAIAvailablePresetSelect } from './BAIAvailablePresetSelect';
+  BAIProjectVfolderSelectAstryxRef,
+} from './BAIProjectVfolderSelectAstryx';
+export { default as BAIAvailablePresetSelectAstryx } from './BAIAvailablePresetSelectAstryx';
 export type {
-  BAIAvailablePresetSelectProps,
-  BAIAvailablePresetSelectRef,
-  DeploymentRevisionPresetNode,
-} from './BAIAvailablePresetSelect';
-export { default as BAIRuntimeVariantSelect } from './BAIRuntimeVariantSelect';
+  BAIAvailablePresetSelectAstryxProps,
+  BAIAvailablePresetSelectAstryxRef,
+  AstryxDeploymentRevisionPresetNode,
+} from './BAIAvailablePresetSelectAstryx';
+export { default as BAIRuntimeVariantSelectAstryx } from './BAIRuntimeVariantSelectAstryx';
 export type {
-  BAIRuntimeVariantSelectProps,
-  BAIRuntimeVariantSelectRef,
+  BAIRuntimeVariantSelectAstryxProps,
+  BAIRuntimeVariantSelectAstryxRef,
   RuntimeVariantNode,
-} from './BAIRuntimeVariantSelect';
-export { default as BAIUserSelect } from './BAIUserSelect';
+} from './BAIRuntimeVariantSelectAstryx';
+export { default as BAIUserSelectAstryx } from './BAIUserSelectAstryx';
 export type {
-  BAIUserSelectProps,
-  UserNode,
-  BAIUserSelectRef,
-} from './BAIUserSelect';
-export { default as BAIProjectSelect } from './BAIProjectSelect';
+  BAIUserSelectAstryxProps,
+  AstryxUserNode,
+  BAIUserSelectAstryxRef,
+} from './BAIUserSelectAstryx';
+export { default as BAIProjectSelectAstryx } from './BAIProjectSelectAstryx';
 export type {
-  BAIProjectSelectProps,
-  ProjectNode,
-  BAIProjectSelectRef,
-} from './BAIProjectSelect';
-export { default as BAIKeypairSelect } from './BAIKeypairSelect';
+  BAIProjectSelectAstryxProps,
+  AstryxProjectNode,
+  BAIProjectSelectAstryxRef,
+} from './BAIProjectSelectAstryx';
+export { default as BAIKeypairSelectAstryx } from './BAIKeypairSelectAstryx';
 export type {
-  BAIKeypairSelectProps,
-  BAIKeypairSelectRef,
-  KeypairNode,
-} from './BAIKeypairSelect';
-export { default as BAIAdminProjectSelect } from './BAIAdminProjectSelect';
+  BAIKeypairSelectAstryxProps,
+  BAIKeypairSelectAstryxRef,
+  AstryxKeypairNode,
+} from './BAIKeypairSelectAstryx';
+export { default as BAIAdminProjectSelectAstryx } from './BAIAdminProjectSelectAstryx';
 export type {
-  BAIAdminProjectSelectProps,
-  BAIAdminProjectSelectRef,
-  AdminProjectNode,
-} from './BAIAdminProjectSelect';
-export { default as BAIAdminKeypairResourcePolicySelect } from './BAIAdminKeypairResourcePolicySelect';
+  BAIAdminProjectSelectAstryxProps,
+  BAIAdminProjectSelectAstryxRef,
+  AstryxAdminProjectNode,
+} from './BAIAdminProjectSelectAstryx';
+export { default as BAIAdminKeypairResourcePolicySelectAstryx } from './BAIAdminKeypairResourcePolicySelectAstryx';
 export type {
-  BAIAdminKeypairResourcePolicySelectProps,
-  BAIAdminKeypairResourcePolicySelectRef,
-  AdminKeypairResourcePolicyNode,
-} from './BAIAdminKeypairResourcePolicySelect';
-export { default as BAIAdminModelServiceSelect } from './BAIAdminModelServiceSelect';
+  BAIAdminKeypairResourcePolicySelectAstryxProps,
+  BAIAdminKeypairResourcePolicySelectAstryxRef,
+  AstryxAdminKeypairResourcePolicyNode,
+} from './BAIAdminKeypairResourcePolicySelectAstryx';
+export { default as BAIAdminModelServiceSelectAstryx } from './BAIAdminModelServiceSelectAstryx';
 export type {
-  BAIAdminModelServiceSelectProps,
-  BAIAdminModelServiceSelectRef,
-  ModelServiceNode,
-} from './BAIAdminModelServiceSelect';
+  BAIAdminModelServiceSelectAstryxProps,
+  BAIAdminModelServiceSelectAstryxRef,
+  AstryxModelServiceNode,
+} from './BAIAdminModelServiceSelectAstryx';
 export { default as BAIHuggingFaceRegistrySettingModal } from './BAIHuggingFaceRegistrySettingModal';
 export type {
   BAIHuggingFaceRegistrySettingModalProps,
@@ -220,23 +223,23 @@ export { default as BAIDeploymentSchedulingHistoryTable } from './BAIDeploymentS
 export type { BAIDeploymentSchedulingHistoryTableProps } from './BAIDeploymentSchedulingHistoryTable';
 export { default as BAIRouteSchedulingHistoryTable } from './BAIRouteSchedulingHistoryTable';
 export type { BAIRouteSchedulingHistoryTableProps } from './BAIRouteSchedulingHistoryTable';
-export { default as BAIDeploymentSelect } from './BAIDeploymentSelect';
+export { default as BAIDeploymentSelectAstryx } from './BAIDeploymentSelectAstryx';
 export type {
-  BAIDeploymentSelectProps,
-  BAIDeploymentSelectRef,
-  DeploymentNode,
-} from './BAIDeploymentSelect';
-export { default as BAIStorageHostSelect } from './BAIStorageHostSelect';
+  BAIDeploymentSelectAstryxProps,
+  BAIDeploymentSelectAstryxRef,
+  AstryxDeploymentNode,
+} from './BAIDeploymentSelectAstryx';
+export { default as BAIStorageHostSelectAstryx } from './BAIStorageHostSelectAstryx';
 export type {
-  BAIStorageHostSelectProps,
-  BAIStorageHostSelectRef,
+  BAIStorageHostSelectAstryxProps,
+  BAIStorageHostSelectAstryxRef,
   StorageHostNode,
-} from './BAIStorageHostSelect';
-export { default as BAIAdminImageSelect } from './BAIAdminImageSelect';
+} from './BAIStorageHostSelectAstryx';
+export { default as BAIAdminImageSelectAstryx } from './BAIAdminImageSelectAstryx';
 export type {
-  BAIAdminImageSelectProps,
-  BAIAdminImageSelectRef,
-  ImageV2Node,
-} from './BAIAdminImageSelect';
+  BAIAdminImageSelectAstryxProps,
+  BAIAdminImageSelectAstryxRef,
+  AstryxImageV2Node,
+} from './BAIAdminImageSelectAstryx';
 export { default as BAISubStepNodes } from './BAISubStepNodes';
 export type { BAISubStepNodesProps, SubStepInList } from './BAISubStepNodes';

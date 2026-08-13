@@ -1,72 +1,87 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `EditableFileName` on Astryx (to-astryx phase 3, wave 2 / ticket W2-D).
+
+ This is the one production inline-edit surface in the repo — the reason
+ wave 1's `BAIText` could DROP antd's `editable` prop outright (decision D1
+ recorded that this file "calls antd `Typography.Text` directly and is out of
+ scope"). It is in scope now.
+
+ PILOT-DECISION — **`Typography.Text editable` is rebuilt as an explicit
+ pencil button.** Astryx has no inline-edit affordance at all, and antd's was
+ an `<a class="ant-typography-edit">` injected into the text flow, revealed on
+ hover by `EditableFileName.css`. The rebuild keeps exactly that behaviour —
+ same hover-reveal, same `triggerType: ['icon']` semantics (the text itself was
+ never click-to-edit) — with an Astryx `IconButton`, so the control now has a
+ real accessible name and a focus ring. `EditableFileName.css` is re-pointed
+ from `.ant-typography-edit` to the button's own class (P6: a selector that
+ matches nothing must go). Ticket 35 applied the same rule to its
+ `.ant-form-item` margin reset — the form engine is self-hosted now, so the
+ item root is `[data-bai-form-item]`.
+
+ PILOT-DECISION — **the `component` prop is dropped.** It let a caller swap
+ `Typography.Text` for `Typography.Title`, typed through antd's `GetProps` —
+ which has no Astryx analog (MAPPING §6 rule 2) and was the last antd specifier
+ here. The component has exactly ONE consumer (`BAIFileExplorer`'s name cell)
+ and it never passed `component`, so the polymorphism had no user; removing it
+ collapses a two-branch discriminated union into a plain props interface.
+
+ PILOT-DECISION — **the ⏎ hint in the rename field is dropped.** Same call as
+ `BAIUncontrolledInput` in this ticket: Astryx `TextInput` has no suffix slot,
+ and `InputGroup` would weld a permanent box next to a field that appears for
+ two seconds. Enter still submits (the form's `onFinish`), and Escape still
+ cancels.
+*/
+import { App } from '../../../app-shim';
+import { Form } from '../../../form-engine';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
+import { AstryxFormTextInput } from '../../astryxFormControls';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
-import { FileOutlined, FolderOutlined } from '@ant-design/icons';
+import './EditableFileName.css';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import { useMutation } from '@tanstack/react-query';
-import { App, Form, Input, theme, Typography, type GetProps } from 'antd';
-import { createStyles } from 'antd-style';
 import * as _ from 'lodash-es';
-import { CornerDownLeftIcon } from 'lucide-react';
-import { use, useRef, useState } from 'react';
+import { File, Folder, PencilIcon } from 'lucide-react';
+import React, { use, useRef, useState } from 'react';
 
 interface ServerError extends Error {
   title?: string;
   msg?: string;
 }
 
-const useStyles = createStyles(({ css }) => ({
-  hoverEdit: css`
-    .ant-typography-edit {
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    &:hover .ant-typography-edit {
-      opacity: 1;
-    }
-  `,
-  form: css`
-    .ant-form-item,
-    .ant-form-item-has-success {
-      margin-bottom: 0px !important;
-    }
-  `,
-}));
-
-type EditableNameProps = {
+export interface EditableFileNameProps {
   fileInfo: VFolderFile;
   existingFiles: Array<VFolderFile>;
   onEndEdit?: () => void;
   onStartEdit?: () => void;
-} & (
-  | ({ component?: typeof Typography.Text } & Omit<
-      GetProps<typeof Typography.Text>,
-      'children'
-    >)
-  | ({ component: typeof Typography.Title } & Omit<
-      GetProps<typeof Typography.Title>,
-      'children'
-    >)
-);
+  disabled?: boolean;
+  style?: React.CSSProperties;
+  className?: string;
+  onClick?: (e: React.MouseEvent) => void;
+}
 
-const EditableFileName: React.FC<EditableNameProps> = ({
+const EditableFileName: React.FC<EditableFileNameProps> = ({
   fileInfo,
   existingFiles,
   disabled = false,
   onEndEdit,
   onStartEdit,
-  component: Component = Typography.Text,
   style,
-  ...props
+  className,
+  onClick,
 }) => {
   'use memo';
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const { modal, message } = App.useApp();
-  const { styles } = useStyles();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const [isEditing, setIsEditing] = useState(false);
   const baiClient = useConnectedBAIClient();
@@ -106,40 +121,39 @@ const EditableFileName: React.FC<EditableNameProps> = ({
     renameMutation.isPending || optimisticName !== fileInfo.name;
 
   // focus back to the text component after editing for better UX related to keyboard shortcuts
-  const textRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   const focusFallback = () => {
     setTimeout(() => {
       textRef.current?.focus();
     }, 0);
   };
 
+  const displayName = isPendingRenamingAndRefreshing
+    ? optimisticName
+    : fileInfo.name;
+  const isEditable = !disabled && !isPendingRenamingAndRefreshing;
+
   return (
     <>
       {!isEditing || isPendingRenamingAndRefreshing ? (
-        <Component
+        <BAIFlex
           ref={textRef}
           tabIndex={-1}
-          editable={
-            !disabled && !isPendingRenamingAndRefreshing
-              ? {
-                  onStart: () => {
-                    setIsEditing(true);
-                    onStartEdit?.();
-                  },
-                  onEnd: () => {
-                    onEndEdit?.();
-                  },
-                  triggerType: ['icon'],
-                }
-              : false
-          }
-          className={!disabled ? styles.hoverEdit : undefined}
+          gap="xxs"
+          align="center"
+          className={[
+            isEditable ? 'bai-editable-file-name-hover-edit' : '',
+            className ?? '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
           style={{
+            display: 'inline-flex',
             // after editing, focus this element, remove outline
             outline: 'none',
             ...style,
           }}
-          {...props}
+          onClick={onClick}
         >
           {fileInfo?.type === 'DIRECTORY' ? (
             <BAILink
@@ -153,32 +167,45 @@ const EditableFileName: React.FC<EditableNameProps> = ({
               ellipsis
               title={fileInfo.name}
             >
-              <FolderOutlined style={{ color: token.colorLink }} /> &nbsp;
-              {isPendingRenamingAndRefreshing ? optimisticName : fileInfo.name}
+              <Folder style={{ color: token.colorLink }} size="1em" /> &nbsp;
+              {displayName}
             </BAILink>
           ) : (
             <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-              <FileOutlined />
-              <Typography.Text
+              <File size="1em" />
+              <Text
+                maxLines={1}
+                hasTruncateTooltip
                 style={{
                   maxWidth: 200,
                   color: isPendingRenamingAndRefreshing
                     ? token.colorTextTertiary
                     : undefined,
                 }}
-                ellipsis
-                title={fileInfo.name}
               >
-                {isPendingRenamingAndRefreshing
-                  ? optimisticName
-                  : fileInfo.name}
-              </Typography.Text>
+                {displayName}
+              </Text>
             </BAIFlex>
           )}
-        </Component>
+          {isEditable ? (
+            <IconButton
+              className="bai-editable-file-name-edit-button"
+              variant="ghost"
+              size="sm"
+              icon={<PencilIcon size="1em" />}
+              label={t('comp:FileExplorer.RenameFile')}
+              tooltip={t('comp:FileExplorer.RenameFile')}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+                onStartEdit?.();
+              }}
+            />
+          ) : null}
+        </BAIFlex>
       ) : (
         <Form
-          className={styles.form}
+          className="bai-editable-file-name-form"
           initialValues={{ newName: fileInfo?.name }}
           onFinish={(values) => {
             setIsEditing(false);
@@ -233,7 +260,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
               }
             }
           }}
-          onClick={props.onClick}
+          onClick={onClick}
         >
           <Form.Item
             name="newName"
@@ -244,25 +271,10 @@ const EditableFileName: React.FC<EditableNameProps> = ({
               },
             ]}
           >
-            <Input
-              size="small"
+            <AstryxFormTextInput
+              label={t('comp:FileExplorer.FileName')}
               placeholder={fileInfo?.name || undefined}
-              suffix={
-                <CornerDownLeftIcon
-                  style={{
-                    fontSize: '0.8em',
-                    color: token.colorTextTertiary,
-                  }}
-                />
-              }
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') {
-                  e.stopPropagation();
-                  setIsEditing(false);
-                  focusFallback();
-                }
-              }}
+              hasAutoFocus
             />
           </Form.Item>
         </Form>

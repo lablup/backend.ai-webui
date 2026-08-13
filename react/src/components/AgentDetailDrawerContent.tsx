@@ -4,21 +4,26 @@
  */
 import { AgentDetailDrawerContentFragment$key } from '../__generated__/AgentDetailDrawerContentFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { theme, useBAIBreakpoint } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Descriptions, Grid, Tabs, theme, Typography } from 'antd';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIDoubleTag,
   BAIFlex,
   BAIIntervalView,
+  BAIMetadataList,
+  BAIText,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Check, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -34,7 +39,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { md } = Grid.useBreakpoint();
+  const { md } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
 
@@ -63,64 +68,63 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
 
   const regionData = _.split(agent?.region || '', '/');
 
+  const isTerminated = agent?.status === 'TERMINATED';
+
   return (
     <BAIFlex direction="column" gap="lg" align="stretch">
       <BAIFlex justify="between">
         <BAIFlex direction="column" align="stretch">
-          <Typography.Title
-            level={3}
-            style={{
-              margin: 0,
-              color: ['TERMINATED'].includes(agent?.status || '')
-                ? token.colorTextSecondary
-                : undefined,
-            }}
+          {/* Not an <h3>: Astryx has no copyable Heading, so the legacy
+              Title renders as large text with the shared copy control. */}
+          <BAIText
+            strong
+            type={isTerminated ? 'secondary' : undefined}
             copyable
+            style={{
+              fontSize: 'var(--text-large-size)',
+              lineHeight: 'var(--text-large-leading)',
+            }}
           >
             {toLocalId(agent?.id || '')}
-          </Typography.Title>
-          <Typography.Text type="secondary" copyable>
-            {agent?.addr}
-          </Typography.Text>
+          </BAIText>
+          <BAIText type="secondary" copyable>
+            {agent?.addr || ''}
+          </BAIText>
         </BAIFlex>
-        <AgentActionButtons agentNodeFrgmt={agent} size="large" />
+        <AgentActionButtons agentNodeFrgmt={agent} size="lg" />
       </BAIFlex>
 
-      <Descriptions
-        bordered
-        column={md ? 2 : 1}
-        labelStyle={{ wordBreak: 'keep-all' }}
-      >
-        <Descriptions.Item label={t('agent.ResourceGroup')} span={md ? 2 : 1}>
+      {/* SUPERSEDED (FR-3496): `bordered` now has a destination — BAIMetadataList.
+          Still dropped: per-item `span`. Column count is `md`-driven (R3). */}
+      <BAIMetadataList bordered columns={md ? 2 : 1}>
+        <MetadataListItem label={t('agent.ResourceGroup')}>
           {agent?.scaling_group}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.Region')}>
-          <Typography.Text style={{ minWidth: 200 }}>
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.Region')}>
+          <Text>
             {regionData.length > 1
               ? _.join([regionData?.[0], regionData?.[1]], ' / ')
               : regionData?.[0]}
-          </Typography.Text>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.Schedulable')}>
+          </Text>
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.Schedulable')}>
           {agent?.schedulable ? (
-            <CheckOutlined style={{ color: token.colorSuccess }} />
+            <Check style={{ color: token.colorSuccess }} size="1em" />
           ) : (
-            <CloseOutlined style={{ color: token.colorTextDisabled }} />
+            <X style={{ color: token.colorTextDisabled }} size="1em" />
           )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.Status')} span={md ? 2 : 1}>
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.Status')}>
           <AgentStatusTag agentNodeFrgmt={agent} />
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.ComputePlugins')} span={md ? 2 : 1}>
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.ComputePlugins')}>
           <BAIFlex gap="sm" wrap="wrap">
             <AgentComputePlugins agentNodeFrgmt={agent} />
           </BAIFlex>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.StartsAt')} span={md ? 2 : 1}>
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.StartsAt')}>
           <BAIFlex gap="sm">
-            <Typography.Text>
-              {dayjs(agent?.first_contact).format('lll')}
-            </Typography.Text>
+            <Text>{dayjs(agent?.first_contact).format('lll')}</Text>
             {agent?.status === 'ALIVE' && (
               <BAIIntervalView
                 callback={() => {
@@ -141,24 +145,22 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
               />
             )}
           </BAIFlex>
-        </Descriptions.Item>
-      </Descriptions>
+        </MetadataListItem>
+      </BAIMetadataList>
 
-      <Tabs
-        activeKey={activeTabKey}
+      {/* antd Tabs → TabList + Tab (MAPPING §4): navigation only, panel is
+          self-rendered below. */}
+      <TabList
+        value={activeTabKey}
         onChange={(key) => setActiveTabKey(key as TabKey)}
-        items={[
-          {
-            key: 'resources',
-            label: t('agent.Resources'),
-            children: (
-              <BAIErrorBoundary>
-                <AgentResources agentNodeFrgmt={agent} />
-              </BAIErrorBoundary>
-            ),
-          },
-        ]}
-      />
+      >
+        <Tab value="resources" label={t('agent.Resources')} />
+      </TabList>
+      {activeTabKey === 'resources' && (
+        <BAIErrorBoundary>
+          <AgentResources agentNodeFrgmt={agent} />
+        </BAIErrorBoundary>
+      )}
     </BAIFlex>
   );
 };

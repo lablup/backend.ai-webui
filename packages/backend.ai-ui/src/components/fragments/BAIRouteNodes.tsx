@@ -11,6 +11,7 @@ import {
   useSemanticColorMap,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
@@ -19,14 +20,14 @@ import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { ExclamationCircleOutlined, HistoryOutlined } from '@ant-design/icons';
-import { Tooltip, theme } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleAlert, History } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 export type RouteNodeInList = NonNullable<BAIRouteNodesFragment$data[number]>;
@@ -129,7 +130,7 @@ const BAIRouteNodes = ({
               <BAIButton
                 size="small"
                 type="text"
-                icon={<ExclamationCircleOutlined />}
+                icon={<CircleAlert size="1em" />}
                 style={{ color: token.colorError }}
                 onClick={() => {
                   onClickErrorData?.(record.errorData);
@@ -179,10 +180,10 @@ const BAIRouteNodes = ({
               </BAITag>
             ) : null}
             {onClickSchedulingHistory && (
-              <Tooltip title={t('comp:BAIRouteNodes.SchedulingHistory')}>
+              <Tooltip content={t('comp:BAIRouteNodes.SchedulingHistory')}>
                 <BAIButton
                   type="text"
-                  icon={<HistoryOutlined />}
+                  icon={<History size="1em" />}
                   size="small"
                   onClick={() =>
                     onClickSchedulingHistory(
@@ -260,11 +261,10 @@ const BAIRouteNodes = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(routes)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableRouteSorterValues)[number]) || null,

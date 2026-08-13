@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   RuntimeVariantPresetDef,
@@ -9,23 +10,34 @@ import {
   RuntimeVariantPresetValueEntry,
   useRuntimeParameterSchema,
 } from '../hooks/useRuntimeParameterSchema';
+import { theme } from '../theme-shim';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import { UndoOutlined } from '@ant-design/icons';
 import {
-  Checkbox,
-  Collapse,
-  Form,
-  InputNumber,
-  Select,
-  Input,
-  Tooltip,
-  theme,
-  Alert,
-  Tabs,
-} from 'antd';
-import { BAIButton, BAIFlex, toLocalId } from 'backend.ai-ui';
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Text } from '@astryxdesign/core/Text';
+import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
+import { BAIFlex, toLocalId } from 'backend.ai-ui';
+import { Undo2 } from 'lucide-react';
 import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const styles = stylex.create({
+  // The tab strip is a bare sibling of the Banner and the first field, so its
+  // breathing room has to come from the strip itself. FR-3529.
+  categoryTabs: {
+    marginBlockStart: spacingVars['--spacing-4'],
+    marginBlockEnd: spacingVars['--spacing-4'],
+  },
+});
 
 /** Convert category slug to a display-friendly label. */
 function formatCategoryLabel(category: string): string {
@@ -108,7 +120,6 @@ const RuntimeParameterFormSection: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const form = Form.useFormInstance();
   const baiClient = useSuspendedBackendaiClient();
   const supportsRequiredField = baiClient.supports(
@@ -224,73 +235,81 @@ const RuntimeParameterFormSection: React.FC<
     : (availableCategories[0] ?? '');
 
   return (
-    <Collapse
-      size="small"
-      defaultActiveKey={['runtime-params']}
-      items={[
-        {
-          key: 'runtime-params',
-          label: (
-            <BAIFlex justify="between" align="center" style={{ flex: 1 }}>
-              <span>
-                {t('modelService.RuntimeParamTitle')}{' '}
-                {!supportsRequiredField && (
-                  <span style={{ color: token.colorTextSecondary }}>
-                    ({t('general.Optional')})
-                  </span>
-                )}
-              </span>
-              <Tooltip title={t('button.Reset')}>
-                <BAIButton
-                  type="link"
-                  size="small"
-                  icon={<UndoOutlined />}
-                  aria-label={t('button.Reset')}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReset();
-                  }}
-                  disabled={touchedKeys.size === 0}
-                />
-              </Tooltip>
-            </BAIFlex>
-          ),
-          children: (
-            <>
-              <Alert
-                type="warning"
-                showIcon
-                title={t('modelService.RuntimeParamUnchangedHint')}
-                style={{ marginBottom: token.marginSM }}
-              />
-              <Tabs
-                size="small"
-                activeKey={effectiveActiveTab}
-                onChange={(key) => setActiveTab(key)}
-                items={tabList.map((tab) => {
-                  const group = groups.find((g) => g.category === tab.key);
-                  return {
-                    key: tab.key,
-                    label: tab.label,
-                    // Mount every pane up front so required rules of fields in
-                    // unvisited tabs are registered with the form — otherwise
-                    // `validateFields()` silently skips them.
-                    forceRender: true,
-                    children: group ? (
-                      <ParameterGroupContent
-                        group={group}
-                        touchedKeys={touchedKeys}
-                        onParamTouch={markTouched}
-                      />
-                    ) : null,
-                  };
-                })}
-              />
-            </>
-          ),
-        },
-      ]}
-    />
+    // MAPPING 4: antd `Collapse items=[...]` -> `Collapsible`; the panel
+    // header becomes `trigger` and `defaultActiveKey` becomes `defaultIsOpen`.
+    // `size="small"` is dropped -- Collapsible has no density axis (MAPPING 4
+    // lists `ghost`/`bordered`/`size` as collapsing to `density`, which this
+    // build does not expose).
+    <Collapsible
+      defaultIsOpen
+      trigger={
+        <BAIFlex justify="between" align="center" style={{ flex: 1 }}>
+          <span>
+            {t('modelService.RuntimeParamTitle')}{' '}
+            {!supportsRequiredField && (
+              <Text color="secondary">({t('general.Optional')})</Text>
+            )}
+          </span>
+          {/* MAPPING 3.3: an icon-only button whose accessible name was an
+              ad-hoc `aria-label` is an `IconButton`, which requires `label`
+              and renders the tooltip itself -- so the Tooltip wrapper goes.
+              The `type="link"` styling collapses to `variant="ghost"`. */}
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={<Undo2 size="1em" />}
+            label={t('button.Reset')}
+            tooltip={t('button.Reset')}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleReset();
+            }}
+            isDisabled={touchedKeys.size === 0}
+          />
+        </BAIFlex>
+      }
+    >
+      {/* `type` -> `status`; `showIcon` dropped (Banner always shows it). */}
+      <Banner
+        status="warning"
+        title={t('modelService.RuntimeParamUnchangedHint')}
+      />
+      {/* MAPPING 4: antd `Tabs` -> `TabList` + `Tab` -- navigation only, the
+          panels are rendered here. antd's `forceRender` mounted every pane so
+          required rules in unvisited tabs registered with the form; that
+          requirement survives, so every group stays mounted and only the
+          inactive ones are hidden with `display:none` rather than unmounted.
+          `Tab.label` is a required STRING (P2), which every tab label here
+          already is. */}
+      <TabList
+        size="sm"
+        hasDivider
+        xstyle={styles.categoryTabs}
+        value={effectiveActiveTab}
+        onChange={(key) => setActiveTab(key)}
+      >
+        {tabList.map((tab) => (
+          <Tab key={tab.key} value={tab.key} label={tab.label} />
+        ))}
+      </TabList>
+      {tabList.map((tab) => {
+        const group = groups.find((g) => g.category === tab.key);
+        return group ? (
+          <div
+            key={tab.key}
+            style={{
+              display: effectiveActiveTab === tab.key ? 'block' : 'none',
+            }}
+          >
+            <ParameterGroupContent
+              group={group}
+              touchedKeys={touchedKeys}
+              onParamTouch={markTouched}
+            />
+          </div>
+        ) : null;
+      })}
+    </Collapsible>
   );
 };
 
@@ -355,6 +374,20 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
     : undefined;
   const defaultPlaceholder = param.defaultValue ?? undefined;
 
+  // The "user has touched this field" hook.
+  //
+  // Under antd the mark rode on each control's own `onChange`. The Astryx
+  // form-control ADAPTERS own that slot (they normalise `onChange` to receive
+  // the value), and only two of them expose an `onValueChange` escape hatch.
+  // Rather than fork the shared adapters, the mark moves one level up to the
+  // `Form.Item` itself: `getValueFromEvent` runs on exactly the same events,
+  // passes the value through untouched, and works uniformly for every control
+  // type -- including the ones with an escape hatch.
+  const touchOnChange = <T,>(value: T): T => {
+    onTouch();
+    return value;
+  };
+
   const uiType = param.uiType;
 
   switch (uiType) {
@@ -370,6 +403,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           style={formItemStyle}
           required={isRequired}
           rules={requiredRules}
+          getValueFromEvent={touchOnChange}
         >
           <InputNumberWithSlider
             min={min}
@@ -405,18 +439,17 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           style={formItemStyle}
           required={isRequired}
           rules={requiredRules}
+          getValueFromEvent={touchOnChange}
         >
-          <InputNumber
+          {/* MAPPING 3.17: `InputNumber` -> `NumberInput`; `style.width:
+              '100%'` becomes the adapter's `width` (its default). */}
+          <AstryxFormNumberInput
+            label={label}
             min={min}
             max={max}
             step={isInt ? 1 : 0.1}
-            onChange={onTouch}
+            isIntegerOnly={isInt}
             placeholder={defaultPlaceholder}
-            style={{
-              width: '100%',
-              opacity: controlOpacity,
-              transition: controlTransition,
-            }}
           />
         </Form.Item>
       );
@@ -431,17 +464,19 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           style={formItemStyle}
           required={isRequired}
           rules={requiredRules}
+          getValueFromEvent={touchOnChange}
         >
-          <Select
-            allowClear
-            onChange={onTouch}
+          {/* MAPPING 3.1: a small static option list -> `Selector`;
+              `allowClear` -> `hasClear`. */}
+          <AstryxFormSelector
+            label={label}
+            hasClear
             placeholder={
               param.choices?.items.find(
                 (opt) => opt.value === param.defaultValue,
               )?.label ?? defaultPlaceholder
             }
-            style={{ opacity: controlOpacity, transition: controlTransition }}
-            options={param.choices?.items.map((opt) => ({
+            options={(param.choices?.items ?? []).map((opt) => ({
               value: opt.value,
               label: opt.label,
             }))}
@@ -459,14 +494,10 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           style={formItemStyle}
           required={isRequired}
           rules={requiredRules}
+          getValueFromEvent={touchOnChange}
         >
-          <Checkbox
-            onChange={onTouch}
-            aria-label={label}
-            style={{ opacity: controlOpacity, transition: controlTransition }}
-          >
-            {t('general.Enable')}
-          </Checkbox>
+          {/* MAPPING 4: children -> the required `label` string. */}
+          <AstryxFormCheckbox label={t('general.Enable')} />
         </Form.Item>
       );
 
@@ -480,13 +511,13 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           style={formItemStyle}
           required={isRequired}
           rules={requiredRules}
+          getValueFromEvent={touchOnChange}
         >
-          <Input
-            onChange={onTouch}
+          <AstryxFormTextInput
+            label={label}
             placeholder={
               defaultPlaceholder ?? param.text?.placeholder ?? undefined
             }
-            style={{ opacity: controlOpacity, transition: controlTransition }}
           />
         </Form.Item>
       );

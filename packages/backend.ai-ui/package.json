@@ -19,20 +19,22 @@
   "main": "./dist/backend.ai-ui.js",
   "module": "./dist/backend.ai-ui.js",
   "types": "./dist/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "import": "./dist/backend.ai-ui.js",
       "types": "./dist/index.d.ts"
     },
-    "./dist/locale/*": {
+    "./locale/*": {
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
-    }
+    },
+    "./styles.css": "./dist/backend.ai-ui.css"
   },
   "files": [
-    "dist",
-    "dist/locale"
+    "dist"
   ],
   "scripts": {
     "dev": "vite build --watch --mode development",
@@ -46,11 +48,9 @@
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "peerDependencies": {
-    "@ant-design/icons": "catalog:",
+    "@astryxdesign/core": "0.3.0",
+    "@astryxdesign/theme-neutral": "0.3.0",
     "@tanstack/react-query": "catalog:",
-    "ahooks": "catalog:",
-    "antd": "catalog:",
-    "antd-style": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -72,10 +72,11 @@
     "react-copy-to-clipboard": "catalog:",
     "react-draggable": "^4.7.0",
     "react-error-boundary": "^6.1.2",
-    "react-i18next": "catalog:",
-    "react-resizable": "^3.2.0"
+    "react-i18next": "catalog:"
   },
   "devDependencies": {
+    "@astryxdesign/core": "0.3.0",
+    "@astryxdesign/theme-neutral": "0.3.0",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",
@@ -92,7 +93,6 @@
     "@types/react-copy-to-clipboard": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/react-relay": "catalog:",
-    "@types/react-resizable": "^3.0.8",
     "@types/relay-runtime": "catalog:",
     "@types/relay-test-utils": "catalog:",
     "@vitejs/plugin-react": "^4.7.0",

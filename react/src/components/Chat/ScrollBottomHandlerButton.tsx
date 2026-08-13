@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Button } from 'antd';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { useEventNotStable } from 'backend.ai-ui';
 import { ArrowDownIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ScrollBottomHandlerButtonProps {
   autoScroll?: boolean;
@@ -18,6 +19,7 @@ const ScrollBottomHandlerButton: React.FC<ScrollBottomHandlerButtonProps> = ({
   ...props
 }) => {
   const onScrollToBottom = useEventNotStable(props.onScrollToBottom);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (atBottom && autoScroll) {
@@ -26,13 +28,13 @@ const ScrollBottomHandlerButton: React.FC<ScrollBottomHandlerButtonProps> = ({
   }, [atBottom, autoScroll, onScrollToBottom]);
 
   return (
-    <Button
+    <IconButton
       icon={<ArrowDownIcon />}
-      shape="circle"
+      label={t('chatui.ScrollToBottom')}
       onClick={() => {
         onScrollToBottom && onScrollToBottom('click');
       }}
-    ></Button>
+    />
   );
 };
 

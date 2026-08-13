@@ -1,0 +1,137 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAITableAstryx> (to-astryx ticket 30-D). Replaces
+ `BAITable.css`, which is gone with the antd engine.
+
+ Two rules survive the engine swap.
+
+ 1. antd's `showHeader={false}`. Astryx's `Table` has no equivalent prop (its
+    header owns the sort controls and the select-all checkbox), so the header
+    row is collapsed in CSS instead. The selector targets the plain `thead`
+    ELEMENT inside our own wrapper class — no design-system class names are
+    reached into, so this survives an Astryx bump.
+
+ 2. The block-axis container-bleed reset (qa2-c). Astryx's `Table` bleeds out
+    to its container's padding edges so rows can run edge-to-edge inside a
+    `Card`. The INLINE bleed is unconditional and intended. The BLOCK bleed is
+    deliberately scoped by Astryx to `:first-child` / `:last-child`:
+
+      .xkibk3:first-child { margin-top:    calc(-1 * var(--container-padding-block-start,0px)) }
+      .xlayyun:last-child { margin-bottom: calc(-1 * var(--container-padding-block-end,0px)) }
+
+    so a table that really IS the card's only content sits flush against the
+    card's top/bottom edges, and a table with siblings does not.
+
+    `BAITableAstryx` wraps Astryx's `<Table>` in its own dim layer (the
+    loading-state opacity wrapper) and renders the pagination bar as a SIBLING
+    of that layer. That makes Astryx's scroll wrapper the ONLY child of the dim
+    layer, so it matches BOTH `:first-child` AND `:last-child` regardless of
+    where the table actually sits on the page — and pulls -24px at the top and
+    -24px at the bottom. Measured on every table page: the filter/action row
+    above the table and the pagination bar below it were overlapped by the
+    table body (e.g. Data page, filter row `y=245..277` vs table `y=265`).
+
+    Astryx's own escape hatch for a nested container is to zero the
+    `--container-padding-*` custom properties (that is exactly what `Section`'s
+    `nestedStyles.inner` does). Zero only the BLOCK axis here: the inline bleed
+    stays, so rows keep running edge-to-edge, while the vertical rhythm falls
+    back to the parent stack's gap — which is what the antd `BAITable` did.
+
+ `@layer components` matches the layer contract declared in
+ `src/styles/backend.ai-ui.css` (ticket 30).
+*/
+@layer components {
+  .bai-table-astryx-no-header thead {
+    display: none;
+  }
+
+  .bai-table-astryx-dim-layer {
+    --container-padding-block-start: 0px;
+    --container-padding-block-end: 0px;
+  }
+}
+
+@layer components {
+  /*
+   Unblock the header's clip wrapper inside Astryx's sort button.
+
+   `BAITableAstryx` already wraps every header label in an
+   `overflow: hidden; text-overflow: ellipsis` span, because Astryx's own
+   `overflowStyles.cell` clip is cancelled on the `<th>` by
+   `useTableColumnResize` (which needs `overflow: visible` so its drag handle
+   can run the full height of the body). That wrapper works on a plain header —
+   but on a SORTABLE one Astryx nests it inside the sort `<button>`'s label
+   span, which is a flex item with the initial `min-width: auto`. A flex item's
+   automatic minimum size is its min-content width, so the wrapper is floored at
+   the label's full width and clips nothing: dragging "Session Name" down to
+   60px measured the `<th>` painting 41px over the "Status" header.
+
+   Element selectors only — the same discipline as the `no-header` rule above —
+   so this survives an Astryx bump, and `@layer components` outranks
+   `@layer astryx-base` where the button's own StyleX lives. Measured after:
+   escape +41.0px -> -16.6px, with the `<th>` still `overflow: visible` so the
+   drag handle and the sticky shadow are untouched. QA-FINDINGS Q-18.
+  */
+  .bai-table-astryx-dim-layer thead th button > span {
+    min-width: 0;
+  }
+}
+
+@layer components {
+  /*
+   antd `scroll={{ x }}` as rc-table writes it: `width: <x>; min-width: 100%`.
+   `table-layout: auto` is required for content-driven widths — the switch
+   rc-table itself makes for 'max-content' (ant-design#25227).
+   `:not(table table)` keeps the rule (and the inherited custom property) off
+   tables nested inside cells / expandedRowRender.
+  */
+  .bai-table-astryx-scroll-x table:not(table table) {
+    table-layout: auto;
+    width: var(--bai-table-scroll-x);
+    /* !important: BaseTable writes a structural inline min-width whenever any
+       pixel column exists (the injected selection column is pixel 52). */
+    min-width: 100% !important;
+  }
+}
+
+@layer components {
+  /*
+   antd `scroll={{ y }}`: cap the body and stick the header. The capped element
+   is Astryx's scroll wrapper (already `overflow-x: auto`), matched as "the div
+   whose direct child is the table" — its DEPTH varies: `useTableColumnResize`
+   (on by default) wraps the whole table in a `display: contents` measuring div,
+   so a `> div` child selector lands on that boxless wrapper and caps nothing.
+   `:not(table div)` keeps wrappers of nested tables (inside cells /
+   expandedRowRender) uncapped.
+  */
+  .bai-table-astryx-scroll-y div:has(> table):not(table div) {
+    max-height: var(--bai-table-scroll-y);
+    overflow-y: auto;
+  }
+
+  /*
+   Astryx paints no background on `th`, so a sticky header needs its own opaque
+   base — the same token the sticky-column plugin uses, so a pinned corner
+   matches. z-index 2 clears pinned BODY cells (z 1); this layer outranks the
+   plugin's `astryx-base` z 3 on pinned HEADER cells, which BAITableAstryx
+   restores inline. `overflow` is untouched: the resize drag handle needs
+   `visible` to reach through the body.
+
+   Known limit, deliberately deferred: the header's bottom rule belongs to the
+   COLLAPSED table border and cannot travel with a sticky cell, so it vanishes
+   while scrolled. Candidate fix: `box-shadow: inset 0 -1px 0
+   var(--color-border)` here — unmeasured against the sticky-column shadows.
+   `:not(table table)` keeps nested tables' headers non-sticky, as above.
+  */
+  .bai-table-astryx-scroll-y table:not(table table) > thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(
+      --table-sticky-background,
+      var(--color-background-card)
+    );
+  }
+}

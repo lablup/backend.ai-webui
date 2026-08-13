@@ -1,31 +1,49 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — converted to Astryx. `Grid.useBreakpoint` becomes
+ `useBAIBreakpoint` (RESPONSIVE-POLICY R2), `Skeleton.Button` becomes the
+ `BAISkeletonAstryx` button variant, and the editable title uses the rebuilt
+ `EditableVFolderNameV2` (`variant="title"` replaces the antd
+ `component={Typography.Title}` polymorphism).
+*/
 import { FolderExplorerHeaderV2Fragment$key } from '../__generated__/FolderExplorerHeaderV2Fragment.graphql';
+import { useBAIBreakpoint } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import EditableVFolderNameV2 from './EditableVFolderNameV2';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { theme, Typography, Skeleton, Grid } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import { HStack } from '@astryxdesign/core/Stack';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderV2Props {
   vfolderNodeFrgmt?: FolderExplorerHeaderV2Fragment$key | null;
   titleStyle?: React.CSSProperties;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3412/FR-3413): pass-through
+   * for the FileBrowser/SFTP session-launch buttons (`null` renders them
+   * disabled with `noProjectTooltip` as the reason) and for the rename
+   * gating of `EditableVFolderNameV2` (`null` drops the project-membership
+   * branch — owner/super-admin keep their power).
+   */
+  project: ProjectContextOrNull;
+  noProjectTooltip?: string;
 }
 
 const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
   vfolderNodeFrgmt,
   titleStyle,
+  project,
+  noProjectTooltip,
 }) => {
   'use memo';
 
-  const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
+  const { lg } = useBAIBreakpoint();
 
   const vfolderNode = useFragment(
     graphql`
@@ -42,87 +60,87 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
   );
 
   return (
-    <BAIFlex
-      data-testid="folder-explorer-header"
+    <HStack
       justify="between"
-      gap={token.marginMD}
-      style={{ width: '100%' }}
+      align="center"
+      // Legacy `BAIFlex gap={token.marginMD}` = 16px = `--spacing-4` (step 4).
+      // The conversion had landed on step 5 (20px).
+      gap={4}
+      width="100%"
+      {...({ 'data-testid': 'folder-explorer-header' } as object)}
     >
-      <BAIFlex
-        data-testid="folder-explorer-title"
-        gap={'xs'}
-        // reset font weight set by BAIModal header
+      <HStack
+        align="center"
+        // Legacy `BAIFlex gap="xs"` = antd `sizeXS` = 8px = step 2.
+        gap={2}
+        // reset font weight set by the modal header
         style={{ flex: 1, fontWeight: 'normal', ...titleStyle }}
+        {...({ 'data-testid': 'folder-explorer-title' } as object)}
       >
         {vfolderNode ? (
           <VFolderNodeIdenticonV2
             vfolderNodeIdenticonFrgmt={vfolderNode}
             style={{
-              fontSize: token.fontSizeHeading4,
+              fontSize: 'var(--font-size-xl)',
             }}
           />
         ) : (
-          <BAIFlex
+          <span
             style={{
-              borderColor: token.colorBorderSecondary,
+              display: 'inline-flex',
+              borderColor: 'var(--color-border)',
               borderWidth: 1,
               borderStyle: 'solid',
-              width: token.fontSizeHeading3,
-              height: token.fontSizeHeading3,
-              borderRadius: token.borderRadius,
+              width: 'var(--font-size-2xl)',
+              height: 'var(--font-size-2xl)',
+              borderRadius: 'var(--radius-inner)',
             }}
           />
         )}
         {vfolderNode && (
           <EditableVFolderNameV2
             vfolderNodeFrgmt={vfolderNode}
+            project={project}
             enableLink={false}
-            component={Typography.Title}
-            level={3}
+            variant="title"
             style={{
               margin: 0,
               width: '100%',
             }}
-            ellipsis
-            editable={{
-              triggerType: ['icon', 'text'],
-            }}
-            inputProps={{
-              size: 'large',
-              count: {
-                max: 64,
-                show: true,
-              },
-              style: {
-                fontWeight: 'normal',
-              },
-            }}
+            editable
           />
         )}
-      </BAIFlex>
-      <BAIFlex
-        data-testid="folder-explorer-actions"
+      </HStack>
+      <HStack
         justify="end"
-        gap={token.marginSM}
+        align="center"
+        // Legacy `BAIFlex gap={token.marginSM}` = 12px = `--spacing-3` (step 3).
+        // The conversion had landed on step 2 (8px), crowding the two buttons.
+        gap={3}
+        {...({ 'data-testid': 'folder-explorer-actions' } as object)}
       >
         {vfolderNode && !vfolderNode?.unmanagedPath ? (
-          <Suspense fallback={<Skeleton.Button active />}>
+          <Suspense fallback={<BAISkeleton variant="button" />}>
             <ErrorBoundaryWithNullFallback>
               <FileBrowserButtonV2
                 vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
+                project={project}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
             <ErrorBoundaryWithNullFallback>
               <SFTPServerButtonV2
                 vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
+                project={project}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
           </Suspense>
         ) : null}
-      </BAIFlex>
-    </BAIFlex>
+      </HStack>
+    </HStack>
   );
 };
 

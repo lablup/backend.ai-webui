@@ -1,25 +1,30 @@
 import { omitNullAndUndefinedFields } from '../helper';
+import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
+import BAIButton, { type BAIButtonProps } from './BAIButton';
 import BAICountdownBorder from './BAICountdownBorder';
-import { CheckOutlined, ReloadOutlined } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import {
-  Button,
-  Dropdown,
-  Space,
-  theme,
-  Tooltip,
-  type ButtonProps,
-  type MenuProps,
-} from 'antd';
+  DropdownMenu,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from '@astryxdesign/core/DropdownMenu';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { RotateCw, ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 dayjs.extend(duration);
+
+/** antd `SizeType` -> Astryx's button size scale. */
+const ASTRYX_SIZE = {
+  small: 'sm',
+  middle: 'md',
+  large: 'lg',
+} as const;
 
 /**
  * Default auto-refresh interval presets (in milliseconds) offered in the
@@ -32,7 +37,7 @@ export const AUTO_UPDATE_DELAY_OPTIONS = [
 ] as const;
 
 export interface BAIFetchKeyButtonProps extends Omit<
-  ButtonProps,
+  BAIButtonProps,
   'value' | 'onChange' | 'loading'
 > {
   /**
@@ -54,7 +59,7 @@ export interface BAIFetchKeyButtonProps extends Omit<
    * existing consumers use it.
    */
   autoUpdateDelay?: number | null;
-  size?: ButtonProps['size'];
+  size?: BAIButtonProps['size'];
   onChange: (fetchKey: string) => void;
   hidden?: boolean;
   pauseWhenHidden?: boolean;
@@ -272,12 +277,32 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
 
   // Icon-only refresh button. When the interval dropdown is shown, the selected
   // interval label ("Ns") lives on the dropdown trigger, not here.
-  const refreshButton = (
-    <Button
-      title={tooltipTitle ? undefined : t('comp:BAIFetchKeyButton.Refresh')}
+  //
+  // `ownTooltip` decides WHO renders the hover text. Astryx joins a
+  // `ButtonGroup`'s members through context + `:first-child` / `IS_LAST_ITEM`
+  // CSS on the button ELEMENT, so a member has to be a DIRECT child of the
+  // group. Astryx's `Tooltip` wraps its child in a `display: contents` div —
+  // invisible to layout, but a real element to the selector engine, which made
+  // the refresh button `:first-child` of the WRAPPER instead of the group and
+  // left it with a full `8px` pill against the dropdown's `0 8px 8px 0`: a
+  // visible notch, measured on /deployments and /data (QA2-B-2). Astryx
+  // `Button` renders its own `tooltip` as a `[popover]` SIBLING inside a
+  // fragment (which is exactly why `IS_LAST_ITEM` skips `[popover]`), so
+  // routing the same text through `title` keeps the button a direct child and
+  // the group welded.
+  const refreshButton = (ownTooltip: boolean) => (
+    <BAIButton
+      title={
+        ownTooltip
+          ? tooltipTitle || t('comp:BAIFetchKeyButton.Refresh')
+          : tooltipTitle
+            ? undefined
+            : t('comp:BAIFetchKeyButton.Refresh')
+      }
+      aria-label={t('comp:BAIFetchKeyButton.Refresh')}
       loading={displayLoading}
       size={size}
-      icon={<ReloadOutlined />}
+      icon={<RotateCw size="1em" />}
       onClick={triggerRefresh}
       {...buttonProps}
     />
@@ -314,20 +339,30 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   // existing consumers.
   if (!isAutoUpdateConfigurable) {
     return withCountdownBorder(
-      <Tooltip title={tooltipTitle} placement="topLeft">
-        {refreshButton}
+      <Tooltip
+        content={tooltipTitle}
+        placement="above"
+        alignment="start"
+        isEnabled={!!tooltipTitle}
+      >
+        {refreshButton(false)}
       </Tooltip>,
     );
   }
 
-  // Feature enabled: a Space.Compact group of the refresh button + a chevron
-  // dropdown trigger to pick the auto-refresh interval (or turn it off). The
-  // trigger shows the selected interval ("Ns") next to the chevron; the active
-  // menu option carries a check mark. Inactive options render the same icon
-  // hidden so every row stays aligned without a hardcoded spacer width.
-  const checkMark = (active: boolean) => (
-    <CheckOutlined style={{ visibility: active ? 'visible' : 'hidden' }} />
-  );
+  // Feature enabled: a `ButtonGroup` welding the refresh button to a chevron
+  // dropdown trigger that picks the auto-refresh interval (or turns it off).
+  // The trigger shows the selected interval ("Ns") next to the chevron.
+  //
+  // PILOT-DECISION (to-astryx W2-D): the hand-rolled check mark is DELETED.
+  // antd's `Dropdown menu={{items}}` has no single-choice semantics, so the
+  // active interval was faked with a `<Check>` icon plus a
+  // `visibility: hidden` copy on every other row to keep them aligned.
+  // `DropdownMenuRadioGroup` + `DropdownMenuRadioItem` is native single-choice:
+  // it emits `role="menuitemradio"` with `aria-checked`, draws the selected
+  // state itself, and aligns the rows — strictly better than the original,
+  // which announced nothing (MAPPING §5.3 makes exactly this call).
+
   // Render an interval (ms) as a compact label, using the largest whole unit:
   // "30s" / "5m" / "1h". `dayjs.duration` only picks the unit; the unit text
   // itself is localized via i18n (e.g. ko "5분", ja "5分"), consistent with the
@@ -356,56 +391,73 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
       ...(selectedDelay !== null ? [selectedDelay] : []),
     ]),
   ].sort((a, b) => a - b);
-  const menuItems: MenuProps['items'] = [
-    {
-      key: 'off',
-      label: t('comp:BAIFetchKeyButton.Off'),
-      icon: checkMark(selectedDelay === null),
-      onClick: () => setSelectedDelay(null),
-    },
-    ...mergedOptions.map((ms) => ({
-      key: String(ms),
-      label: formatInterval(ms),
-      icon: checkMark(selectedDelay === ms),
-      onClick: () => setSelectedDelay(ms),
-    })),
-  ];
-
-  const { token } = theme.useToken();
-
   return withCountdownBorder(
-    <Space.Compact>
-      <Tooltip title={tooltipTitle} placement="topLeft">
-        {refreshButton}
-      </Tooltip>
-      <Dropdown
-        trigger={['click']}
-        placement="bottomRight"
-        open={isDropdownOpen}
+    <ButtonGroup
+      label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+      size={size ? ASTRYX_SIZE[size] : undefined}
+    >
+      {/* Direct child on purpose — see `refreshButton`'s note (QA2-B-2). */}
+      {refreshButton(true)}
+      <DropdownMenu
+        isMenuOpen={isDropdownOpen}
         onOpenChange={setIsDropdownOpen}
-        menu={{ items: menuItems }}
+        placement="below"
+        alignment="end"
+        // ORIGINAL FIDELITY: antd showed the selected interval ("30s") next to
+        // the chevron only while auto-refresh was ON, and a bare chevron
+        // otherwise. Astryx `Button` renders `label` as visible text unless
+        // `children` overrides it or `isIconOnly` is set — so the OFF state
+        // has to be `isIconOnly`, or the accessible name would become a
+        // permanent visible "Auto Refresh" caption the antd control never had.
+        button={
+          isAutoRefreshOn
+            ? {
+                size: size ? ASTRYX_SIZE[size] : undefined,
+                variant: 'secondary' as const,
+                label: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                tooltip: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                endContent: isDropdownOpen ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                ),
+                children: formatInterval(selectedDelay as number),
+              }
+            : {
+                size: size ? ASTRYX_SIZE[size] : undefined,
+                variant: 'secondary' as const,
+                label: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                tooltip: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                isIconOnly: true,
+                icon: isDropdownOpen ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                ),
+              }
+        }
       >
-        <Tooltip title={t('comp:BAIFetchKeyButton.AutoRefresh')}>
-          <Button
-            size={size}
-            style={{
-              paddingInline: token.paddingXS,
-            }}
-            iconPlacement="end"
-            icon={
-              isDropdownOpen ? (
-                <ChevronUp size={16} />
-              ) : (
-                <ChevronDown size={16} />
-              )
-            }
-            aria-label={t('comp:BAIFetchKeyButton.AutoRefresh')}
-          >
-            {isAutoRefreshOn ? formatInterval(selectedDelay as number) : null}
-          </Button>
-        </Tooltip>
-      </Dropdown>
-    </Space.Compact>,
+        <DropdownMenuRadioGroup
+          label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+          value={selectedDelay === null ? 'off' : String(selectedDelay)}
+          onChange={(next) =>
+            setSelectedDelay(next === 'off' ? null : Number(next))
+          }
+        >
+          <DropdownMenuRadioItem
+            value="off"
+            label={t('comp:BAIFetchKeyButton.Off')}
+          />
+          {mergedOptions.map((ms) => (
+            <DropdownMenuRadioItem
+              key={String(ms)}
+              value={String(ms)}
+              label={formatInterval(ms)}
+            />
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenu>
+    </ButtonGroup>,
   );
 };
 

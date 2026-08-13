@@ -10,19 +10,21 @@ import type {
   DeploymentStatus,
   ProjectAdminDeploymentsPageQuery,
 } from '../__generated__/ProjectAdminDeploymentsPageQuery.graphql';
+import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { DeleteFilled } from '@ant-design/icons';
-import { App, Skeleton, Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAICard,
   BAIDeleteConfirmModal,
@@ -43,7 +45,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -341,7 +343,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                             {
                               key: 'delete',
                               title: t('deployment.DeleteDeployment'),
-                              icon: <DeleteFilled />,
+                              icon: <Trash2 size="1em" />,
                               type: 'danger',
                               disabled: destroying,
                               onClick: () => setDeletingDeploymentId(record.id),
@@ -363,14 +365,12 @@ const ProjectAdminDeploymentsContent: React.FC<
                       );
                       const revision = wider?.currentRevision;
                       if (revision?.revisionNumber == null) {
-                        return (
-                          <Typography.Text type="secondary">-</Typography.Text>
-                        );
+                        return <Text color="secondary">-</Text>;
                       }
                       return (
-                        <Typography.Link
+                        <Link
                           onClick={() => setDrawerRevisionFrgmt(revision)}
-                        >{`#${revision.revisionNumber}`}</Typography.Link>
+                        >{`#${revision.revisionNumber}`}</Link>
                       );
                     },
                   };
@@ -391,9 +391,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                             }).toString(),
                           });
                         }}
-                        fallback={
-                          <Typography.Text type="secondary">-</Typography.Text>
-                        }
+                        fallback={<Text color="secondary">-</Text>}
                       />
                     ),
                   };
@@ -407,14 +405,19 @@ const ProjectAdminDeploymentsContent: React.FC<
           }}
         />
       </BAIFlex>
-      <DeploymentSettingModal
-        open={!!editingDeployment}
-        deploymentFrgmt={editingDeployment ?? null}
-        onRequestClose={(success) => {
-          setEditingDeploymentId(null);
-          if (success) updateFetchKey();
-        }}
-      />
+      {/* Edit-only call site: the deployment already belongs to a project, so
+          the props union rejects a `project` here entirely (ADR-0001). That
+          member requires a non-null fragment, hence the guard. */}
+      {editingDeployment != null && (
+        <DeploymentSettingModal
+          open
+          deploymentFrgmt={editingDeployment}
+          onRequestClose={(success) => {
+            setEditingDeploymentId(null);
+            if (success) updateFetchKey();
+          }}
+        />
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}
@@ -487,11 +490,11 @@ const ProjectAdminDeploymentsPage: React.FC = () => {
       }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<Skeleton active />}>
+        <Suspense fallback={<BAISkeletonAstryx />}>
           {currentProject.id ? (
             <ProjectAdminDeploymentsContent projectId={currentProject.id} />
           ) : (
-            <Skeleton active />
+            <BAISkeletonAstryx />
           )}
         </Suspense>
       </BAIErrorBoundary>

@@ -2,7 +2,7 @@ import {
   BAIColumnType,
   BAIFlex,
   BAIQuestionIconWithTooltip,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAITagList,
   BAIText,
@@ -321,13 +321,12 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
     : baseColumns;
 
   return (
-    <BAITable<UserV2InList>
+    <BAITableAstryx<UserV2InList>
       resizable
       rowKey="id"
       size="small"
       dataSource={filterOutNullAndUndefined(users)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableUserV2SorterValues)[number]) || null,

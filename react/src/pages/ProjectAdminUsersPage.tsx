@@ -10,11 +10,11 @@ import type {
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy } from '../helper';
 import { useTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { Skeleton } from 'antd';
 import {
   availableUserV2SorterValues,
   BAICard,
@@ -236,11 +236,11 @@ const ProjectAdminUsersPage: React.FC = () => {
       }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<Skeleton active />}>
+        <Suspense fallback={<BAISkeletonAstryx />}>
           {currentProject.id ? (
             <ProjectAdminUsersContent projectId={currentProject.id} />
           ) : (
-            <Skeleton active />
+            <BAISkeletonAstryx />
           )}
         </Suspense>
       </BAIErrorBoundary>

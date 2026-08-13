@@ -6,21 +6,21 @@ import {
   PrometheusQueryPresetTableFragment$data,
   PrometheusQueryPresetTableFragment$key,
 } from '../__generated__/PrometheusQueryPresetTableFragment.graphql';
-import { DeleteFilled } from '@ant-design/icons';
-import { Tag } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
 import {
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAIText,
+  badgeVariantForTagColor,
   filterOutNullAndUndefined,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -120,7 +120,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => onDeletePreset?.(row),
             },
@@ -205,8 +205,14 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
         if (!labels || labels.length === 0) return '-';
         return (
           <BAIFlex wrap="wrap" gap="xxs">
+            {/* antd `Tag` (no colour) → Astryx `Badge` through the
+                repo-global lookup (ticket 13). */}
             {_.map(labels, (label) => (
-              <Tag key={label}>{label}</Tag>
+              <Badge
+                key={label}
+                variant={badgeVariantForTagColor(undefined)}
+                label={label}
+              />
             ))}
           </BAIFlex>
         );
@@ -223,8 +229,14 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
         if (!labels || labels.length === 0) return '-';
         return (
           <BAIFlex wrap="wrap" gap="xxs">
+            {/* antd `Tag` (no colour) → Astryx `Badge` through the
+                repo-global lookup (ticket 13). */}
             {_.map(labels, (label) => (
-              <Tag key={label}>{label}</Tag>
+              <Badge
+                key={label}
+                variant={badgeVariantForTagColor(undefined)}
+                label={label}
+              />
             ))}
           </BAIFlex>
         );
@@ -278,13 +290,11 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       size="small"
-      scroll={{ x: 'max-content' }}
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}
       columns={allColumns}
-      showSorterTooltip={false}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availablePrometheusQueryPresetSorterValues)[number]) ||
