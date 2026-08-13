@@ -1239,7 +1239,8 @@
         "Revision": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri alın.",
         "RevisionHistory": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri dönün."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Bu dağıtımın ait olduğu proje belirlenemediği için revizyon ekleme devre dışı bırakıldı."
   },
   "desktopNotification": {
     "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",

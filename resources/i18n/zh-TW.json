@@ -1240,7 +1240,8 @@
         "Revision": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。",
         "RevisionHistory": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。"
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "無法確定此部署所屬的專案，因此已停用新增修訂。"
   },
   "desktopNotification": {
     "NotSupported": "該瀏覽器不支持通知。",

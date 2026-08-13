@@ -101,8 +101,18 @@ narrowing helper for the loosely-typed ambient value).
     without a project context does not offer the deploy action at all.
   - `AdminModelCardSettingModal` — model cards are created only in the
     resolved model-store project; the ambient fallback was deleted.
+- Third application (FR-3411):
+  - `ResourceAllocationFormItems` — form-fragment tier: a required
+    **non-null** `project: ProjectContext`. The parent owns any selector, and
+    the prop scopes the `accessible_scaling_groups` query, the resource-group
+    select, and the resource limit/preset lookups.
+  - `DeploymentAddRevisionModal` — derive-from-resource tier: the
+    deployment's own `metadata.projectId` + `projectV2` name drive the
+    model-folder picker, the resource form, and in-modal folder creation.
+    When the project cannot be resolved, submission is visibly disabled
+    instead of falling back to ambient.
 - Subsequent tickets convert session-launch buttons and mismatch alerts
-  (FR-3411/3412), then hide the header selector per admin route.
+  (FR-3412), then hide the header selector per admin route.
 
 ## How to comply (checklist for new/converted components)
 
