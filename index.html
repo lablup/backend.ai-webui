@@ -13,15 +13,6 @@
        policy. The web server substitutes {{nonce}} per request (empty in dev). -->
   <meta property="csp-nonce" nonce="{{nonce}}">
   <base href="/">
-  <!-- Cascade-layer order. This is the AUTHORITATIVE copy and it must stay the
-       first stylesheet the parser sees: a layer named later than a statement
-       can never be reordered, and every other copy lives in a JS-imported CSS
-       module whose parse position differs between dev and build. Compiled
-       StyleX (`xstyle`) lands in `@layer priority1..N`, which is named here by
-       nothing and therefore registers last — above `astryx-base`. -->
-  <style nonce="{{nonce}}">
-    @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
-  </style>
   <link rel="icon" href="manifest/favicon.ico">
   <link rel="apple-touch-icon" sizes="256x256" href="manifest/backend-ai.iconset/icon_256x256@2x.png">
   <link rel="icon" type="image/png" sizes="32x32" href="manifest/backend-ai.iconset/icon_32x32@1x.png">

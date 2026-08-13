@@ -986,14 +986,13 @@ export default defineConfig(({ command, mode }) => {
       // files that literally import `@stylexjs/stylex`, so Astryx's
       // precompiled dist/ is never re-transformed.
       stylexVite({
-        // Layered output, matching upstream `astryxStylex()`
-        // (astryx/packages/build/src/vite.ts). `@layer priority1..N` is named
-        // by nothing in index.html's order statement, so it registers last and
-        // outranks `astryx-base` — which is what makes `xstyle` win. Unlayered
-        // output would ALSO win, but it re-emits Astryx's own atomics (StyleX
-        // hashes class names from the declaration) outside every layer, which
-        // silently promotes those defaults above project CSS.
-        useCSSLayers: true,
+        // Unlayered output: StyleX's own `:not(#\#)` priority ladder orders
+        // rules inside the sheet, and unlayered CSS outranks every named
+        // layer — which is exactly what makes `xstyle` overrides beat
+        // Astryx's `@layer astryx-base` component styles. With `true` the
+        // output would land in `@layer priority1..N`, which sits before
+        // `astryx-base` in react/src/index.css's order statement and LOSES.
+        useCSSLayers: false,
         // MANDATORY. Without this the plugin appends its CSS to "whichever
         // .css asset rollup emitted first", which in a code-split app can be
         // a lazy route's stylesheet — silently putting every authored style
@@ -1002,6 +1001,10 @@ export default defineConfig(({ command, mode }) => {
         // entry CSS (see check_stylex_injection there).
         cssInjectionTarget: (fileName: string) =>
           /assets\/index-[^/]*\.css$/.test(fileName),
+        // Must differ from Astryx's 'x': content-hashed class names collide
+        // across compilers, and this unlayered output then hijacks Astryx's
+        // own atomics app-wide in production builds (FR-3534).
+        classNamePrefix: 'webui',
         // Anchor class-name hashing to the repo root so hashes stay stable
         // across react/ and (future) packages/backend.ai-ui builds.
         unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
