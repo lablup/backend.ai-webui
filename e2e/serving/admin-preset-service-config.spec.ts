@@ -290,8 +290,9 @@ async function setupLegacyPresetCreatePage(
   await nameInput.fill(`e2e-fr3481-legacy-preset-${Date.now()}`);
 
   // Astryx Selector: plain trigger button + clickable option rows (same
-  // idiom as setupPresetCreatePage above).
-  await page.getByRole('button', { name: 'Runtime', exact: true }).click();
+  // idiom as setupPresetCreatePage above — incl. the tooltip glyph joining
+  // the accessible name, so the trigger is 'Runtime info').
+  await page.getByRole('button', { name: 'Runtime info', exact: true }).click();
   const customOption = page.getByRole('option', {
     name: 'custom',
     exact: true,
