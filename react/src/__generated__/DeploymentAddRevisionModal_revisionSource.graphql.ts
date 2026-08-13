@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<07c37c790793b542333551ba7308d475>>
+ * @generated SignedSource<<8fedb19b112987b67e96ef8dd4e5850a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
       readonly modelPath: string;
       readonly name: string;
       readonly service: {
+        readonly command: string | null | undefined;
         readonly healthCheck: {
           readonly enable: boolean;
           readonly expectedStatusCode: number;
@@ -42,6 +43,11 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
           readonly path: string;
         } | null | undefined;
         readonly port: number;
+        readonly preStartActions: ReadonlyArray<{
+          readonly action: string;
+          readonly args: any;
+        }>;
+        readonly shell: string | null | undefined;
         readonly startCommand: ReadonlyArray<string> | null | undefined;
       } | null | undefined;
     }>;
@@ -49,6 +55,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
   readonly modelMountConfig: {
     readonly definitionPath: string;
     readonly mountDestination: string;
+    readonly subpath: string | null | undefined;
     readonly vfolderId: string;
   } | null | undefined;
   readonly modelRuntimeConfig: {
@@ -60,6 +67,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
     } | null | undefined;
     readonly runtimeVariant: {
       readonly name: string;
+      readonly readsVfolderConfigFiles: boolean;
     } | null | undefined;
     readonly runtimeVariantId: string;
     readonly runtimeVariantPresetValues: ReadonlyArray<{
@@ -243,7 +251,14 @@ return {
           "name": "runtimeVariant",
           "plural": false,
           "selections": [
-            (v0/*: any*/)
+            (v0/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "readsVfolderConfigFiles",
+              "storageKey": null
+            }
           ],
           "storageKey": null
         },
@@ -306,6 +321,13 @@ return {
           "kind": "ScalarField",
           "name": "definitionPath",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "subpath",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -346,6 +368,20 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
+                  "name": "command",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "shell",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
                   "name": "startCommand",
                   "storageKey": null
                 },
@@ -354,6 +390,31 @@ return {
                   "args": null,
                   "kind": "ScalarField",
                   "name": "port",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PreStartAction",
+                  "kind": "LinkedField",
+                  "name": "preStartActions",
+                  "plural": true,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "action",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "args",
+                      "storageKey": null
+                    }
+                  ],
                   "storageKey": null
                 },
                 {
@@ -474,6 +535,6 @@ return {
 };
 })();
 
-(node as any).hash = "94f9806003b984d4534543e7895a61e8";
+(node as any).hash = "97c83e03248e0723c89722a664be1abf";
 
 export default node;
