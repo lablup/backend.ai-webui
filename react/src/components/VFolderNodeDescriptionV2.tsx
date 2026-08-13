@@ -6,7 +6,7 @@
  becomes `MetadataList columns="single"` (MAPPING §4: `bordered`/`size` have
  no destination and are DROPPED, defaults-first). The status tag routes
  through the repo-global ticket-13 lookup, the permission select becomes an
- Astryx `Selector`, and copyable values use `BAICopyableText`.
+ Astryx `Selector`, and copyable values use `BAIText copyable`.
 
  PILOT-DECISIONs:
  - The copy affordance on the "Path" LABEL moves next to the path VALUE:
@@ -25,9 +25,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   MetadataList,
   MetadataListItem,
@@ -40,13 +38,13 @@ import {
   toLocalId,
   useErrorMessageResolver,
   badgeVariantForStatus,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
   CircleCheckIcon,
   CircleXIcon,
-  CopyIcon,
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -159,16 +157,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       children: (
         <HStack gap={1} align="start" wrap="wrap">
           <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />
-          <IconButton
-            label={t('sourceCodeViewer.Copy')}
-            tooltip={t('sourceCodeViewer.Copy')}
-            variant="ghost"
-            size="sm"
-            icon={<CopyIcon />}
-            onClick={() => {
-              void navigator.clipboard?.writeText(vfolderPath);
-            }}
-          />
+          <BAIText copyable={{ text: vfolderPath }} />
         </HStack>
       ),
     },
@@ -299,9 +288,9 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'user_email',
       label: t('data.User'),
       children: (
-        <BAICopyableText>
+        <BAIText copyable>
           {vfolderNode.ownership?.user?.basicInfo?.email ?? ''}
-        </BAICopyableText>
+        </BAIText>
       ),
     },
     vfolderNode.ownership?.project?.basicInfo?.name && {

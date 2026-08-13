@@ -19,7 +19,6 @@ import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAISelectionLabel from './astryx-bui/BAISelectionLabel';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
@@ -35,6 +34,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   type BAIColumnType,
+  BAIText,
   useFetchKey,
   useToggle,
 } from 'backend.ai-ui';
@@ -214,9 +214,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         // untruncated path is CLIPPED rather than wrapped as it was under antd.
         // One line plus Astryx's built-in truncation tooltip keeps the whole
         // value reachable and keeps the copy control inside the cell.
-        <BAICopyableText maxLines={1} copyLabel={t('sourceCodeViewer.Copy')}>
+        <BAIText copyable ellipsis={{ tooltip: true }}>
           {getImageFullName(row) || ''}
-        </BAICopyableText>
+        </BAIText>
       ),
       // Computed (`getImageFullName`) — not orderable on the server.
       width: token.screenXS,

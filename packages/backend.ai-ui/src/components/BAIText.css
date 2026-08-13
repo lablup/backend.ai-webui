@@ -46,6 +46,14 @@
   flex-shrink: 0;
 }
 
+/* Flex min-width defaults to `auto`, so a long unbreakable value would drag
+   the copy control out of a fixed cell instead of wrapping. */
+.bai-text-row > .astryx-text,
+.bai-text-row > .bai-text-code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* antd `Typography.Text mark` — the highlighter. */
 .bai-text-mark {
   padding: 0 0.2em;

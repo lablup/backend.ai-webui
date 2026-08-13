@@ -7,7 +7,6 @@ import { MyKeypairInfoModalLegacyQuery } from '../__generated__/MyKeypairInfoMod
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import {
@@ -16,6 +15,7 @@ import {
   BAIModalProps,
   BAITableAstryx,
   badgeVariantForTagColor,
+  BAIText,
 } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -91,7 +91,9 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
             fixed: 'left',
             render: (value) => (
               <BAIFlex direction="column" align="start">
-                <BAICopyableText maxLines={1}>{value}</BAICopyableText>
+                <BAIText copyable ellipsis={{ tooltip: true }}>
+                  {value}
+                </BAIText>
                 {value === user?.main_access_key && (
                   <Badge
                     label={t('credential.MainAccessKey')}
@@ -107,7 +109,9 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
             dataIndex: 'secret_key',
             fixed: 'left',
             render: (value) => (
-              <BAICopyableText maxLines={1}>{value}</BAICopyableText>
+              <BAIText copyable ellipsis={{ tooltip: true }}>
+                {value}
+              </BAIText>
             ),
           },
         ]}

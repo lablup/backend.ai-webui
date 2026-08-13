@@ -6,7 +6,7 @@
  (`BAITableAstryx`, Astryx engine). Everything rendered AROUND and INSIDE the table's
  cells is Astryx: `BAINameActionCellAstryx` (name + row actions),
  `Badge` + the repo-global status lookup (ticket 13) for the status tag,
- `Text` for text cells, `BAICopyableText` for the copyable id, and
+ `Text` for text cells, `BAIText copyable` for the copyable id, and
  `BAIDeleteConfirmModalAstryx` for the typed destructive confirm.
 */
 import {
@@ -29,7 +29,6 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAIDeleteConfirmModal from './astryx-bui/BAIDeleteConfirmModalAstryx';
 import BAINameActionCell from './astryx-bui/BAINameActionCellAstryx';
 import type { BAINameActionCellAstryxAction } from './astryx-bui/BAINameActionCellAstryx';
@@ -43,6 +42,7 @@ import {
   BAITableProps,
   BAIUnmountAfterClose,
   badgeVariantForStatus,
+  BAIText,
   bytesToGB,
   filterOutNullAndUndefined,
   toLocalId,
@@ -633,7 +633,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             defaultHidden: true,
             sorter: isEnableSorter('quota_scope_id'),
             render: (value: string) =>
-              value ? <BAICopyableText>{value}</BAICopyableText> : '-',
+              value ? <BAIText copyable>{value}</BAIText> : '-',
           },
           {
             key: 'last_used',

@@ -14,7 +14,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
@@ -29,6 +28,7 @@ import { Heading, Text } from '@astryxdesign/core/Text';
 import {
   filterOutNullAndUndefined,
   BAITableAstryx,
+  BAIText,
   useErrorMessageResolver,
   toLocalId,
 } from 'backend.ai-ui';
@@ -109,7 +109,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
         />
         <MetadataList title={t('data.FolderInfo')} columns={2}>
           <MetadataListItem label={t('data.folders.Name')}>
-            <BAICopyableText>{vfolder?.metadata?.name ?? ''}</BAICopyableText>
+            <BAIText copyable>{vfolder?.metadata?.name ?? ''}</BAIText>
           </MetadataListItem>
           <MetadataListItem label={t('data.folders.Type')}>
             {isUserOwned ? (

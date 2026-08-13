@@ -5,7 +5,6 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import BAICopyableText from '../astryx-bui/BAICopyableText';
 import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -14,7 +13,7 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, BAIText } from 'backend.ai-ui';
 import { RotateCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -83,7 +82,9 @@ const VSCodeDesktopConnectionModal: React.FC<
               label={{ position: 'start', width: 210 }}
             >
               <MetadataListItem label={t('session.VSCodeRemotePasswordTitle')}>
-                <BAICopyableText type="code">{password ?? ''}</BAICopyableText>
+                <BAIText code copyable>
+                  {password ?? ''}
+                </BAIText>
               </MetadataListItem>
             </MetadataList>
           ) : status === 'pending' ? (

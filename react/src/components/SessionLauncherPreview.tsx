@@ -22,7 +22,6 @@ import { ImageTags } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -35,7 +34,13 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAICard, BAIDoubleTag, BAIFlex, BAITableAstryx } from 'backend.ai-ui';
+import {
+  BAICard,
+  BAIDoubleTag,
+  BAIFlex,
+  BAITableAstryx,
+  BAIText,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CheckIcon, CopyIcon } from 'lucide-react';
@@ -222,9 +227,9 @@ const SessionLauncherPreview: React.FC<{
                 />
                 <BAIFlex direction="row" wrap="wrap">
                   {form.getFieldValue('environments')?.manual ? (
-                    <BAICopyableText type="code" wordBreak="break-all">
+                    <BAIText code copyable>
                       {form.getFieldValue('environments')?.manual}
-                    </BAICopyableText>
+                    </BAIText>
                   ) : (
                     <>
                       <Text>
@@ -315,9 +320,9 @@ const SessionLauncherPreview: React.FC<{
                 />
                 <BAIFlex direction="row" wrap="wrap">
                   {form.getFieldValue('environments')?.manual ? (
-                    <BAICopyableText type="code" wordBreak="break-all">
+                    <BAIText code copyable>
                       {form.getFieldValue('environments')?.manual}
-                    </BAICopyableText>
+                    </BAIText>
                   ) : (
                     <>
                       <Text>

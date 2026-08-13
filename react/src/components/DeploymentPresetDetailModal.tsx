@@ -5,14 +5,19 @@
 import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Heading } from '@astryxdesign/core/Heading';
 import {
   MetadataList,
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAICard, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAICard,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAIText,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -156,9 +161,7 @@ const DeploymentPresetDetailModal: React.FC<
             <MetadataList columns={1}>
               <MetadataListItem label={t('adminDeploymentPreset.Image')}>
                 {imageCanonicalName ? (
-                  <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
-                    {imageCanonicalName}
-                  </BAICopyableText>
+                  <BAIText copyable>{imageCanonicalName}</BAIText>
                 ) : (
                   '-'
                 )}

@@ -8,7 +8,6 @@ import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import './TerminateSessionModalForProjectAdmin.css';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
 import {
@@ -190,10 +189,9 @@ const TerminateSessionModalForProjectAdmin: React.FC<
                     <ul>
                       {kernels.map((kernel) => (
                         <li key={kernel?.id}>
-                          {/* MAPPING §3.4: `copyable` -> BAICopyableText. */}
-                          <BAICopyableText copyLabel={t('button.Copy')}>
+                          <BAIText copyable>
                             {kernel?.resource?.containerId ?? ''}
-                          </BAICopyableText>
+                          </BAIText>
                         </li>
                       ))}
                     </ul>

@@ -13,9 +13,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   MetadataList,
   MetadataListItem,
@@ -30,10 +28,11 @@ import {
   BAIFlex,
   useErrorMessageResolver,
   badgeVariantForStatus,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CircleCheck, CopyIcon, User } from 'lucide-react';
+import { CircleCheck, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -116,16 +115,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       children: (
         <HStack gap={1} align="start" wrap="wrap">
           <VirtualFolderPath vfolderNodeFrgmt={vfolderNode} />
-          <IconButton
-            label={t('sourceCodeViewer.Copy')}
-            tooltip={t('sourceCodeViewer.Copy')}
-            variant="ghost"
-            size="sm"
-            icon={<CopyIcon />}
-            onClick={() => {
-              void navigator.clipboard?.writeText(vfolderPath);
-            }}
-          />
+          <BAIText copyable={{ text: vfolderPath }} />
         </HStack>
       ),
     },
@@ -242,12 +232,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
     vfolderNode.user_email !== null && {
       key: 'user_email',
       label: t('data.User'),
-      children: (
-        // MAPPING §3.4: `copyable` -> BAICopyableText.
-        <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
-          {vfolderNode.user_email ?? ''}
-        </BAICopyableText>
-      ),
+      children: <BAIText copyable>{vfolderNode.user_email ?? ''}</BAIText>,
     },
     vfolderNode.group_name !== null && {
       key: 'group_name',

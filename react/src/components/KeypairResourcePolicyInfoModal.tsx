@@ -4,7 +4,6 @@
  */
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { BAI_BREAKPOINTS } from '../theme-shim';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
   filterOutEmpty,
@@ -14,6 +13,7 @@ import {
   BAIModal,
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -75,9 +75,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
       key: 'name',
       label: t('resourcePolicy.Name'),
       children: resourcePolicy?.name ? (
-        <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
-          {resourcePolicy.name}
-        </BAICopyableText>
+        <BAIText copyable>{resourcePolicy.name}</BAIText>
       ) : (
         '-'
       ),
