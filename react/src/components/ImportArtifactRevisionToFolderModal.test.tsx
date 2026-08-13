@@ -78,7 +78,8 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
-    BAIVFolderSelect: (props: any) =>
+    // The folder select crossed to Astryx (`…Astryx`).
+    BAIVFolderSelectAstryx: (props: any) =>
       React.createElement('div', {
         'data-testid': 'mock-vfolder-select',
         'data-filter': props.filter ?? '',

@@ -602,18 +602,18 @@ describe('ImageInstallModal in-flight behaviour while installing (FR-3415)', () 
 
     await user.click(await screen.findByTestId('mock-project-select'));
     await user.click(screen.getByTestId('mock-resource-group-option-alpha-rg'));
-    expect(installButton()).not.toHaveClass('ant-btn-loading');
+    expect(installButton()).not.toHaveAttribute('aria-busy', 'true');
 
     await user.click(screen.getByText('environment.Install'));
 
     await waitFor(() => {
-      expect(installButton()).toHaveClass('ant-btn-loading');
+      expect(installButton()).toHaveAttribute('aria-busy', 'true');
     });
 
     deferred.resolve({ sessionId: 'installed-session-id' });
 
     await waitFor(() => {
-      expect(installButton()).not.toHaveClass('ant-btn-loading');
+      expect(installButton()).not.toHaveAttribute('aria-busy', 'true');
     });
   });
 
@@ -625,7 +625,7 @@ describe('ImageInstallModal in-flight behaviour while installing (FR-3415)', () 
 
     // Before installing: closable and Cancel are both available.
     expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
-    expect(screen.getByText('Cancel').closest('button')).toBeEnabled();
+    expect(screen.getByText('general.button.Cancel').closest('button')).toBeEnabled();
 
     await chooseTargetsAndInstall(user);
 
@@ -633,7 +633,7 @@ describe('ImageInstallModal in-flight behaviour while installing (FR-3415)', () 
     expect(
       screen.queryByRole('button', { name: 'Close' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('Cancel').closest('button')).toBeDisabled();
+    expect(screen.getByText('general.button.Cancel').closest('button')).toBeDisabled();
 
     deferred.resolve({ sessionId: 'installed-session-id' });
 
@@ -655,7 +655,7 @@ describe('ImageInstallModal in-flight behaviour while installing (FR-3415)', () 
     // No session succeeded, so the standard notification must not fire.
     expect(mockUpsertSessionNotification).not.toHaveBeenCalled();
     // In-flight state cleared: no stray loading button left behind.
-    expect(installButton()).not.toHaveClass('ant-btn-loading');
+    expect(installButton()).not.toHaveAttribute('aria-busy', 'true');
   });
 });
 
@@ -716,7 +716,7 @@ describe('ImageInstallModal exit animation + state reset (FR-3415)', () => {
 
     // Close via Cancel and wait for `BAIUnmountAfterClose` to fully unmount
     // the modal after its exit animation.
-    await user.click(screen.getByText('Cancel').closest('button')!);
+    await user.click(screen.getByText('general.button.Cancel').closest('button')!);
     await waitFor(() => {
       flushPendingCloseTransitions();
       expect(

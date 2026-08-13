@@ -85,7 +85,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         'data-testid': 'mock-project-resource-group-select',
         'data-project-name': props.projectName ?? '',
       }),
-    BAIAdminResourceGroupSelect: (props: any) =>
+    BAIResourceGroupSelect: (props: any) =>
       React.createElement('button', {
         'data-testid': 'mock-admin-resource-group-select',
         'data-allow-clear': String(!!props.allowClear),
@@ -97,9 +97,20 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 
 const renderModal = () => {
   const environment: RelayMockEnvironment = createMockEnvironment();
-  environment.mock.queueOperationResolver((operation) =>
-    MockPayloadGenerator.generate(operation),
-  );
+  // The resolver settles every operation as it arrives, which also drops it
+  // from `getAllOperations()` (that lists only PENDING ones). Record them here
+  // instead, the same way the other contract tests in this stack do.
+  const seenOperations: Array<{
+    name: string;
+    variables: Record<string, any>;
+  }> = [];
+  environment.mock.queueOperationResolver((operation) => {
+    seenOperations.push({
+      name: operation.request.node.params.name,
+      variables: operation.request.variables,
+    });
+    return MockPayloadGenerator.generate(operation);
+  });
   render(
     <RelayEnvironmentProvider environment={environment}>
       <>
@@ -107,7 +118,7 @@ const renderModal = () => {
       </>
     </RelayEnvironmentProvider>,
   );
-  return { environment };
+  return { environment, seenOperations };
 };
 
 describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR-3415)', () => {
@@ -126,7 +137,7 @@ describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR
 
   it('keeps the resource group optional so a global preset can be saved', async () => {
     const user = userEvent.setup();
-    const { environment } = renderModal();
+    const { seenOperations } = renderModal();
 
     // The field is clearable — the manager treats a preset with no resource
     // group as global.
@@ -139,20 +150,25 @@ describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR
       'global-preset',
     );
     await user.type(screen.getByLabelText('cpu'), '1');
-    await user.type(screen.getByLabelText('mem'), '1');
+    // The memory field is a `BAIDynamicUnitInputNumber`: its `<label for>`
+    // points at the form-item name while the real control is labelled by the
+    // unit selector, so `getByLabelText('mem')` finds the label but no
+    // control. Reach the input through its form-item row instead.
+    const memInput = screen
+      .getByText('mem')
+      .closest('[data-bai-form-item]')!
+      .querySelector('input[type="number"]')!;
+    await user.type(memInput, '1');
     await user.click(screen.getByRole('button', { name: /button.Create/ }));
 
     await waitFor(() => {
-      const create = environment.mock
-        .getAllOperations()
-        .find(
-          (operation) =>
-            operation.request.node.params.name ===
-            'ResourcePresetSettingModalCreateMutation',
-        );
+      const create = seenOperations.find(
+        (operation) =>
+          operation.name === 'ResourcePresetSettingModalCreateMutation',
+      );
       expect(create).toBeDefined();
-      expect(create?.request.variables.name).toBe('global-preset');
-      expect(create?.request.variables.props.scaling_group_name).toBeNull();
+      expect(create?.variables.name).toBe('global-preset');
+      expect(create?.variables.props.scaling_group_name).toBeNull();
     });
   });
 });
