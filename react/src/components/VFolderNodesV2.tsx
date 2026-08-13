@@ -38,7 +38,6 @@ import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAISkeletonAstryx as BAISkeleton } from 'backend.ai-ui';
 import {
   BAISkeleton,
   BAIAlertIconWithTooltip,

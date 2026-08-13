@@ -41,7 +41,6 @@ import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import { VStack } from '@astryxdesign/core/Stack';
-import { BAISkeletonAstryx as BAISkeleton } from 'backend.ai-ui';
 import {
   BAISkeleton,
   BAIFileExplorer,

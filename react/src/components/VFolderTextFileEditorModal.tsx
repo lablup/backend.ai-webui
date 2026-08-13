@@ -22,7 +22,6 @@ import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { BAISkeletonAstryx as BAISkeleton } from 'backend.ai-ui';
 import {
   BAISkeleton,
   BAIModal,
