@@ -412,9 +412,15 @@ git branch -m old-branch-1 new-branch-1
 # 3. Re-create the stack with the new structure
 gh stack init --base main new-branch-1 new-branch-2 new-branch-3
 
-# 4. Re-link the PRs on GitHub
+# 4. Re-link the surviving branches' PRs on GitHub
 gh stack submit --auto
 ```
+
+`submit` only finds or creates a PR per **current** branch name — it never
+closes the PR of a removed branch or of a renamed branch's old name (a rename
+would otherwise leave the old PR open next to a freshly created one). Close
+those PRs explicitly (`gh pr close <N>`) between steps 2 and 4, and after a
+rename retarget any PR that used the old name as its base.
 
 Folding a bottom branch into the one above it needs no commit surgery — the
 upper branch already contains the lower branch's commits. After `unstack`,
