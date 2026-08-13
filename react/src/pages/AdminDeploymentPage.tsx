@@ -308,14 +308,8 @@ const AdminDeploymentPage: React.FC = () => {
         }
         break;
       case 'model-store-management': {
-        const currentProjectId = currentProject.id;
-        // Reload when nothing is loaded yet or the active project changed (the
-        // query is scoped to `currentProjectId`).
-        if (
-          currentProjectId &&
-          (!modelCardQueryRef ||
-            modelCardQueryRef.variables.currentProjectId !== currentProjectId)
-        ) {
+        // No longer project-scoped, so loading once is enough.
+        if (!modelCardQueryRef) {
           loadModelCardQuery(
             {
               filter:
@@ -324,7 +318,6 @@ const AdminDeploymentPage: React.FC = () => {
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
-              currentProjectId,
             },
             { fetchPolicy: 'store-and-network' },
           );

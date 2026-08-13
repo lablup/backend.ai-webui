@@ -5,7 +5,6 @@
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
@@ -28,7 +27,6 @@ import {
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   toLocalId,
-  useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -58,10 +56,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [deployModalOpen, setDeployModalOpen] = useState(false);
-  const [
-    isCreateDeploymentOpen,
-    { toggle: toggleCreateDeployment, setLeft: closeCreateDeployment },
-  ] = useToggle(false);
 
   // Defer `open` so the lazy query only fires once the drawer has actually
   // committed to opening. `loading={deferredOpen !== open}` then lets the
@@ -142,7 +136,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         label={heading || t('modelStore.ModelDetails')}
         onClose={() => {
           setDeployModalOpen(false);
-          closeCreateDeployment();
           onClose?.();
         }}
         title={
@@ -352,10 +345,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           />
         </BAIUnmountAfterClose>
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        onRequestClose={toggleCreateDeployment}
-      />
     </>
   );
 };
