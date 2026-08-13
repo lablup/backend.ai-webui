@@ -53,10 +53,15 @@
   border-inline-start-color: var(--color-border-emphasized) !important;
 }
 
-/* A solid primary group's divider is Astryx's `--color-on-accent` (white),
-   which cuts the fill too hard — soften it to the secondary border color. */
+/* A solid primary group's divider stays on-accent (white-family in BOTH
+   modes, like the label) but translucent — Astryx's opaque white cut the
+   fill too hard, and a theme-flipping grey reads as a foreign border. */
 .astryx-button-group .astryx-button.primary:not(:first-child) {
-  border-inline-start-color: var(--color-border-emphasized) !important;
+  border-inline-start-color: color-mix(
+    in srgb,
+    var(--color-on-accent) 35%,
+    transparent
+  ) !important;
 }
 
 /* fix: match the icon size between Lucide and Ant.d icons */
