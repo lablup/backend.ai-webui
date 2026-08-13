@@ -19,6 +19,19 @@
 @import '@astryxdesign/lab/lab.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 
+/* FR-3506: secondary buttons are outlined (theme `variant:secondary`), and a
+   ButtonGroup member's own outline doubles with its neighbour's at each seam.
+   Keep one 1px seam (the predecessor's edge) and pin the leading outer edge,
+   which production's unlayered StyleX group rule zeroes (`!important` is what
+   outranks it — see BAISider.css for the mechanism). Horizontal groups only;
+   no vertical ButtonGroup exists in the app. */
+.astryx-button-group .astryx-button.secondary:not(:first-child) {
+  border-inline-start-width: 0 !important;
+}
+.astryx-button-group .astryx-button.secondary:first-child {
+  border-inline-start: 1px solid var(--color-border-emphasized) !important;
+}
+
 /* fix: match the icon size between Lucide and Ant.d icons */
 .lucide {
   width: 1em !important;

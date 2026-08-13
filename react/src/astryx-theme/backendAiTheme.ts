@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 12;
+export const THEME_NAME_REV = 13;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -761,8 +761,12 @@ const ANTD_HOVER_PARITY = {
     },
     // antd default-button parity (FR-3506): the non-primary button is an
     // OUTLINE — `colorBgContainer` + 1px `colorBorder` — not a solid fill.
+    // The fill is remapped via the token the StyleX rule consumes, not
+    // `backgroundColor`: production's unlayered StyleX copy outranks this
+    // layer (see BAISider.css), but a custom property has no competitor.
+    // ButtonGroup seams: react/src/index.css.
     'variant:secondary': {
-      backgroundColor: 'var(--color-background-surface)',
+      '--color-neutral': 'var(--color-background-surface)',
       border: '1px solid var(--color-border-emphasized)',
     },
   },
