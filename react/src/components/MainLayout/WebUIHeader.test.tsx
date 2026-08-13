@@ -19,6 +19,19 @@ import { render, screen } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
+// Deterministic translations: assert on the raw key. Partial mock — BUI pulls
+// `initReactI18next` from the same module at import time, so the rest must stay
+// real. Without this the i18n bootstrap never runs in this file (its module
+// graph is mocked out) and `useTranslation` suspends forever.
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
+
 // The header only reads `supports()` / `_config` off the client.
 vi.mock('../../hooks', () => ({
   useSuspendedBackendaiClient: () => ({
