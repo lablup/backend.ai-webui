@@ -160,6 +160,10 @@ export interface BAICardProps extends Omit<
   /** Callback function triggered when the extra button is clicked */
   onClickExtraButton?: () => void;
   size?: 'default' | 'small';
+  /** Astryx `Card` padding step; overrides the `size`-derived default (6, or 3 for `size="small"`). */
+  padding?: React.ComponentProps<typeof Card>['padding'];
+  /** Astryx `Card` width passthrough. */
+  width?: React.ComponentProps<typeof Card>['width'];
   /** antd's nested/inner card treatment. */
   type?: 'inner';
   /** antd v5 `bordered` / antd v6 `variant` — both mean the same thing here. */
@@ -189,6 +193,8 @@ const BAICard: React.FC<BAICardProps> = ({
   extra,
   title,
   size,
+  padding,
+  width,
   type,
   bordered: _bordered,
   variant: _variant,
@@ -260,7 +266,8 @@ const BAICard: React.FC<BAICardProps> = ({
         .filter(Boolean)
         .join(' ')}
       variant={type === 'inner' ? 'muted' : 'default'}
-      padding={size === 'small' ? 3 : 6}
+      padding={padding ?? (size === 'small' ? 3 : 6)}
+      width={width}
     >
       <VStack gap={4} align="stretch">
         {cover}

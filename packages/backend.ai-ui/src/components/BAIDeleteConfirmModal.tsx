@@ -112,6 +112,8 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   inputProps?: BAIDeleteConfirmModalInputProps;
   /** Content rendered between the input field and "cannot be undone" text (e.g. checkboxes). */
   extraContent?: React.ReactNode;
+  /** Override for "This action cannot be undone." Defaults to the localized string. */
+  cannotBeUndoneText?: string;
   /** Max height (px) of the scrollable item list. Default: 200. Set 0 for no limit. */
   itemListMaxHeight?: number;
   /**
@@ -152,6 +154,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   inputLabel,
   inputProps,
   extraContent,
+  cannotBeUndoneText,
   itemListMaxHeight = 200,
   plainItems = false,
   onOk,
@@ -174,8 +177,6 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     if (isOpen) setTypedText('');
   }
 
-  const needsInput = !reversible && (items.length > 1 || requireConfirmInput);
-
   const resolvedTitle =
     title ??
     (items.length > 1
@@ -189,6 +190,16 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     (items.length === 1
       ? (extractTextFromNode(items[0]?.label) ?? t('general.button.Delete'))
       : t('general.button.Delete'));
+
+  // An explicitly empty `confirmText` (e.g. the target row is not resolved yet)
+  // must not arm the gate with an already-satisfied empty comparison.
+  const needsInput =
+    !reversible &&
+    (items.length > 1 || requireConfirmInput) &&
+    !!resolvedConfirmText;
+
+  const resolvedWarning =
+    cannotBeUndoneText ?? t('comp:BAIDeleteConfirmModal.CannotBeUndone');
 
   const resolvedDescription =
     description ??
@@ -299,15 +310,18 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
               hasClear
               htmlName="confirmText"
             />
+            {/* QA-FINDINGS Q-17: with the input present the warning is a danger
+                Text directly under it (legacy position), not a trailing Banner
+                below the option checkboxes. */}
+            <Text color="danger">{resolvedWarning}</Text>
           </VStack>
         ) : null}
-        {!reversible ? (
-          <Banner
-            status="error"
-            title={t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
-          />
-        ) : null}
         {extraContent}
+        {/* A reversible-tier modal never had a warning; a non-input one has no
+            input to sit under, so it keeps the banner. */}
+        {!needsInput && !reversible ? (
+          <Banner status="error" title={resolvedWarning} />
+        ) : null}
       </VStack>
     </BAIModal>
   );
