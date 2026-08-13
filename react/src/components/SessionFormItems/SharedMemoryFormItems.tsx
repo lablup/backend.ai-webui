@@ -259,13 +259,9 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   </Form.Item>
                   <BAIQuestionIconWithTooltip
                     title={
-                      <BAIFlex direction="column">
+                      <BAIFlex direction="column" gap="sm">
                         {t('session.launcher.AutoSharedMemoryTooltip')}
-                        <br />
-                        <br />
                         <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                        <br />
-                        <br />
                         <Trans
                           i18nKey={'session.launcher.DescSharedMemoryContext'}
                         />
