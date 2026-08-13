@@ -16,7 +16,6 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -26,6 +25,7 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
@@ -490,11 +490,11 @@ const ProjectAdminDeploymentsPage: React.FC = () => {
       }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           {currentProject.id ? (
             <ProjectAdminDeploymentsContent projectId={currentProject.id} />
           ) : (
-            <BAISkeletonAstryx />
+            <BAISkeleton />
           )}
         </Suspense>
       </BAIErrorBoundary>

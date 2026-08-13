@@ -8,14 +8,14 @@ import { usePainKiller } from '../hooks/usePainKiller';
 import { useStartSession } from '../hooks/useStartSession';
 import { SessionResources } from '../pages/SessionLauncherPage';
 import { ProjectContextOrNull } from '../types/projectContext';
-import { EnvironmentImage } from './ImageList';
 import BAIFormItem from './BAIFormItem';
+import { EnvironmentImage } from './ImageList';
 import ProjectSelect from './ProjectSelect';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { List, ListItem } from '@astryxdesign/core/List';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -312,7 +312,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
           >
             {/* The Suspense boundary swallows BAIFormItem's injected props, so
                 the values are held in local state instead of the form. */}
-            <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+            <Suspense fallback={<BAISkeleton variant="input" />}>
               {/* Deliberately NOT `ProjectSelectForAdminPage`: without
                   `disableDefaultFilter` this lists MEMBER projects only
                   (`ProjectSelect.tsx`). The manager would let a superadmin or
@@ -348,7 +348,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
             required
             style={{ marginBottom: 0 }}
           >
-            <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+            <Suspense fallback={<BAISkeleton variant="input" />}>
               {/* Project-scoped, so it can only offer groups that pass the
                   manager's `query_allowed_sgroups` check. `autoSelectDefault`
                   is deliberately OFF - silently picking `default` would

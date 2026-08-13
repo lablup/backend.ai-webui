@@ -22,7 +22,6 @@ import VFolderNodesV2, {
 } from '../components/VFolderNodesV2';
 import BAICard from '../components/astryx-bui/BAICardAstryx';
 import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
-import BAISkeleton from '../components/astryx-bui/BAISkeletonAstryx';
 import BAIVFolderDeleteButtonV2 from '../components/astryx-bui/BAIVFolderDeleteButtonV2Astryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -37,6 +36,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
   // here until the PowerSearch generalization covers the object-filter DSL.

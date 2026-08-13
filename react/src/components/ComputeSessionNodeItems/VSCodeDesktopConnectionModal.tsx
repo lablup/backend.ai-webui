@@ -5,7 +5,6 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import {
@@ -13,7 +12,13 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex, BAIModal, BAIModalProps, BAIText } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAIText,
+} from 'backend.ai-ui';
 import { RotateCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -88,7 +93,7 @@ const VSCodeDesktopConnectionModal: React.FC<
               </MetadataListItem>
             </MetadataList>
           ) : status === 'pending' ? (
-            <BAISkeletonAstryx variant="input" />
+            <BAISkeleton variant="input" />
           ) : (
             <Banner
               status="warning"

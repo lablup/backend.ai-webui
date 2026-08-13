@@ -8,7 +8,6 @@ import LegacyRolePermissionTab from './LegacyRolePermissionTab';
 import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import {
   MetadataList,
@@ -16,6 +15,7 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import {
+  BAISkeleton,
   badgeVariantForStatus,
   badgeVariantForTagColor,
   toLocalId,
@@ -131,7 +131,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         )}
         <Tab value="assignments" label={t('rbac.RoleAssignments')} />
       </TabList>
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {activeTab === 'detailedPermissions' && (
           <RolePermissionDetailTab roleNodeFrgmt={role} />
         )}

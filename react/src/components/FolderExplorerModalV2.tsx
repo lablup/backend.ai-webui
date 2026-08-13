@@ -40,11 +40,11 @@ import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import { VStack } from '@astryxdesign/core/Stack';
 import {
+  BAISkeleton,
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAILink,

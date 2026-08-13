@@ -10,9 +10,8 @@ import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import UserResourcePolicyV2, {
   UserResourcePolicyV2Query,
 } from '../components/UserResourcePolicyV2';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
-import { filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +78,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         },
       ])}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'keypair' && (
           <BAIErrorBoundary>
             <KeypairResourcePolicyList />
@@ -94,7 +93,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
                   onReload={loadUserResourcePolicyQuery}
                 />
               ) : (
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               )
             ) : (
               <UserResourcePolicyList />

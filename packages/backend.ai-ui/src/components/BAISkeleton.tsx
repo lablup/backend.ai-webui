@@ -2,52 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- GAP COMPONENT 1/5 (to-astryx ticket 08) — `BAISkeleton`.
+ antd-parity skeleton composed from Astryx's single-box `Skeleton`: antd's
+ multi-part shimmer (title + paragraph rows, avatar, input/button shapes)
+ collapses onto `variant` + `rows`/`hasTitle`/`hasAvatar`. `active` is dropped
+ as a prop (Astryx skeletons are always animated); `block` is dropped (Astryx
+ already defaults `width: '100%'`). Mapping evidence: MAPPING.md §"Also
+ COMPOSITION" (FR-3482); moved here from react/src/components/astryx-bui in
+ FR-3513 so BUI components (e.g. `BAIModal`'s loading body) can share it.
 
- MAPPING.md §"Also COMPOSITION": antd `Skeleton` (94 files / 138 sites),
- `Skeleton.Input` (29 files / 34 sites) and `Skeleton.Button` (3 files / 3
- sites) all collapse onto Astryx's single `Skeleton`, which is ONE box
- (`width`, `height`, `radius`, `index` for the stagger). antd's multi-part
- shimmer — title bar + N paragraph rows + avatar — has to be composed.
-
- MEASURED usage (prop-profiles.json), and what this component does with it:
-
-   Skeleton         active x138, style x20, paragraph x11
-   Skeleton.Input   active x34,  block x27, size="small" x25
-   Skeleton.Button  active x3,   size="small" x1
-
-   `active`      -> DROPPED as a prop, kept as behaviour. Astryx `Skeleton` is
-                    always animated; there is no static variant. 175/175 sites
-                    passed `active`, so the prop carried no information.
-   `paragraph`   -> `variant="paragraph"` + `rows` (the object form
-                    `{rows: n}` becomes a scalar; `paragraph={false}` becomes
-                    `hasParagraph={false}` / `variant="block"`).
-   `block`       -> DROPPED. Astryx `Skeleton` already defaults `width: '100%'`,
-                    which is exactly what `block` meant; 27/34 sites passed it.
-   `size`        -> kept for `input`/`button`, resolved through the Astryx
-                    element-size tokens rather than antd's control heights.
-   `style`       -> passes through (Astryx `BaseProps`).
-
- NOT built, because nothing in the repo asks for it: `Skeleton.Avatar` as a
- standalone export, `Skeleton.Image`, `Skeleton.Node`, `loading` (call sites
- branch themselves), `round`, and `title={{width}}` / `paragraph={{width}}`
- per-row width objects. `hasAvatar` IS built (antd `avatar`), because the
- avatar+lines shape is what a list-row fallback needs and composing it at the
- call site is 15 lines every time.
-
- P10 note: `Skeleton.Input active` rendered an INPUT-shaped shimmer (a filled
- control-height box with antd's control radius). `variant="input"` reproduces
- the shape from `--size-element-*` + `radius={1}`; it is a rebuild, not a
- pixel port — see the size table below.
-
- Standard pairing (`use-bai-card.md`): this is the Suspense fallback INSIDE a
- `BAICardAstryx` body, so the card header stays visible while the body loads.
-
-     <BAICardAstryx title={t('...')}>
-       <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
-         <DataDrivenContent />
-       </Suspense>
-     </BAICardAstryx>
+ Standard pairing (`use-bai-card.md`): the Suspense fallback INSIDE a card
+ body, so the header stays visible while the body loads.
 */
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import type { SkeletonProps } from '@astryxdesign/core/Skeleton';
@@ -61,12 +25,8 @@ export type BAISkeletonSize = 'small' | 'default' | 'large';
 
 /**
  * PILOT-DECISION: antd resolved these to its control heights (24 / 32 / 40).
- * Astryx's element-size tokens are 28 / 32 / 40, so `small` drifts +4px.
- * MAPPING.md §"Also COMPOSITION" already prescribes `height={28}` for the 25
- * `size="small"` sites, and the theme-shim records the same delta under
- * `controlHeightSM` (verdict `self`). Taking the Astryx token keeps a skeleton
- * the same height as the Astryx control it stands in for — which is the point
- * of the shape — at the cost of 4px against today's antd render.
+ * Astryx's element-size tokens are 28 / 32 / 40, so `small` drifts +4px —
+ * deliberate, so a skeleton matches the Astryx control it stands in for.
  */
 const ELEMENT_HEIGHT: Record<BAISkeletonSize, string> = {
   small: 'var(--size-element-sm)',
@@ -91,7 +51,7 @@ const BUTTON_WIDTH: Record<BAISkeletonSize, number> = {
   large: 80,
 };
 
-export interface BAISkeletonAstryxProps extends Omit<
+export interface BAISkeletonProps extends Omit<
   SkeletonProps,
   'height' | 'index'
 > {
@@ -131,7 +91,7 @@ export interface BAISkeletonAstryxProps extends Omit<
   startIndex?: number;
 }
 
-const BAISkeletonAstryx: React.FC<BAISkeletonAstryxProps> = ({
+const BAISkeleton: React.FC<BAISkeletonProps> = ({
   variant = 'paragraph',
   rows = 3,
   hasTitle = true,
@@ -217,4 +177,4 @@ const BAISkeletonAstryx: React.FC<BAISkeletonAstryxProps> = ({
   );
 };
 
-export default BAISkeletonAstryx;
+export default BAISkeleton;

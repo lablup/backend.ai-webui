@@ -14,8 +14,8 @@ import {
 } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { ProjectContextOrNull } from '../types/projectContext';
 import { useBAIBreakpoint } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
@@ -35,7 +35,6 @@ import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -47,6 +46,7 @@ import {
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIFlex,
   BAILink,
   BAISessionAgentIds,
@@ -393,7 +393,7 @@ const SessionDetailContent: React.FC<{
                 session.owner.email
               ) : session.user_id ? (
                 <Suspense
-                  fallback={<BAISkeletonAstryx variant="input" size="small" />}
+                  fallback={<BAISkeleton variant="input" size="small" />}
                 >
                   <UNSAFELazyUserEmailView uuid={session.user_id} />
                 </Suspense>
@@ -483,9 +483,7 @@ const SessionDetailContent: React.FC<{
                 imageFrgmt={session.kernel_nodes?.edges[0]?.node?.image || null}
               />
             ) : session.row_id ? (
-              <Suspense
-                fallback={<BAISkeletonAstryx variant="input" size="small" />}
-              >
+              <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
                 <UNSAFELazySessionImageTag sessionId={session.row_id} />
               </Suspense>
             ) : null}
@@ -536,7 +534,7 @@ const SessionDetailContent: React.FC<{
             <MetadataListItem label={t('session.ReclamationStatus')}>
               <BAIFlex gap="xxs" align="start">
                 <Suspense
-                  fallback={<BAISkeletonAstryx variant="input" size="small" />}
+                  fallback={<BAISkeleton variant="input" size="small" />}
                 >
                   <SessionIdleChecks
                     sessionNodeFrgmt={session}
@@ -659,7 +657,7 @@ const SessionDetailContent: React.FC<{
           ) : null}
         </TabList>
         {activeTabKey === 'kernels' && (
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             <ConnectedKernelList
               kernelsFrgmt={filterOutNullAndUndefined(
                 session.kernel_nodes?.edges.map((e) => e?.node),
@@ -671,7 +669,7 @@ const SessionDetailContent: React.FC<{
         {activeTabKey === 'auditLog' && session.row_id && (
           <BAIErrorBoundary>
             {auditLogQueryRef ? (
-              <Suspense fallback={<BAISkeletonAstryx />}>
+              <Suspense fallback={<BAISkeleton />}>
                 <ScopedAuditLog
                   queryRef={auditLogQueryRef}
                   onReload={reloadAuditLogQuery}
@@ -679,7 +677,7 @@ const SessionDetailContent: React.FC<{
                 />
               </Suspense>
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}

@@ -5,8 +5,7 @@
 import { StorageHostDetailDrawerFragment$key } from '../__generated__/StorageHostDetailDrawerFragment.graphql';
 import StorageHostDetailDrawerContent from './StorageHostDetailDrawerContent';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import { BAIFetchKeyButton } from 'backend.ai-ui';
+import { BAISkeleton, BAIFetchKeyButton } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -71,7 +70,7 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
         />
       }
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {storageVolume?.storageVolumeFrgmt ? (
           <StorageHostDetailDrawerContent
             storageVolumeFrgmt={storageVolume.storageVolumeFrgmt}

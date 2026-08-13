@@ -10,11 +10,10 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
 import BAIProgress from './BAIProgress';
 import StorageSelect from './StorageSelect';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -255,7 +254,7 @@ const QuotaPerStorageVolumePanelCard: React.FC<
         style={{ alignSelf: 'flex-start', minWidth: 240 }}
       />
       {/* antd `Skeleton paragraph={{rows: 0}}` (title bar only) →
-          `BAISkeletonAstryx rows={0}`; `active` is always-on behaviour. */}
+          `BAISkeleton rows={0}`; `active` is always-on behaviour. */}
       <Suspense fallback={<BAISkeleton rows={0} />}>
         <QuotaScopeContent selectedVolumeInfo={selectedVolumeInfo} />
       </Suspense>
