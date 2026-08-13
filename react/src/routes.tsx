@@ -24,6 +24,7 @@ import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
+import { useCurrentProjectValue } from './hooks/useCurrentProject';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useActiveProjectName } from './hooks/useRouteScope';
 import { useSToken } from './hooks/useSToken';
@@ -38,6 +39,7 @@ import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
+import { toProjectContext } from './types/projectContext';
 import { theme } from './theme-shim';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
@@ -304,10 +306,16 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             index: true,
             Component: () => {
               useSuspendedBackendaiClient();
+              // Page-level ambient narrowing (ADR-0001): general session
+              // page — the opener's session-detail drawer compares against
+              // the current project.
+              const currentProject = useCurrentProjectValue();
               return (
                 <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <ComputeSessionListPage />
-                  <SessionDetailAndContainerLogOpenerLegacy />
+                  <SessionDetailAndContainerLogOpenerLegacy
+                    project={toProjectContext(currentProject)}
+                  />
                 </Suspense>
               );
             },
@@ -839,7 +847,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           return baiClient?.supports('fair-share-scheduling') ? (
             <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
               <SchedulerPage />
-              <SessionDetailAndContainerLogOpenerLegacy />
+              {/* Super-admin page (ADR-0001): no ambient project context —
+                  the session-detail project-mismatch alert is suppressed. */}
+              <SessionDetailAndContainerLogOpenerLegacy project={null} />
             </Suspense>
           ) : (
             <WebUINavigate to={'/error'} replace />

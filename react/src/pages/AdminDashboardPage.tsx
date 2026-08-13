@@ -19,6 +19,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
+import { toProjectContext } from '../types/projectContext';
 import { theme } from '../theme-shim';
 import {
   filterOutEmpty,
@@ -204,6 +205,11 @@ const AdminDashboardPage: React.FC = () => {
           <RecentlyCreatedSession
             queryRef={queryRef}
             isRefetching={isPendingIntervalRefetch}
+            // /admin-dashboard is out of FR-3407 scope (page is unused) and
+            // its session list is still ambient-project-scoped (`scopeId`
+            // above) — keep the exact current behavior by passing the
+            // narrowed ambient project (ADR-0001 page-level narrowing).
+            project={toProjectContext(currentProject)}
           />
         ),
       },

@@ -25,6 +25,7 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useIsSuperAdminScopedPage } from '../hooks/useIsSuperAdminScopedPage';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
@@ -114,18 +115,18 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
+  // This modal is globally mounted (no page parent), so it is the sanctioned
+  // exception (ADR-0001) that may consult the route to decide its project
+  // context: on the super-admin-scoped routes there is no ambient project
+  // context; elsewhere it narrows the ambient current project (interim state
+  // until a page-owned opener exists).
+  const isSuperAdminScopedPage = useIsSuperAdminScopedPage();
   const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project ID is required for FolderExplorerModalV2');
-  }
+  const pageProject = isSuperAdminScopedPage
+    ? null
+    : toProjectContext(currentProject);
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
-  const { unitedAllowedPermissionByVolume } =
-    useMergedAllowedStorageHostPermission(
-      currentDomain,
-      currentProject.id,
-      currentUserAccessKey,
-    );
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
@@ -171,6 +172,20 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
     },
   );
+
+  // Permission calculation follows the folder's own ownership project when
+  // the folder is project-owned (what the user can do must not depend on the
+  // header selection). For user-owned folders there is no ownership project:
+  // keep the previous ambient scope on general pages, and skip the
+  // group-scope lookup entirely on super-admin routes (`null`).
+  const permissionProjectId =
+    vfolderNode?.ownership?.projectId ?? pageProject?.id ?? null;
+  const { unitedAllowedPermissionByVolume } =
+    useMergedAllowedStorageHostPermission(
+      currentDomain,
+      permissionProjectId,
+      currentUserAccessKey,
+    );
 
   // FIXME: This is a temporary workaround to notify file deletion to use WebUI Notification.
   const { upsertNotification, closeNotification } = useSetBAINotification();
@@ -422,11 +437,15 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         vfolderNode ? (
           <FolderExplorerHeaderV2
             vfolderNodeFrgmt={vfolderNode}
-            // Sanctioned interim state (ADR-0001): this globally-mounted
-            // modal is not yet converted (FR-3413), so it still narrows the
-            // ambient current project and passes it on explicitly — general
-            // page UX is unchanged.
-            project={toProjectContext(currentProject)}
+            // ADR-0001: on super-admin routes `pageProject` is `null` — the
+            // FileBrowser/SFTP buttons render disabled with the tooltip
+            // below, and rename gating falls back to owner/super-admin.
+            project={pageProject}
+            noProjectTooltip={
+              isSuperAdminScopedPage
+                ? t('data.CannotLaunchSessionInAdminMenu')
+                : undefined
+            }
           />
         ) : (
           <span />
@@ -474,7 +493,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               />
             ) : hasNoPermissions ? (
               <Banner title={t('explorer.NoPermissions')} status="error" />
-            ) : currentProject?.id !== vfolderNode?.ownership?.projectId &&
+            ) : pageProject !== null &&
+              pageProject.id !== vfolderNode?.ownership?.projectId &&
               !!vfolderNode?.ownership?.projectId ? (
               <Banner
                 title={

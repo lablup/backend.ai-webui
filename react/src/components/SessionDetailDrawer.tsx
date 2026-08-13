@@ -4,6 +4,7 @@
  */
 import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailDrawerFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
@@ -27,11 +28,18 @@ interface SessionDetailDrawerProps {
   /** Close request handler (Escape, scrim click, close button). */
   onClose?: () => void;
   sessionId?: string;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): pass-through to
+   * `SessionDetailContent`. The mounting page decides the project context
+   * (`null` on super-admin pages suppresses the project-mismatch alert).
+   */
+  project: ProjectContextOrNull;
 }
 const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   sessionId,
   open = false,
   onClose,
+  project,
 }) => {
   const { t } = useTranslation();
   useSuspendedBackendaiClient();
@@ -97,6 +105,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
             id={sessionId}
             fetchKey={fetchKey}
             sessionFrgmt={cachedSessionFrgmt}
+            project={project}
           />
         )}
       </Suspense>
