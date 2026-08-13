@@ -246,7 +246,10 @@ describe('FileBrowserButtonV2 project prop contract (ADR-0001, FR-3412)', () => 
 
     // The reason is the page-provided tooltip — the component itself never
     // knows why the project is absent.
-    fireEvent.mouseEnter(launchButton.closest('.ant-space-compact')!);
+    // antd `Space.Compact` -> Astryx `ButtonGroup`, which exposes itself as
+    // `role="group"` with the group label as its accessible name. The
+    // tooltip stays on the GROUP because a disabled button swallows hover.
+    fireEvent.mouseEnter(launchButton.closest('[role="group"]')!);
     expect(
       await screen.findByText('data.CannotLaunchSessionInAdminMenu'),
     ).toBeInTheDocument();
