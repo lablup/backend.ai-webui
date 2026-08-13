@@ -315,8 +315,10 @@ async function setupLegacyPresetCreatePage(
   await resourcesCard
     .getByRole('spinbutton', { name: 'CPU', exact: true })
     .fill('4');
+  // Same doubled BUI fallback name as setupPresetCreatePage — see the note
+  // there. TODO: real product-side label.
   await resourcesCard
-    .getByRole('spinbutton', { name: 'Select', exact: true })
+    .getByRole('spinbutton', { name: 'Select Select', exact: true })
     .fill('16');
   await selectComplexSelectOption(page, 'Image', MOCK_IMAGE_OPTION_LABEL);
 
