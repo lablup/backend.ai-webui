@@ -7,8 +7,68 @@
 // VITE_DEV_SERVER_NAME so the React app can show it in the browser tab title
 // (dev only), keeping multiple dev-server tabs distinguishable.
 import { spawn, spawnSync } from 'node:child_process';
+import { createInterface } from 'node:readline/promises';
+import { probeFsevents } from './fsevents-health.mjs';
 
 const env = { ...process.env };
+
+// fseventsd can refuse every new FSEventStream registration (client-table
+// exhaustion by leaked dev processes — see scripts/fsevents-health.mjs). Every
+// watcher this script spawns then starts permanently silent: HMR dead, stale
+// transforms on refresh, tsc/relay watch blind. Probe up front and ASK before
+// falling back to stat-polling — polling costs steady CPU and hides the real
+// problem, so it is never enabled silently. Skipped when the user already
+// opted into polling via VITE_WATCH_USE_POLLING.
+if (process.platform === 'darwin' && !env.VITE_WATCH_USE_POLLING?.trim()) {
+  const healthy = await probeFsevents();
+  if (!healthy) {
+    console.warn(
+      '\n[dev] macOS FSEvents is BROKEN on this machine: fseventsd refused a new\n' +
+        '[dev] event stream, so file watching (Vite HMR, tsc watch, relay watch)\n' +
+        '[dev] will be silently dead. Usual cause: leaked dev processes exhausting\n' +
+        "[dev] fseventsd's client table. To heal the machine:\n" +
+        "[dev]   1. kill stale watchers:  ps aux | grep -E 'test-server|vite|relay'\n" +
+        '[dev]      (also close days-old editor windows), then re-run pnpm dev\n' +
+        '[dev]   2. still broken:        sudo pkill fseventsd   (auto-restarts)\n' +
+        '[dev]   3. last resort:         reboot\n' +
+        '[dev] Health check any time:    node scripts/fsevents-health.mjs\n',
+    );
+    if (process.stdin.isTTY) {
+      const rl = createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+      let answer = '';
+      try {
+        answer = await rl.question(
+          '[dev] Fall back to stat-polling for THIS run (works, but steady CPU cost\n' +
+            '[dev] and the machine stays broken for every other tool)? [y/N] ',
+        );
+      } catch {
+        // Ctrl+D / stdin closed mid-question — treat as "No".
+      } finally {
+        rl.close();
+      }
+      if (/^y(es)?$/i.test(answer.trim())) {
+        env.VITE_WATCH_USE_POLLING = '1'; // Vite chokidar (react/vite.config.ts)
+        env.CHOKIDAR_USEPOLLING = '1'; // nodemon's chokidar (relay watch)
+        if (!env.TSC_WATCHFILE?.trim()) {
+          env.TSC_WATCHFILE = 'DynamicPriorityPolling'; // tsc watch children
+        }
+        console.warn('[dev] polling fallback enabled for this run.\n');
+      } else {
+        console.warn(
+          '[dev] continuing WITHOUT polling — expect dead HMR until the machine is healed.\n',
+        );
+      }
+    } else {
+      console.warn(
+        '[dev] non-interactive session: continuing without polling. Set\n' +
+          '[dev] VITE_WATCH_USE_POLLING=1 to opt in explicitly.\n',
+      );
+    }
+  }
+}
 
 // Both TypeScript watch programs under this script — the root `tsc --watch`
 // child below and the one vite-plugin-checker runs inside the Vite process —
