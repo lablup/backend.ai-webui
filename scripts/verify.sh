@@ -119,11 +119,20 @@ check_stylex_injection() {
   # assetFileNames tweak or a Vite major), so this check asserts it directly.
   #
   # 1. Config gate (always): vite.config.ts must still declare
-  #    cssInjectionTarget targeting the entry `assets/index-*.css`.
-  # 2. Build gate (only when react/build/assets exists): the sentinel rule
-  #    authored in react/src/pages/AstryxStylexProbePage.tsx must land in the
-  #    ENTRY stylesheet and in no other emitted CSS asset. Keep the value in
-  #    sync with the `sentinel` style there.
+  #    cssInjectionTarget, and must keep StyleX output LAYERED. Unlayered
+  #    output re-emits Astryx's own atomics (StyleX hashes class names from the
+  #    declaration) outside every layer, at `:not(#\#)` ID-level specificity,
+  #    which silently promotes those library defaults above project CSS
+  #    (FR-3534).
+  # 2. Build gate (only when the build exists): the sentinel rule authored in
+  #    react/src/pages/AstryxStylexProbePage.tsx must land in the ENTRY
+  #    stylesheet and in no other emitted CSS asset. Keep the value in sync
+  #    with the `sentinel` style there.
+  #
+  # The entry stylesheet is resolved from the built index.html, NOT by globbing
+  # `index-*.css`: rollup names a chunk's CSS after its source module, so a
+  # lazy chunk entered through an `index.ts` also emits `assets/index-*.css`.
+  # Globbing matched both, and an injection into the WRONG one passed the gate.
   local STYLEX_SENTINEL='z-index: ?2147480001'
   local config=react/vite.config.ts
 
@@ -135,30 +144,112 @@ check_stylex_injection() {
     return 1
   fi
 
-  local assets=react/build/assets
-  if [ ! -d "$assets" ]; then
+  if ! grep -qE '^\s*useCSSLayers:\s*true' "$config"; then
+    echo "useCSSLayers is not true in $config."
+    echo "Unlayered StyleX output escapes the cascade layers and promotes"
+    echo "Astryx's own atomics above project CSS (FR-3534). Keep it true."
+    return 1
+  fi
+
+  local build=react/build
+  local assets="$build/assets"
+  if [ ! -d "$assets" ] || [ ! -f "$build/index.html" ]; then
     echo "(no production build present — config gate only; run" \
       "\`pnpm run build:react-only\` for the full sentinel check)"
     return 0
   fi
 
-  local entry_hits other_hits
-  entry_hits=$(grep -lE "$STYLEX_SENTINEL" "$assets"/index-*.css 2>/dev/null || true)
-  other_hits=$(grep -lE "$STYLEX_SENTINEL" "$assets"/*.css 2>/dev/null \
-    | grep -v '/index-' || true)
-
-  if [ -z "$entry_hits" ]; then
-    echo "StyleX sentinel not found in the entry stylesheet ($assets/index-*.css)."
-    echo "cssInjectionTarget no longer matches the entry CSS asset — authored"
-    echo "xstyle/StyleX output is landing somewhere else (or nowhere)."
-    [ -n "$other_hits" ] && echo "Found instead in: $other_hits"
+  local entry_name entry
+  entry_name=$(grep -oE 'href="[^"]*assets/index-[^"]*\.css"' "$build/index.html" \
+    | head -1 | sed -E 's#.*assets/(index-[^"]*\.css)".*#\1#')
+  if [ -z "$entry_name" ]; then
+    echo "Could not find the entry stylesheet link in $build/index.html."
+    echo "The HTML build no longer emits <link ... assets/index-*.css>; this"
+    echo "check can no longer identify the entry sheet."
     return 1
   fi
+  entry="$assets/$entry_name"
+
+  if ! grep -qE "$STYLEX_SENTINEL" "$entry" 2>/dev/null; then
+    echo "StyleX sentinel not found in the entry stylesheet ($entry)."
+    echo "cssInjectionTarget no longer matches the entry CSS asset — authored"
+    echo "xstyle/StyleX output is landing somewhere else (or nowhere)."
+    local found
+    found=$(grep -lE "$STYLEX_SENTINEL" "$assets"/*.css 2>/dev/null || true)
+    [ -n "$found" ] && echo "Found instead in: $found"
+    return 1
+  fi
+
+  local other_hits
+  other_hits=$(grep -lE "$STYLEX_SENTINEL" "$assets"/*.css 2>/dev/null \
+    | grep -vF "$entry" || true)
   if [ -n "$other_hits" ]; then
     echo "StyleX sentinel leaked into non-entry stylesheets: $other_hits"
     return 1
   fi
-  echo "sentinel found in: $entry_hits"
+
+  if ! grep -q '@layer priority' "$entry"; then
+    echo "The entry stylesheet has no '@layer priority' block."
+    echo "Compiled StyleX is being emitted unlayered despite the config gate;"
+    echo "it will outrank project CSS at ID-level specificity (FR-3534)."
+    return 1
+  fi
+
+  echo "sentinel found in the entry sheet ($entry), layered"
+  return 0
+}
+
+check_layer_order_statement() {
+  # The cascade-layer order statement must be declared where its parse position
+  # cannot move (FR-3534). Layer precedence is fixed by first appearance and no
+  # later `@layer` statement can reorder names already seen, so the
+  # AUTHORITATIVE copy is the inline <style> at the top of the project-root
+  # index.html — ahead of every stylesheet link, in dev and build alike. The
+  # copies in the CSS modules are defensive duplicates and must not diverge:
+  # two identical statements are idempotent, two different ones hand the order
+  # to whichever loads first.
+  local html=index.html
+  local copies=(
+    react/src/index.css
+    packages/backend.ai-ui/src/styles/backend.ai-ui.css
+  )
+
+  local html_stmt
+  html_stmt=$(grep -ohE '@layer [a-z0-9, -]+;' "$html" 2>/dev/null | head -1)
+  if [ -z "$html_stmt" ]; then
+    echo "No '@layer ...;' order statement in $html."
+    echo "It must be an inline <style> in <head>, before every stylesheet link,"
+    echo "so dev and build resolve the identical cascade (FR-3534)."
+    return 1
+  fi
+
+  # It has to come before the first stylesheet link, or it is not first.
+  local stmt_line link_line
+  stmt_line=$(grep -nE '@layer [a-z0-9, -]+;' "$html" | head -1 | cut -d: -f1)
+  link_line=$(grep -nE '<link[^>]+rel="stylesheet"' "$html" | head -1 | cut -d: -f1)
+  if [ -n "$link_line" ] && [ "$stmt_line" -gt "$link_line" ]; then
+    echo "The @layer order statement (line $stmt_line) comes AFTER the first"
+    echo "stylesheet link (line $link_line) in $html. Move it above them."
+    return 1
+  fi
+
+  local copy stmt
+  for copy in "${copies[@]}"; do
+    stmt=$(grep -ohE '@layer [a-z0-9, -]+;' "$copy" 2>/dev/null | head -1)
+    if [ -z "$stmt" ]; then
+      echo "No '@layer ...;' order statement in $copy."
+      return 1
+    fi
+    if [ "$stmt" != "$html_stmt" ]; then
+      echo "Layer order statement diverges between $html and $copy:"
+      echo "  $html: $html_stmt"
+      echo "  $copy: $stmt"
+      echo "Divergent statements hand the order to whichever loads first."
+      return 1
+    fi
+  done
+
+  echo "authoritative in $html (line $stmt_line), ${#copies[@]} copies in sync"
   return 0
 }
 
@@ -182,6 +273,7 @@ run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
+run_check "CSS layer order statement" check_layer_order_statement
 run_check "Astryx theme build" check_astryx_theme_built
 run_check "Terminology" check_terminology_drift
 
