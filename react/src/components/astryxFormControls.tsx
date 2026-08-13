@@ -6,10 +6,10 @@
  `BAIFormItem` (the antd form ENGINE we keep, per MIGRATION-SPEC §0; visuals
  come from BAIFormItem).
 
- ## Why there is exactly one of these now (ticket 30 / FR-3533)
+ ## Why there is exactly one of these now (ticket 30)
 
  A twin of this module once grew in parallel at
- `components/astryx-bui/astryxFormControls.tsx` (deleted in FR-3533), with the
+ `components/astryx-bui/astryxFormControls.tsx` (since deleted), with the
  same seven export names and quietly different prop surfaces. This file is the
  single implementation, carrying the UNION of both surfaces — do not re-fork
  it (see `.claude/rules/bui-component-home.md`).

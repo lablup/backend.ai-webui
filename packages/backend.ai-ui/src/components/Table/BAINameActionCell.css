@@ -16,7 +16,7 @@
 
  The styling hooks that used to be emotion hashes are namespaced `bai-nac-*`
  instead of reusing the `bai-name-action-cell-*` family, whose only survivor
- (`-danger`, FR-3533) lives in `../styles/dangerAction.css`. Two sheets
+ (`-danger`) lives in `../styles/dangerAction.css`. Two sheets
  defining one class name is decided by load order, which is exactly the kind
  of silent, environment-dependent drift this migration keeps tripping over.
 

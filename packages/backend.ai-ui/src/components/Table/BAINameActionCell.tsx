@@ -127,7 +127,7 @@ const ACTIONS_GAP = 2;
  * PILOT-DECISION (to-astryx W2-D): MAPPING §2 grades `Popconfirm` as **NONE** —
  * "compose `Popover` + buttons, or escalate to `AlertDialog`". This is the
  * compose branch — the same shape the pilot
- * cell shipped before the FR-3533 fold.
+ * cell shipped before it was folded onto this component.
  * What changes against antd: the confirm/cancel pair is a real `HStack` of
  * `Button`s inside the popover body rather than antd's built-in footer, and
  * `okButtonProps.danger` maps onto `variant="destructive"`. What is preserved:
@@ -510,8 +510,8 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 />
               );
             }
-            // FR-3423: the tooltip must ride the button itself (`title` →
-            // Astryx `tooltip`), which keeps a disabled control focusable via
+            // The tooltip must ride the button itself (`title` → Astryx
+            // `tooltip`), which keeps a disabled control focusable via
             // `aria-disabled` so keyboard users can still reach the reason.
             return (
               <BAIButton
