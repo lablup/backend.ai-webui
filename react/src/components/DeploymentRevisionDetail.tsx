@@ -13,7 +13,6 @@ import { useBAIBreakpoint } from '../theme-shim';
 import './DeploymentRevisionDetail.css';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
 import {
   MetadataList,
@@ -432,9 +431,7 @@ const DeploymentRevisionDetail: React.FC<{
       key: 'image',
       label: t('deployment.Image'),
       children: imageFullName ? (
-        <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
-          {imageFullName}
-        </BAICopyableText>
+        <BAIText copyable>{imageFullName}</BAIText>
       ) : (
         renderFallback()
       ),

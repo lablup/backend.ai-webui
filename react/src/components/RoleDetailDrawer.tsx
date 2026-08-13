@@ -6,11 +6,15 @@ import { RoleDetailDrawerFragment$key } from '../__generated__/RoleDetailDrawerF
 import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerRefetchQuery.graphql';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { BAIFetchKeyButton, BAIFlex, useFetchKey } from 'backend.ai-ui';
+import {
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIText,
+  useFetchKey,
+} from 'backend.ai-ui';
 import { SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -104,18 +108,19 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
       // three-column table.
       size={800}
       label={t('rbac.RoleDetailInfo')}
-      // MAPPING §3.4: `Typography.Title copyable` -> BAICopyableText (the only
-      // home for `copyable`). The role name is a `large`/`semibold` Text rather
-      // than an `<h3>`: BAICopyableText wraps `Text`, and the drawer already
-      // announces itself through `label`, so no heading level is lost.
+      // Not an `<h3>`: the drawer already announces itself through `label`,
+      // so the role name renders as large text with the shared copy control.
       title={
-        <BAICopyableText
-          type="large"
-          weight="semibold"
-          copyLabel={t('button.Copy')}
+        <BAIText
+          strong
+          copyable
+          style={{
+            fontSize: 'var(--text-large-size)',
+            lineHeight: 'var(--text-large-leading)',
+          }}
         >
           {role?.name ?? t('rbac.RoleDetailInfo')}
-        </BAICopyableText>
+        </BAIText>
       }
       extra={
         <>

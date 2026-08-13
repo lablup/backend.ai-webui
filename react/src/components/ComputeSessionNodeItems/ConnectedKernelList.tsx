@@ -8,7 +8,6 @@ import {
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
-import BAICopyableText from '../astryx-bui/BAICopyableText';
 import ContainerLogModal from './ContainerLogModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -22,6 +21,7 @@ import {
   BAIDoubleTag,
   BAIId,
   type BAIColumnType,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ScrollTextIcon } from 'lucide-react';
@@ -139,8 +139,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.AgentId'),
       dataIndex: 'agent_id',
-      render: (id) =>
-        _.isEmpty(id) ? '-' : <BAICopyableText>{id}</BAICopyableText>,
+      render: (id) => (_.isEmpty(id) ? '-' : <BAIText copyable>{id}</BAIText>),
     },
     {
       title: t('kernel.KernelId'),

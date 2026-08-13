@@ -10,7 +10,6 @@ import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
@@ -19,6 +18,7 @@ import {
   BAIFlex,
   BAIIntervalView,
   BAIMetadataList,
+  BAIText,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -74,26 +74,22 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
     <BAIFlex direction="column" gap="lg" align="stretch">
       <BAIFlex justify="between">
         <BAIFlex direction="column" align="stretch">
-          {/* antd Typography.Title level={3} copyable → BAICopyableText
-              (Text-based, MAPPING §3.4) sized to approximate the level-3
-              heading step (17px). PILOT-DECISION: loses the semantic <h3>
-              element (BAICopyableText renders a <span>) — Astryx has no
-              copyable Heading; the simplicity policy accepts the visual-only
-              approximation over rebuilding a heading-flavoured copy control. */}
-          <BAICopyableText
-            copyLabel={t('sourceCodeViewer.Copy')}
-            type="large"
-            weight="semibold"
-            color={isTerminated ? 'secondary' : 'primary'}
+          {/* Not an <h3>: Astryx has no copyable Heading, so the legacy
+              Title renders as large text with the shared copy control. */}
+          <BAIText
+            strong
+            type={isTerminated ? 'secondary' : undefined}
+            copyable
+            style={{
+              fontSize: 'var(--text-large-size)',
+              lineHeight: 'var(--text-large-leading)',
+            }}
           >
             {toLocalId(agent?.id || '')}
-          </BAICopyableText>
-          <BAICopyableText
-            copyLabel={t('sourceCodeViewer.Copy')}
-            color="secondary"
-          >
+          </BAIText>
+          <BAIText type="secondary" copyable>
             {agent?.addr || ''}
-          </BAICopyableText>
+          </BAIText>
         </BAIFlex>
         <AgentActionButtons agentNodeFrgmt={agent} size="lg" />
       </BAIFlex>

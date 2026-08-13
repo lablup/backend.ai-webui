@@ -15,7 +15,6 @@ import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { Divider } from '@astryxdesign/core/Divider';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -33,6 +32,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
+  BAIText,
   BAIUnmountAfterClose,
   BooleanTag,
   isDeploymentInStoppedCategory,
@@ -138,9 +138,7 @@ const DeploymentOverviewContent: React.FC<{
       </MetadataListItem>
       <MetadataListItem label={t('deployment.EndpointUrl')}>
         {deployment?.networkAccess.endpointUrl ? (
-          <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
-            {deployment.networkAccess.endpointUrl}
-          </BAICopyableText>
+          <BAIText copyable>{deployment.networkAccess.endpointUrl}</BAIText>
         ) : (
           renderFallback()
         )}

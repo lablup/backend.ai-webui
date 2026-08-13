@@ -5,7 +5,7 @@
  Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
  (`BAITableAstryx`, Astryx engine). Cells and satellites are Astryx:
  `BAINameActionCellAstryx`, `Badge` + the ticket-13 status lookup, `Text`,
- `BAICopyableText`, `BAIModalAstryx` (host-quota modal), `BAISkeletonAstryx`.
+ `BAIText copyable`, `BAIModalAstryx` (host-quota modal), `BAISkeletonAstryx`.
 */
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';
@@ -33,7 +33,6 @@ import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModal
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import BAINameActionCell from './astryx-bui/BAINameActionCellAstryx';
 import type { BAINameActionCellAstryxAction } from './astryx-bui/BAINameActionCellAstryx';
@@ -51,6 +50,7 @@ import {
   BAIUnmountAfterClose,
   StorageUsageBadge,
   badgeVariantForStatus,
+  BAIText,
   filterOutNullAndUndefined,
   toLocalId,
   useErrorMessageResolver,
@@ -864,7 +864,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             // V2 `VFolderOrderField` does not expose quota_scope_id.
             sorter: isEnableSorter('quota_scope_id'),
             render: (value: string) =>
-              value ? <BAICopyableText>{value}</BAICopyableText> : '-',
+              value ? <BAIText copyable>{value}</BAIText> : '-',
           },
           {
             key: 'last_used',

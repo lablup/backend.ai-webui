@@ -30,9 +30,7 @@
    keyboard                        -> RETIRED (FR-3509). Shortcut badges are
                                       Astryx `Kbd` at the call site.
    copyable                        -> self-built (Astryx has no `copyable`);
-                                      IconButton + navigator.clipboard, the
-                                      same shape the pilot's BAICopyableText
-                                      established.
+                                      IconButton + navigator.clipboard.
 
  PILOT-DECISIONs recorded in `.specs/FR-3482-astryx-migration/issues/p3-a-bui-primitives.md`.
 */

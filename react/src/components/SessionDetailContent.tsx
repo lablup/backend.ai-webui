@@ -35,7 +35,6 @@ import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -53,6 +52,7 @@ import {
   BAISessionAgentIds,
   BAISessionClusterMode,
   BAISessionTypeTag,
+  BAIText,
   INITIAL_FETCH_KEY,
   UNSAFELazyUserEmailView,
   filterOutNullAndUndefined,
@@ -383,9 +383,9 @@ const SessionDetailContent: React.FC<{
             string and the icon affordance moves into the value cell (P2). */}
         <MetadataList columns={md ? 2 : 1}>
           <MetadataListItem label={t('session.SessionId')}>
-            <BAICopyableText type="code" maxLines={1}>
+            <BAIText code copyable ellipsis={{ tooltip: true }}>
               {session.row_id ?? ''}
-            </BAICopyableText>
+            </BAIText>
           </MetadataListItem>
           {(userRole === 'admin' || userRole === 'superadmin') && (
             <MetadataListItem label={t('credential.UserID')}>

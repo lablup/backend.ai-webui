@@ -8,7 +8,6 @@ import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { theme } from '../theme-shim';
 import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Code } from '@astryxdesign/core/Code';
@@ -22,6 +21,7 @@ import {
   BAICard,
   BAIFlex,
   badgeVariantForTagColor,
+  BAIText,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -130,13 +130,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
           </MetadataListItem>
           <MetadataListItem label={t('adminDeploymentPreset.Image')}>
             {imageReference ? (
-              <BAICopyableText
-                type="code"
-                style={{ wordBreak: 'break-all' }}
-                copyLabel={t('sourceCodeViewer.Copy')}
-              >
+              <BAIText code copyable style={{ wordBreak: 'break-all' }}>
                 {imageReference}
-              </BAICopyableText>
+              </BAIText>
             ) : (
               '-'
             )}
