@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { Tour, TourStep } from '@astryxdesign/lab';
+import BAITourAstryx from './astryx-bui/BAITourAstryx';
+import { TourStep } from '@astryxdesign/lab';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -67,8 +68,6 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
         setTargets(null);
         return;
       }
-      // antd `scrollIntoViewOptions` parity: bring the first target on screen.
-      card.scrollIntoView({ block: 'center' });
       setTargets({
         card,
         extra: card.querySelector<HTMLElement>('.bai-card__extra'),
@@ -88,7 +87,16 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
   };
 
   return (
-    <Tour isActive hasBackdrop isStepCountShown onDismiss={handleDismiss}>
+    <BAITourAstryx
+      isActive
+      hasBackdrop
+      isStepCountShown
+      onDismiss={handleDismiss}
+      // One entry per rendered step, in step order (nulls are skipped below).
+      scrollTargets={[targets.card, targets.extra, targets.nav].filter(
+        (el): el is HTMLElement => el != null,
+      )}
+    >
       <TourStep
         targetRef={{ current: targets.card }}
         heading={t('tourGuide.deploymentPreset.ValidationErrorTitle')}
@@ -111,7 +119,7 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
           {t('tourGuide.deploymentPreset.FixErrorAndTryAgainText')}
         </TourStep>
       ) : null}
-    </Tour>
+    </BAITourAstryx>
   );
 };
 
