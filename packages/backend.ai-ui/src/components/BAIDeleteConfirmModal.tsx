@@ -191,12 +191,12 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       ? (extractTextFromNode(items[0]?.label) ?? t('general.button.Delete'))
       : t('general.button.Delete'));
 
-  // An explicitly empty `confirmText` (e.g. the target row is not resolved yet)
-  // must not arm the gate with an already-satisfied empty comparison.
-  const needsInput =
-    !reversible &&
-    (items.length > 1 || requireConfirmInput) &&
-    !!resolvedConfirmText;
+  // An explicitly empty `confirmText` (e.g. the target row is not resolved
+  // yet) must not arm the gate with an already-satisfied empty comparison —
+  // and must not enable OK without a gate either, so the input is hidden but
+  // the confirm stays disabled until a confirm text exists.
+  const wantsInput = !reversible && (items.length > 1 || requireConfirmInput);
+  const needsInput = wantsInput && !!resolvedConfirmText;
 
   const resolvedWarning =
     cannotBeUndoneText ?? t('comp:BAIDeleteConfirmModal.CannotBeUndone');
@@ -273,8 +273,8 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       okText={resolvedOkText}
       okButtonProps={{
         danger: true,
-        disabled: needsInput
-          ? typedText !== resolvedConfirmText
+        disabled: wantsInput
+          ? !resolvedConfirmText || typedText !== resolvedConfirmText
           : items.length === 0,
         ...okButtonProps,
       }}

@@ -28,6 +28,7 @@
  anchor positioning + the Popover API. No call site passes any of them
  (measured: `title` ×63, `placement` ×3, `style` ×2, `iconProps` ×2).
 */
+import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import {
   splitAntdPlacement,
   type AntdPlacement,
@@ -73,13 +74,23 @@ const BAIQuestionIconWithTooltip = ({
       onOpenChange={onOpenChange}
       delay={mouseEnterDelay === undefined ? undefined : mouseEnterDelay * 1000}
     >
-      <Text
-        color="placeholder"
+      {/* A real button (reset to inline glyph) keeps the hint focusable, so
+          keyboard users can reach the tooltip. */}
+      <button
+        type="button"
+        aria-label={nodeToAccessibleLabel(title) || undefined}
         className={className}
-        style={{ cursor: 'help', display: 'inline-flex', ...style }}
+        style={{
+          all: 'unset',
+          cursor: 'help',
+          display: 'inline-flex',
+          ...style,
+        }}
       >
-        <CircleHelp {...iconProps} size="1em" />
-      </Text>
+        <Text color="placeholder" style={{ display: 'inline-flex' }}>
+          <CircleHelp {...iconProps} size="1em" />
+        </Text>
+      </button>
     </Tooltip>
   );
 };
