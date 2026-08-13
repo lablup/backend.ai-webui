@@ -1045,6 +1045,7 @@
     "AutoScaling": "Automatische Skalierung",
     "AutoScalingRules": "Regeln für automatische Skalierung",
     "BasicInformation": "Grundlegende Informationen",
+    "CannotResolveDeploymentProject": "Das Projekt, zu dem diese Bereitstellung gehört, kann nicht ermittelt werden. Das Hinzufügen einer Revision ist daher deaktiviert.",
     "ClusterMode": "Cluster-Modus",
     "ClusterModeTooltip": "Clustering-Layout für die Computing-Session des Replikats, formatiert als \"Modus / Größe\". Einzeln bedeutet ein Container; Multi-Node verteilt die Arbeitslast auf mehrere Agenten.",
     "ClusterSize": "Clustergröße",
@@ -1240,8 +1241,7 @@
         "Revision": "Sehen Sie sich vergangene Deployment-Revisionen an und führen Sie einen Rollback auf eine beliebige frühere Version durch.",
         "RevisionHistory": "Durchsuchen Sie vergangene Deployment-Revisionen und führen Sie ein Rollback auf eine beliebige frühere Version durch."
       }
-    },
-    "CannotResolveDeploymentProject": "Das Projekt, zu dem diese Bereitstellung gehört, kann nicht ermittelt werden. Das Hinzufügen einer Revision ist daher deaktiviert."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Dieser Browser unterstützt keine Benachrichtigungen.",
@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "Aktion",
+    "AllProjects": "Alle Projekte",
     "AlreadyInstalledImage": "Bereits installiertes Bild",
     "AppInfoDeleted": "App-Informationen erfolgreich gelöscht.",
     "AppName": "App Name",
@@ -1432,6 +1433,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Bildports erfolgreich geändert",
     "DescImageResourceModified": "Ressourcenlimit erfolgreich geändert",
+    "DescInstallRunsSession": "Die Installation eines Images stellt eine kurzlebige Sitzung in die Warteschlange, die das Image herunterlädt. Wählen Sie das Projekt, in dem die Sitzung ausgeführt wird, und die Ressourcengruppe, in die das Image geladen wird.",
     "DescProblemOccurred": "Bei der Installation ist ein Problem aufgetreten",
     "DescServicePortModified": "Serviceport erfolgreich geändert",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1446,10 +1448,13 @@
     "Images": "Bilder",
     "Install": "Installieren",
     "InstallImage": "Bild installieren",
+    "InstallSessionProject": "Projekt der Installationssitzung",
+    "InstallSessionProjectTooltip": "Die Installationssitzung wird in diesem Projekt als Ihre eigene Sitzung erstellt, daher werden nur Projekte aufgeführt, denen Sie angehören.",
+    "InstallTargetResourceGroup": "Ziel-Ressourcengruppe",
+    "InstallTargetResourceGroupTooltip": "Das Image wird in diese Ressourcengruppe geladen. Es werden nur Ressourcengruppen aufgeführt, die vom ausgewählten Projekt aus erreichbar sind.",
     "Installed": "Eingerichtet",
     "InstalledImagesAreExcluded": "Installierte Bilder sind davon ausgenommen.",
     "Installing": "installieren",
-    "InstallingImage": "Installation:",
     "Language": "Sprache",
     "Local": "Lokal",
     "ManageApps": "Apps verwalten",
@@ -1479,7 +1484,6 @@
     "SuccessfullyCreated": "Erfolgreich erstellt",
     "SuccessfullyModified": "Erfolgreich geändert",
     "Tags": "Schlagworte",
-    "TakesTime": ". Es braucht Zeit, also trinken Sie eine Tasse Kaffee!",
     "Version": "Ausführung"
   },
   "error": {
@@ -1503,7 +1507,6 @@
     "LoginSucceededManagerNotResponding": "Anmeldung erfolgreich, aber Manager antwortet nicht.",
     "MaximumVfolderCreation": "Sie können aufgrund von Ressourcenrichtlinien keine weiteren vOrdner erstellen",
     "NetworkConnectionFailed": "Netzwerkverbindung fehlgeschlagen. Überprüfen Sie den Netzwerkstatus.",
-    "NoCurrentProject": "Kein aktuelles Projekt",
     "NotFoundBasePath": "Nicht gefunden. Bitte überprüfen Sie Ihren Basispfad.",
     "OnlyIntegersAreAllowed": "Nur Ganzzahlen sind erlaubt.",
     "OnlyPositiveIntegersAreAllowed": "Nur positive Ganzzahlen sind erlaubt.",
@@ -1765,7 +1768,6 @@
     "YouCanCreateNotebookCode": "Dieses Abzeichen ermöglicht die direkte Ausführung Ihres Notebooks auf Backend.AI. Kopieren Sie den Code, um ihn überall zu verwenden."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Das aktuelle Projekt wurde erfolgreich geändert.",
     "FailedToImport": "Import von Artefakt(en) fehlgeschlagen",
     "FailedToImportArtifact": "Import des Artefakts {{ name }} ({{ version }}) fehlgeschlagen",
     "FailedToImportModelFromHuggingFace": "Fehler beim Abrufen des Modells von Hugging Face.",
@@ -1774,8 +1776,7 @@
     "Import": "Importieren",
     "ImportToFolder": "In Ordner importieren",
     "ImportingArtifact": "Importiere Artefakt {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Ein eigenes Projekt für den Modell-Store wird benötigt.",
-    "ModelStoreProjectRequiredDescription": "Möchten Sie das aktuelle Projekt in ein nur für den Model Store vorgesehenes Projekt umwandeln?",
+    "ModelStoreProject": "Modellladen-Projekt",
     "NoArtifactsSelected": "Keine Artefakte für den Import ausgewählt",
     "OverwriteWarning": "Vorhandene Dateien werden überschrieben, wenn Dateien mit demselben Namen bereits existieren.",
     "SuccessfullyImported": "Artefakt(e) erfolgreich importiert",

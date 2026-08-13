@@ -1045,6 +1045,7 @@
     "AutoScaling": "Mise à l'échelle automatique",
     "AutoScalingRules": "Règles de mise à l'échelle automatique",
     "BasicInformation": "Informations de base",
+    "CannotResolveDeploymentProject": "Impossible de déterminer le projet auquel appartient ce déploiement ; l'ajout d'une révision est donc désactivé.",
     "ClusterMode": "Mode cluster",
     "ClusterModeTooltip": "Disposition de clustering pour la session de calcul de la réplique, au format \"mode / taille\". Unique signifie un seul conteneur ; Multi-nœud répartit la charge de travail sur plusieurs agents.",
     "ClusterSize": "Taille du Cluster",
@@ -1240,8 +1241,7 @@
         "Revision": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle.",
         "RevisionHistory": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle."
       }
-    },
-    "CannotResolveDeploymentProject": "Impossible de déterminer le projet auquel appartient ce déploiement ; l'ajout d'une révision est donc désactivé."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Ce navigateur ne prend pas en charge les notifications.",
@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "action",
+    "AllProjects": "Tous les projets",
     "AlreadyInstalledImage": "Image déjà installée",
     "AppInfoDeleted": "Informations sur l'application supprimées avec succès.",
     "AppName": "Nom de l'application",
@@ -1432,6 +1433,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Ports d'image modifiés avec succès",
     "DescImageResourceModified": "La limite de ressources a été modifiée avec succès",
+    "DescInstallRunsSession": "L'installation d'une image met en file d'attente une session éphémère qui télécharge l'image. Choisissez le projet dans lequel la session s'exécute et le groupe de ressources dans lequel l'image sera téléchargée.",
     "DescProblemOccurred": "Un problème est survenu lors de l'installation",
     "DescServicePortModified": "Port de service modifié avec succès",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1446,10 +1448,13 @@
     "Images": "Images",
     "Install": "Installer",
     "InstallImage": "Installer l'image",
+    "InstallSessionProject": "Projet de la session d'installation",
+    "InstallSessionProjectTooltip": "La session d'installation est créée dans ce projet en tant que votre propre session ; seuls les projets dont vous êtes membre sont donc listés.",
+    "InstallTargetResourceGroup": "Groupe de ressources cible",
+    "InstallTargetResourceGroupTooltip": "L'image est téléchargée dans ce groupe de ressources. Seuls les groupes de ressources accessibles depuis le projet sélectionné sont listés.",
     "Installed": "installée",
     "InstalledImagesAreExcluded": "Les images installées sont exclues.",
     "Installing": "installation",
-    "InstallingImage": "Installation :",
     "Language": "Langue",
     "Local": "Local",
     "ManageApps": "Gérer les applications",
@@ -1480,7 +1485,6 @@
     "SuccessfullyCreated": "Création réussie",
     "SuccessfullyModified": "Modifié avec succès",
     "Tags": "Balises",
-    "TakesTime": ". Cela prend du temps alors prenez une tasse de café!",
     "Version": "Version"
   },
   "error": {
@@ -1504,7 +1508,6 @@
     "LoginSucceededManagerNotResponding": "La connexion a réussi mais le gestionnaire ne répond pas.",
     "MaximumVfolderCreation": "Vous ne pouvez pas créer d'autres dossiers virtuels en raison de la politique de ressources.",
     "NetworkConnectionFailed": "La connexion réseau a échoué. Vérifier l'état du réseau.",
-    "NoCurrentProject": "Aucun projet en cours",
     "NotFoundBasePath": "Non trouvé. Veuillez vérifier votre chemin d'accès à la base.",
     "OnlyIntegersAreAllowed": "Seuls les entiers sont autorisés.",
     "OnlyPositiveIntegersAreAllowed": "Seuls les entiers positifs sont autorisés.",
@@ -1764,7 +1767,6 @@
     "YouCanCreateNotebookCode": "Entrez l'URL du notebook pour créer un code de badge comme ci-dessous que vous pouvez exécuter directement sur Backend.AI."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Le projet actuel a été modifié avec succès.",
     "FailedToImport": "Échec de l'importation de l'artefact(s)",
     "FailedToImportArtifact": "Échec de l'importation de l'artefact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Impossible de récupérer le modèle depuis Hugging Face.",
@@ -1773,8 +1775,7 @@
     "Import": "Importer",
     "ImportToFolder": "Importer dans le dossier",
     "ImportingArtifact": "Importation de l'artefact {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Un projet dédié au Model Store est nécessaire.",
-    "ModelStoreProjectRequiredDescription": "Souhaitez-vous convertir le projet actuel en projet dédié au Model Store ?",
+    "ModelStoreProject": "Projet du magasin de modèles",
     "NoArtifactsSelected": "Aucun artefact sélectionné pour l’importation",
     "OverwriteWarning": "Les fichiers existants seront remplacés si des fichiers portant le même nom existent déjà.",
     "SuccessfullyImported": "Artefact(s) importé(s) avec succès",

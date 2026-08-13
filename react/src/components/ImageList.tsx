@@ -9,18 +9,23 @@ import {
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
 import { getImageFullName } from '../helper';
-import { useBackendAIImageMetaData } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAISelectionLabel from './astryx-bui/BAISelectionLabel';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -30,6 +35,7 @@ import {
   BAIPropertyFilter,
   BAIResourceNumberWithIcon,
   BAITableAstryx,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
   filterOutEmpty,
@@ -47,7 +53,13 @@ import {
   SquarePenIcon,
 } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { Key, useDeferredValue, useState, useTransition } from 'react';
+import {
+  Key,
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -68,7 +80,100 @@ const availableImageSorterValues = [
 const isEnableSorter = (key: string) =>
   _.includes(availableImageSorterKeys, key);
 
-const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+interface ImageListProps {
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3415). The Environments page
+   * owns the (URL-persisted) choice; this component never reads the ambient
+   * current project.
+   *
+   * `null` is NOT an error state: the list then scopes to the whole DOMAIN
+   * (`domain:<domainName>`) and the project becomes an optional filter that
+   * narrows it. See ADR-0001 for why `domain:` and not `system:`.
+   */
+  project: ProjectContextOrNull;
+  /**
+   * Reports the project the user picked — or `null` when the filter is
+   * cleared — in the in-list selector. The project narrows what this list
+   * SHOWS, so the selector is a content-scoped control and lives in this
+   * list's own filter row rather than in the page's card header
+   * (`.claude/rules/use-bai-card.md`).
+   */
+  onChangeProject: (project: ProjectContextOrNull) => void;
+  style?: React.CSSProperties;
+}
+
+const ImageList: React.FC<ImageListProps> = ({
+  project,
+  onChangeProject,
+  style,
+}) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  // `image_nodes(scope_id:)` is NON-NULL, so there is no "omit it" form — but
+  // `ScopeField` accepts `<TYPE>:<ID>` for TYPE in system/domain/project/user
+  // (manager `api/gql_legacy/fields.py`). With no project filter the list
+  // therefore defaults to the caller's own DOMAIN: the widest scope this page
+  // may legitimately show, and an exact match for a domain admin's authority
+  // (`/admin/environment` is `access: 'admin'`). `system:` is deliberately NOT
+  // used — the manager derives it from the caller's own project memberships
+  // and raises `IndexError` for an admin who belongs to zero projects
+  // (`models/image/row.py`). See ADR-0001.
+  const scopeId = project
+    ? `project:${project.id}`
+    : `domain:${baiClient._config.domainName}`;
+
+  const projectSelect = (
+    <BAIFlex gap="xs" align="center" wrap="wrap">
+      <Text color="secondary">{t('general.Project')}</Text>
+      <Suspense fallback={<BAISkeletonAstryx variant="input" size="small" />}>
+        <ProjectSelectForAdminPage
+          data-testid="environment-project-select"
+          domain={baiClient._config.domainName}
+          value={project?.id ?? undefined}
+          // An optional FILTER, not a required choice: clearing it puts the
+          // list back on the domain-wide default. antd routes the clear
+          // through `onChange` with no option, so an absent `projectInfo` IS
+          // the "cleared" signal.
+          allowClear
+          placeholder={t('environment.AllProjects')}
+          style={{ minWidth: 180 }}
+          onSelectProject={(projectInfo) => {
+            onChangeProject(
+              projectInfo
+                ? { id: projectInfo.projectId, name: projectInfo.projectName }
+                : null,
+            );
+          }}
+        />
+      </Suspense>
+    </BAIFlex>
+  );
+
+  return (
+    <ImageListInScope
+      scopeId={scopeId}
+      projectSelect={projectSelect}
+      style={style}
+    />
+  );
+};
+
+interface ImageListInScopeProps {
+  /** `project:<id>` when the filter is active, `domain:<name>` otherwise. */
+  scopeId: string;
+  /** The project filter control, rendered inside the filter row. */
+  projectSelect: React.ReactNode;
+  style?: React.CSSProperties;
+}
+
+const ImageListInScope: React.FC<ImageListInScopeProps> = ({
+  scopeId,
+  projectSelect,
+  style,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -87,7 +192,15 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
-  const currentProject = useCurrentProjectValue();
+
+  // Selected rows belong to one scope. Reset during render rather than
+  // remounting on a `key`, which would discard the deferred scope transition
+  // below (it renders the previous list while the new scope loads).
+  const [selectedRowsScopeId, setSelectedRowsScopeId] = useState(scopeId);
+  if (selectedRowsScopeId !== scopeId) {
+    setSelectedRowsScopeId(scopeId);
+    setSelectedRows([]);
+  }
 
   const {
     baiPaginationOption,
@@ -106,7 +219,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   );
 
   const queryVariables: ImageListQuery$variables = {
-    scopeId: `project:${currentProject.id}`,
+    scopeId,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
@@ -357,91 +470,94 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         gap="sm"
       >
-        <BAIFlex justify="between">
-          <BAIPropertyFilter
-            filterProperties={filterOutEmpty([
-              {
-                key: 'id',
-                propertyLabel: t('environment.ID'),
-                type: 'string',
-                defaultOperator: '==',
-              },
-              {
-                key: 'image',
-                propertyLabel: t('environment.Image'),
-                type: 'string',
-              },
-              {
-                key: 'name',
-                propertyLabel: t('environment.Name'),
-                type: 'string',
-              },
-              {
-                key: 'registry',
-                propertyLabel: t('environment.Registry'),
-                type: 'string',
-              },
-              {
-                key: 'architecture',
-                propertyLabel: t('environment.Architecture'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'x86_64', value: 'x86_64' },
-                  { label: 'aarch64', value: 'aarch64' },
-                ],
-              },
-              {
-                key: 'namespace',
-                propertyLabel: t('environment.Namespace'),
-                type: 'string',
-              },
-              {
-                key: 'base_image_name',
-                propertyLabel: t('environment.BaseImageName'),
-                type: 'string',
-              },
-              {
-                key: 'tag',
-                propertyLabel: t('environment.Tags'),
-                type: 'string',
-              },
-              {
-                key: 'status',
-                propertyLabel: t('environment.Status'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'ALIVE', value: 'ALIVE' },
-                  { label: 'DELETED', value: 'DELETED' },
-                ],
-              },
-              {
-                key: 'type',
-                propertyLabel: t('data.Type'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'COMPUTE', value: 'COMPUTE' },
-                  { label: 'SERVICE', value: 'SERVICE' },
-                  { label: 'SYSTEM', value: 'SYSTEM' },
-                ],
-              },
-              {
-                key: 'is_local',
-                propertyLabel: t('environment.Local'),
-                type: 'boolean',
-              },
-            ])}
-            value={imageFilter || undefined}
-            onChange={(value) => {
-              setImageFilter(value || '');
-              setTablePaginationOption({ current: 1 });
-            }}
-          />
+        <BAIFlex justify="between" gap="xs" wrap="wrap">
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {projectSelect}
+            <BAIPropertyFilter
+              filterProperties={filterOutEmpty([
+                {
+                  key: 'id',
+                  propertyLabel: t('environment.ID'),
+                  type: 'string',
+                  defaultOperator: '==',
+                },
+                {
+                  key: 'image',
+                  propertyLabel: t('environment.Image'),
+                  type: 'string',
+                },
+                {
+                  key: 'name',
+                  propertyLabel: t('environment.Name'),
+                  type: 'string',
+                },
+                {
+                  key: 'registry',
+                  propertyLabel: t('environment.Registry'),
+                  type: 'string',
+                },
+                {
+                  key: 'architecture',
+                  propertyLabel: t('environment.Architecture'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'x86_64', value: 'x86_64' },
+                    { label: 'aarch64', value: 'aarch64' },
+                  ],
+                },
+                {
+                  key: 'namespace',
+                  propertyLabel: t('environment.Namespace'),
+                  type: 'string',
+                },
+                {
+                  key: 'base_image_name',
+                  propertyLabel: t('environment.BaseImageName'),
+                  type: 'string',
+                },
+                {
+                  key: 'tag',
+                  propertyLabel: t('environment.Tags'),
+                  type: 'string',
+                },
+                {
+                  key: 'status',
+                  propertyLabel: t('environment.Status'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'ALIVE', value: 'ALIVE' },
+                    { label: 'DELETED', value: 'DELETED' },
+                  ],
+                },
+                {
+                  key: 'type',
+                  propertyLabel: t('data.Type'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'COMPUTE', value: 'COMPUTE' },
+                    { label: 'SERVICE', value: 'SERVICE' },
+                    { label: 'SYSTEM', value: 'SYSTEM' },
+                  ],
+                },
+                {
+                  key: 'is_local',
+                  propertyLabel: t('environment.Local'),
+                  type: 'boolean',
+                },
+              ])}
+              value={imageFilter || undefined}
+              onChange={(value) => {
+                setImageFilter(value || '');
+                setTablePaginationOption({ current: 1 });
+              }}
+            />
+          </BAIFlex>
           <BAIFlex gap={'xs'}>
             {selectedRows.length > 0 ? (
               <BAISelectionLabel
@@ -561,14 +677,23 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         imageFrgmt={managingApp}
       />
-      <ImageInstallModal
-        open={isOpenInstallModal}
-        onRequestClose={() => {
-          setIsOpenInstallModal(false);
-        }}
-        setInstallingImages={setInstallingImages}
-        selectedRows={selectedRows}
-      />
+      {/* No project is handed down: installing an image enqueues a session,
+          and the modal asks for that session's own project and resource group.
+          The list's project filter only decides which images are on screen.
+          Wrapped in `BAIUnmountAfterClose` so the modal keeps its exit
+          animation instead of vanishing instantly, while still fully
+          unmounting between opens - which is what resets the project /
+          resource-group selectors on every fresh open. */}
+      <BAIUnmountAfterClose>
+        <ImageInstallModal
+          open={isOpenInstallModal}
+          onRequestClose={() => {
+            setIsOpenInstallModal(false);
+          }}
+          setInstallingImages={setInstallingImages}
+          selectedRows={selectedRows}
+        />
+      </BAIUnmountAfterClose>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

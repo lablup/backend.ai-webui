@@ -7,8 +7,8 @@
  * (extracted into `WebUIHeaderProjectSelect`) must not be mounted on the
  * project-agnostic routes (`PROJECT_AGNOSTIC_MENU_KEYS` — decided by
  * `useIsProjectAgnosticPage` off the route `handle.menuKey`) and must be
- * mounted everywhere else, including the admin pages that still depend on the
- * ambient project (`environment`, `reservoir`, `admin-dashboard`).
+ * mounted everywhere else, including the one admin page that still depends on
+ * the ambient project (`admin-dashboard`).
  *
  * External behavior only: routes in → selector block mounted / not mounted.
  * The selector itself is stubbed; its internals are not under test here.
@@ -88,6 +88,9 @@ describe('WebUIHeader project selector gating (FR-3414)', () => {
     ['/admin/data', 'admin-data'],
     // Widened in FR-3414 — note `credential` lives at `/admin/users`.
     ['/admin/users', 'credential'],
+    // Widened in FR-3415 — both now have in-page project selection.
+    ['/admin/environment', 'environment'],
+    ['/admin/reservoir', 'reservoir'],
     ['/admin/resource-policy', 'resource-policy'],
     ['/admin/agent', 'agent'],
     ['/admin/project', 'project'],
@@ -117,9 +120,7 @@ describe('WebUIHeader project selector gating (FR-3414)', () => {
   it.each([
     ['/project/default/data', { scope: 'project', menuKey: 'data' }],
     ['/project/default/session', { scope: 'project', menuKey: 'session' }],
-    // Admin pages that still genuinely depend on the ambient project.
-    ['/admin/environment', { scope: 'admin', menuKey: 'environment' }],
-    ['/admin/reservoir', { scope: 'admin', menuKey: 'reservoir' }],
+    // The only admin page that still genuinely depends on the ambient project.
     ['/admin/dashboard', { scope: 'admin', menuKey: 'admin-dashboard' }],
   ])('mounts the project selector block on %s', (path, handle) => {
     renderHeaderAt(path, handle);

@@ -1046,6 +1046,7 @@
     "AutoScaling": "自動擴縮容",
     "AutoScalingRules": "自動擴縮容規則",
     "BasicInformation": "基本資訊",
+    "CannotResolveDeploymentProject": "無法確定此部署所屬的專案，因此已停用新增修訂。",
     "ClusterMode": "叢集模式",
     "ClusterModeTooltip": "副本計算工作階段的叢集布局，格式為「模式 / 大小」。單一表示一個容器；多節點將工作負載分散到多個 agent。",
     "ClusterSize": "叢集大小",
@@ -1241,8 +1242,7 @@
         "Revision": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。",
         "RevisionHistory": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。"
       }
-    },
-    "CannotResolveDeploymentProject": "無法確定此部署所屬的專案，因此已停用新增修訂。"
+    }
   },
   "desktopNotification": {
     "NotSupported": "該瀏覽器不支持通知。",
@@ -1416,6 +1416,7 @@
   },
   "environment": {
     "Action": "行動",
+    "AllProjects": "全部專案",
     "AlreadyInstalledImage": "已安装的图像",
     "AppInfoDeleted": "應用信息刪除成功。",
     "AppName": "應用名稱",
@@ -1433,6 +1434,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "圖像連接埠修改成功",
     "DescImageResourceModified": "資源限製成功修改",
+    "DescInstallRunsSession": "安裝映像檔會排入一個短暫的會話來拉取映像檔。請選擇執行該會話的專案，以及拉取映像檔的目標資源群組。",
     "DescProblemOccurred": "安裝過程中出現問題",
     "DescServicePortModified": "服務端口修改成功",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1447,10 +1449,13 @@
     "Images": "圖片",
     "Install": "安裝",
     "InstallImage": "安裝映像",
+    "InstallSessionProject": "安裝會話專案",
+    "InstallSessionProjectTooltip": "安裝會話將在此專案中以您本人的會話建立，因此僅列出您所屬的專案。",
+    "InstallTargetResourceGroup": "目標資源群組",
+    "InstallTargetResourceGroupTooltip": "映像檔將被拉取到此資源群組。僅列出所選專案可存取的資源群組。",
     "Installed": "已安裝",
     "InstalledImagesAreExcluded": "不包括已安装的图像。",
     "Installing": "安裝",
-    "InstallingImage": "安裝：",
     "Language": "語",
     "Local": "本機",
     "ManageApps": "管理應用程序",
@@ -1480,7 +1485,6 @@
     "SuccessfullyCreated": "建立成功",
     "SuccessfullyModified": "修改成功",
     "Tags": "標籤",
-    "TakesTime": ".這需要時間，所以喝杯咖啡吧！",
     "Version": "版本"
   },
   "error": {
@@ -1504,7 +1508,6 @@
     "LoginSucceededManagerNotResponding": "登錄成功，但經理沒有響應。",
     "MaximumVfolderCreation": "由于资源政策原因，无法创建更多 v 文件夹",
     "NetworkConnectionFailed": "网络连接失败。检查网络状态。",
-    "NoCurrentProject": "沒有當前項目",
     "NotFoundBasePath": "未找到。请检查您的基本路径。",
     "OnlyIntegersAreAllowed": "只允許整數。",
     "OnlyPositiveIntegersAreAllowed": "僅允許積極的整數。",
@@ -1766,7 +1769,6 @@
     "YouCanCreateNotebookCode": "此徽章可讓您的筆記本在 Backend.AI 上直接執行。複製程式碼以在任何地方使用。"
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "已成功變更目前專案。",
     "FailedToImport": "無法匯入工件",
     "FailedToImportArtifact": "無法匯入工件 {{ name }}（{{ version }}）",
     "FailedToImportModelFromHuggingFace": "無法從 Hugging Face 取得模型。",
@@ -1775,8 +1777,7 @@
     "Import": "匯入",
     "ImportToFolder": "匯入至資料夾",
     "ImportingArtifact": "正在匯入工件 {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "需要一個專門用於模型商店的專案",
-    "ModelStoreProjectRequiredDescription": "是否要將目前專案轉為僅供模型商店使用？",
+    "ModelStoreProject": "模型店專案",
     "NoArtifactsSelected": "未選取任何要匯入的項目",
     "OverwriteWarning": "若已存在同名檔案，現有檔案將被覆蓋。",
     "SuccessfullyImported": "已成功匯入產出物",

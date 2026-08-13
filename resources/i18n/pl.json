@@ -1045,6 +1045,7 @@
     "AutoScaling": "Automatyczne skalowanie",
     "AutoScalingRules": "Reguły automatycznego skalowania",
     "BasicInformation": "Podstawowe informacje",
+    "CannotResolveDeploymentProject": "Nie można ustalić projektu, do którego należy to wdrożenie, dlatego dodawanie rewizji jest wyłączone.",
     "ClusterMode": "Tryb klastra",
     "ClusterModeTooltip": "Układ klastrowania dla sesji obliczeniowej repliki w formacie \"tryb / rozmiar\". Pojedynczy oznacza jeden kontener; Wielowęzłowy rozkłada obciążenie na wielu agentów.",
     "ClusterSize": "Rozmiar klastra",
@@ -1240,8 +1241,7 @@
         "Revision": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich.",
         "RevisionHistory": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich."
       }
-    },
-    "CannotResolveDeploymentProject": "Nie można ustalić projektu, do którego należy to wdrożenie, dlatego dodawanie rewizji jest wyłączone."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",
@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "Akcja",
+    "AllProjects": "Wszystkie projekty",
     "AlreadyInstalledImage": "Już zainstalowany obraz",
     "AppInfoDeleted": "Informacje o aplikacji zostały pomyślnie usunięte.",
     "AppName": "Nazwa aplikacji",
@@ -1432,6 +1433,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Pomyślnie zmodyfikowano porty obrazu",
     "DescImageResourceModified": "Limit zasobów został pomyślnie zmodyfikowany",
+    "DescInstallRunsSession": "Instalacja obrazu dodaje do kolejki krótkotrwałą sesję, która pobiera obraz. Wybierz projekt, w którym sesja zostanie uruchomiona, oraz grupę zasobów, do której obraz zostanie pobrany.",
     "DescProblemOccurred": "Wystąpił problem podczas instalacji",
     "DescServicePortModified": "Pomyślnie zmodyfikowano port serwisowy",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1446,10 +1448,13 @@
     "Images": "Obrazy",
     "Install": "zainstalować",
     "InstallImage": "Zainstaluj obraz",
+    "InstallSessionProject": "Projekt sesji instalacji",
+    "InstallSessionProjectTooltip": "Sesja instalacji jest tworzona w tym projekcie jako Twoja własna sesja, dlatego wyświetlane są tylko projekty, do których należysz.",
+    "InstallTargetResourceGroup": "Docelowa grupa zasobów",
+    "InstallTargetResourceGroupTooltip": "Obraz jest pobierany do tej grupy zasobów. Wyświetlane są tylko grupy zasobów dostępne z wybranego projektu.",
     "Installed": "zainstalowany",
     "InstalledImagesAreExcluded": "Zainstalowane obrazy są wykluczone.",
     "Installing": "instalowanie",
-    "InstallingImage": "Instalowanie:",
     "Language": "Język",
     "Local": "Lokalny",
     "ManageApps": "Zarządzać aplikacjami",
@@ -1480,7 +1485,6 @@
     "SuccessfullyCreated": "Pomyślnie utworzono",
     "SuccessfullyModified": "Pomyślnie zmodyfikowano",
     "Tags": "Tagi",
-    "TakesTime": ". Potrzeba czasu, więc napij się kawy!",
     "Version": "Wersja"
   },
   "error": {
@@ -1504,7 +1508,6 @@
     "LoginSucceededManagerNotResponding": "Logowanie powiodło się, ale menedżer nie odpowiada.",
     "MaximumVfolderCreation": "Nie można utworzyć więcej folderów wirtualnych ze względu na zasady dotyczące zasobów",
     "NetworkConnectionFailed": "Połączenie sieciowe nie powiodło się. Sprawdź stan sieci.",
-    "NoCurrentProject": "Brak bieżącego projektu",
     "NotFoundBasePath": "Nie znaleziono. Sprawdź ścieżkę podstawową.",
     "OnlyIntegersAreAllowed": "Dozwolone są tylko liczby całkowite.",
     "OnlyPositiveIntegersAreAllowed": "Dozwolone są tylko pozytywne liczby całkowite.",
@@ -1764,7 +1767,6 @@
     "YouCanCreateNotebookCode": "Ta odznaka umożliwia bezpośrednie uruchamianie Twojego notatnika na Backend.AI. Skopiuj kod, aby użyć go w dowolnym miejscu."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Pomyślnie zmieniono bieżący projekt.",
     "FailedToImport": "Nie udało się zaimportować artefaktu(ów)",
     "FailedToImportArtifact": "Nie udało się zaimportować artefaktu {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Nie udało się pobrać modelu z Hugging Face.",
@@ -1773,8 +1775,7 @@
     "Import": "Importuj",
     "ImportToFolder": "Importuj do folderu",
     "ImportingArtifact": "Importowanie artefaktu {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Wymagany jest projekt dedykowany sklepowi z modelami.",
-    "ModelStoreProjectRequiredDescription": "Czy chcesz przekształcić bieżący projekt w projekt przeznaczony wyłącznie dla Model Store?",
+    "ModelStoreProject": "Projekt sklepu modelarskiego",
     "NoArtifactsSelected": "Nie wybrano żadnych artefaktów do importu",
     "OverwriteWarning": "Istniejące pliki o tej samej nazwie zostaną nadpisane.",
     "SuccessfullyImported": "Pomyślnie zaimportowano artefakt(ów)",

@@ -1045,6 +1045,7 @@
     "AutoScaling": "Автоматическое масштабирование",
     "AutoScalingRules": "Правила автоматического масштабирования",
     "BasicInformation": "Основная информация",
+    "CannotResolveDeploymentProject": "Не удаётся определить проект, к которому относится это развёртывание, поэтому добавление ревизии отключено.",
     "ClusterMode": "Режим кластера",
     "ClusterModeTooltip": "Схема кластеризации вычислительного сеанса реплики в формате «режим / размер». Одиночный означает один контейнер; Многоузловой распределяет нагрузку между несколькими агентами.",
     "ClusterSize": "Размер кластера",
@@ -1240,8 +1241,7 @@
         "Revision": "Просматривайте прошлые ревизии развёртывания и откатывайтесь до любой из них.",
         "RevisionHistory": "Просматривайте прошлые ревизии развёртывания и откатывайтесь к любой из них."
       }
-    },
-    "CannotResolveDeploymentProject": "Не удаётся определить проект, к которому относится это развёртывание, поэтому добавление ревизии отключено."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Этот браузер не поддерживает уведомления.",
@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "Действие",
+    "AllProjects": "Все проекты",
     "AlreadyInstalledImage": "Уже установленный образ",
     "AppInfoDeleted": "Информация о приложении успешно удалена.",
     "AppName": "Имя приложения",
@@ -1432,6 +1433,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Порты изображений успешно изменены",
     "DescImageResourceModified": "Лимит ресурсов успешно изменен",
+    "DescInstallRunsSession": "Установка образа помещает в очередь короткую сессию, которая загружает образ. Выберите проект, в котором будет выполняться сессия, и группу ресурсов, в которую будет загружен образ.",
     "DescProblemOccurred": "Проблема возникла во время установки",
     "DescServicePortModified": "Сервисный порт успешно изменен",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1446,10 +1448,13 @@
     "Images": "Изображений",
     "Install": "Установить",
     "InstallImage": "Установить образ",
+    "InstallSessionProject": "Проект сессии установки",
+    "InstallSessionProjectTooltip": "Сессия установки создаётся в этом проекте как ваша собственная сессия, поэтому отображаются только проекты, в которых вы состоите.",
+    "InstallTargetResourceGroup": "Целевая группа ресурсов",
+    "InstallTargetResourceGroupTooltip": "Образ загружается в эту группу ресурсов. Отображаются только группы ресурсов, доступные из выбранного проекта.",
     "Installed": "установлены",
     "InstalledImagesAreExcluded": "Установленные образы исключены.",
     "Installing": "установка",
-    "InstallingImage": "Установка:",
     "Language": "Язык",
     "Local": "Локальный",
     "ManageApps": "Управление приложениями",
@@ -1479,7 +1484,6 @@
     "SuccessfullyCreated": "Успешно создано",
     "SuccessfullyModified": "Успешно изменено",
     "Tags": "Теги",
-    "TakesTime": ". Это требует времени, так что выпейте чашечку кофе!",
     "Version": "Версия"
   },
   "error": {
@@ -1503,7 +1507,6 @@
     "LoginSucceededManagerNotResponding": "Вход выполнен успешно, но менеджер не отвечает.",
     "MaximumVfolderCreation": "Создание дополнительных VFolders невозможно из-за политики ресурсов",
     "NetworkConnectionFailed": "Не удалось установить сетевое соединение. Проверьте состояние сети.",
-    "NoCurrentProject": "Нет текущего проекта",
     "NotFoundBasePath": "Не найдено. Пожалуйста, проверьте путь к вашей базе.",
     "OnlyIntegersAreAllowed": "Разрешены только целые числа.",
     "OnlyPositiveIntegersAreAllowed": "Разрешены только положительные целые числа.",
@@ -1763,7 +1766,6 @@
     "YouCanCreateNotebookCode": "Этот значок позволяет запускать ваш ноутбук напрямую на Backend.AI. Скопируйте код, чтобы использовать его где угодно."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Текущий проект успешно изменён.",
     "FailedToImport": "Не удалось импортировать артефакт(ы)",
     "FailedToImportArtifact": "Не удалось импортировать артефакт {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Не удалось получить модель с Hugging Face.",
@@ -1772,8 +1774,7 @@
     "Import": "Импорт",
     "ImportToFolder": "Импорт в папку",
     "ImportingArtifact": "Импортируется артефакт {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Требуется отдельный проект для Model Store.",
-    "ModelStoreProjectRequiredDescription": "Перевести текущий проект в проект, предназначенный только для хранилища моделей?",
+    "ModelStoreProject": "Проект модельного магазина",
     "NoArtifactsSelected": "Нет выбранных артефактов для импорта",
     "OverwriteWarning": "Файлы с теми же именами будут перезаписаны, если они уже существуют.",
     "SuccessfullyImported": "Артефакты успешно импортированы",

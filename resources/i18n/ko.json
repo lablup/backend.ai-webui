@@ -1045,6 +1045,7 @@
     "AutoScaling": "오토스케일링",
     "AutoScalingRules": "오토스케일링 규칙",
     "BasicInformation": "기본 정보",
+    "CannotResolveDeploymentProject": "이 배포가 속한 프로젝트를 확인할 수 없어 리비전 추가가 비활성화되었습니다.",
     "ClusterMode": "클러스터 모드",
     "ClusterModeTooltip": "복제본 컴퓨트 세션의 클러스터링 구성으로 \"모드 / 크기\" 형식으로 표시됩니다. \"Single\" 모드는 컨테이너 한 개를 사용하고, \"Multi-node\" 모드는 여러 에이전트에 워크로드를 분산합니다.",
     "ClusterSize": "클러스터 크기",
@@ -1240,8 +1241,7 @@
         "Revision": "현재 적용된 리비전과 설정을 확인합니다.",
         "RevisionHistory": "현재 적용된 리비전과 설정을 확인합니다."
       }
-    },
-    "CannotResolveDeploymentProject": "이 배포가 속한 프로젝트를 확인할 수 없어 리비전 추가가 비활성화되었습니다."
+    }
   },
   "desktopNotification": {
     "NotSupported": "현재 브라우저에서는 알림 기능을 지원하지 않습니다. ",
@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "동작",
+    "AllProjects": "전체 프로젝트",
     "AlreadyInstalledImage": "이미 설치된 이미지입니다.",
     "AppInfoDeleted": "선택한 앱 정보가 삭제되었습니다.",
     "AppName": "앱 이름",
@@ -1432,6 +1433,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "이미지 포트가 수정되었습니다.",
     "DescImageResourceModified": "리소스 제한이 수정되었습니다.",
+    "DescInstallRunsSession": "이미지 설치는 이미지를 내려받는 짧은 세션을 대기열에 등록하는 방식으로 동작합니다. 세션을 실행할 프로젝트와 이미지를 내려받을 자원 그룹을 선택하세요.",
     "DescProblemOccurred": "설치 중 오류가 발생했습니다",
     "DescServicePortModified": "서비스 포트 수정이 완료되었습니다.",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1446,10 +1448,13 @@
     "Images": "이미지",
     "Install": "설치",
     "InstallImage": "이미지 설치",
+    "InstallSessionProject": "설치 세션 프로젝트",
+    "InstallSessionProjectTooltip": "설치 세션은 이 프로젝트에서 본인 소유의 세션으로 생성되므로, 소속된 프로젝트만 표시됩니다.",
+    "InstallTargetResourceGroup": "대상 자원 그룹",
+    "InstallTargetResourceGroupTooltip": "이미지는 이 자원 그룹으로 내려받습니다. 선택한 프로젝트에서 접근할 수 있는 자원 그룹만 표시됩니다.",
     "Installed": "설치 완료",
     "InstalledImagesAreExcluded": "설치된 이미지는 제외되었습니다.",
     "Installing": "설치 중",
-    "InstallingImage": "설치 중인 이미지: ",
     "Language": "언어",
     "Local": "로컬",
     "ManageApps": "앱 관리",
@@ -1479,7 +1484,6 @@
     "SuccessfullyCreated": "생성되었습니다",
     "SuccessfullyModified": "수정되었습니다.",
     "Tags": "태그",
-    "TakesTime": ". 시간이 다소 소요될 예정입니다. 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요.",
     "Version": "버전"
   },
   "error": {
@@ -1503,7 +1507,6 @@
     "LoginSucceededManagerNotResponding": "로그인은 성공했으나 매니저 서버가 응답하지 않습니다.",
     "MaximumVfolderCreation": "자원 정책에 따라 더 이상 폴더를 만들 수 없습니다.",
     "NetworkConnectionFailed": "네트워크 연결 실패. 네트워크 상태를 확인하세요.",
-    "NoCurrentProject": "현재 프로젝트가 없습니다",
     "NotFoundBasePath": "찾을 수 없습니다. 기본 경로를 확인하세요.",
     "OnlyIntegersAreAllowed": "정수만 허용됩니다.",
     "OnlyPositiveIntegersAreAllowed": "양의 정수만 허용됩니다.",
@@ -1765,7 +1768,6 @@
     "YouCanCreateNotebookCode": "입력한 노트북을 Backend.AI에서 바로 실행할 수 있는 배지입니다. 코드를 복사해서 사용해보세요."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "현재 프로젝트를 변경했습니다.",
     "FailedToImport": "아티팩트 가져오기에 실패했습니다.",
     "FailedToImportArtifact": "아티팩트 {{ name }} ({{ version }})를 가져오는 데 실패했습니다.",
     "FailedToImportModelFromHuggingFace": "허깅 페이스에서 모델을 가져오는데 실패했습니다.",
@@ -1774,8 +1776,7 @@
     "Import": "가져오기",
     "ImportToFolder": "폴더로 가져오기",
     "ImportingArtifact": "아티팩트 {{name}} ({{version}}) 가져오는 중...",
-    "ModelStoreProjectRequired": "모델 스토어 전용 프로젝트가 필요합니다",
-    "ModelStoreProjectRequiredDescription": "현재 프로젝트를 모델 스토어 전용 프로젝트로 전환하시겠습니까?",
+    "ModelStoreProject": "모델 스토어 프로젝트",
     "NoArtifactsSelected": "가져올 아티팩트가 선택되지 않았습니다",
     "OverwriteWarning": "동일한 이름의 파일이 이미 존재할 경우 기존 파일이 덮어써집니다.",
     "SuccessfullyImported": "아티팩트를 가져왔습니다.",
