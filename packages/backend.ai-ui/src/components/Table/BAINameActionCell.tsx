@@ -14,7 +14,6 @@ import {
 import { Popover } from '@astryxdesign/core/Popover';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useRef, useState, useTransition } from 'react';
@@ -501,20 +500,6 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 ? 'bai-nac-action-button-danger'
                 : 'bai-nac-action-button-default';
 
-            const button = (
-              <BAIButton
-                type="text"
-                size="small"
-                icon={action.icon}
-                aria-label={action.title}
-                disabled={action.disabled}
-                className={buttonClassName}
-                style={action.style}
-                onClick={action.onClick}
-                action={action.action}
-              />
-            );
-
             if (action.popConfirm && !action.disabled) {
               return (
                 <ConfirmPopoverButton
@@ -525,16 +510,23 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 />
               );
             }
+            // FR-3423: the tooltip must ride the button itself (`title` →
+            // Astryx `tooltip`), which keeps a disabled control focusable via
+            // `aria-disabled` so keyboard users can still reach the reason.
             return (
-              <Tooltip
+              <BAIButton
                 key={action.key}
-                content={action.disabled ? action.disabledReason : action.title}
-                isEnabled={
-                  !!(action.disabled ? action.disabledReason : action.title)
-                }
-              >
-                {button}
-              </Tooltip>
+                type="text"
+                size="small"
+                icon={action.icon}
+                aria-label={action.title}
+                title={action.disabled ? action.disabledReason : action.title}
+                disabled={action.disabled}
+                className={buttonClassName}
+                style={action.style}
+                onClick={action.onClick}
+                action={action.action}
+              />
             );
           })}
           {hasMoreMenu && (

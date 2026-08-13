@@ -13,9 +13,8 @@ import useUserUsageStats from '../hooks/useUserUsageStats';
 import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
 import './AllocationHistoryStatistics.css';
-import BAICardAstryx from './astryx-bui/BAICardAstryx';
 import { Heading } from '@astryxdesign/core/Heading';
-import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
+import { BAICard, BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
@@ -39,7 +38,7 @@ interface GraphCardProps {
   tooltipText?: string;
   children: React.ReactNode;
 }
-// PILOT-DECISION: antd `Card type="inner"` -> `BAICardAstryx` (MAPPING §5.1 —
+// PILOT-DECISION: antd `Card type="inner"` -> BUI `BAICard` (MAPPING §5.1 —
 // Astryx `Card` is a bare surface, the header is composition). antd's inner
 // variant differed from the outer one by a tinted header strip, a 14px title
 // and 16px body padding; Astryx has no header strip to tint, so the two
@@ -53,7 +52,7 @@ interface GraphCardProps {
 // titles this inner card sits under, i.e. an inverted hierarchy. 16px is the
 // nearest rung and lines this up with every other card title.
 export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
-  <BAICardAstryx
+  <BAICard
     padding={4}
     width="100%"
     title={
@@ -66,7 +65,7 @@ export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
     }
   >
     {children}
-  </BAICardAstryx>
+  </BAICard>
 );
 
 interface UsageBarChartProps {

@@ -20,8 +20,6 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
-import BAICard from '../components/astryx-bui/BAICardAstryx';
-import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
 import BAIVFolderDeleteButtonV2 from '../components/astryx-bui/BAIVFolderDeleteButtonV2Astryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -40,7 +38,9 @@ import {
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
   // here until the PowerSearch generalization covers the object-filter DSL.
+  BAICard,
   BAIGraphQLPropertyFilter,
+  BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx.
- - Modal shell: `BAIModalAstryx` with the custom `headerContent` slot (the
+ - Modal shell: BUI `BAIModal` with the custom `headerContent` slot (the
    explorer header is JSX — identicon + editable name + action buttons — and
    Astryx `DialogHeader.title` is a plain string, P2) and `bodyRef` (the file
    drag-and-drop container).
@@ -38,8 +38,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import { VStack } from '@astryxdesign/core/Stack';
@@ -48,6 +46,8 @@ import {
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAILink,
+  BAIModal,
+  type BAIModalProps,
   BAIUnmountAfterClose,
   useFetchKey,
   useInterval,
@@ -430,8 +430,10 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       // `Layout` restores the legacy proportion: the dialog cap minus the
       // dialog's own block padding, which the theme publishes as
       // `--astryx-dialog-padding-block-*` on `.astryx-dialog`.
-      style={{
-        minHeight: `calc(${EXPLORER_MAX_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`,
+      styles={{
+        container: {
+          minHeight: `calc(${EXPLORER_MAX_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`,
+        },
       }}
       headerContent={
         vfolderNode ? (
@@ -453,6 +455,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       }
       closeLabel={t('button.Close')}
       bodyRef={bodyRef}
+      maskClosable={false}
+      footer={null}
       isOpen={modalProps.open}
       onOpenChange={(next) => {
         if (!next) onRequestClose();
