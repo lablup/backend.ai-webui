@@ -1,15 +1,12 @@
 /* Astryx foundation (to-astryx ticket 01).
-   The `@layer` order statement MUST be the first rule in the global CSS so
-   Astryx's prebuilt layered sheets slot deterministically. Compiled StyleX
-   (`xstyle` / `stylex.props`) output is emitted UNLAYERED and therefore
-   outranks every named layer — which is what makes `xstyle` overrides win
-   over Astryx component base styles. During antd coexistence, do NOT add any
-   unlayered global reset (e.g. `antd/dist/reset.css`): unlayered globals
-   beat every Astryx layer and visibly break its components. */
-/* KEEP IN SYNC with `packages/backend.ai-ui/src/styles/backend.ai-ui.css`,
-   which repeats this list because BUI's own sheet is often the first layered
-   CSS in the bundle (ticket 30). Identical statements are idempotent; a
-   divergent one silently hands the order to whichever loads first. */
+   Defensive duplicate — the AUTHORITATIVE order statement is the inline
+   `<style>` at the top of the project-root `index.html`; a JS-imported CSS
+   module parses at a position that differs between dev and build, so it
+   cannot own the order. Identical statements are idempotent; keep this one,
+   `packages/backend.ai-ui/src/styles/backend.ai-ui.css` and index.html
+   BYTE-IDENTICAL — a divergent list hands the order to whichever loads first.
+   Do NOT add an unlayered global reset here: unlayered globals beat every
+   Astryx layer and visibly break its components. */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
 @import '@astryxdesign/core/reset.css';

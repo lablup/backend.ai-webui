@@ -30,13 +30,14 @@
  * That relative order only holds if the FULL order is declared before any
  * layered rule appears, because layer precedence is fixed by first appearance
  * and later `@layer` statements can only append names, never reorder ones
- * already seen. Since `src/index.ts` imports this file first, BUI's CSS is
- * frequently the first layered sheet in the bundle — so the statement lives
- * here as well as in the app.
+ * already seen. The app declares it authoritatively in the project-root
+ * `index.html`; this copy is what covers a consumer loading BUI's `dist`
+ * without that HTML.
  *
- * !! KEEP IN SYNC with `react/src/index.css`, which declares the identical
- * !! list. Two identical statements are idempotent (the second is a no-op);
- * !! two DIFFERENT ones silently give you whichever loads first.
+ * !! KEEP IN SYNC with the project-root `index.html` and `react/src/index.css`,
+ * !! which declare the identical list. Two identical statements are idempotent
+ * !! (the second is a no-op); two DIFFERENT ones silently give you whichever
+ * !! loads first.
  */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
