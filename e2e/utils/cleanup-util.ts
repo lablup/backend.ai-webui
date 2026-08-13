@@ -200,7 +200,7 @@ export async function sweepVFolders(
   for (let i = 0; i < maxIterations; i++) {
     await navigateTo(page, dataPath);
     await page
-      .getByRole('tab', { name: 'Active' })
+      .getByRole('tab', { name: /^Active/ })
       .click()
       .catch(() => {});
     const name = await firstActionableVFolderName(page, pattern, activeSkip, {
@@ -228,7 +228,7 @@ export async function sweepVFolders(
   for (let i = 0; i < maxIterations; i++) {
     await navigateTo(page, dataPath);
     await page
-      .getByRole('tab', { name: 'Trash' })
+      .getByRole('tab', { name: /^Trash/ })
       .click()
       .catch(() => {});
     const name = await firstActionableVFolderName(page, pattern, trashSkip, {

@@ -186,8 +186,11 @@ async function setupPresetCreatePage(
   await resourcesCard
     .getByRole('spinbutton', { name: 'CPU', exact: true })
     .fill('4');
+  // The mem input (BAIDynamicUnitInputNumber) has no field label of its own;
+  // its accessible name is BUI's doubled generic fallback "Select Select"
+  // (group label + inner label). TODO: give the call site a real label.
   await resourcesCard
-    .getByRole('spinbutton', { name: 'Select', exact: true })
+    .getByRole('spinbutton', { name: 'Select Select', exact: true })
     .fill('16');
   await selectComplexSelectOption(page, 'Image', MOCK_IMAGE_OPTION_LABEL);
 

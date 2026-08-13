@@ -557,7 +557,11 @@ export async function verifyVFolder(
 ) {
   // Use navigateTo for reliable navigation regardless of current page state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: statusTab }).click();
+  // The Active/Trash tabs render a count Badge in their endContent when any
+  // folder exists, which joins the tab's accessible name ("Active 3") — so a
+  // whole-string name match fails exactly when there is something to clean
+  // up. Match on the label prefix instead (all tab sites below do the same).
+  await page.getByRole('tab', { name: new RegExp(`^${statusTab}`) }).click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   const row = getVFolderRow(page, folderName);
@@ -622,7 +626,7 @@ export async function moveToTrashAndVerify(
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page.getByRole('tab', { name: /^Active/ }).click();
   await selectPropertyFilter(page, 'Name', folderName);
 
   // Fail fast (with a bounded wait) if the folder is not in Active — for example,
@@ -685,7 +689,7 @@ export async function deleteForeverAndVerifyFromTrash(
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: 'Trash' }).click();
+  await page.getByRole('tab', { name: /^Trash/ }).click();
 
   // Clear any existing filters before searching for the folder to delete
   await clearAllFilters(page);
@@ -933,7 +937,7 @@ export async function leaveSharedFolderAndVerify(
   folderName: string,
 ) {
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page.getByRole('tab', { name: /^Active/ }).click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
 
@@ -974,7 +978,7 @@ export async function leaveSharedFolderAndVerify(
   // This mirrors how the other *AndVerify helpers force a clean reload before
   // asserting a row's disappearance.
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page.getByRole('tab', { name: /^Active/ }).click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   await expect(
@@ -985,7 +989,7 @@ export async function leaveSharedFolderAndVerify(
 
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Trash' }).click();
+  await page.getByRole('tab', { name: /^Trash/ }).click();
 
   // Clear any existing filters before searching
   await clearAllFilters(page);
