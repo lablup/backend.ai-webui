@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Nama folder pemasangan otomatis harus dimulai dengan tanda titik ('.').",
     "AutomountFolders": "Folder yang Dipasang Otomatis",
     "BelongsToDifferentProject": "Folder ini milik proyek lain.",
+    "CannotLaunchSessionInAdminMenu": "Sesi tidak dapat dijalankan dari menu admin.",
     "CloningIsOnlyPossibleSameHost": "Saat ini, kloning hanya dapat dilakukan pada host yang sama.",
     "Create": "Buat",
     "CreateANewStorageFolder": "Buat folder penyimpanan baru",

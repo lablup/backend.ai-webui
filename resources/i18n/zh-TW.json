@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "自动挂载文件夹的名称必须以点（'.'）开头。",
     "AutomountFolders": "自動掛載文件夾",
     "BelongsToDifferentProject": "此資料夾屬於其他專案。",
+    "CannotLaunchSessionInAdminMenu": "無法從管理員選單啟動會話。",
     "CloningIsOnlyPossibleSameHost": "目前，克隆只能在同一主機上進行。",
     "Create": "創造",
     "CreateANewStorageFolder": "創建一個新的存儲文件夾",
