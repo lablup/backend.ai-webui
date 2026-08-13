@@ -302,7 +302,7 @@ async function setupLegacyPresetCreatePage(
   // Wait for the selection to commit before asserting the negative below —
   // otherwise "not visible yet" and "legacy layout" are indistinguishable.
   await expect(
-    page.getByRole('button', { name: 'Runtime', exact: true }),
+    page.getByRole('button', { name: 'Runtime info', exact: true }),
   ).toContainText('custom', { timeout: 10000 });
 
   // Legacy: unlike the nullable-capable path, Service Configuration is NOT
