@@ -860,6 +860,7 @@
       "AdminDataPageAlert": "Na stronie Dane administratora można tworzyć tylko foldery projektu.",
       "CannotDeleteFolder": "Nie można usunąć folderu zamontowanego w co najmniej jednej sesji. Najpierw zakończ sesję.",
       "CannotDeletePipelineFolder": "Nie możesz usunąć folderów rurociągów.",
+      "CannotDeployFromAdminMenu": "Wdrożenia są tworzone ze strony Dane danego projektu; menu administratora tego nie obsługuje.",
       "CannotRestorePipelineFolder": "Nie możesz przywrócić folderów rurociągów.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Nie można utworzyć folderu automatycznego montowania jako folderu projektu.",
       "CloneAFolder": "Sklonuj folder",

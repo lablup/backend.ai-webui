@@ -137,16 +137,15 @@ interface VFolderNameCellProps {
    */
   onStartServiceFallback: (vfolderId: string) => void;
   /**
-   * Whether the deploy row action is offered at all. A deployment is created
-   * inside a specific project, so a page without a project context has no
-   * valid target and must not surface the action.
-   *
-   * TODO(FR-3423): #8494 replaces this with a visible-but-disabled action
-   * carrying an explanatory tooltip (`noDeployTooltip`). Reconcile when that
-   * PR lands — it deliberately does not infer the admin context from
-   * `project` being `null`.
+   * When set, the "Deploy as service" row action renders disabled with this
+   * string as its tooltip. The component never infers on its own when
+   * deployment should be blocked — the page decides and supplies the
+   * reason (mirrors `FolderExplorerHeaderV2`'s `noProjectTooltip`,
+   * FR-3412). Absent by default, so every current caller
+   * (`ProjectAdminDataPage`, always project-scoped) keeps today's behavior
+   * unchanged. Mirrors `VFolderNodes` (V1, FR-3423).
    */
-  canDeploy: boolean;
+  noDeployTooltip?: string;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -156,7 +155,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onRestore,
   onDeleteForever,
   onStartServiceFallback,
-  canDeploy,
+  noDeployTooltip,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -174,11 +173,13 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const actions: Array<BAINameActionCellAstryxAction> =
     filterOutNullAndUndefined([
       // Start Service (model folders only, active only)
-      isModelFolder && !isDeleted && canDeploy
+      isModelFolder && !isDeleted
         ? {
             key: 'start-service',
             title: t('modelService.DeployAsService'),
             icon: <RocketIcon />,
+            disabled: !!noDeployTooltip,
+            disabledReason: noDeployTooltip,
             // Use `action` (not `onClick`) so the state update that mounts
             // `<VFolderDeployModal>` (which suspends on its preloaded query)
             // runs inside `startTransition` — the page stays interactive
@@ -477,12 +478,21 @@ interface VFolderNodesV2Props extends Omit<
    * pass their page-level project.
    */
   project: ProjectContextOrNull;
+  /**
+   * Forwarded to each row's name cell (FR-3423). When set, the "Deploy as
+   * service" row action renders disabled with this string as its tooltip.
+   * No current caller passes this — `ProjectAdminDataPage` is always
+   * project-scoped — added for API parity with `VFolderNodes` (V1) so a
+   * future admin-oversight caller of V2 gets the same treatment for free.
+   */
+  noDeployTooltip?: string;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   vfoldersFrgmt,
   onRemoveRow,
   project,
+  noDeployTooltip,
   ...tableProps
 }) => {
   'use memo';
@@ -642,6 +652,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               return (
                 <VFolderNameCell
                   vfolder={vfolder}
+                  noDeployTooltip={noDeployTooltip}
                   onShare={() => {
                     vfolder?.ownership?.userId === currentUser?.uuid
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
@@ -701,7 +712,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                   onDeleteForever={() => {
                     setPurgingVFolders(vfolder ? [vfolder] : []);
                   }}
-                  canDeploy={project != null}
                   onStartServiceFallback={(id) => {
                     // Render-as-you-fetch: start the request in the open event.
                     loadDeployQuery({}, { fetchPolicy: 'store-and-network' });

@@ -847,6 +847,7 @@
       "AdminDataPageAlert": "Only project-owned folders can be created on the Admin Data Page.",
       "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
       "CannotDeletePipelineFolder": "You can't delete pipeline folders.",
+      "CannotDeployFromAdminMenu": "Create deployments from a project's Data page — the admin menu does not support it.",
       "CannotRestorePipelineFolder": "You can't restore pipeline folders.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Unable to create the auto-mount folder as a project folder.",
       "CloneAFolder": "Clone folder",

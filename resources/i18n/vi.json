@@ -860,6 +860,7 @@
       "AdminDataPageAlert": "Trên trang Dữ liệu Quản trị chỉ có thể tạo thư mục dự án.",
       "CannotDeleteFolder": "Không thể xóa thư mục được gắn trong một hoặc nhiều phiên. Vui lòng kết thúc phiên trước.",
       "CannotDeletePipelineFolder": "Bạn không thể xóa các thư mục đường ống.",
+      "CannotDeployFromAdminMenu": "Việc triển khai được tạo từ trang Dữ liệu của một dự án; menu quản trị không hỗ trợ việc này.",
       "CannotRestorePipelineFolder": "Bạn không thể khôi phục các thư mục đường ống.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Không thể tạo thư mục tự động gắn kết làm thư mục dự án.",
       "CloneAFolder": "Sao chép một thư mục",

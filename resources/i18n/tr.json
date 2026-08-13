@@ -860,6 +860,7 @@
       "AdminDataPageAlert": "Yönetici Veri sayfasında yalnızca proje klasörleri oluşturulabilir.",
       "CannotDeleteFolder": "Bir veya daha fazla oturuma bağlı klasör silinemez. Lütfen önce oturumu sonlandırın.",
       "CannotDeletePipelineFolder": "Boru hattı klasörlerini silemezsiniz.",
+      "CannotDeployFromAdminMenu": "Dağıtımlar bir projenin Veri sayfasından oluşturulur; yönetici menüsü bunu desteklemez.",
       "CannotRestorePipelineFolder": "Boru hattı klasörlerini geri yükleyemezsiniz.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Otomatik bağlanan klasör proje klasörü olarak oluşturulamıyor.",
       "CloneAFolder": "Klasörü klonla",
