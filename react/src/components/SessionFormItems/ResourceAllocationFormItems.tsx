@@ -29,6 +29,7 @@ import {
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
+import BAISegmentedControlItemAstryx from '../astryx-bui/BAISegmentedControlItemAstryx';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
@@ -36,12 +37,11 @@ import SharedMemoryFormItems from './SharedMemoryFormItems';
 // and every control and every piece of chrome below is Astryx now.
 import { Card } from '@astryxdesign/core/Card';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
+import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
   useEventNotStable,
@@ -172,6 +172,16 @@ interface ResourceAllocationFormItemsProps {
   }>;
 }
 
+// FR-3531: hug the content instead of stretching to the parent's width.
+const clusterModeSegmentedStyles = stylex.create({
+  control: { alignSelf: 'flex-start' },
+  label: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: spacingVars['--spacing-1'],
+  },
+});
+
 /**
  * Cluster-mode segmented control — the twin of the one in
  * `ClusterModeFormItems`, declared locally for the same reason: each option
@@ -194,20 +204,25 @@ const ClusterModeSegmented: React.FC<{
       label={label}
       isDisabled={isDisabled}
       value={value ?? items[0]?.value ?? ''}
+      xstyle={clusterModeSegmentedStyles.control}
       onChange={(next) => {
         onChange?.(next);
         onValueChange();
       }}
     >
       {items.map((item) => (
-        <SegmentedControlItem
+        // FR-3531: the help affordance is a small view that trails the label,
+        // not a leading `icon` — Astryx renders the `icon` slot first.
+        <BAISegmentedControlItemAstryx
           key={item.value}
           value={item.value}
-          label={item.label}
-          icon={
-            <Tooltip content={item.tooltip}>
-              <CircleHelp size="1em" />
-            </Tooltip>
+          label={
+            <span {...stylex.props(clusterModeSegmentedStyles.label)}>
+              {item.label}
+              <Tooltip content={item.tooltip}>
+                <CircleHelp size="1em" />
+              </Tooltip>
+            </span>
           }
         />
       ))}
@@ -1565,9 +1580,7 @@ const ResourceAllocationFormItems: React.FC<
                     this one is `VStack gap`. No `xs`-driven reflow is lost:
                     both columns already spanned the full 24.
                     The Radio.Group -> SegmentedControl move mirrors
-                    `ClusterModeFormItems` exactly (same PILOT-DECISION: the
-                    per-option help tooltip becomes the item's `icon`, since
-                    `SegmentedControlItem.label` is a required string). */}
+                    `ClusterModeFormItems` exactly. */}
                 <VStack gap={5} align="stretch">
                   <Form.Item name={'cluster_mode'} required noStyle>
                     <ClusterModeSegmented
