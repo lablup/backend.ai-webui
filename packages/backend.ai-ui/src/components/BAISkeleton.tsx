@@ -10,8 +10,55 @@
  COMPOSITION" (FR-3482); moved here from react/src/components/astryx-bui in
  FR-3513 so BUI components (e.g. `BAIModal`'s loading body) can share it.
 
+<<<<<<<< HEAD:packages/backend.ai-ui/src/components/BAISkeleton.tsx
  Standard pairing (`use-bai-card.md`): the Suspense fallback INSIDE a card
  body, so the header stays visible while the body loads.
+========
+ MAPPING.md §"Also COMPOSITION": antd `Skeleton` (94 files / 138 sites),
+ `Skeleton.Input` (29 files / 34 sites) and `Skeleton.Button` (3 files / 3
+ sites) all collapse onto Astryx's single `Skeleton`, which is ONE box
+ (`width`, `height`, `radius`, `index` for the stagger). antd's multi-part
+ shimmer — title bar + N paragraph rows + avatar — has to be composed.
+
+ MEASURED usage (prop-profiles.json), and what this component does with it:
+
+   Skeleton         active x138, style x20, paragraph x11
+   Skeleton.Input   active x34,  block x27, size="small" x25
+   Skeleton.Button  active x3,   size="small" x1
+
+   `active`      -> DROPPED as a prop, kept as behaviour. Astryx `Skeleton` is
+                    always animated; there is no static variant. 175/175 sites
+                    passed `active`, so the prop carried no information.
+   `paragraph`   -> `variant="paragraph"` + `rows` (the object form
+                    `{rows: n}` becomes a scalar; `paragraph={false}` becomes
+                    `hasParagraph={false}` / `variant="block"`).
+   `block`       -> DROPPED. Astryx `Skeleton` already defaults `width: '100%'`,
+                    which is exactly what `block` meant; 27/34 sites passed it.
+   `size`        -> kept for `input`/`button`, resolved through the Astryx
+                    element-size tokens rather than antd's control heights.
+   `style`       -> passes through (Astryx `BaseProps`).
+
+ NOT built, because nothing in the repo asks for it: `Skeleton.Avatar` as a
+ standalone export, `Skeleton.Image`, `Skeleton.Node`, `loading` (call sites
+ branch themselves), `round`, and `title={{width}}` / `paragraph={{width}}`
+ per-row width objects. `hasAvatar` IS built (antd `avatar`), because the
+ avatar+lines shape is what a list-row fallback needs and composing it at the
+ call site is 15 lines every time.
+
+ P10 note: `Skeleton.Input active` rendered an INPUT-shaped shimmer (a filled
+ control-height box with antd's control radius). `variant="input"` reproduces
+ the shape from `--size-element-*` + `radius={1}`; it is a rebuild, not a
+ pixel port — see the size table below.
+
+ Standard pairing (`use-bai-card.md`): this is the Suspense fallback INSIDE a
+ `BAICard` body, so the card header stays visible while the body loads.
+
+     <BAICard title={t('...')}>
+       <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+         <DataDrivenContent />
+       </Suspense>
+     </BAICard>
+>>>>>>>> e1551f359 (refactor(FR-3533): promote the no-twin astryx-bui components into backend.ai-ui):packages/backend.ai-ui/src/components/BAISkeletonAstryx.tsx
 */
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import type { SkeletonProps } from '@astryxdesign/core/Skeleton';

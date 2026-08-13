@@ -34,7 +34,6 @@ import SessionTemplateModal from '../components/SessionTemplateModal';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
-import BAIPopconfirmAstryx from '../components/astryx-bui/BAIPopconfirmAstryx';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -79,6 +78,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { Step, Stepper } from '@astryxdesign/lab';
 import * as stylex from '@stylexjs/stylex';
 import {
+  BAIPopconfirmAstryx,
   BAIFlex,
   BAIIntervalView,
   BAIResourceNumberWithIcon,

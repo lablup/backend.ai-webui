@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { BAIDrawerAstryx as BAIDrawer } from 'backend.ai-ui';
 import { ExternalLink } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

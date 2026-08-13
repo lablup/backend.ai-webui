@@ -51,6 +51,7 @@
   "peerDependencies": {
     "@astryxdesign/core": "catalog:",
     "@astryxdesign/theme-neutral": "catalog:",
+    "@astryxdesign/lab": "catalog:",
     "@tanstack/react-query": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
@@ -78,6 +79,7 @@
   "devDependencies": {
     "@astryxdesign/core": "catalog:",
     "@astryxdesign/theme-neutral": "catalog:",
+    "@astryxdesign/lab": "catalog:",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",

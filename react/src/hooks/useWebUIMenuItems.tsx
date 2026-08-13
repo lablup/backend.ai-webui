@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import BAIBadgeCountAstryx from '../components/astryx-bui/BAIBadgeCountAstryx';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
 import { theme } from '../theme-shim';
 import { useCurrentUserRole } from './backendai';
@@ -22,6 +21,7 @@ import {
   useWebUIPluginValue,
 } from './useWebUIPluginState';
 import {
+  BAIBadgeCountAstryx,
   BAIEndpointsIcon,
   BAIModelStoreIcon,
   BAIMyEnvironmentsIcon,

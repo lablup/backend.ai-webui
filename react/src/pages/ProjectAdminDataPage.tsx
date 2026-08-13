@@ -20,20 +20,8 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
-import BAIVFolderDeleteButtonV2 from '../components/astryx-bui/BAIVFolderDeleteButtonV2Astryx';
-import { convertToOrderBy, handleRowSelectionChange } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { ProjectContext, toProjectContext } from '../types/projectContext';
-import { isDeletedCategory } from './VFolderNodeListPage';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import {
+import '../components/astryx-bui/astryxBui.css';
+import { BAIVFolderDeleteButtonV2Astryx as BAIVFolderDeleteButtonV2 ,
   BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
@@ -47,6 +35,18 @@ import {
   useFetchKey,
   useToggle,
 } from 'backend.ai-ui';
+import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ProjectContext, toProjectContext } from '../types/projectContext';
+import { isDeletedCategory } from './VFolderNodeListPage';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';

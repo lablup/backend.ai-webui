@@ -25,7 +25,8 @@
    control now carries a real translated name and the tooltip is redundant
    decoration rather than the only affordance.
 */
-import { BAIVFolderDeleteButtonAstryxFragment$key } from '../../__generated__/BAIVFolderDeleteButtonAstryxFragment.graphql';
+import { BAIVFolderDeleteButtonAstryxFragment$key } from '../__generated__/BAIVFolderDeleteButtonAstryxFragment.graphql';
+import './BAIVFolderDeleteButtonAstryx.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { TrashIcon } from 'lucide-react';
 import React from 'react';

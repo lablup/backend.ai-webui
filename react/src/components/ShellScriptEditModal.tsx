@@ -8,7 +8,6 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -16,6 +15,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIPopconfirmAstryx,
   BAIModal,
   BAIModalProps,
   BAIFlex,
