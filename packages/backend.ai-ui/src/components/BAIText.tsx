@@ -220,7 +220,7 @@ const BAIText: React.FC<BAITextProps> = ({
   const anchorRef = useRef<HTMLElement | null>(null);
 
   const decorationStyle: CSSProperties = {
-    ...(monospace && { fontFamily: 'var(--font-family-mono, monospace)' }),
+    ...(monospace && { fontFamily: 'var(--font-family-code, monospace)' }),
     ...(italic && { fontStyle: 'italic' }),
     ...(underline && deleteProp
       ? { textDecoration: 'underline line-through' }
