@@ -318,7 +318,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.Deployment')}
         extra={editLink(0, 'preset-form-card-deployment')}
       >
-        <MetadataList columns={2}>
+        {/* Multi-column MetadataList defaults its labels to position: top,
+            which reads as a different (vertical) layout from every other
+            card here — pin the inline label placement. */}
+        <MetadataList columns={2} label={{ position: 'start' }}>
           <MetadataListItem label={t('adminDeploymentPreset.Replicas')}>
             {values.replicaCount ?? '-'}
           </MetadataListItem>
