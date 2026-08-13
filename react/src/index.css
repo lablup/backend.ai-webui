@@ -53,6 +53,17 @@
   border-inline-start-color: var(--color-border-emphasized) !important;
 }
 
+/* A disabled member's wholesale `opacity: 0.5` dims its own divider with it,
+   so seam brightness alternates with the enabled members'. Inside a ringed
+   group the frame stays at full strength and the disabled state reads from
+   the glyph alone, via the disabled text token (icons follow currentColor). */
+.astryx-button-group:has(.astryx-button.secondary)
+  .astryx-button[aria-disabled='true'],
+.astryx-button-group:has(.astryx-button.secondary) .astryx-button:disabled {
+  opacity: 1 !important;
+  color: var(--color-text-disabled) !important;
+}
+
 /* A solid primary group's divider stays on-accent (white-family in BOTH
    modes, like the label) but translucent — Astryx's opaque white cut the
    fill too hard, and a theme-flipping grey reads as a foreign border. */
