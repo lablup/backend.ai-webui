@@ -24,11 +24,11 @@ import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import BAISelectionLabel from './astryx-bui/BAISelectionLabel';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
   BAIPropertyFilter,
@@ -128,7 +128,7 @@ const ImageList: React.FC<ImageListProps> = ({
   const projectSelect = (
     <BAIFlex gap="xs" align="center" wrap="wrap">
       <Text color="secondary">{t('general.Project')}</Text>
-      <Suspense fallback={<BAISkeletonAstryx variant="input" size="small" />}>
+      <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
         <ProjectSelectForAdminPage
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}

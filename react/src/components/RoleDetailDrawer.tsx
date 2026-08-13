@@ -7,9 +7,9 @@ import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerR
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
+  BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIText,
@@ -157,7 +157,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
         </>
       }
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {role && (
           <BAIFlex direction="column" gap="sm" align="stretch">
             <RoleDetailDrawerContent roleNodeFrgmt={role} />

@@ -22,10 +22,10 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIButton,
   BAICard,
@@ -141,7 +141,7 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
       styles={{ body: { paddingTop: 0 } }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           <DeploymentReplicasCardContent
             deploymentFrgmt={deploymentFrgmt}
             deploymentId={deploymentId}

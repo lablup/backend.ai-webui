@@ -40,7 +40,7 @@ import AdminRuntimeVariantPreset, {
   AdminRuntimeVariantPresetQuery,
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
+import { BAISkeleton } from 'backend.ai-ui';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -454,7 +454,7 @@ const AdminDeploymentPage: React.FC = () => {
       onTabChange={onTabChange}
       tabList={tabItems}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'deployments' && (
           <BAIErrorBoundary>
             {deploymentQueryRef ? (
@@ -467,7 +467,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -483,7 +483,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -499,7 +499,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -515,7 +515,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -531,7 +531,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}

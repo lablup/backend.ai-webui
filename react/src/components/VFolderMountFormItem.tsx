@@ -13,7 +13,6 @@ import {
   vFolderAliasNameRegExp,
   DEFAULT_ALIAS_BASE_PATH,
 } from './VFolderTable';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -23,6 +22,7 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIFlex,
   BAIVFolderSelectAstryx,
   BAIVFolderSelectAstryxRef,
@@ -122,7 +122,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
   return (
     <>
       <Form.Item name={'mount_ids'} label={label}>
-        <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+        <Suspense fallback={<BAISkeleton variant="input" />}>
           <BAIVFolderSelectAstryx
             ref={vFolderSelectRef}
             label={t('session.launcher.FolderToMount')}
@@ -290,7 +290,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
         }}
       </Form.Item>
       {currentProjectId && (
-        <Suspense fallback={<BAISkeletonAstryx variant="input" size="small" />}>
+        <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
           <AutoMountFolderSection currentProjectId={currentProjectId} />
         </Suspense>
       )}

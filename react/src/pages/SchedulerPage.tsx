@@ -4,12 +4,11 @@
  */
 import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
 import FairShareList from '../components/FairShareItems/FairShareList';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { theme } from '../theme-shim';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAICard } from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleHelp, TriangleAlertIcon } from 'lucide-react';
 import {
@@ -69,7 +68,7 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
         },
       ]}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'fair-share' && (
           <ErrorBoundary
             fallbackRender={({ error, resetErrorBoundary }) => {

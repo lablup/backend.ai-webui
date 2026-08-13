@@ -9,7 +9,6 @@ import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
 import { theme } from '../theme-shim';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -18,6 +17,7 @@ import { Text } from '@astryxdesign/core/Text';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  BAISkeleton,
   BAIModal,
   BAIModalProps,
   BAIFlex,
@@ -213,7 +213,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
       {...modalProps}
     >
       {isLoading ? (
-        <BAISkeletonAstryx rows={4} />
+        <BAISkeleton rows={4} />
       ) : (
         <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
           <BAIFlex

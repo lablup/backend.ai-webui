@@ -6,11 +6,10 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import ImageList from '../components/ImageList';
 import ResourcePresetList from '../components/ResourcePresetList';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import { toProjectContext } from '../types/projectContext';
-import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { BAISkeleton, BAICard, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense } from 'react';
@@ -72,7 +71,7 @@ const EnvironmentPage = () => {
         },
       ])}
     >
-      <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+      <Suspense fallback={<BAISkeleton rows={4} />}>
         {currentTab === 'image' && (
           <BAIErrorBoundary>
             {/* The project NARROWS what this tab lists, so the selector is a

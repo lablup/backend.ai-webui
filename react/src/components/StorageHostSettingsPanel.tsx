@@ -6,8 +6,8 @@ import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated_
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
+  BAISkeleton,
   BAIAdminProjectSelectAstryx,
   BAIFlex,
   BAIUserSelectAstryx,
@@ -91,7 +91,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         )}
       </BAIFlex>
 
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         <QuotaScopeTable scopeId={scopeId} hostName={storageVolume?.id ?? ''} />
       </Suspense>
     </BAIFlex>

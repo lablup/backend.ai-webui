@@ -5,13 +5,13 @@
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIBoardItemTitle,
   BAIFetchKeyButton,
   BAIFlex,
@@ -222,7 +222,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         }
       />
       {resourceSlotsDetails.isLoading ? (
-        <BAISkeletonAstryx />
+        <BAISkeleton />
       ) : (
         <ResourceStatistics
           resourceData={agentStatsData}

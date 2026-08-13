@@ -4,7 +4,7 @@
 
  Ticket 16 — converted to Astryx. `Grid.useBreakpoint` becomes
  `useBAIBreakpoint` (RESPONSIVE-POLICY R2), `Skeleton.Button` becomes the
- `BAISkeletonAstryx` button variant, and the editable title uses the rebuilt
+ `BAISkeleton` button variant, and the editable title uses the rebuilt
  `EditableVFolderNameV2` (`variant="title"` replaces the antd
  `component={Typography.Title}` polymorphism).
 */
@@ -16,8 +16,8 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { HStack } from '@astryxdesign/core/Stack';
+import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 

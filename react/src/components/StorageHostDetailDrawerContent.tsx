@@ -10,12 +10,11 @@ import StorageHostResourcePanel from './StorageHostResourcePanel';
 import StorageHostSettingsPanel from './StorageHostSettingsPanel';
 import UserFolderPermissionPanel from './UserFolderPermissionPanel';
 import UserFolderPermissionPanelV2 from './UserFolderPermissionPanelV2';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { BAISkeleton, BAICard, BAIFlex } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -93,14 +92,14 @@ const StorageHostDetailDrawerContent: React.FC<
       </TabList>
       {activeTabKey === 'projectFolderPermissions' && (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             <ProjectFolderPermissionPanel storageVolumeFrgmt={storageVolume} />
           </Suspense>
         </ErrorBoundaryWithNullFallback>
       )}
       {activeTabKey === 'userFolderPermissions' && (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             {supportsKeypairUserFilter ? (
               <UserFolderPermissionPanelV2 storageVolumeFrgmt={storageVolume} />
             ) : (
@@ -112,7 +111,7 @@ const StorageHostDetailDrawerContent: React.FC<
       {activeTabKey === 'capacity' &&
         (isQuotaSupportedStorage ? (
           <ErrorBoundaryWithNullFallback>
-            <Suspense fallback={<BAISkeletonAstryx />}>
+            <Suspense fallback={<BAISkeleton />}>
               <StorageHostSettingsPanel storageVolumeFrgmt={storageVolume} />
             </Suspense>
           </ErrorBoundaryWithNullFallback>

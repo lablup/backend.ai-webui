@@ -12,10 +12,14 @@ import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
-import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  filterOutEmpty,
+  BAICard,
+  BAICardProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Settings } from 'lucide-react';
 import React, { Suspense, useEffect } from 'react';
@@ -176,7 +180,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     >
       <Suspense
         fallback={
-          <BAISkeletonAstryx style={{ padding: `0px ${token.marginMD}px` }} />
+          <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
         }
       >
         {renderResourcePanel()}

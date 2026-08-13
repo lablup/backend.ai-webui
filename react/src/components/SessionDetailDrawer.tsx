@@ -8,8 +8,7 @@ import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import { useFetchKey } from 'backend.ai-ui';
+import { BAISkeleton, useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -99,7 +98,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
         />
       }
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {sessionId && (
           <SessionDetailContent
             id={sessionId}

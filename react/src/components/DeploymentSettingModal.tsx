@@ -12,7 +12,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import { ProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
@@ -22,6 +21,7 @@ import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIButton,
   BAIFlex,
   BAIModal,
@@ -285,7 +285,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         </BAIFlex>
       }
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         <Form<FormValues>
           form={form}
           layout="vertical"
