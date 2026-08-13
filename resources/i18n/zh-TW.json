@@ -867,6 +867,7 @@
       "CloneFolder": "克隆文件夹",
       "Cloneable": "可克隆",
       "Control": "控制",
+      "CopyFullPath": "複製完整路徑",
       "CreateModelFolderOnlyInExclusiveProject": "模型項目文件夾只能在模型商店的獨家項目中創建。",
       "CreatedAt": "創建在",
       "Delete": "刪除",

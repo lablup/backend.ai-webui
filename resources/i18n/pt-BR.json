@@ -867,6 +867,7 @@
       "CloneFolder": "Clonar pasta",
       "Cloneable": "Clonável",
       "Control": "Ao controle",
+      "CopyFullPath": "Copiar caminho completo",
       "CreateModelFolderOnlyInExclusiveProject": "As pastas de projeto modelo só podem ser criadas em projetos exclusivos da loja de modelos.",
       "CreatedAt": "Criado em",
       "Delete": "Excluir",

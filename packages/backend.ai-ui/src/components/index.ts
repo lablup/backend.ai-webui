@@ -16,6 +16,8 @@ export { default as BAICompactGroup } from './BAICompactGroup';
 export type { BAICompactGroupProps } from './BAICompactGroup';
 export { default as BAIMetadataList } from './BAIMetadataList';
 export type { BAIMetadataListProps } from './BAIMetadataList';
+export { BAIMetadataListItem } from './BAIMetadataList';
+export type { BAIMetadataListItemProps } from './BAIMetadataList';
 export {
   default as BAIPropertyFilter,
   mergeFilterValues,

@@ -867,6 +867,7 @@
       "CloneFolder": "Clona la cartella",
       "Cloneable": "Clonabile",
       "Control": "Controllo",
+      "CopyFullPath": "Copia percorso completo",
       "CreateModelFolderOnlyInExclusiveProject": "Le cartelle del progetto di modello possono essere create solo in progetti esclusivi del negozio di modelli.",
       "CreatedAt": "Creato a",
       "Delete": "Elimina",

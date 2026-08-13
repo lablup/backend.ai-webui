@@ -9,10 +9,6 @@
  Astryx `Selector`, and copyable values use `BAIText copyable`.
 
  PILOT-DECISIONs:
- - The copy affordance on the "Path" LABEL moves next to the path VALUE:
-   `MetadataListItem.label` is a plain string (P2). FR-3517: it carries a
-   visible label there, so its target is distinguishable from the segment
-   copies it now sits beside.
  - The disabled 'rw' option's inline Tooltip is dropped — Astryx `Selector`
    options take string labels; the client-side guard in `onChange` still
    blocks the restricted transition.
@@ -28,14 +24,12 @@ import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataList } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIMetadataListItem,
   filterOutEmpty,
   toLocalId,
   useErrorMessageResolver,
@@ -157,16 +151,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const items = filterOutEmpty([
     !vfolderNode?.unmanagedPath && {
       key: 'path',
-      label: t('data.folders.Path'),
-      children: (
-        <HStack gap={3} align="start" wrap="wrap">
-          <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />
+      label: (
+        <HStack gap={1} align="center">
+          {t('data.folders.Path')}
           <Button
-            label={t('button.CopySomething', {
-              name: t('data.folders.Path'),
-            })}
-            variant="ghost"
+            label={t('data.folders.CopyFullPath')}
+            tooltip={t('data.folders.CopyFullPath')}
+            variant="link"
             size="sm"
+            isIconOnly
             icon={<CopyIcon />}
             onClick={() => {
               void navigator.clipboard?.writeText(vfolderPath);
@@ -174,6 +167,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           />
         </HStack>
       ),
+      children: <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />,
     },
     {
       key: 'status',
@@ -355,9 +349,9 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   return (
     <MetadataList columns="single" {...props}>
       {items.map((item) => (
-        <MetadataListItem key={item.key} label={item.label as string}>
+        <BAIMetadataListItem key={item.key} label={item.label}>
           {item.children}
-        </MetadataListItem>
+        </BAIMetadataListItem>
       ))}
     </MetadataList>
   );

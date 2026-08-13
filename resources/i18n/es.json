@@ -867,6 +867,7 @@
       "CloneFolder": "Clonar carpeta",
       "Cloneable": "Clonable",
       "Control": "Controlar",
+      "CopyFullPath": "Copiar ruta completa",
       "CreateModelFolderOnlyInExclusiveProject": "Las carpetas de proyectos modelo solo se pueden crear en proyectos exclusivos de Model Store.",
       "CreatedAt": "Creado a",
       "Delete": "Borrar",

@@ -854,6 +854,7 @@
       "CloneFolder": "Clone folder",
       "Cloneable": "Cloneable",
       "Control": "Controls",
+      "CopyFullPath": "Copy full path",
       "CreateModelFolderOnlyInExclusiveProject": "Model project folders can only be created in model-store–exclusive projects.",
       "CreatedAt": "Created At",
       "Delete": "Delete",

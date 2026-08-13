@@ -867,6 +867,7 @@
       "CloneFolder": "Φάκελος κλωνοποίησης",
       "Cloneable": "Κλωνοποιήσιμο",
       "Control": "Ελεγχος",
+      "CopyFullPath": "Αντιγραφή πλήρους διαδρομής",
       "CreateModelFolderOnlyInExclusiveProject": "Οι φακέλοι έργων μοντέλων μπορούν να δημιουργηθούν μόνο σε αποκλειστικά έργα Model Store.",
       "CreatedAt": "Δημιουργήθηκε στο",
       "Delete": "Διαγράφω",
