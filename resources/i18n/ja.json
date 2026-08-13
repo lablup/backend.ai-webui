@@ -944,6 +944,8 @@
       "SharedUser": "共有ユーザー",
       "SharedUserDesc": "招待状を受け入れたユーザーのみがリストに表示されます。\n\nまだ招待しているユーザーは表示されません。",
       "Status": "状態",
+      "TargetProject": "対象プロジェクト",
+      "TargetProjectRequired": "フォルダーを作成するプロジェクトを選択してください。",
       "TrashBin": "ゴミ箱",
       "Type": "タイプ",
       "TypeFolderNameToDelete": "削除するフォルダ名を入力します",

@@ -944,6 +944,8 @@
       "SharedUser": "Usuario compartido",
       "SharedUserDesc": "Solo los usuarios que aceptaron la invitación se muestran en la lista.\n\nLos usuarios que todavía están invitando no se muestran.",
       "Status": "Estado",
+      "TargetProject": "Proyecto de destino",
+      "TargetProjectRequired": "Seleccione un proyecto en el que crear la carpeta.",
       "TrashBin": "Basura",
       "Type": "Tipo",
       "TypeFolderNameToDelete": "Escriba el nombre de la carpeta que desea eliminar",

@@ -944,6 +944,8 @@
       "SharedUser": "Người dùng được chia sẻ",
       "SharedUserDesc": "Chỉ người dùng chấp nhận lời mời mới được hiển thị trong danh sách.\n\nNgười dùng vẫn đang mời không được hiển thị.",
       "Status": "Trạng thái",
+      "TargetProject": "Dự án đích",
+      "TargetProjectRequired": "Vui lòng chọn dự án để tạo thư mục.",
       "TrashBin": "Rác",
       "Type": "Kiểu",
       "TypeFolderNameToDelete": "Nhập tên thư mục để xóa",

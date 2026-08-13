@@ -4,7 +4,9 @@
  */
 import { VFolderMountFormItemAutoMountQuery } from '../__generated__/VFolderMountFormItemAutoMountQuery.graphql';
 import { Form } from '../form-engine';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
@@ -71,6 +73,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const form = Form.useFormInstance();
+  const currentProject = useCurrentProjectValue();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
   const vFolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
@@ -294,6 +297,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
       <Suspense>
         <FolderCreateModalV2
           open={isFolderCreateModalOpen}
+          project={toProjectContext(currentProject)}
           // TODO: hiddenFormItems prop was removed from FolderCreateModalV2.
           // This component is currently unused; revisit if it gets re-enabled.
           // hiddenFormItems={[
