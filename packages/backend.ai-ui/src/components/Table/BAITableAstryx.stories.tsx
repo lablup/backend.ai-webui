@@ -66,6 +66,11 @@ const meta: Meta<typeof BAITableAstryx> = {
       description:
         'Sort order string (e.g. "name" ascending, "-name" descending)',
     },
+    scroll: {
+      control: { type: 'object' },
+      description:
+        'antd-shaped `{ x?, y? }` — `x` sizes the table from its content, `y` caps the body height with a sticky header',
+    },
   },
 };
 
