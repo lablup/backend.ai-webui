@@ -19,17 +19,34 @@
 @import '@astryxdesign/lab/lab.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 
-/* FR-3506: secondary buttons are outlined (theme `variant:secondary`), and a
-   ButtonGroup member's own outline doubles with its neighbour's at each seam.
-   Keep one 1px seam (the predecessor's edge) and pin the leading outer edge,
-   which production's unlayered StyleX group rule zeroes (`!important` is what
-   outranks it — see BAISider.css for the mechanism). Horizontal groups only;
-   no vertical ButtonGroup exists in the app. */
-.astryx-button-group .astryx-button.secondary:not(:first-child) {
-  border-inline-start-width: 0 !important;
+/* FR-3506: secondary buttons are outlined (theme `variant:secondary`). Inside a
+   ButtonGroup the outline moves to the GROUP: per-member borders double at
+   seams and leave half-open chips when a disabled member renders ghost. The
+   ring is an inset outline (no layout change, follows the radius); members
+   drop their own border and keep only a 1px leading divider. `!important`
+   outranks production's unlayered StyleX copy (see BAISider.css). Horizontal
+   groups only; no vertical ButtonGroup exists in the app. */
+.astryx-button-group:has(.astryx-button.secondary) {
+  position: relative;
+  border-radius: var(--radius-element);
 }
-.astryx-button-group .astryx-button.secondary:first-child {
-  border-inline-start: 1px solid var(--color-border-emphasized) !important;
+/* The ring must paint ABOVE the members — an inset outline/border on the
+   wrapper is covered by their opaque fills — so it is a generated overlay. */
+.astryx-button-group:has(.astryx-button.secondary)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-border-emphasized);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.astryx-button-group .astryx-button.secondary {
+  border-width: 0 !important;
+}
+.astryx-button-group .astryx-button.secondary:not(:first-child) {
+  border-inline-start-width: 1px !important;
+  border-inline-start-style: solid !important;
+  border-inline-start-color: var(--color-border-emphasized) !important;
 }
 
 /* fix: match the icon size between Lucide and Ant.d icons */
