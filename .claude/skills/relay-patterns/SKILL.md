@@ -107,13 +107,26 @@ const UserNodes: React.FC<UserNodesProps> = ({
 ```typescript
 // useLazyLoadQuery
 const data = useLazyLoadQuery(
-  graphql`query MyQuery { user { id ...UserProfile_user } }`,
+  graphql`
+    query MyQuery {
+      user {
+        id
+        ...UserProfile_user
+      }
+    }
+  `,
   {},
 );
 
 // useFragment
 const data = useFragment(
-  graphql`fragment UserProfile_user on User { id, name, email }`,
+  graphql`
+    fragment UserProfile_user on User {
+      id
+      name
+      email
+    }
+  `,
   userRef,
 );
 
@@ -122,7 +135,10 @@ const [data, refetch] = useRefetchableFragment(
   graphql`
     fragment UserList_users on Query
     @refetchable(queryName: "UserListRefetchQuery") {
-      users { id, name }
+      users {
+        id
+        name
+      }
     }
   `,
   usersRef,
@@ -137,8 +153,10 @@ skill. The short version:
 - An **update** mutation must select `id` plus the fields the UI reads (ideally
   by spreading the consumer's fragment). Relay merges the payload into the
   normalized record and every subscriber re-renders — **no refetch**.
-- Refetch only when **list membership** changes (create/delete), or when
-  server-computed values cannot be returned.
+- Refetch when **list membership** changes: create, delete, or an update to a
+  field the list query **filters or sorts on** — a store patch cannot evict or
+  reorder an already-fetched connection edge. Also when server-computed values
+  cannot be returned.
 - `if (success) updateFetchKey()` after an update is the anti-pattern this
   project is actively removing (FR-3170).
 
@@ -165,13 +183,13 @@ Backend.AI uses custom client-side directives to handle multi-version backend co
 
 #### Directive Reference
 
-| Directive | Purpose | When field is removed |
-|---|---|---|
-| `@since(version: "X.Y.Z")` | Field introduced in version X.Y.Z | Backend version < X.Y.Z |
-| `@deprecatedSince(version: "X.Y.Z")` | Field removed/replaced in version X.Y.Z | Backend version >= X.Y.Z |
-| `@sinceMultiple(versions: [...])` | Multi-branch version support | Backend incompatible with version array |
-| `@deprecatedSinceMultiple(versions: [...])` | Multi-branch deprecation | Backend compatible with version array |
-| `@skipOnClient(if: $var)` | Conditionally skip field at runtime | Variable evaluates to `true` |
+| Directive                                   | Purpose                                 | When field is removed                   |
+| ------------------------------------------- | --------------------------------------- | --------------------------------------- |
+| `@since(version: "X.Y.Z")`                  | Field introduced in version X.Y.Z       | Backend version < X.Y.Z                 |
+| `@deprecatedSince(version: "X.Y.Z")`        | Field removed/replaced in version X.Y.Z | Backend version >= X.Y.Z                |
+| `@sinceMultiple(versions: [...])`           | Multi-branch version support            | Backend incompatible with version array |
+| `@deprecatedSinceMultiple(versions: [...])` | Multi-branch deprecation                | Backend compatible with version array   |
+| `@skipOnClient(if: $var)`                   | Conditionally skip field at runtime     | Variable evaluates to `true`            |
 
 #### Usage Patterns
 
@@ -217,7 +235,7 @@ query UserSettingsQuery($isNotSupportTotp: Boolean!) {
 
 ### Code Review Checklist
 
-- [ ] Update mutations select `id` + the fields the UI reads; no refetch-after-update
+- [ ] Update mutations select `id` + the fields the UI reads; no refetch-after-update unless a changed field is in the list's `filter`/`orderBy`
 - [ ] Query orchestrator components separate from fragment components
 - [ ] Fragment refs properly typed with generated `$key` types
 - [ ] Fragment props follow naming conventions (`queryRef` / `{typeName}Frgmt`)

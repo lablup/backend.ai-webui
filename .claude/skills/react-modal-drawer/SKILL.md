@@ -90,22 +90,23 @@ interface FolderCreateModalProps extends BAIModalProps {
   initialValues?: Partial<FolderCreateFormItemsType>;
 }
 
-// caller — FolderCreateModal only creates, so the flag means "a row was added"
+// caller — FolderCreateModal only creates, so success implies a new row
 <FolderCreateModal
   open={open}
   onRequestClose={(result) => {
-    if (result) updateFetchKey();  // new folder → list membership changed
+    if (result) updateFetchKey(); // new folder → list membership changed
     setOpen(false);
   }}
-/>
+/>;
 ```
 
-**The argument means "the list changed", not "it succeeded".** Refetching on
-every success throws away Relay's normalized cache: an *update* mutation that
-returns its changed fields has already patched the store, so `updateFetchKey()`
-there is a redundant round-trip. This matters most in modals that handle both
-create and update behind one nullable fragment prop — those two paths must not
-share a single `onRequestClose(true)` exit.
+**The argument means "the mutation succeeded" — pass it truthfully.** Never
+report a successful update as `false` to suppress a refetch; `false` already
+means "cancelled". The _caller_ decides whether to refetch: it holds the
+create/update context (the nullable fragment prop it passed), so it can skip
+the refetch after an update whose payload has patched the store — and keep it
+for create, or for an update that changes a field the list filters or sorts
+on.
 
 Read the `relay-mutation-store-updates` skill before writing
 `if (success) updateFetchKey()`.
@@ -129,10 +130,10 @@ const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
 const [emailForInfoModal, setEmailForInfoModal] = useState<string | null>(null);
 
 <UserInfoModal
-  userEmail={emailForInfoModal || ''}
+  userEmail={emailForInfoModal || ""}
   open={!!emailForInfoModal}
   onRequestClose={() => setEmailForInfoModal(null)}
-/>
+/>;
 ```
 
 ### 3.1 With `useTransition` for deferred open
@@ -169,11 +170,11 @@ URL state. Use `useQueryStates` with `parseAsString` — see `react-url-state`.
 
 ## 4. `afterOpenChange` vs `afterClose`
 
-| Hook | Fires when | Use for |
-|---|---|---|
-| `afterOpenChange(true)` | After open animation ends | One-shot setup (e.g. `validateFields()` if `initialValidate`) |
-| `afterOpenChange(false)` | After close animation ends | Reset local state not in the form |
-| `afterClose` | Modal only, after close anim | Cleanup callback for non-Drawer modals |
+| Hook                     | Fires when                   | Use for                                                       |
+| ------------------------ | ---------------------------- | ------------------------------------------------------------- |
+| `afterOpenChange(true)`  | After open animation ends    | One-shot setup (e.g. `validateFields()` if `initialValidate`) |
+| `afterOpenChange(false)` | After close animation ends   | Reset local state not in the form                             |
+| `afterClose`             | Modal only, after close anim | Cleanup callback for non-Drawer modals                        |
 
 ```tsx
 <BAIModal
@@ -198,12 +199,12 @@ const { modal } = App.useApp();
 
 const handleRemoveShare = () => {
   modal.confirm({
-    title: t('data.folders.RemoveFolderSharing'),
-    content: t('data.folders.RemoveFolderSharingDescription'),
+    title: t("data.folders.RemoveFolderSharing"),
+    content: t("data.folders.RemoveFolderSharingDescription"),
     okButtonProps: { danger: true },
     onOk: async () => {
       await removeSharing();
-      message.success(t('data.folders.RemoveFolderSharingSuccess'));
+      message.success(t("data.folders.RemoveFolderSharingSuccess"));
     },
   });
 };
@@ -213,6 +214,7 @@ When the confirmation needs rich content / form / mutation with multi-stage
 feedback → then build a proper `*Modal` component.
 
 Reusable confirmation helpers that exist:
+
 - `BAIConfirmModalWithInput` — confirm by typing a token
 - `BAIDeleteConfirmModal` — dangerous delete flow with double-check
 
@@ -222,22 +224,22 @@ Reusable confirmation helpers that exist:
 `Modal`) already render a standard OK + Cancel footer wired to `onOk` /
 `onCancel`. Customize it through props before reaching for a custom `footer`:
 
-| Need | Prop |
-|---|---|
-| Submit handler | `onOk` (async supported) |
-| Cancel handler | `onCancel` |
-| Submit label | `okText` |
-| Cancel label | `cancelText` |
-| Submit button loading | `confirmLoading` — bind to the mutation's `isInFlight` / `isPending` |
-| Submit button danger / disabled / icon | `okButtonProps` |
-| Cancel button styling | `cancelButtonProps` |
-| Hide a button | `okButtonProps={{ style: { display: 'none' } }}` or `cancelButtonProps={{ ... }}` |
+| Need                                   | Prop                                                                              |
+| -------------------------------------- | --------------------------------------------------------------------------------- |
+| Submit handler                         | `onOk` (async supported)                                                          |
+| Cancel handler                         | `onCancel`                                                                        |
+| Submit label                           | `okText`                                                                          |
+| Cancel label                           | `cancelText`                                                                      |
+| Submit button loading                  | `confirmLoading` — bind to the mutation's `isInFlight` / `isPending`              |
+| Submit button danger / disabled / icon | `okButtonProps`                                                                   |
+| Cancel button styling                  | `cancelButtonProps`                                                               |
+| Hide a button                          | `okButtonProps={{ style: { display: 'none' } }}` or `cancelButtonProps={{ ... }}` |
 
 ```tsx
 <BAIModal
   open={open}
-  title={t('data.CreateFolder')}
-  okText={t('data.Create')}
+  title={t("data.CreateFolder")}
+  okText={t("data.Create")}
   confirmLoading={isInFlightCreate}
   onOk={async () => {
     await form.validateFields();
@@ -335,7 +337,7 @@ to show the built-in skeleton:
 ```tsx
 <BAIModal
   loading={isFetchingAllowedTypes}
-  title={t('data.CreateANewStorageFolder')}
+  title={t("data.CreateANewStorageFolder")}
   // ...
 />
 ```

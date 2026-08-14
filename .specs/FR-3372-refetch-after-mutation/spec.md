@@ -35,13 +35,13 @@ Setting modal 계열이 create/update를 한 컴포넌트에서 분기하면서 
 
 prop 선언은 `onRequestClose: (success: boolean) => void`입니다. 성공을 `false`로 보고하는 것은 계약 위반이며, refetch 억제를 위한 우회입니다.
 
-### B. payload에 `id` 누락 — 네트워크 비용만 지불
+### B. ~~payload에 `id` 누락~~ — 재검증 결과 **기각**: 컴파일러가 자동 보완
 
 | 위치                                       | 내용                                                       |
 | ------------------------------------------ | ---------------------------------------------------------- |
 | `AutoScalingRuleEditorModalLegacy.tsx:136` | `rule { metric_name … }` 8개 필드를 반환하면서 `id` 미선택 |
 
-Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payload는 분리된 레코드에 기록되고 병합되지 않습니다. 데이터를 받아오고도 UI를 갱신하지 못합니다.
+당초 "`id` 없는 payload는 분리된 레코드에 기록되어 병합되지 않는다"로 판정했으나, **오판입니다**. Relay 컴파일러는 노드 식별이 가능한 타입의 selection에 `id`를 자동 추가합니다 — 생성된 `AutoScalingRuleEditorModalLegacyModifyMutation.graphql.ts`의 operation 텍스트는 이미 `rule { … id }`를 전송하고, `MyKeypairManagementModal`의 `updateMyKeypair`도 `keypair { isActive id }`를 전송합니다. 병합은 이미 동작하며, 소스에 `id`를 명시하는 것은 가독성 컨벤션이지 버그 수정이 아닙니다.
 
 ### C. 부분 커버리지 — refetch도 없고 store 갱신도 없음
 
@@ -49,7 +49,7 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `UserSettingModal.tsx` | `groupIds`를 전송(`:448`)하고 fragment는 `projects`를 읽는데(`:213`) payload가 `projects` 미선택. update 경로는 refetch도 생략 |
 
-사용자의 프로젝트 소속을 변경하면 서버에는 반영되지만 UI는 이전 값을 계속 보여줍니다. **A/B보다 위험한 형태**로, refetch를 제거할 때 가장 흔히 발생할 수 있는 실패 모드입니다.
+사용자의 프로젝트 소속을 변경하면 서버에는 반영되지만 UI는 이전 값을 계속 보여줍니다. **A보다 위험한 형태**로, refetch를 제거할 때 가장 흔히 발생할 수 있는 실패 모드입니다.
 
 > D 분류에서 `UserSettingModal`은 `OK`로 잡힙니다. 축이 다르기 때문입니다 — D는 **테이블(뷰) fragment** 커버리지만 보고, 여기 C는 **모달 자신의 fragment**가 읽는 `projects`를 봅니다. 즉 목록은 최신인데 모달을 다시 열면 옛 값이 보이는 형태입니다. 두 축 모두 확인해야 합니다.
 
@@ -78,7 +78,7 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 | ------------------------------------------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `AdminUserManagement.tsx:189`              | `user { id }`               | `BAIAdminUserV2Table`이 `status.status` 등 14개. **이 mutation이 바로 상태 토글**이라 바꾼 값 자체가 안 돌아옴                          |
 | `DeploymentSettingModal.tsx:103`           | `deployment { id }`         | `BAIModelDeploymentNodes`·`DeploymentBasicInfoCard` 등 8개 fragment가 `metadata.name`, `metadata.tags`, `networkAccess.openToPublic` 등 |
-| `AutoScalingRuleEditorModalLegacy.tsx:136` | `rule { …8개 }` (`id` 없음) | 병합 자체가 불가 — B 항목과 동일 건                                                                                                     |
+| `AutoScalingRuleEditorModalLegacy.tsx:136` | `rule { …8개 }` (`id` 없음) | ~~병합 자체가 불가~~ — 기각. 컴파일러가 `id`를 자동 추가해 병합 정상 (B 참조)                                                           |
 | `ResourceGroupFairShareSettingModal.tsx`   | `resourceGroup { id name }` | `ResourceGroupFairShareTable`이 편집 대상인 `fairShareSpec.*` 4개                                                                       |
 | `AdminDeploymentPresetSettingPage.tsx`     | 일부 spread + `id name`     | `AdminDeploymentPresetNodes` 등이 `cluster.*`, `deploymentDefaults.*`, `execution.*` 등 13~15개                                         |
 
@@ -109,28 +109,32 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 
 목록의 한 행을 활성/비활성으로 바꾸면서 목록 전체를 재조회하는 형태가 지배적입니다.
 
-| 위치                                      | 내용                                                       |
-| ----------------------------------------- | ---------------------------------------------------------- |
-| `ResourceGroupList.tsx:227`               | `modify_scaling_group(is_active)` 토글, payload `ok`/`msg` |
-| `AdminUserCredentialList.tsx:340`·`:390`  | `modify_keypair(is_active)` 토글, payload `ok`/`msg`       |
-| `ContainerRegistryList.tsx:390`           | 행 `<Switch>` → `modify_domain`, payload `ok`/`msg`        |
-| `ContainerRegistryList.tsx:520`           | `onOk('create'\|'modify')`를 받고도 양쪽 모두 refetch      |
-| `AdminUserManagement.tsx:255`             | 상태 토글인데 `user { id }`만 반환 (D-1과 동일 건)         |
-| `ProjectPage.tsx:294`·`:337`              | 프로젝트 활성/비활성 토글, payload `ok`/`msg`              |
-| `ProjectPage.tsx:630`                     | `BAIProjectSettingModal onOk` — create/edit 양쪽 refetch   |
-| `MyKeypairManagementModal.tsx:299`·`:315` | `updateMyKeypair` payload에 **`id` 누락**으로 병합 불가    |
-| `RBACManagementPage.tsx:181`              | 소프트 비활성인데 payload가 `status` 미포함                |
-| `FairShareList.tsx:680`                   | `afterUpdate` 콜백 경유, 필드 전용 수정                    |
-| `UserSettingModal.tsx:902`                | REST TOTP 제거 후 무관한 access-key 목록 재조회            |
+| 위치                                      | 내용                                                                                      |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `ResourceGroupList.tsx:227`               | `modify_scaling_group(is_active)` 토글, payload `ok`/`msg`                                |
+| `AdminUserCredentialList.tsx:340`·`:390`  | `modify_keypair(is_active)` 토글, payload `ok`/`msg`                                      |
+| `ContainerRegistryList.tsx:390`           | 행 `<Switch>` → `modify_domain`, payload `ok`/`msg`                                       |
+| `ContainerRegistryList.tsx:520`           | `onOk('create'\|'modify')`를 받고도 양쪽 모두 refetch                                     |
+| `AdminUserManagement.tsx:255`             | 상태 토글인데 `user { id }`만 반환 (D-1과 동일 건)                                        |
+| `ProjectPage.tsx:294`·`:337`              | 프로젝트 활성/비활성 토글, payload `ok`/`msg`                                             |
+| `ProjectPage.tsx:630`                     | `BAIProjectSettingModal onOk` — create/edit 양쪽 refetch                                  |
+| `MyKeypairManagementModal.tsx:299`·`:315` | `updateMyKeypair(isActive)` 토글 — `isActive`는 목록의 필터 키라 refetch 유지 (필터 연동) |
+| `RBACManagementPage.tsx:181`              | 소프트 비활성 토글 — `status`는 목록의 필터 키라 refetch 유지 (E-3 참조)                  |
+| `FairShareList.tsx:680`                   | `afterUpdate` 콜백 경유, 필드 전용 수정                                                   |
+| `UserSettingModal.tsx:902`                | REST TOTP 제거 후 무관한 access-key 목록 재조회                                           |
 
-#### E-3. 가장 싼 수정 — payload가 **이미** 변경 필드를 반환하는데도 refetch
+#### E-3. payload가 **이미** 변경 필드를 반환하는데도 refetch — 재검증 결과 **둘 다 refetch가 load-bearing**
 
-둘 다 파일을 직접 열어 확인했습니다. mutation selection을 손댈 필요 없이 refetch 호출만 지우면 됩니다.
+당초 "refetch 호출만 지우면 되는 가장 싼 건"으로 분류했으나, 재검증 결과 두 건 모두 **바뀌는 필드가 목록 자신의 서버 측 필터 조건**입니다. payload가 변경 필드를 반환하는 것은 맞지만, store 패치는 레코드를 갱신할 뿐 이미 받아온 커넥션에서 edge를 제거하지 못합니다.
 
-- **`RBACManagementPage.tsx:202`** — `adminUpdateRole`이 `{ id, status }`를 반환(`:145`)해 Relay가 이미 패치하는데 `updateFetchKey()`를 호출
-- **`ReservoirArtifactDetailPage.tsx:329`** — `cancelImportArtifact`가 `artifactRevision { id status }`를 반환하는데 페이지 전체 재조회
+- **`RBACManagementPage.tsx:202`(활성화)·`:181`(비활성화)** — 쿼리가 `filter: { status: { in: [queryParams.status] } }`로 서버에서 걸러오고(`:80`), 활성화 액션은 `isDeletedFilter`일 때만 노출됩니다(`:305`·`:319`). 즉 활성화한 역할은 보고 있던 DELETED 목록에서 **빠져야** 합니다. `adminUpdateRole`이 `{ id, status }`를 돌려주고 Relay가 레코드를 패치하는 것은 맞지만, offset 페이지네이션 결과 집합에서 edge가 제거되지는 않습니다
+- **`ReservoirArtifactDetailPage.tsx:329`** — 알림 목록은 `filter: { status: { equals: PULLING } }`로 서버 필터링된 `pullingArtifactRevisions` 커넥션에서 옵니다(`:141`). `cancelImportArtifact`가 `artifactRevision { id status }`를 돌려줘 레코드는 갱신되지만 edge는 커넥션에 남아 **취소된 pull의 알림이 사라지지 않습니다**
 
-**필터 연동 주의.** 토글 대상이 목록의 필터 조건인 경우(`MyKeypairManagementModal`의 `isActive` 필터, `ProjectPage`의 활성/비활성 탭, `ReservoirPage`의 availability 필터) store 패치만으로는 **행이 목록에서 빠지지 않습니다**. 이때는 refetch가 정당하며, 그 이유를 주석으로 남겨야 합니다.
+즉 E-3은 아래 「필터 연동 주의」의 **반례가 아니라 사례**입니다.
+
+**감사 절차에 주는 교훈.** "payload가 변경 필드를 반환한다"는 사실만으로는 refetch를 지울 근거가 되지 않습니다. 특히 E-2의 행 단위 토글은 대부분 `is_active` 계열이라 같은 함정에 그대로 노출됩니다. 건별로 **바뀌는 필드가 목록 쿼리의 필터·정렬 인자에 쓰이는지**를 반드시 함께 확인해야 합니다.
+
+**필터 연동 주의.** 토글 대상이 목록의 필터 조건인 경우(`MyKeypairManagementModal`의 `isActive` 필터, `ProjectPage`의 활성/비활성 탭, `ReservoirPage`의 availability 필터) store 패치만으로는 **행이 목록에서 빠지지 않습니다**. 이때는 refetch가 정당하므로 코드는 그대로 두고, 확인한 근거는 이 문서에 기록합니다 — 손대지 않는 호출부에 감사용 주석을 덧붙이지 않습니다.
 
 ### F. 문서가 anti-pattern을 규약으로 기술 — 본 PR에서 수정 완료
 
@@ -188,13 +192,13 @@ onRequestClose={(success) => {
 
 ## 작업 분해
 
-의존성이 없어 병렬 진행이 가능하며, 1은 나머지의 참조 구현이 됩니다.
+의존성이 없어 병렬 진행이 가능합니다.
 
-1. **죽은 refetch 제거 (E-3)** — `RBACManagementPage.tsx:202`, `ReservoirArtifactDetailPage.tsx:329`. payload가 이미 변경 필드를 반환하므로 호출 한 줄씩만 삭제. 가장 싸고 위험이 없어 먼저 머지
-2. **한 줄 payload 버그 (B) 수정** — `AutoScalingRuleEditorModalLegacy`에 `id` 추가, `MyKeypairManagementModal`의 `updateMyKeypair`에 `id` 추가
+1. ~~**죽은 refetch 제거 (E-3)**~~ — **제거 대상 없음.** 재검증 결과 두 건 모두 바뀌는 필드가 목록의 필터 조건이라 refetch가 정당합니다 (E-3 참조). 다른 단계도 착수 전 **목록 쿼리의 필터 인자부터 확인**하십시오
+2. ~~**한 줄 payload 버그 (B) 수정**~~ — **기각.** 컴파일러가 `id`를 자동 추가해 병합은 이미 동작합니다 (B 참조). 소스에 `id`를 명시하는 것은 컨벤션 정리일 뿐 버그 수정이 아닙니다
 3. **C 수정** — `UserSettingModal` payload에 `projects` 추가
 4. **A 제거** — `UserSettingModal`의 `onRequestClose(false)` 우회를 걷어내고 호출부(`AdminUserManagement`)로 판단 이동
-5. **행 단위 토글 (E-2)** — 토글 mutation의 selection에 `id` + 변경 필드를 넣고 refetch 제거. 단 필터 연동 건은 refetch 유지 + 사유 주석
+5. **행 단위 토글 (E-2)** — 토글 mutation의 selection에 변경 필드를 넣고 refetch 제거. 단 필터 연동 건은 refetch 유지 — 확인한 근거는 본 문서에 기록
 6. **D — selection 보강** — `NODE_NOT_SELECTED` 5건은 selection만 채우고, `GAP` 중 D-1 확정 건은 필드 보강 후 호출부 refetch 제거
 
 ## 검증
