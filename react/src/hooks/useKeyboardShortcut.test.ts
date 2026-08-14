@@ -146,7 +146,7 @@ describe('useKeyboardShortcut', () => {
 
     // The non-scrim drawers open with `show()`: page interactive, shortcuts
     // too — an open notification drawer must not eat its own `]` toggle
-    // (FR-3619).
+    // (FR-3553 / FR-3619).
     it('should trigger handler when only a non-modal dialog is open', () => {
       appendOpenModalRoot('dialog', { open: '' });
 
@@ -163,6 +163,16 @@ describe('useKeyboardShortcut', () => {
       triggerKeydown({ key: 'a' });
 
       expect(mockHandler).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not trigger handler when a modal and a non-modal dialog are both open', () => {
+      appendOpenModalRoot('dialog', { open: '' });
+      appendOpenModalRoot('dialog', { open: '', 'aria-modal': 'true' });
+
+      renderHook(() => useKeyboardShortcut(mockHandler));
+      triggerKeydown({ key: 'a' });
+
+      expect(mockHandler).not.toHaveBeenCalled();
     });
 
     it('should trigger handler when no modal is open', () => {
