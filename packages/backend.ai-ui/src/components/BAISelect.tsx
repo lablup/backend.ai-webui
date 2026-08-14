@@ -503,23 +503,29 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
 
   const singleValue = toOptionKey(value ?? defaultValue);
   const resolvedSingleValue =
-    singleValue === '' && autoSelectOption
+    mode === undefined && singleValue === '' && autoSelectOption
       ? toOptionKey(
           _.isFunction(autoSelectOption)
             ? autoSelectOption(options)
             : rawOptions[0]?.value,
         )
       : singleValue;
-  // antd `optionLabelProp="children"` — the selected option's rich node
-  // renders on the closed trigger (via `Selector`'s pass-through icon slot);
-  // the string label stays the accessible name and search key (FR-3544).
   const richTriggerNode =
-    mode === undefined && optionLabelProp === 'children'
+    mode === undefined &&
+    resolvedSingleValue !== '' &&
+    optionLabelProp === 'children'
       ? nodeLabels.get(resolvedSingleValue)
       : undefined;
 
   const shared = {
     ...restProps,
+    // `nodeLabels` holds non-string labels only, so `renderIconSlot` renders
+    // this node as-is instead of wrapping it in an `Icon` (FR-3544).
+    ...(richTriggerNode !== undefined && {
+      startIcon: (
+        <span className="bai-select-rich-value">{richTriggerNode}</span>
+      ),
+    }),
     className: classNames(
       className,
       'bai-select',
@@ -602,11 +608,6 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       {...shared}
       options={optionsWithSlots}
       hasClear={allowClear}
-      startIcon={
-        richTriggerNode !== undefined ? (
-          <span className="bai-select-rich-value">{richTriggerNode}</span>
-        ) : undefined
-      }
       // `autoSelectOption` is honoured without the antd layout effect: when
       // nothing is selected the resolved first (or caller-chosen) option is
       // the rendered value, and the caller is told on mount by the same

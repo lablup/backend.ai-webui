@@ -47,36 +47,41 @@
   border-color: var(--color-error);
 }
 
-/* optionLabelProp="children" (FR-3544): the selected option's rich node
-   renders in `Selector`'s pass-through icon slot; the trigger button keeps
-   only the visually-hidden string label (still the accessible name), so it
-   collapses and the node takes the label's flex share. Structural child
-   selectors, matching the ghost rules above, so an Astryx class rename
-   cannot silently break it. */
-/* `stretch`, not `center`: vertical Dividers inside the node size themselves
-   by stretching, and the option rows render under the same default. */
+/* optionLabelProp="children" (FR-3544): the rich node sits in `Selector`'s
+   icon slot and takes the label's flex share; a bridge until Astryx `Selector`
+   grows `ComplexSelector`'s `triggerLabel` slot. Centering would collapse the
+   node's vertical Dividers to 0 height — keep default stretch. */
 .bai-select-rich-trigger > .bai-select-rich-value {
   display: flex;
-  align-items: stretch;
   flex: 1 1 0;
   min-width: 0;
   overflow: hidden;
 }
 
 /* The node fills the label area so a row's `justify="between"` keeps pushing
-   its trailing badges to the trigger's right edge, as antd rendered it. */
+   its trailing badges to the trigger's right edge. */
 .bai-select-rich-trigger > .bai-select-rich-value > * {
   flex: 1 1 auto;
   min-width: 0;
 }
-.bai-select-rich-trigger > button {
+
+/* Only the trigger combobox button — the container also hosts the clear and
+   status-tooltip buttons, whose glyphs must not be clipped. */
+.bai-select-rich-trigger > button[aria-haspopup='listbox'] {
   flex: 0 0 auto;
 }
-.bai-select-rich-trigger > button > span {
+
+/* @astryxdesign/core `VisuallyHidden`'s recipe, inlined — the label span is
+   Selector-internal, still the accessible selected-value text. */
+.bai-select-rich-trigger > button[aria-haspopup='listbox'] > span {
   position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   width: 1px;
   height: 1px;
+  margin: -1px;
   overflow: hidden;
-  clip-path: inset(50%);
+  clip: rect(0 0 0 0);
   white-space: nowrap;
+  pointer-events: none;
 }

@@ -108,7 +108,7 @@ describe('BAISelect children-option trigger label (FR-3499)', () => {
           <SelectOption
             key="cr.backend.ai/stable/pytorch"
             value="cr.backend.ai/stable/pytorch"
-            label="PyTorch"
+            label="PyTorch (GPU)"
           >
             <span data-testid="rich-row">PyTorch</span>
             <span>GPU</span>
@@ -118,8 +118,38 @@ describe('BAISelect children-option trigger label (FR-3499)', () => {
     );
     const richValue = container.querySelector('.bai-select-rich-value');
     expect(richValue?.querySelector('[data-testid="rich-row"]')).not.toBeNull();
-    // The string label survives as the trigger button's accessible text.
-    expect(triggerText()).toBe('PyTorch');
+    // The string label stays the trigger button's accessible text — the rich
+    // node must not leak into it.
+    expect(triggerText()).toBe('PyTorch (GPU)');
+  });
+
+  it('keeps the plain trigger when nothing is selected or without the opt-in', () => {
+    const richless = render(
+      <BAISelect label="Environments" value="a">
+        <SelectOptGroup key="g" label="G">
+          <SelectOption key="a" value="a" label="A">
+            <span>A</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    expect(
+      richless.container.querySelector('.bai-select-rich-trigger'),
+    ).toBeNull();
+    richless.unmount();
+
+    const empty = render(
+      <BAISelect label="Environments" optionLabelProp="children">
+        <SelectOptGroup key="g" label="G">
+          <SelectOption key="a" value="a" label="A">
+            <span>A</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    expect(
+      empty.container.querySelector('.bai-select-rich-trigger'),
+    ).toBeNull();
   });
 
   it('still selects a grouped option and reports the caller value', async () => {
