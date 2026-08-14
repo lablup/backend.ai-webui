@@ -162,8 +162,7 @@ export interface BAICardProps extends Omit<
   size?: 'default' | 'small';
   /**
    * Astryx `Card` padding step; overrides the `size`-derived default (6, or 3
-   * for `size="small"`). `--bai-card-inset` (the full-bleed tab strip's
-   * contract) is republished from this step, so `tabList` stays aligned.
+   * for `size="small"`). The full-bleed tab strip follows it (BAICard.css).
    */
   padding?: React.ComponentProps<typeof Card>['padding'];
   /** Astryx `Card` width passthrough. */
@@ -214,19 +213,9 @@ const BAICard: React.FC<BAICardProps> = ({
   showDivider,
   styles: _styles,
   className,
-  style,
   children,
   ...cardProps
 }) => {
-  // `--bai-card-inset` in BAICard.css is keyed on `size` only, so an explicit
-  // `padding` must republish it or the full-bleed tab strip bleeds past the
-  // actual card padding. `max()` guards the `padding={0}` step.
-  const insetStyle: CSSProperties | undefined =
-    padding != null
-      ? {
-          ['--bai-card-inset' as string]: `max(0px, calc(var(--spacing-${String(padding).replace('.', '-')}) - var(--border-width)))`,
-        }
-      : undefined;
   const extraNode =
     extra ||
     (extraButtonTitle ? (
@@ -264,12 +253,8 @@ const BAICard: React.FC<BAICardProps> = ({
   return (
     <Card
       {...cardProps}
-      style={insetStyle ? { ...insetStyle, ...style } : style}
       className={[
         'bai-card',
-        // `padding` is a StyleX prop with no reflected data attribute, so the
-        // card's own inset is republished as a class the co-located CSS can
-        // read (`--bai-card-inset`, used by the full-bleed tab strip).
         size === 'small' ? 'bai-card--compact' : '',
         status !== 'default' ? `bai-card--${status}` : '',
         // Kept verbatim: `.bai-card-error` is an existing hook the app styles
