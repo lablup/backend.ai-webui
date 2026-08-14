@@ -92,7 +92,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   );
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getBaseVersion, getImageMeta, tagAlias }] =
+  const [metadata, { getBaseVersion, getImageMeta, getTags, tagAlias }] =
     useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
@@ -789,10 +789,64 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         );
                       }
                     }
+                    // The closed trigger renders a plain string (BAISelect
+                    // FR-3544), so the row's version | arch | tag facts are
+                    // restated as text here, mirroring the JSX below.
+                    const selectedLabel = _.compact(
+                      supportExtendedImageInfo
+                        ? [
+                            image?.version,
+                            image?.architecture,
+                            ..._.map(
+                              image?.tags,
+                              (tag: { key: string; value: string }) => {
+                                const isCustomized = _.includes(
+                                  tag.key,
+                                  'customized_',
+                                );
+                                const tagValue = isCustomized
+                                  ? _.find(image?.labels, {
+                                      key: 'ai.backend.customized-image.name',
+                                    })?.value
+                                  : tag.value;
+                                const aliasedTag = tagAlias(tag.key + tagValue);
+                                return _.isEqual(
+                                  aliasedTag,
+                                  preserveDotStartCase(tag.key + tagValue),
+                                ) || isCustomized
+                                  ? _.trim(
+                                      `${tagAlias(tag.key)} ${tagValue ?? ''}`,
+                                    )
+                                  : aliasedTag;
+                              },
+                            ),
+                          ]
+                        : [
+                            getBaseVersion(getImageFullName(image) || ''),
+                            image?.architecture,
+                            ..._.map(
+                              getTags(
+                                image?.tag || '',
+                                (image?.labels ?? []) as Array<{
+                                  key: string;
+                                  value: string;
+                                }>,
+                              ),
+                              (tag) =>
+                                _.isEqual(
+                                  tagAlias(tag.key + tag.value),
+                                  preserveDotStartCase(tag.key + tag.value),
+                                )
+                                  ? _.trim(`${tagAlias(tag.key)} ${tag.value}`)
+                                  : tagAlias(tag.key + tag.value),
+                            ),
+                          ],
+                    ).join(' | ');
                     return (
                       <SelectOption
                         key={image?.id}
                         value={getImageFullName(image)}
+                        label={selectedLabel}
                         filterValue={[
                           version,
                           metadataTagAlias,

@@ -341,7 +341,13 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         // reading, which is exactly what the `optionFilterProp` PILOT-DECISION
         // above already specifies for the `options`-prop path; this makes the
         // two option APIs agree instead of only one of them corrupting itself.
+        //
+        // FR-3544 — an explicit string `label` wins over the flattened
+        // children text: rich option rows carry their key facts in Badge/tag
+        // PROPS the flattener cannot see, so the call site names what the
+        // closed trigger should say.
         const displayLabel =
+          (_.isString(childProps.label) && childProps.label) ||
           nodeToAccessibleLabel(childProps.children) ||
           toOptionKey(childProps.value);
         into.push({
@@ -598,6 +604,13 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
  */
 export interface BAISelectOptionProps {
   value?: BAISelectOption['value'];
+  /**
+   * antd's `optionLabelProp="label"` slot: the string the closed trigger
+   * shows (and search matches) when `children` is rich JSX whose key facts
+   * live in props the text flattener cannot reach (FR-3544). Must accompany
+   * `value` — a label-only element is read as an OptGroup.
+   */
+  label?: string;
   disabled?: boolean;
   /**
    * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call

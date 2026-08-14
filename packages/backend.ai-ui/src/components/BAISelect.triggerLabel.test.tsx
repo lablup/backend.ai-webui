@@ -78,6 +78,27 @@ describe('BAISelect children-option trigger label (FR-3499)', () => {
     expect(text.match(/TensorFlow/g)).toHaveLength(1);
   });
 
+  it('prefers an explicit option label over the flattened children text (FR-3544)', () => {
+    // The image version rows carry their tag facts in Badge/BAIDoubleTag
+    // PROPS, which the text flattener cannot see — the call site names the
+    // trigger text explicitly instead.
+    render(
+      <BAISelect label="Version" value="cr.backend.ai/stable/pytorch:2.1.0">
+        <SelectOptGroup key="v" label="Versions">
+          <SelectOption
+            key="cr.backend.ai/stable/pytorch:2.1.0"
+            value="cr.backend.ai/stable/pytorch:2.1.0"
+            label={'2.1.0 | x86_64 | CUDA 12.1'}
+          >
+            <span>2.1.0</span>
+            <span>x86_64</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    expect(triggerText()).toBe('2.1.0 | x86_64 | CUDA 12.1');
+  });
+
   it('still selects a grouped option and reports the caller value', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
