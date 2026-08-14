@@ -103,10 +103,7 @@ interface FolderCreateModalProps extends BAIModalProps {
 **The argument means "the mutation succeeded" — pass it truthfully.** Never
 report a successful update as `false` to suppress a refetch; `false` already
 means "cancelled". The _caller_ decides whether to refetch: it holds the
-create/update context (the nullable fragment prop it passed), so it can skip
-the refetch after an update whose payload has patched the store — and keep it
-for create, or for an update that changes a field the list filters or sorts
-on.
+create/update context (the nullable fragment prop it passed).
 
 Read the `relay-mutation-store-updates` skill before writing
 `if (success) updateFetchKey()`.

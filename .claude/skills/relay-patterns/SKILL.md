@@ -150,13 +150,13 @@ const [data, refetch] = useRefetchableFragment(
 Writing data is not covered here — see the **`relay-mutation-store-updates`**
 skill. The short version:
 
-- An **update** mutation must select `id` plus the fields the UI reads (ideally
-  by spreading the consumer's fragment). Relay merges the payload into the
-  normalized record and every subscriber re-renders — **no refetch**.
-- Refetch when **list membership** changes: create, delete, or an update to a
-  field the list query **filters or sorts on** — a store patch cannot evict or
-  reorder an already-fetched connection edge. Also when server-computed values
-  cannot be returned.
+- An **update** mutation must select the fields the UI reads (ideally by
+  spreading the consumer's fragment; `id` explicitly by convention — the
+  compiler adds it regardless). Relay merges the payload into the normalized
+  record and every subscriber re-renders — **no refetch**.
+- Refetch when **list membership or order** changes: create, delete, or an
+  update to a field the list query **filters or sorts on**. Also when
+  server-computed values cannot be returned.
 - `if (success) updateFetchKey()` after an update is the anti-pattern this
   project is actively removing (FR-3170).
 
@@ -235,7 +235,7 @@ query UserSettingsQuery($isNotSupportTotp: Boolean!) {
 
 ### Code Review Checklist
 
-- [ ] Update mutations select `id` + the fields the UI reads; no refetch-after-update unless a changed field is in the list's `filter`/`orderBy`
+- [ ] Update mutations select the fields the UI reads; no refetch-after-update (exceptions: see the `relay-mutation-store-updates` checklist)
 - [ ] Query orchestrator components separate from fragment components
 - [ ] Fragment refs properly typed with generated `$key` types
 - [ ] Fragment props follow naming conventions (`queryRef` / `{typeName}Frgmt`)

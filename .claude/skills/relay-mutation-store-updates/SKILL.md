@@ -15,7 +15,7 @@ description: >
 The rule this skill exists to enforce:
 
 > **A refetch after an update mutation is a bug, not a refresh — unless the
-> update changes list membership.**
+> update changes list membership or order.**
 > Update mutations should return the changed fields so Relay patches the
 > normalized store by `id`. Refetch when membership or order changes: create,
 > delete, or an update to a field the list query **filters or sorts on**.
@@ -34,13 +34,13 @@ detailed treatment: how to tell the cases apart, and what to do in each.
 
 Ask **what changed**, not **did it succeed**.
 
-| What the mutation changed                                              | What to do                                                                                                                            |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| **Fields of an entity already in the store** (update)                  | Select the changed fields on the returned node. Relay merges by `id`. **No refetch** — after the filter/orderBy check below.          |
-| Same, but a changed field is in the list's **`filter`/`orderBy` args** | Refetch (§7). The patch updates the record, but the edge stays in the already-fetched connection — the row will not leave or reorder. |
-| Same, but the payload returns only `ok`/`msg` (legacy)                 | Keep the refetch and comment why (§4). Nothing to merge.                                                                              |
-| **List membership** — a row added or removed (create/delete)           | Refetch the list (§6). Don't patch the connection.                                                                                    |
-| Server-derived fields you did not send (computed status, timestamps)   | Select those too; refetch only if the server cannot return them (§7).                                                                 |
+| What the mutation changed                                              | What to do                                                                                                                   |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Fields of an entity already in the store** (update)                  | Select the changed fields on the returned node. Relay merges by `id`. **No refetch** — after the filter/orderBy check below. |
+| Same, but a changed field is in the list's **`filter`/`orderBy` args** | Refetch (§7) — the patched row would otherwise neither leave nor reorder.                                                    |
+| Same, but the payload returns only `ok`/`msg` (legacy)                 | Keep the refetch and comment why (§4). Nothing to merge.                                                                     |
+| **List membership** — a row added or removed (create/delete)           | Refetch the list (§6). Don't patch the connection.                                                                           |
+| Server-derived fields you did not send (computed status, timestamps)   | Select those too; refetch only if the server cannot return them (§7).                                                        |
 
 ## 2. Update: fill the selection set
 
@@ -249,18 +249,20 @@ matchable the same way.
 
 ## Review Checklist
 
-- [ ] No `if (success) updateFetchKey()` where the mutation was an **update**
-      whose changed fields stay out of the list's `filter`/`orderBy`
-- [ ] Changed fields diffed against the list query's `filter`/`orderBy`
-      arguments **before** any refetch is dropped
-- [ ] Every update mutation payload selects `id` plus the fields the UI reads
+- [ ] Before dropping any refetch after an **update**, the changed fields were
+      diffed against the list query's `filter`/`orderBy` args — refetch kept
+      if any match
+- [ ] Every update mutation payload selects the fields the UI reads (`id`
+      written explicitly by convention; the compiler adds it regardless — §2)
 - [ ] Prefer spreading the consumer's fragment over hand-listing fields
 - [ ] Schema checked (`data/schema.graphql`) before concluding a refetch is required
 - [ ] Legacy `ok`/`msg`-only mutation → refetch kept, with a comment saying why
 - [ ] `success` is passed truthfully; the refetch decision lives at the call site
 - [ ] Create/delete refetch the list — no `@appendEdge`/`@deleteRecord` added
-- [ ] A refetch after an **update** has a comment naming why the patch is not
-      enough (legacy `ok`/`msg` payload, filter/orderBy key, side effects)
+- [ ] An update-path refetch **added or touched by this change** has a comment
+      naming why the patch is not enough (legacy `ok`/`msg` payload,
+      filter/orderBy key, side effects); untouched call sites record the
+      rationale in the audit doc, not in comments
 
 ## Related
 
