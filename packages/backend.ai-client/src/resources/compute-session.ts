@@ -214,7 +214,10 @@ export class ComputeSession {
         arguments: JSON.stringify(args) || undefined,
       },
     );
-    return this.client._wrapWithPromise(rqst);
+    // App launch traverses webserver → manager RPC → agent → krunner; the
+    // backend-side budget (BA-7258) can exceed the client-wide 30s default,
+    // so give start-service its own longer timeout (FR-3479).
+    return this.client._wrapWithPromise(rqst, false, null, 60_000);
   }
 
   /**
