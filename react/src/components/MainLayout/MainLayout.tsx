@@ -25,6 +25,7 @@ import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
+import WebUISpotlight from '../WebUISpotlight/WebUISpotlight';
 import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
@@ -223,6 +224,11 @@ function MainLayout() {
                     {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
                     {/* https://github.com/lablup/backend.ai/pull/4354 */}
                     <ForceTOTPChecker />
+                  </ErrorBoundaryWithNullFallback>
+                </Suspense>
+                <Suspense>
+                  <ErrorBoundaryWithNullFallback>
+                    <WebUISpotlight />
                   </ErrorBoundaryWithNullFallback>
                 </Suspense>
                 <Suspense>

@@ -59,6 +59,7 @@ export interface UserSettings {
   sessionResourceGridHueOverrides?: Record<string, number>;
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;
+  spotlight_recent_menu_keys?: Array<string>;
 }
 
 export type SessionHistory = {

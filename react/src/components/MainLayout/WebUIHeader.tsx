@@ -10,6 +10,7 @@ import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
+import { spotlightOpenAtom } from '../WebUISpotlight/WebUISpotlight';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
@@ -20,7 +21,8 @@ import {
   BAIFlex,
   BAIFlexProps,
 } from 'backend.ai-ui';
-import { MenuIcon } from 'lucide-react';
+import { useSetAtom } from 'jotai';
+import { MenuIcon, SearchIcon } from 'lucide-react';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,6 +33,7 @@ export interface WebUIHeaderProps extends BAIFlexProps {
 const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
+  const setSpotlightOpen = useSetAtom(spotlightOpenAtom);
   // The brand band is a REVERSED surface: its content polarity is the opposite
   // of the app's, so it is "on dark" in light mode and "on light" in dark.
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
@@ -127,6 +130,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             Both are plain `IconButton`s — they open no floating surface, so a
             shared wrapper has nothing to leak into. */}
         <MediaTheme mode={bandMediaMode}>
+          <IconButton
+            data-testid="button-spotlight"
+            icon={<SearchIcon size="1em" />}
+            variant="ghost"
+            label={t('spotlight.Search')}
+            onClick={() => setSpotlightOpen(true)}
+          />
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
         </MediaTheme>

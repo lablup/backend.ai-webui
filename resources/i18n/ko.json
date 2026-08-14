@@ -3203,6 +3203,18 @@
     "Copied": "복사됨",
     "Copy": "복사"
   },
+  "spotlight": {
+    "Actions": "동작",
+    "NoResults": "일치하는 페이지나 동작이 없습니다",
+    "Pages": "페이지",
+    "Recent": "최근",
+    "Search": "검색",
+    "SearchPlaceholder": "페이지와 동작 검색...",
+    "SwitchToDarkTheme": "어두운 테마로 전환",
+    "SwitchToLightTheme": "밝은 테마로 전환",
+    "TypeToSearch": "페이지와 동작을 검색하려면 입력하세요",
+    "UseSystemTheme": "시스템 테마 사용"
+  },
   "start": {
     "CreateASession": "세션을 만들어 보세요",
     "CreateFolder": "새 스토리지 폴더 생성하기",

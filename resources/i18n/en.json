@@ -3187,6 +3187,18 @@
     "Copied": "Copied",
     "Copy": "Copy"
   },
+  "spotlight": {
+    "Actions": "Actions",
+    "NoResults": "No matching pages or actions",
+    "Pages": "Pages",
+    "Recent": "Recent",
+    "Search": "Search",
+    "SearchPlaceholder": "Search pages and actions...",
+    "SwitchToDarkTheme": "Switch to dark theme",
+    "SwitchToLightTheme": "Switch to light theme",
+    "TypeToSearch": "Type to search pages and actions",
+    "UseSystemTheme": "Use system theme"
+  },
   "start": {
     "CreateASession": "Create a Session",
     "CreateFolder": "Create New Storage Folder",
