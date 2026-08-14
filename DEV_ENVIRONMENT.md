@@ -95,6 +95,14 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 - **HTTPS request hangs / `HTTP 000`** — TLS cert generation can fail for very long hostnames. Either rename the branch to include `FR-XXXX`, or switch the daemon to HTTP with `pnpm exec portless proxy start -p 1355 --no-tls`.
 - **Theme color not applied** — confirm `VITE_THEME_HEADER_COLOR` is set in `.env.development.local` or the shell, and restart `pnpm run dev`. Vite reads env at server start, so existing dev servers won't pick up changes until restarted.
 - **Watchers seem stuck** — all three dev children (tsc, Relay watch, CRA) run under `concurrently` with `--kill-others`; Ctrl+C tears them down together.
+- **HMR dead AND full refresh serves stale code until a dev-server restart (macOS)** — fseventsd is refusing new FSEvents streams, usually because leaked dev processes exhausted its client table. `pnpm run dev` now detects this at startup, prints the heal steps, and asks before falling back to stat-polling for that run; `node scripts/fsevents-health.mjs` checks health any time (exit 0 ok / 1 broken). Heal order: kill stale watchers (`ps aux | grep -E 'test-server|relay'`, days-old editor windows) → `sudo pkill fseventsd` (auto-restarts) → reboot. To shrink the standing watcher load, keep VS Code's tsserver from watching the pnpm global virtual store — it sits outside every repo, so `**/node_modules` excludes never match it (FR-3214 measured ~83% of one program's watched paths coming from the store). In your **user** settings.json (the store path is machine-specific, so it cannot be committed):
+
+  ```jsonc
+  "typescript.tsserver.watchOptions": {
+    "watchFile": "useFsEventsOnParentDirectory",
+    "excludeDirectories": ["**/node_modules", "<pnpm store path>/**"] // `pnpm store path`
+  }
+  ```
 
 ## Commands reference
 
