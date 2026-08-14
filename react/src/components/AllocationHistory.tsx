@@ -4,10 +4,14 @@
  */
 import { Form } from '../form-engine';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Selector } from '@astryxdesign/core/Selector';
-import { useUpdatableState, BAIFlex, BAIFetchKeyButton } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  useUpdatableState,
+  BAIFlex,
+  BAIFetchKeyButton,
+} from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -72,7 +76,7 @@ const AllocationHistory: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         <AllocationHistoryStatistics
           period={selectedPeriod || '1D'}
           fetchKey={usageFetchKey}

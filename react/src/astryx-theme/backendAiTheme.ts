@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 10;
+export const THEME_NAME_REV = 15;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -567,6 +567,34 @@ const SIDE_NAV_DENSITY = {
 };
 
 /**
+ * A `DropdownMenu` panel is a floating PAGE surface, so it resolves the neutral
+ * interaction overlays against the app scheme — never against whatever it is
+ * nested under. Load-bearing because the panel renders as a SIBLING of its
+ * trigger, i.e. a DOM child of `WebUIHeader`'s band, and would otherwise
+ * inherit the band's app-mode-INVERTED wash; the highlight that consumes the
+ * token is focus-driven (`menuItemHover.js`), not `:hover`. Read from
+ * `ANTD_NEUTRAL_SURFACES` so it cannot drift from the token it restores.
+ * Mechanism, measurements and the sibling reports it does NOT close: FR-3493.
+ */
+const MENU_PANEL_PAGE_OVERLAYS = {
+  '--color-overlay-hover': `light-dark(${ANTD_NEUTRAL_SURFACES['--color-overlay-hover'][0]}, ${ANTD_NEUTRAL_SURFACES['--color-overlay-hover'][1]})`,
+  '--color-overlay-pressed': `light-dark(${ANTD_NEUTRAL_SURFACES['--color-overlay-pressed'][0]}, ${ANTD_NEUTRAL_SURFACES['--color-overlay-pressed'][1]})`,
+};
+
+/**
+ * Same surface rule as above for a `Selector` listbox, which `themeProps` does
+ * not reach: `selector` sits on the TRIGGER and the panel carries no theme
+ * class, so `field` — the wrapper both render inside — is the only declaration
+ * point. The band re-declares the inverted pair on the trigger itself, which is
+ * inline and therefore still wins there. FR-3505.
+ */
+const FIELD_PAGE_OVERLAYS = {
+  field: {
+    base: { ...MENU_PANEL_PAGE_OVERLAYS },
+  },
+};
+
+/**
  * DROPDOWN MENU DENSITY — pinned to the measured legacy antd `Dropdown`
  * (`menu={{items}}`) metrics.
  *
@@ -624,6 +652,8 @@ const ANTD_DROPDOWN_DENSITY = {
       // antd's `.ant-dropdown-menu` is a plain list: adjacent items touch.
       gap: '0px',
       maxHeight: 'none',
+      // Surface scope, not density — see `MENU_PANEL_PAGE_OVERLAYS` above.
+      ...MENU_PANEL_PAGE_OVERLAYS,
     },
   },
   'dropdown-menu-item': {
@@ -718,6 +748,10 @@ const ANTD_HOVER_PARITY = {
     base: {
       backgroundColor: 'light-dark(rgba(0,0,0,0.85), #424242)',
       color: '#FFFFFF',
+      // Pin the alignment so the bubble never inherits `text-align` from its
+      // trigger's context — a `<button>` trigger (SegmentedControl) leaks its
+      // UA-default `center` down to the popover text. FR-3537.
+      textAlign: 'start',
     },
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
@@ -732,14 +766,25 @@ const ANTD_HOVER_PARITY = {
       '--color-overlay-hover': 'transparent',
     },
   },
-  // Filled variants only. `secondary` / `ghost` keep the global overlay: they
-  // have no brand fill to destroy, and that IS antd's `colorBgTextHover`.
+  // Hover keys: filled variants only. `secondary` / `ghost` keep the global
+  // overlay: they have no brand fill to destroy, and that IS antd's
+  // `colorBgTextHover`.
   button: {
     'variant:primary': {
       '--color-overlay-hover': 'rgba(255,255,255,0.16)',
     },
     'variant:destructive': {
       '--color-overlay-hover': 'rgba(255,255,255,0.16)',
+    },
+    // antd default-button parity (FR-3506): the non-primary button is an
+    // OUTLINE — `colorBgContainer` + 1px `colorBorder` — not a solid fill.
+    // The fill is remapped via the token the StyleX rule consumes, not
+    // `backgroundColor`: production's unlayered StyleX copy outranks this
+    // layer (see BAISider.css), but a custom property has no competitor.
+    // ButtonGroup seams: react/src/index.css.
+    'variant:secondary': {
+      '--color-neutral': 'var(--color-background-surface)',
+      border: '1px solid var(--color-border-emphasized)',
     },
   },
 };
@@ -875,6 +920,7 @@ export const computeThemeName = (
       ANTD_STATUS_ON_COLORS,
       ANTD_DIALOG_SURFACE,
       ANTD_DROPDOWN_DENSITY,
+      FIELD_PAGE_OVERLAYS,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -992,6 +1038,7 @@ export function buildBackendAiTheme(
       ...STATUS_TEXT_COLORS,
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
+      ...FIELD_PAGE_OVERLAYS,
       ...ANTD_HOVER_PARITY,
     },
   });

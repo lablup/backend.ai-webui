@@ -13,13 +13,13 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import TerminateSessionModalForProjectAdmin from '../components/TerminateSessionModalForProjectAdmin';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
+  BAISkeleton,
   BAICard,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -377,11 +377,11 @@ const ProjectAdminSessionPage: React.FC = () => {
         }}
       >
         <BAIErrorBoundary>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             {currentProject.id ? (
               <ProjectAdminSessionContent projectId={currentProject.id} />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </Suspense>
         </BAIErrorBoundary>

@@ -4,9 +4,8 @@
  */
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import './documentProse.css';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAISkeleton, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
 import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +66,7 @@ const TermsOfServiceModal = ({
       width={'80%'}
       {...props}
     >
-      <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+      <Suspense fallback={<BAISkeleton rows={4} />}>
         <RenderTOSHtml />
       </Suspense>
     </BAIModal>

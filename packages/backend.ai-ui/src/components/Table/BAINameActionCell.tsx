@@ -335,7 +335,24 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   // change the reporter themselves marked optional. Left as-is and reported
   // rather than taken on inside a QA row.
   const toMenuItem = (action: BAINameActionCellAction) => ({
-    label: action.title,
+    // FR-3423: a disabled action must still explain itself once it overflows
+    // into this menu — otherwise a narrow viewport turns "disabled with a
+    // reason" into "disabled for no visible reason".
+    //
+    // PILOT-DECISION (to-astryx): the antd original wrapped the label in a
+    // `Tooltip` (a disabled antd menu item swallows hover, so the tooltip had
+    // to sit on the label). Astryx's DATA mode types
+    // `DropdownMenuItemData.label` as `string`, and `DropdownMenuItem`'s
+    // `description` slot is reachable only through the compound render path —
+    // which `items` disables outright (`DropdownMenu.js`: `children` is
+    // ignored whenever `items` is passed). Rewriting this menu to the
+    // compound path would have to carry the divider / disabled / keyboard
+    // behaviour across with it. The reason is folded into the label text
+    // instead: still visible, still read out, no tooltip needed.
+    label:
+      action.disabled && action.disabledReason
+        ? `${action.title} — ${action.disabledReason}`
+        : action.title,
     icon: action.icon,
     isDisabled: action.disabled,
     onClick: () => {

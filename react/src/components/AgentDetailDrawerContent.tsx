@@ -11,18 +11,16 @@ import AgentResources from './AgentNodeItems/AgentResources';
 import AgentSessions from './AgentNodeItems/AgentSessions';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import BAICopyableText from './astryx-bui/BAICopyableText';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIDoubleTag,
   BAIFlex,
   BAIIntervalView,
+  BAIMetadataList,
+  BAISkeleton,
+  BAIText,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -78,38 +76,29 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
     <BAIFlex direction="column" gap="lg" align="stretch">
       <BAIFlex justify="between">
         <BAIFlex direction="column" align="stretch">
-          {/* antd Typography.Title level={3} copyable → BAICopyableText
-              (Text-based, MAPPING §3.4) sized to approximate the level-3
-              heading step (17px). PILOT-DECISION: loses the semantic <h3>
-              element (BAICopyableText renders a <span>) — Astryx has no
-              copyable Heading; the simplicity policy accepts the visual-only
-              approximation over rebuilding a heading-flavoured copy control. */}
-          <BAICopyableText
-            copyLabel={t('sourceCodeViewer.Copy')}
-            type="large"
-            weight="semibold"
-            color={isTerminated ? 'secondary' : 'primary'}
+          {/* Not an <h3>: Astryx has no copyable Heading, so the legacy
+              Title renders as large text with the shared copy control. */}
+          <BAIText
+            strong
+            type={isTerminated ? 'secondary' : undefined}
+            copyable
+            style={{
+              fontSize: 'var(--text-large-size)',
+              lineHeight: 'var(--text-large-leading)',
+            }}
           >
             {toLocalId(agent?.id || '')}
-          </BAICopyableText>
-          <BAICopyableText
-            copyLabel={t('sourceCodeViewer.Copy')}
-            color="secondary"
-          >
+          </BAIText>
+          <BAIText type="secondary" copyable>
             {agent?.addr || ''}
-          </BAICopyableText>
+          </BAIText>
         </BAIFlex>
         <AgentActionButtons agentNodeFrgmt={agent} size="lg" />
       </BAIFlex>
 
-      {/* antd Descriptions bordered → MetadataList (MAPPING §4). `bordered` /
-          per-item `span` have no destination and are dropped (PILOT-DECISION,
-          established ticket 15/18 project-wide); the `md`-driven column count
-          survives via useBAIBreakpoint (R3). */}
-      <MetadataList
-        columns={md ? 2 : 1}
-        label={{ position: 'start', width: md ? 160 : 120 }}
-      >
+      {/* SUPERSEDED (FR-3496): `bordered` now has a destination — BAIMetadataList.
+          Still dropped: per-item `span`. Column count is `md`-driven (R3). */}
+      <BAIMetadataList bordered columns={md ? 2 : 1}>
         <MetadataListItem label={t('agent.ResourceGroup')}>
           {agent?.scaling_group}
         </MetadataListItem>
@@ -159,7 +148,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
             )}
           </BAIFlex>
         </MetadataListItem>
-      </MetadataList>
+      </BAIMetadataList>
 
       {/* antd Tabs → TabList + Tab (MAPPING §4): navigation only, panel is
           self-rendered below. */}
@@ -177,7 +166,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
       )}
       {activeTabKey === 'sessions' && (
         <BAIErrorBoundary>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             {agent?.row_id && <AgentSessions agentId={agent.row_id} />}
           </Suspense>
         </BAIErrorBoundary>

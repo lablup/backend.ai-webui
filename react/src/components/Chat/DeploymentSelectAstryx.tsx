@@ -27,7 +27,7 @@
     reports the `labelInValue`-shaped selection (P26-3/P26-4: no
     `optionRender`/arbitrary option passthrough), so that side-channel is
     dropped here rather than reconstructed.
-  - P26-7 antd's `notFoundContent={<BAISkeletonAstryx variant="input".../>}`
+  - P26-7 antd's `notFoundContent={<BAISkeleton variant="input".../>}`
     first-load placeholder is dropped — shared "No results" text instead.
 */
 import { DeploymentSelectAstryxQuery } from '../../__generated__/DeploymentSelectAstryxQuery.graphql';

@@ -9,31 +9,20 @@
 
  `BAIDynamicStepInputNumber` and `BAIDynamicUnitInputNumber` are not "number
  inputs with a step" — their whole substance is a NON-LINEAR step ladder
- (`1, 2, 4, 8, 16, …`, plus a unit carry in the unit variant). antd gave them
- the hook they needed: `InputNumber onStep(afterValue, {type})` fires when the
- user clicks a spinner arrow or presses ↑/↓, and `step={0}` neutralised antd's
- own arithmetic so the handler alone decided the next value.
+ (`1, 2, 4, 8, 16, …`, plus a unit carry in the unit variant). Astryx
+ `NumberInput` exposes no `onStep` hook (MAPPING §3.17), and every stepping
+ affordance it does have — keyboard, wheel, its opt-in trailing buttons — is
+ LINEAR by `step`, which would silently replace the ladder. So the ladder gets
+ explicit controls: two `IconButton`s drive `onStep('up' | 'down')`, and the
+ owning components cancel the built-in ArrowUp/ArrowDown step in `onKeyDown`.
+ The ladder arithmetic itself is ported unchanged from each component — this
+ module owns only the affordance.
 
- MAPPING §3.17 records the gap bluntly: **`onStep` -> NONE. Astryx
- `NumberInput` has `onChange` and nothing else.** Its field is a native
- `<input type="number">`, so the browser's own spinner is still there and steps
- by `step` — i.e. leaving it in place would silently replace the step ladder
- with linear arithmetic. That is the P10 shape (a behaviour antd rendered and
- Astryx does not), and it is invisible to `tsc`.
-
- So the ladder gets explicit controls: the native spinner is suppressed in CSS
- and two `IconButton`s drive `onStep('up' | 'down')`. The ladder arithmetic
- itself is ported unchanged from each component — this module owns only the
- affordance.
-
- SCOPED CSS JUSTIFICATION (`astryxNumberStepper.css`, imported by this module
- per P17): the rules hide `::-webkit-*-spin-button` / Firefox's
- `-moz-appearance` on the input inside `.bai-number-stepper`. They target
- native pseudo-elements of `input[type=number]`, never a design-system class,
- so an Astryx bump cannot break them. Astryx exposes no prop to suppress the
- native spinner.
+ (Until Astryx 0.4.0 the field was a native `<input type="number">` whose
+ browser spinner also had to be suppressed in a co-located CSS file; 0.4.0's
+ text-backed spinbutton, astryx#4896, renders no native spinner, so the CSS
+ is gone.)
 */
-import './astryxNumberStepper.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { VStack } from '@astryxdesign/core/Stack';
 import { ChevronDown, ChevronUp } from 'lucide-react';

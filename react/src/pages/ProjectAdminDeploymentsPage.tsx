@@ -16,7 +16,6 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -26,6 +25,7 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
@@ -405,14 +405,19 @@ const ProjectAdminDeploymentsContent: React.FC<
           }}
         />
       </BAIFlex>
-      <DeploymentSettingModal
-        open={!!editingDeployment}
-        deploymentFrgmt={editingDeployment ?? null}
-        onRequestClose={(success) => {
-          setEditingDeploymentId(null);
-          if (success) updateFetchKey();
-        }}
-      />
+      {/* Edit-only call site: the deployment already belongs to a project, so
+          the props union rejects a `project` here entirely (ADR-0001). That
+          member requires a non-null fragment, hence the guard. */}
+      {editingDeployment != null && (
+        <DeploymentSettingModal
+          open
+          deploymentFrgmt={editingDeployment}
+          onRequestClose={(success) => {
+            setEditingDeploymentId(null);
+            if (success) updateFetchKey();
+          }}
+        />
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}
@@ -485,11 +490,11 @@ const ProjectAdminDeploymentsPage: React.FC = () => {
       }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           {currentProject.id ? (
             <ProjectAdminDeploymentsContent projectId={currentProject.id} />
           ) : (
-            <BAISkeletonAstryx />
+            <BAISkeleton />
           )}
         </Suspense>
       </BAIErrorBoundary>

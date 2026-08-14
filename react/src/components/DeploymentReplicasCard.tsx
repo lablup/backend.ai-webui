@@ -11,6 +11,7 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { ProjectContextOrNull } from '../types/projectContext';
 import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
@@ -21,10 +22,10 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIButton,
   BAICard,
@@ -100,6 +101,12 @@ interface DeploymentReplicasCardProps {
   // and replicas are spawned) — combined with the local manual-refresh key so
   // either event re-issues the list query.
   replicaFetchKey?: string;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): pass-through to the
+   * replica session-detail drawer. The deployment detail page decides the
+   * project context (`null` on the admin URL space).
+   */
+  project: ProjectContextOrNull;
 }
 
 /**
@@ -112,6 +119,7 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
   deploymentFrgmt,
   deploymentId,
   replicaFetchKey,
+  project,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -133,11 +141,12 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
       styles={{ body: { paddingTop: 0 } }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           <DeploymentReplicasCardContent
             deploymentFrgmt={deploymentFrgmt}
             deploymentId={deploymentId}
             replicaFetchKey={replicaFetchKey}
+            project={project}
           />
         </Suspense>
       </BAIErrorBoundary>
@@ -149,6 +158,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
   deploymentFrgmt,
   deploymentId,
   replicaFetchKey,
+  project,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -607,6 +617,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         <SessionDetailDrawer
           open={!!selectedSessionId}
           sessionId={selectedSessionId ?? undefined}
+          project={project}
           onClose={() => setSelectedSessionId(null)}
         />
       </BAIUnmountAfterClose>

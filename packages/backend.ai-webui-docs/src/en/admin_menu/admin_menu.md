@@ -88,8 +88,6 @@ In the Users list, columns that hold several values — **Allowed Client IPs** a
 show the first value inline and collapse the rest behind a `+N` tag. Hover over the tag to see the
 complete list without widening the column.
 
-Filters, sorting, and other view state persist when you switch tabs, and copying the URL lets you reopen or share the exact same view.
-
 <a id="bulk-create-users"></a>
 
 ### Bulk create users
@@ -453,11 +451,6 @@ Each individual admin deployment has its own address under the Admin Deployments
 URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
 :::
 
-The refresh control at the top right of the deployment list carries an auto-refresh interval dropdown.
-The list reloads every 15 seconds until you pick a different interval, or **Off**, from the dropdown;
-while auto-refresh is on, a countdown border fills around the control to show when the next reload is
-due. Your choice is remembered for this list in this browser.
-
 #### Deployment detail page
 
 When you open a deployment from the Admin Deployments page, the **Revisions** card on the Deployment Detail Page provides three tabs: **Current Revision**, **Revision History**, and **Audit Log**. These behave the same as on the user-facing Deployments page — for the full description of each tab, see the [Revisions Tab](#revisions-tab) section in the Model Deployment documentation.
@@ -580,11 +573,6 @@ The preset table lists all Prometheus query presets across the cluster. Each row
 - **Created At** / **Updated At**: Timestamps maintained automatically by the server.
 
 You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
-
-Because a Prometheus query can be expensive to evaluate, the refresh control on this tab offers longer
-auto-refresh intervals than the other admin lists — 30 seconds, 1 minute, 5 minutes, and 10 minutes.
-Auto-refresh is **Off** until you choose one of them, and your choice is remembered for this tab in this
-browser.
 
 <a id="prometheus-preset-column-settings"></a>
 
@@ -1018,11 +1006,6 @@ On the **Sessions** tab, the property filter offers the following conditions:
   shows the project's name.
 - **Session Name**, **Resource Group**, **Agent**, **Owner Email**: Narrow the list by text match.
 
-Both tabs refresh on their own: **Sessions** every 15 seconds and **Pending Sessions** every 10 seconds.
-Use the interval dropdown next to the refresh button to pick a different cadence, or **Off** to stop
-automatic reloading. While auto-refresh is on, a countdown border fills around the control so you can
-see when the next reload is due. Each tab remembers its own choice in this browser.
-
 ## Fair share scheduler
 
 The Fair Share Scheduler page is available in the
@@ -1085,11 +1068,6 @@ you edit a weight rather than only in the table.
 At each step, the following common features are available:
 
 - **Pagination**: Navigate through results with configurable page size.
-- **Auto-refresh**: The refresh button carries an interval dropdown. Because a Fair Share query is
-  expensive, the offered intervals are longer than elsewhere — 30 seconds, 1 minute, 5 minutes, and 10
-  minutes — and auto-refresh is **Off** until you pick one. While it is on, a countdown border fills
-  around the control to show when the next reload is due, and your choice is remembered in this browser.
-  The button also works as a manual refresh at any time.
 
 ### Resource group
 
@@ -1425,13 +1403,10 @@ as a reference for node management; if it is empty, then no disconnection or ter
 ![](../images/terminated_agent_list.png)
 
 You can narrow the list with the property filter, which supports **ID**, **Endpoint**, and
-**Schedulable**. The list reloads every 15 seconds; use the interval dropdown next to the refresh button
-to choose 30 seconds, 1 minute, or 5 minutes instead, or **Off** to stop automatic reloading. Because a
-cluster-wide agent query is heavy, 15 seconds is the shortest interval offered here.
+**Schedulable**.
 
 Click an agent's ID to open the **Agent Info** drawer, which shows the exact resource usage for that
-node. The drawer has its own refresh control with an interval dropdown; auto-refresh is **Off** until you
-pick an interval.
+node.
 
 ![](../images/detailed_agent_node_usage_information.png)
 
@@ -1567,10 +1542,6 @@ By using this feature, admin can easily manage and monitor the exact amount of s
 
 ![](../images/storage_list.png)
 <!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
-
-The refresh control above the list carries an auto-refresh interval dropdown. Auto-refresh is **Off**
-until you pick an interval; while it is on, a countdown border fills around the control to show when the
-next reload is due, and your choice is remembered for this tab in this browser.
 
 To manage a storage host, click the storage host name in the Storages list. This opens the **Storage Host
 Detail Drawer**, where capacity (quota) and folder permissions are configured.

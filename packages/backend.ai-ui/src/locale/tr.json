@@ -472,6 +472,7 @@
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",
     "InvalidPageNumber": "Geçersiz sayfa numarası",
+    "NoDataToDisplay": "Görüntülenecek veri yok",
     "Pagination": "Sayfalama",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",

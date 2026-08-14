@@ -10,13 +10,13 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { AstryxFormSelector } from './astryx-bui/astryxFormControls';
 import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
 import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
@@ -179,7 +179,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
         }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           <DeploymentAccessTokensTable
             deploymentId={deploymentId}
             fetchKey={deferredFetchKey}

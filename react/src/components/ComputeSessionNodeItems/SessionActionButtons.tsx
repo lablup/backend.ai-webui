@@ -84,39 +84,21 @@ const isAppSupported = (session: SessionActionButtonsFragment$data) => {
 };
 
 /**
- * antd button `size` -> Astryx size enum (frontier translation).
- *
- * QA-FINDINGS Q-19: `'large'` maps to Astryx **`md`**, not `lg`.
- *
- * Reported as "SessionActionButtons 의 크기가 너무 큼". The surprise in the
- * measurement is that the BOX is not the problem — Astryx `lg` renders a 36px
- * control where antd's `size="large"` was `controlHeightLG` = **40px**, i.e. 4px
- * SMALLER. What reads as bulk is the GLYPH: Astryx hard-codes `lg -> 20px` in
- * `Button`'s StyleX, while antd's large button drew its icon at
- * `onlyIconSize: 'inherit'` = `fontSizeLG` = **16px**. So the glyph-to-box ratio
- * went 0.40 -> 0.56, and four of them joined in a `ButtonGroup` read as one
- * heavy slab.
- *
- * Astryx has no size with antd's 40px box + 16px glyph, and no theme lever for
- * the glyph (`astryx component IconButton` exposes no icon-size prop; the value
- * is a StyleX literal). `md` is the closest: its glyph is **exactly** antd's
- * 16px, and its 32px box is 8px under antd's 40 — which is the direction the
- * report asks for anyway. Residue recorded rather than rounded away: 32-vs-40 on
- * the box.
- *
- * Only two call sites exist and neither passes `'medium'`
- * (`SessionDetailContent` passes `'large'`, `BAIComputeSessionNodeNotificationItem`
- * passes `'small'`), so collapsing large and medium onto `md` loses no live
- * distinction today.
- *
- * NOT changed here, and worth a separate decision: antd's non-primary buttons
- * were `colorBgContainer` + a 1px `colorBorder` outline, where Astryx
- * `variant="secondary"` is a solid `rgba(0,0,0,0.06)` / `#262626` fill. That
- * fill is the other half of the "heavy" impression, and Astryx has no
- * `outlined` variant to map onto.
+ * QA-FINDINGS Q-19 (measured): `'large'` maps to Astryx **`md`**, not `lg`.
+ * Astryx's `lg` glyph is a 20px StyleX literal with no theme lever, against the
+ * 16px the report asked for; `md`'s glyph is exactly 16px. Residue: `md`'s 32px
+ * box is 8px under the 40px reference — in the direction the report wanted.
  */
 const toAstryxSize = (size?: SessionActionButtonSize): 'sm' | 'md' | 'lg' =>
   size === 'small' ? 'sm' : 'md';
+
+// A disabled control must not keep a solid fill: inside an info Banner the theme
+// collapses `--color-accent` onto the text colour, so a half-opacity filled chip
+// still reads louder than an enabled neighbour. FR-3506.
+const variantWhenEnabled = (
+  isDisabled: boolean,
+  variant: 'primary' | 'secondary',
+): 'primary' | 'secondary' | 'ghost' => (isDisabled ? 'ghost' : variant);
 
 const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   sessionFrgmt,
@@ -202,6 +184,12 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 
   const astryxSize = toAstryxSize(size);
 
+  const isAppDisabled =
+    !session || !isAppSupported(session) || !isActive(session) || !isOwner;
+  const isSftpDisabled = !session || !isActive(session) || !isOwner;
+  const isContainerCommitDisabled = session?.status !== 'RUNNING' || !isOwner;
+  const isTerminateDisabled = !session || !isActive(session);
+
   const launchApp = () => {
     if (!primaryAppOption?.appName) return;
 
@@ -232,10 +220,8 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <IconButton
             key="primary-jupyter"
             size={astryxSize}
-            variant="primary"
-            isDisabled={
-              !isAppSupported(session) || !isActive(session) || !isOwner
-            }
+            variant={variantWhenEnabled(isAppDisabled, 'primary')}
+            isDisabled={isAppDisabled}
             icon={<BAIJupyterIcon />}
             label={t('session.ExecuteSpecificApp', {
               appName: 'Jupyter Notebook',
@@ -252,10 +238,8 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <IconButton
             key="primary-filebrowser"
             size={astryxSize}
-            variant="primary"
-            isDisabled={
-              !isAppSupported(session) || !isActive(session) || !isOwner
-            }
+            variant={variantWhenEnabled(isAppDisabled, 'primary')}
+            isDisabled={isAppDisabled}
             icon={<BAIFileBrowserIcon />}
             label={t('session.ExecuteSpecificApp', {
               appName: 'File browser',
@@ -272,10 +256,11 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <IconButton
             key="appLauncher"
             size={astryxSize}
-            variant={primaryAppOption ? 'secondary' : 'primary'}
-            isDisabled={
-              !isAppSupported(session) || !isActive(session) || !isOwner
-            }
+            variant={variantWhenEnabled(
+              isAppDisabled,
+              primaryAppOption ? 'secondary' : 'primary',
+            )}
+            isDisabled={isAppDisabled}
             icon={<BAIAppIcon />}
             label={t('session.SeeAppDialog')}
             tooltip={t('session.SeeAppDialog')}
@@ -289,8 +274,8 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <IconButton
             key="sftp"
             size={astryxSize}
-            variant="primary"
-            isDisabled={!isActive(session) || !isOwner}
+            variant={variantWhenEnabled(isSftpDisabled, 'primary')}
+            isDisabled={isSftpDisabled}
             icon={<BAISftpIcon />}
             label={t('data.explorer.RunSSH/SFTPserver')}
             tooltip={t('data.explorer.RunSSH/SFTPserver')}
@@ -303,9 +288,8 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <IconButton
             key="terminal"
             size={astryxSize}
-            isDisabled={
-              !isAppSupported(session) || !isActive(session) || !isOwner
-            }
+            variant={variantWhenEnabled(isAppDisabled, 'secondary')}
+            isDisabled={isAppDisabled}
             icon={<BAITerminalAppIcon />}
             label={t('session.ExecuteTerminalApp')}
             tooltip={t('session.ExecuteTerminalApp')}
@@ -332,7 +316,8 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <IconButton
             key="containerCommit"
             size={astryxSize}
-            isDisabled={session?.status !== 'RUNNING' || !isOwner}
+            variant={variantWhenEnabled(isContainerCommitDisabled, 'secondary')}
+            isDisabled={isContainerCommitDisabled}
             icon={<BAIContainerCommitIcon />}
             label={t('session.RequestContainerCommit')}
             tooltip={t('session.RequestContainerCommit')}
@@ -346,11 +331,12 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           <IconButton
             key="terminate"
             size={astryxSize}
-            isDisabled={!isActive(session)}
+            variant={variantWhenEnabled(isTerminateDisabled, 'secondary')}
+            isDisabled={isTerminateDisabled}
             icon={
               <BAITerminateIcon
                 style={{
-                  color: isActive(session) ? 'var(--color-error)' : undefined,
+                  color: isTerminateDisabled ? undefined : 'var(--color-error)',
                 }}
               />
             }

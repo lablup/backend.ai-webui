@@ -23,10 +23,21 @@ import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
+import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import { BAIFlex, toLocalId } from 'backend.ai-ui';
 import { Undo2 } from 'lucide-react';
 import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const styles = stylex.create({
+  // The tab strip is a bare sibling of the Banner and the first field, so its
+  // breathing room has to come from the strip itself. FR-3529.
+  categoryTabs: {
+    marginBlockStart: spacingVars['--spacing-4'],
+    marginBlockEnd: spacingVars['--spacing-4'],
+  },
+});
 
 /** Convert category slug to a display-friendly label. */
 function formatCategoryLabel(category: string): string {
@@ -272,6 +283,8 @@ const RuntimeParameterFormSection: React.FC<
           already is. */}
       <TabList
         size="sm"
+        hasDivider
+        xstyle={styles.categoryTabs}
         value={effectiveActiveTab}
         onChange={(key) => setActiveTab(key)}
       >

@@ -10,13 +10,13 @@ import {
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIBoardItemTitle,
   BAIFetchKeyButton,
   BAIFlex,
@@ -254,7 +254,7 @@ const MyResourceWithinResourceGroup: React.FC<
         // `data-testid` anchor for e2e (`dashboard.spec.ts`): Astryx
         // `Skeleton` renders `aria-hidden="true"` with no default class, so
         // there is no other stable "still loading" selector.
-        <BAISkeletonAstryx data-testid="my-resource-skeleton" />
+        <BAISkeleton data-testid="my-resource-skeleton" />
       ) : (
         <ResourceStatistics
           resourceData={resourceData}

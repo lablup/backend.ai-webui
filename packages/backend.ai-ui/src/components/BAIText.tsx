@@ -6,7 +6,7 @@
 
  FRONTIER COMPONENT. 276 call sites in 62 files pass antd `Typography.Text`
  props (`type`, `strong`, `ellipsis={{rows,tooltip}}`, `copyable`, `code`,
- `keyboard`, `mark`, `delete`, `monospace`, …). Per the frontier rule the
+ `mark`, `delete`, `monospace`, …). Per the frontier rule the
  PUBLIC prop surface stays antd-SHAPED so none of those files change; only the
  internals move to Astryx. The antd *import* is gone though — the prop types
  are declared locally here (`BAITextEllipsisConfig`, `BAITextCopyConfig`)
@@ -27,12 +27,10 @@
    delete                          -> hasStrikethrough
    ellipsis / ellipsis={{rows}}    -> maxLines (+ hasTruncateTooltip)
    code                            -> <Code>
-   keyboard                        -> <Kbd> when the content is a shortcut
-                                      string, else the Kbd-ish box below
+   keyboard                        -> RETIRED (FR-3509). Shortcut badges are
+                                      Astryx `Kbd` at the call site.
    copyable                        -> self-built (Astryx has no `copyable`);
-                                      IconButton + navigator.clipboard, the
-                                      same shape the pilot's BAICopyableText
-                                      established.
+                                      IconButton + navigator.clipboard.
 
  PILOT-DECISIONs recorded in `.specs/FR-3482-astryx-migration/issues/p3-a-bui-primitives.md`.
 */
@@ -93,14 +91,11 @@ export interface BAITextProps extends Omit<
   delete?: boolean;
   mark?: boolean;
   code?: boolean;
-  keyboard?: boolean;
   disabled?: boolean;
   monospace?: boolean;
   /** CSS-based ellipsis (multi-line via `rows`), with an optional tooltip. */
   ellipsis?: boolean | BAITextEllipsisConfig;
   copyable?: boolean | BAITextCopyConfig;
-  /** Legacy variant used by the notification/keyboard-hint surfaces. */
-  keyboardWithLightBorder?: boolean;
 }
 
 const TYPE_TO_COLOR: Record<BAITextType, NonNullable<TextProps['color']>> = {
@@ -197,8 +192,6 @@ const BAIText: React.FC<BAITextProps> = ({
   delete: deleteProp,
   mark,
   code,
-  keyboard,
-  keyboardWithLightBorder,
   disabled,
   type,
   ...restProps
@@ -227,7 +220,7 @@ const BAIText: React.FC<BAITextProps> = ({
   const anchorRef = useRef<HTMLElement | null>(null);
 
   const decorationStyle: CSSProperties = {
-    ...(monospace && { fontFamily: 'var(--font-family-mono, monospace)' }),
+    ...(monospace && { fontFamily: 'var(--font-family-code, monospace)' }),
     ...(italic && { fontStyle: 'italic' }),
     ...(underline && deleteProp
       ? { textDecoration: 'underline line-through' }
@@ -263,22 +256,11 @@ const BAIText: React.FC<BAITextProps> = ({
     </Text>
   );
 
-  // `code` / `keyboard` / `mark` are box treatments antd painted around the
-  // text. `Code` is Astryx-native; `keyboard` and `mark` have no counterpart
-  // and are rendered by the two co-located classes in BAIText.css (tokens
-  // only, justified there).
+  // `code` / `mark` are box treatments antd painted around the text. `Code` is
+  // Astryx-native; `mark` has no counterpart and is rendered by a co-located
+  // class in BAIText.css (tokens only, justified there).
   const boxed = code ? (
     <Code className="bai-text-code">{textNode}</Code>
-  ) : keyboard || keyboardWithLightBorder ? (
-    <span
-      className={
-        keyboardWithLightBorder
-          ? 'bai-text-kbd bai-text-kbd--light'
-          : 'bai-text-kbd'
-      }
-    >
-      {textNode}
-    </span>
   ) : mark ? (
     <mark className="bai-text-mark">{textNode}</mark>
   ) : (

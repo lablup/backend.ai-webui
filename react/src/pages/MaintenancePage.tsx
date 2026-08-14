@@ -4,8 +4,7 @@
  */
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import MaintenanceSettingList from '../components/MaintenanceSettingList';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
-import { BAICard } from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +27,7 @@ const MaintenancePage = () => {
         },
       ]}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {curTabKey === 'maintenance' && (
           <BAIErrorBoundary>
             <MaintenanceSettingList />

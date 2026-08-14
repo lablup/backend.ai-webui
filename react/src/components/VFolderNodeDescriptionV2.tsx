@@ -6,7 +6,7 @@
  becomes `MetadataList columns="single"` (MAPPING §4: `bordered`/`size` have
  no destination and are DROPPED, defaults-first). The status tag routes
  through the repo-global ticket-13 lookup, the permission select becomes an
- Astryx `Selector`, and copyable values use `BAICopyableText`.
+ Astryx `Selector`, and copyable values use `BAIText copyable`.
 
  PILOT-DECISIONs:
  - The copy affordance on the "Path" LABEL moves next to the path VALUE:
@@ -21,13 +21,10 @@ import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   MetadataList,
   MetadataListItem,
@@ -40,13 +37,13 @@ import {
   toLocalId,
   useErrorMessageResolver,
   badgeVariantForStatus,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
   CircleCheckIcon,
   CircleXIcon,
-  CopyIcon,
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -73,10 +70,11 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const { getErrorMessage } = useErrorMessageResolver();
 
   const relayEnv = useRelayEnvironment();
-  const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
-  const effectiveAdminRole = useEffectiveAdminRole();
+  // Not `useEffectiveAdminRole` — it resolves its target from the ambient
+  // project. Authorization here is derived from the folder's own ownership.
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
 
   // TODO(needs-backend): the mount-permission update still goes through the
   // legacy REST endpoint (`baiClient.vfolder.update_folder`) because the V2
@@ -159,16 +157,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       children: (
         <HStack gap={1} align="start" wrap="wrap">
           <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />
-          <IconButton
-            label={t('sourceCodeViewer.Copy')}
-            tooltip={t('sourceCodeViewer.Copy')}
-            variant="ghost"
-            size="sm"
-            icon={<CopyIcon />}
-            onClick={() => {
-              void navigator.clipboard?.writeText(vfolderPath);
-            }}
-          />
+          <BAIText copyable={{ text: vfolderPath }} />
         </HStack>
       ),
     },
@@ -203,14 +192,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           </HStack>
         ),
     },
-    // Mount permission editing is allowed for the folder owner, super admins
-    // (any project), or the current project's admin when the folder belongs to
-    // that project. Domain admins are intentionally excluded — they do not
-    // have implicit per-project ownership rights.
+    // Allowed for the folder owner, super admins, or an admin of the project
+    // that owns the folder. Domain admins are excluded — they have no
+    // implicit per-project ownership rights.
     (vfolderNode?.ownership?.userId === currentUser.uuid ||
-      effectiveAdminRole === 'superadmin' ||
-      (effectiveAdminRole === 'currentProjectAdmin' &&
-        vfolderNode?.ownership?.projectId === currentProject?.id)) && {
+      isSuperAdmin ||
+      (!!vfolderNode?.ownership?.projectId &&
+        projectAdminIds.includes(vfolderNode.ownership.projectId))) && {
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
@@ -299,9 +287,9 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'user_email',
       label: t('data.User'),
       children: (
-        <BAICopyableText>
+        <BAIText copyable>
           {vfolderNode.ownership?.user?.basicInfo?.email ?? ''}
-        </BAICopyableText>
+        </BAIText>
       ),
     },
     vfolderNode.ownership?.project?.basicInfo?.name && {

@@ -5,10 +5,9 @@
 import AllocationHistory from '../components/AllocationHistory';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import { theme } from '../theme-shim';
-import { filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,12 +51,12 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         <BAIErrorBoundary>
           <Suspense
             fallback={
-              // antd `Skeleton active style={{padding}}` -> `BAISkeletonAstryx`
+              // antd `Skeleton active style={{padding}}` -> `BAISkeleton`
               // inside a padded box. The padding cannot ride on the component:
               // in `paragraph` mode it forwards `style` to EVERY line box, so
               // one shared style would repeat the inset per row.
               <div style={{ padding: token.paddingContentVerticalLG }}>
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               </div>
             }
           >
@@ -69,12 +68,12 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         <BAIErrorBoundary>
           <Suspense
             fallback={
-              // antd `Skeleton active style={{padding}}` -> `BAISkeletonAstryx`
+              // antd `Skeleton active style={{padding}}` -> `BAISkeleton`
               // inside a padded box. The padding cannot ride on the component:
               // in `paragraph` mode it forwards `style` to EVERY line box, so
               // one shared style would repeat the inset per row.
               <div style={{ padding: token.paddingContentVerticalLG }}>
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               </div>
             }
           >

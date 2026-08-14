@@ -5,14 +5,12 @@
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
@@ -23,12 +21,12 @@ import {
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   toLocalId,
-  useToggle,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -58,10 +56,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [deployModalOpen, setDeployModalOpen] = useState(false);
-  const [
-    isCreateDeploymentOpen,
-    { toggle: toggleCreateDeployment, setLeft: closeCreateDeployment },
-  ] = useToggle(false);
 
   // Defer `open` so the lazy query only fires once the drawer has actually
   // committed to opening. `loading={deferredOpen !== open}` then lets the
@@ -142,7 +136,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         label={heading || t('modelStore.ModelDetails')}
         onClose={() => {
           setDeployModalOpen(false);
-          closeCreateDeployment();
           onClose?.();
         }}
         title={
@@ -176,7 +169,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
       >
         <VStack gap={4} align="stretch">
           {isLoadingCard ? (
-            <BAISkeletonAstryx rows={6} />
+            <BAISkeleton rows={6} />
           ) : (
             modelCard && (
               <BAIFlex direction="column" align="stretch" gap="sm">
@@ -276,7 +269,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                       <ErrorBoundaryWithNullFallback>
                         <Suspense
                           fallback={
-                            <BAISkeletonAstryx variant="input" size="small" />
+                            <BAISkeleton variant="input" size="small" />
                           }
                         >
                           <BAILink
@@ -352,10 +345,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           />
         </BAIUnmountAfterClose>
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        onRequestClose={toggleCreateDeployment}
-      />
     </>
   );
 };

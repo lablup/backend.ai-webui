@@ -2,14 +2,18 @@
 name: astryx-fix
 description: >
   Standing rules for fixing a visual or behavioural regression on the Astryx
-  UI: measure before you fix, theme-defaults-first (with the exact
+  UI: check the tracked issue's assignee before starting (proceed only when it
+  is you or nobody — claim an unassigned one, stop and report when someone else
+  holds it), measure before you fix, theme-defaults-first (with the exact
   THEME_NAME_REV bump + `astryx theme build` artifact regeneration + wrapper
   and mirror updates), Astryx-canonical composition over hand-rolled CSS,
   `astryx component <Name>` discovery over guessing, tokens-only enforced by
   `scripts/migration-gates/astryx-token-gate.mjs`, the known traps (stale
   theme artifacts, stale BUI dist, Grid child overflow, Table bleed, Tooltip
   `display:contents`, MediaTheme leaking into native `<dialog>`), and the
-  verification bar (verify.sh + vitest + live light/dark probe). Use whenever
+  verification bar (verify.sh + vitest + live light/dark probe), and shipping
+  the fix through to an open draft PR (branch, scratch cleanup, commit,
+  `Resolves #N (FR-N)` body carrying the measured evidence). Use whenever
   someone reports a visual or behavioural regression on the Astryx UI, or any
   fix touches Astryx component usage, theme tokens, or layout.
 ---
@@ -21,6 +25,63 @@ source file imports it, and the workspace pins exact dependency versions so
 nothing reintroduces it transitively. A `from 'antd'` import is not migration
 debt; it fails `tsc` immediately, which is what keeps it out. Everything below
 assumes `@astryxdesign/core` is the only component system.
+
+## Before anything — the assignee gate
+
+**Run this first, before §0.** Two people measuring, branching and PR-ing the
+same regression is the one waste this skill can prevent outright, and it is only
+preventable *before* the work, not after.
+
+The gate applies whenever the fix is tied to a tracked issue — a `FR-XXXX` key
+in the request, in the branch name, in a linked GitHub issue, or the issue you
+were handed.
+
+```bash
+FW_JIRA=$(find ~/.claude/plugins -path '*fw*/skills/jira-workflow/scripts/jira.sh' 2>/dev/null | head -1)
+
+$FW_JIRA myself                       # → {accountId, name, email}
+$FW_JIRA get FR-XXXX | jq '{key, status, assignee, summary}'
+```
+
+`assignee` comes back as a **display name**, and literally `"Unassigned"` when
+the field is empty. Compare it against `myself`'s `name` (the account the CLI is
+authenticated as *is* "you" — do not infer identity from the git author or the
+branch name).
+
+| `assignee` | What to do |
+|---|---|
+| **You** | Proceed to §0. |
+| **`Unassigned`** | Claim it, then proceed: `$FW_JIRA update FR-XXXX --assignee me`. Say in your reply that you assigned it to yourself. |
+| **Someone else** | **Stop.** Report, do not fix. |
+
+### When someone else holds it
+
+Do **not** measure, reproduce, branch, edit, or open a PR — stopping after
+"just a quick look" still means two people looked. Instead, reply with:
+
+- the holder's name, the issue's current status, and the key as a link
+  (`https://lablup.atlassian.net/browse/FR-XXXX` — `get` returns no URL field);
+- one line on what you were about to do, so they can judge overlap;
+- the choices: hand it back and pick something else / ask the holder / take it
+  over / file a separate issue for the part that is genuinely distinct.
+
+**Reassignment is the user's call, not yours.** Never run
+`--assignee me` on an issue held by someone else. An explicit "그래도 진행해" /
+"take it over" from the user unblocks you — record in your reply that you
+proceeded on their instruction, and leave the assignee field alone unless they
+also asked you to change it.
+
+### Edge cases
+
+- **The key does not resolve, or the CLI errors.** Resolve toward stopping: say
+  the check failed and ask, rather than treating an error as "Unassigned".
+- **Status is Done / Closed.** Cheap signal that the fix already landed — check
+  before redoing it, whoever the assignee is.
+- **No tracked issue at all** (an ad-hoc "이거 좀 고쳐줘"). No gate; proceed. If
+  the fix will end up in a PR, find or file the issue first — `astryx-bug-report`
+  handles the filing, and then this gate applies to what it created.
+- **Several issues in one request.** Gate each one. A blocked issue does not
+  block the others; do the ones you hold and report the rest.
 
 ## 0. Measure before you fix
 
@@ -89,7 +150,9 @@ none.
      `ANTD_BOX_SHADOW_SECONDARY`, …). BUI cannot import from `react/src`, so the
      measured tables live there and are re-exported.
 
-2. **Bump `THEME_NAME_REV`** (`backendAiTheme.ts`, currently **10**) whenever
+2. **Bump `THEME_NAME_REV`** (read the current value from
+   `react/src/astryx-theme/backendAiTheme.ts` — do not trust any number quoted
+   in docs, it goes stale on every theme fix) whenever
    the *static recipe* changes, and add any new keys to the seed-hash array.
    The theme's `name` **is** its identity — it becomes the `data-astryx-theme`
    attribute, and when two `defineTheme()` calls share a name the **first
@@ -225,14 +288,83 @@ Terminology.
   evidence) — that's the durable home for patterns worth reusing across
   multiple fixes.
 - **A deliberate capability drop** stays a `// PILOT-DECISION:` comment at the
-  call site explaining *why*, so the next reader does not "fix" it back.
+  call site explaining *why*, so the next reader does not "fix" it back — in
+  one or two lines, not an essay.
 - **A superseded idiom** is marked superseded where it's documented, not
   deleted, so history stays legible.
-- Commit or push only when asked, following the repo's normal PR/commit
-  conventions.
+- **Keep it out of the source file.** The mechanism goes in the commit body,
+  the measurements in the PR description (§8), a reusable recipe in
+  `CONVERSION-IDIOMS.md`. The comment at the fix site carries the one sentence
+  that stops someone reverting it, plus the FR number. See
+  `.claude/rules/comment-density.md` — this skill used to be one of the main
+  producers of 40-line justification blocks.
+
+## 8. Ship it — branch, commit, PR
+
+A finished Astryx fix ends at an **open draft PR**, not at a dirty working
+tree. Do this without being asked again; the request to fix the regression is
+the request to ship it. Two things still need an explicit ask: marking the PR
+**ready for review**, and **merging** it.
+
+1. **Branch.** `FR-XXXX` — the dev URL derives from it
+   (`https://fr-XXXX.localhost:1355`). Base it on **what the fix actually
+   depends on**, which decides the shape of step 5 too:
+   - depends only on `main` → branch off `main`, single PR;
+   - depends on work still in review on another branch → branch off **that**
+     branch and stack (`AGENTS.md`: "Follow the GitHub Stacked PRs strategy"),
+     so the PR's base is the branch below, not `main`.
+
+   Basing a dependent fix on `main` puts unrelated commits in its diff and
+   makes it unmergeable until the branch below lands. If the fix was made on
+   `main`, branch first and carry the changes over.
+
+2. **Delete the scratch.** Probe scripts, harness pages, screenshots dumped in
+   the repo root — none of it belongs in the diff. `git status` should show
+   only the fix and its regenerated artifacts before you commit.
+
+3. **Commit.** `fix(FR-XXXX): <what changed>` (`style:` when it is purely
+   visual with no behaviour change). Body: the mechanism in two or three
+   sentences — the *cause*, not the symptom.
+
+4. **Find the GitHub issue.** The Jira issue is cloned to GitHub by a webhook:
+
+   ```bash
+   gh issue list --search "FR-XXXX" --state all --json number,title,url
+   ```
+
+   Match on the title, not the search rank — sibling reports in the same
+   symptom family come back from the same query. If the webhook has not fired
+   yet, say so and open the PR without the `Resolves` line rather than
+   inventing a number.
+
+5. **Open the PR.** Single fix → `git push -u origin FR-XXXX` +
+   `gh pr create --draft`. Stacked on another branch → `gh stack submit --auto`
+   (see the `gh-stack` and `fw:stacked-pr-workflow` skills). Title
+   `fix(FR-XXXX): title`; body starts `Resolves #NNNN (FR-XXXX)` — **the space
+   before `(` is required** or the project-status-sync workflow misses the link.
+
+6. **The body carries the evidence this skill made you collect**, because that
+   is what a reviewer cannot reproduce from the diff:
+   - the **mechanism**, named — which token/prop/DOM relationship actually did
+     it, and how you know (§0);
+   - the **measured before/after table**, light *and* dark, in the real app;
+   - the **verification bar** results with real counts (§6), including any
+     gate that was already failing on `main` — say that it is pre-existing and
+     how you checked;
+   - **residue** — what this fix deliberately does not close, and any sibling
+     report it does or does not subsume. A reader must not have to guess
+     whether a neighbouring bug was covered.
+   - before/after **screenshots** when the change is visual. Capture them
+     during the live probe; a scratchpad can be cleared between sessions, so
+     attach them to the PR rather than leaving them on disk.
 
 ## Related
 
+- `astryx-bug-report` — the capture-only counterpart, and where an untracked
+  regression gets its issue before this skill's assignee gate can apply. Its
+  `astryx-discussion` Tasks are not fix-ready until the team has answered them.
+- `fw:jira-workflow` — full `$FW_JIRA` command reference (`myself`, `get`,
+  `update --assignee me`).
 - `dev-server`, `webui-connection-info` — running the app and logging in.
 - `.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md`,
   `.specs/FR-3482-astryx-migration/RESPONSIVE-POLICY.md` — ratified conversion

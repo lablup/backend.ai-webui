@@ -32,7 +32,6 @@ import RuntimeParameterFormSection, {
   RUNTIME_PARAMS_NAMESPACE,
   type RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -45,6 +44,7 @@ import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Step, Stepper } from '@astryxdesign/lab';
 import {
+  BAISkeleton,
   BAIAdminImageSelectAstryx,
   BAIButton,
   BAICard,
@@ -782,7 +782,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       marginBottom: token.marginLG,
                     }}
                   >
-                    <Suspense fallback={<BAISkeletonAstryx />}>
+                    <Suspense fallback={<BAISkeleton />}>
                       <RuntimeParameterFormSection
                         runtimeVariant={variantName}
                         onTouchedKeysChange={(keys) => {
@@ -1135,7 +1135,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           {currentStepKey === 'review' && (
             <BAIFormItem noStyle shouldUpdate>
               {() => (
-                <Suspense fallback={<BAISkeletonAstryx />}>
+                <Suspense fallback={<BAISkeleton />}>
                   <PresetReviewSummary
                     form={form}
                     onGoToStep={goToStep}

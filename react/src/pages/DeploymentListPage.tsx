@@ -15,17 +15,18 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
@@ -102,6 +103,7 @@ const DeploymentListPageContent: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const currentProject = useCurrentProjectValue();
+  const pageProject = toProjectContext(currentProject);
 
   const orderBy = convertToOrderBy<DeploymentOrderBy>(queryParams.order);
   const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
@@ -404,17 +406,24 @@ const DeploymentListPageContent: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <BAIUnmountAfterClose>
-        <DeploymentSettingModal
-          open={isCreating || !!editingDeployment}
-          deploymentFrgmt={editingDeployment ?? null}
-          onRequestClose={(success) => {
-            closeCreate();
-            setEditingDeploymentId(null);
-            if (success) updateFetchKey();
-          }}
-        />
-      </BAIUnmountAfterClose>
+      {/* ADR-0001: general page — the page is the only reader of the ambient
+          current project and passes it explicitly. Creation is offered only
+          here, from this project-scoped menu, so the modal's props union
+          requires a non-null project on this call site. */}
+      {pageProject != null && (
+        <BAIUnmountAfterClose>
+          <DeploymentSettingModal
+            open={isCreating || !!editingDeployment}
+            deploymentFrgmt={editingDeployment ?? null}
+            project={pageProject}
+            onRequestClose={(success) => {
+              closeCreate();
+              setEditingDeploymentId(null);
+              if (success) updateFetchKey();
+            }}
+          />
+        </BAIUnmountAfterClose>
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}
@@ -482,7 +491,7 @@ const DeploymentListPage: React.FC = () => {
         title={t('webui.menu.Deployments')}
         styles={{ body: { paddingTop: 0 } }}
       >
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           <DeploymentListPageContent />
         </Suspense>
       </BAICard>
