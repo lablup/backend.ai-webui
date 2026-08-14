@@ -130,6 +130,7 @@ interface CellSpec {
 const UnitGridSvg = ({
   cells,
   emptyFill,
+  cellStroke,
   borderColor,
   cellPx,
   gapPx,
@@ -139,6 +140,9 @@ const UnitGridSvg = ({
 }: {
   cells: CellSpec[];
   emptyFill: string;
+  // Ramp extremes sit under 2:1 vs surface (validated 2026-08-14, both
+  // modes) — the stroke keeps every cell visible regardless of fill.
+  cellStroke: string;
   borderColor: string;
   cellPx: number;
   gapPx: number;
@@ -184,6 +188,8 @@ const UnitGridSvg = ({
               height={cellPx}
               rx={2}
               fill={isPartial ? emptyFill : cell.color}
+              stroke={cellStroke}
+              strokeWidth={0.5}
             />
             {isPartial && (
               <rect
@@ -584,6 +590,7 @@ const SessionResourceGridPrototype = ({
                     <UnitGridSvg
                       cells={cellsFor(session)}
                       emptyFill={emptyFill}
+                      cellStroke={colors.structural.grid}
                       borderColor={borderFor(session.id)}
                       cellPx={cellPx}
                       gapPx={gapPx}
