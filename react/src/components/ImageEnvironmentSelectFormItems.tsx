@@ -588,6 +588,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       <SelectOption
                         key={environmentGroup.environmentName}
                         value={environmentGroup.environmentName}
+                        // The prefix/meta badge texts live in Badge props, so
+                        // the accessible/search label restates them (FR-3544).
+                        label={_.compact([
+                          environmentGroup.displayName,
+                          ...extraFilterValues,
+                        ]).join(' | ')}
                         filterValue={
                           environmentGroup.displayName +
                           '\t' +

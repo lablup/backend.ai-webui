@@ -522,8 +522,12 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     // `nodeLabels` holds non-string labels only, so `renderIconSlot` renders
     // this node as-is instead of wrapping it in an `Icon` (FR-3544).
     ...(richTriggerNode !== undefined && {
+      // The clone is decorative; the trigger button's visually-hidden string
+      // label stays the single accessible selected value.
       startIcon: (
-        <span className="bai-select-rich-value">{richTriggerNode}</span>
+        <span className="bai-select-rich-value" aria-hidden="true">
+          {richTriggerNode}
+        </span>
       ),
     }),
     className: classNames(

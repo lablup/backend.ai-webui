@@ -75,10 +75,16 @@
   margin-inline: var(--spacing-2);
 }
 
-/* Only the trigger combobox button — the container also hosts the clear and
-   status-tooltip buttons, whose glyphs must not be clipped. */
+/* The trigger button spans the whole control so its focus, click and
+   voice-control target stays full-size (the container is position:relative).
+   Sibling clear/status buttons become positioned so DOM order keeps them
+   painted — and clickable — above it. */
 .bai-select-rich-trigger > button[aria-haspopup='listbox'] {
-  flex: 0 0 auto;
+  position: absolute;
+  inset: 0;
+}
+.bai-select-rich-trigger > button:not([aria-haspopup='listbox']) {
+  position: relative;
 }
 
 /* @astryxdesign/core `VisuallyHidden`'s recipe, inlined — the label span is
