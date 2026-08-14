@@ -65,6 +65,16 @@
   min-width: 0;
 }
 
+/* antd's vertical divider metrics (0.9em, centered, breathing room) — full
+   stretch reads as a cell border inside the compact trigger. */
+.bai-select-rich-trigger
+  > .bai-select-rich-value
+  [role='separator'][aria-orientation='vertical'] {
+  align-self: center;
+  height: 0.9em;
+  margin-inline: var(--spacing-2);
+}
+
 /* Only the trigger combobox button — the container also hosts the clear and
    status-tooltip buttons, whose glyphs must not be clipped. */
 .bai-select-rich-trigger > button[aria-haspopup='listbox'] {
