@@ -9,6 +9,7 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import './collapsible-section.css';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
@@ -96,6 +97,7 @@ const ModelConfigItem: React.FC<{
           the single-panel accordion frame (bordered antd panel chrome) is
           replaced by Collapsible's flat default. */}
       <Collapsible
+        className="bai-collapsible-section"
         trigger={t('adminDeploymentPreset.modelDef.EnableMetadata')}
         defaultIsOpen
         style={{ marginTop: token.marginSM }}

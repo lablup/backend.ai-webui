@@ -72,6 +72,7 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import './collapsible-section.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
@@ -2234,6 +2235,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               // stopPropagation dance the antd header needed).
               return (
                 <Collapsible
+                  className="bai-collapsible-section"
                   trigger={t('modelService.ServiceConfiguration')}
                   style={{ marginBottom: token.marginMD }}
                 >
@@ -2697,6 +2699,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               default). `defaultIsOpen={false}` is required: antd panels start
               collapsed, Astryx Collapsible defaults to open. */}
           <Collapsible
+            className="bai-collapsible-section"
             trigger={t('session.launcher.AdvancedSettings')}
             defaultIsOpen={false}
           >

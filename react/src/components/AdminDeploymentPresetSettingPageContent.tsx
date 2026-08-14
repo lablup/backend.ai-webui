@@ -48,6 +48,7 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import './collapsible-section.css';
 import { Button } from '@astryxdesign/core/Button';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { Selector } from '@astryxdesign/core/Selector';
@@ -906,6 +907,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       marginTop: -token.margin,
                       marginBottom: token.marginLG,
                     }}
+                    className="bai-collapsible-section"
                     trigger={t('modelService.ServiceConfiguration')}
                   >
                     {/* PILOT-DECISION: the Basic/Advanced Segmented moves from

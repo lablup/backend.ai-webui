@@ -1,0 +1,8 @@
+/* Collapsible section triggers inside forms/modals sat flush on the page
+   background, hiding the fold affordance — tint them into a header band. */
+.bai-collapsible-section > .astryx-collapsible-trigger {
+  background: var(--color-background-muted);
+  border-radius: var(--radius-inner);
+  padding-block: var(--spacing-2);
+  padding-inline: var(--spacing-3);
+}
