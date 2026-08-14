@@ -12,12 +12,11 @@
  PILOT-DECISION — **`onStep` has no Astryx counterpart, so the ladder gets
  explicit controls.** MAPPING §3.17 lists `onStep` as NONE. The component's
  entire substance is the non-linear ladder (`1, 2, 4, 8, …`), which antd drove
- through `onStep` with `step={0}` to disable its own arithmetic. Astryx's
- `NumberInput` is a native `<input type="number">` whose browser spinner steps
- LINEARLY and reports nothing, so leaving it in place would silently replace
- the ladder — a P10 regression `tsc` cannot see. The spinner is therefore
- suppressed in CSS and two `IconButton`s drive the same ladder arithmetic,
- ported unchanged (see `astryxNumberStepper.tsx`).
+ through `onStep` with `step={0}` to disable its own arithmetic. Every
+ stepping affordance Astryx's `NumberInput` has is LINEAR by `step`, so left
+ alone it would silently replace the ladder — a P10 regression `tsc` cannot
+ see. Two `IconButton`s therefore drive the same ladder arithmetic, ported
+ unchanged (see `astryxNumberStepper.tsx`).
 
  PILOT-DECISION — **the `useUpdatableState` remount workaround is deleted.**
  It existed because antd's `InputNumber` kept its own internal display string
@@ -94,9 +93,9 @@ const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
 
   /**
    * antd's `onStep` fired for the spinner AND for ↑/↓, so the buttons alone
-   * only restored half of it. A native `<input type="number">` steps LINEARLY
-   * on the arrow keys, which is precisely the silent linearisation the ladder
-   * exists to prevent — cancel it and run the ladder instead.
+   * only restored half of it. `NumberInput`'s own ArrowUp/ArrowDown stepping
+   * is LINEAR by `step`, which is precisely the silent linearisation the
+   * ladder exists to prevent — cancel it and run the ladder instead.
    */
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (disabled) return;
@@ -109,7 +108,6 @@ const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
 
   return (
     <InputGroup
-      className="bai-number-stepper"
       label={accessibleLabel}
       isLabelHidden={isLabelHidden ?? label === undefined}
       isDisabled={disabled}
