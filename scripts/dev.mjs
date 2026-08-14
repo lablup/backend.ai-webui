@@ -17,11 +17,14 @@ const env = { ...process.env };
 // watcher this script spawns then starts permanently silent: HMR dead, stale
 // transforms on refresh, tsc/relay watch blind. Probe up front and ASK before
 // falling back to stat-polling — polling costs steady CPU and hides the real
-// problem, so it is never enabled silently. Skipped when the user already
-// opted into polling via VITE_WATCH_USE_POLLING.
-if (process.platform === 'darwin' && !env.VITE_WATCH_USE_POLLING?.trim()) {
+// problem, so it is never enabled silently. VITE_WATCH_USE_POLLING covers
+// ONLY Vite (react/vite.config.ts), so the probe still runs with it set —
+// the tsc/relay watchers would otherwise stay dead undiagnosed; the prompt
+// then targets just those uncovered subsystems.
+if (process.platform === 'darwin') {
   const healthy = await probeFsevents();
   if (!healthy) {
+    const viteCovered = !!env.VITE_WATCH_USE_POLLING?.trim();
     console.warn(
       '\n[dev] macOS FSEvents is BROKEN on this machine: fseventsd refused a new\n' +
         '[dev] event stream, so file watching (Vite HMR, tsc watch, relay watch)\n' +
@@ -41,8 +44,11 @@ if (process.platform === 'darwin' && !env.VITE_WATCH_USE_POLLING?.trim()) {
       let answer = '';
       try {
         answer = await rl.question(
-          '[dev] Fall back to stat-polling for THIS run (works, but steady CPU cost\n' +
-            '[dev] and the machine stays broken for every other tool)? [y/N] ',
+          viteCovered
+            ? '[dev] Vite already stat-polls (VITE_WATCH_USE_POLLING), but the tsc/relay\n' +
+                '[dev] watchers still rely on FSEvents. Extend polling to them for THIS run? [y/N] '
+            : '[dev] Fall back to stat-polling for THIS run (works, but steady CPU cost\n' +
+                '[dev] and the machine stays broken for every other tool)? [y/N] ',
         );
       } catch {
         // Ctrl+D / stdin closed mid-question — treat as "No".
@@ -58,13 +64,20 @@ if (process.platform === 'darwin' && !env.VITE_WATCH_USE_POLLING?.trim()) {
         console.warn('[dev] polling fallback enabled for this run.\n');
       } else {
         console.warn(
-          '[dev] continuing WITHOUT polling — expect dead HMR until the machine is healed.\n',
+          viteCovered
+            ? '[dev] continuing — Vite HMR polls, but tsc/relay change detection stays dead\n' +
+                '[dev] until the machine is healed.\n'
+            : '[dev] continuing WITHOUT polling — expect dead HMR until the machine is healed.\n',
         );
       }
     } else {
       console.warn(
-        '[dev] non-interactive session: continuing without polling. Set\n' +
-          '[dev] VITE_WATCH_USE_POLLING=1 to opt in explicitly.\n',
+        viteCovered
+          ? '[dev] non-interactive session: Vite polls via VITE_WATCH_USE_POLLING, but\n' +
+              '[dev] tsc/relay watchers stay on FSEvents. Set CHOKIDAR_USEPOLLING=1 and\n' +
+              '[dev] TSC_WATCHFILE=DynamicPriorityPolling to cover them explicitly.\n'
+          : '[dev] non-interactive session: continuing without polling. Set\n' +
+              '[dev] VITE_WATCH_USE_POLLING=1 to opt in explicitly.\n',
       );
     }
   }
