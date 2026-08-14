@@ -4,31 +4,53 @@
  */
 import {
   PendingSessionNodeListQuery,
+  PendingSessionNodeListQuery$data,
   PendingSessionNodeListQuery$variables,
 } from '../__generated__/PendingSessionNodeListQuery.graphql';
 import { Form } from '../form-engine';
-import { useWebUINavigate } from '../hooks';
+import { handleRowSelectionChange } from '../helper';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
+import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlert,
+  BAIButton,
   BAIFlex,
+  BAISelectionLabel,
+  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useFetchKey,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useDeferredValue, useMemo } from 'react';
+import { SettingsIcon } from 'lucide-react';
+import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
+type PendingSessionNode = NonNullableNodeOnEdges<
+  PendingSessionNodeListQuery$data['session_pending_queue']
+>;
+
 const PendingSessionNodeList: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  // Editing priority is only safe on managers that sequence all pending
+  // workloads in a single scheduling tick (BA-6788, backend.ai#12668,
+  // shipped in 26.4). On older managers, lowering a priority could hide
+  // the session from scheduling passes, so hide the priority UI entirely.
+  const enablePriorityEditing =
+    baiClient.isManagerVersionCompatibleWith('26.4.0');
   const [fetchKey, updateFetchKey] = useFetchKey();
   // const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
   const currentResourceGroup = useCurrentResourceGroupValue();
@@ -38,6 +60,12 @@ const PendingSessionNodeList: React.FC = () => {
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.PendingSessionNodeList',
   );
+
+  const [selectedSessionList, setSelectedSessionList] = useState<
+    PendingSessionNode[]
+  >([]);
+  const [openBulkEditPriorityModal, setOpenBulkEditPriorityModal] =
+    useState(false);
 
   const webUINavigate = useWebUINavigate();
   const location = useLocation();
@@ -76,8 +104,10 @@ const PendingSessionNodeList: React.FC = () => {
           ) {
             edges @required(action: THROW) {
               node {
+                id
                 ...SessionDetailDrawerFragment
                 ...SessionNodesFragment
+                ...EditSessionPriorityModalFragment
               }
             }
             count
@@ -111,28 +141,76 @@ const PendingSessionNodeList: React.FC = () => {
             style={{ minWidth: 100 }}
             onChangeInTransition={() => {
               setTablePaginationOption({ current: 1 });
+              setSelectedSessionList([]);
             }}
             loading={currentResourceGroup !== deferredCurrentResourceGroup}
             popupMatchSelectWidth={false}
             tooltip={t('general.ResourceGroup')}
           />
         </Form.Item>
-        <AutoUpdateFetchKeyButton
-          settingId="pending-session-list"
-          defaultAutoUpdateDelay={10_000}
-          loading={
-            deferredQueryVariables !== queryVariables ||
-            deferredFetchKey !== fetchKey
-          }
-          value={fetchKey}
-          onChange={(newFetchKey) => {
-            updateFetchKey(newFetchKey);
-          }}
-        />
+        <BAIFlex gap="xs">
+          {enablePriorityEditing && selectedSessionList.length > 0 && (
+            <>
+              <BAISelectionLabel
+                count={selectedSessionList.length}
+                onClearSelection={() => setSelectedSessionList([])}
+              />
+              <Tooltip
+                content={t('button.Settings')}
+                placement="above"
+                alignment="start"
+              >
+                <BAIButton
+                  icon={<SettingsIcon style={{ color: token.colorInfo }} />}
+                  onClick={() => {
+                    setOpenBulkEditPriorityModal(true);
+                  }}
+                />
+              </Tooltip>
+            </>
+          )}
+          <AutoUpdateFetchKeyButton
+            settingId="pending-session-list"
+            defaultAutoUpdateDelay={10_000}
+            loading={
+              deferredQueryVariables !== queryVariables ||
+              deferredFetchKey !== fetchKey
+            }
+            value={fetchKey}
+            onChange={(newFetchKey) => {
+              updateFetchKey(newFetchKey);
+            }}
+          />
+        </BAIFlex>
       </BAIFlex>
 
       <SessionNodes
         disableSorter
+        enablePriorityColumn={enablePriorityEditing}
+        rowSelection={
+          enablePriorityEditing
+            ? {
+                type: 'checkbox',
+                preserveSelectedRowKeys: true,
+                getCheckboxProps(record) {
+                  // Priority is only editable while the session is PENDING.
+                  return {
+                    disabled: record.status !== 'PENDING',
+                  };
+                },
+                onChange: (selectedRowKeys) => {
+                  handleRowSelectionChange(
+                    selectedRowKeys,
+                    filterOutNullAndUndefined(
+                      session_pending_queue?.edges.map((e) => e?.node),
+                    ),
+                    setSelectedSessionList,
+                  );
+                },
+                selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
+              }
+            : undefined
+        }
         onClickSessionName={(session) => {
           // Set sessionDetailDrawerFrgmt in location state via webUINavigate
           // instead of directly setting sessionDetailId query param
@@ -172,6 +250,19 @@ const PendingSessionNodeList: React.FC = () => {
           onColumnOverridesChange: setColumnOverrides,
         }}
       />
+      <BAIUnmountAfterClose>
+        <EditSessionPriorityModal
+          sessionFrgmts={selectedSessionList}
+          open={openBulkEditPriorityModal}
+          onRequestClose={(success) => {
+            setOpenBulkEditPriorityModal(false);
+            if (success) {
+              setSelectedSessionList([]);
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
