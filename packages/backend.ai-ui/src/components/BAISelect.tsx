@@ -312,7 +312,15 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
           filterValue?: string;
           children?: ReactNode;
         };
-        if (childProps.value === undefined && childProps.label !== undefined) {
+        // The BUI carriers are discriminated by TYPE; the prop-shape test only
+        // remains for foreign elements, since options may carry `label` too
+        // (FR-3544).
+        const isOptGroup =
+          child.type === BAISelectOptionGroup ||
+          (child.type !== BAISelectOptionItem &&
+            childProps.value === undefined &&
+            childProps.label !== undefined);
+        if (isOptGroup) {
           // OptGroup
           const groupOptions: Array<BAISelectOption> = [];
           collect(childProps.children, groupOptions);
@@ -342,12 +350,10 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         // above already specifies for the `options`-prop path; this makes the
         // two option APIs agree instead of only one of them corrupting itself.
         //
-        // FR-3544 — an explicit string `label` wins over the flattened
-        // children text: rich option rows carry their key facts in Badge/tag
-        // PROPS the flattener cannot see, so the call site names what the
-        // closed trigger should say.
+        // FR-3544 — rich rows keep their key facts in Badge/tag PROPS the
+        // flattener cannot see, so an explicit `label` wins when provided.
         const displayLabel =
-          (_.isString(childProps.label) && childProps.label) ||
+          nodeToAccessibleLabel(childProps.label) ||
           nodeToAccessibleLabel(childProps.children) ||
           toOptionKey(childProps.value);
         into.push({
@@ -596,8 +602,9 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
  * `options` model — but the elements themselves were still antd's
  * `Select.Option` / `Select.OptGroup`, which kept three otherwise-converted
  * files importing antd for a component that is never rendered. The flattener
- * reads PROPS only and never looks at the element type (see `collect` above),
- * so a render-null marker is a complete replacement.
+ * discriminates these carriers by element type (falling back to the antd
+ * prop-shape test for foreign elements), so a render-null marker is a
+ * complete replacement.
  *
  * These do NOT render. They exist to be walked by `BAISelect`; putting one
  * anywhere else produces nothing.
@@ -607,8 +614,7 @@ export interface BAISelectOptionProps {
   /**
    * antd's `optionLabelProp="label"` slot: the string the closed trigger
    * shows (and search matches) when `children` is rich JSX whose key facts
-   * live in props the text flattener cannot reach (FR-3544). Must accompany
-   * `value` — a label-only element is read as an OptGroup.
+   * live in props the text flattener cannot reach (FR-3544).
    */
   label?: string;
   disabled?: boolean;

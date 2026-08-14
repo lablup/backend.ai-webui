@@ -79,9 +79,7 @@ describe('BAISelect children-option trigger label (FR-3499)', () => {
   });
 
   it('prefers an explicit option label over the flattened children text (FR-3544)', () => {
-    // The image version rows carry their tag facts in Badge/BAIDoubleTag
-    // PROPS, which the text flattener cannot see — the call site names the
-    // trigger text explicitly instead.
+    // The flattener cannot see Badge/tag props, so the call site names the text.
     render(
       <BAISelect label="Version" value="cr.backend.ai/stable/pytorch:2.1.0">
         <SelectOptGroup key="v" label="Versions">

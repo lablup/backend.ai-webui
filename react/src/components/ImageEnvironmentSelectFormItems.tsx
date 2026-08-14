@@ -24,7 +24,7 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
 // @ts-ignore
 import ImageMetaIcon from './ImageMetaIcon';
-import { ImageTags } from './ImageTags';
+import { imageTagFacts, ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -34,11 +34,8 @@ import {
   BAIDoubleTag,
   BAIFlex,
   BAISelect,
-  // `BAISelect` was rebuilt on Astryx in wave 2 and still accepts antd's
-  // children option API — it flattens the element tree by reading PROPS, never
-  // the element type. So `Select.Option` / `Select.OptGroup` are replaced by
-  // BUI's own render-null carriers, and the rich JSX option rows below (image
-  // icon + highlighted name + metadata badges) stay exactly as they are.
+  // BAISelect still accepts antd's children option API via BUI's render-null
+  // carriers; the rich JSX option rows below survive through `renderOption`.
   BAISelectOptionItem as SelectOption,
   BAISelectOptionGroup as SelectOptGroup,
   BAIText,
@@ -711,6 +708,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   _.uniqBy(selectedEnvironmentGroup?.images, 'id'),
 
                   (image) => {
+                    const imageFullName = getImageFullName(image);
                     const [version, tag, ...requirements] = image?.tag?.split(
                       '-',
                     ) || ['', '', ''];
@@ -790,62 +788,68 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       }
                     }
                     // The closed trigger renders a plain string (BAISelect
-                    // FR-3544), so the row's version | arch | tag facts are
-                    // restated as text here, mirroring the JSX below.
-                    const selectedLabel = _.compact(
+                    // FR-3544): compute each tag's display facts once, then
+                    // derive both the trigger text and the option row from them.
+                    const customizedImageName = _.find(image?.labels, {
+                      key: 'ai.backend.customized-image.name',
+                    })?.value;
+                    const tagFacts = supportExtendedImageInfo
+                      ? _.map(
+                          (image?.tags ?? []) as Array<{
+                            key: string;
+                            value: string;
+                          }>,
+                          (imageTag) => {
+                            const isCustomized = _.includes(
+                              imageTag.key,
+                              'customized_',
+                            );
+                            const value = isCustomized
+                              ? customizedImageName
+                              : imageTag.value;
+                            const aliasedTag = tagAlias(imageTag.key + value);
+                            const isDouble =
+                              _.isEqual(
+                                aliasedTag,
+                                preserveDotStartCase(imageTag.key + value),
+                              ) || isCustomized;
+                            return {
+                              key: imageTag.key,
+                              value,
+                              isCustomized,
+                              aliasedTag,
+                              isDouble,
+                              keyAlias: isDouble
+                                ? tagAlias(imageTag.key)
+                                : undefined,
+                            };
+                          },
+                        )
+                      : imageTagFacts(
+                          getTags(
+                            image?.tag || '',
+                            image?.labels as Array<{
+                              key: string;
+                              value: string;
+                            }>,
+                          ),
+                          tagAlias,
+                        );
+                    const selectedLabel = _.compact([
                       supportExtendedImageInfo
-                        ? [
-                            image?.version,
-                            image?.architecture,
-                            ..._.map(
-                              image?.tags,
-                              (tag: { key: string; value: string }) => {
-                                const isCustomized = _.includes(
-                                  tag.key,
-                                  'customized_',
-                                );
-                                const tagValue = isCustomized
-                                  ? _.find(image?.labels, {
-                                      key: 'ai.backend.customized-image.name',
-                                    })?.value
-                                  : tag.value;
-                                const aliasedTag = tagAlias(tag.key + tagValue);
-                                return _.isEqual(
-                                  aliasedTag,
-                                  preserveDotStartCase(tag.key + tagValue),
-                                ) || isCustomized
-                                  ? _.trim(
-                                      `${tagAlias(tag.key)} ${tagValue ?? ''}`,
-                                    )
-                                  : aliasedTag;
-                              },
-                            ),
-                          ]
-                        : [
-                            getBaseVersion(getImageFullName(image) || ''),
-                            image?.architecture,
-                            ..._.map(
-                              getTags(
-                                image?.tag || '',
-                                (image?.labels ?? []) as Array<{
-                                  key: string;
-                                  value: string;
-                                }>,
-                              ),
-                              (tag) =>
-                                _.isEqual(
-                                  tagAlias(tag.key + tag.value),
-                                  preserveDotStartCase(tag.key + tag.value),
-                                )
-                                  ? _.trim(`${tagAlias(tag.key)} ${tag.value}`)
-                                  : tagAlias(tag.key + tag.value),
-                            ),
-                          ],
-                    ).join(' | ');
+                        ? image?.version
+                        : getBaseVersion(imageFullName || ''),
+                      image?.architecture,
+                      ..._.map(tagFacts, (fact) =>
+                        fact.isDouble
+                          ? _.trim(`${fact.keyAlias ?? ''} ${fact.value ?? ''}`)
+                          : fact.aliasedTag,
+                      ),
+                    ]).join(' | ');
                     return (
                       <SelectOption
                         key={image?.id}
-                        value={getImageFullName(image)}
+                        value={imageFullName}
                         label={selectedLabel}
                         filterValue={[
                           version,
@@ -866,55 +870,39 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             <Divider orientation="vertical" />
                             <BAIFlex direction="row" align="start" gap="xs">
                               {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                              {_.map(
-                                image?.tags,
-                                (tag: { key: string; value: string }) => {
-                                  const isCustomized = _.includes(
-                                    tag.key,
-                                    'customized_',
-                                  );
-                                  const tagValue = isCustomized
-                                    ? _.find(image?.labels, {
-                                        key: 'ai.backend.customized-image.name',
-                                      })?.value
-                                    : tag.value;
-                                  const aliasedTag = tagAlias(
-                                    tag.key + tagValue,
-                                  );
-                                  return _.isEqual(
-                                    aliasedTag,
-                                    preserveDotStartCase(tag.key + tagValue),
-                                  ) || isCustomized ? (
-                                    <BAIDoubleTag
-                                      key={tag.key}
-                                      highlightKeyword={versionSearch}
-                                      values={[
-                                        {
-                                          label: tagAlias(tag.key),
-                                          color: isCustomized ? 'cyan' : 'blue',
-                                        },
-                                        {
-                                          label: tagValue ?? '',
-                                          color: isCustomized ? 'cyan' : 'blue',
-                                        },
-                                      ]}
-                                    />
-                                  ) : (
-                                    <Badge
-                                      key={tag.key}
-                                      variant={badgeVariantForTagColor(
-                                        isCustomized ? 'cyan' : 'blue',
-                                      )}
-                                      label={
-                                        <TextHighlighter
-                                          keyword={versionSearch}
-                                        >
-                                          {aliasedTag}
-                                        </TextHighlighter>
-                                      }
-                                    />
-                                  );
-                                },
+                              {_.map(tagFacts, (fact) =>
+                                fact.isDouble ? (
+                                  <BAIDoubleTag
+                                    key={fact.key}
+                                    highlightKeyword={versionSearch}
+                                    values={[
+                                      {
+                                        label: fact.keyAlias ?? '',
+                                        color: fact.isCustomized
+                                          ? 'cyan'
+                                          : 'blue',
+                                      },
+                                      {
+                                        label: fact.value ?? '',
+                                        color: fact.isCustomized
+                                          ? 'cyan'
+                                          : 'blue',
+                                      },
+                                    ]}
+                                  />
+                                ) : (
+                                  <Badge
+                                    key={fact.key}
+                                    variant={badgeVariantForTagColor(
+                                      fact.isCustomized ? 'cyan' : 'blue',
+                                    )}
+                                    label={
+                                      <TextHighlighter keyword={versionSearch}>
+                                        {fact.aliasedTag}
+                                      </TextHighlighter>
+                                    }
+                                  />
+                                ),
                               )}
                             </BAIFlex>
                           </BAIFlex>
@@ -922,7 +910,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           <BAIFlex direction="row" justify="between">
                             <BAIFlex direction="row">
                               <TextHighlighter keyword={versionSearch}>
-                                {getBaseVersion(getImageFullName(image) || '')}
+                                {getBaseVersion(imageFullName || '')}
                               </TextHighlighter>
                               <Divider orientation="vertical" />
                               <TextHighlighter keyword={versionSearch}>

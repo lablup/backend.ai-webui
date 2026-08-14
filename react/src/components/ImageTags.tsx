@@ -115,6 +115,28 @@ interface ImageTagsProps extends ImageTagColorProps {
   labels: Array<{ key: string; value: string }>;
   highlightKeyword?: string;
 }
+
+// One rule for "how does a parsed image tag display" — the tag row (below)
+// and the version select's trigger text (FR-3544) both read these facts.
+export const imageTagFacts = (
+  tags: Array<{ key: string; value: string }>,
+  tagAlias: (tag: string) => string,
+) =>
+  _.map(tags, (tag) => {
+    const aliasedTag = tagAlias(tag.key + tag.value);
+    const isDouble = _.isEqual(
+      aliasedTag,
+      preserveDotStartCase(tag.key + tag.value),
+    );
+    return {
+      ...tag,
+      isCustomized: tag.key === 'Customized',
+      aliasedTag,
+      isDouble,
+      keyAlias: isDouble ? tagAlias(tag.key) : undefined,
+    };
+  });
+
 export const ImageTags: React.FC<ImageTagsProps> = ({
   tag,
   labels,
@@ -123,42 +145,38 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
 }) => {
   labels = labels || [];
   const [, { getTags, tagAlias }] = useBackendAIImageMetaData();
-  const tags = getTags(tag, labels);
   return (
     <React.Fragment {...props}>
-      {_.map(tags, (tag: { key: string; value: string }, index) => {
-        const isCustomized = tag.key === 'Customized';
-        const aliasedTag = tagAlias(tag.key + tag.value);
-        return _.isEqual(
-          aliasedTag,
-          preserveDotStartCase(tag.key + tag.value),
-        ) ? (
+      {_.map(imageTagFacts(getTags(tag, labels), tagAlias), (fact, index) =>
+        fact.isDouble ? (
           <BAIDoubleTag
-            key={tag.key}
+            key={fact.key}
             highlightKeyword={highlightKeyword}
             values={[
               {
-                label: tagAlias(tag.key),
-                color: isCustomized ? 'cyan' : 'blue',
+                label: fact.keyAlias ?? '',
+                color: fact.isCustomized ? 'cyan' : 'blue',
               },
               {
-                label: tag.value,
-                color: isCustomized ? 'cyan' : 'blue',
+                label: fact.value,
+                color: fact.isCustomized ? 'cyan' : 'blue',
               },
             ]}
           />
         ) : (
           <Badge
-            key={tag.key}
-            variant={badgeVariantForTagColor(isCustomized ? 'cyan' : 'blue')}
+            key={fact.key}
+            variant={badgeVariantForTagColor(
+              fact.isCustomized ? 'cyan' : 'blue',
+            )}
             label={
               <TextHighlighter keyword={highlightKeyword} key={index}>
-                {aliasedTag}
+                {fact.aliasedTag}
               </TextHighlighter>
             }
           />
-        );
-      })}
+        ),
+      )}
     </React.Fragment>
   );
 };
