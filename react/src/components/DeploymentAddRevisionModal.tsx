@@ -37,7 +37,6 @@ import {
 } from '../helper/parseModelDefinitionYaml';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useModelDefinitionPlaceholders } from '../hooks/useModelDefinitionDefaults';
 import {
   buildRuntimeVariantPresetValues,
