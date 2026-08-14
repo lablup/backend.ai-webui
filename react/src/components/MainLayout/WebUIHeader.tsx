@@ -10,7 +10,7 @@ import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
-import { spotlightOpenAtom } from '../WebUISpotlight/WebUISpotlight';
+import { spotlightOpenAtom } from '../WebUISpotlight/spotlightAtoms';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';

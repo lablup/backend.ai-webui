@@ -3,14 +3,23 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../../hooks';
+import {
+  useBAISettingGeneralState,
+  useBAISettingUserState,
+} from '../../hooks/useBAISetting';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
+  WebUIMenuItemBase,
 } from '../../hooks/useWebUIMenuItems';
+import { spotlightFolderCreateOpenAtom } from './spotlightAtoms';
+import { useSetAtom } from 'jotai';
 import {
   CirclePlay,
+  FolderPlus,
+  Languages,
   LogOut,
   MonitorCog,
   Moon,
@@ -23,15 +32,62 @@ import { useTranslation } from 'react-i18next';
 export interface SpotlightEntry {
   id: string;
   label: string;
-  /** Palette group: 'page' | 'action' (rendered via i18n group headings). */
-  kind: 'page' | 'action';
+  /** Palette group (rendered via i18n group headings). */
+  kind: 'page' | 'admin-page' | 'action';
   icon?: React.ReactNode;
   /** English aliases matched alongside the locale label (FR-3549). */
   keywords: ReadonlyArray<string>;
   run: () => void;
   /** Menu key for MRU tracking; only page entries derived from the menu have one. */
   menuKey?: string;
+  /** Reachable via search only — kept out of the empty-query action list. */
+  isHiddenInBootstrap?: boolean;
 }
+
+// The `language.*` i18n values are native names in EVERY locale, so English
+// names live here as search keywords ('korean' → 한국어 from any UI language).
+const LANGUAGE_OPTIONS: ReadonlyArray<{
+  value: string;
+  englishName: string;
+  nativeName: string;
+}> = [
+  { value: 'en', englishName: 'English', nativeName: 'English' },
+  { value: 'ko', englishName: 'Korean', nativeName: '한국어' },
+  {
+    value: 'pt-BR',
+    englishName: 'Brazilian Portuguese',
+    nativeName: 'Português (Brasil)',
+  },
+  {
+    value: 'zh-CN',
+    englishName: 'Simplified Chinese',
+    nativeName: '简体中文',
+  },
+  {
+    value: 'zh-TW',
+    englishName: 'Traditional Chinese',
+    nativeName: '繁體中文',
+  },
+  { value: 'fr', englishName: 'French', nativeName: 'Français' },
+  { value: 'fi', englishName: 'Finnish', nativeName: 'Suomi' },
+  { value: 'de', englishName: 'German', nativeName: 'Deutsch' },
+  { value: 'el', englishName: 'Greek', nativeName: 'Ελληνικά' },
+  {
+    value: 'id',
+    englishName: 'Indonesian',
+    nativeName: 'Bahasa Indonesia',
+  },
+  { value: 'it', englishName: 'Italian', nativeName: 'Italiano' },
+  { value: 'ja', englishName: 'Japanese', nativeName: '日本語' },
+  { value: 'mn', englishName: 'Mongolian', nativeName: 'Монгол' },
+  { value: 'pl', englishName: 'Polish', nativeName: 'Polski' },
+  { value: 'pt', englishName: 'Portuguese', nativeName: 'Português' },
+  { value: 'ru', englishName: 'Russian', nativeName: 'Русский' },
+  { value: 'es', englishName: 'Spanish', nativeName: 'Español' },
+  { value: 'th', englishName: 'Thai', nativeName: 'ไทย' },
+  { value: 'tr', englishName: 'Turkish', nativeName: 'Türkçe' },
+  { value: 'vi', englishName: 'Vietnamese', nativeName: 'Tiếng Việt' },
+];
 
 // English aliases per menu key. Locale labels come from the menu itself, so
 // this dictionary stays locale-independent (FR-3550).
@@ -74,23 +130,38 @@ const MENU_KEY_ALIASES: Record<string, ReadonlyArray<string>> = {
  */
 export const useSpotlightEntries = () => {
   'use memo';
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { generalMenu, adminMenu } = useWebUIMenuItems();
   const activeProjectName = useActiveProjectName();
   const { themeMode, setThemeMode } = useThemeMode();
   const webuiNavigate = useWebUINavigate();
+  const setFolderCreateOpen = useSetAtom(spotlightFolderCreateOpenAtom);
+  const [, setSelectedLanguage] = useBAISettingUserState('selected_language');
+  const [, setGeneralLanguage] = useBAISettingGeneralState('language');
 
-  const menuEntries: Array<SpotlightEntry> = [...generalMenu, ...adminMenu]
-    .filter((item) => item.to && !item.disabled)
-    .map((item) => ({
-      id: `page:${item.key}`,
-      label: item.labelText,
-      kind: 'page' as const,
-      icon: item.icon,
-      keywords: MENU_KEY_ALIASES[item.key] ?? [],
-      menuKey: item.key,
-      run: () => webuiNavigate(item.to as string),
-    }));
+  const toMenuEntry = (
+    item: WebUIMenuItemBase,
+    kind: 'page' | 'admin-page',
+  ): SpotlightEntry => ({
+    id: `page:${item.key}`,
+    label: item.labelText,
+    kind,
+    icon: item.icon,
+    keywords: MENU_KEY_ALIASES[item.key] ?? [],
+    menuKey: item.key,
+    run: () => webuiNavigate(item.to as string),
+  });
+
+  // Admin pages get their own kind → own palette group, so identical labels
+  // (e.g. general vs admin "Sessions") stay distinguishable.
+  const menuEntries: Array<SpotlightEntry> = [
+    ...generalMenu
+      .filter((item) => item.to && !item.disabled)
+      .map((item) => toMenuEntry(item, 'page')),
+    ...adminMenu
+      .filter((item) => item.to && !item.disabled)
+      .map((item) => toMenuEntry(item, 'admin-page')),
+  ];
 
   const hasSessionMenu = generalMenu.some((item) => item.key === 'session');
 
@@ -152,8 +223,43 @@ export const useSpotlightEntries = () => {
       run: () => setThemeMode(mode),
     }));
 
+  const hasDataMenu = generalMenu.some((item) => item.key === 'data');
+
+  // Mirrors UserSettingsPage's language onChange: persist both settings, then
+  // broadcast `langChanged` so DefaultProviders swaps i18n/dayjs/<html lang>.
+  const languageActions: Array<SpotlightEntry> = LANGUAGE_OPTIONS.filter(
+    ({ value }) => value !== i18n.language,
+  ).map(({ value, englishName, nativeName }) => ({
+    id: `action:language-${value}`,
+    label: `${t('userSettings.Language')}: ${nativeName}`,
+    kind: 'action' as const,
+    icon: <Languages size="1em" />,
+    keywords: ['language', 'lang', value, nativeName, englishName],
+    isHiddenInBootstrap: true,
+    run: () => {
+      setSelectedLanguage(value);
+      setGeneralLanguage(value);
+      window.dispatchEvent(
+        new CustomEvent('langChanged', { detail: { lang: value } }),
+      );
+    },
+  }));
+
   const actionEntries: Array<SpotlightEntry> = [
+    ...(hasDataMenu
+      ? [
+          {
+            id: 'action:create-folder',
+            label: t('start.CreateFolder'),
+            kind: 'action' as const,
+            icon: <FolderPlus size="1em" />,
+            keywords: ['create', 'new', 'folder', 'vfolder', 'storage', 'add'],
+            run: () => setFolderCreateOpen(true),
+          },
+        ]
+      : []),
     ...themeActions,
+    ...languageActions,
     {
       id: 'action:logout',
       label: t('webui.menu.LogOut'),
