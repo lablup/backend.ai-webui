@@ -17,6 +17,8 @@ import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+// PROTOTYPE (wayfinder #8786 / #8789): table ↔ grid view toggle + grid view.
+import SessionResourceGridPrototype from '../components/SessionResourceGridPrototype';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -32,6 +34,10 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
 import {
@@ -130,6 +136,7 @@ const ComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
@@ -461,6 +468,16 @@ const ComputeSessionListPage = () => {
               }}
               wrap="wrap"
             >
+              <SegmentedControl
+                label="View mode"
+                value={queryParams.view}
+                onChange={(value) =>
+                  setQueryParams({ view: value as 'table' | 'grid' })
+                }
+              >
+                <SegmentedControlItem value="table" label="Table" />
+                <SegmentedControlItem value="grid" label="Grid (proto)" />
+              </SegmentedControl>
               <BAIRadioGroup
                 optionType="button"
                 value={queryParams.statusCategory}
@@ -538,7 +555,33 @@ const ComputeSessionListPage = () => {
               />
             </BAIFlex>
           </BAIFlex>
-          {computeSessionNodeResult.ok ? (
+          {queryParams.view === 'grid' ? (
+            <Suspense
+              fallback={
+                <BAICard
+                  style={{ width: '100%' }}
+                  loading
+                  variant="borderless"
+                />
+              }
+            >
+              <SessionResourceGridPrototype
+                filter={deferredQueryVariables.filter}
+                order={deferredQueryVariables.order ?? undefined}
+                projectId={currentProject.id}
+                fetchKey={deferredFetchKey}
+                onClickSession={(sessionId) => {
+                  const newSearchParams = new URLSearchParams(location.search);
+                  newSearchParams.set('sessionDetail', sessionId);
+                  webUINavigate({
+                    pathname: location.pathname,
+                    hash: location.hash,
+                    search: newSearchParams.toString(),
+                  });
+                }}
+              />
+            </Suspense>
+          ) : computeSessionNodeResult.ok ? (
             <SessionNodes
               order={queryParams.order}
               onClickSessionName={(session) => {
