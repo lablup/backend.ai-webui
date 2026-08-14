@@ -802,6 +802,11 @@ const ANTD_HOVER_PARITY = {
   button: {
     'variant:primary': {
       '--color-overlay-hover': 'rgba(255,255,255,0.16)',
+      // An info Banner re-points `--color-accent` at its blue status hue so
+      // its own icon reads blue — which also repainted this button's fill,
+      // leaving a white label on pale blue. `--color-text-accent` is the same
+      // accent, and no component scope re-points it. FR-3555.
+      '--color-accent': 'var(--color-text-accent)',
     },
     'variant:destructive': {
       '--color-overlay-hover': 'rgba(255,255,255,0.16)',

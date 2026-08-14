@@ -141,6 +141,14 @@ export const astryxBrandTheme = defineTheme({
   // Storybook while looking correct in the app, which is exactly the kind of
   // silent divergence this mirror file exists to prevent.
   components: {
+    // KEEP IN SYNC with `ANTD_HOVER_PARITY.button` in
+    // `react/src/astryx-theme/backendAiTheme.ts` — without it Storybook keeps
+    // rendering the FR-3555 defect the app no longer has.
+    button: {
+      'variant:primary': {
+        '--color-accent': 'var(--color-text-accent)',
+      },
+    },
     text: {
       'color:danger': { color: 'var(--color-error)' },
       'color:warning': { color: 'var(--color-warning)' },
