@@ -13,6 +13,7 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../astryxFormControls';
+import '../collapsible-section.css';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
@@ -63,7 +64,11 @@ const ServiceConfigurationFormItems: React.FC<
     // `defaultActiveKey`. `forceRender` needs no equivalent: Collapsible
     // keeps its children MOUNTED while collapsed (CSS-hidden), so the
     // command fields stay registered and validate on submit (FR-3205).
-    <Collapsible defaultIsOpen trigger={t('modelService.ServiceConfiguration')}>
+    <Collapsible
+      className="bai-collapsible-section"
+      defaultIsOpen
+      trigger={t('modelService.ServiceConfiguration')}
+    >
       {/* Execution/Shell controls need the 26.8.0 command/shell API;
           on older managers only the plain command input below is
           shown. */}
