@@ -27,7 +27,7 @@
  | `confirmLoading`                   | `Button.isLoading`                                  |
  | `cancelText`/`cancelButtonProps`   | `Button variant="secondary"`                        |
  | `footer` node / `null` / render fn | `LayoutFooter` (or nothing)                         |
- | `loading`                          | `Skeleton` in place of the body                     |
+ | `loading`                          | `BAISkeleton` in place of the body (FR-3513)        |
  | `maskClosable` / `keyboard`        | `Dialog.purpose` (`info` / `form` / `required`)     |
  | `styles.{header,body,footer,…}`    | inline styles on the matching Astryx slot           |
  | `.ant-modal-*` CSS (BAIModal.css)  | deleted — the slots are Astryx's own                |
@@ -68,6 +68,7 @@
  that reproduces none of it.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import BAISkeleton from './BAISkeleton';
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -77,7 +78,6 @@ import {
   LayoutFooter,
   LayoutHeader,
 } from '@astryxdesign/core/Layout';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack } from '@astryxdesign/core/Stack';
 import {
   SquareStack,
@@ -240,7 +240,7 @@ export interface BAIModalProps {
   bodyProps?: React.HTMLAttributes<HTMLDivElement> & {
     ref?: React.Ref<HTMLDivElement>;
   };
-  /** Renders a `Skeleton` in place of the body. */
+  /** Renders a `BAISkeleton` (title + paragraph rows) in place of the body. */
   loading?: boolean;
 
   /* ---------------------------------------------------------------- footer */
@@ -755,7 +755,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
                 className={classNames?.body ?? bodyProps?.className}
                 style={{ ...styles?.body, ...bodyProps?.style }}
               >
-                {loading ? <Skeleton height={120} /> : children}
+                {loading ? <BAISkeleton /> : children}
               </div>
             </LayoutContent>
           )

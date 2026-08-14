@@ -472,6 +472,7 @@
     "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",
     "InvalidPageNumber": "Хуудасны дугаар буруу байна",
+    "NoDataToDisplay": "Харуулах өгөгдөл алга",
     "Pagination": "Хуудаслалт",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",

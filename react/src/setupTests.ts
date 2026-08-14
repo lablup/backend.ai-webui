@@ -19,6 +19,41 @@ import { vi } from 'vitest';
 
 (globalThis as any).jest = vi;
 
+// jsdom implements `<dialog>` as an element but not its modal API, so any
+// component built on Astryx `Dialog` (every `BAIModalAstryx`, drawer and
+// popover-dialog) throws `dialog.showModal is not a function` the moment it
+// mounts open. Give the element the three methods Astryx calls and keep the
+// `open` attribute in sync, which is what testing-library queries see.
+if (typeof HTMLDialogElement !== 'undefined') {
+  const proto = HTMLDialogElement.prototype as HTMLDialogElement & {
+    showModal?: () => void;
+    show?: () => void;
+    close?: (returnValue?: string) => void;
+  };
+  if (typeof proto.showModal !== 'function') {
+    proto.showModal = function showModal(this: HTMLDialogElement) {
+      this.open = true;
+    };
+  }
+  if (typeof proto.show !== 'function') {
+    proto.show = function show(this: HTMLDialogElement) {
+      this.open = true;
+    };
+  }
+  if (typeof proto.close !== 'function') {
+    proto.close = function close(
+      this: HTMLDialogElement,
+      returnValue?: string,
+    ) {
+      this.open = false;
+      if (returnValue !== undefined) {
+        this.returnValue = returnValue;
+      }
+      this.dispatchEvent(new Event('close'));
+    };
+  }
+}
+
 // Polyfill fetch for jsdom environment
 if (typeof global.fetch === 'undefined') {
   global.fetch = () =>

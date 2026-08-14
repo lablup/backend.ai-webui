@@ -4,63 +4,40 @@
 
  Co-located styles for <BAISelect> (imported by the component itself, P17).
 
- to-astryx W2-D: `BAISelect` now renders Astryx `Selector` / `MultiSelector`,
- so every antd select selector this file used to carry matches nothing and was
- DELETED rather than left silently compiling (P6). That removed the ghost
- variant's suffix rules (×3 states), its error-status rules (×2), and two
- dimming blocks keyed on the search-value and open states of antd's select
- popup — in both the antd and the Astryx spelling that sibling A/C added.
- Astryx's `Selector` owns its own popup states.
+ Only the `ghost` variant survives here: Astryx `Selector` has `variant`, not a
+ colour slot (P5), and `ghost` exists for exactly one placement — a select on
+ the app header's brand-accent band.
 
- NOTE on spelling: antd class names are written WITHOUT their leading dot
- throughout this file's prose. CSS comments — unlike JS ones — survive
- minification into the shipped stylesheet, and antd is no longer a
- dependency of this repo at all, so there is nothing left in `build/web`
- for a literal dotted antd class to be evidence of. The convention below
- is now prose hygiene, not an enforcement requirement.
+ That band is a REVERSED surface: its content polarity is the OPPOSITE of the
+ app's, so these read `light-dark(on-dark, on-light)` — white on the orange in
+ light mode, near-black in dark (FR-3502). `light-dark()` is safe on a NORMAL
+ property (it computes at the declaring element); it would NOT be on a custom
+ property, which is substituted at use time.
 
- What survives is `ghost`, because it is the one thing the wrapper genuinely
- owned and Astryx cannot express (P5: `Selector` has `variant`, not a colour
- slot).
-
- GHOST — why `--color-on-dark` (verbatim from the pre-Astryx file, still true).
-
- The `ghost` variant exists for exactly one placement: a select sitting ON the
- app header's brand-accent band (the header `ProjectSelect`). Legacy spelled
- "white" as `token.colorBgBase`, which antd resolves to `#fff` in light mode —
- so the ghost select's text and hairline border came out white on the orange.
-
- The straight token translation is `colorBgBase -> --color-background-body`,
- and that is the correct ROLE mapping, but this theme pins that token to the
- legacy PAGE backdrop (`#F7F7F6` / `#191919`, see `ANTD_NEUTRAL_SURFACES` in
- `react/src/astryx-theme/backendAiTheme.ts`). The expression therefore stopped
- meaning "white": the header select rendered off-white grey in light mode and
- near-BLACK on the orange band in dark mode.
-
- `--color-on-dark` is the Astryx token that actually means "content on a
- dark/inverted surface" and is `#ffffff` in both modes — the legacy rendering,
- and the same token `WebUIHeader` uses for the band's inherited text colour.
- P19: both custom properties below are declared by the built brand theme, and
- neither carries a literal fallback argument.
+ The chevron and any slot glyphs take `--color-icon-secondary` from Astryx's own
+ StyleX rules, which a class selector cannot outrank — so the token is
+ re-declared rather than the `color` re-stated.
 */
 .bai-select-ghost {
   background-color: transparent;
-  color: var(--color-on-dark);
+  color: light-dark(var(--color-on-dark), var(--color-on-light));
+  --color-icon-secondary: light-dark(
+    var(--color-on-dark),
+    var(--color-on-light)
+  );
 }
 
 /* The trigger is Astryx's own button-like element; target it structurally
    (any direct child that is a button/`role=combobox`) rather than by a
-   design-system class name, so an Astryx bump cannot silently break it. */
+   design-system class name, so an Astryx bump cannot silently break it.
+   The hover wash is NOT painted here: `Selector`'s own ghost gradient reads
+   `--color-overlay-hover`, which `WebUIHeader` sets to the band pair, so the
+   trigger hovers identically to the ghost IconButtons beside it (FR-3501). */
 .bai-select-ghost button,
 .bai-select-ghost [role='combobox'] {
   background-color: transparent;
-  border-color: var(--color-on-dark);
-  color: var(--color-on-dark);
-}
-
-.bai-select-ghost button:hover,
-.bai-select-ghost [role='combobox']:hover {
-  background-color: rgb(255 255 255 / 10%);
+  border-color: light-dark(var(--color-on-dark), var(--color-on-light));
+  color: light-dark(var(--color-on-dark), var(--color-on-light));
 }
 
 /* The ghost border is a hard override, which would otherwise swallow the

@@ -4,30 +4,42 @@
 
  Ticket 16 — converted to Astryx. `Grid.useBreakpoint` becomes
  `useBAIBreakpoint` (RESPONSIVE-POLICY R2), `Skeleton.Button` becomes the
- `BAISkeletonAstryx` button variant, and the editable title uses the rebuilt
+ `BAISkeleton` button variant, and the editable title uses the rebuilt
  `EditableVFolderNameV2` (`variant="title"` replaces the antd
  `component={Typography.Title}` polymorphism).
 */
 import { FolderExplorerHeaderV2Fragment$key } from '../__generated__/FolderExplorerHeaderV2Fragment.graphql';
 import { useBAIBreakpoint } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import EditableVFolderNameV2 from './EditableVFolderNameV2';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { HStack } from '@astryxdesign/core/Stack';
+import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderV2Props {
   vfolderNodeFrgmt?: FolderExplorerHeaderV2Fragment$key | null;
   titleStyle?: React.CSSProperties;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3412/FR-3413): pass-through
+   * for the FileBrowser/SFTP session-launch buttons (`null` renders them
+   * disabled with `noProjectTooltip` as the reason) and for the rename
+   * gating of `EditableVFolderNameV2` (`null` drops the project-membership
+   * branch — owner/super-admin keep their power).
+   */
+  project: ProjectContextOrNull;
+  noProjectTooltip?: string;
 }
 
 const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
   vfolderNodeFrgmt,
   titleStyle,
+  project,
+  noProjectTooltip,
 }) => {
   'use memo';
 
@@ -88,6 +100,7 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
         {vfolderNode && (
           <EditableVFolderNameV2
             vfolderNodeFrgmt={vfolderNode}
+            project={project}
             enableLink={false}
             variant="title"
             style={{
@@ -112,12 +125,16 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
               <FileBrowserButtonV2
                 vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
+                project={project}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
             <ErrorBoundaryWithNullFallback>
               <SFTPServerButtonV2
                 vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
+                project={project}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
           </Suspense>

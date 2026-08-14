@@ -4,10 +4,9 @@
  */
 import { theme } from '../theme-shim';
 import type { DiagnosticResult } from '../types/diagnostics';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -35,7 +34,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
   const { token } = theme.useToken();
 
   if (loading) {
-    return <BAISkeletonAstryx rows={2} />;
+    return <BAISkeleton rows={2} />;
   }
 
   // Separate issues from passed checks for visual grouping

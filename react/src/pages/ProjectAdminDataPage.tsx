@@ -22,13 +22,13 @@ import VFolderNodesV2, {
 } from '../components/VFolderNodesV2';
 import BAICard from '../components/astryx-bui/BAICardAstryx';
 import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
-import BAISkeleton from '../components/astryx-bui/BAISkeletonAstryx';
 import BAIVFolderDeleteButtonV2 from '../components/astryx-bui/BAIVFolderDeleteButtonV2Astryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ProjectContext, toProjectContext } from '../types/projectContext';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
@@ -36,6 +36,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
   // here until the PowerSearch generalization covers the object-filter DSL.
@@ -102,11 +103,11 @@ function getUsageModeFilter(mode: (typeof modeValues)[number]) {
 }
 
 interface ProjectAdminDataContentProps {
-  projectId: string;
+  project: ProjectContext;
 }
 
 const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
-  projectId,
+  project,
 }) => {
   'use memo';
 
@@ -177,7 +178,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   };
 
   const queryVariables = {
-    projectId,
+    projectId: project.id,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.first,
     filter: combinedFilter,
@@ -413,6 +414,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
         <VFolderNodesV2
           order={queryParams.order}
           loading={deferredQueryVariables !== queryVariables}
+          project={project}
           vfoldersFrgmt={filterOutNullAndUndefined(
             _.map(projectVfolders?.edges, 'node'),
           )}
@@ -501,6 +503,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       />
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={project}
         folderType="project"
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
@@ -518,13 +521,14 @@ const ProjectAdminDataPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const currentProject = useCurrentProjectValue();
+  const project = toProjectContext(currentProject);
 
   return (
     <BAICard title={t('data.ProjectFolders')}>
       <BAIErrorBoundary>
         <Suspense fallback={<BAISkeleton rows={4} />}>
-          {currentProject.id ? (
-            <ProjectAdminDataContent projectId={currentProject.id} />
+          {project ? (
+            <ProjectAdminDataContent project={project} />
           ) : (
             <BAISkeleton rows={4} />
           )}

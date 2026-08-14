@@ -472,6 +472,7 @@
     "ExportCSV": "CSV をエクスポート",
     "GoToFirstPage": "最初のページへ",
     "InvalidPageNumber": "無効なページ番号です",
+    "NoDataToDisplay": "表示するデータがありません",
     "Pagination": "ページネーション",
     "SearchTableColumn": "テーブル列を検索します",
     "SelectColumnToDisplay": "表示する列を選択します",

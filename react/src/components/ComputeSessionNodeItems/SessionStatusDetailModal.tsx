@@ -5,7 +5,6 @@
 import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import BAICopyableText from '../astryx-bui/BAICopyableText';
 import SessionStatusTag from './SessionStatusTag';
 import { Badge } from '@astryxdesign/core/Badge';
 import {
@@ -14,7 +13,7 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
-import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, type BAIModalProps, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX } from 'lucide-react';
@@ -117,7 +116,9 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
           "Predicate checks" Descriptions collapses into a labeled item. */}
       <MetadataList columns="single">
         <MetadataListItem label={t('session.SessionName')}>
-          <BAICopyableText maxLines={1}>{session.name ?? ''}</BAICopyableText>
+          <BAIText copyable ellipsis={{ tooltip: true }}>
+            {session.name ?? ''}
+          </BAIText>
         </MetadataListItem>
         {statusData?.kernel ? (
           <MetadataListItem label={t('session.KernelExitCode')}>

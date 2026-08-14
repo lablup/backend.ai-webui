@@ -16,9 +16,9 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
@@ -109,7 +109,7 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
       }
       styles={{ body: { paddingTop: 0 } }}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         <DeploymentAutoScalingCardContent
           deploymentId={deployment.id}
           isEndpointDestroying={isEndpointDestroying}

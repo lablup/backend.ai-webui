@@ -9,6 +9,7 @@ import {
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import { useThemeMode } from '../hooks/useThemeMode';
 import { useBAIBreakpoint } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DownloadModal from './DownloadModal';
@@ -64,6 +65,7 @@ const UserDropdownMenu: React.FC<{
   const [userInfo] = useCurrentUserInfo();
   // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
   const screens = useBAIBreakpoint();
+  const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
@@ -240,7 +242,10 @@ const UserDropdownMenu: React.FC<{
         // element legacy's `styles.root` also sized.
         menuWidth="fit-content(300px)"
         button={{
-          'data-astryx-media': 'dark',
+          // The band is a REVERSED surface: its content polarity is the
+          // opposite of the app's (FR-3502). Scoped to the trigger, never the
+          // overlays below — Astryx renders those as inline siblings.
+          'data-astryx-media': isDarkMode ? 'light' : 'dark',
           variant: 'ghost',
           icon: <User size="1em" />,
           isIconOnly: !screens.lg,
@@ -249,14 +254,10 @@ const UserDropdownMenu: React.FC<{
         }}
         items={items}
       />
-      {/* The overlays are page-level surfaces, not band content, and the
-          trigger's media context no longer reaches them. They are still DOM
-          descendants of the header row, which carries an inline
-          `color: var(--color-on-dark)` for the antd-engine `ProjectSelect`
-          value; `display: contents` + `--color-text-primary` re-establishes
-          the page's inherited text colour without adding a layout box. This
-          is the same two-declaration wrapper Astryx's own `Theme` and
-          `MediaTheme` render (`@astryxdesign/core/theme`). */}
+      {/* The overlays are page-level surfaces but still DOM descendants of the
+          band row, which sets an inherited `color` for its own content;
+          `display: contents` + `--color-text-primary` re-establishes the page
+          text colour without adding a layout box. */}
       <div style={{ display: 'contents', color: 'var(--color-text-primary)' }}>
         <ErrorBoundaryWithNullFallback>
           <Suspense>

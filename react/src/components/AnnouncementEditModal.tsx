@@ -9,23 +9,21 @@ import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
 import { theme } from '../theme-shim';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
-import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Markdown } from '@astryxdesign/core/Markdown';
 import { Text } from '@astryxdesign/core/Text';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  BAISkeleton,
   BAIModal,
   BAIModalProps,
   BAIFlex,
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
-// `rehype-katex` does not import the CSS file, so we need to import it manually.
-import 'katex/dist/katex.min.css';
 import {
   Bold,
   Code,
@@ -39,10 +37,6 @@ import {
 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 
 type MonacoEditorInstance = Parameters<OnMount>[0];
 type MonacoNamespace = Parameters<OnMount>[1];
@@ -219,7 +213,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
       {...modalProps}
     >
       {isLoading ? (
-        <BAISkeletonAstryx rows={4} />
+        <BAISkeleton rows={4} />
       ) : (
         <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
           <BAIFlex
@@ -252,7 +246,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           >
             <Text weight="semibold">{t('summary.AnnouncementPreview')}</Text>
             <div
-              className="announcement-markdown-preview"
               style={{
                 border: `1px solid ${token.colorBorder}`,
                 borderRadius: token.borderRadius,
@@ -264,33 +257,10 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                 overflow: 'auto',
               }}
             >
-              <Markdown
-                remarkPlugins={[remarkGfm, remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-                components={{
-                  // Fenced code blocks: render through the shared shiki-based
-                  // highlighter (theme-aware). Inline code keeps the default
-                  // <code> and is styled via CSS.
-                  pre({ children }) {
-                    const codeElement = Array.isArray(children)
-                      ? children[0]
-                      : children;
-                    const className: string =
-                      // @ts-ignore - react-markdown passes the <code> element here
-                      codeElement?.props?.className ?? '';
-                    const match = /language-(\w+)/.exec(className);
-                    const content = String(
-                      // @ts-ignore
-                      codeElement?.props?.children ?? '',
-                    ).replace(/\n$/, '');
-                    return (
-                      <SyntaxHighlighter language={match?.[1] ?? 'txt'}>
-                        {content}
-                      </SyntaxHighlighter>
-                    );
-                  },
-                }}
-              >
+              {/* Must stay byte-identical to AnnouncementAlert's props — a
+                  preview that renders differently from the published banner
+                  is the whole of FR-3402. */}
+              <Markdown density="compact" headingLevelStart={3} autolink="gfm">
                 {message}
               </Markdown>
             </div>

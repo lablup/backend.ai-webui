@@ -4,7 +4,6 @@
  */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { Badge } from '@astryxdesign/core/Badge';
 import {
   MetadataList,
@@ -17,6 +16,7 @@ import {
   type BAIModalProps,
   PRIMARY_TAG_VARIANT,
   badgeVariantForTagColor,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -104,9 +104,9 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
             {keypair?.access_key}
           </MetadataListItem>
           <MetadataListItem label={t('credential.SecretKey')}>
-            <BAICopyableText copyText={keypair?.secret_key ?? ''}>
+            <BAIText copyable={{ text: keypair?.secret_key ?? '' }}>
               {keypair?.secret_key ? '********' : ''}
-            </BAICopyableText>
+            </BAIText>
           </MetadataListItem>
           <MetadataListItem label={t('credential.Permission')}>
             {keypair?.is_admin ? (

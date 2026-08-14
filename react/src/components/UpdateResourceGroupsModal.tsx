@@ -10,9 +10,9 @@ import {
   useSFTPResourceGroups,
 } from '../hooks/useSFTPResourceGroups';
 import BAIFormItem from './BAIFormItem';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Code } from '@astryxdesign/core/Code';
 import {
+  BAISkeleton,
   BAIFlex,
   BAIListAlert,
   BAIModal,
@@ -168,7 +168,7 @@ const UpdateResourceGroupsModal: React.FC<UpdateResourceGroupsModalProps> = ({
           {/* The proxy options come from a Relay query that suspends, so wrap
               the whole Form.Item (not the select — that would break Form's
               value/onChange binding) in its own Suspense boundary. */}
-          <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+          <Suspense fallback={<BAISkeleton variant="input" />}>
             <BAIFormItem
               name="proxies"
               label={t('storageProxy.SFTPStorageProxies')}

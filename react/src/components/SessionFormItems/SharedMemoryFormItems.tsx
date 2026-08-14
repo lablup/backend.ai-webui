@@ -6,7 +6,6 @@ import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
 import { theme } from '../../theme-shim';
 import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
-import { Divider } from '@astryxdesign/core/Divider';
 import { Switch } from '@astryxdesign/core/Switch';
 import {
   BAIQuestionIconWithTooltip,
@@ -260,15 +259,9 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   </Form.Item>
                   <BAIQuestionIconWithTooltip
                     title={
-                      <BAIFlex direction="column">
+                      <BAIFlex direction="column" gap="sm">
                         {t('session.launcher.AutoSharedMemoryTooltip')}
-                        {/* The explicit margin/background overrides go with
-                            the antd Divider — Astryx's owns its spacing and
-                            colour from the theme. */}
-                        <Divider />
                         <Trans i18nKey={'session.launcher.DescSharedMemory'} />
-                        <br />
-                        <br />
                         <Trans
                           i18nKey={'session.launcher.DescSharedMemoryContext'}
                         />

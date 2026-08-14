@@ -10,6 +10,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../hooks/useAppTemplate';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
+import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionReclamationStatusCell from './ComputeSessionNodeItems/SessionReclamationStatusCell';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
@@ -34,7 +35,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PowerOffIcon } from 'lucide-react';
+import { PowerOffIcon, SettingsIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -66,6 +67,7 @@ interface SessionNodesProps extends Omit<
   sessionsFrgmt: SessionNodesFragment$key;
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;
+  enablePriorityColumn?: boolean;
   onChangeOrder?: (
     order: (typeof availableSessionSorterValues)[number] | null,
   ) => void;
@@ -75,6 +77,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
   onClickSessionName,
   disableSorter,
+  enablePriorityColumn,
   onChangeOrder,
   ...tableProps
 }) => {
@@ -88,6 +91,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
     useState<SessionNodeInList | null>(null);
   const [appLauncherTarget, setAppLauncherTarget] =
     useState<SessionNodeInList | null>(null);
+  const [editPriorityTarget, setEditPriorityTarget] =
+    useState<SessionNodeInList | null>(null);
 
   const sessions = useFragment(
     graphql`
@@ -100,6 +105,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         service_ports
         user_id
         agent_ids
+        priority @since(version: "24.09.0")
         ...SessionStatusTagFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
@@ -111,6 +117,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...BAISessionClusterModeFragment
         ...AppLauncherModalFragment
         ...TerminateSessionModalFragment
+        ...EditSessionPriorityModalFragment
         kernel_nodes {
           edges {
             node {
@@ -187,6 +194,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                     disabled: !isAppSupported || !isActive || !isOwner,
                     onClick: () => setAppLauncherTarget(session),
                   },
+                enablePriorityColumn && {
+                  key: 'editPriority',
+                  title: t('button.Settings'),
+                  icon: <SettingsIcon />,
+                  // Priority only orders the pending queue, so it is only
+                  // editable while the session is PENDING.
+                  disabled: session.status !== 'PENDING',
+                  onClick: () => setEditPriorityTarget(session),
+                },
                 {
                   key: 'terminate',
                   title: t('session.TerminateSession'),
@@ -223,6 +239,18 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
         },
+      },
+      enablePriorityColumn && {
+        key: 'priority',
+        title: t('session.Priority'),
+        dataIndex: 'priority',
+        // Priority only orders the pending queue, so it is only meaningful
+        // while the session is PENDING. Editing goes through the name cell's
+        // action (Settings icon), not this column.
+        render: (priority: number | null, session) =>
+          session.status === 'PENDING' && !_.isNil(priority)
+            ? String(priority)
+            : '-',
       },
       {
         key: 'reclamationStatus',
@@ -414,6 +442,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         open={!!terminateTarget}
         onRequestClose={() => setTerminateTarget(null)}
       />
+      <BAIUnmountAfterClose>
+        <EditSessionPriorityModal
+          sessionFrgmts={editPriorityTarget ? [editPriorityTarget] : null}
+          open={!!editPriorityTarget}
+          onRequestClose={() => setEditPriorityTarget(null)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

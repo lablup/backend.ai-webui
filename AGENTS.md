@@ -53,7 +53,8 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
   - **GitHub**: Use `gh` CLI (preferred) or GitHub MCP (`mcp__github__*`)
   - **Git/PR**: Use **GitHub Stacked PRs** via the `gh stack` CLI (`github/gh-stack` extension) for all stacked branch/PR work. The command reference lives in the `gh-stack` skill (`.claude/skills/gh-stack/`) and the project conventions (naming, draft→ready lifecycle, bottom-up merge, sync/rebase/conflict loops, non-interactive agent rules) in the `fw:stacked-pr-workflow` skill — load both before stack work.
     - **Graphite (`gt`) is banned in this repository (FR-3391).** Never run any `gt` command; a permissions deny rule plus a `PreToolUse` hook block `gt` invocations. Stack metadata lives on GitHub itself.
-    - Open and update PRs with `gh stack submit --auto` (drafts by default; `--open` to mark ready). For a genuinely single, unstacked PR, plain `git push` + `gh pr create` is acceptable.
+    - Open and update PRs with `gh stack submit --auto`, which creates them as drafts. For a genuinely single, unstacked PR, plain `git push` + `gh pr create` is acceptable. Leave them as drafts — marking a PR ready (`--open` / `gh pr ready`) belongs to the gate below, not here.
+    - **Draft → ready goes through the `fw:pr-ready-gate` skill (FR-3508), never a bare `gh pr ready` / `--open`.** Copilot's automatic review is disabled on this repository, so the gate is what requests it: it asks Copilot to review while the PR is still a draft, fixes what is objectively wrong, brings anything needing a human decision back to you with the thread left open, replies to and resolves the rest, and only then flips the PR out of draft. Copilot is the first reader; humans are the second.
 - Follow the GitHub Stacked PRs strategy. Write work by appropriately stacking individual PRs.
 - When amending a PR with significant changes, update the PR description to reflect the new scope. Minor fixes don't need description updates, but new features, deleted files, or changed approach should be reflected.
 
@@ -89,14 +90,15 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
 - Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
 - Use Jotai for global state, Relay for GraphQL state.
+- Comment only what the code cannot say — ≤2 lines by default; the reasoning behind a change goes in the commit body and the PR, not the source file (`.claude/rules/comment-density.md`). The long justification blocks already in the tree are migration-era history: trim a file's blocks when you edit it, don't sweep.
 
 ### On-Demand Skills (loaded only when needed)
 
 - **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
-- **Astryx UI fixes**: `astryx-fix` skill (measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
-- **Astryx UI bug reporting**: `astryx-bug-report` skill (capture-only intake for visual / behavioral defects, files them as Jira Bugs under epic FR-3491, duplicate + relates scan). Use it when the ask is "record this", `astryx-fix` when it is "fix this".
+- **Astryx UI fixes**: `astryx-fix` skill (assignee gate before starting, measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
+- **Astryx UI bug reporting**: `astryx-bug-report` skill (capture-only intake for visual / behavioral defects and `discussion` items — "is this intended?" / "propose X instead" — filed under epic FR-3491 as Bugs and Tasks respectively, duplicate + relates scan). Use it when the ask is "record this", `astryx-fix` when it is "fix this".
 
 Component-authoring patterns (Relay tables, selects, modals, forms, layout) have no
 dedicated skills: read `react.instructions.md` for the project deltas, then copy the
@@ -130,7 +132,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- ASTRYX:START -->
-Astryx v0.3.0 · 155 components
+Astryx v0.4.0 · 156 components
 CLI: run every command as `pnpm exec astryx <cmd>` (shown below as `astryx ...`).
 
 SETUP (once, in your app entry e.g. main.tsx) — without these, components render unstyled:
@@ -143,10 +145,9 @@ WORKFLOW — discover, don't guess. Before writing UI:
 3. `astryx component <Name>` — props + examples for every component you use.
 
 RULES:
-- No <div> — components do all layout/spacing. Full page → AppShell; sidebar nav → SideNav.
-- Frame first: pick the shell (AppShell / Layout+LayoutPanel) and budget regions in px BEFORE writing content (`astryx docs layout`).
-- Dense data = rows (Table, List/Item) edge-to-edge — never Card-wrapped list items. Card = dashboard widgets, galleries, settings groups only.
-- Status → StatusDot/Token; Badge only for counts and enumerated states, never decoration.
+- No <div> — components do all layout/spacing, page frame included.
+- Frame first: read `astryx docs layout` before writing any page or screen — page frame, region widths, breakpoint behavior.
+- Dense data = rows (Table, List/Item), never Card-wrapped list items; Card is for standalone widgets. Status = StatusDot/Token; Badge = counts only.
 - Custom styling: component props first; else the xstyle prop / StyleX tokens (@astryxdesign/core/theme/tokens.stylex). No raw hex/px.
 - Tokens for every value (`astryx docs tokens`). Brand/accent via `astryx theme` — never override --color-* in :root.
 - SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `astryx component <Name>` / `astryx search "<thing>"`; don't hand-roll CSS.
@@ -154,7 +155,7 @@ RULES:
 
 MORE CLI:
   search "<query>"   find any component / hook / doc / template / block
-  component --list   155 components by category
+  component --list   156 components by category
   template --list    page + block recipes
   docs <topic>       color, elevation, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling, theme, tokens, typography
   swizzle <Name>     eject component source for deep customization

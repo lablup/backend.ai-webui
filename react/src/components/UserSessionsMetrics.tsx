@@ -11,13 +11,17 @@ import AutoUpdateFetchKeyButton, {
 } from './AutoUpdateFetchKeyButton';
 import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import SessionMetricGraph from './SessionMetricGraph';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import type { ISODateString } from '@astryxdesign/core/Calendar';
 import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
 import type { DateRange } from '@astryxdesign/core/DateRangeInput';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { useUpdatableState, BAIFlex, filterOutEmpty } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  useUpdatableState,
+  BAIFlex,
+  filterOutEmpty,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryState } from 'nuqs';
@@ -134,7 +138,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
         columnSpan: windowWidth > 2160 ? 3 : 2,
         data: {
           content: (
-            <Suspense fallback={<BAISkeletonAstryx />}>
+            <Suspense fallback={<BAISkeleton />}>
               <SessionMetricGraph
                 key={metric}
                 queryProps={{
@@ -291,7 +295,7 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
                       data: {
                         ...originalItem.data,
                         content: (
-                          <Suspense fallback={<BAISkeletonAstryx />}>
+                          <Suspense fallback={<BAISkeleton />}>
                             <SessionMetricGraph
                               key={`${item.id}-${Date.now()}`}
                               queryProps={{

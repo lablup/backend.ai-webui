@@ -25,9 +25,11 @@
 import './BAIMetadataList.css';
 import {
   MetadataList,
+  MetadataListItem,
+  type MetadataListItemProps,
   type MetadataListProps,
 } from '@astryxdesign/core/MetadataList';
-import React from 'react';
+import React, { type ReactNode } from 'react';
 
 export interface BAIMetadataListProps extends MetadataListProps {
   /**
@@ -83,5 +85,28 @@ const BAIMetadataList: React.FC<BAIMetadataListProps> = ({
 };
 
 BAIMetadataList.displayName = 'BAIMetadataList';
+
+/**
+ * Astryx types `label` as `string`, but `MetadataListItem` renders it as a JSX
+ * child with no attribute path, so a node works (CONVERSION-IDIOMS §3).
+ */
+export interface BAIMetadataListItemProps extends Omit<
+  MetadataListItemProps,
+  'label'
+> {
+  label: ReactNode;
+}
+
+export const BAIMetadataListItem: React.FC<BAIMetadataListItemProps> = ({
+  label,
+  ...metadataListItemProps
+}) => {
+  'use memo';
+  return (
+    <MetadataListItem {...metadataListItemProps} label={label as string} />
+  );
+};
+
+BAIMetadataListItem.displayName = 'BAIMetadataListItem';
 
 export default BAIMetadataList;

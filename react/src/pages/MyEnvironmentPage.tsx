@@ -3,8 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import CustomizedImageList from '../components/CustomizedImageList';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
-import { BAICard } from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 // `BAICard tabList`, which now renders the strip as the card's header chrome.
 // See `AgentSummaryPage` for the same note.
 // PILOT-DECISION (kept): the FlexActivityIndicator (antd Spin) suspense
-// fallback is replaced with BAISkeletonAstryx, matching the loading idiom used
+// fallback is replaced with BAISkeleton, matching the loading idiom used
 // by the other converted tab hosts (ticket 15).
 const MyEnvironmentPage = () => {
   'use memo';
@@ -33,7 +32,7 @@ const MyEnvironmentPage = () => {
       }}
       tabList={[{ key: 'image', label: t('environment.Images') }]}
     >
-      <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+      <Suspense fallback={<BAISkeleton rows={4} />}>
         {curTabKey === 'image' && <CustomizedImageList />}
       </Suspense>
     </BAICard>

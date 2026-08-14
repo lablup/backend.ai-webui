@@ -207,20 +207,13 @@ if (import.meta.hot) {
 /**
  * The locale a host hands `<BAIConfigProvider locale={…}>`.
  *
- * It carries the language code and nothing else. It used to also carry
- * `antdLocale`, an `antd/es/locale/*` bundle re-exported by 21 per-language
- * modules under this directory (`en_US.ts`, `pt_BR.ts`, …) and published as
- * the `backend.ai-ui/dist/locale/*` package export. Those existed for exactly
- * one consumer — antd's `ConfigProvider locale` prop, which localized antd's
- * own built-in strings (pagination labels, date-picker month names). With the
- * ConfigProvider layer gone (to-astryx final switch) nothing reads them, so
- * the 21 modules, the package export and the `Locale` type import were all
- * removed rather than left as an unused field.
- *
- * The three runtimes that DO need the language still get it from `lang`:
- * BUI's own i18next instance, `dayjs.locale()`, and Astryx's
- * `InternationalizationProvider` — all wired in `BAIConfigProvider`.
+ * `astryxLocale` is the flat `@astryx.*` → string catalog for the language.
+ * The per-language modules under this directory (`ko_KR.ts`, …, published as
+ * the `backend.ai-ui/locale/*` package export) each bundle their
+ * `./astryx/*.json` catalog into this shape — the host imports one and passes
+ * it whole, exactly like the antd-era `antdLocale` flow this replaces.
  */
 export interface BAILocale {
   lang: string;
+  astryxLocale?: Record<string, string>;
 }

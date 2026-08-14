@@ -57,20 +57,22 @@ describe('BAIDynamicUnitInputNumber — keyboard stepping', () => {
   it('walks the dynamic ladder on ArrowUp instead of stepping by 1', () => {
     render(<Harness initial="4g" />);
     fireEvent.keyDown(field(), { key: 'ArrowUp' });
-    expect(field()).toHaveValue(8);
+    // Astryx 0.4.0's NumberInput is a text-backed spinbutton (#4896), so the
+    // DOM value is a string.
+    expect(field()).toHaveValue('8');
   });
 
   it('walks the ladder downwards on ArrowDown', () => {
     render(<Harness initial="8g" />);
     fireEvent.keyDown(field(), { key: 'ArrowDown' });
-    expect(field()).toHaveValue(4);
+    expect(field()).toHaveValue('4');
   });
 
   it('lands on the next rung up from a value between two rungs', () => {
     // 5 is not on the ladder; ↑ selects the next rung (8), not 6.
     render(<Harness initial="5g" />);
     fireEvent.keyDown(field(), { key: 'ArrowUp' });
-    expect(field()).toHaveValue(8);
+    expect(field()).toHaveValue('8');
   });
 
   it('cancels the browser’s own linear step', () => {

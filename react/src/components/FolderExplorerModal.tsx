@@ -14,11 +14,11 @@ import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Divider } from '@astryxdesign/core/Divider';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import {
+  BAISkeleton,
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAIFlex,

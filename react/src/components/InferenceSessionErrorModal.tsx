@@ -3,13 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
-import CopyableCodeText from './CopyableCodeText';
 import { Button } from '@astryxdesign/core/Button';
 import {
   MetadataList,
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, BAIText } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -66,7 +65,9 @@ const InferenceSessionErrorModal: React.FC<Props> = ({
         style={{ marginTop: 20 }}
       >
         <MetadataListItem label={t('modelService.SessionId')}>
-          <CopyableCodeText>{iSessionError?.session_id}</CopyableCodeText>
+          <BAIText code copyable>
+            {iSessionError?.session_id}
+          </BAIText>
         </MetadataListItem>
         <MetadataListItem label={t('dialog.error.Error')}>
           {iSessionError?.errors[0].repr}

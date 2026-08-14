@@ -227,6 +227,66 @@ export const WithDisabledAction: Story = {
   },
 };
 
+export const DisabledActionInOverflowMenu: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A disabled action keeps its reason after it collapses into the ' +
+          'overflow menu. The visible icon button explains itself with a ' +
+          'tooltip; the menu row cannot carry one (Astryx types ' +
+          '`DropdownMenuItemData.label` as a plain string), so the reason is ' +
+          'folded into the label instead. Narrow the container to compare ' +
+          'the two. See FR-3423.',
+      },
+    },
+  },
+  render: () => {
+    const [width, setWidth] = React.useState(400);
+    return (
+      <div>
+        <div style={{ marginBottom: 16 }}>
+          <label>
+            Container width: {width}px
+            <input
+              type="range"
+              min={120}
+              max={600}
+              value={width}
+              onChange={(e) => setWidth(Number(e.target.value))}
+              style={{ marginLeft: 8, width: 200 }}
+            />
+          </label>
+        </div>
+        <div
+          style={{
+            width,
+            border: '1px solid #d9d9d9',
+            padding: '8px 12px',
+            borderRadius: 4,
+          }}
+        >
+          <BAINameActionCell
+            icon={<Folder size="1em" />}
+            title="model-weights"
+            showActions="always"
+            actions={[
+              ...sampleActions,
+              {
+                key: 'start-service',
+                title: 'Deploy as service',
+                icon: <Copy size="1em" />,
+                disabled: true,
+                disabledReason: "Create deployments from a project's Data page",
+              },
+            ]}
+          />
+        </div>
+      </div>
+    );
+  },
+};
+
 export const LongTitle: Story = {
   parameters: {
     docs: {

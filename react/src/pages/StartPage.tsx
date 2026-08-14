@@ -2,18 +2,20 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AstryxSecondaryTheme } from '../astryx-theme';
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
-import { AstryxSecondaryTheme } from '../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { MenuKeys } from '../hooks/useWebUIMenuItems';
+import { toProjectContext } from '../types/projectContext';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import {
   filterOutEmpty,
@@ -40,6 +42,7 @@ const StartPage: React.FC = () => {
   const { t } = useTranslation();
 
   const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
   const blockList = baiClient?._config?.blockList ?? [];
   const inactiveList = baiClient?._config?.inactiveList ?? [];
   const enableModelFolders = baiClient?._config?.enableModelFolders ?? false;
@@ -309,6 +312,7 @@ const StartPage: React.FC = () => {
       <BAIUnmountAfterClose>
         <FolderCreateModalV2
           open={isOpenCreateModal}
+          project={toProjectContext(currentProject)}
           onRequestClose={(response) => {
             setIsOpenCreateModal(false);
             if (response) {

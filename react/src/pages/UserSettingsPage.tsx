@@ -15,7 +15,6 @@ import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import {
   useBAISettingGeneralState,
@@ -28,6 +27,7 @@ import {
 import { useThemeMode } from '../hooks/useThemeMode';
 import { Button } from '@astryxdesign/core/Button';
 import {
+  BAISkeleton,
   BAICard,
   filterOutEmpty,
   useSessionStorageState,
@@ -506,7 +506,7 @@ const UserPreferencesPage = () => {
           },
         ]}
       >
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           {currentTab === 'general' && (
             <BAIErrorBoundary>
               <SettingList
@@ -530,7 +530,7 @@ const UserPreferencesPage = () => {
                   onReload={loadLoginSessionQuery}
                 />
               ) : (
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               )}
             </BAIErrorBoundary>
           )}
@@ -542,7 +542,7 @@ const UserPreferencesPage = () => {
                   onReload={loadLoginHistoryQuery}
                 />
               ) : (
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               )}
             </BAIErrorBoundary>
           )}

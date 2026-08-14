@@ -15,7 +15,6 @@ import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -25,7 +24,9 @@ import {
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import {
+  BAISkeleton,
   BAIBoardItemErrorBoundary,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
@@ -124,9 +125,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeletonAstryx
-                style={{ padding: `0px ${token.marginMD}px` }}
-              />
+              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
             <SessionCountDashboardItem
@@ -157,9 +156,7 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={
-                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
-              }
+              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
             >
               <MyResource
                 fetchKey={deferredFetchKey}
@@ -185,9 +182,7 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={
-                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
-              }
+              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
             >
               <MyResourceWithinResourceGroup
                 fetchKey={deferredFetchKey}
@@ -213,9 +208,7 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={
-                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
-              }
+              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
             >
               <StorageStatusPanelCard
                 fetchKey={deferredFetchKey}
@@ -248,9 +241,7 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={
-                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
-              }
+              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
             >
               <QuotaPerStorageVolumeDashboardItem />
             </Suspense>
@@ -289,9 +280,7 @@ const DashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <BAISkeletonAstryx
-                  style={{ padding: `0px ${token.marginMD}px` }}
-                />
+                <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
               }
             >
               <AgentStats
@@ -314,9 +303,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeletonAstryx
-                style={{ padding: `0px ${token.marginMD}px` }}
-              />
+              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
             <ActiveAgents
@@ -340,6 +327,10 @@ const DashboardPage: React.FC = () => {
           <RecentlyCreatedSession
             queryRef={queryRef}
             isRefetching={isRefetching}
+            // Page-level ambient narrowing (ADR-0001): the dashboard is
+            // project-scoped, so the drawer compares against the current
+            // project.
+            project={toProjectContext(currentProject)}
           />
         ),
       },

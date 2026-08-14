@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3e1d467f4611b7d53aa7ffb58cdb048c>>
+ * @generated SignedSource<<c1e8e378815150d976b7c59c31f0cd0e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,6 +45,7 @@ export type SessionNodesFragment$data = ReadonlyArray<{
   readonly owner: {
     readonly email: string | null | undefined;
   } | null | undefined;
+  readonly priority: number | null | undefined;
   readonly project_id: string | null | undefined;
   readonly row_id: string;
   readonly scaling_group: string | null | undefined;
@@ -52,7 +53,7 @@ export type SessionNodesFragment$data = ReadonlyArray<{
   readonly status: string | null | undefined;
   readonly type: string | null | undefined;
   readonly user_id: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "SessionDetailDrawerFragment" | "SessionReclamationStatusCellFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "EditSessionPriorityModalFragment" | "SessionDetailDrawerFragment" | "SessionReclamationStatusCellFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
   readonly " $fragmentType": "SessionNodesFragment";
 } | null | undefined>;
 export type SessionNodesFragment$key = ReadonlyArray<{
@@ -169,6 +170,13 @@ return {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "priority",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "SessionStatusTagFragment"
@@ -222,6 +230,11 @@ return {
       "args": null,
       "kind": "FragmentSpread",
       "name": "TerminateSessionModalFragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "EditSessionPriorityModalFragment"
     },
     {
       "alias": null,
@@ -337,6 +350,6 @@ return {
 };
 })();
 
-(node as any).hash = "e9c6f30d972123bb2505ff8ec9dc74b2";
+(node as any).hash = "096035329410525be1813d6896490bdd";
 
 export default node;

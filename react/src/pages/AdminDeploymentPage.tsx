@@ -40,12 +40,11 @@ import AdminRuntimeVariantPreset, {
   AdminRuntimeVariantPresetQuery,
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { BAISkeleton } from 'backend.ai-ui';
 import { BAICard, type BAICardProps, filterOutEmpty } from 'backend.ai-ui';
 import {
   parseAsJson,
@@ -98,7 +97,6 @@ const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const currentProject = useCurrentProjectValue();
   const isPrometheusPresetSupported = baiClient.supports(
     'prometheus-query-preset',
   );
@@ -308,14 +306,8 @@ const AdminDeploymentPage: React.FC = () => {
         }
         break;
       case 'model-store-management': {
-        const currentProjectId = currentProject.id;
-        // Reload when nothing is loaded yet or the active project changed (the
-        // query is scoped to `currentProjectId`).
-        if (
-          currentProjectId &&
-          (!modelCardQueryRef ||
-            modelCardQueryRef.variables.currentProjectId !== currentProjectId)
-        ) {
+        // No longer project-scoped, so loading once is enough.
+        if (!modelCardQueryRef) {
           loadModelCardQuery(
             {
               filter:
@@ -324,7 +316,6 @@ const AdminDeploymentPage: React.FC = () => {
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
-              currentProjectId,
             },
             { fetchPolicy: 'store-and-network' },
           );
@@ -414,10 +405,12 @@ const AdminDeploymentPage: React.FC = () => {
   };
 
   // For entries that don't go through `onTabChange` — the initial mount, a full
-  // reload, or a direct `?tab=...` URL — load the active tab. Keyed on the
-  // project id so the project-scoped model-store tab reloads when the active
-  // project changes; a plain tab switch is already handled by `onTabChange`
-  // (render-as-you-fetch), so `currentTab` is intentionally not a dependency.
+  // reload, or a direct `?tab=...` URL — load the active tab. Mount-only:
+  // `/admin/deployments` is project-agnostic (ADR-0001, FR-3414), so the
+  // header selector is not mounted and there is no ambient project that could
+  // change underneath this page. A plain tab switch is already handled by
+  // `onTabChange` (render-as-you-fetch), so `currentTab` is intentionally not
+  // a dependency either.
   const loadActiveTab = useEffectEvent(() => {
     loadTab(
       currentTab,
@@ -427,7 +420,7 @@ const AdminDeploymentPage: React.FC = () => {
   });
   useEffect(() => {
     loadActiveTab();
-  }, [currentProject.id]);
+  }, []);
 
   // The antd `CardTabListType` import is replaced by the tab-item shape
   // `BAICard` itself accepts — this array's only consumer.
@@ -461,7 +454,7 @@ const AdminDeploymentPage: React.FC = () => {
       onTabChange={onTabChange}
       tabList={tabItems}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'deployments' && (
           <BAIErrorBoundary>
             {deploymentQueryRef ? (
@@ -474,7 +467,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -490,7 +483,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -506,7 +499,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -522,7 +515,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}
@@ -538,7 +531,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <BAISkeletonAstryx />
+              <BAISkeleton />
             )}
           </BAIErrorBoundary>
         )}

@@ -8,16 +8,15 @@ import { theme } from '../theme-shim';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIText,
   useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
-import { Copy } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -85,23 +84,9 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
             <pre style={{ width: 430, height: 270 }}>
               {data?.ssh_public_key}
             </pre>
-            {/* antd `Typography.Text copyable={{text}}` with no children
-                rendered ONLY the copy glyph — a standalone copy control, not
-                a labeled text row (so `BAICopyableText`, which always pairs
-                text + icon, doesn't fit). Self-built as a bare IconButton. */}
-            <IconButton
-              icon={<Copy size="1em" />}
-              label={t('button.Copy')}
-              tooltip={t('button.Copy')}
-              variant="ghost"
-              size="sm"
-              style={{ marginTop: token.margin }}
-              onClick={() => {
-                if (data?.ssh_public_key) {
-                  void navigator.clipboard?.writeText(data.ssh_public_key);
-                }
-              }}
-            />
+            <BAIFlex style={{ marginTop: token.margin }}>
+              <BAIText copyable={{ text: data.ssh_public_key }} />
+            </BAIFlex>
           </BAIFlex>
         ) : (
           <pre style={{ height: 270 }}>

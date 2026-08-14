@@ -10,6 +10,7 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
@@ -414,6 +415,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
       </Form>
       <FolderCreateModalV2
         open={isFolderCreateModalOpen}
+        project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsFolderCreateModalOpen(false);

@@ -6,8 +6,7 @@ import { AgentDetailDrawerFragment$key } from '../__generated__/AgentDetailDrawe
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import { toLocalId, useBAILogger } from 'backend.ai-ui';
+import { BAISkeleton, toLocalId, useBAILogger } from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useRefetchableFragment } from 'react-relay';
@@ -111,7 +110,7 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
         />
       }
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {agent?.agentNodeFrgmt && (
           <AgentDetailDrawerContent agentNodeFrgmt={agent?.agentNodeFrgmt} />
         )}
