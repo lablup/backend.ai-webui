@@ -26,7 +26,7 @@ describe('BAIMetadataListItem', () => {
           label={
             <>
               Path
-              <button type="button" aria-label="Copy full path" />
+              <button type="button" aria-label="Copy" />
             </>
           }
         >
@@ -38,8 +38,6 @@ describe('BAIMetadataListItem', () => {
     // The label cell still reads as the label…
     expect(screen.getByRole('term')).toHaveTextContent('Path');
     // …and the control is reachable under its own accessible name.
-    expect(
-      screen.getByRole('button', { name: 'Copy full path' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
   });
 });
