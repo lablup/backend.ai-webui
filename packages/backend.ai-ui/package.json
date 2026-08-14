@@ -48,8 +48,8 @@
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "peerDependencies": {
-    "@astryxdesign/core": "0.3.0",
-    "@astryxdesign/theme-neutral": "0.3.0",
+    "@astryxdesign/core": "0.4.0",
+    "@astryxdesign/theme-neutral": "0.4.0",
     "@tanstack/react-query": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
@@ -75,8 +75,8 @@
     "react-i18next": "catalog:"
   },
   "devDependencies": {
-    "@astryxdesign/core": "0.3.0",
-    "@astryxdesign/theme-neutral": "0.3.0",
+    "@astryxdesign/core": "0.4.0",
+    "@astryxdesign/theme-neutral": "0.4.0",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",
