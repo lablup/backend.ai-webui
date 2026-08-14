@@ -3204,6 +3204,18 @@
     "Copied": "已複製",
     "Copy": "複製"
   },
+  "spotlight": {
+    "Actions": "操作",
+    "NoResults": "找不到符合的頁面或操作",
+    "Pages": "頁面",
+    "Recent": "最近",
+    "Search": "搜尋",
+    "SearchPlaceholder": "搜尋頁面和操作...",
+    "SwitchToDarkTheme": "切換至深色主題",
+    "SwitchToLightTheme": "切換至淺色主題",
+    "TypeToSearch": "輸入以搜尋頁面和操作",
+    "UseSystemTheme": "使用系統主題"
+  },
   "start": {
     "CreateASession": "创建会话",
     "CreateFolder": "建立新的儲存資料夾",

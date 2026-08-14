@@ -3202,6 +3202,18 @@
     "Copied": "已复制",
     "Copy": "复制"
   },
+  "spotlight": {
+    "Actions": "操作",
+    "NoResults": "未找到匹配的页面或操作",
+    "Pages": "页面",
+    "Recent": "最近",
+    "Search": "搜索",
+    "SearchPlaceholder": "搜索页面和操作...",
+    "SwitchToDarkTheme": "切换到深色主题",
+    "SwitchToLightTheme": "切换到浅色主题",
+    "TypeToSearch": "输入以搜索页面和操作",
+    "UseSystemTheme": "使用系统主题"
+  },
   "start": {
     "CreateASession": "创建会话",
     "CreateFolder": "创建新的存储文件夹",

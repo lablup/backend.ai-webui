@@ -3200,6 +3200,18 @@
     "Copied": "disalin",
     "Copy": "Salinan"
   },
+  "spotlight": {
+    "Actions": "Tindakan",
+    "NoResults": "Tiada halaman atau tindakan yang sepadan",
+    "Pages": "Halaman",
+    "Recent": "Terkini",
+    "Search": "Cari",
+    "SearchPlaceholder": "Cari halaman dan tindakan...",
+    "SwitchToDarkTheme": "Tukar ke tema gelap",
+    "SwitchToLightTheme": "Tukar ke tema cerah",
+    "TypeToSearch": "Taip untuk mencari halaman dan tindakan",
+    "UseSystemTheme": "Guna tema sistem"
+  },
   "start": {
     "CreateASession": "Cipta Sesi",
     "CreateFolder": "Buat Folder Storan Baharu",

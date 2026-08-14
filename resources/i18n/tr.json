@@ -3200,6 +3200,18 @@
     "Copied": "Kopyalandı",
     "Copy": "Kopyala"
   },
+  "spotlight": {
+    "Actions": "Eylemler",
+    "NoResults": "Eşleşen sayfa veya eylem bulunamadı",
+    "Pages": "Sayfalar",
+    "Recent": "Son",
+    "Search": "Ara",
+    "SearchPlaceholder": "Sayfa ve eylem ara...",
+    "SwitchToDarkTheme": "Koyu temaya geç",
+    "SwitchToLightTheme": "Açık temaya geç",
+    "TypeToSearch": "Sayfa ve eylem aramak için yazın",
+    "UseSystemTheme": "Sistem temasını kullan"
+  },
   "start": {
     "CreateASession": "Oturum Oluşturma",
     "CreateFolder": "Yeni Bir Depolama Klasörü Oluşturun",

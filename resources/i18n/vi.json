@@ -3202,6 +3202,18 @@
     "Copied": "Đã sao chép",
     "Copy": "Sao chép"
   },
+  "spotlight": {
+    "Actions": "Hành động",
+    "NoResults": "Không tìm thấy trang hoặc hành động phù hợp",
+    "Pages": "Trang",
+    "Recent": "Gần đây",
+    "Search": "Tìm kiếm",
+    "SearchPlaceholder": "Tìm kiếm trang và hành động...",
+    "SwitchToDarkTheme": "Chuyển sang chủ đề tối",
+    "SwitchToLightTheme": "Chuyển sang chủ đề sáng",
+    "TypeToSearch": "Nhập để tìm kiếm trang và hành động",
+    "UseSystemTheme": "Sử dụng chủ đề hệ thống"
+  },
   "start": {
     "CreateASession": "Tạo một phiên",
     "CreateFolder": "Tạo thư mục lưu trữ mới",

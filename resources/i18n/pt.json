@@ -3202,6 +3202,18 @@
     "Copied": "Copiado",
     "Copy": "cópia de"
   },
+  "spotlight": {
+    "Actions": "Ações",
+    "NoResults": "Nenhuma página ou ação correspondente encontrada",
+    "Pages": "Páginas",
+    "Recent": "Recentes",
+    "Search": "Pesquisar",
+    "SearchPlaceholder": "Pesquisar páginas e ações...",
+    "SwitchToDarkTheme": "Mudar para o tema escuro",
+    "SwitchToLightTheme": "Mudar para o tema claro",
+    "TypeToSearch": "Digite para pesquisar páginas e ações",
+    "UseSystemTheme": "Usar o tema do sistema"
+  },
   "start": {
     "CreateASession": "Criar uma sessão",
     "CreateFolder": "Crie uma nova pasta de armazenamento",

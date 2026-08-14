@@ -3201,6 +3201,18 @@
     "Copied": "คัดลอกแล้ว",
     "Copy": "คัดลอก"
   },
+  "spotlight": {
+    "Actions": "การดำเนินการ",
+    "NoResults": "ไม่พบหน้าหรือการดำเนินการที่ตรงกัน",
+    "Pages": "หน้า",
+    "Recent": "ล่าสุด",
+    "Search": "ค้นหา",
+    "SearchPlaceholder": "ค้นหาหน้าและการดำเนินการ...",
+    "SwitchToDarkTheme": "สลับไปใช้ธีมมืด",
+    "SwitchToLightTheme": "สลับไปใช้ธีมสว่าง",
+    "TypeToSearch": "พิมพ์เพื่อค้นหาหน้าและการดำเนินการ",
+    "UseSystemTheme": "ใช้ธีมของระบบ"
+  },
   "start": {
     "CreateASession": "สร้างเซสชัน",
     "CreateFolder": "สร้างโฟลเดอร์จัดเก็บข้อมูลใหม่",

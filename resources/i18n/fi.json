@@ -3200,6 +3200,18 @@
     "Copied": "Kopioitu",
     "Copy": "Kopio"
   },
+  "spotlight": {
+    "Actions": "Toimet",
+    "NoResults": "Ei vastaavia sivuja tai toimia",
+    "Pages": "Sivut",
+    "Recent": "Viimeisimmät",
+    "Search": "Haku",
+    "SearchPlaceholder": "Etsi sivuja ja toimia...",
+    "SwitchToDarkTheme": "Vaihda tummaan teemaan",
+    "SwitchToLightTheme": "Vaihda vaaleaan teemaan",
+    "TypeToSearch": "Kirjoita hakeaksesi sivuja ja toimia",
+    "UseSystemTheme": "Käytä järjestelmän teemaa"
+  },
   "start": {
     "CreateASession": "Luo istunto",
     "CreateFolder": "Luo uusi tallennuskansio",

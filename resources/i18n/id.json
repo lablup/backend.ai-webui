@@ -3204,6 +3204,18 @@
     "Copied": "Disalin",
     "Copy": "Menyalin"
   },
+  "spotlight": {
+    "Actions": "Tindakan",
+    "NoResults": "Tidak ada halaman atau tindakan yang cocok",
+    "Pages": "Halaman",
+    "Recent": "Terbaru",
+    "Search": "Pencarian",
+    "SearchPlaceholder": "Cari halaman dan tindakan...",
+    "SwitchToDarkTheme": "Beralih ke tema gelap",
+    "SwitchToLightTheme": "Beralih ke tema terang",
+    "TypeToSearch": "Ketik untuk mencari halaman dan tindakan",
+    "UseSystemTheme": "Gunakan tema sistem"
+  },
   "start": {
     "CreateASession": "Membuat Sesi",
     "CreateFolder": "Buat Folder Penyimpanan Baru",

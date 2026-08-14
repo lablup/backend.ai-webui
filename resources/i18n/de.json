@@ -3202,6 +3202,18 @@
     "Copied": "Kopiert",
     "Copy": "Kopieren"
   },
+  "spotlight": {
+    "Actions": "Aktionen",
+    "NoResults": "Keine passenden Seiten oder Aktionen gefunden",
+    "Pages": "Seiten",
+    "Recent": "Kürzlich",
+    "Search": "Suche",
+    "SearchPlaceholder": "Seiten und Aktionen durchsuchen...",
+    "SwitchToDarkTheme": "Zum dunklen Theme wechseln",
+    "SwitchToLightTheme": "Zum hellen Theme wechseln",
+    "TypeToSearch": "Eingeben, um Seiten und Aktionen zu durchsuchen",
+    "UseSystemTheme": "Systemtheme verwenden"
+  },
   "start": {
     "CreateASession": "Eine Sitzung erstellen",
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",

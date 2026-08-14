@@ -3202,6 +3202,18 @@
     "Copied": "Хуулсан",
     "Copy": "Хуулбарлах"
   },
+  "spotlight": {
+    "Actions": "Үйлдэл",
+    "NoResults": "Тохирох хуудас эсвэл үйлдэл олдсонгүй",
+    "Pages": "Хуудсууд",
+    "Recent": "Сүүлийн",
+    "Search": "Хайх",
+    "SearchPlaceholder": "Хуудас, үйлдэл хайх...",
+    "SwitchToDarkTheme": "Харанхуй сэдэв рүү шилжих",
+    "SwitchToLightTheme": "Гэрэл сэдэв рүү шилжих",
+    "TypeToSearch": "Хуудас, үйлдэл хайхын тулд бичнэ үү",
+    "UseSystemTheme": "Системийн сэдвийг ашиглах"
+  },
   "start": {
     "CreateASession": "Сеанс үүсгэ",
     "CreateFolder": "Хадгалах шинэ хавтас үүсгэх",

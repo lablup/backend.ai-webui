@@ -3202,6 +3202,18 @@
     "Copied": "コピーされました",
     "Copy": "コピー"
   },
+  "spotlight": {
+    "Actions": "操作",
+    "NoResults": "一致するページや操作が見つかりません",
+    "Pages": "ページ",
+    "Recent": "最近",
+    "Search": "検索",
+    "SearchPlaceholder": "ページと操作を検索...",
+    "SwitchToDarkTheme": "ダークテーマに切り替え",
+    "SwitchToLightTheme": "ライトテーマに切り替え",
+    "TypeToSearch": "入力してページと操作を検索",
+    "UseSystemTheme": "システムのテーマを使用"
+  },
   "start": {
     "CreateASession": "セッションの作成",
     "CreateFolder": "保存フォルダー作成",
