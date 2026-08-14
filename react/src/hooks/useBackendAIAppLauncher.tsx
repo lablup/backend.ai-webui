@@ -1122,7 +1122,7 @@ export const useBackendAIAppLauncher = (
  * e.g. the app name is not in the session's service_ports), which must NOT
  * be presented as "session not accessible". Manager ≥24.09 sends a stable
  * `error_code` ("{domain}_{operation}_{detail}"), so when one is present we
- * additionally require the `session` domain; when absent (older managers)
+ * exclude that one known app-not-found code; when absent (older managers)
  * we keep the 404-only heuristic from FR-2586.
  */
 export function isSessionNotFoundError(err: unknown): boolean {
@@ -1130,7 +1130,12 @@ export function isSessionNotFoundError(err: unknown): boolean {
   const e = err as { statusCode?: unknown; error_code?: unknown };
   if (e.statusCode !== 404) return false;
   if (typeof e.error_code === 'string') {
-    return e.error_code.startsWith('session_');
+    // `backendai_read_not-found` means the *app* is absent from service_ports,
+    // not the session. Deliberately a denylist rather than an allowlist on the
+    // `session_` domain: this backend contract cannot be verified from the
+    // frontend, so an unrecognized code must keep the FR-2586 behaviour instead
+    // of silently dropping the localized recovery guidance.
+    return e.error_code !== 'backendai_read_not-found';
   }
   return true;
 }

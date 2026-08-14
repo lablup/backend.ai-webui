@@ -150,7 +150,7 @@ describe('stage 1 — manager start-service rejections through the real client',
     },
   );
 
-  it('treats only session-domain 404s as "session not accessible"', async () => {
+  it('treats 404s as "session not accessible" unless the app-not-found code says otherwise', async () => {
     // 404 with error_code "session_read_not-found" → the session itself is
     // gone (or created under another access key): show SessionNotAccessible.
     expect(
@@ -171,6 +171,18 @@ describe('stage 1 — manager start-service rejections through the real client',
     // Pre-24.09 managers send no error_code — keep the FR-2586 heuristic.
     expect(isSessionNotFoundError({ statusCode: 404 })).toBe(true);
     expect(isSessionNotFoundError({ statusCode: 500 })).toBe(false);
+
+    // Fail-safe direction: an error_code we do not recognize (e.g. the manager
+    // renames its domain prefix) must NOT strip the localized guidance. These
+    // literals are intentionally not sourced from the fixture — reading them
+    // from the same catalog the production code is matched against would make
+    // the assertion self-fulfilling.
+    expect(
+      isSessionNotFoundError({
+        statusCode: 404,
+        error_code: 'compute-session_read_not-found',
+      }),
+    ).toBe(true);
   });
 
   it('distinguishes same-title 503 causes only via msg, never via title', async () => {
@@ -219,15 +231,18 @@ describe('stage 2/3 — appproxy coordinator & worker errors through sendRequest
     },
   );
 
-  it('coordinator 404 (token not found) is NOT a session-not-found error', () => {
-    // error_code "agent_read_not-found" is outside the session domain, so a
-    // stale/tampered token must not be reported as an inaccessible session.
+  it('coordinator 404 (token not found) follows the fail-safe direction', () => {
+    // Under the denylist an out-of-domain code like "agent_read_not-found"
+    // keeps the session-not-found guidance (fail-safe). This never surfaces:
+    // isSessionNotFoundError is called exclusively on the manager's
+    // start-service rejection — coordinator failures are routed through
+    // sendRequest/getAppProxyErrorMessage and never reach it.
     expect(
       isSessionNotFoundError({
         statusCode: coordinatorErrors.tokenNotFound.status,
         error_code: coordinatorErrors.tokenNotFound.body.error_code,
       }),
-    ).toBe(false);
+    ).toBe(true);
   });
 });
 
