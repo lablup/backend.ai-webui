@@ -119,6 +119,15 @@
    bars, retry/cancel actions and a link, and they stack. */
 .bai-notification-stack {
   position: fixed;
+  /* Neutralize the UA popover defaults — the stack is a `popover="manual"`
+     so it renders in the CSS top layer above modal backdrops (FR-3486). */
+  inset: auto;
+  margin: 0;
+  border: none;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
   /* `--spacing-6` = 24px, antd's own notification inset. */
   inset-block-end: var(--spacing-6);
   inset-inline-end: var(--spacing-6);
@@ -129,9 +138,9 @@
   gap: var(--spacing-3);
   width: 384px; /* antd's notification width; not on the spacing scale. */
   max-width: calc(100vw - var(--spacing-6) * 2);
-  /* The theme-shim owns `zIndexPopupBase` (verdict `self`, value 1000) because
-     Astryx layering is a LayerProvider concern with no token. Kept in one
-     place here rather than repeated per item. */
+  /* Only used where the Popover API is unavailable (`display: flex` keeps the
+     stack rendered as a plain fixed element there); the top layer ignores it.
+     1000 = the theme-shim's `zIndexPopupBase`. */
   z-index: 1000;
   pointer-events: none;
 }

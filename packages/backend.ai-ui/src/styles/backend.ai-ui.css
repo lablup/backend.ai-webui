@@ -120,6 +120,16 @@
         var(--text-supporting-leading)
     );
   }
+
+  /* A modal backdrop dims but never blurs — blur makes notices behind the
+     top-most dialog unreadable (FR-3486). Astryx hardcodes `blur(2px)` in
+     `astryx-base` with no token or stable class hook, so the selector is
+     deliberately un-scoped; `components` outranks `astryx-base` by layer
+     order. */
+  dialog::backdrop {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 /* Keyframes are not layerable — `@keyframes` inside `@layer` is legal but the

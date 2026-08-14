@@ -323,6 +323,24 @@ const BAINotificationStackAstryx: React.FC<BAINotificationStackAstryxProps> = ({
 
   return (
     <div
+      // A manual popover, so the stack enters the CSS top layer — a fixed
+      // div's z-index cannot compete with a modal <dialog>'s backdrop there.
+      // `data-bai-top-layer` opts into the app-shim's re-promotion on modal
+      // open; notices stay inert while a modal is open (FR-3486). Mirrors
+      // Astryx ToastViewport's own top-layer promotion.
+      popover="manual"
+      data-bai-top-layer=""
+      ref={(el) => {
+        // API guard first: `:popover-open` throws in matches() where the
+        // Popover API is missing (the CSS fallback keeps the stack visible).
+        if (
+          el &&
+          typeof el.showPopover === 'function' &&
+          !el.matches(':popover-open')
+        ) {
+          el.showPopover();
+        }
+      }}
       className="bai-notification-stack"
       // e2e anchor: the stack, each notice, and each notice's status are
       // addressable without reaching into Astryx's own class names (P7).

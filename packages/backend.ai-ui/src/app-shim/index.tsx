@@ -23,6 +23,7 @@
  Astryx's `LayerProvider` (toast viewport + layer stacking), the toast bridge
  registration, and the imperative-modal host.
 */
+import useEventListener from '../hooks/useEventListener';
 import {
   registerBridge,
   setMessageConfig,
@@ -86,6 +87,38 @@ const BAIAppBridgeMount: React.FC<{
     registerBridge({ showToast });
     return () => registerBridge(null);
   }, [showToast]);
+
+  // The CSS top layer stacks by entry order, so a `showModal()` backdrop
+  // paints over notice popovers that entered earlier; re-enter them on each
+  // modal open. Notices stay inert while a modal is open (FR-3486).
+  // `[role="region"][popover="manual"]` is Astryx 0.4.0 ToastViewport's
+  // internal DOM (src/Toast/ToastViewport.tsx) — no refresh hook is exposed.
+  useEventListener(
+    'toggle',
+    (e) => {
+      const dialog = e.target;
+      if (
+        !(dialog instanceof HTMLDialogElement) ||
+        (e as ToggleEvent).newState !== 'open' ||
+        !dialog.matches(':modal')
+      ) {
+        return;
+      }
+      document
+        .querySelectorAll<HTMLElement>(
+          '[popover="manual"]:is([role="region"], [data-bai-top-layer])',
+        )
+        .forEach((el) => {
+          try {
+            if (el.matches(':popover-open')) el.hidePopover();
+            el.showPopover();
+          } catch {
+            /* disconnected mid-toggle */
+          }
+        });
+    },
+    { target: () => document, capture: true },
+  );
 
   return null;
 };
