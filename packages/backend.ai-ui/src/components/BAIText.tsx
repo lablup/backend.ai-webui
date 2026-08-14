@@ -93,6 +93,8 @@ export interface BAITextProps extends Omit<
   code?: boolean;
   disabled?: boolean;
   monospace?: boolean;
+  /** Astryx `Text` size step, forwarded as-is (antd had no counterpart). */
+  size?: TextProps['size'];
   /** CSS-based ellipsis (multi-line via `rows`), with an optional tooltip. */
   ellipsis?: boolean | BAITextEllipsisConfig;
   copyable?: boolean | BAITextCopyConfig;

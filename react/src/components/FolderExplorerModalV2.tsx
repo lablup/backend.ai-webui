@@ -530,13 +530,20 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {fileExplorerElement}
                   </div>
-                  <ResizeHandle
-                    direction="horizontal"
-                    isReversed
-                    hasDivider
-                    label={t('explorer.Metadata')}
-                    resizable={infoPanel.props}
-                  />
+                  {/* The handle's own `height: 100%` resolves to `auto` here —
+                      this row is sized by `min-height` only, which makes the
+                      percentage indefinite, collapsing the handle (divider +
+                      pill) to ~30px pinned at the top, over the tab strip. A
+                      stretched flex wrapper gives it a definite height. */}
+                  <div style={{ display: 'flex', alignSelf: 'stretch' }}>
+                    <ResizeHandle
+                      direction="horizontal"
+                      isReversed
+                      hasDivider
+                      label={t('explorer.Metadata')}
+                      resizable={infoPanel.props}
+                    />
+                  </div>
                   <div style={{ width: infoPanel.size, flexShrink: 0 }}>
                     {vFolderInfoPanelElement}
                   </div>
