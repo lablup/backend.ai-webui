@@ -97,6 +97,31 @@ describe('BAISelect children-option trigger label (FR-3499)', () => {
     expect(triggerText()).toBe('2.1.0 | x86_64 | CUDA 12.1');
   });
 
+  it('renders the option node on the trigger with optionLabelProp="children" (FR-3544)', () => {
+    const { container } = render(
+      <BAISelect
+        label="Environments"
+        optionLabelProp="children"
+        value="cr.backend.ai/stable/pytorch"
+      >
+        <SelectOptGroup key="ml" label="Machine Learning">
+          <SelectOption
+            key="cr.backend.ai/stable/pytorch"
+            value="cr.backend.ai/stable/pytorch"
+            label="PyTorch"
+          >
+            <span data-testid="rich-row">PyTorch</span>
+            <span>GPU</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    const richValue = container.querySelector('.bai-select-rich-value');
+    expect(richValue?.querySelector('[data-testid="rich-row"]')).not.toBeNull();
+    // The string label survives as the trigger button's accessible text.
+    expect(triggerText()).toBe('PyTorch');
+  });
+
   it('still selects a grouped option and reports the caller value', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

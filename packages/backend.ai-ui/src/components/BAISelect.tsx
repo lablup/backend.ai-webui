@@ -200,6 +200,11 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   triggerDisplay?: 'count' | 'labels' | 'badges';
   /** Badges shown before "+N". Only meaningful with `triggerDisplay="badges"`. */
   maxBadges?: number;
+  /**
+   * antd's trigger-label source selector. Only `'children'` is honoured: the
+   * selected option's rich node renders on the closed trigger (FR-3544).
+   * Other values fall back to the flattened text label.
+   */
   optionLabelProp?: string;
   filterOption?: boolean | ((input: string, option?: any) => boolean);
   defaultActiveFirstOption?: boolean;
@@ -276,7 +281,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   labelRender: _labelRender,
   maxTagCount: _maxTagCount,
   maxTagPlaceholder: _maxTagPlaceholder,
-  optionLabelProp: _optionLabelProp,
+  optionLabelProp,
   filterOption: _filterOption,
   defaultActiveFirstOption: _defaultActiveFirstOption,
   open: _open,
@@ -496,9 +501,31 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   const accessibleLabel =
     label ?? nodeToAccessibleLabel(placeholder) ?? t('general.Select');
 
+  const singleValue = toOptionKey(value ?? defaultValue);
+  const resolvedSingleValue =
+    singleValue === '' && autoSelectOption
+      ? toOptionKey(
+          _.isFunction(autoSelectOption)
+            ? autoSelectOption(options)
+            : rawOptions[0]?.value,
+        )
+      : singleValue;
+  // antd `optionLabelProp="children"` — the selected option's rich node
+  // renders on the closed trigger (via `Selector`'s pass-through icon slot);
+  // the string label stays the accessible name and search key (FR-3544).
+  const richTriggerNode =
+    mode === undefined && optionLabelProp === 'children'
+      ? nodeLabels.get(resolvedSingleValue)
+      : undefined;
+
   const shared = {
     ...restProps,
-    className: classNames(className, 'bai-select', ghost && 'bai-select-ghost'),
+    className: classNames(
+      className,
+      'bai-select',
+      ghost && 'bai-select-ghost',
+      richTriggerNode !== undefined && 'bai-select-rich-trigger',
+    ),
     label: accessibleLabel || t('general.Select'),
     isLabelHidden: isLabelHidden ?? label === undefined,
     // `tooltip` was an antd `Tooltip` WRAPPING the whole control; Astryx
@@ -557,7 +584,6 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     );
   }
 
-  const singleValue = toOptionKey(value ?? defaultValue);
   return (
     <Selector
       // QA-FINDINGS Q-34 — `placement` is the documented opt-out from
@@ -576,19 +602,16 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       {...shared}
       options={optionsWithSlots}
       hasClear={allowClear}
+      startIcon={
+        richTriggerNode !== undefined ? (
+          <span className="bai-select-rich-value">{richTriggerNode}</span>
+        ) : undefined
+      }
       // `autoSelectOption` is honoured without the antd layout effect: when
       // nothing is selected the resolved first (or caller-chosen) option is
       // the rendered value, and the caller is told on mount by the same
       // `onChange` it used to receive.
-      value={
-        singleValue === '' && autoSelectOption
-          ? toOptionKey(
-              _.isFunction(autoSelectOption)
-                ? autoSelectOption(options)
-                : rawOptions[0]?.value,
-            )
-          : singleValue
-      }
+      value={resolvedSingleValue}
       onChange={(next: string | null) => emitChange(next)}
     />
   );

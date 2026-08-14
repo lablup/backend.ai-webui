@@ -46,3 +46,37 @@
 .bai-select-ghost [aria-invalid='true'] {
   border-color: var(--color-error);
 }
+
+/* optionLabelProp="children" (FR-3544): the selected option's rich node
+   renders in `Selector`'s pass-through icon slot; the trigger button keeps
+   only the visually-hidden string label (still the accessible name), so it
+   collapses and the node takes the label's flex share. Structural child
+   selectors, matching the ghost rules above, so an Astryx class rename
+   cannot silently break it. */
+/* `stretch`, not `center`: vertical Dividers inside the node size themselves
+   by stretching, and the option rows render under the same default. */
+.bai-select-rich-trigger > .bai-select-rich-value {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* The node fills the label area so a row's `justify="between"` keeps pushing
+   its trailing badges to the trigger's right edge, as antd rendered it. */
+.bai-select-rich-trigger > .bai-select-rich-value > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.bai-select-rich-trigger > button {
+  flex: 0 0 auto;
+}
+.bai-select-rich-trigger > button > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

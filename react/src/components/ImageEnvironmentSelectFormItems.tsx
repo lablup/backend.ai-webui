@@ -429,6 +429,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       >
         <BAISelect
           ref={envSelectRef}
+          optionLabelProp="children"
           open={envSelectOpen}
           onOpenChange={(visible) => {
             // Return to uncontrolled mode once the user interacts
@@ -669,6 +670,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
             >
               <BAISelect
                 ref={versionSelectRef}
+                optionLabelProp="children"
                 popupMatchSelectWidth={false}
                 onChange={(value) => {
                   const selectedImage = _.find(images, (image) => {
