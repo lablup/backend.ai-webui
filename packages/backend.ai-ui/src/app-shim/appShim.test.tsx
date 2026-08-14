@@ -17,8 +17,8 @@ import { BAIAppProvider } from './index';
 import { message } from './message';
 import { modal } from './modal';
 import type { ShowToastFn, ToastOptions } from '@astryxdesign/core/Toast';
-import { cleanup, render } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 interface ShownToast {
   options: ToastOptions;
@@ -121,71 +121,80 @@ describe('app-shim message', () => {
 });
 
 describe('app-shim top-layer re-entry (FR-3486)', () => {
-  // jsdom has neither the Popover API nor the `:modal` / `:popover-open`
-  // selectors, so the fixtures carry instance-level stand-ins. The Astryx
-  // toast viewport BAIAppProvider mounts has no stubs, which also exercises
-  // the listener's `typeof showPopover` guard.
-  function mountNotice({ isPopoverOpen }: { isPopoverOpen: boolean }) {
+  // jsdom lacks the Popover API and the `:modal` / `:popover-open` selectors,
+  // so fixtures carry instance-level stand-ins. Never hoist them into a
+  // setupTests prototype polyfill: the listener branches on the method's
+  // ABSENCE, and a global polyfill would make that branch untestable.
+  const fixtures: HTMLElement[] = [];
+
+  function mountNotice({ isPopoverOpen = false, hasPopoverApi = true } = {}) {
     const el = document.createElement('div');
     el.setAttribute('popover', 'manual');
     el.setAttribute('data-bai-top-layer', '');
-    const showPopover = vi.fn();
-    const hidePopover = vi.fn();
-    Object.assign(el, { showPopover, hidePopover });
-    const nativeMatches = el.matches.bind(el);
     el.matches = (selector: string) =>
-      selector === ':popover-open' ? isPopoverOpen : nativeMatches(selector);
+      selector === ':popover-open' && isPopoverOpen;
+    const calls: string[] = [];
+    if (hasPopoverApi) {
+      Object.assign(el, {
+        showPopover: () => calls.push('show'),
+        hidePopover: () => calls.push('hide'),
+      });
+    }
     document.body.appendChild(el);
-    return { showPopover, hidePopover };
+    fixtures.push(el);
+    return calls;
   }
 
-  function dispatchToggle(
-    target: HTMLElement,
-    { isModal = true, newState = 'open' } = {},
-  ) {
-    if (target instanceof HTMLDialogElement) {
-      const nativeMatches = target.matches.bind(target);
-      target.matches = (selector: string) =>
-        selector === ':modal' ? isModal : nativeMatches(selector);
-    }
+  function dispatchToggle({
+    tag = 'dialog',
+    isModal = true,
+    newState = 'open',
+  } = {}) {
+    const target = document.createElement(tag);
+    target.matches = (selector: string) => selector === ':modal' && isModal;
     document.body.appendChild(target);
+    fixtures.push(target);
     const event = new Event('toggle');
     Object.assign(event, { newState });
     target.dispatchEvent(event);
   }
 
+  beforeEach(() => {
+    render(<BAIAppProvider />);
+  });
+
   afterEach(() => {
-    cleanup();
-    document.body.innerHTML = '';
+    fixtures.splice(0).forEach((el) => el.remove());
   });
 
   it('re-enters an open notice surface when a modal dialog opens', () => {
-    render(<BAIAppProvider />);
-    const notice = mountNotice({ isPopoverOpen: true });
-    dispatchToggle(document.createElement('dialog'));
-    expect(notice.hidePopover).toHaveBeenCalledTimes(1);
-    expect(notice.showPopover).toHaveBeenCalledTimes(1);
-    expect(notice.hidePopover.mock.invocationCallOrder[0]).toBeLessThan(
-      notice.showPopover.mock.invocationCallOrder[0],
-    );
+    const calls = mountNotice({ isPopoverOpen: true });
+    dispatchToggle();
+    expect(calls).toEqual(['hide', 'show']);
   });
 
   it('shows a not-yet-promoted notice without hiding it first', () => {
-    render(<BAIAppProvider />);
-    const notice = mountNotice({ isPopoverOpen: false });
-    dispatchToggle(document.createElement('dialog'));
-    expect(notice.hidePopover).not.toHaveBeenCalled();
-    expect(notice.showPopover).toHaveBeenCalledTimes(1);
+    const calls = mountNotice();
+    dispatchToggle();
+    expect(calls).toEqual(['show']);
   });
 
-  it('ignores dialog close, non-modal dialogs, and non-dialog toggles', () => {
-    render(<BAIAppProvider />);
-    const notice = mountNotice({ isPopoverOpen: true });
-    dispatchToggle(document.createElement('dialog'), { newState: 'closed' });
-    dispatchToggle(document.createElement('dialog'), { isModal: false });
-    dispatchToggle(document.createElement('div'));
-    expect(notice.hidePopover).not.toHaveBeenCalled();
-    expect(notice.showPopover).not.toHaveBeenCalled();
+  it('skips a notice without the Popover API instead of throwing', () => {
+    const bare = mountNotice({ isPopoverOpen: true, hasPopoverApi: false });
+    const stubbed = mountNotice({ isPopoverOpen: true });
+    dispatchToggle();
+    expect(bare).toEqual([]);
+    expect(stubbed).toEqual(['hide', 'show']);
+  });
+
+  it.each([
+    { name: 'dialog close', options: { newState: 'closed' } },
+    { name: 'a non-modal dialog', options: { isModal: false } },
+    { name: 'a non-dialog toggle', options: { tag: 'div' } },
+  ])('ignores $name', ({ options }) => {
+    const calls = mountNotice({ isPopoverOpen: true });
+    dispatchToggle(options);
+    expect(calls).toEqual([]);
   });
 });
 
