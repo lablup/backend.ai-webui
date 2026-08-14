@@ -109,11 +109,12 @@ const BAIAppBridgeMount: React.FC<{
           '[popover="manual"]:is([role="region"], [data-bai-top-layer])',
         )
         .forEach((el) => {
+          if (typeof el.showPopover !== 'function') return;
           try {
             if (el.matches(':popover-open')) el.hidePopover();
             el.showPopover();
           } catch {
-            /* disconnected mid-toggle */
+            /* a beforetoggle handler flipped the popover mid-re-entry */
           }
         });
     },
