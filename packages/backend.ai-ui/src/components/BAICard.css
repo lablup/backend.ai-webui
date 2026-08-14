@@ -79,7 +79,9 @@
 
  Every value below is a token; the only arithmetic is the bleed/inset identity,
  which is derived from the `padding` step `BAICard` hands Astryx `Card`
- (`padding={6}` = `--spacing-6`, `padding={3}` for `size="small"`).  Astryx
+ (`padding={6}` = `--spacing-6`, `padding={3}` for `size="small"`; an explicit
+ `padding` prop republishes `--bai-card-inset` inline from BAICard.tsx, which
+ wins over both class declarations below).  Astryx
  `Card`'s bordered variant subtracts the border width from its padding so that
  border + padding == the padding token, so the inset does the same and the rail
  lands exactly between the card's side borders — as antd's head border did.
