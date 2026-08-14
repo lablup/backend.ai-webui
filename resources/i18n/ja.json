@@ -867,7 +867,6 @@
       "CloneFolder": "フォルダクローン",
       "Cloneable": "クローン可能",
       "Control": "コントロール",
-      "CopyFullPath": "フルパスをコピー",
       "CreateModelFolderOnlyInExclusiveProject": "モデルプロジェクトフォルダーは、モデルストアと独占プロジェクトでのみ作成できます。",
       "CreatedAt": "で作成されました",
       "Delete": "削除",

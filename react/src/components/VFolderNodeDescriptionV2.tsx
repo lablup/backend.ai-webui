@@ -23,7 +23,6 @@ import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles'
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
 import { MetadataList } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack } from '@astryxdesign/core/Stack';
@@ -41,7 +40,6 @@ import * as _ from 'lodash-es';
 import {
   CircleCheckIcon,
   CircleXIcon,
-  CopyIcon,
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -152,20 +150,9 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     !vfolderNode?.unmanagedPath && {
       key: 'path',
       label: (
-        <HStack gap={1} align="center">
+        <BAIText copyable={{ text: vfolderPath }}>
           {t('data.folders.Path')}
-          <Button
-            label={t('data.folders.CopyFullPath')}
-            tooltip={t('data.folders.CopyFullPath')}
-            variant="link"
-            size="sm"
-            isIconOnly
-            icon={<CopyIcon />}
-            onClick={() => {
-              void navigator.clipboard?.writeText(vfolderPath);
-            }}
-          />
-        </HStack>
+        </BAIText>
       ),
       children: <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />,
     },
