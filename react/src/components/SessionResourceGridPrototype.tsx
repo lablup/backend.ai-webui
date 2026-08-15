@@ -134,6 +134,128 @@ interface PackedCell {
   letter?: string; // first cell of a session carries its initial
 }
 
+// Group palette supplied by the driving dev (#8789 reaction, 2026-08-15) —
+// muted swatches replacing the too-vivid chart categorical set. Raw hex is
+// prototype-only; production must map these to theme tokens.
+const GROUP_HUES_ON_LIGHT = [
+  '#8C50BC',
+  '#3469D6',
+  '#42825C',
+  '#417C99',
+  '#B05F1D',
+  '#B84134',
+  '#6C6E76',
+];
+const GROUP_HUES_ON_DARK = [
+  '#BE81EF',
+  '#749DED',
+  '#74CB9A',
+  '#83C2DE',
+  '#E9D149',
+  '#E6786D',
+  '#8D8F97',
+];
+
+type BoundarySeg = [number, number, number, number];
+
+// Chain axis-aligned boundary segments into closed loops (each vertex has
+// exactly two incident segments by construction), merging collinear runs.
+const chainLoops = (segs: BoundarySeg[]): Array<Array<[number, number]>> => {
+  const key = (x: number, y: number) => `${x.toFixed(2)},${y.toFixed(2)}`;
+  const unused = new Set<number>(segs.map((_, i) => i));
+  const byPoint = new Map<string, number[]>();
+  segs.forEach((s, i) => {
+    [key(s[0], s[1]), key(s[2], s[3])].forEach((k) => {
+      const list = byPoint.get(k);
+      if (list) list.push(i);
+      else byPoint.set(k, [i]);
+    });
+  });
+  const near = (a: number, b: number) => Math.abs(a - b) < 0.01;
+  const loops: Array<Array<[number, number]>> = [];
+  while (unused.size > 0) {
+    const startIdx: number = unused.values().next().value as number;
+    unused.delete(startIdx);
+    const s0 = segs[startIdx];
+    const pts: Array<[number, number]> = [
+      [s0[0], s0[1]],
+      [s0[2], s0[3]],
+    ];
+    let cur: [number, number] = [s0[2], s0[3]];
+    for (;;) {
+      const candidates = (byPoint.get(key(cur[0], cur[1])) ?? []).filter((i) =>
+        unused.has(i),
+      );
+      if (candidates.length === 0) break;
+      const i = candidates[0];
+      unused.delete(i);
+      const s = segs[i];
+      const next: [number, number] =
+        near(s[0], cur[0]) && near(s[1], cur[1]) ? [s[2], s[3]] : [s[0], s[1]];
+      pts.push(next);
+      cur = next;
+    }
+    if (pts.length > 2 && near(pts[0][0], cur[0]) && near(pts[0][1], cur[1]))
+      pts.pop();
+    const merged: Array<[number, number]> = [];
+    pts.forEach((p) => {
+      const a = merged[merged.length - 2];
+      const b = merged[merged.length - 1];
+      if (
+        a &&
+        b &&
+        ((near(a[0], b[0]) && near(b[0], p[0])) ||
+          (near(a[1], b[1]) && near(b[1], p[1])))
+      )
+        merged[merged.length - 1] = p;
+      else merged.push(p);
+    });
+    while (merged.length > 3) {
+      const a = merged[merged.length - 1];
+      const b = merged[0];
+      const c = merged[1];
+      if (
+        (near(a[0], b[0]) && near(b[0], c[0])) ||
+        (near(a[1], b[1]) && near(b[1], c[1]))
+      )
+        merged.shift();
+      else break;
+    }
+    if (merged.length >= 4) loops.push(merged);
+  }
+  return loops;
+};
+
+// Rounded rectilinear-polygon path: every corner (convex and concave) is
+// rounded with a quadratic arc clamped to half of its shorter edge.
+const roundedLoopPath = (
+  pts: Array<[number, number]>,
+  radius: number,
+): string => {
+  const n = pts.length;
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const p = pts[i];
+    const prev = pts[(i - 1 + n) % n];
+    const next = pts[(i + 1) % n];
+    const inLen = Math.hypot(p[0] - prev[0], p[1] - prev[1]);
+    const outLen = Math.hypot(next[0] - p[0], next[1] - p[1]);
+    const r = Math.min(radius, inLen / 2, outLen / 2);
+    const pin: [number, number] = [
+      p[0] - ((p[0] - prev[0]) / inLen) * r,
+      p[1] - ((p[1] - prev[1]) / inLen) * r,
+    ];
+    const pout: [number, number] = [
+      p[0] + ((next[0] - p[0]) / outLen) * r,
+      p[1] + ((next[1] - p[1]) / outLen) * r,
+    ];
+    d +=
+      (i === 0 ? `M${pin[0]},${pin[1]}` : `L${pin[0]},${pin[1]}`) +
+      `Q${p[0]},${p[1]} ${pout[0]},${pout[1]}`;
+  }
+  return d + 'Z';
+};
+
 const LegendSwatch = ({ color, label }: { color: string; label: string }) => {
   'use memo';
   return (
@@ -316,13 +438,14 @@ const SessionResourceGridPrototype = ({
     return p < 50 ? ramp3[0] : p < 80 ? ramp3[1] : ramp3[2];
   };
 
-  // Group hues cycle the 10 categorical colors in FLOW order, so adjacent
-  // groups are always distinct and none falls back to gray. Deliberate
-  // deviation from "color follows entity": here color's only job is local
-  // discrimination between neighbors (identity = position + letter + hover).
-  const categorical = colors.categorical(10);
+  // Group hues cycle the dev-supplied muted palette in FLOW order, so
+  // adjacent groups are always distinct. Deliberate deviation from "color
+  // follows entity": here color's only job is local discrimination between
+  // neighbors (identity = position + letter + hover).
+  const groupPalette =
+    theme.mode === 'dark' ? GROUP_HUES_ON_DARK : GROUP_HUES_ON_LIGHT;
   const hueFor = (sessionIdx: number): string =>
-    categorical[sessionIdx % categorical.length];
+    groupPalette[sessionIdx % groupPalette.length];
 
   const px = (name: string, fallback: number): number => {
     const v = parseFloat(theme.token(name));
@@ -464,58 +587,6 @@ const SessionResourceGridPrototype = ({
     if (group && group[0].sessionIdx === seg.sessionIdx) group.push(seg);
     else sessionSegGroups.push([seg]);
   });
-
-  // Rounded rect path with independent left/right corner radii (fill).
-  const segPath = (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    rl: number,
-    rr: number,
-  ): string =>
-    `M${x + rl},${y}` +
-    `H${x + w - rr}` +
-    (rr ? `A${rr},${rr} 0 0 1 ${x + w},${y + rr}` : '') +
-    `V${y + h - rr}` +
-    (rr ? `A${rr},${rr} 0 0 1 ${x + w - rr},${y + h}` : '') +
-    `H${x + rl}` +
-    (rl ? `A${rl},${rl} 0 0 1 ${x},${y + h - rl}` : '') +
-    `V${y + rl}` +
-    (rl ? `A${rl},${rl} 0 0 1 ${x + rl},${y}` : '') +
-    'Z';
-
-  // Border path that leaves the cut side OPEN where the run continues on
-  // another row — the missing vertical edge is the continuation signal.
-  const segBorderPath = (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    r: number,
-    leftOpen: boolean,
-    rightOpen: boolean,
-  ): string => {
-    const rl = leftOpen ? 0 : r;
-    const rr = rightOpen ? 0 : r;
-    let d = `M${x + rl},${y} H${x + w - rr}`;
-    if (!rightOpen) {
-      d +=
-        (rr ? ` A${rr},${rr} 0 0 1 ${x + w},${y + rr}` : '') +
-        ` V${y + h - rr}` +
-        (rr ? ` A${rr},${rr} 0 0 1 ${x + w - rr},${y + h}` : '');
-      d += ` H${x + rl}`;
-    } else {
-      d += ` M${x + w},${y + h} H${x + rl}`;
-    }
-    if (!leftOpen) {
-      d +=
-        (rl ? ` A${rl},${rl} 0 0 1 ${x},${y + h - rl}` : '') +
-        ` V${y + rl}` +
-        (rl ? ` A${rl},${rl} 0 0 1 ${x + rl},${y}` : '');
-    }
-    return d;
-  };
 
   const legendItems =
     gridParams.gridEncoding === 'stepped'
@@ -659,45 +730,16 @@ const SessionResourceGridPrototype = ({
               {sessionSegGroups.map((segs, k) => {
                 const si = segs[0].sessionIdx;
                 const hue = hueFor(si);
-                const dimmed = hover !== null && hover.sessionIdx !== si;
-                const r = radiusPx + platePadY;
+                const hovered = hover !== null && hover.sessionIdx === si;
                 const rects = segs.map((s) => ({
                   x: s.x0 - platePadX,
                   y: s.y - platePadY,
                   w: s.x1 - s.x0 + platePadX * 2,
                   h: cellPx + platePadY * 2,
                 }));
-                if (rects.length === 1) {
-                  const g0 = rects[0];
-                  return (
-                    <g key={`sg-${k}`} opacity={dimmed ? 0.3 : 1}>
-                      <path
-                        data-si={si}
-                        d={segPath(g0.x, g0.y, g0.w, g0.h, r, r)}
-                        fill={colors.alpha(hue, 0.15)}
-                      />
-                      <path
-                        d={segBorderPath(
-                          g0.x,
-                          g0.y,
-                          g0.w,
-                          g0.h,
-                          r,
-                          false,
-                          false,
-                        )}
-                        fill="none"
-                        stroke={hue}
-                        strokeWidth={1.5}
-                        pointerEvents="none"
-                      />
-                    </g>
-                  );
-                }
-                // Multi-row run: where vertically-adjacent segments of the
-                // same session overlap horizontally, a BRIDGE joins their
-                // plates and the border between them is dropped, so the run
-                // reads as one merged region (square corners on merged runs).
+                // Bridge vertically-adjacent overlapping segments so the run
+                // reads as one merged region; then trace the union boundary
+                // and round every corner.
                 const bridges: Array<{
                   ox0: number;
                   ox1: number;
@@ -715,14 +757,6 @@ const SessionResourceGridPrototype = ({
                       : null,
                   );
                 }
-                let fillD = rects
-                  .map((g0) => `M${g0.x},${g0.y}h${g0.w}v${g0.h}h${-g0.w}Z`)
-                  .join('');
-                bridges.forEach((b) => {
-                  if (b)
-                    fillD += `M${b.ox0},${b.y0 - 0.5}H${b.ox1}V${b.y1 + 0.5}H${b.ox0}Z`;
-                });
-                // Horizontal edge pieces minus the bridged interval.
                 const hPieces = (
                   a0: number,
                   a1: number,
@@ -736,65 +770,50 @@ const SessionResourceGridPrototype = ({
                         ] as Array<[number, number]>
                       ).filter(([p0, p1]) => p1 - p0 > 0.5)
                     : [[a0, a1]];
-                const lines: Array<[number, number, number, number]> = [];
+                const boundary: BoundarySeg[] = [];
                 rects.forEach((g0, i) => {
                   const above = i > 0 ? bridges[i - 1] : null;
                   const below = i < rects.length - 1 ? bridges[i] : null;
                   hPieces(g0.x, g0.x + g0.w, above).forEach(([p0, p1]) =>
-                    lines.push([p0, g0.y, p1, g0.y]),
+                    boundary.push([p0, g0.y, p1, g0.y]),
                   );
                   hPieces(g0.x, g0.x + g0.w, below).forEach(([p0, p1]) =>
-                    lines.push([p0, g0.y + g0.h, p1, g0.y + g0.h]),
+                    boundary.push([p0, g0.y + g0.h, p1, g0.y + g0.h]),
                   );
-                  // Cut sides stay open ONLY when the pair could not be
-                  // bridged (no horizontal overlap) — the open edge is the
-                  // continuation signal in that rare case.
-                  const leftOpen = i > 0 && !bridges[i - 1];
-                  const rightOpen = i < rects.length - 1 && !bridges[i];
-                  if (!leftOpen) lines.push([g0.x, g0.y, g0.x, g0.y + g0.h]);
-                  if (!rightOpen)
-                    lines.push([g0.x + g0.w, g0.y, g0.x + g0.w, g0.y + g0.h]);
+                  boundary.push([g0.x, g0.y, g0.x, g0.y + g0.h]);
+                  boundary.push([g0.x + g0.w, g0.y, g0.x + g0.w, g0.y + g0.h]);
                 });
                 bridges.forEach((b) => {
                   if (b) {
-                    lines.push([b.ox0, b.y0, b.ox0, b.y1]);
-                    lines.push([b.ox1, b.y0, b.ox1, b.y1]);
+                    boundary.push([b.ox0, b.y0, b.ox0, b.y1]);
+                    boundary.push([b.ox1, b.y0, b.ox1, b.y1]);
                   }
                 });
+                const d = chainLoops(boundary)
+                  .map((loop) => roundedLoopPath(loop, radiusPx + platePadY))
+                  .join('');
+                // Hover highlights the hovered group (stronger tint + border)
+                // instead of dimming everything else.
                 return (
-                  <g key={`sg-${k}`} opacity={dimmed ? 0.3 : 1}>
-                    <path
-                      data-si={si}
-                      d={fillD}
-                      fill={colors.alpha(hue, 0.15)}
-                    />
-                    {lines.map(([lx0, ly0, lx1, ly1], j) => (
-                      <line
-                        key={j}
-                        x1={lx0}
-                        y1={ly0}
-                        x2={lx1}
-                        y2={ly1}
-                        stroke={hue}
-                        strokeWidth={1.5}
-                        strokeLinecap="square"
-                        pointerEvents="none"
-                      />
-                    ))}
-                  </g>
+                  <path
+                    key={`sg-${k}`}
+                    data-si={si}
+                    d={d}
+                    fill={colors.alpha(hue, hovered ? 0.32 : 0.15)}
+                    stroke={hue}
+                    strokeWidth={hovered ? 2.5 : 1.5}
+                  />
                 );
               })}
               {placedCells.map((cell, i) => {
                 const x = cell.px;
                 const y = cell.py;
-                const dimmed =
-                  hover !== null && hover.sessionIdx !== cell.sessionIdx;
                 const isPartial =
                   cell.fraction !== undefined && cell.fraction < 1;
                 const letterInk =
                   relativeLuminance(cell.color) > 0.45 ? darkInk : lightInk;
                 return (
-                  <g key={i} opacity={dimmed ? 0.3 : 1}>
+                  <g key={i}>
                     <rect
                       data-si={cell.sessionIdx}
                       x={x}
