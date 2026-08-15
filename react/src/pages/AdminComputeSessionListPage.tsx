@@ -15,6 +15,8 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+// PROTOTYPE (wayfinder #8786 / #8789): table ↔ grid view toggle + grid view.
+import SessionResourceGridPrototype from '../components/SessionResourceGridPrototype';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useWebUINavigate } from '../hooks';
@@ -26,10 +28,15 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import {
   BAIAdminProjectSelectAstryx,
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
+  BAISkeleton,
   filterOutEmpty,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
@@ -41,7 +48,7 @@ import {
 import * as _ from 'lodash-es';
 import { PowerOffIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
+import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
@@ -100,6 +107,7 @@ const AdminComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
@@ -297,6 +305,16 @@ const AdminComputeSessionListPage = () => {
             }}
             wrap="wrap"
           >
+            <SegmentedControl
+              label="View mode"
+              value={queryParams.view}
+              onChange={(value) =>
+                setQueryParams({ view: value as 'table' | 'grid' })
+              }
+            >
+              <SegmentedControlItem value="table" label="Table" />
+              <SegmentedControlItem value="grid" label="Grid (proto)" />
+            </SegmentedControl>
             <BAIRadioGroup
               optionType="button"
               value={queryParams.statusCategory}
@@ -404,7 +422,24 @@ const AdminComputeSessionListPage = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {computeSessionNodeResult.ok ? (
+        {queryParams.view === 'grid' ? (
+          <Suspense fallback={<BAISkeleton />}>
+            <SessionResourceGridPrototype
+              filter={deferredQueryVariables.filter}
+              order={deferredQueryVariables.order ?? undefined}
+              fetchKey={deferredFetchKey}
+              onClickSession={(sessionId) => {
+                const newSearchParams = new URLSearchParams(location.search);
+                newSearchParams.set('sessionDetail', sessionId);
+                webUINavigate({
+                  pathname: location.pathname,
+                  hash: location.hash,
+                  search: newSearchParams.toString(),
+                });
+              }}
+            />
+          </Suspense>
+        ) : computeSessionNodeResult.ok ? (
           <SessionNodes
             order={queryParams.order}
             onClickSessionName={(session) => {

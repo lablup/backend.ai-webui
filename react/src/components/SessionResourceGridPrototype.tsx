@@ -4,28 +4,30 @@
  */
 // PROTOTYPE — session resource-grid view (wayfinder map #8786, ticket #8789).
 // Throwaway code: hardcoded English labels, no tests, prototype-grade error
-// handling. Do not promote as-is; the production build is a follow-up effort.
+// handling (incl. the inline-styled hover panel). Do not promote as-is.
+//
+// Layout (per driving-dev reaction, 2026-08-15): all sessions pack into ONE
+// shared grid, cells flowing row-by-row with no per-session gaps ("Tetris").
+// Identity = per-session stroke color + first letter in the session's first
+// cell; the full name appears only in the hover panel.
 import { SessionResourceGridPrototypeQuery } from '../__generated__/SessionResourceGridPrototypeQuery.graphql';
 import { Banner } from '@astryxdesign/core/Banner';
-import { Grid } from '@astryxdesign/core/Grid';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useTheme } from '@astryxdesign/core/theme';
 import { useChartColors } from '@astryxdesign/lab';
-import * as stylex from '@stylexjs/stylex';
 import { BAIFlex, filterOutNullAndUndefined } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { useEffect, useRef, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const SESSION_CAP = 100;
 const MAX_UNITS_PER_SESSION = 256;
-const GRID_COLS = 8;
 
 const gridModeValues = ['resource', 'kernel'] as const;
 const encodingValues = ['stepped', 'banded'] as const;
@@ -112,102 +114,23 @@ const formatSlotSummary = (slots: SlotMap): string =>
     )
     .join(' · ');
 
-const styles = stylex.create({
-  sessionName: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    maxWidth: '100%',
-  },
-});
+// WCAG relative luminance of a #rrggbb fill, for picking the letter ink.
+const relativeLuminance = (hex: string): number => {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!m) return 0.5;
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const c = parseInt(m[1].slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
 
-interface CellSpec {
+interface PackedCell {
+  sessionIdx: number;
   color: string;
   fraction?: number; // 0..1 partial fill (fractional accelerator share)
-  title: string;
+  letter?: string; // first cell of a session carries its initial
 }
-
-const UnitGridSvg = ({
-  cells,
-  emptyFill,
-  cellStroke,
-  borderColor,
-  cellPx,
-  gapPx,
-  radiusPx,
-  ariaLabel,
-  onClick,
-}: {
-  cells: CellSpec[];
-  emptyFill: string;
-  // Ramp extremes sit under 2:1 vs surface (validated 2026-08-14, both
-  // modes) — the stroke keeps every cell visible regardless of fill.
-  cellStroke: string;
-  borderColor: string;
-  cellPx: number;
-  gapPx: number;
-  radiusPx: number;
-  ariaLabel: string;
-  onClick?: () => void;
-}) => {
-  'use memo';
-  const pad = gapPx * 2;
-  const cols = Math.min(GRID_COLS, Math.max(1, cells.length));
-  const rows = Math.max(1, Math.ceil(cells.length / cols));
-  const width = pad * 2 + cols * cellPx + (cols - 1) * gapPx;
-  const height = pad * 2 + rows * cellPx + (rows - 1) * gapPx;
-  return (
-    <svg
-      width={width}
-      height={height}
-      role="img"
-      aria-label={ariaLabel}
-      onClick={onClick}
-      style={{ display: 'block', cursor: onClick ? 'pointer' : undefined }}
-    >
-      <rect
-        x={0.75}
-        y={0.75}
-        width={width - 1.5}
-        height={height - 1.5}
-        rx={radiusPx}
-        fill="none"
-        stroke={borderColor}
-        strokeWidth={1.5}
-      />
-      {cells.map((cell, i) => {
-        const x = pad + (i % cols) * (cellPx + gapPx);
-        const y = pad + Math.floor(i / cols) * (cellPx + gapPx);
-        const isPartial = cell.fraction !== undefined && cell.fraction < 1;
-        return (
-          <g key={i}>
-            <rect
-              x={x}
-              y={y}
-              width={cellPx}
-              height={cellPx}
-              rx={2}
-              fill={isPartial ? emptyFill : cell.color}
-              stroke={cellStroke}
-              strokeWidth={0.5}
-            />
-            {isPartial && (
-              <rect
-                x={x}
-                y={y + cellPx * (1 - (cell.fraction ?? 0))}
-                width={cellPx}
-                height={cellPx * (cell.fraction ?? 0)}
-                rx={1}
-                fill={cell.color}
-              />
-            )}
-            <title>{cell.title}</title>
-          </g>
-        );
-      })}
-    </svg>
-  );
-};
 
 const LegendSwatch = ({ color, label }: { color: string; label: string }) => {
   'use memo';
@@ -253,6 +176,24 @@ const SessionResourceGridPrototype = ({
     },
     { history: 'replace' },
   );
+
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [wrapperWidth, setWrapperWidth] = useState(0);
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      setWrapperWidth(entries[0]?.contentRect.width ?? 0);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const [hover, setHover] = useState<{
+    sessionIdx: number;
+    x: number;
+    y: number;
+  } | null>(null);
 
   const queryData = useLazyLoadQuery<SessionResourceGridPrototypeQuery>(
     graphql`
@@ -361,6 +302,8 @@ const SessionResourceGridPrototype = ({
   const grayRamp = colors.sequential.gray(5);
   const noDataFill = grayRamp[3];
   const emptyFill = colors.alpha(grayRamp[4], 0.6);
+  const darkInk = grayRamp[0];
+  const lightInk = grayRamp[4];
 
   const binColor = (pct: number | null): string => {
     if (pct === null || !Number.isFinite(pct)) return noDataFill;
@@ -371,11 +314,11 @@ const SessionResourceGridPrototype = ({
     return p < 50 ? ramp3[0] : p < 80 ? ramp3[1] : ramp3[2];
   };
 
-  // Group borders: categorical hue keyed to stable session-id order (color
-  // follows the entity); 11th+ session folds to structural gray.
+  // Session identity strokes: categorical hue keyed to stable session-id
+  // order (color follows the entity); 11th+ session folds to structural gray.
   const categorical = colors.categorical(10);
   const sortedIds = [...sessions.map((s) => s.id)].sort();
-  const borderFor = (id: string): string => {
+  const strokeFor = (id: string): string => {
     const idx = sortedIds.indexOf(id);
     return idx >= 0 && idx < 10 ? categorical[idx] : colors.structural.grid;
   };
@@ -384,9 +327,9 @@ const SessionResourceGridPrototype = ({
     const v = parseFloat(theme.token(name));
     return Number.isFinite(v) ? v : fallback;
   };
-  const cellPx = px('--spacing-3', 12);
+  const cellPx = px('--spacing-4', 16);
   const gapPx = px('--spacing-0-5', 2);
-  const radiusPx = px('--radius-element', 6);
+  const radiusPx = Math.min(px('--radius-element', 4), 4);
 
   const sessionUtilPct = (
     session: GridSession,
@@ -412,32 +355,41 @@ const SessionResourceGridPrototype = ({
     return resource === 'mem' ? raw / memUnitBytes : raw;
   };
 
-  const cellsFor = (session: GridSession): CellSpec[] => {
+  const cellsFor = (session: GridSession, sessionIdx: number): PackedCell[] => {
+    let cells: PackedCell[];
     if (gridParams.gridMode === 'kernel') {
-      return session.kernels.map((k) => {
-        const pct = kernelMetricPct(k);
-        return {
-          color: binColor(pct),
-          title: `${k.hostname || k.role} · ${metric}: ${pct === null ? 'no data' : `${pct.toFixed(1)}%`}`,
-        };
-      });
+      cells = session.kernels.map((k) => ({
+        sessionIdx,
+        color: binColor(kernelMetricPct(k)),
+      }));
+      if (cells.length === 0) cells = [{ sessionIdx, color: noDataFill }];
+    } else {
+      const units = unitCount(session);
+      const full = Math.floor(units + 1e-9);
+      const fraction = units - full;
+      const color = binColor(sessionUtilPct(session, resource));
+      const capped = Math.min(full, MAX_UNITS_PER_SESSION);
+      cells = Array.from({ length: capped }, () => ({ sessionIdx, color }));
+      if (fraction > 1e-6 && cells.length < MAX_UNITS_PER_SESSION) {
+        cells.push({ sessionIdx, color, fraction });
+      }
+      if (cells.length === 0) cells = [{ sessionIdx, color: noDataFill }];
     }
-    const units = unitCount(session);
-    const full = Math.floor(units + 1e-9);
-    const fraction = units - full;
-    const pct = sessionUtilPct(session, resource);
-    const color = binColor(pct);
-    const title = `${resource}: ${units % 1 === 0 ? units : units.toFixed(2)} unit(s) · util ${pct === null ? 'no data' : `${pct.toFixed(1)}%`}`;
-    const capped = Math.min(full, MAX_UNITS_PER_SESSION);
-    const cells: CellSpec[] = Array.from({ length: capped }, () => ({
-      color,
-      title,
-    }));
-    if (fraction > 1e-6 && cells.length < MAX_UNITS_PER_SESSION) {
-      cells.push({ color, fraction, title });
-    }
-    return cells.length > 0 ? cells : [{ color: noDataFill, title }];
+    cells[0].letter = (session.name[0] ?? '?').toUpperCase();
+    return cells;
   };
+
+  const packedCells: PackedCell[] = sessions.flatMap((s, i) => cellsFor(s, i));
+
+  const pad = gapPx * 2;
+  const stride = cellPx + gapPx;
+  const cols = Math.max(
+    8,
+    Math.floor((wrapperWidth - pad * 2 + gapPx) / stride),
+  );
+  const rows = Math.max(1, Math.ceil(packedCells.length / cols));
+  const svgWidth = pad * 2 + cols * stride - gapPx;
+  const svgHeight = pad * 2 + rows * stride - gapPx;
 
   const legendItems =
     gridParams.gridEncoding === 'stepped'
@@ -447,6 +399,15 @@ const SessionResourceGridPrototype = ({
           { color: ramp3[1], label: 'Mid (50–80%)' },
           { color: ramp3[2], label: 'High (≥80%)' },
         ];
+
+  const hoveredSession = hover === null ? null : sessions[hover.sessionIdx];
+
+  const sessionIdxFromEvent = (e: React.MouseEvent): number | null => {
+    const raw = (e.target as Element).getAttribute?.('data-si');
+    if (raw === null || raw === undefined) return null;
+    const idx = parseInt(raw);
+    return Number.isFinite(idx) ? idx : null;
+  };
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -545,69 +506,124 @@ const SessionResourceGridPrototype = ({
       {sessions.length === 0 ? (
         <Banner status="info" title="No sessions match the current filter." />
       ) : (
-        <Grid columns={{ minWidth: 160 }} gap={3}>
-          {sessions.map((session) => {
-            const pct =
-              gridParams.gridMode === 'resource'
-                ? sessionUtilPct(session, resource)
-                : null;
-            return (
-              <BAIFlex
-                key={session.id}
-                direction="column"
-                align="start"
-                gap={4}
-                style={{ minWidth: 0 }}
-              >
-                <Tooltip
-                  content={
-                    <BAIFlex direction="column" align="start" gap={2}>
-                      <Text size="sm">{session.name}</Text>
-                      <Text size="sm" color="secondary">
-                        {session.status}
-                        {session.slotsAreRequested ? ' (requested slots)' : ''}
-                      </Text>
-                      <Text size="sm" color="secondary">
-                        {formatSlotSummary(session.slots)}
-                      </Text>
-                      {gridParams.gridMode === 'resource' && (
-                        <Text size="sm" color="secondary">
-                          {`${resource} util: ${pct === null ? 'no data' : `${pct.toFixed(1)}%`}`}
-                        </Text>
-                      )}
-                      {gridParams.gridMode === 'kernel' && (
-                        <Text size="sm" color="secondary">
-                          {`${session.kernels.length} kernel(s) · ${metric}`}
-                        </Text>
-                      )}
-                    </BAIFlex>
-                  }
-                >
-                  <BAIFlex direction="column" align="start" gap={2}>
-                    <Text size="sm" xstyle={styles.sessionName}>
-                      {session.name}
-                    </Text>
-                    <UnitGridSvg
-                      cells={cellsFor(session)}
-                      emptyFill={emptyFill}
-                      cellStroke={colors.structural.grid}
-                      borderColor={borderFor(session.id)}
-                      cellPx={cellPx}
-                      gapPx={gapPx}
-                      radiusPx={radiusPx}
-                      ariaLabel={`Session ${session.name}`}
-                      onClick={
-                        onClickSession
-                          ? () => onClickSession(session.id)
-                          : undefined
-                      }
+        <div ref={wrapperRef} style={{ position: 'relative' }}>
+          {wrapperWidth > 0 && (
+            <svg
+              width={svgWidth}
+              height={svgHeight}
+              role="img"
+              aria-label={`Resource grid of ${sessions.length} sessions`}
+              style={{ display: 'block', cursor: 'pointer' }}
+              onMouseMove={(e) => {
+                const idx = sessionIdxFromEvent(e);
+                if (idx === null) {
+                  setHover(null);
+                } else {
+                  setHover({ sessionIdx: idx, x: e.clientX, y: e.clientY });
+                }
+              }}
+              onMouseLeave={() => setHover(null)}
+              onClick={(e) => {
+                const idx = sessionIdxFromEvent(e);
+                if (idx !== null && onClickSession) {
+                  onClickSession(sessions[idx].id);
+                }
+              }}
+            >
+              {packedCells.map((cell, i) => {
+                const x = pad + (i % cols) * stride;
+                const y = pad + Math.floor(i / cols) * stride;
+                const session = sessions[cell.sessionIdx];
+                const stroke = strokeFor(session.id);
+                const dimmed =
+                  hover !== null && hover.sessionIdx !== cell.sessionIdx;
+                const isPartial =
+                  cell.fraction !== undefined && cell.fraction < 1;
+                const letterInk =
+                  relativeLuminance(cell.color) > 0.45 ? darkInk : lightInk;
+                return (
+                  <g key={i} opacity={dimmed ? 0.3 : 1}>
+                    <rect
+                      data-si={cell.sessionIdx}
+                      x={x}
+                      y={y}
+                      width={cellPx}
+                      height={cellPx}
+                      rx={radiusPx}
+                      fill={isPartial ? emptyFill : cell.color}
+                      stroke={stroke}
+                      strokeWidth={1}
                     />
-                  </BAIFlex>
-                </Tooltip>
+                    {isPartial && (
+                      <rect
+                        data-si={cell.sessionIdx}
+                        x={x}
+                        y={y + cellPx * (1 - (cell.fraction ?? 0))}
+                        width={cellPx}
+                        height={cellPx * (cell.fraction ?? 0)}
+                        rx={1}
+                        fill={cell.color}
+                      />
+                    )}
+                    {cell.letter && (
+                      <text
+                        x={x + cellPx / 2}
+                        y={y + cellPx / 2}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fontSize={cellPx * 0.62}
+                        fontWeight={700}
+                        fill={letterInk}
+                        pointerEvents="none"
+                      >
+                        {cell.letter}
+                      </text>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+          )}
+          {hoveredSession && hover && (
+            <div
+              style={{
+                position: 'fixed',
+                left: hover.x + 14,
+                top: hover.y + 14,
+                zIndex: 1000,
+                pointerEvents: 'none',
+                background: theme.token('--color-surface'),
+                border: `1px solid ${strokeFor(hoveredSession.id)}`,
+                borderRadius: px('--radius-element', 6),
+                padding: px('--spacing-2', 8),
+                maxWidth: 320,
+              }}
+            >
+              <BAIFlex direction="column" align="start" gap={2}>
+                <Text size="sm">{hoveredSession.name}</Text>
+                <Text size="sm" color="secondary">
+                  {hoveredSession.status}
+                  {hoveredSession.slotsAreRequested ? ' (requested slots)' : ''}
+                </Text>
+                <Text size="sm" color="secondary">
+                  {formatSlotSummary(hoveredSession.slots)}
+                </Text>
+                {gridParams.gridMode === 'resource' ? (
+                  <Text size="sm" color="secondary">
+                    {`${resource} util: ${(() => {
+                      const pct = sessionUtilPct(hoveredSession, resource);
+                      return pct === null ? 'no data' : `${pct.toFixed(1)}%`;
+                    })()}`}
+                  </Text>
+                ) : (
+                  <Text size="sm" color="secondary">
+                    {`${hoveredSession.kernels.length} kernel(s) · ${metric}`}
+                  </Text>
+                )}
               </BAIFlex>
-            );
-          })}
-        </Grid>
+            </div>
+          )}
+        </div>
       )}
     </BAIFlex>
   );
