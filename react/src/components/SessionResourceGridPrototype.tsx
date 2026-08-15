@@ -34,6 +34,7 @@ const MAX_UNITS_PER_SESSION = 256;
 const gridModeValues = ['resource', 'kernel'] as const;
 const encodingValues = ['stepped', 'banded'] as const;
 const memUnitValues = ['1', '2', '4', '8'] as const;
+const layoutValues = ['serpentine', 'wordwrap'] as const;
 
 interface StatItem {
   current?: string;
@@ -297,6 +298,7 @@ const SessionResourceGridPrototype = ({
       gridMetric: parseAsString.withDefault('cpu_util'),
       gridEncoding: parseAsStringLiteral(encodingValues).withDefault('stepped'),
       gridMemUnit: parseAsStringLiteral(memUnitValues).withDefault('1'),
+      gridLayout: parseAsStringLiteral(layoutValues).withDefault('serpentine'),
     },
     { history: 'replace' },
   );
@@ -524,19 +526,46 @@ const SessionResourceGridPrototype = ({
     6,
     Math.floor((wrapperWidth - pad * 2 + gapPx) / stridePx),
   );
+  const cellCountBySession: number[] = [];
+  packedCells.forEach((c) => {
+    cellCountBySession[c.sessionIdx] =
+      (cellCountBySession[c.sessionIdx] ?? 0) + 1;
+  });
   const placedCells: PlacedCell[] = [];
   {
     let slot = 0;
     let crow = 0;
     packedCells.forEach((cell) => {
-      if (cell.letter !== undefined && slot > 0) slot += 1; // seam slot
+      if (cell.letter !== undefined && slot > 0) {
+        const n = cellCountBySession[cell.sessionIdx];
+        if (
+          gridParams.gridLayout === 'wordwrap' &&
+          n <= latticeCols &&
+          slot + 1 + n > latticeCols
+        ) {
+          // Word-wrap: a group that cannot fit in the remaining row starts
+          // on the next row (gap only at the row end), so it never splits
+          // into disconnected pieces; larger-than-a-row groups stay
+          // connected via their full middle rows.
+          crow += 1;
+          slot = 0;
+        } else {
+          slot += 1; // seam slot between groups
+        }
+      }
       if (slot >= latticeCols) {
         crow += 1;
         slot = 0;
       }
+      // Serpentine: odd rows run right→left, so a wrap continuation is
+      // always directly below the previous cell — zero gaps, always merged.
+      const visualSlot =
+        gridParams.gridLayout === 'serpentine' && crow % 2 === 1
+          ? latticeCols - 1 - slot
+          : slot;
       placedCells.push({
         ...cell,
-        px: pad + slot * stridePx,
+        px: pad + visualSlot * stridePx,
         py: pad + crow * (cellPx + rowGapPx),
         prow: crow,
       });
@@ -564,7 +593,9 @@ const SessionResourceGridPrototype = ({
   placedCells.forEach((cell) => {
     const seg = segments[segments.length - 1];
     if (seg && seg.sessionIdx === cell.sessionIdx && seg.row === cell.prow) {
-      seg.x1 = cell.px + cellPx;
+      // min/max so serpentine's right→left rows extend segments correctly.
+      seg.x0 = Math.min(seg.x0, cell.px);
+      seg.x1 = Math.max(seg.x1, cell.px + cellPx);
     } else {
       if (seg && seg.sessionIdx === cell.sessionIdx) seg.last = false;
       segments.push({
@@ -685,6 +716,19 @@ const SessionResourceGridPrototype = ({
           >
             <SegmentedControlItem value="stepped" label="Stepped (5)" />
             <SegmentedControlItem value="banded" label="Banded (3)" />
+          </SegmentedControl>
+          <SegmentedControl
+            size="sm"
+            label="Layout"
+            value={gridParams.gridLayout}
+            onChange={(value) =>
+              setGridParams({
+                gridLayout: value as (typeof layoutValues)[number],
+              })
+            }
+          >
+            <SegmentedControlItem value="serpentine" label="Serpentine" />
+            <SegmentedControlItem value="wordwrap" label="Word-wrap" />
           </SegmentedControl>
         </BAIFlex>
         <BAIFlex gap="sm" wrap="wrap" align="center">
