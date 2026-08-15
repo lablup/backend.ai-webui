@@ -8,8 +8,10 @@
 //
 // Layout (per driving-dev reaction, 2026-08-15): all sessions pack into ONE
 // shared grid, cells flowing row-by-row with no per-session gaps ("Tetris").
-// Identity = per-session stroke color + first letter in the session's first
-// cell; the full name appears only in the hover panel.
+// Each session is bordered as a GROUP by a highlight-style outline that
+// follows the run's outer edge across row wraps (only edges whose neighbor
+// is a different session are drawn). Identity = that categorical outline +
+// first letter in the session's first cell; full name in the hover panel.
 import { SessionResourceGridPrototypeQuery } from '../__generated__/SessionResourceGridPrototypeQuery.graphql';
 import { Banner } from '@astryxdesign/core/Banner';
 import {
@@ -531,16 +533,39 @@ const SessionResourceGridPrototype = ({
               }}
             >
               {packedCells.map((cell, i) => {
-                const x = pad + (i % cols) * stride;
-                const y = pad + Math.floor(i / cols) * stride;
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const x = pad + col * stride;
+                const y = pad + row * stride;
                 const session = sessions[cell.sessionIdx];
-                const stroke = strokeFor(session.id);
                 const dimmed =
                   hover !== null && hover.sessionIdx !== cell.sessionIdx;
                 const isPartial =
                   cell.fraction !== undefined && cell.fraction < 1;
                 const letterInk =
                   relativeLuminance(cell.color) > 0.45 ? darkInk : lightInk;
+                // Group outline: draw only the edges whose grid neighbor is
+                // not a cell of the same session, so the border follows the
+                // run's outer boundary across row wraps (highlighter style).
+                const sameSession = (j: number): boolean =>
+                  j >= 0 &&
+                  j < packedCells.length &&
+                  packedCells[j].sessionIdx === cell.sessionIdx;
+                const o = gapPx / 4;
+                const [x0, y0, x1, y1] = [
+                  x - o,
+                  y - o,
+                  x + cellPx + o,
+                  y + cellPx + o,
+                ];
+                const edges: Array<[number, number, number, number]> = [];
+                if (col === 0 || !sameSession(i - 1))
+                  edges.push([x0, y0, x0, y1]);
+                if (col === cols - 1 || !sameSession(i + 1))
+                  edges.push([x1, y0, x1, y1]);
+                if (row === 0 || !sameSession(i - cols))
+                  edges.push([x0, y0, x1, y0]);
+                if (!sameSession(i + cols)) edges.push([x0, y1, x1, y1]);
                 return (
                   <g key={i} opacity={dimmed ? 0.3 : 1}>
                     <rect
@@ -551,8 +576,8 @@ const SessionResourceGridPrototype = ({
                       height={cellPx}
                       rx={radiusPx}
                       fill={isPartial ? emptyFill : cell.color}
-                      stroke={stroke}
-                      strokeWidth={1}
+                      stroke={colors.structural.grid}
+                      strokeWidth={0.5}
                     />
                     {isPartial && (
                       <rect
@@ -565,6 +590,19 @@ const SessionResourceGridPrototype = ({
                         fill={cell.color}
                       />
                     )}
+                    {edges.map(([ex0, ey0, ex1, ey1], k) => (
+                      <line
+                        key={k}
+                        x1={ex0}
+                        y1={ey0}
+                        x2={ex1}
+                        y2={ey1}
+                        stroke={strokeFor(session.id)}
+                        strokeWidth={gapPx / 2}
+                        strokeLinecap="square"
+                        pointerEvents="none"
+                      />
+                    ))}
                     {cell.letter && (
                       <text
                         x={x + cellPx / 2}
