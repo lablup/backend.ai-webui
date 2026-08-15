@@ -385,9 +385,12 @@ const SessionResourceGridPrototype = ({
   // Word-wrap placement on a FIXED lattice: every cell sits on the same
   // column grid; the seam between groups is one skipped lattice slot, so
   // columns never drift while proximity still separates groups.
-  const plateInset = gapPx;
-  const rowGapPx = gapPx + plateInset * 2;
-  const pad = plateInset + gapPx;
+  // Plate breathing room: inner padding between the group border and its
+  // cells; row gap leaves clear space between plates of adjacent rows.
+  const platePadX = gapPx * 2 + 1;
+  const platePadY = gapPx * 2;
+  const rowGapPx = platePadY * 2 + gapPx * 3;
+  const pad = platePadX + gapPx;
   const stridePx = cellPx + gapPx;
   interface PlacedCell extends PackedCell {
     px: number;
@@ -648,11 +651,11 @@ const SessionResourceGridPrototype = ({
                 const hue = hueFor(seg.sessionIdx);
                 const dimmed =
                   hover !== null && hover.sessionIdx !== seg.sessionIdx;
-                const gx = seg.x0 - plateInset;
-                const gy = seg.y - plateInset;
-                const gw = seg.x1 - seg.x0 + plateInset * 2;
-                const gh = cellPx + plateInset * 2;
-                const r = radiusPx + plateInset;
+                const gx = seg.x0 - platePadX;
+                const gy = seg.y - platePadY;
+                const gw = seg.x1 - seg.x0 + platePadX * 2;
+                const gh = cellPx + platePadY * 2;
+                const r = radiusPx + platePadY;
                 return (
                   <g key={`seg-${k}`} opacity={dimmed ? 0.3 : 1}>
                     <path
