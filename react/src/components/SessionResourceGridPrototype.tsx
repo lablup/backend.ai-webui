@@ -421,11 +421,29 @@ const SessionResourceGridPrototype = ({
       ? gridParams.gridMetric
       : availableMetrics[0];
 
-  // Color ramps — stepped 5-bin vs banded 3-bin, both from the theme's
-  // sequential blue ramp (darkest-first from the API; reversed → low=light).
-  const ramp5 = [...colors.sequential.blue(5)].reverse();
-  const ramp3 = [...colors.sequential.blue(3)].reverse();
+  // Utilization colors follow the app's semantic usage convention
+  // (SessionSlotCell: ≥50% warning, ≥80% error) via theme tokens, which are
+  // mode-aware — unlike the chart sequential ramps (mode-invariant, too
+  // bright on dark). Low utilization sits near the background but visible.
   const grayRamp = colors.sequential.gray(5);
+  const token = (name: string, fallback: string): string =>
+    theme.token(name) || fallback;
+  const lowFill = token('--color-background-muted', grayRamp[4]);
+  const warnFill = token('--color-warning', grayRamp[1]);
+  const errorFill = token('--color-error', grayRamp[0]);
+  // Intermediate steps deepen the WARNING hue (no separate blue/green hues).
+  const warnStep = (opacity: number): string =>
+    /^#[0-9a-f]{6}$/i.test(warnFill.trim())
+      ? colors.alpha(warnFill, opacity)
+      : token('--color-warning-muted', grayRamp[2]);
+  const stepFills = [
+    lowFill,
+    warnStep(0.35),
+    warnStep(0.65),
+    warnFill,
+    errorFill,
+  ];
+  const bandFills = [lowFill, warnFill, errorFill];
   const noDataFill = grayRamp[3];
   const emptyFill = colors.alpha(grayRamp[4], 0.6);
   const darkInk = grayRamp[0];
@@ -435,9 +453,9 @@ const SessionResourceGridPrototype = ({
     if (pct === null || !Number.isFinite(pct)) return noDataFill;
     const p = Math.max(0, Math.min(100, pct));
     if (gridParams.gridEncoding === 'stepped') {
-      return ramp5[Math.min(4, Math.floor(p / 20))];
+      return stepFills[Math.min(4, Math.floor(p / 20))];
     }
-    return p < 50 ? ramp3[0] : p < 80 ? ramp3[1] : ramp3[2];
+    return p < 50 ? bandFills[0] : p < 80 ? bandFills[1] : bandFills[2];
   };
 
   // Group hues cycle the dev-supplied muted palette in FLOW order, so
@@ -621,11 +639,14 @@ const SessionResourceGridPrototype = ({
 
   const legendItems =
     gridParams.gridEncoding === 'stepped'
-      ? ramp5.map((c, i) => ({ color: c, label: `${i * 20}–${(i + 1) * 20}%` }))
+      ? stepFills.map((c, i) => ({
+          color: c,
+          label: `${i * 20}–${(i + 1) * 20}%`,
+        }))
       : [
-          { color: ramp3[0], label: 'Low (<50%)' },
-          { color: ramp3[1], label: 'Mid (50–80%)' },
-          { color: ramp3[2], label: 'High (≥80%)' },
+          { color: bandFills[0], label: 'Low (<50%)' },
+          { color: bandFills[1], label: 'Mid (50–80%)' },
+          { color: bandFills[2], label: 'High (≥80%)' },
         ];
 
   // The initial goes on each group's VISUAL top-left cell (topmost row,
@@ -869,8 +890,13 @@ const SessionResourceGridPrototype = ({
                 const y = cell.py;
                 const isPartial =
                   cell.fraction !== undefined && cell.fraction < 1;
-                const letterInk =
-                  relativeLuminance(cell.color) > 0.45 ? darkInk : lightInk;
+                // Non-hex fills (token rgba etc.) fall back to mode default.
+                const lum = /^#[0-9a-f]{6}$/i.test(cell.color.trim())
+                  ? relativeLuminance(cell.color)
+                  : theme.mode === 'dark'
+                    ? 0.2
+                    : 0.8;
+                const letterInk = lum > 0.45 ? darkInk : lightInk;
                 return (
                   <g key={i}>
                     <rect
@@ -924,32 +950,70 @@ const SessionResourceGridPrototype = ({
                 top: hover.y + 14,
                 zIndex: 1000,
                 pointerEvents: 'none',
-                background: theme.token('--color-surface'),
+                background: token(
+                  '--color-background-popover',
+                  theme.mode === 'dark' ? '#1F1F22' : '#FFFFFF',
+                ),
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.22)',
                 border: `1px solid ${hueFor(hover.sessionIdx)}`,
                 borderRadius: px('--radius-element', 6),
                 padding: px('--spacing-2', 8),
+                minWidth: 200,
                 maxWidth: 320,
               }}
             >
-              <BAIFlex direction="column" align="start" gap={2}>
+              <BAIFlex direction="column" align="stretch" gap={2}>
                 <Text size="sm">{hoveredSession.name}</Text>
                 <Text size="sm" color="secondary">
                   {hoveredSession.status}
                   {hoveredSession.slotsAreRequested ? ' (requested slots)' : ''}
+                  {` · ${hoveredSession.kernels.length} kernel(s)`}
                 </Text>
                 <Text size="sm" color="secondary">
                   {formatSlotSummary(hoveredSession.slots)}
                 </Text>
-                {gridParams.gridMode === 'resource' ? (
+                {/* Mini session-detail: every live_stat metric, util first. */}
+                {Object.keys(hoveredSession.liveStat)
+                  .filter((k) => k !== 'cpu_used')
+                  .sort((a, b) => {
+                    const rank = (k: string) =>
+                      k.includes('_util')
+                        ? 0
+                        : k === 'mem'
+                          ? 1
+                          : k.includes('_mem')
+                            ? 2
+                            : 3;
+                    return rank(a) - rank(b) || a.localeCompare(b);
+                  })
+                  .slice(0, 8)
+                  .map((k) => {
+                    const stat = hoveredSession.liveStat[k];
+                    const pct = parseFloat(stat?.pct ?? '');
+                    // GiB detail only for memory metrics — io/net capacities
+                    // are sentinel values, meaningless to display.
+                    const isBytes =
+                      stat?.unit_hint === 'bytes' &&
+                      (k === 'mem' || k.endsWith('_mem'));
+                    const detail =
+                      isBytes && stat?.current
+                        ? `${(parseFloat(stat.current) / 2 ** 30).toFixed(1)} / ${(parseFloat(stat.capacity ?? '0') / 2 ** 30).toFixed(1)} GiB`
+                        : null;
+                    return (
+                      <BAIFlex key={k} justify="between" gap={12}>
+                        <Text size="sm" color="secondary">
+                          {k}
+                        </Text>
+                        <Text size="sm">
+                          {Number.isFinite(pct) ? `${pct.toFixed(1)}%` : '–'}
+                          {detail ? ` (${detail})` : ''}
+                        </Text>
+                      </BAIFlex>
+                    );
+                  })}
+                {Object.keys(hoveredSession.liveStat).length === 0 && (
                   <Text size="sm" color="secondary">
-                    {`${resource} util: ${(() => {
-                      const pct = sessionUtilPct(hoveredSession, resource);
-                      return pct === null ? 'no data' : `${pct.toFixed(1)}%`;
-                    })()}`}
-                  </Text>
-                ) : (
-                  <Text size="sm" color="secondary">
-                    {`${hoveredSession.kernels.length} kernel(s) · ${metric}`}
+                    no live data
                   </Text>
                 )}
               </BAIFlex>
