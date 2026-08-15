@@ -628,6 +628,21 @@ const SessionResourceGridPrototype = ({
           { color: ramp3[2], label: 'High (≥80%)' },
         ];
 
+  // The initial goes on each group's VISUAL top-left cell (topmost row,
+  // then leftmost), not the flow-first cell — on serpentine's right→left
+  // rows those differ.
+  const letterCellIdx = new Map<number, number>();
+  placedCells.forEach((c, i) => {
+    const curIdx = letterCellIdx.get(c.sessionIdx);
+    if (curIdx === undefined) {
+      letterCellIdx.set(c.sessionIdx, i);
+      return;
+    }
+    const cur = placedCells[curIdx];
+    if (c.py < cur.py || (c.py === cur.py && c.px < cur.px))
+      letterCellIdx.set(c.sessionIdx, i);
+  });
+
   const hoveredSession = hover === null ? null : sessions[hover.sessionIdx];
 
   const sessionIdxFromEvent = (e: React.MouseEvent): number | null => {
@@ -880,7 +895,7 @@ const SessionResourceGridPrototype = ({
                         fill={cell.color}
                       />
                     )}
-                    {cell.letter && (
+                    {letterCellIdx.get(cell.sessionIdx) === i && (
                       <text
                         x={x + cellPx / 2}
                         y={y + cellPx / 2}
@@ -891,7 +906,9 @@ const SessionResourceGridPrototype = ({
                         fill={letterInk}
                         pointerEvents="none"
                       >
-                        {cell.letter}
+                        {(
+                          sessions[cell.sessionIdx].name[0] ?? '?'
+                        ).toUpperCase()}
                       </text>
                     )}
                   </g>
