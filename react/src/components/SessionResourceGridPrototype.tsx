@@ -456,6 +456,15 @@ const SessionResourceGridPrototype = ({
     }
   });
 
+  // Consecutive segments of one session (a session's cells are contiguous
+  // in flow order, so its segments are consecutive too).
+  const sessionSegGroups: Segment[][] = [];
+  segments.forEach((seg) => {
+    const group = sessionSegGroups[sessionSegGroups.length - 1];
+    if (group && group[0].sessionIdx === seg.sessionIdx) group.push(seg);
+    else sessionSegGroups.push([seg]);
+  });
+
   // Rounded rect path with independent left/right corner radii (fill).
   const segPath = (
     x: number,
@@ -647,44 +656,131 @@ const SessionResourceGridPrototype = ({
                 }
               }}
             >
-              {segments.map((seg, k) => {
-                const hue = hueFor(seg.sessionIdx);
-                const dimmed =
-                  hover !== null && hover.sessionIdx !== seg.sessionIdx;
-                const gx = seg.x0 - platePadX;
-                const gy = seg.y - platePadY;
-                const gw = seg.x1 - seg.x0 + platePadX * 2;
-                const gh = cellPx + platePadY * 2;
+              {sessionSegGroups.map((segs, k) => {
+                const si = segs[0].sessionIdx;
+                const hue = hueFor(si);
+                const dimmed = hover !== null && hover.sessionIdx !== si;
                 const r = radiusPx + platePadY;
+                const rects = segs.map((s) => ({
+                  x: s.x0 - platePadX,
+                  y: s.y - platePadY,
+                  w: s.x1 - s.x0 + platePadX * 2,
+                  h: cellPx + platePadY * 2,
+                }));
+                if (rects.length === 1) {
+                  const g0 = rects[0];
+                  return (
+                    <g key={`sg-${k}`} opacity={dimmed ? 0.3 : 1}>
+                      <path
+                        data-si={si}
+                        d={segPath(g0.x, g0.y, g0.w, g0.h, r, r)}
+                        fill={colors.alpha(hue, 0.15)}
+                      />
+                      <path
+                        d={segBorderPath(
+                          g0.x,
+                          g0.y,
+                          g0.w,
+                          g0.h,
+                          r,
+                          false,
+                          false,
+                        )}
+                        fill="none"
+                        stroke={hue}
+                        strokeWidth={1.5}
+                        pointerEvents="none"
+                      />
+                    </g>
+                  );
+                }
+                // Multi-row run: where vertically-adjacent segments of the
+                // same session overlap horizontally, a BRIDGE joins their
+                // plates and the border between them is dropped, so the run
+                // reads as one merged region (square corners on merged runs).
+                const bridges: Array<{
+                  ox0: number;
+                  ox1: number;
+                  y0: number;
+                  y1: number;
+                } | null> = [];
+                for (let i = 0; i < rects.length - 1; i++) {
+                  const A = rects[i];
+                  const B = rects[i + 1];
+                  const ox0 = Math.max(A.x, B.x);
+                  const ox1 = Math.min(A.x + A.w, B.x + B.w);
+                  bridges.push(
+                    segs[i + 1].row === segs[i].row + 1 && ox1 - ox0 > gapPx
+                      ? { ox0, ox1, y0: A.y + A.h, y1: B.y }
+                      : null,
+                  );
+                }
+                let fillD = rects
+                  .map((g0) => `M${g0.x},${g0.y}h${g0.w}v${g0.h}h${-g0.w}Z`)
+                  .join('');
+                bridges.forEach((b) => {
+                  if (b)
+                    fillD += `M${b.ox0},${b.y0 - 0.5}H${b.ox1}V${b.y1 + 0.5}H${b.ox0}Z`;
+                });
+                // Horizontal edge pieces minus the bridged interval.
+                const hPieces = (
+                  a0: number,
+                  a1: number,
+                  ex: { ox0: number; ox1: number } | null | undefined,
+                ): Array<[number, number]> =>
+                  ex
+                    ? (
+                        [
+                          [a0, Math.max(a0, ex.ox0)],
+                          [Math.min(a1, ex.ox1), a1],
+                        ] as Array<[number, number]>
+                      ).filter(([p0, p1]) => p1 - p0 > 0.5)
+                    : [[a0, a1]];
+                const lines: Array<[number, number, number, number]> = [];
+                rects.forEach((g0, i) => {
+                  const above = i > 0 ? bridges[i - 1] : null;
+                  const below = i < rects.length - 1 ? bridges[i] : null;
+                  hPieces(g0.x, g0.x + g0.w, above).forEach(([p0, p1]) =>
+                    lines.push([p0, g0.y, p1, g0.y]),
+                  );
+                  hPieces(g0.x, g0.x + g0.w, below).forEach(([p0, p1]) =>
+                    lines.push([p0, g0.y + g0.h, p1, g0.y + g0.h]),
+                  );
+                  // Cut sides stay open ONLY when the pair could not be
+                  // bridged (no horizontal overlap) — the open edge is the
+                  // continuation signal in that rare case.
+                  const leftOpen = i > 0 && !bridges[i - 1];
+                  const rightOpen = i < rects.length - 1 && !bridges[i];
+                  if (!leftOpen) lines.push([g0.x, g0.y, g0.x, g0.y + g0.h]);
+                  if (!rightOpen)
+                    lines.push([g0.x + g0.w, g0.y, g0.x + g0.w, g0.y + g0.h]);
+                });
+                bridges.forEach((b) => {
+                  if (b) {
+                    lines.push([b.ox0, b.y0, b.ox0, b.y1]);
+                    lines.push([b.ox1, b.y0, b.ox1, b.y1]);
+                  }
+                });
                 return (
-                  <g key={`seg-${k}`} opacity={dimmed ? 0.3 : 1}>
+                  <g key={`sg-${k}`} opacity={dimmed ? 0.3 : 1}>
                     <path
-                      data-si={seg.sessionIdx}
-                      d={segPath(
-                        gx,
-                        gy,
-                        gw,
-                        gh,
-                        seg.first ? r : 0,
-                        seg.last ? r : 0,
-                      )}
+                      data-si={si}
+                      d={fillD}
                       fill={colors.alpha(hue, 0.15)}
                     />
-                    <path
-                      d={segBorderPath(
-                        gx,
-                        gy,
-                        gw,
-                        gh,
-                        r,
-                        !seg.first,
-                        !seg.last,
-                      )}
-                      fill="none"
-                      stroke={hue}
-                      strokeWidth={1.5}
-                      pointerEvents="none"
-                    />
+                    {lines.map(([lx0, ly0, lx1, ly1], j) => (
+                      <line
+                        key={j}
+                        x1={lx0}
+                        y1={ly0}
+                        x2={lx1}
+                        y2={ly1}
+                        stroke={hue}
+                        strokeWidth={1.5}
+                        strokeLinecap="square"
+                        pointerEvents="none"
+                      />
+                    ))}
                   </g>
                 );
               })}
