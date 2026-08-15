@@ -316,14 +316,13 @@ const SessionResourceGridPrototype = ({
     return p < 50 ? ramp3[0] : p < 80 ? ramp3[1] : ramp3[2];
   };
 
-  // Session identity strokes: categorical hue keyed to stable session-id
-  // order (color follows the entity); 11th+ session folds to structural gray.
+  // Group hues cycle the 10 categorical colors in FLOW order, so adjacent
+  // groups are always distinct and none falls back to gray. Deliberate
+  // deviation from "color follows entity": here color's only job is local
+  // discrimination between neighbors (identity = position + letter + hover).
   const categorical = colors.categorical(10);
-  const sortedIds = [...sessions.map((s) => s.id)].sort();
-  const strokeFor = (id: string): string => {
-    const idx = sortedIds.indexOf(id);
-    return idx >= 0 && idx < 10 ? categorical[idx] : colors.structural.grid;
-  };
+  const hueFor = (sessionIdx: number): string =>
+    categorical[sessionIdx % categorical.length];
 
   const px = (name: string, fallback: number): number => {
     const v = parseFloat(theme.token(name));
@@ -383,15 +382,128 @@ const SessionResourceGridPrototype = ({
 
   const packedCells: PackedCell[] = sessions.flatMap((s, i) => cellsFor(s, i));
 
-  const pad = gapPx * 2;
-  const stride = cellPx + gapPx;
-  const cols = Math.max(
-    8,
-    Math.floor((wrapperWidth - pad * 2 + gapPx) / stride),
+  // Word-wrap placement on a FIXED lattice: every cell sits on the same
+  // column grid; the seam between groups is one skipped lattice slot, so
+  // columns never drift while proximity still separates groups.
+  const plateInset = gapPx;
+  const rowGapPx = gapPx + plateInset * 2;
+  const pad = plateInset + gapPx;
+  const stridePx = cellPx + gapPx;
+  interface PlacedCell extends PackedCell {
+    px: number;
+    py: number;
+    prow: number;
+  }
+  const latticeCols = Math.max(
+    6,
+    Math.floor((wrapperWidth - pad * 2 + gapPx) / stridePx),
   );
-  const rows = Math.max(1, Math.ceil(packedCells.length / cols));
-  const svgWidth = pad * 2 + cols * stride - gapPx;
-  const svgHeight = pad * 2 + rows * stride - gapPx;
+  const placedCells: PlacedCell[] = [];
+  {
+    let slot = 0;
+    let crow = 0;
+    packedCells.forEach((cell) => {
+      if (cell.letter !== undefined && slot > 0) slot += 1; // seam slot
+      if (slot >= latticeCols) {
+        crow += 1;
+        slot = 0;
+      }
+      placedCells.push({
+        ...cell,
+        px: pad + slot * stridePx,
+        py: pad + crow * (cellPx + rowGapPx),
+        prow: crow,
+      });
+      slot += 1;
+    });
+  }
+  const rowCount =
+    placedCells.length > 0 ? placedCells[placedCells.length - 1].prow + 1 : 1;
+  const svgWidth = pad * 2 + latticeCols * stridePx - gapPx;
+  const svgHeight = pad * 2 + rowCount * (cellPx + rowGapPx) - rowGapPx;
+
+  // Per-(session, row) segments → one rounded plate each. Corners stay
+  // square on the side where the run continues on another row (text-
+  // highlighter convention), signalling continuation.
+  interface Segment {
+    sessionIdx: number;
+    row: number;
+    x0: number;
+    x1: number;
+    y: number;
+    first: boolean;
+    last: boolean;
+  }
+  const segments: Segment[] = [];
+  placedCells.forEach((cell) => {
+    const seg = segments[segments.length - 1];
+    if (seg && seg.sessionIdx === cell.sessionIdx && seg.row === cell.prow) {
+      seg.x1 = cell.px + cellPx;
+    } else {
+      if (seg && seg.sessionIdx === cell.sessionIdx) seg.last = false;
+      segments.push({
+        sessionIdx: cell.sessionIdx,
+        row: cell.prow,
+        x0: cell.px,
+        x1: cell.px + cellPx,
+        y: cell.py,
+        first: cell.letter !== undefined,
+        last: true,
+      });
+    }
+  });
+
+  // Rounded rect path with independent left/right corner radii (fill).
+  const segPath = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    rl: number,
+    rr: number,
+  ): string =>
+    `M${x + rl},${y}` +
+    `H${x + w - rr}` +
+    (rr ? `A${rr},${rr} 0 0 1 ${x + w},${y + rr}` : '') +
+    `V${y + h - rr}` +
+    (rr ? `A${rr},${rr} 0 0 1 ${x + w - rr},${y + h}` : '') +
+    `H${x + rl}` +
+    (rl ? `A${rl},${rl} 0 0 1 ${x},${y + h - rl}` : '') +
+    `V${y + rl}` +
+    (rl ? `A${rl},${rl} 0 0 1 ${x + rl},${y}` : '') +
+    'Z';
+
+  // Border path that leaves the cut side OPEN where the run continues on
+  // another row — the missing vertical edge is the continuation signal.
+  const segBorderPath = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number,
+    leftOpen: boolean,
+    rightOpen: boolean,
+  ): string => {
+    const rl = leftOpen ? 0 : r;
+    const rr = rightOpen ? 0 : r;
+    let d = `M${x + rl},${y} H${x + w - rr}`;
+    if (!rightOpen) {
+      d +=
+        (rr ? ` A${rr},${rr} 0 0 1 ${x + w},${y + rr}` : '') +
+        ` V${y + h - rr}` +
+        (rr ? ` A${rr},${rr} 0 0 1 ${x + w - rr},${y + h}` : '');
+      d += ` H${x + rl}`;
+    } else {
+      d += ` M${x + w},${y + h} H${x + rl}`;
+    }
+    if (!leftOpen) {
+      d +=
+        (rl ? ` A${rl},${rl} 0 0 1 ${x},${y + h - rl}` : '') +
+        ` V${y + rl}` +
+        (rl ? ` A${rl},${rl} 0 0 1 ${x + rl},${y}` : '');
+    }
+    return d;
+  };
 
   const legendItems =
     gridParams.gridEncoding === 'stepped'
@@ -532,40 +644,56 @@ const SessionResourceGridPrototype = ({
                 }
               }}
             >
-              {packedCells.map((cell, i) => {
-                const col = i % cols;
-                const row = Math.floor(i / cols);
-                const x = pad + col * stride;
-                const y = pad + row * stride;
-                const session = sessions[cell.sessionIdx];
+              {segments.map((seg, k) => {
+                const hue = hueFor(seg.sessionIdx);
+                const dimmed =
+                  hover !== null && hover.sessionIdx !== seg.sessionIdx;
+                const gx = seg.x0 - plateInset;
+                const gy = seg.y - plateInset;
+                const gw = seg.x1 - seg.x0 + plateInset * 2;
+                const gh = cellPx + plateInset * 2;
+                const r = radiusPx + plateInset;
+                return (
+                  <g key={`seg-${k}`} opacity={dimmed ? 0.3 : 1}>
+                    <path
+                      data-si={seg.sessionIdx}
+                      d={segPath(
+                        gx,
+                        gy,
+                        gw,
+                        gh,
+                        seg.first ? r : 0,
+                        seg.last ? r : 0,
+                      )}
+                      fill={colors.alpha(hue, 0.15)}
+                    />
+                    <path
+                      d={segBorderPath(
+                        gx,
+                        gy,
+                        gw,
+                        gh,
+                        r,
+                        !seg.first,
+                        !seg.last,
+                      )}
+                      fill="none"
+                      stroke={hue}
+                      strokeWidth={1.5}
+                      pointerEvents="none"
+                    />
+                  </g>
+                );
+              })}
+              {placedCells.map((cell, i) => {
+                const x = cell.px;
+                const y = cell.py;
                 const dimmed =
                   hover !== null && hover.sessionIdx !== cell.sessionIdx;
                 const isPartial =
                   cell.fraction !== undefined && cell.fraction < 1;
                 const letterInk =
                   relativeLuminance(cell.color) > 0.45 ? darkInk : lightInk;
-                // Group outline: draw only the edges whose grid neighbor is
-                // not a cell of the same session, so the border follows the
-                // run's outer boundary across row wraps (highlighter style).
-                const sameSession = (j: number): boolean =>
-                  j >= 0 &&
-                  j < packedCells.length &&
-                  packedCells[j].sessionIdx === cell.sessionIdx;
-                const o = gapPx / 4;
-                const [x0, y0, x1, y1] = [
-                  x - o,
-                  y - o,
-                  x + cellPx + o,
-                  y + cellPx + o,
-                ];
-                const edges: Array<[number, number, number, number]> = [];
-                if (col === 0 || !sameSession(i - 1))
-                  edges.push([x0, y0, x0, y1]);
-                if (col === cols - 1 || !sameSession(i + 1))
-                  edges.push([x1, y0, x1, y1]);
-                if (row === 0 || !sameSession(i - cols))
-                  edges.push([x0, y0, x1, y0]);
-                if (!sameSession(i + cols)) edges.push([x0, y1, x1, y1]);
                 return (
                   <g key={i} opacity={dimmed ? 0.3 : 1}>
                     <rect
@@ -590,19 +718,6 @@ const SessionResourceGridPrototype = ({
                         fill={cell.color}
                       />
                     )}
-                    {edges.map(([ex0, ey0, ex1, ey1], k) => (
-                      <line
-                        key={k}
-                        x1={ex0}
-                        y1={ey0}
-                        x2={ex1}
-                        y2={ey1}
-                        stroke={strokeFor(session.id)}
-                        strokeWidth={gapPx / 2}
-                        strokeLinecap="square"
-                        pointerEvents="none"
-                      />
-                    ))}
                     {cell.letter && (
                       <text
                         x={x + cellPx / 2}
@@ -631,7 +746,7 @@ const SessionResourceGridPrototype = ({
                 zIndex: 1000,
                 pointerEvents: 'none',
                 background: theme.token('--color-surface'),
-                border: `1px solid ${strokeFor(hoveredSession.id)}`,
+                border: `1px solid ${hueFor(hover.sessionIdx)}`,
                 borderRadius: px('--radius-element', 6),
                 padding: px('--spacing-2', 8),
                 maxWidth: 320,
