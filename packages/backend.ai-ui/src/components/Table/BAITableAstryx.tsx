@@ -47,10 +47,11 @@
  last, which is what they want: most read the FINAL column list, and `scrollY`
  (which reads only pinned-ness) must run before `cellRow` so `onCell` wins.
 
- Pagination is deliberately NOT the `useTablePagination` plugin: BUI's tables
- are server-paginated (the data is already sliced) and BUI renders its own
- bottom bar next to the settings gear. The plugin also hides itself when there
- is a single page, which antd never does.
+ Pagination is deliberately NOT the `useTablePagination` plugin: BUI renders
+ its own bottom bar next to the settings gear, and the plugin hides itself on a
+ single page, which antd never does. Slicing follows antd's `pageData` rule —
+ a `total` larger than `dataSource` means the caller already sliced server-side
+ (FR-3563).
 
  ## PILOT-DECISIONs (see the ticket file for the full list)
 
@@ -591,7 +592,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   });
   const activeOrder = isOrderControlled ? order : uncontrolledOrder;
 
-  const rows = useMemo(() => {
+  const sortedRows = useMemo(() => {
     const source = dataSource ? [...dataSource] : [];
     if (isOrderControlled || !activeOrder) return source;
     const isDescending = activeOrder.startsWith('-');
@@ -611,6 +612,42 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
       isDescending ? -compare(a, b, 'descend') : compare(a, b, 'ascend'),
     );
   }, [dataSource, isOrderControlled, activeOrder, flatColumns]);
+
+  /* ---- pagination -------------------------------------------------------- */
+
+  const [currentPage, setCurrentPage] = useControllableValue<number>(
+    pagination ? pagination : {},
+    { valuePropName: 'current', defaultValue: 1, trigger: 'no-trigger' },
+  );
+  const [currentPageSize, setCurrentPageSize] = useControllableValue<number>(
+    pagination ? pagination : {},
+    { valuePropName: 'pageSize', defaultValue: 10, trigger: 'no-trigger' },
+  );
+
+  const total = pagination
+    ? (pagination.total ?? sortedRows.length)
+    : sortedRows.length;
+
+  // antd's `pageData` rule, restored: a caller whose `total` exceeds the rows
+  // it handed us has already sliced server-side, so slicing again would empty
+  // every page past the first. Everything else is client-side data that antd
+  // used to page for the call site (FR-3563).
+  // Filtering can shrink the list under the page the user is on; clamp for
+  // display instead of setting state during render.
+  const activePage = Math.min(
+    currentPage,
+    Math.max(1, Math.ceil(total / currentPageSize)),
+  );
+
+  const isServerSliced = sortedRows.length < total;
+  const rows =
+    pagination === false ||
+    (isServerSliced && sortedRows.length <= currentPageSize)
+      ? sortedRows
+      : sortedRows.slice(
+          (activePage - 1) * currentPageSize,
+          activePage * currentPageSize,
+        );
 
   /* ---- expandable -------------------------------------------------------- */
 
@@ -1197,20 +1234,8 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     expansionPlugin,
   ]);
 
-  /* ---- pagination -------------------------------------------------------- */
-
-  const [currentPage, setCurrentPage] = useControllableValue<number>(
-    pagination ? pagination : {},
-    { valuePropName: 'current', defaultValue: 1, trigger: 'no-trigger' },
-  );
-  const [currentPageSize, setCurrentPageSize] = useControllableValue<number>(
-    pagination ? pagination : {},
-    { valuePropName: 'pageSize', defaultValue: 10, trigger: 'no-trigger' },
-  );
-
-  const total = pagination ? (pagination.total ?? rows.length) : rows.length;
-  const rangeStart = total === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
-  const rangeEnd = Math.min(currentPage * currentPageSize, total);
+  const rangeStart = total === 0 ? 0 : (activePage - 1) * currentPageSize + 1;
+  const rangeEnd = Math.min(activePage * currentPageSize, total);
 
   const isDimmed = !!loading || !!spinnerLoading;
 
@@ -1292,7 +1317,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           rowCount={total || undefined}
           rowIndexStart={
             pagination !== false
-              ? (currentPage - 1) * currentPageSize + 1
+              ? (activePage - 1) * currentPageSize + 1
               : undefined
           }
           plugins={plugins}
@@ -1320,7 +1345,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
                 />
               </Text>
               <Pagination
-                page={currentPage}
+                page={activePage}
                 pageSize={currentPageSize}
                 totalItems={total}
                 // Astryx renders the size selector exactly when options are

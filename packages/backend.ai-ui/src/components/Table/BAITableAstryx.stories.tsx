@@ -29,7 +29,7 @@ const meta: Meta<typeof BAITableAstryx> = {
 - **Column visibility** via \`tableSettings\` (Astryx \`Dialog\` settings modal, not the antd one)
 - **Resizable columns** — drag-to-resize, persisted into \`columnOverrides[key].width\`
 - **Sorting** via \`order\`/\`onChangeOrder\` order strings (unchanged from \`BAITable\`)
-- **Server-side pagination** — a custom bottom bar (not antd's pager)
+- **Pagination** — a custom bottom bar (not antd's pager). Client-side data is sliced here; a \`total\` larger than \`dataSource\` means the caller already sliced server-side (FR-3563)
 
 - **Horizontal scroll** via antd-shaped \`scroll={{ x }}\` — width-less columns take their content's intrinsic width (FR-3500)
 - **Vertical scroll** via \`scroll={{ y }}\` — the body is capped at \`y\` and the header row sticks (FR-3500)
@@ -222,6 +222,31 @@ export const Default: Story = {
     dataSource: sampleData,
     pagination: {
       total: sampleData.length,
+      pageSize: 10,
+    },
+  },
+};
+
+const clientPagedData = Array.from({ length: 42 }, (_unused, index) => ({
+  ...sampleData[index % sampleData.length],
+  key: `p${index + 1}`,
+  name: `Person ${index + 1}`,
+}));
+
+export const ClientSidePagination: Story = {
+  name: 'Client-side Pagination',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A whole list handed over at once, with no `total`: the table slices it and the pager walks all 42 rows. Passing a `total` larger than `dataSource` instead declares the rows already server-sliced, and the table leaves them alone (FR-3563).',
+      },
+    },
+  },
+  args: {
+    columns: sampleColumns,
+    dataSource: clientPagedData,
+    pagination: {
       pageSize: 10,
     },
   },
