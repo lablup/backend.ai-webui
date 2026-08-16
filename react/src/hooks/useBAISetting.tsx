@@ -5,6 +5,7 @@
 import { BAIBoardItem } from '../components/BAIBoard';
 import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
+import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
 import { CustomThemeConfig } from '../helper/customThemeConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
@@ -29,6 +30,7 @@ export interface UserSettings {
   selected_language?: string;
   recentSessionHistory?: Array<SessionHistory>;
   pinnedSessionHistory?: Array<SessionHistory>;
+  recentSearchHits?: Array<RecentSearchHit>;
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;

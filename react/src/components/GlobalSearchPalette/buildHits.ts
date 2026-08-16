@@ -1,0 +1,211 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { getSearchIndex } from './searchIndex.types';
+import type {
+  SearchIndex,
+  SearchIndexEntry,
+  SearchIndexSetting,
+  SearchIndexTab,
+} from './searchIndex.types';
+import type { HitTranslator, SearchHit } from './types';
+import { ALWAYS_VISIBLE_MENU_KEYS } from './visibility';
+import * as _ from 'lodash-es';
+import type { ReactNode } from 'react';
+
+/** A menu row flattened out of `useWebUIMenuItems()`'s grouped output. */
+export interface MenuHitSource {
+  key: string;
+  labelText: string;
+  icon?: ReactNode;
+  /** Sidebar group label; admin groups already prefixed "Administration › ". */
+  groupLabel: string;
+  disabled?: boolean;
+}
+
+/** The subset of the grouped menu shape `toMenuSources` reads. */
+export interface GroupedMenuNode {
+  type?: 'group';
+  key?: string;
+  labelText?: string;
+  icon?: ReactNode;
+  disabled?: boolean;
+  children?: Array<GroupedMenuNode>;
+}
+
+export interface ToMenuSourcesOptions {
+  /** Prepended to every group label, e.g. "Administration". */
+  scopeLabel?: string;
+}
+
+/**
+ * Flattens `groupedGeneralMenu` / `groupedAdminMenu` into rows that carry their
+ * group's label, preserving sidebar order.
+ */
+export const toMenuSources = (
+  nodes: ReadonlyArray<GroupedMenuNode> | undefined,
+  options: ToMenuSourcesOptions = {},
+): Array<MenuHitSource> => {
+  const { scopeLabel } = options;
+  const sources: Array<MenuHitSource> = [];
+
+  const pushItem = (node: GroupedMenuNode, groupLabel: string) => {
+    if (!node?.key) return;
+    sources.push({
+      key: node.key,
+      labelText: node.labelText ?? '',
+      icon: node.icon,
+      groupLabel,
+      disabled: node.disabled,
+    });
+  };
+
+  _.forEach(nodes, (node) => {
+    if (node?.type === 'group') {
+      const groupLabel = _.compact([scopeLabel, node.labelText]).join(' › ');
+      _.forEach(node.children, (child) => pushItem(child, groupLabel));
+    } else {
+      pushItem(node, scopeLabel ?? '');
+    }
+  });
+
+  return sources;
+};
+
+/** `buildPath`'s own encoding, applied to the index's scope param. */
+export const fillProjectName = (
+  path: string,
+  projectName?: string | null,
+): string =>
+  path.replace(':projectName', encodeURIComponent(projectName ?? ''));
+
+export interface BuildHitsParams {
+  index?: SearchIndex;
+  menuSources: ReadonlyArray<MenuHitSource>;
+  projectName?: string | null;
+  t: HitTranslator;
+}
+
+const tabLabelKeyOf = (
+  entry: SearchIndexEntry,
+  tabKey: string | undefined,
+): string | undefined =>
+  tabKey
+    ? _.find(entry.tabs, (tab) => tab.param === 'tab' && tab.key === tabKey)
+        ?.labelKey
+    : undefined;
+
+const makeTabHit = (
+  entry: SearchIndexEntry,
+  tab: SearchIndexTab,
+  base: Pick<SearchHit, 'menuKey' | 'scope' | 'group' | 'icon'>,
+  path: string,
+  t: HitTranslator,
+): SearchHit | null => {
+  // Params the extractor found without a `label:` sibling (`type`,
+  // `statusCategory`, `mode`) have no text to show or search.
+  if (!tab.labelKey) return null;
+  return {
+    ...base,
+    id: `tab:${entry.path}?${tab.param}=${tab.key}`,
+    kind: 'tab',
+    label: t(tab.labelKey),
+    labelKey: tab.labelKey,
+    breadcrumbKeys: _.compact([entry.labelKey]),
+    target: { path, search: { [tab.param]: tab.key } },
+    keywords: _.compact([tab.key, base.menuKey]),
+    bodyKeys: [],
+    tab: { param: tab.param, key: tab.key },
+    auxiliaryData: { group: base.group },
+  };
+};
+
+const makeSettingHit = (
+  entry: SearchIndexEntry,
+  setting: SearchIndexSetting,
+  base: Pick<SearchHit, 'menuKey' | 'scope' | 'group' | 'icon'>,
+  path: string,
+  t: HitTranslator,
+): SearchHit => ({
+  ...base,
+  id: `setting:${entry.path}#${setting.key}`,
+  kind: 'settingItem',
+  label: t(setting.key),
+  labelKey: setting.key,
+  breadcrumbKeys: _.compact([
+    entry.labelKey,
+    tabLabelKeyOf(entry, setting.tab),
+    setting.groupKey,
+  ]),
+  target: {
+    path,
+    search: {
+      ...(setting.tab ? { tab: setting.tab } : {}),
+      setting: setting.key,
+    },
+  },
+  keywords: _.compact([setting.testId, setting.groupId, base.menuKey]),
+  bodyKeys: setting.descriptionKeys,
+  auxiliaryData: { group: base.group },
+});
+
+/**
+ * Turns the generated index plus the live menu into hits. A page contributes
+ * hits only when its menu key survived `useWebUIMenuItems()`'s gating (or is
+ * whitelisted), because the menu is where the icon and the group label live.
+ */
+export const buildHits = ({
+  index = getSearchIndex(),
+  menuSources,
+  projectName,
+  t,
+}: BuildHitsParams): Array<SearchHit> => {
+  const entriesByMenuKey = _.groupBy(
+    _.filter(index.entries, (entry) => !!entry.menuKey && !!entry.labelKey),
+    'menuKey',
+  );
+  const sourceByKey = _.keyBy(menuSources, 'key');
+  const orderedKeys = _.uniq([
+    ..._.map(menuSources, 'key'),
+    ...ALWAYS_VISIBLE_MENU_KEYS,
+  ]);
+
+  const hits: Array<SearchHit> = [];
+  _.forEach(orderedKeys, (menuKey) => {
+    const source = sourceByKey[menuKey];
+    _.forEach(entriesByMenuKey[menuKey], (entry) => {
+      const path = fillProjectName(entry.path, projectName);
+      const base = {
+        menuKey,
+        scope: entry.scope,
+        group: source?.groupLabel ?? '',
+        icon: source?.icon,
+      };
+      const labelKey = entry.labelKey as string;
+
+      hits.push({
+        ...base,
+        id: `page:${entry.path}`,
+        kind: 'page',
+        label: t(labelKey),
+        labelKey,
+        breadcrumbKeys: [],
+        target: { path },
+        keywords: [menuKey],
+        bodyKeys: entry.keys,
+        auxiliaryData: { group: base.group },
+      });
+
+      _.forEach(entry.tabs, (tab) => {
+        const hit = makeTabHit(entry, tab, base, path, t);
+        if (hit) hits.push(hit);
+      });
+      _.forEach(entry.settings, (setting) => {
+        hits.push(makeSettingHit(entry, setting, base, path, t));
+      });
+    });
+  });
+
+  return hits;
+};
