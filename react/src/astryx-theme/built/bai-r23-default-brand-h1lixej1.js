@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r22-default-brand-hg6tffs theme — built by `pnpm exec astryx theme build`
+ * bai-r23-default-brand-h1lixej1 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR22DefaultBrandHg6tffsTheme } from './bai-r22-default-brand-hg6tffs';
- *   import './bai-r22-default-brand-hg6tffs.css';
+ *   import { baiR23DefaultBrandH1lixej1Theme } from './bai-r23-default-brand-h1lixej1';
+ *   import './bai-r23-default-brand-h1lixej1.css';
  */
-export const baiR22DefaultBrandHg6tffsTheme = {
-  name: 'bai-r22-default-brand-hg6tffs',
+export const baiR23DefaultBrandH1lixej1Theme = {
+  name: 'bai-r23-default-brand-h1lixej1',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -527,6 +527,12 @@ export const baiR22DefaultBrandHg6tffsTheme = {
     "field": {
       "base": {
         "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))",
+        "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+      }
+    },
+    "command-palette-item": {
+      "base": {
+        "--color-overlay-hover": "var(--color-accent-muted)",
         "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
       }
     },
