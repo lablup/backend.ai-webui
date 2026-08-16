@@ -37,6 +37,8 @@ export interface GroupedMenuNode {
 export interface ToMenuSourcesOptions {
   /** Prepended to every group label, e.g. "Administration". */
   scopeLabel?: string;
+  /** Heading for entries the sidebar shows outside any group (Start, Dashboard). */
+  ungroupedLabel?: string;
 }
 
 /**
@@ -47,7 +49,7 @@ export const toMenuSources = (
   nodes: ReadonlyArray<GroupedMenuNode> | undefined,
   options: ToMenuSourcesOptions = {},
 ): Array<MenuHitSource> => {
-  const { scopeLabel } = options;
+  const { scopeLabel, ungroupedLabel } = options;
   const sources: Array<MenuHitSource> = [];
 
   const pushItem = (node: GroupedMenuNode, groupLabel: string) => {
@@ -66,7 +68,9 @@ export const toMenuSources = (
       const groupLabel = _.compact([scopeLabel, node.labelText]).join(' › ');
       _.forEach(node.children, (child) => pushItem(child, groupLabel));
     } else {
-      pushItem(node, scopeLabel ?? '');
+      // An empty heading makes `CommandPalette` render the row ungrouped, and
+      // ungrouped rows sort last — so ungrouped entries need a heading too.
+      pushItem(node, ungroupedLabel ?? scopeLabel ?? '');
     }
   });
 
@@ -85,6 +89,8 @@ export interface BuildHitsParams {
   menuSources: ReadonlyArray<MenuHitSource>;
   projectName?: string | null;
   t: HitTranslator;
+  /** Heading for whitelisted pages the sidebar never lists (user settings). */
+  fallbackGroup?: string;
 }
 
 const tabLabelKeyOf = (
@@ -160,6 +166,7 @@ export const buildHits = ({
   menuSources,
   projectName,
   t,
+  fallbackGroup = '',
 }: BuildHitsParams): Array<SearchHit> => {
   const entriesByMenuKey = _.groupBy(
     _.filter(index.entries, (entry) => !!entry.menuKey && !!entry.labelKey),
@@ -179,7 +186,7 @@ export const buildHits = ({
       const base = {
         menuKey,
         scope: entry.scope,
-        group: source?.groupLabel ?? '',
+        group: source?.groupLabel || fallbackGroup,
         icon: source?.icon,
       };
       const labelKey = entry.labelKey as string;
