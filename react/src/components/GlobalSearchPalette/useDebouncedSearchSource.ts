@@ -7,8 +7,9 @@ import type { GlobalSearchSource } from './useGlobalSearchSource';
 import * as _ from 'lodash-es';
 import { useEffect, useRef } from 'react';
 
-/** Quiet period after the last keystroke before the ranker runs. */
-export const SEARCH_DEBOUNCE_MS = 120;
+// Quiet period after the last keystroke before the ranker runs. 120ms was
+// shorter than an ordinary typing cadence, so it never coalesced anything.
+export const SEARCH_DEBOUNCE_MS = 500;
 
 interface PendingSearch {
   timer: ReturnType<typeof setTimeout> | null;
