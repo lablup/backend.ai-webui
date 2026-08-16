@@ -37,7 +37,8 @@
     "copymonaco": "mkdir -p build/web/resources/monaco/vs && cp -R react/node_modules/monaco-editor/min/vs/. build/web/resources/monaco/vs/",
     "prepare": "husky",
     "theme-schema:update": "node scripts/gen-theme-schema.cjs",
-    "astryx": "pnpm --prefix ./react exec astryx"
+    "astryx": "pnpm --prefix ./react exec astryx",
+    "search-index": "pnpm --prefix ./react run search-index"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",

@@ -30,6 +30,10 @@ The generated output is just those two inputs run through `pnpm relay`, and
 
 1. **Do not review the contents of these paths:**
    - `**/__generated__/**` — Relay compiler output
+   - `react/src/generated/**` — the search-palette index (`pnpm run search-index`);
+     it lives outside `__generated__` because relay-compiler deletes every file
+     it does not own there. Review `react/src/routes.tsx` and the extractor, not
+     the JSON.
    - `pnpm-lock.yaml`, `**/*.lock`, `**/*.lock.yml` — lockfiles (see `pnpm-lockfile-conflicts.md`)
    - `*.d.ts` and other artifacts under `dist/` or `build/`
 2. **Review the inputs, not the output.** For Relay changes, review the `graphql` tags

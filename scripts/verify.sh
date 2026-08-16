@@ -72,6 +72,23 @@ check_relay_drift() {
   return 0
 }
 
+check_search_index_drift() {
+  # The global search palette's index (FR-3558) is generated from routes.tsx
+  # and the i18n keys of everything each route transitively renders, then
+  # committed. Any route/tab/setting/`t()` change without a rebuild leaves the
+  # palette pointing at a stale map, so rebuild and diff like Relay does.
+  pnpm --prefix ./react run search-index || return 1
+  local dirty
+  dirty=$(git status --porcelain -- 'react/src/generated/searchIndex.json')
+  if [ -n "$dirty" ]; then
+    echo "$dirty"
+    echo "The search index is out of sync with the source."
+    echo "Run \`pnpm run search-index\` and commit react/src/generated/searchIndex.json."
+    return 1
+  fi
+  return 0
+}
+
 check_terminology_drift() {
   # Deterministic terminology checker (read-only). Scans i18n VALUES *and* the
   # user manual's prose (FR-3373) against
@@ -177,6 +194,7 @@ check_astryx_theme_built() {
 }
 
 run_check "Relay" check_relay_drift
+run_check "Search index" check_search_index_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
