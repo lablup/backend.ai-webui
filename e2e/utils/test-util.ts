@@ -138,7 +138,7 @@ export async function login(
       if (overlay) overlay.remove();
     })
     .catch(() => {});
-  await page.getByLabel('Email or Username').fill(username);
+  await page.getByLabel('Email').fill(username);
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
