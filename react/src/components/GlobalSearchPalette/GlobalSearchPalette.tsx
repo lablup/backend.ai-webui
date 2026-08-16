@@ -5,7 +5,6 @@
 import { useWebUINavigate } from '../../hooks';
 import { plainText } from './rank';
 import type { SearchHit } from './types';
-import { useDebouncedSearchSource } from './useDebouncedSearchSource';
 import { toTranslator, useGlobalSearchSource } from './useGlobalSearchSource';
 import { useRecentSearchHits } from './useRecentSearchHits';
 import {
@@ -52,7 +51,10 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const navigate = useWebUINavigate();
-  const searchSource = useDebouncedSearchSource(useGlobalSearchSource());
+  // Deliberately undebounced: the index is in-memory and `search()` is
+  // synchronous, so Astryx commits its optimistic narrowing and the ranked
+  // rows in one paint. A delay splits that into a visible two-phase jump.
+  const searchSource = useGlobalSearchSource();
   const [, { push }] = useRecentSearchHits();
 
   const translate = toTranslator(t);
