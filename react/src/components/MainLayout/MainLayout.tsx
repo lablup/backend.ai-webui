@@ -10,6 +10,7 @@ import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
+import { useSiderCollapsedState } from '../../hooks/useShellPanels';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import { theme } from '../../theme-shim';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
@@ -55,8 +56,9 @@ function MainLayout() {
   'use memo';
   const navigate = useWebUINavigate();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
-  const [sideCollapsed, setSideCollapsed] =
-    useState<boolean>(!!compactSidebarActive);
+  // Lifted to Jotai so the search palette's "Toggle sidebar" action drives the
+  // same state as the `[` shortcut.
+  const [sideCollapsed, setSideCollapsed] = useSiderCollapsedState();
 
   const matches = useMatches();
   // @ts-ignore

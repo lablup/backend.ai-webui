@@ -100,6 +100,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     'invitation',
     parseAsString.withOptions({ history: 'replace' }),
   );
+  // `?action=add` opens the create-folder modal, the same deep-link shape the
+  // credentials page uses — it is how the search palette's action arrives.
+  const [action, setAction] = useQueryState('action', parseAsString);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -116,7 +119,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     setSelectedFolderList([]);
   }
 
-  const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [
+    isOpenCreateModal,
+    { toggle: toggleCreateModal, setRight: openCreateModal },
+  ] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
 
@@ -193,6 +199,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     // Update fetchKey when invitation count changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invitations.length]);
+
+  useEffect(() => {
+    if (action === 'add') {
+      openCreateModal();
+      setAction(null);
+    }
+  }, [action, setAction, openCreateModal]);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(

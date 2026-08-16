@@ -3735,7 +3735,22 @@
       "FoundIn": "Found in {{text}}",
       "NoResults": "No results",
       "Placeholder": "Search pages, tabs, and settings",
-      "Recent": "Recent"
+      "Recent": "Recent",
+      "action": {
+        "ChangeLanguage": "Change UI language",
+        "OpenManual": "Open manual for this page",
+        "OpenNotifications": "Open notifications",
+        "OpenUserSettings": "Open user settings",
+        "SwitchToDarkMode": "Switch to dark mode",
+        "SwitchToLightMode": "Switch to light mode",
+        "ToggleSidebar": "Toggle sidebar",
+        "UseSystemTheme": "Use system theme"
+      },
+      "group": {
+        "Appearance": "Appearance",
+        "Create": "Create",
+        "PanelsAndHelp": "Panels & help"
+      }
     }
   }
 }
