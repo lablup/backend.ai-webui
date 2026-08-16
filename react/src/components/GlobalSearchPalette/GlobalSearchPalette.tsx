@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../../hooks';
+import { plainText } from './rank';
 import type { SearchHit } from './types';
 import { useDebouncedSearchSource } from './useDebouncedSearchSource';
 import { toTranslator, useGlobalSearchSource } from './useGlobalSearchSource';
@@ -56,19 +57,13 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
 
   const translate = toTranslator(t);
 
-  // Setting descriptions carry inline markup (`<br />`, `<b>`); the row is one
-  // line of plain text.
-  const toPlainText = (key: string) =>
-    translate(key)
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
   // Body-key matches surface as the page row, so the secondary line says where
   // the word was found instead of repeating the page's own breadcrumb.
   const secondaryTextOf = (hit: SearchHit) =>
     hit.matchedIn
-      ? t('webui.search.FoundIn', { text: toPlainText(hit.matchedIn.key) })
+      ? t('webui.search.FoundIn', {
+          text: plainText(translate(hit.matchedIn.key)),
+        })
       : hit.breadcrumbKeys.map(translate).join(' › ');
 
   return (
