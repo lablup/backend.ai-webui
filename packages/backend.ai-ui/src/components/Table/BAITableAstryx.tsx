@@ -520,12 +520,15 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     Record<string, number>
   >({});
 
-  const widthsFromOverrides: Record<string, number> = {};
-  _.forEach(effectiveColumnOverrides, (override, key) => {
-    if (typeof override?.width === 'number')
-      widthsFromOverrides[key] = override.width;
-  });
-  const columnWidths = tableSettings ? widthsFromOverrides : localColumnWidths;
+  const columnWidths = ((): Record<string, number> => {
+    if (!tableSettings) return localColumnWidths;
+    const fromOverrides: Record<string, number> = {};
+    _.forEach(effectiveColumnOverrides, (override, key) => {
+      if (typeof override?.width === 'number')
+        fromOverrides[key] = override.width;
+    });
+    return fromOverrides;
+  })();
 
   const handleColumnResizeEnd = (updates: Record<string, number>) => {
     if (!tableSettings) {
@@ -989,7 +992,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
 
   const hasPinnedColumns = !!(stickyConfig.startKeys || stickyConfig.endKeys);
 
-  const scrollYPlugin: TablePlugin<AnyRow> = ((): TablePlugin<AnyRow> => {
+  const scrollYPlugin: TablePlugin<AnyRow> = (() => {
     const pinned = new Set([
       ...(stickyConfig.startKeys ?? []),
       ...(stickyConfig.endKeys ?? []),
@@ -1004,16 +1007,16 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
 
   /* ---- sorting ----------------------------------------------------------- */
 
-  const sortState: TableSortState = !activeOrder
-    ? []
-    : [
-        {
-          sortKey: activeOrder.startsWith('-')
-            ? activeOrder.slice(1)
-            : activeOrder,
-          direction: activeOrder.startsWith('-') ? 'descending' : 'ascending',
-        },
-      ];
+  const sortState: TableSortState = ((): TableSortState => {
+    if (!activeOrder) return [];
+    const isDescending = activeOrder.startsWith('-');
+    return [
+      {
+        sortKey: isDescending ? activeOrder.slice(1) : activeOrder,
+        direction: isDescending ? 'descending' : 'ascending',
+      },
+    ];
+  })();
 
   const sortPlugin = useTableSortable<AnyRow>({
     sort: sortState,
