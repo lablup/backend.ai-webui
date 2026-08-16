@@ -631,17 +631,13 @@ const FIELD_PAGE_OVERLAYS = {
 /**
  * Same surface rule again for the global search palette, whose `<dialog>` is a
  * non-portalled descendant of the band and so inherited its reversed literals —
- * an invisible active row in BOTH modes. `--color-accent-muted` rather than the
- * page overlay because this row is the palette's CURRENT item (Astryx's own
- * `itemSelected`), not a generic menu hover. FR-3558.
+ * an invisible hover row in BOTH modes. Stock Astryx keeps hover/highlight on
+ * the neutral overlay and reserves the accent for picker-mode selection, so
+ * only the scope is restored here, not the colour. FR-3558.
  */
 const COMMAND_PALETTE_ROW_OVERLAYS = {
   'command-palette-item': {
-    base: {
-      '--color-overlay-hover': 'var(--color-accent-muted)',
-      '--color-overlay-pressed':
-        MENU_PANEL_PAGE_OVERLAYS['--color-overlay-pressed'],
-    },
+    base: { ...MENU_PANEL_PAGE_OVERLAYS },
   },
 };
 
