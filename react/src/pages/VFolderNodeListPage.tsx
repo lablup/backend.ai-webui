@@ -21,6 +21,7 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
@@ -100,9 +101,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     'invitation',
     parseAsString.withOptions({ history: 'replace' }),
   );
-  // `?action=add` opens the create-folder modal, the same deep-link shape the
-  // credentials page uses — it is how the search palette's action arrives.
-  const [action, setAction] = useQueryState('action', parseAsString);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -200,12 +198,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invitations.length]);
 
-  useEffect(() => {
-    if (action === 'add') {
-      openCreateModal();
-      setAction(null);
-    }
-  }, [action, setAction, openCreateModal]);
+  useCreateActionArrival(openCreateModal);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(

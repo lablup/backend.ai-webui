@@ -3,6 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { buildPath } from '../../helper/pathBuilder';
+import {
+  CREATE_ACTION_PARAM,
+  CREATE_ACTION_VALUE,
+} from '../../hooks/useCreateActionArrival';
 import { SETTING_ARRIVAL_PARAM } from '../../hooks/useSettingArrival';
 import type { PaletteActionContext, SearchContext } from './types';
 import {
@@ -36,7 +40,7 @@ export interface PaletteAction {
 }
 
 /** The one URL-openable modal convention in the app (`credentials?action=add`). */
-const OPEN_CREATE_SEARCH = 'action=add';
+const OPEN_CREATE_SEARCH = `${CREATE_ACTION_PARAM}=${CREATE_ACTION_VALUE}`;
 
 const userSettingsTarget = (settingKey?: string) => ({
   pathname: '/usersettings',
