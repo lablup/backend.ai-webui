@@ -127,6 +127,16 @@ describe('GlobalSearchPalette', () => {
     ).toBeInTheDocument();
   });
 
+  it('keeps the row icon in a slot of its own, beside the text column', async () => {
+    await openPalette();
+
+    const textColumn = screen.getByText('Sessions')
+      .parentElement as HTMLElement;
+    const iconSlot = textColumn.previousElementSibling as HTMLElement;
+    expect(iconSlot).toBeTruthy();
+    expect(iconSlot.querySelector('svg')).toBeTruthy();
+  });
+
   it('shows the no-results copy for a query that matches nothing', async () => {
     const user = await openPalette();
 
