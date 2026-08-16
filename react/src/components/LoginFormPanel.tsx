@@ -24,6 +24,7 @@ import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
+import './LoginFormPanel.css';
 import SignupModal from './SignupModal';
 import {
   TOTPActivateForm,
@@ -32,38 +33,36 @@ import {
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import {
-  DropdownMenu,
-  type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
+import { List, ListItem } from '@astryxdesign/core/List';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
+import { VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
-  BAI_Z_INDEX,
   BAIModal,
   BAIFlex,
   useBAILogger,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
-import {
-  X,
-  Cloud,
-  ChevronDown,
-  Info,
-  ChevronRight,
-  TriangleAlert,
-} from 'lucide-react';
+import { ChevronDown, ChevronRight, Trash2, TriangleAlert } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
+
+/** One row of the endpoint history list. */
+export interface EndpointHistoryEntry {
+  endpoint: string;
+  /** Pinned from `VITE_DEFAULT_API_ENDPOINT`; tagged, but deletable like the rest. */
+  isFromEnv?: boolean;
+}
 
 interface LoginFormPanelProps {
   isOpen: boolean;
@@ -83,7 +82,11 @@ interface LoginFormPanelProps {
   showEndpointInput: boolean;
   isEndpointDisabled: boolean;
   form: FormInstance;
-  endpointMenuItems: DropdownMenuOption[];
+  isRememberUserId: boolean;
+  onChangeRememberUserId: (next: boolean) => void;
+  endpointHistory: EndpointHistoryEntry[];
+  onSelectEndpoint: (ep: string) => void;
+  onDeleteEndpoint: (ep: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
   onConnectionModeChange: (mode: ConnectionMode) => void;
@@ -115,7 +118,11 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   showEndpointInput,
   isEndpointDisabled,
   form,
-  endpointMenuItems,
+  isRememberUserId,
+  onChangeRememberUserId,
+  endpointHistory,
+  onSelectEndpoint,
+  onDeleteEndpoint,
   onKeyDown,
   onLogin,
   onConnectionModeChange,
@@ -138,22 +145,22 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
   );
-  const [helpPanel, setHelpPanel] = useState<{
-    title: string;
-    content: string;
-  } | null>(null);
+  const [isEndpointHistoryOpen, setIsEndpointHistoryOpen] = useState(false);
   const [showChangePasswordEmailModal, setShowChangePasswordEmailModal] =
     useState(false);
 
-  // Derive effective help panel visibility: hidden when modal is closed
-  const effectiveHelpPanel = isOpen ? helpPanel : null;
-
-  const hasBottomLinks =
-    loginConfig.signup_support || loginConfig.allowAnonymousChangePassword;
-
   const modalWidth = 400;
-  const helpPanelWidth = 280;
-  const helpPanelGap = 12;
+  // The dialog's own slots pad 24px; the login screen wants 32px around a form
+  // this sparse, so the header sets its inline padding outright and the body
+  // adds the remaining 8px on top of `LayoutContent`'s.
+  const dialogPaddingInline = 32;
+  const bodyExtraPaddingInline = dialogPaddingInline - 24;
+  // The logo is the screen's masthead: it gets more room above than below,
+  // and clears the first field by more than one field gap.
+  const logoPaddingTop = 48;
+  const logoToFirstFieldGap = 32;
+  const fieldSize = 'lg' as const;
+  const fieldGap = token.margin;
 
   return (
     <>
@@ -169,40 +176,13 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         width={modalWidth}
         title={
           // A flex row, not `textAlign: center`: as an inline image the 35px
-          // logo sat in a 27px line box (the dialog's 16px/24px base) and
-          // overflowed it by 4px on each side, so it painted outside the
-          // header's own padding box.
-          //
-          // `marginTop` reclaims the header's top padding. Astryx's
-          // `DialogHeader` gives its title wrapper `marginBlock: -4px` (a
-          // measured `calc()` that optically centres a TEXT cap-height against
-          // the close button); this dialog has neither text title nor close
-          // button, so on the top edge that compensation just ate 4 of the
-          // header's 16px padding — the logo sat 12px below the dialog edge
-          // against legacy's 19px. The bottom -4px is left alone on purpose:
-          // it is what keeps the logo-to-first-field gap at 28px, which is
-          // legacy's 27px (antd 6.5.0 oracle).
-          //
-          // `flex-start`, NOT `center`. The legacy source reads
-          // `<div style={{ textAlign: 'center' }}>`, but that rule never
-          // rendered: antd's `.ant-modal-title` is a `flex: 0 1 auto` item of
-          // `BAIModal`'s `display:flex; justify-content:space-between` header,
-          // so it SHRINK-WRAPPED to the image's own 213.5px and centring
-          // inside a box that exactly fits its only child is a no-op. The
-          // logo therefore sat on the header's content-box left edge — 24px
-          // from the dialog, the same x as the form below it. Astryx's
-          // `DialogHeader` gives the title slot the full 352px content width
-          // instead, which turned that inert declaration into a live one and
-          // pushed the logo to x=93. Measured on the antd 6.5.0 oracle
-          // during the FR-3482 Astryx migration (both modes):
-          // logo x = 24 from the dialog edge, right gap 162.5, `centred:
-          // false`.
+          // logo overflows the header's 27px line box and paints outside its
+          // padding box.
           <div
             style={{
               display: 'flex',
-              justifyContent: 'flex-start',
+              justifyContent: 'center',
               alignItems: 'center',
-              marginTop: 'var(--spacing-1)',
             }}
           >
             <img
@@ -223,20 +203,21 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             />
           </div>
         }
+        classNames={{ body: 'bai-login-form' }}
         styles={{
-          header: { borderBottom: 'none', paddingBottom: 0 },
-          // NO body padding. Under antd, `BAIModal` gave the modal CONTENT
-          // element `padding: 0` and the BODY `0 24px`, so this call site's
-          // `padding: paddingLG` REPLACED the body's own padding and the form
-          // ended up 24px in from each dialog edge (352px wide inside the
-          // 400px modal — measured on the antd 6.5.0 oracle).
-          //
-          // On Astryx the dialog's `LayoutContent` already owns that padding
-          // (`16px 24px`), so the same declaration became ADDITIVE: 24 + 24 =
-          // 48px per side and a 304px form — 48px narrower than legacy, with
-          // 40px between the logo and the first field instead of 27px. The
-          // Astryx-canonical answer is to let the layout slot own the body
-          // padding and pass nothing here.
+          header: {
+            borderBottom: 'none',
+            paddingBottom: 0,
+            paddingInline: dialogPaddingInline,
+            paddingTop: logoPaddingTop,
+          },
+          // `LayoutContent` owns the body padding (`16px 24px`), so anything
+          // set here ADDS to it — see `dialogPaddingInline` above.
+          body: {
+            paddingInline: bodyExtraPaddingInline,
+            paddingTop: logoToFirstFieldGap - 16,
+            paddingBottom: 16,
+          },
           // When needToResetPassword is true, hide the login modal wrapper via
           // display:none while keeping open={true}. This preserves the Form
           // instance (and its field values) that child modals depend on.
@@ -248,7 +229,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       >
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
-          <div style={{ marginBottom: token.marginMD }}>
+          <div style={{ marginBottom: fieldGap }}>
             <SegmentedControl
               value={connectionMode}
               onChange={(value) =>
@@ -269,30 +250,27 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         <Form
           form={form}
           layout="vertical"
+          // Every field here is required to sign in, so the app-wide
+          // "(optional)" suffix would be both noise and wrong.
+          requiredMark={false}
           onKeyDown={onKeyDown}
           initialValues={{ api_endpoint: apiEndpoint }}
         >
           {/* SESSION login fields */}
           {connectionMode === 'SESSION' && (
             <>
-              {/* PILOT-DECISION: antd `Input prefix={<icon/>}` (MAPPING
-                  §3.6) -> `TextInput startIcon`; the leading glyphs stay
-                  dropped — the placeholder already carries the field meaning,
-                  and the `label` (hidden, supplied for a11y) carries the
-                  accessible name that antd's `aria-label` used to.
-
-                  RESTORED (input-parity pass): `maxLength` and `autoComplete`
-                  DO have a destination — Astryx spreads unknown props onto the
-                  native `<input>`, so the adapter only had to declare them.
-                  `autoComplete` in particular is what lets a password manager
-                  recognise this as a login form. */}
+              {/* `autoComplete` is what lets a password manager recognise this
+                  as a login form; Astryx spreads it onto the native `<input>`.
+                  The webserver authenticates by EMAIL only — a bare `username`
+                  is rejected with a credential mismatch (FR-3560). */}
               <BAIFormItem
                 name="user_id"
-                style={{ marginBottom: token.marginSM }}
+                label={t('login.Email', { postProcess: [] })}
+                style={{ marginBottom: fieldGap }}
               >
                 <AstryxFormTextInput
-                  label={t('login.E-mailOrUsername', { postProcess: [] })}
-                  placeholder={t('login.E-mailOrUsername', { postProcess: [] })}
+                  size={fieldSize}
+                  label={t('login.Email', { postProcess: [] })}
                   maxLength={64}
                   autoComplete="username"
                   // Focus the first field when the login form opens. When OTP is
@@ -304,12 +282,13 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFormItem>
               <BAIFormItem
                 name="password"
-                style={{ marginBottom: token.marginSM }}
+                label={t('login.Password', { postProcess: [] })}
+                style={{ marginBottom: fieldGap }}
               >
                 <AstryxFormTextInput
+                  size={fieldSize}
                   type="password"
                   label={t('login.Password', { postProcess: [] })}
-                  placeholder={t('login.Password', { postProcess: [] })}
                   autoComplete="current-password"
                   disabled={isLoading}
                 />
@@ -317,11 +296,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               {otpRequired && (
                 <BAIFormItem
                   name="otp"
-                  style={{ marginBottom: token.marginSM }}
+                  label={t('totp.OTP', { postProcess: [] })}
+                  style={{ marginBottom: fieldGap }}
                 >
                   <AstryxFormTextInput
+                    size={fieldSize}
                     label={t('totp.OTP', { postProcess: [] })}
-                    placeholder={t('totp.OTP', { postProcess: [] })}
                     disabled={isLoading}
                     hasAutoFocus
                   />
@@ -335,11 +315,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             <>
               <BAIFormItem
                 name="api_key"
-                style={{ marginBottom: token.marginSM }}
+                label={t('login.APIKey', { postProcess: [] })}
+                style={{ marginBottom: fieldGap }}
               >
                 <AstryxFormTextInput
+                  size={fieldSize}
                   label={t('login.APIKey', { postProcess: [] })}
-                  placeholder={t('login.APIKey', { postProcess: [] })}
                   maxLength={20}
                   hasAutoFocus
                   disabled={isLoading}
@@ -347,17 +328,56 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFormItem>
               <BAIFormItem
                 name="secret_key"
-                style={{ marginBottom: token.marginSM }}
+                label={t('login.SecretKey', { postProcess: [] })}
+                style={{ marginBottom: fieldGap }}
               >
                 <AstryxFormTextInput
+                  size={fieldSize}
                   type="password"
                   label={t('login.SecretKey', { postProcess: [] })}
-                  placeholder={t('login.SecretKey', { postProcess: [] })}
                   maxLength={40}
                   disabled={isLoading}
                 />
               </BAIFormItem>
             </>
+          )}
+
+          {/* Remember-ID and password recovery sit with the credentials they
+              belong to: one row directly under the last field, above the CTA. */}
+          {connectionMode === 'SESSION' && (
+            <BAIFlex
+              gap="xs"
+              justify="between"
+              align="center"
+              wrap="wrap"
+              style={{ marginBottom: fieldGap }}
+            >
+              <span className="bai-login-remember-id">
+                <CheckboxInput
+                  size="sm"
+                  label={t('login.RememberID')}
+                  value={isRememberUserId}
+                  onChange={onChangeRememberUserId}
+                  isDisabled={isLoading}
+                />
+              </span>
+              {loginConfig.allowAnonymousChangePassword && (
+                // Quiet by design: it reads as an emphasised label, not as a
+                // second call to action competing with Login.
+                <span className="bai-login-find-password">
+                  <Link
+                    isStandalone
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowChangePasswordEmailModal(true);
+                    }}
+                  >
+                    {t('login.FindPassword')}
+                  </Link>
+                </span>
+              )}
+            </BAIFlex>
           )}
 
           {/* Login error alert */}
@@ -373,9 +393,13 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           )}
 
           {/* Login button */}
-          <BAIFormItem style={{ marginBottom: token.marginSM }}>
+          <BAIFormItem
+            className="bai-login-submit"
+            style={{ marginBottom: token.marginSM }}
+          >
             <Button
               variant="primary"
+              size={fieldSize}
               width="100%"
               onClick={onLogin}
               isLoading={isLoading}
@@ -387,6 +411,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           {loginConfig.singleSignOnVendors.includes('saml') && (
             <BAIFormItem style={{ marginBottom: token.marginSM }}>
               <Button
+                size={fieldSize}
                 width="100%"
                 onClick={onSAMLLogin}
                 label={t('login.singleSignOn.LoginWithSAML')}
@@ -396,6 +421,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           {loginConfig.singleSignOnVendors.includes('openid') && (
             <BAIFormItem style={{ marginBottom: token.marginSM }}>
               <Button
+                size={fieldSize}
                 width="100%"
                 onClick={onOpenIDLogin}
                 label={t('login.singleSignOn.LoginWithRealm', {
@@ -407,23 +433,14 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
           {/* Collapsible endpoint section */}
           {showEndpointInput && (
-            <div style={{ marginTop: token.marginSM }}>
-              {/* `Typography.Link onClick` with no href -> Astryx `Link`
-                  is anchor-first (MAPPING §3.16), so the router-less toggle
-                  uses `href="#"` + `preventDefault` (the pilot's fallback).
-                  The hand-set 13px/10px sizes are dropped (closed type
-                  scale). */}
-              {/* `isStandalone` is not cosmetic: an Astryx `Link` with no
-                  `isStandalone` INHERITS its font size, and the dialog's base
-                  is the app's 16px/24px, whereas antd pinned `.ant-modal` to
-                  14px/22px. Without it this disclosure row rendered 2px larger
-                  than legacy (measured 16px/24px vs 14px/22px). `isStandalone`
-                  is Astryx's own "this link is not inside a paragraph" flag and
-                  resolves to `--text-body-size` / `--text-body-leading`, i.e.
-                  exactly 14px / 1.5714 — the legacy values. */}
+            <div style={{ marginTop: token.marginXL }}>
+              {/* `isStandalone` is not cosmetic: without it an Astryx `Link`
+                  INHERITS the dialog's 16px base instead of resolving to
+                  `--text-body-size` (14px), the size this row wants. */}
               <Link
                 isStandalone
                 href="#"
+                className="bai-login-quiet-link"
                 onClick={(e) => {
                   e.preventDefault();
                   setIsEndpointExpanded((prev) => !prev);
@@ -449,157 +466,137 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 </span>
               </Link>
               {isEndpointExpanded && (
-                <BAIFlex
-                  gap="xs"
-                  align="center"
-                  style={{ marginTop: token.marginXS }}
+                <div
+                  // `BAIFlex` hard-sets `padding: 0` INLINE, so a plain div
+                  // carries the panel surface.
+                  style={{
+                    marginTop: token.marginXS,
+                    background: 'var(--color-background-muted)',
+                    borderRadius: 'var(--radius-element)',
+                    padding: 'var(--spacing-3)',
+                  }}
                 >
-                  {/* antd `Dropdown` wrapped an arbitrary trigger element;
-                      Astryx `DropdownMenu` renders its own trigger from
-                      `button` props and binds `onClick` per ITEM, so the
-                      endpoint-select handler is attached where the items are
-                      built (LoginView). The `overlayStyle` z-index and the
-                      hand-painted info-blue icon tint have no destination
-                      (P5). */}
-                  <DropdownMenu
-                    hasChevron={false}
-                    menuWidth={340}
-                    button={{
-                      variant: 'ghost',
-                      isIconOnly: true,
-                      icon: <Cloud size="1em" />,
-                      label: t('login.EndpointHistory'),
+                  {/* The saved endpoints behave as the field's own autofill:
+                      focusing the input offers them, picking one fills it. A
+                      separate trigger made "why did this appear" and "why did
+                      clicking a row change the field" two things to learn. */}
+                  <div
+                    style={{ position: 'relative' }}
+                    // Focus opens, focus-out closes. Picking a row unmounts the
+                    // row that holds focus, so focus lands outside and the next
+                    // click on the input opens the list again.
+                    onFocus={() => setIsEndpointHistoryOpen(true)}
+                    onBlur={(e) => {
+                      if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                        setIsEndpointHistoryOpen(false);
+                      }
                     }}
-                    items={endpointMenuItems}
-                  />
-                  <BAIFormItem
-                    name="api_endpoint"
-                    style={{ flex: 1, marginBottom: 0 }}
-                    rules={[
-                      {
-                        pattern: /^https?:\/\/(.*)/,
-                        message: t('login.EndpointStartWith'),
-                      },
-                    ]}
                   >
-                    <AstryxFormTextInput
+                    <BAIFormItem
+                      name="api_endpoint"
                       label={t('login.Endpoint', { postProcess: [] })}
-                      placeholder={t('login.Endpoint', { postProcess: [] })}
-                      disabled={isEndpointDisabled || isLoading}
-                      onChange={(value) => onSetApiEndpoint(value)}
-                    />
-                  </BAIFormItem>
-                  <IconButton
-                    icon={<Info size="1em" />}
-                    variant="ghost"
-                    label={t('login.EndpointInfo')}
-                    onClick={() =>
-                      setHelpPanel({
-                        title: t('login.EndpointInfo'),
-                        content: t('login.DescEndpoint'),
-                      })
-                    }
-                  />
-                </BAIFlex>
+                      tooltip={
+                        <VStack gap={1} align="stretch">
+                          <Text weight="semibold">
+                            {t('login.EndpointInfo')}
+                          </Text>
+                          {/* `login.DescEndpoint` is authored with `<br/>`s. */}
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(
+                                t('login.DescEndpoint'),
+                              ),
+                            }}
+                          />
+                        </VStack>
+                      }
+                      style={{ marginBottom: 0 }}
+                      rules={[
+                        {
+                          pattern: /^https?:\/\/(.*)/,
+                          message: t('login.EndpointStartWith'),
+                        },
+                      ]}
+                    >
+                      <AstryxFormTextInput
+                        size={fieldSize}
+                        label={t('login.Endpoint', { postProcess: [] })}
+                        disabled={isEndpointDisabled || isLoading}
+                        onChange={(value) => onSetApiEndpoint(value)}
+                      />
+                    </BAIFormItem>
+                    {isEndpointHistoryOpen && endpointHistory.length > 0 && (
+                      <div
+                        // Floats over what follows instead of pushing it down,
+                        // the way a browser's own autofill list behaves.
+                        style={{
+                          position: 'absolute',
+                          insetInline: 0,
+                          top: '100%',
+                          zIndex: 1,
+                          marginTop: 'var(--spacing-1)',
+                          background: 'var(--color-background-popover)',
+                          border: '1px solid var(--color-border)',
+                          borderRadius: 'var(--radius-element)',
+                          boxShadow: 'var(--shadow-med)',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <List density="compact" hasDividers>
+                          {endpointHistory.map(({ endpoint, isFromEnv }) => (
+                            <ListItem
+                              key={endpoint}
+                              label={isFromEnv ? `${endpoint} (env)` : endpoint}
+                              onClick={() => {
+                                onSelectEndpoint(endpoint);
+                                setIsEndpointHistoryOpen(false);
+                              }}
+                              endContent={
+                                <IconButton
+                                  variant="ghost"
+                                  size="sm"
+                                  icon={<Trash2 size="1em" />}
+                                  label={`${t('button.Delete')}: ${endpoint}`}
+                                  onClick={(e) => {
+                                    // The row is an invisible-button target;
+                                    // deleting must not also select it.
+                                    e.stopPropagation();
+                                    onDeleteEndpoint(endpoint);
+                                  }}
+                                />
+                              }
+                            />
+                          ))}
+                        </List>
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
           )}
 
-          {/* Signup and change password links */}
-          {hasBottomLinks && (
+          {/* Sign-up stays at the very bottom, centred. */}
+          {loginConfig.signup_support && (
             <BAIFlex
-              gap="xs"
               justify="center"
               align="center"
-              wrap="wrap"
-              style={{
-                marginTop: token.marginLG,
-                fontSize: 13,
-              }}
+              style={{ marginTop: token.marginLG }}
             >
-              {loginConfig.signup_support && (
-                <Link
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onShowSignupDialog();
-                  }}
-                >
-                  {t('login.SignUp')}
-                </Link>
-              )}
-              {/* `type="inherit"` is the Astryx spelling of legacy's
-                  `style={{ fontSize: 'inherit' }}` on these `Typography.Text`s:
-                  the row pins 13px and every child followed it. A plain `Text`
-                  imposes its own `--text-body-size` (14px) instead, which is
-                  1px off legacy right next to `Link`s that DO inherit. */}
-              {loginConfig.signup_support &&
-                loginConfig.allowAnonymousChangePassword && (
-                  <Text type="inherit" color="secondary">
-                    |
-                  </Text>
-                )}
-              {loginConfig.allowAnonymousChangePassword && (
-                <>
-                  <Text type="inherit" color="secondary">
-                    {t('login.ForgotPassword')}
-                  </Text>
-                  <Link
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setShowChangePasswordEmailModal(true);
-                    }}
-                  >
-                    {t('login.ChangePassword')}
-                  </Link>
-                </>
-              )}
+              <Link
+                isStandalone
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onShowSignupDialog();
+                }}
+              >
+                {t('login.SignUp')}
+              </Link>
             </BAIFlex>
           )}
         </Form>
       </BAIModal>
-
-      {/* Help side panel - positioned to the right of the login modal */}
-      {effectiveHelpPanel && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '50%',
-            left: `calc(50% + ${modalWidth / 2 + helpPanelGap}px)`,
-            transform: 'translateY(-50%)',
-            width: helpPanelWidth,
-            maxHeight: '60vh',
-            background: token.colorBgContainer,
-            borderRadius: token.borderRadiusLG,
-            boxShadow: token.boxShadowSecondary,
-            padding: token.paddingLG,
-            overflow: 'auto',
-            zIndex: BAI_Z_INDEX.loginSideHelp,
-          }}
-        >
-          <BAIFlex
-            justify="between"
-            align="center"
-            style={{ marginBottom: token.marginSM }}
-          >
-            <Text weight="semibold">{effectiveHelpPanel.title}</Text>
-            <IconButton
-              variant="ghost"
-              size="sm"
-              icon={<X size="1em" />}
-              label={t('button.Close')}
-              onClick={() => setHelpPanel(null)}
-            />
-          </BAIFlex>
-          <div
-            style={{ fontSize: 13, lineHeight: 1.6 }}
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(effectiveHelpPanel.content),
-            }}
-          />
-        </div>
-      )}
 
       {/* Child modals rendered outside login panel */}
       <ResetPasswordRequiredInline
@@ -979,28 +976,31 @@ const ChangePasswordEmailModal: React.FC<{
       okText={t('login.EmailSendButton')}
       destroyOnHidden
     >
-      <Text as="p" display="block">
-        {t('login.DescChangePasswordEmail')}
-      </Text>
-      <Form ref={form} layout="vertical" disabled={mutation.isPending}>
-        <BAIFormItem
-          name="email"
-          label={t('signUp.E-mail')}
-          rules={[
-            { required: true, message: t('signUp.EmailInputRequired') },
-            {
-              pattern: /^[A-Z0-9a-z#\-_]+@.+\..+$/,
-              message: t('signUp.InvalidEmail'),
-            },
-          ]}
-        >
-          <AstryxFormTextInput
-            type="email"
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Text as="p" display="block" style={{ margin: 0 }}>
+          {t('login.DescChangePasswordEmail')}
+        </Text>
+        <Form ref={form} layout="vertical" disabled={mutation.isPending}>
+          <BAIFormItem
+            name="email"
             label={t('signUp.E-mail')}
-            hasAutoFocus
-          />
-        </BAIFormItem>
-      </Form>
+            style={{ marginBottom: 0 }}
+            rules={[
+              { required: true, message: t('signUp.EmailInputRequired') },
+              {
+                pattern: /^[A-Z0-9a-z#\-_]+@.+\..+$/,
+                message: t('signUp.InvalidEmail'),
+              },
+            ]}
+          >
+            <AstryxFormTextInput
+              type="email"
+              label={t('signUp.E-mail')}
+              hasAutoFocus
+            />
+          </BAIFormItem>
+        </Form>
+      </BAIFlex>
     </BAIModal>
   );
 };
