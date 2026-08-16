@@ -436,10 +436,17 @@ const LoginView: React.FC<{
       );
       (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
 
-      // "Remember ID" persists only the identifier, never the password, and
-      // only for SESSION logins — API mode has no `user_id`, so writing here
+      // "Remember ID" is persisted here and nowhere else: both the checkbox
+      // state and the identifier are written only once a login has actually
+      // succeeded, so a failed attempt leaves nothing behind. Never the
+      // password. SESSION only — API mode has no `user_id`, so writing here
       // would wipe a remembered email.
       if (connectionMode === 'SESSION') {
+        (globalThis as any).backendaioptions.set(
+          'remember_login_id',
+          isRememberUserId,
+          'general',
+        );
         (globalThis as any).backendaioptions.set(
           'saved_login_id',
           isRememberUserId ? (form.getFieldValue('user_id') || '').trim() : '',
@@ -1164,13 +1171,16 @@ const LoginView: React.FC<{
         form={form}
         isRememberUserId={isRememberUserId}
         onChangeRememberUserId={(next) => {
+          // Checking is local until the login succeeds (see
+          // `postConnectSetup`); only UNCHECKING is written through, so
+          // withdrawing consent takes effect without needing a login.
           setIsRememberUserId(next);
-          (globalThis as any).backendaioptions.set(
-            'remember_login_id',
-            next,
-            'general',
-          );
           if (!next) {
+            (globalThis as any).backendaioptions.set(
+              'remember_login_id',
+              false,
+              'general',
+            );
             (globalThis as any).backendaioptions.set(
               'saved_login_id',
               '',
