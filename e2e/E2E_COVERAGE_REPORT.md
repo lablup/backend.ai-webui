@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-08-11
+> **Last Updated:** 2026-08-16
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -50,7 +50,8 @@
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`     |    16    |   12    | 🔶 75%  |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **475**  | **326** | **69%** |
+| Global Search Palette    | (header, every route)                  |    7     |    7    | ✅ 100% |
+| **Total**                |                                        | **482**  | **333** | **69%** |
 
 ---
 
@@ -1156,6 +1157,25 @@
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
 **Coverage: 🔶 12/16 features (4 deferred to backend-surface testing or future work)**
+
+---
+
+### 31. Global Search Palette (header, every route)
+
+**Test files:** [`e2e/global-search-palette.spec.ts`](global-search-palette.spec.ts)
+
+| Feature                                        | Status | Test                                                                    |
+| ---------------------------------------------- | ------ | ----------------------------------------------------------------------- |
+| Open from the header button                    | ✅     | `user can open the palette from the header button and close it with Escape` |
+| Open with `mod+k`                              | ✅     | `user can open the palette with the keyboard shortcut`                  |
+| Escape closes                                  | ✅     | `user can open the palette from the header button and close it with Escape` |
+| Page hit → route                               | ✅     | `user can arrow-select a page hit and land on that page`                |
+| Tab hit → `?tab=`                              | ✅     | `user can select a tab hit and land on the deep-linked tab`             |
+| Setting hit → `?setting=` arrival + highlight  | ✅     | `user can select a setting hit and arrive on the highlighted item`      |
+| Action hit (theme) → effect                    | ✅     | `user can run the theme action from the palette`                        |
+| Recents in the empty state                     | ✅     | `user sees the pages they picked under Recent when reopening`           |
+
+**Coverage: ✅ 7/7 features**
 
 ---
 

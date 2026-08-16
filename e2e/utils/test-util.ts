@@ -141,7 +141,9 @@ export async function login(
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
   // Expand the endpoint section if it's not already visible
-  const endpointInput = page.getByLabel('Endpoint');
+  // `getByLabel('Endpoint')` also matches the endpoint-history menu, its
+  // trigger, and the "About Endpoint" button — five elements, so it throws.
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
