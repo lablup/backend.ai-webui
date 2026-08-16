@@ -3868,7 +3868,22 @@
       "FoundIn": "{{text}}에서 찾음",
       "NoResults": "검색 결과 없음",
       "Placeholder": "페이지, 탭, 설정 검색",
-      "Recent": "최근 항목"
+      "Recent": "최근 항목",
+      "action": {
+        "ChangeLanguage": "UI 언어 변경",
+        "OpenManual": "현재 페이지 매뉴얼 열기",
+        "OpenNotifications": "알림 열기",
+        "OpenUserSettings": "사용자 설정 열기",
+        "SwitchToDarkMode": "다크 모드로 전환",
+        "SwitchToLightMode": "라이트 모드로 전환",
+        "ToggleSidebar": "사이드바 접기/펼치기",
+        "UseSystemTheme": "시스템 설정 사용"
+      },
+      "group": {
+        "Appearance": "화면",
+        "Create": "만들기",
+        "PanelsAndHelp": "패널 및 도움말"
+      }
     }
   }
 }

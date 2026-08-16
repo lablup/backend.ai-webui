@@ -4,6 +4,7 @@
  */
 import type { SearchableItem } from '@astryxdesign/core/Typeahead';
 import type { ReactNode } from 'react';
+import type { To } from 'react-router-dom';
 
 /** The four things v1 can honestly deep-link to. */
 export type SearchHitKind = 'page' | 'tab' | 'settingItem' | 'action';
@@ -40,7 +41,8 @@ export interface SearchHit extends SearchableItem<SearchHitAuxiliaryData> {
   icon?: ReactNode;
   /** Sidebar group label; admin groups are prefixed "Administration › ". */
   group: string;
-  target: SearchHitTarget;
+  /** Where the hit navigates. Actions run instead, so they carry none. */
+  target?: SearchHitTarget;
   /** Set on a body-key match: the page hit gains a "found in" line. */
   matchedIn?: { key: string; kind: 'body' };
   /** Literal terms (menu key, tab key, testid) matched verbatim. */
@@ -49,14 +51,30 @@ export interface SearchHit extends SearchableItem<SearchHitAuxiliaryData> {
   bodyKeys: Array<string>;
   /** The tab this hit addresses, for the `TAB_GATES` override map. */
   tab?: { param: string; key: string };
-  /** Actions declare their own runtime gate (registry lands in PR ⑤). */
+  /** Actions declare their own runtime gate. */
   gate?: (ctx: SearchContext) => boolean;
+  /** Action hits do this instead of navigating. */
+  run?: (ctx: PaletteActionContext) => void | Promise<void>;
 }
 
 export interface SearchConfigFlags {
   hideAgents: boolean;
   enableReservoir: boolean;
   fasttrackEndpoint: string | null;
+  allowThemeMode: boolean;
+}
+
+export type ThemeModeValue = 'system' | 'light' | 'dark';
+
+/** The handles an action's `run` may use, assembled by the palette. */
+export interface PaletteActionContext {
+  navigate: (to: To) => void;
+  projectName: string | null;
+  config: SearchConfigFlags;
+  setThemeMode: (mode: ThemeModeValue) => void;
+  openNotifications: () => void;
+  toggleSider: () => void;
+  openHelp: () => void;
 }
 
 /** Everything `isHitVisible` and the ranker need that is not in the index. */
