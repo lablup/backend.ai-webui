@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { PALETTE_ACTIONS } from './actions';
+import type { PaletteAction, PaletteActionGroup } from './actions';
 import { getSearchIndex } from './searchIndex.types';
 import type {
   SearchIndex,
@@ -12,6 +14,7 @@ import type {
 import type { HitTranslator, SearchHit } from './types';
 import { ALWAYS_VISIBLE_MENU_KEYS } from './visibility';
 import * as _ from 'lodash-es';
+import { createElement } from 'react';
 import type { ReactNode } from 'react';
 
 /** A menu row flattened out of `useWebUIMenuItems()`'s grouped output. */
@@ -216,3 +219,39 @@ export const buildHits = ({
 
   return hits;
 };
+
+export interface BuildActionHitsParams {
+  actions?: ReadonlyArray<PaletteAction>;
+  /** Translated heading per group, in `CommandPalette` insertion order. */
+  groupLabels: Record<PaletteActionGroup, string>;
+  t: HitTranslator;
+}
+
+/**
+ * Turns the static registry into trailing hits. Gates are carried, not applied:
+ * `isHitVisible` is the single place that decides what the user may see.
+ */
+export const buildActionHits = ({
+  actions = PALETTE_ACTIONS,
+  groupLabels,
+  t,
+}: BuildActionHitsParams): Array<SearchHit> =>
+  _.map(actions, (action) => {
+    const group = groupLabels[action.group];
+    return {
+      id: action.id,
+      kind: 'action' as const,
+      label: t(action.labelKey),
+      labelKey: action.labelKey,
+      menuKey: null,
+      scope: null,
+      breadcrumbKeys: [],
+      icon: createElement(action.icon, { size: '1em' }),
+      group,
+      keywords: action.keywords ?? [],
+      bodyKeys: [],
+      gate: action.gate,
+      run: action.run,
+      auxiliaryData: { group },
+    };
+  });

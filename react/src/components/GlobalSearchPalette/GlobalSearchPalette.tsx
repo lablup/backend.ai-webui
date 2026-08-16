@@ -2,9 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useOpenHelp } from '../../hooks/useHelpURL';
+import { useActiveProjectName } from '../../hooks/useRouteScope';
+import {
+  useNotificationDrawerState,
+  useSiderCollapsedState,
+} from '../../hooks/useShellPanels';
+import { useThemeMode } from '../../hooks/useThemeMode';
 import { plainText } from './rank';
-import type { SearchHit } from './types';
+import type { PaletteActionContext, SearchHit } from './types';
 import { toTranslator, useGlobalSearchSource } from './useGlobalSearchSource';
 import { useRecentSearchHits } from './useRecentSearchHits';
 import {
@@ -51,11 +58,32 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const navigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
+  const projectName = useActiveProjectName();
+  const { setThemeMode } = useThemeMode();
+  const [, setNotificationDrawerOpen] = useNotificationDrawerState();
+  const [, setSiderCollapsed] = useSiderCollapsedState();
+  const openHelp = useOpenHelp();
   // Deliberately undebounced: the index is in-memory and `search()` is
   // synchronous, so Astryx commits its optimistic narrowing and the ranked
   // rows in one paint. A delay splits that into a visible two-phase jump.
   const searchSource = useGlobalSearchSource();
   const [, { push }] = useRecentSearchHits();
+
+  const actionContext: PaletteActionContext = {
+    navigate,
+    projectName: projectName ?? null,
+    config: {
+      hideAgents: baiClient?._config?.hideAgents ?? true,
+      enableReservoir: !!baiClient?._config?.enableReservoir,
+      fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
+      allowThemeMode: !!baiClient?._config?.allowThemeMode,
+    },
+    setThemeMode,
+    openNotifications: () => setNotificationDrawerOpen(true),
+    toggleSider: () => setSiderCollapsed((collapsed) => !collapsed),
+    openHelp,
+  };
 
   const translate = toTranslator(t);
 
@@ -91,10 +119,16 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
           return;
         }
         push(hit);
-        navigate({
-          pathname: hit.target.path,
-          search: new URLSearchParams(hit.target.search ?? {}).toString(),
-        });
+        if (hit.run) {
+          Promise.resolve(hit.run(actionContext)).catch((error) =>
+            logger.error('GlobalSearchPalette: action failed', hit.id, error),
+          );
+        } else if (hit.target) {
+          navigate({
+            pathname: hit.target.path,
+            search: new URLSearchParams(hit.target.search ?? {}).toString(),
+          });
+        }
         onRequestClose();
       }}
       renderItem={(hit: SearchHit) => {
