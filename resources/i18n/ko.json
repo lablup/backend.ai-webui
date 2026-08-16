@@ -3826,6 +3826,7 @@
       "ResourcePolicies": "자원 정책",
       "Resources": "자원",
       "Scheduler": "스케줄러",
+      "Search": "검색",
       "Serving": "모델 서빙",
       "Sessions": "세션",
       "Settings": "설정",
@@ -3849,6 +3850,7 @@
       "WelcomeMessage": "환영합니다. {{ userName }}님",
       "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
       "groupName": {
+        "General": "일반",
         "Metrics": "메트릭",
         "Mlops": "MLOps",
         "Playground": "플레이그라운드",
@@ -3863,6 +3865,9 @@
       }
     },
     "search": {
+      "FoundIn": "{{text}}에서 찾음",
+      "NoResults": "검색 결과 없음",
+      "Placeholder": "페이지, 탭, 설정 검색",
       "Recent": "최근 항목"
     }
   }

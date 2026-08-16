@@ -58,6 +58,9 @@ vi.mock('./WebUIHeaderProjectSelect', () => ({
 vi.mock('../BAINotificationButton', () => ({
   default: () => <div data-testid="stub-notification" />,
 }));
+vi.mock('../GlobalSearchPalette/GlobalSearchPaletteButton', () => ({
+  default: () => <div data-testid="stub-global-search" />,
+}));
 vi.mock('../UserDropdownMenu', () => ({
   default: () => <div data-testid="stub-user-dropdown" />,
 }));
