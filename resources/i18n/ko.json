@@ -1951,7 +1951,7 @@
     "ShowOnlyError": "에러만 표시",
     "Status": "상태",
     "TimeStamp": "시간",
-    "UpTo3000Logs": "(최근 3000개의 로그)"
+    "UpTo3000Logs": "(최대 3000개의 로그)"
   },
   "maintenance": {
     "Announcement": "공지사항",
