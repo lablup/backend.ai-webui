@@ -4,6 +4,7 @@
  */
 import { useWebUINavigate } from '../../hooks';
 import type { SearchHit } from './types';
+import { useDebouncedSearchSource } from './useDebouncedSearchSource';
 import { toTranslator, useGlobalSearchSource } from './useGlobalSearchSource';
 import { useRecentSearchHits } from './useRecentSearchHits';
 import {
@@ -13,6 +14,7 @@ import {
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { textSizeVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { useBAILogger } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';
@@ -23,6 +25,12 @@ const styles = stylex.create({
   // Flex items default to `min-width: auto`, which lets a long "found in" line
   // push past the dialog instead of truncating at `maxLines`.
   rowText: { minWidth: 0 },
+  // A long secondary line must eat the text column, never the glyph.
+  iconSlot: {
+    flexShrink: 0,
+    width: textSizeVars['--font-size-xl'],
+    height: textSizeVars['--font-size-xl'],
+  },
 });
 
 export interface GlobalSearchPaletteProps {
@@ -43,7 +51,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const navigate = useWebUINavigate();
-  const searchSource = useGlobalSearchSource();
+  const searchSource = useDebouncedSearchSource(useGlobalSearchSource());
   const [, { push }] = useRecentSearchHits();
 
   const translate = toTranslator(t);
@@ -96,9 +104,11 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
         const secondaryText = secondaryTextOf(hit);
         return (
           <HStack gap={2} align="center" width="100%">
-            {/* Pages the sidebar never lists (user settings) carry no menu
-                icon; the fallback keeps every row's text on one baseline. */}
-            {hit.icon ?? <Settings size="1em" />}
+            <HStack align="center" justify="center" xstyle={styles.iconSlot}>
+              {/* Pages the sidebar never lists (user settings) carry no menu
+                  icon; the fallback keeps every row's text on one baseline. */}
+              {hit.icon ?? <Settings size="1em" />}
+            </HStack>
             <VStack gap={0} xstyle={styles.rowText}>
               <Text type="body" maxLines={1}>
                 {hit.label}
