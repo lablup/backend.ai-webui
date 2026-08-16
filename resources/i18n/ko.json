@@ -1961,6 +1961,7 @@
     "NotAUser": "아직 가입 전이면",
     "Password": "비밀번호",
     "PasswordChanged": "비밀번호가 변경되었습니다",
+    "PleaseInputEmailAndPassword": "로그인하려면 이메일과 비밀번호를 입력해 주세요.",
     "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해 주세요.",
     "PleaseInputOTPCode": "이중 인증 코드를 입력해 주세요.",
     "PleaseWait": "로그인하고 있습니다. 잠시만 기다려주세요.",

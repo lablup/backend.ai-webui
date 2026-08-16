@@ -1961,6 +1961,7 @@
     "NotAUser": "Không phải là người dùng?",
     "Password": "Mật khẩu",
     "PasswordChanged": "Mật khẩu đã được thay đổi thành công",
+    "PleaseInputEmailAndPassword": "Vui lòng nhập email và mật khẩu để đăng nhập.",
     "PleaseInputLoginInfo": "Vui lòng nhập ID và mật khẩu để đăng nhập.",
     "PleaseInputOTPCode": "Vui lòng nhập mã 2FA của bạn để đăng nhập.",
     "PleaseWait": "Vui lòng đợi để đăng nhập.",

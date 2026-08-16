@@ -1960,6 +1960,7 @@
     "NotAUser": "Vous n'êtes pas utilisateur ?",
     "Password": "Mot de passe",
     "PasswordChanged": "Le mot de passe a été modifié avec succès",
+    "PleaseInputEmailAndPassword": "Veuillez saisir votre e-mail et votre mot de passe pour vous connecter.",
     "PleaseInputLoginInfo": "Veuillez saisir l'identifiant et le mot de passe pour vous connecter.",
     "PleaseInputOTPCode": "Veuillez saisir votre code 2FA pour la connexion.",
     "PleaseWait": "Veuillez patienter pour vous connecter.",

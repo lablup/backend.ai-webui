@@ -47,16 +47,3 @@ a.bai-login-quiet-link:hover *,
 a.bai-login-quiet-link:focus-visible {
   color: var(--color-text-primary);
 }
-
-/* The endpoint history rows are full-width text buttons: keep a long URL on
-   one line and let it ellipsize instead of widening the popover. */
-.bai-login-endpoint-history-item button {
-  justify-content: flex-start;
-  overflow: hidden;
-}
-
-.bai-login-endpoint-history-item button > * {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}

@@ -1959,6 +1959,7 @@
     "NotAUser": "Etkö ole käyttäjä?",
     "Password": "Salasana",
     "PasswordChanged": "Salasana on onnistuneesti vaihdettu",
+    "PleaseInputEmailAndPassword": "Kirjaudu sisään syöttämällä sähköpostiosoite ja salasana.",
     "PleaseInputLoginInfo": "Syötä tunnus ja salasana kirjautumista varten.",
     "PleaseInputOTPCode": "Anna 2FA -koodisi kirjautumista varten.",
     "PleaseWait": "Odota kirjautumista.",

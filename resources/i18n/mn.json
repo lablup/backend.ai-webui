@@ -1960,6 +1960,7 @@
     "NotAUser": "Хэрэглэгч биш үү?",
     "Password": "Нууц үг",
     "PasswordChanged": "Нууц үг амжилттай өөрчлөгдсөн",
+    "PleaseInputEmailAndPassword": "Нэвтрэхийн тулд и-мэйл болон нууц үгээ оруулна уу.",
     "PleaseInputLoginInfo": "Нэвтрэхийн тулд ID болон нууц үгээ оруулна уу.",
     "PleaseInputOTPCode": "Нэвтрэхийн тулд 2FA кодоо оруулна уу.",
     "PleaseWait": "Нэвтрэхийг хүлээнэ үү.",

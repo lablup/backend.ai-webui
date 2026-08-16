@@ -1959,6 +1959,7 @@
     "NotAUser": "Kullanıcı değil misiniz?",
     "Password": "Parola",
     "PasswordChanged": "Şifre başarıyla değiştirildi",
+    "PleaseInputEmailAndPassword": "Giriş yapmak için e-posta ve şifrenizi girin.",
     "PleaseInputLoginInfo": "Lütfen giriş için ID ve şifreyi giriniz.",
     "PleaseInputOTPCode": "Lütfen giriş için 2FA kodunuzu girin.",
     "PleaseWait": "Giriş yapmak için lütfen bekleyiniz.",

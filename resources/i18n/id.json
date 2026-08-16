@@ -1962,6 +1962,7 @@
     "NotAUser": "Bukan pengguna?",
     "Password": "Kata sandi",
     "PasswordChanged": "Kata sandi berhasil diubah",
+    "PleaseInputEmailAndPassword": "Masukkan email dan kata sandi Anda untuk masuk.",
     "PleaseInputLoginInfo": "Silakan masukkan ID dan password untuk login.",
     "PleaseInputOTPCode": "Harap masukkan kode 2FA Anda untuk login.",
     "PleaseWait": "Harap tunggu untuk login.",

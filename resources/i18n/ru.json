@@ -1959,6 +1959,7 @@
     "NotAUser": "Не пользователь?",
     "Password": "Пароль",
     "PasswordChanged": "Пароль успешно изменен",
+    "PleaseInputEmailAndPassword": "Введите электронную почту и пароль для входа.",
     "PleaseInputLoginInfo": "Пожалуйста, введите ID и пароль для входа.",
     "PleaseInputOTPCode": "Пожалуйста, введите свой код 2FA для входа в систему.",
     "PleaseWait": "Подождите, пока вы войдете.",

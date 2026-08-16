@@ -1959,6 +1959,7 @@
     "NotAUser": "¿No es usuario?",
     "Password": "Contraseña",
     "PasswordChanged": "La contraseña se ha cambiado correctamente",
+    "PleaseInputEmailAndPassword": "Introduzca su correo electrónico y contraseña para iniciar sesión.",
     "PleaseInputLoginInfo": "Introduzca su nombre de usuario y contraseña para iniciar sesión.",
     "PleaseInputOTPCode": "Ingrese su código 2FA para iniciar sesión.",
     "PleaseWait": "Espere para iniciar sesión.",

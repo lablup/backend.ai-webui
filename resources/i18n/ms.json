@@ -1959,6 +1959,7 @@
     "NotAUser": "Bukan pengguna?",
     "Password": "Kata Laluan",
     "PasswordChanged": "Kata laluan berjaya diubah",
+    "PleaseInputEmailAndPassword": "Sila masukkan e-mel dan kata laluan anda untuk log masuk.",
     "PleaseInputLoginInfo": "Sila masukkan ID dan kata laluan untuk log masuk.",
     "PleaseInputOTPCode": "Sila masukkan kod 2FA anda untuk log masuk.",
     "PleaseWait": "Sila tunggu untuk log masuk.",

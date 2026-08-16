@@ -1946,6 +1946,7 @@
     "NotAUser": "Not a user?",
     "Password": "Password",
     "PasswordChanged": "Password is successfully changed",
+    "PleaseInputEmailAndPassword": "Please enter your email and password to sign in.",
     "PleaseInputLoginInfo": "Please input ID and password for login.",
     "PleaseInputOTPCode": "Please enter your 2FA code for login.",
     "PleaseWait": "Please wait to login.",
