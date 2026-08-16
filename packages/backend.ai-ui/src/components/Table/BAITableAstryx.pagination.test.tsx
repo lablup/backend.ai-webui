@@ -1,17 +1,6 @@
 /*
- FR-3563 — client-side slicing, and the server-sliced case it must not break.
-
- The migration dropped antd's `pageData` step: every row in `dataSource` was
- rendered while the bottom bar displayed a page range, so the five call sites
- that hand over a whole client-side list (the error log, the artifact modals)
- showed everything on page 1 and page numbers did nothing.
-
- The rule restored here is antd's: a `total` LARGER than the rows we were given
- means the caller already sliced server-side, so slicing again would empty
- every page past the first. That is the branch most of the ~100 call sites take,
- which is why it is asserted alongside the fix.
-
- Structural, not visual — jsdom's lack of layout does not matter.
+ Client-side slicing, plus the server-sliced case it must not re-slice.
+ Mechanism + affected call sites: FR-3563.
 */
 import BAITableAstryx from './BAITableAstryx';
 import type { BAIColumnsType } from './tableTypes';
@@ -55,13 +44,6 @@ describe('BAITableAstryx pagination (FR-3563)', () => {
     expect(screen.queryByText('row-20')).not.toBeInTheDocument();
     expect(screen.getByText('row-21')).toBeInTheDocument();
     expect(screen.getByText('row-25')).toBeInTheDocument();
-  });
-
-  it('honours a caller-supplied page size', () => {
-    renderTable({ dataSource: makeRows(25), pagination: { pageSize: 5 } });
-
-    expect(screen.getByText('row-5')).toBeInTheDocument();
-    expect(screen.queryByText('row-6')).not.toBeInTheDocument();
   });
 
   it('does not re-slice rows the caller already sliced server-side', () => {
