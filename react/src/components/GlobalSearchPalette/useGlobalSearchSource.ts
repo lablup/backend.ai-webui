@@ -9,7 +9,7 @@ import { useActiveProjectName } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { buildHits, toMenuSources } from './buildHits';
 import type { GroupedMenuNode } from './buildHits';
-import { RECENT_HIT_ID_PREFIX, rankHits } from './rank';
+import { RECENT_HIT_ID_PREFIX, baseHitId, rankHits } from './rank';
 import type { HitTranslator, SearchContext, SearchHit } from './types';
 import { useRecentSearchHits } from './useRecentSearchHits';
 import { isHitVisible } from './visibility';
@@ -24,19 +24,24 @@ import { useTranslation } from 'react-i18next';
  * `postProcess: []` bypasses the dev-only `copyableI18nKey` processor, which
  * returns JSX; the ranker needs plain strings in every environment.
  */
-const toTranslator = (translate: TFunction): HitTranslator => {
+export const toTranslator = (translate: TFunction): HitTranslator => {
   return (key: string) => {
     const value = translate(key, { postProcess: [] });
     return _.isString(value) ? value : key;
   };
 };
 
+export interface GlobalSearchSource extends SearchSource<SearchHit> {
+  /** Astryx signals selection by id only; ids may carry `recent:` / `#found=`. */
+  getHit: (id: string) => SearchHit | undefined;
+}
+
 /**
  * The palette's `SearchSource`: every visible page / tab / setting hit, ranked
  * against the current locale and English. Empty query shows recents plus the
  * full page list, grouped the way the sidebar is.
  */
-export const useGlobalSearchSource = (): SearchSource<SearchHit> => {
+export const useGlobalSearchSource = (): GlobalSearchSource => {
   'use memo';
 
   const { t, i18n } = useTranslation();
@@ -53,7 +58,9 @@ export const useGlobalSearchSource = (): SearchSource<SearchHit> => {
   const translateEn = toTranslator(i18n.getFixedT('en'));
 
   const menuSources = [
-    ...toMenuSources(groupedGeneralMenu as Array<GroupedMenuNode>),
+    ...toMenuSources(groupedGeneralMenu as Array<GroupedMenuNode>, {
+      ungroupedLabel: translate('webui.menu.groupName.General'),
+    }),
     ...toMenuSources(groupedAdminMenu as Array<GroupedMenuNode>, {
       scopeLabel: translate('webui.menu.Administration'),
     }),
@@ -83,7 +90,12 @@ export const useGlobalSearchSource = (): SearchSource<SearchHit> => {
   };
 
   const hits = _.filter(
-    buildHits({ menuSources, projectName, t: translate }),
+    buildHits({
+      menuSources,
+      projectName,
+      t: translate,
+      fallbackGroup: translate('webui.menu.groupName.General'),
+    }),
     (hit) => isHitVisible(hit, ctx),
   );
   const hitById = _.keyBy(hits, 'id');
@@ -131,5 +143,6 @@ export const useGlobalSearchSource = (): SearchSource<SearchHit> => {
         recentIds,
       }),
     bootstrap: () => [...recentRows, ...pageRows],
+    getHit: (id: string) => hitById[baseHitId(id)],
   };
 };

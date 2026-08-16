@@ -3810,6 +3810,7 @@
       "ResourcePolicies": "Resource Policies",
       "Resources": "Resources",
       "Scheduler": "Scheduler",
+      "Search": "Search",
       "Serving": "Serving",
       "Sessions": "Sessions",
       "Settings": "Settings",
@@ -3833,6 +3834,7 @@
       "WelcomeMessage": "Welcome, {{ userName }}.",
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
       "groupName": {
+        "General": "General",
         "Metrics": "Metrics",
         "Mlops": "MLOps",
         "Playground": "Playground",
@@ -3847,6 +3849,9 @@
       }
     },
     "search": {
+      "FoundIn": "Found in {{text}}",
+      "NoResults": "No results",
+      "Placeholder": "Search pages, tabs, and settings",
       "Recent": "Recent"
     }
   }
