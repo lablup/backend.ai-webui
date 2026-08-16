@@ -31,7 +31,6 @@ vi.mock('react-i18next', async (importOriginal) => {
   };
 });
 
-
 // The header only reads `supports()` / `_config` off the client.
 vi.mock('../../hooks', () => ({
   useSuspendedBackendaiClient: () => ({
@@ -56,6 +55,9 @@ vi.mock('./WebUIHeaderProjectSelect', () => ({
 // Heavy, irrelevant header children.
 vi.mock('../BAINotificationButton', () => ({
   default: () => <div data-testid="stub-notification" />,
+}));
+vi.mock('../GlobalSearchPalette/GlobalSearchPaletteButton', () => ({
+  default: () => <div data-testid="stub-global-search" />,
 }));
 vi.mock('../UserDropdownMenu', () => ({
   default: () => <div data-testid="stub-user-dropdown" />,
