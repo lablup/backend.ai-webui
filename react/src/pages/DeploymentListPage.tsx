@@ -19,6 +19,7 @@ import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { toProjectContext } from '../types/projectContext';
@@ -48,14 +49,8 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
-import {
-  parseAsJson,
-  parseAsString,
-  parseAsStringLiteral,
-  useQueryState,
-  useQueryStates,
-} from 'nuqs';
-import React, { Suspense, useDeferredValue, useEffect, useState } from 'react';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -78,9 +73,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
-  // `?action=add` opens the create modal, the same deep-link shape the
-  // credentials page uses — it is how the search palette's action arrives.
-  const [action, setAction] = useQueryState('action', parseAsString);
+  useCreateActionArrival(openCreate);
 
   const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
     null,
@@ -118,13 +111,6 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-
-  useEffect(() => {
-    if (action === 'add') {
-      openCreate();
-      setAction(null);
-    }
-  }, [action, setAction, openCreate]);
 
   const currentProject = useCurrentProjectValue();
   const pageProject = toProjectContext(currentProject);
