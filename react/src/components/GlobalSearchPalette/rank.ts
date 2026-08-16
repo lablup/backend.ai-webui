@@ -141,6 +141,19 @@ const prepare = (
   return prepared;
 };
 
+/**
+ * How a body row reads once resolved — tags stripped and whitespace collapsed,
+ * the way the palette renders the "found in" line.
+ */
+const resolvedBodyText = (t: HitTranslator, key: string): string =>
+  _.toLower(
+    _.trim(
+      t(key)
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' '),
+    ),
+  );
+
 const matchBoost = (folded: string, foldedQuery: string): number =>
   folded === foldedQuery
     ? EXACT_BOOST
@@ -242,10 +255,10 @@ export const rankHits = (
     const hit = hits[hitIndex];
     if (!hit) return;
     const best = _.take(
-      _.orderBy(
-        _.uniqBy(body.get(hitIndex) ?? [], (scored) => scored.record.bodyKey),
-        'score',
-        'desc',
+      // Distinct keys can resolve to the same sentence, and the row shows the
+      // sentence — so the resolved text, not the key, is a row's identity.
+      _.uniqBy(_.orderBy(body.get(hitIndex) ?? [], 'score', 'desc'), (scored) =>
+        resolvedBodyText(t, scored.record.bodyKey as string),
       ),
       bodyLimitPerHit,
     );
