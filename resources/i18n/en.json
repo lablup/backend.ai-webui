@@ -3843,6 +3843,9 @@
           "System": "System"
         }
       }
+    },
+    "search": {
+      "Recent": "Recent"
     }
   }
 }
