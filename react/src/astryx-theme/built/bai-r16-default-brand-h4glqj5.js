@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r15-default-brand-hc43dtt theme — built by `pnpm exec astryx theme build`
+ * bai-r16-default-brand-h4glqj5 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR15DefaultBrandHc43dttTheme } from './bai-r15-default-brand-hc43dtt';
- *   import './bai-r15-default-brand-hc43dtt.css';
+ *   import { baiR16DefaultBrandH4glqj5Theme } from './bai-r16-default-brand-h4glqj5';
+ *   import './bai-r16-default-brand-h4glqj5.css';
  */
-export const baiR15DefaultBrandHc43dttTheme = {
-  name: 'bai-r15-default-brand-hc43dtt',
+export const baiR16DefaultBrandH4glqj5Theme = {
+  name: 'bai-r16-default-brand-h4glqj5',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -106,7 +106,7 @@ export const baiR15DefaultBrandHc43dttTheme = {
     "--color-accent-muted": "light-dark(color-mix(in srgb, var(--color-accent) 20%, transparent), color-mix(in srgb, var(--color-accent) 25%, transparent))",
     "--color-neutral": "light-dark(rgba(0,0,0,0.06), #262626)",
     "--color-overlay": "light-dark(rgba(0,0,0,0.45), rgba(0,0,0,0.45))",
-    "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))",
     "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
     "--color-text-primary": "light-dark(#141414, #FFFFFF)",
     "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",

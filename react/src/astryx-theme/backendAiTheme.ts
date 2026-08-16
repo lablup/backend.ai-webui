@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 15;
+export const THEME_NAME_REV = 16;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -172,13 +172,17 @@ const ANTD_NEUTRAL_SURFACES = {
   ],
   // antd `colorBgTextHover` / `colorBgTextActive` — the neutral INTERACTION
   // fills behind ghost buttons, menu rows, table row hover, icon buttons.
-  // Astryx ships both as a flat 5% / 10% wash of the text colour, which on the
-  // dark surface (`#141414`) is effectively invisible: audit 1 (catalog G-4)
-  // measured `#FFFFFF0D` in dark, i.e. no readable hover state anywhere in the
-  // app. `resources/theme.json:49` declares the dark hover OPAQUE (`#262626`,
-  // = `--color-neutral` above, which is the same antd `colorFillSecondary`),
-  // and `colorBgTextActive` is antd's `colorFill` (= `--color-skeleton`).
-  '--color-overlay-hover': ['rgba(0,0,0,0.06)', '#262626'] as [string, string],
+  // Astryx composites this as a universal overlay, so it must stay TRANSLUCENT:
+  // the dark half was the pre-resolved opaque `#262626`, which is invisible on
+  // any surface that already IS `#262626` (card / modal / table row — measured
+  // 1.00:1 against the row background). `rgba(255,255,255,0.08)` resolves to
+  // `#272727` over the `#141414` page surface, so it keeps the opaque value
+  // audit 1 (catalog G-4) pinned to within 1/255, and stays visible elsewhere.
+  // FR-3557. `colorBgTextActive` is antd's `colorFill` (= `--color-skeleton`).
+  '--color-overlay-hover': ['rgba(0,0,0,0.06)', 'rgba(255,255,255,0.08)'] as [
+    string,
+    string,
+  ],
   '--color-overlay-pressed': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'] as [
     string,
     string,
@@ -679,10 +683,13 @@ const ANTD_DROPDOWN_DENSITY = {
  * child. Measured live during the FR-3482 Astryx migration.
  *
  * `--color-overlay-hover` is pinned to antd's `colorBgTextHover`
- * (`ANTD_NEUTRAL_SURFACES`), which is `rgba(0,0,0,0.06)` in light but
- * **opaque `#262626`** in dark — and that opaque value is *correct*: it comes
- * from `resources/theme.json`'s `colorFillSecondary: '#262626'` dark seed, so
- * it is what legacy antd rendered. The bug is not the token, it is that antd
+ * (`ANTD_NEUTRAL_SURFACES`), `rgba(0,0,0,0.06)` in light and
+ * `rgba(255,255,255,0.08)` in dark. SUPERSEDED (FR-3557): the dark half used to
+ * be the pre-resolved opaque `#262626` from `resources/theme.json`'s
+ * `colorFillSecondary` seed. That is what legacy antd *rendered on the page
+ * surface*, but an opaque overlay is only ever right on the one surface it was
+ * resolved against — on a `#262626` card / modal / table row it disappeared.
+ * The bug is not the token, it is that antd
  * only ever used it on surfaces with NO fill of their own (text/ghost buttons,
  * menu rows) while Astryx reuses it as a universal overlay. Composited over a
  * filled button it replaces the brand colour outright; painted over a tab it
@@ -718,10 +725,12 @@ const ANTD_DROPDOWN_DENSITY = {
  *
  * ## Why the theme layer, and why per-variant
  *
- * `--color-overlay-hover` must stay as it is globally: it is antd-correct for
- * the ghost/text/menu surfaces that make up most of its call sites, and audit 1
- * (catalog G-4) pinned the opaque dark value precisely because a translucent
- * wash is invisible on `#141414`. So the override is scoped to the components
+ * `--color-overlay-hover` stays GLOBAL: it is antd-correct for the ghost/text/
+ * menu surfaces that make up most of its call sites. Audit 1 (catalog G-4)
+ * pinned an opaque dark value because Astryx's own 5% wash was invisible on
+ * `#141414`; FR-3557 keeps that rendered result (0.08 white resolves there to
+ * `#272727`) without breaking the other dark surfaces. The override is scoped
+ * to the components
  * that composite it over something that must survive — `button` (which reflects
  * `data-variant`, so `variant:*` keys render) and `tab`. Both keys are the ones
  * `astryx component Button` / `astryx component TabList` document.
@@ -756,7 +765,9 @@ const ANTD_HOVER_PARITY = {
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
   // Astryx's hover pill is an absolutely-positioned overlay that outranks the
-  // label in paint order, so in dark (opaque `#262626`) it erased it.
+  // label in paint order, so in dark it erased it (the global overlay was the
+  // opaque `#262626` then; it is translucent since FR-3557, but the pill is
+  // still not antd's behaviour here).
   // `--color-overlay-hover: transparent` removes the pill and leaves Astryx's
   // own accent recolour, which is antd's behaviour exactly.
   // `BAITabList.css` already does this for the card variant; this generalises
