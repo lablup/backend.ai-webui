@@ -77,7 +77,6 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
       hideAgents: baiClient?._config?.hideAgents ?? true,
       enableReservoir: !!baiClient?._config?.enableReservoir,
       fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
-      allowThemeMode: !!baiClient?._config?.allowThemeMode,
     },
     setThemeMode,
     openNotifications: () => setNotificationDrawerOpen(true),

@@ -112,7 +112,6 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     icon: Sun,
     group: 'appearance',
     keywords: ['theme', 'light', 'mode', 'appearance'],
-    gate: (ctx) => ctx.config.allowThemeMode,
     run: (ctx) => ctx.setThemeMode('light'),
   },
   {
@@ -121,7 +120,6 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     icon: Moon,
     group: 'appearance',
     keywords: ['theme', 'dark', 'mode', 'appearance'],
-    gate: (ctx) => ctx.config.allowThemeMode,
     run: (ctx) => ctx.setThemeMode('dark'),
   },
   {
@@ -130,7 +128,6 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     icon: SunMoon,
     group: 'appearance',
     keywords: ['theme', 'system', 'mode', 'appearance'],
-    gate: (ctx) => ctx.config.allowThemeMode,
     run: (ctx) => ctx.setThemeMode('system'),
   },
   {
