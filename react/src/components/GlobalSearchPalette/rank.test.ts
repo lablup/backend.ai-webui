@@ -135,6 +135,35 @@ describe('rankHits — body matches and caps', () => {
     expect(rank('e', { limit: 5 })).toHaveLength(5);
   });
 
+  it('shows one row per resolved sentence, not one per key', () => {
+    const texts: Record<string, string> = {
+      'dup.Title': 'Zilch',
+      'dup.a': 'Light mode',
+      'dup.b': 'Light mode',
+      'dup.c': 'Dark mode',
+    };
+    const tDup = (key: string) => texts[key] ?? key;
+    const dupHit: SearchHit = {
+      ...(hits[0] as SearchHit),
+      id: 'page:/dup',
+      label: 'Zilch',
+      labelKey: 'dup.Title',
+      keywords: [],
+      bodyKeys: ['dup.a', 'dup.b', 'dup.c'],
+    };
+
+    const rows = rankHits('Light mode', [dupHit], { t: tDup, tEn: tDup });
+
+    expect(rows.length).toBeGreaterThan(0);
+    const foundTexts = _.map(rows, (row) => tDup(row.matchedIn?.key ?? ''));
+    expect(_.uniq(foundTexts)).toHaveLength(foundTexts.length);
+    expect(
+      _.filter(rows, (row) =>
+        _.includes(['dup.a', 'dup.b'], row.matchedIn?.key),
+      ),
+    ).toHaveLength(1);
+  });
+
   it('keeps every returned id unique', () => {
     const ids = _.map(rank('session'), 'id');
     expect(_.uniq(ids)).toHaveLength(ids.length);
