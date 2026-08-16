@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r23-default-brand-h1lixej1 theme — built by `pnpm exec astryx theme build`
+ * bai-r23-default-brand-hv7b7uv theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR23DefaultBrandH1lixej1Theme } from './bai-r23-default-brand-h1lixej1';
- *   import './bai-r23-default-brand-h1lixej1.css';
+ *   import { baiR23DefaultBrandHv7b7uvTheme } from './bai-r23-default-brand-hv7b7uv';
+ *   import './bai-r23-default-brand-hv7b7uv.css';
  */
-export const baiR23DefaultBrandH1lixej1Theme = {
-  name: 'bai-r23-default-brand-h1lixej1',
+export const baiR23DefaultBrandHv7b7uvTheme = {
+  name: 'bai-r23-default-brand-hv7b7uv',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -532,7 +532,7 @@ export const baiR23DefaultBrandH1lixej1Theme = {
     },
     "command-palette-item": {
       "base": {
-        "--color-overlay-hover": "var(--color-accent-muted)",
+        "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))",
         "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
       }
     },
