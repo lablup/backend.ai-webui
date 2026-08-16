@@ -229,7 +229,11 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       >
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
-          <div style={{ marginBottom: fieldGap }}>
+          // `marginTop` keeps the masthead gap identical whether or not this
+          // control is present: the field label that otherwise follows the logo
+          // paints 2px below its box (half-leading of a 14px/22px line), while
+          // the segmented pill fills from its box edge. Measured, not guessed.
+          <div style={{ marginTop: 2, marginBottom: fieldGap }}>
             <SegmentedControl
               value={connectionMode}
               onChange={(value) =>
