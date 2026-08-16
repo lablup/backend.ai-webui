@@ -75,7 +75,6 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
       hideAgents: baiClient?._config?.hideAgents ?? true,
       enableReservoir: !!baiClient?._config?.enableReservoir,
       fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
-      allowThemeMode: !!baiClient?._config?.allowThemeMode,
     },
     visibleMenuKeys: new Set(
       _.map([...generalMenu, ...adminMenu], (item) => item.key as string),

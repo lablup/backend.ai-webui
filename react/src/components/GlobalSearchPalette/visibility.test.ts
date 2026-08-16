@@ -38,7 +38,6 @@ const makeCtx = (overrides: Partial<SearchContext> = {}): SearchContext => ({
     hideAgents: true,
     enableReservoir: false,
     fasttrackEndpoint: null,
-    allowThemeMode: false,
   },
   visibleMenuKeys: new Set(allMenuKeys),
   disabledMenuKeys: new Set(),

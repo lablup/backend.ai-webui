@@ -61,7 +61,6 @@ export interface SearchConfigFlags {
   hideAgents: boolean;
   enableReservoir: boolean;
   fasttrackEndpoint: string | null;
-  allowThemeMode: boolean;
 }
 
 export type ThemeModeValue = 'system' | 'light' | 'dark';

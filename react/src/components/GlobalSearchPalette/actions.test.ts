@@ -33,7 +33,6 @@ const makeSearchContext = (
     hideAgents: false,
     enableReservoir: false,
     fasttrackEndpoint: null,
-    allowThemeMode: false,
   },
   visibleMenuKeys: new Set(['session', 'data', 'deployments']),
   disabledMenuKeys: new Set(),
@@ -64,7 +63,6 @@ const makeActionContext = (
     hideAgents: false,
     enableReservoir: false,
     fasttrackEndpoint: 'https://fasttrack.example.com',
-    allowThemeMode: true,
   },
   setThemeMode,
   openNotifications,
@@ -80,18 +78,12 @@ const run = (id: string, ctx = makeActionContext()) => {
 };
 
 describe('PALETTE_ACTIONS gates', () => {
-  it('hides the theme actions unless the deployment allows theme mode', () => {
-    expect(visibleIds(makeSearchContext())).not.toContain('action:theme-light');
-
-    const allowed = visibleIds(
-      makeSearchContext({
-        config: {
-          ...makeSearchContext().config,
-          allowThemeMode: true,
-        },
-      }),
-    );
-    expect(allowed).toEqual(
+  // The header's `WebUIThemeToggleButton` is mounted unconditionally, so the
+  // palette must not invent a stricter condition for the same capability.
+  it('offers the theme actions wherever the header toggle is offered', () => {
+    expect(
+      visibleIds(makeSearchContext({ visibleMenuKeys: new Set() })),
+    ).toEqual(
       expect.arrayContaining([
         'action:theme-light',
         'action:theme-dark',
