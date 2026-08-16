@@ -7,7 +7,7 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import { useEffectiveAdminRole } from '../../hooks/useCurrentUserProjectRoles';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
-import { buildHits, toMenuSources } from './buildHits';
+import { buildActionHits, buildHits, toMenuSources } from './buildHits';
 import type { GroupedMenuNode } from './buildHits';
 import { RECENT_HIT_ID_PREFIX, baseHitId, rankHits } from './rank';
 import type { HitTranslator, SearchContext, SearchHit } from './types';
@@ -75,6 +75,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
       hideAgents: baiClient?._config?.hideAgents ?? true,
       enableReservoir: !!baiClient?._config?.enableReservoir,
       fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
+      allowThemeMode: !!baiClient?._config?.allowThemeMode,
     },
     visibleMenuKeys: new Set(
       _.map([...generalMenu, ...adminMenu], (item) => item.key as string),
@@ -90,12 +91,24 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
   };
 
   const hits = _.filter(
-    buildHits({
-      menuSources,
-      projectName,
-      t: translate,
-      fallbackGroup: translate('webui.menu.groupName.General'),
-    }),
+    [
+      ...buildHits({
+        menuSources,
+        projectName,
+        t: translate,
+        fallbackGroup: translate('webui.menu.groupName.General'),
+      }),
+      // Actions come last so their groups trail the sidebar's in the empty
+      // state, which is the order `CommandPalette` renders headings in.
+      ...buildActionHits({
+        t: translate,
+        groupLabels: {
+          create: translate('webui.search.group.Create'),
+          appearance: translate('webui.search.group.Appearance'),
+          panels: translate('webui.search.group.PanelsAndHelp'),
+        },
+      }),
+    ],
     (hit) => isHitVisible(hit, ctx),
   );
   const hitById = _.keyBy(hits, 'id');
@@ -115,6 +128,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
     }),
   );
   const pageRows = _.filter(hits, (hit) => hit.kind === 'page');
+  const actionRows = _.filter(hits, (hit) => hit.kind === 'action');
 
   // Index drift is silent otherwise: a menu page with no indexed entry simply
   // never appears in the palette.
@@ -123,7 +137,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
       `[global-search] ${missing.length} menu key(s) have no search-index entry: ${missing.join(', ')}`,
     );
   });
-  const indexedMenuKeys = new Set(_.map(hits, 'menuKey'));
+  const indexedMenuKeys = new Set(_.compact(_.map(hits, 'menuKey')));
   const missingMenuKeys = _.filter(
     [...ctx.visibleMenuKeys],
     (key) => !indexedMenuKeys.has(key),
@@ -142,7 +156,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
         tEn: translateEn,
         recentIds,
       }),
-    bootstrap: () => [...recentRows, ...pageRows],
+    bootstrap: () => [...recentRows, ...pageRows, ...actionRows],
     getHit: (id: string) => hitById[baseHitId(id)],
   };
 };

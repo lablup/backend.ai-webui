@@ -52,7 +52,7 @@ describe('buildHits', () => {
   it('drops pages the menu does not show, but keeps whitelisted /usersettings', () => {
     const hits = build([]);
     expect(_.uniq(_.map(hits, 'menuKey'))).toEqual(['usersettings']);
-    expect(_.find(hits, { kind: 'page' })?.target.path).toBe('/usersettings');
+    expect(_.find(hits, { kind: 'page' })?.target?.path).toBe('/usersettings');
   });
 
   it('keeps twin pages apart and gives each its own scope and group', () => {
@@ -78,7 +78,7 @@ describe('buildHits', () => {
     const sessions = _.find(build(), {
       id: 'page:/project/:projectName/session',
     });
-    expect(sessions?.target.path).toBe('/project/my%20project/session');
+    expect(sessions?.target?.path).toBe('/project/my%20project/session');
     expect(fillProjectName('/project/:projectName/data', null)).toBe(
       '/project//data',
     );
@@ -88,7 +88,7 @@ describe('buildHits', () => {
     const hit = _.find(build(), {
       id: 'tab:/project/:projectName/statistics?tab=user-session-history',
     });
-    expect(hit?.target.search).toEqual({ tab: 'user-session-history' });
+    expect(hit?.target?.search).toEqual({ tab: 'user-session-history' });
     expect(hit?.tab).toEqual({ param: 'tab', key: 'user-session-history' });
     expect(hit?.breadcrumbKeys).toEqual(['webui.menu.Statistics']);
     expect(hit?.label).toBe('User Session History');

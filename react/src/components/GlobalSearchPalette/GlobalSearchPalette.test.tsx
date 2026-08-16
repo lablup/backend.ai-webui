@@ -40,6 +40,11 @@ const suspension = vi.hoisted(() => {
 
 const navigate = vi.fn();
 const pushRecent = vi.fn();
+const runAction = vi.fn();
+const setThemeMode = vi.fn();
+const openNotifications = vi.fn();
+const toggleSider = vi.fn();
+const openHelp = vi.fn();
 
 const makeHit = (hit: Partial<SearchHit> & Pick<SearchHit, 'id'>): SearchHit =>
   ({
@@ -80,7 +85,17 @@ const bodyHit = makeHit({
   target: { path: '/summary' },
 });
 
-const hits = [sessionsHit, settingHit, bodyHit];
+const actionHit = makeHit({
+  id: 'action:toggle-sidebar',
+  kind: 'action',
+  label: 'Toggle sidebar',
+  target: undefined,
+  run: runAction,
+  group: 'Panels & help',
+  auxiliaryData: { group: 'Panels & help' },
+});
+
+const hits = [sessionsHit, settingHit, bodyHit, actionHit];
 
 vi.mock('react-i18next', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-i18next')>();
@@ -95,10 +110,24 @@ vi.mock('react-i18next', async (importOriginal) => {
 
 vi.mock('../../hooks', () => ({
   useWebUINavigate: () => navigate,
+  useSuspendedBackendaiClient: () => ({ _config: {} }),
+}));
+
+vi.mock('../../hooks/useRouteScope', () => ({
+  useActiveProjectName: () => 'my project',
+}));
+
+vi.mock('../../hooks/useHelpURL', () => ({
+  useOpenHelp: () => openHelp,
+}));
+
+vi.mock('../../hooks/useShellPanels', () => ({
+  useNotificationDrawerState: () => [false, openNotifications],
+  useSiderCollapsedState: () => [false, toggleSider],
 }));
 
 vi.mock('../../hooks/useThemeMode', () => ({
-  useThemeMode: () => ({ isDarkMode: false }),
+  useThemeMode: () => ({ isDarkMode: false, setThemeMode }),
 }));
 
 vi.mock('./useRecentSearchHits', () => ({
@@ -130,8 +159,7 @@ const openPalette = async () => {
 
 describe('GlobalSearchPalette', () => {
   beforeEach(() => {
-    navigate.mockClear();
-    pushRecent.mockClear();
+    vi.clearAllMocks();
     suspension.release();
   });
 
@@ -219,5 +247,26 @@ describe('GlobalSearchPalette', () => {
     await waitFor(() =>
       expect(screen.queryByText('Auto logout')).not.toBeInTheDocument(),
     );
+  });
+
+  it('runs an action hit with the assembled context instead of navigating', async () => {
+    const user = await openPalette();
+
+    await user.click(screen.getByText('Toggle sidebar'));
+
+    await waitFor(() => expect(runAction).toHaveBeenCalledTimes(1));
+    expect(navigate).not.toHaveBeenCalled();
+    expect(pushRecent).toHaveBeenCalledWith(actionHit);
+
+    const ctx = runAction.mock.calls[0][0];
+    expect(ctx.projectName).toBe('my project');
+    ctx.openNotifications();
+    ctx.toggleSider();
+    ctx.openHelp();
+    ctx.setThemeMode('dark');
+    expect(openNotifications).toHaveBeenCalledWith(true);
+    expect(toggleSider).toHaveBeenCalledTimes(1);
+    expect(openHelp).toHaveBeenCalledTimes(1);
+    expect(setThemeMode).toHaveBeenCalledWith('dark');
   });
 });

@@ -34,7 +34,12 @@ const makeCtx = (overrides: Partial<SearchContext> = {}): SearchContext => ({
   isSuperAdmin: false,
   isAdmin: true,
   supports: () => false,
-  config: { hideAgents: true, enableReservoir: false, fasttrackEndpoint: null },
+  config: {
+    hideAgents: true,
+    enableReservoir: false,
+    fasttrackEndpoint: null,
+    allowThemeMode: false,
+  },
   visibleMenuKeys: new Set(allMenuKeys),
   disabledMenuKeys: new Set(),
   t: tEn,
