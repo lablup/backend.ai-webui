@@ -925,7 +925,9 @@ const LoginView: React.FC<{
         !password ||
         password === 'undefined'
       ) {
-        notification(t('login.PleaseInputLoginInfo'));
+        // SESSION signs in with an email, so it cannot share the API branch's
+        // "ID and password" wording.
+        notification(t('login.PleaseInputEmailAndPassword'));
         setIsLoading(false);
         return;
       }

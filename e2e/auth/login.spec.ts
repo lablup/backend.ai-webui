@@ -37,7 +37,7 @@ test.describe(
   { tag: ['@smoke', '@auth', '@functional'] },
   () => {
     test('should display the login form', async ({ page }) => {
-      await expect(page.getByLabel('Email or Username')).toBeVisible();
+      await expect(page.getByLabel('Email')).toBeVisible();
       await expect(page.getByLabel('Password')).toBeVisible();
       // Astryx `Button`'s accessible name comes from its visible text content,
       // not `aria-label`, so `getByRole` is required (`getByLabel` matches
@@ -76,7 +76,7 @@ test.describe(
     test('user can login with endpoint that has a single trailing slash', async ({
       page,
     }) => {
-      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+      await page.getByLabel('Email').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
       await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
@@ -90,7 +90,7 @@ test.describe(
     test('user can login with endpoint that has multiple trailing slashes', async ({
       page,
     }) => {
-      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+      await page.getByLabel('Email').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
       await fillEndpoint(page, webServerEndpoint + '///');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
@@ -116,7 +116,7 @@ test.describe(
         }
       });
 
-      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+      await page.getByLabel('Email').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
       await fillEndpoint(page, webServerEndpoint + '/');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
@@ -135,7 +135,7 @@ test.describe(
       page,
     }) => {
       await page
-        .getByLabel('Email or Username')
+        .getByLabel('Email')
         // Use random email to avoid block due to too many requests
         .fill(`nonexistent-${new Date().getTime()}@example.com`);
       await page.getByLabel('Password').fill('somepassword');
@@ -151,7 +151,7 @@ test.describe(
     test('should display error message for incorrect password', async ({
       page,
     }) => {
-      await page.getByLabel('Email or Username').fill(userInfo.admin.email);
+      await page.getByLabel('Email').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password + 'wrong');
       await fillEndpoint(page, webServerEndpoint);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
