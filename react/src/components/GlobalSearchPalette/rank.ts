@@ -68,13 +68,6 @@ interface PreparedHits {
 
 const preparedCache = new WeakMap<object, PreparedHits>();
 
-const titleWeight = (kind: SearchHitKind): number =>
-  kind === 'page'
-    ? FIELD_WEIGHTS.page
-    : kind === 'action'
-      ? FIELD_WEIGHTS.action
-      : FIELD_WEIGHTS[kind];
-
 const buildRecords = (
   hits: ReadonlyArray<SearchHit>,
   t: HitTranslator,
@@ -101,7 +94,7 @@ const buildRecords = (
   };
 
   _.forEach(hits, (hit, hitIndex) => {
-    push(hitIndex, 'title', titleWeight(hit.kind), [
+    push(hitIndex, 'title', FIELD_WEIGHTS[hit.kind], [
       hit.label,
       t(hit.labelKey),
       tEn(hit.labelKey),
@@ -141,18 +134,13 @@ const prepare = (
   return prepared;
 };
 
-/**
- * How a body row reads once resolved — tags stripped and whitespace collapsed,
- * the way the palette renders the "found in" line.
- */
+/** Setting descriptions carry inline markup (`<br />`, `<b>`); a row is one line. */
+export const plainText = (text: string): string =>
+  _.trim(text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' '));
+
+/** How a body row reads once resolved — the identity two keys can share. */
 const resolvedBodyText = (t: HitTranslator, key: string): string =>
-  _.toLower(
-    _.trim(
-      t(key)
-        .replace(/<[^>]*>/g, ' ')
-        .replace(/\s+/g, ' '),
-    ),
-  );
+  _.toLower(plainText(t(key)));
 
 const matchBoost = (folded: string, foldedQuery: string): number =>
   folded === foldedQuery
