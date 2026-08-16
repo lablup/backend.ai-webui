@@ -481,7 +481,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                       separate trigger made "why did this appear" and "why did
                       clicking a row change the field" two things to learn. */}
                   <div
-                    style={{ position: 'relative' }}
                     // Focus opens, focus-out closes. Picking a row unmounts the
                     // row that holds focus, so focus lands outside and the next
                     // click on the input opens the list again.
@@ -530,16 +529,20 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                         // Floats over what follows instead of pushing it down,
                         // the way a browser's own autofill list behaves.
                         style={{
-                          position: 'absolute',
-                          insetInline: 0,
-                          top: '100%',
-                          zIndex: 1,
+                          // In FLOW under the input, not floating over it: the
+                          // list has to sit below the field it fills, and an
+                          // absolutely-positioned panel here either overflowed
+                          // the dialog's scroll box (scrollbar + hidden
+                          // sign-up) or, opening upward, covered the very label
+                          // it belongs to. Height is capped so a long history
+                          // scrolls inside the list instead of growing the
+                          // dialog.
                           marginTop: 'var(--spacing-1)',
-                          background: 'var(--color-background-popover)',
+                          maxHeight: 140,
+                          overflowY: 'auto',
+                          background: 'var(--color-background-surface)',
                           border: '1px solid var(--color-border)',
                           borderRadius: 'var(--radius-element)',
-                          boxShadow: 'var(--shadow-med)',
-                          overflow: 'hidden',
                         }}
                       >
                         <List density="compact" hasDividers>
