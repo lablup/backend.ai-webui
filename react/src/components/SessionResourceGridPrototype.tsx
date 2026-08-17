@@ -1082,34 +1082,6 @@ const SessionResourceGridPrototype = ({
               >
                 {/* Mini session detail — the drawer's essentials, condensed. */}
                 <BAIFlex direction="column" align="stretch" gap={6}>
-                  <BAIFlex gap={6} align="center">
-                    {/* One-cell swatch in the group's style; click opens a
-                      Jira-style palette picker for this group's color. */}
-                    <svg
-                      width={16}
-                      height={16}
-                      role="button"
-                      aria-label="Change group color"
-                      style={{ cursor: 'pointer', flexShrink: 0 }}
-                      onClick={() =>
-                        setPickerFor((v) => (v === hoverIdx ? null : hoverIdx))
-                      }
-                    >
-                      <rect
-                        x={1}
-                        y={1}
-                        width={14}
-                        height={14}
-                        rx={4}
-                        fill={colors.alpha(hueFor(hoverIdx), 0.15)}
-                        stroke={hueFor(hoverIdx)}
-                        strokeWidth={1.5}
-                      />
-                    </svg>
-                    <Text size="sm" weight="semibold">
-                      {hoveredSession.name}
-                    </Text>
-                  </BAIFlex>
                   {pickerOpen && (
                     <BAIFlex gap={4} align="center">
                       {groupPalette.map((hue, pi) => (
@@ -1150,6 +1122,34 @@ const SessionResourceGridPrototype = ({
                       ))}
                     </BAIFlex>
                   )}
+                  <BAIFlex gap={6} align="center">
+                    {/* One-cell swatch in the group's style; click opens a
+                      Jira-style palette picker for this group's color. */}
+                    <svg
+                      width={16}
+                      height={16}
+                      role="button"
+                      aria-label="Change group color"
+                      style={{ cursor: 'pointer', flexShrink: 0 }}
+                      onClick={() =>
+                        setPickerFor((v) => (v === hoverIdx ? null : hoverIdx))
+                      }
+                    >
+                      <rect
+                        x={1}
+                        y={1}
+                        width={14}
+                        height={14}
+                        rx={4}
+                        fill={colors.alpha(hueFor(hoverIdx), 0.15)}
+                        stroke={hueFor(hoverIdx)}
+                        strokeWidth={1.5}
+                      />
+                    </svg>
+                    <Text size="sm" weight="semibold">
+                      {hoveredSession.name}
+                    </Text>
+                  </BAIFlex>
                   <BAIFlex gap={6} align="center">
                     <Badge
                       variant={badgeVariantForStatus(
