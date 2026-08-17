@@ -433,10 +433,15 @@ const AdminComputeSessionListPage = () => {
           </BAIFlex>
         </BAIFlex>
         {queryParams.view === 'grid' ? (
-          <Suspense fallback={<BAISkeleton />}>
+          // Keyed + undeferred: filter changes show the fallback at once
+          // instead of being held hidden until the next poll commit.
+          <Suspense
+            key={`${queryVariables.filter ?? ''}:${queryVariables.order ?? ''}`}
+            fallback={<BAISkeleton />}
+          >
             <SessionResourceGridPrototype
-              filter={deferredQueryVariables.filter}
-              order={deferredQueryVariables.order ?? undefined}
+              filter={queryVariables.filter}
+              order={queryVariables.order ?? undefined}
               fetchKey={deferredFetchKey}
               onClickSession={(sessionId) => {
                 const newSearchParams = new URLSearchParams(location.search);

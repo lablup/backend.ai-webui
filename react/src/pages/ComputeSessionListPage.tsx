@@ -566,7 +566,12 @@ const ComputeSessionListPage = () => {
             </BAIFlex>
           </BAIFlex>
           {queryParams.view === 'grid' ? (
+            // Keyed by filter/order + UNdeferred values: a change remounts the
+            // boundary so its fallback shows immediately, instead of the
+            // refetch being held hidden inside the nuqs transition until the
+            // next poll commit.
             <Suspense
+              key={`${queryVariables.filter ?? ''}:${queryVariables.order ?? ''}`}
               fallback={
                 <BAICard
                   style={{ width: '100%' }}
@@ -576,8 +581,8 @@ const ComputeSessionListPage = () => {
               }
             >
               <SessionResourceGridPrototype
-                filter={deferredQueryVariables.filter}
-                order={deferredQueryVariables.order ?? undefined}
+                filter={queryVariables.filter}
+                order={queryVariables.order ?? undefined}
                 projectId={currentProject.id}
                 fetchKey={deferredFetchKey}
                 onClickSession={(sessionId) => {
