@@ -1216,22 +1216,21 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     return next;
   })();
 
-  // Split the BUI-only keys out so the inherited Astryx ones can be forwarded
-  // as-is; anything left in `paginationRest` is a real `Pagination` prop.
+  // Split the BUI-only keys out; anything left in `paginationRest` is a real
+  // `Pagination` prop and is forwarded as-is. The keys this bar computes
+  // itself (`pageSize`, `pageSizeOptions`, `size`) stay in — the explicit
+  // props after the spread win.
   const {
     current: _current,
     defaultCurrent: _defaultCurrent,
     defaultPageSize: _defaultPageSize,
     total: _total,
     onChange: _onChange,
-    pageSize: _pageSize,
-    pageSizeOptions: _pageSizeOptions,
-    size: _size,
     showSizeChanger: _showSizeChanger,
     hideOnSinglePage: _hideOnSinglePage,
     extraContent: _extraContent,
     ...paginationRest
-  } = pagination === false || !pagination ? {} : pagination;
+  } = pagination || {};
 
   const rangeStart = total === 0 ? 0 : (activePage - 1) * currentPageSize + 1;
   const rangeEnd = Math.min(activePage * currentPageSize, total);
