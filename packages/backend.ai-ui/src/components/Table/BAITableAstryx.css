@@ -135,3 +135,41 @@
     );
   }
 }
+
+@layer components {
+  /*
+   antd-style header band. The wash is painted card-base + muted-overlay so it
+   stays opaque under the scroll-y sticky header (--color-background-muted
+   alone is semi-transparent). The between-columns split is a background layer,
+   not a `th::after` (collides with the sticky-columns plugin's edge-shadow
+   pseudo) and not a positioned child (a positioned `th` would fight the
+   scroll-y `position: sticky` above). 1.6em inset height = antd's
+   `headerSplitColor` rule.
+  */
+  .bai-table-astryx-dim-layer thead th {
+    background-color: var(--color-background-card);
+    background-image: linear-gradient(
+      var(--color-background-muted),
+      var(--color-background-muted)
+    );
+  }
+
+  .bai-table-astryx-header-split thead th:not(:last-child) {
+    background-image:
+      linear-gradient(
+        var(--color-border-emphasized),
+        var(--color-border-emphasized)
+      ),
+      linear-gradient(
+        var(--color-background-muted),
+        var(--color-background-muted)
+      );
+    background-repeat: no-repeat;
+    background-position:
+      right center,
+      0 0;
+    background-size:
+      var(--border-width) 1.6em,
+      100% 100%;
+  }
+}
