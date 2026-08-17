@@ -292,7 +292,7 @@ export interface BAITableProps<
   size?: 'small' | 'middle' | 'large';
   /** Dims the rows while a refetch is in flight (no spinner — see header). */
   loading?: boolean;
-  /** Kept for prop parity with `BAITable`; behaves like `loading` here. */
+  /** Kept for parity with the retired antd engine; behaves like `loading`. */
   spinnerLoading?: boolean;
   /** Drag-to-resize column borders. Defaults to on; pass `false` to opt out. */
   resizable?: boolean;
@@ -857,7 +857,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
           // identically sized NON-pinned cell with 255px of overflow escaped by
           // 0. Same on `/agent`'s pinned `row_id`. Legacy antd clipped both
           // faces unconditionally — `.ant-table-cell { overflow: hidden }` in
-          // `BAITable`'s `resizableTable` block matched `<th>`, `<td>` and
+          // the antd table's `resizableTable` block matched `<th>`, `<td>` and
           // `.ant-table-cell-fix-left` alike.
           //
           // Wrapping the CONTENT rather than re-clipping the cell keeps the
