@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cf99f63c7dc61f9285ea240ec223073c>>
+ * @generated SignedSource<<1c18b2c1f6d2c47cad007156e1e69829>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,9 +55,29 @@ v2 = [
 return {
   "argumentDefinitions": [
     {
+      "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\"",
+      "kind": "LocalArgument",
+      "name": "batchFilter"
+    },
+    {
+      "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\"",
+      "kind": "LocalArgument",
+      "name": "inferenceFilter"
+    },
+    {
+      "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\"",
+      "kind": "LocalArgument",
+      "name": "interactiveFilter"
+    },
+    {
       "defaultValue": null,
       "kind": "LocalArgument",
       "name": "scopeId"
+    },
+    {
+      "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\"",
+      "kind": "LocalArgument",
+      "name": "systemFilter"
     }
   ],
   "kind": "Fragment",
@@ -74,9 +94,9 @@ return {
       "alias": "myInteractive",
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "filter",
-          "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
+          "variableName": "interactiveFilter"
         },
         (v0/*: any*/),
         (v1/*: any*/)
@@ -92,9 +112,9 @@ return {
       "alias": "myBatch",
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "filter",
-          "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
+          "variableName": "batchFilter"
         },
         (v0/*: any*/),
         (v1/*: any*/)
@@ -110,9 +130,9 @@ return {
       "alias": "myInference",
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "filter",
-          "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
+          "variableName": "inferenceFilter"
         },
         (v0/*: any*/),
         (v1/*: any*/)
@@ -128,9 +148,9 @@ return {
       "alias": "myUpload",
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "filter",
-          "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
+          "variableName": "systemFilter"
         },
         (v0/*: any*/),
         (v1/*: any*/)
@@ -148,6 +168,6 @@ return {
 };
 })();
 
-(node as any).hash = "19e666cf346850c01eda18c6889928ae";
+(node as any).hash = "62fd6c06a208e3f17511370116de6c21";
 
 export default node;

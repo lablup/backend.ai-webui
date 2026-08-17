@@ -383,7 +383,8 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                       <BAIText>
                         {statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}
                       </BAIText>
-                      <BAIText>{`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}bps`}</BAIText>
+                      {/* stats.rate over psutil byte counters — bytes/sec, not bits/sec */}
+                      <BAIText>{`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}B/s`}</BAIText>
                     </BAIFlex>
                   );
                 }

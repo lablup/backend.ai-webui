@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { StorageStatusPanelCardPolicyQuery } from '../__generated__/StorageStatusPanelCardPolicyQuery.graphql';
 import { StorageStatusPanelCardQuery } from '../__generated__/StorageStatusPanelCardQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
@@ -60,11 +61,11 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     updateInvitations();
   }, [fetchKey]);
 
+  // Matches the backend's HARD_DELETED_VFOLDER_STATUSES: the enforced
+  // max_vfolder_count still counts delete-ongoing folders, so the displayed
+  // "N / max" must count them too.
   const isExcludedCount = (status: string) => {
-    return _.includes(
-      ['delete-ongoing', 'delete-complete', 'delete-error'],
-      status,
-    );
+    return _.includes(['delete-complete', 'delete-error'], status);
   };
 
   // TODO(FR-2691 v2-migration): the counts below are derived from the legacy
@@ -103,7 +104,12 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   ).length;
   const projectCount = vfolders?.filter(
     (item: any) =>
-      item.ownership_type === 'group' && !isExcludedCount(item.status),
+      item.ownership_type === 'group' &&
+      // The legacy list endpoint returns group folders of every project the
+      // user can see regardless of the group_id param — scope to the project
+      // selected in the header, which is also the limit's denominator.
+      item.group === currentProject.id &&
+      !isExcludedCount(item.status),
   ).length;
   const invitedCount = vfolders?.filter(
     (item: any) =>
@@ -115,20 +121,41 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   // TODO(FR-2691 v2-migration): `user_resource_policy` and
   // `project_resource_policy` are legacy (V1) root fields. Port this to the V2
   // schema once it exposes per-user / per-project vfolder count limits.
-  const { user_resource_policy, project_resource_policy } =
+  const { user_resource_policy, group } =
     useLazyLoadQuery<StorageStatusPanelCardQuery>(
       graphql`
-        query StorageStatusPanelCardQuery($name: String!) {
+        query StorageStatusPanelCardQuery($projectId: UUID!) {
           user_resource_policy {
             max_vfolder_count
           }
-          project_resource_policy(name: $name) {
+          group(id: $projectId, type: ["GENERAL", "MODEL_STORE"]) {
+            resource_policy
+          }
+        }
+      `,
+      {
+        projectId: currentProject.id,
+      },
+    );
+
+  // The enforced project vfolder limit comes from the group's FK-linked
+  // policy; a policy is not guaranteed to share the project's name, so the
+  // lookup must go through group.resource_policy.
+  const { project_resource_policy } =
+    useLazyLoadQuery<StorageStatusPanelCardPolicyQuery>(
+      graphql`
+        query StorageStatusPanelCardPolicyQuery(
+          $name: String!
+          $skip: Boolean!
+        ) {
+          project_resource_policy(name: $name) @skip(if: $skip) {
             max_vfolder_count
           }
         }
       `,
       {
-        name: currentProject.name,
+        name: group?.resource_policy ?? '',
+        skip: !group?.resource_policy,
       },
     );
 

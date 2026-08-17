@@ -16,7 +16,7 @@ import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -30,6 +30,7 @@ import {
   BAIBoardItemErrorBoundary,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
+  mergeFilterValues,
   useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
@@ -45,6 +46,19 @@ const DashboardPage: React.FC = () => {
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
+  const [currentUser] = useCurrentUserInfo();
+
+  // Domain admins/monitors hold project-wide read permission on sessions, so
+  // without a user filter the "My Sessions" counts would include every
+  // member's sessions. Superadmin keeps the project-wide "Active Sessions".
+  const sessionCountFilter = (type: string) =>
+    mergeFilterValues([
+      'status != "TERMINATED" & status != "CANCELLED"',
+      `type == "${type}"`,
+      _.isEqual(userRole, 'superadmin')
+        ? undefined
+        : `user_id == "${currentUser.uuid}"`,
+    ]);
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -76,8 +90,19 @@ const DashboardPage: React.FC = () => {
         $skipTotalResourceWithinResourceGroup: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
+        $interactiveFilter: String
+        $batchFilter: String
+        $inferenceFilter: String
+        $systemFilter: String
       ) {
-        ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
+        ...SessionCountDashboardItemFragment
+          @arguments(
+            scopeId: $scopeId
+            interactiveFilter: $interactiveFilter
+            batchFilter: $batchFilter
+            inferenceFilter: $inferenceFilter
+            systemFilter: $systemFilter
+          )
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
         ...TotalResourceWithinResourceGroupFragment
           @skip(if: $skipTotalResourceWithinResourceGroup)
@@ -96,6 +121,10 @@ const DashboardPage: React.FC = () => {
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      interactiveFilter: sessionCountFilter('interactive'),
+      batchFilter: sessionCountFilter('batch'),
+      inferenceFilter: sessionCountFilter('inference'),
+      systemFilter: sessionCountFilter('system'),
     },
     {
       fetchPolicy:
