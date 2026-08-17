@@ -315,11 +315,22 @@ const SessionResourceGridPrototype = ({
     return () => ro.disconnect();
   }, []);
 
-  const [hover, setHover] = useState<{
-    sessionIdx: number;
-    x: number;
-    y: number;
-  } | null>(null);
+  // The popover is anchored (not cursor-following) and itself hoverable so
+  // it can later grow interactive content; hiding is delayed so the mouse
+  // can travel from the cells onto the popover.
+  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelHide = () => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+      hideTimer.current = null;
+    }
+  };
+  const scheduleHide = () => {
+    cancelHide();
+    hideTimer.current = setTimeout(() => setHoverIdx(null), 150);
+  };
+  useEffect(() => cancelHide, []);
 
   const queryData = useLazyLoadQuery<SessionResourceGridPrototypeQuery>(
     graphql`
@@ -664,7 +675,11 @@ const SessionResourceGridPrototype = ({
       letterCellIdx.set(c.sessionIdx, i);
   });
 
-  const hoveredSession = hover === null ? null : sessions[hover.sessionIdx];
+  const hoveredSession = hoverIdx === null ? null : sessions[hoverIdx];
+  const hoverAnchor =
+    hoverIdx === null
+      ? null
+      : (placedCells[letterCellIdx.get(hoverIdx) ?? -1] ?? null);
 
   const sessionIdxFromEvent = (e: React.MouseEvent): number | null => {
     const raw = (e.target as Element).getAttribute?.('data-si');
@@ -794,12 +809,13 @@ const SessionResourceGridPrototype = ({
               onMouseMove={(e) => {
                 const idx = sessionIdxFromEvent(e);
                 if (idx === null) {
-                  setHover(null);
+                  scheduleHide();
                 } else {
-                  setHover({ sessionIdx: idx, x: e.clientX, y: e.clientY });
+                  cancelHide();
+                  setHoverIdx(idx);
                 }
               }}
-              onMouseLeave={() => setHover(null)}
+              onMouseLeave={scheduleHide}
               onClick={(e) => {
                 const idx = sessionIdxFromEvent(e);
                 if (idx !== null && onClickSession) {
@@ -810,7 +826,7 @@ const SessionResourceGridPrototype = ({
               {sessionSegGroups.map((segs, k) => {
                 const si = segs[0].sessionIdx;
                 const hue = hueFor(si);
-                const hovered = hover !== null && hover.sessionIdx === si;
+                const hovered = hoverIdx === si;
                 const rects = segs.map((s) => ({
                   x: s.x0 - platePadX,
                   y: s.y - platePadY,
@@ -898,7 +914,7 @@ const SessionResourceGridPrototype = ({
                     : 0.8;
                 const letterInk = lum > 0.45 ? darkInk : lightInk;
                 // Hovered session: each cell's border takes the group hue.
-                const cellHovered = hover?.sessionIdx === cell.sessionIdx;
+                const cellHovered = hoverIdx === cell.sessionIdx;
                 return (
                   <g key={i}>
                     <rect
@@ -948,20 +964,28 @@ const SessionResourceGridPrototype = ({
               })}
             </svg>
           )}
-          {hoveredSession && hover && (
+          {hoveredSession && hoverIdx !== null && hoverAnchor && (
             <div
+              onMouseEnter={cancelHide}
+              onMouseLeave={scheduleHide}
               style={{
-                position: 'fixed',
-                left: hover.x + 14,
-                top: hover.y + 14,
+                position: 'absolute',
+                left: Math.max(
+                  0,
+                  Math.min(
+                    hoverAnchor.px - platePadX,
+                    Math.max(0, wrapperWidth - 330),
+                  ),
+                ),
+                top: hoverAnchor.py - platePadY - 6,
+                transform: 'translateY(-100%)',
                 zIndex: 1000,
-                pointerEvents: 'none',
                 background: token(
                   '--color-background-popover',
                   theme.mode === 'dark' ? '#1F1F22' : '#FFFFFF',
                 ),
                 boxShadow: '0 4px 14px rgba(0, 0, 0, 0.22)',
-                border: `1px solid ${hueFor(hover.sessionIdx)}`,
+                border: `1px solid ${hueFor(hoverIdx)}`,
                 borderRadius: px('--radius-element', 6),
                 padding: px('--spacing-2', 8),
                 minWidth: 200,
