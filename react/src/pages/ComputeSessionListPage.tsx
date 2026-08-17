@@ -56,7 +56,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PowerOffIcon } from 'lucide-react';
+import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -468,16 +468,6 @@ const ComputeSessionListPage = () => {
               }}
               wrap="wrap"
             >
-              <SegmentedControl
-                label="View mode"
-                value={queryParams.view}
-                onChange={(value) =>
-                  setQueryParams({ view: value as 'table' | 'grid' })
-                }
-              >
-                <SegmentedControlItem value="table" label="Table" />
-                <SegmentedControlItem value="grid" label="Grid (proto)" />
-              </SegmentedControl>
               <BAIRadioGroup
                 optionType="button"
                 value={queryParams.statusCategory}
@@ -540,6 +530,26 @@ const ComputeSessionListPage = () => {
                   />
                 </>
               )}
+              <SegmentedControl
+                label="View mode"
+                value={queryParams.view}
+                onChange={(value) =>
+                  setQueryParams({ view: value as 'table' | 'grid' })
+                }
+              >
+                <SegmentedControlItem
+                  value="table"
+                  label="Table"
+                  isLabelHidden
+                  icon={<TableIcon size="1em" />}
+                />
+                <SegmentedControlItem
+                  value="grid"
+                  label="Grid (proto)"
+                  isLabelHidden
+                  icon={<LayoutGridIcon size="1em" />}
+                />
+              </SegmentedControl>
               <AutoUpdateFetchKeyButton
                 settingId="session-list"
                 defaultAutoUpdateDelay={15_000}

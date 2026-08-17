@@ -13,6 +13,8 @@
 // is a different session are drawn). Identity = that categorical outline +
 // first letter in the session's first cell; full name in the hover panel.
 import { SessionResourceGridPrototypeQuery } from '../__generated__/SessionResourceGridPrototypeQuery.graphql';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import {
   SegmentedControl,
@@ -22,7 +24,11 @@ import { Selector } from '@astryxdesign/core/Selector';
 import { Text } from '@astryxdesign/core/Text';
 import { useTheme } from '@astryxdesign/core/theme';
 import { useChartColors } from '@astryxdesign/lab';
-import { BAIFlex, filterOutNullAndUndefined } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  badgeVariantForStatus,
+  filterOutNullAndUndefined,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useEffect, useRef, useState } from 'react';
@@ -102,20 +108,35 @@ interface GridSession {
   name: string;
   status: string;
   type: string;
+  image: string;
+  createdAt: string;
+  clusterMode: string;
+  scalingGroup: string;
   slots: SlotMap;
   slotsAreRequested: boolean;
   liveStat: LiveStats;
   kernels: Array<GridKernel>;
 }
 
-const formatSlotSummary = (slots: SlotMap): string =>
-  Object.entries(slots)
-    .map(([k, v]) =>
-      k === 'mem'
-        ? `mem ${(parseFloat(v) / 2 ** 30).toFixed(1)} GiB`
-        : `${k} ${v}`,
-    )
-    .join(' · ');
+const formatBytes = (v: number): string =>
+  v >= 2 ** 30
+    ? `${(v / 2 ** 30).toFixed(1)} GiB`
+    : v >= 2 ** 20
+      ? `${(v / 2 ** 20).toFixed(1)} MiB`
+      : `${(v / 2 ** 10).toFixed(0)} KiB`;
+
+// "cr.backend.ai/multiarch/python:3.13-ubuntu24.04" → "python:3.13-ubuntu24.04"
+const shortImage = (image: string): string => image.split('/').pop() ?? image;
+
+const formatElapsed = (createdAt: string): string | null => {
+  const t = Date.parse(createdAt);
+  if (!Number.isFinite(t)) return null;
+  const mins = Math.max(0, Math.floor((Date.now() - t) / 60000));
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 48) return `${hours}h ${mins % 60}m`;
+  return `${Math.floor(hours / 24)}d ${hours % 24}h`;
+};
 
 // WCAG relative luminance of a #rrggbb fill, for picking the letter ink.
 const relativeLuminance = (hex: string): number => {
@@ -289,6 +310,17 @@ const SessionResourceGridPrototype = ({
   'use memo';
   const theme = useTheme();
   const colors = useChartColors();
+  // Human-friendly names/units for dynamic accelerator slot keys
+  // (e.g. `cuda.shares` → "fGPU"), same source as the session list/detail.
+  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const slotLabel = (slot: string): string =>
+    slot === 'cpu'
+      ? 'CPU'
+      : slot === 'mem'
+        ? 'Memory'
+        : (mergedResourceSlots?.[slot]?.human_readable_name ?? slot);
+  const slotUnit = (slot: string): string =>
+    mergedResourceSlots?.[slot]?.display_unit ?? '';
 
   const [gridParams, setGridParams] = useQueryStates(
     {
@@ -331,6 +363,25 @@ const SessionResourceGridPrototype = ({
     hideTimer.current = setTimeout(() => setHoverIdx(null), 150);
   };
   useEffect(() => cancelHide, []);
+  // Wrapper viewport rect, measured post-render (reading refs during render
+  // is forbidden); the popover positions itself from these coordinates.
+  const [wrapperRect, setWrapperRect] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  useEffect(() => {
+    if (hoverIdx !== null) {
+      const r = wrapperRef.current?.getBoundingClientRect();
+      setWrapperRect(r ? { left: r.left, top: r.top } : null);
+    }
+  }, [hoverIdx]);
+  // Per-session group-color overrides, chosen from a Jira-style swatch
+  // picker opened by clicking the popover swatch.
+  const [hueOverrides, setHueOverrides] = useState<Record<string, number>>({});
+  // Which session the picker was opened for — derived against hoverIdx so
+  // moving to another session closes it without an effect.
+  const [pickerFor, setPickerFor] = useState<number | null>(null);
+  const pickerOpen = pickerFor !== null && pickerFor === hoverIdx;
 
   const queryData = useLazyLoadQuery<SessionResourceGridPrototypeQuery>(
     graphql`
@@ -355,7 +406,11 @@ const SessionResourceGridPrototype = ({
             name
             type
             status
+            image
+            created_at
+            cluster_mode
             cluster_size
+            scaling_group
             occupied_slots
             requested_slots
             containers {
@@ -400,6 +455,10 @@ const SessionResourceGridPrototype = ({
       name: item.name ?? '(unnamed)',
       status: item.status ?? '',
       type: item.type ?? '',
+      image: item.image ?? '',
+      createdAt: item.created_at ?? '',
+      clusterMode: item.cluster_mode ?? '',
+      scalingGroup: item.scaling_group ?? '',
       slots: slotsAreRequested ? requested : occupied,
       slotsAreRequested,
       liveStat: mergeKernelStats(kernels.map((k) => k.liveStat)),
@@ -475,8 +534,20 @@ const SessionResourceGridPrototype = ({
   // neighbors (identity = position + letter + hover).
   const groupPalette =
     theme.mode === 'dark' ? GROUP_HUES_ON_DARK : GROUP_HUES_ON_LIGHT;
-  const hueFor = (sessionIdx: number): string =>
-    groupPalette[sessionIdx % groupPalette.length];
+  const hueFor = (sessionIdx: number): string => {
+    const id = sessions[sessionIdx]?.id ?? '';
+    const base = hueOverrides[id] ?? sessionIdx;
+    return groupPalette[base % groupPalette.length];
+  };
+  const hueIndexFor = (sessionIdx: number): number => {
+    const id = sessions[sessionIdx]?.id ?? '';
+    return (hueOverrides[id] ?? sessionIdx) % groupPalette.length;
+  };
+  const pickHue = (sessionIdx: number, paletteIdx: number) => {
+    const id = sessions[sessionIdx]?.id ?? '';
+    setHueOverrides((prev) => ({ ...prev, [id]: paletteIdx }));
+    setPickerFor(null);
+  };
 
   const px = (name: string, fallback: number): number => {
     const v = parseFloat(theme.token(name));
@@ -717,9 +788,7 @@ const SessionResourceGridPrototype = ({
                   <SegmentedControlItem
                     key={slot}
                     value={slot}
-                    label={
-                      slot === 'cpu' ? 'CPU' : slot === 'mem' ? 'Memory' : slot
-                    }
+                    label={slotLabel(slot)}
                   />
                 ))}
               </SegmentedControl>
@@ -964,91 +1033,209 @@ const SessionResourceGridPrototype = ({
               })}
             </svg>
           )}
-          {hoveredSession && hoverIdx !== null && hoverAnchor && (
-            <div
-              onMouseEnter={cancelHide}
-              onMouseLeave={scheduleHide}
-              style={{
-                position: 'absolute',
-                left: Math.max(
-                  0,
-                  Math.min(
-                    hoverAnchor.px - platePadX,
-                    Math.max(0, wrapperWidth - 330),
+          {hoveredSession &&
+            hoverIdx !== null &&
+            hoverAnchor &&
+            wrapperRect && (
+              <div
+                onMouseEnter={cancelHide}
+                onMouseLeave={scheduleHide}
+                style={{
+                  // Fixed positioning escapes the card's overflow clipping;
+                  // coordinates derive from the wrapper's measured rect.
+                  position: 'fixed',
+                  ...(() => {
+                    const left =
+                      wrapperRect.left +
+                      Math.max(
+                        0,
+                        Math.min(
+                          hoverAnchor.px - platePadX,
+                          Math.max(0, wrapperWidth - 330),
+                        ),
+                      );
+                    const cellTop = wrapperRect.top + hoverAnchor.py;
+                    // Above the cell when there is viewport room, else below.
+                    return cellTop >= 340
+                      ? {
+                          left,
+                          top: cellTop - platePadY - 6,
+                          transform: 'translateY(-100%)',
+                        }
+                      : {
+                          left,
+                          top: cellTop + cellPx + platePadY + 6,
+                        };
+                  })(),
+                  zIndex: 1000,
+                  background: token(
+                    '--color-background-popover',
+                    theme.mode === 'dark' ? '#1F1F22' : '#FFFFFF',
                   ),
-                ),
-                top: hoverAnchor.py - platePadY - 6,
-                transform: 'translateY(-100%)',
-                zIndex: 1000,
-                background: token(
-                  '--color-background-popover',
-                  theme.mode === 'dark' ? '#1F1F22' : '#FFFFFF',
-                ),
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.22)',
-                border: `1px solid ${hueFor(hoverIdx)}`,
-                borderRadius: px('--radius-element', 6),
-                padding: px('--spacing-2', 8),
-                minWidth: 200,
-                maxWidth: 320,
-              }}
-            >
-              <BAIFlex direction="column" align="stretch" gap={2}>
-                <Text size="sm">{hoveredSession.name}</Text>
-                <Text size="sm" color="secondary">
-                  {hoveredSession.status}
-                  {hoveredSession.slotsAreRequested ? ' (requested slots)' : ''}
-                  {` · ${hoveredSession.kernels.length} kernel(s)`}
-                </Text>
-                <Text size="sm" color="secondary">
-                  {formatSlotSummary(hoveredSession.slots)}
-                </Text>
-                {/* Mini session-detail: every live_stat metric, util first. */}
-                {Object.keys(hoveredSession.liveStat)
-                  .filter((k) => k !== 'cpu_used')
-                  .sort((a, b) => {
-                    const rank = (k: string) =>
-                      k.includes('_util')
-                        ? 0
-                        : k === 'mem'
-                          ? 1
-                          : k.includes('_mem')
-                            ? 2
-                            : 3;
-                    return rank(a) - rank(b) || a.localeCompare(b);
-                  })
-                  .slice(0, 8)
-                  .map((k) => {
-                    const stat = hoveredSession.liveStat[k];
-                    const pct = parseFloat(stat?.pct ?? '');
-                    // GiB detail only for memory metrics — io/net capacities
-                    // are sentinel values, meaningless to display.
-                    const isBytes =
-                      stat?.unit_hint === 'bytes' &&
-                      (k === 'mem' || k.endsWith('_mem'));
-                    const detail =
-                      isBytes && stat?.current
-                        ? `${(parseFloat(stat.current) / 2 ** 30).toFixed(1)} / ${(parseFloat(stat.capacity ?? '0') / 2 ** 30).toFixed(1)} GiB`
-                        : null;
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.22)',
+                  border: `1px solid ${hueFor(hoverIdx)}`,
+                  borderRadius: px('--radius-element', 6),
+                  padding: px('--spacing-2', 8),
+                  minWidth: 200,
+                  maxWidth: 320,
+                }}
+              >
+                {/* Mini session detail — the drawer's essentials, condensed. */}
+                <BAIFlex direction="column" align="stretch" gap={6}>
+                  <BAIFlex gap={6} align="center">
+                    {/* One-cell swatch in the group's style; click opens a
+                      Jira-style palette picker for this group's color. */}
+                    <svg
+                      width={16}
+                      height={16}
+                      role="button"
+                      aria-label="Change group color"
+                      style={{ cursor: 'pointer', flexShrink: 0 }}
+                      onClick={() =>
+                        setPickerFor((v) => (v === hoverIdx ? null : hoverIdx))
+                      }
+                    >
+                      <rect
+                        x={1}
+                        y={1}
+                        width={14}
+                        height={14}
+                        rx={4}
+                        fill={colors.alpha(hueFor(hoverIdx), 0.15)}
+                        stroke={hueFor(hoverIdx)}
+                        strokeWidth={1.5}
+                      />
+                    </svg>
+                    <Text size="sm" weight="semibold">
+                      {hoveredSession.name}
+                    </Text>
+                  </BAIFlex>
+                  {pickerOpen && (
+                    <BAIFlex gap={4} align="center">
+                      {groupPalette.map((hue, pi) => (
+                        <svg
+                          key={hue}
+                          width={20}
+                          height={20}
+                          role="button"
+                          aria-label={`Use color ${pi + 1}`}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => pickHue(hoverIdx, pi)}
+                        >
+                          <rect
+                            x={1}
+                            y={1}
+                            width={18}
+                            height={18}
+                            rx={5}
+                            fill={colors.alpha(hue, 0.35)}
+                            stroke={hue}
+                            strokeWidth={hueIndexFor(hoverIdx) === pi ? 2 : 1}
+                          />
+                          {hueIndexFor(hoverIdx) === pi && (
+                            <text
+                              x={10}
+                              y={10.5}
+                              textAnchor="middle"
+                              dominantBaseline="central"
+                              fontSize={11}
+                              fontWeight={700}
+                              fill={hue}
+                              pointerEvents="none"
+                            >
+                              ✓
+                            </text>
+                          )}
+                        </svg>
+                      ))}
+                    </BAIFlex>
+                  )}
+                  <BAIFlex gap={6} align="center">
+                    <Badge
+                      variant={badgeVariantForStatus(
+                        'session',
+                        hoveredSession.status,
+                      )}
+                      label={hoveredSession.status}
+                    />
+                    <Text size="sm" color="secondary">
+                      {`${hoveredSession.type.toLowerCase()} · ${hoveredSession.clusterMode} ×${Math.max(1, hoveredSession.kernels.length)} · ${hoveredSession.scalingGroup}`}
+                    </Text>
+                  </BAIFlex>
+                  <Text size="sm" color="secondary">
+                    {shortImage(hoveredSession.image) || 'unknown image'}
+                  </Text>
+                  {formatElapsed(hoveredSession.createdAt) && (
+                    <Text size="sm" color="secondary">
+                      {`Started ${new Date(hoveredSession.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} · Elapsed ${formatElapsed(hoveredSession.createdAt)}`}
+                    </Text>
+                  )}
+                  <div
+                    style={{ height: 1, background: colors.structural.grid }}
+                  />
+                  {Object.entries(hoveredSession.slots).map(([slot, raw]) => {
+                    const pct = sessionUtilPct(hoveredSession, slot);
+                    const label = slotLabel(slot);
+                    const alloc =
+                      slot === 'cpu'
+                        ? `${raw} core${parseFloat(raw) > 1 ? 's' : ''}`
+                        : slot === 'mem'
+                          ? formatBytes(parseFloat(raw))
+                          : `${raw} ${slotUnit(slot)}`.trim();
                     return (
-                      <BAIFlex key={k} justify="between" gap={12}>
-                        <Text size="sm" color="secondary">
-                          {k}
-                        </Text>
-                        <Text size="sm">
-                          {Number.isFinite(pct) ? `${pct.toFixed(1)}%` : '–'}
-                          {detail ? ` (${detail})` : ''}
-                        </Text>
+                      <BAIFlex
+                        key={slot}
+                        direction="column"
+                        align="stretch"
+                        gap={2}
+                      >
+                        <BAIFlex justify="between" gap={12}>
+                          <Text size="sm" color="secondary">
+                            {`${label} · ${alloc}`}
+                            {hoveredSession.slotsAreRequested
+                              ? ' (requested)'
+                              : ''}
+                          </Text>
+                          <Text size="sm">
+                            {pct === null ? '–' : `${pct.toFixed(0)}%`}
+                          </Text>
+                        </BAIFlex>
+                        <div
+                          style={{
+                            height: 5,
+                            borderRadius: 3,
+                            background: lowFill,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: `${Math.max(0, Math.min(100, pct ?? 0))}%`,
+                              height: '100%',
+                              background: binColor(pct),
+                            }}
+                          />
+                        </div>
                       </BAIFlex>
                     );
                   })}
-                {Object.keys(hoveredSession.liveStat).length === 0 && (
-                  <Text size="sm" color="secondary">
-                    no live data
-                  </Text>
-                )}
-              </BAIFlex>
-            </div>
-          )}
+                  {(() => {
+                    const io = ['io_read', 'io_write'].map((k) =>
+                      parseFloat(hoveredSession.liveStat[k]?.current ?? ''),
+                    );
+                    return Number.isFinite(io[0]) || Number.isFinite(io[1]) ? (
+                      <Text size="sm" color="secondary">
+                        {`I/O read ${Number.isFinite(io[0]) ? formatBytes(io[0]) : '–'} · write ${Number.isFinite(io[1]) ? formatBytes(io[1]) : '–'}`}
+                      </Text>
+                    ) : (
+                      <Text size="sm" color="secondary">
+                        no live data
+                      </Text>
+                    );
+                  })()}
+                </BAIFlex>
+              </div>
+            )}
         </div>
       )}
     </BAIFlex>

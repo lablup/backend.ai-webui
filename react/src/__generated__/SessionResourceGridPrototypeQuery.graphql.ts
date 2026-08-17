@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0c46df81d7e02a73f627380f392fc0f4>>
+ * @generated SignedSource<<f80328b9307d52dcc8ed174406328d68>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type SessionResourceGridPrototypeQuery$variables = {
 export type SessionResourceGridPrototypeQuery$data = {
   readonly compute_session_list: {
     readonly items: ReadonlyArray<{
+      readonly cluster_mode: string | null | undefined;
       readonly cluster_size: number | null | undefined;
       readonly containers: ReadonlyArray<{
         readonly cluster_hostname: string | null | undefined;
@@ -27,10 +28,13 @@ export type SessionResourceGridPrototypeQuery$data = {
         readonly live_stat: string | null | undefined;
         readonly status: string | null | undefined;
       } | null | undefined> | null | undefined;
+      readonly created_at: string | null | undefined;
       readonly id: string | null | undefined;
+      readonly image: string | null | undefined;
       readonly name: string | null | undefined;
       readonly occupied_slots: string | null | undefined;
       readonly requested_slots: string | null | undefined;
+      readonly scaling_group: string | null | undefined;
       readonly session_id: string | null | undefined;
       readonly status: string | null | undefined;
       readonly type: string | null | undefined;
@@ -160,7 +164,35 @@ v7 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "image",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "created_at",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "cluster_mode",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "cluster_size",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "scaling_group",
             "storageKey": null
           },
           {
@@ -248,16 +280,16 @@ return {
     "selections": (v7/*: any*/)
   },
   "params": {
-    "cacheID": "c9a075b81a1c196e50308c44635e55bd",
+    "cacheID": "a4744e37166eea3510a0ae0bcc38a2ab",
     "id": null,
     "metadata": {},
     "name": "SessionResourceGridPrototypeQuery",
     "operationKind": "query",
-    "text": "query SessionResourceGridPrototypeQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $group_id: String\n) {\n  compute_session_list(limit: $limit, offset: $offset, filter: $filter, order: $order, group_id: $group_id) {\n    total_count\n    items {\n      id\n      session_id\n      name\n      type\n      status\n      cluster_size\n      occupied_slots\n      requested_slots\n      containers {\n        id\n        cluster_role\n        cluster_hostname\n        status\n        live_stat\n      }\n    }\n  }\n}\n"
+    "text": "query SessionResourceGridPrototypeQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $group_id: String\n) {\n  compute_session_list(limit: $limit, offset: $offset, filter: $filter, order: $order, group_id: $group_id) {\n    total_count\n    items {\n      id\n      session_id\n      name\n      type\n      status\n      image\n      created_at\n      cluster_mode\n      cluster_size\n      scaling_group\n      occupied_slots\n      requested_slots\n      containers {\n        id\n        cluster_role\n        cluster_hostname\n        status\n        live_stat\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f9607da604671b8b8af2c19c838cfe7a";
+(node as any).hash = "48ef0853e65476c9afc4dea532ad919e";
 
 export default node;
