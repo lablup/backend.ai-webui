@@ -39,6 +39,7 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlertIconWithTooltip,
@@ -537,16 +538,22 @@ const ComputeSessionListPage = () => {
                   setQueryParams({ view: value as 'table' | 'grid' })
                 }
               >
-                <SegmentedControlItem
-                  value="table"
-                  label="Table"
-                  icon={<TableIcon size="1em" />}
-                />
-                <SegmentedControlItem
-                  value="grid"
-                  label="Grid"
-                  icon={<LayoutGridIcon size="1em" />}
-                />
+                <Tooltip content="Table">
+                  <SegmentedControlItem
+                    value="table"
+                    label="Table"
+                    isLabelHidden
+                    icon={<TableIcon size="1em" />}
+                  />
+                </Tooltip>
+                <Tooltip content="Grid">
+                  <SegmentedControlItem
+                    value="grid"
+                    label="Grid"
+                    isLabelHidden
+                    icon={<LayoutGridIcon size="1em" />}
+                  />
+                </Tooltip>
               </SegmentedControl>
               <AutoUpdateFetchKeyButton
                 settingId="session-list"

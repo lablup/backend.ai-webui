@@ -31,6 +31,7 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAdminProjectSelectAstryx,
   BAIFlex,
@@ -405,16 +406,22 @@ const AdminComputeSessionListPage = () => {
                 setQueryParams({ view: value as 'table' | 'grid' })
               }
             >
-              <SegmentedControlItem
-                value="table"
-                label="Table"
-                icon={<TableIcon size="1em" />}
-              />
-              <SegmentedControlItem
-                value="grid"
-                label="Grid"
-                icon={<LayoutGridIcon size="1em" />}
-              />
+              <Tooltip content="Table">
+                <SegmentedControlItem
+                  value="table"
+                  label="Table"
+                  isLabelHidden
+                  icon={<TableIcon size="1em" />}
+                />
+              </Tooltip>
+              <Tooltip content="Grid">
+                <SegmentedControlItem
+                  value="grid"
+                  label="Grid"
+                  isLabelHidden
+                  icon={<LayoutGridIcon size="1em" />}
+                />
+              </Tooltip>
             </SegmentedControl>
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"
