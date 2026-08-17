@@ -60,7 +60,7 @@ Writing `/workspace` in the input field of the `test` folder will mount to `/wor
 Writing a relative path will mount the folder under `/home/work/` with the path.
 :::
 
-Backend.AI gives an option to preserve files in folders when a compute session is deleted.
+Backend.AI gives an option to preserve files in folders when a compute session is terminated.
 The example below illustrates what's happening.
 
 Under the `user2-vfolder`, create a `test_file`.
@@ -140,4 +140,4 @@ Homebrew can be configured as follows:
    Hello, world!
    ```
 `brew` installs packages under `/home/linuxbrew/.linuxbrew` which is automatically mounted when `.linuxbrew` folder exists.
-So, if an automount folder named ''.linuxbrew'' is created, the Homebrew packages previously installed can be used again, even if the compute session is deleted and a new compute session is created.
+So, if an automount folder named ''.linuxbrew'' is created, the Homebrew packages previously installed can be used again, even if the compute session is terminated and a new compute session is created.

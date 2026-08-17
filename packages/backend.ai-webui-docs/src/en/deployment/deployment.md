@@ -57,7 +57,7 @@ The modal contains the following fields:
 :::warning[The resource group is fixed at creation]
 A warning notice sits under the **Resource Group** field from the moment the modal opens: *"The resource group selected at creation cannot be changed."* The resource group belongs to the deployment rather than to a revision, so you cannot move a deployment to a different resource group later — not by editing the deployment and not by adding a new revision. Pick the right one before you create the deployment; if you need a different resource group, create a new deployment.
 
-**Open to Public** is fixed in the same way. In the **Edit Deployment** modal the checkbox is read-only and its tooltip reads *"Cannot be changed after creation."*
+**Open to Public** is fixed in the same way. In the **Edit Deployment** modal the checkbox is read-only and its tooltip reads *"The public access setting selected at creation cannot be changed."*
 :::
 
 Click `Create` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision.

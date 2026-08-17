@@ -72,7 +72,7 @@
       "preferred": {
         "en": "vfolder",
         "ko": "가상 폴더",
-        "ja": "バーチャルフォルダ",
+        "ja": "仮想フォルダ",
         "th": "โฟลเดอร์เสมือน"
       },
       "context": "Technical term for storage folder",
@@ -344,11 +344,11 @@
       "decidingFR": null,
       "preferred": {
         "en": "role",
-        "ko": "권한",
+        "ko": "역할",
         "ja": "ロール",
         "th": "บทบาท"
       },
-      "description": "A named set of permissions assignable to users. The Korean i18n uses \"권한\" for both \"Role\" and \"Permission\" in different contexts."
+      "description": "A named set of permissions assignable to users. The Korean i18n uses \"역할\" for Role (rbac.Roles, credential.Role) and \"권한\" for Permission."
     },
     {
       "id": "rbac-permission",
@@ -383,7 +383,7 @@
       "decidingFR": null,
       "preferred": {
         "en": "scope type",
-        "ko": "적용 범위 타입",
+        "ko": "적용 범위",
         "ja": "スコープタイプ",
         "th": "ประเภทขอบเขต"
       },
@@ -439,16 +439,16 @@
       "description": "Full system access across all domains."
     },
     {
-      "id": "nav-summary",
+      "id": "nav-dashboard",
       "category": "UI Navigation Terms",
       "status": "approved",
       "decidingFR": null,
       "preferred": {
-        "en": "Summary",
-        "ko": "요약",
-        "ja": "サマリー"
+        "en": "Dashboard",
+        "ko": "대시보드",
+        "ja": "ダッシュボード"
       },
-      "description": "Sidebar menu item. Documentation section: summary/summary.md"
+      "description": "Sidebar menu item (webui.menu.Dashboard; the former Summary menu item — webui.menu.Summary now only backs the legacy /summary redirect). Documentation section: dashboard/dashboard.md"
     },
     {
       "id": "nav-sessions",
@@ -480,11 +480,11 @@
       "status": "approved",
       "decidingFR": null,
       "preferred": {
-        "en": "Deployment",
+        "en": "Deployments",
         "ko": "배포",
-        "ja": "モデルサービス"
+        "ja": "デプロイ"
       },
-      "description": "Sidebar menu item. Documentation section: deployment/deployment.md"
+      "description": "Sidebar menu item (webui.menu.Deployments). Documentation section: deployment/deployment.md"
     },
     {
       "id": "nav-statistics",
@@ -504,11 +504,11 @@
       "status": "approved",
       "decidingFR": null,
       "preferred": {
-        "en": "User Settings",
-        "ko": "사용자 설정",
-        "ja": "ユーザー設定"
+        "en": "Settings & Logs",
+        "ko": "설정 및 로그",
+        "ja": "設定とログ"
       },
-      "description": "Sidebar menu item. Documentation section: user_settings/user_settings.md"
+      "description": "Sidebar menu item (webui.menu.Settings&Logs, route /usersettings). The documentation page title remains \"User Settings\". Documentation section: user_settings/user_settings.md"
     },
     {
       "id": "nav-rbac-management",
@@ -739,7 +739,7 @@
       "avoid": ["Abort", "Discard"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",
-      "description": "Use \"Cancel\" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel` / `modelService.Cancel`."
+      "description": "Use \"Cancel\" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel`."
     },
     {
       "id": "verb-delete",
@@ -763,7 +763,7 @@
       "avoid": ["Delete", "Unlink"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",
-      "description": "Use \"Remove\" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. \"Remove from list\" is NOT \"Delete permanently\". Maps to i18n `rbac.RemovePermission`, `model.RemoveSelectedVersions`. Reserve \"Delete\" for destroying the standalone resource."
+      "description": "Use \"Remove\" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. \"Remove from list\" is NOT \"Delete permanently\". Maps to i18n `rbac.RemovePermission`, `reservoirPage.RemoveSelectedVersions`. Reserve \"Delete\" for destroying the standalone resource."
     },
     {
       "id": "verb-terminate",
@@ -775,7 +775,7 @@
       "avoid": ["Kill", "Destroy", "End"],
       "reversible": "irreversible",
       "decidingFR": "FR-3052",
-      "description": "Use \"Terminate\" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `session.ForceTerminate`. Do not use \"Stop\" for this; \"Stop\" is reserved for pausable workloads."
+      "description": "Use \"Terminate\" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `button.ForceTerminate`. Do not use \"Stop\" for this; \"Stop\" is reserved for pausable workloads."
     },
     {
       "id": "verb-stop",
@@ -799,7 +799,7 @@
       "avoid": ["Inactivate", "Disable", "Suspend"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",
-      "description": "Approved verb is \"Deactivate\" (not \"Inactivate\"): the UI uses \"Deactivate\" 13x vs \"Inactivate\" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The single `usersettings.InactivateTheFollowingUsers` value is the drift this entry pins. Reversible: pair with Activate."
+      "description": "Approved verb is \"Deactivate\" (not \"Inactivate\"): the UI uses \"Deactivate\" 13x vs \"Inactivate\" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The `credential.InactivateTheFollowingUsers` value was the drift this entry pinned (fixed to \"Deactivate\"). Reversible: pair with Activate."
     },
     {
       "id": "verb-purge",

@@ -274,7 +274,7 @@
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
-    "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
+    "UpdateMultipleProjects": "แก้ไขหลายโปรเจกต์"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "เลือกโปรเจกต์"
@@ -299,7 +299,7 @@
     "ProjectResourcePolicy": "นโยบายทรัพยากร",
     "ProjectUpdated": "โปรเจกต์ได้รับการอัปเดตแล้ว.",
     "Registry": "รีจิสทรี",
-    "UpdateProject": "อัปเดตโปรเจกต์"
+    "UpdateProject": "แก้ไขโปรเจกต์"
   },
   "comp:BAIProjectTable": {
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",

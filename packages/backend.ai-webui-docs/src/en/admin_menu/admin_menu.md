@@ -237,7 +237,7 @@ that could not be changed is reported separately with its own error.
 
 <a id="inactivate-user-account"></a>
 
-## Inactivate user account
+## Deactivate user account
 
 To track usage statistics per user, retain metrics, and prevent accidental
 account loss, the recommended way to stop a user from logging in is to
@@ -791,7 +791,7 @@ applied rather than what it limits:
 To change a resource policy, click the **Edit** (pencil) action in the Name column of the policy. In the
 **Edit Keypair Resource Policy** dialog, every option is editable except for the policy name, which serves
 as the primary key for distinguishing resource policies in the list. Uncheck the Unlimited checkbox
-at the bottom of CPU, RAM, and fGPU, and set the resource limits to the desired
+at the bottom of CPU, RAM, and fractional GPU (fGPU), and set the resource limits to the desired
 values. Ensure that the allocated resources are less than the total hardware
 capacity. In this case, set CPU, RAM, and fGPU to 2, 4, and 1 respectively.
 Click **Save** to apply the changed resource policy.
@@ -827,7 +827,7 @@ About details of each option in resource policy dialog, see the description belo
   - Idle timeout (sec.): Configurable period of time during which the user can
     leave their session untouched. If there is no activity at all on a
     compute session for idle timeout, the session will be garbage collected
-    and destroyed automatically. The criteria of the "idleness" can be
+    and terminated automatically. The criteria of the "idleness" can be
     various and set by the administrators. (max value: 15552000 (approx. 180 days))
   - Max Concurrent SFTP Sessions: Maximum number of concurrent SFTP sessions.
 

@@ -13,7 +13,7 @@ navTitle: เริ่มต้นอย่างรวดเร็ว
 - [สร้างโฟลเดอร์จัดเก็บ](#create-storage-folder)
 - [เริ่มเซสชันใหม่](#create_session)
 - [ใช้งาน Jupyter Notebook](#use_session)
-- [ลบเซสชันการคำนวณ](#delete_session)
+- [ยุติเซสชันการคำนวณ](#delete_session)
 - [ปรับใช้โมเดล](#create-deployment)
 
 ### ส่วนที่ 2. คู่มือขั้นสูงในการใช้ Backend.AI

@@ -274,7 +274,7 @@
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",
-    "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
+    "UpdateMultipleProjects": "프로젝트 일괄 수정"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "프로젝트를 선택해주세요"

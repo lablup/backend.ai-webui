@@ -11,7 +11,7 @@ navTitle: Appendix
 Backend.AI supports GPU virtualization technology which allows single physical
 GPU can be divided and shared by multiple users simultaneously. Therefore, if
 you want to execute a task that does not require much GPU computation
-capability, you can create a compute session by allocating a portion of the GPU.
+capability, you can create a compute session by allocating a portion of the GPU as a fractional GPU (fGPU).
 The amount of GPU resources that 1 fGPU actually allocates may vary from system
 to system depending on administrator settings. For example, if the administrator
 has set one physical GPU to be divided into five pieces, 5 fGPU means 1 physical
@@ -98,7 +98,7 @@ GPU resources.
 
 ![](../images/pending_session_list.png)
 
-Now let's destroy one of the two sessions in RUNNING state. Then you can see
+Now let's terminate one of the two sessions in RUNNING state. Then you can see
 that the compute session in PENDING state is allocated resources
 by the job scheduler and converted to RUNNING state soon. In this way, the job
 scheduler utilizes the job queue to hold the user's compute session requests

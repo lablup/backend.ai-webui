@@ -274,7 +274,7 @@
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
-    "UpdateMultipleProjects": "プロジェクトを一括更新"
+    "UpdateMultipleProjects": "プロジェクトを一括編集"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "プロジェクトを選択"
@@ -299,7 +299,7 @@
     "ProjectResourcePolicy": "リソースポリシー",
     "ProjectUpdated": "プロジェクトが更新されました。",
     "Registry": "レジストリ",
-    "UpdateProject": "プロジェクトの更新"
+    "UpdateProject": "プロジェクトの編集"
   },
   "comp:BAIProjectTable": {
     "ContainerRegistry": "コンテナレジストリ",

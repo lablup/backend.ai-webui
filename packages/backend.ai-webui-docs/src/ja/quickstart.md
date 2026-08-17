@@ -13,7 +13,7 @@ navTitle: クイックスタート
 - [ストレージフォルダの作成](#create-storage-folder)
 - [新しいセッションの開始](#create_session)
 - [Jupyter Notebookの使用](#use_session)
-- [コンピュートセッションの削除](#delete_session)
+- [コンピュートセッションの終了](#delete_session)
 - [モデルのデプロイ](#create-deployment)
 
 ### パート2. Backend.AIの高度な使用ガイド

@@ -40,7 +40,7 @@ If needed, setting the name of the session (optional) is also available.
     - The compute session is used in a way that the user interacts with after
       creating a session without specifying a pre-defined execution script or
       command.
-    - The session is not terminated automatically unless user explicitly destroys
+    - The session is not terminated automatically unless the user explicitly terminates
       the session or session garbage collectors are set by the admin.
 
   - Batch compute session
@@ -207,7 +207,7 @@ The Agent Select feature may not be available depending on the server environmen
 
 Click the `Next` button below, or the `Data & Storage` menu on the right to proceed to the next page.
 
-When a compute session is destroyed, data deletion is set to default.
+When a compute session is terminated, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
 
@@ -589,7 +589,7 @@ New session name should also follow the [the authoring rule](#session-naming-rul
 
 <a id="delete_session"></a>
 
-## Delete a compute session
+## Terminate a compute session
 
 To terminate a specific session, simply click on the red power button and click
 `Terminate` button in the dialog. Since the data in the folder inside the compute

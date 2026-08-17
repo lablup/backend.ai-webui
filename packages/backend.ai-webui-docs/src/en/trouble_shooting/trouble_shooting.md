@@ -78,7 +78,7 @@ the [guide on using Homebrew with automount folder](#using-linuxbrew-with-automo
 
 By default, when you install a pip package, it will be installed under
 `~/.local`. So, if you create an automount storage folder named `.local`, you
-can keep the installed packages after a compute session is destroyed, and then
+can keep the installed packages after a compute session is terminated, and then
 reuse them for the next compute session. Just install the packages with pip like:
 
 ```bash

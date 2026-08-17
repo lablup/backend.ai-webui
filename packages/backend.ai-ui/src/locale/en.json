@@ -286,7 +286,7 @@
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
-    "UpdateMultipleProjects": "Update Multiple Projects"
+    "UpdateMultipleProjects": "Edit Multiple Projects"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Select Project"
@@ -311,7 +311,7 @@
     "ProjectResourcePolicy": "Resource Policy",
     "ProjectUpdated": "The project has been updated.",
     "Registry": "Registry",
-    "UpdateProject": "Update Project"
+    "UpdateProject": "Edit Project"
   },
   "comp:BAIProjectTable": {
     "ContainerRegistry": "Container Registry",

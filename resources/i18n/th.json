@@ -565,7 +565,7 @@
     "Credentials": "ข้อมูลประจำตัว",
     "CurrentClientIp": "IP ไคลเอนต์ปัจจุบัน: {{ip}}",
     "Days": "วัน",
-    "Deactivate": "ปิดการใช้งาน",
+    "Deactivate": "ปิดใช้งาน",
     "DeactivateConfirm": "คุณแน่ใจหรือไม่ว่าต้องการปิดใช้งานคู่คีย์นี้?",
     "DeactivateCredential": "ปิดใช้งานข้อมูลรับรอง",
     "DeactivateUser": "ปิดการใช้งานผู้ใช้",

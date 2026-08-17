@@ -35,7 +35,7 @@ The tables below list the approved term for each concept, per language, grouped 
 | session-type-inference | inference session | 추론 세션 | 推論セッション | — | — | — | Compute session type: Model serving sessions. |
 | session-type-interactive | interactive session | 대화형 세션 | インタラクティブセッション | — | — | — | Compute session type: User interacts after creation. |
 | storage-folder | storage folder | 스토리지 폴더 | ストレージフォルダ | โฟลเดอร์จัดเก็บ | — | — | Persistent storage that survives session termination. Use "storage folder" in procedural text, "virtual folder" or "vfolder" in introductions. |
-| storage-folder-technical | vfolder | 가상 폴더 | バーチャルフォルダ | โฟลเดอร์เสมือน | Technical term for storage folder | — | Technical-context term for the storage folder (virtual folder). Referred to as "vfolder" in technical contexts. |
+| storage-folder-technical | vfolder | 가상 폴더 | 仮想フォルダ | โฟลเดอร์เสมือน | Technical term for storage folder | — | Technical-context term for the storage folder (virtual folder). Referred to as "vfolder" in technical contexts. |
 
 ### Feature-Specific Terms
 
@@ -58,9 +58,9 @@ The tables below list the approved term for each concept, per language, grouped 
 | rbac | RBAC | RBAC | RBAC | RBAC | — | — | Role-Based Access Control. Keep as abbreviation across all languages. |
 | rbac-permission | permission | 세부 권한 | 権限 | สิทธิ์ | — | — | A fine-grained access rule within a role. "세부 권한" is used specifically for fine-grained permissions within a role. |
 | rbac-permission-type | permission type | 권한 타입 | 権限タイプ | ประเภทสิทธิ์ | — | — | The category of resource a permission controls. |
-| rbac-role | role | 권한 | ロール | บทบาท | — | — | A named set of permissions assignable to users. The Korean i18n uses "권한" for both "Role" and "Permission" in different contexts. |
+| rbac-role | role | 역할 | ロール | บทบาท | — | — | A named set of permissions assignable to users. The Korean i18n uses "역할" for Role (rbac.Roles, credential.Role) and "권한" for Permission. |
 | rbac-role-assignment | role assignment | 권한 할당 | ロール割り当て | การมอบหมายบทบาท | — | — | The association of a user to a role. |
-| rbac-scope-type | scope type | 적용 범위 타입 | スコープタイプ | ประเภทขอบเขต | — | — | The level at which a permission applies. |
+| rbac-scope-type | scope type | 적용 범위 | スコープタイプ | ประเภทขอบเขต | — | — | The level at which a permission applies. |
 | replica | replica | 복제본 | レプリカ | เรพลิกา | — | — | An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md |
 | resource-policy | Resource Policy | 자원 정책 | リソースポリシー | นโยบายทรัพยากร | — | FR-3302 | A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses "자원 정책" (consistent with 자원 그룹). |
 
@@ -76,13 +76,13 @@ The tables below list the approved term for each concept, per language, grouped 
 
 | Concept | EN | KO | JA | TH | Description |
 |---|---|---|---|---|---|
+| nav-dashboard | Dashboard | 대시보드 | ダッシュボード | — | Sidebar menu item (webui.menu.Dashboard; the former Summary menu item — webui.menu.Summary now only backs the legacy /summary redirect). Documentation section: dashboard/dashboard.md |
 | nav-data | Data | 데이터 | データ | — | Sidebar menu item. Documentation section: vfolder/vfolder.md |
-| nav-deployment | Deployment | 배포 | モデルサービス | — | Sidebar menu item. Documentation section: deployment/deployment.md |
+| nav-deployment | Deployments | 배포 | デプロイ | — | Sidebar menu item (webui.menu.Deployments). Documentation section: deployment/deployment.md |
 | nav-rbac-management | RBAC Management | RBAC 관리 | RBAC管理 | — | Sidebar menu item. Documentation section: rbac_management/rbac_management.md |
 | nav-sessions | Sessions | 세션 | セッション | — | Sidebar menu item. Documentation section: session_page/session_page.md |
 | nav-statistics | Statistics | 통계 | 統計 | — | Sidebar menu item. Documentation section: statistics/statistics.md |
-| nav-summary | Summary | 요약 | サマリー | — | Sidebar menu item. Documentation section: summary/summary.md |
-| nav-user-settings | User Settings | 사용자 설정 | ユーザー設定 | — | Sidebar menu item. Documentation section: user_settings/user_settings.md |
+| nav-user-settings | Settings & Logs | 설정 및 로그 | 設定とログ | — | Sidebar menu item (webui.menu.Settings&Logs, route /usersettings). The documentation page title remains "User Settings". Documentation section: user_settings/user_settings.md |
 
 <!-- terminology:auto:concepts END -->
 
@@ -163,7 +163,7 @@ A **Container** is the runtime environment of a compute session; a **Kernel imag
 
 The RBAC vocabulary (RBAC, role, permission, role assignment, scope type, permission type) is listed in the Feature-Specific Terms table above with per-language terms.
 
-**Note**: The Korean i18n uses "권한" for both "Role" and "Permission" in different contexts. "세부 권한" is used specifically for fine-grained permissions within a role. Always check `resources/i18n/ko.json` for the exact UI labels.
+**Note**: The Korean i18n uses "역할" for Role (`rbac.Roles`, `credential.Role`) and "권한" for Permission (`rbac.Permission`); "세부 권한" is used specifically for fine-grained permissions within a role (`rbac.CreatePermission`, `rbac.RemovePermission`). Always check `resources/i18n/ko.json` for the exact UI labels.
 
 ### UI Navigation Terms
 
@@ -221,15 +221,15 @@ This list governs only **which word** labels an action. It does **not** decide t
 
 | Intent | Approved Verb (EN) | Avoid | Context | Reversible | Deciding FR | Description |
 |---|---|---|---|---|---|---|
-| cancel | Cancel | Abort, Discard | Stop an in-flight or not-yet-committed operation (request, draft, running deployment rollout). | reversible | FR-3052 | Use "Cancel" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel` / `modelService.Cancel`. |
+| cancel | Cancel | Abort, Discard | Stop an in-flight or not-yet-committed operation (request, draft, running deployment rollout). | reversible | FR-3052 | Use "Cancel" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel`. |
 | delete | Delete | Destroy, Erase, Wipe | Permanently remove a standalone resource the user owns (storage folder, image, token, resource preset). | irreversible | FR-3052 | Use "Delete" for permanent removal of a resource that exists on its own. Maps to i18n `button.Delete`, `data.folders.Delete`, `environment.Delete`. NOTE: lexical only — whether a given Delete needs a typed-confirm modal is decided by destructive-confirmation.md from the action's reversibility, NOT from this word. |
 | edit | Edit | Modify, Update | Modify values of an existing entity that was created with initial values (resource group, user, role, preset, deployment, registry, resource policy). | reversible | FR-3331 | Use "Edit" (KO: 수정) for actions that open or title a form modifying a previously created entity's values — modal titles, row actions, icon tooltips. Maps to i18n `button.Edit`, `credential.ModifyUserDetail` ("Edit User Detail"), `resourceGroup.ModifyResourceGroup` ("Edit Resource Group"). Do NOT use "Edit" for feature configuration — that stays "Settings" (KO: 설정, e.g., fair share settings) — nor for text/content editing where KO keeps 편집 (e.g., the vfolder file editor). The submit button of an edit form is "Save" (KO: 저장, i18n `button.Save`), not "Edit" or "Update". |
 | hide | Hide | Remove, Delete, Dismiss | Make an item invisible in the UI without deleting it (hide a column, hide a notice, hide a list entry). | reversible | FR-3052 | Use "Hide" for purely cosmetic visibility changes that keep the underlying data intact and can be reversed by un-hiding. Never use "Hide" when data is actually removed. |
-| inactivate | Deactivate | Inactivate, Disable, Suspend | Disable an account/credential/project/role so it can no longer be used, while keeping its data for later reactivation. | reversible | FR-3052 | Approved verb is "Deactivate" (not "Inactivate"): the UI uses "Deactivate" 13x vs "Inactivate" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The single `usersettings.InactivateTheFollowingUsers` value is the drift this entry pins. Reversible: pair with Activate. |
+| inactivate | Deactivate | Inactivate, Disable, Suspend | Disable an account/credential/project/role so it can no longer be used, while keeping its data for later reactivation. | reversible | FR-3052 | Approved verb is "Deactivate" (not "Inactivate"): the UI uses "Deactivate" 13x vs "Inactivate" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The `credential.InactivateTheFollowingUsers` value was the drift this entry pinned (fixed to "Deactivate"). Reversible: pair with Activate. |
 | purge | Purge | Delete, Wipe, Destroy | Permanently and irrecoverably erase an already-deactivated account/project/role and all its records. | irreversible | FR-3052 | Use "Purge" for the final, irreversible erase that follows "Deactivate". Distinct from "Delete": Purge implies the entity was first deactivated and now has its records expunged. Maps to i18n `project.Purge`, `project.PurgeProject`, `rbac.PurgeRole`. |
-| remove | Remove | Delete, Unlink | Detach an item from a collection / relationship without destroying the item itself (permission from a role, version from a list, member from a project). | reversible | FR-3052 | Use "Remove" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. "Remove from list" is NOT "Delete permanently". Maps to i18n `rbac.RemovePermission`, `model.RemoveSelectedVersions`. Reserve "Delete" for destroying the standalone resource. |
+| remove | Remove | Delete, Unlink | Detach an item from a collection / relationship without destroying the item itself (permission from a role, version from a list, member from a project). | reversible | FR-3052 | Use "Remove" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. "Remove from list" is NOT "Delete permanently". Maps to i18n `rbac.RemovePermission`, `reservoirPage.RemoveSelectedVersions`. Reserve "Delete" for destroying the standalone resource. |
 | stop | Stop | Pause, Halt, Terminate | Halt a process that can later be resumed or restarted (a service replica, a pausable job). | reversible | FR-3052 | Use "Stop" only when the workload can be started again afterward. If the resources are released and the session ends, use "Terminate" instead. |
-| terminate | Terminate | Kill, Destroy, End | End a running compute session (interactive / batch / inference) or model-service endpoint. | irreversible | FR-3052 | Use "Terminate" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `session.ForceTerminate`. Do not use "Stop" for this; "Stop" is reserved for pausable workloads. |
+| terminate | Terminate | Kill, Destroy, End | End a running compute session (interactive / batch / inference) or model-service endpoint. | irreversible | FR-3052 | Use "Terminate" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `button.ForceTerminate`. Do not use "Stop" for this; "Stop" is reserved for pausable workloads. |
 
 <!-- terminology:auto:verbs END -->
 
