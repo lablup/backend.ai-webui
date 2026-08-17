@@ -540,13 +540,11 @@ const ComputeSessionListPage = () => {
                 <SegmentedControlItem
                   value="table"
                   label="Table"
-                  isLabelHidden
                   icon={<TableIcon size="1em" />}
                 />
                 <SegmentedControlItem
                   value="grid"
-                  label="Grid (proto)"
-                  isLabelHidden
+                  label="Grid"
                   icon={<LayoutGridIcon size="1em" />}
                 />
               </SegmentedControl>
