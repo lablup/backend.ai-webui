@@ -102,6 +102,7 @@ import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Icon } from '@astryxdesign/core/Icon';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Pagination } from '@astryxdesign/core/Pagination';
+import type { PaginationProps } from '@astryxdesign/core/Pagination';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import {
   Table,
@@ -215,10 +216,27 @@ export interface BAITableRowSelection<RecordType> {
   getRowLabel?: (record: RecordType) => string;
 }
 
-export interface BAITablePaginationConfig {
+/**
+ * Astryx's `Pagination` props, minus what the bottom bar renames or owns.
+ * `pageSize` / `pageSizeOptions` / `size` / `variant` and the rest are
+ * inherited and forwarded, so the bar gains Astryx's knobs without restating
+ * them (FR-3564).
+ */
+type InheritedPaginationProps = Omit<
+  PaginationProps,
+  // Renamed by the frozen antd vocabulary
+  | 'page' // -> current
+  | 'totalItems' // -> total
+  | 'onChange' // -> onChange(page, pageSize)
+  // Owned by the bottom bar: derived from the table's own state
+  | 'onPageSizeChange'
+  | 'label'
+  | 'ref'
+>;
+
+export interface BAITablePaginationConfig extends InheritedPaginationProps {
   current?: number;
   defaultCurrent?: number;
-  pageSize?: number;
   defaultPageSize?: number;
   /**
    * Omit it and the table slices `dataSource` itself. Pass a `total` greater
@@ -226,9 +244,7 @@ export interface BAITablePaginationConfig {
    * and the table leaves them alone (antd's `pageData` rule).
    */
   total?: number;
-  pageSizeOptions?: Array<number>;
   onChange?: (page: number, pageSize: number) => void;
-  size?: 'sm' | 'md';
   /**
    * antd parity. Astryx's `Pagination` renders the size selector exactly when
    * `pageSizeOptions` is passed, so `false` here simply withholds them — the
@@ -1200,6 +1216,23 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     return next;
   })();
 
+  // Split the BUI-only keys out so the inherited Astryx ones can be forwarded
+  // as-is; anything left in `paginationRest` is a real `Pagination` prop.
+  const {
+    current: _current,
+    defaultCurrent: _defaultCurrent,
+    defaultPageSize: _defaultPageSize,
+    total: _total,
+    onChange: _onChange,
+    pageSize: _pageSize,
+    pageSizeOptions: _pageSizeOptions,
+    size: _size,
+    showSizeChanger: _showSizeChanger,
+    hideOnSinglePage: _hideOnSinglePage,
+    extraContent: _extraContent,
+    ...paginationRest
+  } = pagination === false || !pagination ? {} : pagination;
+
   const rangeStart = total === 0 ? 0 : (activePage - 1) * currentPageSize + 1;
   const rangeEnd = Math.min(activePage * currentPageSize, total);
 
@@ -1312,6 +1345,8 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 />
               </Text>
               <Pagination
+                variant="pages"
+                {...paginationRest}
                 page={activePage}
                 pageSize={currentPageSize}
                 totalItems={total}
@@ -1323,7 +1358,6 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                     : (pagination?.pageSizeOptions ?? [10, 20, 50])
                 }
                 size={pagination?.size ?? 'sm'}
-                variant="pages"
                 label={String(t('comp:BAITable.Pagination'))}
                 onChange={(page) => {
                   setCurrentPage(page);
