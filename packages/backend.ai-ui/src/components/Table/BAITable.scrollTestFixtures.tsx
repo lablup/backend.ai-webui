@@ -2,7 +2,7 @@
  Shared fixture for the scroll.x / scroll.y test pair — each file asserts the
  NEGATIVE of the other's axis, so they must agree on the render shape.
 */
-import BAITableAstryx from './BAITableAstryx';
+import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render } from '@testing-library/react';
 
@@ -27,12 +27,10 @@ export const SCROLL_ROWS: Array<ScrollTestRow> = [
 ];
 
 export const renderScrollTable = (
-  props: Partial<
-    React.ComponentProps<typeof BAITableAstryx<ScrollTestRow>>
-  > = {},
+  props: Partial<React.ComponentProps<typeof BAITable<ScrollTestRow>>> = {},
 ) =>
   render(
-    <BAITableAstryx<ScrollTestRow>
+    <BAITable<ScrollTestRow>
       rowKey="id"
       dataSource={SCROLL_ROWS}
       columns={SCROLL_COLUMNS}

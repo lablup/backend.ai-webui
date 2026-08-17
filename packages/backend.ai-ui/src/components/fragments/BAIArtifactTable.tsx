@@ -13,7 +13,7 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
-import { BAIColumnType, BAITableAstryx, BAITableProps } from '../Table';
+import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
@@ -171,7 +171,7 @@ const BAIArtifactTable = ({
       // HISTORY (to-astryx W2-D): this column declared `render: (record) => …`
       // and every row threw `Cannot read properties of undefined (reading
       // 'availability')`. Under rc-table a `dataIndex`-less column happens to
-      // receive the RECORD as `render`'s first argument; `BAITableAstryx` does
+      // receive the RECORD as `render`'s first argument; `BAITable` does
       // not reproduce that quirk, so the record must be taken from the SECOND
       // argument — the Astryx/antd `(value, record, index)` contract. This is
       // the canonical form for every computed column in this codebase.
@@ -309,12 +309,12 @@ const BAIArtifactTable = ({
   ];
 
   return (
-    <BAITableAstryx<Artifact>
+    <BAITable<Artifact>
       rowKey={(record) => record.id}
       columns={filterOutEmpty(columns)}
       dataSource={filterOutNullAndUndefined(artifact)}
       {...tableProps}
-    ></BAITableAstryx>
+    ></BAITable>
   );
 };
 

@@ -15,7 +15,7 @@ import {
   BAIColumnType,
   BAIColumnsType,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
@@ -427,7 +427,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx<ModelDeploymentNodeInList>
+    <BAITable<ModelDeploymentNodeInList>
       resizable
       rowKey="id"
       size="small"

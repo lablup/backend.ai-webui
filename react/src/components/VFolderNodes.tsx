@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
- (`BAITableAstryx`, Astryx engine). Everything rendered AROUND and INSIDE the table's
+ (`BAITable`, Astryx engine). Everything rendered AROUND and INSIDE the table's
  cells is Astryx: `BAINameActionCellAstryx` (name + row actions),
  `Badge` + the repo-global status lookup (ticket 13) for the status tag,
  `Text` for text cells, `BAIText copyable` for the copyable id, and
@@ -39,7 +39,7 @@ import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
   badgeVariantForStatus,
@@ -421,7 +421,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         resizable
         rowKey={(record) => record.id}
         size="small"

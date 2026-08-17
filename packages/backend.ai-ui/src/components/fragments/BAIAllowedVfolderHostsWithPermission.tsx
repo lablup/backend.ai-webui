@@ -7,7 +7,7 @@ import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
-import { BAITableAstryx } from '../Table';
+import { BAITable } from '../Table';
 import * as _ from 'lodash-es';
 import { CircleCheck, Ban, LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';
@@ -133,7 +133,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
         onCancel={() => setStorageHost(null)}
         footer={null}
       >
-        <BAITableAstryx
+        <BAITable
           pagination={false}
           size="small"
           dataSource={_.map(

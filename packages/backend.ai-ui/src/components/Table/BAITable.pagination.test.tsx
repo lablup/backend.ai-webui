@@ -2,7 +2,7 @@
  Client-side slicing, plus the server-sliced case it must not re-slice.
  Mechanism + affected call sites: FR-3563.
 */
-import BAITableAstryx from './BAITableAstryx';
+import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render, screen } from '@testing-library/react';
 
@@ -22,10 +22,10 @@ const makeRows = (count: number): Array<Row> =>
   }));
 
 const renderTable = (
-  props: Partial<React.ComponentProps<typeof BAITableAstryx<Row>>> = {},
-) => render(<BAITableAstryx<Row> rowKey="id" columns={COLUMNS} {...props} />);
+  props: Partial<React.ComponentProps<typeof BAITable<Row>>> = {},
+) => render(<BAITable<Row> rowKey="id" columns={COLUMNS} {...props} />);
 
-describe('BAITableAstryx pagination (FR-3563)', () => {
+describe('BAITable pagination (FR-3563)', () => {
   it('slices a client-side list to the default page size', () => {
     renderTable({ dataSource: makeRows(25), pagination: {} });
 

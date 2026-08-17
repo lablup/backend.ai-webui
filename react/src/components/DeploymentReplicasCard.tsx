@@ -11,8 +11,8 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { ProjectContextOrNull } from '../types/projectContext';
 import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -34,7 +34,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIId,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -584,7 +584,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
           }}
         />
       </BAIFlex>
-      <BAITableAstryx<ReplicaNode>
+      <BAITable<ReplicaNode>
         rowKey={(record) => record.id}
         dataSource={replicas}
         columns={columns}

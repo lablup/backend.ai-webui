@@ -1108,7 +1108,7 @@ export const convertToOrderBy = <
 
 /**
  * Reverses `convertToOrderBy`: converts the first entry of a GraphQL v2
- * OrderBy array back to a UI order string (e.g., for a `BAITableAstryx`'s `order`
+ * OrderBy array back to a UI order string (e.g., for a `BAITable`'s `order`
  * prop, or to persist the current sort to the URL).
  *
  * @param orderBy - An OrderBy array (or its first entry's `field`/`direction`).

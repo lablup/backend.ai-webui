@@ -31,7 +31,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -448,7 +448,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               />
             </BAIFlex>
           </BAIFlex>
-          <BAITableAstryx<KeypairNode>
+          <BAITable<KeypairNode>
             rowKey="id"
             loading={deferredQueryVariables !== queryVariables}
             dataSource={keypairNodes}

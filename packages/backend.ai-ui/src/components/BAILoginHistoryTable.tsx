@@ -1,7 +1,7 @@
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAITag,
   filterOutEmpty,
@@ -179,7 +179,7 @@ const BAILoginHistoryTable = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
       resizable
       rowKey="id"
       size="small"

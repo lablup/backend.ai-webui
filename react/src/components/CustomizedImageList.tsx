@@ -26,7 +26,7 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -427,7 +427,7 @@ const CustomizedImageList: React.FC = () => {
             }}
           />
         </BAIFlex>
-        <BAITableAstryx
+        <BAITable
           resizable
           loading={isPendingSearchTransition}
           columns={

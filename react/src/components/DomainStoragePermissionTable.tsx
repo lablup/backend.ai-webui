@@ -16,7 +16,7 @@ import StoragePermissionEditModal from './StoragePermissionEditModal';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
@@ -154,7 +154,7 @@ const DomainStoragePermissionTable: React.FC<
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         size="small"
         {...tableProps}
         locale={{ emptyText: t('storageHost.permission.NoDomainSelected') }}

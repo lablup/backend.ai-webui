@@ -22,7 +22,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
-  BAITableAstryx,
+  BAITable,
   BAIFlex,
   BAILink,
 } from 'backend.ai-ui';
@@ -114,7 +114,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
             Astryx owns its checkbox column and has no such hook, so the
             highlight is applied directly through `onRow` instead, which is
             what the hack was emulating. */}
-        <BAITableAstryx<ParsedSessionHistory>
+        <BAITable<ParsedSessionHistory>
           dataSource={parsedSessionHistory}
           pagination={false}
           onRow={(record) => ({

@@ -14,7 +14,7 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIFlex,
   BAIModal,
-  BAITableAstryx,
+  BAITable,
   type BAIColumnsType,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -253,7 +253,7 @@ const ErrorLogList: React.FC<{
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
         pagination={{
           showSizeChanger: false,
         }}

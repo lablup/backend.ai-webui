@@ -13,10 +13,10 @@ import BAISchedulingResultBadge, {
 } from '../BAISchedulingResultBadge';
 import BAIText from '../BAIText';
 import {
-  BAIAstryxTableProps,
+  BAITableProps,
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
 } from '../Table';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -38,7 +38,7 @@ const isEnableSorter = (key: string) => {
 };
 
 export interface BAISchedulingHistoryNodesProps extends Omit<
-  BAIAstryxTableProps<SchedulingHistoryNodeInList>,
+  BAITableProps<SchedulingHistoryNodeInList>,
   'dataSource' | 'onChangeOrder' | 'columns'
 > {
   schedulingHistoryFrgmt: BAISchedulingHistoryNodesFragment$key;
@@ -161,7 +161,7 @@ const BAISchedulingHistoryNodes = ({
     // to-astryx ticket 25: migrated to the Astryx engine — this is the
     // expandable-row proving ground (`expandable` arrives from
     // `BAISchedulingHistoryTable` and renders a nested `BAISubStepNodes`).
-    <BAITableAstryx
+    <BAITable
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(histories)}
       columns={allColumns}

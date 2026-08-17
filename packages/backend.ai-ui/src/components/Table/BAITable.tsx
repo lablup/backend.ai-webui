@@ -2,32 +2,27 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- to-astryx TICKET 25 — the Astryx-native successor to `BAITable`.
+ The project's table: Astryx's `Table` primitive plus a plugin pipeline,
+ behind an antd/BUI-shaped prop contract.
 
- `BAITable` (antd) is a MONOLITH: `columns` / `dataSource` / `rowSelection` /
- `pagination` / `expandable` / sorting are all internal to one component.
- Astryx's `Table` is a PRIMITIVE plus a plugin pipeline — selection, sorting,
- column settings and resizing are each an opt-in hook whose state the CONSUMER
- owns. Nothing here is "ported"; the behaviour is re-assembled.
+ Astryx's `Table` is a PRIMITIVE — selection, sorting, column settings and
+ resizing are each an opt-in hook whose state the CONSUMER owns. Nothing here
+ is "ported" from the antd table that preceded it; the behaviour is
+ re-assembled.
 
- ## The migration seam (read this before touching a call site)
+ ## The prop contract (read this before touching a call site)
 
- The public prop contract is deliberately kept **antd/BUI-shaped**:
- `columns` (`BAIColumnsType`, i.e. `title`/`dataIndex`/`render`/`sorter`/
- `required`/`defaultHidden`), `dataSource`, `rowKey`, `rowSelection`,
+ The public surface is deliberately kept **antd-v6-shaped**: `columns`
+ (`BAIColumnsType`, i.e. `title`/`dataIndex`/`render`/`sorter`/`required`/
+ `defaultHidden`), `dataSource`, `rowKey`, `size`, `bordered`, `rowSelection`,
  `pagination`, `expandable`, `order`/`onChangeOrder`, `tableSettings`,
- `exportSettings`. That is the whole point of this file: a consumer moves off
- the antd table by swapping ONE import, not by rewriting its column model.
+ `exportSettings`. Several hundred call sites carried over from the antd era
+ use those names; renaming them buys nothing and breaks all of them. See
+ `.claude/rules/component-props-extension.md` ("Frozen antd-v6-shaped prop
+ vocabulary").
 
-   - import { BAITable }       from 'backend.ai-ui';  // antd engine (legacy)
-   + import { BAITableAstryx } from 'backend.ai-ui';  // Astryx engine
-
- **Ticket 30-D completed that flip.** All 71 consumers are across, the antd
- engine (`BAITable.tsx` / `BAITableSettingModal.tsx` / `BAITable.css`) is
- deleted, and this is the only table engine in the package. `BAITableProps` is
- kept as an alias of `BAIAstryxTableProps` because ~30 components embed it in
- their own public prop interfaces; the column model and the persisted-override
- shape moved to the engine-neutral `tableTypes.ts`.
+ Everything Astryx exposes that this file does NOT rename is inherited rather
+ than restated — see `InheritedTableProps` below (FR-3564).
 
  ## The plugin composition
 
@@ -50,7 +45,7 @@
  Pagination is deliberately NOT the `useTablePagination` plugin: BUI renders
  its own bottom bar next to the settings gear, and the plugin hides itself on a
  single page, which antd never does. Client-vs-server slicing is documented on
- `BAIAstryxPaginationConfig.total` (FR-3563).
+ `BAITablePaginationConfig.total` (FR-3563).
 
  ## PILOT-DECISIONs (see the ticket file for the full list)
 
@@ -87,7 +82,7 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
-import './BAITableAstryx.css';
+import './BAITable.css';
 import BAITableAstryxSettingModal from './BAITableAstryxSettingModal';
 import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
 import type {
@@ -122,6 +117,7 @@ import type {
   TableColumn,
   TableDensity,
   TablePlugin,
+  TableProps,
   TableSortState,
 } from '@astryxdesign/core/Table';
 import { Text } from '@astryxdesign/core/Text';
@@ -139,10 +135,10 @@ import React, { useState, type ReactNode } from 'react';
 /** Internal row shape Astryx's generic constraint requires. */
 type AnyRow = Record<string, unknown>;
 /**
- * PUBLIC record constraint. Deliberately looser than `AnyRow`: it is the same
- * shape antd's `AnyObject` had, so the ~70 consumers that write
- * `BAITableProps<SomeRelayNode>` keep type-checking unchanged after the flip.
- * Rows are cast to `AnyRow` at the Astryx boundary.
+ * PUBLIC record constraint. Deliberately looser than `AnyRow` so the ~70
+ * consumers that write `BAITableProps<SomeRelayNode>` type-check — a Relay
+ * node interface does not satisfy Astryx's `Record<string, unknown>`. Rows are
+ * cast to `AnyRow` at the Astryx boundary.
  */
 type AnyRecord = BAIAnyObject;
 
@@ -176,7 +172,7 @@ const X_HEADER_RELEASE: React.CSSProperties = {
 };
 const X_BODY_RELEASE: React.CSSProperties = { maxWidth: 'none' };
 // Inline beats every @layer, restoring the pinned header's z 3 over the
-// sticky-header rule. Why: BAITableAstryx.css.
+// sticky-header rule. Why: BAITable.css.
 const Y_PINNED_HEADER_STACK: React.CSSProperties = { zIndex: 3 };
 
 /** antd scroll values: numbers are px, strings pass through. */
@@ -203,7 +199,7 @@ const mergeCellStyle = <
 /* Public prop contract                                                        */
 /* -------------------------------------------------------------------------- */
 
-export interface BAIAstryxRowSelection<RecordType> {
+export interface BAITableRowSelection<RecordType> {
   /** Only `'checkbox'` is implemented; `'radio'` is dropped (see ticket 25). */
   type?: 'checkbox';
   selectedRowKeys?: ReadonlyArray<React.Key>;
@@ -219,7 +215,7 @@ export interface BAIAstryxRowSelection<RecordType> {
   getRowLabel?: (record: RecordType) => string;
 }
 
-export interface BAIAstryxPaginationConfig {
+export interface BAITablePaginationConfig {
   current?: number;
   defaultCurrent?: number;
   pageSize?: number;
@@ -250,7 +246,7 @@ export interface BAIAstryxPaginationConfig {
   extraContent?: ReactNode;
 }
 
-export interface BAIAstryxExpandable<RecordType> {
+export interface BAITableExpandable<RecordType> {
   expandedRowRender?: (record: RecordType, index: number) => ReactNode;
   rowExpandable?: (record: RecordType) => boolean;
   expandedRowKeys?: ReadonlyArray<React.Key>;
@@ -261,7 +257,34 @@ export interface BAIAstryxExpandable<RecordType> {
   columnWidth?: number;
 }
 
-export interface BAIAstryxTableProps<RecordType extends AnyRecord = AnyRecord> {
+/**
+ * Astryx's own props, minus everything this wrapper renames or owns. The
+ * renamed ones (`data`/`columns`/`idKey`) are also the only generic-in-`T`
+ * props, so the remainder is instantiated at `AnyRow` — which keeps the public
+ * `RecordType` constraint loose enough for the Relay node types call sites
+ * pass, while Astryx's own is `Record<string, unknown>`.
+ */
+type InheritedTableProps = Omit<
+  TableProps<AnyRow>,
+  // Renamed by the frozen antd-v6-shaped vocabulary
+  | 'data' // -> dataSource
+  | 'columns' // -> BAIColumnsType, not TableColumn[]
+  | 'idKey' // -> rowKey
+  | 'density' // -> size
+  | 'dividers' // -> bordered
+  // Owned here: derived from `pagination`, or fixed internally
+  | 'rowIndexStart'
+  | 'rowCount'
+  | 'children'
+  | 'scrollWrapper'
+  | 'ref'
+  // Owned here: a string is wrapped in the default EmptyState (see below)
+  | 'emptyState'
+>;
+
+export interface BAITableProps<
+  RecordType extends AnyRecord = AnyRecord,
+> extends InheritedTableProps {
   columns?: BAIColumnsType<RecordType>;
   dataSource?: ReadonlyArray<RecordType>;
   rowKey?: string | ((record: RecordType) => React.Key);
@@ -276,11 +299,11 @@ export interface BAIAstryxTableProps<RecordType extends AnyRecord = AnyRecord> {
   /** Backend.AI order string, e.g. `-created_at`. */
   order?: string | null;
   onChangeOrder?: (order?: string) => void;
-  rowSelection?: BAIAstryxRowSelection<RecordType>;
-  pagination?: false | BAIAstryxPaginationConfig;
+  rowSelection?: BAITableRowSelection<RecordType>;
+  pagination?: false | BAITablePaginationConfig;
   tableSettings?: BAITableSettings;
   exportSettings?: BAIExportSettings;
-  expandable?: BAIAstryxExpandable<RecordType>;
+  expandable?: BAITableExpandable<RecordType>;
   /**
    * Rendered in place of the body when `dataSource` is empty. A string is
    * wrapped in the default `EmptyState` (icon + padding); any other node is
@@ -303,9 +326,6 @@ export interface BAIAstryxTableProps<RecordType extends AnyRecord = AnyRecord> {
   sticky?: boolean;
   /** antd `bordered` -> Astryx `dividers="grid"`. */
   bordered?: boolean;
-  isStriped?: boolean;
-  hasHover?: boolean;
-  textOverflow?: 'wrap' | 'truncate';
   /**
    * antd `scroll`. Both axes are wired — see the file-header PILOT-DECISION:
    * `x` sizes the table from its content, `y` caps the body height and sticks
@@ -359,7 +379,7 @@ const columnKeyOf = (column: BAIColumnType<any>, index: number) =>
  * `getPathValue` returns the whole RECORD when `path` is empty, which makes
  * `render: (row) => …` work under antd); that quirk is deliberately NOT
  * re-implemented. Call sites that need the record write
- * `render: (_value, row) => …`. See `BAITableAstryx.cellValue.test.tsx`,
+ * `render: (_value, row) => …`. See `BAITable.cellValue.test.tsx`,
  * which pins this in both directions.
  */
 const readDataIndex = (record: AnyRow, dataIndex: unknown): unknown => {
@@ -444,7 +464,7 @@ const columnPlainLabel = <RecordType extends AnyRecord>({
 /* Component                                                                   */
 /* -------------------------------------------------------------------------- */
 
-const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
+const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   columns,
   dataSource,
   rowKey = 'id',
@@ -467,11 +487,12 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   isStriped,
   hasHover = true,
   textOverflow = 'truncate',
+  verticalAlign,
   scroll,
   showHeader = true,
   className,
   style,
-}: BAIAstryxTableProps<RecordType>): React.ReactElement => {
+}: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
@@ -1220,12 +1241,12 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
 
           qa2-c: holding only the table also makes Astryx's scroll wrapper the
           wrapper's ONLY child, which is why it needs the block-bleed reset
-          below — see BAITableAstryx.css. */}
+          below — see BAITable.css. */}
       <div
         aria-busy={isDimmed || undefined}
         className={classNames(
           // Cancels Astryx's BLOCK-axis container bleed. See
-          // BAITableAstryx.css for why this dim wrapper makes the bleed
+          // BAITable.css for why this dim wrapper makes the bleed
           // misfire; without it every table page overlaps its filter row and
           // its pagination bar by 24px.
           'bai-table-astryx-dim-layer',
@@ -1258,6 +1279,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           isStriped={isStriped}
           hasHover={hasHover}
           textOverflow={textOverflow}
+          verticalAlign={verticalAlign}
           emptyState={emptyStateNode}
           rowCount={total || undefined}
           rowIndexStart={
@@ -1398,7 +1420,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   );
 };
 
-export default BAITableAstryx;
+export default BAITable;
 
 /** Re-exported so a migrated call site does not need a second import. */
 export type { BAIColumnType, BAIColumnsType };

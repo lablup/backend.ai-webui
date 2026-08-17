@@ -1,30 +1,30 @@
 import BAITag from '../BAITag';
-import BAITableAstryx from './BAITableAstryx';
+import BAITable from './BAITable';
 import { BAITableColumnOverrideItem, BAIColumnsType } from './tableTypes';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type Key } from 'react';
 
 /**
- * BAITableAstryx is the Astryx-native successor to BAITable (to-astryx
+ * BAITable is the Astryx-native successor to BAITable (to-astryx
  * ticket 25). It keeps the SAME antd/BUI-shaped `columns`/`dataSource`
  * contract as the legacy `BAITable` — a consumer migrates by swapping the
- * import (`BAITable` -> `BAITableAstryx`), not by rewriting its column
+ * import (`BAITable` -> `BAITable`), not by rewriting its column
  * model — but renders through Astryx's `Table` primitive + plugin pipeline
  * instead of antd's `Table`.
  *
  * The antd engine (and its `BAITable.stories.tsx`) was deleted in ticket 30-D
  * once the last consumer flipped; these are now the table's only stories.
  */
-const meta: Meta<typeof BAITableAstryx> = {
-  title: 'Table/BAITableAstryx',
-  component: BAITableAstryx,
+const meta: Meta<typeof BAITable> = {
+  title: 'Table/BAITable',
+  component: BAITable,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component: `
-**BAITableAstryx** is the Astryx-engine successor to \`BAITable\` (ticket 25). Same public contract, different renderer:
+**BAITable** is the Astryx-engine successor to \`BAITable\` (ticket 25). Same public contract, different renderer:
 
 - **Column visibility** via \`tableSettings\` (Astryx \`Dialog\` settings modal, not the antd one)
 - **Resizable columns** — drag-to-resize, persisted into \`columnOverrides[key].width\`
@@ -76,7 +76,7 @@ const meta: Meta<typeof BAITableAstryx> = {
 
 export default meta;
 
-type Story = StoryObj<typeof BAITableAstryx>;
+type Story = StoryObj<typeof BAITable>;
 
 const sampleColumns: BAIColumnsType<any> = [
   {
@@ -264,7 +264,7 @@ export const HorizontalScroll: Story = {
   },
   render: () => (
     <div style={{ width: 560 }}>
-      <BAITableAstryx
+      <BAITable
         scroll={{ x: 'max-content' }}
         columns={scrollColumns}
         dataSource={scrollData}
@@ -286,7 +286,7 @@ export const VerticalScroll: Story = {
   },
   render: () => (
     <div style={{ width: 560 }}>
-      <BAITableAstryx
+      <BAITable
         scroll={{ x: 'max-content', y: 240 }}
         columns={scrollColumns}
         dataSource={verticalScrollData}
@@ -312,7 +312,7 @@ export const WithColumnSettings: Story = {
     >({});
 
     return (
-      <BAITableAstryx
+      <BAITable
         columns={sampleColumns}
         dataSource={sampleData}
         resizable
@@ -342,7 +342,7 @@ export const WithSorting: Story = {
   render: () => {
     const [order, setOrder] = useState<string | null>('name');
     return (
-      <BAITableAstryx
+      <BAITable
         columns={sampleColumns}
         dataSource={sampleData}
         order={order}
@@ -364,7 +364,7 @@ export const RowSelection: Story = {
   render: () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<Array<Key>>([]);
     return (
-      <BAITableAstryx
+      <BAITable
         columns={sampleColumns}
         dataSource={sampleData}
         rowKey="key"

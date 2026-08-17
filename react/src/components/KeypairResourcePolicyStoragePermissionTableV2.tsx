@@ -19,7 +19,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   type BAITableProps,
   BAITag,
   BAIUnmountAfterClose,
@@ -210,7 +210,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         size="small"
         {...tableProps}
         rowKey="id"

@@ -2,7 +2,7 @@ import {
   BAIColumnType,
   BAIFlex,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAITagList,
   BAIText,
@@ -321,7 +321,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx<UserV2InList>
+    <BAITable<UserV2InList>
       resizable
       rowKey="id"
       size="small"

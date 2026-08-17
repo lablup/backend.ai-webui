@@ -10,7 +10,7 @@ import {
   BAIColumnType,
   BAINameActionCell,
   BAISessionClusterMode,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIText,
   BooleanTag,
@@ -257,7 +257,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
       rowKey="id"
       dataSource={filteredPresets}
       columns={allColumns}

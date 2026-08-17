@@ -23,7 +23,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITableAstryx,
+  BAITable,
   BAIFlex,
   BAIPropertyFilter,
   BAINameActionCell,
@@ -376,7 +376,7 @@ const AdminUserCredentialList: React.FC = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx<Keypair>
+      <BAITable<Keypair>
         rowKey={'id'}
         loading={deferredQueryVariables !== queryVariables}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}

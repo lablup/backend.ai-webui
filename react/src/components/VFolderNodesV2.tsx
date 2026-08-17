@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
- (`BAITableAstryx`, Astryx engine). Cells and satellites are Astryx:
+ (`BAITable`, Astryx engine). Cells and satellites are Astryx:
  `BAINameActionCellAstryx`, `Badge` + the ticket-13 status lookup, `Text`,
  `BAIText copyable`, `BAIModalAstryx` (host-quota modal), `BAISkeleton`.
 */
@@ -45,7 +45,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   BAIAlertIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
   StorageUsageBadge,
@@ -637,7 +637,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         resizable
         rowKey={(record) => record.id}
         size="small"

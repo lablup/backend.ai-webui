@@ -24,7 +24,7 @@ import {
   BAIFlex,
   BAIModal,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -353,7 +353,7 @@ const DeploymentAccessTokensTable: React.FC<
 
   return (
     <>
-      <BAITableAstryx<AccessTokenNode>
+      <BAITable<AccessTokenNode>
         rowKey="id"
         loading={isPendingRefetch || isDeletingToken}
         dataSource={accessTokens}

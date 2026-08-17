@@ -5,7 +5,7 @@
  to-astryx TICKET 30-D — the engine-neutral half of the BAITable contract.
 
  These types and helpers used to live inside `BAITable.tsx` (the antd engine),
- which is why ticket 30 could not delete that file: `BAITableAstryx` imported
+ which is why ticket 30 could not delete that file: `BAITable` imported
  `isColumnVisible` from it, and every consumer imported `BAIColumnsType` /
  `BAITableSettings` from it. Extracting them here breaks that cycle — the
  column model, the persisted-override shape and the visibility rules are
@@ -75,7 +75,7 @@ export interface BAITableColumnOverrideItem {
    */
   order?: number;
   /**
-   * Persisted column width in pixels. Written by `BAITableAstryx` when the
+   * Persisted column width in pixels. Written by `BAITable` when the
    * user drags a column border, so a resize survives a reload exactly like a
    * visibility toggle (ticket 25).
    */
@@ -119,7 +119,7 @@ export interface BAIExportSettings {
 }
 
 /**
- * Column model for BAITable / BAITableAstryx.
+ * Column model for BAITable / BAITable.
  *
  * antd-shaped (see the file header) but antd-free.
  */

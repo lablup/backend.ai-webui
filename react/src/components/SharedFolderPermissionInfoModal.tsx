@@ -29,7 +29,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import {
   filterOutNullAndUndefined,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   useErrorMessageResolver,
   toGlobalId,
@@ -125,7 +125,7 @@ const SharedFolderPermissionInfoModal: React.FC<
         {vfolder?.ownership_type === 'user' ? (
           <VStack align="stretch" gap={4}>
             <Heading level={5}>{t('data.folders.Permission')}</Heading>
-            <BAITableAstryx
+            <BAITable
               bordered
               pagination={false}
               dataSource={filterOutNullAndUndefined([vfolder])}

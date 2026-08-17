@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <BAITableAstryx> (to-astryx ticket 30-D). Replaces
+ Co-located styles for <BAITable> (to-astryx ticket 30-D). Replaces
  `BAITable.css`, which is gone with the antd engine.
 
  Two rules survive the engine swap.
@@ -24,7 +24,7 @@
     so a table that really IS the card's only content sits flush against the
     card's top/bottom edges, and a table with siblings does not.
 
-    `BAITableAstryx` wraps Astryx's `<Table>` in its own dim layer (the
+    `BAITable` wraps Astryx's `<Table>` in its own dim layer (the
     loading-state opacity wrapper) and renders the pagination bar as a SIBLING
     of that layer. That makes Astryx's scroll wrapper the ONLY child of the dim
     layer, so it matches BOTH `:first-child` AND `:last-child` regardless of
@@ -57,7 +57,7 @@
   /*
    Unblock the header's clip wrapper inside Astryx's sort button.
 
-   `BAITableAstryx` already wraps every header label in an
+   `BAITable` already wraps every header label in an
    `overflow: hidden; text-overflow: ellipsis` span, because Astryx's own
    `overflowStyles.cell` clip is cancelled on the `<th>` by
    `useTableColumnResize` (which needs `overflow: visible` so its drag handle
@@ -115,7 +115,7 @@
    Astryx paints no background on `th`, so a sticky header needs its own opaque
    base — the same token the sticky-column plugin uses, so a pinned corner
    matches. z-index 2 clears pinned BODY cells (z 1); this layer outranks the
-   plugin's `astryx-base` z 3 on pinned HEADER cells, which BAITableAstryx
+   plugin's `astryx-base` z 3 on pinned HEADER cells, which BAITable
    restores inline. `overflow` is untouched: the resize drag handle needs
    `visible` to reach through the body.
 

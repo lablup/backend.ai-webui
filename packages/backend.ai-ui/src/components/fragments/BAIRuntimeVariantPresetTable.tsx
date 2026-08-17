@@ -12,7 +12,7 @@ import BooleanTag from '../BooleanTag';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -240,7 +240,7 @@ const BAIRuntimeVariantPresetTable = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}
       columns={allColumns}

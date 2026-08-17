@@ -8,7 +8,7 @@ import { theme } from '../../../theme-shim';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
-import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../../Table';
+import { BAIColumnsType, BAITable, BAITableProps } from '../../Table';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
@@ -449,7 +449,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           />
         </BAIFlex>
 
-        <BAITableAstryx
+        <BAITable
           rowKey="name"
           dataSource={files?.items}
           columns={tableColumns}
