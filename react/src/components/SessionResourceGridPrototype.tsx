@@ -897,6 +897,8 @@ const SessionResourceGridPrototype = ({
                     ? 0.2
                     : 0.8;
                 const letterInk = lum > 0.45 ? darkInk : lightInk;
+                // Hovered session: each cell's border takes the group hue.
+                const cellHovered = hover?.sessionIdx === cell.sessionIdx;
                 return (
                   <g key={i}>
                     <rect
@@ -907,8 +909,12 @@ const SessionResourceGridPrototype = ({
                       height={cellPx}
                       rx={radiusPx}
                       fill={isPartial ? emptyFill : cell.color}
-                      stroke={colors.structural.grid}
-                      strokeWidth={0.5}
+                      stroke={
+                        cellHovered
+                          ? hueFor(cell.sessionIdx)
+                          : colors.structural.grid
+                      }
+                      strokeWidth={cellHovered ? 1 : 0.5}
                     />
                     {isPartial && (
                       <rect
