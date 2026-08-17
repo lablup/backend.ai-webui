@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Tambah panel",
       "Condition": "Kondisi",
+      "Count": "Jumlah",
       "EditPanel": "Sunting panel",
+      "PanelType": "Jenis panel",
       "Resource": "Sumber daya",
+      "Table": "Tabel",
       "TitleDescription": "Ditampilkan sebagai judul panel — gunakan untuk menjelaskan kondisinya.",
       "TitleOptional": "Judul (opsional)"
     }

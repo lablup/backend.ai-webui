@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Aggiungi pannello",
       "Condition": "Condizione",
+      "Count": "Conteggio",
       "EditPanel": "Modifica pannello",
+      "PanelType": "Tipo di pannello",
       "Resource": "Risorsa",
+      "Table": "Tabella",
       "TitleDescription": "Mostrato come intestazione del pannello — usalo per descrivere la condizione.",
       "TitleOptional": "Titolo (facoltativo)"
     }

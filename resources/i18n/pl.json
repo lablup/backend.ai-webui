@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Dodaj panel",
       "Condition": "Warunek",
+      "Count": "Liczba",
       "EditPanel": "Edytuj panel",
+      "PanelType": "Typ panelu",
       "Resource": "Zasób",
+      "Table": "Tabela",
       "TitleDescription": "Wyświetlany jako nagłówek panelu — użyj go do opisania warunku.",
       "TitleOptional": "Tytuł (opcjonalnie)"
     }

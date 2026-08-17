@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Tambah panel",
       "Condition": "Syarat",
+      "Count": "Bilangan",
       "EditPanel": "Edit panel",
+      "PanelType": "Jenis panel",
       "Resource": "Sumber",
+      "Table": "Jadual",
       "TitleDescription": "Dipaparkan sebagai tajuk panel — gunakannya untuk menerangkan syarat.",
       "TitleOptional": "Tajuk (pilihan)"
     }

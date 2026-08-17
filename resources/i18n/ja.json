@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "パネルを追加",
       "Condition": "条件",
+      "Count": "カウント",
       "EditPanel": "パネルを編集",
+      "PanelType": "パネル形式",
       "Resource": "リソース",
+      "Table": "テーブル",
       "TitleDescription": "パネルの見出しとして表示されます。条件を説明するタイトルをおすすめします。",
       "TitleOptional": "タイトル（オプション）"
     }

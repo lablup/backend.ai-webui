@@ -22,8 +22,8 @@ import type { GraphQLTaggedNode, OperationType } from 'relay-runtime';
 /** Data sources a panel can list. Regular-user scope: no admin-only resources. */
 export type ResourceKey = 'session' | 'deployment' | 'vfolder';
 
-/** Panel kinds the registry can render. v1 ships the table view. */
-export type PanelType = 'resourceTable';
+/** Panel kinds the registry can render: table rows or a single count stat. */
+export type PanelType = 'resourceTable' | 'resourceCount';
 
 /**
  * Serializable, persisted per-panel configuration. MUST stay plain JSON (no JSX,
@@ -49,7 +49,9 @@ export interface PanelDescriptor {
 export type PanelInput = Pick<
   PanelDescriptor,
   'resourceType' | 'filter' | 'title' | 'order'
->;
+> & {
+  panelType: PanelType;
+};
 
 /**
  * A persisted custom panel: identity + serializable descriptor only. Layout

@@ -721,8 +721,11 @@
     "panelModal": {
       "AddPanel": "Add panel",
       "Condition": "Condition",
+      "Count": "Count",
       "EditPanel": "Edit panel",
+      "PanelType": "Panel type",
       "Resource": "Resource",
+      "Table": "Table",
       "TitleDescription": "Shown as the panel header — use it to describe the condition.",
       "TitleOptional": "Title (optional)"
     }

@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Thêm bảng",
       "Condition": "Điều kiện",
+      "Count": "Số lượng",
       "EditPanel": "Chỉnh sửa bảng",
+      "PanelType": "Loại bảng",
       "Resource": "Tài nguyên",
+      "Table": "Bảng",
       "TitleDescription": "Hiển thị làm tiêu đề của bảng — hãy dùng nó để mô tả điều kiện.",
       "TitleOptional": "Tiêu đề (tùy chọn)"
     }

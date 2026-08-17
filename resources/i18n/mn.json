@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Самбар нэмэх",
       "Condition": "Нөхцөл",
+      "Count": "Тоо",
       "EditPanel": "Самбар засах",
+      "PanelType": "Самбарын төрөл",
       "Resource": "Нөөц",
+      "Table": "Хүснэгт",
       "TitleDescription": "Самбарын гарчиг болж харагдана — нөхцөлийг тайлбарлахад ашиглана уу.",
       "TitleOptional": "Гарчиг (заавал биш)"
     }

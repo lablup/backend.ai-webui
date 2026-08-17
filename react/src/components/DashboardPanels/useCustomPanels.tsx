@@ -5,7 +5,7 @@
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { BAIBoardItem } from '../BAIBoard';
-import { createPanel, DEFAULT_PANEL_LAYOUT, DEFAULT_PANELS } from './defaults';
+import { createPanel, DEFAULT_PANEL_LAYOUTS, DEFAULT_PANELS } from './defaults';
 import { panelRegistry } from './panelRegistry';
 import {
   availableResourceKeys,
@@ -108,6 +108,7 @@ export const useCustomPanels = ({
         panel.id === id
           ? {
               ...panel,
+              panelType: input.panelType,
               descriptor: {
                 resourceType: input.resourceType,
                 title: input.title,
@@ -144,7 +145,8 @@ export const useCustomPanels = ({
   const customDefaultLayout: Array<Omit<BAIBoardItem, 'data'>> =
     renderablePanels.map((panel) => ({
       id: panel.id,
-      ...DEFAULT_PANEL_LAYOUT,
+      ...(DEFAULT_PANEL_LAYOUTS[panel.panelType] ??
+        DEFAULT_PANEL_LAYOUTS.resourceTable),
     }));
 
   // Element identity is keyed by panel id (not array position) so a layout-only

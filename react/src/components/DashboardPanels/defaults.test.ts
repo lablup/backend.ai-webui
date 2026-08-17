@@ -6,6 +6,7 @@ import { createPanel } from './defaults';
 import type { PanelInput } from './types';
 
 const input: PanelInput = {
+  panelType: 'resourceTable',
   resourceType: 'session',
   title: 'Running sessions',
   filter: null,

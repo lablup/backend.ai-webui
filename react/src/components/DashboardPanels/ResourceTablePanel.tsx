@@ -5,12 +5,11 @@
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { theme } from '../../theme-shim';
-import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
+import PanelEditControls from './PanelEditControls';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,
@@ -18,10 +17,7 @@ import {
   BAISkeleton,
   BAITable,
   useFetchKey,
-  BAIPopconfirmAstryx,
 } from 'backend.ai-ui';
-import { useAtomValue } from 'jotai';
-import { SquarePenIcon, Trash2 } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
@@ -53,43 +49,9 @@ const ResourceTablePanel: React.FC<ResourceTablePanelProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const editMode = useAtomValue(dashboardEditModeAtom);
   const title = resolvePanelTitle(descriptor, t);
   const [localFetchKey, updateLocalFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-
-  const editControls =
-    editMode && (onEdit || onRemove) ? (
-      <>
-        {onEdit ? (
-          <IconButton
-            variant="ghost"
-            size="sm"
-            label={t('button.Edit')}
-            tooltip={t('button.Edit')}
-            icon={<SquarePenIcon size="1em" />}
-            onClick={onEdit}
-          />
-        ) : null}
-        {onRemove ? (
-          <BAIPopconfirmAstryx
-            title={t('dialog.ask.DoYouWantToDeleteSomething', {
-              name: title,
-            })}
-            isDanger
-            onConfirm={onRemove}
-          >
-            <IconButton
-              variant="ghost"
-              size="sm"
-              label={t('button.Delete')}
-              tooltip={t('button.Delete')}
-              icon={<Trash2 size="1em" />}
-            />
-          </BAIPopconfirmAstryx>
-        ) : null}
-      </>
-    ) : null;
 
   return (
     <BAIFlex
@@ -113,7 +75,11 @@ const ResourceTablePanel: React.FC<ResourceTablePanelProps> = ({
               type="text"
               style={{ backgroundColor: 'transparent' }}
             />
-            {editControls}
+            <PanelEditControls
+              title={title}
+              onEdit={onEdit}
+              onRemove={onRemove}
+            />
           </BAIFlex>
         }
       />
