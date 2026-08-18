@@ -206,6 +206,8 @@ export type {
   BAIUnitGridGroup,
   BAIUnitGridUnit,
 } from './BAIResourceUnitGrid';
+export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
+export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

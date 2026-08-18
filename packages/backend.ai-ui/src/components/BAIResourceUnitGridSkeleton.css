@@ -1,0 +1,19 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIResourceUnitGridSkeleton> (FR-3569). Imported by
+ the component itself (P17).
+*/
+
+/* Tinted rounded "plate" wrapper, matching the real grid's group-plate
+   look. Capped to ~8 cells per row so large groupCount plates wrap instead
+   of running the full container width. */
+.bai-resource-unit-grid-skeleton-plate {
+  background: var(--color-background-muted);
+  border-radius: var(--radius-element);
+  padding: var(--spacing-2);
+  max-width: calc(
+    8 * var(--spacing-4) + 7 * var(--spacing-0-5) + 2 * var(--spacing-2)
+  );
+}
