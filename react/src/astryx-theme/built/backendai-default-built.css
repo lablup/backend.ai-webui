@@ -406,6 +406,24 @@
     border: 1px solid var(--color-border-emphasized);
   }
 
+  .astryx-button.link {
+    color: var(--color-text-accent);
+    background-color: transparent;
+    padding-inline: 0;
+    padding-block: 0;
+    height: auto;
+    --button-focus-offset: 3px;
+  }
+
+  .astryx-button.link:hover {
+    text-decoration: underline;
+  }
+
+  .astryx-button.link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: var(--button-focus-offset);
+  }
+
   .astryx-badge.info {
     background-color: light-dark(#0074e2, #6d9cfe);
     color: light-dark(#ffffff, #171717);

@@ -622,7 +622,7 @@ const SessionLauncherPage = () => {
             <Heading level={4}>{t('session.launcher.StartNewSession')}</Heading>
             <BAIFlex direction="row" gap={'sm'}>
               <Button
-                variant="ghost"
+                variant="link"
                 label={t('session.launcher.RecentHistory')}
                 onClick={() => toggleIsOpenTemplateModal()}
               />

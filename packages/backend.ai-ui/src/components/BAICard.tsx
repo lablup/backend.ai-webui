@@ -212,6 +212,11 @@ const BAICard: React.FC<BAICardProps> = ({
     (extraButtonTitle ? (
       <BAIButton
         type="link"
+        // FR-3524: a status card already signals through its red/amber glyph;
+        // opt out of the link tint so the label keeps carrying that status.
+        color={
+          status === 'error' || status === 'warning' ? 'default' : undefined
+        }
         className={
           status === 'error'
             ? 'bai-card-extra--error'
