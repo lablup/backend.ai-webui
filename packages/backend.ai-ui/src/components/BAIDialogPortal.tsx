@@ -30,8 +30,8 @@ export const BAI_MODAL_OPEN_ATTRIBUTE = 'data-bai-modal-open';
 
 // The CSS climbs one ladder step per nesting level; past this ceiling a modal
 // would reach the notice stack, the inversion FR-3578 exists to prevent.
-// `zIndexLadder.test.ts` pins the ceiling under it.
-const MAX_DIALOG_LEVEL = 80;
+// Exported so `zIndexLadder.test.ts` pins THIS number under it, not a copy.
+export const MAX_DIALOG_LEVEL = 80;
 
 /**
  * The `zIndex` escape hatch is reachable from every `<BAIModal>`. A number

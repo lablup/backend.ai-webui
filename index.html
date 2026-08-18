@@ -49,12 +49,10 @@
        assignment here: an inline style outranks every rule above and froze the
        backdrop at its boot-time value, so toggling the theme mid-session left
        the page painting the previous mode until a reload. -->
-  <!-- KEEP IN SYNC with the z-index ladder in
-       `packages/backend.ai-ui/src/styles/zIndexLadder.{ts,css}`: this file is
-       parsed before any JS, so it re-declares the one layer it needs. The
-       splash sits BELOW the modal band on purpose — every dialog is a
-       `document.body` portal now, so a splash above the band would hide the
-       login form (FR-3578 T10). `zIndexLadder.test.ts` fails on drift. -->
+  <!-- `--bai-z-splash` mirrors the ladder in
+       `packages/backend.ai-ui/src/styles/zIndexLadder.ts`; this file is parsed
+       before any JS, so it cannot import it. verify.sh's z-index ladder gate
+       fails on drift. -->
   <style nonce="{{nonce}}">
     :root { --bai-z-splash: 900; }
     html[data-theme="light"] { color-scheme: light; }
