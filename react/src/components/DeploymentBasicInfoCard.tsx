@@ -16,8 +16,8 @@ import DeploymentSchedulingHistoryModal, {
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { Divider } from '@astryxdesign/core/Divider';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   MetadataList,
   MetadataListItem,
@@ -95,20 +95,19 @@ const DeploymentOverviewContent: React.FC<{
               status={deployment.metadata.status as BAIDeploymentStatus}
             />
             {onClickSchedulingHistory && (
-              <>
-                <Divider orientation="vertical" />
-                <BAIButton
-                  type="link"
-                  size="small"
-                  icon={<History size="1em" />}
-                  style={{ padding: 0 }}
-                  action={async () => {
-                    await onClickSchedulingHistory();
-                  }}
-                >
-                  {t('deployment.SchedulingHistory')}
-                </BAIButton>
-              </>
+              // Same control as the session drawer's Status row: an accent
+              // icon button, not a default-tinted link (FR-3482 Q-37 / FR-3572).
+              <IconButton
+                className="bai-action-accent"
+                variant="ghost"
+                size="sm"
+                icon={<History size="1em" />}
+                label={t('deployment.SchedulingHistory')}
+                tooltip={t('deployment.SchedulingHistory')}
+                clickAction={async () => {
+                  await onClickSchedulingHistory();
+                }}
+              />
             )}
           </BAIFlex>
         ) : (
