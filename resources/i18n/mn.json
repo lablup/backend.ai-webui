@@ -3827,6 +3827,7 @@
       "ResourcePolicies": "Нөөцийн бодлогууд",
       "Resources": "Нөөц",
       "Scheduler": "Хуваарийн өгөх",
+      "Search": "Хайх",
       "Serving": "Үйлчилж байна",
       "Sessions": "Session-үүд",
       "Settings": "Тохиргоо",
@@ -3864,6 +3865,9 @@
       }
     },
     "search": {
+      "FoundIn": "{{text}} дотроос олдсон",
+      "NoResults": "Үр дүн олдсонгүй",
+      "Placeholder": "Хуудас, таб, тохиргоо хайх",
       "Recent": "Сүүлийн үеийн"
     }
   }

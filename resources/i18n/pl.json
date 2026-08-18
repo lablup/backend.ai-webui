@@ -3828,6 +3828,7 @@
       "ResourcePolicies": "Polityki zasobów",
       "Resources": "Zasoby",
       "Scheduler": "Harmonogram",
+      "Search": "Wyszukiwanie",
       "Serving": "Obsługa",
       "Sessions": "Sesje",
       "Settings": "Ustawienia",
@@ -3865,6 +3866,9 @@
       }
     },
     "search": {
+      "FoundIn": "Znaleziono w {{text}}",
+      "NoResults": "Brak wyników",
+      "Placeholder": "Szukaj stron, kart i ustawień",
       "Recent": "Ostatnie"
     }
   }

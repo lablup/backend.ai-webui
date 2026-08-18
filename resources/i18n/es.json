@@ -3825,6 +3825,7 @@
       "ResourcePolicies": "Políticas de recursos",
       "Resources": "Recursos",
       "Scheduler": "Planificador",
+      "Search": "Buscar",
       "Serving": "Sirviendo a",
       "Sessions": "Sesiones",
       "Settings": "Ajustes",
@@ -3862,6 +3863,9 @@
       }
     },
     "search": {
+      "FoundIn": "Encontrado en {{text}}",
+      "NoResults": "Sin resultados",
+      "Placeholder": "Buscar páginas, pestañas y ajustes",
       "Recent": "Recientes"
     }
   }
