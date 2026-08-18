@@ -3863,6 +3863,9 @@
           "System": "System"
         }
       }
+    },
+    "search": {
+      "Recent": "Ostatnie"
     }
   }
 }

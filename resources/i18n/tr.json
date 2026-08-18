@@ -3860,6 +3860,9 @@
           "System": "Sistem"
         }
       }
+    },
+    "search": {
+      "Recent": "Son kullanılanlar"
     }
   }
 }
