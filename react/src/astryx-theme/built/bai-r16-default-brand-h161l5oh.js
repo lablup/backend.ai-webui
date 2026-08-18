@@ -492,6 +492,17 @@ export const baiR16DefaultBrandH161l5ohTheme = {
         "lineHeight": "22px"
       }
     },
+    "complex-selector": {
+      "base": {
+        "height": "var(--size-element-md)"
+      },
+      "size:sm": {
+        "height": "var(--size-element-sm)"
+      },
+      "size:lg": {
+        "height": "var(--size-element-lg)"
+      }
+    },
     "field": {
       "base": {
         "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), #262626)",

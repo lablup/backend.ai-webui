@@ -647,10 +647,10 @@ const FIELD_PAGE_OVERLAYS = {
  * genuinely long menu on screen.
  */
 /**
- * `ComplexSelector` leaves its field height auto (min-height 32px + 8px
- * vertical padding → 40px) while `Selector` pins md at 32px, so the two select
- * engines sit at different heights in the same toolbar row. Pin the field to
- * the element-size ramp `Selector` uses. Measurements: FR-3536.
+ * Pins the `ComplexSelector` field to the element-size ramp `Selector` uses.
+ * Astryx 0.4.0 sized it `min-height` + padding (40px at md, vs `Selector`'s
+ * 32px, so the two engines sat at different heights in one toolbar row); 0.4.3
+ * sets the same `height` itself, leaving this a redundant pin. FR-3536.
  */
 const COMPLEX_SELECTOR_HEIGHT_PARITY = {
   'complex-selector': {
