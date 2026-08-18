@@ -2,80 +2,37 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- The project's table: Astryx's `Table` primitive plus a plugin pipeline,
- behind an antd/BUI-shaped prop contract.
-
- Astryx's `Table` is a PRIMITIVE — selection, sorting, column settings and
- resizing are each an opt-in hook whose state the CONSUMER owns. Nothing here
- is "ported" from the antd table that preceded it; the behaviour is
- re-assembled.
+ The project's table: Astryx's `Table` primitive plus a plugin pipeline, behind
+ an antd-v6-shaped prop contract.
 
  ## The prop contract (read this before touching a call site)
 
- The public surface is deliberately kept **antd-v6-shaped**: `columns`
- (`BAIColumnsType`, i.e. `title`/`dataIndex`/`render`/`sorter`/`required`/
- `defaultHidden`), `dataSource`, `rowKey`, `size`, `bordered`, `rowSelection`,
- `pagination`, `expandable`, `order`/`onChangeOrder`, `tableSettings`,
- `exportSettings`. Several hundred call sites carried over from the antd era
- use those names; renaming them buys nothing and breaks all of them. See
+ The public surface is deliberately antd-v6-shaped — `dataSource`, `rowKey`,
+ `size`, `bordered`, `columns` (`BAIColumnsType`) and friends. Several hundred
+ call sites carried over from the antd era use those names; renaming them buys
+ nothing and breaks all of them. See
  `.claude/rules/component-props-extension.md` ("Frozen antd-v6-shaped prop
- vocabulary").
+ vocabulary"). Everything Astryx exposes that this file does NOT rename is
+ inherited rather than restated — `InheritedTableProps` (FR-3564).
 
- Everything Astryx exposes that this file does NOT rename is inherited rather
- than restated — see `InheritedTableProps` below (FR-3564).
+ ## Plugin order is load-bearing
 
- ## The plugin composition
+ Astryx runs columnSettings -> sort -> tree -> selection -> pagination, then
+ unknown names in insertion order. `resize` / `sticky` / `scrollX` / `scrollY` /
+ `cellRow` / `expansion` must stay last: most read the FINAL column list, and
+ `scrollY` must run before `cellRow` so a consumer's `onCell` wins.
 
-   columnSettings  visibility + display order (BUI `columnOverrides`)
-   sort            header sort controls  <-> the `-field` order string
-   selection       checkbox column       <-> antd `rowSelection`
-   resize          drag-to-resize widths (persisted into `columnOverrides`)
-   sticky          column-level `fixed: 'left' | 'right' | true`
-   expansion       antd `expandedRowRender` (local plugin, see below)
-   cellRow         antd `onCell` / `onRow` escape hatches (local plugin)
-   scrollX         x mode's per-column `max-width` release (local plugin)
-   scrollY         y mode's pinned-header z-order restore (local plugin)
+ Pagination is deliberately NOT the `useTablePagination` plugin: BUI renders its
+ own bottom bar next to the settings gear, and the plugin hides itself on a
+ single page, which antd never does.
 
- Astryx's canonical plugin order is columnSettings -> sort -> tree ->
- selection -> pagination, with unknown names appended in insertion order — so
- `resize` / `sticky` / `scrollX` / `scrollY` / `cellRow` / `expansion` run
- last, which is what they want: most read the FINAL column list, and `scrollY`
- (which reads only pinned-ness) must run before `cellRow` so `onCell` wins.
+ ## Deliberate capability drops
 
- Pagination is deliberately NOT the `useTablePagination` plugin: BUI renders
- its own bottom bar next to the settings gear, and the plugin hides itself on a
- single page, which antd never does. Client-vs-server slicing is documented on
- `BAITablePaginationConfig.total` (FR-3563).
-
- ## PILOT-DECISIONs (see the ticket file for the full list)
-
- - **Multi-level headers** (`columns[].children`) have NO Astryx counterpart —
-   there is no `colSpan` header contract. Column groups are FLATTENED and each
-   child header renders the group title above it in muted small text. The
-   information survives; the spanning cell does not.
- - **`expandedRowRender`** has no Astryx counterpart either (`useTableTreeData`
-   / `useTableRowExpansion` only do *inherited-column* child rows). Rebuilt as
-   a local plugin: detail rows are interleaved into `data` and the plugin
-   replaces that row's cells with a single full-span `<td>`.
- - **`loading`** — antd dims the existing rows under a centred spinner. Astryx
-   has no table loading state; the dim + `pointer-events: none` wrapper is
-   reproduced, the spinner is not.
- - **`scroll.x`** IS wired, as rc-table wires it: width-less columns drop their
-   proportional width so their content defines them, and the table switches to
-   `table-layout: auto` with `width: <x>; min-width: 100%`. Columns with a
-   numeric/resized width stay pixel-fixed and keep truncating.
-   **`scroll.y`** IS wired too: the scroll wrapper is capped at
-   `max-height: <y>` and every `<th>` goes `position: sticky; top: 0` over an
-   opaque base. The header's bottom rule belongs to the COLLAPSED table border,
-   not to the cell, so it scrolls away with the rows.
- - **Column-level `fixed`** IS wired, via `useTableStickyColumns` — 40 of the
-   74 call sites use it. antd pins per column; Astryx pins a contiguous RUN
-   from each edge, so the adapter derives the run from the LEADING
-   `fixed: 'left' | true` columns and the TRAILING `fixed: 'right'` ones. A
-   `fixed` column in the middle of the table silently stops pinning; no call
-   site does that today.
- - **Virtualization is DEFERRED** by an explicit product decision (2026-08-07).
-   Do not add it here without re-opening that decision.
+ Each is documented where it happens: multi-level headers (`flattenColumns`),
+ `expandedRowRender` (`astryxData`), `loading`'s spinner (the dim wrapper),
+ column-level `fixed` (`stickyConfig`), `scroll.x`/`.y` (the `scroll` prop).
+ Row virtualization is DEFERRED by an explicit product decision (2026-08-07) —
+ do not add it without re-opening that decision.
 */
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -343,9 +300,11 @@ export interface BAITableProps<
   /** antd `bordered` -> Astryx `dividers="grid"`. */
   bordered?: boolean;
   /**
-   * antd `scroll`. Both axes are wired — see the file-header PILOT-DECISION:
-   * `x` sizes the table from its content, `y` caps the body height and sticks
-   * the header row.
+   * antd `scroll`, both axes. `x`: width-less columns drop their proportional
+   * width so content defines them and the table goes `table-layout: auto`;
+   * pixel/resized columns stay fixed and keep truncating. `y`: the wrapper is
+   * capped at `y` and every `<th>` sticks. The header's bottom rule belongs to
+   * the COLLAPSED table border, so it scrolls away with the rows.
    */
   scroll?: { x?: number | string | true; y?: number | string };
   /**
@@ -386,17 +345,11 @@ const columnKeyOf = (column: BAIColumnType<any>, index: number) =>
   (column.dataIndex ? String(column.dataIndex) : `index_${index}`);
 
 /**
- * The cell VALUE for a column, read out of the record.
- *
- * POLICY (to-astryx approved-2, per user direction): a column with no
- * `dataIndex` has no value, so this returns `undefined` — the record reaches
- * `render` through its SECOND argument, which is the Astryx/antd render
- * contract `(value, record, index)`. rc-table has a quirk here (its
- * `getPathValue` returns the whole RECORD when `path` is empty, which makes
- * `render: (row) => …` work under antd); that quirk is deliberately NOT
- * re-implemented. Call sites that need the record write
- * `render: (_value, row) => …`. See `BAITable.cellValue.test.tsx`,
- * which pins this in both directions.
+ * The cell VALUE for a column. A column with no `dataIndex` has no value, so
+ * this returns `undefined`; the record reaches `render` through its SECOND
+ * argument (`(value, record, index)`). Do NOT re-implement rc-table's quirk of
+ * returning the whole record for an empty path — call sites write
+ * `render: (_value, row) => …`. Pinned by `BAITable.cellValue.test.tsx`.
  */
 const readDataIndex = (record: AnyRow, dataIndex: unknown): unknown => {
   if (dataIndex == null) return undefined;
@@ -586,13 +539,10 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   /* ---- row keys ---------------------------------------------------------- */
 
   /**
-   * Row identity. `rowKey` defaults to `'id'` here, but antd's `Table`
-   * defaulted to `'key'` — and 10 call sites relied on that default rather
-   * than declaring one. A missing key is not a cosmetic problem: every row
-   * would resolve to the string `"undefined"`, which collapses React's
-   * reconciliation keys, row selection and expansion onto a single identity
-   * (observed live on `ErrorLogList`). So an unresolved lookup falls back to
-   * antd's `key`, then `id`, and finally to the row's position.
+   * Row identity. Falls back `rowKey` -> `key` -> `id` -> position: 10 call
+   * sites declare none and relied on antd's `'key'` default. Without the
+   * fallback every row keys to `"undefined"`, collapsing reconciliation,
+   * selection and expansion onto one identity (seen live on `ErrorLogList`).
    */
   const getRowKey = (record: RecordType): string => {
     if (typeof rowKey === 'function') return String(rowKey(record));
@@ -853,6 +803,9 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
             : value == null || value === ''
               ? null
               : String(value);
+          // Over budget deliberately: external constraint (Astryx's own plugin
+          // CSS) + a measured value. See comment-density.md.
+          //
           // Body cells are clipped by the same wrapper the header above uses,
           // and for the same reason one rung down (FR-3482 QA finding Q-18).
           //
@@ -871,10 +824,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
           // Measured on the session scheduling-history nested table: the pinned
           // `step` cell escaped its box by +30px onto `result`, while an
           // identically sized NON-pinned cell with 255px of overflow escaped by
-          // 0. Same on `/agent`'s pinned `row_id`. Legacy antd clipped both
-          // faces unconditionally — `.ant-table-cell { overflow: hidden }` in
-          // the antd table's `resizableTable` block matched `<th>`, `<td>` and
-          // `.ant-table-cell-fix-left` alike.
+          // 0. Same on `/agent`'s pinned `row_id`.
           //
           // Wrapping the CONTENT rather than re-clipping the cell keeps the
           // plugins' bleed working: the shadow and the drag handle are painted
@@ -1169,20 +1119,12 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   /* ---- plugin record ----------------------------------------------------- */
 
   /**
-   * Give the injected selection column room for its own checkbox.
+   * Give the injected selection column room for its checkbox: the plugin's
+   * default 36px leaves 4px of content box, so the 20px checkbox overhangs
+   * 8px each side. Measured on sessions / admin-users: checkbox left 280 vs a
+   * card content edge of 287 (FR-3482 QA finding Q-14).
    *
-   * Astryx insets the FIRST column by 24px so a bleeding table's content still
-   * lines up with its card's content edge — that is what makes a normal first
-   * cell start exactly there. The selection plugin injects its column without a
-   * width, and the default lands at 36px, of which the first-column inset takes
-   * 24 and the trailing pad 8: the 20px checkbox is centred in the 4px that is
-   * left and overhangs 8px each side. Measured on the sessions and admin-users
-   * tables during the FR-3482 Astryx migration: checkbox left
-   * 280 against a card content edge of 287, while the same table's first data
-   * column starts at 288. That 7-8px is "첫 row의 시작점은 다듬어야" in the
-   * report (FR-3482 QA finding Q-14).
-   *
-   * 24 (inset) + 20 (checkbox) + 8 (trailing pad) = 52.
+   * 24 (Astryx first-column inset) + 20 (checkbox) + 8 (trailing pad) = 52.
    */
   const selectionWidthPlugin: TablePlugin<AnyRow> = {
     transformColumns: (cols) =>
