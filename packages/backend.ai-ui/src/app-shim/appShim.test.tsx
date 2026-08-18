@@ -127,12 +127,18 @@ describe('app-shim top-layer re-entry (FR-3486)', () => {
   // ABSENCE, and a global polyfill would make that branch untestable.
   const fixtures: HTMLElement[] = [];
 
+  // TS 6 types `matches` with `this`-based predicate overloads, so a plain
+  // boolean stub only assigns through `unknown`.
+  const stubMatches = (fn: (selector: string) => boolean) =>
+    fn as unknown as Element['matches'];
+
   function mountNotice({ isPopoverOpen = false, hasPopoverApi = true } = {}) {
     const el = document.createElement('div');
     el.setAttribute('popover', 'manual');
     el.setAttribute('data-bai-top-layer', '');
-    el.matches = (selector: string) =>
-      selector === ':popover-open' && isPopoverOpen;
+    el.matches = stubMatches(
+      (selector) => selector === ':popover-open' && isPopoverOpen,
+    );
     const calls: string[] = [];
     if (hasPopoverApi) {
       Object.assign(el, {
@@ -151,7 +157,9 @@ describe('app-shim top-layer re-entry (FR-3486)', () => {
     newState = 'open',
   } = {}) {
     const target = document.createElement(tag);
-    target.matches = (selector: string) => selector === ':modal' && isModal;
+    target.matches = stubMatches(
+      (selector) => selector === ':modal' && isModal,
+    );
     document.body.appendChild(target);
     fixtures.push(target);
     const event = new Event('toggle');
