@@ -33,8 +33,7 @@
    transition-end event, so it lands a frame earlier than antd's.
 */
 import { Button } from '@astryxdesign/core/Button';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
-import type { DialogProps } from '@astryxdesign/core/Dialog';
+import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   Layout,
@@ -44,11 +43,13 @@ import {
 } from '@astryxdesign/core/Layout';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack } from '@astryxdesign/core/Stack';
+import { BAIDialogPortal } from 'backend.ai-ui';
+import type { BAIDialogPortalProps } from 'backend.ai-ui';
 import { XIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
 
 export interface BAIModalAstryxProps extends Omit<
-  DialogProps,
+  BAIDialogPortalProps,
   'children' | 'isOpen' | 'onOpenChange'
 > {
   /** Astryx `Dialog` naming — NOT antd's `open`. */
@@ -151,7 +152,7 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
   ) : null;
 
   return (
-    <Dialog
+    <BAIDialogPortal
       isOpen={isOpen}
       onOpenChange={(next) => {
         if (!next) close();
@@ -216,7 +217,7 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
           ) : undefined
         }
       />
-    </Dialog>
+    </BAIDialogPortal>
   );
 };
 

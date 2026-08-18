@@ -3,8 +3,9 @@
 // When a user's password has expired, the backend responds to POST /server/login with:
 //   { authenticated: false, data: { details: "Password expired on ..." } }
 //
-// The app must display the ResetPasswordRequiredInline modal (zIndex 1002) without
-// it being blocked by the login modal's mask or wrapper.
+// The app must display the ResetPasswordRequiredInline modal without it being
+// blocked by the login modal's mask or wrapper. It takes the modal band's own
+// stacking level; its antd-era `zIndex={1002}` went away with FR-3578 T10.
 //
 // Mock strategy:
 //   - POST /server/login → password-expired response (mocked in beforeEach)

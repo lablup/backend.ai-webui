@@ -45,6 +45,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAI_Z_INDEX,
   BAIModal,
   BAIFlex,
   useBAILogger,
@@ -160,8 +161,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         open={isOpen}
         closable={false}
         // The login screen backdrop (weave + version/copyright metadata) is the
-        // persisted splash element behind this modal (z-index 10000). The modal
-        // mask dims that backdrop, so the metadata reads softly behind the mask.
+        // persisted splash element, which the ladder puts below the modal band.
+        // The modal mask dims it, so the metadata reads softly behind the mask.
         mask={!needToResetPassword}
         keyboard={false}
         maskClosable={false}
@@ -576,7 +577,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             boxShadow: token.boxShadowSecondary,
             padding: token.paddingLG,
             overflow: 'auto',
-            zIndex: 1060,
+            zIndex: BAI_Z_INDEX.loginSideHelp,
           }}
         >
           <BAIFlex
@@ -737,7 +738,6 @@ const ResetPasswordRequiredInline: React.FC<{
       footer={null}
       width={450}
       destroyOnHidden
-      zIndex={1002}
       getContainer={false}
     >
       <BAIFlex

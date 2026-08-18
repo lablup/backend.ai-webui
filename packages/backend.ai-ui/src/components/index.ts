@@ -208,6 +208,9 @@ export type {
 } from './BAIResourceUnitGrid';
 export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
 export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
+export { default as BAIDialogPortal } from './BAIDialogPortal';
+export { BAI_MODAL_OPEN_ATTRIBUTE } from './BAIDialogPortal';
+export type { BAIDialogPortalProps } from './BAIDialogPortal';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

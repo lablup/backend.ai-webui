@@ -1,0 +1,80 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for `<BAIDialogPortal>` — the mask, centering and entry
+ animation Astryx `Dialog` gets from the top layer and `::backdrop`, restated
+ for a portalled tree. BUI authors no StyleX (no compiler in its tsup build),
+ so these are plain CSS rules over Astryx tokens.
+*/
+
+@layer components {
+  /* Base and step come from the ladder (`src/styles/zIndexLadder.css`). The
+     component writes only the level; an explicit `zIndex` prop lands inline
+     and wins, floored at the base by `BAIDialogPortal.tsx`. */
+  .bai-dialog-portal {
+    --bai-dialog-portal-level: 0;
+    --bai-dialog-portal-z: calc(
+      var(--bai-z-modal-base) + var(--bai-dialog-portal-level) *
+        var(--bai-z-modal-level-step)
+    );
+    position: fixed;
+    inset: 0;
+    z-index: var(--bai-dialog-portal-z);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* A closed dialog keeps its children mounted, as the native `<dialog>` did. */
+  .bai-dialog-portal--closed {
+    display: none;
+  }
+
+  /* Same look as Astryx `Dialog`'s `::backdrop`. */
+  .bai-dialog-portal__mask {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-overlay);
+    backdrop-filter: blur(2px);
+  }
+
+  /* The animated element, kept separate from the mask so only this subtree is
+     affected while the keyframe's `transform` makes it a containing block for
+     `position: fixed` descendants. */
+  .bai-dialog-portal__wrap {
+    --bai-dialog-portal-dir-x: 0px;
+    --bai-dialog-portal-dir-y: 16px;
+    position: relative;
+    display: flex;
+    animation: bai-dialog-portal-enter var(--duration-medium-max)
+      var(--ease-standard) backwards;
+  }
+
+  /* `position` prop: statically placed instead of centered. */
+  .bai-dialog-portal__wrap--positioned {
+    position: absolute;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bai-dialog-portal__wrap {
+      animation-name: none;
+    }
+  }
+}
+
+@keyframes bai-dialog-portal-enter {
+  from {
+    opacity: 0;
+    transform: translate(
+        var(--bai-dialog-portal-dir-x),
+        var(--bai-dialog-portal-dir-y)
+      )
+      scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}

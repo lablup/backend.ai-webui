@@ -28,7 +28,7 @@ import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
+import { BAI_Z_INDEX, BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
@@ -40,10 +40,9 @@ import React, {
 } from 'react';
 import { Outlet, useMatches, useLocation } from 'react-router-dom';
 
-// Z-index for header in MainLayout. Should be higher than any other elements in the page content.
-// Since fixed column z-index in antd table is dynamically calculated based on the number of columns,
-// we use a safe fixed value of 100. See: https://github.com/react-component/table/blob/master/src/utils/fixUtil.ts
-export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 100;
+// Above every in-page stacking value (tables, boards, compact groups top out
+// at 60); `SiderToggleButton` sits one step higher again.
+export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = BAI_Z_INDEX.appHeader;
 
 export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   {

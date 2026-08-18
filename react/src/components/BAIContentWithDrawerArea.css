@@ -17,7 +17,8 @@
  sets inline on its own element (`--bai-drawer-area-width`).
 
  `drawerStyle` used to select whether the drawer-panel rule was emitted at
- all. That element lives in the TOP LAYER (a native `<dialog>`), so it cannot
+ all. The drawer panel lives in the TOP LAYER (a native `<dialog>` — unlike
+ modals, which FR-3578 portalled), so it cannot
  read a custom property set on the content div. Rather than reach for an
  imperative attribute toggle, the rule keys off the content div's own
  `margin-style` class through `:has()` — declarative, and it reproduces the

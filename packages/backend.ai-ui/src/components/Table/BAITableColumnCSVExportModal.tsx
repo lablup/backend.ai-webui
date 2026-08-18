@@ -30,10 +30,11 @@
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIDialogPortal from '../BAIDialogPortal';
 import type { BAIColumnsType } from './tableTypes';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -175,7 +176,7 @@ const BAITableColumnCSVExportModal = <T,>({
   if (!open) return null;
 
   return (
-    <Dialog
+    <BAIDialogPortal
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose?.(false);
@@ -261,7 +262,7 @@ const BAITableColumnCSVExportModal = <T,>({
         }
         style={{ minWidth: 0 }}
       />
-    </Dialog>
+    </BAIDialogPortal>
   );
 };
 
