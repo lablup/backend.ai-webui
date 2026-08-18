@@ -15,6 +15,7 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useWebUINavigate } from '../hooks';
@@ -26,7 +27,13 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import {
   BAIAdminProjectSelectAstryx,
+  BAICard,
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
@@ -39,9 +46,9 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PowerOffIcon } from 'lucide-react';
+import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
+import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
@@ -61,6 +68,32 @@ type ComputeSessionNodesData = ExtractResultValue<
 >;
 
 type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
+
+// Splits a queryfilter string on top-level `&` only (never inside quotes or
+// parentheses), so `(a)&(b | c)` stays two segments.
+const splitTopLevelAnd = (filter: string): string[] => {
+  const segments: string[] = [];
+  let depth = 0;
+  let inQuote = false;
+  let current = '';
+  for (const ch of filter) {
+    if (ch === '"') {
+      inQuote = !inQuote;
+    } else if (!inQuote && ch === '(') {
+      depth += 1;
+    } else if (!inQuote && ch === ')') {
+      depth -= 1;
+    }
+    if (ch === '&' && depth === 0 && !inQuote) {
+      segments.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  segments.push(current);
+  return segments.map((s) => s.trim()).filter(Boolean);
+};
 
 const AdminComputeSessionListPage = () => {
   'use memo';
@@ -100,6 +133,7 @@ const AdminComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
@@ -144,6 +178,31 @@ const AdminComputeSessionListPage = () => {
     filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
     order: queryParams.order || '-created_at',
   };
+
+  // The grid's legacy compute_session_list has no `project_id` queryfilter
+  // field — lift the filter UI's project condition to the query's group_id
+  // argument. Only a segment that IS a bare project predicate is lifted and
+  // stripped; a compound segment mentioning project_id is passed through
+  // untouched (the grid then surfaces the backend error) rather than
+  // silently narrowing the result set. The UUID comes from the project
+  // select, so an `ilike "%uuid%"` predicate is equality in practice.
+  let gridProjectId: string | undefined;
+  const keptSegments: string[] = [];
+  for (const seg of splitTopLevelAnd(queryParams.filter ?? '')) {
+    const m = /^\(*\s*project_id\s+(?:==|ilike)\s+"%?([^"%]+)%?"\s*\)*$/.exec(
+      seg,
+    );
+    if (m) {
+      gridProjectId ??= m[1];
+    } else {
+      keptSegments.push(seg);
+    }
+  }
+  const gridFilter = mergeFilterValues([
+    statusFilter,
+    keptSegments.join('&') || undefined,
+    typeFilter,
+  ]);
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -390,6 +449,30 @@ const AdminComputeSessionListPage = () => {
                 />
               </>
             )}
+            <SegmentedControl
+              label={t('session.resourceGrid.ViewMode')}
+              value={queryParams.view}
+              onChange={(value) =>
+                setQueryParams({ view: value as 'table' | 'grid' })
+              }
+            >
+              <Tooltip content={t('session.resourceGrid.TableView')}>
+                <SegmentedControlItem
+                  value="table"
+                  label={t('session.resourceGrid.TableView')}
+                  isLabelHidden
+                  icon={<TableIcon size="1em" />}
+                />
+              </Tooltip>
+              <Tooltip content={t('session.resourceGrid.GridView')}>
+                <SegmentedControlItem
+                  value="grid"
+                  label={t('session.resourceGrid.GridView')}
+                  isLabelHidden
+                  icon={<LayoutGridIcon size="1em" />}
+                />
+              </Tooltip>
+            </SegmentedControl>
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"
               defaultAutoUpdateDelay={15_000}
@@ -404,7 +487,34 @@ const AdminComputeSessionListPage = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {computeSessionNodeResult.ok ? (
+        {queryParams.view === 'grid' ? (
+          // Keyed by the UNdeferred filter/order: a change remounts the
+          // boundary so its fallback shows immediately, instead of the
+          // refetch being held hidden until the next poll commit. The
+          // fetchKey stays deferred so poll refreshes never flash.
+          <Suspense
+            key={`${gridFilter ?? ''}:${gridProjectId ?? ''}:${queryVariables.order ?? ''}`}
+            fallback={
+              <BAICard style={{ width: '100%' }} loading variant="borderless" />
+            }
+          >
+            <SessionResourceGrid
+              filter={gridFilter}
+              projectId={gridProjectId}
+              order={queryVariables.order ?? undefined}
+              fetchKey={deferredFetchKey}
+              onClickSession={(sessionId) => {
+                const newSearchParams = new URLSearchParams(location.search);
+                newSearchParams.set('sessionDetail', sessionId);
+                webUINavigate({
+                  pathname: location.pathname,
+                  hash: location.hash,
+                  search: newSearchParams.toString(),
+                });
+              }}
+            />
+          </Suspense>
+        ) : computeSessionNodeResult.ok ? (
           <SessionNodes
             order={queryParams.order}
             onClickSessionName={(session) => {
