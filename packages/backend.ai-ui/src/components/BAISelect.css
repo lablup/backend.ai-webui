@@ -65,16 +65,6 @@
   min-width: 0;
 }
 
-/* antd's vertical divider metrics (0.9em, centered, breathing room) — full
-   stretch reads as a cell border inside the compact trigger. */
-.bai-select-rich-trigger
-  > .bai-select-rich-value
-  [role='separator'][aria-orientation='vertical'] {
-  align-self: center;
-  height: 0.9em;
-  margin-inline: var(--spacing-2);
-}
-
 /* The trigger button spans the whole control so its focus, click and
    voice-control target stays full-size (the container is position:relative).
    Sibling clear/status buttons become positioned so DOM order keeps them

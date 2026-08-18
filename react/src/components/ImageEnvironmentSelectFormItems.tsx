@@ -93,6 +93,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
     useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
+  // Astryx's vertical Divider is `height: 100%`, which a centered flex row
+  // collapses to 0; antd's metrics keep the row and the trigger identical.
+  const versionDividerStyle: React.CSSProperties = {
+    alignSelf: 'center',
+    height: '0.9em',
+    marginInline: token.marginXXS,
+  };
 
   // antd `RefSelectProps` restated as the one method these two refs ever
   // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
@@ -871,12 +878,18 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             <TextHighlighter keyword={versionSearch}>
                               {image?.version}
                             </TextHighlighter>
-                            <Divider orientation="vertical" />
+                            <Divider
+                              orientation="vertical"
+                              style={versionDividerStyle}
+                            />
                             <TextHighlighter keyword={versionSearch}>
                               {image?.architecture}
                             </TextHighlighter>
-                            <Divider orientation="vertical" />
-                            <BAIFlex direction="row" align="start" gap="xs">
+                            <Divider
+                              orientation="vertical"
+                              style={versionDividerStyle}
+                            />
+                            <BAIFlex direction="row" align="start" gap="xxs">
                               {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
                               {_.map(tagFacts, (fact) =>
                                 fact.isDouble ? (
@@ -916,15 +929,21 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           </BAIFlex>
                         ) : (
                           <BAIFlex direction="row" justify="between">
-                            <BAIFlex direction="row">
+                            <BAIFlex direction="row" gap="xxs">
                               <TextHighlighter keyword={versionSearch}>
                                 {getBaseVersion(imageFullName || '')}
                               </TextHighlighter>
-                              <Divider orientation="vertical" />
+                              <Divider
+                                orientation="vertical"
+                                style={versionDividerStyle}
+                              />
                               <TextHighlighter keyword={versionSearch}>
                                 {image?.architecture}
                               </TextHighlighter>
-                              <Divider orientation="vertical" />
+                              <Divider
+                                orientation="vertical"
+                                style={versionDividerStyle}
+                              />
                               <ImageTags
                                 tag={image?.tag || ''}
                                 highlightKeyword={versionSearch}
