@@ -1260,6 +1260,9 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           // its pagination bar by 24px.
           'bai-table-astryx-dim-layer',
           !showHeader && 'bai-table-astryx-no-header',
+          // dividers="grid" already draws real column borders; the header
+          // split would double them. See BAITableAstryx.css.
+          !bordered && 'bai-table-astryx-header-split',
           isScrollX && 'bai-table-astryx-scroll-x',
           isScrollY && 'bai-table-astryx-scroll-y',
         )}
