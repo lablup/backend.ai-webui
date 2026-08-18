@@ -111,15 +111,28 @@ test.describe(
         );
       });
 
-      // 5. The Astryx dropzone covers the explorer and carries the caption
-      //    inside it (FR-3575).
-      const dragOverlay = page.locator(
-        '.astryx-file-input[data-mode=dropzone]',
-      );
+      // 5. The dropzone covers the whole explorer overlay and carries the
+      //    caption inside it (FR-3575). The regression this pins is a drop
+      //    area that collapsed to a ~100px band at the top of a full-height
+      //    overlay, so visibility alone would not catch it — the boxes have
+      //    to match.
+      const dropOverlay = page.getByTestId('folder-explorer-drop-overlay');
+      const dragOverlay = dropOverlay.locator('.bai-file-explorer-dropzone');
       await expect(dragOverlay).toBeVisible({ timeout: 5000 });
       await expect(
         dragOverlay.getByText('Drag and drop files to this area to upload.'),
       ).toBeVisible();
+
+      const overlayBox = await dropOverlay.boundingBox();
+      const dropzoneBox = await dragOverlay.boundingBox();
+      expect(overlayBox).not.toBeNull();
+      expect(dropzoneBox).not.toBeNull();
+      for (const side of ['x', 'y', 'width', 'height'] as const) {
+        expect(
+          Math.abs(dropzoneBox![side] - overlayBox![side]),
+          `dropzone ${side} should match the overlay`,
+        ).toBeLessThanOrEqual(1);
+      }
 
       // 6. Move around inside the dropzone before releasing. The browser fires
       //    dragenter/dragleave pairs with no relatedTarget here, and the

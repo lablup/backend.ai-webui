@@ -37,6 +37,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
 
   const overlay = (
     <div
+      data-testid="folder-explorer-drop-overlay"
       // Deferred on purpose: `drop` is discrete priority, so closing during
       // the dispatch flushes synchronously and unmounts the dropzone before
       // React reaches `FileInput`'s own handler — the file is then silently
@@ -57,6 +58,10 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
     >
       <FileInput
         mode="dropzone"
+        // `FileInput` spreads unknown props onto its hidden <input>, so a
+        // data-testid cannot reach the drop area — `className` can, and e2e
+        // needs a repo-owned handle on it (never an `astryx-*` class).
+        className="bai-file-explorer-dropzone"
         // The caption has to live INSIDE the drop area: `label` / `description`
         // render above it in the Field, on top of the explorer title (FR-3575).
         label={t('comp:FileExplorer.DragAndDropDesc')}
