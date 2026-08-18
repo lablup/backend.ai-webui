@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "割り当て / 要求"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "グループの色を変更",
+    "ResourceGrid": "リソースグリッド",
+    "UseColorN": "色{{n}}を使用"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無制限"
   },

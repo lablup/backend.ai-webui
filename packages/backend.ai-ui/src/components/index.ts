@@ -200,6 +200,12 @@ export type {
 export { default as StorageUsageBadge } from './StorageUsageBadge';
 export type { StorageUsageBadgeProps } from './StorageUsageBadge';
 export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
+export { default as BAIResourceUnitGrid } from './BAIResourceUnitGrid';
+export type {
+  BAIResourceUnitGridProps,
+  BAIUnitGridGroup,
+  BAIUnitGridUnit,
+} from './BAIResourceUnitGrid';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

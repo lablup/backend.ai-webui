@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Alocado / Solicitado"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Alterar a cor do grupo",
+    "ResourceGrid": "Grelha de recursos",
+    "UseColorN": "Usar a cor {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Ilimitado"
   },

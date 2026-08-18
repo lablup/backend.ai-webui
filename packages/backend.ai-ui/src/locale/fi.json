@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Varattu / Pyydetty"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Vaihda ryhmän väri",
+    "ResourceGrid": "Resurssiruudukko",
+    "UseColorN": "Käytä väriä {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Rajoittamaton"
   },
