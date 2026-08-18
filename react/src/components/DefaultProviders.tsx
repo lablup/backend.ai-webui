@@ -258,13 +258,18 @@ export const useCurrentLanguage = () => {
 };
 
 /**
- * Global message config for the app-shim's toast leg. Was `commonAppProps:
- * AppProps` and was spread onto BOTH antd's `<App>` and `<BAIAppProvider>`
- * while the two hosts coexisted; the antd half is gone (final switch), so
- * this is now just the shim's own `message` prop value. `duration` is in
+ * Global message config for the app-shim's toast leg. `duration` is in
  * SECONDS, matching antd's semantics, which `app-shim/bridge.ts` reproduces.
  */
 const messageConfig = { duration: 4 };
+
+/**
+ * antd's `message` rendered top-center, and the bottom-right corner belongs to
+ * `.bai-notification-stack` — co-anchoring there let the toast viewport (browser
+ * top layer) paint over the notification cards (FR-3554). Astryx offers no
+ * centered anchor, so `topStart` is the base and `astryxBui.css` centers it.
+ */
+const toastConfig = { position: 'topStart' } as const;
 
 const BAIMetaDataProviderWrapper = ({ children }: { children: ReactNode }) => {
   const { data: deviceMetaData } = useDeviceMetaData();
@@ -406,7 +411,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
                      * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
                      * useBAIi18n.ts.
                      */}
-                    <BAIAppProvider message={messageConfig}>
+                    <BAIAppProvider message={messageConfig} toast={toastConfig}>
                       <BAIMetaDataProviderWrapper>
                         {/* Single app-wide notification renderer. Lives outside
                             the Suspense below so toasts work on every route and
