@@ -5,9 +5,13 @@
 import { SessionLiveStats } from './mergeKernelLiveStats';
 import {
   availableLiveStatMetrics,
+  availableResourceOptions,
   availableResourceSlots,
   isNotYetAllocatedSession,
   kernelMetricPct,
+  memKeyForSlot,
+  parseResourceValue,
+  sessionHasResource,
   MAX_UNITS_PER_SESSION,
   parseSlotMap,
   sessionGridUnits,
@@ -406,5 +410,139 @@ describe('isNotYetAllocatedSession', () => {
   test('running sessions with real occupancy are allocated', () => {
     expect(isNotYetAllocatedSession('RUNNING', false)).toBe(false);
     expect(isNotYetAllocatedSession('TERMINATED', false)).toBe(false);
+  });
+});
+
+describe('resource-mode util/mem dimensions', () => {
+  test('parseResourceValue decodes slot and dimension', () => {
+    expect(parseResourceValue('cpu')).toEqual({
+      slot: 'cpu',
+      dimension: 'util',
+    });
+    expect(parseResourceValue('cuda.shares')).toEqual({
+      slot: 'cuda.shares',
+      dimension: 'util',
+    });
+    expect(parseResourceValue('cuda.shares:mem')).toEqual({
+      slot: 'cuda.shares',
+      dimension: 'mem',
+    });
+  });
+
+  test('memKeyForSlot maps accelerator slots to their memory stat key', () => {
+    expect(memKeyForSlot('cuda.shares')).toBe('cuda_mem');
+    expect(memKeyForSlot('hyperaccel-lpu.device')).toBe('hyperaccel_lpu_mem');
+  });
+
+  test('availableResourceOptions splits accelerators that report a mem stat', () => {
+    const sessions = [
+      {
+        slots: { cpu: '2', mem: `${GiB}`, 'cuda.shares': '1' },
+        liveStat: {
+          cuda_util: { pct: '10' },
+          cuda_mem: { pct: '55' },
+        } as SessionLiveStats,
+      },
+    ];
+    expect(availableResourceOptions(sessions)).toEqual([
+      'cpu',
+      'mem',
+      'cuda.shares',
+      'cuda.shares:mem',
+    ]);
+  });
+
+  test('availableResourceOptions keeps a single entry without a mem stat', () => {
+    const sessions = [
+      {
+        slots: { cpu: '2', 'cuda.shares': '1' },
+        liveStat: { cuda_util: { pct: '10' } } as SessionLiveStats,
+      },
+    ];
+    expect(availableResourceOptions(sessions)).toEqual([
+      'cpu',
+      'mem',
+      'cuda.shares',
+    ]);
+  });
+
+  test('sessionHasResource is true only when the slot is held', () => {
+    const slots = { cpu: '2', 'cuda.shares': '0.5' };
+    expect(sessionHasResource(slots, 'cpu')).toBe(true);
+    expect(sessionHasResource(slots, 'cuda.shares')).toBe(true);
+    expect(sessionHasResource(slots, 'cuda.shares:mem')).toBe(true);
+    expect(sessionHasResource({ cpu: '2' }, 'cuda.shares')).toBe(false);
+    expect(sessionHasResource({ 'cuda.shares': '0' }, 'cuda.shares')).toBe(
+      false,
+    );
+  });
+
+  test('sessionUtilizationPct reads the mem stat for a :mem selection', () => {
+    const liveStat = {
+      cuda_util: { pct: '10' },
+      cuda_mem: { pct: '85' },
+    } as SessionLiveStats;
+    expect(sessionUtilizationPct('RUNNING', liveStat, 'cuda.shares')).toBe(10);
+    expect(sessionUtilizationPct('RUNNING', liveStat, 'cuda.shares:mem')).toBe(
+      85,
+    );
+  });
+
+  test('sessionGridUnits sizes a :mem selection by device-memory GiB, colors by the mem stat', () => {
+    const fills: UtilizationFills = {
+      bins: ['b0', 'b1', 'b2', 'b3', 'b4'],
+      noData: 'nd',
+    };
+    const session = {
+      status: 'RUNNING',
+      slots: { 'cuda.shares': '2.5' },
+      liveStat: {
+        cuda_util: { pct: '10' },
+        cuda_mem: { pct: '85', capacity: `${5 * GiB}` },
+      } as SessionLiveStats,
+      kernels: [],
+    };
+    const oneGiB = sessionGridUnits(session, {
+      mode: 'resource',
+      resource: 'cuda.shares:mem',
+      metric: '',
+      memUnitGiB: 1,
+      fills,
+    });
+    // 5 GiB of device memory at 1 GiB/unit, colored by cuda_mem (85% → bin 4).
+    expect(oneGiB).toHaveLength(5);
+    expect(oneGiB.every((c) => c.color === 'b4')).toBe(true);
+    const twoGiB = sessionGridUnits(session, {
+      mode: 'resource',
+      resource: 'cuda.shares:mem',
+      metric: '',
+      memUnitGiB: 2,
+      fills,
+    });
+    expect(twoGiB).toHaveLength(3);
+    expect(twoGiB[2].fraction).toBeCloseTo(0.5);
+  });
+
+  test('sessionGridUnits falls back to one no-data cell without a device-memory capacity', () => {
+    const fills: UtilizationFills = {
+      bins: ['b0', 'b1', 'b2', 'b3', 'b4'],
+      noData: 'nd',
+    };
+    const cells = sessionGridUnits(
+      {
+        status: 'PENDING',
+        slots: { 'cuda.shares': '2' },
+        liveStat: {} as SessionLiveStats,
+        kernels: [],
+      },
+      {
+        mode: 'resource',
+        resource: 'cuda.shares:mem',
+        metric: '',
+        memUnitGiB: 1,
+        fills,
+      },
+    );
+    expect(cells).toEqual([{ color: 'nd' }]);
   });
 });

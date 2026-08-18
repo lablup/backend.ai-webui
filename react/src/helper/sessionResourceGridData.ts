@@ -75,21 +75,52 @@ export const utilKeyForSlot = (slot: string): string =>
       ? 'mem'
       : `${slot.split('.')[0].replace(/-/g, '_')}_util`;
 
+// `cuda.shares` → `cuda_mem` (accelerator memory-usage live_stat key)
+export const memKeyForSlot = (slot: string): string =>
+  `${slot.split('.')[0].replace(/-/g, '_')}_mem`;
+
+/**
+ * A resource-mode selection: quantize by `slot`, color by that slot's
+ * `util` or (accelerators only) `mem` live_stat. Encoded as `slot` for
+ * util — the historical form, so existing URLs keep working — and
+ * `slot:mem` for the memory dimension.
+ */
+export const parseResourceValue = (
+  value: string,
+): { slot: string; dimension: 'util' | 'mem' } => {
+  const [slot, dim] = value.split(':');
+  return { slot, dimension: dim === 'mem' ? 'mem' : 'util' };
+};
+
+/** True when the session holds any amount of the selection's slot. */
+export const sessionHasResource = (
+  slots: SlotMap,
+  resourceValue: string,
+): boolean =>
+  (parseFloat(slots[parseResourceValue(resourceValue).slot] ?? '0') || 0) > 0;
+
 const statPct = (liveStat: SessionLiveStats, key: string): number | null => {
   const stat = liveStat[key];
   const pct = stat ? parseFloat(stat.pct ?? '') : NaN;
   return Number.isFinite(pct) ? pct : null;
 };
 
-/** Utilization percent of one slot, or null when not live / no data. */
+/**
+ * Utilization percent for a resource-mode selection (`slot` or `slot:mem`),
+ * or null when not live / no data.
+ */
 export const sessionUtilizationPct = (
   status: string,
   liveStat: SessionLiveStats,
-  slot: string,
-): number | null =>
-  LIVE_SESSION_STATUSES.includes(status)
-    ? statPct(liveStat, utilKeyForSlot(slot))
-    : null;
+  resourceValue: string,
+): number | null => {
+  if (!LIVE_SESSION_STATUSES.includes(status)) return null;
+  const { slot, dimension } = parseResourceValue(resourceValue);
+  return statPct(
+    liveStat,
+    dimension === 'mem' ? memKeyForSlot(slot) : utilKeyForSlot(slot),
+  );
+};
 
 /** A kernel's percent for a raw live_stat metric key, or null. */
 export const kernelMetricPct = (
@@ -133,7 +164,11 @@ export interface SessionGridUnitsInput {
 
 export interface SessionGridUnitsOptions {
   mode: SessionGridMode;
-  /** Resource mode: the slot key to quantize (`cpu`, `mem`, `cuda.shares`, …). */
+  /**
+   * Resource mode: the selection to quantize and color by — a slot key
+   * (`cpu`, `mem`, `cuda.shares`, …) or `slot:mem` for an accelerator's
+   * memory dimension (see `parseResourceValue`).
+   */
   resource: string;
   /** Kernel mode: the live_stat metric key to color by. */
   metric: string;
@@ -144,9 +179,10 @@ export interface SessionGridUnitsOptions {
 
 /**
  * Quantize one session into unit cells. Resource mode: 1 unit per CPU core /
- * selected GiB of memory / accelerator device (fractional remainder becomes
- * one partial-fill cell). Kernel mode: 1 unit per kernel. Sessions that
- * would yield no cells get a single no-data cell so they stay visible.
+ * selected GiB of (host or accelerator-device) memory / accelerator device
+ * (fractional remainder becomes one partial-fill cell). Kernel mode: 1 unit
+ * per kernel. Sessions that would yield no cells get a single no-data cell
+ * so they stay visible.
  */
 export const sessionGridUnits = (
   session: SessionGridUnitsInput,
@@ -169,8 +205,22 @@ export const sessionGridUnits = (
     }));
     return cells.length > 0 ? cells : [{ color: fills.noData }];
   }
-  const raw = parseFloat(session.slots[resource] ?? '0') || 0;
-  const units = resource === 'mem' ? raw / (memUnitGiB * 2 ** 30) : raw;
+  const { slot, dimension } = parseResourceValue(resource);
+  let units: number;
+  if (dimension === 'mem') {
+    // Accelerator memory: quantize the device-memory capacity (from the
+    // merged live_stat) per selected GiB, like the host memory slot.
+    const capacity = parseFloat(
+      session.liveStat[memKeyForSlot(slot)]?.capacity ?? '',
+    );
+    units =
+      Number.isFinite(capacity) && capacity > 0
+        ? capacity / (memUnitGiB * 2 ** 30)
+        : 0;
+  } else {
+    const raw = parseFloat(session.slots[slot] ?? '0') || 0;
+    units = slot === 'mem' ? raw / (memUnitGiB * 2 ** 30) : raw;
+  }
   const full = Math.floor(units + 1e-9);
   const fraction = units - full;
   const color = utilizationFill(
@@ -202,6 +252,22 @@ export const availableResourceSlots = (
       Object.keys(s.slots).filter((k) => k !== 'cpu' && k !== 'mem'),
     ),
   ]);
+
+/**
+ * Resource-mode selector values: every slot's util dimension, and — right
+ * after each accelerator whose data carries a `<family>_mem` live_stat —
+ * that accelerator's `slot:mem` memory dimension.
+ */
+export const availableResourceOptions = (
+  sessions: ReadonlyArray<{ slots: SlotMap; liveStat: SessionLiveStats }>,
+): string[] =>
+  availableResourceSlots(sessions).flatMap((slot) =>
+    slot !== 'cpu' &&
+    slot !== 'mem' &&
+    sessions.some((s) => memKeyForSlot(slot) in s.liveStat)
+      ? [slot, `${slot}:mem`]
+      : [slot],
+  );
 
 export const availableLiveStatMetrics = (
   sessions: ReadonlyArray<{

@@ -17,14 +17,17 @@ import {
 } from '../helper/mergeKernelLiveStats';
 import {
   availableLiveStatMetrics,
-  availableResourceSlots,
+  availableResourceOptions,
   isNotYetAllocatedSession,
   MAX_UNITS_PER_SESSION,
+  memKeyForSlot,
+  parseResourceValue,
   parseSlotMap,
   SESSION_CAP,
   sessionGridMemUnitValues,
   sessionGridModeValues,
   sessionGridUnits,
+  sessionHasResource,
   sessionUtilizationPct,
   SlotMap,
   utilizationFill,
@@ -265,7 +268,7 @@ const SessionResourceGrid = ({
     };
   });
 
-  const resourceOptions = availableResourceSlots(sessions);
+  const resourceOptions = availableResourceOptions(sessions);
   const metricOptions = availableLiveStatMetrics(sessions);
   const resource = resourceOptions.includes(gridParams.gridResource)
     ? gridParams.gridResource
@@ -303,7 +306,16 @@ const SessionResourceGrid = ({
     },
   ];
 
-  const groups: BAIUnitGridGroup[] = sessions.map((session) => ({
+  // Resource mode surveys ONE resource: sessions holding none of it are
+  // omitted (and counted into an info banner) instead of rendering as
+  // misleading no-data placeholder cells.
+  const shownSessions =
+    gridParams.gridMode === 'resource'
+      ? sessions.filter((s) => sessionHasResource(s.slots, resource))
+      : sessions;
+  const omittedCount = sessions.length - shownSessions.length;
+
+  const groups: BAIUnitGridGroup[] = shownSessions.map((session) => ({
     key: session.id,
     label: session.name,
     units: sessionGridUnits(session, {
@@ -351,45 +363,78 @@ const SessionResourceGrid = ({
           </Text>
         )}
         <Divider />
-        {Object.entries(session.slots).map(([slot, raw]) => {
-          const pct = sessionUtilizationPct(
-            session.status,
-            session.liveStat,
-            slot,
-          );
-          const alloc =
-            slot === 'cpu'
-              ? parseFloat(raw) > 1
-                ? t('session.resourceGrid.NCores', { value: raw })
-                : t('session.resourceGrid.NCore', { value: raw })
-              : slot === 'mem'
-                ? formatBytes(parseFloat(raw))
-                : `${raw} ${slotUnit(slot)}`.trim();
-          return (
-            <BAIFlex key={slot} direction="column" align="stretch" gap={2}>
+        {Object.entries(session.slots)
+          .flatMap(([slot, raw]) => {
+            const alloc =
+              slot === 'cpu'
+                ? parseFloat(raw) > 1
+                  ? t('session.resourceGrid.NCores', { value: raw })
+                  : t('session.resourceGrid.NCore', { value: raw })
+                : slot === 'mem'
+                  ? formatBytes(parseFloat(raw))
+                  : `${raw} ${slotUnit(slot)}`.trim();
+            const rows = [
+              {
+                key: slot,
+                label:
+                  `${slotLabel(slot)} · ${alloc}` +
+                  (session.notYetAllocated
+                    ? ` ${t('session.resourceGrid.Requested')}`
+                    : ''),
+                pct: sessionUtilizationPct(
+                  session.status,
+                  session.liveStat,
+                  slot,
+                ),
+              },
+            ];
+            // Accelerators reporting a memory stat get a second row: device
+            // memory (capacity from the merged live_stat) + its own bar.
+            const memStat =
+              slot !== 'cpu' && slot !== 'mem'
+                ? session.liveStat[memKeyForSlot(slot)]
+                : undefined;
+            if (memStat) {
+              const capacity = parseFloat(memStat.capacity ?? '');
+              rows.push({
+                key: `${slot}:mem`,
+                label:
+                  t('session.resourceGrid.SlotMemLabel', {
+                    label: slotLabel(slot),
+                  }) +
+                  (Number.isFinite(capacity)
+                    ? ` · ${formatBytes(capacity)}`
+                    : ''),
+                pct: sessionUtilizationPct(
+                  session.status,
+                  session.liveStat,
+                  `${slot}:mem`,
+                ),
+              });
+            }
+            return rows;
+          })
+          .map((row) => (
+            <BAIFlex key={row.key} direction="column" align="stretch" gap={2}>
               <BAIFlex justify="between" gap={12}>
                 <Text size="sm" color="secondary">
-                  {`${slotLabel(slot)} · ${alloc}`}
-                  {session.notYetAllocated
-                    ? ` ${t('session.resourceGrid.Requested')}`
-                    : ''}
+                  {row.label}
                 </Text>
                 <Text size="sm">
-                  {pct === null ? '–' : `${pct.toFixed(0)}%`}
+                  {row.pct === null ? '–' : `${row.pct.toFixed(0)}%`}
                 </Text>
               </BAIFlex>
               <div className="session-resource-grid-usage-track">
                 <div
                   className="session-resource-grid-usage-fill"
                   style={{
-                    width: `${Math.max(0, Math.min(100, pct ?? 0))}%`,
-                    background: utilizationFill(pct, UTILIZATION_FILLS),
+                    width: `${Math.max(0, Math.min(100, row.pct ?? 0))}%`,
+                    background: utilizationFill(row.pct, UTILIZATION_FILLS),
                   }}
                 />
               </div>
             </BAIFlex>
-          );
-        })}
+          ))}
         {Number.isFinite(ioRead) || Number.isFinite(ioWrite) ? (
           <Text size="sm" color="secondary">
             {t('session.resourceGrid.IOReadWrite', {
@@ -436,15 +481,31 @@ const SessionResourceGrid = ({
               value={resource}
               onChange={(value) => setGridParams({ gridResource: value })}
             >
-              {resourceOptions.map((slot) => (
-                <SegmentedControlItem
-                  key={slot}
-                  value={slot}
-                  label={slotLabel(slot)}
-                />
-              ))}
+              {resourceOptions.map((value) => {
+                const { slot, dimension } = parseResourceValue(value);
+                // Accelerators with a memory live_stat split into two
+                // entries: "<label> (util)" and "<label> (mem)".
+                const label =
+                  dimension === 'mem'
+                    ? t('session.resourceGrid.SlotMemLabel', {
+                        label: slotLabel(slot),
+                      })
+                    : resourceOptions.includes(`${slot}:mem`)
+                      ? t('session.resourceGrid.SlotUtilLabel', {
+                          label: slotLabel(slot),
+                        })
+                      : slotLabel(slot);
+                return (
+                  <SegmentedControlItem
+                    key={value}
+                    value={value}
+                    label={label}
+                  />
+                );
+              })}
             </SegmentedControl>
-            {resource === 'mem' && (
+            {(resource === 'mem' ||
+              parseResourceValue(resource).dimension === 'mem') && (
               <SegmentedControl
                 size="sm"
                 label={t('session.resourceGrid.MemoryUnit')}
@@ -506,9 +567,18 @@ const SessionResourceGrid = ({
           })}
         />
       )}
+      {omittedCount > 0 && (
+        <Banner
+          status="info"
+          title={t('session.resourceGrid.OmittedNoResource', {
+            count: omittedCount,
+            label: slotLabel(parseResourceValue(resource).slot),
+          })}
+        />
+      )}
       <BAIResourceUnitGrid
         aria-label={t('session.resourceGrid.ResourceGridOfNSessions', {
-          count: sessions.length,
+          count: shownSessions.length,
         })}
         groups={groups}
         layout={gridParams.gridLayout}
@@ -534,10 +604,14 @@ const SessionResourceGrid = ({
         }}
         onClickGroup={(key) => onClickSession?.(key)}
         emptyFallback={
-          <Banner
-            status="info"
-            title={t('session.resourceGrid.NoSessionsMatchingFilter')}
-          />
+          // When everything was omitted for lacking the selected resource,
+          // the omitted-count banner above already explains the empty grid.
+          omittedCount > 0 ? null : (
+            <Banner
+              status="info"
+              title={t('session.resourceGrid.NoSessionsMatchingFilter')}
+            />
+          )
         }
       />
     </BAIFlex>
