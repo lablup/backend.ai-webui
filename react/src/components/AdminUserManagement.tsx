@@ -473,7 +473,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           )}
           <BAIFetchKeyButton
             loading={isPending}
-            value=""
             onChange={() => {
               onReload(variables, { fetchPolicy: 'network-only' });
             }}

@@ -81,10 +81,9 @@ export const useTabQuerySnapshot = <T extends string>(
  * `sourceKey` seeds the key state and re-syncs it whenever the argument's
  * value changes (e.g. the caller derives it from the URL and the user
  * navigates back/forward). The sync is change-triggered, not
- * difference-triggered: right after `setAfterSnapshot` the caller's async URL
- * mirror still reports the departing key, but since the argument hasn't
- * changed, no bounce-back occurs. It also runs during render, so effects only
- * ever observe a settled key/value pair.
+ * difference-triggered, so a rerender whose `sourceKey` still reports the
+ * departing key cannot undo `setAfterSnapshot`. It runs during render, so
+ * effects only ever observe a settled key/value pair.
  *
  * `setAfterSnapshot(nextKey)` snapshots the current key's value, switches the
  * key, and synchronously returns the value stored for `nextKey` (`undefined`

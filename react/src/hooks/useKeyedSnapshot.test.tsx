@@ -92,8 +92,7 @@ describe('useKeyedSnapshot', () => {
 
     expect(result.current[0]).toBe('credentials');
 
-    // The source key holding still (the async URL mirror after a tab click)
-    // must not move the key back.
+    // An unchanged source key is a no-op.
     rerender({ sourceKey: 'credentials', value: 'credentials-from-url' });
     expect(result.current[0]).toBe('credentials');
   });
