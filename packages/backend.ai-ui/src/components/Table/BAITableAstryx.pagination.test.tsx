@@ -57,6 +57,19 @@ describe('BAITableAstryx pagination (FR-3563)', () => {
     expect(screen.getByText('row-10')).toBeInTheDocument();
   });
 
+  it('leaves a server-sliced page alone even when it exceeds the page size', () => {
+    // The branch the `total` guard exists for: 20 rows in hand from a 250-row
+    // result set on page 5. Without the guard this indexes past the end and
+    // renders nothing.
+    renderTable({
+      dataSource: makeRows(20),
+      pagination: { current: 5, pageSize: 10, total: 250 },
+    });
+
+    expect(screen.getByText('row-1')).toBeInTheDocument();
+    expect(screen.getByText('row-20')).toBeInTheDocument();
+  });
+
   it('renders every row when pagination is disabled', () => {
     renderTable({ dataSource: makeRows(25), pagination: false });
 

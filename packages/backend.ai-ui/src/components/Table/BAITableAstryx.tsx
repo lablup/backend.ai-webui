@@ -645,8 +645,14 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     Math.max(1, Math.ceil(total / currentPageSize)),
   );
 
+  // A `total` larger than the rows we were handed is the caller declaring them
+  // already sliced server-side, so honour that and never re-slice — otherwise
+  // a page past the first indexes past the end and renders nothing.
+  const isServerSliced = total > sortedRows.length;
   const rows =
-    pagination !== false && sortedRows.length > currentPageSize
+    pagination !== false &&
+    !isServerSliced &&
+    sortedRows.length > currentPageSize
       ? sortedRows.slice(
           (activePage - 1) * currentPageSize,
           activePage * currentPageSize,
