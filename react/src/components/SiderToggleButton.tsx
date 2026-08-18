@@ -2,12 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { MediaTheme } from '@astryxdesign/core/theme';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAI_Z_INDEX, BAIFlex } from 'backend.ai-ui';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +46,7 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
         right: 0,
         transform: 'translateX(12px)',
         paddingTop: buttonTop,
-        zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT + 1,
+        zIndex: BAI_Z_INDEX.appHeader + 1,
       }}
       direction="column"
       justify={buttonTop ? 'start' : 'center'}

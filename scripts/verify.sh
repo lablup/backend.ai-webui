@@ -176,6 +176,18 @@ check_astryx_theme_built() {
     -o src/astryx-theme/built/backendai-default-built.css
 }
 
+check_z_index_ladder() {
+  # z-index ladder mirror gate (FR-3578 T10). The ladder is declared once in
+  # packages/backend.ai-ui/src/styles/zIndexLadder.ts and hand-mirrored into
+  # its CSS twin and index.html's critical <style> (parsed before any JS, so it
+  # cannot import either). Drift produces no compiler, lint, or runtime error —
+  # just a login screen painting under the boot curtain — and a vitest
+  # assertion cannot cover it: vitest.yml's path filter never fires for an
+  # index.html-only PR. Also pins @astryxdesign/lab's 1000 non-modal overlay
+  # base, the off-ladder value `loginSideHelp` (1060) straddles.
+  node scripts/migration-gates/z-index-ladder-gate.mjs
+}
+
 run_check "Relay" check_relay_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
@@ -183,6 +195,7 @@ run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
+run_check "z-index ladder mirrors" check_z_index_ladder
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row
