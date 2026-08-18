@@ -1236,7 +1236,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
           'bai-table-astryx-dim-layer',
           !showHeader && 'bai-table-astryx-no-header',
           // dividers="grid" already draws real column borders; the header
-          // split would double them. See BAITableAstryx.css.
+          // split would double them. See BAITable.css.
           !bordered && 'bai-table-astryx-header-split',
           isScrollX && 'bai-table-astryx-scroll-x',
           isScrollY && 'bai-table-astryx-scroll-y',
