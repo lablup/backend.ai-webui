@@ -6,14 +6,37 @@
  * Top-layer contract: the header button opens the palette, rows render as
  * title + breadcrumb (or "found in" for a body match), an empty result set
  * shows the no-results copy, and selecting a row records a recent, navigates
- * to the hit's target, and closes.
+ * to the hit's target, and closes. Opening runs in a transition, so a
+ * suspending subtree holds the previous UI instead of flashing an empty frame.
  */
 import GlobalSearchPaletteButton from './GlobalSearchPaletteButton';
 import type { SearchHit } from './types';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Suspense } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Lets a test suspend the palette subtree the way `useSuspendedBackendaiClient`
+// does on a cold client, so the transition contract is observable.
+const suspension = vi.hoisted(() => {
+  let gate: { promise: Promise<void>; resolve: () => void } | null = null;
+  return {
+    hold: () => {
+      let resolve!: () => void;
+      const promise = new Promise<void>((r) => (resolve = r));
+      gate = { promise, resolve };
+    },
+    release: () => {
+      const held = gate;
+      gate = null;
+      held?.resolve();
+    },
+    throwIfHeld: () => {
+      if (gate) throw gate.promise;
+    },
+  };
+});
 
 const navigate = vi.fn();
 const pushRecent = vi.fn();
@@ -84,14 +107,17 @@ vi.mock('./useRecentSearchHits', () => ({
 
 vi.mock('./useGlobalSearchSource', () => ({
   toTranslator: () => (key: string) => key,
-  useGlobalSearchSource: () => ({
-    search: (query: string) =>
-      hits.filter((hit) =>
-        hit.label.toLowerCase().includes(query.toLowerCase()),
-      ),
-    bootstrap: () => hits,
-    getHit: (id: string) => hits.find((hit) => hit.id === id),
-  }),
+  useGlobalSearchSource: () => {
+    suspension.throwIfHeld();
+    return {
+      search: (query: string) =>
+        hits.filter((hit) =>
+          hit.label.toLowerCase().includes(query.toLowerCase()),
+        ),
+      bootstrap: () => hits,
+      getHit: (id: string) => hits.find((hit) => hit.id === id),
+    };
+  },
 }));
 
 const openPalette = async () => {
@@ -106,6 +132,37 @@ describe('GlobalSearchPalette', () => {
   beforeEach(() => {
     navigate.mockClear();
     pushRecent.mockClear();
+    suspension.release();
+  });
+
+  it('holds the header while the palette subtree suspends, then mounts it whole', async () => {
+    const user = userEvent.setup();
+    // Mirrors MainLayout: the header's only boundary is an ancestor one, so an
+    // urgent open would swap the whole header for this fallback.
+    render(
+      <Suspense fallback={<span>header-blanked</span>}>
+        <GlobalSearchPaletteButton />
+      </Suspense>,
+    );
+    const trigger = screen.getByRole('button', { name: 'webui.menu.Search' });
+
+    suspension.hold();
+    await user.click(trigger);
+
+    // The transition holds the commit, so neither an empty dialog nor a
+    // blanked header is ever painted.
+    expect(trigger).toBeInTheDocument();
+    expect(screen.queryByText('header-blanked')).not.toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
+
+    await act(async () => {
+      suspension.release();
+    });
+
+    await waitFor(() =>
+      expect(screen.getByText('Sessions')).toBeInTheDocument(),
+    );
   });
 
   it('lists the bootstrap rows grouped by the hit group', async () => {
