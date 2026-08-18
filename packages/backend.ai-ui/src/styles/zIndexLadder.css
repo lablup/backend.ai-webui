@@ -1,0 +1,22 @@
+/**
+ * The z-index ladder, for stylesheets. `zIndexLadder.ts` declares the same
+ * numbers for JS/TSX and carries the table of what owns each layer.
+ *
+ * Unlayered on purpose: a custom property inside `@layer` loses to any
+ * unlayered `:root` declaration, and these have to be the value everybody
+ * reads.
+ *
+ * !! KEEP IN SYNC with `zIndexLadder.ts` and with the `--bai-z-splash` mirror
+ * !! in the repo-root `index.html` critical <style> — that file is parsed
+ * !! before any JS and cannot import this one. `zIndexLadder.test.ts` fails if
+ * !! any of the three drift.
+ */
+:root {
+  --bai-z-app-header: 100;
+  --bai-z-splash: 900;
+  --bai-z-login-host: 950;
+  --bai-z-login-side-help: 1060;
+  --bai-z-modal-base: 1100;
+  --bai-z-modal-level-step: 10;
+  --bai-z-notification: 11000;
+}
