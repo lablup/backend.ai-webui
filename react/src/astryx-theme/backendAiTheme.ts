@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 15;
+export const THEME_NAME_REV = 16;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -752,6 +752,10 @@ const ANTD_HOVER_PARITY = {
       // trigger's context — a `<button>` trigger (SegmentedControl) leaks its
       // UA-default `center` down to the popover text. FR-3537.
       textAlign: 'start',
+      // Same leak, one property over: Astryx tooltips are NOT portalled, so a
+      // truncating trigger's `nowrap` reaches the bubble and its 300px content
+      // cap can no longer wrap — the text paints outside the surface. FR-3573.
+      whiteSpace: 'normal',
     },
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
