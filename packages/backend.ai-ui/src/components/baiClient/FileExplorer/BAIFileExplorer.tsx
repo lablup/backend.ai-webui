@@ -344,16 +344,19 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       setIsDragMode(false);
     };
 
+    // `drop` and `dragleave` listen in the CAPTURE phase: the overlay's Astryx
+    // `FileInput` stops propagation on both, so a bubble-phase listener here
+    // never sees a drop that lands on the dropzone and the overlay stays up.
     document.addEventListener('dragenter', handleDragEnter);
-    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('dragleave', handleDragLeave, true);
     document.addEventListener('dragover', handleDragOver);
-    document.addEventListener('drop', handleDrop);
+    document.addEventListener('drop', handleDrop, true);
 
     return () => {
       document.removeEventListener('dragenter', handleDragEnter);
-      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('dragleave', handleDragLeave, true);
       document.removeEventListener('dragover', handleDragOver);
-      document.removeEventListener('drop', handleDrop);
+      document.removeEventListener('drop', handleDrop, true);
     };
   }, [fileDropContainerRef]);
 
