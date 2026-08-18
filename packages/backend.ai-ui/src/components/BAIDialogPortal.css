@@ -4,13 +4,13 @@
 
  Co-located styles for `<BAIDialogPortal>` — the mask, centering and entry
  animation Astryx `Dialog` gets from the top layer and `::backdrop`, restated
- for a portalled tree. BUI authors no StyleX (no compiler in its tsup build),
- so these are plain CSS rules over Astryx tokens.
+ for a portalled tree. Plain CSS over Astryx tokens: BUI's tsup build runs no
+ StyleX compiler.
 */
 
 @layer components {
-  /* Base and step come from the ladder (`src/styles/zIndexLadder.css`). The
-     component writes only the level; an explicit `zIndex` prop lands inline
+  /* Base and step come from the ladder (`src/styles/zIndexLadder.css`); the
+     component writes only the level. An explicit `zIndex` prop lands inline
      and wins, floored at the base by `BAIDialogPortal.tsx`. */
   .bai-dialog-portal {
     --bai-dialog-portal-level: 0;
