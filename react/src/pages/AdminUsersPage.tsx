@@ -17,7 +17,6 @@ import AdminUserManagement, {
   USER_LIST_DEFAULT_PAGE_SIZE,
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import { BAISkeleton } from 'backend.ai-ui';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
 import { useSuspendedTOTPSupported } from '../hooks/backendai';
@@ -28,6 +27,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import {
   BAIFlex,
   BAICard,
+  BAISkeleton,
   availableUserV2SorterValues,
   type BAICardTabItem,
 } from 'backend.ai-ui';
@@ -295,7 +295,7 @@ const AdminUsersPage: React.FC = () => {
                   onReload={handleUsersReload}
                 />
               ) : (
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               )}
             </BAIFlex>
           </BAIErrorBoundary>
@@ -309,7 +309,7 @@ const AdminUsersPage: React.FC = () => {
                   onReload={handleCredentialsReload}
                 />
               ) : (
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               )}
             </BAIFlex>
           </BAIErrorBoundary>
