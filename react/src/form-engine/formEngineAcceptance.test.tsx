@@ -1314,6 +1314,55 @@ describe.each(IMPLEMENTATIONS)('form engine acceptance [%s]', (_name, Form) => {
     expect(onValuesChange).not.toHaveBeenCalled();
   });
 
+  // 25b. FR-3530 — SessionLauncherPage's real `<Form>` carries NO `name`, and
+  //      its URL sync rides `Form.Provider onFormChange`. rc-field-form fires
+  //      the callback for unnamed forms too (`name` undefined); a name guard
+  //      here silently killed the page's `formValues` query-param sync.
+  it('25b. Form.Provider onFormChange fires for unnamed forms, with name undefined', async () => {
+    const user = userEvent.setup();
+    let form!: FormInstance;
+    const captureForm = (instance: FormInstance) => {
+      form = instance;
+    };
+    const onFormChange = vi.fn();
+    const Demo = () => {
+      const instance = useTestForm(captureForm);
+      return (
+        <Form.Provider onFormChange={onFormChange}>
+          <Form form={instance} initialValues={{ a: '1' }}>
+            {/* Rule required: the programmatic leg reaches onFieldsChange via
+                validation, and a rule-less field is skipped there (test 1). */}
+            <Form.Item
+              name="a"
+              rules={[{ required: true, message: 'a required' }]}
+            >
+              <Input data-testid="a" />
+            </Form.Item>
+          </Form>
+        </Form.Provider>
+      );
+    };
+    render(<Demo />);
+    await settle();
+    onFormChange.mockClear();
+
+    // User input fires the channel even without a form name.
+    await user.type(screen.getByTestId('a'), '2');
+    await settle();
+    expect(onFormChange).toHaveBeenCalled();
+    expect(onFormChange.mock.calls[0][0]).toBeUndefined();
+
+    onFormChange.mockClear();
+
+    // So does a programmatic edit — the path SessionLauncherPage depends on.
+    await act(async () => {
+      form.setFieldValue('a', 'programmatic');
+    });
+    await form.validateFields().catch(() => undefined);
+    await settle();
+    expect(onFormChange).toHaveBeenCalled();
+  });
+
   // ==========================================================================
   // G. error channels
   // ==========================================================================
