@@ -533,9 +533,7 @@ const BAIResourceUnitGrid: React.FC<BAIResourceUnitGridProps> = ({
                         ? PLATE_DASH_PATTERN
                         : undefined
                     }
-                  >
-                    <title>{group?.label ?? key}</title>
-                  </path>
+                  />
                 );
               })}
               {placed.map((cell, i) => {

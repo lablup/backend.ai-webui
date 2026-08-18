@@ -84,16 +84,15 @@ describe('BAIResourceUnitGrid', () => {
     const { container } = render(
       <BAIResourceUnitGrid groups={GROUPS} columns={8} />,
     );
-    const titles = Array.from(container.querySelectorAll('path > title')).map(
-      (el) => el.textContent,
-    );
-    expect(titles).toEqual(['Alpha', 'Beta']);
-    // role="img" on the svg flattens its subtree for AT, so the groups must
-    // also be enumerable through the parallel sr-only list.
+    // role="img" on the svg flattens its subtree for AT, so the groups are
+    // enumerable through the parallel sr-only list (no <title> on the
+    // plates — its only rendered effect was a native tooltip competing
+    // with the component's own popover).
     const srItems = Array.from(
       container.querySelectorAll('.bai-resource-unit-grid-sr-only li'),
     ).map((el) => el.textContent);
     expect(srItems).toEqual(['Alpha', 'Beta']);
+    expect(container.querySelectorAll('path > title')).toHaveLength(0);
   });
 
   it('shows the popover slot content for the hovered group', () => {
