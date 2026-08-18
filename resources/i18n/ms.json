@@ -3431,7 +3431,7 @@
     "JsonConfigAppliedSuccessfully": "Tetapan tema telah berjaya diterapkan.",
     "PreviewModeAlert": "Anda sedang menggunakan mod pratonton tema. Sila teruskan kerja sebenar anda di tetingkap asal.",
     "ThemeJsonConfiguration": "Konfigurasi Tema JSON",
-    "ThemeJsonConfigurationDesc": "Import fail JSON untuk menukar tema atau eksport tema semasa sebagai JSON. Untuk menerapkan perubahan pada laman anda, eksport fail JSON dan salin ke resources/theme.json pada pelayan web WebUI.",
+    "ThemeJsonConfigurationDesc": "Import fail JSON untuk menukar tema atau eksport tema semasa sebagai JSON. Tekan OK untuk memuatkannya ke draf; Guna pada halaman Branding menyimpan tema untuk domain ini.",
     "button": {
       "ExportToJson": "Eksport JSON",
       "ImportFromJson": "Import JSON",
@@ -3618,7 +3618,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Tema yang dikemas kini tidak dapat diterapkan serta-merta. Jika anda ingin menerapkan tema tersebut, sila hubungi pasukan sokongan kami dengan fail konfigurasi JSON yang dieksport.",
       "ErrorColor": "Warna ralat",
       "ErrorColorDesc": "Warna yang digunakan untuk butang atau amaran yang mewakili tindakan kritikal, seperti penghapusan, untuk menunjukkan amaran atau kesilapan.",
       "HeaderBg": "Warna latar belakang header",

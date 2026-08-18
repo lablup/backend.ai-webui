@@ -2,6 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { pickValidThemeFamilies } from '../helper/customThemeConfig';
+import {
+  useBAIPrivateDomainConfigForAdmin,
+  useBAIUserConfigDomainDefaultsForAdmin,
+} from '../hooks/useBAIAppConfig';
+import {
+  DOMAIN_THEME_CONFIG_KEY,
+  THEME_FAMILIES_CONFIG_KEY,
+} from '../hooks/useCustomThemeConfig';
 import { useDefaultTheme } from '../hooks/useDefaultTheme';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
@@ -14,10 +24,10 @@ import ThemeColorPicker, {
 } from './BrandingSettingItems/ThemeColorPicker';
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
-import { Settings, Fullscreen } from 'lucide-react';
+import * as _ from 'lodash-es';
+import { Settings, Fullscreen, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -27,10 +37,38 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { message } = App.useApp();
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
-  const { resetDefaultTheme } = useDefaultTheme();
+  const { defaultTheme, resetDefaultTheme } = useDefaultTheme();
+  const [, setDomainTheme] = useBAIPrivateDomainConfigForAdmin<unknown>(
+    DOMAIN_THEME_CONFIG_KEY,
+  );
+  const [, setDomainThemeFamilies] =
+    useBAIUserConfigDomainDefaultsForAdmin<unknown>(THEME_FAMILIES_CONFIG_KEY);
+
+  const applyThemeToDomain = async () => {
+    if (!defaultTheme) {
+      message.error(t('userSettings.FailedToLoadDefaultThemeConfig'));
+      return;
+    }
+    try {
+      const { families, ...domainTheme } = defaultTheme;
+      await setDomainTheme(domainTheme);
+      const validFamilies = pickValidThemeFamilies(families);
+      await setDomainThemeFamilies(
+        _.isEmpty(validFamilies) ? undefined : validFamilies,
+      );
+      message.success(t('theme.JsonConfigAppliedSuccessfully'));
+    } catch (error) {
+      message.error(
+        error instanceof Error && error.message
+          ? error.message
+          : t('dialog.ErrorOccurred'),
+      );
+    }
+  };
 
   const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
     resetDefaultTheme([`light.${tokenName}`, `dark.${tokenName}`]);
@@ -275,13 +313,6 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      {/* antd `Alert description` (no `message`) -> Banner. Banner's `title`
-          is unconditionally required (ground-truth .d.ts, not just the doc
-          narrative) — the single line of text goes there. */}
-      <Banner
-        title={t('userSettings.theme.CustomThemeSettingAlert')}
-        status="warning"
-      />
       <SettingList
         showSearchBar
         showResetButton
@@ -292,31 +323,38 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         primaryButton={
           <Button
             variant="primary"
-            icon={<Fullscreen size="1em" />}
-            label={t('userSettings.theme.Preview')}
-            clickAction={async () => {
-              const previewWindow = window.open(
-                window.location.origin,
-                '_blank',
-              );
-              previewWindow?.addEventListener('load', () => {
-                previewWindow?.sessionStorage.setItem(
-                  'isThemePreviewMode',
-                  'true',
-                );
-                previewWindow?.location.reload();
-              });
-            }}
+            icon={<Check size="1em" />}
+            label={t('button.Apply')}
+            clickAction={applyThemeToDomain}
           />
         }
         extraButton={
-          <Button
-            icon={<Settings size="1em" />}
-            label={t('theme.button.JsonConfig')}
-            clickAction={async () => {
-              setOpenThemeConfigModal(true);
-            }}
-          />
+          <BAIFlex gap="sm">
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('theme.button.JsonConfig')}
+              clickAction={async () => {
+                setOpenThemeConfigModal(true);
+              }}
+            />
+            <Button
+              icon={<Fullscreen size="1em" />}
+              label={t('userSettings.theme.Preview')}
+              clickAction={async () => {
+                const previewWindow = window.open(
+                  window.location.origin,
+                  '_blank',
+                );
+                previewWindow?.addEventListener('load', () => {
+                  previewWindow?.sessionStorage.setItem(
+                    'isThemePreviewMode',
+                    'true',
+                  );
+                  previewWindow?.location.reload();
+                });
+              }}
+            />
+          </BAIFlex>
         }
       />
       <BAIUnmountAfterClose>

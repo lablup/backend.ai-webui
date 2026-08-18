@@ -3433,7 +3433,7 @@
     "JsonConfigAppliedSuccessfully": "主题设置已成功应用。",
     "PreviewModeAlert": "您当前处于主题预览模式。请在原窗口继续进行实际工作。",
     "ThemeJsonConfiguration": "主题 JSON 配置",
-    "ThemeJsonConfigurationDesc": "导入 JSON 文件以更改主题，或将当前主题导出为 JSON。要将更改应用到您的站点，请导出 JSON 文件并将其复制到 WebUI Web 服务器的 resources/theme.json。",
+    "ThemeJsonConfigurationDesc": "导入 JSON 文件以更改主题，或将当前主题导出为 JSON。按确定后将载入编辑草稿；在品牌页面点击应用即可将主题保存到此域。",
     "button": {
       "ExportToJson": "导出 JSON",
       "ImportFromJson": "导入 JSON",
@@ -3620,7 +3620,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "更新后的主题无法立即应用。如果您希望应用该主题，请将导出的 JSON 配置文件发送给我们的支持团队。",
       "ErrorColor": "错误颜色",
       "ErrorColorDesc": "应用于表示关键操作（例如删除）的按钮或警报的颜色，以指示警告或错误。",
       "HeaderBg": "标题背景颜色",

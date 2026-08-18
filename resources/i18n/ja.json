@@ -3433,7 +3433,7 @@
     "JsonConfigAppliedSuccessfully": "テーマ設定が正常に適用されました。",
     "PreviewModeAlert": "現在、テーマのプレビュー モードを使用しています。実際の作業は元のウィンドウで行ってください。",
     "ThemeJsonConfiguration": "テーマのJSON設定",
-    "ThemeJsonConfigurationDesc": "テーマを変更するにはJSONファイルをインポートするか、現在のテーマをJSONとしてエクスポートしてください。変更をサイトに適用するには、エクスポートしたJSONファイルをWebUIのWebサーバー上のresources/theme.jsonにコピーしてください。",
+    "ThemeJsonConfigurationDesc": "JSONファイルをインポートしてテーマを変更するか、現在のテーマをJSONとしてエクスポートできます。OKを押すと編集ドラフトに読み込まれ、ブランディングページの適用ボタンでこのドメインに保存されます。",
     "button": {
       "ExportToJson": "JSON をエクスポート",
       "ImportFromJson": "JSON をインポート",
@@ -3620,7 +3620,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "更新されたテーマはすぐには適用できません。テーマを適用したい場合は、エクスポートした設定のJSONファイルを添えてサポートチームまでご連絡ください。",
       "ErrorColor": "エラーの色",
       "ErrorColorDesc": "警告やエラーを示すために、削除などの重要なアクションを表すボタンまたはアラートに適用される色。",
       "HeaderBg": "ヘッダーの背景色",

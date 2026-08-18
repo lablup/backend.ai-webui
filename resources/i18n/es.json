@@ -3431,7 +3431,7 @@
     "JsonConfigAppliedSuccessfully": "La configuración del tema se ha aplicado correctamente.",
     "PreviewModeAlert": "Actualmente está usando el modo de vista previa del tema. Por favor, continúe con su trabajo en la ventana original.",
     "ThemeJsonConfiguration": "Configuración JSON del tema",
-    "ThemeJsonConfigurationDesc": "Importar un archivo JSON para cambiar el tema o exportar el tema actual como JSON. Para aplicar los cambios en su sitio, exporte el archivo JSON y cópielo en resources/theme.json en el servidor web de WebUI.",
+    "ThemeJsonConfigurationDesc": "Importe un archivo JSON para cambiar el tema o exporte el tema actual como JSON. Al pulsar Aceptar se carga en el borrador; Aplicar en la página de Branding guarda el tema para este dominio.",
     "button": {
       "ExportToJson": "Exportar JSON",
       "ImportFromJson": "Importar JSON",
@@ -3618,7 +3618,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "El tema actualizado no se puede aplicar de inmediato. Si desea aplicarlo, póngase en contacto con nuestro equipo de soporte e incluya el archivo JSON de configuración exportado.",
       "ErrorColor": "Color de error",
       "ErrorColorDesc": "El color aplicado a los botones o alertas que representan acciones críticas, como la eliminación, para indicar advertencias o errores.",
       "HeaderBg": "Color de fondo del encabezado",

@@ -3431,7 +3431,7 @@
     "JsonConfigAppliedSuccessfully": "Teema-asetukset on otettu käyttöön.",
     "PreviewModeAlert": "Käytät tällä hetkellä teeman esikatselutilaa. Jatka varsinaista työskentelyä alkuperäisessä ikkunassa.",
     "ThemeJsonConfiguration": "Teeman JSON-määritys",
-    "ThemeJsonConfigurationDesc": "Tuo JSON-tiedosto muuttaaksesi teemaa tai vie nykyinen teema JSON-muodossa. Ota muutokset käyttöön sivustollasi viemällä JSON-tiedosto ja kopioimalla se WebUI-web-palvelimen tiedostoon resources/theme.json.",
+    "ThemeJsonConfigurationDesc": "Tuo JSON-tiedosto teeman muuttamiseksi tai vie nykyinen teema JSON-muodossa. OK lataa sen luonnokseen; Branding-sivun Käytä-painike tallentaa teeman tälle toimialueelle.",
     "button": {
       "ExportToJson": "Vie JSON",
       "ImportFromJson": "Tuo JSON",
@@ -3618,7 +3618,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Päivitettyä teemaa ei voi ottaa käyttöön välittömästi. Jos haluat ottaa teeman käyttöön, ota yhteyttä tukitiimiimme ja lähetä viety konfiguraatio JSON-tiedostona.",
       "ErrorColor": "Värivirhe",
       "ErrorColorDesc": "Väri, jota käytetään painikkeissa tai varoituksissa, jotka edustavat kriittisiä toimia, kuten poistoa, varoitusten tai virheiden ilmaisemiseksi.",
       "HeaderBg": "Otsikon taustaväri",
