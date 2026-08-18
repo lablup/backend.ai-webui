@@ -28,8 +28,8 @@ import { sessionDetailMockResponse } from './mocking/session-detail-mock';
 import { sessionListMockResponse } from './mocking/session-list-mock';
 import { test, expect, type Route } from '@playwright/test';
 
-// Fires once on page load, then again (network-only) when Refresh is
-// clicked -- the second firing is the one we hold open.
+// Fires during page load (possibly more than once) and again when Refresh
+// is clicked -- the armed firing after the click is the one we hold open.
 const SESSION_LIST_QUERY = 'ComputeSessionListPageQuery';
 // Not expected to fire for this flow (the clicked row already carries a fresh
 // fragment via router state, so SessionDetailContent reads it store-only),
@@ -59,7 +59,11 @@ test.describe(
       // test needs no live session/cluster -- only fault-injects a delay on
       // the second list refetch. Set up before login/navigation so it is in
       // place before any query fires.
-      let sessionListQueryCount = 0;
+      // Armed explicitly right before the Refresh click — an ordinal
+      // ("2nd query") arm can be spent by an extra list query during
+      // initial load, letting the spec pass without a held transition.
+      let holdArmed = false;
+      let heldRefetchCount = 0;
       let signalHeldRefetchStarted: () => void = () => {};
       const heldRefetchStarted = new Promise<void>((resolve) => {
         signalHeldRefetchStarted = resolve;
@@ -72,8 +76,9 @@ test.describe(
         const body = req.postData() ?? '';
 
         if (body.includes(SESSION_LIST_QUERY)) {
-          sessionListQueryCount += 1;
-          if (sessionListQueryCount === 2) {
+          if (holdArmed) {
+            holdArmed = false;
+            heldRefetchCount += 1;
             signalHeldRefetchStarted();
             await new Promise((resolve) =>
               setTimeout(resolve, HELD_TRANSITION_DELAY_MS),
@@ -106,8 +111,10 @@ test.describe(
       });
       await expect(sessionNameButton).toBeVisible({ timeout: 15000 });
 
-      // Click Refresh to start the held (delayed) refetch -- the concurrently
-      // pending transition the drawer mount must not entangle with.
+      // Arm the hold only now, then click Refresh to start the held (delayed)
+      // refetch -- the concurrently pending transition the drawer mount must
+      // not entangle with.
+      holdArmed = true;
       await getTableRefreshButton(page).click();
 
       // The refresh click only schedules the deferred refetch; wait until the
@@ -135,9 +142,9 @@ test.describe(
       // exercised the entanglement window, so a passing drawer would prove
       // nothing.
       expect(
-        sessionListQueryCount,
-        `${SESSION_LIST_QUERY} should have fired at least twice (initial load + refresh)`,
-      ).toBeGreaterThanOrEqual(2);
+        heldRefetchCount,
+        `${SESSION_LIST_QUERY} should have been held exactly once (armed refresh)`,
+      ).toBe(1);
 
       // Close clears the param; the drawer must not be left poisoned for a
       // re-open.
