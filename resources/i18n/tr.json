@@ -3823,6 +3823,7 @@
       "ResourcePolicies": "Kaynak Politikaları",
       "Resources": "Kaynaklar",
       "Scheduler": "Zamanlayıcı",
+      "Search": "Arama",
       "Serving": "Servis",
       "Sessions": "Oturumlar",
       "Settings": "Ayarlar",
@@ -3860,6 +3861,9 @@
       }
     },
     "search": {
+      "FoundIn": "{{text}} içinde bulundu",
+      "NoResults": "Sonuç yok",
+      "Placeholder": "Sayfalarda, sekmelerde ve ayarlarda ara",
       "Recent": "Son kullanılanlar"
     }
   }

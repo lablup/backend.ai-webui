@@ -3824,6 +3824,7 @@
       "ResourcePolicies": "Resurssipolitiikat",
       "Resources": "Resurssit",
       "Scheduler": "Aikataulu",
+      "Search": "Haku",
       "Serving": "Palvelevat",
       "Sessions": "Istunnot",
       "Settings": "Asetukset",
@@ -3861,6 +3862,9 @@
       }
     },
     "search": {
+      "FoundIn": "Löytyi kohteesta {{text}}",
+      "NoResults": "Ei tuloksia",
+      "Placeholder": "Hae sivuja, välilehtiä ja asetuksia",
       "Recent": "Viimeisimmät"
     }
   }

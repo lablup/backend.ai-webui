@@ -3823,6 +3823,7 @@
       "ResourcePolicies": "Dasar Sumber",
       "Resources": "Sumber",
       "Scheduler": "Penjadual",
+      "Search": "Cari",
       "Serving": "Melayan",
       "Sessions": "Sesi",
       "Settings": "Tetapan",
@@ -3860,6 +3861,9 @@
       }
     },
     "search": {
+      "FoundIn": "Ditemui dalam {{text}}",
+      "NoResults": "Tiada keputusan",
+      "Placeholder": "Cari halaman, tab dan tetapan",
       "Recent": "Terkini"
     }
   }

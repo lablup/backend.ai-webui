@@ -3823,6 +3823,7 @@
       "ResourcePolicies": "Politiche delle risorse",
       "Resources": "risorse",
       "Scheduler": "Scheduler",
+      "Search": "Ricerca",
       "Serving": "Servire",
       "Sessions": "sessioni",
       "Settings": "Impostazioni",
@@ -3860,6 +3861,9 @@
       }
     },
     "search": {
+      "FoundIn": "Trovato in {{text}}",
+      "NoResults": "Nessun risultato",
+      "Placeholder": "Cerca pagine, schede e impostazioni",
       "Recent": "Recenti"
     }
   }

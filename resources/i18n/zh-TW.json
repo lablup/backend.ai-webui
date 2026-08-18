@@ -3827,6 +3827,7 @@
       "ResourcePolicies": "資源政策",
       "Resources": "資源",
       "Scheduler": "調度程序",
+      "Search": "搜尋",
       "Serving": "服务",
       "Sessions": "會話",
       "Settings": "設置",
@@ -3864,6 +3865,9 @@
       }
     },
     "search": {
+      "FoundIn": "在 {{text}} 中找到",
+      "NoResults": "無結果",
+      "Placeholder": "搜尋頁面、分頁與設置",
       "Recent": "最近使用"
     }
   }
