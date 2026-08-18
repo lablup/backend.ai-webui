@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r16-default-brand-h161l5oh theme — built by `pnpm exec astryx theme build`
+ * bai-r17-default-brand-hlble8 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR16DefaultBrandH161l5ohTheme } from './bai-r16-default-brand-h161l5oh';
- *   import './bai-r16-default-brand-h161l5oh.css';
+ *   import { baiR17DefaultBrandHlble8Theme } from './bai-r17-default-brand-hlble8';
+ *   import './bai-r17-default-brand-hlble8.css';
  */
-export const baiR16DefaultBrandH161l5ohTheme = {
-  name: 'bai-r16-default-brand-h161l5oh',
+export const baiR17DefaultBrandHlble8Theme = {
+  name: 'bai-r17-default-brand-hlble8',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -504,6 +504,12 @@ export const baiR16DefaultBrandH161l5ohTheme = {
       }
     },
     "field": {
+      "base": {
+        "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), #262626)",
+        "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
+      }
+    },
+    "command-palette-item": {
       "base": {
         "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), #262626)",
         "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))"
