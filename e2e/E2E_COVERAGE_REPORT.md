@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-08-11
+> **Last Updated:** 2026-08-18
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 313 / 458 features covered (68%)**
+**Overall (in-scope routes): 314 / 459 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
@@ -20,7 +20,7 @@
 | Change Password          | `/change-password`                     |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                               |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                           |    9     |    7    | 🔶 78%  |
-| Session List             | `/session`                             |    22    |   14    | 🔶 64%  |
+| Session List             | `/session`                             |    23    |   15    | 🔶 65%  |
 | Session Launcher         | `/session/start`                       |    14    |    3    | 🔶 21%  |
 | Serving                  | `/serving`                             |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                  |    20    |    9    | 🔶 45%  |
@@ -176,38 +176,39 @@
 
 ### 4. Session List (`/session`)
 
-**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts)
+**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts), [`e2e/session/session-detail-drawer-transition-delay.spec.ts`](session/session-detail-drawer-transition-delay.spec.ts)
 
 **Tabs:** `all` | `interactive` | `batch` | `inference` | `system`
 **Sub-tabs:** Running | Finished
 **Modals/Drawers:** `TerminateSessionModal`, `SessionDetailDrawer` (via name click), `SessionSchedulingHistoryModal`
 
-| Feature                                                  | Status | Test                                                                                                   |
-| -------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
-| Create interactive session (Start page)                  | ✅     | `User can create interactive session on the Start page`                                                |
-| Create batch session (Start page)                        | ✅     | `User can create batch session on the Start page`                                                      |
-| Create interactive session (Session page)                | ✅     | `User can create interactive session from the quick-action card`                                       |
-| Create batch session (Session page)                      | ✅     | Via session creation tests                                                                             |
-| Session lifecycle (create/monitor/terminate)             | ✅     | `Create, monitor, and terminate interactive session`                                                   |
-| Batch session auto-completion                            | ✅     | `Create and wait for batch session completion`                                                         |
-| View container logs                                      | ✅     | `View session container logs`                                                                          |
-| Monitor resource usage                                   | ✅     | `Monitor session resource usage`                                                                       |
-| Status transitions                                       | ✅     | `Session status transitions are correct`                                                               |
-| Bulk terminate disabled for terminated                   | ✅     | `Cannot select terminated sessions for bulk operations`                                                |
-| Sensitive env vars cleared on reload                     | ✅     | `Sensitive environment variables are cleared`                                                          |
-| Scheduling history modal                                 | ✅     | `Session Scheduling History Modal` (via mocked GraphQL)                                                |
-| Session name click → SessionDetailDrawer                 | 🚧     | `Session detail drawer renders correctly and can show dependency info` (fixme: requires running agent) |
-| Dependencies column toggle                               | ✅     | `Dependencies column can be enabled via table settings`                                                |
-| Session type filtering (interactive/batch/inference)     | ❌     | -                                                                                                      |
-| Running/Finished status toggle                           | ❌     | -                                                                                                      |
-| Property filtering (name, resource group, agent)         | ❌     | -                                                                                                      |
-| Session table sorting                                    | ❌     | -                                                                                                      |
-| Pagination                                               | ❌     | -                                                                                                      |
-| Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                      |
-| Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                          |
-| Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                |
+| Feature                                                  | Status | Test                                                                                                                                                 |
+| -------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create interactive session (Start page)                  | ✅     | `User can create interactive session on the Start page`                                                                                              |
+| Create batch session (Start page)                        | ✅     | `User can create batch session on the Start page`                                                                                                    |
+| Create interactive session (Session page)                | ✅     | `User can create interactive session from the quick-action card`                                                                                     |
+| Create batch session (Session page)                      | ✅     | Via session creation tests                                                                                                                           |
+| Session lifecycle (create/monitor/terminate)             | ✅     | `Create, monitor, and terminate interactive session`                                                                                                 |
+| Batch session auto-completion                            | ✅     | `Create and wait for batch session completion`                                                                                                       |
+| View container logs                                      | ✅     | `View session container logs`                                                                                                                        |
+| Monitor resource usage                                   | ✅     | `Monitor session resource usage`                                                                                                                     |
+| Status transitions                                       | ✅     | `Session status transitions are correct`                                                                                                             |
+| Bulk terminate disabled for terminated                   | ✅     | `Cannot select terminated sessions for bulk operations`                                                                                              |
+| Sensitive env vars cleared on reload                     | ✅     | `Sensitive environment variables are cleared`                                                                                                        |
+| Scheduling history modal                                 | ✅     | `Session Scheduling History Modal` (via mocked GraphQL)                                                                                              |
+| Session name click → SessionDetailDrawer                 | 🚧     | `Session detail drawer renders correctly and can show dependency info` (fixme: requires running agent)                                               |
+| Drawer opens promptly under held refetch (FR-3568)       | ✅     | `User can open the session detail drawer promptly while a session-list refetch is held in flight` (`session-detail-drawer-transition-delay.spec.ts`) |
+| Dependencies column toggle                               | ✅     | `Dependencies column can be enabled via table settings`                                                                                              |
+| Session type filtering (interactive/batch/inference)     | ❌     | -                                                                                                                                                    |
+| Running/Finished status toggle                           | ❌     | -                                                                                                                                                    |
+| Property filtering (name, resource group, agent)         | ❌     | -                                                                                                                                                    |
+| Session table sorting                                    | ❌     | -                                                                                                                                                    |
+| Pagination                                               | ❌     | -                                                                                                                                                    |
+| Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                                                                    |
+| Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                                                                        |
+| Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                                                              |
 
-**Coverage: 🔶 14/22 features**
+**Coverage: 🔶 15/23 features**
 
 ---
 
