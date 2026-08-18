@@ -3709,6 +3709,7 @@
       "ResourcePolicies": "Ressourcenrichtlinien",
       "Resources": "Ressourcen",
       "Scheduler": "Scheduler",
+      "Search": "Suche",
       "Serving": "Bedienung von",
       "Sessions": "Sitzungen",
       "Settings": "die Einstellungen",
@@ -3746,6 +3747,9 @@
       }
     },
     "search": {
+      "FoundIn": "Gefunden in {{text}}",
+      "NoResults": "Keine Ergebnisse",
+      "Placeholder": "Seiten, Tabs und Einstellungen durchsuchen",
       "Recent": "Zuletzt verwendet"
     }
   }
