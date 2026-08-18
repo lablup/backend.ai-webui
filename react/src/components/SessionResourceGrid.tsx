@@ -64,6 +64,9 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const layoutValues = ['serpentine', 'wordwrap'] as const;
 
+/** Persisted palette overrides kept to the most recent N sessions. */
+const MAX_HUE_OVERRIDES = 200;
+
 // Utilization fills follow the app's semantic usage convention
 // (utilizationThresholds.ts: ≥50% warning, ≥80% error) via theme tokens;
 // intermediate steps deepen the WARNING hue. <BAIResourceUnitGrid> resolves
@@ -190,7 +193,7 @@ const SessionResourceGrid = ({
           filter: $filter
           order: $order
           group_id: $group_id
-        ) {
+        ) @catch(to: RESULT) {
           total_count
           items {
             id
@@ -229,14 +232,17 @@ const SessionResourceGrid = ({
     { fetchPolicy: 'network-only', fetchKey },
   );
 
-  const totalCount = queryData.compute_session_list?.total_count ?? 0;
+  // Degrade a rejected query (e.g. a filter/order key the legacy list does
+  // not know) to a banner instead of escalating to the app-shell boundary.
+  const listResult = queryData.compute_session_list;
+  if (!listResult.ok) {
+    return <Banner status="error" title={t('error.FailedToLoadTableData')} />;
+  }
+  const totalCount = listResult.value?.total_count ?? 0;
   const sessions: GridSession[] = filterOutNullAndUndefined(
-    queryData.compute_session_list?.items,
+    listResult.value?.items,
   ).map((item) => {
-    const { slots, slotsAreRequested } = parseSlotMap(
-      item.occupied_slots,
-      item.requested_slots,
-    );
+    const { slots } = parseSlotMap(item.occupied_slots, item.requested_slots);
     const kernels: GridKernel[] = filterOutNullAndUndefined(
       item.containers,
     ).map((c) => ({
@@ -259,10 +265,7 @@ const SessionResourceGrid = ({
       clusterSize: item.cluster_size ?? 0,
       scalingGroup: item.scaling_group ?? '',
       slots,
-      notYetAllocated: isNotYetAllocatedSession(
-        item.status ?? '',
-        slotsAreRequested,
-      ),
+      notYetAllocated: isNotYetAllocatedSession(item.status ?? ''),
       liveStat: mergeKernelLiveStats(kernels.map((k) => k.liveStat)),
       kernels,
     };
@@ -587,14 +590,16 @@ const SessionResourceGrid = ({
         hueOverrides={hueOverrides}
         onHueOverrideChange={(key, paletteIdx) =>
           setHueOverrides((prev) => {
-            // Prune overrides for sessions no longer in the result so the
-            // persisted map cannot grow unboundedly with dead session ids.
-            const alive = new Set(sessions.map((s) => s.id));
-            const next: Record<string, number> = {};
-            for (const [k, v] of Object.entries(prev ?? {})) {
-              if (alive.has(k)) next[k] = v;
-            }
+            // Bounded by size, NOT pruned to the current result — that is a
+            // filtered, capped slice, and trimming to it deleted overrides
+            // set under other filters/tabs. Insertion order ≈ recency.
+            const next: Record<string, number> = { ...(prev ?? {}) };
+            delete next[key];
             next[key] = paletteIdx;
+            const keys = Object.keys(next);
+            for (let i = 0; i < keys.length - MAX_HUE_OVERRIDES; i++) {
+              delete next[keys[i]];
+            }
             return next;
           })
         }

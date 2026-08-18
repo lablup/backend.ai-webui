@@ -396,20 +396,20 @@ describe('control inventories', () => {
 });
 
 describe('isNotYetAllocatedSession', () => {
-  test('PENDING is not-yet-allocated even when occupied_slots is populated', () => {
-    // Some managers mirror requested_slots into occupied_slots while PENDING,
-    // so the status must decide on its own.
-    expect(isNotYetAllocatedSession('PENDING', false)).toBe(true);
+  test('pre-running statuses are not-yet-allocated regardless of slot maps', () => {
+    // Some managers mirror requested_slots into occupied_slots while
+    // PENDING, so occupied-emptiness cannot decide.
+    expect(isNotYetAllocatedSession('PENDING')).toBe(true);
+    expect(isNotYetAllocatedSession('SCHEDULED')).toBe(true);
+    expect(isNotYetAllocatedSession('PREPARING')).toBe(true);
   });
 
-  test('empty occupied_slots marks any status as not-yet-allocated', () => {
-    expect(isNotYetAllocatedSession('SCHEDULED', true)).toBe(true);
-    expect(isNotYetAllocatedSession('PREPARING', true)).toBe(true);
-  });
-
-  test('running sessions with real occupancy are allocated', () => {
-    expect(isNotYetAllocatedSession('RUNNING', false)).toBe(false);
-    expect(isNotYetAllocatedSession('TERMINATED', false)).toBe(false);
+  test('running and released sessions are not marked', () => {
+    expect(isNotYetAllocatedSession('RUNNING')).toBe(false);
+    // Terminated sessions ALSO have an empty occupied_slots (released) —
+    // the reason the predicate must not fall back on slot emptiness.
+    expect(isNotYetAllocatedSession('TERMINATED')).toBe(false);
+    expect(isNotYetAllocatedSession('CANCELLED')).toBe(false);
   });
 });
 
