@@ -263,8 +263,7 @@ type InheritedTableProps = Omit<
   // Owned here: the pipeline is assembled below and its order is load-bearing
   | 'plugins'
   // Not offered: antd's `onChange(pagination, filters, sorter)` habit would
-  // otherwise compile as a form handler on the `<table>`. Sorting and paging
-  // report through `onChangeOrder` / `pagination.onChange`.
+  // otherwise compile as a form handler on the `<table>`.
   | 'onChange'
 >;
 

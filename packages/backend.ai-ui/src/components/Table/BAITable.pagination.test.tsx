@@ -78,9 +78,8 @@ describe('BAITable pagination (FR-3563)', () => {
   });
 
   it('clamps a page that a shrinking list left stranded', () => {
-    // Paged to 5, then a filter cut the list to 25 rows — still longer than a
-    // page, so this exercises the slice with a clamped page rather than
-    // short-circuiting on `length <= pageSize`.
+    // Still longer than a page after the filter, so this reaches the slice
+    // instead of short-circuiting on `length <= pageSize` (which made it vacuous).
     renderTable({
       dataSource: makeRows(25),
       pagination: { current: 5, pageSize: 10 },
