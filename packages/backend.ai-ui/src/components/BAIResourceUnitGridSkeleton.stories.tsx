@@ -12,12 +12,12 @@ const meta: Meta<typeof BAIResourceUnitGridSkeleton> = {
         component: `
 **BAIResourceUnitGridSkeleton** is the Suspense fallback for
 [BAIResourceUnitGrid](?path=/docs/data-display-bairesourceunitgrid--docs): a
-toolbar row, a legend row, and a lattice of plates, sized from the same
-layout tokens the real grid reads, so the page doesn't visibly reflow when
-the data arrives.
+toolbar row, a legend row, and a deliberately low-fidelity lattice stand-in
+(two blocks per row) — per-session plates and cells would read as false
+detail while loading.
 
 \`\`\`tsx
-<Suspense fallback={<BAIResourceUnitGridSkeleton groupCount={8} />}>
+<Suspense fallback={<BAIResourceUnitGridSkeleton />}>
   <SessionResourceGrid ... />
 </Suspense>
 \`\`\`
@@ -26,13 +26,12 @@ the data arrives.
     },
   },
   argTypes: {
-    groupCount: {
+    rows: {
       control: { type: 'number', min: 0 },
-      description:
-        'Plate count; cycles through the fixed cell-count array by index.',
+      description: 'Lattice stand-in rows (two blocks each).',
       table: {
         type: { summary: 'number' },
-        defaultValue: { summary: '6' },
+        defaultValue: { summary: '3' },
       },
     },
   },
@@ -45,15 +44,15 @@ export const Default: Story = {
   args: {},
 };
 
-export const ManyPlates: Story = {
+export const MoreRows: Story = {
   args: {
-    groupCount: 12,
+    rows: 5,
   },
   parameters: {
     docs: {
       description: {
         story:
-          'Once `groupCount` exceeds the fixed cell-count array, it cycles from the start (plates 7–12 repeat the sizes of plates 1–6).',
+          'Row block widths cycle a fixed 3-row pattern, so extra rows repeat it.',
       },
     },
   },
