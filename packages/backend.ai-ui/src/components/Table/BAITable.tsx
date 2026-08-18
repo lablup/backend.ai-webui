@@ -30,9 +30,9 @@
 
  Each is documented where it happens: multi-level headers (`flattenColumns`),
  `expandedRowRender` (`astryxData`), `loading`'s spinner (the dim wrapper),
- column-level `fixed` (`stickyConfig`), `scroll.x`/`.y` (the `scroll` prop).
- Row virtualization is DEFERRED by an explicit product decision (2026-08-07) —
- do not add it without re-opening that decision.
+ column-level `fixed` (`stickyConfig`), `scroll.x`/`.y` (the `scroll` prop),
+ width-less column sizing (`columnFit`). Row virtualization is DEFERRED by an
+ explicit product decision (2026-08-07) — do not add it without re-opening it.
 */
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -129,6 +129,16 @@ const X_HEADER_RELEASE: React.CSSProperties = {
   maxWidth: 'none',
 };
 const X_BODY_RELEASE: React.CSSProperties = { maxWidth: 'none' };
+/**
+ * Ceiling for a content-sized column, applied to the cell's content wrapper
+ * (a `<td>`'s own `max-width` is ignored by the automatic table layout, a
+ * block child's is not). Without it one free-text column — an error message,
+ * a start command — takes the viewport and starves the rest.
+ *
+ * 400px clears the widest measured id+tag+actions cell in the app (Revision
+ * (ID) on the deployment detail page needs 362px at 1632px table width).
+ */
+const CONTENT_FIT_MAX_COLUMN_WIDTH = 400;
 // Inline beats every @layer, restoring the pinned header's z 3 over the
 // sticky-header rule. Why: BAITable.css.
 const Y_PINNED_HEADER_STACK: React.CSSProperties = { zIndex: 3 };
@@ -320,6 +330,17 @@ export interface BAITableProps<
    */
   scroll?: { x?: number | string | true; y?: number | string };
   /**
+   * How width-LESS columns claim horizontal space.
+   *
+   * `'content'` (default) sizes each one from what it actually renders, so a
+   * cell that packs an id + a tag + action buttons is not handed the same
+   * share as a one-word status. `'equal'` restores the flat 1/N split for a
+   * table that wants uniform columns regardless of content.
+   *
+   * Columns with a numeric `width` are pixel-pinned either way.
+   */
+  columnFit?: 'content' | 'equal';
+  /**
    * Hide the header row. Astryx's `Table` has no such prop (its header carries
    * the sort controls and the select-all checkbox), so this is done in CSS:
    * a wrapper class collapses `thead`. Only use it for list-shaped tables with
@@ -470,6 +491,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   textOverflow = 'truncate',
   verticalAlign,
   scroll,
+  columnFit = 'content',
   showHeader = true,
   className,
   style,
@@ -480,9 +502,14 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   const { token } = theme.useToken();
 
   // rc-table's own mapping of `scroll` onto CSS lengths (`y` has no `true`).
+  // `columnFit: 'content'` is the same machinery antd reached through
+  // `scroll={{ x: 'max-content' }}`, so it defaults `x` rather than opening a
+  // second layout path.
   const scrollXWidth =
     scroll?.x == null
-      ? undefined
+      ? columnFit === 'content'
+        ? 'max-content'
+        : undefined
       : scroll.x === true
         ? 'auto'
         : toCssLength(scroll.x);
@@ -753,6 +780,18 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
             ? width
             : undefined;
 
+      // Under the automatic layout a content-sized column takes its width from
+      // these wrappers, so they carry the column's bounds: `minWidth` keeps an
+      // explicit floor reachable (Astryx drops `proportional`'s own minimum in
+      // this mode) and the cap stops one long cell from eating the table.
+      const contentFitBounds: React.CSSProperties =
+        isScrollX && numericWidth == null
+          ? {
+              minWidth: column.minWidth,
+              maxWidth: CONTENT_FIT_MAX_COLUMN_WIDTH,
+            }
+          : { minWidth: 0 };
+
       // Header text is clipped, not overflowed. Astryx puts a plain-string
       // `header` straight into the `<th>` (which is `overflow: visible`), so a
       // label longer than its column — `Sudo Session Enabled` in a 120px
@@ -763,10 +802,10 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
         <span
           style={{
             display: 'block',
-            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            ...contentFitBounds,
           }}
         >
           {groupTitle == null ? (
@@ -782,8 +821,9 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
         </span>
       );
 
-      // x mode: a width-less column carries NO width so its content sizes it;
-      // `column.minWidth` is deliberately ignored there (FR-3500).
+      // Content-fit / x mode: a width-less column carries NO width so its
+      // content sizes it. `column.minWidth` cannot ride on `proportional` here
+      // (FR-3500) — `contentFitBounds` above puts it on the wrapper instead.
       const astryxWidth =
         numericWidth != null
           ? pixel(numericWidth)
@@ -847,10 +887,10 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
             <span
               style={{
                 display: 'block',
-                minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                ...contentFitBounds,
               }}
             >
               {content}
