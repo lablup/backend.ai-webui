@@ -6,6 +6,7 @@ import { SessionLiveStats } from './mergeKernelLiveStats';
 import {
   availableLiveStatMetrics,
   availableResourceSlots,
+  isNotYetAllocatedSession,
   kernelMetricPct,
   MAX_UNITS_PER_SESSION,
   parseSlotMap,
@@ -387,5 +388,23 @@ describe('control inventories', () => {
       'io_read',
       'net_rx',
     ]);
+  });
+});
+
+describe('isNotYetAllocatedSession', () => {
+  test('PENDING is not-yet-allocated even when occupied_slots is populated', () => {
+    // Some managers mirror requested_slots into occupied_slots while PENDING,
+    // so the status must decide on its own.
+    expect(isNotYetAllocatedSession('PENDING', false)).toBe(true);
+  });
+
+  test('empty occupied_slots marks any status as not-yet-allocated', () => {
+    expect(isNotYetAllocatedSession('SCHEDULED', true)).toBe(true);
+    expect(isNotYetAllocatedSession('PREPARING', true)).toBe(true);
+  });
+
+  test('running sessions with real occupancy are allocated', () => {
+    expect(isNotYetAllocatedSession('RUNNING', false)).toBe(false);
+    expect(isNotYetAllocatedSession('TERMINATED', false)).toBe(false);
   });
 });

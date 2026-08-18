@@ -18,6 +18,7 @@ import {
 import {
   availableLiveStatMetrics,
   availableResourceSlots,
+  isNotYetAllocatedSession,
   MAX_UNITS_PER_SESSION,
   parseSlotMap,
   SESSION_CAP,
@@ -96,7 +97,7 @@ interface GridSession {
   clusterSize: number;
   scalingGroup: string;
   slots: SlotMap;
-  slotsAreRequested: boolean;
+  notYetAllocated: boolean;
   liveStat: SessionLiveStats;
   kernels: Array<GridKernel>;
 }
@@ -255,7 +256,10 @@ const SessionResourceGrid = ({
       clusterSize: item.cluster_size ?? 0,
       scalingGroup: item.scaling_group ?? '',
       slots,
-      slotsAreRequested,
+      notYetAllocated: isNotYetAllocatedSession(
+        item.status ?? '',
+        slotsAreRequested,
+      ),
       liveStat: mergeKernelLiveStats(kernels.map((k) => k.liveStat)),
       kernels,
     };
@@ -310,7 +314,7 @@ const SessionResourceGrid = ({
       fills: UTILIZATION_FILLS,
     }),
     // Dashed plate = the allocation is not real yet (still requested).
-    plateVariant: session.slotsAreRequested ? ('dashed' as const) : undefined,
+    plateVariant: session.notYetAllocated ? ('dashed' as const) : undefined,
   }));
   const sessionByKey = new Map(sessions.map((s) => [s.id, s]));
 
@@ -366,7 +370,7 @@ const SessionResourceGrid = ({
               <BAIFlex justify="between" gap={12}>
                 <Text size="sm" color="secondary">
                   {`${slotLabel(slot)} · ${alloc}`}
-                  {session.slotsAreRequested
+                  {session.notYetAllocated
                     ? ` ${t('session.resourceGrid.Requested')}`
                     : ''}
                 </Text>

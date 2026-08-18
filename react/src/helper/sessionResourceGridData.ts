@@ -26,6 +26,16 @@ export const LIVE_SESSION_STATUSES = [
   'TERMINATING',
 ];
 
+/**
+ * True when the session's allocation is not real yet. Status-based because
+ * some managers mirror requested_slots into occupied_slots while PENDING,
+ * so an empty occupied map alone (the fallback signal) cannot be relied on.
+ */
+export const isNotYetAllocatedSession = (
+  status: string,
+  slotsAreRequested: boolean,
+): boolean => slotsAreRequested || status === 'PENDING';
+
 export type SlotMap = Record<string, string>;
 
 const parseJSONObject = (raw?: string | null): Record<string, any> => {
