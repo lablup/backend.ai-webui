@@ -119,7 +119,7 @@ export interface BAIExportSettings {
 }
 
 /**
- * Column model for BAITable / BAITable.
+ * Column model for `BAITable`.
  *
  * antd-shaped (see the file header) but antd-free.
  */

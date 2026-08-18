@@ -5,15 +5,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type Key } from 'react';
 
 /**
- * BAITable is the Astryx-native successor to BAITable (to-astryx
- * ticket 25). It keeps the SAME antd/BUI-shaped `columns`/`dataSource`
- * contract as the legacy `BAITable` — a consumer migrates by swapping the
- * import (`BAITable` -> `BAITable`), not by rewriting its column
- * model — but renders through Astryx's `Table` primitive + plugin pipeline
- * instead of antd's `Table`.
- *
- * The antd engine (and its `BAITable.stories.tsx`) was deleted in ticket 30-D
- * once the last consumer flipped; these are now the table's only stories.
+ * `BAITable` renders through Astryx's `Table` primitive + plugin pipeline,
+ * behind the antd-shaped `columns` / `dataSource` contract the retired antd
+ * engine had. That engine and its stories were deleted in to-astryx ticket
+ * 30-D, so these are the table's only stories.
  */
 const meta: Meta<typeof BAITable> = {
   title: 'Table/BAITable',
@@ -24,11 +19,11 @@ const meta: Meta<typeof BAITable> = {
     docs: {
       description: {
         component: `
-**BAITable** is the Astryx-engine successor to \`BAITable\` (ticket 25). Same public contract, different renderer:
+**BAITable** renders through Astryx instead of the retired antd engine, keeping the same public contract:
 
 - **Column visibility** via \`tableSettings\` (Astryx \`Dialog\` settings modal, not the antd one)
 - **Resizable columns** — drag-to-resize, persisted into \`columnOverrides[key].width\`
-- **Sorting** via \`order\`/\`onChangeOrder\` order strings (unchanged from \`BAITable\`)
+- **Sorting** via \`order\`/\`onChangeOrder\` order strings
 - **Pagination** — a custom bottom bar (not antd's pager). Client-side data is sliced here; a \`total\` larger than \`dataSource\` means the caller already sliced server-side (FR-3563)
 
 - **Horizontal scroll** via antd-shaped \`scroll={{ x }}\` — width-less columns take their content's intrinsic width (FR-3500)

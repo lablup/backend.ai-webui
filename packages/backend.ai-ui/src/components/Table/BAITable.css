@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <BAITable> (to-astryx ticket 30-D). Replaces
- `BAITable.css`, which is gone with the antd engine.
+ Co-located styles for <BAITable>. Renamed from `BAITableAstryx.css` in
+ FR-3564; the antd engine's own stylesheet is gone.
 
  Two rules survive the engine swap.
 

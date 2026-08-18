@@ -253,6 +253,9 @@ type InheritedTableProps = Omit<
   | 'ref'
   // Owned here: a string is wrapped in the default EmptyState (see below)
   | 'emptyState'
+  // Owned here: these land on the dim/scroll WRAPPER, not on the `<table>`
+  | 'className'
+  | 'style'
 >;
 
 export interface BAITableProps<
@@ -461,6 +464,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   showHeader = true,
   className,
   style,
+  ...restTableProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
   const { t } = useBAIi18n();
@@ -1241,6 +1245,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
         }
       >
         <Table<AnyRow>
+          {...restTableProps}
           data={astryxData}
           columns={astryxColumns}
           idKey={(item: AnyRow) =>
