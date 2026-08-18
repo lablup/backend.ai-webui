@@ -3564,6 +3564,7 @@
     "SSHKeypairGeneration": "Penjanaan Keypair SSH",
     "SSHKeypairGenerationWarning": "Anda tidak akan dapat mengakses kunci peribadi lagi selepas menutup modal ini.",
     "SSHKeypairManagement": "Pengurusan Keypair SSH",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Penamatan sesi tidak boleh dibuat asal. Adakah anda mahu meneruskan untuk menamatkan sesi?",
     "ShellEnvironments": "Persekitaran Shell",
     "Theme": "Tema",

@@ -3566,6 +3566,7 @@
     "SSHKeypairGeneration": "SSH-Schlüsselpaargenerierung",
     "SSHKeypairGenerationWarning": "Nach dem Schließen dieses Modals können Sie nicht mehr auf den privaten Schlüssel zugreifen.",
     "SSHKeypairManagement": "SSH-Schlüsselpaarverwaltung",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Die Beendigung der Sitzung kann nicht rückgängig gemacht werden. Möchten Sie fortfahren, um die Sitzung zu beenden?",
     "ShellEnvironments": "Shell-Umgebungen",
     "Theme": "Thema",

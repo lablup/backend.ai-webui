@@ -3566,6 +3566,7 @@
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "Bạn sẽ không thể truy cập lại khóa riêng tư sau khi đóng cửa sổ này.",
     "SSHKeypairManagement": "Quản lý cặp khóa SSH",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Không thể hoàn tác việc kết thúc phiên. Bạn có muốn tiếp tục kết thúc phiên này không?",
     "ShellEnvironments": "Môi trường Shell",
     "Theme": "chủ đề",

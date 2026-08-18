@@ -3568,6 +3568,7 @@
     "SSHKeypairGeneration": "Pembuatan Pasangan Kunci SSH",
     "SSHKeypairGenerationWarning": "Anda tidak akan dapat mengakses kunci pribadi lagi setelah menutup modal ini.",
     "SSHKeypairManagement": "Manajemen Pasangan Kunci SSH",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Penghentian sesi tidak dapat diurungkan. Apakah Anda ingin melanjutkan untuk mengakhiri sesi?",
     "ShellEnvironments": "Lingkungan Shell",
     "Theme": "Tema",

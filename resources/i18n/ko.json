@@ -3567,6 +3567,7 @@
     "SSHKeypairGeneration": "SSH 키페어 생성",
     "SSHKeypairGenerationWarning": "모달을 닫은 후에는 개인 키를 다시 확인할 수 없습니다.",
     "SSHKeypairManagement": "SSH 키페어 관리",
+    "SessionResourceGrid": "세션 리소스 그리드 뷰",
     "SessionTerminationDialog": "세션 종료는 취소할 수 없습니다. 종료하시겠습니까?",
     "ShellEnvironments": "쉘 스크립트 환경",
     "Theme": "테마",

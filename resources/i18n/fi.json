@@ -3564,6 +3564,7 @@
     "SSHKeypairGeneration": "SSH-avainparin luominen",
     "SSHKeypairGenerationWarning": "Et pysty enää käyttämään yksityistä avainta tämän ikkunan sulkemisen jälkeen.",
     "SSHKeypairManagement": "SSH-avainparin hallinta",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Istunnon lopettamista ei voi peruuttaa. Haluatko jatkaa istunnon lopettamista?",
     "ShellEnvironments": "Shell-ympäristöt",
     "Theme": "Teema",

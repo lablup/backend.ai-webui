@@ -3568,6 +3568,7 @@
     "SSHKeypairGeneration": "SSH 密鑰對生成",
     "SSHKeypairGenerationWarning": "關閉此視窗後，您將無法再次存取私鑰。",
     "SSHKeypairManagement": "SSH 密鑰對管理",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "會話終止無法撤消。您要繼續終止會話嗎？",
     "ShellEnvironments": "外殼環境",
     "Theme": "主題",

@@ -3566,6 +3566,7 @@
     "SSHKeypairGeneration": "SSH товчлуурын үе",
     "SSHKeypairGenerationWarning": "Энэ цонхыг хаасны дараа хувийн түлхүүрт дахин хандах боломжгүй болно.",
     "SSHKeypairManagement": "SSH товчлуурын менежмент",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Session дуусахыг цуцлах боломжгүй. Та хуралдааныг зогсоохыг хүсч байна уу?",
     "ShellEnvironments": "Shell Environments",
     "Theme": "Сэдэв",

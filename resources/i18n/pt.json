@@ -3566,6 +3566,7 @@
     "SSHKeypairGeneration": "Geração de par de chaves SSH",
     "SSHKeypairGenerationWarning": "Não poderá aceder à chave privada novamente após fechar esta janela.",
     "SSHKeypairManagement": "Gerenciamento de par de chaves SSH",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "O encerramento da sessão não pode ser desfeito. Você deseja prosseguir para encerrar a sessão?",
     "ShellEnvironments": "Ambientes Shell",
     "Theme": "Tema",

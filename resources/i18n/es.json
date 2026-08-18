@@ -3564,6 +3564,7 @@
     "SSHKeypairGeneration": "Generación de pares de claves SSH",
     "SSHKeypairGenerationWarning": "No podrá acceder a la clave privada de nuevo después de cerrar este modal.",
     "SSHKeypairManagement": "Gestión de pares de claves SSH",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "La finalización de la sesión no se puede deshacer. ¿Desea finalizar la sesión?",
     "ShellEnvironments": "Entornos de conchas",
     "Theme": "Tema",

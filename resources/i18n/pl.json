@@ -3567,6 +3567,7 @@
     "SSHKeypairGeneration": "Generowanie par kluczy SSH",
     "SSHKeypairGenerationWarning": "Po zamknięciu tego okna nie będzie można uzyskać ponownego dostępu do klucza prywatnego.",
     "SSHKeypairManagement": "Zarządzanie parami kluczy SSH",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Zakończenia sesji nie można cofnąć. Czy chcesz kontynuować, aby zakończyć sesję?",
     "ShellEnvironments": "Środowiska powłoki",
     "Theme": "Temat",

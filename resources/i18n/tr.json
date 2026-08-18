@@ -3564,6 +3564,7 @@
     "SSHKeypairGeneration": "SSH Anahtar Çifti Oluşturma",
     "SSHKeypairGenerationWarning": "Bu modal kapatıldıktan sonra özel anahtara tekrar erişemeyeceksiniz.",
     "SSHKeypairManagement": "SSH Anahtar Çifti Yönetimi",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "Oturum sonlandırma geri alınamaz. Oturumu sonlandırmak için devam etmek istiyor musunuz?",
     "ShellEnvironments": "Kabuk Ortamları",
     "Theme": "Tema",

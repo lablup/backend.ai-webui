@@ -3551,6 +3551,7 @@
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You will not be able to access the private key again after closing this modal.",
     "SSHKeypairManagement": "SSH Keypair Management",
+    "SessionResourceGrid": "Session resource grid view",
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "ShellEnvironments": "Shell Environments",
     "Theme": "Theme",

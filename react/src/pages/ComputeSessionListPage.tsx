@@ -46,6 +46,7 @@ import {
   BAIFlex,
   BAILink,
   BAIPropertyFilter,
+  BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
   BAISessionsIcon,
   filterOutNullAndUndefined,
@@ -142,6 +143,17 @@ const ComputeSessionListPage = () => {
       history: 'replace',
     },
   );
+
+  const [experimentalSessionResourceGrid] = useBAISettingUserState(
+    'experimental_session_resource_grid',
+  );
+  // Grid view is gated behind an experimental opt-in (FR-3570); when off, the
+  // effective view is always 'table' regardless of the `view` URL param, but
+  // the param itself is left untouched so the stored choice comes back if the
+  // flag is re-enabled.
+  const effectiveView = experimentalSessionResourceGrid
+    ? queryParams.view
+    : 'table';
 
   // `view` is page-level state, not per-tab: keep it out of the snapshots so
   // restoring a tab never flips the table/grid toggle.
@@ -533,30 +545,32 @@ const ComputeSessionListPage = () => {
                   />
                 </>
               )}
-              <SegmentedControl
-                label={t('session.resourceGrid.ViewMode')}
-                value={queryParams.view}
-                onChange={(value) =>
-                  setQueryParams({ view: value as 'table' | 'grid' })
-                }
-              >
-                <Tooltip content={t('session.resourceGrid.TableView')}>
-                  <SegmentedControlItem
-                    value="table"
-                    label={t('session.resourceGrid.TableView')}
-                    isLabelHidden
-                    icon={<TableIcon size="1em" />}
-                  />
-                </Tooltip>
-                <Tooltip content={t('session.resourceGrid.GridView')}>
-                  <SegmentedControlItem
-                    value="grid"
-                    label={t('session.resourceGrid.GridView')}
-                    isLabelHidden
-                    icon={<LayoutGridIcon size="1em" />}
-                  />
-                </Tooltip>
-              </SegmentedControl>
+              {experimentalSessionResourceGrid && (
+                <SegmentedControl
+                  label={t('session.resourceGrid.ViewMode')}
+                  value={queryParams.view}
+                  onChange={(value) =>
+                    setQueryParams({ view: value as 'table' | 'grid' })
+                  }
+                >
+                  <Tooltip content={t('session.resourceGrid.TableView')}>
+                    <SegmentedControlItem
+                      value="table"
+                      label={t('session.resourceGrid.TableView')}
+                      isLabelHidden
+                      icon={<TableIcon size="1em" />}
+                    />
+                  </Tooltip>
+                  <Tooltip content={t('session.resourceGrid.GridView')}>
+                    <SegmentedControlItem
+                      value="grid"
+                      label={t('session.resourceGrid.GridView')}
+                      isLabelHidden
+                      icon={<LayoutGridIcon size="1em" />}
+                    />
+                  </Tooltip>
+                </SegmentedControl>
+              )}
               <AutoUpdateFetchKeyButton
                 settingId="session-list"
                 defaultAutoUpdateDelay={15_000}
@@ -572,20 +586,14 @@ const ComputeSessionListPage = () => {
               />
             </BAIFlex>
           </BAIFlex>
-          {queryParams.view === 'grid' ? (
+          {effectiveView === 'grid' ? (
             // Keyed by the UNdeferred filter/order: a change remounts the
             // boundary so its fallback shows immediately, instead of the
             // refetch being held hidden until the next poll commit. The
             // fetchKey stays deferred so poll refreshes never flash.
             <Suspense
               key={`${queryVariables.filter ?? ''}:${queryVariables.order ?? ''}`}
-              fallback={
-                <BAICard
-                  style={{ width: '100%' }}
-                  loading
-                  variant="borderless"
-                />
-              }
+              fallback={<BAIResourceUnitGridSkeleton />}
             >
               <SessionResourceGrid
                 filter={queryVariables.filter}

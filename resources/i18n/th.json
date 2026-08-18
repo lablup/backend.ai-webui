@@ -3565,6 +3565,7 @@
     "SSHKeypairGeneration": "การสร้างคู่คีย์ SSH",
     "SSHKeypairGenerationWarning": "คุณจะไม่สามารถเข้าถึงคีย์ส่วนตัวได้อีกหลังจากปิดหน้าต่างนี้",
     "SSHKeypairManagement": "การจัดการคู่คีย์ SSH",
+    "SessionResourceGrid": "__NOT_TRANSLATED__",
     "SessionTerminationDialog": "การยุติเซสชันไม่สามารถยกเลิกได้ คุณต้องการดำเนินการต่อเพื่อยุติเซสชันหรือไม่?",
     "ShellEnvironments": "สภาพแวดล้อมเชลล์",
     "Theme": "ธีม",
