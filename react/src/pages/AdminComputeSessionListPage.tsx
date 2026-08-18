@@ -33,9 +33,9 @@ import {
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAdminProjectSelectAstryx,
-  BAICard,
   BAIFlex,
   BAIPropertyFilter,
+  BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -112,6 +112,9 @@ const AdminComputeSessionListPage = () => {
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminComputeSessionListPage',
+  );
+  const [experimentalSessionResourceGrid] = useBAISettingUserState(
+    'experimental_session_resource_grid',
   );
 
   const { supportedFields, exportCSV } = useCSVExport('sessions');
@@ -449,30 +452,32 @@ const AdminComputeSessionListPage = () => {
                 />
               </>
             )}
-            <SegmentedControl
-              label={t('session.resourceGrid.ViewMode')}
-              value={queryParams.view}
-              onChange={(value) =>
-                setQueryParams({ view: value as 'table' | 'grid' })
-              }
-            >
-              <Tooltip content={t('session.resourceGrid.TableView')}>
-                <SegmentedControlItem
-                  value="table"
-                  label={t('session.resourceGrid.TableView')}
-                  isLabelHidden
-                  icon={<TableIcon size="1em" />}
-                />
-              </Tooltip>
-              <Tooltip content={t('session.resourceGrid.GridView')}>
-                <SegmentedControlItem
-                  value="grid"
-                  label={t('session.resourceGrid.GridView')}
-                  isLabelHidden
-                  icon={<LayoutGridIcon size="1em" />}
-                />
-              </Tooltip>
-            </SegmentedControl>
+            {experimentalSessionResourceGrid && (
+              <SegmentedControl
+                label={t('session.resourceGrid.ViewMode')}
+                value={queryParams.view}
+                onChange={(value) =>
+                  setQueryParams({ view: value as 'table' | 'grid' })
+                }
+              >
+                <Tooltip content={t('session.resourceGrid.TableView')}>
+                  <SegmentedControlItem
+                    value="table"
+                    label={t('session.resourceGrid.TableView')}
+                    isLabelHidden
+                    icon={<TableIcon size="1em" />}
+                  />
+                </Tooltip>
+                <Tooltip content={t('session.resourceGrid.GridView')}>
+                  <SegmentedControlItem
+                    value="grid"
+                    label={t('session.resourceGrid.GridView')}
+                    isLabelHidden
+                    icon={<LayoutGridIcon size="1em" />}
+                  />
+                </Tooltip>
+              </SegmentedControl>
+            )}
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"
               defaultAutoUpdateDelay={15_000}
@@ -487,16 +492,14 @@ const AdminComputeSessionListPage = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {queryParams.view === 'grid' ? (
+        {experimentalSessionResourceGrid && queryParams.view === 'grid' ? (
           // Keyed by the UNdeferred filter/order: a change remounts the
           // boundary so its fallback shows immediately, instead of the
           // refetch being held hidden until the next poll commit. The
           // fetchKey stays deferred so poll refreshes never flash.
           <Suspense
             key={`${gridFilter ?? ''}:${gridProjectId ?? ''}:${queryVariables.order ?? ''}`}
-            fallback={
-              <BAICard style={{ width: '100%' }} loading variant="borderless" />
-            }
+            fallback={<BAIResourceUnitGridSkeleton />}
           >
             <SessionResourceGrid
               filter={gridFilter}
