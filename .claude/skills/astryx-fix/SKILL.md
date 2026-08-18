@@ -132,7 +132,7 @@ engine — nothing injects `<style>` at runtime any more.
 
 **Do not reproduce a retired engine's quirk inside the one that replaced it.**
 `rc-table` returned the whole record from an empty `dataIndex` path, so
-`render: (row) =>` worked under it; teaching `BAITableAstryx` the same trick
+`render: (row) =>` worked under it; teaching `BAITable` the same trick
 would carry the old engine's accidents forward permanently. The contract is
 `render(value, record, index)` and call sites use `(_value, row) =>` (see
 `.specs/FR-3482-astryx-migration/CONVERSION-IDIOMS.md` §2).
@@ -243,7 +243,7 @@ re-invent.
 | **Stale built theme artifact** | The recipe changed but the committed `bai-r*` CSS did not, or an old artifact is still present — the first registration for a `data-astryx-theme` name wins, so your change silently does nothing. | §2 steps 2 + 4, in full. |
 | **Stale BUI `dist`** | `verify.sh`'s `astryx theme build --check` depends on the built `backend.ai-ui`, so it can fail for a reason unrelated to your edit. | `pnpm --filter backend.ai-ui build` after **any** `packages/backend.ai-ui/src` change, then re-run verify. |
 | **`Grid` child overflow** | CSS grid items default to `min-width: auto`, so a `width: 100%` Astryx field pushes its track past the container and the right-hand column gets clipped at the modal edge. | `width="100%"` on the `Grid` **plus** `style={{ minWidth: 0 }}` on every direct grid child. Every grid-of-fields conversion needs it. |
-| **Astryx Table bleed** | The table can paint outside its own layout box — the pagination row lays out as if the table ended slightly earlier and overlaps the last row. | Do not "fix" it with a margin at one call site. If it recurs, the root cause is in `BAITableAstryx` itself — check whether it is already fixed upstream before patching around it locally. |
+| **Astryx Table bleed** | The table can paint outside its own layout box — the pagination row lays out as if the table ended slightly earlier and overlaps the last row. | Do not "fix" it with a margin at one call site. If it recurs, the root cause is in `BAITable` itself — check whether it is already fixed upstream before patching around it locally. |
 | **`Tooltip` / `MediaTheme` `display: contents`** | Both render zero-layout wrappers — good (no layout cost), but they are still **DOM ancestors**, so token context inherits through them. `useTooltip` inverts its surface by hardcoding colours *without* flipping the token context, so nested content (e.g. `Kbd`) resolves against the page surface and comes out invisible. | Wrap tooltip content in `<MediaTheme mode={opposite of app mode}>` — the surface is inverted, so the media mode is too. |
 | **`MediaTheme` leaking into a native `<dialog>`** | Astryx `Dialog` is a **native, non-portalled `<dialog>`** promoted with `showModal()`; the top layer does not change DOM ancestry. A `MediaTheme` ancestor therefore keeps forcing its surface tokens inside every modal mounted under it — e.g. a dark header band forcing dark text onto a light modal surface, or vice versa. | Scope the `MediaTheme` to the content actually on the band; mount modals outside it. Do not wrap modals in a counter-`MediaTheme` (it declares *surface luminance*, not app mode) and do not portal the dialog (non-portalled is deliberate). |
 | **`ButtonGroup` with a non-Astryx child** | Joining is context-based and only Astryx `Button`/`IconButton`/`ToggleButton` read it; any other child keeps its own pill and leaves a notch. | Make every group child an Astryx button. |

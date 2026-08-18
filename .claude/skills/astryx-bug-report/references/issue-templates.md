@@ -20,7 +20,7 @@ see what still needs chasing.
 
 - **Page**: `/admin/users` (menu: Admin → Users)
 - **Region**: the credentials table header
-- **Component** (if identified): `BAITableAstryx` (`packages/backend.ai-ui/src/components/Table/`)
+- **Component** (if identified): `BAITable` (`packages/backend.ai-ui/src/components/Table/`)
 
 ## Observed
 

@@ -78,13 +78,16 @@ describe('BAITable pagination (FR-3563)', () => {
   });
 
   it('clamps a page that a shrinking list left stranded', () => {
-    // The user paged to 3, then a filter cut the list down to 4 rows.
+    // Paged to 5, then a filter cut the list to 25 rows — still longer than a
+    // page, so this exercises the slice with a clamped page rather than
+    // short-circuiting on `length <= pageSize`.
     renderTable({
-      dataSource: makeRows(4),
-      pagination: { current: 3, pageSize: 10 },
+      dataSource: makeRows(25),
+      pagination: { current: 5, pageSize: 10 },
     });
 
-    expect(screen.getByText('row-1')).toBeInTheDocument();
-    expect(screen.getByText('row-4')).toBeInTheDocument();
+    expect(screen.queryByText('row-20')).not.toBeInTheDocument();
+    expect(screen.getByText('row-21')).toBeInTheDocument();
+    expect(screen.getByText('row-25')).toBeInTheDocument();
   });
 });

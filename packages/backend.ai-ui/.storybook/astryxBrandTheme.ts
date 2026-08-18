@@ -2,7 +2,7 @@
  * Backend.AI brand Astryx theme for Storybook (to-astryx ticket 32).
  *
  * Before this file, no `<Theme>` from `@astryxdesign/core/theme` was ever
- * mounted in the preview — Astryx-native components (`BAITableAstryx`,
+ * mounted in the preview — Astryx-native components (`BAITable`,
  * `BAIComplexSelect`, PowerSearch, …) fell back to `@astryxdesign/theme-
  * neutral`'s default palette (imported globally in `astryx.css`), not the
  * Backend.AI brand. `ThemeShimProvider` (ticket 10) only feeds antd-shaped

@@ -88,7 +88,7 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
     // Astryx brand theme (ticket 32, mirrors the app's always-on
     // `AstryxBrandTheme` — see DefaultProviders.tsx). Mounted unconditionally
     // (not gated by the antd-only "Theme Style" toolbar below) so
-    // Astryx-native components (BAITableAstryx, BAIComplexSelect,
+    // Astryx-native components (BAITable, BAIComplexSelect,
     // PowerSearch, …) render the real Backend.AI palette instead of Astryx's
     // theme-neutral default, in both light and dark.
     <AstryxThemeProvider
