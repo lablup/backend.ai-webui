@@ -68,6 +68,31 @@ describe('useKeyedSnapshot', () => {
     expect(result.current[0]).toBe('credentials');
   });
 
+  it('holds the new key while the source key still reports the departing one', () => {
+    const { result, rerender } = renderKeyedSnapshot('users', 'users-initial');
+
+    act(() => {
+      result.current[1]('credentials');
+    });
+    expect(result.current[0]).toBe('credentials');
+
+    // The case the hook's docblock defends: a rerender arrives with
+    // `sourceKey` still describing the tab the user just left. The sync is
+    // change-triggered, so an unchanged argument must not bounce the key back.
+    rerender({ sourceKey: 'users', value: 'users-initial' });
+    expect(result.current[0]).toBe('credentials');
+
+    rerender({ sourceKey: 'credentials', value: 'credentials-initial' });
+    expect(result.current[0]).toBe('credentials');
+
+    // …and the departing key's snapshot survived that render.
+    let restored: string | undefined;
+    act(() => {
+      restored = result.current[1]('users');
+    });
+    expect(restored).toBe('users-initial');
+  });
+
   it('re-syncs the current key when the source key changes', () => {
     const { result, rerender } = renderKeyedSnapshot('users', 'users-initial');
 
