@@ -205,7 +205,10 @@ const AdminUsersPage: React.FC = () => {
     variables: UsersVariables,
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
-    loadUsersQuery(variables, options);
+    loadUsersQuery(variables, {
+      fetchPolicy: 'store-and-network',
+      ...options,
+    });
     const snapshot = snapshotOfVariables('users', variables);
     setQueryParams(
       { tab: 'users', ...snapshot.queryParams },
@@ -218,7 +221,10 @@ const AdminUsersPage: React.FC = () => {
     variables: CredentialsVariables,
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
-    loadCredentialsQuery(variables, options);
+    loadCredentialsQuery(variables, {
+      fetchPolicy: 'store-and-network',
+      ...options,
+    });
     const snapshot = snapshotOfVariables('credentials', variables);
     setQueryParams(
       { tab: 'credentials', ...snapshot.queryParams },
@@ -229,9 +235,13 @@ const AdminUsersPage: React.FC = () => {
 
   const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
     if (tab === 'users') {
-      loadUsersQuery(usersVariablesOf(snapshot));
+      loadUsersQuery(usersVariablesOf(snapshot), {
+        fetchPolicy: 'store-and-network',
+      });
     } else {
-      loadCredentialsQuery(credentialsVariablesOf(snapshot));
+      loadCredentialsQuery(credentialsVariablesOf(snapshot), {
+        fetchPolicy: 'store-and-network',
+      });
     }
   };
 
