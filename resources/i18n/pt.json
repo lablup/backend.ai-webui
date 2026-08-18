@@ -3860,6 +3860,9 @@
           "System": "Sistema"
         }
       }
+    },
+    "search": {
+      "Recent": "Recentes"
     }
   }
 }

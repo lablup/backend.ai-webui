@@ -3860,6 +3860,9 @@
           "System": "System"
         }
       }
+    },
+    "search": {
+      "Recent": "Zuletzt verwendet"
     }
   }
 }

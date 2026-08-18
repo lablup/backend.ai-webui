@@ -3859,6 +3859,9 @@
           "System": "Järjestelmä"
         }
       }
+    },
+    "search": {
+      "Recent": "Viimeisimmät"
     }
   }
 }

@@ -3861,6 +3861,9 @@
           "System": "Système"
         }
       }
+    },
+    "search": {
+      "Recent": "Récents"
     }
   }
 }

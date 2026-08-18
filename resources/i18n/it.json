@@ -3858,6 +3858,9 @@
           "System": "Sistema"
         }
       }
+    },
+    "search": {
+      "Recent": "Recenti"
     }
   }
 }
