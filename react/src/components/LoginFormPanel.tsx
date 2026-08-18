@@ -20,7 +20,6 @@ import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
@@ -132,7 +131,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
-  const { themeConfig } = useCustomThemeConfig();
 
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
@@ -206,21 +204,17 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               marginTop: 'var(--spacing-1)',
             }}
           >
+            {/* Built-in logo on purpose: pre-login the domain-scoped theme
+                config is unreadable, so this screen must not depend on
+                theme.json (FR-1964). */}
             <img
               src={
                 isDarkMode
-                  ? themeConfig?.logo?.loginLogoSrcDark ||
-                    themeConfig?.logo?.src ||
-                    'manifest/backend.ai-text-bgdark.svg'
-                  : themeConfig?.logo?.loginLogoSrc ||
-                    themeConfig?.logo?.srcDark ||
-                    'manifest/backend.ai-text.svg'
+                  ? 'manifest/backend.ai-text-bgdark.svg'
+                  : 'manifest/backend.ai-text.svg'
               }
-              alt={themeConfig?.logo?.alt || 'backend.ai'}
-              style={{
-                width: themeConfig?.logo?.loginLogoSize?.width,
-                height: themeConfig?.logo?.loginLogoSize?.height || 35,
-              }}
+              alt="backend.ai"
+              style={{ height: 35 }}
             />
           </div>
         }
