@@ -189,6 +189,10 @@ type InheritedPaginationProps = Omit<
   | 'onPageSizeChange'
   | 'label'
   | 'ref'
+  // Unsupported: slicing, range text and row indices all derive from `total`,
+  // which the bar always passes as `totalItems`, so neither can drive anything
+  | 'totalPages'
+  | 'hasMore'
 >;
 
 export interface BAITablePaginationConfig extends InheritedPaginationProps {
@@ -256,6 +260,8 @@ type InheritedTableProps = Omit<
   // Owned here: these land on the dim/scroll WRAPPER, not on the `<table>`
   | 'className'
   | 'style'
+  // Owned here: the pipeline is assembled below and its order is load-bearing
+  | 'plugins'
 >;
 
 export interface BAITableProps<

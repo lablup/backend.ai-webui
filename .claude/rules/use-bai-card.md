@@ -71,7 +71,7 @@ import { BAICard } from 'backend.ai-ui';
 >
   <BAIFlex direction="column" align="stretch" gap="sm">
     <BAIGraphQLPropertyFilter style={{ flex: 1 }} {...filterProps} />
-    <BAITableAstryx {...tableProps} />
+    <BAITable {...tableProps} />
   </BAIFlex>
 </BAICard>
 ```
