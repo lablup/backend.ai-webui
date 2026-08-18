@@ -44,7 +44,7 @@ test.describe(
       // Create temporary directory and test file
       tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'e2e-dnd-upload-'));
 
-      // Create a subdirectory to simulate folder upload
+      // Keep the file in its own subdirectory so the temp dir cleans up as one.
       uploadDir = path.join(tmpDir, 'upload-folder');
       fs.mkdirSync(uploadDir);
 
@@ -98,64 +98,79 @@ test.describe(
       // 3. Verify file explorer loaded
       await modal.verifyFileExplorerLoaded();
 
-      // 4. Simulate drag-and-drop of a file onto the file explorer area
+      // 4. Drag a file onto the file explorer area.
       const fileName = path.basename(testFilePath);
+      const fileContent = fs.readFileSync(testFilePath, 'utf8');
 
-      // Get the modal body (drop container)
-      const modalBody = page.locator('.ant-modal-body').first();
-
-      // Trigger dragenter to show the overlay by dispatching a real dragenter event
-      await modalBody.evaluate((element) => {
-        const dragEvent = new DragEvent('dragenter', {
-          bubbles: true,
-          cancelable: true,
-          dataTransfer: new DataTransfer(),
-        });
-        element.dispatchEvent(dragEvent);
+      // The drag overlay is driven by document-level listeners, so the
+      // dragenter goes to the document exactly as the browser sends it.
+      await page.evaluate(() => {
+        const dt = new DataTransfer();
+        document.dispatchEvent(
+          new DragEvent('dragenter', { bubbles: true, dataTransfer: dt }),
+        );
       });
 
-      // 5. Verify the drag-and-drop overlay appears with text "Drag and drop"
-      const dragOverlay = page.locator('.ant-upload-drag');
+      // 5. The Astryx dropzone covers the explorer and carries the caption
+      //    inside it (FR-3575).
+      const dragOverlay = page.locator(
+        '.astryx-file-input[data-mode=dropzone]',
+      );
       await expect(dragOverlay).toBeVisible({ timeout: 5000 });
-
-      // Verify the overlay text
       await expect(
-        page.getByText('Drag and drop files to this area to upload.'),
+        dragOverlay.getByText('Drag and drop files to this area to upload.'),
       ).toBeVisible();
 
-      // 6. Upload files by setting them on the hidden input in the Dragger component
-      // Even though the input has directory/webkitdirectory attributes, Playwright can
-      // set individual file paths with their relative paths to simulate directory structure
-      const fileInput = dragOverlay.locator('input[type="file"]');
-
-      // Set the file with its relative path (simulating it being inside a folder)
-      // This works because Ant Design's Upload component processes the files based on
-      // their webkitRelativePath property
-      await fileInput.evaluate((input: HTMLInputElement) => {
-        // Remove the directory attributes temporarily to allow file selection
-        input.removeAttribute('directory');
-        input.removeAttribute('webkitdirectory');
+      // 6. Move around inside the dropzone before releasing. The browser fires
+      //    dragenter/dragleave pairs with no relatedTarget here, and the
+      //    dropzone stops their propagation — the overlay must survive them or
+      //    there is nothing left to drop onto (FR-3575).
+      await dragOverlay.evaluate((zone) => {
+        const child = zone.firstElementChild ?? zone;
+        for (let i = 0; i < 3; i++) {
+          const dt = new DataTransfer();
+          child.dispatchEvent(
+            new DragEvent('dragenter', { bubbles: true, dataTransfer: dt }),
+          );
+          zone.dispatchEvent(
+            new DragEvent('dragleave', { bubbles: true, dataTransfer: dt }),
+          );
+          zone.dispatchEvent(
+            new DragEvent('dragover', {
+              bubbles: true,
+              cancelable: true,
+              dataTransfer: dt,
+            }),
+          );
+        }
       });
+      await expect(dragOverlay).toBeVisible();
 
-      await fileInput.setInputFiles(testFilePath);
+      // 7. Release the file onto the dropzone — a real `drop` carrying the file,
+      //    not `setInputFiles` on the hidden input, so the drop path is what is
+      //    under test.
+      await dragOverlay.evaluate(
+        (zone, [name, content]) => {
+          const dt = new DataTransfer();
+          dt.items.add(new File([content], name, { type: 'text/plain' }));
+          zone.dispatchEvent(
+            new DragEvent('drop', {
+              bubbles: true,
+              cancelable: true,
+              dataTransfer: dt,
+            }),
+          );
+        },
+        [fileName, fileContent],
+      );
 
-      // Dismiss the drag overlay by dispatching a dragleave event to the document
-      // This simulates the user completing the drag-and-drop operation
-      await page.evaluate(() => {
-        const dragLeaveEvent = new DragEvent('dragleave', {
-          bubbles: true,
-          cancelable: true,
-        });
-        document.dispatchEvent(dragLeaveEvent);
-      });
-
-      // Wait for drag overlay to disappear after upload
+      // The drop must close the overlay by itself — no synthetic dragleave.
       await expect(dragOverlay).not.toBeVisible({ timeout: 10000 });
 
-      // 7. Verify the uploaded file appears in the file table
+      // 8. Verify the uploaded file appears in the file table
       await modal.verifyFileVisible(fileName);
 
-      // 8. Close modal
+      // 9. Close modal
       await modal.close();
     });
   },

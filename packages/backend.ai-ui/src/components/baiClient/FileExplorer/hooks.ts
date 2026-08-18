@@ -5,7 +5,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useQuery } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 
 /**
  * `RcFile` from `antd/es/upload`, restated locally (to-astryx W2-D).
@@ -24,6 +24,65 @@ export interface RcFile extends File {
   uid: string;
   readonly lastModifiedDate: Date;
 }
+
+/**
+ * Tracks whether a file is being dragged over the page, so the explorer can
+ * show its upload overlay.
+ *
+ * These document listeners deliberately do NOT close the overlay on `drop`
+ * (FR-3575). The overlay's Astryx `FileInput` stops propagation on `drop`, so a
+ * bubble listener never sees one that lands on the dropzone — and a *capture*
+ * listener sees it too early: `drop` is discrete priority, React flushes the
+ * state update synchronously, and the dropzone unmounts before React can
+ * dispatch `FileInput`'s own handler, so the file is silently dropped.
+ * Closing on drop is therefore the overlay's job, through `close` — see
+ * `DragAndDrop`'s `onDropCapture`, which runs inside React's own dispatch.
+ */
+export const useDragOverlay = (
+  containerRef?: React.RefObject<HTMLDivElement | null>,
+) => {
+  const [isDragMode, setIsDragMode] = useState(false);
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      setPortalContainer(containerRef?.current ?? null);
+      setIsDragMode(true);
+    };
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      if (!e.relatedTarget || !document.contains(e.relatedTarget as Node)) {
+        setIsDragMode(false);
+      }
+    };
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      setIsDragMode(false);
+    };
+
+    document.addEventListener('dragenter', handleDragEnter);
+    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('drop', handleDrop);
+
+    return () => {
+      document.removeEventListener('dragenter', handleDragEnter);
+      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('drop', handleDrop);
+    };
+  }, [containerRef]);
+
+  const close = () => setIsDragMode(false);
+
+  return { isDragMode, portalContainer, close };
+};
 
 export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
   const baiClient = useConnectedBAIClient();

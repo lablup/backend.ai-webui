@@ -21,11 +21,14 @@ interface DragAndDropProps {
   onUpload: (files: Array<RcFile>, currentPath: string) => void;
   /** Optional container element for portal rendering */
   portalContainer?: HTMLElement | null;
+  /** Dismisses the overlay once the drag is over. */
+  onDragEnd?: () => void;
 }
 
 const DragAndDrop: React.FC<DragAndDropProps> = ({
   onUpload,
   portalContainer,
+  onDragEnd,
 }) => {
   'use memo';
   const { t } = useBAIi18n();
@@ -34,6 +37,14 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
 
   const overlay = (
     <div
+      // Deferred on purpose: `drop` is discrete priority, so closing during
+      // the dispatch flushes synchronously and unmounts the dropzone before
+      // React reaches `FileInput`'s own handler — the file is then silently
+      // lost. Waiting for the event to finish is what makes the upload run
+      // (FR-3575).
+      onDropCapture={() => {
+        setTimeout(() => onDragEnd?.(), 0);
+      }}
       style={{
         position: 'absolute',
         inset: 0,
