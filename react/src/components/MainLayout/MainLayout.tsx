@@ -40,10 +40,6 @@ import React, {
 } from 'react';
 import { Outlet, useMatches, useLocation } from 'react-router-dom';
 
-// Above every in-page stacking value (tables, boards, compact groups top out
-// at 60); `SiderToggleButton` sits one step higher again.
-export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = BAI_Z_INDEX.appHeader;
-
 export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   {
     current: null,
@@ -158,7 +154,7 @@ function MainLayout() {
                     margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
                     position: 'sticky',
                     top: 0,
-                    zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
+                    zIndex: BAI_Z_INDEX.appHeader,
                   }}
                 >
                   <Suspense

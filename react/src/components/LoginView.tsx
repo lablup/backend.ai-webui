@@ -1114,8 +1114,7 @@ const LoginView: React.FC<{
 
   // The login screen background (Diagonal Weave + version/copyright metadata)
   // is the persisted splash from index.html, switched to backdrop mode by
-  // __enterLoginBackdrop(). It sits at BAI_Z_INDEX.splash, below the modal
-  // band, so everything below renders over it with no wrapper to lift it.
+  // __enterLoginBackdrop().
   return (
     <>
       <LoginFormPanel
@@ -1169,7 +1168,6 @@ const LoginView: React.FC<{
         }
         closable={false}
         mask={{ closable: false }}
-        getContainer={false}
         destroyOnHidden
       >
         <div style={{ textAlign: 'center', paddingTop: 15 }}>
