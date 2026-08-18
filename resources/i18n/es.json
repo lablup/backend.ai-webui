@@ -3742,6 +3742,9 @@
           "System": "Sistema"
         }
       }
+    },
+    "search": {
+      "Recent": "Recientes"
     }
   }
 }

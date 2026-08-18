@@ -3746,6 +3746,9 @@
           "System": "Sistem"
         }
       }
+    },
+    "search": {
+      "Recent": "Terbaru"
     }
   }
 }

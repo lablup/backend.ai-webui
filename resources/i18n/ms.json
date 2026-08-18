@@ -3742,6 +3742,9 @@
           "System": "Sistem"
         }
       }
+    },
+    "search": {
+      "Recent": "Terkini"
     }
   }
 }

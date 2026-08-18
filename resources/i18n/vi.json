@@ -3744,6 +3744,9 @@
           "System": "Hệ thống"
         }
       }
+    },
+    "search": {
+      "Recent": "Gần đây"
     }
   }
 }
