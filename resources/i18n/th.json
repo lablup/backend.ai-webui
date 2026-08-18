@@ -3709,6 +3709,7 @@
       "ResourcePolicies": "นโยบายทรัพยากร",
       "Resources": "ทรัพยากร",
       "Scheduler": "ผู้กำหนดตารางเวลา",
+      "Search": "ค้นหา",
       "Serving": "การให้บริการ",
       "Sessions": "เซสชัน",
       "Settings": "การตั้งค่า",
@@ -3746,6 +3747,9 @@
       }
     },
     "search": {
+      "FoundIn": "พบใน {{text}}",
+      "NoResults": "ไม่พบผลลัพธ์",
+      "Placeholder": "ค้นหาหน้า แท็บ และการตั้งค่า",
       "Recent": "ล่าสุด"
     }
   }

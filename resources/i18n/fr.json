@@ -3710,6 +3710,7 @@
       "ResourcePolicies": "Politiques des ressources",
       "Resources": "Ressources",
       "Scheduler": "Planificateur",
+      "Search": "Recherche",
       "Serving": "Servir",
       "Sessions": "Sessions",
       "Settings": "Paramètres",
@@ -3747,6 +3748,9 @@
       }
     },
     "search": {
+      "FoundIn": "Trouvé dans {{text}}",
+      "NoResults": "Aucun résultat",
+      "Placeholder": "Rechercher des pages, des onglets et des paramètres",
       "Recent": "Récents"
     }
   }

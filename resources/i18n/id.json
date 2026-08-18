@@ -3711,6 +3711,7 @@
       "ResourcePolicies": "Kebijakan Sumber Daya",
       "Resources": "Sumber Daya",
       "Scheduler": "Penjadwal",
+      "Search": "Pencarian",
       "Serving": "Penyajian",
       "Sessions": "Sesi",
       "Settings": "Pengaturan",
@@ -3748,6 +3749,9 @@
       }
     },
     "search": {
+      "FoundIn": "Ditemukan di {{text}}",
+      "NoResults": "Tidak ada hasil",
+      "Placeholder": "Cari halaman, tab, dan pengaturan",
       "Recent": "Terbaru"
     }
   }

@@ -3709,6 +3709,7 @@
       "ResourcePolicies": "Chính sách tài nguyên",
       "Resources": "Tài nguyên",
       "Scheduler": "Người lập lịch",
+      "Search": "Tìm kiếm",
       "Serving": "Phục vụ",
       "Sessions": "Phiên",
       "Settings": "Cài đặt",
@@ -3746,6 +3747,9 @@
       }
     },
     "search": {
+      "FoundIn": "Tìm thấy trong {{text}}",
+      "NoResults": "Không có kết quả",
+      "Placeholder": "Tìm kiếm trang, tab và cài đặt",
       "Recent": "Gần đây"
     }
   }

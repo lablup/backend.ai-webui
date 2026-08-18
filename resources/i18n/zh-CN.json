@@ -3709,6 +3709,7 @@
       "ResourcePolicies": "资源政策",
       "Resources": "资源",
       "Scheduler": "调度程序",
+      "Search": "搜索",
       "Serving": "服务",
       "Sessions": "会话",
       "Settings": "设置",
@@ -3746,6 +3747,9 @@
       }
     },
     "search": {
+      "FoundIn": "在 {{text}} 中找到",
+      "NoResults": "无结果",
+      "Placeholder": "搜索页面、标签页和设置",
       "Recent": "最近使用"
     }
   }

@@ -3709,6 +3709,7 @@
       "ResourcePolicies": "リソースポリシー",
       "Resources": "リソース管理",
       "Scheduler": "スケジューラ",
+      "Search": "検索",
       "Serving": "モデルサービス",
       "Sessions": "セッション",
       "Settings": "設定",
@@ -3746,6 +3747,9 @@
       }
     },
     "search": {
+      "FoundIn": "{{text}}内で見つかりました",
+      "NoResults": "検索結果がありません",
+      "Placeholder": "ページ、タブ、設定を検索",
       "Recent": "最近の項目"
     }
   }
