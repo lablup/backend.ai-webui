@@ -3,13 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * `useBrowserPopstateEffect` is the most delicate assembly in the page-owned
- * keyed-snapshot pilot (FR-3387). A `popstate` arms a ref, and the callback is
- * held back until nuqs' query state — applied inside a transition, so it lags
- * the address bar by at least one render — describes the entry the user
- * navigated to. The three cases below pin that state machine: silent while
- * nuqs lags, exactly one call on the render it catches up, and silent for the
- * page's own `setQueryParams` writes.
+ * `useBrowserPopstateEffect` exists so a caller can read its own nuqs state
+ * inside the callback (FR-3387). nuqs applies `popstate` in a transition, so a
+ * render can still carry the departed entry's params after the address bar has
+ * moved — the hook's job is to withhold the callback until the two agree. That
+ * window is not guaranteed to occur, only tolerated, so the cases below drive
+ * it by hand.
  */
 import { useBrowserPopstateEffect } from '.';
 import { renderHook, act } from '@testing-library/react';
@@ -34,7 +33,6 @@ const browserNavigatesTo = (search: string) => {
 
 describe('useBrowserPopstateEffect', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     window.history.replaceState({}, '', '?tab=users');
     nuqsRendersWith('?tab=users');
   });
@@ -46,14 +44,14 @@ describe('useBrowserPopstateEffect', () => {
     act(() => {
       browserNavigatesTo('?tab=credentials');
     });
-    // The transition renders once more with the departed entry's params.
+    // A render still carrying the departed entry's params must not release it.
     nuqsRendersWith('?tab=users');
     rerender();
 
     expect(onSettled).not.toHaveBeenCalled();
   });
 
-  it('fires exactly once, on the render where nuqs catches up', () => {
+  it("fires exactly once, once nuqs' params match the address bar", () => {
     const onSettled = vi.fn();
     const { rerender } = renderHook(() => useBrowserPopstateEffect(onSettled));
 
@@ -64,7 +62,7 @@ describe('useBrowserPopstateEffect', () => {
     rerender();
     expect(onSettled).not.toHaveBeenCalled();
 
-    // Key order is not a difference — the hook compares sorted params.
+    // Key order is not a difference.
     nuqsRendersWith('?status=INACTIVE&tab=credentials');
     rerender();
     expect(onSettled).toHaveBeenCalledTimes(1);
@@ -81,9 +79,7 @@ describe('useBrowserPopstateEffect', () => {
 
     // `setQueryParams` updates nuqs and writes the URL through
     // `pushState`/`replaceState`, neither of which emits `popstate`.
-    act(() => {
-      window.history.replaceState({}, '', '?tab=users&filter=email');
-    });
+    window.history.replaceState({}, '', '?tab=users&filter=email');
     nuqsRendersWith('?tab=users&filter=email');
     rerender();
 
