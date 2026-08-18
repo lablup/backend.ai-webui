@@ -279,7 +279,11 @@ export const useBackendAIAppLauncher = (
       // `instanceof Error` — that check made every start-service failure
       // surface as "Proxy configurator is not responding." (FR-3478).
       throw new AppLaunchError(
-        getErrorMessage(err, t('session.appLauncher.FailedToStartAppService')),
+        resolveStartServiceErrorMessage(
+          err,
+          getErrorMessage,
+          t('session.appLauncher.FailedToStartAppService'),
+        ),
         'configuring',
         err,
       );
@@ -428,13 +432,10 @@ export const useBackendAIAppLauncher = (
     try {
       return await sendRequest(rqst_proxy);
     } catch (err) {
-      // Wrap error in AppLaunchError with proper stage
       throw new AppLaunchError(
-        err instanceof Error && err.message
-          ? err.message
-          : 'Failed to connect to coordinator',
+        getErrorMessage(err, 'Failed to connect to coordinator'),
         'requesting',
-        err instanceof Error ? err : undefined,
+        err,
       );
     }
   };
@@ -806,29 +807,9 @@ export const useBackendAIAppLauncher = (
             };
           },
           rejected: (error: any) => {
-            // Prefer the original rejection payload (manager problem+json with
-            // statusCode/error_code/traceback) over the AppLaunchError wrapper
-            // stack, which carries no diagnostic information (FR-3478).
-            // `requestParameters` is omitted: it echoes the raw start-service
-            // request body — login_session_token and possibly secret-bearing
-            // app envs/args — which must not appear in the copyable
-            // notification details.
-            const original = error?.originalError;
-            const extraDescription =
-              original instanceof Error
-                ? original.stack
-                : original && typeof original === 'object'
-                  ? JSON.stringify(
-                      _.omit(original, 'requestParameters'),
-                      null,
-                      2,
-                    )
-                  : original
-                    ? JSON.stringify(original, null, 2)
-                    : error?.stack || JSON.stringify(error, null, 2);
             return {
               description: getErrorMessage(error),
-              extraDescription,
+              extraDescription: buildAppLaunchFailureExtraDescription(error),
               duration: 0, // Persistent error notification
             };
           },
@@ -1148,8 +1129,6 @@ export class AppLaunchError extends Error {
   // `unknown` — typing it `Error` silently dropped the manager's payload
   // (statusCode/error_code/traceback) at wrap time (FR-3478).
   originalError?: unknown;
-  statusCode?: number;
-  errorCode?: string;
 
   constructor(
     message: string,
@@ -1160,23 +1139,71 @@ export class AppLaunchError extends Error {
     this.name = 'AppLaunchError';
     this.stage = stage;
     this.originalError = originalError;
-    if (originalError && typeof originalError === 'object') {
-      const { statusCode, error_code } = originalError as {
-        statusCode?: unknown;
-        error_code?: unknown;
-      };
-      if (typeof statusCode === 'number') {
-        this.statusCode = statusCode;
-      }
-      if (typeof error_code === 'string') {
-        this.errorCode = error_code;
-      }
-    }
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, AppLaunchError);
     }
   }
+}
+
+/**
+ * Resolve the user-facing message for a start-service rejection.
+ *
+ * The client's `message` is a debug string ("server responded failure:
+ * 503 Service Unavailable - …") and its `msg` is always undefined —
+ * `_wrapWithPromise` copies it off the fetch `Response`, which never carries
+ * one. The clean manager text lives in `description` / `response.msg`, so
+ * slot it into the resolver's preferred field before delegating.
+ */
+export function resolveStartServiceErrorMessage(
+  err: unknown,
+  getErrorMessage: (error: unknown, defaultMessage?: string) => string,
+  fallback: string,
+): string {
+  if (err && typeof err === 'object' && !(err instanceof Error)) {
+    const e = err as {
+      msg?: unknown;
+      description?: unknown;
+      response?: { msg?: unknown; title?: unknown } | null;
+    };
+    const clean = [
+      e.msg,
+      e.description,
+      e.response?.msg,
+      e.response?.title,
+    ].find((v): v is string => typeof v === 'string' && v.length > 0);
+    if (clean) {
+      return getErrorMessage({ ...e, msg: clean }, fallback);
+    }
+  }
+  return getErrorMessage(err, fallback);
+}
+
+/**
+ * Diagnostic payload for the failure notification's copyable details.
+ * Prefers the original rejection (manager problem+json with
+ * statusCode/error_code/traceback) over the AppLaunchError wrapper stack.
+ * `requestParameters` is omitted: it echoes the raw start-service request
+ * body — login_session_token and possibly secret-bearing app envs/args.
+ */
+export function buildAppLaunchFailureExtraDescription(
+  error: unknown,
+): string | undefined {
+  const original =
+    error && typeof error === 'object' && 'originalError' in error
+      ? (error as { originalError?: unknown }).originalError
+      : undefined;
+  if (original instanceof Error) {
+    return original.stack;
+  }
+  if (original && typeof original === 'object') {
+    return JSON.stringify(_.omit(original, 'requestParameters'), null, 2);
+  }
+  if (original) {
+    return JSON.stringify(original, null, 2);
+  }
+  const e = error as { stack?: string } | null | undefined;
+  return e?.stack || JSON.stringify(error, null, 2);
 }
 
 /**

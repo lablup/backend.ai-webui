@@ -16,6 +16,11 @@
  * test would let the two drift apart. The real client is imported by relative
  * path on purpose: the bare `backend.ai-client` specifier is aliased to a stub
  * in vitest.config.ts.
+ *
+ * On the frontend side the tests call the same exported helpers the hook
+ * uses in production (`resolveStartServiceErrorMessage`,
+ * `buildAppLaunchFailureExtraDescription`) rather than re-composing their
+ * logic here, so a regression in those paths fails these tests.
  */
 import { Client } from '../../../packages/backend.ai-client/src/client';
 import { ClientConfig } from '../../../packages/backend.ai-client/src/client-config';
@@ -28,9 +33,11 @@ import {
 } from './__fixtures__/appLaunchBackendErrors';
 import {
   AppLaunchError,
+  buildAppLaunchFailureExtraDescription,
   getAppProxyErrorMessage,
   isSendRequestErrorResponse,
   isSessionNotFoundError,
+  resolveStartServiceErrorMessage,
   sendRequest,
 } from './useBackendAIAppLauncher';
 import { renderHook } from '@testing-library/react';
@@ -118,17 +125,21 @@ describe('stage 1 — manager start-service rejections through the real client',
   );
 
   it.each(Object.entries<MockedErrorResponse>(managerErrors))(
-    '%s: resolves to the manager message + error_code, not the proxy text',
+    '%s: resolves to exactly the manager message + error_code',
     async (_name, mock) => {
       const err = await startServiceRejection(mock);
-      const resolved = getErrorMessage()(err, FALLBACK);
+      // The production resolver used by `_resolveV2ProxyUri`'s catch. Equality
+      // (not toContain) so the client's debug prefix ("server responded
+      // failure: 503 Service Unavailable - …") can never leak back in.
+      const resolved = resolveStartServiceErrorMessage(
+        err,
+        getErrorMessage(),
+        FALLBACK,
+      );
 
-      expect(resolved).not.toBe(LEGACY_PROXY_TEXT);
-      expect(resolved).not.toBe(FALLBACK);
-      // The client folds `body.msg` (or `body.title` when msg is absent) into
-      // its `message`, and getErrorMessage appends the error_code.
-      expect(resolved).toContain(mock.body.msg ?? mock.body.title);
-      expect(resolved).toContain(`(${mock.body.error_code})`);
+      expect(resolved).toBe(
+        `${mock.body.msg ?? mock.body.title} (${mock.body.error_code})`,
+      );
     },
   );
 
@@ -137,18 +148,47 @@ describe('stage 1 — manager start-service rejections through the real client',
     async (_name, mock) => {
       const err = await startServiceRejection(mock);
       const wrapped = new AppLaunchError(
-        getErrorMessage()(err, FALLBACK),
+        resolveStartServiceErrorMessage(err, getErrorMessage(), FALLBACK),
         'configuring',
         err,
       );
 
-      expect(wrapped.statusCode).toBe(mock.status);
-      expect(wrapped.errorCode).toBe(mock.body.error_code);
       // The original payload (incl. traceback/response) must survive for the
       // notification's extraDescription.
       expect(wrapped.originalError).toBe(err);
     },
   );
+
+  it.each(Object.entries<MockedErrorResponse>(managerErrors))(
+    '%s: notification details keep diagnostics but never the request body',
+    async (_name, mock) => {
+      const err = await startServiceRejection(mock);
+
+      // Sanity: the raw rejection DOES echo the start-service request body
+      // (incl. the credential) via `requestParameters` — that is what the
+      // builder must strip.
+      expect(JSON.stringify(err)).toContain('login_session_token');
+
+      const wrapped = new AppLaunchError('m', 'configuring', err);
+      const extra = buildAppLaunchFailureExtraDescription(wrapped);
+
+      expect(extra).toBeDefined();
+      expect(extra).not.toContain('login_session_token');
+      expect(extra).not.toContain('requestParameters');
+      expect(extra).toContain(mock.body.error_code);
+      expect(extra).toContain(String(mock.status));
+    },
+  );
+
+  it('notification details fall back to the wrapper when nothing was preserved', () => {
+    const fromError = buildAppLaunchFailureExtraDescription(
+      new AppLaunchError('m', 'requesting', new Error('boom')),
+    );
+    expect(fromError).toContain('boom');
+
+    const bare = new AppLaunchError('m', 'connecting');
+    expect(buildAppLaunchFailureExtraDescription(bare)).toBe(bare.stack);
+  });
 
   it('treats 404s as "session not accessible" unless the app-not-found code says otherwise', async () => {
     // 404 with error_code "session_read_not-found" → the session itself is
@@ -188,21 +228,24 @@ describe('stage 1 — manager start-service rejections through the real client',
   it('distinguishes same-title 503 causes only via msg, never via title', async () => {
     // noScalingGroup and noCoordinator share status, type, the (typo'd)
     // title "Serivce unavailable." and even error_code — msg is the only
-    // discriminator, and it must reach the user.
-    const scalingGroupMsg = getErrorMessage()(
+    // discriminator, and it must reach the user verbatim.
+    const scalingGroupMsg = resolveStartServiceErrorMessage(
       await startServiceRejection(managerErrors.noScalingGroup),
+      getErrorMessage(),
       FALLBACK,
     );
-    const coordinatorMsg = getErrorMessage()(
+    const coordinatorMsg = resolveStartServiceErrorMessage(
       await startServiceRejection(managerErrors.noCoordinator),
+      getErrorMessage(),
       FALLBACK,
     );
 
-    expect(scalingGroupMsg).toContain('Session has no scaling group assigned');
-    expect(coordinatorMsg).toContain(
-      'No coordinator configured for this resource group',
+    expect(scalingGroupMsg).toBe(
+      'Session has no scaling group assigned (backendai_generic_unavailable)',
     );
-    expect(scalingGroupMsg).not.toBe(coordinatorMsg);
+    expect(coordinatorMsg).toBe(
+      'No coordinator configured for this resource group (backendai_generic_unavailable)',
+    );
   });
 });
 
@@ -277,7 +320,11 @@ describe('stage 0 — network-level failures (no HTTP response at all)', () => {
     expect(rejection).toBeDefined();
     expect(rejection).not.toBeInstanceOf(Error);
     expect(isSessionNotFoundError(rejection)).toBe(false);
-    const resolved = getErrorMessage()(rejection, FALLBACK);
+    const resolved = resolveStartServiceErrorMessage(
+      rejection,
+      getErrorMessage(),
+      FALLBACK,
+    );
     expect(resolved).not.toBe(LEGACY_PROXY_TEXT);
     expect(resolved).toContain('Failed to fetch');
   });
@@ -296,36 +343,5 @@ describe('stage 0 — network-level failures (no HTTP response at all)', () => {
         method: 'GET',
       }),
     ).rejects.toThrow('Request failed: Failed to fetch');
-  });
-});
-
-describe('AppLaunchError payload extraction guards', () => {
-  it('extracts statusCode/errorCode only from well-typed fields', () => {
-    const fromPayload = new AppLaunchError('m', 'configuring', {
-      statusCode: 503,
-      error_code: 'backendai_generic_unavailable',
-    });
-    expect(fromPayload.statusCode).toBe(503);
-    expect(fromPayload.errorCode).toBe('backendai_generic_unavailable');
-
-    // The client's overlay types statusCode as number|string; a string status
-    // (or any other mistyped field) must be ignored, not coerced.
-    const mistyped = new AppLaunchError('m', 'configuring', {
-      statusCode: '503',
-      error_code: 42,
-    });
-    expect(mistyped.statusCode).toBeUndefined();
-    expect(mistyped.errorCode).toBeUndefined();
-  });
-
-  it('accepts Error and absent originalError without extraction', () => {
-    const fromError = new AppLaunchError('m', 'requesting', new Error('boom'));
-    expect(fromError.statusCode).toBeUndefined();
-    expect(fromError.errorCode).toBeUndefined();
-    expect(fromError.originalError).toBeInstanceOf(Error);
-
-    const bare = new AppLaunchError('m', 'connecting');
-    expect(bare.originalError).toBeUndefined();
-    expect(bare.statusCode).toBeUndefined();
   });
 });
