@@ -54,9 +54,9 @@
     rendered-but-hidden tree, a CSS-transition name) that `BAIDialogPortal`
     now owns. `stickyTitle` in particular is unconditionally true — Astryx
     `Layout` keeps the header slot outside the scrolling content.
-    `zIndex` is the exception: since FR-3578 the modal is a portalled div with
-    a real z-index, so an explicitly passed value is forwarded — floored at
-    `BAI_Z_INDEX.modalBase`, since a number below the band is always stale.
+    `zIndex` is the exception: the modal is a portalled div with a real
+    z-index since FR-3578, so a passed value is forwarded, floored at
+    `BAI_Z_INDEX.modalBase`.
  6. **`afterClose` fires from an effect on the `open` transition**, not from a
     transition-end event, so it lands a frame earlier than antd's. This is what
     `BAIUnmountAfterClose` subscribes to and it keeps working unchanged.
@@ -492,13 +492,10 @@ const BAIModal: React.FC<BAIModalProps> = ({
   const isMaximized = effectiveWindowState === 'maximized';
   const isMinimized = effectiveWindowState === 'minimized';
 
-  // antd allowed a per-breakpoint width record; `Dialog.width` is one value
-  // already capped at `90vw`, so the record collapses to its largest declared
-  // entry (the desktop budget) — see RESPONSIVE-POLICY.
-  //
-  // `width="auto"` is TRANSLATED, not forwarded (QA-FINDINGS Q-21): bare `auto`
-  // resolves against the viewport, which measured 1440px on dialogs whose
-  // content needs 301 / 288. `fit-content` is what antd's `auto` meant here.
+  // A per-breakpoint width record collapses to its largest declared entry (the
+  // desktop budget; see RESPONSIVE-POLICY). `width="auto"` is TRANSLATED to
+  // `fit-content`, not forwarded: bare `auto` resolves against the viewport —
+  // measured 1440px where the content needed 301 / 288 (QA-FINDINGS Q-21).
   const resolvedWidth =
     typeof width === 'object'
       ? (Object.values(width).at(-1) ?? 520)

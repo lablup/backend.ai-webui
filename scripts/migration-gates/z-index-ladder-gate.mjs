@@ -3,31 +3,20 @@
  * z-index ladder mirror gate (FR-3578 T10).
  *
  * `packages/backend.ai-ui/src/styles/zIndexLadder.ts` is the one declaration of
- * every full-window stacking layer. Two files HAND-MIRROR it because they
- * cannot import it:
- *   1. `zIndexLadder.css` — the same numbers as `--bai-z-*` custom properties,
- *      for stylesheets;
- *   2. the repo-root `index.html` critical <style> — `--bai-z-splash` only,
- *      because that file is parsed before any JS runs.
+ * every full-window stacking layer; `zIndexLadder.css` and the repo-root
+ * `index.html` critical <style> (parsed before any JS runs) HAND-MIRROR it
+ * because they cannot import it.
  *
- * Drift in either mirror fails SILENTLY: no compiler, lint, or test error, just
- * a login screen painting under an opaque boot curtain. A vitest assertion is
- * not enough of a guard — `.github/workflows/vitest.yml` only triggers on
- * `react/src/**`, `packages/backend.ai-ui/src/**`, `scripts/**` and `src/**`,
- * so a PR touching ONLY `index.html` runs zero test jobs. This gate runs from
- * `scripts/verify.sh` regardless of which files changed, and reaching outside
- * the package is its job rather than a publishable package's.
+ * Drift fails SILENTLY — a login screen painting under an opaque boot curtain,
+ * with no compiler, lint or test error. A vitest assertion cannot guard it:
+ * `.github/workflows/vitest.yml` triggers only on `react/src/**`,
+ * `packages/backend.ai-ui/src/**`, `scripts/**` and `src/**`, so a PR touching
+ * ONLY `index.html` runs zero test jobs. This gate runs from `scripts/verify.sh`
+ * whatever changed.
  *
  * Also pinned: `@astryxdesign/lab`'s non-modal `Drawer` / `BottomSheet` base of
- * 1000. It is the one off-ladder value the ladder must not collide with —
- * `loginSideHelp` (1060) straddles it — and nothing else asserts it. Skipped
- * with a note when node_modules is absent.
- *
- * Usage:
- *   node scripts/migration-gates/z-index-ladder-gate.mjs [--json]
- *     [--repo-root <dir>]
- *
- * Exits 1 on any mismatch.
+ * 1000 — the one off-ladder value the ladder must not collide with, since
+ * `loginSideHelp` (1060) straddles it.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -52,9 +41,8 @@ export const cssName = (key) =>
   `--bai-z-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
 
 /**
- * The ladder's own declarations, read as TEXT (this gate is plain node, and
- * the module is TypeScript). Anchored on the `export const` so the doc
- * comment's markdown table above it cannot be mistaken for a declaration.
+ * Read as TEXT (plain node, TypeScript module), anchored on the `export const`
+ * so the doc comment's markdown table above it cannot look like a declaration.
  * @returns {{layers: Record<string, number>|null, step: number|null}}
  */
 export function parseLadderTs(text) {

@@ -5,8 +5,7 @@
 import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 
 // A `BAIDialogPortal` root, or any open native `<dialog>` — after FR-3578 that
-// is drawers, plus anything opened with `.show()`. Only the drawer arm is app
-// knowledge; the attribute comes from the component that writes it.
+// is drawers, plus anything opened with `.show()`.
 const OPEN_MODAL_ROOTS = [
   `[${BAI_MODAL_OPEN_ATTRIBUTE}]`,
   'dialog[open]',
@@ -15,9 +14,8 @@ const OPEN_MODAL_ROOTS = [
 export const OPEN_MODAL_ROOT_SELECTOR = OPEN_MODAL_ROOTS.join(', ');
 
 /**
- * First element matching `selector` inside an open modal root, scanning roots
- * in document order. Takes the selector rather than handing out a built string
- * so grouped selectors stay scoped and call sites do not reach for `document`.
+ * First match inside an open modal root, roots scanned in document order.
+ * Takes the selector, not a built string, so it stays scoped to each root.
  */
 export const queryWithinOpenModal = <T extends HTMLElement>(
   selector: string,

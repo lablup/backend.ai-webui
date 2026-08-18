@@ -177,14 +177,9 @@ check_astryx_theme_built() {
 }
 
 check_z_index_ladder() {
-  # z-index ladder mirror gate (FR-3578 T10). The ladder is declared once in
-  # packages/backend.ai-ui/src/styles/zIndexLadder.ts and hand-mirrored into
-  # its CSS twin and index.html's critical <style> (parsed before any JS, so it
-  # cannot import either). Drift produces no compiler, lint, or runtime error —
-  # just a login screen painting under the boot curtain — and a vitest
-  # assertion cannot cover it: vitest.yml's path filter never fires for an
-  # index.html-only PR. Also pins @astryxdesign/lab's 1000 non-modal overlay
-  # base, the off-ladder value `loginSideHelp` (1060) straddles.
+  # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
+  # path filter never fires for an index.html-only PR — so it runs here, always.
+  # Why each mirror exists: the gate's own header.
   node scripts/migration-gates/z-index-ladder-gate.mjs
 }
 
