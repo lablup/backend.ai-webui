@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIDialogPortal` — Astryx `Dialog`'s surface rendered through a portal into
- `document.body` instead of a native `<dialog>` promoted with `showModal()`.
- Leaving the top layer is the point: with nothing outside the modal marked
- inert, the notification stack paints above it and stays clickable (FR-3578).
+ `BAIDialogPortal` — Astryx `Dialog`'s surface portalled into `document.body`
+ instead of a native `<dialog>` promoted with `showModal()`. Leaving the top
+ layer is the point: nothing outside the modal is inert, so the notification
+ stack paints above it and stays clickable (FR-3578).
 
- The inner `<Dialog isInline>` is always told `isOpen` — its inline path returns
- `null` when closed, and we keep children mounted as the native `<dialog>` did.
+ The inner `<Dialog isInline>` is always told `isOpen`: its inline path renders
+ `null` when closed, and children stay mounted as the native `<dialog>` did.
 */
 import { BAI_Z_INDEX } from '../styles/zIndexLadder';
 import './BAIDialogPortal.css';
@@ -23,8 +23,8 @@ import React, { useEffect, useId, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 /**
- * Marks an open portal modal root. Consumers scope document queries to it, so
- * renaming it here without updating them fails silently — import, never retype.
+ * Marks an open portal modal root. Consumers scope document queries to it —
+ * import it rather than retyping the string; a rename fails silently.
  */
 export const BAI_MODAL_OPEN_ATTRIBUTE = 'data-bai-modal-open';
 
@@ -34,9 +34,8 @@ export const BAI_MODAL_OPEN_ATTRIBUTE = 'data-bai-modal-open';
 export const MAX_DIALOG_LEVEL = 80;
 
 /**
- * The `zIndex` escape hatch is reachable from every `<BAIModal>`. A number
- * below the band is always a stale one, so it degrades to "on top of the band"
- * rather than to an invisible modal (FR-3578 T10).
+ * The `zIndex` escape hatch is reachable from every `<BAIModal>`, and a number
+ * below the band is always stale — degrade to "on top" rather than invisible.
  */
 function floorToModalBand(zIndex: number): number {
   if (zIndex >= BAI_Z_INDEX.modalBase) {
@@ -55,9 +54,9 @@ function floorToModalBand(zIndex: number): number {
 const openDialogs: Array<{ level: number; root: HTMLElement | null }> = [];
 
 /**
- * Only the topmost portal stays interactive. A covered dialog's `useFocusTrap`
- * would otherwise redirect Tab back into itself — measured: tabbing inside a
- * nested dialog landed on the parent's last button.
+ * Only the topmost portal stays interactive: a covered dialog's `useFocusTrap`
+ * otherwise redirects Tab back into itself — measured, Tab inside a nested
+ * dialog landed on the parent's last button.
  */
 function syncCoveredDialogs(): void {
   openDialogs.forEach(({ root }, index) => {
@@ -144,9 +143,8 @@ export interface BAIDialogPortalProps extends Omit<
   /** Ref to the element carrying `role="dialog"` — a `div`, not a `<dialog>`. */
   ref?: React.Ref<HTMLDivElement>;
   /**
-   * Explicit stacking override for the portal root, replacing the level the
-   * stack assigns and floored at `BAI_Z_INDEX.modalBase`. `style` reaches the
-   * inner Dialog surface instead, so `style={{ zIndex }}` does NOT move it.
+   * Stacking override for the portal root, floored at `BAI_Z_INDEX.modalBase`.
+   * `style` reaches the inner Dialog surface, so `style={{ zIndex }}` does not.
    */
   zIndex?: number;
 }
@@ -187,9 +185,8 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
     }
   };
 
-  // Resolves topmost-only Escape through its own shared stack, so a popover
-  // nested in the modal keeps single-Escape dismissal; it also restores focus
-  // to whatever was focused before the trap activated.
+  // Its shared stack resolves Escape topmost-only, so a popover nested in the
+  // modal keeps single-Escape dismissal; it also restores focus on deactivate.
   const { containerRef, focusFirst } = useFocusTrap<HTMLDivElement>({
     isActive: isOpen,
     onEscape: handleEscape,
@@ -237,9 +234,8 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
     };
   }, [isOpen]);
 
-  // Set before first paint so the entry keyframe reads the trigger's direction,
-  // and cleared on close so a later trigger-less open falls back to the CSS
-  // defaults instead of animating in from the previous trigger's corner.
+  // Set before first paint so the entry keyframe reads the trigger's direction;
+  // cleared on close so a later trigger-less open uses the CSS defaults.
   useLayoutEffect(() => {
     const node = containerRef.current;
     if (!isOpen || !node) {
@@ -346,9 +342,8 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
           hasPosition && 'bai-dialog-portal__wrap--positioned',
         )}
         style={hasPosition ? resolveDialogPortalPosition(position) : undefined}
-        // A consumer-passed `role` wins: the app-shim's confirm needs
-        // `alertdialog` on a `form`-purpose dialog (alertdialog + Escape),
-        // which `purpose` alone cannot express.
+        // A consumer `role` wins: the app-shim's confirm needs `alertdialog`
+        // on a `form`-purpose dialog, which `purpose` alone cannot express.
         role={
           isOpen
             ? (role ?? (purpose === 'required' ? 'alertdialog' : 'dialog'))

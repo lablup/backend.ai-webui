@@ -2,11 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- The one z-index ladder (FR-3578 T10). Every layer that can cover the whole
- window asks for a NAME here instead of writing a number. `zIndexLadder.css`
- declares the same values as custom properties for stylesheets and
- `index.html` re-declares `--bai-z-splash`;
- `scripts/migration-gates/z-index-ladder-gate.mjs` fails on drift between them.
+ The one z-index ladder (FR-3578 T10): every full-window layer takes a NAME here
+ instead of a number. `zIndexLadder.css` and `index.html` hand-mirror these
+ values; `scripts/migration-gates/z-index-ladder-gate.mjs` fails on drift.
 
  | Layer | Value | Owner |
  |---|---|---|

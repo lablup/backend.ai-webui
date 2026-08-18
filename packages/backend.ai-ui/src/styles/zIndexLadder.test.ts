@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Static assertions over the ladder and its in-package CSS mirror. The mirrors
- OUTSIDE this package (`index.html`) are checked by
- `scripts/migration-gates/z-index-ladder-gate.mjs`, which runs in
- `scripts/verify.sh` regardless of which files a change touched.
+ Static assertions over the ladder and its in-package CSS mirror; the mirror
+ outside this package (`index.html`) is checked by
+ `scripts/migration-gates/z-index-ladder-gate.mjs`.
 */
 import { MAX_DIALOG_LEVEL } from '../components/BAIDialogPortal';
 import { BAI_Z_INDEX, BAI_Z_INDEX_MODAL_LEVEL_STEP } from './zIndexLadder';

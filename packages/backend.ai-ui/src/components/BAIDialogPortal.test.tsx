@@ -3,9 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  `BAIDialogPortal` — the contract T5/T6 build on: no native `<dialog>` (so
- nothing is inert), the `.astryx-dialog` surface the brand theme keys off, the
- `getByRole('dialog', {name})` wiring every e2e spec uses, `data-bai-modal-open`
- on the root, and purpose-gated dismissal.
+ nothing is inert), the `.astryx-dialog` surface, the `getByRole('dialog',
+ {name})` wiring every e2e spec uses, and purpose-gated dismissal.
 
  NOTE: `setupTests` polyfills `showModal`/`close`, so an accidental native
  `<dialog>` would NOT fail on its own — the tag is asserted explicitly.
@@ -175,8 +174,7 @@ describe('BAIDialogPortal', () => {
   });
 
   // Without the covered-dialog inert sync this Tab landed on `outer-b`: the
-  // parent's focus trap redirects focus that leaves its own container, and a
-  // portalled child dialog is outside it.
+  // parent trap redirects focus leaving its container, and the child is outside.
   it('keeps Tab inside a dialog opened on top of another', async () => {
     const user = userEvent.setup();
     const Nested: React.FC = () => {
@@ -228,8 +226,7 @@ describe('BAIDialogPortal', () => {
     ).toBe('10001');
   });
 
-  // A stale number below the band used to render the modal invisible — how
-  // LoginFormPanel's antd-era 1002 survived (FR-3578 T10).
+  // A stale number below the band would render the modal invisible.
   it('floors an override below the modal band base', () => {
     renderPortal({ zIndex: 1002 });
     expect(

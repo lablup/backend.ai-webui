@@ -1,9 +1,7 @@
 /**
  * The z-index ladder for stylesheets; `zIndexLadder.ts` carries the table.
- *
  * Unlayered on purpose: a custom property inside `@layer` loses to any
- * unlayered `:root` declaration, and these have to be the value everybody
- * reads.
+ * unlayered `:root` declaration, and these must be the value everybody reads.
  */
 :root {
   --bai-z-app-header: 100;

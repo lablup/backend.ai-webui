@@ -22,11 +22,10 @@
 
  Branching (answers/07 §4): `confirm` with plain-text title/content renders the
  WAI-ARIA alert-dialog shape — `role="alertdialog"`, no header X, cancel
- preselected — which needs `purpose="form"` (Escape cancels) plus an explicit
- `role`, since `purpose="required"` would buy the role by disabling Escape.
- Everything else (ReactNode content, and the single-button
- error/info/warning/success variants) gets the `DialogHeader` + `Layout` shape.
- Both keep antd's confirm-family dismissal: Escape yes, backdrop no.
+ preselected — which needs `purpose="form"` plus an explicit `role`, since
+ `purpose="required"` would buy the role by disabling Escape. Everything else
+ gets the `DialogHeader` + `Layout` shape. Both keep antd's confirm-family
+ dismissal: Escape yes, backdrop no.
 
  Promise/close semantics (all antd-matching):
  - `onOk` returning a promise puts the ok button into loading and closes only
@@ -71,9 +70,8 @@ export interface ModalShimFuncProps {
   onCancel?: () => unknown;
   width?: number | string;
   /**
-   * Stacking override for the portal root, floored at `BAI_Z_INDEX.modalBase`.
-   * Honoured since FR-3578; the ladder covers every shipping case, so reach
-   * for a `BAI_Z_INDEX` layer before a literal.
+   * Stacking override for the portal root, floored at `BAI_Z_INDEX.modalBase`;
+   * reach for a `BAI_Z_INDEX` layer before a literal.
    */
   zIndex?: number;
   /**
@@ -307,13 +305,11 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
               <HStack justify="end" gap={2} align="center">
                 <Button
                   label={cancelLabel}
-                  // Matches the other branch: one antd `confirm` must not style
-                  // its Cancel by whether `content` was a string or a ReactNode.
+                  // Same Cancel styling as the ReactNode branch below.
                   variant="secondary"
                   isDisabled={options.cancelButtonProps?.disabled}
                   onClick={() => runCancel(task)}
-                  // Cancel is the least destructive choice, so it is the one
-                  // the dialog preselects (WAI-ARIA alert-dialog pattern).
+                  // WAI-ARIA alert-dialog: preselect the safest choice.
                   data-autofocus=""
                 />
                 {okButton}
