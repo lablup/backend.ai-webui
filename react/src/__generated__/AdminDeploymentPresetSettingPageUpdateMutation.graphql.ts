@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fce99cf16cbb504be52481b6e6b46d0f>>
+ * @generated SignedSource<<abee490e5cfd400aae9d11dc1a3432aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type UpdateDeploymentRevisionPresetInput = {
   environ?: ReadonlyArray<EnvironEntryInput> | null | undefined;
   id: string;
   imageId?: string | null | undefined;
-  modelDefinition?: ModelDefinitionInput | null | undefined;
+  modelDefinition?: PresetModelDefinitionInput | null | undefined;
   name?: string | null | undefined;
   openToPublic?: boolean | null | undefined;
   presetValues?: ReadonlyArray<RuntimeVariantPresetValueEntryInput> | null | undefined;
@@ -50,20 +50,20 @@ export type BlueGreenConfigInput = {
   autoPromote?: boolean;
   promoteDelaySeconds?: number;
 };
-export type ModelDefinitionInput = {
-  models?: ReadonlyArray<ModelConfigInput> | null | undefined;
+export type PresetModelDefinitionInput = {
+  models: ReadonlyArray<PresetModelConfigInput>;
 };
-export type ModelConfigInput = {
-  metadata?: ModelMetadataInput | null | undefined;
+export type PresetModelConfigInput = {
+  metadata?: PresetModelMetadataInput | null | undefined;
   modelPath?: string | null | undefined;
   name?: string | null | undefined;
-  service?: ModelServiceConfigInput | null | undefined;
+  service: PresetModelServiceConfigInput;
 };
-export type ModelServiceConfigInput = {
+export type PresetModelServiceConfigInput = {
   command?: string | null | undefined;
-  healthCheck?: ModelHealthCheckInput | null | undefined;
+  healthCheck?: PresetModelHealthCheckInput | null | undefined;
   port?: number | null | undefined;
-  preStartActions?: ReadonlyArray<PreStartActionInput> | null | undefined;
+  preStartActions: ReadonlyArray<PreStartActionInput>;
   shell?: string | null | undefined;
   startCommand?: ReadonlyArray<string> | null | undefined;
 };
@@ -71,16 +71,16 @@ export type PreStartActionInput = {
   action: string;
   args: any;
 };
-export type ModelHealthCheckInput = {
+export type PresetModelHealthCheckInput = {
   enable?: boolean;
-  expectedStatusCode?: number | null | undefined;
-  initialDelay?: number | null | undefined;
-  interval?: number | null | undefined;
-  maxRetries?: number | null | undefined;
-  maxWaitTime?: number | null | undefined;
-  path?: string | null | undefined;
+  expectedStatusCode?: number;
+  initialDelay?: number;
+  interval?: number;
+  maxRetries?: number;
+  maxWaitTime?: number;
+  path?: string;
 };
-export type ModelMetadataInput = {
+export type PresetModelMetadataInput = {
   architecture?: string | null | undefined;
   author?: string | null | undefined;
   category?: string | null | undefined;
@@ -442,7 +442,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ModelDefinition",
+                "concreteType": "PresetModelDefinition",
                 "kind": "LinkedField",
                 "name": "modelDefinition",
                 "plural": false,
@@ -450,7 +450,7 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "ModelConfig",
+                    "concreteType": "PresetModelConfig",
                     "kind": "LinkedField",
                     "name": "models",
                     "plural": true,
@@ -466,7 +466,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ModelServiceConfig",
+                        "concreteType": "PresetModelServiceConfig",
                         "kind": "LinkedField",
                         "name": "service",
                         "plural": false,

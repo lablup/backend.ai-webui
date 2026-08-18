@@ -486,11 +486,16 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           ? {
               enabled: true,
               models: preset.modelDefinition.models.map((m) => ({
-                name: m.name,
-                modelPath: m.modelPath,
+                // 26.9.0: `name`/`modelPath` are nullable on the output;
+                // the form fields are required strings.
+                name: m.name ?? '',
+                modelPath: m.modelPath ?? '',
                 service: m.service
                   ? {
-                      port: m.service.port,
+                      // 26.9.0: `port` is nullable on the output; the form
+                      // requires it, so fall back to the default port
+                      // (DeploymentAddRevisionModal uses the same 8000).
+                      port: m.service.port ?? 8000,
                       // 26.7.0: `shell` is nullable on the output. Normalize
                       // null → undefined so the (now optional) form field shows
                       // blank and the user can clear it.

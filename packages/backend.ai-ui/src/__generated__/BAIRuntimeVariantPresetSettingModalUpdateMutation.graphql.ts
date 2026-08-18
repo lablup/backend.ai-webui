@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<654b10abc304e961b6386e165db508cd>>
+ * @generated SignedSource<<998729a3b8f407a6abe3a29521b80b30>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,16 +11,46 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
+export type RuntimeVariantPresetUIType = "CHECKBOX" | "NUMBER_INPUT" | "SELECT" | "SLIDER" | "TEXT_INPUT" | "%future added value";
 export type UpdateRuntimeVariantPresetInput = {
+  category?: string | null | undefined;
   defaultValue?: string | null | undefined;
   description?: string | null | undefined;
+  displayName?: string | null | undefined;
   id: string;
   key?: string | null | undefined;
   name?: string | null | undefined;
   presetTarget?: PresetTarget | null | undefined;
   rank?: number | null | undefined;
   required?: boolean | null | undefined;
+  uiOption?: RuntimeVariantPresetUIOptionInput | null | undefined;
   valueType?: PresetValueType | null | undefined;
+};
+export type RuntimeVariantPresetUIOptionInput = {
+  choices?: RuntimeVariantPresetChoiceOptionInput | null | undefined;
+  number?: RuntimeVariantPresetNumberOptionInput | null | undefined;
+  slider?: RuntimeVariantPresetSliderOptionInput | null | undefined;
+  text?: RuntimeVariantPresetTextOptionInput | null | undefined;
+  uiType: RuntimeVariantPresetUIType;
+};
+export type RuntimeVariantPresetSliderOptionInput = {
+  max: number;
+  min: number;
+  step?: number;
+};
+export type RuntimeVariantPresetNumberOptionInput = {
+  max?: number | null | undefined;
+  min?: number | null | undefined;
+};
+export type RuntimeVariantPresetChoiceOptionInput = {
+  items: ReadonlyArray<RuntimeVariantPresetChoiceItemInput>;
+};
+export type RuntimeVariantPresetChoiceItemInput = {
+  label: string;
+  value: string;
+};
+export type RuntimeVariantPresetTextOptionInput = {
+  placeholder?: string | null | undefined;
 };
 export type BAIRuntimeVariantPresetSettingModalUpdateMutation$variables = {
   input: UpdateRuntimeVariantPresetInput;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8d7f78200fa6326edc37339367c664c4>>
+ * @generated SignedSource<<9367571797bf81ad087e77c9d304828f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,7 @@ export type KeypairResourcePolicyV2Filter = {
   maxConcurrentSftpSessions?: IntFilter | null | undefined;
   maxContainersPerSession?: IntFilter | null | undefined;
   maxPendingSessionCount?: IntFilter | null | undefined;
+  maxPriority?: IntFilter | null | undefined;
   maxSessionLifetime?: IntFilter | null | undefined;
   name?: StringFilter | null | undefined;
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<455fe0f8330bdaf3a6ad60583ce2a124>>
+ * @generated SignedSource<<9acef04708c64c1813918a100d08949a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -41,7 +41,7 @@ export type DeploymentPresetDetailModalFragment$data = {
   } | null | undefined;
   readonly modelDefinition: {
     readonly models: ReadonlyArray<{
-      readonly name: string;
+      readonly name: string | null | undefined;
       readonly service: {
         readonly healthCheck: {
           readonly enable: boolean;
@@ -355,7 +355,7 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "ModelDefinition",
+      "concreteType": "PresetModelDefinition",
       "kind": "LinkedField",
       "name": "modelDefinition",
       "plural": false,
@@ -363,7 +363,7 @@ return {
         {
           "alias": null,
           "args": null,
-          "concreteType": "ModelConfig",
+          "concreteType": "PresetModelConfig",
           "kind": "LinkedField",
           "name": "models",
           "plural": true,
@@ -372,7 +372,7 @@ return {
             {
               "alias": null,
               "args": null,
-              "concreteType": "ModelServiceConfig",
+              "concreteType": "PresetModelServiceConfig",
               "kind": "LinkedField",
               "name": "service",
               "plural": false,

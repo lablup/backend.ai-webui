@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e2eed56717cd3ccab54e1ba0c9b1e06>>
+ * @generated SignedSource<<2aafc98cfbd3626f598e4df7fed74d63>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,8 +50,8 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
         readonly title: string | null | undefined;
         readonly version: any | null | undefined;
       } | null | undefined;
-      readonly modelPath: string;
-      readonly name: string;
+      readonly modelPath: string | null | undefined;
+      readonly name: string | null | undefined;
       readonly service: {
         readonly healthCheck: {
           readonly enable: boolean;
@@ -62,7 +62,7 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
           readonly maxWaitTime: number;
           readonly path: string;
         } | null | undefined;
-        readonly port: number;
+        readonly port: number | null | undefined;
         readonly preStartActions: ReadonlyArray<{
           readonly action: string;
           readonly args: any;
@@ -340,7 +340,7 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "ModelDefinition",
+      "concreteType": "PresetModelDefinition",
       "kind": "LinkedField",
       "name": "modelDefinition",
       "plural": false,
@@ -348,7 +348,7 @@ return {
         {
           "alias": null,
           "args": null,
-          "concreteType": "ModelConfig",
+          "concreteType": "PresetModelConfig",
           "kind": "LinkedField",
           "name": "models",
           "plural": true,
@@ -364,7 +364,7 @@ return {
             {
               "alias": null,
               "args": null,
-              "concreteType": "ModelServiceConfig",
+              "concreteType": "PresetModelServiceConfig",
               "kind": "LinkedField",
               "name": "service",
               "plural": false,

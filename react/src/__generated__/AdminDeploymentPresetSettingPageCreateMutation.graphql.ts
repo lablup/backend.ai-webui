@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5fd4151c93dbeed64db2bc9a56772a03>>
+ * @generated SignedSource<<cd721d199fa5dc657b7a63a52496eebe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -53,14 +53,14 @@ export type PresetModelDefinitionInput = {
 };
 export type PresetModelConfigInput = {
   metadata?: PresetModelMetadataInput | null | undefined;
-  modelPath: string;
-  name: string;
+  modelPath?: string | null | undefined;
+  name?: string | null | undefined;
   service: PresetModelServiceConfigInput;
 };
 export type PresetModelServiceConfigInput = {
   command?: string | null | undefined;
   healthCheck?: PresetModelHealthCheckInput | null | undefined;
-  port: number;
+  port?: number | null | undefined;
   preStartActions: ReadonlyArray<PreStartActionInput>;
   shell?: string | null | undefined;
   startCommand?: ReadonlyArray<string> | null | undefined;
@@ -440,7 +440,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ModelDefinition",
+                "concreteType": "PresetModelDefinition",
                 "kind": "LinkedField",
                 "name": "modelDefinition",
                 "plural": false,
@@ -448,7 +448,7 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "ModelConfig",
+                    "concreteType": "PresetModelConfig",
                     "kind": "LinkedField",
                     "name": "models",
                     "plural": true,
@@ -464,7 +464,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ModelServiceConfig",
+                        "concreteType": "PresetModelServiceConfig",
                         "kind": "LinkedField",
                         "name": "service",
                         "plural": false,

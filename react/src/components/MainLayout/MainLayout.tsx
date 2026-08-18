@@ -5,6 +5,7 @@
 import { AstryxAdminTheme } from '../../astryx-theme';
 import { useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { useBAIAppConfigsLoader } from '../../hooks/useBAIAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
@@ -96,6 +97,9 @@ function MainLayout() {
   // Register logout/app-close/beforeunload event listeners at the app level.
   // These were previously in the Lit shell (backend-ai-webui.ts).
   useLogoutEventListeners();
+
+  // One fetch for every app-config document; value hooks read the shared atom.
+  useBAIAppConfigsLoader();
 
   useLayoutEffect(() => {
     const handleNavigate = (e: Event) => {
