@@ -3866,7 +3866,22 @@
       "FoundIn": "Gefunden in {{text}}",
       "NoResults": "Keine Ergebnisse",
       "Placeholder": "Seiten, Tabs und Einstellungen durchsuchen",
-      "Recent": "Zuletzt verwendet"
+      "Recent": "Zuletzt verwendet",
+      "action": {
+        "ChangeLanguage": "UI-Sprache ändern",
+        "OpenManual": "Handbuch zu dieser Seite öffnen",
+        "OpenNotifications": "Benachrichtigungen öffnen",
+        "OpenUserSettings": "Benutzereinstellungen öffnen",
+        "SwitchToDarkMode": "Zum Dunkelmodus wechseln",
+        "SwitchToLightMode": "Zum Hellmodus wechseln",
+        "ToggleSidebar": "Seitenleiste ein-/ausklappen",
+        "UseSystemTheme": "Systemeinstellung verwenden"
+      },
+      "group": {
+        "Appearance": "Darstellung",
+        "Create": "Erstellen",
+        "PanelsAndHelp": "Panels & Hilfe"
+      }
     }
   }
 }

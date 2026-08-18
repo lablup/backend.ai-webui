@@ -3865,7 +3865,22 @@
       "FoundIn": "Löytyi kohteesta {{text}}",
       "NoResults": "Ei tuloksia",
       "Placeholder": "Hae sivuja, välilehtiä ja asetuksia",
-      "Recent": "Viimeisimmät"
+      "Recent": "Viimeisimmät",
+      "action": {
+        "ChangeLanguage": "Vaihda käyttöliittymän kieli",
+        "OpenManual": "Avaa tämän sivun käyttöohje",
+        "OpenNotifications": "Avaa ilmoitukset",
+        "OpenUserSettings": "Avaa käyttäjäasetukset",
+        "SwitchToDarkMode": "Vaihda tummaan tilaan",
+        "SwitchToLightMode": "Vaihda vaaleaan tilaan",
+        "ToggleSidebar": "Näytä tai piilota sivupalkki",
+        "UseSystemTheme": "Käytä järjestelmäasetuksia"
+      },
+      "group": {
+        "Appearance": "Ulkoasu",
+        "Create": "Luo",
+        "PanelsAndHelp": "Paneelit ja ohje"
+      }
     }
   }
 }

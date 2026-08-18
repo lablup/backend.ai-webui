@@ -3866,7 +3866,22 @@
       "FoundIn": "Tìm thấy trong {{text}}",
       "NoResults": "Không có kết quả",
       "Placeholder": "Tìm kiếm trang, tab và cài đặt",
-      "Recent": "Gần đây"
+      "Recent": "Gần đây",
+      "action": {
+        "ChangeLanguage": "Thay đổi ngôn ngữ giao diện",
+        "OpenManual": "Mở hướng dẫn cho trang này",
+        "OpenNotifications": "Mở thông báo",
+        "OpenUserSettings": "Mở cài đặt người dùng",
+        "SwitchToDarkMode": "Chuyển sang chế độ tối",
+        "SwitchToLightMode": "Chuyển sang chế độ sáng",
+        "ToggleSidebar": "Ẩn hoặc hiện thanh bên",
+        "UseSystemTheme": "Sử dụng cài đặt hệ thống"
+      },
+      "group": {
+        "Appearance": "Giao diện",
+        "Create": "Tạo",
+        "PanelsAndHelp": "Bảng điều khiển và trợ giúp"
+      }
     }
   }
 }

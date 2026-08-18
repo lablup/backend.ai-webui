@@ -3867,7 +3867,22 @@
       "FoundIn": "Znaleziono w {{text}}",
       "NoResults": "Brak wyników",
       "Placeholder": "Szukaj stron, kart i ustawień",
-      "Recent": "Ostatnie"
+      "Recent": "Ostatnie",
+      "action": {
+        "ChangeLanguage": "Zmień język interfejsu",
+        "OpenManual": "Otwórz podręcznik tej strony",
+        "OpenNotifications": "Otwórz powiadomienia",
+        "OpenUserSettings": "Otwórz ustawienia użytkownika",
+        "SwitchToDarkMode": "Przełącz na tryb ciemny",
+        "SwitchToLightMode": "Przełącz na tryb jasny",
+        "ToggleSidebar": "Pokaż lub ukryj pasek boczny",
+        "UseSystemTheme": "Użyj ustawień systemowych"
+      },
+      "group": {
+        "Appearance": "Wygląd",
+        "Create": "Utwórz",
+        "PanelsAndHelp": "Panele i wsparcie"
+      }
     }
   }
 }

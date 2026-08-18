@@ -3866,7 +3866,22 @@
       "FoundIn": "พบใน {{text}}",
       "NoResults": "ไม่พบผลลัพธ์",
       "Placeholder": "ค้นหาหน้า แท็บ และการตั้งค่า",
-      "Recent": "ล่าสุด"
+      "Recent": "ล่าสุด",
+      "action": {
+        "ChangeLanguage": "เปลี่ยนภาษาของอินเทอร์เฟซ",
+        "OpenManual": "เปิดคู่มือของหน้านี้",
+        "OpenNotifications": "เปิดการแจ้งเตือน",
+        "OpenUserSettings": "เปิดการตั้งค่าผู้ใช้",
+        "SwitchToDarkMode": "สลับเป็นโหมดมืด",
+        "SwitchToLightMode": "สลับเป็นโหมดสว่าง",
+        "ToggleSidebar": "แสดงหรือซ่อนแถบด้านข้าง",
+        "UseSystemTheme": "ใช้การตั้งค่าระบบ"
+      },
+      "group": {
+        "Appearance": "การแสดงผล",
+        "Create": "สร้าง",
+        "PanelsAndHelp": "แผงและความช่วยเหลือ"
+      }
     }
   }
 }

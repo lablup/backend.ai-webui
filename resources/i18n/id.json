@@ -3868,7 +3868,22 @@
       "FoundIn": "Ditemukan di {{text}}",
       "NoResults": "Tidak ada hasil",
       "Placeholder": "Cari halaman, tab, dan pengaturan",
-      "Recent": "Terbaru"
+      "Recent": "Terbaru",
+      "action": {
+        "ChangeLanguage": "Ubah bahasa antarmuka",
+        "OpenManual": "Buka manual untuk halaman ini",
+        "OpenNotifications": "Buka pemberitahuan",
+        "OpenUserSettings": "Buka pengaturan pengguna",
+        "SwitchToDarkMode": "Beralih ke Mode Gelap",
+        "SwitchToLightMode": "Beralih ke Mode Terang",
+        "ToggleSidebar": "Tampilkan atau sembunyikan sidebar",
+        "UseSystemTheme": "Gunakan Pengaturan Sistem"
+      },
+      "group": {
+        "Appearance": "Tampilan",
+        "Create": "Buat",
+        "PanelsAndHelp": "Panel & bantuan"
+      }
     }
   }
 }

@@ -3864,7 +3864,22 @@
       "FoundIn": "Encontrado en {{text}}",
       "NoResults": "Sin resultados",
       "Placeholder": "Buscar páginas, pestañas y ajustes",
-      "Recent": "Recientes"
+      "Recent": "Recientes",
+      "action": {
+        "ChangeLanguage": "Cambiar el idioma de la interfaz",
+        "OpenManual": "Abrir el manual de esta página",
+        "OpenNotifications": "Abrir notificaciones",
+        "OpenUserSettings": "Abrir ajustes de usuario",
+        "SwitchToDarkMode": "Cambiar al modo oscuro",
+        "SwitchToLightMode": "Cambiar al modo claro",
+        "ToggleSidebar": "Mostrar u ocultar la barra lateral",
+        "UseSystemTheme": "Usar configuración del sistema"
+      },
+      "group": {
+        "Appearance": "Apariencia",
+        "Create": "Crear",
+        "PanelsAndHelp": "Paneles y ayuda"
+      }
     }
   }
 }

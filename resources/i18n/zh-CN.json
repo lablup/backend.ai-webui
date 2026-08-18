@@ -3866,7 +3866,22 @@
       "FoundIn": "在 {{text}} 中找到",
       "NoResults": "无结果",
       "Placeholder": "搜索页面、标签页和设置",
-      "Recent": "最近使用"
+      "Recent": "最近使用",
+      "action": {
+        "ChangeLanguage": "更改界面语言",
+        "OpenManual": "打开本页手册",
+        "OpenNotifications": "打开通知",
+        "OpenUserSettings": "打开用户设置",
+        "SwitchToDarkMode": "切换到深色模式",
+        "SwitchToLightMode": "切换到浅色模式",
+        "ToggleSidebar": "折叠/展开侧边栏",
+        "UseSystemTheme": "使用系统设置"
+      },
+      "group": {
+        "Appearance": "外观",
+        "Create": "创建",
+        "PanelsAndHelp": "面板与帮助"
+      }
     }
   }
 }

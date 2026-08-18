@@ -3864,7 +3864,22 @@
       "FoundIn": "Βρέθηκε σε {{text}}",
       "NoResults": "Χωρίς αποτελέσματα",
       "Placeholder": "Αναζήτηση σελίδων, καρτελών και ρυθμίσεων",
-      "Recent": "Πρόσφατα"
+      "Recent": "Πρόσφατα",
+      "action": {
+        "ChangeLanguage": "Αλλαγή γλώσσας διεπαφής",
+        "OpenManual": "Άνοιγμα εγχειριδίου αυτής της σελίδας",
+        "OpenNotifications": "Άνοιγμα ειδοποιήσεων",
+        "OpenUserSettings": "Άνοιγμα ρυθμίσεων χρήστη",
+        "SwitchToDarkMode": "Εναλλαγή σε σκοτεινή λειτουργία",
+        "SwitchToLightMode": "Εναλλαγή σε φωτεινή λειτουργία",
+        "ToggleSidebar": "Εμφάνιση ή απόκρυψη πλαϊνής γραμμής",
+        "UseSystemTheme": "Χρήση ρύθμισης συστήματος"
+      },
+      "group": {
+        "Appearance": "Εμφάνιση",
+        "Create": "Δημιουργία",
+        "PanelsAndHelp": "Πίνακες και βοήθεια"
+      }
     }
   }
 }

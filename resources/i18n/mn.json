@@ -3866,7 +3866,22 @@
       "FoundIn": "{{text}} дотроос олдсон",
       "NoResults": "Үр дүн олдсонгүй",
       "Placeholder": "Хуудас, таб, тохиргоо хайх",
-      "Recent": "Сүүлийн үеийн"
+      "Recent": "Сүүлийн үеийн",
+      "action": {
+        "ChangeLanguage": "Интерфейсийн хэлийг өөрчлөх",
+        "OpenManual": "Энэ хуудасны гарын авлагыг нээх",
+        "OpenNotifications": "Мэдэгдлийг нээх",
+        "OpenUserSettings": "Хэрэглэгчийн тохиргоог нээх",
+        "SwitchToDarkMode": "Харанхуй горим руу шилжих",
+        "SwitchToLightMode": "Цайвар горим руу шилжих",
+        "ToggleSidebar": "Хажуугийн самбарыг нээх/хаах",
+        "UseSystemTheme": "Системийн тохиргоог ашиглах"
+      },
+      "group": {
+        "Appearance": "Харагдац",
+        "Create": "Үүсгэх",
+        "PanelsAndHelp": "Самбар ба тусламж"
+      }
     }
   }
 }

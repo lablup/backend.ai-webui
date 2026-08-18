@@ -3864,7 +3864,22 @@
       "FoundIn": "Trovato in {{text}}",
       "NoResults": "Nessun risultato",
       "Placeholder": "Cerca pagine, schede e impostazioni",
-      "Recent": "Recenti"
+      "Recent": "Recenti",
+      "action": {
+        "ChangeLanguage": "Cambia la lingua dell'interfaccia",
+        "OpenManual": "Apri il manuale di questa pagina",
+        "OpenNotifications": "Apri le notifiche",
+        "OpenUserSettings": "Apri le impostazioni utente",
+        "SwitchToDarkMode": "Passa alla modalità scura",
+        "SwitchToLightMode": "Passa alla modalità chiara",
+        "ToggleSidebar": "Mostra o nascondi la barra laterale",
+        "UseSystemTheme": "Utilizza le impostazioni di sistema"
+      },
+      "group": {
+        "Appearance": "Aspetto",
+        "Create": "Crea",
+        "PanelsAndHelp": "Pannelli e aiuto"
+      }
     }
   }
 }
