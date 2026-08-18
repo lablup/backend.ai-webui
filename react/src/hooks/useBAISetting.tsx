@@ -53,6 +53,9 @@ export interface UserSettings {
   custom_theme_config?: CustomThemeConfig;
   custom_primary_color?: { light?: string; dark?: string };
   deploymentRevisionCreationMode?: 'preset' | 'custom';
+  // Session resource grid: per-session group-color overrides, keyed by
+  // session id, valued by palette index (FR-3570).
+  sessionResourceGridHueOverrides?: Record<string, number>;
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;
 }

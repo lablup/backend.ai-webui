@@ -5,6 +5,10 @@
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
 import {
+  UTILIZATION_ERROR_PERCENT,
+  UTILIZATION_WARNING_PERCENT,
+} from '../../helper/utilizationThresholds';
+import {
   ResourceSlotName,
   useResourceSlotsDetails,
 } from '../../hooks/backendai';
@@ -160,8 +164,8 @@ const percentToSemantic = (
   percent: number,
 ): { color?: SemanticColor; processing?: boolean } => {
   if (!percent) return {};
-  if (percent < 50) return { color: 'default' };
-  if (percent < 80) return { color: 'warning' };
+  if (percent < UTILIZATION_WARNING_PERCENT) return { color: 'default' };
+  if (percent < UTILIZATION_ERROR_PERCENT) return { color: 'warning' };
   return { color: 'error', processing: true };
 };
 

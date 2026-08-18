@@ -17,6 +17,7 @@ import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -32,7 +33,12 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlertIconWithTooltip,
@@ -50,7 +56,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PowerOffIcon } from 'lucide-react';
+import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -130,22 +136,25 @@ const ComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
     },
   );
 
+  // `view` is page-level state, not per-tab: keep it out of the snapshots so
+  // restoring a tab never flips the table/grid toggle.
   const queryMapRef = useRef({
     [queryParams.type]: {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     },
   });
 
   useEffect(() => {
     queryMapRef.current[queryParams.type] = {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     };
   }, [queryParams, tablePaginationOption]);
@@ -404,6 +413,7 @@ const ComputeSessionListPage = () => {
             setQueryParams({
               ...storedQuery.queryParams,
               type: key as TypeFilterType,
+              view: queryParams.view,
             });
             setTablePaginationOption(
               storedQuery.tablePaginationOption || { current: 1 },
@@ -523,6 +533,30 @@ const ComputeSessionListPage = () => {
                   />
                 </>
               )}
+              <SegmentedControl
+                label={t('session.resourceGrid.ViewMode')}
+                value={queryParams.view}
+                onChange={(value) =>
+                  setQueryParams({ view: value as 'table' | 'grid' })
+                }
+              >
+                <Tooltip content={t('session.resourceGrid.TableView')}>
+                  <SegmentedControlItem
+                    value="table"
+                    label={t('session.resourceGrid.TableView')}
+                    isLabelHidden
+                    icon={<TableIcon size="1em" />}
+                  />
+                </Tooltip>
+                <Tooltip content={t('session.resourceGrid.GridView')}>
+                  <SegmentedControlItem
+                    value="grid"
+                    label={t('session.resourceGrid.GridView')}
+                    isLabelHidden
+                    icon={<LayoutGridIcon size="1em" />}
+                  />
+                </Tooltip>
+              </SegmentedControl>
               <AutoUpdateFetchKeyButton
                 settingId="session-list"
                 defaultAutoUpdateDelay={15_000}
@@ -538,7 +572,38 @@ const ComputeSessionListPage = () => {
               />
             </BAIFlex>
           </BAIFlex>
-          {computeSessionNodeResult.ok ? (
+          {queryParams.view === 'grid' ? (
+            // Keyed by the UNdeferred filter/order: a change remounts the
+            // boundary so its fallback shows immediately, instead of the
+            // refetch being held hidden until the next poll commit. The
+            // fetchKey stays deferred so poll refreshes never flash.
+            <Suspense
+              key={`${queryVariables.filter ?? ''}:${queryVariables.order ?? ''}`}
+              fallback={
+                <BAICard
+                  style={{ width: '100%' }}
+                  loading
+                  variant="borderless"
+                />
+              }
+            >
+              <SessionResourceGrid
+                filter={queryVariables.filter}
+                order={queryVariables.order ?? undefined}
+                projectId={currentProject.id}
+                fetchKey={deferredFetchKey}
+                onClickSession={(sessionId) => {
+                  const newSearchParams = new URLSearchParams(location.search);
+                  newSearchParams.set('sessionDetail', sessionId);
+                  webUINavigate({
+                    pathname: location.pathname,
+                    hash: location.hash,
+                    search: newSearchParams.toString(),
+                  });
+                }}
+              />
+            </Suspense>
+          ) : computeSessionNodeResult.ok ? (
             <SessionNodes
               order={queryParams.order}
               onClickSessionName={(session) => {
