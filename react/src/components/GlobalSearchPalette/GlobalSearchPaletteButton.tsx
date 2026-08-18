@@ -10,7 +10,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useHotkeys } from '@astryxdesign/core/hooks';
 import { MediaTheme } from '@astryxdesign/core/theme';
 import { Search } from 'lucide-react';
-import React, { Suspense, useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type GlobalSearchPaletteButtonProps = Pick<
@@ -33,12 +33,14 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
   const [isOpen, setIsOpen] = useState(false);
+  // Every open path must stay inside `startTransition`: the palette tree
+  // suspends, and an urgent open would blank the header's ancestor boundary.
+  const [isPending, startTransition] = useTransition();
+  const open = () => startTransition(() => setIsOpen(true));
 
   // `allowInInputs` so the palette is reachable while a form field has focus,
   // which is where a user most often reaches for it.
-  useHotkeys([
-    { keys: 'mod+k', allowInInputs: true, onPress: () => setIsOpen(true) },
-  ]);
+  useHotkeys([{ keys: 'mod+k', allowInInputs: true, onPress: open }]);
 
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 
@@ -59,7 +61,11 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
           icon={
             <Search size="1em" style={{ color: 'var(--color-icon-primary)' }} />
           }
-          onClick={() => setIsOpen(true)}
+          // `isInterruptible` keeps the trigger enabled while the transition
+          // holds; Astryx derives `aria-busy` from `isLoading` itself.
+          isLoading={isPending}
+          isInterruptible
+          onClick={open}
           {...props}
           style={{ color: 'var(--color-icon-primary)', ...props.style }}
         />
@@ -67,9 +73,7 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
       {/* Mounted on open: the hit index and the menu gating behind
           `useGlobalSearchSource` cost nothing while the palette is closed. */}
       {isOpen && (
-        <Suspense>
-          <GlobalSearchPalette open onRequestClose={() => setIsOpen(false)} />
-        </Suspense>
+        <GlobalSearchPalette open onRequestClose={() => setIsOpen(false)} />
       )}
     </>
   );
