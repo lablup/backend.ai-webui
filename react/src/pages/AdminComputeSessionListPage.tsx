@@ -17,6 +17,7 @@ import SessionNodes, {
 } from '../components/SessionNodes';
 import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
+import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -69,32 +70,6 @@ type ComputeSessionNodesData = ExtractResultValue<
 
 type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 
-// Splits a queryfilter string on top-level `&` only (never inside quotes or
-// parentheses), so `(a)&(b | c)` stays two segments.
-const splitTopLevelAnd = (filter: string): string[] => {
-  const segments: string[] = [];
-  let depth = 0;
-  let inQuote = false;
-  let current = '';
-  for (const ch of filter) {
-    if (ch === '"') {
-      inQuote = !inQuote;
-    } else if (!inQuote && ch === '(') {
-      depth += 1;
-    } else if (!inQuote && ch === ')') {
-      depth -= 1;
-    }
-    if (ch === '&' && depth === 0 && !inQuote) {
-      segments.push(current);
-      current = '';
-    } else {
-      current += ch;
-    }
-  }
-  segments.push(current);
-  return segments.map((s) => s.trim()).filter(Boolean);
-};
-
 const AdminComputeSessionListPage = () => {
   'use memo';
 
@@ -143,16 +118,18 @@ const AdminComputeSessionListPage = () => {
     },
   );
 
+  // `view` is page-level state, not per-tab — excluded from the snapshots
+  // and re-applied on tab change so switching tabs cannot flip the mode.
   const queryMapRef = useRef({
     [queryParams.type]: {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     },
   });
 
   useEffect(() => {
     queryMapRef.current[queryParams.type] = {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     };
   }, [queryParams, tablePaginationOption]);
@@ -184,26 +161,14 @@ const AdminComputeSessionListPage = () => {
 
   // The grid's legacy compute_session_list has no `project_id` queryfilter
   // field — lift the filter UI's project condition to the query's group_id
-  // argument. Only a segment that IS a bare project predicate is lifted and
-  // stripped; a compound segment mentioning project_id is passed through
-  // untouched (the grid then surfaces the backend error) rather than
-  // silently narrowing the result set. The UUID comes from the project
-  // select, so an `ilike "%uuid%"` predicate is equality in practice.
-  let gridProjectId: string | undefined;
-  const keptSegments: string[] = [];
-  for (const seg of splitTopLevelAnd(queryParams.filter ?? '')) {
-    const m = /^\(*\s*project_id\s+(?:==|ilike)\s+"%?([^"%]+)%?"\s*\)*$/.exec(
-      seg,
-    );
-    if (m) {
-      gridProjectId ??= m[1];
-    } else {
-      keptSegments.push(seg);
-    }
-  }
+  // argument when that is provably semantics-preserving; anything else
+  // passes through and surfaces as the grid's error banner (see
+  // helper/adminSessionProjectLift.ts).
+  const { projectId: gridProjectId, remainder: gridUserFilter } =
+    liftProjectPredicate(queryParams.filter ?? '');
   const gridFilter = mergeFilterValues([
     statusFilter,
-    keptSegments.join('&') || undefined,
+    gridUserFilter,
     typeFilter,
   ]);
 
@@ -301,6 +266,7 @@ const AdminComputeSessionListPage = () => {
           setQueryParams({
             ...storedQuery.queryParams,
             type: key as TypeFilterType,
+            view: queryParams.view,
           });
           setTablePaginationOption(
             storedQuery.tablePaginationOption || { current: 1 },
