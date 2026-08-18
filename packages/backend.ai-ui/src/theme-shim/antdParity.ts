@@ -177,9 +177,12 @@ export const ANTD_ALIGN_TOKENS = {
  * surface: its content polarity follows the app mode (FR-3502), so the wash
  * must too — TRANSLUCENT WHITE over the brand orange in light, TRANSLUCENT
  * BLACK in dark. Both stay translucent so the orange shows through; the
- * app-wide `--color-overlay-hover` cannot be used here because its dark value
- * is the OPAQUE `#262626` (`ANTD_NEUTRAL_SURFACES`, correct on a `#141414`
- * page surface, a black block on the band).
+ * app-wide `--color-overlay-hover` cannot be used here because its dark half
+ * is a translucent WHITE wash (`rgba(255,255,255,0.08)`, `ANTD_NEUTRAL_SURFACES`)
+ * — right for a page-polarity surface, wrong POLARITY for a band that inverts
+ * with the app mode, where dark needs black. (Before FR-3557 that dark half was
+ * the opaque `#262626`, so the reason was opacity rather than polarity; the
+ * override is still required either way.)
  *
  * `light-dark()` is not usable and this must be indexed in JS by the caller: a
  * custom property holding `light-dark(a, b)` is substituted at USE time, and
