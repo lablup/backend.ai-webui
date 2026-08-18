@@ -21,4 +21,4 @@ import './backendai-default-built.css';
       drift apart (built name ≠ derived default name), and
       `scripts/verify.sh` runs the CLI's `--check` for artifact staleness.
  */
-export { baiR16DefaultBrandH161l5ohTheme as builtBackendAiBrandTheme } from './bai-r16-default-brand-h161l5oh';
+export { baiR17DefaultBrandH161l5ohTheme as builtBackendAiBrandTheme } from './bai-r17-default-brand-h161l5oh';
