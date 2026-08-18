@@ -502,7 +502,8 @@ export const baiR16DefaultBrandHc43dttTheme = {
       "base": {
         "backgroundColor": "light-dark(rgba(0,0,0,0.85), #424242)",
         "color": "#FFFFFF",
-        "textAlign": "start"
+        "textAlign": "start",
+        "whiteSpace": "normal"
       }
     },
     "tab": {
