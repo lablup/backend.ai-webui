@@ -22,12 +22,12 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
-  BAIButton,
   BAICard,
   BAIColumnType,
   BAIFlex,
@@ -377,13 +377,17 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         <BAIFlex align="center" gap="xs">
           <ReplicaStatusTag status={toReplicaTagStatus(value)} />
           {supportsRouteSchedulingHistory && (
-            <Tooltip content={t('route.RouteSchedulingHistory')}>
-              <BAIButton
-                type="link"
-                icon={<History size="1em" />}
-                size="small"
-                style={{ padding: 0 }}
-                action={async () => {
+            // `IconButton`'s own `label`/`tooltip` — the wrapping `Tooltip` left
+            // the button with no accessible name (it resolved to "Action"),
+            // and `type="link"` lost the accent tint (FR-3572).
+            <IconButton
+              className="bai-action-accent"
+              variant="ghost"
+              size="sm"
+              icon={<History size="1em" />}
+              label={t('route.RouteSchedulingHistory')}
+              tooltip={t('route.RouteSchedulingHistory')}
+              clickAction={async () => {
                   const id = safeDecodeUuid(record.id) ?? record.id;
                   // Render-as-you-fetch: start the request in the open event.
                   loadRouteHistoryQuery(
@@ -397,10 +401,9 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                       fetchPolicy: 'store-and-network',
                     },
                   );
-                  setIsRouteHistoryOpen(true);
-                }}
-              />
-            </Tooltip>
+                setIsRouteHistoryOpen(true);
+              }}
+            />
           )}
         </BAIFlex>
       ),

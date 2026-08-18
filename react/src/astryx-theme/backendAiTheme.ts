@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 16;
+export const THEME_NAME_REV = 17;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -646,6 +646,20 @@ const FIELD_PAGE_OVERLAYS = {
  * flip/shift that Astryx's popover positioning already does is what keeps a
  * genuinely long menu on screen.
  */
+/**
+ * Pins the `ComplexSelector` field to the element-size ramp `Selector` uses.
+ * Astryx 0.4.0 sized it `min-height` + padding (40px at md, vs `Selector`'s
+ * 32px, so the two engines sat at different heights in one toolbar row); 0.4.3
+ * sets the same `height` itself, leaving this a redundant pin. FR-3536.
+ */
+const COMPLEX_SELECTOR_HEIGHT_PARITY = {
+  'complex-selector': {
+    base: { height: 'var(--size-element-md)' },
+    'size:sm': { height: 'var(--size-element-sm)' },
+    'size:lg': { height: 'var(--size-element-lg)' },
+  },
+};
+
 const ANTD_DROPDOWN_DENSITY = {
   'dropdown-menu': {
     base: {
@@ -924,6 +938,7 @@ export const computeThemeName = (
       ANTD_STATUS_ON_COLORS,
       ANTD_DIALOG_SURFACE,
       ANTD_DROPDOWN_DENSITY,
+      COMPLEX_SELECTOR_HEIGHT_PARITY,
       FIELD_PAGE_OVERLAYS,
     ]),
   );
@@ -1042,6 +1057,7 @@ export function buildBackendAiTheme(
       ...STATUS_TEXT_COLORS,
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
+      ...COMPLEX_SELECTOR_HEIGHT_PARITY,
       ...FIELD_PAGE_OVERLAYS,
       ...ANTD_HOVER_PARITY,
     },
