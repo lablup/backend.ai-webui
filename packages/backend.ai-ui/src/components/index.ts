@@ -234,6 +234,9 @@ export { default as BAIVFolderDeleteButtonV2Astryx } from './BAIVFolderDeleteBut
 export type { BAIVFolderDeleteButtonV2AstryxProps } from './BAIVFolderDeleteButtonV2Astryx';
 export { default as BAIDrawerAstryx } from './BAIDrawerAstryx';
 export type { BAIDrawerAstryxProps } from './BAIDrawerAstryx';
+export { default as BAIDialogPortal } from './BAIDialogPortal';
+export { BAI_MODAL_OPEN_ATTRIBUTE } from './BAIDialogPortal';
+export type { BAIDialogPortalProps } from './BAIDialogPortal';
 export * from './Table';
 export * from './fragments';
 export * from './provider';
