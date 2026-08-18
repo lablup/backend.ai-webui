@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r15-default-brand-hc43dtt theme — built by `pnpm exec astryx theme build`
+ * bai-r16-default-brand-h161l5oh theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR15DefaultBrandHc43dttTheme } from './bai-r15-default-brand-hc43dtt';
- *   import './bai-r15-default-brand-hc43dtt.css';
+ *   import { baiR16DefaultBrandH161l5ohTheme } from './bai-r16-default-brand-h161l5oh';
+ *   import './bai-r16-default-brand-h161l5oh.css';
  */
-export const baiR15DefaultBrandHc43dttTheme = {
-  name: 'bai-r15-default-brand-hc43dtt',
+export const baiR16DefaultBrandH161l5ohTheme = {
+  name: 'bai-r16-default-brand-h161l5oh',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -490,6 +490,17 @@ export const baiR15DefaultBrandHc43dttTheme = {
       "base": {
         "padding": "5px 12px",
         "lineHeight": "22px"
+      }
+    },
+    "complex-selector": {
+      "base": {
+        "height": "var(--size-element-md)"
+      },
+      "size:sm": {
+        "height": "var(--size-element-sm)"
+      },
+      "size:lg": {
+        "height": "var(--size-element-lg)"
       }
     },
     "field": {
