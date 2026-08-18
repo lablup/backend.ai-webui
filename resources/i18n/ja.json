@@ -3750,7 +3750,22 @@
       "FoundIn": "{{text}}内で見つかりました",
       "NoResults": "検索結果がありません",
       "Placeholder": "ページ、タブ、設定を検索",
-      "Recent": "最近の項目"
+      "Recent": "最近の項目",
+      "action": {
+        "ChangeLanguage": "UI言語を変更",
+        "OpenManual": "このページのマニュアルを開く",
+        "OpenNotifications": "お知らせを開く",
+        "OpenUserSettings": "ユーザー設定を開く",
+        "SwitchToDarkMode": "ダークモードに切り替え",
+        "SwitchToLightMode": "ライトモードに切り替え",
+        "ToggleSidebar": "サイドバーの開閉",
+        "UseSystemTheme": "システム設定を使用する"
+      },
+      "group": {
+        "Appearance": "表示",
+        "Create": "作成",
+        "PanelsAndHelp": "パネルとヘルプ"
+      }
     }
   }
 }

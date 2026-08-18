@@ -3748,7 +3748,22 @@
       "FoundIn": "Найдено в {{text}}",
       "NoResults": "Ничего не найдено",
       "Placeholder": "Поиск по страницам, вкладкам и настройкам",
-      "Recent": "Недавние"
+      "Recent": "Недавние",
+      "action": {
+        "ChangeLanguage": "Изменить язык интерфейса",
+        "OpenManual": "Открыть руководство для этой страницы",
+        "OpenNotifications": "Открыть уведомления",
+        "OpenUserSettings": "Открыть настройки пользователя",
+        "SwitchToDarkMode": "Переключиться на тёмный режим",
+        "SwitchToLightMode": "Переключиться на светлый режим",
+        "ToggleSidebar": "Показать или скрыть боковую панель",
+        "UseSystemTheme": "Использовать настройки системы"
+      },
+      "group": {
+        "Appearance": "Оформление",
+        "Create": "Создать",
+        "PanelsAndHelp": "Панели и справка"
+      }
     }
   }
 }
