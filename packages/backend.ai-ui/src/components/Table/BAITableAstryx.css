@@ -154,7 +154,11 @@
     );
   }
 
-  .bai-table-astryx-header-split thead th:not(:last-child) {
+  /*
+   Only where a resize handle actually exists — the injected selection column
+   and the last column render none, so they get no split (FR-3566 follow-up).
+  */
+  .bai-table-astryx-header-split thead th:has([role='separator']) {
     background-image:
       linear-gradient(
         var(--color-border-emphasized),
@@ -171,5 +175,17 @@
     background-size:
       var(--border-width) 1.6em,
       100% 100%;
+  }
+
+  /*
+   On a SORTABLE header Astryx anchors the resize handle (`right: 0`) to the
+   inner flex wrapper around the sort button, which sits one cell-padding
+   (8px measured) inside the `<th>` — so the whole 8px hit zone misses the
+   actual column boundary. Un-positioning that wrapper re-anchors the handle
+   to the `<th>` (always positioned: relative, or sticky under scroll-y),
+   identical to non-sortable headers. FR-3566.
+  */
+  .bai-table-astryx-dim-layer thead th > div:has(> [role='separator']) {
+    position: static;
   }
 }
