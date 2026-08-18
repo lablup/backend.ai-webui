@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-ui",
-  "version": "26.8.0-alpha.0",
+  "version": "26.9.0-alpha.0",
   "description": "React components for Backend.AI",
   "repository": {
     "type": "git",
@@ -27,6 +27,10 @@
       "import": "./dist/backend.ai-ui.js",
       "types": "./dist/index.d.ts"
     },
+    "./locale/*": {
+      "import": "./dist/locale/*.js",
+      "types": "./dist/locale/*.d.ts"
+    },
     "./styles.css": "./dist/backend.ai-ui.css"
   },
   "files": [
@@ -44,8 +48,8 @@
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "peerDependencies": {
-    "@astryxdesign/core": "0.3.0",
-    "@astryxdesign/theme-neutral": "0.3.0",
+    "@astryxdesign/core": "0.4.0",
+    "@astryxdesign/theme-neutral": "0.4.0",
     "@tanstack/react-query": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
@@ -66,19 +70,19 @@
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "react-copy-to-clipboard": "catalog:",
-    "react-draggable": "^4.7.0",
+    "react-draggable": "^4.7.1",
     "react-error-boundary": "^6.1.2",
     "react-i18next": "catalog:"
   },
   "devDependencies": {
-    "@astryxdesign/core": "0.3.0",
-    "@astryxdesign/theme-neutral": "0.3.0",
+    "@astryxdesign/core": "0.4.0",
+    "@astryxdesign/theme-neutral": "0.4.0",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",
-    "@storybook/addon-docs": "^10.4.6",
-    "@storybook/addon-onboarding": "^10.4.6",
-    "@storybook/react-vite": "^10.4.6",
+    "@storybook/addon-docs": "^10.5.7",
+    "@storybook/addon-onboarding": "^10.5.7",
+    "@storybook/react-vite": "^10.5.7",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
@@ -101,14 +105,14 @@
     "eslint-plugin-json-schema-validator": "catalog:",
     "eslint-plugin-react": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
-    "eslint-plugin-storybook": "^10.4.6",
+    "eslint-plugin-storybook": "^10.5.7",
     "fast-glob": "^3.3.3",
     "globals": "catalog:",
     "jsdom": "^29.1.1",
     "jsonc-eslint-parser": "catalog:",
     "prettier-plugin-sort-json": "catalog:",
     "relay-test-utils": "catalog:",
-    "storybook": "^10.4.6",
+    "storybook": "^10.5.7",
     "typescript": "~6.0.3",
     "typescript-eslint": "catalog:",
     "vite": "^6.4.3",

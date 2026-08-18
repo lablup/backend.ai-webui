@@ -8,19 +8,29 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import InputNumberWithSlider from '../InputNumberWithSlider';
+import BAISegmentedControlItemAstryx from '../astryx-bui/BAISegmentedControlItemAstryx';
 import RemainingMark from './RemainingMark';
 // FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS are Astryx now.
-import {
-  SegmentedControl,
-  SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
+import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+
+// FR-3531: hug the content instead of stretching to the parent's width.
+const clusterModeSegmentedStyles = stylex.create({
+  control: { alignSelf: 'flex-start' },
+  label: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: spacingVars['--spacing-1'],
+  },
+});
 
 /**
  * The cluster-mode segmented control. A local adapter rather than the shared
@@ -45,20 +55,25 @@ const ClusterModeSegmented: React.FC<{
       label={label}
       isDisabled={isDisabled}
       value={value ?? items[0]?.value ?? ''}
+      xstyle={clusterModeSegmentedStyles.control}
       onChange={(next) => {
         onChange?.(next);
         onValueChange();
       }}
     >
       {items.map((item) => (
-        <SegmentedControlItem
+        // FR-3531: the help affordance is a small view that trails the label,
+        // not a leading `icon` — Astryx renders the `icon` slot first.
+        <BAISegmentedControlItemAstryx
           key={item.value}
           value={item.value}
-          label={item.label}
-          icon={
-            <Tooltip content={item.tooltip}>
-              <CircleHelp size="1em" />
-            </Tooltip>
+          label={
+            <span {...stylex.props(clusterModeSegmentedStyles.label)}>
+              {item.label}
+              <Tooltip content={item.tooltip}>
+                <CircleHelp size="1em" />
+              </Tooltip>
+            </span>
           }
         />
       ))}
@@ -103,13 +118,8 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
             <BAIFlex direction="column" align="stretch">
               {/* MAPPING §3.10: `Radio.Group` whose children are
                   `Radio.Button` -> `SegmentedControl` + `SegmentedControlItem`.
-                  PILOT-DECISION: `SegmentedControlItem.label` is a required
-                  STRING (P2), so the per-option help tooltip cannot stay
-                  inside the label. It moves to the item's `icon` slot — the
-                  same `CircleHelp` glyph and the same `Trans` copy, now
-                  leading the label instead of trailing it (the only visual
-                  change) and with the manual `marginLeft` gone, since the
-                  slot owns its spacing. */}
+                  The per-option help tooltip stays inside the label (FR-3531),
+                  which `BAISegmentedControlItemAstryx` widens to a ReactNode. */}
               <Form.Item name={'cluster_mode'} required noStyle>
                 <ClusterModeSegmented
                   label={t('session.launcher.ClusterMode')}

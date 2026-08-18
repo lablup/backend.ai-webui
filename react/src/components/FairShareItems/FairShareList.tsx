@@ -4,7 +4,6 @@
  */
 import { FairShareListProjectNameQuery } from '../../__generated__/FairShareListProjectNameQuery.graphql';
 import { theme } from '../../theme-shim';
-import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import DomainFairShareStep from './DomainFairShareStep';
 import ProjectFairShareStep from './ProjectFairShareStep';
 import ResourceGroupFairShareStep from './ResourceGroupFairShareStep';
@@ -13,6 +12,7 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Step, Stepper } from '@astryxdesign/lab';
 import {
+  BAISkeleton,
   BAIQuestionIconWithTooltip,
   BAIBackButton,
   BAIFlex,
@@ -226,7 +226,7 @@ const FairShareList: React.FC = () => {
           currentStep={currentStep}
           navigateTo={getNavigateTo()}
         />
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           {currentStep === 'resource-group' && (
             <ResourceGroupFairShareStep
               loading={isStepTransitionPending}

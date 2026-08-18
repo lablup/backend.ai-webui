@@ -3,14 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx. `BAIText monospace` becomes
- `Text type="code"`; `copyable={{ text }}` (truncated display, full-value
- copy) becomes `BAICopyableText copyText` (astryx-bui gap component).
+ `Text type="code"`; the copyable segments render `BAIText code copyable`
+ (truncated display, full-value copy via `copyable.text`).
+
+ FR-3517: every segment carries `size="sm"` — the legacy render sized this path
+ down (`fontSize: '0.9em'`) so it did not outweigh sibling metadata values.
 */
 import { useVirtualFolderNodePathV2Fragment$key } from '../../__generated__/useVirtualFolderNodePathV2Fragment.graphql';
 import { useVirtualFolderPathV2 } from '../../hooks/useVirtualFolderNodePathV2';
-import BAICopyableText from '../astryx-bui/BAICopyableText';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -33,38 +36,42 @@ const VirtualFolderPathV2: React.FC<VirtualFolderPathV2Props> = ({
 
   return (
     <HStack align="start" justify="start" wrap="wrap" gap={3}>
-      <Text type="code" color="secondary">
+      <Text type="code" size="sm" color="secondary">
         (root)
       </Text>
-      <Text type="code" color="secondary">
+      <Text type="code" size="sm" color="secondary">
         /
       </Text>
       <VStack align="start" justify="start">
-        <BAICopyableText type="code" copyText={quotaScopeIdWithoutType}>
+        <BAIText code size="sm" copyable={{ text: quotaScopeIdWithoutType }}>
           {_.truncate(quotaScopeIdWithoutType.replaceAll('-', ''), {
             length: 15,
           })}
-        </BAICopyableText>
+        </BAIText>
         <Text type="supporting">
           Quota Scope ID ({_.upperFirst(quotaScopeType)})
         </Text>
       </VStack>
-      <Text type="code" color="secondary">
+      <Text type="code" size="sm" color="secondary">
         /
       </Text>
       <VStack align="start" justify="start">
         <HStack gap={3}>
-          <Text type="code">{vfolderIdPrefix1}</Text>
-          <Text type="code" color="secondary">
+          <Text type="code" size="sm">
+            {vfolderIdPrefix1}
+          </Text>
+          <Text type="code" size="sm" color="secondary">
             /
           </Text>
-          <Text type="code">{vfolderIdPrefix2}</Text>
-          <Text type="code" color="secondary">
+          <Text type="code" size="sm">
+            {vfolderIdPrefix2}
+          </Text>
+          <Text type="code" size="sm" color="secondary">
             /
           </Text>
-          <BAICopyableText type="code" copyText={vfolderId}>
+          <BAIText code size="sm" copyable={{ text: vfolderId }}>
             {_.truncate(vfolderIdRest.replaceAll('-', ''), { length: 7 })}
-          </BAICopyableText>
+          </BAIText>
         </HStack>
         <Text type="supporting">VFolder ID</Text>
       </VStack>

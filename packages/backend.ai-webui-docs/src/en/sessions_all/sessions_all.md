@@ -17,8 +17,8 @@ After logging in with a user account, click `Sessions` on the left sidebar.
 
 ![](../images/sessions_page.png)
 
-For how the list is organized, filtered, and refreshed, see
-[Session List View and Refresh](#session-list-view-and-refresh).
+For how the list is organized and filtered, see
+[Session List View](#session-list-view-and-refresh).
 
 Click the `Start Session` button to start a new compute session.
 
@@ -325,42 +325,12 @@ browser.
 
 <a id="session-list-view-and-refresh"></a>
 
-## Session List View and Refresh
+## Session List View
 
 The session list groups your sessions into type tabs — **All**, **Interactive**,
 **Batch**, **Inference**, and **Upload Sessions** — and each tab carries a
 **Running** / **Finished** switch and a property filter for **Session Name**,
 **Resource Group**, and **Agent**.
-
-Every tab keeps its own filter, sort order, and page number while you stay on the
-page, so switching to another tab and back restores the view you left instead of
-resetting it. The view state of the tab you are currently on is also stored in the
-page URL, so reloading the browser reproduces that view, and you can bookmark or
-share the URL to open the list in the same state. The URL carries only the tab you
-are on, so after a reload the other tabs start from their defaults.
-
-<a id="auto-refresh-interval"></a>
-
-### Auto-Refresh Interval
-
-The refresh button at the right of the list toolbar reloads the session list on
-demand. It also carries an auto-refresh interval selector: click the chevron
-next to the button to pick an interval — **Off**, or one of the presets between
-5 seconds and 60 seconds. While auto-refresh is on, an animated countdown border
-fills the control to show how much time remains until the next reload, and the
-active interval appears as a label (for example, `15s`) on the selector.
-
-Auto-refresh is on out of the box on the compute session surfaces:
-
-- The **session list** starts at a 15-second interval.
-- The **session detail panel** and the **container log** window start at a
-  10-second interval.
-
-Each of these surfaces remembers your interval separately and keeps it across
-reloads, so choosing **Off** in the container log window does not stop the
-session list from refreshing.
-
-![](../images/session_list_auto_refresh_dropdown.png)
 
 <a id="session-detail-panel"></a>
 
@@ -372,10 +342,6 @@ session ID, user ID, status, type, environments, mount information, resource all
 elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
 
 Click the `Log` button next to the `Hostname` in `Kernels` to view the logs of that kernel directly.
-
-The refresh button in the panel header reloads the session information and, like
-the list toolbar, offers an auto-refresh interval selector. See
-[Auto-Refresh Interval](#auto-refresh-interval) for how the intervals work.
 
 ![](../images/session_detail.png)
 
@@ -438,11 +404,6 @@ preferred order.
 The scheduling history table is paginated with offset-based pagination. The default page size is 10
 records per page. Changing a filter or the sort order automatically resets the view back to page 1.
 
-:::note
-The **Expand errors only** mode (described below) applies only to the records visible on the current
-page, not to the entire history.
-:::
-
 #### Expandable sub-steps
 
 Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
@@ -459,20 +420,6 @@ The sub-steps table includes the following columns:
 - **Message**: Detailed information or error description
 - **Started At**: When the sub-step began
 - **Ended At**: When the sub-step completed
-
-#### Expand / collapse control
-
-A kebab menu (⋮) in the expand-column header opens the **Expand options** menu, which lets you control
-how rows are expanded across the entire table. Three view modes are available:
-
-- **Expand all**: Expands every row so all sub-steps are immediately visible.
-- **Collapse all**: Collapses every row to show only the top-level history records.
-- **Expand errors only** (default): Automatically expands rows whose result is not SUCCESS, and
-  also hides SUCCESS sub-steps within those expanded rows. This is the most useful mode for quickly
-  identifying what went wrong in a session's scheduling lifecycle.
-
-The selected mode is remembered per user and persists across modal opens. You can still manually
-expand or collapse individual rows at any time, regardless of the active mode.
 
 #### Result badge colors
 
@@ -625,21 +572,9 @@ The log window provides the following controls above the log view:
   single-container session there is only one entry; for a cluster session, each
   container is listed by its hostname with the first characters of its ID.
 - **Download**: Save the currently displayed log to a text file.
-- **Refresh**: Reload the log. The button also carries the auto-refresh interval
-  selector described in [Auto-Refresh Interval](#auto-refresh-interval).
-
-Because a log window is normally opened to watch new lines arrive, auto-refresh
-starts at a 10-second interval. Pick another interval — or **Off** — from the
-selector next to the refresh button, and that choice is remembered for the log
-window the next time you open it. The log view scrolls to the newest lines after
-each reload, and the lines that arrived since the previous reload are
-highlighted.
 
 You can also search within the displayed log using the search box built into the
 log view.
-
-![](../images/container_log_refresh_dropdown.png)
-
 
 <a id="rename-running-session"></a>
 

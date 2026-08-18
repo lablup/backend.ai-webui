@@ -450,6 +450,17 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             <VFolderNodes
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
+              // ADR-0001: super-admin page — no ambient project context. The
+              // deployment-creation escalation modal embeds its own required
+              // project selector.
+              project={null}
+              // FR-3423: deployments are project-scoped, and this page is an
+              // oversight surface across every project — deploying from here
+              // would create an endpoint in a project the admin may not
+              // belong to and can't afterwards see or clean up. Mirrors the
+              // FileBrowser/SFTP disabled-with-tooltip treatment already
+              // applied to this page (FR-3412).
+              noDeployTooltip={t('data.folders.CannotDeployFromAdminMenu')}
               vfoldersFrgmt={filterOutNullAndUndefined(
                 _.map(vfolder_nodes?.edges, 'node'),
               )}
@@ -524,6 +535,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
         />
         <FolderCreateModalV2
           open={isOpenCreateModal}
+          // ADR-0001: no ambient project context on the admin Data page — the
+          // modal renders its own required project selector.
+          project={null}
           folderType="project"
           alertMessage={t('data.folders.AdminDataPageAlert')}
           onRequestClose={(result) => {

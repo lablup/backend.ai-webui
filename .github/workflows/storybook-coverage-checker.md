@@ -93,7 +93,7 @@ For each component file:
 
 ### Commands
 
-`@claude` /manage-bui-component-story BAICard BAIFlex
+`@claude` update the stories for BAICard BAIFlex (create missing story files, sync args/argTypes with the current props)
 
 <details>
 <summary><strong>Detailed Changes</strong></summary>

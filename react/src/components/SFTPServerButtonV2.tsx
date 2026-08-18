@@ -9,10 +9,6 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
-import {
-  useCurrentProjectValue,
-  useResourceGroupsForCurrentProject,
-} from '../hooks/useCurrentProject';
 import { useDefaultSystemSSHImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useProjectPath } from '../hooks/useRouteScope';
@@ -20,8 +16,14 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { useVHostInfo } from '../hooks/useVHostInfo';
+import {
+  ProjectContext,
+  ProjectContextOrNull,
+} from '../types/projectContext';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
@@ -38,13 +40,74 @@ import { graphql, useFragment } from 'react-relay';
 interface SFTPServerButtonV2Props extends BAIButtonProps {
   showTitle?: boolean;
   vfolderNodeFrgmt: SFTPServerButtonV2Fragment$key;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3412): the project the
+   * SSH/SFTP session is created in. With `null` the button renders disabled
+   * and shows the caller-provided `noProjectTooltip` — this component never
+   * knows WHY the project is absent.
+   */
+  project: ProjectContextOrNull;
+  noProjectTooltip?: string;
 }
 
 const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
   showTitle = true,
   vfolderNodeFrgmt,
+  project,
+  noProjectTooltip,
   ...buttonProps
 }) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  if (project === null) {
+    return (
+      <Tooltip content={noProjectTooltip} isEnabled={!!noProjectTooltip}>
+        <ButtonGroup label={t('data.explorer.RunSSH/SFTPserver')}>
+          <BAIButton
+            icon={
+              <img
+                width="18"
+                height="18"
+                src="/resources/icons/sftp.png"
+                alt="SSH / SFTP"
+              />
+            }
+            {...buttonProps}
+            // After the spread: a caller must not re-enable this tier.
+            disabled
+          >
+            {showTitle && t('data.explorer.RunSSH/SFTPserver')}
+          </BAIButton>
+          <IconButton
+            label={t('import.StartWithOptions')}
+            icon={<Ellipsis size="1em" />}
+            isDisabled
+          />
+        </ButtonGroup>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <SFTPServerButtonWithProject
+      showTitle={showTitle}
+      vfolderNodeFrgmt={vfolderNodeFrgmt}
+      project={project}
+      {...buttonProps}
+    />
+  );
+};
+
+interface SFTPServerButtonWithProjectProps extends BAIButtonProps {
+  showTitle: boolean;
+  vfolderNodeFrgmt: SFTPServerButtonV2Fragment$key;
+  project: ProjectContext;
+}
+
+const SFTPServerButtonWithProject: React.FC<
+  SFTPServerButtonWithProjectProps
+> = ({ showTitle, vfolderNodeFrgmt, project, ...buttonProps }) => {
   'use memo';
 
   const { logger } = useBAILogger();
@@ -56,19 +119,16 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project ID is required for SFTPServerButtonV2');
-  }
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
-      currentProject.id,
+      project.id,
       currentUserAccessKey,
     );
-  const { vhostInfo: vhostInfoByCurrentProject } =
-    useResourceGroupsForCurrentProject();
+  // Per-project volume host info (FR-3412) — keyed to the passed project,
+  // not the ambient current-project derived atom.
+  const { vhostInfo } = useVHostInfo(project.id);
 
   const { getErrorMessage } = useErrorMessageResolver();
   const { startSessionWithDefault, upsertSessionNotification } =
@@ -86,12 +146,11 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
     vfolderNodeFrgmt,
   );
 
-  // Verify that the current user has access to the volume of the vfolder.
+  // Verify that the passed project has access to the volume of the vfolder.
   // Check the project has SFTP scaling groups for the host of the vfolder.
-  const sftpScalingGroupByCurrentProject =
-    vhostInfoByCurrentProject?.volume_info[vfolderNode?.host || '']
-      ?.sftp_scaling_groups;
-  // Verify that the current project has access to the volumes in the folder.
+  const sftpScalingGroupsByProject =
+    vhostInfo?.volume_info[vfolderNode?.host || '']?.sftp_scaling_groups;
+  // Verify that the passed project has access to the volumes in the folder.
   // Check the user has 'mount-in-session' permission united by domain, project, and keypair resource policy.
   const hasAccessPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
@@ -101,7 +160,7 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
   const getTooltipTitle = () => {
     if (!hasAccessPermission) {
       return t('data.explorer.NoPermissionToMountFolder');
-    } else if (_.isEmpty(sftpScalingGroupByCurrentProject)) {
+    } else if (_.isEmpty(sftpScalingGroupsByProject)) {
       return t('data.explorer.NoSFTPSupportingScalingGroup');
     } else if (!systemSSHImage) {
       return t('data.explorer.NoImagesSupportingSystemSession');
@@ -129,7 +188,7 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
     cluster_mode: 'single-node',
     cluster_size: 1,
     mount_ids: [toLocalId(vfolderNode?.id || '').replaceAll('-', '')],
-    resourceGroup: sftpScalingGroupByCurrentProject?.[0],
+    resourceGroup: sftpScalingGroupsByProject?.[0],
     reuseIfExists: true,
   });
 
@@ -142,7 +201,7 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
       <ButtonGroup label={t('data.explorer.RunSSH/SFTPserver')}>
         <BAIButton
           disabled={
-            _.isEmpty(sftpScalingGroupByCurrentProject) ||
+            _.isEmpty(sftpScalingGroupsByProject) ||
             !systemSSHImage ||
             !hasAccessPermission
           }
@@ -158,7 +217,11 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
             />
           }
           action={async () => {
-            const sftpSessionConf = createSftpLauncherValue();
+            const sftpSessionConf = {
+              ...createSftpLauncherValue(),
+              // Pin the session to exactly the passed project (FR-3412).
+              projectName: project.name,
+            };
             await startSessionWithDefault(sftpSessionConf)
               .then((results) => {
                 if (results?.fulfilled && results.fulfilled.length > 0) {
@@ -199,7 +262,7 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
             icon: <Ellipsis size="1em" />,
             isIconOnly: true,
             isDisabled:
-              _.isEmpty(sftpScalingGroupByCurrentProject) ||
+              _.isEmpty(sftpScalingGroupsByProject) ||
               !systemSSHImage ||
               !hasAccessPermission,
           }}
@@ -209,12 +272,21 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
             {
               label: t('import.StartWithOptions'),
               onClick: () => {
-                const launcherValue = createSftpLauncherValue();
+                const launcherValue = {
+                  ...createSftpLauncherValue(),
+                  projectName: project.name,
+                };
                 const params = new URLSearchParams();
                 params.set('formValues', JSON.stringify(launcherValue));
                 params.set('step', '4');
                 webuiNavigate({
-                  pathname: buildProjectPath('session/start'),
+                  // The launcher reads the project from the URL, not from
+                  // these form values. `scope` is required too: the launcher
+                  // route exists only in the project subtree.
+                  pathname: buildProjectPath('session/start', {
+                    scope: 'project',
+                    projectName: project.name,
+                  }),
                   search: params.toString(),
                 });
               },

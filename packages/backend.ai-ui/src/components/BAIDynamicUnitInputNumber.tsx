@@ -25,21 +25,21 @@
 
  PILOT-DECISION — **`onStep` is replaced by explicit ladder controls PLUS a
  keydown handler.** Same call as the sibling `BAIDynamicStepInputNumber`; the
- rationale (Astryx's native spinner would silently linearise the ladder AND the
- unit carry) is written up in `astryxNumberStepper.tsx`. antd's `onStep` fired
- for BOTH the spinner click and ↑/↓, so the buttons alone were only half of it:
- `handleKeyDown` below cancels the browser's own linear step and runs the same
- ladder, which is what makes ↑ from `4g` land on `8g` and ↑ from `512g` carry
- to `1t`.
+ rationale (`NumberInput`'s own stepping is linear and would silently
+ linearise the ladder AND the unit carry) is written up in
+ `astryxNumberStepper.tsx`. antd's `onStep` fired for BOTH the spinner click
+ and ↑/↓, so the buttons alone were only half of it: `handleKeyDown` below
+ cancels `NumberInput`'s own linear step and runs the same ladder, which is
+ what makes ↑ from `4g` land on `8g` and ↑ from `512g` carry to `1t`.
 
- RESTORED — **typing a unit letter switches the unit.** antd's `InputNumber` is
- a TEXT field, so `"512m"` reached a raw `input` listener that re-parsed it. A
- native `<input type="number">` discards the letter before any value-level
- listener can see it (which is why the original listener was deleted), but the
- KEY event still fires: `handleKeyDown` matches the character against `units`
- and re-serialises the current number under the new unit. Same affordance,
- reached through the only event that survives on a number field — and it now
- covers every unit in `units`, not just the `m|g` the old regex hard-coded.
+ RESTORED — **typing a unit letter switches the unit.** antd's `InputNumber`
+ is a TEXT field, so `"512m"` reached a raw `input` listener that re-parsed
+ it. `handleKeyDown` matches the typed character against `units`,
+ `preventDefault`s it out of the field, and re-serialises the current number
+ under the new unit — covering every unit in `units`, not just the `m|g` the
+ old regex hard-coded. (The key-event route dates from when the field was a
+ native number input that discarded letters; it stays on 0.4.0's text-backed
+ field because a letter must not land in the numeric text either.)
 
  PILOT-DECISION — **`stringMode` is dropped, and nothing is lost here.**
  MAPPING §3.17 lists it as NONE. It existed so antd's `InputNumber` could hold
@@ -231,14 +231,14 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
   };
 
   /**
-   * antd drove BOTH of this component's keyboard affordances; a native
-   * `<input type="number">` drives neither, so they are reinstated here.
+   * antd drove BOTH of this component's keyboard affordances; `NumberInput`
+   * drives neither, so they are reinstated here.
    *
-   *  - ↑/↓ ran `onStep` with `step={0}`, i.e. the LADDER — the browser would
-   *    instead add/subtract 1. `preventDefault` cancels the native step before
-   *    it can fire an `input` event.
-   *  - a unit letter (`m`, `g`, `t`, `p`, …) switched the unit in place. The
-   *    number field discards the character, so the KEY is what we match on.
+   *  - ↑/↓ ran `onStep` with `step={0}`, i.e. the LADDER — `NumberInput`'s
+   *    own keyboard stepping would instead add/subtract 1. `preventDefault`
+   *    cancels it before it can fire an `input` event.
+   *  - a unit letter (`m`, `g`, `t`, `p`, …) switched the unit in place.
+   *    `preventDefault` keeps the letter out of the numeric text.
    */
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (disabled) return;
@@ -265,7 +265,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
 
   return (
     <InputGroup
-      className={['bai-number-stepper', className ?? ''].join(' ').trim()}
+      className={className}
       label={accessibleLabel}
       isLabelHidden={isLabelHidden ?? label === undefined}
       isDisabled={disabled}

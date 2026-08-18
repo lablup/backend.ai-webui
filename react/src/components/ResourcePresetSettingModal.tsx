@@ -17,7 +17,6 @@ import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIFormItem from './BAIFormItem';
 import {
   AstryxFormNumberInput,
@@ -27,14 +26,35 @@ import {
   BAIDynamicUnitInputNumber,
   BAIModal,
   BAIModalProps,
-  BAIProjectResourceGroupSelect,
+  BAIResourceGroupSelect,
+  BAIResourceGroupSelectProps,
   BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, Suspense, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
+
+/**
+ * Resource groups a preset may be bound to, listed at ADMIN scope — no project
+ * involved. A resource preset has no project dimension in the manager
+ * (`resource_presets` has no group column; its only relation is to one
+ * `ScalingGroupRow`, and a null `scaling_group_name` means the preset is
+ * global), so the options must not be narrowed by any project.
+ * `BAIResourceGroupSelect` queries `scaling_groups` unscoped, which is
+ * exactly that list. Spreading `props` keeps the value/onChange pair
+ * `BAIFormItem` injects into its direct child from being swallowed by the
+ * Suspense boundary.
+ */
+const ResourceGroupSelect: React.FC<BAIResourceGroupSelectProps> = (props) => {
+  'use memo';
+  return (
+    <Suspense fallback={<BAISelect {...props} loading disabled />}>
+      <BAIResourceGroupSelect {...props} />
+    </Suspense>
+  );
+};
 
 interface ResourcePresetSettingModalProps extends BAIModalProps {
   resourcePresetFrgmt?: ResourcePresetSettingModalFragment$key | null;
@@ -52,7 +72,6 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
-  const currentProject = useCurrentProjectValue();
 
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -307,24 +326,18 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
-              <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
+              <BAISelect disabled />
             </BAIFormItem>
           )}
         >
           {baiClient?.supports('resource-presets-per-resource-group') && (
+            // Optional by design: a preset with no resource group is the
+            // manager's "global" preset, so the field stays clearable.
             <BAIFormItem
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
-              {currentProject.name ? (
-                <BAIProjectResourceGroupSelect
-                  projectName={currentProject.name}
-                  allowClear
-                  popupMatchSelectWidth={false}
-                />
-              ) : (
-                <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
-              )}
+              <ResourceGroupSelect allowClear popupMatchSelectWidth={false} />
             </BAIFormItem>
           )}
         </ErrorBoundary>

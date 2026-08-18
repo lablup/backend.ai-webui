@@ -19,7 +19,6 @@ import {
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormMultiSelector,
   AstryxFormNumberInput,
@@ -31,6 +30,7 @@ import {
 import { Grid } from '@astryxdesign/core/Grid';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIModal,
   BAIModalProps,
   omitNullAndUndefinedFields,
@@ -352,7 +352,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }}
       {...modalProps}
     >
-      <Suspense fallback={<BAISkeletonAstryx rows={6} />}>
+      <Suspense fallback={<BAISkeleton rows={6} />}>
         <Form
           ref={formRef}
           initialValues={INITIAL_FORM_VALUES}
@@ -442,14 +442,14 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           {baiClient.is_superadmin ? (
             isSftpMapLoading ? (
               <BAIFormItem label={t('storageProxy.SFTPStorageProxies')}>
-                <BAISkeletonAstryx variant="input" />
+                <BAISkeleton variant="input" />
               </BAIFormItem>
             ) : (
               // Wrap the Form.Item (not the select — that would break Form's
               // value/onChange binding) in Suspense: BAIStorageProxySelect's
               // proxy-options query suspends. The prefill is registered as the
               // Form.Item `initialValue`, computed from the now-resolved map.
-              <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+              <Suspense fallback={<BAISkeleton variant="input" />}>
                 <BAIFormItem
                   label={t('storageProxy.SFTPStorageProxies')}
                   name="sftpProxies"

@@ -5,7 +5,7 @@
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { BAISkeleton } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -55,7 +55,7 @@ const DeploymentRevisionDetailDrawer: React.FC<
           status={status}
         />
       ) : (
-        <BAISkeletonAstryx />
+        <BAISkeleton />
       )}
     </BAIDrawer>
   );

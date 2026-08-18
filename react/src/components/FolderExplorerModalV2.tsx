@@ -25,8 +25,10 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useBAIBreakpoint } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
 import { useFileUploadManager } from './FileUploadManager';
@@ -38,11 +40,11 @@ import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import { VStack } from '@astryxdesign/core/Stack';
 import {
+  BAISkeleton,
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAILink,
@@ -113,18 +115,18 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
+  // This modal is globally mounted (no page parent), so it is the sanctioned
+  // exception (ADR-0001) that may consult the route to decide its project
+  // context: on the project-agnostic routes there is no ambient project
+  // context; elsewhere it narrows the ambient current project (interim state
+  // until a page-owned opener exists).
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
   const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project ID is required for FolderExplorerModalV2');
-  }
+  const pageProject = isProjectAgnosticPage
+    ? null
+    : toProjectContext(currentProject);
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
-  const { unitedAllowedPermissionByVolume } =
-    useMergedAllowedStorageHostPermission(
-      currentDomain,
-      currentProject.id,
-      currentUserAccessKey,
-    );
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
@@ -170,6 +172,20 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
     },
   );
+
+  // Permission calculation follows the folder's own ownership project when
+  // the folder is project-owned (what the user can do must not depend on the
+  // header selection). For user-owned folders there is no ownership project:
+  // keep the previous ambient scope on general pages, and skip the
+  // group-scope lookup entirely on super-admin routes (`null`).
+  const permissionProjectId =
+    vfolderNode?.ownership?.projectId ?? pageProject?.id ?? null;
+  const { unitedAllowedPermissionByVolume } =
+    useMergedAllowedStorageHostPermission(
+      currentDomain,
+      permissionProjectId,
+      currentUserAccessKey,
+    );
 
   // FIXME: This is a temporary workaround to notify file deletion to use WebUI Notification.
   const { upsertNotification, closeNotification } = useSetBAINotification();
@@ -419,7 +435,18 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       }}
       headerContent={
         vfolderNode ? (
-          <FolderExplorerHeaderV2 vfolderNodeFrgmt={vfolderNode} />
+          <FolderExplorerHeaderV2
+            vfolderNodeFrgmt={vfolderNode}
+            // ADR-0001: on super-admin routes `pageProject` is `null` — the
+            // FileBrowser/SFTP buttons render disabled with the tooltip
+            // below, and rename gating falls back to owner/super-admin.
+            project={pageProject}
+            noProjectTooltip={
+              isProjectAgnosticPage
+                ? t('data.CannotLaunchSessionInAdminMenu')
+                : undefined
+            }
+          />
         ) : (
           <span />
         )
@@ -466,7 +493,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               />
             ) : hasNoPermissions ? (
               <Banner title={t('explorer.NoPermissions')} status="error" />
-            ) : currentProject?.id !== vfolderNode?.ownership?.projectId &&
+            ) : pageProject !== null &&
+              pageProject.id !== vfolderNode?.ownership?.projectId &&
               !!vfolderNode?.ownership?.projectId ? (
               <Banner
                 title={
@@ -502,13 +530,20 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {fileExplorerElement}
                   </div>
-                  <ResizeHandle
-                    direction="horizontal"
-                    isReversed
-                    hasDivider
-                    label={t('explorer.Metadata')}
-                    resizable={infoPanel.props}
-                  />
+                  {/* The handle's own `height: 100%` resolves to `auto` here —
+                      this row is sized by `min-height` only, which makes the
+                      percentage indefinite, collapsing the handle (divider +
+                      pill) to ~30px pinned at the top, over the tab strip. A
+                      stretched flex wrapper gives it a definite height. */}
+                  <div style={{ display: 'flex', alignSelf: 'stretch' }}>
+                    <ResizeHandle
+                      direction="horizontal"
+                      isReversed
+                      hasDivider
+                      label={t('explorer.Metadata')}
+                      resizable={infoPanel.props}
+                    />
+                  </div>
                   <div style={{ width: infoPanel.size, flexShrink: 0 }}>
                     {vFolderInfoPanelElement}
                   </div>

@@ -14,7 +14,6 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
-import BAICopyableText from '../astryx-bui/BAICopyableText';
 import { Card } from '@astryxdesign/core/Card';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -25,6 +24,7 @@ import {
   BAIFlex,
   BAIModal,
   type BAIModalProps,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -422,9 +422,9 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                           <ul {...stylex.props(styles.warningList)}>
                             {kernels.map((k) => (
                               <li key={k.container_id}>
-                                <BAICopyableText>
+                                <BAIText copyable>
                                   {k.container_id ?? ''}
-                                </BAICopyableText>
+                                </BAIText>
                               </li>
                             ))}
                           </ul>

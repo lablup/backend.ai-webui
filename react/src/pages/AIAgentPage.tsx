@@ -4,7 +4,6 @@
  */
 import AgentEditorModal from '../components/AgentEditorModal';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
@@ -20,6 +19,7 @@ import {
 import { Grid } from '@astryxdesign/core/Grid';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIFlex,
   BAIUnmountAfterClose,
   BAIDeleteConfirmModal,
@@ -210,7 +210,7 @@ const AIAgentPage: React.FC = () => {
   };
 
   return (
-    <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+    <Suspense fallback={<BAISkeleton rows={4} />}>
       <BAIFlex direction="column" align="stretch" justify="center" gap="sm">
         <BAIFlex direction="row" justify="end" align="center">
           <Button

@@ -173,53 +173,25 @@ export const ANTD_ALIGN_TOKENS = {
 } as const;
 
 /**
- * The neutral hover/pressed washes as they resolved on the LEGACY header band —
- * i.e. under `ReverseThemeProvider`, which merged the OPPOSITE mode's seed and
- * algorithm (QA-FINDINGS Q-20).
+ * The neutral hover/pressed washes for the header band, which is a REVERSED
+ * surface: its content polarity follows the app mode (FR-3502), so the wash
+ * must too — TRANSLUCENT WHITE over the brand orange in light, TRANSLUCENT
+ * BLACK in dark. Both stay translucent so the orange shows through; the
+ * app-wide `--color-overlay-hover` cannot be used here because its dark value
+ * is the OPAQUE `#262626` (`ANTD_NEUTRAL_SURFACES`, correct on a `#141414`
+ * page surface, a black block on the band).
  *
- * `--color-overlay-hover` is pinned app-wide to antd's `colorBgTextHover`
- * (`ANTD_NEUTRAL_SURFACES`), whose dark value `resources/theme.json` makes
- * OPAQUE via its `colorFillSecondary: '#262626'` seed. That is correct on a
- * `#141414` page surface, and it is what audit 1 (catalog G-4) deliberately
- * pinned.
+ * `light-dark()` is not usable and this must be indexed in JS by the caller: a
+ * custom property holding `light-dark(a, b)` is substituted at USE time, and
+ * consumers sit inside the band's `MediaTheme`, so the forced scheme picks the
+ * slot instead of the app scheme (measured).
  *
- * The header band is the one surface where it is wrong in both directions at
- * once. Every control there sits inside `MediaTheme mode="dark"` — the band is a
- * dark surface in BOTH app modes — so `light-dark()` always takes the dark
- * branch and every header button hovers to an opaque near-black block on the
- * brand-orange band. Legacy did the opposite: `ReverseThemeProvider` resolved
- * the band against the INVERTED mode, so
- *
- *   app light -> reversed dark  -> colorBgTextHover `#262626`
- *   app dark  -> reversed light -> colorBgTextHover `rgba(0,0,0,0.06)`
- *
- * The light column already matches; the dark one is the regression. Declared as
- * a measured table here, next to the other antd parity values, rather than
- * inlined at the call site, so the P19 tokens-only gate has something to read
- * and the numbers stay with their derivation.
- *
- * Note the argument order is `light-dark(light, dark)` as the page reads it —
- * the INVERSION is already baked in, so the LIGHT slot carries antd's DARK value
- * and vice versa.
- *
- * Indexed by the APP's mode, and the caller must do that indexing in JS.
- *
- * `light-dark()` is NOT usable here, which is worth writing down because it is
- * the obvious-looking answer and it silently does the wrong thing. A custom
- * property holding `light-dark(a, b)` is substituted at USE time, by the element
- * that consumes it — and every consumer here is inside the band's
- * `MediaTheme mode="dark"`. So the dark slot wins in both app modes no matter
- * which element declares the property. Measured: declaring
- * `light-dark(#262626, rgba(0,0,0,0.06))` on the band root resolved to
- * `rgba(0,0,0,0.06)` in light AND dark.
- *
- * Resolving in JS against the app mode is therefore the only route, and it is
- * also what legacy effectively did — `ReverseThemeProvider` picked the opposite
- * mode's token set in JS, not in CSS.
+ * `rgba(255,255,255,0.16)` is the same wash `ANTD_HOVER_PARITY` applies to
+ * filled buttons (`backendAiTheme.ts`) — no new number. FR-3501.
  */
 export const ANTD_REVERSED_BAND_OVERLAYS = {
   light: {
-    '--color-overlay-hover': '#262626',
+    '--color-overlay-hover': 'rgba(255,255,255,0.16)',
     '--color-overlay-pressed': 'rgba(255,255,255,0.18)',
   },
   dark: {

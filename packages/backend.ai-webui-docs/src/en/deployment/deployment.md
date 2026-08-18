@@ -27,8 +27,6 @@ At the top of the page, you can filter deployments by lifecycle stage:
 
 You can also use the property filter bar to search deployments by **Deployment Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
 
-The refresh button at the top of the list also controls auto-refresh. Click the chevron next to it to pick an interval — **Off**, `5s`, `10s`, `15s`, `30s`, or `60s`. The Deployments list starts at `15s`; once you pick an interval (including **Off**), your choice is remembered for this list across page reloads. While auto-refresh is on, the chevron trigger shows the selected interval and a countdown border fills around the control until the next refresh. A manual click restarts the countdown.
-
 Click the `New Deployment` button to open the **Create Deployment** modal.
 
 <a id="create-deployment"></a>
@@ -534,15 +532,7 @@ Click the **Scheduling History** link button next to the status tag to open the 
 
 ![](../images/deployment_scheduling_history.png)
 
-Every event that has sub-steps can be expanded: click the `+` icon at the start of the row to see the sub-step table for that event. The menu in the expand column header offers three view options:
-
-- **Expand all**: Opens every expandable row.
-- **Collapse all**: Closes every row.
-- **Expand errors only**: Opens only the rows whose result is not a success. This is the default, so failures, retries, and expirations are visible as soon as the modal opens.
-
-   The view option decides only **which rows start expanded** — it never changes what an expanded row shows. An expanded row always lists the **complete** sub-step table for that event, including sub-steps that succeeded, so you can read a failure in the context of the steps that ran before it. Rows you open or close by hand keep that state until you change the view option or the data reloads.
-
-The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table and the same expand controls. See [Replicas](#replicas-tab-history).
+The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table. See [Replicas](#replicas-tab-history).
 
 <a id="revisions-tab"></a>
 
@@ -634,8 +624,6 @@ The Replicas tab shows the routing nodes that make up the deployment. Replica en
 - **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
 - **Terminated**: Shows replicas that have completed their lifecycle.
 
-The Replicas card has its own auto-refresh control on the refresh button, with the same interval options as the Deployments list. Because replica state changes quickly, this card starts at `10s`; your chosen interval is remembered separately from the one on the Deployments list.
-
 Each replica row carries three **independent** status fields. They describe different axes and should be read together — a replica can be *Running* in its lifecycle while its health is still *Not Checked*, for example.
 
 - **Lifecycle Status**: Where the replica is in its lifecycle — for example, *Provisioning*, *Warming Up*, *Running*, *Terminating*, or *Terminated*. During **Warming Up**, the replica is inside its startup grace period: it is starting up and waiting for the first successful health check. Failed checks are tolerated during this window; the replica moves to *Running* on the first success, and is terminated if it never succeeds before the window ends. The column header reads **Lifecycle**.
@@ -654,8 +642,6 @@ Click the session name in the **Session** column to open the session detail draw
 Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
 
 ![](../images/replica_scheduling_history.png)
-
-Expanding a row and the three view options behave exactly as described in [Scheduling History](#scheduling-history): the view option chooses which rows start expanded, and an expanded row always shows the full sub-step table for that event.
 
 If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
 

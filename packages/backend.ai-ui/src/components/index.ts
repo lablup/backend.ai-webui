@@ -16,6 +16,8 @@ export { default as BAICompactGroup } from './BAICompactGroup';
 export type { BAICompactGroupProps } from './BAICompactGroup';
 export { default as BAIMetadataList } from './BAIMetadataList';
 export type { BAIMetadataListProps } from './BAIMetadataList';
+export { BAIMetadataListItem } from './BAIMetadataList';
+export type { BAIMetadataListItemProps } from './BAIMetadataList';
 export {
   default as BAIPropertyFilter,
   mergeFilterValues,
@@ -78,6 +80,12 @@ export type {
 } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
+export { default as BAISkeleton } from './BAISkeleton';
+export type {
+  BAISkeletonProps,
+  BAISkeletonSize,
+  BAISkeletonVariant,
+} from './BAISkeleton';
 export { default as BAIBulkErrorModal } from './BAIBulkErrorModal';
 export type { BAIBulkErrorModalProps } from './BAIBulkErrorModal';
 export { default as BAIDeleteConfirmModal } from './BAIDeleteConfirmModal';

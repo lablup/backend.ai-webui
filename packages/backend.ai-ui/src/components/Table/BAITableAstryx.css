@@ -78,3 +78,119 @@
     min-width: 0;
   }
 }
+
+@layer components {
+  /*
+   antd `scroll={{ x }}` as rc-table writes it: `width: <x>; min-width: 100%`.
+   `table-layout: auto` is required for content-driven widths — the switch
+   rc-table itself makes for 'max-content' (ant-design#25227).
+   `:not(table table)` keeps the rule (and the inherited custom property) off
+   tables nested inside cells / expandedRowRender.
+  */
+  .bai-table-astryx-scroll-x table:not(table table) {
+    table-layout: auto;
+    width: var(--bai-table-scroll-x);
+    /* !important: BaseTable writes a structural inline min-width whenever any
+       pixel column exists (the injected selection column is pixel 52). */
+    min-width: 100% !important;
+  }
+}
+
+@layer components {
+  /*
+   antd `scroll={{ y }}`: cap the body and stick the header. The capped element
+   is Astryx's scroll wrapper (already `overflow-x: auto`), matched as "the div
+   whose direct child is the table" — its DEPTH varies: `useTableColumnResize`
+   (on by default) wraps the whole table in a `display: contents` measuring div,
+   so a `> div` child selector lands on that boxless wrapper and caps nothing.
+   `:not(table div)` keeps wrappers of nested tables (inside cells /
+   expandedRowRender) uncapped.
+  */
+  .bai-table-astryx-scroll-y div:has(> table):not(table div) {
+    max-height: var(--bai-table-scroll-y);
+    overflow-y: auto;
+  }
+
+  /*
+   Astryx paints no background on `th`, so a sticky header needs its own opaque
+   base — the same token the sticky-column plugin uses, so a pinned corner
+   matches. z-index 2 clears pinned BODY cells (z 1); this layer outranks the
+   plugin's `astryx-base` z 3 on pinned HEADER cells, which BAITableAstryx
+   restores inline. `overflow` is untouched: the resize drag handle needs
+   `visible` to reach through the body.
+
+   Known limit, deliberately deferred: the header's bottom rule belongs to the
+   COLLAPSED table border and cannot travel with a sticky cell, so it vanishes
+   while scrolled. Candidate fix: `box-shadow: inset 0 -1px 0
+   var(--color-border)` here — unmeasured against the sticky-column shadows.
+   `:not(table table)` keeps nested tables' headers non-sticky, as above.
+  */
+  .bai-table-astryx-scroll-y table:not(table table) > thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(
+      --table-sticky-background,
+      var(--color-background-card)
+    );
+  }
+}
+
+@layer components {
+  /*
+   antd-style header band. The wash is painted card-base + muted-overlay so it
+   stays opaque under the scroll-y sticky header (--color-background-muted
+   alone is semi-transparent). The between-columns split is a background layer,
+   not a `th::after` (collides with the sticky-columns plugin's edge-shadow
+   pseudo) and not a positioned child (a positioned `th` would fight the
+   scroll-y `position: sticky` above). 1.6em inset height = antd's
+   `headerSplitColor` rule.
+  */
+  .bai-table-astryx-dim-layer thead th {
+    background-color: var(--color-background-card);
+    background-image: linear-gradient(
+      var(--color-background-muted),
+      var(--color-background-muted)
+    );
+  }
+
+  /*
+   Only where a resize handle actually exists — the injected selection column
+   and the last column render none, so they get no split (FR-3566 follow-up).
+   `:not(table table)` keeps the split off tables nested inside cells /
+   expandedRowRender (whose own wrapper may be bordered), as above.
+  */
+  .bai-table-astryx-header-split
+    table:not(table table)
+    > thead
+    th:has([role='separator']) {
+    background-image:
+      linear-gradient(
+        var(--color-border-emphasized),
+        var(--color-border-emphasized)
+      ),
+      linear-gradient(
+        var(--color-background-muted),
+        var(--color-background-muted)
+      );
+    background-repeat: no-repeat;
+    background-position:
+      right center,
+      0 0;
+    background-size:
+      var(--border-width) 1.6em,
+      100% 100%;
+  }
+
+  /*
+   On a SORTABLE header Astryx anchors the resize handle (`right: 0`) to the
+   inner flex wrapper around the sort button, which sits one cell-padding
+   (8px measured) inside the `<th>` — so the whole 8px hit zone misses the
+   actual column boundary. Un-positioning that wrapper re-anchors the handle
+   to the `<th>` (always positioned: relative, or sticky under scroll-y),
+   identical to non-sortable headers. FR-3566.
+  */
+  .bai-table-astryx-dim-layer thead th > div:has(> [role='separator']) {
+    position: static;
+  }
+}

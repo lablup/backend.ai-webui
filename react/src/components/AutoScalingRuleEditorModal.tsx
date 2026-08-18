@@ -17,7 +17,6 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormNumberInput,
   AstryxFormSegmented,
@@ -27,6 +26,7 @@ import {
 } from './astryxFormControls';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -910,7 +910,7 @@ const AutoScalingRuleEditorModal: React.FC<AutoScalingRuleEditorModalProps> = ({
       confirmLoading={isInflightCreate || isInflightUpdate}
     >
       <ErrorBoundaryWithNullFallback>
-        <React.Suspense fallback={<BAISkeletonAstryx rows={6} />}>
+        <React.Suspense fallback={<BAISkeleton rows={6} />}>
           <AutoScalingRuleEditorModalContent
             autoScalingRule={autoScalingRule ?? null}
             formRef={

@@ -496,6 +496,7 @@
     "ExportCSV": "Export CSV",
     "GoToFirstPage": "Go to first page",
     "InvalidPageNumber": "Invalid page number",
+    "NoDataToDisplay": "No data to display",
     "Pagination": "Pagination",
     "SearchTableColumn": "Search table columns",
     "SelectColumnToDisplay": "Select columns to display",

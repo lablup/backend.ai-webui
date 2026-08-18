@@ -472,6 +472,7 @@
     "ExportCSV": "Exporter en CSV",
     "GoToFirstPage": "Aller à la première page",
     "InvalidPageNumber": "Numéro de page invalide",
+    "NoDataToDisplay": "Aucune donnée à afficher",
     "Pagination": "Pagination",
     "SearchTableColumn": "Colonnes de table de recherche",
     "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",

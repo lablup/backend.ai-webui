@@ -34,7 +34,6 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormCheckbox,
   AstryxFormTextArea,
@@ -48,6 +47,7 @@ import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIAlert,
   BAIButton,
   BAIDomainSelect,
@@ -1220,7 +1220,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               label={t('credential.Domain')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<BAISkeletonAstryx />}>
+              <Suspense fallback={<BAISkeleton />}>
                 <BAIDomainSelect
                   value={globalDefaults.domainName}
                   onChange={(v) => {
@@ -1241,7 +1241,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             >
               <Suspense
                 key={globalDefaults.domainName}
-                fallback={<BAISkeletonAstryx />}
+                fallback={<BAISkeleton />}
               >
                 <ProjectSelect
                   key={globalDefaults.domainName}
@@ -1270,7 +1270,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               label={t('credential.UserResourcePolicy')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<BAISkeletonAstryx />}>
+              <Suspense fallback={<BAISkeleton />}>
                 <UserResourcePolicySelect
                   value={globalDefaults.resourcePolicy}
                   onChange={(v) =>

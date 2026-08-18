@@ -8,10 +8,9 @@ import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Spinner } from '@astryxdesign/core/Spinner';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
 // PILOT-DECISION (p3-w3b): antd `QRCode` was the last antd RENDER in this
 // file. MAPPING.md §2 grades it **NONE** — neither Astryx core nor lab ships
 // a QR renderer — so closing it meant adopting a dependency. `qrcode.react`
@@ -169,11 +168,9 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
         justify="center"
         style={{ margin: token.marginSM, gap: token.margin }}
       >
-        {/* MAPPING §3.4: `copyable` has exactly one home — BAICopyableText;
-            `code` becomes its `type`. */}
-        <BAICopyableText type="code" copyLabel={t('button.Copy')}>
+        <BAIText code copyable>
           {totp_key}
-        </BAICopyableText>
+        </BAIText>
       </BAIFlex>
       {t('totp.EnterConfirmationCode')}
       <Form ref={ref} preserve={false} validateTrigger={['onChange', 'onBlur']}>

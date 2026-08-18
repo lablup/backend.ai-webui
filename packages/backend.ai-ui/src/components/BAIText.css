@@ -6,18 +6,19 @@
  component itself (P17), so the rules travel with it and cannot rot in an app
  stylesheet.
 
- JUSTIFICATION for per-component CSS (the policy asks for one). Three of antd
+ JUSTIFICATION for per-component CSS (the policy asks for one). Two of antd
  `Typography.Text`'s decorations have NO Astryx counterpart and no theme knob:
 
-   `keyboard` (9 sites)  Astryx `Kbd` takes a `keys: string` shortcut spec
-                         ("mod+k") and renders ITS OWN glyphs. Our call sites
-                         pass arbitrary children (a token, a path fragment),
-                         so `Kbd` cannot carry them — the box is rebuilt here.
    `mark` (4 sites)      no Astryx equivalent at all (MAPPING §3.4: "NONE —
                          self-build").
    `code` box padding    Astryx `Code` styles the glyph run; the surrounding
                          chip padding antd drew is added back so the 16 `code`
                          sites keep their footprint.
+
+ `keyboard` used to be a third: its box was rebuilt here because Astryx `Kbd`
+ takes a `keys: string` spec rather than children. FR-3509 retired the prop —
+ the one production call site passed a single literal key, which `Kbd` renders
+ verbatim — so shortcut badges are `Kbd` at the call site now.
 
  The copy-control row is layout, not decoration: the text must still measure
  its own ellipsis box, so the control is a sibling in an inline flex row.
@@ -45,32 +46,12 @@
   flex-shrink: 0;
 }
 
-/* antd `Typography.Text keyboard` — the <kbd> chip. */
-.bai-text-kbd {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.15em 0.4em;
-  font-family: var(--font-family-code);
-  font-size: 0.9em;
-  background-color: var(--color-background-muted);
-  border: 1px solid var(--color-border-emphasized);
-  border-radius: var(--radius-inner);
-  box-shadow: 0 2px 0 var(--color-border);
-}
-
-/*
- The light-bordered variant used on the dark notification surface, where the
- chip sits on an inverted background and must borrow the surrounding color.
- antd expressed it as an inline `rgba(255,255,255,0.6)` border; the token
- counterpart on an inverted surface is the on-dark text color at the same
- role.
-*/
-.bai-text-kbd--light {
-  color: inherit;
-  margin: 0;
-  background-color: transparent;
-  border-color: var(--color-on-dark);
-  box-shadow: none;
+/* Flex min-width defaults to `auto`, so a long unbreakable value would drag
+   the copy control out of a fixed cell instead of wrapping. */
+.bai-text-row > .astryx-text,
+.bai-text-row > .bai-text-code {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* antd `Typography.Text mark` — the highlighter. */

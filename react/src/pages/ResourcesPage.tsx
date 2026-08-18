@@ -6,9 +6,8 @@ import AgentList from '../components/AgentList';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useTabQuerySnapshot } from '../hooks';
-import { BAICard } from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +38,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         { key: 'resourceGroup', label: t('general.ResourceGroup') },
       ]}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'agents' && (
           <BAIErrorBoundary>
             <AgentList />

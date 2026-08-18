@@ -125,5 +125,7 @@ After editing a file that touches card containers, confirm:
 
 ## Related
 
+- `comment-density.md` — `BAICard.tsx`'s accepted-and-ignored props are a
+  **list**, not an essay; keep them that way when you add one.
 - `component-props-extension.md` — the wrapper-component prop-extension pattern. `BAICard` is that rule's documented **escape hatch**, not an exception to it: because it composes several Astryx primitives rather than wrapping one, `BAICardProps` extends no library props type at all — only `Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'color' | 'children'>` — and hand-restates the antd-`Card`-SHAPED surface inline, so the ~200 `<BAICard>` call sites carried over from the antd era need no edit and the module stays out of the antd import graph. Each accepted-and-ignored prop is documented as a PILOT-DECISION in `BAICard.tsx`.
 - `BAICard` source: `packages/backend.ai-ui/src/components/BAICard.tsx`

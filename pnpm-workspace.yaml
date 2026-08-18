@@ -5,22 +5,22 @@ packages:
 catalog:
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
-  "@eslint/js": ^9.39.4
+  "@eslint/js": ^9.39.5
   "@jest/expect": 30.3.0
   "@jest/globals": 30.3.0
-  "@tanstack/react-query": ^5.101.2
+  "@tanstack/react-query": ^5.101.4
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2
-  "@testing-library/user-event": ^14.6.1
+  "@testing-library/user-event": ^14.6.3
   "@trivago/prettier-plugin-sort-imports": ^6.0.2
   "@types/big.js": ^6.2.2
   "@types/jest": ^30.0.0
-  "@types/lodash": ^4.17.24
+  "@types/lodash": ^4.17.25
   "@types/lodash-es": ^4.17.12
-  "@types/node": ^22.20.0
-  "@types/react": ^19.2.17
+  "@types/node": ^22.20.1
+  "@types/react": ^19.2.18
   "@types/react-copy-to-clipboard": ^5.0.7
-  "@types/react-dom": ^19.2.3
+  "@types/react-dom": ^19.2.4
   "@types/react-relay": ^18.2.1
   "@types/relay-runtime": ^19.0.3
   "@types/relay-test-utils": ^19.0.0
@@ -30,7 +30,7 @@ catalog:
   classnames: ^2.5.1
   dayjs: ^1.11.21
   dompurify: ^3.4.12
-  eslint: ^9.39.4
+  eslint: ^9.39.5
   eslint-plugin-import: ^2.32.0
   eslint-plugin-json-schema-validator: ^5.5.1
   eslint-plugin-react: ^7.37.5
@@ -42,28 +42,28 @@ catalog:
   jest-environment-jsdom: ^30.3.0
   jsonc-eslint-parser: ^2.4.2
   lodash-es: ^4.18.1
-  # ^1.18: single-major convergence with @astryxdesign/theme-neutral@0.3.0,
+  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.4.0,
   # whose hard dependency is lucide-react ^1.18.0 (to-astryx ticket 07). All
   # 78 icon names the app imports exist in both 0.552 and 1.x (measured);
   # converging up dedupes the two installed majors into one instance.
-  lucide-react: ^1.18.0
+  lucide-react: ^1.29.0
   marked: ^16.4.2
-  prettier: ^3.9.4
+  prettier: ^3.9.6
   prettier-plugin-sort-json: ^4.2.0
   qrcode.react: ^4.2.0
-  react: ^19.2.7
+  react: ^19.2.8
   react-copy-to-clipboard: ^5.1.1
-  react-dom: ^19.2.7
+  react-dom: ^19.2.8
   react-i18next: ^16.6.6
   react-relay: ^20.1.1
   react-router-dom: ^6.30.4
   relay-compiler: ^20.1.1
   relay-runtime: ^20.1.1
   relay-test-utils: ^20.1.1
-  smol-toml: ^1.7.0
+  smol-toml: ^1.7.1
   ts-jest: ^29.4.9
   tus-js-client: ^4.3.1
-  typescript-eslint: ^8.63.0
+  typescript-eslint: ^8.66.0
   uuid: ^13.0.2
   webpack: ^5.106.1
 
@@ -81,11 +81,11 @@ minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
   - nuqs@2.9.2
-  # Astryx foundation (to-astryx, ticket 01): 0.3.0 published 2026-08-05,
-  # inside the 7-day window at adoption time. Remove after 2026-08-12.
-  - "@astryxdesign/core@0.3.0"
-  - "@astryxdesign/theme-neutral@0.3.0"
-  - "@astryxdesign/cli@0.3.0"
+  # Astryx 0.4.0: published 2026-08-13, inside the 7-day window at adoption
+  # time. Remove after 2026-08-20.
+  - "@astryxdesign/core@0.4.0"
+  - "@astryxdesign/theme-neutral@0.4.0"
+  - "@astryxdesign/cli@0.4.0"
   # Astryx Lab canary (to-astryx, ticket 18): MIGRATION-SPEC §1-④ decided
   # canary adoption with an exact pin; canary releases never age past the
   # quarantine window by design, so the exclusion is permanent while the
@@ -151,7 +151,7 @@ overrides:
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
+  "@astryxdesign/lab@0.3.0-canary.12db2a1": react/patches/@astryxdesign__lab@0.3.0-canary.12db2a1.patch
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
-  portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

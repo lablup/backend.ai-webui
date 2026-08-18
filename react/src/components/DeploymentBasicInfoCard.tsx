@@ -15,7 +15,6 @@ import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import BAICopyableText from './astryx-bui/BAICopyableText';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { Divider } from '@astryxdesign/core/Divider';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -33,6 +32,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
+  BAIText,
   BAIUnmountAfterClose,
   BooleanTag,
   isDeploymentInStoppedCategory,
@@ -138,9 +138,7 @@ const DeploymentOverviewContent: React.FC<{
       </MetadataListItem>
       <MetadataListItem label={t('deployment.EndpointUrl')}>
         {deployment?.networkAccess.endpointUrl ? (
-          <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
-            {deployment.networkAccess.endpointUrl}
-          </BAICopyableText>
+          <BAIText copyable>{deployment.networkAccess.endpointUrl}</BAIText>
         ) : (
           renderFallback()
         )}
@@ -360,14 +358,19 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           }
         />
       </BAICard>
-      <DeploymentSettingModal
-        open={settingModalOpen}
-        deploymentFrgmt={deployment}
-        onRequestClose={(success) => {
-          setSettingModalOpen(false);
-          if (success) onRefetch();
-        }}
-      />
+      {/* Edit-only call site: the deployment already belongs to a project, so
+          the props union rejects a `project` here entirely (ADR-0001). That
+          member requires a non-null fragment, hence the guard. */}
+      {deployment != null && (
+        <DeploymentSettingModal
+          open={settingModalOpen}
+          deploymentFrgmt={deployment}
+          onRequestClose={(success) => {
+            setSettingModalOpen(false);
+            if (success) onRefetch();
+          }}
+        />
+      )}
       <BAIDeleteConfirmModal
         open={isDeleteModalOpen}
         title={t('deployment.DeleteDeployment')}

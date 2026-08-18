@@ -1,5 +1,4 @@
 import { BAILocale, i18n } from '../../../locale';
-import { buildAstryxOverrides } from '../../../locale/astryxOverrides';
 import { type BAIClient, BAIClientProvider } from '../BAIClientProvider';
 import {
   InternationalizationProvider,
@@ -87,6 +86,7 @@ const BAIConfigProvider = ({
   clientPromise,
   anonymousClientFactory,
 }: BAIConfigProviderProps) => {
+  'use memo';
   // Sync BUI's i18n + dayjs locale to the prop. BUI components access
   // `buiI18n` *explicitly* via `useBAIi18n()` (which calls
   // `useTranslation(undefined, { i18n: buiI18n })`), so we do NOT wrap
@@ -106,8 +106,9 @@ const BAIConfigProvider = ({
   // on its `'en'` context default. This is not only about strings: the locale
   // is what Astryx passes to `IntlMessageFormat`, so plurals, numbers and
   // dates inside Astryx components were being formatted as English in a
-  // Korean session. `astryxOverrides` routes any Astryx key we choose to
-  // translate through BUI's existing catalogs rather than a fourth one.
+  // Korean session. The chrome-string catalog rides on the host-passed
+  // `BAILocale.astryxLocale` (`backend.ai-ui/locale/*`), the same flow
+  // that used to carry `antdLocale`.
   //
   // `dir` is passed explicitly (rather than left to Astryx's own derivation)
   // only to keep it in one place; `getLocaleDirection` is the same helper the
@@ -115,15 +116,17 @@ const BAIConfigProvider = ({
   // Astryx reads from context, it does NOT set the DOM `dir` attribute — the
   // host still owns `<html dir>`. No RTL locale ships in `resources/i18n`
   // today, so the two cannot currently disagree.
-  const astryxLocale = locale?.lang ?? 'en';
-  const astryxOverrides = buildAstryxOverrides(i18n, astryxLocale);
+  const astryxLang = locale?.lang ?? 'en';
+  const astryxOverrides = locale?.astryxLocale
+    ? { [astryxLang]: locale.astryxLocale }
+    : undefined;
 
   return (
     <QueryClientProvider client={queryClient}>
       <InternationalizationProvider
-        locale={astryxLocale}
+        locale={astryxLang}
         overrides={astryxOverrides}
-        dir={getLocaleDirection(astryxLocale)}
+        dir={getLocaleDirection(astryxLang)}
       >
         {clientPromise && anonymousClientFactory ? (
           <BAIClientProvider
