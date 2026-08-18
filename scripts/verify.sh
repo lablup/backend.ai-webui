@@ -179,7 +179,9 @@ check_astryx_theme_built() {
 run_check "Relay" check_relay_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
-run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
+
+run_check "TypeScript (react)" pnpm --prefix ./react exec tsc --noEmit
+run_check "TypeScript (backend.ai-ui)" pnpm --filter backend.ai-ui exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
