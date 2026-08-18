@@ -3748,7 +3748,22 @@
       "FoundIn": "Ditemui dalam {{text}}",
       "NoResults": "Tiada keputusan",
       "Placeholder": "Cari halaman, tab dan tetapan",
-      "Recent": "Terkini"
+      "Recent": "Terkini",
+      "action": {
+        "ChangeLanguage": "Tukar bahasa antara muka",
+        "OpenManual": "Buka manual untuk halaman ini",
+        "OpenNotifications": "Buka pemberitahuan",
+        "OpenUserSettings": "Buka tetapan pengguna",
+        "SwitchToDarkMode": "Tukar ke Mod Gelap",
+        "SwitchToLightMode": "Tukar ke Mod Terang",
+        "ToggleSidebar": "Tunjuk atau sembunyikan bar sisi",
+        "UseSystemTheme": "Gunakan Tetapan Sistem"
+      },
+      "group": {
+        "Appearance": "Paparan",
+        "Create": "Buat",
+        "PanelsAndHelp": "Panel & bantuan"
+      }
     }
   }
 }
