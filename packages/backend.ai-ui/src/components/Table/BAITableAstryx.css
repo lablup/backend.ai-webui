@@ -157,8 +157,13 @@
   /*
    Only where a resize handle actually exists — the injected selection column
    and the last column render none, so they get no split (FR-3566 follow-up).
+   `:not(table table)` keeps the split off tables nested inside cells /
+   expandedRowRender (whose own wrapper may be bordered), as above.
   */
-  .bai-table-astryx-header-split thead th:has([role='separator']) {
+  .bai-table-astryx-header-split
+    table:not(table table)
+    > thead
+    th:has([role='separator']) {
     background-image:
       linear-gradient(
         var(--color-border-emphasized),
