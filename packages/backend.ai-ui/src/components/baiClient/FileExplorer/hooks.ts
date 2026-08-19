@@ -41,10 +41,13 @@ export interface RcFile extends File {
  *   update flushes synchronously and unmounts the dropzone, silently
  *   discarding the file. Closing on a drop that HITS the dropzone is the
  *   overlay's own job, via `close` (`DragAndDrop`'s deferred `onDropCapture`).
- * - `mousemove` while open — a cancelled drag (Escape, or a drop the OS
- *   rejects) fires no drag event at all; measured on Chromium, neither
- *   `dragleave` nor `dragend` reaches the page. Mouse events stay suppressed
- *   for the whole drag, so the first one afterwards is proof it is over.
+ * - `mousedown`/`keydown`/`wheel` while open — a cancelled drag (Escape, or a
+ *   drop the OS rejects) fires no drag event at all, so the overlay needs some
+ *   non-drag signal to come down. It must be one the browser CANNOT deliver
+ *   mid-drag: a pointer-motion signal looks earlier but is not suppressed on
+ *   every platform, and one stray `mousemove` unmounts the dropzone with the
+ *   drag still in flight — the drop then has nothing to land on and the
+ *   browser opens the file instead of uploading it (FR-3575).
  */
 export const useDragOverlay = (
   containerRef?: React.RefObject<HTMLDivElement | null>,
@@ -91,15 +94,18 @@ export const useDragOverlay = (
     if (!isDragMode) {
       return;
     }
-    const handleDragEnd = () => setIsDragMode(false);
-    const handleMouseMove = () => setIsDragMode(false);
+    const dismiss = () => setIsDragMode(false);
 
-    document.addEventListener('dragend', handleDragEnd, true);
-    document.addEventListener('mousemove', handleMouseMove, true);
+    document.addEventListener('dragend', dismiss, true);
+    document.addEventListener('mousedown', dismiss, true);
+    document.addEventListener('keydown', dismiss, true);
+    document.addEventListener('wheel', dismiss, true);
 
     return () => {
-      document.removeEventListener('dragend', handleDragEnd, true);
-      document.removeEventListener('mousemove', handleMouseMove, true);
+      document.removeEventListener('dragend', dismiss, true);
+      document.removeEventListener('mousedown', dismiss, true);
+      document.removeEventListener('keydown', dismiss, true);
+      document.removeEventListener('wheel', dismiss, true);
     };
   }, [isDragMode]);
 

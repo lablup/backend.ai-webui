@@ -83,17 +83,33 @@ describe('useDragOverlay', () => {
     expect(result.current.isDragMode).toBe(false);
   });
 
-  it('closes after a cancelled drag, on the first pointer movement', () => {
-    // Escape (or a drop the OS refuses) ends the drag without firing any drag
-    // event at all. Mouse events are suppressed for the whole drag, so the
-    // first one afterwards is what proves it is over.
+  it.each(['mousedown', 'keydown', 'wheel'])(
+    'closes after a cancelled drag, on the next %s',
+    (type) => {
+      // Escape (or a drop the OS refuses) ends the drag without firing any
+      // drag event at all, so the overlay comes down on the user's next
+      // interaction instead.
+      const { result } = renderHook(() => useDragOverlay());
+      mountDropzoneStandIn();
+      fire(document, 'dragenter');
+      expect(result.current.isDragMode).toBe(true);
+
+      fire(document, type);
+      expect(result.current.isDragMode).toBe(false);
+    },
+  );
+
+  it('survives pointer movement while the drag is still in flight', () => {
+    // The regression this pins: `mousemove` is not suppressed during a drag on
+    // every platform, and closing on it unmounted the dropzone mid-drag — the
+    // drop then landed on nothing and the browser opened the file (FR-3575).
     const { result } = renderHook(() => useDragOverlay());
-    mountDropzoneStandIn();
+    const { zone } = mountDropzoneStandIn();
     fire(document, 'dragenter');
-    expect(result.current.isDragMode).toBe(true);
 
     fire(document, 'mousemove');
-    expect(result.current.isDragMode).toBe(false);
+    fire(zone, 'dragover');
+    expect(result.current.isDragMode).toBe(true);
   });
 
   it('leaves a drop on the dropzone to the overlay itself', () => {
