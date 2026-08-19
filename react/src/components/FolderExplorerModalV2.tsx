@@ -511,14 +511,11 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
 
             {vfolderNode && !hasNoPermissions ? (
               xl ? (
-                // antd `Splitter` → Astryx `useResizable` + `ResizeHandle`:
-                // explorer fills the remaining space, the info panel keeps a
-                // drag-resizable width (default 45%, min 550px). `gap` restores
-                // the legacy `Splitter style={{ gap: token.size }}` — 16px of
-                // total separation between the two panes, which the conversion
-                // dropped (the 1px handle sat flush against both). The flex gap
-                // applies on BOTH sides of the handle, so half the legacy value
-                // (`--spacing-2`) reproduces it: 8 + 1 + 8 = 17px.
+                // antd `Splitter` owned containment — panel sizes always summed
+                // to the container and each panel clipped. `useResizable` only
+                // yields a number, so the panes carry it themselves (FR-3590).
+                // `gap` applies on BOTH sides of the handle, so half the legacy
+                // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
                 <div
                   style={{
                     display: 'flex',
@@ -527,7 +524,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                     gap: 'var(--spacing-2)',
                   }}
                 >
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                     {fileExplorerElement}
                   </div>
                   {/* The handle's own `height: 100%` resolves to `auto` here —
@@ -544,7 +541,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                       resizable={infoPanel.props}
                     />
                   </div>
-                  <div style={{ width: infoPanel.size, flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: infoPanel.size,
+                      flexShrink: 1,
+                      minWidth: 0,
+                      overflow: 'hidden',
+                    }}
+                  >
                     {vFolderInfoPanelElement}
                   </div>
                 </div>
