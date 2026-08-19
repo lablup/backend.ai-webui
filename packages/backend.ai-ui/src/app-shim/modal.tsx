@@ -305,8 +305,10 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
               <HStack justify="end" gap={2} align="center">
                 <Button
                   label={cancelLabel}
-                  // Same Cancel styling as the ReactNode branch below.
-                  variant="secondary"
+                  // Astryx `AlertDialog`'s own Cancel variant — this branch
+                  // reproduces that component, the one below reproduces
+                  // `Dialog` + `Layout`, so the two differ on purpose.
+                  variant="ghost"
                   isDisabled={options.cancelButtonProps?.disabled}
                   onClick={() => runCancel(task)}
                   // WAI-ARIA alert-dialog: preselect the safest choice.
