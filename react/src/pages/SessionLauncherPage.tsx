@@ -1548,6 +1548,9 @@ const SessionLauncherPage = () => {
             <Stepper
               orientation="vertical"
               density="compact"
+              // FR-3596: on-track puts each indicator on the connector line.
+              // Keep in sync with the deployment preset rail, which mirrors this one.
+              indicatorPosition="on-track"
               activeStep={currentStep}
               // `Stepper.label` names the whole sequence for assistive tech;
               // antd's `Steps` had none. Reuses the page's own existing title
