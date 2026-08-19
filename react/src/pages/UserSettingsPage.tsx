@@ -485,9 +485,9 @@ const UserPreferencesPage = () => {
           onChange: setExperimentalCustomDashboard,
         },
         {
-          'data-testid': 'items-experimental-global-search',
+          'data-testid': 'items-experimental-command-palette',
           type: 'checkbox',
-          title: t('userSettings.GlobalSearch'),
+          title: t('userSettings.CommandPalette'),
           description: t('general.Enabled'),
           defaultValue: false,
           value: experimentalGlobalSearch,
