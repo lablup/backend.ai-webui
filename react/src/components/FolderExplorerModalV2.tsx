@@ -34,6 +34,7 @@ import BAITabs from './BAITabs';
 import { useFileUploadManager } from './FileUploadManager';
 import type { RcFile } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
+import './FolderExplorerModalV2.css';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
@@ -568,7 +569,10 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                       percentage indefinite, collapsing the handle (divider +
                       pill) to ~30px pinned at the top, over the tab strip. A
                       stretched flex wrapper gives it a definite height. */}
-                  <div style={{ display: 'flex', alignSelf: 'stretch' }}>
+                  <div
+                    className="bai-folder-explorer-split"
+                    style={{ display: 'flex', alignSelf: 'stretch' }}
+                  >
                     <ResizeHandle
                       direction="horizontal"
                       isReversed

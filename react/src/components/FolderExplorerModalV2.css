@@ -1,0 +1,16 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+
+/* Astryx `ResizeHandle` (0.4.3, unchanged in 0.4.4) stretches its grab zone with
+   `top/bottom: 0` and ALSO applies a block-axis `translate(…, -50%)` left over
+   from a `top: 50%` anchor, so the zone sits half its own height too high and
+   only the divider's top half is draggable (FR-3591). `translate` composes
+   before `transform`, so this cancels the stray shift without competing with the
+   atomic `transform` rule. Drop it when the upstream fix lands. */
+.bai-folder-explorer-split
+  .astryx-resize-handle
+  > :not(.astryx-resize-handle-pill) {
+  translate: 0 50%;
+}
