@@ -40,12 +40,15 @@ const wrapper = ({ children }: { children: React.ReactNode }) =>
 // ---------------------------------------------------------------------------
 
 // Mock react-i18next so that t() returns the key as-is, making assertions
-// independent of the actual translation strings.
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+// independent of the actual translation strings. The rest of the module stays
+// intact — BUI's locale bootstrap imports `initReactI18next` from here.
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
 
 // ---------------------------------------------------------------------------
 // Helper: set up a fake backendaiclient on globalThis

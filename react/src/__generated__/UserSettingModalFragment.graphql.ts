@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5f3d6bdc21d0312e7f33a933e7f11afb>>
+ * @generated SignedSource<<4535281cf97f84428b776aa5e1bc963d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -41,7 +41,7 @@ export type UserSettingModalFragment$data = {
   readonly security: {
     readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
     readonly sudoSessionEnabled: boolean;
-    readonly totpActivated: boolean | null | undefined;
+    readonly totpActivated?: boolean | null | undefined;
   };
   readonly status: {
     readonly needPasswordChange: boolean | null | undefined;
@@ -187,11 +187,18 @@ return {
       "plural": false,
       "selections": [
         {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "totpActivated",
-          "storageKey": null
+          "condition": "isNotSupportTotp",
+          "kind": "Condition",
+          "passingValue": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "totpActivated",
+              "storageKey": null
+            }
+          ]
         },
         {
           "alias": null,
@@ -287,6 +294,6 @@ return {
 };
 })();
 
-(node as any).hash = "4361007be22259c3a0c1918a3f35db96";
+(node as any).hash = "fe5c9e96f7b5b915441f9784c6cb4b3e";
 
 export default node;

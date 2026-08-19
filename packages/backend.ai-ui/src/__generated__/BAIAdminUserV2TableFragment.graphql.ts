@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6873a2e8480d63aa479a52e63163e388>>
+ * @generated SignedSource<<47d1f265f2e8be29be972a1654752c18>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -35,8 +35,8 @@ export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
   readonly security: {
     readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
     readonly sudoSessionEnabled: boolean;
-    readonly totpActivated: boolean | null | undefined;
-    readonly totpActivatedAt: string | null | undefined;
+    readonly totpActivated?: boolean | null | undefined;
+    readonly totpActivatedAt?: string | null | undefined;
   };
   readonly status: {
     readonly needPasswordChange: boolean | null | undefined;
@@ -172,18 +172,25 @@ const node: ReaderFragment = {
       "plural": false,
       "selections": [
         {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "totpActivated",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "totpActivatedAt",
-          "storageKey": null
+          "condition": "isNotSupportTotp",
+          "kind": "Condition",
+          "passingValue": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "totpActivated",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "totpActivatedAt",
+              "storageKey": null
+            }
+          ]
         },
         {
           "alias": null,
@@ -296,6 +303,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "cc2d2f87954ec529fdc80352e406cf85";
+(node as any).hash = "2a7ebc6edb19014b896c2fb9c7b8f3e7";
 
 export default node;

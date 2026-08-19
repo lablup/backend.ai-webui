@@ -5,13 +5,11 @@
 import { AdminUserCredentialListDeleteMutation } from '../__generated__/AdminUserCredentialListDeleteMutation.graphql';
 import { AdminUserCredentialListModifyMutation } from '../__generated__/AdminUserCredentialListModifyMutation.graphql';
 import {
-  AdminUserCredentialListQuery,
+  AdminUserCredentialListQuery as AdminUserCredentialListQueryType,
   AdminUserCredentialListQuery$data,
-  AdminUserCredentialListQuery$variables,
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
@@ -30,9 +28,7 @@ import {
   BAIDeleteConfirmModal,
   BAISelectionLabel,
   useBAILogger,
-  useUpdatableState,
   BAIText,
-  INITIAL_FETCH_KEY,
   PRIMARY_TAG_VARIANT,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -46,10 +42,53 @@ import {
   SquarePenIcon,
   UndoIcon,
 } from 'lucide-react';
-import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
-import { useDeferredValue, useEffect, useState, useTransition } from 'react';
+import { useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useMutation,
+  usePreloadedQuery,
+  type PreloadedQuery,
+  type UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+export const AdminUserCredentialListQuery = graphql`
+  query AdminUserCredentialListQuery(
+    $limit: Int!
+    $offset: Int!
+    $filter: String
+    $order: String
+    $domain_name: String
+    $email: String
+    $is_active: Boolean
+  ) {
+    keypair_list(
+      limit: $limit
+      offset: $offset
+      filter: $filter
+      order: $order
+      domain_name: $domain_name
+      email: $email
+      is_active: $is_active
+    ) {
+      items {
+        id
+        user_id
+        access_key
+        is_admin
+        resource_policy
+        created_at
+        rate_limit
+        num_queries
+        concurrency_used @since(version: "24.09.0")
+
+        ...KeypairSettingModalFragment
+        ...KeypairInfoModalFragment
+      }
+      total_count
+    }
+  }
+`;
 
 type Keypair = NonNullable<
   NonNullable<
@@ -57,23 +96,25 @@ type Keypair = NonNullable<
   >['items'][number]
 >;
 
-const AdminUserCredentialList: React.FC = () => {
+export const CREDENTIAL_LIST_DEFAULT_PAGE_SIZE = 20;
+
+interface AdminUserCredentialListProps {
+  queryRef: PreloadedQuery<AdminUserCredentialListQueryType>;
+  onReload: (
+    variables: AdminUserCredentialListQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+}
+
+const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
+  queryRef,
+  onReload,
+}) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
-
-  const [action, setAction] = useQueryState('action', parseAsString);
-
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      activeType: parseAsString.withDefault('active'),
-      order: parseAsString,
-      filter: parseAsString,
-    },
-    { history: 'replace' },
-  );
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
     useState<KeypairSettingModalFragment$key | null>(null);
@@ -88,71 +129,20 @@ const AdminUserCredentialList: React.FC = () => {
   const [selectedKeypairs, setSelectedKeypairs] = useState<Keypair[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
-    current: 1,
-    pageSize: 20,
-  });
+  // The page owns URL state and the fetch; this component derives every
+  // filter/order/pagination control from the last requested variables and
+  // funnels changes back through `onReload`.
+  const variables = queryRef.variables;
+  const activeType = variables.is_active === false ? 'inactive' : 'active';
+  const pageSize = variables.limit ?? CREDENTIAL_LIST_DEFAULT_PAGE_SIZE;
+  const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 
-  const queryVariables: AdminUserCredentialListQuery$variables = {
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-    is_active: queryParams.activeType === 'active',
-    filter: queryParams.filter,
-    order: queryParams.order,
-  };
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isPending = deferredQueryRef !== queryRef;
 
-  const { keypair_list } = useLazyLoadQuery<AdminUserCredentialListQuery>(
-    graphql`
-      query AdminUserCredentialListQuery(
-        $limit: Int!
-        $offset: Int!
-        $filter: String
-        $order: String
-        $domain_name: String
-        $email: String
-        $is_active: Boolean
-      ) {
-        keypair_list(
-          limit: $limit
-          offset: $offset
-          filter: $filter
-          order: $order
-          domain_name: $domain_name
-          email: $email
-          is_active: $is_active
-        ) {
-          items {
-            id
-            user_id
-            access_key
-            is_admin
-            resource_policy
-            created_at
-            rate_limit
-            num_queries
-            concurrency_used @since(version: "24.09.0")
-
-            ...KeypairSettingModalFragment
-            ...KeypairInfoModalFragment
-          }
-          total_count
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
+  const { keypair_list } = usePreloadedQuery<AdminUserCredentialListQueryType>(
+    AdminUserCredentialListQuery,
+    deferredQueryRef,
   );
 
   const [commitModifyKeypair] =
@@ -248,31 +238,22 @@ const AdminUserCredentialList: React.FC = () => {
           );
         }
         setSelectedKeypairs([]);
-        updateFetchKey();
+        onReload(variables, { fetchPolicy: 'network-only' });
       },
     });
   };
-
-  useEffect(() => {
-    if (action === 'add') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOpenUserKeypairSettingModal(true);
-
-      setAction(null);
-    }
-  }, [action, setAction]);
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex gap={'sm'} align="start">
           <BAIRadioGroup
-            value={queryParams.activeType}
+            value={activeType}
             onChange={(value) => {
-              setQueryParams({ activeType: value.target.value });
-              setTablePaginationOption({
-                current: 1,
-                pageSize: tablePaginationOption.pageSize,
+              onReload({
+                ...variables,
+                is_active: value.target.value === 'active',
+                offset: 0,
               });
               setSelectedKeypairs([]);
             }}
@@ -323,9 +304,13 @@ const AdminUserCredentialList: React.FC = () => {
                 type: 'string',
               },
             ]}
-            value={queryParams.filter ?? undefined}
+            value={variables.filter ?? undefined}
             onChange={(value) => {
-              setQueryParams({ filter: value ?? null });
+              onReload({
+                ...variables,
+                filter: value ?? null,
+                offset: 0,
+              });
               setSelectedKeypairs([]);
             }}
           />
@@ -337,7 +322,7 @@ const AdminUserCredentialList: React.FC = () => {
                 count={selectedKeypairs.length}
                 onClearSelection={() => setSelectedKeypairs([])}
               />
-              {queryParams.activeType === 'active' ? (
+              {activeType === 'active' ? (
                 <Tooltip content={t('credential.Deactivate')}>
                   <BAIButton
                     icon={<BanIcon style={{ color: token.colorError }} />}
@@ -358,9 +343,9 @@ const AdminUserCredentialList: React.FC = () => {
           )}
           <Tooltip content={t('button.Refresh')}>
             <BAIButton
-              loading={deferredFetchKey !== fetchKey}
+              loading={isPending}
               onClick={() => {
-                updateFetchKey();
+                onReload(variables, { fetchPolicy: 'network-only' });
               }}
               icon={<RotateCw size="1em" />}
             />
@@ -378,7 +363,7 @@ const AdminUserCredentialList: React.FC = () => {
       </BAIFlex>
       <BAITable<Keypair>
         rowKey={'id'}
-        loading={deferredQueryVariables !== queryVariables}
+        loading={isPending}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
         rowSelection={{
           type: 'checkbox',
@@ -432,7 +417,7 @@ const AdminUserCredentialList: React.FC = () => {
                     });
                   },
                 },
-                ...(queryParams.activeType === 'inactive'
+                ...(activeType === 'inactive'
                   ? [
                       {
                         key: 'activate',
@@ -467,7 +452,9 @@ const AdminUserCredentialList: React.FC = () => {
                                         kp.access_key !== record.access_key,
                                     ),
                                   );
-                                  updateFetchKey();
+                                  onReload(variables, {
+                                    fetchPolicy: 'network-only',
+                                  });
                                   resolve();
                                 },
                                 onError: (error) => {
@@ -482,7 +469,7 @@ const AdminUserCredentialList: React.FC = () => {
                       },
                     ]
                   : []),
-                ...(queryParams.activeType === 'active'
+                ...(activeType === 'active'
                   ? [
                       {
                         key: 'deactivate',
@@ -521,7 +508,9 @@ const AdminUserCredentialList: React.FC = () => {
                                         kp.access_key !== record.access_key,
                                     ),
                                   );
-                                  updateFetchKey();
+                                  onReload(variables, {
+                                    fetchPolicy: 'network-only',
+                                  });
                                   resolve();
                                 },
                                 onError: (error) => {
@@ -631,22 +620,26 @@ const AdminUserCredentialList: React.FC = () => {
           },
         ])}
         pagination={{
-          pageSize: tablePaginationOption.pageSize,
+          pageSize,
           total: keypair_list?.total_count || 0,
-          current: tablePaginationOption.current,
+          current,
           // TODO: need to set more options to export CSV in current page's data
-          onChange(current, pageSize) {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
+          onChange(nextCurrent, nextPageSize) {
+            if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
+              onReload({
+                ...variables,
+                limit: nextPageSize,
+                offset: (nextCurrent - 1) * nextPageSize,
               });
               setSelectedKeypairs([]);
             }
           },
         }}
         onChangeOrder={(nextOrder) => {
-          setQueryParams({ order: nextOrder ?? null });
+          onReload({
+            ...variables,
+            order: nextOrder ?? null,
+          });
           setSelectedKeypairs([]);
         }}
       />
@@ -670,7 +663,7 @@ const AdminUserCredentialList: React.FC = () => {
           setKeypairSettingModalFrgmt(null);
           setOpenUserKeypairSettingModal(false);
           if (success) {
-            updateFetchKey();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }
         }}
       />
@@ -709,7 +702,7 @@ const AdminUserCredentialList: React.FC = () => {
                   ),
                 );
                 setDeletingKeypair(null);
-                updateFetchKey();
+                onReload(variables, { fetchPolicy: 'network-only' });
               },
               onError: (error) => {
                 message.error(error?.message);
