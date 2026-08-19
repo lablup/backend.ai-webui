@@ -121,32 +121,17 @@
     );
   }
 
-  /* ======================== Placeholder strength (FR-3543) ================
-
-     Astryx paints every placeholder with the SECONDARY text token, and the
-     antd-parity theme pins that token at 0.65 alpha — nearly entered-text
-     strength, so empty and filled fields read the same. Placeholders get
-     their own strength token instead: antd's colorTextTertiary step (0.45),
-     picked over strict placeholder parity (antd's colorTextPlaceholder was
-     0.25, the quaternary/disabled step) so an empty field still reads as a
-     hint but does not look disabled.
-
-     The compiled StyleX placeholder rule is unlayered with id-level
-     specificity, so it is not overridable — but it only READS
-     `--color-text-secondary`, so the token is remapped on the
-     placeholder-bearing element instead. `:placeholder-shown` scopes the
-     remap to empty fields (NumberInput colors its invalid VALUE with the
-     secondary token); `.astryx-selector`'s popover is a DOM sibling of the
-     root, so its option list is out of reach; the chat composer's overlay
-     `<div>` is its own only secondary consumer. MultiSelector's trigger is
-     deliberately left out — its "+N" overflow count shares the token. */
+  /* Astryx paints placeholders with `--color-text-secondary`, which this theme
+     pins at entered-text strength; dark keeps 0.65 for legibility (FR-3543). */
   :root {
     --bai-color-text-placeholder: light-dark(
       rgba(0, 0, 0, 0.45),
-      rgba(255, 255, 255, 0.45)
+      rgba(255, 255, 255, 0.65)
     );
   }
 
+  /* `:placeholder-shown` only — NumberInput paints its invalid VALUE with the
+     same token. */
   input:placeholder-shown,
   textarea:placeholder-shown,
   .astryx-selector,
