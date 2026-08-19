@@ -383,9 +383,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 applyLabel={t('button.Apply')}
                 // Free text with no field prefix becomes a `name ilike` token.
                 contentSearchFieldKey="name"
-                resultCount={t('general.TotalItems', {
-                  total: vfolder_nodes?.count ?? 0,
-                })}
                 filterProperties={[
                   {
                     key: 'name',
