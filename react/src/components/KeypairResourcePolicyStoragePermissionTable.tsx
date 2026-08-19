@@ -13,7 +13,7 @@ import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import {
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
   BAIText,
@@ -199,7 +199,7 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         size="small"
         {...tableProps}
         rowKey="id"

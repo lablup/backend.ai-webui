@@ -30,7 +30,7 @@ import {
   BAIId,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForStatus,
@@ -460,7 +460,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAITableAstryx<(typeof scopeRows)[number]>
+        <BAITable<(typeof scopeRows)[number]>
           rowKey="scopeId"
           dataSource={scopeRows}
           columns={columns}

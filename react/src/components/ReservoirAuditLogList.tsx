@@ -6,7 +6,7 @@ import { Badge } from '@astryxdesign/core/Badge';
 import {
   BAIPropertyFilter,
   BAIFlex,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   badgeVariantForTagColor,
 } from 'backend.ai-ui';
@@ -95,7 +95,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
           onChange={onFilterChange}
         />
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
         size="small"
         dataSource={auditLogs}
         rowKey="id"

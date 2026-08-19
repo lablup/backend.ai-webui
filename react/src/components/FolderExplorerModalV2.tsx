@@ -342,7 +342,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       enableEdit={hasUploadContentPermission}
       // NOTE: the legacy `tableProps.scroll` ({x:'max-content'} at `xl`,
       // plus a `y: calc(100vh - 400px)` body cap below it) is gone on purpose:
-      // `BAITableAstryx` accepts and ignores `scroll` (Astryx's own scroll
+      // `BAITable` accepts and ignores `scroll` (Astryx's own scroll
       // wrapper owns horizontal overflow), and the dialog body is the scroll
       // container for the vertical axis now.
       style={{

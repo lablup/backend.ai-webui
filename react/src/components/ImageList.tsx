@@ -33,7 +33,7 @@ import {
   BAIFlex,
   BAIPropertyFilter,
   BAIResourceNumberWithIcon,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
@@ -319,7 +319,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // The record arrives as `render`'s SECOND argument — this column is
       // computed and has no `dataIndex`, so the first argument (the cell
       // value) is `undefined`. Reading the row off the first argument is an
-      // rc-table quirk that `BAITableAstryx` does not reproduce; taking it
+      // rc-table quirk that `BAITable` does not reproduce; taking it
       // from the second is the Astryx/antd `(value, record, index)` contract.
       render: (_value, row) => (
         // `maxLines={1}` for the same reason as the Digest column below:
@@ -597,7 +597,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAITableAstryx
+        <BAITable
           resizable
           rowKey="id"
           pagination={{

@@ -24,7 +24,7 @@ import {
   filterOutNullAndUndefined,
   BAIColumnType,
   BAIFlex,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAISessionAgentIds,
   BAIAppIcon,
@@ -415,7 +415,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         resizable
         rowKey={'id'}
         size="small"

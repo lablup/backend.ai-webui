@@ -55,7 +55,7 @@ const meta: Meta<typeof BAIBulkErrorModal> = {
 - The title defaults to a localized "Action execution failed" with an error icon; pass \`title\` for operation-specific copy.
 - Purely informational: there is no footer — dismissal happens through the header X (or mask / Esc) and is reported through \`onRequestClose\` so the caller decides what happens next (typically keeping its own form open for a retry).
 - Client-side pagination shows at most 10 rows per page; the pager is hidden while the failures fit on a single page.
-- Built on \`BAIModal\` and \`BAITableAstryx\`.
+- Built on \`BAIModal\` and \`BAITable\`.
         `,
       },
     },

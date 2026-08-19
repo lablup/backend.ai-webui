@@ -151,7 +151,7 @@ const DeploymentAutoScalingCardContent: React.FC<
     'table_column_overrides.AutoScalingRuleList',
   );
 
-  // BAITableAstryx order string: "createdAt" (ASC) | "-createdAt" (DESC)
+  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC)
   const [queryParams, setQueryParams] = useQueryStates(
     {
       order: parseAsStringLiteral([

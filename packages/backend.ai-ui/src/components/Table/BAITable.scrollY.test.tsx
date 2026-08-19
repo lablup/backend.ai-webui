@@ -7,9 +7,9 @@ import {
   SCROLL_PINNED_COLUMNS,
   dimLayerOf,
   renderScrollTable,
-} from './BAITableAstryx.scrollTestFixtures';
+} from './BAITable.scrollTestFixtures';
 
-describe('BAITableAstryx scroll.y', () => {
+describe('BAITable scroll.y', () => {
   it.each([
     [500 as const, '500px'],
     ['60vh' as const, '60vh'],

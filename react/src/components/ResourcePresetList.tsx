@@ -17,7 +17,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAITableAstryx,
+  BAITable,
   BAIFlex,
   BAINumberWithUnit,
   useUpdatableState,
@@ -185,7 +185,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
         rowKey={'name'}
         dataSource={filterOutNullAndUndefined(resource_presets)}
         columns={columns}

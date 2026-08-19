@@ -15,7 +15,7 @@
 
  Structural, not visual — jsdom's lack of layout does not matter.
 */
-import BAITableAstryx from './BAITableAstryx';
+import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -29,7 +29,7 @@ const ROWS: Array<Row> = [{ id: '1', cpu: '2' }];
 
 const openSettings = async (columns: BAIColumnsType<Row>) => {
   render(
-    <BAITableAstryx<Row>
+    <BAITable<Row>
       rowKey="id"
       dataSource={ROWS}
       columns={columns}
@@ -39,7 +39,7 @@ const openSettings = async (columns: BAIColumnsType<Row>) => {
   await userEvent.click(screen.getByRole('button', { name: /setting/i }));
 };
 
-describe('BAITableAstryx column labels in the settings modal', () => {
+describe('BAITable column labels in the settings modal', () => {
   it('uses the text of an ELEMENT title instead of stringifying the element', async () => {
     await openSettings([
       {

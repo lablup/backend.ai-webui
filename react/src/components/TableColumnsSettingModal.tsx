@@ -7,7 +7,7 @@
  수정이 필요합니다."
 
  There are two column-settings surfaces in the app. Most tables use the one
- `BAITableAstryx` renders for its `tableSettings` prop
+ `BAITable` renders for its `tableSettings` prop
  (`BAITableAstryxSettingModal`): a `Dialog` with a title+subtitle header, an
  unlabelled search field, drag-to-reorder handles, locked required columns and
  Cancel/Apply. The five tables that predate that prop — `RoleNodes` (RBAC

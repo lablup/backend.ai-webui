@@ -6,7 +6,7 @@ import { badgeVariantForTagColor, toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAIText from '../BAIText';
-import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../Table';
+import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
 import { Badge } from '@astryxdesign/core/Badge';
 import dayjs from 'dayjs';
@@ -200,7 +200,7 @@ const BAIProjectTable = ({
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;
 
   return (
-    <BAITableAstryx<ProjectInList>
+    <BAITable<ProjectInList>
       {...tableProps}
       rowKey={(record) => record.id}
       dataSource={projects}

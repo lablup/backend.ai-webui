@@ -28,7 +28,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITag,
   BAIUnmountAfterClose,
   BAIId,
@@ -725,7 +725,7 @@ const DeploymentRevisionHistoryTab: React.FC<
           onChange={() => handleRefresh()}
         />
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
         rowKey="id"
         dataSource={revisions}
         columns={columns}

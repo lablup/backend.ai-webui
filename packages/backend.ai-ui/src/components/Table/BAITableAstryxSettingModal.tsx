@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  to-astryx TICKET 25 — Astryx-native column-settings modal for
- `BAITableAstryx`.
+ `BAITable`.
 
  The antd version (`BAITableSettingModal`) renders a whole antd `Table` inside
  an antd `Modal`, with `Form`, `Checkbox`, `Input.Search` and a dnd-kit
@@ -16,7 +16,7 @@
  the working set is ordinary component state seeded from props on open, and
  `onRequestClose` is called with `undefined` on cancel / the new
  `{selectedColumnKeys, columnOrder}` on apply. That is the same contract the
- caller already handled, so `BAITableAstryx`'s projection back into
+ caller already handled, so `BAITable`'s projection back into
  `columnOverrides` is unchanged.
 
  Drag-to-reorder still uses dnd-kit (already a BUI dependency); Astryx ships no

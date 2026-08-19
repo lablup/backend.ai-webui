@@ -16,7 +16,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
@@ -214,16 +214,12 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
               entries,
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
-                  {index > 0 && (
-                    <Divider orientation="vertical" />
-                  )}
+                  {index > 0 && <Divider orientation="vertical" />}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Text color="secondary">
-                        / {t('fairShare.DayUnit')}
-                      </Text>
+                      <Text color="secondary">/ {t('fairShare.DayUnit')}</Text>
                     }
                   />
                 </BAIFlex>
@@ -249,7 +245,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   ];
 
   return (
-    <BAITableAstryx
+    <BAITable
       rowKey={'domainName'}
       {...tableProps}
       dataSource={domain || []}

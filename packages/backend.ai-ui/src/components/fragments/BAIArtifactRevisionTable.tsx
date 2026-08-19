@@ -12,7 +12,7 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
-import { BAIColumnType, BAITableAstryx, BAITableProps } from '../Table';
+import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import { Badge } from '@astryxdesign/core/Badge';
 import dayjs from 'dayjs';
@@ -144,13 +144,13 @@ const BAIArtifactRevisionTable = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx<ArtifactRevision>
+    <BAITable<ArtifactRevision>
       rowKey={(record) => record.id}
       resizable
       columns={allColumns}
       dataSource={artifactRevision}
       {...tableProps}
-    ></BAITableAstryx>
+    ></BAITable>
   );
 };
 

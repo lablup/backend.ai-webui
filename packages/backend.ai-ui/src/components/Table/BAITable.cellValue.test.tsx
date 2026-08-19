@@ -1,5 +1,5 @@
 /*
- approved-2: the value `BAITableAstryx` hands to a column's `render`.
+ approved-2: the value `BAITable` hands to a column's `render`.
 
  The contract is Astryx/antd's `render(value, record, index)`, nothing more.
  A column with no `dataIndex` has NO cell value, so `value` is `undefined` and
@@ -14,7 +14,7 @@
 
  They are structural, not visual, so jsdom's lack of layout does not matter.
 */
-import BAITableAstryx from './BAITableAstryx';
+import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render, screen } from '@testing-library/react';
 
@@ -33,11 +33,9 @@ const ROWS: Array<Row> = [
 const fullPath = (row: Row) => `${row.registry}/${row.name}:${row.tag}`;
 
 const renderTable = (columns: BAIColumnsType<Row>) =>
-  render(
-    <BAITableAstryx<Row> rowKey="id" dataSource={ROWS} columns={columns} />,
-  );
+  render(<BAITable<Row> rowKey="id" dataSource={ROWS} columns={columns} />);
 
-describe('BAITableAstryx cell values', () => {
+describe('BAITable cell values', () => {
   it('should reach the record through `render`s SECOND argument on a column with no dataIndex', () => {
     renderTable([
       {
@@ -109,7 +107,7 @@ describe('BAITableAstryx cell values', () => {
 
   it('should resolve a nested dataIndex path', () => {
     render(
-      <BAITableAstryx<{ id: string; meta: { owner: string } }>
+      <BAITable<{ id: string; meta: { owner: string } }>
         rowKey="id"
         dataSource={[{ id: '1', meta: { owner: 'admin' } }]}
         columns={[

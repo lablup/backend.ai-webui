@@ -2,7 +2,7 @@
  Client-side slicing, plus the server-sliced case it must not re-slice.
  Mechanism + affected call sites: FR-3563.
 */
-import BAITableAstryx from './BAITableAstryx';
+import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render, screen } from '@testing-library/react';
 
@@ -22,10 +22,10 @@ const makeRows = (count: number): Array<Row> =>
   }));
 
 const renderTable = (
-  props: Partial<React.ComponentProps<typeof BAITableAstryx<Row>>> = {},
-) => render(<BAITableAstryx<Row> rowKey="id" columns={COLUMNS} {...props} />);
+  props: Partial<React.ComponentProps<typeof BAITable<Row>>> = {},
+) => render(<BAITable<Row> rowKey="id" columns={COLUMNS} {...props} />);
 
-describe('BAITableAstryx pagination (FR-3563)', () => {
+describe('BAITable pagination (FR-3563)', () => {
   it('slices a client-side list to the default page size', () => {
     renderTable({ dataSource: makeRows(25), pagination: {} });
 
@@ -78,13 +78,15 @@ describe('BAITableAstryx pagination (FR-3563)', () => {
   });
 
   it('clamps a page that a shrinking list left stranded', () => {
-    // The user paged to 3, then a filter cut the list down to 4 rows.
+    // Still longer than a page after the filter, so this reaches the slice
+    // instead of short-circuiting on `length <= pageSize` (which made it vacuous).
     renderTable({
-      dataSource: makeRows(4),
-      pagination: { current: 3, pageSize: 10 },
+      dataSource: makeRows(25),
+      pagination: { current: 5, pageSize: 10 },
     });
 
-    expect(screen.getByText('row-1')).toBeInTheDocument();
-    expect(screen.getByText('row-4')).toBeInTheDocument();
+    expect(screen.queryByText('row-20')).not.toBeInTheDocument();
+    expect(screen.getByText('row-21')).toBeInTheDocument();
+    expect(screen.getByText('row-25')).toBeInTheDocument();
   });
 });
