@@ -57,22 +57,30 @@ describe('BAIDialogPortal', () => {
     expect(root?.hasAttribute('data-bai-modal-open')).toBe(true);
   });
 
-  it('leaves content outside the modal clickable — the point of FR-3578', async () => {
+  // The point of FR-3578: an open modal marks nothing outside itself inert, so a
+  // surface stacked ABOVE the mask stays operable. jsdom does no hit-testing, so
+  // this can only assert the inertness half — the mask half is a z-index question
+  // the ladder owns, and the click itself is measured live (see the PR).
+  it('leaves a surface above the mask operable while open', async () => {
     const user = userEvent.setup();
-    const onOutside = vi.fn();
+    const onNotice = vi.fn();
     render(
       <>
-        <button type="button" onClick={onOutside}>
-          Outside
-        </button>
+        <div className="bai-notification-stack">
+          <button type="button" onClick={onNotice}>
+            Dismiss
+          </button>
+        </div>
         <BAIDialogPortal isOpen onOpenChange={vi.fn()} aria-label="modal">
           <Layout content={<LayoutContent>body</LayoutContent>} />
         </BAIDialogPortal>
       </>,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Outside' }));
-    expect(onOutside).toHaveBeenCalledTimes(1);
+    const notice = screen.getByRole('button', { name: 'Dismiss' });
+    expect(notice.closest('[inert]')).toBeNull();
+    await user.click(notice);
+    expect(onNotice).toHaveBeenCalledTimes(1);
   });
 
   it('names itself from the DialogHeader title', () => {
