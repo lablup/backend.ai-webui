@@ -37,8 +37,6 @@ export interface SearchIndexEntry {
   /** Route path; `:projectName` is filled in at query time. */
   path: string;
   labelKey: string | null;
-  /** Repo-relative files the route renders, for debugging the index. */
-  component: Array<string>;
   tabs: Array<SearchIndexTab>;
   settings: Array<SearchIndexSetting>;
   /** Body keys: page vocabulary minus titles, tab/setting keys, and chrome. */
