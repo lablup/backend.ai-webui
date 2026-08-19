@@ -1,5 +1,5 @@
 // spec: global search palette (FR-3558) — open, search, and arrive
-import { loginAsAdmin, navigateTo } from './utils/test-util';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
 const palette = (page: Page) => page.getByRole('dialog', { name: 'Search' });
@@ -13,6 +13,24 @@ const resultRow = (page: Page, text: string) =>
     .filter({ hasText: text })
     .filter({ hasNotText: 'Found in' })
     .first();
+
+/**
+ * `data-value` on a row is the hit id, which is the only text-free handle on
+ * exactly which row is which — "Statistics" also appears in the breadcrumb of
+ * that page's tab hits.
+ */
+const STATISTICS_PAGE_HIT = 'page:/project/:projectName/statistics';
+
+/**
+ * The hit id of the row the arrow keys are currently on. The highlight lives
+ * on the input as `aria-activedescendant`, not on the row itself.
+ */
+const highlightedHit = (page: Page) =>
+  expect.poll(async () => {
+    const id = await searchInput(page).getAttribute('aria-activedescendant');
+    if (!id) return null;
+    return palette(page).locator(`[id="${id}"]`).getAttribute('data-value');
+  });
 
 const openPalette = async (page: Page) => {
   await page.getByTestId('button-global-search').click();
@@ -64,6 +82,10 @@ test.describe(
     test('user can open the palette with the keyboard shortcut', async ({
       page,
     }) => {
+      // The header trigger is the same component that registers `mod+k`, so
+      // its presence is the readiness signal the bare press otherwise races.
+      await expect(page.getByTestId('button-global-search')).toBeVisible();
+
       await page.keyboard.press('ControlOrMeta+k');
 
       await expect(palette(page)).toBeVisible();
@@ -77,9 +99,12 @@ test.describe(
       await expect(resultRow(page, 'Statistics')).toBeVisible();
 
       await page.keyboard.press('ArrowDown');
+      await highlightedHit(page).toBe(STATISTICS_PAGE_HIT);
+
       await page.keyboard.press('Enter');
 
-      await expect(page).toHaveURL(/\/statistics/);
+      // Anchored: the tab hits of this same page land on /statistics?tab=….
+      await expect(page).toHaveURL(/\/statistics$/);
       await expect(palette(page)).toBeHidden();
     });
 
@@ -105,14 +130,14 @@ test.describe(
 
       await resultRow(page, 'Auto Logout').click();
 
-      await expect(page).toHaveURL(/setting=userSettings.AutoLogout/);
       // The param IS the highlight: it marks the item, then strips itself.
+      // Asserting the un-stripped URL first would race that same window, so
+      // the mark and the stripped URL are all this test looks at.
       await expect(page.getByTestId('items-auto-logout')).toHaveAttribute(
         'data-arrival',
         'true',
       );
-      await expect(page).not.toHaveURL(/setting=/);
-      await expect(page.getByTestId('items-auto-logout')).toBeVisible();
+      await expect(page).not.toHaveURL(/setting=userSettings\.AutoLogout/);
     });
 
     test('user can run the theme action from the palette', async ({ page }) => {
@@ -121,9 +146,16 @@ test.describe(
         (await themeButton.getAttribute('aria-label')) === 'Light mode';
 
       await openPalette(page);
-      await search(page, wasDark ? 'Switch to light mode' : 'Switch to dark');
+      await search(
+        page,
+        wasDark ? 'Switch to light mode' : 'Switch to dark mode',
+      );
 
-      await resultRow(page, wasDark ? 'light mode' : 'dark mode').click();
+      await palette(page)
+        .locator(
+          `[data-value="${wasDark ? 'action:theme-light' : 'action:theme-dark'}"]`,
+        )
+        .click();
 
       await expect(palette(page)).toBeHidden();
       await expect(themeButton).toHaveAttribute(
