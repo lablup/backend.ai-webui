@@ -3849,6 +3849,7 @@
       "WelcomeMessage": "Bem vindo, {{userName }}.",
       "YouMushChangeYourPassword": "Recomenda-se que altere periodicamente a sua palavra-passe por razões de segurança. Uma vez que passou um certo tempo desde a última vez que alterou a sua palavra-passe, deve alterá-la para poder continuar a utilizar o serviço.",
       "groupName": {
+        "General": "Geral",
         "Metrics": "Métricas",
         "Mlops": "MLOps",
         "Playground": "Parque infantil",
@@ -3881,6 +3882,10 @@
         "Appearance": "Aparência",
         "Create": "Criar",
         "PanelsAndHelp": "Painéis e ajuda"
+      },
+      "scope": {
+        "Project": "Projeto",
+        "ProjectAdministration": "Administração do projeto"
       }
     }
   }

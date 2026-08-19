@@ -4,13 +4,17 @@
  */
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import { useEffectiveAdminRole } from '../../hooks/useCurrentUserProjectRoles';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { buildActionHits, buildHits, toMenuSources } from './buildHits';
 import type { GroupedMenuNode } from './buildHits';
 import { RECENT_HIT_ID_PREFIX, baseHitId, rankHits } from './rank';
-import type { HitTranslator, SearchContext, SearchHit } from './types';
+import type {
+  HitTranslator,
+  SearchConfigFlags,
+  SearchContext,
+  SearchHit,
+} from './types';
 import { useRecentSearchHits } from './useRecentSearchHits';
 import { isHitVisible } from './visibility';
 import type { SearchSource } from '@astryxdesign/core/Typeahead';
@@ -31,6 +35,13 @@ export const toTranslator = (translate: TFunction): HitTranslator => {
   };
 };
 
+/** The one place the palette reads deployment config off the client. */
+export const toSearchConfigFlags = (baiClient: {
+  _config?: { fasttrackEndpoint?: string | null };
+}): SearchConfigFlags => ({
+  fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
+});
+
 export interface GlobalSearchSource extends SearchSource<SearchHit> {
   /** Astryx signals selection by id only; ids may carry `recent:` / `#found=`. */
   getHit: (id: string) => SearchHit | undefined;
@@ -47,7 +58,6 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
   const { t, i18n } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const currentUserRole = useCurrentUserRole();
-  const effectiveAdminRole = useEffectiveAdminRole();
   const projectName = useActiveProjectName();
   const { generalMenu, adminMenu, groupedGeneralMenu, groupedAdminMenu } =
     useWebUIMenuItems();
@@ -67,15 +77,9 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
   ];
 
   const ctx: SearchContext = {
-    projectName: projectName ?? null,
     isSuperAdmin: currentUserRole === 'superadmin',
-    isAdmin: effectiveAdminRole !== 'none',
     supports: (feature: string) => !!baiClient?.supports?.(feature),
-    config: {
-      hideAgents: baiClient?._config?.hideAgents ?? true,
-      enableReservoir: !!baiClient?._config?.enableReservoir,
-      fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
-    },
+    config: toSearchConfigFlags(baiClient),
     visibleMenuKeys: new Set(
       _.map([...generalMenu, ...adminMenu], (item) => item.key as string),
     ),
@@ -136,7 +140,9 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
       `[global-search] ${missing.length} menu key(s) have no search-index entry: ${missing.join(', ')}`,
     );
   });
-  const indexedMenuKeys = new Set(_.compact(_.map(hits, 'menuKey')));
+  const indexedMenuKeys = new Set(
+    _.compact(_.map(_.reject(hits, { kind: 'action' }), 'menuKey')),
+  );
   const missingMenuKeys = _.filter(
     [...ctx.visibleMenuKeys],
     (key) => !indexedMenuKeys.has(key),
@@ -155,6 +161,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
         tEn: translateEn,
         recentIds,
       }),
+    // Recents repeat below in the full list on purpose, the way VS Code does.
     bootstrap: () => [...recentRows, ...pageRows, ...actionRows],
     getHit: (id: string) => hitById[baseHitId(id)],
   };

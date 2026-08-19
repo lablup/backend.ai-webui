@@ -3848,6 +3848,7 @@
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
       "groupName": {
+        "General": "Yleistä",
         "Metrics": "Mittarit",
         "Mlops": "MLOps",
         "Playground": "Leikkipaikka",
@@ -3880,6 +3881,10 @@
         "Appearance": "Ulkoasu",
         "Create": "Luo",
         "PanelsAndHelp": "Paneelit ja ohje"
+      },
+      "scope": {
+        "Project": "Projekti",
+        "ProjectAdministration": "Projektin hallinta"
       }
     }
   }

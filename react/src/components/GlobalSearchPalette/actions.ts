@@ -33,6 +33,8 @@ export interface PaletteAction {
   labelKey: string;
   icon: ComponentType<{ size?: string | number }>;
   group: PaletteActionGroup;
+  /** Sidebar page the action acts on; it inherits that page's visibility. */
+  menuKey?: string;
   /** Literal terms matched verbatim, in English (the always-searched locale). */
   keywords?: Array<string>;
   gate?: (ctx: SearchContext) => boolean;
@@ -62,8 +64,8 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     labelKey: 'session.launcher.StartNewSession',
     icon: Play,
     group: 'create',
+    menuKey: 'session',
     keywords: ['session', 'launch', 'new'],
-    gate: (ctx) => ctx.visibleMenuKeys.has('session'),
     run: (ctx) =>
       ctx.navigate(`${buildPath('project', 'session', ctx.projectName)}/start`),
   },
@@ -72,8 +74,8 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     labelKey: 'data.CreateFolder',
     icon: FolderPlus,
     group: 'create',
+    menuKey: 'data',
     keywords: ['folder', 'vfolder', 'storage', 'data'],
-    gate: (ctx) => ctx.visibleMenuKeys.has('data'),
     run: (ctx) =>
       ctx.navigate({
         pathname: buildPath('project', 'data', ctx.projectName),
@@ -85,8 +87,8 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     labelKey: 'deployment.CreateDeployment',
     icon: Rocket,
     group: 'create',
+    menuKey: 'deployments',
     keywords: ['deployment', 'serving', 'model', 'inference'],
-    gate: (ctx) => ctx.visibleMenuKeys.has('deployments'),
     run: (ctx) =>
       ctx.navigate({
         pathname: buildPath('project', 'deployments', ctx.projectName),
@@ -98,6 +100,7 @@ export const PALETTE_ACTIONS: ReadonlyArray<PaletteAction> = [
     labelKey: 'webui.menu.FastTrack',
     icon: Workflow,
     group: 'create',
+    menuKey: 'pipeline',
     keywords: ['fasttrack', 'pipeline', 'mlops'],
     gate: (ctx) => !!ctx.config.fasttrackEndpoint,
     run: (ctx) => {

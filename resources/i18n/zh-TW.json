@@ -3851,6 +3851,7 @@
       "WelcomeMessage": "歡迎，{{ userName }}",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",
       "groupName": {
+        "General": "一般",
         "Metrics": "衡量标准",
         "Mlops": "MLOps",
         "Playground": "游乐场",
@@ -3883,6 +3884,10 @@
         "Appearance": "外觀",
         "Create": "建立",
         "PanelsAndHelp": "面板與幫助"
+      },
+      "scope": {
+        "Project": "項目",
+        "ProjectAdministration": "項目管理"
       }
     }
   }

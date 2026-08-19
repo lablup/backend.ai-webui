@@ -3851,6 +3851,7 @@
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Disarankan untuk mengubah kata sandi Anda secara berkala untuk alasan keamanan. Karena sejumlah waktu telah berlalu sejak terakhir kali Anda mengubah kata sandi, Anda harus mengubahnya agar dapat terus menggunakan layanan ini.",
       "groupName": {
+        "General": "Umum",
         "Metrics": "Metrik",
         "Mlops": "MLOps",
         "Playground": "Taman bermain",
@@ -3883,6 +3884,10 @@
         "Appearance": "Tampilan",
         "Create": "Buat",
         "PanelsAndHelp": "Panel & bantuan"
+      },
+      "scope": {
+        "Project": "Proyek",
+        "ProjectAdministration": "Administrasi proyek"
       }
     }
   }

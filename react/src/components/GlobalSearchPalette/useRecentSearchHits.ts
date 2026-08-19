@@ -12,8 +12,8 @@ export const RECENT_SEARCH_HITS_LIMIT = 5;
 
 /**
  * The last few hits the user selected, persisted per user. Mirrors
- * `useRecentSessionHistory`; only the id/kind/key are stored so the label and
- * the visibility gate are re-resolved live.
+ * `useRecentSessionHistory`; only the id and kind are stored so the label and
+ * the visibility gate are re-resolved live from the current index.
  */
 export const useRecentSearchHits = () => {
   'use memo';
@@ -26,7 +26,6 @@ export const useRecentSearchHits = () => {
     const entry: RecentSearchHit = {
       id,
       kind: hit.kind,
-      labelKey: hit.labelKey,
       selectedAt: new Date().toISOString(),
     };
     setRecentSearchHits(

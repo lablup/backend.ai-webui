@@ -3849,6 +3849,7 @@
       "WelcomeMessage": "ようこそ、{{ userName }}.",
       "YouMushChangeYourPassword": "セキュリティのため、定期的にパスワードを変更することをお勧めします。パスワードを変更してから一定時間が経過したため、サービスを継続して利用するには、パスワードを変更する必要があります。",
       "groupName": {
+        "General": "一般",
         "Metrics": "指標",
         "Mlops": "MLOps",
         "Playground": "遊び場",
@@ -3881,6 +3882,10 @@
         "Appearance": "表示",
         "Create": "作成",
         "PanelsAndHelp": "パネルとヘルプ"
+      },
+      "scope": {
+        "Project": "プロジェクト",
+        "ProjectAdministration": "プロジェクト管理"
       }
     }
   }

@@ -58,8 +58,12 @@ describe('useRecentSearchHits', () => {
     push(makeHit('page:a', 'webui.menu.Start'));
     push(makeHit('page:b', 'webui.menu.Data'));
     expect(_.map(read(), 'id')).toEqual(['page:b', 'page:a']);
-    expect(read()[0]?.labelKey).toBe('webui.menu.Data');
-    expect(read()[0]?.selectedAt).toEqual(expect.any(String));
+    // Only the id / kind / timestamp persist; the label is re-resolved live.
+    expect(read()[0]).toEqual({
+      id: 'page:b',
+      kind: 'page',
+      selectedAt: expect.any(String),
+    });
   });
 
   it('de-duplicates a re-selected hit instead of growing', () => {

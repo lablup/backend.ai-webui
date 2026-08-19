@@ -3849,6 +3849,7 @@
       "WelcomeMessage": "Chào mừng, {{ userName }}.",
       "YouMushChangeYourPassword": "Bạn nên thay đổi mật khẩu định kỳ vì lý do bảo mật. \nVì một khoảng thời gian nhất định đã trôi qua kể từ lần cuối bạn thay đổi mật khẩu, bạn phải thay đổi mật khẩu để tiếp tục sử dụng dịch vụ.",
       "groupName": {
+        "General": "Chung",
         "Metrics": "Số liệu",
         "Mlops": "MLOps",
         "Playground": "Sân chơi",
@@ -3881,6 +3882,10 @@
         "Appearance": "Giao diện",
         "Create": "Tạo",
         "PanelsAndHelp": "Bảng điều khiển và trợ giúp"
+      },
+      "scope": {
+        "Project": "Dự án",
+        "ProjectAdministration": "Quản trị dự án"
       }
     }
   }

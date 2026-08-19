@@ -3849,6 +3849,7 @@
       "WelcomeMessage": "Willkommen, {{ userName }}.",
       "YouMushChangeYourPassword": "Es wird empfohlen, Ihr Passwort aus Sicherheitsgründen regelmäßig zu ändern. Da seit der letzten Änderung Ihres Passworts eine gewisse Zeit verstrichen ist, müssen Sie es ändern, um den Dienst weiterhin nutzen zu können.",
       "groupName": {
+        "General": "Allgemein",
         "Metrics": "Metriken",
         "Mlops": "MLOps",
         "Playground": "Spielplatz",
@@ -3881,6 +3882,10 @@
         "Appearance": "Darstellung",
         "Create": "Erstellen",
         "PanelsAndHelp": "Panels & Hilfe"
+      },
+      "scope": {
+        "Project": "Projekt",
+        "ProjectAdministration": "Projektverwaltung"
       }
     }
   }

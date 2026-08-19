@@ -3850,6 +3850,7 @@
       "WelcomeMessage": "Bienvenue, {{ userName }}.",
       "YouMushChangeYourPassword": "Il est recommandé de modifier périodiquement votre mot de passe pour des raisons de sécurité. Étant donné qu'un certain temps s'est écoulé depuis la dernière modification de votre mot de passe, vous devez le modifier pour pouvoir continuer à utiliser le service.",
       "groupName": {
+        "General": "Général",
         "Metrics": "Métriques",
         "Mlops": "MLOps",
         "Playground": "Terrain de jeux",
@@ -3882,6 +3883,10 @@
         "Appearance": "Apparence",
         "Create": "Créer",
         "PanelsAndHelp": "Panneaux et aide"
+      },
+      "scope": {
+        "Project": "Projet",
+        "ProjectAdministration": "Administration du projet"
       }
     }
   }

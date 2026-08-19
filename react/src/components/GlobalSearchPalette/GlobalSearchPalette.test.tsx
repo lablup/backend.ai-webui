@@ -12,10 +12,16 @@
 import GlobalSearchPaletteButton from './GlobalSearchPaletteButton';
 import type { SearchHit } from './types';
 import '@testing-library/jest-dom';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Lets a test suspend the palette subtree the way `useSuspendedBackendaiClient`
 // does on a cold client, so the transition contract is observable.
@@ -136,6 +142,7 @@ vi.mock('./useRecentSearchHits', () => ({
 
 vi.mock('./useGlobalSearchSource', () => ({
   toTranslator: () => (key: string) => key,
+  toSearchConfigFlags: () => ({ fasttrackEndpoint: null }),
   useGlobalSearchSource: () => {
     suspension.throwIfHeld();
     return {
@@ -158,6 +165,12 @@ const openPalette = async () => {
 };
 
 describe('GlobalSearchPalette', () => {
+  // The palette is `React.lazy`; under vitest the first dynamic import pays the
+  // whole transform cost, which is a test-env artifact, not a product delay.
+  beforeAll(async () => {
+    await import('./GlobalSearchPalette');
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     suspension.release();
@@ -191,6 +204,29 @@ describe('GlobalSearchPalette', () => {
     await waitFor(() =>
       expect(screen.getByText('Sessions')).toBeInTheDocument(),
     );
+  });
+
+  it('opens on the mod+k hotkey, not only on the trigger', async () => {
+    // `mod` is ⌘ only on Apple platforms, and jsdom reports none.
+    const platform = Object.getOwnPropertyDescriptor(
+      window.navigator,
+      'platform',
+    );
+    Object.defineProperty(window.navigator, 'platform', {
+      value: 'MacIntel',
+      configurable: true,
+    });
+    render(<GlobalSearchPaletteButton />);
+    expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
+
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+
+    await waitFor(() =>
+      expect(screen.getByText('Sessions')).toBeInTheDocument(),
+    );
+    if (platform) {
+      Object.defineProperty(window.navigator, 'platform', platform);
+    }
   });
 
   it('lists the bootstrap rows grouped by the hit group', async () => {

@@ -3883,6 +3883,10 @@
         "Appearance": "화면",
         "Create": "만들기",
         "PanelsAndHelp": "패널 및 도움말"
+      },
+      "scope": {
+        "Project": "프로젝트",
+        "ProjectAdministration": "프로젝트 관리"
       }
     }
   }

@@ -182,11 +182,20 @@ const SettingList: React.FC<SettingPageProps> = ({
     (group) => group.settingItems.length,
   );
 
-  // `?setting=` arrival only fires for an item that is actually rendered, so
-  // it is matched against the filtered groups, not the raw ones.
-  const arrivalTitle = useSettingArrival(
-    _.map(_.flatMap(filteredSettingGroups, 'settingItems'), 'title'),
-  );
+  const activeGroup =
+    activeTabKey === ALL_NAV_KEY
+      ? undefined
+      : filteredSettingGroups[Number(activeTabKey.replace('index', ''))];
+
+  // `?setting=` arrival only fires for an item that is actually on screen: the
+  // nav view below `md` and a selected group both hide items the filter kept.
+  const renderedSettingItems =
+    isNarrow && narrowView === 'nav'
+      ? []
+      : activeTabKey === ALL_NAV_KEY
+        ? _.flatMap(filteredSettingGroups, 'settingItems')
+        : (activeGroup?.settingItems ?? []);
+  const arrivalTitle = useSettingArrival(_.map(renderedSettingItems, 'title'));
 
   const navItems = [
     {
@@ -202,10 +211,6 @@ const SettingList: React.FC<SettingPageProps> = ({
   ];
   const activeNavItem =
     _.find(navItems, (item) => item.key === activeTabKey) ?? navItems[0];
-  const activeGroup =
-    activeTabKey === ALL_NAV_KEY
-      ? undefined
-      : filteredSettingGroups[Number(activeTabKey.replace('index', ''))];
 
   const selectNavItem = (key: string) => {
     setActiveTabKey(key);

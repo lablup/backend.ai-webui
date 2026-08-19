@@ -123,7 +123,7 @@ const makeTabHit = (
     labelKey: tab.labelKey,
     breadcrumbKeys: _.compact([entry.labelKey]),
     target: { path, search: { [tab.param]: tab.key } },
-    keywords: _.compact([tab.key, base.menuKey]),
+    keywords: _.compact([tab.key]),
     bodyKeys: [],
     tab: { param: tab.param, key: tab.key },
     auxiliaryData: { group: base.group },
@@ -154,10 +154,32 @@ const makeSettingHit = (
       setting: setting.key,
     },
   },
-  keywords: _.compact([setting.testId, setting.groupId, base.menuKey]),
+  keywords: _.compact([setting.testId, setting.groupId]),
   bodyKeys: setting.descriptionKeys,
   auxiliaryData: { group: base.group },
 });
+
+/**
+ * Second line of a page row. Twin pages (`/admin/data`, `/project/x/admin/data`,
+ * `/project/x/data`) carry the same label and no breadcrumb, so without this
+ * they render as byte-identical rows.
+ */
+const scopeTextOf = (
+  scope: string | null,
+  projectName: string | null | undefined,
+  t: HitTranslator,
+): string | undefined => {
+  switch (scope) {
+    case 'project':
+      return projectName || t('webui.search.scope.Project');
+    case 'projectAdmin':
+      return t('webui.search.scope.ProjectAdministration');
+    case 'admin':
+      return t('webui.menu.Administration');
+    default:
+      return undefined;
+  }
+};
 
 /**
  * Turns the generated index plus the live menu into hits. A page contributes
@@ -201,6 +223,7 @@ export const buildHits = ({
         label: t(labelKey),
         labelKey,
         breadcrumbKeys: [],
+        scopeText: scopeTextOf(entry.scope, projectName, t),
         target: { path },
         keywords: [menuKey],
         bodyKeys: entry.keys,
@@ -243,7 +266,7 @@ export const buildActionHits = ({
       kind: 'action' as const,
       label: t(action.labelKey),
       labelKey: action.labelKey,
-      menuKey: null,
+      menuKey: action.menuKey ?? null,
       scope: null,
       breadcrumbKeys: [],
       icon: createElement(action.icon, { size: '1em' }),
