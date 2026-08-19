@@ -12,16 +12,18 @@
 import GlobalSearchPaletteButton from './GlobalSearchPaletteButton';
 import type { SearchHit } from './types';
 import '@testing-library/jest-dom';
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 // Lets a test suspend the palette subtree the way `useSuspendedBackendaiClient`
 // does on a cold client, so the boundary's containment is observable.
@@ -204,6 +206,25 @@ vi.mock('./useGlobalSearchSource', () => ({
   },
 }));
 
+/**
+ * Presses ⌘K and reports whether a hotkey claimed it. `useHotkeys` calls
+ * `preventDefault()` before its handler, so `defaultPrevented` is the only
+ * observable trace of the registration — the render gate hides the dialog
+ * either way, which is why asserting on the dialog proves nothing.
+ */
+const pressModK = () => {
+  const event = new KeyboardEvent('keydown', {
+    key: 'k',
+    metaKey: true,
+    cancelable: true,
+    bubbles: true,
+  });
+  act(() => {
+    window.dispatchEvent(event);
+  });
+  return event.defaultPrevented;
+};
+
 const openPalette = async () => {
   const user = userEvent.setup();
   render(<GlobalSearchPaletteButton />);
@@ -213,10 +234,27 @@ const openPalette = async () => {
 };
 
 describe('GlobalSearchPalette', () => {
+  const realPlatform = Object.getOwnPropertyDescriptor(
+    window.navigator,
+    'platform',
+  );
+
   // The palette is `React.lazy`; under vitest the first dynamic import pays the
   // whole transform cost, which is a test-env artifact, not a product delay.
   beforeAll(async () => {
+    // `useHotkeys` resolves `mod` once, at mount, from `navigator.platform`,
+    // and jsdom reports none — pin Apple so `mod+k` is the ⌘K users press.
+    Object.defineProperty(window.navigator, 'platform', {
+      value: 'MacIntel',
+      configurable: true,
+    });
     await import('./GlobalSearchPalette');
+  });
+
+  afterAll(() => {
+    if (realPlatform) {
+      Object.defineProperty(window.navigator, 'platform', realPlatform);
+    }
   });
 
   beforeEach(() => {
@@ -235,19 +273,39 @@ describe('GlobalSearchPalette', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders no trigger and binds no mod+k while the experimental setting is off', async () => {
+  it('renders no trigger and leaves mod+k to the browser while the experimental setting is off', () => {
     experimentalGlobalSearch.value = null;
-    const user = userEvent.setup();
     render(<GlobalSearchPaletteButton />);
 
     expect(
       screen.queryByRole('button', { name: 'webui.menu.Search' }),
     ).not.toBeInTheDocument();
+    // Unclaimed, so the browser's own ⌘K (the address bar) still runs.
+    expect(pressModK()).toBe(false);
+  });
 
-    await user.keyboard('{Control>}k{/Control}');
-    await user.keyboard('{Meta>}k{/Meta}');
+  it('closes the palette and forgets it was open when the setting is toggled off', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<GlobalSearchPaletteButton />);
+    await user.click(screen.getByRole('button', { name: 'webui.menu.Search' }));
+    await waitFor(() =>
+      expect(screen.getByText('Sessions')).toBeInTheDocument(),
+    );
 
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    experimentalGlobalSearch.value = null;
+    rerender(<GlobalSearchPaletteButton />);
+    expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
+
+    experimentalGlobalSearch.value = true;
+    rerender(<GlobalSearchPaletteButton />);
+    // Give a surviving `isOpen` the chance to remount the palette — the lazy
+    // chunk is already resolved, so one flush is all it would need.
+    await act(async () => {});
+
+    expect(
+      screen.getByRole('button', { name: 'webui.menu.Search' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
   });
 
   it('fills the list with skeleton rows while bootstrap is pending, never the default copy', async () => {
@@ -308,27 +366,15 @@ describe('GlobalSearchPalette', () => {
     );
   });
 
-  it('opens on the mod+k hotkey, not only on the trigger', async () => {
-    // `mod` is ⌘ only on Apple platforms, and jsdom reports none.
-    const platform = Object.getOwnPropertyDescriptor(
-      window.navigator,
-      'platform',
-    );
-    Object.defineProperty(window.navigator, 'platform', {
-      value: 'MacIntel',
-      configurable: true,
-    });
+  it('claims mod+k and opens on it, not only on the trigger', async () => {
     render(<GlobalSearchPaletteButton />);
     expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
 
-    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    expect(pressModK()).toBe(true);
 
     await waitFor(() =>
       expect(screen.getByText('Sessions')).toBeInTheDocument(),
     );
-    if (platform) {
-      Object.defineProperty(window.navigator, 'platform', platform);
-    }
   });
 
   it('lists the bootstrap rows grouped by the hit group', async () => {

@@ -43,9 +43,8 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
   );
   const [isOpen, setIsOpen] = useState(false);
 
-  // `allowInInputs` so the palette is reachable while a form field has focus,
-  // which is where a user most often reaches for it. Registering nothing while
-  // the setting is off leaves `mod+k` to the browser.
+  // `allowInInputs`: reachable from a focused form field. An empty array still
+  // attaches the listener, but nothing matches, so the browser keeps `mod+k`.
   useHotkeys(
     isExperimentalGlobalSearchEnabled
       ? [{ keys: 'mod+k', allowInInputs: true, onPress: () => setIsOpen(true) }]
@@ -68,7 +67,12 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
     // be its own dependency for a language switch to re-warm the index.
   }, [isExperimentalGlobalSearchEnabled, i18n, i18n.resolvedLanguage]);
 
-  if (!isExperimentalGlobalSearchEnabled) return null;
+  if (!isExperimentalGlobalSearchEnabled) {
+    // The gate unmounts the palette but not this flag; clear it here (React's
+    // adjust-state-while-rendering) so a later toggle-on does not re-open it.
+    if (isOpen) setIsOpen(false);
+    return null;
+  }
 
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 
