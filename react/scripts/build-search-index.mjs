@@ -6,10 +6,13 @@
  * it searches this index, derived from source. The index stores i18n KEYS, not
  * strings, so every locale is covered without re-indexing.
  *
+ * Staleness is gated by `scripts/verify.sh`, which rebuilds and diffs the
+ * committed artifact the same way it does for Relay — this script only writes.
+ *
  *   node scripts/build-search-index.mjs            # write the index
- *   node scripts/build-search-index.mjs --check    # fail if the committed index is stale
  *   node scripts/build-search-index.mjs --verbose  # build + report
  *   node scripts/build-search-index.mjs --out FILE # write elsewhere (tests)
+ *   node scripts/build-search-index.mjs --routes   # route candidates as JSON
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -34,11 +37,20 @@ const GENERATED_FROM = 'react/src/routes.tsx';
 const MAX_DEPTH = Infinity;
 
 /**
- * Drop any plain key present on >= this many entries. Such keys are chrome
- * (`time.*`, `errorBoundary.*`, `button.Cancel`) and identify no page.
+ * A plain key on >= this many entries is shared vocabulary: it stops being
+ * kept everywhere and is placed by ownership instead (see `keyPlacement`).
  * Structured keys (tab labels, setting titles/descriptions) are exempt.
  */
 const NOISE_THRESHOLD = 10;
+
+/**
+ * An entry OWNS a key when it declares it within this many import hops of the
+ * route component. Ownership — not the raw entry count — decides where a
+ * shared key survives: chrome (`time.*`, `button.Cancel`) is owned by many
+ * pages at once, while page vocabulary (`session.launcher.SharedMemory`) is
+ * owned by one or two and merely leaks deep into the rest.
+ */
+const OWNER_DEPTH = 4;
 
 /** Edges not followed: reaching them makes every page contain every page. */
 const CUT_PATH_PREFIXES = ['react/src/components/MainLayout/'];
@@ -68,12 +80,15 @@ const RESOLVE_EXTS = ['.tsx', '.ts', '.jsx', '.js'];
 /** i18n key literals. */
 const KEY_RE = /(?:^|[^A-Za-z0-9_$])t\(\s*(['"`])([^'"`$\n]+?)\1/g;
 const TRANS_RE = /i18nKey\s*=\s*(?:\{\s*)?(['"`])([^'"`$\n]+?)\1/g;
+/** `t('key', 'Fallback text')` — i18next renders the default, so it is not missing. */
+const KEY_WITH_DEFAULT_RE =
+  /(?:^|[^A-Za-z0-9_$])t\(\s*(['"`])([^'"`$\n]+?)\1\s*,\s*['"`]/g;
 /** Dynamic keys — recorded for the report, never emitted. */
 const DYN_KEY_RE = /(?:^|[^A-Za-z0-9_$])t\(\s*`([^`\n]*\$\{[^`\n]*)`/g;
 
 /** URL params that behave like a page-level tab strip (FR-3267 patterns A-i/A-ii). */
 const TAB_PARAMS = ['tab'];
-const TAB_LIKE_PARAMS = ['type', 'statusCategory', 'mode', 'revisionTab'];
+const TAB_LIKE_PARAMS = ['type', 'statusCategory', 'mode'];
 
 /** A one-entry tab strip is the page itself — never a separate hit. */
 const MIN_TAB_KEYS = 2;
@@ -99,6 +114,33 @@ const TAB_OVERRIDES = {
     },
   ],
 };
+
+// ---------------------------------------------------------------------------
+// config integrity: every hardcoded path above must still exist, or the rule it
+// encodes has silently stopped applying (a rename would otherwise pass unnoticed).
+// ---------------------------------------------------------------------------
+function assertConfiguredPaths() {
+  const groups = [
+    ['ROUTES_FILE', [path.relative(ROOT, ROUTES_FILE)]],
+    ['EN_JSON', [path.relative(ROOT, EN_JSON)]],
+    ['CUT_PATH_PREFIXES', CUT_PATH_PREFIXES],
+    ['CUT_PATH_EXACT', CUT_PATH_EXACT],
+    ['EXTERNAL_PREFIXES', EXTERNAL_PREFIXES],
+    ['SHIM_COMPONENT_FILES', SHIM_COMPONENT_FILES],
+    ['ROUTE_CHROME_COMPONENTS', ROUTE_CHROME_COMPONENTS],
+  ];
+  const missing = [];
+  for (const [label, paths] of groups)
+    for (const p of paths)
+      if (!fs.existsSync(path.join(ROOT, p))) missing.push(`${label}: ${p}`);
+  if (missing.length)
+    throw new Error(
+      'build-search-index.mjs is configured with path(s) that no longer exist ' +
+        '(renamed or deleted). Update the CONFIG block:\n  ' +
+        missing.join('\n  '),
+    );
+}
+assertConfiguredPaths();
 
 // ---------------------------------------------------------------------------
 // workspace deps (zero new dependencies)
@@ -218,12 +260,16 @@ async function analyzeFile(file) {
   const dynamic = new Set();
   DYN_KEY_RE.lastIndex = 0;
   while ((m = DYN_KEY_RE.exec(src))) dynamic.add(m[1]);
+  const defaulted = new Set();
+  KEY_WITH_DEFAULT_RE.lastIndex = 0;
+  while ((m = KEY_WITH_DEFAULT_RE.exec(src))) defaulted.add(m[2]);
 
   const rec = {
     file,
     deps: [...deps].sort(byString),
     keys: [...keys].sort(byString),
     dynamic: [...dynamic].sort(byString),
+    defaulted: [...defaulted].sort(byString),
     ...structuredSurfaces(file, src),
   };
   fileCache.set(file, rec);
@@ -311,8 +357,11 @@ function objectElements(arr) {
     while (x && (ts.isParenthesizedExpression(x) || ts.isAsExpression(x)))
       x = x.expression;
     if (!x) return;
+    // Only `cond && {…}` contributes its right side; any other binary operator
+    // (`??`, `||`, `+`) would make the left operand vanish silently.
     if (ts.isBinaryExpression(x)) {
-      push(x.right);
+      if (x.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken)
+        push(x.right);
       return;
     }
     if (ts.isConditionalExpression(x)) {
@@ -366,14 +415,13 @@ function structuredSurfaces(file, src) {
       }
     }
 
+    // Tab strips spell the identifier `key` (BAITabs) or `value` (radio strips).
     if (ts.isArrayLiteralExpression(node)) {
       const objs = objectElements(node);
-      if (
-        objs.length &&
-        objs.every((o) => propOf(o, 'key') && propOf(o, 'label'))
-      ) {
+      const keyProp = (o) => propOf(o, 'key') ?? propOf(o, 'value');
+      if (objs.length && objs.every((o) => keyProp(o) && propOf(o, 'label'))) {
         for (const o of objs) {
-          const k = textOfString(propOf(o, 'key'));
+          const k = textOfString(keyProp(o));
           const lk = tCallKey(propOf(o, 'label'));
           if (k && lk) labelByKey.set(k, lk);
         }
@@ -608,6 +656,9 @@ export function parseRoutes() {
       const seg = textOfString(propOf(obj, 'path'));
       const isIndex = !!propOf(obj, 'index');
       const full = joinPath(parentPath, seg);
+      // `chat/:id?` renders without the param, so the page IS reachable — index
+      // it at the bare path. Children still nest under the declared one.
+      const indexed = stripOptionalParams(full);
 
       const handleNode = propOf(obj, 'handle');
       const handle = { ...inheritedHandle };
@@ -628,18 +679,18 @@ export function parseRoutes() {
           ? 'no-component'
           : isShim
             ? 'redirect-shim'
-            : full.includes('*')
+            : indexed.includes('*')
               ? 'splat'
-              : hasEntityParam(full)
+              : hasEntityParam(indexed)
                 ? 'parametrised'
-                : seenPaths.has(full)
+                : seenPaths.has(indexed)
                   ? 'duplicate-path'
                   : null;
-        if (!skipReason) seenPaths.add(full);
+        if (!skipReason) seenPaths.add(indexed);
         candidates.push({
-          menuKey: handle.menuKey ?? deriveMenuKey(full),
+          menuKey: handle.menuKey ?? deriveMenuKey(indexed),
           scope: handle.scope ?? null,
-          path: full,
+          path: indexed,
           menuKeySource: handle.menuKey ? 'handle' : 'path',
           labelKey: handle.labelKey ?? handle.title ?? null,
           isIndex,
@@ -665,6 +716,13 @@ export function parseRoutes() {
   candidates.sort((a, b) => byString(a.path, b.path));
   return candidates;
 }
+
+/** Optional params are droppable, so they never make a path unaddressable. */
+const stripOptionalParams = (fullPath) =>
+  fullPath
+    .split('/')
+    .filter((s) => !(s.startsWith(':') && s.endsWith('?')))
+    .join('/') || '/';
 
 const hasEntityParam = (fullPath) =>
   fullPath
@@ -774,6 +832,18 @@ async function walkEntry(entry, isCut) {
 // ---------------------------------------------------------------------------
 export async function buildEntries() {
   const routes = parseRoutes().filter((r) => !r.skipReason);
+
+  const indexedPaths = new Set(routes.map((r) => r.path));
+  const staleOverrides = Object.keys(TAB_OVERRIDES).filter(
+    (p) => !indexedPaths.has(p),
+  );
+  if (staleOverrides.length)
+    throw new Error(
+      'TAB_OVERRIDES keys no longer match an indexed route (renamed or now ' +
+        'skipped). Update build-search-index.mjs:\n  ' +
+        staleOverrides.join('\n  '),
+    );
+
   const routeEntryFiles = new Set(routes.flatMap((e) => e.components));
   const isCut = makeIsCut(routeEntryFiles);
 
@@ -807,7 +877,6 @@ export async function buildEntries() {
       path: e.path,
       labelKey: e.labelKey,
       component: e.components.map(rel),
-      fileCount: files.length,
       tabs: applyTabOverrides(e.path, dedupeTabs(tabs)),
       settings: dedupeSettings(settings),
       keyMap,
@@ -829,13 +898,18 @@ function dedupeTabs(tabs) {
   );
 }
 
+/** Keyed by key+group: the same title can legitimately appear in two groups. */
 function dedupeSettings(settings) {
   const m = new Map();
   for (const s of settings) {
-    const prev = m.get(s.key);
-    if (!prev || s.depth < prev.depth) m.set(s.key, s);
+    const id = `${s.groupId ?? s.groupKey ?? ''} ${s.key}`;
+    const prev = m.get(id);
+    if (!prev || s.depth < prev.depth) m.set(id, s);
   }
-  return [...m.values()].sort((a, b) => byString(a.key, b.key));
+  return [...m.values()].sort(
+    (a, b) =>
+      byString(a.key, b.key) || byString(a.groupId ?? '', b.groupId ?? ''),
+  );
 }
 
 function applyTabOverrides(routePath, tabs) {
@@ -849,21 +923,58 @@ function applyTabOverrides(routePath, tabs) {
   );
 }
 
-/** How many entries each plain key appears on — the noise-threshold input. */
-function entriesPerKey(built) {
-  const counts = new Map();
+/**
+ * Which entries each plain key survives on.
+ *
+ * A key below NOISE_THRESHOLD entries is page vocabulary by definition and is
+ * kept wherever it appears. Above it, the raw count says nothing — deep
+ * transitive imports put `session.launcher.SharedMemory` on 19 entries just as
+ * surely as `button.Cancel` — so placement is decided by OWNERSHIP instead:
+ *
+ *   owners(k) = entries declaring k within OWNER_DEPTH hops of the route
+ *   - owned by >= NOISE_THRESHOLD entries -> chrome; dropped everywhere
+ *   - otherwise                           -> kept on its owners only
+ *   - owned by nobody                     -> kept where it is shallowest
+ */
+function keyPlacement(built) {
+  const depthsPerKey = new Map();
   for (const e of built)
-    for (const k of e.keyMap.keys()) counts.set(k, (counts.get(k) ?? 0) + 1);
-  return counts;
+    for (const [k, v] of e.keyMap) {
+      let m = depthsPerKey.get(k);
+      if (!m) depthsPerKey.set(k, (m = new Map()));
+      m.set(e.path, v.depth);
+    }
+
+  const placement = new Map();
+  for (const [k, depths] of depthsPerKey) {
+    const owners = [...depths].filter(([, d]) => d <= OWNER_DEPTH);
+    if (owners.length >= NOISE_THRESHOLD) {
+      placement.set(k, new Set());
+      continue;
+    }
+    if (depths.size < NOISE_THRESHOLD) {
+      placement.set(k, new Set(depths.keys()));
+      continue;
+    }
+    const min = Math.min(...depths.values());
+    const kept = owners.length
+      ? owners
+      : [...depths].filter(([, d]) => d === min);
+    placement.set(
+      k,
+      new Set(kept.map(([p]) => p)),
+    );
+  }
+  return placement;
 }
 
 /**
  * The shipped shape. Tab labels, setting titles and setting descriptions are
- * carried by their structured hit, so they never repeat in `keys`; plain keys
- * on >= NOISE_THRESHOLD entries are dropped as chrome.
+ * carried by their structured hit, so they never repeat in `keys`; shared plain
+ * keys are placed by `keyPlacement`.
  */
 export function toIndex(built) {
-  const counts = entriesPerKey(built);
+  const placement = keyPlacement(built);
   const entries = built.map((e) => {
     const structured = new Set();
     for (const t of e.tabs) if (t.labelKey) structured.add(t.labelKey);
@@ -877,7 +988,6 @@ export function toIndex(built) {
       scope: e.scope,
       path: e.path,
       labelKey: e.labelKey,
-      component: e.component,
       tabs: e.tabs.map((t) => ({
         param: t.param,
         key: t.key,
@@ -896,7 +1006,7 @@ export function toIndex(built) {
           (k) =>
             !structured.has(k) &&
             k !== e.labelKey &&
-            counts.get(k) < NOISE_THRESHOLD,
+            placement.get(k).has(e.path),
         )
         .sort(byString),
     };
@@ -930,15 +1040,21 @@ function missingFromEnJson(index) {
     }
     for (const k of e.keys) all.add(k);
   }
-  return [...all].filter((k) => !has(k)).sort(byString);
+  // `t('key', 'Fallback')` renders the fallback, so its absence is not a bug.
+  const defaulted = new Set();
+  for (const rec of fileCache.values())
+    for (const k of rec.defaulted) defaulted.add(k);
+  return [...all].filter((k) => !has(k) && !defaulted.has(k)).sort(byString);
 }
 
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
 function reportOn(built, index) {
-  const counts = entriesPerKey(built);
+  const placement = keyPlacement(built);
+  const chrome = [...placement.values()].filter((on) => on.size === 0).length;
   const distinct = new Set(index.entries.flatMap((e) => e.keys));
+  const componentOf = new Map(built.map((e) => [e.path, e.component]));
   const tabPages = index.entries.filter((e) => e.tabs.some((t) => t.param === 'tab'));
   const tabKeys = index.entries.reduce(
     (a, e) => a + e.tabs.filter((t) => t.param === 'tab').length,
@@ -949,9 +1065,10 @@ function reportOn(built, index) {
 
   console.log(`entries              ${index.entries.length}`);
   console.log(`files analysed       ${fileCache.size}`);
-  console.log(`distinct body keys   ${distinct.size} (dropped >=${NOISE_THRESHOLD}: ${
-    [...counts.values()].filter((c) => c >= NOISE_THRESHOLD).length
-  })`);
+  console.log(
+    `distinct body keys   ${distinct.size} ` +
+      `(chrome dropped: ${chrome}, owner-depth ${OWNER_DEPTH})`,
+  );
   console.log(`?tab= pages / keys   ${tabPages.length} / ${tabKeys}`);
   console.log(`setting pages/items  ${settingPages.length} / ${settingItems}`);
   console.log(
@@ -959,7 +1076,7 @@ function reportOn(built, index) {
   );
   console.log('');
   console.log('menuKey'.padEnd(26) + 'path'.padEnd(44) + 'keys'.padStart(6) + 'tab'.padStart(5) + 'set'.padStart(5));
-  for (const e of index.entries)
+  for (const e of index.entries) {
     console.log(
       String(e.menuKey ?? '—').padEnd(26) +
         e.path.slice(0, 43).padEnd(44) +
@@ -967,43 +1084,19 @@ function reportOn(built, index) {
         String(e.tabs.length).padStart(5) +
         String(e.settings.length).padStart(5),
     );
+    // Rendered files are debugging context, not shipped index content.
+    for (const c of componentOf.get(e.path) ?? []) console.log(`  ↳ ${c}`);
+  }
   const skipped = parseRoutes().filter((r) => r.skipReason);
   console.log('');
   console.log(`skipped routes (${skipped.length}):`);
   for (const r of skipped) console.log(`  ${r.skipReason.padEnd(14)} ${r.path}`);
 }
 
-function diffSummary(committed, fresh) {
-  const lines = [];
-  let prev;
-  try {
-    prev = JSON.parse(committed);
-  } catch {
-    return ['committed index is not valid JSON'];
-  }
-  const byPath = (idx) => new Map((idx.entries ?? []).map((e) => [e.path, e]));
-  const a = byPath(prev);
-  const b = byPath(fresh);
-  for (const p of b.keys()) if (!a.has(p)) lines.push(`+ entry ${p}`);
-  for (const p of a.keys()) if (!b.has(p)) lines.push(`- entry ${p}`);
-  for (const [p, be] of b) {
-    const ae = a.get(p);
-    if (!ae) continue;
-    if (JSON.stringify(ae) !== JSON.stringify(be))
-      lines.push(
-        `~ entry ${p} (keys ${ae.keys?.length ?? 0}→${be.keys.length}, ` +
-          `tabs ${ae.tabs?.length ?? 0}→${be.tabs.length}, ` +
-          `settings ${ae.settings?.length ?? 0}→${be.settings.length})`,
-      );
-  }
-  return lines.length ? lines : ['content differs only in formatting'];
-}
-
 async function main(argv) {
   const t0 = Date.now();
   const outArg = argv.indexOf('--out');
   const outFile = outArg >= 0 ? path.resolve(argv[outArg + 1]) : OUT_FILE;
-  const check = argv.includes('--check');
 
   // Route candidates only, including what was skipped and why (used by tests).
   if (argv.includes('--routes')) {
@@ -1022,19 +1115,6 @@ async function main(argv) {
         missing.slice(0, 10).join(', ') +
         (missing.length > 10 ? ', …' : ''),
     );
-
-  if (check) {
-    const committed = fs.existsSync(OUT_FILE) ? fs.readFileSync(OUT_FILE, 'utf8') : null;
-    if (committed === text) {
-      console.log(`search index up to date (${index.entries.length} entries)`);
-      return 0;
-    }
-    console.error('Search index is out of sync with the source.');
-    if (committed === null) console.error(`  missing: ${rel(OUT_FILE)}`);
-    else for (const l of diffSummary(committed, index).slice(0, 20)) console.error('  ' + l);
-    console.error('Run `pnpm run search-index` and commit react/src/generated/searchIndex.json.');
-    return 1;
-  }
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, text);
