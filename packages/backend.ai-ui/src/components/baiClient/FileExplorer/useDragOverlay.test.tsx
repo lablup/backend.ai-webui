@@ -4,23 +4,41 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 /**
  * The overlay's Astryx `FileInput` calls `stopPropagation()` on its own
- * `dragleave` and `drop`. These tests stand in for it, because the listener
- * phase the hook picks is only observable through a descendant that does that
- * (FR-3575) — nothing in `tsc` or lint can see it.
+ * `dragenter`/`dragover`/`dragleave`/`drop`, and it covers the whole overlay.
+ * These tests stand in for it, because the listener phase the hook picks is
+ * only observable through a descendant that does that (FR-3575) — nothing in
+ * `tsc` or lint can see it.
  */
 const mountDropzoneStandIn = () => {
   const zone = document.createElement('div');
   const child = document.createElement('span');
   zone.appendChild(child);
   document.body.appendChild(zone);
-  zone.addEventListener('dragleave', (e) => e.stopPropagation());
-  zone.addEventListener('drop', (e) => e.stopPropagation());
+  for (const type of ['dragenter', 'dragover', 'dragleave', 'drop']) {
+    zone.addEventListener(type, (e) => e.stopPropagation());
+  }
   return { zone, child };
 };
 
 const fire = (el: Element | Document, type: string) =>
   act(() => {
     el.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+  });
+
+/**
+ * Chromium populates `relatedTarget` on every `dragleave` between two elements
+ * of the page, and leaves it null only when the drag exits the window — which
+ * is the one case that must dismiss the overlay.
+ */
+const fireDragLeave = (el: Element, relatedTarget: Element | null) =>
+  act(() => {
+    el.dispatchEvent(
+      new MouseEvent('dragleave', {
+        bubbles: true,
+        cancelable: true,
+        relatedTarget,
+      }),
+    );
   });
 
 afterEach(() => {
@@ -40,16 +58,42 @@ describe('useDragOverlay', () => {
     const { zone, child } = mountDropzoneStandIn();
     fire(document, 'dragenter');
 
-    // The browser fires dragenter on the child and dragleave on the parent as
-    // the cursor moves within the zone, with no relatedTarget. The dropzone
-    // stops those, so they must not reach the hook.
+    // Moving between the zone and its children keeps the cursor in the page,
+    // so every leave names the element being entered.
     for (let i = 0; i < 3; i++) {
       fire(child, 'dragenter');
-      fire(zone, 'dragleave');
+      fireDragLeave(zone, child);
+      fireDragLeave(child, zone);
       fire(zone, 'dragover');
     }
 
     expect(result.current.isDragMode).toBe(true);
+  });
+
+  it('closes when the drag leaves the window over the dropzone', () => {
+    // The regression this pins: the dropzone fills the overlay, so the leave
+    // that ends the drag fires ON it and its `stopPropagation()` hides it from
+    // any bubble listener — the overlay then never comes down (FR-3575).
+    const { result } = renderHook(() => useDragOverlay());
+    const { zone } = mountDropzoneStandIn();
+    fire(document, 'dragenter');
+    expect(result.current.isDragMode).toBe(true);
+
+    fireDragLeave(zone, null);
+    expect(result.current.isDragMode).toBe(false);
+  });
+
+  it('closes after a cancelled drag, on the first pointer movement', () => {
+    // Escape (or a drop the OS refuses) ends the drag without firing any drag
+    // event at all. Mouse events are suppressed for the whole drag, so the
+    // first one afterwards is what proves it is over.
+    const { result } = renderHook(() => useDragOverlay());
+    mountDropzoneStandIn();
+    fire(document, 'dragenter');
+    expect(result.current.isDragMode).toBe(true);
+
+    fire(document, 'mousemove');
+    expect(result.current.isDragMode).toBe(false);
   });
 
   it('leaves a drop on the dropzone to the overlay itself', () => {
@@ -81,14 +125,6 @@ describe('useDragOverlay', () => {
     expect(result.current.isDragMode).toBe(true);
 
     act(() => result.current.close());
-    expect(result.current.isDragMode).toBe(false);
-  });
-
-  it('closes when the drag leaves the window', () => {
-    const { result } = renderHook(() => useDragOverlay());
-    fire(document, 'dragenter');
-    // relatedTarget is null and nothing stops this one — it reaches the hook.
-    fire(document, 'dragleave');
     expect(result.current.isDragMode).toBe(false);
   });
 

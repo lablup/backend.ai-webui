@@ -134,10 +134,10 @@ test.describe(
         ).toBeLessThanOrEqual(1);
       }
 
-      // 6. Move around inside the dropzone before releasing. The browser fires
-      //    dragenter/dragleave pairs with no relatedTarget here, and the
-      //    dropzone stops their propagation — the overlay must survive them or
-      //    there is nothing left to drop onto (FR-3575).
+      // 6. Move around inside the dropzone before releasing. Every leave
+      //    between two elements of the page names the element being entered,
+      //    and the dropzone stops their propagation — the overlay must survive
+      //    them or there is nothing left to drop onto (FR-3575).
       await dragOverlay.evaluate((zone) => {
         const child = zone.firstElementChild ?? zone;
         for (let i = 0; i < 3; i++) {
@@ -146,7 +146,11 @@ test.describe(
             new DragEvent('dragenter', { bubbles: true, dataTransfer: dt }),
           );
           zone.dispatchEvent(
-            new DragEvent('dragleave', { bubbles: true, dataTransfer: dt }),
+            new DragEvent('dragleave', {
+              bubbles: true,
+              dataTransfer: dt,
+              relatedTarget: child,
+            }),
           );
           zone.dispatchEvent(
             new DragEvent('dragover', {
@@ -159,9 +163,47 @@ test.describe(
       });
       await expect(dragOverlay).toBeVisible();
 
-      // 7. Release the file onto the dropzone — a real `drop` carrying the file,
-      //    not `setInputFiles` on the hidden input, so the drop path is what is
-      //    under test.
+      // 6b. Dragging back out of the window ends the drag with a relatedTarget-
+      //     less leave, fired ON the dropzone — which stops its propagation, so
+      //     only a capture listener sees it. Left unhandled the overlay stays up
+      //     and the explorer is unusable (FR-3575).
+      await dragOverlay.evaluate((zone) => {
+        zone.dispatchEvent(
+          new DragEvent('dragleave', {
+            bubbles: true,
+            dataTransfer: new DataTransfer(),
+          }),
+        );
+      });
+      await expect(dragOverlay).not.toBeVisible({ timeout: 5000 });
+
+      // 6c. Cancelling the drag (Escape) fires no drag event at all. Mouse
+      //     events stay suppressed for the whole drag, so the first movement
+      //     afterwards is what dismisses the overlay.
+      await page.evaluate(() => {
+        document.dispatchEvent(
+          new DragEvent('dragenter', {
+            bubbles: true,
+            dataTransfer: new DataTransfer(),
+          }),
+        );
+      });
+      await expect(dragOverlay).toBeVisible({ timeout: 5000 });
+      await page.mouse.move(10, 10);
+      await expect(dragOverlay).not.toBeVisible({ timeout: 5000 });
+
+      // 7. Bring the overlay back up and release the file onto the dropzone —
+      //    a real `drop` carrying the file, not `setInputFiles` on the hidden
+      //    input, so the drop path is what is under test.
+      await page.evaluate(() => {
+        document.dispatchEvent(
+          new DragEvent('dragenter', {
+            bubbles: true,
+            dataTransfer: new DataTransfer(),
+          }),
+        );
+      });
+      await expect(dragOverlay).toBeVisible({ timeout: 5000 });
       await dragOverlay.evaluate(
         (zone, [name, content]) => {
           const dt = new DataTransfer();

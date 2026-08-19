@@ -29,14 +29,22 @@ export interface RcFile extends File {
  * Tracks whether a file is being dragged over the page, so the explorer can
  * show its upload overlay.
  *
- * These document listeners deliberately do NOT close the overlay on `drop`
- * (FR-3575). The overlay's Astryx `FileInput` stops propagation on `drop`, so a
- * bubble listener never sees one that lands on the dropzone — and a *capture*
- * listener sees it too early: `drop` is discrete priority, React flushes the
- * state update synchronously, and the dropzone unmounts before React can
- * dispatch `FileInput`'s own handler, so the file is silently dropped.
- * Closing on drop is therefore the overlay's job, through `close` — see
- * `DragAndDrop`'s `onDropCapture`, which runs inside React's own dispatch.
+ * Three listener phases are load-bearing here, because the overlay's Astryx
+ * `FileInput` calls `stopPropagation()` on its own `dragenter`/`dragover`/
+ * `dragleave`/`drop`, and it now covers the whole overlay (FR-3575):
+ *
+ * - `dragleave` on CAPTURE — on bubble the dropzone swallows every leave,
+ *   including the one that fires when the drag exits the window, and the
+ *   overlay is left up for good.
+ * - `drop` on BUBBLE — a capture listener runs before React dispatches
+ *   `FileInput`'s handler, and since `drop` is discrete priority the state
+ *   update flushes synchronously and unmounts the dropzone, silently
+ *   discarding the file. Closing on a drop that HITS the dropzone is the
+ *   overlay's own job, via `close` (`DragAndDrop`'s deferred `onDropCapture`).
+ * - `mousemove` while open — a cancelled drag (Escape, or a drop the OS
+ *   rejects) fires no drag event at all; measured on Chromium, neither
+ *   `dragleave` nor `dragend` reaches the page. Mouse events stay suppressed
+ *   for the whole drag, so the first one afterwards is proof it is over.
  */
 export const useDragOverlay = (
   containerRef?: React.RefObject<HTMLDivElement | null>,
@@ -67,17 +75,33 @@ export const useDragOverlay = (
     };
 
     document.addEventListener('dragenter', handleDragEnter);
-    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('dragleave', handleDragLeave, true);
     document.addEventListener('dragover', handleDragOver);
     document.addEventListener('drop', handleDrop);
 
     return () => {
       document.removeEventListener('dragenter', handleDragEnter);
-      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('dragleave', handleDragLeave, true);
       document.removeEventListener('dragover', handleDragOver);
       document.removeEventListener('drop', handleDrop);
     };
   }, [containerRef]);
+
+  useEffect(() => {
+    if (!isDragMode) {
+      return;
+    }
+    const handleDragEnd = () => setIsDragMode(false);
+    const handleMouseMove = () => setIsDragMode(false);
+
+    document.addEventListener('dragend', handleDragEnd, true);
+    document.addEventListener('mousemove', handleMouseMove, true);
+
+    return () => {
+      document.removeEventListener('dragend', handleDragEnd, true);
+      document.removeEventListener('mousemove', handleMouseMove, true);
+    };
+  }, [isDragMode]);
 
   const close = () => setIsDragMode(false);
 
