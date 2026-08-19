@@ -20,12 +20,16 @@ export const BAI_MODAL_OPEN_ATTRIBUTE = 'data-bai-modal-open';
 // `zIndexLadder.test.ts` pins THIS number, not a copy.
 export const MAX_DIALOG_LEVEL = 80;
 
-// Module-level: inside `'use memo'` the compiler rewrites a read-then-increment.
-const openDialogs: Array<{
+/** The claim's handle. Released by reference, never by `level` — the clamp at
+    `MAX_DIALOG_LEVEL` lets two entries share one. */
+export interface DialogLevelEntry {
   level: number;
   root: HTMLElement | null;
   setIsTopmost: (isTopmost: boolean) => void;
-}> = [];
+}
+
+// Module-level: inside `'use memo'` the compiler rewrites a read-then-increment.
+const openDialogs: Array<DialogLevelEntry> = [];
 
 /**
  * Only the topmost portal stays interactive. A covered surface must both drop
@@ -47,22 +51,23 @@ function syncCoveredDialogs(): void {
 export function claimDialogLevel(
   root: HTMLElement | null,
   setIsTopmost: (isTopmost: boolean) => void,
-): number {
+): DialogLevelEntry {
   const level = Math.min(
     (openDialogs.at(-1)?.level ?? -1) + 1,
     MAX_DIALOG_LEVEL,
   );
-  openDialogs.push({ level, root, setIsTopmost });
+  const entry: DialogLevelEntry = { level, root, setIsTopmost };
+  openDialogs.push(entry);
   syncCoveredDialogs();
-  return level;
+  return entry;
 }
 
-export function releaseDialogLevel(level: number): void {
-  const index = openDialogs.findIndex((entry) => entry.level === level);
+export function releaseDialogLevel(entry: DialogLevelEntry): void {
+  const index = openDialogs.indexOf(entry);
   if (index !== -1) {
     // A root can outlive its stack entry, so the entry sheds `inert` as it is
     // removed rather than leaving it for the root's next open.
-    openDialogs[index].root?.removeAttribute('inert');
+    entry.root?.removeAttribute('inert');
     openDialogs.splice(index, 1);
   }
   syncCoveredDialogs();
@@ -88,10 +93,10 @@ export function useDialogLevel(
       return;
     }
     const root = rootRef.current;
-    const level = claimDialogLevel(root, setIsTopmost);
-    root?.style.setProperty(cssVar, String(level));
+    const entry = claimDialogLevel(root, setIsTopmost);
+    root?.style.setProperty(cssVar, String(entry.level));
     return () => {
-      releaseDialogLevel(level);
+      releaseDialogLevel(entry);
       // Cleared, or a root reopened at a lower level keeps the stale one.
       root?.style.removeProperty(cssVar);
     };

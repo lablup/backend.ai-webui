@@ -23,8 +23,12 @@ import { createPortal } from 'react-dom';
     so a closing drawer does not re-render its whole subtree a frame later. */
 const HIDDEN_ATTRIBUTE = 'data-bai-drawer-hidden';
 
-/** Everything lab `Drawer` takes; the portal owns the scrim, so not `hasScrim`. */
-export type BAIDrawerPortalProps = Omit<DrawerProps, 'hasScrim'>;
+/** Everything lab `Drawer` takes; the portal owns the scrim, so not `hasScrim`
+    — nor the collapse-to-rail pair its `hasScrim={false}` silently unlocks. */
+export type BAIDrawerPortalProps = Omit<
+  DrawerProps,
+  'hasScrim' | 'isCollapsed' | 'onCollapsedChange'
+>;
 
 const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   isOpen,

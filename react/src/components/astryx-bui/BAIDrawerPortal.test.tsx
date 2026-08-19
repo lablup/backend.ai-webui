@@ -45,6 +45,28 @@ const getMask = () =>
     '.bai-drawer-portal__mask',
   ) as HTMLElement;
 
+// A drawer with a modal opened from inside it — the FR-3585 arrangement.
+const Nested: React.FC<{
+  onDrawerClose: () => void;
+  onModalOpenChange: (isOpen: boolean) => void;
+}> = ({ onDrawerClose, onModalOpenChange }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  return (
+    <BAIDrawerPortal isOpen onClose={onDrawerClose} label="Details">
+      <button type="button" onClick={() => setIsModalOpen(true)}>
+        Deploy
+      </button>
+      <BAIDialogPortal
+        isOpen={isModalOpen}
+        onOpenChange={onModalOpenChange}
+        aria-label="deploy"
+      >
+        <button type="button">Confirm</button>
+      </BAIDialogPortal>
+    </BAIDrawerPortal>
+  );
+};
+
 // A nested `<Theme>` is the app's admin/reverse region: a wrapper element the
 // portal is not a descendant of.
 const outerTheme = defineTheme({ name: 'drawer-outer', tokens: {} });
@@ -101,24 +123,7 @@ describe('BAIDrawerPortal', () => {
   // portalled modal instead, leaving it unclickable and untabbable.
   it('lets a modal opened inside it take the level above and inert it', async () => {
     const user = userEvent.setup();
-    const Nested: React.FC = () => {
-      const [isModalOpen, setIsModalOpen] = useState(false);
-      return (
-        <BAIDrawerPortal isOpen onClose={vi.fn()} label="Details">
-          <button type="button" onClick={() => setIsModalOpen(true)}>
-            Deploy
-          </button>
-          <BAIDialogPortal
-            isOpen={isModalOpen}
-            onOpenChange={vi.fn()}
-            aria-label="deploy"
-          >
-            <button type="button">Confirm</button>
-          </BAIDialogPortal>
-        </BAIDrawerPortal>
-      );
-    };
-    render(<Nested />);
+    render(<Nested onDrawerClose={vi.fn()} onModalOpenChange={vi.fn()} />);
 
     await user.click(screen.getByRole('button', { name: 'Deploy' }));
 
@@ -134,9 +139,46 @@ describe('BAIDrawerPortal', () => {
     );
     expect(drawerRoot.hasAttribute('inert')).toBe(true);
     expect(modalRoot.hasAttribute('inert')).toBe(false);
-    expect(
-      screen.getByRole('button', { name: 'Confirm' }).closest('[inert]'),
-    ).toBeNull();
+
+    // jsdom does not enforce `inert`, so also assert reachability the way a user
+    // meets it: the control takes focus when asked.
+    const confirm = screen.getByRole('button', { name: 'Confirm' });
+    expect(confirm.closest('[inert]')).toBeNull();
+    act(() => confirm.focus());
+    expect(document.activeElement).toBe(confirm);
+  });
+
+  // The other half of the goal: the modal is reachable AND owns Escape, so one
+  // press dismisses it without also collapsing the drawer underneath.
+  it('routes Escape to the modal above it, leaving the drawer open', async () => {
+    const user = userEvent.setup();
+    const onDrawerClose = vi.fn();
+    const onModalOpenChange = vi.fn();
+    render(
+      <Nested
+        onDrawerClose={onDrawerClose}
+        onModalOpenChange={onModalOpenChange}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Deploy' }));
+    act(() => screen.getByRole('button', { name: 'Confirm' }).focus());
+    await user.keyboard('{Escape}');
+
+    expect(onModalOpenChange).toHaveBeenCalledWith(false);
+    expect(onDrawerClose).not.toHaveBeenCalled();
+  });
+
+  // lab listens for Escape on its `<dialog>`, so the press has to bubble out of
+  // the panel — which it still does through the portal.
+  it('closes on Escape pressed inside the drawer panel', async () => {
+    const user = userEvent.setup();
+    const { onClose } = renderDrawer();
+
+    act(() => screen.getByRole('button', { name: 'Inside' }).focus());
+    await user.keyboard('{Escape}');
+
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('closes on a mask click, but not on a drag that started inside', () => {
