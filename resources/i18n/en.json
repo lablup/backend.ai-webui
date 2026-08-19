@@ -3867,6 +3867,10 @@
         "Appearance": "Appearance",
         "Create": "Create",
         "PanelsAndHelp": "Panels & help"
+      },
+      "scope": {
+        "Project": "Project",
+        "ProjectAdministration": "Project administration"
       }
     }
   }

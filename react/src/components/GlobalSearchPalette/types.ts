@@ -41,6 +41,8 @@ export interface SearchHit extends SearchableItem<SearchHitAuxiliaryData> {
   icon?: ReactNode;
   /** Sidebar group label; admin groups are prefixed "Administration › ". */
   group: string;
+  /** Twin pages share a label, so a page row's second line is its scope. */
+  scopeText?: string;
   /** Where the hit navigates. Actions run instead, so they carry none. */
   target?: SearchHitTarget;
   /** Set on a body-key match: the page hit gains a "found in" line. */
@@ -58,8 +60,6 @@ export interface SearchHit extends SearchableItem<SearchHitAuxiliaryData> {
 }
 
 export interface SearchConfigFlags {
-  hideAgents: boolean;
-  enableReservoir: boolean;
   fasttrackEndpoint: string | null;
 }
 
@@ -78,9 +78,7 @@ export interface PaletteActionContext {
 
 /** Everything `isHitVisible` and the ranker need that is not in the index. */
 export interface SearchContext {
-  projectName: string | null;
   isSuperAdmin: boolean;
-  isAdmin: boolean;
   supports: (feature: string) => boolean;
   config: SearchConfigFlags;
   /** Menu keys `useWebUIMenuItems()` emitted. */
@@ -91,10 +89,10 @@ export interface SearchContext {
   tEn: HitTranslator;
 }
 
-/** Persisted shape of a recently selected hit (`UserSettings`). */
+/** Persisted shape of a recently selected hit (`UserSettings`). Entries written
+ * before v1 shipped also carry a `labelKey`; it is read from the live hit now. */
 export interface RecentSearchHit {
   id: string;
   kind: SearchHitKind;
-  labelKey: string;
   selectedAt: string;
 }

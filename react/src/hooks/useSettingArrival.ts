@@ -18,8 +18,9 @@ export const SETTING_ARRIVAL_HIGHLIGHT_MS = 1500;
  * the item title in the current locale and returns it while the item should be
  * highlighted. The param IS the highlight — stripping it after the transient
  * window both ends the highlight and stops a reload being a second arrival, so
- * no state mirrors the URL. Returns `null` until the item is on screen: a
- * `?tab=…&setting=…` link only matches once the tab carrying it has rendered.
+ * no state mirrors the URL. `titles` must therefore be the titles actually ON
+ * SCREEN: an unmatched key returns `null` and keeps the param, so a link that
+ * lands on the wrong tab (or on the narrow nav view) still arrives later.
  */
 export const useSettingArrival = (
   titles: ReadonlyArray<string>,

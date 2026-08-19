@@ -25,16 +25,10 @@ const hits = (): Array<SearchHit> =>
 const makeSearchContext = (
   overrides: Partial<SearchContext> = {},
 ): SearchContext => ({
-  projectName: 'my project',
   isSuperAdmin: false,
-  isAdmin: false,
   supports: () => true,
-  config: {
-    hideAgents: false,
-    enableReservoir: false,
-    fasttrackEndpoint: null,
-  },
-  visibleMenuKeys: new Set(['session', 'data', 'deployments']),
+  config: { fasttrackEndpoint: null },
+  visibleMenuKeys: new Set(['session', 'data', 'deployments', 'pipeline']),
   disabledMenuKeys: new Set(),
   t: (key) => key,
   tEn: (key) => key,
@@ -59,11 +53,7 @@ const makeActionContext = (
 ): PaletteActionContext => ({
   navigate,
   projectName: 'my project',
-  config: {
-    hideAgents: false,
-    enableReservoir: false,
-    fasttrackEndpoint: 'https://fasttrack.example.com',
-  },
+  config: { fasttrackEndpoint: 'https://fasttrack.example.com' },
   setThemeMode,
   openNotifications,
   toggleSider,
@@ -92,20 +82,24 @@ describe('PALETTE_ACTIONS gates', () => {
     );
   });
 
+  const withEndpoint = (overrides: Partial<SearchContext> = {}) =>
+    makeSearchContext({
+      config: { fasttrackEndpoint: 'https://fasttrack.example.com' },
+      ...overrides,
+    });
+
   it('hides FastTrack until an endpoint is configured', () => {
     expect(visibleIds(makeSearchContext())).not.toContain(
       'action:open-fasttrack',
     );
+    expect(visibleIds(withEndpoint())).toContain('action:open-fasttrack');
+  });
+
+  // The sidebar's FastTrack entry is menu key `pipeline`; blockList removes it.
+  it('hides FastTrack when the sidebar entry is blocked, endpoint or not', () => {
     expect(
-      visibleIds(
-        makeSearchContext({
-          config: {
-            ...makeSearchContext().config,
-            fasttrackEndpoint: 'https://fasttrack.example.com',
-          },
-        }),
-      ),
-    ).toContain('action:open-fasttrack');
+      visibleIds(withEndpoint({ visibleMenuKeys: new Set(['session']) })),
+    ).not.toContain('action:open-fasttrack');
   });
 
   it('hides a create action when its page is not in the menu', () => {
@@ -113,6 +107,19 @@ describe('PALETTE_ACTIONS gates', () => {
     expect(ids).not.toContain('action:start-session');
     expect(ids).not.toContain('action:create-folder');
     expect(ids).not.toContain('action:create-deployment');
+  });
+
+  // inactiveList disables a menu entry rather than removing it, so the key is
+  // still "visible"; the action must follow the page and disappear anyway.
+  it('hides an action whose page inactiveList disabled', () => {
+    const ids = visibleIds(
+      makeSearchContext({ disabledMenuKeys: new Set(['data', 'pipeline']) }),
+    );
+    expect(ids).not.toContain('action:create-folder');
+    expect(ids).toContain('action:start-session');
+    expect(
+      visibleIds(withEndpoint({ disabledMenuKeys: new Set(['pipeline']) })),
+    ).not.toContain('action:open-fasttrack');
   });
 
   it('keeps the ungated panel actions on every deployment', () => {

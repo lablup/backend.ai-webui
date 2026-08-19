@@ -32,25 +32,27 @@ export const TAB_GATES: Readonly<Record<string, TabGate>> = {
     ctx.supports('deployment-preset'),
 };
 
+/** Whether the menu still offers the page, i.e. neither blocked nor inactive. */
+const isMenuKeyOffered = (menuKey: string, ctx: SearchContext): boolean =>
+  !ctx.disabledMenuKeys.has(menuKey) &&
+  (ctx.visibleMenuKeys.has(menuKey) || ALWAYS_VISIBLE_MENU_KEYS.has(menuKey));
+
 /**
  * The single visibility predicate: pages are visible iff their menu key
  * survived `useWebUIMenuItems()`, `inactiveList` entries are hidden, tabs and
- * setting items inherit the page gate, and actions bring their own.
+ * setting items inherit the page gate, and actions inherit the gate of the page
+ * they act on before their own runs.
  */
 export const isHitVisible = (hit: SearchHit, ctx: SearchContext): boolean => {
+  const menuKey = hit.menuKey;
+
   if (hit.kind === 'action') {
+    if (menuKey && !isMenuKeyOffered(menuKey, ctx)) return false;
     return hit.gate ? hit.gate(ctx) : true;
   }
 
-  const menuKey = hit.menuKey;
   if (!menuKey) return false;
-  if (ctx.disabledMenuKeys.has(menuKey)) return false;
-  if (
-    !ctx.visibleMenuKeys.has(menuKey) &&
-    !ALWAYS_VISIBLE_MENU_KEYS.has(menuKey)
-  ) {
-    return false;
-  }
+  if (!isMenuKeyOffered(menuKey, ctx)) return false;
 
   if (hit.tab) {
     const gate = TAB_GATES[tabGateKey(menuKey, hit.tab.param, hit.tab.key)];

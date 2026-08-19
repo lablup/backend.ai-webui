@@ -12,7 +12,11 @@ import {
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { plainText } from './rank';
 import type { PaletteActionContext, SearchHit } from './types';
-import { toTranslator, useGlobalSearchSource } from './useGlobalSearchSource';
+import {
+  toSearchConfigFlags,
+  toTranslator,
+  useGlobalSearchSource,
+} from './useGlobalSearchSource';
 import { useRecentSearchHits } from './useRecentSearchHits';
 import {
   CommandPalette,
@@ -73,11 +77,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const actionContext: PaletteActionContext = {
     navigate,
     projectName: projectName ?? null,
-    config: {
-      hideAgents: baiClient?._config?.hideAgents ?? true,
-      enableReservoir: !!baiClient?._config?.enableReservoir,
-      fasttrackEndpoint: baiClient?._config?.fasttrackEndpoint ?? null,
-    },
+    config: toSearchConfigFlags(baiClient),
     setThemeMode,
     openNotifications: () => setNotificationDrawerOpen(true),
     toggleSider: () => setSiderCollapsed((collapsed) => !collapsed),
@@ -87,13 +87,19 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const translate = toTranslator(t);
 
   // Body-key matches surface as the page row, so the secondary line says where
-  // the word was found instead of repeating the page's own breadcrumb.
-  const secondaryTextOf = (hit: SearchHit) =>
-    hit.matchedIn
-      ? t('webui.search.FoundIn', {
-          text: plainText(translate(hit.matchedIn.key)),
-        })
-      : hit.breadcrumbKeys.map(translate).join(' › ');
+  // the word was found instead of repeating the page's own breadcrumb. Page rows
+  // have no breadcrumb and fall back to their scope, which is what keeps the
+  // twin Data / Sessions pages apart.
+  const secondaryTextOf = (hit: SearchHit) => {
+    if (hit.matchedIn) {
+      return t('webui.search.FoundIn', {
+        text: plainText(translate(hit.matchedIn.key)),
+      });
+    }
+    return (
+      hit.breadcrumbKeys.map(translate).join(' › ') || (hit.scopeText ?? '')
+    );
+  };
 
   return (
     <CommandPalette

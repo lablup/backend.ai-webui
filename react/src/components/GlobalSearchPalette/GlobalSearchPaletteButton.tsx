@@ -3,15 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useThemeMode } from '../../hooks/useThemeMode';
-import GlobalSearchPalette from './GlobalSearchPalette';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useHotkeys } from '@astryxdesign/core/hooks';
 import { MediaTheme } from '@astryxdesign/core/theme';
 import { Search } from 'lucide-react';
-import React, { useState, useTransition } from 'react';
+import React, { lazy, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
+
+// Lazy so the generated hit index and fuse.js stay out of the entry bundle; the
+// open transition below holds the header until the chunk arrives.
+const GlobalSearchPalette = lazy(() => import('./GlobalSearchPalette'));
 
 type GlobalSearchPaletteButtonProps = Pick<
   React.ComponentProps<typeof IconButton>,
@@ -70,8 +73,8 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
           style={{ color: 'var(--color-icon-primary)', ...props.style }}
         />
       </Tooltip>
-      {/* Mounted on open: the hit index and the menu gating behind
-          `useGlobalSearchSource` cost nothing while the palette is closed. */}
+      {/* Mounted on open: while the palette is closed the index is neither
+          downloaded nor built. No local Suspense — see the transition above. */}
       {isOpen && (
         <GlobalSearchPalette open onRequestClose={() => setIsOpen(false)} />
       )}

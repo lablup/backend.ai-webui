@@ -15,10 +15,24 @@ const indexedEntries = _.filter(
   (entry) => !!entry.menuKey && !!entry.labelKey,
 );
 
+/**
+ * Production puts `admin-data` and `project-data` in the same admin group, so
+ * the twin Data pages really do share a heading. A per-key group label would
+ * hand the fixture a uniqueness the app does not have.
+ */
+const SHARED_ADMIN_GROUP = 'Administration › Operations';
+const SHARED_GROUP_KEYS = ['admin-data', 'project-data', 'admin-session'];
+
 /** A menu that shows every indexed page, so buildHits is the only filter. */
 const fullMenu: Array<MenuHitSource> = _.map(
   _.uniq(_.compact(_.map(indexedEntries, 'menuKey'))),
-  (key) => ({ key, labelText: key, groupLabel: `group:${key}` }),
+  (key) => ({
+    key,
+    labelText: key,
+    groupLabel: _.includes(SHARED_GROUP_KEYS, key)
+      ? SHARED_ADMIN_GROUP
+      : `group:${key}`,
+  }),
 );
 
 const build = (menuSources: Array<MenuHitSource> = fullMenu) =>
@@ -55,7 +69,7 @@ describe('buildHits', () => {
     expect(_.find(hits, { kind: 'page' })?.target?.path).toBe('/usersettings');
   });
 
-  it('keeps twin pages apart and gives each its own scope and group', () => {
+  it('keeps twin pages apart by scope, not by their sidebar group', () => {
     const dataPages = _.filter(
       build(),
       (hit) => hit.kind === 'page' && hit.labelKey === 'webui.menu.Data',
@@ -71,7 +85,23 @@ describe('buildHits', () => {
       'projectAdmin',
     ]);
     expect(_.uniq(_.map(dataPages, 'id'))).toHaveLength(3);
-    expect(_.uniq(_.map(dataPages, 'group'))).toHaveLength(3);
+    // Two of the three share a heading, so the group cannot be the difference …
+    expect(_.uniq(_.map(dataPages, 'group'))).toHaveLength(2);
+    // … the secondary line the palette renders is. Every row reads differently.
+    expect(_.map(dataPages, 'breadcrumbKeys')).toEqual([[], [], []]);
+    expect(_.uniq(_.map(dataPages, 'scopeText')).sort()).toEqual([
+      'Administration',
+      'Project administration',
+      'my project',
+    ]);
+  });
+
+  it('names the active project on a project-scoped row, the label without one', () => {
+    const withoutProject = buildHits({ menuSources: fullMenu, t: tEn });
+    const sessions = _.find(withoutProject, {
+      id: 'page:/project/:projectName/session',
+    });
+    expect(sessions?.scopeText).toBe('Project');
   });
 
   it('fills :projectName into project-scoped targets', () => {

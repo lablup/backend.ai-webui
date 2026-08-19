@@ -30,15 +30,9 @@ const hits = buildHits({
 });
 
 const makeCtx = (overrides: Partial<SearchContext> = {}): SearchContext => ({
-  projectName: 'default',
   isSuperAdmin: false,
-  isAdmin: true,
   supports: () => false,
-  config: {
-    hideAgents: true,
-    enableReservoir: false,
-    fasttrackEndpoint: null,
-  },
+  config: { fasttrackEndpoint: null },
   visibleMenuKeys: new Set(allMenuKeys),
   disabledMenuKeys: new Set(),
   t: tEn,
@@ -51,6 +45,20 @@ const hitById = (id: string): SearchHit => {
   if (!hit) throw new Error(`missing fixture hit: ${id}`);
   return hit;
 };
+
+const makeAction = (): SearchHit => ({
+  id: 'action:test',
+  label: 'Test',
+  kind: 'action',
+  menuKey: null,
+  scope: null,
+  labelKey: 'button.Confirm',
+  breadcrumbKeys: [],
+  group: '',
+  target: { path: '/' },
+  keywords: [],
+  bodyKeys: [],
+});
 
 describe('isHitVisible', () => {
   it('hides a page whose menu key the menu did not emit', () => {
@@ -145,22 +153,28 @@ describe('isHitVisible', () => {
   });
 
   it('lets actions bring their own gate', () => {
-    const action: SearchHit = {
-      id: 'action:test',
-      label: 'Test',
-      kind: 'action',
-      menuKey: null,
-      scope: null,
-      labelKey: 'button.Confirm',
-      breadcrumbKeys: [],
-      group: '',
-      target: { path: '/' },
-      keywords: [],
-      bodyKeys: [],
-    };
-    expect(isHitVisible(action, makeCtx())).toBe(true);
+    expect(isHitVisible(makeAction(), makeCtx())).toBe(true);
     expect(
-      isHitVisible({ ...action, gate: (ctx) => ctx.isSuperAdmin }, makeCtx()),
+      isHitVisible(
+        { ...makeAction(), gate: (ctx) => ctx.isSuperAdmin },
+        makeCtx(),
+      ),
+    ).toBe(false);
+  });
+
+  it('makes an action inherit the visibility of the page it acts on', () => {
+    const action = { ...makeAction(), menuKey: 'data' };
+    expect(isHitVisible(action, makeCtx())).toBe(true);
+    // blockList removes the key outright …
+    expect(
+      isHitVisible(
+        action,
+        makeCtx({ visibleMenuKeys: new Set(_.without(allMenuKeys, 'data')) }),
+      ),
+    ).toBe(false);
+    // … and inactiveList only disables it, which must hide the action too.
+    expect(
+      isHitVisible(action, makeCtx({ disabledMenuKeys: new Set(['data']) })),
     ).toBe(false);
   });
 });
