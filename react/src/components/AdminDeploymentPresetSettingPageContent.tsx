@@ -1216,6 +1216,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             activeStep={currentStepIndex}
             orientation="vertical"
             density="compact"
+            // FR-3596: on-track puts each indicator on the connector line.
+            // Keep in sync with the Session Launcher rail this one mirrors.
+            indicatorPosition="on-track"
             onStepClick={(nextIndex) => goToStep(nextIndex)}
           >
             {stepTitles.map((title, idx) => (
