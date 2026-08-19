@@ -23,11 +23,27 @@ const search = async (page: Page, query: string) => {
   await searchInput(page).fill(query);
 };
 
+/**
+ * The palette is behind the `experimental_global_search` user setting, which is
+ * off by default. `addInitScript` runs before every document — including the
+ * reloads `loginAsAdmin` / `navigateTo` trigger — so the flag is already in
+ * `localStorage` by the time the settings atom first reads it.
+ */
+const enableGlobalSearchSetting = async (page: Page) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'backendaiwebui.settings.user.experimental_global_search',
+      'true',
+    );
+  });
+};
+
 test.describe(
   'Global Search Palette - Navigation',
   { tag: ['@regression', '@global-search', '@functional'] },
   () => {
     test.beforeEach(async ({ page, request }) => {
+      await enableGlobalSearchSetting(page);
       await loginAsAdmin(page, request);
       await navigateTo(page, 'summary');
     });
