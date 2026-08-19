@@ -9,6 +9,7 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, StackItem, VStack } from '@astryxdesign/core/Stack';
 import { Drawer } from '@astryxdesign/lab';
+import classNames from 'classnames';
 import { X } from 'lucide-react';
 import React, { type ReactNode } from 'react';
 
@@ -31,7 +32,12 @@ export interface BAIDrawerAstryxProps {
   size?: number | string;
   /** Edge the panel slides from. @default 'end' */
   side?: 'start' | 'end' | 'top' | 'bottom';
-  /** Modal scrim. antd `Drawer`'s `mask`. @default true */
+  /**
+   * Modal scrim, and with it the modality switch: `true` renders through
+   * `BAIDrawerPortal` (modal band level + focus containment), `false` keeps
+   * lab's native non-modal `show()` overlay.
+   * antd `Drawer`'s `mask`. @default true
+   */
   hasScrim?: boolean;
   /**
    * Body padding. antd's drawer body was `paddingLG` (24px) and a few call
@@ -85,9 +91,7 @@ const BAIDrawerAstryx: React.FC<BAIDrawerAstryxProps> = ({
     <VStack gap={0} align="stretch" height="100%">
       {hasHeader ? (
         <HStack
-          className={['bai-drawer-header', headerClassName]
-            .filter(Boolean)
-            .join(' ')}
+          className={classNames('bai-drawer-header', headerClassName)}
           align="center"
           gap={0}
           wrap="nowrap"
@@ -128,12 +132,10 @@ const BAIDrawerAstryx: React.FC<BAIDrawerAstryxProps> = ({
       ) : null}
       <StackItem size="fill" isScrollable>
         <div
-          className={[
+          className={classNames(
             hasBodyPadding ? 'bai-drawer-body' : 'bai-drawer-body-flush',
             bodyClassName,
-          ]
-            .filter(Boolean)
-            .join(' ')}
+          )}
         >
           {children}
         </div>
