@@ -33,6 +33,10 @@ vi.mock('../../hooks/useThemeMode', () => ({
   useThemeMode: () => ({ isDarkMode: false, setThemeMode: vi.fn() }),
 }));
 
+vi.mock('../../hooks/useBAISetting', () => ({
+  useBAISettingUserState: () => [true, vi.fn()],
+}));
+
 describe('GlobalSearchPaletteButton chunk preload', () => {
   it('warms the palette chunk on mount, without opening the palette', async () => {
     render(<GlobalSearchPaletteButton />);
