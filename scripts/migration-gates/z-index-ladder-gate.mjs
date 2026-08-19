@@ -15,8 +15,9 @@
  * whatever changed.
  *
  * Also pinned: `@astryxdesign/lab`'s non-modal `Drawer` / `BottomSheet` base of
- * 1000 — the one off-ladder value the ladder must not collide with, since
- * `loginSideHelp` (1060) straddles it.
+ * 1000 — the one off-ladder value the ladder must not collide with. It sits
+ * between `loginHost` (950) and `modalBase` (1100), so an upstream bump moving
+ * it lands inside the ladder's range with nothing else to notice.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -165,8 +166,8 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
     );
   }
 
-  // 3. lab's non-modal overlay base — off the ladder, and the value
-  //    `loginSideHelp` straddles.
+  // 3. lab's non-modal overlay base — off the ladder, and inside the range it
+  //    spans (between `loginHost` and `modalBase`).
   const labCss = read(LAB_CSS);
   const drawerJs = read(LAB_DRAWER_JS);
   if (labCss === null || drawerJs === null) {

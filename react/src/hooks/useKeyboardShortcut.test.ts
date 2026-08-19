@@ -4,8 +4,9 @@ import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 import type { Mock } from 'vitest';
 
 // Factory mock keeps the whole component library out of this hook's test graph.
-// `BAI_MODAL_OPEN_ATTRIBUTE` is restated because a factory mock cannot reach the
-// real module; the fixtures below read it back so they cannot drift from it.
+// It has to restate `BAI_MODAL_OPEN_ATTRIBUTE`, so this suite cannot catch a
+// rename of the real constant — the gate on the DOM contract is
+// `BAIDialogPortal.test.tsx`, which asserts the attribute the component emits.
 vi.mock('backend.ai-ui', () => ({
   BAI_MODAL_OPEN_ATTRIBUTE: 'data-bai-modal-open',
   useEventListener: vi.fn((event, handler) => {
