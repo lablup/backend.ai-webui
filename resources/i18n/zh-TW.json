@@ -3620,6 +3620,7 @@
     "FollowSystem": "跟隨系統",
     "Font": "字型",
     "General": "一般的",
+    "GlobalSearch": "全域搜尋",
     "ImportFromHuggingFace": "從 Hugging Face 匯入",
     "InvalidPortNumber": "端口號應為 1025~65534 之間的正數",
     "KeepLoginSessionInformation": "註銷時保留登錄會話信息",

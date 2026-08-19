@@ -3616,6 +3616,7 @@
     "FollowSystem": "Sistemi Takip Et",
     "Font": "Yazı Tipi",
     "General": "Genel",
+    "GlobalSearch": "Global arama",
     "ImportFromHuggingFace": "Hugging Face'ten içe aktar",
     "InvalidPortNumber": "Port numarası 1025~65534 arasında pozitif bir sayı olmalıdır",
     "KeepLoginSessionInformation": "Oturumu Kapatırken Oturum Açma Bilgilerini Saklayın",

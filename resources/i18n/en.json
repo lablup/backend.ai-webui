@@ -3603,6 +3603,7 @@
     "FollowSystem": "Follow System",
     "Font": "Font",
     "General": "General",
+    "GlobalSearch": "Global search",
     "ImportFromHuggingFace": "Import from Hugging Face",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",

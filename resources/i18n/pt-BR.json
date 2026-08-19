@@ -3616,6 +3616,7 @@
     "FollowSystem": "Seguir o sistema",
     "Font": "Fonte",
     "General": "Em geral",
+    "GlobalSearch": "Pesquisa global",
     "ImportFromHuggingFace": "Importar do Hugging Face",
     "InvalidPortNumber": "O número da porta deve ser um número positivo entre 1025 ~ 65534",
     "KeepLoginSessionInformation": "Manter as informações da sessão de login durante o logout",

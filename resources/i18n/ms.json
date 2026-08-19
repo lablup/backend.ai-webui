@@ -3616,6 +3616,7 @@
     "FollowSystem": "Ikut Sistem",
     "Font": "Fon",
     "General": "Am",
+    "GlobalSearch": "Carian global",
     "ImportFromHuggingFace": "Import daripada Hugging Face",
     "InvalidPortNumber": "Nombor port mestilah nombor positif antara 1025 ~ 65534",
     "KeepLoginSessionInformation": "Simpan Maklumat Sesi Masuk semasa Log Keluar",

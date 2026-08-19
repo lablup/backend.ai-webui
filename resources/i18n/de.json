@@ -3618,6 +3618,7 @@
     "FollowSystem": "Systemeinstellung",
     "Font": "Schriftart",
     "General": "Allgemeines",
+    "GlobalSearch": "Globale Suche",
     "ImportFromHuggingFace": "Import aus Hugging Face",
     "InvalidPortNumber": "Die Portnummer sollte eine positive Zahl zwischen 1025 und 65534 sein",
     "KeepLoginSessionInformation": "Behalten Sie die Informationen zur Anmeldesitzung beim Abmelden bei",

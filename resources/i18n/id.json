@@ -3620,6 +3620,7 @@
     "FollowSystem": "Ikuti Sistem",
     "Font": "Jenis huruf",
     "General": "Umum",
+    "GlobalSearch": "Pencarian global",
     "ImportFromHuggingFace": "Impor dari Hugging Face",
     "InvalidPortNumber": "Nomor port harus berupa angka positif antara 1025~65534",
     "KeepLoginSessionInformation": "Simpan Informasi Login saat Keluar",

@@ -3616,6 +3616,7 @@
     "FollowSystem": "Ακολουθία συστήματος",
     "Font": "Γραμματοσειρά",
     "General": "Γενικός",
+    "GlobalSearch": "Καθολική αναζήτηση",
     "ImportFromHuggingFace": "Εισαγωγή από το Hugging Face",
     "InvalidPortNumber": "Ο αριθμός θύρας πρέπει να είναι θετικός αριθμός μεταξύ 1025 ~ 65534",
     "KeepLoginSessionInformation": "Διατηρήστε τα στοιχεία σύνδεσης σύνδεσης κατά την έξοδο",

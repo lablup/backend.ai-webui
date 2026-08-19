@@ -3618,6 +3618,7 @@
     "FollowSystem": "Theo hệ thống",
     "Font": "Phông chữ",
     "General": "Chung",
+    "GlobalSearch": "Tìm kiếm toàn cục",
     "ImportFromHuggingFace": "Nhập từ Hugging Face",
     "InvalidPortNumber": "Số cổng phải là số dương trong khoảng 1025 ~ 65534",
     "KeepLoginSessionInformation": "Giữ thông tin phiên đăng nhập trong khi đăng xuất",

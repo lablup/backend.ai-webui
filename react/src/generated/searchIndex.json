@@ -4946,6 +4946,16 @@
           "descriptionKeys": []
         },
         {
+          "key": "userSettings.GlobalSearch",
+          "tab": "general",
+          "groupKey": "userSettings.ExperimentalFeatures",
+          "groupId": "group-experimental-features",
+          "testId": "items-experimental-global-search",
+          "descriptionKeys": [
+            "general.Enabled"
+          ]
+        },
+        {
           "key": "userSettings.ImportFromHuggingFace",
           "tab": "general",
           "groupKey": "userSettings.ExperimentalFeatures",

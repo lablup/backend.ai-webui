@@ -3616,6 +3616,7 @@
     "FollowSystem": "Seuraa järjestelmää",
     "Font": "Fontti",
     "General": "Yleistä",
+    "GlobalSearch": "Globaali haku",
     "ImportFromHuggingFace": "Tuo Hugging Facesta",
     "InvalidPortNumber": "Portin numeron on oltava positiivinen numero välillä 1025~65534.",
     "KeepLoginSessionInformation": "Pidä kirjautumisistunnon tiedot uloskirjautumisen aikana",

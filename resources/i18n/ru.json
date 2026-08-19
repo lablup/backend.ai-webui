@@ -3616,6 +3616,7 @@
     "FollowSystem": "Следовать системе",
     "Font": "Шрифт",
     "General": "Общий",
+    "GlobalSearch": "Глобальный поиск",
     "ImportFromHuggingFace": "Импорт из Hugging Face",
     "InvalidPortNumber": "Номер порта должен быть положительным числом от 1025 до 65534.",
     "KeepLoginSessionInformation": "Сохранять информацию о сеансе входа в систему при выходе из системы",

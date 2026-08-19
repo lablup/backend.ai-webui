@@ -3619,6 +3619,7 @@
     "FollowSystem": "시스템 설정",
     "Font": "폰트",
     "General": "일반",
+    "GlobalSearch": "전체 검색",
     "ImportFromHuggingFace": "Hugging Face에서 가져오기",
     "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",

@@ -3618,6 +3618,7 @@
     "FollowSystem": "Системийг дагах",
     "Font": "Фонт",
     "General": "Ерөнхий",
+    "GlobalSearch": "Глобал хайлт",
     "ImportFromHuggingFace": "Hugging Face-ээс импортлох",
     "InvalidPortNumber": "Портын дугаар нь 1025 ~ 65534 хооронд эерэг тоо байх ёстой",
     "KeepLoginSessionInformation": "Гарах үед нэвтрэх хуралдааны мэдээллийг хадгалах",

@@ -164,6 +164,21 @@ vi.mock('../../hooks/useThemeMode', () => ({
   useThemeMode: () => ({ isDarkMode: false, setThemeMode }),
 }));
 
+// The rollout gate. The real hook drags in `DefaultProviders`; the flag is all
+// the button reads. Defaults to on so the contracts below exercise the palette.
+const experimentalGlobalSearch = vi.hoisted(() => ({
+  value: true as boolean | null,
+}));
+
+vi.mock('../../hooks/useBAISetting', () => ({
+  useBAISettingUserState: (name: string) => {
+    if (name === 'experimental_global_search') {
+      return [experimentalGlobalSearch.value, vi.fn()];
+    }
+    throw new Error(`Unexpected setting key in test: ${name}`);
+  },
+}));
+
 vi.mock('./useRecentSearchHits', () => ({
   useRecentSearchHits: () => [[], { push: pushRecent, clear: vi.fn() }],
 }));
@@ -209,6 +224,30 @@ describe('GlobalSearchPalette', () => {
     suspension.release();
     bootstrapGate.release(hits);
     hasSyncBootstrap = true;
+    experimentalGlobalSearch.value = true;
+  });
+
+  it('renders the trigger while the experimental setting is on', () => {
+    render(<GlobalSearchPaletteButton />);
+
+    expect(
+      screen.getByRole('button', { name: 'webui.menu.Search' }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders no trigger and binds no mod+k while the experimental setting is off', async () => {
+    experimentalGlobalSearch.value = null;
+    const user = userEvent.setup();
+    render(<GlobalSearchPaletteButton />);
+
+    expect(
+      screen.queryByRole('button', { name: 'webui.menu.Search' }),
+    ).not.toBeInTheDocument();
+
+    await user.keyboard('{Control>}k{/Control}');
+    await user.keyboard('{Meta>}k{/Meta}');
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('fills the list with skeleton rows while bootstrap is pending, never the default copy', async () => {
