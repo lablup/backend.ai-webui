@@ -9,11 +9,11 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useHotkeys } from '@astryxdesign/core/hooks';
 import { MediaTheme } from '@astryxdesign/core/theme';
 import { Search } from 'lucide-react';
-import React, { lazy, useState, useTransition } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Lazy so the generated hit index and fuse.js stay out of the entry bundle; the
-// open transition below holds the header until the chunk arrives.
+// local Suspense below covers the chunk load.
 const GlobalSearchPalette = lazy(() => import('./GlobalSearchPalette'));
 
 type GlobalSearchPaletteButtonProps = Pick<
@@ -36,14 +36,12 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
   const [isOpen, setIsOpen] = useState(false);
-  // Every open path must stay inside `startTransition`: the palette tree
-  // suspends, and an urgent open would blank the header's ancestor boundary.
-  const [isPending, startTransition] = useTransition();
-  const open = () => startTransition(() => setIsOpen(true));
 
   // `allowInInputs` so the palette is reachable while a form field has focus,
   // which is where a user most often reaches for it.
-  useHotkeys([{ keys: 'mod+k', allowInInputs: true, onPress: open }]);
+  useHotkeys([
+    { keys: 'mod+k', allowInInputs: true, onPress: () => setIsOpen(true) },
+  ]);
 
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 
@@ -64,19 +62,18 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
           icon={
             <Search size="1em" style={{ color: 'var(--color-icon-primary)' }} />
           }
-          // `isInterruptible` keeps the trigger enabled while the transition
-          // holds; Astryx derives `aria-busy` from `isLoading` itself.
-          isLoading={isPending}
-          isInterruptible
-          onClick={open}
+          onClick={() => setIsOpen(true)}
           {...props}
           style={{ color: 'var(--color-icon-primary)', ...props.style }}
         />
       </Tooltip>
       {/* Mounted on open: while the palette is closed the index is neither
-          downloaded nor built. No local Suspense — see the transition above. */}
+          downloaded nor built. The local boundary absorbs both the lazy chunk
+          and the client suspend, so an urgent open never blanks the header. */}
       {isOpen && (
-        <GlobalSearchPalette open onRequestClose={() => setIsOpen(false)} />
+        <Suspense fallback={null}>
+          <GlobalSearchPalette open onRequestClose={() => setIsOpen(false)} />
+        </Suspense>
       )}
     </>
   );

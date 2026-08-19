@@ -6,8 +6,8 @@
  * Top-layer contract: the header button opens the palette, rows render as
  * title + breadcrumb (or "found in" for a body match), an empty result set
  * shows the no-results copy, and selecting a row records a recent, navigates
- * to the hit's target, and closes. Opening runs in a transition, so a
- * suspending subtree holds the previous UI instead of flashing an empty frame.
+ * to the hit's target, and closes. Opening is urgent, and the palette's own
+ * Suspense boundary absorbs the suspend instead of blanking the header.
  */
 import GlobalSearchPaletteButton from './GlobalSearchPaletteButton';
 import type { SearchHit } from './types';
@@ -24,7 +24,7 @@ import { Suspense } from 'react';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Lets a test suspend the palette subtree the way `useSuspendedBackendaiClient`
-// does on a cold client, so the transition contract is observable.
+// does on a cold client, so the boundary's containment is observable.
 const suspension = vi.hoisted(() => {
   let gate: { promise: Promise<void>; resolve: () => void } | null = null;
   return {
@@ -176,10 +176,11 @@ describe('GlobalSearchPalette', () => {
     suspension.release();
   });
 
-  it('holds the header while the palette subtree suspends, then mounts it whole', async () => {
+  it('keeps the header mounted while the palette subtree suspends, then mounts it whole', async () => {
     const user = userEvent.setup();
-    // Mirrors MainLayout: the header's only boundary is an ancestor one, so an
-    // urgent open would swap the whole header for this fallback.
+    // Mirrors MainLayout: the header's only outer boundary is an ancestor one,
+    // so a suspend that escaped the palette would swap the whole header for
+    // this fallback.
     render(
       <Suspense fallback={<span>header-blanked</span>}>
         <GlobalSearchPaletteButton />
@@ -190,8 +191,8 @@ describe('GlobalSearchPalette', () => {
     suspension.hold();
     await user.click(trigger);
 
-    // The transition holds the commit, so neither an empty dialog nor a
-    // blanked header is ever painted.
+    // The palette's own boundary contains the suspend: the header stays
+    // painted and no half-built dialog is shown.
     expect(trigger).toBeInTheDocument();
     expect(screen.queryByText('header-blanked')).not.toBeInTheDocument();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
