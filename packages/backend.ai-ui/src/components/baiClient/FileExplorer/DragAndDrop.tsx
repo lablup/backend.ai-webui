@@ -11,6 +11,7 @@
  `DataTransfer`); picking a folder from the file dialog does not.
 */
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import './DragAndDrop.css';
 import { useUploadVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { FileInput } from '@astryxdesign/core/FileInput';
@@ -59,8 +60,9 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
       <FileInput
         mode="dropzone"
         // `FileInput` spreads unknown props onto its hidden <input>, so a
-        // data-testid cannot reach the drop area — `className` can, and e2e
-        // needs a repo-owned handle on it (never an `astryx-*` class).
+        // data-testid cannot reach the drop area — `className` can, and both
+        // e2e and `DragAndDrop.css` need a repo-owned handle on it (never an
+        // `astryx-*` class).
         className="bai-file-explorer-dropzone"
         // The caption has to live INSIDE the drop area: `label` / `description`
         // render above it in the Field, on top of the explorer title (FR-3575).
