@@ -9,12 +9,13 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useHotkeys } from '@astryxdesign/core/hooks';
 import { MediaTheme } from '@astryxdesign/core/theme';
 import { Search } from 'lucide-react';
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Lazy so the generated hit index and fuse.js stay out of the entry bundle; the
 // local Suspense below covers the chunk load.
-const GlobalSearchPalette = lazy(() => import('./GlobalSearchPalette'));
+const importPalette = () => import('./GlobalSearchPalette');
+const GlobalSearchPalette = lazy(importPalette);
 
 type GlobalSearchPaletteButtonProps = Pick<
   React.ComponentProps<typeof IconButton>,
@@ -42,6 +43,14 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
   useHotkeys([
     { keys: 'mod+k', allowInInputs: true, onPress: () => setIsOpen(true) },
   ]);
+
+  // Warm the chunk while the header is idle: `import()` caches its module
+  // promise, so the first open reuses it instead of paying the fetch.
+  useEffect(() => {
+    const warm = () => void importPalette();
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(warm);
+    else setTimeout(warm, 200);
+  }, []);
 
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 

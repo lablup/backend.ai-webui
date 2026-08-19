@@ -23,6 +23,7 @@ import {
   CommandPaletteInput,
 } from '@astryxdesign/core/CommandPalette';
 import { Kbd } from '@astryxdesign/core/Kbd';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { textSizeVars } from '@astryxdesign/core/theme/tokens.stylex';
@@ -42,6 +43,13 @@ const styles = stylex.create({
     width: textSizeVars['--font-size-xl'],
     height: textSizeVars['--font-size-xl'],
   },
+  // Placeholder bars sized off the same type scale the two row lines use.
+  placeholderColumn: { flexGrow: 1, minWidth: 0 },
+  placeholderLabel: { width: '40%', height: textSizeVars['--font-size-base'] },
+  placeholderSecondary: {
+    width: '24%',
+    height: textSizeVars['--font-size-sm'],
+  },
 });
 
 export interface GlobalSearchPaletteProps {
@@ -52,6 +60,27 @@ export interface GlobalSearchPaletteProps {
 // Astryx's own default width, capped so the dialog never outgrows a phone
 // viewport (standing decision 8 — the header trigger stays visible below `sm`).
 const PALETTE_WIDTH = 'min(640px, 92vw)';
+
+// Astryx paints the bootstrap empty slot on the first frame after mount, before
+// `bootstrap()` commits in its transition — so text there reads as "no results"
+// on every open. Rows shaped like the real ones read as loading instead.
+const BOOTSTRAP_PLACEHOLDER = (
+  <VStack gap={2} width="100%">
+    {[0, 1, 2].map((index) => (
+      <HStack key={index} gap={2} align="center" width="100%">
+        <Skeleton index={index} radius={2} xstyle={styles.iconSlot} />
+        <VStack gap={0.5} xstyle={styles.placeholderColumn}>
+          <Skeleton index={index} radius={1} xstyle={styles.placeholderLabel} />
+          <Skeleton
+            index={index}
+            radius={1}
+            xstyle={styles.placeholderSecondary}
+          />
+        </VStack>
+      </HStack>
+    ))}
+  </VStack>
+);
 
 const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   open,
@@ -116,6 +145,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
           endContent={<Kbd keys="mod+k" />}
         />
       }
+      emptyBootstrapText={BOOTSTRAP_PLACEHOLDER}
       emptySearchText={t('webui.search.NoResults')}
       onValueChange={(value) => {
         const hit = searchSource.getHit(value);

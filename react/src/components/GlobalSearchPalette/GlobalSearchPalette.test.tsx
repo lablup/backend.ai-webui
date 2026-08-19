@@ -44,6 +44,28 @@ const suspension = vi.hoisted(() => {
   };
 });
 
+// Holds `bootstrap()` unresolved — the state every open starts in, since Astryx
+// commits bootstrap in a transition after the dialog has already painted.
+const bootstrapGate = vi.hoisted(() => {
+  let pending: {
+    promise: Promise<unknown>;
+    resolve: (items: unknown) => void;
+  } | null = null;
+  return {
+    hold: () => {
+      let resolve!: (items: unknown) => void;
+      const promise = new Promise<unknown>((r) => (resolve = r));
+      pending = { promise, resolve };
+    },
+    result: (items: unknown) => pending?.promise ?? items,
+    release: (items: unknown) => {
+      const held = pending;
+      pending = null;
+      held?.resolve(items);
+    },
+  };
+});
+
 const navigate = vi.fn();
 const pushRecent = vi.fn();
 const runAction = vi.fn();
@@ -150,7 +172,7 @@ vi.mock('./useGlobalSearchSource', () => ({
         hits.filter((hit) =>
           hit.label.toLowerCase().includes(query.toLowerCase()),
         ),
-      bootstrap: () => hits,
+      bootstrap: () => bootstrapGate.result(hits),
       getHit: (id: string) => hits.find((hit) => hit.id === id),
     };
   },
@@ -174,6 +196,32 @@ describe('GlobalSearchPalette', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     suspension.release();
+    bootstrapGate.release(hits);
+  });
+
+  it('fills the list with skeleton rows while bootstrap is pending, never the default copy', async () => {
+    const user = userEvent.setup();
+    bootstrapGate.hold();
+    render(<GlobalSearchPaletteButton />);
+    await user.click(screen.getByRole('button', { name: 'webui.menu.Search' }));
+
+    await waitFor(() =>
+      expect(
+        document.querySelectorAll('.astryx-skeleton').length,
+      ).toBeGreaterThan(0),
+    );
+    // Astryx's `emptyBootstrapText` default, which reads as an empty result set.
+    expect(screen.queryByText('Type to search')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sessions')).not.toBeInTheDocument();
+
+    await act(async () => {
+      bootstrapGate.release(hits);
+    });
+
+    await waitFor(() =>
+      expect(screen.getByText('Sessions')).toBeInTheDocument(),
+    );
+    expect(document.querySelectorAll('.astryx-skeleton')).toHaveLength(0);
   });
 
   it('keeps the header mounted while the palette subtree suspends, then mounts it whole', async () => {
