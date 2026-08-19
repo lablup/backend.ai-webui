@@ -86,6 +86,7 @@ export function useDialogLevel(
   isOpen: boolean,
   cssVar: string,
 ): boolean {
+  'use memo';
   const [isTopmost, setIsTopmost] = useState(true);
 
   useLayoutEffect(() => {

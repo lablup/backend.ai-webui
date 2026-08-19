@@ -50,6 +50,7 @@ const Nested: React.FC<{
   onDrawerClose: () => void;
   onModalOpenChange: (isOpen: boolean) => void;
 }> = ({ onDrawerClose, onModalOpenChange }) => {
+  'use memo';
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <BAIDrawerPortal isOpen onClose={onDrawerClose} label="Details">
