@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r17-default-brand-h161l5oh theme — built by `pnpm exec astryx theme build`
+ * bai-r18-default-brand-h161l5oh theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR17DefaultBrandH161l5ohTheme } from './bai-r17-default-brand-h161l5oh';
- *   import './bai-r17-default-brand-h161l5oh.css';
+ *   import { baiR18DefaultBrandH161l5ohTheme } from './bai-r18-default-brand-h161l5oh';
+ *   import './bai-r18-default-brand-h161l5oh.css';
  */
-export const baiR17DefaultBrandH161l5ohTheme = {
-  name: 'bai-r17-default-brand-h161l5oh',
+export const baiR18DefaultBrandH161l5ohTheme = {
+  name: 'bai-r18-default-brand-h161l5oh',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -397,7 +397,7 @@ export const baiR17DefaultBrandH161l5ohTheme = {
     },
     "banner": {
       "status:info": {
-        "--color-accent-muted": "var(--color-background-blue)",
+        "--color-accent-muted": "light-dark(#c4ddfb, #393f50)",
         "--color-text-primary": "var(--color-text-blue)",
         "--color-text-secondary": "var(--color-text-blue)",
         "--color-accent": "var(--color-text-blue)"

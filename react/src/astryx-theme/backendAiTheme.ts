@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 17;
+export const THEME_NAME_REV = 18;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -505,6 +505,18 @@ const STATUS_TEXT_COLORS = {
     'color:danger': { color: 'var(--color-error)' },
     'color:warning': { color: 'var(--color-warning)' },
     'color:success': { color: 'var(--color-success)' },
+  },
+};
+
+// Astryx fills `.astryx-banner.info` from `--color-accent-muted`, which the
+// theme points at `--color-background-blue` — dark-only alpha (`#9eb7ff3D` =
+// 24%), so page content read through the notification cards. `#393f50` is that
+// fill composited over the dark page: same colour, opaque (FR-3554).
+const BANNER_OPAQUE_INFO_SURFACE = {
+  banner: {
+    'status:info': {
+      '--color-accent-muted': 'light-dark(#c4ddfb, #393f50)',
+    },
   },
 };
 
@@ -1055,6 +1067,7 @@ export function buildBackendAiTheme(
     components: {
       ...SIDE_NAV_DENSITY,
       ...STATUS_TEXT_COLORS,
+      ...BANNER_OPAQUE_INFO_SURFACE,
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
       ...COMPLEX_SELECTOR_HEIGHT_PARITY,

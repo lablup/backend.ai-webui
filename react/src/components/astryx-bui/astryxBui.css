@@ -274,3 +274,15 @@
   background: var(--color-text-secondary);
   border-radius: var(--radius-full);
 }
+
+/* antd's `message` rendered TOP-CENTER. Astryx's `ToastPosition` is four
+   corners only (`topEnd | topStart | bottomEnd | bottomStart`) and `inset`
+   takes px offsets, so a centered anchor is not expressible through the
+   component API — hence this rule rather than a prop (FR-3554).
+   `[popover][role='region']` is the toast viewport and nothing else: the only
+   other `role="region"` in Astryx is Carousel, which is not a popover. */
+[popover][role='region'] {
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
