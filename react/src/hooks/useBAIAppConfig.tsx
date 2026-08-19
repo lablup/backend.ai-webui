@@ -15,9 +15,10 @@ import {
   useBAIAppConfigScopedUpsertMutation,
   useBAIAppConfigScopedUpsertMutation$data,
 } from '../__generated__/useBAIAppConfigScopedUpsertMutation.graphql';
+import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import {
   commitMutation,
   fetchQuery,
@@ -151,6 +152,10 @@ export const useBAIAppConfigsLoader = () => {
   const relayEnv = useRelayEnvironment();
   const fetchKey = useAtomValue(appConfigsFetchKeyAtom);
   const setMergedConfigs = useSetAtom(mergedAppConfigsAtom);
+  const { logger } = useBAILogger();
+  const reportLoadError = useEffectEvent((error: unknown) => {
+    logger.error('Failed to load app configs', error);
+  });
 
   useEffect(() => {
     let disposed = false;
@@ -168,6 +173,10 @@ export const useBAIAppConfigsLoader = () => {
           next[node.configName as AppConfigName] = node.config ?? {};
         });
         setMergedConfigs(next);
+      })
+      .catch((error) => {
+        if (disposed) return;
+        reportLoadError(error);
       });
     return () => {
       disposed = true;
@@ -338,10 +347,16 @@ const useBAIDomainScopedConfigForAdmin = <T,>(
   const rawData = useLazyLoadQuery<useBAIAppConfigScopedRawQuery>(
     scopedRawQuery,
     {
-      scope: { scopeType: 'DOMAIN', scopeId: domainId },
+      scope: { scopeType: 'DOMAIN', scopeId: domainId ?? '' },
       configNames: [configName],
     },
-    { fetchKey: rawFetchKey, fetchPolicy: 'network-only' },
+    {
+      fetchKey: rawFetchKey,
+      // Unresolved domain: DOMAIN + empty scopeId fails backend scope
+      // validation, so skip the network trip; `value` stays undefined and
+      // `setValue` throws.
+      fetchPolicy: domainId ? 'network-only' : 'store-only',
+    },
   );
   const value = _.get(
     rawData?.scopedAppConfigFragmentsByNames?.[0]?.config,
