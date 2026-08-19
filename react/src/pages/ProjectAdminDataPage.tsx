@@ -50,7 +50,13 @@ import {
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -154,11 +160,16 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
 
-  // eslint-disable-next-line react-hooks/refs
-  queryMapRef.current[queryParams.statusCategory] = {
-    queryParams,
-    tablePaginationOption,
-  };
+  // Written in an effect: a render-phase ref write is a react-hooks/refs
+  // violation that made the React Compiler bail out of this component, which
+  // re-created `queryVariables` every render and flashed the deferred-value
+  // loading states on unrelated re-renders (same symptom as FR-3510).
+  useEffect(() => {
+    queryMapRef.current[queryParams.statusCategory] = {
+      queryParams,
+      tablePaginationOption,
+    };
+  }, [queryParams, tablePaginationOption]);
 
   const usageModeFilter = getUsageModeFilter(queryParams.mode);
 
