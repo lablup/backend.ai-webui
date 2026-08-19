@@ -34,12 +34,12 @@
     display: none;
   }
 
-  /* Same look as lab's `::backdrop` scrim, on the same duration. */
+  /* lab's `::backdrop` overlay color on the same duration — minus its
+     blur, dropped on request (FR-3585). */
   .bai-drawer-portal__mask {
     position: absolute;
     inset: 0;
     background-color: var(--color-overlay);
-    backdrop-filter: blur(2px);
     transition: opacity var(--duration-medium) var(--ease-standard);
   }
 
