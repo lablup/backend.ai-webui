@@ -9,7 +9,6 @@ type KnownSettingName =
   | 'AgentSummaryList'
   | 'ContainerRegistryList'
   | 'CustomizedImageList'
-  | 'ErrorLogList'
   | 'ImageList'
   | 'KeypairResourcePolicyList'
   | 'ProjectResourcePolicyList'
