@@ -4,9 +4,10 @@
 */
 import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 
-// A `BAIDialog` root, or any open native `<dialog>` — after FR-3578 that
-// is drawers, plus anything opened with `.show()`. `:not([inert])` drops the
-// roots the level stack covered, whose contents no one can reach.
+// A portal root (`BAIDialog`, and `BAIDrawerPortal` since FR-3585), or any
+// open native `<dialog>` — tours, the launcher, non-scrim drawers.
+// `:not([inert])` drops the roots the level stack covered, whose contents no
+// one can reach.
 const OPEN_MODAL_ROOTS = [
   `[${BAI_MODAL_OPEN_ATTRIBUTE}]:not([inert])`,
   'dialog[open]:not([inert])',

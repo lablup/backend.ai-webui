@@ -17,7 +17,9 @@
  * Also pinned: `@astryxdesign/lab`'s non-modal `Drawer` / `BottomSheet` base of
  * 1000 — the one off-ladder value the ladder must not collide with. It sits
  * between `loginHost` (950) and `modalBase` (1100), so an upstream bump moving
- * it lands inside the ladder's range with nothing else to notice.
+ * it lands inside the ladder's range with nothing else to notice. Still live
+ * after FR-3585: `ChatPage`, the notification drawer, and the inner `<dialog>`
+ * of every portalled drawer all open with `show()` and take this base.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";

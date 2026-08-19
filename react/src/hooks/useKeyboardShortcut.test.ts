@@ -120,11 +120,12 @@ describe('useKeyboardShortcut', () => {
   });
 
   describe('Modal detection', () => {
-    // Both roots the selector covers: BAIDialog's marked div, and the lab
-    // `Drawer`'s still-native `<dialog>`.
+    // Both roots the selector covers: a portal root (BAIDialog, and since
+    // FR-3585 the scrimmed drawer), and the native `<dialog>` tours, the
+    // launcher and non-scrim drawers still open.
     it.each([
       ['a portal modal', 'div', BAI_MODAL_OPEN_ATTRIBUTE],
-      ['a native dialog (drawer)', 'dialog', 'open'],
+      ['a native dialog', 'dialog', 'open'],
     ])(
       'should not trigger handler when %s is open',
       (_label, tagName, attribute) => {
