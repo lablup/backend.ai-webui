@@ -86,27 +86,23 @@ const STATUS_FILTER_DELETED = {
 const statusCategoryValues = ['active', 'deleted'] as const;
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
 
-function getUsageModeFilter(mode: (typeof modeValues)[number]) {
-  switch (mode) {
-    case 'all':
-      return undefined;
-    case 'general':
-      return {
-        AND: [
-          { name: { iNotStartsWith: '.' } },
-          { usageMode: { equals: 'GENERAL' } },
-        ],
-      } as const;
-    case 'data':
-      return { usageMode: { equals: 'DATA' } } as const;
-    case 'automount':
-      return { name: { iStartsWith: '.' } } as const;
-    case 'model':
-      return { usageMode: { equals: 'MODEL' } } as const;
-    default:
-      return undefined;
-  }
-}
+// Module constants so each mode's filter keeps a stable identity: the compiler
+// cannot skip calls that take fresh mutable arguments, and an unstable object
+// here cascades into a new `queryVariables` identity on every render, which
+// flashes the deferred-value loading states (FR-3594).
+const USAGE_MODE_FILTERS: Partial<
+  Record<(typeof modeValues)[number], VFolderFilter>
+> = {
+  general: {
+    AND: [
+      { name: { iNotStartsWith: '.' } },
+      { usageMode: { equals: 'GENERAL' } },
+    ],
+  },
+  data: { usageMode: { equals: 'DATA' } },
+  automount: { name: { iStartsWith: '.' } },
+  model: { usageMode: { equals: 'MODEL' } },
+};
 
 interface ProjectAdminDataContentProps {
   project: ProjectContext;
@@ -171,7 +167,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
     };
   }, [queryParams, tablePaginationOption]);
 
-  const usageModeFilter = getUsageModeFilter(queryParams.mode);
+  const usageModeFilter = USAGE_MODE_FILTERS[queryParams.mode];
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -180,12 +176,15 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       ? STATUS_FILTER_DELETED
       : STATUS_FILTER_ACTIVE;
 
-  const combinedFilter = {
-    AND: filterOutEmpty([
+  // Built from literals and stable references only (no helper call): the
+  // compiler keeps unknown calls with mutable arguments un-memoized, and any
+  // per-render identity here re-fires the deferred-value loading flash.
+  const combinedFilter: VFolderFilter = {
+    AND: [
       statusFilter,
-      usageModeFilter,
-      queryParams.filter ?? undefined,
-    ]),
+      ...(usageModeFilter ? [usageModeFilter] : []),
+      ...(queryParams.filter ? [queryParams.filter] : []),
+    ],
   };
 
   const queryVariables = {
