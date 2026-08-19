@@ -4912,6 +4912,16 @@
           "descriptionKeys": []
         },
         {
+          "key": "userSettings.CommandPalette",
+          "tab": "general",
+          "groupKey": "userSettings.ExperimentalFeatures",
+          "groupId": "group-experimental-features",
+          "testId": "items-experimental-command-palette",
+          "descriptionKeys": [
+            "general.Enabled"
+          ]
+        },
+        {
           "key": "userSettings.CustomDashboardPanels",
           "tab": "general",
           "groupKey": "userSettings.ExperimentalFeatures",
@@ -4944,16 +4954,6 @@
           "groupId": "group-shell-environments",
           "testId": "items-edit-user-config-script",
           "descriptionKeys": []
-        },
-        {
-          "key": "userSettings.GlobalSearch",
-          "tab": "general",
-          "groupKey": "userSettings.ExperimentalFeatures",
-          "groupId": "group-experimental-features",
-          "testId": "items-experimental-global-search",
-          "descriptionKeys": [
-            "general.Enabled"
-          ]
         },
         {
           "key": "userSettings.ImportFromHuggingFace",
