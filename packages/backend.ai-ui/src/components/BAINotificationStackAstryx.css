@@ -17,8 +17,9 @@
   width: 384px; /* antd's notification width; not on the spacing scale. */
   max-width: calc(100vw - var(--spacing-6) * 2);
   /* Top of the ladder (`../styles/zIndexLadder.ts`), so a notice clears every
-     layer on it — including the whole modal band. It does NOT clear the CSS top
-     layer: lab `Drawer` is still a native `<dialog>` and paints over notices. */
+     layer on it — the modal band included, and since FR-3585 the scrimmed
+     drawers that joined it. It does NOT clear the CSS top layer: tours and
+     non-scrim drawers are still native and paint over notices. */
   z-index: var(--bai-z-notification);
   pointer-events: none;
 }

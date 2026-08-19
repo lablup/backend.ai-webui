@@ -1,0 +1,71 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIDrawerPortal> — the scrim and stacking a scrimmed
+ lab `Drawer` used to get from the top layer, restated for a portalled tree
+ (FR-3585). The panel geometry stays lab's: the inner <dialog> is
+ `position: fixed` and anchors itself to its own edge.
+*/
+
+@layer components {
+  /* Same band and step as `BAIDialogPortal` (`backend.ai-ui/src/styles/
+     zIndexLadder.css`), so a modal opened later claims a level above the
+     drawer and paints over it. */
+  .bai-drawer-portal {
+    --bai-drawer-portal-level: 0;
+    position: fixed;
+    inset: 0;
+    z-index: calc(
+      var(--bai-z-modal-base) + var(--bai-drawer-portal-level) *
+        var(--bai-z-modal-level-step)
+    );
+  }
+
+  /* Closed but still rendered: lab keeps the panel sliding out for one
+     `--duration-medium` before its delayed `dialog.close()`. */
+  .bai-drawer-portal--closed {
+    pointer-events: none;
+  }
+
+  /* Set by the component once that slide-out is over. Children stay mounted,
+     as the native drawer's did. */
+  .bai-drawer-portal[data-bai-drawer-hidden] {
+    display: none;
+  }
+
+  /* No box of its own: the focus trap needs an element, the panel inside is
+     `position: fixed` and lab anchors it. */
+  .bai-drawer-portal__wrap {
+    display: contents;
+  }
+
+  /* Same look as lab's `::backdrop` scrim, on the same duration. */
+  .bai-drawer-portal__mask {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-overlay);
+    backdrop-filter: blur(2px);
+    opacity: 1;
+    transition: opacity var(--duration-medium) var(--ease-standard);
+  }
+
+  /* The scrim fades in on the frame the root leaves `display: none`; a plain
+     transition cannot start from an unrendered element. */
+  @starting-style {
+    .bai-drawer-portal__mask {
+      opacity: 0;
+    }
+  }
+
+  .bai-drawer-portal--closed .bai-drawer-portal__mask {
+    opacity: 0;
+  }
+
+  /* lab's own reduced-motion duration, so scrim and panel stay in step. */
+  @media (prefers-reduced-motion: reduce) {
+    .bai-drawer-portal__mask {
+      transition-duration: 0.01s;
+    }
+  }
+}
