@@ -98,6 +98,16 @@ export interface BAIModalAstryxProps extends Omit<
   style?: React.CSSProperties;
 }
 
+/** Module scope on purpose: assigning through a prop-borne ref inside the
+ *  component body is a mutation the React Compiler rejects. */
+const assignRef = <T,>(ref: React.Ref<T> | undefined, value: T | null) => {
+  if (typeof ref === 'function') {
+    ref(value);
+  } else if (ref) {
+    (ref as React.RefObject<T | null>).current = value;
+  }
+};
+
 const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
   isOpen = false,
   onOpenChange,
@@ -130,6 +140,23 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
     // `onAfterOpen` is a stable callback at every call site in this graph.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  const attachBodyRef = (node: HTMLDivElement | null) => {
+    const assign = (value: HTMLDivElement | null) => assignRef(bodyRef, value);
+    assign(node);
+    if (!node) return;
+    // `<input type="file">` fires a BUBBLING `cancel` when the user dismisses
+    // the chooser, and Astryx `Dialog`'s `onCancel` — its own close request —
+    // accepts any that reaches it, taking the whole modal down with the
+    // chooser (FR-3575). React types `onCancel` for `<dialog>` only, hence the
+    // native listener.
+    const stopCancelBubbling = (e: Event) => e.stopPropagation();
+    node.addEventListener('cancel', stopCancelBubbling);
+    return () => {
+      node.removeEventListener('cancel', stopCancelBubbling);
+      assign(null);
+    };
+  };
 
   if (!isOpen) return null;
   const close = () => onOpenChange?.(false);
@@ -205,7 +232,7 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
         }
         content={
           <LayoutContent>
-            <div ref={bodyRef} style={{ minHeight: '100%' }}>
+            <div ref={attachBodyRef} style={{ minHeight: '100%' }}>
               {isLoading ? <Skeleton height={120} /> : children}
             </div>
           </LayoutContent>

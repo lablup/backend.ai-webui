@@ -344,6 +344,16 @@ const TYPE_COLOR: Record<'warning' | 'error', string> = {
 
 /** Viewport inset (px) kept around a maximized dialog — antd used `marginLG`. */
 const MAXIMIZED_INSET = 24;
+
+/** Module scope on purpose: assigning through a prop-borne ref inside the
+ *  component body is a mutation the React Compiler rejects. */
+const assignRef = <T,>(ref: React.Ref<T> | undefined, value: T | null) => {
+  if (typeof ref === 'function') {
+    ref(value);
+  } else if (ref) {
+    (ref as React.RefObject<T | null>).current = value;
+  }
+};
 /** Width (px) of the minimized title bar. */
 const MINIMIZED_WIDTH = 320;
 
@@ -721,6 +731,24 @@ const BAIModal: React.FC<BAIModalProps> = ({
     />
   );
 
+  const attachBodyRef = (node: HTMLDivElement | null) => {
+    const target = bodyRef ?? bodyProps?.ref;
+    const assign = (value: HTMLDivElement | null) => assignRef(target, value);
+    assign(node);
+    if (!node) return;
+    // `<input type="file">` fires a BUBBLING `cancel` when the user dismisses
+    // the chooser, and Astryx `Dialog`'s `onCancel` — its own close request —
+    // accepts any that reaches it, taking the whole modal down with the
+    // chooser (FR-3575). React types `onCancel` for `<dialog>` only, hence the
+    // native listener.
+    const stopCancelBubbling = (e: Event) => e.stopPropagation();
+    node.addEventListener('cancel', stopCancelBubbling);
+    return () => {
+      node.removeEventListener('cancel', stopCancelBubbling);
+      assign(null);
+    };
+  };
+
   // Nothing is rendered while closed — see PILOT-DECISION 3. Hooks above have
   // already run, so this early return is safe.
   if (!isVisible) return null;
@@ -751,7 +779,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
             <LayoutContent>
               <div
                 {...bodyProps}
-                ref={bodyRef ?? bodyProps?.ref}
+                ref={attachBodyRef}
                 className={classNames?.body ?? bodyProps?.className}
                 style={{ ...styles?.body, ...bodyProps?.style }}
               >
