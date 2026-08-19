@@ -25,15 +25,10 @@ describe('useKeyedSnapshot', () => {
     act(() => {
       result.current[1]('credentials');
     });
-    let restored: string | undefined;
-    act(() => {
-      restored = result.current[1]('users');
-    });
-
-    expect(restored).toBe('users-initial');
+    expect(result.current[2]('users')).toBe('users-initial');
   });
 
-  it('snapshots the departing key and returns the target key value', () => {
+  it('snapshots the departing key and peeks the target key value', () => {
     const { result, rerender } = renderKeyedSnapshot('users', 'users-initial');
 
     rerender({ sourceKey: 'users', value: 'users-edited' });
@@ -42,29 +37,31 @@ describe('useKeyedSnapshot', () => {
     });
     rerender({ sourceKey: 'credentials', value: 'credentials-edited' });
 
-    let restoredUsers: string | undefined;
+    expect(result.current[2]('users')).toBe('users-edited');
     act(() => {
-      restoredUsers = result.current[1]('users');
+      result.current[1]('users');
     });
-    expect(restoredUsers).toBe('users-edited');
     expect(result.current[0]).toBe('users');
-
-    let restoredCredentials: string | undefined;
-    act(() => {
-      restoredCredentials = result.current[1]('credentials');
-    });
-    expect(restoredCredentials).toBe('credentials-edited');
+    expect(result.current[2]('credentials')).toBe('credentials-edited');
   });
 
-  it('returns undefined for a key that was never visited', () => {
+  it('peeks the live value for the current key', () => {
+    const { result, rerender } = renderKeyedSnapshot('users', 'users-initial');
+
+    rerender({ sourceKey: 'users', value: 'users-edited' });
+
+    expect(result.current[2]('users')).toBe('users-edited');
+  });
+
+  it('returns undefined for a key that was never visited, without switching', () => {
     const { result } = renderKeyedSnapshot('users', 'users-initial');
 
-    let restored: string | undefined = 'not-undefined';
-    act(() => {
-      restored = result.current[1]('credentials');
-    });
+    expect(result.current[2]('credentials')).toBeUndefined();
+    expect(result.current[0]).toBe('users');
 
-    expect(restored).toBeUndefined();
+    act(() => {
+      result.current[1]('credentials');
+    });
     expect(result.current[0]).toBe('credentials');
   });
 
@@ -78,7 +75,7 @@ describe('useKeyedSnapshot', () => {
 
     // A rerender arrives with `sourceKey` still describing the tab the user
     // just left: an unchanged `sourceKey` must never override a key that was
-    // set through `setAfterSnapshot`.
+    // set through `setKey`.
     rerender({ sourceKey: 'users', value: 'users-initial' });
     expect(result.current[0]).toBe('credentials');
   });
@@ -87,7 +84,7 @@ describe('useKeyedSnapshot', () => {
     const { result, rerender } = renderKeyedSnapshot('users', 'users-initial');
 
     // A browser navigation changes the source key without going through
-    // setAfterSnapshot.
+    // setKey.
     rerender({ sourceKey: 'credentials', value: 'credentials-from-url' });
 
     expect(result.current[0]).toBe('credentials');

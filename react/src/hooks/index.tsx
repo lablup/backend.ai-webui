@@ -82,18 +82,19 @@ export const useTabQuerySnapshot = <T extends string>(
  * value changes (e.g. the caller derives it from the URL and the user
  * navigates back/forward). The sync is change-triggered, not
  * difference-triggered, so a rerender whose `sourceKey` still reports the
- * departing key cannot undo `setAfterSnapshot`. It runs during render, so
+ * departing key cannot undo `setKey`. It runs during render, so
  * effects only ever observe a settled key/value pair.
  *
- * `setAfterSnapshot(nextKey)` snapshots the current key's value, switches the
- * key, and synchronously returns the value stored for `nextKey` (`undefined`
- * if never visited) — so the caller can start a preloaded query and mirror
- * the URL inside the same event handler (render-as-you-fetch).
+ * `setKey(nextKey)` snapshots the current key's value and switches the key.
+ * `peekSnapshot(key)` reads the value stored for `key` (`undefined` if never
+ * visited) without touching any state — together they let the caller start a
+ * preloaded query and mirror the URL inside the same event handler
+ * (render-as-you-fetch).
  */
 export const useKeyedSnapshot = <K extends string, V>(
   sourceKey: K,
   value: V,
-): [K, (nextKey: K) => V | undefined] => {
+): [K, (nextKey: K) => void, (key: K) => V | undefined] => {
   'use memo';
   const [currentKey, setCurrentKey] = useState(sourceKey);
   const [prevSourceKey, setPrevSourceKey] = useState(sourceKey);
@@ -112,13 +113,17 @@ export const useKeyedSnapshot = <K extends string, V>(
     snapshotMapRef.current[currentKey] = value;
   }, [currentKey, value]);
 
-  const setAfterSnapshot = (nextKey: K): V | undefined => {
+  const setKey = (nextKey: K) => {
     snapshotMapRef.current[currentKey] = value;
     setCurrentKey(nextKey);
-    return snapshotMapRef.current[nextKey];
   };
 
-  return [currentKey, setAfterSnapshot];
+  // The current key answers with the live value: its ref entry is only as
+  // fresh as the last commit's effect.
+  const peekSnapshot = (key: K): V | undefined =>
+    key === currentKey ? value : snapshotMapRef.current[key];
+
+  return [currentKey, setKey, peekSnapshot];
 };
 
 /** Key order doesn't matter for "are these the same query string?". */

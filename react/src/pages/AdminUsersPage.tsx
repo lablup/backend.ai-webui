@@ -121,10 +121,10 @@ const AdminUsersPage: React.FC = () => {
     tablePaginationOption,
   };
 
-  const [currentTab, setAfterSnapshot] = useKeyedSnapshot<TabKey, TabSnapshot>(
-    queryParams.tab,
-    currentSnapshot,
-  );
+  const [currentTab, setCurrentTab, peekTabSnapshot] = useKeyedSnapshot<
+    TabKey,
+    TabSnapshot
+  >(queryParams.tab, currentSnapshot);
 
   const usersVariablesOf = (snapshot: TabSnapshot): UsersVariables => {
     const { queryParams: params, tablePaginationOption: pagination } = snapshot;
@@ -278,7 +278,8 @@ const AdminUsersPage: React.FC = () => {
       onTabChange={(key) => {
         const tab = tabParser.parse(key) ?? tabParser.defaultValue;
         if (tab === currentTab) return;
-        const snapshot = setAfterSnapshot(tab) ?? defaultSnapshotOf(tab);
+        const snapshot = peekTabSnapshot(tab) ?? defaultSnapshotOf(tab);
+        setCurrentTab(tab);
         loadTabQuery(tab, snapshot);
         setQueryParams({ tab, ...snapshot.queryParams }, { history: 'push' });
         setTablePaginationOption(snapshot.tablePaginationOption);
