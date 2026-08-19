@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "已分配 / 请求"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "更改分组颜色",
+    "ResourceGrid": "资源网格",
+    "UseColorN": "使用颜色 {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "无限"
   },

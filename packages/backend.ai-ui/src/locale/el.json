@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Διατεθέντα / Ζητούμενα"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Αλλαγή χρώματος ομάδας",
+    "ResourceGrid": "Πλέγμα πόρων",
+    "UseColorN": "Χρήση χρώματος {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Απεριόριστος"
   },

@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Diperuntukkan / Diminta"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Tukar warna kumpulan",
+    "ResourceGrid": "Grid sumber",
+    "UseColorN": "Guna warna {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tidak terhad"
   },
