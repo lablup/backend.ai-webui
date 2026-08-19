@@ -6,7 +6,7 @@ import { App } from '../app-shim';
 // FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
-import { preserveDotStartCase, getImageFullName } from '../helper';
+import { getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -18,7 +18,12 @@ import {
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
 import ImageMetaIcon from './ImageMetaIcon';
-import { ImageTags } from './ImageTags';
+import {
+  imageNodeTagFacts,
+  ImageMetaDivider,
+  ImageTagBadges,
+  ImageTags,
+} from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
@@ -26,7 +31,6 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
-import { Divider } from '@astryxdesign/core/Divider';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
@@ -34,13 +38,7 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import {
-  BAICard,
-  BAIDoubleTag,
-  BAIFlex,
-  BAITableAstryx,
-  BAIText,
-} from 'backend.ai-ui';
+import { BAICard, BAIFlex, BAITableAstryx, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CheckIcon, CopyIcon } from 'lucide-react';
@@ -218,14 +216,14 @@ const SessionLauncherPreview: React.FC<{
           </MetadataListItem>
           <MetadataListItem label={t('general.Image')}>
             {supportExtendedImageInfo ? (
-              <BAIFlex direction="row" align="start" gap="xs" wrap="nowrap">
+              <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
                 <ImageMetaIcon
                   image={
                     form.getFieldValue('environments')?.version ||
                     form.getFieldValue('environments')?.manual
                   }
                 />
-                <BAIFlex direction="row" wrap="wrap">
+                <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
                   {form.getFieldValue('environments')?.manual ? (
                     <BAIText code copyable>
                       {form.getFieldValue('environments')?.manual}
@@ -238,63 +236,27 @@ const SessionLauncherPreview: React.FC<{
                             ?.base_image_name,
                         )}
                       </Text>
-                      <Divider orientation="vertical" />
+                      <ImageMetaDivider />
                       <Text>
                         {form.getFieldValue('environments')?.image?.version}
                       </Text>
-                      <Divider orientation="vertical" />
+                      <ImageMetaDivider />
                       <Text>
                         {
                           form.getFieldValue('environments')?.image
                             ?.architecture
                         }
                       </Text>
-                      <Divider orientation="vertical" />
+                      <ImageMetaDivider />
                       {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                      <BAIFlex gap={'xxs'}>
-                        {_.map(
+                      <ImageTagBadges
+                        facts={imageNodeTagFacts(
                           form.getFieldValue('environments')?.image?.tags,
-                          (tag: { key: string; value: string }) => {
-                            const isCustomized = _.includes(
-                              tag.key,
-                              'customized_',
-                            );
-                            const tagValue = isCustomized
-                              ? _.find(
-                                  form.getFieldValue('environments')?.image
-                                    ?.labels,
-                                  {
-                                    key: 'ai.backend.customized-image.name',
-                                  },
-                                )?.value
-                              : tag.value;
-                            const aliasedTag = tagAlias(tag.key + tagValue);
-                            return _.isEqual(
-                              aliasedTag,
-                              preserveDotStartCase(tag.key + tagValue),
-                            ) || isCustomized ? (
-                              <BAIDoubleTag
-                                key={tag.key}
-                                values={[
-                                  {
-                                    label: tagAlias(tag.key),
-                                    color: isCustomized ? 'cyan' : 'blue',
-                                  },
-                                  {
-                                    label: tagValue,
-                                    color: isCustomized ? 'cyan' : 'blue',
-                                  },
-                                ]}
-                              />
-                            ) : (
-                              <Badge
-                                key={tag.key}
-                                variant={isCustomized ? 'cyan' : 'blue'}
-                                label={aliasedTag}
-                              />
-                            );
-                          },
+                          form.getFieldValue('environments')?.image?.labels,
+                          tagAlias,
                         )}
+                      />
+                      <BAIFlex gap={'xxs'}>
                         <CopyValueIconButton
                           label={t('button.CopySomething', {
                             name: t('general.Image'),
@@ -311,14 +273,14 @@ const SessionLauncherPreview: React.FC<{
                 </BAIFlex>
               </BAIFlex>
             ) : (
-              <BAIFlex direction="row" align="start" gap="xs" wrap="nowrap">
+              <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
                 <ImageMetaIcon
                   image={
                     form.getFieldValue('environments')?.version ||
                     form.getFieldValue('environments')?.manual
                   }
                 />
-                <BAIFlex direction="row" wrap="wrap">
+                <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
                   {form.getFieldValue('environments')?.manual ? (
                     <BAIText code copyable>
                       {form.getFieldValue('environments')?.manual}
@@ -332,20 +294,20 @@ const SessionLauncherPreview: React.FC<{
                           ),
                         )}
                       </Text>
-                      <Divider orientation="vertical" />
+                      <ImageMetaDivider />
                       <Text>
                         {getBaseVersion(
                           form.getFieldValue('environments')?.version,
                         )}
                       </Text>
-                      <Divider orientation="vertical" />
+                      <ImageMetaDivider />
                       <Text>
                         {
                           form.getFieldValue('environments')?.image
                             ?.architecture
                         }
                       </Text>
-                      <Divider orientation="vertical" />
+                      <ImageMetaDivider />
                       <ImageTags
                         tag={form.getFieldValue([
                           'environments',
