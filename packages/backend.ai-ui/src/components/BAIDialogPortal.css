@@ -4,8 +4,8 @@
 
  Co-located styles for `<BAIDialogPortal>` — the mask, centering and entry
  animation Astryx `Dialog` gets from the top layer and `::backdrop`, restated
- for a portalled tree. Plain CSS over Astryx tokens: BUI's tsup build runs no
- StyleX compiler.
+ for a portalled tree (the mask deliberately drops the blur). Plain CSS over
+ Astryx tokens: BUI's tsup build runs no StyleX compiler.
 */
 
 @layer components {
@@ -31,12 +31,13 @@
     display: none;
   }
 
-  /* Same look as Astryx `Dialog`'s `::backdrop`. */
+  /* Astryx `Dialog`'s `::backdrop` wash, without its `blur(2px)` — the tint
+     alone separates the surfaces, and the blur is the one repaint-heavy
+     property on screen while a modal is open. */
   .bai-dialog-portal__mask {
     position: absolute;
     inset: 0;
     background-color: var(--color-overlay);
-    backdrop-filter: blur(2px);
   }
 
   /* The animated element, kept separate from the mask so only this subtree is
