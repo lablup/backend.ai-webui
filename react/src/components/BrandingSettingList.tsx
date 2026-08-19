@@ -3,15 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import { pickValidThemeFamilies } from '../helper/customThemeConfig';
-import {
-  useBAIPrivateDomainConfigForAdmin,
-  useBAIUserConfigDomainDefaultsForAdmin,
-} from '../hooks/useBAIAppConfig';
-import {
-  DOMAIN_THEME_CONFIG_KEY,
-  THEME_FAMILIES_CONFIG_KEY,
-} from '../hooks/useCustomThemeConfig';
+import { useBAIPublicConfigByDomainForAdmin } from '../hooks/useBAIAppConfig';
+import { DOMAIN_THEME_CONFIG_KEY } from '../hooks/useCustomThemeConfig';
 import { useDefaultTheme } from '../hooks/useDefaultTheme';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
@@ -26,7 +19,6 @@ import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { Button } from '@astryxdesign/core/Button';
 import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { Settings, Fullscreen, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,11 +34,12 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
   const { defaultTheme, resetDefaultTheme } = useDefaultTheme();
-  const [, setDomainTheme] = useBAIPrivateDomainConfigForAdmin<unknown>(
+  // The draft (prefilled from the saved domain theme, else theme.json) is
+  // saved WHOLE — families included — as this domain's slice of the public
+  // document; reads replace wholesale rather than merging (FR-1964).
+  const [, setDomainTheme] = useBAIPublicConfigByDomainForAdmin<unknown>(
     DOMAIN_THEME_CONFIG_KEY,
   );
-  const [, setDomainThemeFamilies] =
-    useBAIUserConfigDomainDefaultsForAdmin<unknown>(THEME_FAMILIES_CONFIG_KEY);
 
   const applyThemeToDomain = async () => {
     if (!defaultTheme) {
@@ -54,12 +47,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       return;
     }
     try {
-      const { families, ...domainTheme } = defaultTheme;
-      await setDomainTheme(domainTheme);
-      const validFamilies = pickValidThemeFamilies(families);
-      await setDomainThemeFamilies(
-        _.isEmpty(validFamilies) ? undefined : validFamilies,
-      );
+      await setDomainTheme(defaultTheme);
       message.success(t('theme.JsonConfigAppliedSuccessfully'));
     } catch (error) {
       message.error(

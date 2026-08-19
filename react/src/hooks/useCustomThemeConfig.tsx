@@ -8,10 +8,7 @@ import {
   getCustomTheme,
   pickValidThemeFamilies,
 } from '../helper/customThemeConfig';
-import {
-  useBAIMyPersonalConfigValue,
-  useBAIPrivateDomainConfigValue,
-} from './useBAIAppConfig';
+import { useBAIPublicConfigByDomainValue } from './useBAIAppConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
 import { useSessionStorageState } from 'backend.ai-ui';
@@ -36,18 +33,20 @@ export const DEFAULT_THEME_FAMILY = 'default';
  */
 export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
 
-/** `domainConfig` subKey holding the domain theme (theme.json minus `families`). */
+/**
+ * Per-domain subKey inside `publicConfigByDomain` holding the domain's whole
+ * theme document (same shape as theme.json, `families` included).
+ */
 export const DOMAIN_THEME_CONFIG_KEY = 'theme';
-/** `userConfig` subKey holding the theme-family catalog (domain-scope default). */
-export const THEME_FAMILIES_CONFIG_KEY = 'themeFamilies';
 
 /**
- * Returns the raw, operator-provided `CustomThemeConfig`: the app-config
- * documents (`domainConfig.theme` + `userConfig.themeFamilies`, post-login)
- * deep-merged over the shipped `resources/theme.json` defaults — or the
- * per-user draft while in branding preview mode. Pre-login the app-config
- * atoms are empty, so this degrades to theme.json alone. Shared by
- * `useCustomThemeConfig` (as the base of `themeConfig`) and
+ * Returns the raw, operator-provided `CustomThemeConfig`: the current
+ * domain's saved theme (`publicConfigByDomain[domain].theme`) wholesale, or
+ * the shipped `resources/theme.json` when no domain theme was ever saved —
+ * or the per-user draft while in branding preview mode. No deep-merge:
+ * "absent" means "follow the shipped defaults" (FR-1964). Pre-login the
+ * app-config atoms are empty, so this degrades to theme.json alone. Shared
+ * by `useCustomThemeConfig` (as the base of `themeConfig`) and
  * `useDefaultTheme` (as the pristine source of the editable default-theme
  * document). Reads only jotai state — safe outside RelayEnvironmentProvider.
  */
@@ -90,24 +89,17 @@ export const useRawCustomThemeConfig = (): CustomThemeConfig | undefined => {
     addEventListener();
   }, []);
 
-  const domainTheme = useBAIPrivateDomainConfigValue<
-    Omit<CustomThemeConfig, 'families'>
-  >(DOMAIN_THEME_CONFIG_KEY);
-  const configFamilies = useBAIMyPersonalConfigValue<
-    Record<string, ThemeFamilyConfig>
-  >(THEME_FAMILIES_CONFIG_KEY);
+  const domainTheme = useBAIPublicConfigByDomainValue<CustomThemeConfig>(
+    DOMAIN_THEME_CONFIG_KEY,
+  );
 
   if (isThemePreviewMode) {
     return userCustomThemeConfig;
   }
-  if (!customThemeConfig) {
-    return undefined;
+  if (_.isPlainObject(domainTheme) && !_.isEmpty(domainTheme)) {
+    return domainTheme;
   }
-  const base = _.omit(customThemeConfig, ['families']);
-  const themed = domainTheme ? _.merge({}, base, domainTheme) : base;
-  const families =
-    pickValidThemeFamilies(configFamilies) ?? customThemeConfig.families;
-  return { ...themed, families } as CustomThemeConfig;
+  return customThemeConfig;
 };
 
 export type ThemeFamilyCatalog = Record<string, ThemeFamilyConfig>;

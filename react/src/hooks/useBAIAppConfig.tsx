@@ -36,16 +36,25 @@ import type { IEnvironment } from 'relay-runtime';
  * writing the merged value back would freeze admin-set defaults into the
  * user's own fragment.
  */
-export type AppConfigName = 'userConfig' | 'domainConfig';
+export type AppConfigName =
+  'userConfig' | 'domainConfig' | 'publicConfigByDomain';
 export type AppConfigDocument = Record<string, any>;
 
-const APP_CONFIG_NAMES: Array<AppConfigName> = ['userConfig', 'domainConfig'];
+const APP_CONFIG_NAMES: Array<AppConfigName> = [
+  'userConfig',
+  'domainConfig',
+  'publicConfigByDomain',
+];
 
 type MergedAppConfigs = Partial<Record<AppConfigName, AppConfigDocument>>;
 
 // undefined until the post-login loader has fetched once.
 const mergedAppConfigsAtom = atom<MergedAppConfigs | undefined>(undefined);
 const appConfigsFetchKeyAtom = atom(0);
+// The session's domain name, published by the loader so jotai-only value
+// hooks (the theme chain runs outside RelayEnvironmentProvider) can key into
+// `publicConfigByDomain` without the suspending `useCurrentDomainValue`.
+const appConfigDomainNameAtom = atom<string | undefined>(undefined);
 
 const mergedQuery = graphql`
   query useBAIAppConfigMergedQuery($configNames: [String!]!) {
@@ -117,7 +126,7 @@ const scopedUpsertMutation = graphql`
 
 const applySubKey = (
   base: AppConfigDocument,
-  subKey: string,
+  subKey: string | Array<string>,
   nextValue: unknown,
 ): AppConfigDocument => {
   const next = _.cloneDeep(base);
@@ -152,7 +161,13 @@ export const useBAIAppConfigsLoader = () => {
   const relayEnv = useRelayEnvironment();
   const fetchKey = useAtomValue(appConfigsFetchKeyAtom);
   const setMergedConfigs = useSetAtom(mergedAppConfigsAtom);
+  const domainName = useCurrentDomainValue();
+  const setDomainName = useSetAtom(appConfigDomainNameAtom);
   const { logger } = useBAILogger();
+
+  useEffect(() => {
+    setDomainName(domainName);
+  }, [domainName, setDomainName]);
   const reportLoadError = useEffectEvent((error: unknown) => {
     logger.error('Failed to load app configs', error);
   });
@@ -193,7 +208,7 @@ export const useBAIRefreshAppConfigs = () => {
 
 const useMergedAppConfigValue = <T,>(
   configName: AppConfigName,
-  subKey: string,
+  subKey: string | Array<string>,
 ): T | undefined => {
   'use memo';
   const mergedConfigs = useAtomValue(mergedAppConfigsAtom);
@@ -222,6 +237,28 @@ export const useBAIMyPersonalConfigValue = <T,>(
 ): T | undefined => {
   'use memo';
   return useMergedAppConfigValue<T>('userConfig', subKey);
+};
+
+/**
+ * The current domain's slice of the anonymous-readable single document
+ * `publicConfigByDomain` (keyed by domain NAME, superadmin-writable only).
+ * Post-login only for now — undefined until the loader has published the
+ * session's domain; the pre-login `publicAppConfigs` path is a follow-up.
+ * Jotai-only, safe outside `RelayEnvironmentProvider`.
+ */
+export const useBAIPublicConfigByDomainValue = <T,>(
+  subKey: string | Array<string>,
+): T | undefined => {
+  'use memo';
+  const domainName = useAtomValue(appConfigDomainNameAtom);
+  const mergedConfigs = useAtomValue(mergedAppConfigsAtom);
+  if (!domainName) {
+    return undefined;
+  }
+  return _.get(mergedConfigs?.publicConfigByDomain, [
+    domainName,
+    ..._.toPath(subKey),
+  ]) as T | undefined;
 };
 
 /**
@@ -284,7 +321,7 @@ const commitMyUpsert = (
 
 const commitScopedUpsert = (
   relayEnv: IEnvironment,
-  scopeId: string,
+  scope: { scopeType: 'DOMAIN' | 'PUBLIC'; scopeId?: string },
   item: { configName: string; config: AppConfigDocument },
 ) =>
   new Promise<useBAIAppConfigScopedUpsertMutation$data>((resolve, reject) => {
@@ -292,7 +329,7 @@ const commitScopedUpsert = (
       mutation: scopedUpsertMutation,
       variables: {
         input: {
-          scope: { scopeType: 'DOMAIN', scopeId },
+          scope,
           items: [item],
         },
       },
@@ -379,10 +416,14 @@ const useBAIDomainScopedConfigForAdmin = <T,>(
     const rawDoc =
       (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
         AppConfigDocument | undefined) ?? {};
-    await commitScopedUpsert(relayEnv, domainId, {
-      configName,
-      config: applySubKey(rawDoc, subKey, nextValue),
-    });
+    await commitScopedUpsert(
+      relayEnv,
+      { scopeType: 'DOMAIN', scopeId: domainId },
+      {
+        configName,
+        config: applySubKey(rawDoc, subKey, nextValue),
+      },
+    );
     setRawFetchKey((k) => k + 1);
     refresh();
   };
@@ -398,10 +439,70 @@ export const useBAIPrivateDomainConfigForAdmin = <T,>(
 
 /**
  * Admin editor for `userConfig`'s DOMAIN-scope fragment — the domain-wide
- * defaults under every user's personal config (e.g. the theme family
- * catalog).
+ * defaults under every user's personal config.
  */
 export const useBAIUserConfigDomainDefaultsForAdmin = <T,>(
   subKey: string,
   domainName?: string,
 ) => useBAIDomainScopedConfigForAdmin<T>('userConfig', subKey, domainName);
+
+/**
+ * Superadmin editor for ONE domain's slice of the single public
+ * `publicConfigByDomain` document: `value` is the raw public fragment's
+ * `[domainName, ...subKey]` (what was explicitly saved — NOT the theme.json
+ * fallback), `set` re-reads the raw document and replaces only that slice.
+ * Suspends; post-login admin surfaces only. Writes need superadmin (public
+ * scope owns no RBAC element).
+ */
+export const useBAIPublicConfigByDomainForAdmin = <T,>(
+  subKey: string | Array<string>,
+  domainName?: string,
+): [T | undefined, (nextValue: T | undefined) => Promise<void>] => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+  const refresh = useBAIRefreshAppConfigs();
+  const currentDomainName = useCurrentDomainValue();
+  const targetDomainName = domainName ?? currentDomainName;
+  const [rawFetchKey, setRawFetchKey] = useState(0);
+  const path = [targetDomainName, ..._.toPath(subKey)];
+
+  const rawData = useLazyLoadQuery<useBAIAppConfigScopedRawQuery>(
+    scopedRawQuery,
+    {
+      scope: { scopeType: 'PUBLIC' },
+      configNames: ['publicConfigByDomain'],
+    },
+    { fetchKey: rawFetchKey, fetchPolicy: 'network-only' },
+  );
+  const value = _.get(
+    rawData?.scopedAppConfigFragmentsByNames?.[0]?.config,
+    path,
+  ) as T | undefined;
+
+  const setValue = async (nextValue: T | undefined) => {
+    const raw = await fetchQuery<useBAIAppConfigScopedRawQuery>(
+      relayEnv,
+      scopedRawQuery,
+      {
+        scope: { scopeType: 'PUBLIC' },
+        configNames: ['publicConfigByDomain'],
+      },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+    const rawDoc =
+      (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
+        AppConfigDocument | undefined) ?? {};
+    await commitScopedUpsert(
+      relayEnv,
+      { scopeType: 'PUBLIC' },
+      {
+        configName: 'publicConfigByDomain',
+        config: applySubKey(rawDoc, path, nextValue),
+      },
+    );
+    setRawFetchKey((k) => k + 1);
+    refresh();
+  };
+
+  return [value, setValue];
+};
