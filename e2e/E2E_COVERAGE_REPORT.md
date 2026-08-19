@@ -52,8 +52,8 @@
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    4     |    4    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| Global Search Palette    | (header, every route)                  |    7     |    7    | ✅ 100% |
-| **Total**                |                                        | **489**  | **341** | **70%** |
+| Global Search Palette    | (header, every route)                  |    8     |    8    | ✅ 100% |
+| **Total**                |                                        | **490**  | **342** | **70%** |
 
 ---
 
@@ -1262,20 +1262,20 @@ is deliberately out of scope — operate above project scope — the header proj
 
 ### 33. Global Search Palette (header, every route)
 
-**Test files:** [`e2e/global-search-palette.spec.ts`](global-search-palette.spec.ts)
+**Test files:** [`e2e/global-search/global-search-palette.spec.ts`](global-search/global-search-palette.spec.ts)
 
-| Feature                                        | Status | Test                                                                    |
-| ---------------------------------------------- | ------ | ----------------------------------------------------------------------- |
-| Open from the header button                    | ✅     | `user can open the palette from the header button and close it with Escape` |
-| Open with `mod+k`                              | ✅     | `user can open the palette with the keyboard shortcut`                  |
-| Escape closes                                  | ✅     | `user can open the palette from the header button and close it with Escape` |
-| Page hit → route                               | ✅     | `user can arrow-select a page hit and land on that page`                |
-| Tab hit → `?tab=`                              | ✅     | `user can select a tab hit and land on the deep-linked tab`             |
-| Setting hit → `?setting=` arrival + highlight  | ✅     | `user can select a setting hit and arrive on the highlighted item`      |
-| Action hit (theme) → effect                    | ✅     | `user can run the theme action from the palette`                        |
-| Recents in the empty state                     | ✅     | `user sees the pages they picked under Recent when reopening`           |
+| Feature                                       | Status | Test                                                                        |
+| --------------------------------------------- | ------ | --------------------------------------------------------------------------- |
+| Open from the header button                   | ✅     | `user can open the palette from the header button and close it with Escape` |
+| Open with `mod+k`                             | ✅     | `user can open the palette with the keyboard shortcut`                      |
+| Escape closes                                 | ✅     | `user can open the palette from the header button and close it with Escape` |
+| Page hit → route                              | ✅     | `user can arrow-select a page hit and land on that page`                    |
+| Tab hit → `?tab=`                             | ✅     | `user can select a tab hit and land on the deep-linked tab`                 |
+| Setting hit → `?setting=` arrival + highlight | ✅     | `user can select a setting hit and arrive on the highlighted item`          |
+| Action hit (theme) → effect                   | ✅     | `user can run the theme action from the palette`                            |
+| Recents in the empty state                    | ✅     | `user sees the pages they picked under Recent when reopening`               |
 
-**Coverage: ✅ 7/7 features**
+**Coverage: ✅ 8/8 features**
 
 ---
 
