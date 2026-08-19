@@ -4,8 +4,9 @@
  */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAITourAstryx from './astryx-bui/BAITourAstryx';
+import { useTourTargets } from './astryx-bui/useTourTargets';
 import { TourStep } from '@astryxdesign/lab';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -39,45 +40,30 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
 
   // PILOT-DECISION: antd Tour took lazy function targets
   // (`target: () => HTMLElement`); lab `TourStep` anchors through a
-  // `targetRef` whose element must already exist when the step renders. The
-  // same DOM queries now run once in an effect when the tour opens, and the
-  // resolved elements are handed to the steps as literal ref objects. Each
-  // target contains a real `<button>` (the review card's Modify link / the
-  // footer nav buttons), satisfying the Popover anchor contract. The
-  // The action-slot anchor is `.bai-card__extra`. It was `.ant-card-extra`,
-  // which stopped existing when `BAICard` was rebuilt on Astryx — the query
-  // returned null and this step silently lost its anchor. `BAICard` now emits
-  // a BAI-namespaced class for exactly this purpose (see the comment on its
+  // `targetRef` whose element must already exist when the step renders, so the
+  // DOM queries run in an effect and the resolved elements are handed to the
+  // steps as literal ref objects. Each target contains a real `<button>` (the
+  // review card's Modify link / the footer nav buttons), satisfying the
+  // Popover anchor contract.
+  // The action-slot anchor is `.bai-card__extra` — `BAICard` emits a
+  // BAI-namespaced class for exactly this purpose (see the comment on its
   // header row).
-  const [targets, setTargets] = useState<TourTargets | null>(null);
-
   const isActive = !!open && !hasOpened;
 
-  useEffect(() => {
-    // Resolve targets on the next frame (never synchronously in the effect —
-    // react-hooks/set-state-in-effect): the error-card DOM this queries is
-    // painted by the same commit that flips `isActive`.
-    const frame = requestAnimationFrame(() => {
-      if (!isActive) {
-        setTargets(null);
-        return;
-      }
-      const card = document.getElementsByClassName('bai-card-error')?.[0] as
-        HTMLElement | undefined;
-      if (!card) {
-        setTargets(null);
-        return;
-      }
-      setTargets({
-        card,
-        extra: card.querySelector<HTMLElement>('.bai-card__extra'),
-        nav: document.querySelector<HTMLElement>(
-          '[data-test-id="deployment-preset-step-navigation"]',
-        ),
-      });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [isActive]);
+  const targets = useTourTargets<TourTargets>(isActive, () => {
+    const card = document.getElementsByClassName('bai-card-error')?.[0] as
+      HTMLElement | undefined;
+    if (!card) {
+      return null;
+    }
+    return {
+      card,
+      extra: card.querySelector<HTMLElement>('.bai-card__extra'),
+      nav: document.querySelector<HTMLElement>(
+        '[data-test-id="deployment-preset-step-navigation"]',
+      ),
+    };
+  });
 
   if (!isActive || !targets) return null;
 
