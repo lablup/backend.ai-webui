@@ -43,7 +43,15 @@ describe('the z-index ladder', () => {
   it('puts the modal band above the splash and the login hosts', () => {
     expect(BAI_Z_INDEX.modalBase).toBeGreaterThan(BAI_Z_INDEX.splash);
     expect(BAI_Z_INDEX.modalBase).toBeGreaterThan(BAI_Z_INDEX.loginHost);
-    expect(BAI_Z_INDEX.modalBase).toBeGreaterThan(BAI_Z_INDEX.loginSideHelp);
+  });
+
+  // The panel is a fixed sibling anchored to the base modal's edge, so it has to
+  // clear that modal's full-viewport mask — but not a modal opened on top of it.
+  it('puts the login side help between the base modal and the next level', () => {
+    expect(BAI_Z_INDEX.loginSideHelp).toBeGreaterThan(BAI_Z_INDEX.modalBase);
+    expect(BAI_Z_INDEX.loginSideHelp).toBeLessThan(
+      BAI_Z_INDEX.modalBase + BAI_Z_INDEX_MODAL_LEVEL_STEP,
+    );
   });
 
   it('keeps the whole modal band under the notification stack', () => {
