@@ -57,30 +57,31 @@ describe('BAIDialogPortal', () => {
     expect(root?.hasAttribute('data-bai-modal-open')).toBe(true);
   });
 
-  // The point of FR-3578: an open modal marks nothing outside itself inert, so a
-  // surface stacked ABOVE the mask stays operable. jsdom does no hit-testing, so
-  // this can only assert the inertness half — the mask half is a z-index question
-  // the ladder owns, and the click itself is measured live (see the PR).
-  it('leaves a surface above the mask operable while open', async () => {
-    const user = userEvent.setup();
-    const onNotice = vi.fn();
+  // FR-3578 exists because `showModal()` made the whole document inert. Keeping
+  // the page reachable is therefore a DELIBERATE non-feature, and the obvious
+  // way to restore the a11y containment the native element gave — `inert` or
+  // `aria-hidden` on the app root — would undo the ticket. This fails if anyone
+  // adds it. (Whether the notice is actually *clickable* is a hit-test the mask
+  // and the ladder decide; jsdom does neither, so it is measured live.)
+  it('marks nothing outside the modal inert or aria-hidden while open', () => {
     render(
-      <>
-        <div className="bai-notification-stack">
-          <button type="button" onClick={onNotice}>
-            Dismiss
-          </button>
-        </div>
+      <div id="app-root">
+        <button type="button">Behind</button>
         <BAIDialogPortal isOpen onOpenChange={vi.fn()} aria-label="modal">
           <Layout content={<LayoutContent>body</LayoutContent>} />
         </BAIDialogPortal>
-      </>,
+      </div>,
     );
 
-    const notice = screen.getByRole('button', { name: 'Dismiss' });
-    expect(notice.closest('[inert]')).toBeNull();
-    await user.click(notice);
-    expect(onNotice).toHaveBeenCalledTimes(1);
+    const appRoot = document.getElementById('app-root') as HTMLElement;
+    expect(appRoot.hasAttribute('inert')).toBe(false);
+    expect(appRoot.getAttribute('aria-hidden')).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Behind' }).closest('[inert]'),
+    ).toBeNull();
+    // The covered-modal sync is the ONLY thing allowed to set `inert`, and only
+    // on a portal root — never on a page container.
+    expect(document.querySelectorAll('[inert]')).toHaveLength(0);
   });
 
   it('names itself from the DialogHeader title', () => {
