@@ -11,6 +11,7 @@
 */
 import BAIModal from './BAIModal';
 import { render, screen } from '@testing-library/react';
+import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('BAIModal and a file input inside it', () => {
@@ -44,5 +45,68 @@ describe('BAIModal and a file input inside it', () => {
     close.click();
 
     expect(handleCancel).toHaveBeenCalled();
+  });
+});
+
+/**
+ * The guard is installed from the body's callback ref, so this component now
+ * owns `bodyRef`'s teardown. Getting that wrong silently breaks any consumer
+ * that installs an observer there — the FolderExplorer's drop container is one.
+ */
+describe('BAIModal bodyRef forwarding', () => {
+  it('still populates and clears an object ref', () => {
+    const ref = createRef<HTMLDivElement>();
+    const { unmount } = render(
+      <BAIModal open title="Upload" bodyRef={ref}>
+        <span>body</span>
+      </BAIModal>,
+    );
+
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+    unmount();
+    expect(ref.current).toBeNull();
+  });
+
+  it("runs a callback ref's own React 19 cleanup instead of calling it with null", () => {
+    const cleanup = vi.fn();
+    const attached = vi.fn();
+    const { unmount } = render(
+      <BAIModal
+        open
+        title="Upload"
+        bodyRef={(node) => {
+          attached(node);
+          return cleanup;
+        }}
+      >
+        <span>body</span>
+      </BAIModal>,
+    );
+
+    expect(attached).toHaveBeenCalledWith(expect.any(HTMLDivElement));
+    unmount();
+    expect(cleanup).toHaveBeenCalledTimes(1);
+    // The cleanup is the teardown contract; a stray `ref(null)` on top of it is
+    // exactly what React 19 stopped doing.
+    expect(attached).not.toHaveBeenCalledWith(null);
+  });
+
+  it('falls back to clearing a cleanup-less callback ref', () => {
+    const seen: Array<HTMLDivElement | null> = [];
+    const { unmount } = render(
+      <BAIModal
+        open
+        title="Upload"
+        bodyRef={(node) => {
+          seen.push(node);
+        }}
+      >
+        <span>body</span>
+      </BAIModal>,
+    );
+
+    expect(seen).toHaveLength(1);
+    unmount();
+    expect(seen).toEqual([expect.any(HTMLDivElement), null]);
   });
 });

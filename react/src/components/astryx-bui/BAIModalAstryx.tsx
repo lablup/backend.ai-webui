@@ -99,10 +99,14 @@ export interface BAIModalAstryxProps extends Omit<
 }
 
 /** Module scope on purpose: assigning through a prop-borne ref inside the
- *  component body is a mutation the React Compiler rejects. */
-const assignRef = <T,>(ref: React.Ref<T> | undefined, value: T | null) => {
+ *  component body is a mutation the React Compiler rejects. Returns the
+ *  callback ref's own React 19 cleanup, when it hands one back. */
+const assignRef = <T,>(
+  ref: React.Ref<T> | undefined,
+  value: T | null,
+): (() => void) | void => {
   if (typeof ref === 'function') {
-    ref(value);
+    return ref(value);
   } else if (ref) {
     (ref as React.RefObject<T | null>).current = value;
   }
@@ -142,19 +146,21 @@ const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
   }, [isOpen]);
 
   const attachBodyRef = (node: HTMLDivElement | null) => {
-    const assign = (value: HTMLDivElement | null) => assignRef(bodyRef, value);
-    assign(node);
+    const detachBody = assignRef(bodyRef, node);
     if (!node) return;
     // `<input type="file">` fires a BUBBLING `cancel` when the user dismisses
     // the chooser, and Astryx `Dialog`'s `onCancel` — its own close request —
     // accepts any that reaches it, taking the whole modal down with the
-    // chooser (FR-3575). React types `onCancel` for `<dialog>` only, hence the
+    // chooser (FR-3579). React types `onCancel` for `<dialog>` only, hence the
     // native listener.
     const stopCancelBubbling = (e: Event) => e.stopPropagation();
     node.addEventListener('cancel', stopCancelBubbling);
     return () => {
       node.removeEventListener('cancel', stopCancelBubbling);
-      assign(null);
+      // Taking over the ref means owning its teardown: run the consumer's own
+      // cleanup when it returned one, otherwise clear the ref ourselves.
+      if (detachBody) detachBody();
+      else assignRef(bodyRef, null);
     };
   };
 
