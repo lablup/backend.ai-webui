@@ -34,19 +34,12 @@
     display: none;
   }
 
-  /* No box of its own: the focus trap needs an element, the panel inside is
-     `position: fixed` and lab anchors it. */
-  .bai-drawer-portal__wrap {
-    display: contents;
-  }
-
   /* Same look as lab's `::backdrop` scrim, on the same duration. */
   .bai-drawer-portal__mask {
     position: absolute;
     inset: 0;
     background-color: var(--color-overlay);
     backdrop-filter: blur(2px);
-    opacity: 1;
     transition: opacity var(--duration-medium) var(--ease-standard);
   }
 

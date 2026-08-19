@@ -10,13 +10,9 @@
  The inner `<Dialog isInline>` is always told `isOpen`: its inline path renders
  `null` when closed, and children stay mounted as the native `<dialog>` did.
 */
+import { BAI_Z_INDEX } from '../styles/zIndexLadder';
 import './BAIDialogPortal.css';
-import {
-  BAI_MODAL_OPEN_ATTRIBUTE,
-  claimDialogLevel,
-  floorToModalBand,
-  releaseDialogLevel,
-} from './dialogLevelStack';
+import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 import { Dialog } from '@astryxdesign/core/Dialog';
 import type { DialogPosition, DialogProps } from '@astryxdesign/core/Dialog';
 import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
@@ -32,10 +28,6 @@ import React, {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-
-// The level stack moved to `dialogLevelStack` so `BAIDrawerPortal` can join it
-// (FR-3585); re-exported here because both names read as this module's.
-export { BAI_MODAL_OPEN_ATTRIBUTE, MAX_DIALOG_LEVEL } from './dialogLevelStack';
 
 const HEADING_SELECTOR = '[role="heading"], h1, h2, h3, h4, h5, h6';
 const DIALOG_SELECTOR = 'dialog, [role="dialog"], [role="alertdialog"]';
@@ -71,6 +63,23 @@ function getDialogDirection(
 
 function toCssLength(value: number | string): string {
   return typeof value === 'number' ? `${value}px` : value;
+}
+
+/**
+ * The `zIndex` escape hatch is reachable from every `<BAIModal>`, and a number
+ * below the band is always stale — degrade to "on top" rather than invisible.
+ */
+function floorToModalBand(zIndex: number): number {
+  if (zIndex >= BAI_Z_INDEX.modalBase) {
+    return zIndex;
+  }
+  devWarn(
+    'BAIDialogPortal',
+    `zIndex ${zIndex} is below the modal band base ` +
+      `(${BAI_Z_INDEX.modalBase}); clamping. Pass a layer from ` +
+      '`BAI_Z_INDEX` rather than a literal, or drop the prop.',
+  );
+  return BAI_Z_INDEX.modalBase;
 }
 
 // Logical `start`/`end` become `inset-inline-*`; unset offsets fall back to `auto`.
@@ -144,8 +153,12 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
 
   // Its shared stack resolves Escape topmost-only, so a popover nested in the
   // modal keeps single-Escape dismissal; it also restores focus on deactivate.
-  // A covered dialog drops its trap; see `syncCoveredDialogs`.
-  const [isTopmost, setIsTopmost] = useState(true);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const isTopmost = useDialogLevel(
+    rootRef,
+    isOpen,
+    '--bai-dialog-portal-level',
+  );
 
   const { containerRef, focusFirst } = useFocusTrap<HTMLDivElement>({
     isActive: isOpen && isTopmost,
@@ -176,23 +189,6 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
   useEffect(syncAccessibleName);
 
   const wrapRef = mergeRefs<HTMLDivElement>(ref, containerRef);
-
-  // Written to the DOM rather than to state: the value must be right at first
-  // paint, and `--bai-dialog-portal-level` is a property React never manages.
-  const rootRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    const level = claimDialogLevel(rootRef.current, setIsTopmost);
-    rootRef.current?.style.setProperty(
-      '--bai-dialog-portal-level',
-      String(level),
-    );
-    return () => {
-      releaseDialogLevel(level);
-    };
-  }, [isOpen]);
 
   // Set before first paint so the entry keyframe reads the trigger's direction;
   // cleared on close so a later trigger-less open uses the CSS defaults.

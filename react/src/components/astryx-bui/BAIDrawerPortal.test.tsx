@@ -151,8 +151,9 @@ describe('BAIDrawerPortal', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  // Hiding the root the moment `isOpen` flips would cut lab's slide-out off.
-  it('keeps the root rendered through lab’s exit delay', () => {
+  // Hiding the root the moment `isOpen` flips would cut lab's slide-out off;
+  // the root waits for the inner dialog's `close`, which lab delays by 250ms.
+  it('keeps the root rendered until lab closes the inner dialog', () => {
     vi.useFakeTimers();
     const drawer = (isOpen: boolean) => (
       <BAIDrawerPortal isOpen={isOpen} onClose={vi.fn()} label="Details">

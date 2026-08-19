@@ -6,7 +6,7 @@
  outside this package (`index.html`) is checked by
  `scripts/migration-gates/z-index-ladder-gate.mjs`.
 */
-import { MAX_DIALOG_LEVEL } from '../components/BAIDialogPortal';
+import { MAX_DIALOG_LEVEL } from '../components/dialogLevelStack';
 import { BAI_Z_INDEX, BAI_Z_INDEX_MODAL_LEVEL_STEP } from './zIndexLadder';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

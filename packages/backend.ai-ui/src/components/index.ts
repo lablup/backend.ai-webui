@@ -211,12 +211,7 @@ export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkel
 export { default as BAIDialogPortal } from './BAIDialogPortal';
 export type { BAIDialogPortalProps } from './BAIDialogPortal';
 // `react/`'s `BAIDrawerPortal` joins this stack — one ladder for both (FR-3585).
-export {
-  BAI_MODAL_OPEN_ATTRIBUTE,
-  MAX_DIALOG_LEVEL,
-  claimDialogLevel,
-  releaseDialogLevel,
-} from './dialogLevelStack';
+export { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

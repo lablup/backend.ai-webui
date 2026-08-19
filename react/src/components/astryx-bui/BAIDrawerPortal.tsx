@@ -12,26 +12,12 @@ import './BAIDrawerPortal.css';
 import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
 import { dataAttr } from '@astryxdesign/core/naming';
 import { useThemeName } from '@astryxdesign/core/theme';
+import { mergeRefs } from '@astryxdesign/core/utils';
 import { Drawer, type DrawerProps } from '@astryxdesign/lab';
-import {
-  BAI_MODAL_OPEN_ATTRIBUTE,
-  claimDialogLevel,
-  releaseDialogLevel,
-} from 'backend.ai-ui';
+import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from 'backend.ai-ui';
 import classNames from 'classnames';
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-
-// lab delays its own `dialog.close()` by these to let the panel slide out
-// (`@astryxdesign/lab/src/Drawer/Drawer.tsx`); the portal root has to outlive
-// `isOpen` by the same amount or the exit is cut off.
-const EXIT_DURATION_MS = 250;
-const REDUCED_MOTION_EXIT_DURATION_MS = 10;
 
 /** Hides the root once the slide-out is over. Driven from the DOM, not React,
     so a closing drawer does not re-render its whole subtree a frame later. */
@@ -55,8 +41,12 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   // Modality restored by hand: `show()` traps nothing. Escape stays lab's — its
   // dialog `keydown` already closes the top drawer, and a second handler here
   // would call `onClose` twice.
-  // A covered surface drops its trap; see `syncCoveredDialogs`.
-  const [isTopmost, setIsTopmost] = useState(true);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const isTopmost = useDialogLevel(
+    rootRef,
+    isOpen,
+    '--bai-drawer-portal-level',
+  );
 
   const { containerRef, focusFirst } = useFocusTrap<HTMLDivElement>({
     isActive: isOpen && isTopmost,
@@ -65,51 +55,33 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   // lab runs `useScrollLock(isOpen && hasScrim)`, and its scrim is off now.
   useScrollLock(isOpen);
 
-  const rootRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    const level = claimDialogLevel(rootRef.current, setIsTopmost);
-    rootRef.current?.style.setProperty(
-      '--bai-drawer-portal-level',
-      String(level),
-    );
-    return () => {
-      releaseDialogLevel(level);
-    };
-  }, [isOpen]);
-
-  const hasBeenOpenRef = useRef(false);
+  // lab delays its own `dialog.close()` to let the panel slide out, so the
+  // portal root outlives `isOpen` until that close lands — no copied duration.
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) {
       return;
     }
     if (isOpen) {
-      hasBeenOpenRef.current = true;
       root.removeAttribute(HIDDEN_ATTRIBUTE);
       return;
     }
-    if (!hasBeenOpenRef.current) {
-      root.setAttribute(HIDDEN_ATTRIBUTE, '');
+    const hide = () => root.setAttribute(HIDDEN_ATTRIBUTE, '');
+    const dialog = root.querySelector('dialog');
+    if (!dialog?.open) {
+      hide();
       return;
     }
-    const timer = setTimeout(
-      () => root.setAttribute(HIDDEN_ATTRIBUTE, ''),
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? REDUCED_MOTION_EXIT_DURATION_MS
-        : EXIT_DURATION_MS,
-    );
-    return () => clearTimeout(timer);
+    dialog.addEventListener('close', hide, { once: true });
+    return () => dialog.removeEventListener('close', hide);
   }, [isOpen]);
 
-  // `show()` moves focus nowhere, unlike `showModal()`. lab has already honoured
-  // `[data-autofocus]`; otherwise land on its `tabindex="-1"` panel body, where
-  // the dialog focusing steps used to put us.
+  // `show()` moves focus nowhere, unlike `showModal()`. lab may already have
+  // focused `[data-autofocus]`; otherwise land on its `tabindex="-1"` panel
+  // body, where the dialog focusing steps used to put us.
   useEffect(() => {
     const node = containerRef.current;
-    if (!isOpen || !node || node.querySelector('[data-autofocus]')) {
+    if (!isOpen || !node || node.contains(document.activeElement)) {
       return;
     }
     const panel = node.querySelector<HTMLElement>('dialog > [tabindex="-1"]');
@@ -137,7 +109,7 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
 
   return createPortal(
     <div
-      ref={rootRef}
+      ref={mergeRefs<HTMLDivElement>(rootRef, containerRef)}
       className={classNames(
         'bai-drawer-portal',
         !isOpen && 'bai-drawer-portal--closed',
@@ -150,18 +122,16 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
       }}
     >
       <div ref={maskRef} className="bai-drawer-portal__mask" />
-      <div ref={containerRef} className="bai-drawer-portal__wrap">
-        <Drawer
-          {...rest}
-          isOpen={isOpen}
-          onClose={onClose}
-          hasScrim={false}
-          // lab omits it without a scrim, but the portal restores modality.
-          aria-modal={isOpen ? 'true' : undefined}
-        >
-          {children}
-        </Drawer>
-      </div>
+      <Drawer
+        {...rest}
+        isOpen={isOpen}
+        onClose={onClose}
+        hasScrim={false}
+        // lab omits it without a scrim, but the portal restores modality.
+        aria-modal={isOpen ? 'true' : undefined}
+      >
+        {children}
+      </Drawer>
     </div>,
     document.body,
   );
