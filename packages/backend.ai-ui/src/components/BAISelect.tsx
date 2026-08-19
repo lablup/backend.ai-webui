@@ -200,6 +200,11 @@ export interface BAISelectProps<ValueType = any, OptionType = BAISelectOption> {
   triggerDisplay?: 'count' | 'labels' | 'badges';
   /** Badges shown before "+N". Only meaningful with `triggerDisplay="badges"`. */
   maxBadges?: number;
+  /**
+   * antd's trigger-label source selector. Only `'children'` is honoured: the
+   * selected option's rich node renders on the closed trigger (FR-3544).
+   * Other values fall back to the flattened text label.
+   */
   optionLabelProp?: string;
   filterOption?: boolean | ((input: string, option?: any) => boolean);
   defaultActiveFirstOption?: boolean;
@@ -276,7 +281,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   labelRender: _labelRender,
   maxTagCount: _maxTagCount,
   maxTagPlaceholder: _maxTagPlaceholder,
-  optionLabelProp: _optionLabelProp,
+  optionLabelProp,
   filterOption: _filterOption,
   defaultActiveFirstOption: _defaultActiveFirstOption,
   open: _open,
@@ -312,7 +317,15 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
           filterValue?: string;
           children?: ReactNode;
         };
-        if (childProps.value === undefined && childProps.label !== undefined) {
+        // The BUI carriers are discriminated by TYPE; the prop-shape test only
+        // remains for foreign elements, since options may carry `label` too
+        // (FR-3544).
+        const isOptGroup =
+          child.type === BAISelectOptionGroup ||
+          (child.type !== BAISelectOptionItem &&
+            childProps.value === undefined &&
+            childProps.label !== undefined);
+        if (isOptGroup) {
           // OptGroup
           const groupOptions: Array<BAISelectOption> = [];
           collect(childProps.children, groupOptions);
@@ -341,7 +354,11 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         // reading, which is exactly what the `optionFilterProp` PILOT-DECISION
         // above already specifies for the `options`-prop path; this makes the
         // two option APIs agree instead of only one of them corrupting itself.
+        //
+        // FR-3544 — rich rows keep their key facts in Badge/tag PROPS the
+        // flattener cannot see, so an explicit `label` wins when provided.
         const displayLabel =
+          nodeToAccessibleLabel(childProps.label) ||
           nodeToAccessibleLabel(childProps.children) ||
           toOptionKey(childProps.value);
         into.push({
@@ -484,9 +501,41 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   const accessibleLabel =
     label ?? nodeToAccessibleLabel(placeholder) ?? t('general.Select');
 
+  const singleValue = toOptionKey(value ?? defaultValue);
+  const resolvedSingleValue =
+    mode === undefined && singleValue === '' && autoSelectOption
+      ? toOptionKey(
+          _.isFunction(autoSelectOption)
+            ? autoSelectOption(options)
+            : rawOptions[0]?.value,
+        )
+      : singleValue;
+  const richTriggerNode =
+    mode === undefined &&
+    resolvedSingleValue !== '' &&
+    optionLabelProp === 'children'
+      ? nodeLabels.get(resolvedSingleValue)
+      : undefined;
+
   const shared = {
     ...restProps,
-    className: classNames(className, 'bai-select', ghost && 'bai-select-ghost'),
+    // `nodeLabels` holds non-string labels only, so `renderIconSlot` renders
+    // this node as-is instead of wrapping it in an `Icon` (FR-3544).
+    ...(richTriggerNode !== undefined && {
+      // The clone is decorative; the trigger button's visually-hidden string
+      // label stays the single accessible selected value.
+      startIcon: (
+        <span className="bai-select-rich-value" aria-hidden="true">
+          {richTriggerNode}
+        </span>
+      ),
+    }),
+    className: classNames(
+      className,
+      'bai-select',
+      ghost && 'bai-select-ghost',
+      richTriggerNode !== undefined && 'bai-select-rich-trigger',
+    ),
     label: accessibleLabel || t('general.Select'),
     isLabelHidden: isLabelHidden ?? label === undefined,
     // `tooltip` was an antd `Tooltip` WRAPPING the whole control; Astryx
@@ -545,7 +594,6 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     );
   }
 
-  const singleValue = toOptionKey(value ?? defaultValue);
   return (
     <Selector
       // QA-FINDINGS Q-34 — `placement` is the documented opt-out from
@@ -568,15 +616,7 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       // nothing is selected the resolved first (or caller-chosen) option is
       // the rendered value, and the caller is told on mount by the same
       // `onChange` it used to receive.
-      value={
-        singleValue === '' && autoSelectOption
-          ? toOptionKey(
-              _.isFunction(autoSelectOption)
-                ? autoSelectOption(options)
-                : rawOptions[0]?.value,
-            )
-          : singleValue
-      }
+      value={resolvedSingleValue}
       onChange={(next: string | null) => emitChange(next)}
     />
   );
@@ -590,14 +630,21 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
  * `options` model — but the elements themselves were still antd's
  * `Select.Option` / `Select.OptGroup`, which kept three otherwise-converted
  * files importing antd for a component that is never rendered. The flattener
- * reads PROPS only and never looks at the element type (see `collect` above),
- * so a render-null marker is a complete replacement.
+ * discriminates these carriers by element type (falling back to the antd
+ * prop-shape test for foreign elements), so a render-null marker is a
+ * complete replacement.
  *
  * These do NOT render. They exist to be walked by `BAISelect`; putting one
  * anywhere else produces nothing.
  */
 export interface BAISelectOptionProps {
   value?: BAISelectOption['value'];
+  /**
+   * antd's `optionLabelProp="label"` slot: the string the closed trigger
+   * shows (and search matches) when `children` is rich JSX whose key facts
+   * live in props the text flattener cannot reach (FR-3544).
+   */
+  label?: string;
   disabled?: boolean;
   /**
    * Accepted and IGNORED, for antd's `optionFilterProp="filterValue"` call

@@ -78,6 +78,80 @@ describe('BAISelect children-option trigger label (FR-3499)', () => {
     expect(text.match(/TensorFlow/g)).toHaveLength(1);
   });
 
+  it('prefers an explicit option label over the flattened children text (FR-3544)', () => {
+    // The flattener cannot see Badge/tag props, so the call site names the text.
+    render(
+      <BAISelect label="Version" value="cr.backend.ai/stable/pytorch:2.1.0">
+        <SelectOptGroup key="v" label="Versions">
+          <SelectOption
+            key="cr.backend.ai/stable/pytorch:2.1.0"
+            value="cr.backend.ai/stable/pytorch:2.1.0"
+            label={'2.1.0 | x86_64 | CUDA 12.1'}
+          >
+            <span>2.1.0</span>
+            <span>x86_64</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    expect(triggerText()).toBe('2.1.0 | x86_64 | CUDA 12.1');
+  });
+
+  it('renders the option node on the trigger with optionLabelProp="children" (FR-3544)', () => {
+    const { container } = render(
+      <BAISelect
+        label="Environments"
+        optionLabelProp="children"
+        value="cr.backend.ai/stable/pytorch"
+      >
+        <SelectOptGroup key="ml" label="Machine Learning">
+          <SelectOption
+            key="cr.backend.ai/stable/pytorch"
+            value="cr.backend.ai/stable/pytorch"
+            label="PyTorch (GPU)"
+          >
+            <span data-testid="rich-row">PyTorch</span>
+            <span>GPU</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    const richValue = container.querySelector('.bai-select-rich-value');
+    expect(richValue?.querySelector('[data-testid="rich-row"]')).not.toBeNull();
+    // The string label stays the trigger button's accessible text — the rich
+    // node must not leak into it.
+    expect(triggerText()).toBe('PyTorch (GPU)');
+  });
+
+  it('keeps the plain trigger when nothing is selected or without the opt-in', () => {
+    const richless = render(
+      <BAISelect label="Environments" value="a">
+        <SelectOptGroup key="g" label="G">
+          <SelectOption key="a" value="a" label="A">
+            <span>A</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    expect(
+      richless.container.querySelector('.bai-select-rich-trigger'),
+    ).toBeNull();
+    richless.unmount();
+
+    const empty = render(
+      <BAISelect label="Environments" optionLabelProp="children">
+        <SelectOptGroup key="g" label="G">
+          <SelectOption key="a" value="a" label="A">
+            <span>A</span>
+          </SelectOption>
+        </SelectOptGroup>
+      </BAISelect>,
+    );
+    expect(
+      empty.container.querySelector('.bai-select-rich-trigger'),
+    ).toBeNull();
+  });
+
   it('still selects a grouped option and reports the caller value', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

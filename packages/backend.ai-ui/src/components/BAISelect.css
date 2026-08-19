@@ -46,3 +46,48 @@
 .bai-select-ghost [aria-invalid='true'] {
   border-color: var(--color-error);
 }
+
+/* optionLabelProp="children" (FR-3544): the rich node sits in `Selector`'s
+   icon slot and takes the label's flex share; a bridge until Astryx `Selector`
+   grows `ComplexSelector`'s `triggerLabel` slot. Centering would collapse the
+   node's vertical Dividers to 0 height — keep default stretch. */
+.bai-select-rich-trigger > .bai-select-rich-value {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* The node fills the label area so a row's `justify="between"` keeps pushing
+   its trailing badges to the trigger's right edge. */
+.bai-select-rich-trigger > .bai-select-rich-value > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The trigger button spans the whole control so its focus, click and
+   voice-control target stays full-size (the container is position:relative).
+   Sibling clear/status buttons become positioned so DOM order keeps them
+   painted — and clickable — above it. */
+.bai-select-rich-trigger > button[aria-haspopup='listbox'] {
+  position: absolute;
+  inset: 0;
+}
+.bai-select-rich-trigger > button:not([aria-haspopup='listbox']) {
+  position: relative;
+}
+
+/* @astryxdesign/core `VisuallyHidden`'s recipe, inlined — the label span is
+   Selector-internal, still the accessible selected-value text. */
+.bai-select-rich-trigger > button[aria-haspopup='listbox'] > span {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  pointer-events: none;
+}
