@@ -134,6 +134,8 @@ const UserPreferencesPage = () => {
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
   ] = useBAISettingUserState('experimental_import_from_huggingface');
+  const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
+    useBAISettingUserState('experimental_session_resource_grid');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -477,6 +479,15 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: experimentalImportFromHuggingFace,
           onChange: setExperimentalImportFromHuggingFace,
+        },
+        {
+          'data-testid': 'items-experimental-session-resource-grid',
+          type: 'checkbox',
+          title: t('userSettings.SessionResourceGrid'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalSessionResourceGrid,
+          onChange: setExperimentalSessionResourceGrid,
         },
       ],
     },

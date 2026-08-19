@@ -32,6 +32,7 @@ export interface UserSettings {
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
   experimental_import_from_huggingface?: boolean;
+  experimental_session_resource_grid?: boolean;
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
@@ -53,6 +54,9 @@ export interface UserSettings {
   custom_theme_config?: CustomThemeConfig;
   custom_primary_color?: { light?: string; dark?: string };
   deploymentRevisionCreationMode?: 'preset' | 'custom';
+  // Session resource grid: per-session group-color overrides, keyed by
+  // session id, valued by palette index (FR-3570).
+  sessionResourceGridHueOverrides?: Record<string, number>;
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;
 }

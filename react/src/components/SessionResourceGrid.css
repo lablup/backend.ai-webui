@@ -1,0 +1,17 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <SessionResourceGrid> (P17). The popover usage bar's
+ width/fill are data-driven and stay inline.
+*/
+.session-resource-grid-usage-track {
+  height: var(--spacing-1);
+  border-radius: var(--radius-element);
+  background: var(--color-background-muted);
+  overflow: hidden;
+}
+
+.session-resource-grid-usage-fill {
+  height: 100%;
+}
