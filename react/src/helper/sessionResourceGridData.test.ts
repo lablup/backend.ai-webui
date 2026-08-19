@@ -429,6 +429,17 @@ describe('resource-mode util/mem dimensions', () => {
     });
   });
 
+  test('parseResourceValue keeps MIG subtype colons inside the slot', () => {
+    expect(parseResourceValue('cuda.device:1g.20gb-mig')).toEqual({
+      slot: 'cuda.device:1g.20gb-mig',
+      dimension: 'util',
+    });
+    expect(parseResourceValue('cuda.device:1g.20gb-mig:mem')).toEqual({
+      slot: 'cuda.device:1g.20gb-mig',
+      dimension: 'mem',
+    });
+  });
+
   test('memKeyForSlot maps accelerator slots to their memory stat key', () => {
     expect(memKeyForSlot('cuda.shares')).toBe('cuda_mem');
     expect(memKeyForSlot('hyperaccel-lpu.device')).toBe('hyperaccel_lpu_mem');

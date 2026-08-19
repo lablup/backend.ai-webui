@@ -49,6 +49,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAIResourceUnitGrid,
@@ -149,14 +150,33 @@ const SessionResourceGrid = ({
   // Human-friendly names/units for dynamic accelerator slot keys
   // (e.g. `cuda.shares` → "fGPU"), same source as the session list/detail.
   const { mergedResourceSlots } = useResourceSlotsDetails();
+  // Subtyped slots (MIG: `cuda.device:1g.20gb-mig`) have no metadata entry
+  // of their own — fall back to the base key so the label stays short
+  // ("GPU"); the selector tooltip carries the subtype.
   const slotLabel = (slot: string): string =>
     slot === 'cpu'
       ? t('session.CPU')
       : slot === 'mem'
         ? t('session.launcher.Memory')
-        : (mergedResourceSlots?.[slot]?.human_readable_name ?? slot);
+        : (mergedResourceSlots?.[slot]?.human_readable_name ??
+          mergedResourceSlots?.[slot.split(':')[0]]?.human_readable_name ??
+          slot);
   const slotUnit = (slot: string): string =>
     mergedResourceSlots?.[slot]?.display_unit ?? '';
+  // Hover detail for accelerator selector items — the short labels collapse
+  // across families (several read "GPU"), so the tooltip carries the full
+  // description plus the slot subtype:
+  // `cuda.device:1g.20gb-mig` → "CUDA-capable GPU (1g.20gb-mig)".
+  const slotFullName = (slot: string): string => {
+    const colonIdx = slot.indexOf(':');
+    const base = colonIdx === -1 ? slot : slot.slice(0, colonIdx);
+    const subtype = colonIdx === -1 ? undefined : slot.slice(colonIdx + 1);
+    const name =
+      mergedResourceSlots?.[slot]?.description ??
+      mergedResourceSlots?.[base]?.description ??
+      slotLabel(slot);
+    return subtype ? `${name} (${subtype})` : name;
+  };
 
   const [gridParams, setGridParams] = useQueryStates(
     {
@@ -498,12 +518,19 @@ const SessionResourceGrid = ({
                           label: slotLabel(slot),
                         })
                       : slotLabel(slot);
+                if (slot === 'cpu' || slot === 'mem') {
+                  return (
+                    <SegmentedControlItem
+                      key={value}
+                      value={value}
+                      label={label}
+                    />
+                  );
+                }
                 return (
-                  <SegmentedControlItem
-                    key={value}
-                    value={value}
-                    label={label}
-                  />
+                  <Tooltip key={value} content={slotFullName(slot)}>
+                    <SegmentedControlItem value={value} label={label} />
+                  </Tooltip>
                 );
               })}
             </SegmentedControl>

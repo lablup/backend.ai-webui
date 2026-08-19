@@ -95,10 +95,12 @@ export const memKeyForSlot = (slot: string): string =>
  */
 export const parseResourceValue = (
   value: string,
-): { slot: string; dimension: 'util' | 'mem' } => {
-  const [slot, dim] = value.split(':');
-  return { slot, dimension: dim === 'mem' ? 'mem' : 'util' };
-};
+): { slot: string; dimension: 'util' | 'mem' } =>
+  // Only a TRAILING `:mem` is the dimension marker — slot keys themselves
+  // may contain `:` (MIG subtypes like `cuda.device:1g.20gb-mig`).
+  value.endsWith(':mem')
+    ? { slot: value.slice(0, -':mem'.length), dimension: 'mem' }
+    : { slot: value, dimension: 'util' };
 
 /** True when the session holds any amount of the selection's slot. */
 export const sessionHasResource = (
