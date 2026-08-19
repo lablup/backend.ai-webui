@@ -47,10 +47,10 @@
  last, which is what they want: most read the FINAL column list, and `scrollY`
  (which reads only pinned-ness) must run before `cellRow` so `onCell` wins.
 
- Pagination is deliberately NOT the `useTablePagination` plugin: BUI's tables
- are server-paginated (the data is already sliced) and BUI renders its own
- bottom bar next to the settings gear. The plugin also hides itself when there
- is a single page, which antd never does.
+ Pagination is deliberately NOT the `useTablePagination` plugin: BUI renders
+ its own bottom bar next to the settings gear, and the plugin hides itself on a
+ single page, which antd never does. Client-vs-server slicing is documented on
+ `BAIAstryxPaginationConfig.total` (FR-3563).
 
  ## PILOT-DECISIONs (see the ticket file for the full list)
 
@@ -134,7 +134,7 @@ import {
   Inbox,
   Settings,
 } from 'lucide-react';
-import React, { useMemo, useState, type ReactNode } from 'react';
+import React, { useState, type ReactNode } from 'react';
 
 /** Internal row shape Astryx's generic constraint requires. */
 type AnyRow = Record<string, unknown>;
@@ -224,6 +224,11 @@ export interface BAIAstryxPaginationConfig {
   defaultCurrent?: number;
   pageSize?: number;
   defaultPageSize?: number;
+  /**
+   * Omit it and the table slices `dataSource` itself. Pass a `total` greater
+   * than `dataSource.length` to declare the rows already sliced server-side,
+   * and the table leaves them alone (antd's `pageData` rule).
+   */
   total?: number;
   pageSizeOptions?: Array<number>;
   onChange?: (page: number, pageSize: number) => void;
@@ -496,21 +501,15 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     defaultValue: {},
   });
 
-  const effectiveColumnOverrides = useMemo(
-    () => ({
-      ...(tableSettings?.defaultColumnOverrides ?? {}),
-      ...(columnOverrides ?? {}),
-    }),
-    [tableSettings, columnOverrides],
-  );
+  const effectiveColumnOverrides = {
+    ...(tableSettings?.defaultColumnOverrides ?? {}),
+    ...(columnOverrides ?? {}),
+  };
 
   const isColumnReorderEnabled =
     !!tableSettings && !tableSettings.disableColumnReorder;
 
-  const flatColumns = useMemo(
-    () => flattenColumns<RecordType>(columns),
-    [columns],
-  );
+  const flatColumns = flattenColumns<RecordType>(columns);
 
   /* ---- resized widths ---------------------------------------------------- */
 
@@ -521,7 +520,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     Record<string, number>
   >({});
 
-  const columnWidths = useMemo(() => {
+  const columnWidths = ((): Record<string, number> => {
     if (!tableSettings) return localColumnWidths;
     const fromOverrides: Record<string, number> = {};
     _.forEach(effectiveColumnOverrides, (override, key) => {
@@ -529,7 +528,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
         fromOverrides[key] = override.width;
     });
     return fromOverrides;
-  }, [tableSettings, effectiveColumnOverrides, localColumnWidths]);
+  })();
 
   const handleColumnResizeEnd = (updates: Record<string, number>) => {
     if (!tableSettings) {
@@ -591,7 +590,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   });
   const activeOrder = isOrderControlled ? order : uncontrolledOrder;
 
-  const rows = useMemo(() => {
+  const sortedRows = ((): Array<RecordType> => {
     const source = dataSource ? [...dataSource] : [];
     if (isOrderControlled || !activeOrder) return source;
     const isDescending = activeOrder.startsWith('-');
@@ -610,7 +609,55 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     return source.sort((a, b) =>
       isDescending ? -compare(a, b, 'descend') : compare(a, b, 'ascend'),
     );
-  }, [dataSource, isOrderControlled, activeOrder, flatColumns]);
+  })();
+
+  /* ---- pagination -------------------------------------------------------- */
+
+  const [currentPage, setCurrentPage] = useControllableValue<number>(
+    pagination ? pagination : {},
+    {
+      valuePropName: 'current',
+      defaultValuePropName: 'defaultCurrent',
+      defaultValue: 1,
+      trigger: 'no-trigger',
+    },
+  );
+  const [currentPageSize, setCurrentPageSize] = useControllableValue<number>(
+    pagination ? pagination : {},
+    {
+      valuePropName: 'pageSize',
+      defaultValuePropName: 'defaultPageSize',
+      defaultValue: 10,
+      trigger: 'no-trigger',
+    },
+  );
+
+  const total = pagination
+    ? (pagination.total ?? sortedRows.length)
+    : sortedRows.length;
+
+  // Filtering can shrink the list under the page the user is on; clamp for
+  // display instead of setting state during render, as antd's `usePagination`
+  // does.
+  const activePage = _.clamp(
+    currentPage,
+    1,
+    Math.max(1, Math.ceil(total / currentPageSize)),
+  );
+
+  // A `total` larger than the rows we were handed is the caller declaring them
+  // already sliced server-side, so honour that and never re-slice — otherwise
+  // a page past the first indexes past the end and renders nothing.
+  const isServerSliced = total > sortedRows.length;
+  const rows =
+    pagination !== false &&
+    !isServerSliced &&
+    sortedRows.length > currentPageSize
+      ? sortedRows.slice(
+          (activePage - 1) * currentPageSize,
+          activePage * currentPageSize,
+        )
+      : sortedRows;
 
   /* ---- expandable -------------------------------------------------------- */
 
@@ -621,10 +668,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   const expandedKeys = expandable?.expandedRowKeys
     ? expandable.expandedRowKeys
     : uncontrolledExpandedKeys;
-  const expandedKeySet = useMemo(
-    () => new Set(_.map(expandedKeys, String)),
-    [expandedKeys],
-  );
+  const expandedKeySet = new Set(_.map(expandedKeys, String));
 
   const hasExpandable = !!expandable?.expandedRowRender;
 
@@ -637,13 +681,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   };
 
   /** Row index of the ORIGINAL record, needed by antd-shaped `render`. */
-  const rowIndexByKey = useMemo(() => {
-    const map = new Map<string, number>();
-    _.forEach(rows, (record, index) => map.set(getRowKey(record), index));
-    return map;
-    // `getRowKey` is derived from `rowKey`, which is in the dep list.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, rowKey]);
+  const rowIndexByKey = new Map<string, number>();
+  _.forEach(rows, (record, index) =>
+    rowIndexByKey.set(getRowKey(record), index),
+  );
 
   /**
    * The data actually handed to Astryx: the real rows with a synthetic detail
@@ -651,7 +692,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
    * carrying a marker field; the expansion plugin recognises them and replaces
    * their cells with a single full-span `<td>`.
    */
-  const astryxData = useMemo(() => {
+  const astryxData = ((): Array<AnyRow> => {
     if (!hasExpandable) return rows as Array<AnyRow>;
     const out: Array<AnyRow> = [];
     _.forEach(rows, (record) => {
@@ -665,19 +706,16 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
       }
     });
     return out;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, hasExpandable, expandedKeySet, expandable, rowKey]);
+  })();
 
-  const recordByKey = useMemo(() => {
-    const map = new Map<string, RecordType>();
-    _.forEach(rows, (record) => map.set(getRowKey(record), record));
-    return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, rowKey]);
+  // Built from the FULL list, not the page: `emitSelection` resolves selected
+  // keys through it, and `preserveSelectedRowKeys` keeps keys from other pages.
+  const recordByKey = new Map<string, RecordType>();
+  _.forEach(sortedRows, (record) => recordByKey.set(getRowKey(record), record));
 
   /* ---- Astryx columns ---------------------------------------------------- */
 
-  const astryxColumns = useMemo(() => {
+  const astryxColumns = ((): Array<TableColumn<AnyRow>> => {
     const built: Array<TableColumn<AnyRow>> = [];
 
     if (hasExpandable) {
@@ -823,23 +861,11 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     });
 
     return built;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    flatColumns,
-    columnWidths,
-    isScrollX,
-    resizable,
-    hasExpandable,
-    expandable,
-    expandedKeySet,
-    rowIndexByKey,
-    rowKey,
-    t,
-  ]);
+  })();
 
   /* ---- visibility + order (feeds the columnSettings plugin) -------------- */
 
-  const activeColumnKeys = useMemo(() => {
+  const activeColumnKeys = ((): Array<string> => {
     const visible = tableSettings
       ? _.filter(flatColumns, ({ key, column }) =>
           isColumnVisible(column, key, effectiveColumnOverrides),
@@ -856,34 +882,25 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
       ...(hasExpandable ? [EXPAND_COLUMN_KEY] : []),
       ..._.map(ordered, ({ key }) => key),
     ];
-  }, [
-    flatColumns,
-    tableSettings,
-    effectiveColumnOverrides,
-    isColumnReorderEnabled,
-    hasExpandable,
-  ]);
+  })();
 
   const columnSettingsPlugin = useTableColumnSettings<AnyRow>({
-    columns: useMemo(
-      () => [
-        ...(hasExpandable
-          ? [
-              {
-                key: EXPAND_COLUMN_KEY,
-                label: '',
-                isAlwaysVisible: true,
-              },
-            ]
-          : []),
-        ..._.map(flatColumns, (flat) => ({
-          key: flat.key,
-          label: columnPlainLabel(flat),
-          isAlwaysVisible: !!flat.column.required,
-        })),
-      ],
-      [flatColumns, hasExpandable],
-    ),
+    columns: [
+      ...(hasExpandable
+        ? [
+            {
+              key: EXPAND_COLUMN_KEY,
+              label: '',
+              isAlwaysVisible: true,
+            },
+          ]
+        : []),
+      ..._.map(flatColumns, (flat) => ({
+        key: flat.key,
+        label: columnPlainLabel(flat),
+        isAlwaysVisible: !!flat.column.required,
+      })),
+    ],
     activeColumnKeys,
     // The settings MODAL owns the write path (it also has to preserve `order`
     // and `width`), so the plugin's own mutation callback is a no-op.
@@ -896,7 +913,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   // the last `fixed: 'left'` / first `fixed: 'right'` key matters. The
   // synthetic selection / expand columns sit before every user column, so they
   // ride along with the start run automatically.
-  const stickyConfig = useMemo(() => {
+  const stickyConfig = ((): {
+    startKeys?: Array<string>;
+    endKeys?: Array<string>;
+  } => {
     if (!sticky) return {};
     const orderedKeys = _.without(activeColumnKeys, EXPAND_COLUMN_KEY);
     const columnByKey = _.keyBy(flatColumns, 'key');
@@ -922,70 +942,63 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           ],
       endKeys: _.isEmpty(endKeys) ? undefined : endKeys,
     };
-  }, [sticky, activeColumnKeys, flatColumns, rowSelection, hasExpandable]);
+  })();
 
   const stickyPlugin = useTableStickyColumns<AnyRow>(stickyConfig);
 
   /* ---- per-cell / per-row escape hatches (antd `onCell` / `onRow`) ------- */
 
-  const cellRowPlugin: TablePlugin<AnyRow> = useMemo(
-    () => ({
-      transformBodyCell: (props, column, item) => {
-        if (isDetailRow(item)) return props;
-        const source = _.find(flatColumns, { key: column.key })?.column;
-        const extra = source?.onCell?.(item as RecordType, 0);
-        if (!extra) return props;
-        return {
-          ...props,
-          htmlProps: {
-            ...props.htmlProps,
-            ...(extra as React.TdHTMLAttributes<HTMLTableCellElement>),
-            style: {
-              ...props.htmlProps.style,
-              ...(extra as { style?: React.CSSProperties }).style,
-            },
+  const cellRowPlugin: TablePlugin<AnyRow> = {
+    transformBodyCell: (props, column, item) => {
+      if (isDetailRow(item)) return props;
+      const source = _.find(flatColumns, { key: column.key })?.column;
+      const extra = source?.onCell?.(item as RecordType, 0);
+      if (!extra) return props;
+      return {
+        ...props,
+        htmlProps: {
+          ...props.htmlProps,
+          ...(extra as React.TdHTMLAttributes<HTMLTableCellElement>),
+          style: {
+            ...props.htmlProps.style,
+            ...(extra as { style?: React.CSSProperties }).style,
           },
-        };
-      },
-      transformBodyRow: (props, item) => {
-        if (!onRow || isDetailRow(item)) return props;
-        const record = item as RecordType;
-        const extra = onRow(record, rowIndexByKey.get(getRowKey(record)));
-        if (!extra) return props;
-        return {
-          ...props,
-          htmlProps: {
-            ...props.htmlProps,
-            ...extra,
-            style: { ...props.htmlProps.style, ...extra.style },
-          },
-        };
-      },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [flatColumns, onRow, rowIndexByKey, rowKey],
-  );
+        },
+      };
+    },
+    transformBodyRow: (props, item) => {
+      if (!onRow || isDetailRow(item)) return props;
+      const record = item as RecordType;
+      const extra = onRow(record, rowIndexByKey.get(getRowKey(record)));
+      if (!extra) return props;
+      return {
+        ...props,
+        htmlProps: {
+          ...props.htmlProps,
+          ...extra,
+          style: { ...props.htmlProps.style, ...extra.style },
+        },
+      };
+    },
+  };
 
   /* ---- x-mode per-column max-width release ------------------------------- */
 
   // Astryx clips cells with `max-width: 0`; x mode releases width-LESS columns
   // only, so pixel/resized columns keep truncating (the header release also
   // cancels the stray % width `resolveColumnWidths` hands width-less columns).
-  const scrollXPlugin: TablePlugin<AnyRow> = useMemo(
-    () => ({
-      transformHeaderCell: (props, column) =>
-        column.width != null ? props : mergeCellStyle(props, X_HEADER_RELEASE),
-      transformBodyCell: (props, column) =>
-        column.width != null ? props : mergeCellStyle(props, X_BODY_RELEASE),
-    }),
-    [],
-  );
+  const scrollXPlugin: TablePlugin<AnyRow> = {
+    transformHeaderCell: (props, column) =>
+      column.width != null ? props : mergeCellStyle(props, X_HEADER_RELEASE),
+    transformBodyCell: (props, column) =>
+      column.width != null ? props : mergeCellStyle(props, X_BODY_RELEASE),
+  };
 
   /* ---- y-mode pinned-header z-order restore ------------------------------ */
 
   const hasPinnedColumns = !!(stickyConfig.startKeys || stickyConfig.endKeys);
 
-  const scrollYPlugin: TablePlugin<AnyRow> = useMemo(() => {
+  const scrollYPlugin: TablePlugin<AnyRow> = (() => {
     const pinned = new Set([
       ...(stickyConfig.startKeys ?? []),
       ...(stickyConfig.endKeys ?? []),
@@ -996,11 +1009,11 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           ? mergeCellStyle(props, Y_PINNED_HEADER_STACK)
           : props,
     };
-  }, [stickyConfig]);
+  })();
 
   /* ---- sorting ----------------------------------------------------------- */
 
-  const sortState: TableSortState = useMemo(() => {
+  const sortState: TableSortState = ((): TableSortState => {
     if (!activeOrder) return [];
     const isDescending = activeOrder.startsWith('-');
     return [
@@ -1009,7 +1022,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
         direction: isDescending ? 'descending' : 'ascending',
       },
     ];
-  }, [activeOrder]);
+  })();
 
   const sortPlugin = useTableSortable<AnyRow>({
     sort: sortState,
@@ -1028,9 +1041,8 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
 
   /* ---- selection --------------------------------------------------------- */
 
-  const selectedKeySet = useMemo(
-    () => new Set(_.map(rowSelection?.selectedRowKeys ?? [], String)),
-    [rowSelection],
+  const selectedKeySet = new Set(
+    _.map(rowSelection?.selectedRowKeys ?? [], String),
   );
 
   const emitSelection = (keys: Array<string>) => {
@@ -1093,39 +1105,29 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
 
   const renderedColumnCount = activeColumnKeys.length + (rowSelection ? 1 : 0);
 
-  const expansionPlugin: TablePlugin<AnyRow> = useMemo(
-    () => ({
-      transformBodyRow: (props, item) => {
-        if (!isDetailRow(item)) return props;
-        const parentKey = String(item[DETAIL_ROW_MARKER]);
-        const record = recordByKey.get(parentKey);
-        if (!record) return props;
-        const index = rowIndexByKey.get(parentKey) ?? 0;
-        return {
-          ...props,
-          children: (
-            <td
-              colSpan={renderedColumnCount}
-              style={{
-                padding: token.paddingSM,
-                background: token.colorFillQuaternary,
-              }}
-            >
-              {expandable?.expandedRowRender?.(record, index)}
-            </td>
-          ),
-        };
-      },
-    }),
-    [
-      recordByKey,
-      rowIndexByKey,
-      renderedColumnCount,
-      expandable,
-      token.paddingSM,
-      token.colorFillQuaternary,
-    ],
-  );
+  const expansionPlugin: TablePlugin<AnyRow> = {
+    transformBodyRow: (props, item) => {
+      if (!isDetailRow(item)) return props;
+      const parentKey = String(item[DETAIL_ROW_MARKER]);
+      const record = recordByKey.get(parentKey);
+      if (!record) return props;
+      const index = rowIndexByKey.get(parentKey) ?? 0;
+      return {
+        ...props,
+        children: (
+          <td
+            colSpan={renderedColumnCount}
+            style={{
+              padding: token.paddingSM,
+              background: token.colorFillQuaternary,
+            }}
+          >
+            {expandable?.expandedRowRender?.(record, index)}
+          </td>
+        ),
+      };
+    },
+  };
 
   /* ---- plugin record ----------------------------------------------------- */
 
@@ -1145,19 +1147,16 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
    *
    * 24 (inset) + 20 (checkbox) + 8 (trailing pad) = 52.
    */
-  const selectionWidthPlugin: TablePlugin<AnyRow> = useMemo(
-    () => ({
-      transformColumns: (cols) =>
-        _.map(cols, (column) =>
-          column.key === SELECTION_COLUMN_KEY
-            ? { ...column, width: pixel(SELECTION_COLUMN_WIDTH) }
-            : column,
-        ),
-    }),
-    [],
-  );
+  const selectionWidthPlugin: TablePlugin<AnyRow> = {
+    transformColumns: (cols) =>
+      _.map(cols, (column) =>
+        column.key === SELECTION_COLUMN_KEY
+          ? { ...column, width: pixel(SELECTION_COLUMN_WIDTH) }
+          : column,
+      ),
+  };
 
-  const plugins = useMemo(() => {
+  const plugins = ((): Record<string, TablePlugin<AnyRow>> => {
     const next: Record<string, TablePlugin<AnyRow>> = {
       // Canonical Astryx order is columnSettings -> sort -> tree -> selection
       // -> pagination; unknown names (here `resize` / `expansion`) run last.
@@ -1178,39 +1177,10 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
     next.cellRow = cellRowPlugin;
     if (hasExpandable) next.expansion = expansionPlugin;
     return next;
-  }, [
-    columnSettingsPlugin,
-    sortPlugin,
-    rowSelection,
-    selectionPlugin,
-    selectionWidthPlugin,
-    resizable,
-    resizePlugin,
-    stickyPlugin,
-    isScrollX,
-    scrollXPlugin,
-    isScrollY,
-    hasPinnedColumns,
-    scrollYPlugin,
-    cellRowPlugin,
-    hasExpandable,
-    expansionPlugin,
-  ]);
+  })();
 
-  /* ---- pagination -------------------------------------------------------- */
-
-  const [currentPage, setCurrentPage] = useControllableValue<number>(
-    pagination ? pagination : {},
-    { valuePropName: 'current', defaultValue: 1, trigger: 'no-trigger' },
-  );
-  const [currentPageSize, setCurrentPageSize] = useControllableValue<number>(
-    pagination ? pagination : {},
-    { valuePropName: 'pageSize', defaultValue: 10, trigger: 'no-trigger' },
-  );
-
-  const total = pagination ? (pagination.total ?? rows.length) : rows.length;
-  const rangeStart = total === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
-  const rangeEnd = Math.min(currentPage * currentPageSize, total);
+  const rangeStart = total === 0 ? 0 : (activePage - 1) * currentPageSize + 1;
+  const rangeEnd = Math.min(activePage * currentPageSize, total);
 
   const isDimmed = !!loading || !!spinnerLoading;
 
@@ -1292,7 +1262,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           rowCount={total || undefined}
           rowIndexStart={
             pagination !== false
-              ? (currentPage - 1) * currentPageSize + 1
+              ? (activePage - 1) * currentPageSize + 1
               : undefined
           }
           plugins={plugins}
@@ -1320,7 +1290,7 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
                 />
               </Text>
               <Pagination
-                page={currentPage}
+                page={activePage}
                 pageSize={currentPageSize}
                 totalItems={total}
                 // Astryx renders the size selector exactly when options are
