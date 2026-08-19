@@ -4,8 +4,9 @@
 */
 import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 
-// A portal root (`BAIDialog`, and `BAIDrawerPortal` since FR-3585), or any
-// open native `<dialog>` — tours, the launcher, non-scrim drawers.
+// A portal root (`BAIDialog`, the `BAIModal` app launcher among them, and
+// `BAIDrawerPortal` since FR-3585), or an open native `<dialog>` — which since
+// FR-3585 is only the two non-scrim drawers. Tours are popovers, not dialogs.
 // `:not([inert])` drops the roots the level stack covered, whose contents no
 // one can reach.
 const OPEN_MODAL_ROOTS = [
