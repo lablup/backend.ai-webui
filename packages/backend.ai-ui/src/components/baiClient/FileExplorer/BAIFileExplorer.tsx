@@ -16,7 +16,7 @@ import DragAndDrop from './DragAndDrop';
 import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
-import { useSearchVFolderFiles } from './hooks';
+import { useDragOverlay, useSearchVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
@@ -116,10 +116,13 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
-  const [isDragMode, setIsDragMode] = useState(false);
-  // The container ref is parent-owned; capture its element when dragging starts.
-  const [dragPortalContainer, setDragPortalContainer] =
-    useState<HTMLElement | null>(null);
+  // The container ref is parent-owned; the hook captures its element when
+  // dragging starts.
+  const {
+    isDragMode,
+    portalContainer: dragPortalContainer,
+    close: closeDragOverlay,
+  } = useDragOverlay(fileDropContainerRef);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
     useState<VFolderFile | null>(null);
@@ -324,39 +327,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     },
   ]);
 
-  useEffect(() => {
-    const handleDragEnter = (e: DragEvent) => {
-      e.preventDefault();
-      setDragPortalContainer(fileDropContainerRef?.current ?? null);
-      setIsDragMode(true);
-    };
-    const handleDragLeave = (e: DragEvent) => {
-      e.preventDefault();
-      if (!e.relatedTarget || !document.contains(e.relatedTarget as Node)) {
-        setIsDragMode(false);
-      }
-    };
-    const handleDragOver = (e: DragEvent) => {
-      e.preventDefault();
-    };
-    const handleDrop = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragMode(false);
-    };
-
-    document.addEventListener('dragenter', handleDragEnter);
-    document.addEventListener('dragleave', handleDragLeave);
-    document.addEventListener('dragover', handleDragOver);
-    document.addEventListener('drop', handleDrop);
-
-    return () => {
-      document.removeEventListener('dragenter', handleDragEnter);
-      document.removeEventListener('dragleave', handleDragLeave);
-      document.removeEventListener('dragover', handleDragOver);
-      document.removeEventListener('drop', handleDrop);
-    };
-  }, [fileDropContainerRef]);
-
   return (
     <FolderInfoContext.Provider
       value={{
@@ -368,6 +338,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       {isDragMode && enableUpload && (
         <DragAndDrop
           portalContainer={dragPortalContainer || undefined}
+          onDragEnd={closeDragOverlay}
           onUpload={(files, currentPath) => onUpload?.(files, currentPath)}
         />
       )}
