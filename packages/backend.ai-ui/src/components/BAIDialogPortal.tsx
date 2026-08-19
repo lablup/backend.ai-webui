@@ -10,8 +10,13 @@
  The inner `<Dialog isInline>` is always told `isOpen`: its inline path renders
  `null` when closed, and children stay mounted as the native `<dialog>` did.
 */
-import { BAI_Z_INDEX } from '../styles/zIndexLadder';
 import './BAIDialogPortal.css';
+import {
+  BAI_MODAL_OPEN_ATTRIBUTE,
+  claimDialogLevel,
+  floorToModalBand,
+  releaseDialogLevel,
+} from './dialogLevelStack';
 import { Dialog } from '@astryxdesign/core/Dialog';
 import type { DialogPosition, DialogProps } from '@astryxdesign/core/Dialog';
 import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
@@ -28,80 +33,9 @@ import React, {
 } from 'react';
 import { createPortal } from 'react-dom';
 
-/**
- * Marks an open portal modal root. Consumers scope document queries to it —
- * import it rather than retyping the string; a rename fails silently.
- */
-export const BAI_MODAL_OPEN_ATTRIBUTE = 'data-bai-modal-open';
-
-// The CSS climbs one ladder step per nesting level; past this ceiling a modal
-// would reach the notice stack, the inversion FR-3578 exists to prevent.
-// Exported so `zIndexLadder.test.ts` pins THIS number under it, not a copy.
-export const MAX_DIALOG_LEVEL = 80;
-
-/**
- * The `zIndex` escape hatch is reachable from every `<BAIModal>`, and a number
- * below the band is always stale — degrade to "on top" rather than invisible.
- */
-function floorToModalBand(zIndex: number): number {
-  if (zIndex >= BAI_Z_INDEX.modalBase) {
-    return zIndex;
-  }
-  devWarn(
-    'BAIDialogPortal',
-    `zIndex ${zIndex} is below the modal band base ` +
-      `(${BAI_Z_INDEX.modalBase}); clamping. Pass a layer from ` +
-      '`BAI_Z_INDEX` rather than a literal, or drop the prop.',
-  );
-  return BAI_Z_INDEX.modalBase;
-}
-
-// Module-level: inside `'use memo'` the compiler rewrites a read-then-increment.
-const openDialogs: Array<{
-  level: number;
-  root: HTMLElement | null;
-  setIsTopmost: (isTopmost: boolean) => void;
-}> = [];
-
-/**
- * Only the topmost portal stays interactive. A covered dialog must both drop
- * its focus trap and go `inert`: the trap alone lets Tab escape to the parent's
- * last button, and `inert` alone freezes Tab entirely — Astryx ≥0.4.4 excludes
- * `inert` subtrees when collecting focusables, so the covered trap sees none
- * and swallows the key rather than letting the topmost trap cycle.
- */
-function syncCoveredDialogs(): void {
-  openDialogs.forEach(({ root, setIsTopmost }, index) => {
-    const isTopmost = index === openDialogs.length - 1;
-    setIsTopmost(isTopmost);
-    if (isTopmost) {
-      root?.removeAttribute('inert');
-    } else {
-      root?.setAttribute('inert', '');
-    }
-  });
-}
-
-function claimDialogLevel(
-  root: HTMLElement | null,
-  setIsTopmost: (isTopmost: boolean) => void,
-): number {
-  const level = Math.min(
-    (openDialogs.at(-1)?.level ?? -1) + 1,
-    MAX_DIALOG_LEVEL,
-  );
-  openDialogs.push({ level, root, setIsTopmost });
-  syncCoveredDialogs();
-  return level;
-}
-
-function releaseDialogLevel(level: number): void {
-  const index = openDialogs.findIndex((entry) => entry.level === level);
-  if (index !== -1) {
-    openDialogs.splice(index, 1);
-  }
-  syncCoveredDialogs();
-}
+// The level stack moved to `dialogLevelStack` so `BAIDrawerPortal` can join it
+// (FR-3585); re-exported here because both names read as this module's.
+export { BAI_MODAL_OPEN_ATTRIBUTE, MAX_DIALOG_LEVEL } from './dialogLevelStack';
 
 const HEADING_SELECTOR = '[role="heading"], h1, h2, h3, h4, h5, h6';
 const DIALOG_SELECTOR = 'dialog, [role="dialog"], [role="alertdialog"]';

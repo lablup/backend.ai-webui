@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import './BAIDrawerAstryx.css';
+import BAIDrawerPortal from './BAIDrawerPortal';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, StackItem, VStack } from '@astryxdesign/core/Stack';
@@ -50,38 +51,12 @@ export interface BAIDrawerAstryxProps {
 }
 
 /**
- * The project's drawer shell: lab `Drawer` plus the header arrangement the
- * antd `Drawer` produced, so every detail drawer reads the same way it did
- * before the Astryx migration.
- *
- * WHY THIS EXISTS (qa2-c). lab `Drawer` has no title bar at all — it only
- * offers `hasCloseButton`, which paints a ghost icon button ABSOLUTELY
- * POSITIONED in the top-trailing corner, floating over whatever the content
- * renders first. Each converted drawer therefore hand-rolled its own
- * `HStack justify="between"` title row inside the body, which put the page's
- * own action buttons underneath (or overlapping) that floating close button
- * and produced a different header on every drawer.
- *
- * The legacy arrangement, read off antd 6.5.0's `DrawerPanel` and its style
- * module (and confirmed by rendering it):
- *
- *   .ant-drawer-header        display:flex; align-items:center;
- *                             padding: `padding` `paddingLG` (16px 24px);
- *                             border-bottom: 1px solid colorSplit
- *     .ant-drawer-header-title  flex:1; display:flex; align-items:center
- *       button.ant-drawer-close   margin-inline-end: marginXS (8px)
- *       .ant-drawer-title         flex:1; font-weight:600; font-size:fontSizeLG
- *     .ant-drawer-extra         flex:none
- *   .ant-drawer-body          flex:1; padding: paddingLG (24px); overflow:auto
- *
- * i.e. `[X] Title …………… [extra]` on one row, a divider, then a padded
- * scrollable body. `closable.placement` was never overridden anywhere in the
- * app (`ConfigProvider drawer={{ mask: { blur: false } }}` is the only drawer
- * config), so antd's default `'start'` placement applies and the close button
- * sits BEFORE the title, not at the far edge.
- *
- * This component reproduces that exactly and turns lab's floating button off
- * (`hasCloseButton={false}`) so there is only one close affordance.
+ * The project's drawer shell: lab `Drawer` plus the header arrangement antd's
+ * `Drawer` produced — `[X] Title …… [extra]`, a divider, then a padded
+ * scrollable body — so every detail drawer reads the way it did before the
+ * Astryx migration. lab has no title bar of its own, only a floating
+ * `hasCloseButton` glyph that overlaps whatever the content renders first;
+ * that button is turned off here so there is one close affordance (qa2-c).
  */
 const BAIDrawerAstryx: React.FC<BAIDrawerAstryxProps> = ({
   open = false,
@@ -106,66 +81,76 @@ const BAIDrawerAstryx: React.FC<BAIDrawerAstryxProps> = ({
 
   const hasHeader = title !== undefined || extra !== undefined;
 
-  return (
-    <Drawer
-      isOpen={open}
-      onClose={() => onClose?.()}
-      side={side}
-      size={size}
-      label={accessibleName}
-      hasScrim={hasScrim}
-      // The header below owns the close affordance, at antd's `start`
-      // placement. Leaving lab's own button on would paint a second, floating
-      // one over the content.
-      hasCloseButton={false}
-    >
-      <VStack gap={0} align="stretch" height="100%">
-        {hasHeader ? (
+  const panel = (
+    <VStack gap={0} align="stretch" height="100%">
+      {hasHeader ? (
+        <HStack
+          className={['bai-drawer-header', headerClassName]
+            .filter(Boolean)
+            .join(' ')}
+          align="center"
+          gap={0}
+          wrap="nowrap"
+        >
           <HStack
-            className={['bai-drawer-header', headerClassName]
-              .filter(Boolean)
-              .join(' ')}
             align="center"
             gap={0}
             wrap="nowrap"
+            className="bai-drawer-header-title"
           >
-            <HStack
-              align="center"
-              gap={0}
-              wrap="nowrap"
-              className="bai-drawer-header-title"
-            >
-              <IconButton
-                icon={<X size="1em" />}
-                label={t('button.Close')}
-                variant="ghost"
-                size="sm"
-                onClick={() => onClose?.()}
-              />
-              {title !== undefined ? (
-                <Heading level={5} className="bai-drawer-title">
-                  {title}
-                </Heading>
-              ) : null}
-            </HStack>
-            {extra !== undefined ? (
-              <div className="bai-drawer-extra">{extra}</div>
+            <IconButton
+              icon={<X size="1em" />}
+              label={t('button.Close')}
+              variant="ghost"
+              size="sm"
+              onClick={() => onClose?.()}
+            />
+            {title !== undefined ? (
+              <Heading level={5} className="bai-drawer-title">
+                {title}
+              </Heading>
             ) : null}
           </HStack>
-        ) : null}
-        <StackItem size="fill" isScrollable>
-          <div
-            className={[
-              hasBodyPadding ? 'bai-drawer-body' : 'bai-drawer-body-flush',
-              bodyClassName,
-            ]
-              .filter(Boolean)
-              .join(' ')}
-          >
-            {children}
-          </div>
-        </StackItem>
-      </VStack>
+          {extra !== undefined ? (
+            <div className="bai-drawer-extra">{extra}</div>
+          ) : null}
+        </HStack>
+      ) : null}
+      <StackItem size="fill" isScrollable>
+        <div
+          className={[
+            hasBodyPadding ? 'bai-drawer-body' : 'bai-drawer-body-flush',
+            bodyClassName,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {children}
+        </div>
+      </StackItem>
+    </VStack>
+  );
+
+  const drawerProps = {
+    isOpen: open,
+    onClose: () => onClose?.(),
+    side,
+    size,
+    label: accessibleName,
+    // The header above owns the close affordance, at antd's `start` placement.
+    // Leaving lab's own button on would paint a second, floating one over the
+    // content.
+    hasCloseButton: false,
+  };
+
+  // A scrimmed lab `Drawer` would `showModal()` and inert every portalled modal
+  // opened from inside it; the portal keeps the modality without the top layer
+  // (FR-3585). Non-scrim drawers already use `show()` and stay native.
+  return hasScrim ? (
+    <BAIDrawerPortal {...drawerProps}>{panel}</BAIDrawerPortal>
+  ) : (
+    <Drawer {...drawerProps} hasScrim={false}>
+      {panel}
     </Drawer>
   );
 };

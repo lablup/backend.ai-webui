@@ -17,11 +17,12 @@
  sets inline on its own element (`--bai-drawer-area-width`).
 
  `drawerStyle` used to select whether the drawer-panel rule was emitted at all.
- The drawer panel lives in the TOP LAYER (a native `<dialog>`; modals are
- portalled since FR-3578), so it cannot read a custom property set on the
- content div — the rule keys off the content div's own `margin-style` class
- through `:has()` instead (Chromium 105+/Safari 15.4+/Firefox 121+). It fires
- only while the notification drawer holds the layout in margin-style.
+ The drawer panel is never a descendant of the content div — non-scrim drawers
+ are top-layer-free native `<dialog>`s and scrimmed ones are `document.body`
+ portals (FR-3585) — so it cannot read a custom property set there. The rule
+ keys off the content div's own `margin-style` class through `:has()` instead
+ (Chromium 105+/Safari 15.4+/Firefox 121+). It fires only while the
+ notification drawer holds the layout in margin-style.
 
  Token mapping (P19-checked): theme.colorBorder -> var(--color-border-emphasized).
 */
