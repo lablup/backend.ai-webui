@@ -48,8 +48,17 @@
     --bai-dialog-portal-dir-y: 16px;
     position: relative;
     display: flex;
+    /* The surface can be narrower than the wrap (Astryx caps it at 90vw, a
+       consumer `maxWidth` narrows it further), so centre the gutter that
+       leaves and let clicks in it reach the mask. */
+    justify-content: center;
+    pointer-events: none;
     animation: bai-dialog-portal-enter var(--duration-medium-max)
       var(--ease-standard) backwards;
+  }
+
+  .bai-dialog-portal__wrap > * {
+    pointer-events: auto;
   }
 
   /* `position` prop: statically placed instead of centered. */

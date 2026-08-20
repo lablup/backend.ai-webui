@@ -46,6 +46,11 @@ const innerTheme = defineTheme({ name: 'portal-inner', tokens: {} });
 const getMask = () =>
   document.querySelector('.bai-dialog-portal__mask') as HTMLElement;
 
+const getSurface = () =>
+  screen
+    .getByRole('dialog')
+    .querySelector('.astryx-dialog') as HTMLElement | null;
+
 describe('BAIDialogPortal', () => {
   it('portals to document.body without a native <dialog>', () => {
     renderPortal();
@@ -63,7 +68,7 @@ describe('BAIDialogPortal', () => {
   // `aria-hidden` on the app root — would undo the ticket. This fails if anyone
   // adds it. (Whether the notice is actually *clickable* is a hit-test the mask
   // and the ladder decide; jsdom does neither, so it is measured live.)
-  it('marks nothing outside the modal inert or aria-hidden while open', () => {
+  it('claims nothing outside the modal is unavailable while open', () => {
     render(
       <div id="app-root">
         <button type="button">Behind</button>
@@ -82,22 +87,20 @@ describe('BAIDialogPortal', () => {
     // The covered-modal sync is the ONLY thing allowed to set `inert`, and only
     // on a portal root — never on a page container.
     expect(document.querySelectorAll('[inert]')).toHaveLength(0);
+    // `aria-modal` would tell assistive tech the opposite of all of the above.
+    expect(screen.getByRole('dialog')).not.toHaveAttribute('aria-modal');
   });
 
   it('names itself from the DialogHeader title', () => {
     renderPortal();
 
-    const dialog = screen.getByRole('dialog', { name: 'Portal title' });
-    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(screen.getByRole('dialog')).toHaveAccessibleName('Portal title');
   });
 
   it('keeps the .astryx-dialog surface the brand theme keys off', () => {
     renderPortal();
 
-    const surface = screen
-      .getByRole('dialog')
-      .querySelector('.astryx-dialog') as HTMLElement | null;
-    expect(surface).not.toBeNull();
+    expect(getSurface()).not.toBeNull();
   });
 
   it('uses role="alertdialog" for a required dialog', () => {
@@ -292,5 +295,18 @@ describe('BAIDialogPortal', () => {
     expect(wrap.style.insetInlineStart).toBe('auto');
     expect(wrap.style.bottom).toBe('0px');
     expect(wrap.style.top).toBe('auto');
+  });
+
+  it('sizes the wrap and lets the dialog surface fill it', () => {
+    renderPortal({ width: '90%' });
+
+    expect(screen.getByRole('dialog').style.width).toBe('90%');
+    expect(getSurface()?.style.getPropertyValue('--x-width')).toBe('100%');
+  });
+
+  it('leaves a fullscreen dialog to size itself from the viewport', () => {
+    renderPortal({ variant: 'fullscreen', width: '90%' });
+
+    expect(screen.getByRole('dialog').style.width).toBe('');
   });
 });

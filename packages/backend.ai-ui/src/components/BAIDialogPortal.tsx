@@ -4,8 +4,8 @@
 
  `BAIDialogPortal` — Astryx `Dialog`'s surface portalled into `document.body`
  instead of a native `<dialog>` promoted with `showModal()`. Leaving the top
- layer is the point: nothing outside the modal is inert, so the notification
- stack paints above it and stays clickable (FR-3578).
+ layer is the point: no page container is inert — only covered dialog roots are
+ — so the notification stack paints above it and stays clickable (FR-3578).
 
  The inner `<Dialog isInline>` is always told `isOpen`: its inline path renders
  `null` when closed, and children stay mounted as the native `<dialog>` did.
@@ -118,7 +118,7 @@ function getDialogDirection(
   };
 }
 
-function formatPosition(value: number | string): string {
+function toCssLength(value: number | string): string {
   return typeof value === 'number' ? `${value}px` : value;
 }
 
@@ -129,19 +129,25 @@ function resolveDialogPortalPosition(
 ): React.CSSProperties {
   const { top, bottom, start, end } = position;
   return {
-    top: top !== undefined ? formatPosition(top) : 'auto',
-    bottom: bottom !== undefined ? formatPosition(bottom) : 'auto',
-    insetInlineStart: start !== undefined ? formatPosition(start) : 'auto',
-    insetInlineEnd: end !== undefined ? formatPosition(end) : 'auto',
+    top: top !== undefined ? toCssLength(top) : 'auto',
+    bottom: bottom !== undefined ? toCssLength(bottom) : 'auto',
+    insetInlineStart: start !== undefined ? toCssLength(start) : 'auto',
+    insetInlineEnd: end !== undefined ? toCssLength(end) : 'auto',
   };
 }
 
 export interface BAIDialogPortalProps extends Omit<
   DialogProps,
-  'ref' | 'isInline'
+  'ref' | 'isInline' | 'width' | 'aria-modal'
 > {
   /** Ref to the element carrying `role="dialog"` — a `div`, not a `<dialog>`. */
   ref?: React.Ref<HTMLDivElement>;
+  /**
+   * Width of the outer sizing box, so a percentage resolves against the
+   * viewport. Astryx's own 90vw cap still applies to the surface inside it;
+   * `variant="fullscreen"` ignores this.
+   */
+  width?: number | string;
   /**
    * Stacking override for the portal root, floored at `BAI_Z_INDEX.modalBase`.
    * `style` reaches the inner Dialog surface, so `style={{ zIndex }}` does not.
@@ -310,7 +316,8 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
     }
   };
 
-  const hasPosition = position != null && variant !== 'fullscreen';
+  const isFullscreen = variant === 'fullscreen';
+  const hasPosition = position != null && !isFullscreen;
 
   return createPortal(
     <div
@@ -341,7 +348,13 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
           'bai-dialog-portal__wrap',
           hasPosition && 'bai-dialog-portal__wrap--positioned',
         )}
-        style={hasPosition ? resolveDialogPortalPosition(position) : undefined}
+        // Astryx applies `width` to the surface, where a percentage would
+        // resolve against the wrap rather than the viewport. `maxHeight` stays
+        // on the surface: Astryx also feeds it to the inner scroll container.
+        style={{
+          ...(hasPosition ? resolveDialogPortalPosition(position) : null),
+          width: isFullscreen ? undefined : toCssLength(width),
+        }}
         // A consumer `role` wins: the app-shim's confirm needs `alertdialog`
         // on a `form`-purpose dialog, which `purpose` alone cannot express.
         role={
@@ -349,13 +362,16 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
             ? (role ?? (purpose === 'required' ? 'alertdialog' : 'dialog'))
             : undefined
         }
-        aria-modal={isOpen ? true : undefined}
+        // No `aria-modal` (and it is Omitted from the props): it asserts that
+        // everything outside is unavailable, which FR-3578 made false. Residue:
+        // `useFocusTrap` above still holds Tab, so the notices are reachable in
+        // a screen reader's browse mode but not by keyboard.
       >
         <Dialog
           isInline
           isOpen
           onOpenChange={onOpenChange}
-          width={width}
+          width="100%"
           maxHeight={maxHeight}
           variant={variant}
           padding={padding}
