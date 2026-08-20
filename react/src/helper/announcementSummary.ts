@@ -28,7 +28,13 @@ const announcementFirstLine = (message: string): string => {
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/\[([^\]]*)\]\[[^\]]*\]/g, '$1')
     .replace(/\[\^[^\]]*\]/g, '')
-    .replace(/<[^>\n]*>/g, '')
+    // Markdown autolinks keep their URL text; only real HTML tags (a tag name,
+    // then either `>` or whitespace-separated attributes) are dropped, so
+    // plain-text `1 < 2 and 3 > 2` survives. The output is rendered as a React
+    // text node (Banner title) — this is display cleanup, not an HTML
+    // sanitizer.
+    .replace(/<(https?:\/\/[^>\s]+)>/g, '$1')
+    .replace(/<\/?[a-zA-Z][a-zA-Z0-9-]*(\s[^>\n]*)?\/?>/g, '')
     .replace(/\*\*([^*]+)\*\*/g, '$1')
     .replace(/__([^_]+)__/g, '$1')
     .replace(/~~([^~]+)~~/g, '$1')
@@ -47,12 +53,16 @@ const announcementFirstLine = (message: string): string => {
   );
 };
 
-/** One-line summary for the collapsed banner title. */
+/**
+ * One-line summary for the collapsed banner title. Truncation counts Unicode
+ * code points (`Array.from`), not UTF-16 units, so an emoji at the cutoff is
+ * dropped whole rather than split into a replacement character.
+ */
 export const summarizeAnnouncement = (message: string): string => {
-  const firstLine = announcementFirstLine(message);
-  return firstLine.length > SUMMARY_MAX_LENGTH
-    ? `${firstLine.slice(0, SUMMARY_MAX_LENGTH).trimEnd()}…`
-    : firstLine;
+  const codePoints = Array.from(announcementFirstLine(message));
+  return codePoints.length > SUMMARY_MAX_LENGTH
+    ? `${codePoints.slice(0, SUMMARY_MAX_LENGTH).join('').trimEnd()}…`
+    : codePoints.join('');
 };
 
 /**
@@ -67,6 +77,7 @@ export const isAnnouncementCollapsible = (message: string): boolean => {
     return false;
   }
   return (
-    /\r?\n\s*\S/.test(message.trim()) || firstLine.length > SUMMARY_MAX_LENGTH
+    /\r?\n\s*\S/.test(message.trim()) ||
+    Array.from(firstLine).length > SUMMARY_MAX_LENGTH
   );
 };

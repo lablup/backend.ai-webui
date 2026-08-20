@@ -66,6 +66,22 @@ describe('summarizeAnnouncement', () => {
     );
   });
 
+  it('keeps plain-text angle brackets and autolink URLs', () => {
+    expect(summarizeAnnouncement('Versions 1 < 2 and 3 > 2')).toBe(
+      'Versions 1 < 2 and 3 > 2',
+    );
+    expect(summarizeAnnouncement('See <https://example.com/notice>')).toBe(
+      'See https://example.com/notice',
+    );
+  });
+
+  it('truncates on code points so an emoji at the cutoff is not split', () => {
+    const long = `${'a'.repeat(SUMMARY_MAX_LENGTH - 1)}🎉tail`;
+    const summary = summarizeAnnouncement(long);
+    expect(summary).toBe(`${'a'.repeat(SUMMARY_MAX_LENGTH - 1)}🎉…`);
+    expect(summary.includes('�')).toBe(false);
+  });
+
   it('skips table rows and setext underlines', () => {
     expect(summarizeAnnouncement('| a | b |\n|---|---|\nProse here')).toBe(
       'Prose here',

@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 export interface WebUIHeaderProps extends BAIFlexProps {}
 
 const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
+  'use memo';
   const { token } = theme.useToken();
   // FR-3612: hamburger visibility and action come from AppShell's mobile
   // context, so the header and the shell share one breakpoint verdict (no
