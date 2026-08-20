@@ -221,13 +221,15 @@ onRequestClose={(success) => {
 5. ~~**행 단위 토글 (E-2)**~~ — **완료. 제거 대상 없음.** 토글 대상이 예외 없이 목록의 필터 인자였습니다. 유지 확정: `MyKeypairManagementModal`(`isActive` 필터), `ProjectPage`(`is_active == true/false`가 필터 문자열에 하드코딩), `AdminUserManagement`(`status` 무조건 필터 + `status` 정렬 키), `ContainerRegistryList`(필터는 아니지만 `Domain` 병합 불가라 refetch가 유일한 갱신 경로), `RBACManagementPage`(1단계)
 6. ~~**D — selection 보강**~~ — **완료.** `NODE_NOT_SELECTED` 5건은 **오분류라 제외**(위 D 참조). `GAP` D-1 확정 건 중 병합 가능한 것만 보강했습니다 — `ResourceGroupFairShareSettingModal`(`fairShareSpec` 4종), `DeploymentSettingModal`(`metadata`·`networkAccess`·`replicaState`), `AdminDeploymentPresetSettingPage`(`updatedAt`·`runtimeVariant`·`image`). payload selection은 fragment spread가 아니라 **명시 필드 나열**로 통일했습니다 — payload가 무엇을 반환하는지 그 자리에서 읽히도록 한 리뷰 결정이며, 폼에 편집 필드를 추가할 때 payload에도 같이 넣어야 합니다. `AdminUserManagement`는 보강해도 행이 항상 탭에서 빠지므로 하지 않았습니다
 
-**이 PR에서 update 경로의 refetch를 제거·조건화한 곳은 3건입니다.**
+**이 PR에서 update 경로의 refetch를 제거·조건화한 곳은 5건입니다.** (정책 반전 후 deployment 목록 2곳이 다시 포함 — 상단 배너 참조)
 
 - `FairShareList` — `afterUpdate` 체인 **제거**. fair-share 스펙 값이 `ResourceGroupFilter`·`ResourceGroupOrderField` 어디에도 없어 행의 소속·순서가 바뀔 수 없습니다
 - `DeploymentAutoScalingCard` — `if (success && !editingRuleId)`로 **조건화** (create만 refetch). 목록은 `CREATED_AT` 정렬·`createdAt`/`lastTriggeredAt` 필터뿐이라 폼이 편집하는 필드와 겹치지 않습니다
 - `ContainerRegistryList` — `onOk('create' | 'modify')`의 refetch를 create 분기로 **이동**. 목록의 필터·정렬은 `registry_name` 하나인데 edit 폼이 그 필드를 비활성화합니다
+- `DeploymentListPage` — `if (success && !editingDeployment)`로 **조건화** (create만 refetch). `name`·`tags`·`openToPublic`이 필터 속성이지만, 반전된 규칙에 따라 수정된 행은 patch로 남기고 필터 재평가는 수동 새로고침에 맡깁니다
+- `ProjectAdminDeploymentsPage` — update 전용 모달의 무조건 refetch **제거** (같은 근거)
 
-deployment 목록 3곳(`DeploymentListPage`·`AdminDeployment`·`ProjectAdminDeploymentsPage`)은 이 PR 진행 중 main(FR-3256·FR-3410)이 같은 판정을 먼저 적용해 **hunk가 rebase에서 해소**됐고, `name`·`tags`·`openToPublic`이 필터 속성인 `DeploymentListPage`류는 필터 규칙에 따라 update refetch를 유지합니다.
+`AdminDeployment`는 main의 죽은 분기(`success && editingDeployment === null` — non-null 가드 안이라 도달 불가)를 정리만 했고 동작 변화는 없습니다.
 
 ## 검증
 

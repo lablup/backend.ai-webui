@@ -149,13 +149,12 @@ const UpdateUsersModal = ({
     <BAIModal
       title={t('credential.UpdateUsers')}
       okText={t('button.Save')}
+      loading={isTOTPSupportLoading}
       confirmLoading={isPending || isInFlightBulkUpdate}
       {...modalProps}
       okButtonProps={{
         ...modalProps.okButtonProps,
-        // Block submit until the TOTP capability resolves — `isNotSupportTotp`
-        // is baked into the mutation variables and must not read `undefined`.
-        disabled: users.length === 0 || isTOTPSupportLoading,
+        disabled: users.length === 0
       }}
       onOk={(e) => {
         formRef.current
