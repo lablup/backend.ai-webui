@@ -50,11 +50,16 @@
   // the user sees labeled "K". We fall back to `e.code` only when the
   // produced character is not a Latin letter — i.e. exactly the
   // non-Latin-layout / IME case this guards against.
+  //
+  // The Latin test is by Unicode script, not `[a-z]`: an accented Latin
+  // layout that puts "é" or "ő" on this key is still Latin, so `e.key`
+  // must be trusted there rather than falling through to `e.code` and
+  // firing Cmd-K on Cmd-é. Property escapes need the `u` flag.
   function matchesShortcutKey(e, code, char) {
     var k = e.key;
     if (typeof k === "string" && k.length === 1) {
       if (k.toLowerCase() === char) return true;
-      if (/[a-z]/i.test(k)) return false;
+      if (/\p{Script=Latin}/u.test(k)) return false;
     }
     return e.code === code;
   }

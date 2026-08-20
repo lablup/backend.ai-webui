@@ -143,3 +143,27 @@ test("Ctrl + a Latin letter that is not 'k' does not open the palette", async ({
 
   await expect(page.locator(palette)).toBeHidden();
 });
+
+// Same guard, extended Latin. "Latin letter" is tested by Unicode
+// script rather than [a-z], so an accented layout that puts "é" on this
+// physical key is trusted like any other Latin layout — it must NOT be
+// treated as a non-Latin IME and fall through to the code fallback.
+test("Ctrl + an accented Latin letter does not open the palette", async ({
+  page,
+}) => {
+  await page.goto(PAGE);
+
+  await page.evaluate(() => {
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "é",
+        code: "KeyK",
+        ctrlKey: true,
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+  });
+
+  await expect(page.locator(palette)).toBeHidden();
+});

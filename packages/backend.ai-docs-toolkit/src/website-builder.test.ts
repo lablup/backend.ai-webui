@@ -2035,11 +2035,38 @@ describe("keyboard shortcuts — single owner, layout-independent", () => {
     // behind the "no palette on this page" guard.
     const guard = /if \(!document\.querySelector\('\[data-search-palette\]'\)\) \{/;
     assert.match(searchSource, guard);
-    const guardIndex = searchSource.search(guard);
+
+    // Brace-match the guard so this pins *nesting*, not mere ordering:
+    // a handler moved just past the guard's closing brace would restore
+    // the two-owner bug while still appearing "after" the guard.
+    const guardStart = searchSource.search(guard);
+    const openBrace = searchSource.indexOf("{", guardStart);
+    let depth = 0;
+    let guardEnd = -1;
+    for (let i = openBrace; i < searchSource.length; i++) {
+      const ch = searchSource[i];
+      if (ch === "{") depth++;
+      else if (ch === "}") {
+        depth--;
+        if (depth === 0) {
+          guardEnd = i;
+          break;
+        }
+      }
+    }
+    assert.ok(guardEnd > openBrace, "guard block must be brace-balanced");
+
     const handlerIndex = searchSource.indexOf(
       "(e.metaKey || e.ctrlKey) && matchesShortcutKey(e, 'KeyK', 'k')",
     );
-    assert.ok(handlerIndex > guardIndex, "Cmd-K handler must sit inside the guard");
+    assert.ok(
+      handlerIndex > guardStart && handlerIndex < guardEnd,
+      "Cmd-K handler must sit inside the guard block, not merely after it",
+    );
+
+    // And it must be the only Cmd-K listener in the file.
+    const listeners = codeOnly(searchSource).match(/e\.metaKey \|\| e\.ctrlKey/g);
+    assert.equal(listeners?.length, 1);
   });
 
   it("matches Cmd-K by physical key so a Hangul IME cannot break it", () => {
