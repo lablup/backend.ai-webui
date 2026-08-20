@@ -41,15 +41,11 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   BAIAlertIconWithTooltip,
-<<<<<<< HEAD
-  BAITable,
-=======
   BAIModal,
   BAINameActionCell,
   type BAINameActionCellAction,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
->>>>>>> 99432e8c6 (refactor(FR-3533): fold the astryx-bui twin components onto their BUI originals)
+  BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
   StorageUsageBadge,
