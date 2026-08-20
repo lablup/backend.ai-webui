@@ -24,6 +24,13 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      # First: the only step later events cannot replay (it fires on opened/
+      # reopened only), so a synchronize arriving right after `opened` cannot
+      # cancel the run before the author is assigned.
+      - name: Assign author
+        if: github.event.action == 'opened' || github.event.action == 'reopened'
+        uses: toshimaru/auto-author-assign@v1.6.2
+        continue-on-error: true
       - uses: actions/labeler@v6
         continue-on-error: true
         with:
@@ -34,8 +41,4 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - uses: lablup/auto-label-in-issue@1.4.0
-        continue-on-error: true
-      - name: Assign author
-        if: github.event.action == 'opened' || github.event.action == 'reopened'
-        uses: toshimaru/auto-author-assign@v1.6.2
         continue-on-error: true
