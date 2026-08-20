@@ -187,6 +187,11 @@ function MainLayout() {
                 paddingBottom: token.paddingContentVertical,
                 height: '100%',
                 overflow: 'auto',
+                // Reserve the (2px, see MainLayout.css) scrollbar gutter even
+                // when nothing overflows, so content width doesn't shift as
+                // pages cross the overflow threshold. True overlay scrollbars
+                // (`overflow: overlay`) were removed from Chromium.
+                scrollbarGutter: 'stable',
               }}
             >
               <BAIErrorBoundary>
