@@ -253,6 +253,11 @@ export default [
       // verify.sh byte-compares them against the CLI output, so linters must
       // not touch them (same policy as prettierignore/.gitattributes).
       'src/astryx-theme/built/bai-r*',
+      // Vendored by `astryx swizzle` (see the header in
+      // src/components/GlobalSearchPalette/astryx/CommandPalette/CommandPalette.tsx).
+      // Kept in upstream's own style so a re-swizzle on a core bump diffs down
+      // to the marked SYNC-SEED blocks.
+      'src/components/GlobalSearchPalette/astryx/**',
     ],
   },
 ];

@@ -14,3 +14,8 @@ react/src/astryx-theme/built/backendai-default-built.css
 # scripts/verify.sh byte-compares it against a fresh build, so prettier must
 # not reformat it.
 react/src/generated/searchIndex.json
+# Vendored by `astryx swizzle` (see the header in
+# react/src/components/GlobalSearchPalette/astryx/CommandPalette/CommandPalette.tsx).
+# Kept in upstream's own formatting so a re-swizzle on a core bump diffs down to
+# the marked SYNC-SEED blocks.
+react/src/components/GlobalSearchPalette/astryx/
