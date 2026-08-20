@@ -187,11 +187,10 @@ One instance serving both paths:
 
 When the caller renders **separate instances** for create and edit — as
 `AdminUserManagement` does with `userSettingFrgmt={selectedUser}` and
-`={null}` — the branch collapses. But run the filter/orderBy check (§1)
-before dropping the edit instance's refetch: `AdminUserManagement`'s list
-filters on `status` unconditionally and this modal edits `status`, so its
-edit path **keeps** the refetch — patching the row would leave it visible on
-the wrong status tab under a stale predicate.
+`={null}` — the branch collapses. Its edit path still **keeps** the refetch,
+but for the §2 reason, not the retired filter rule: the status-toggle payload
+returns only `user { id }`, so the changed fields never come back and there
+is nothing to patch. Fill the payload first if you want to drop that one.
 
 If a caller genuinely cannot know, enrich the result rather than lying about
 success — `ContainerRegistryEditorModal` already passes
