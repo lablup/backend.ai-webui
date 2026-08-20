@@ -26,6 +26,12 @@ interface ContainerLogModalProps extends BAIModalProps {
   defaultKernelId?: string;
 }
 
+// Astryx `Dialog` caps its height at 75vh unless given `maxHeight`, so the tall
+// body this viewer asks for overflowed into a scrollbar. The two budgets must
+// stay in step: the body plus the header chrome has to fit the cap (FR-3601).
+const MODAL_MAX_HEIGHT = 'calc(100vh - 64px)';
+const LOG_BODY_HEIGHT = 'calc(100vh - 160px)';
+
 const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   sessionFrgmt,
   defaultKernelId,
@@ -143,13 +149,13 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         </BAIFlex>
       }
       width={'100%'}
+      maxHeight={MODAL_MAX_HEIGHT}
       styles={{
         header: {
           width: '100%',
         },
         body: {
-          height: 'calc(100vh - 100px)',
-          maxHeight: 'calc(100vh - 100px)',
+          height: LOG_BODY_HEIGHT,
         },
       }}
       {...modalProps}
