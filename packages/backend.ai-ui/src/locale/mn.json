@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Хуваарилсан / Хүссэн"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Бүлгийн өнгийг өөрчлөх",
+    "ResourceGrid": "Нөөцийн тор",
+    "UseColorN": "Өнгө {{n}} ашиглах"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Хязгааргүй"
   },

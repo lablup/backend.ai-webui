@@ -8,7 +8,7 @@
  harness page (`react/theme-probe/table25.tsx`) mounts these against a
  relay-test-utils mock environment; they render nothing in the app itself.
 
- Each case exercises a different corner of the Astryx-native `BAITableAstryx`:
+ Each case exercises a different corner of the Astryx-native `BAITable`:
 
    users       BAIUserNodes  — sorting, resize, row selection, column settings,
                                CSV export, pagination bar

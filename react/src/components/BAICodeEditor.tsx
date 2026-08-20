@@ -6,8 +6,8 @@ import { loadMonacoEditor } from '../helper/monacoEditor';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import type { EditorProps } from '@monaco-editor/react';
+import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 
 const MonacoEditor: React.LazyExoticComponent<React.FC<EditorProps>> =
@@ -66,10 +66,10 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   });
 
   const loadingFallback = (
-    // antd `Skeleton active` (title bar + 3 lines) -> `BAISkeletonAstryx`,
+    // antd `Skeleton active` (title bar + 3 lines) -> `BAISkeleton`,
     // which composes that shape out of Astryx's single-box `Skeleton`.
     // `active` is dropped: Astryx skeletons are always animated.
-    <BAISkeletonAstryx
+    <BAISkeleton
       style={{
         paddingInline: token.paddingContentHorizontal,
         paddingBlock: token.paddingContentVertical,

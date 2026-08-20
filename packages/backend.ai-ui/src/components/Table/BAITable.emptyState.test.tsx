@@ -1,5 +1,5 @@
 /*
- FR-3503 — the empty state BAITableAstryx renders when it has no rows.
+ FR-3503 — the empty state BAITable renders when it has no rows.
 
  Astryx's `Table` falls back to its OWN catalog (`@astryx.table.noData`), which
  ships en/fr only, so a Korean UI showed a bare English "No data". Owning the
@@ -12,7 +12,7 @@
 
  Structural, not visual — jsdom's lack of layout does not matter.
 */
-import BAITableAstryx from './BAITableAstryx';
+import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render, screen } from '@testing-library/react';
 
@@ -26,18 +26,13 @@ const COLUMNS: BAIColumnsType<Row> = [
 ];
 
 const renderEmpty = (
-  props: Partial<React.ComponentProps<typeof BAITableAstryx<Row>>> = {},
+  props: Partial<React.ComponentProps<typeof BAITable<Row>>> = {},
 ) =>
   render(
-    <BAITableAstryx<Row>
-      rowKey="id"
-      dataSource={[]}
-      columns={COLUMNS}
-      {...props}
-    />,
+    <BAITable<Row> rowKey="id" dataSource={[]} columns={COLUMNS} {...props} />,
   );
 
-describe('BAITableAstryx empty state (FR-3503)', () => {
+describe('BAITable empty state (FR-3503)', () => {
   it('renders the localized default when no override is given', () => {
     renderEmpty();
     // The copy comes from BUI's catalog, NOT Astryx's `@astryx.table.noData`.

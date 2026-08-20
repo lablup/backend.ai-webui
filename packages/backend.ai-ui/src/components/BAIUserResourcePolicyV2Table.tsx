@@ -1,7 +1,7 @@
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   convertToDecimalUnit,
   filterOutEmpty,
@@ -149,7 +149,7 @@ const BAIUserResourcePolicyV2Table = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
       resizable
       rowKey="id"
       dataSource={filterOutNullAndUndefined(userResourcePolicies)}

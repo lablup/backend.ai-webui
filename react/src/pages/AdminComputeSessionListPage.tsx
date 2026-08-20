@@ -15,7 +15,9 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
+import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -26,9 +28,15 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import {
   BAIAdminProjectSelectAstryx,
   BAIFlex,
   BAIPropertyFilter,
+  BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -39,9 +47,9 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PowerOffIcon } from 'lucide-react';
+import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
+import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
@@ -92,6 +100,9 @@ const AdminComputeSessionListPage = () => {
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminComputeSessionListPage',
   );
+  const [experimentalSessionResourceGrid] = useBAISettingUserState(
+    'experimental_session_resource_grid',
+  );
 
   const { supportedFields, exportCSV } = useCSVExport('sessions');
 
@@ -112,22 +123,25 @@ const AdminComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
     },
   );
 
+  // `view` is page-level state, not per-tab — excluded from the snapshots
+  // and re-applied on tab change so switching tabs cannot flip the mode.
   const queryMapRef = useRef({
     [queryParams.type]: {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     },
   });
 
   useEffect(() => {
     queryMapRef.current[queryParams.type] = {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     };
   }, [queryParams, tablePaginationOption]);
@@ -161,6 +175,19 @@ const AdminComputeSessionListPage = () => {
     filterForBatchCount: COUNT_FILTERS.batch,
     filterForSystemCount: COUNT_FILTERS.system,
   };
+
+  // The grid's legacy compute_session_list has no `project_id` queryfilter
+  // field — lift the filter UI's project condition to the query's group_id
+  // argument when that is provably semantics-preserving; anything else
+  // passes through and surfaces as the grid's error banner (see
+  // helper/adminSessionProjectLift.ts).
+  const { projectId: gridProjectId, remainder: gridUserFilter } =
+    liftProjectPredicate(queryParams.filter ?? '');
+  const gridFilter = mergeFilterValues([
+    statusFilter,
+    gridUserFilter,
+    typeFilter,
+  ]);
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -261,6 +288,7 @@ const AdminComputeSessionListPage = () => {
           setQueryParams({
             ...storedQuery.queryParams,
             type: key as TypeFilterType,
+            view: queryParams.view,
           });
           setTablePaginationOption(
             storedQuery.tablePaginationOption || { current: 1 },
@@ -409,6 +437,32 @@ const AdminComputeSessionListPage = () => {
                 />
               </>
             )}
+            {experimentalSessionResourceGrid && (
+              <SegmentedControl
+                label={t('session.resourceGrid.ViewMode')}
+                value={queryParams.view}
+                onChange={(value) =>
+                  setQueryParams({ view: value as 'table' | 'grid' })
+                }
+              >
+                <Tooltip content={t('session.resourceGrid.TableView')}>
+                  <SegmentedControlItem
+                    value="table"
+                    label={t('session.resourceGrid.TableView')}
+                    isLabelHidden
+                    icon={<TableIcon size="1em" />}
+                  />
+                </Tooltip>
+                <Tooltip content={t('session.resourceGrid.GridView')}>
+                  <SegmentedControlItem
+                    value="grid"
+                    label={t('session.resourceGrid.GridView')}
+                    isLabelHidden
+                    icon={<LayoutGridIcon size="1em" />}
+                  />
+                </Tooltip>
+              </SegmentedControl>
+            )}
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"
               defaultAutoUpdateDelay={15_000}
@@ -423,7 +477,32 @@ const AdminComputeSessionListPage = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {computeSessionNodeResult.ok ? (
+        {experimentalSessionResourceGrid && queryParams.view === 'grid' ? (
+          // Keyed by the UNdeferred filter/order: a change remounts the
+          // boundary so its fallback shows immediately, instead of the
+          // refetch being held hidden until the next poll commit. The
+          // fetchKey stays deferred so poll refreshes never flash.
+          <Suspense
+            key={`${gridFilter ?? ''}:${gridProjectId ?? ''}:${queryVariables.order ?? ''}`}
+            fallback={<BAIResourceUnitGridSkeleton />}
+          >
+            <SessionResourceGrid
+              filter={gridFilter}
+              projectId={gridProjectId}
+              order={queryVariables.order ?? undefined}
+              fetchKey={deferredFetchKey}
+              onClickSession={(sessionId) => {
+                const newSearchParams = new URLSearchParams(location.search);
+                newSearchParams.set('sessionDetail', sessionId);
+                webUINavigate({
+                  pathname: location.pathname,
+                  hash: location.hash,
+                  search: newSearchParams.toString(),
+                });
+              }}
+            />
+          </Suspense>
+        ) : computeSessionNodeResult.ok ? (
           <SessionNodes
             order={queryParams.order}
             onClickSessionName={(session) => {

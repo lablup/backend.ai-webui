@@ -739,17 +739,13 @@ export function isValidIPv4(ip: string): boolean {
   if (parts.length !== 4) return false;
 
   for (const part of parts) {
-    // Empty octet
     if (part.length === 0) return false;
 
-    // Leading zero check (except '0' itself)
     if (part.length > 1 && part[0] === '0') return false;
 
-    // Must be numeric
     const num = Number(part);
     if (isNaN(num) || num < 0 || num > 255) return false;
 
-    // Must not have non-numeric characters
     if (!/^\d+$/.test(part)) return false;
   }
 
@@ -768,7 +764,6 @@ export function isValidIPv4(ip: string): boolean {
  * - Case-insensitive hex digits allowed
  */
 export function isValidIPv6(ip: string): boolean {
-  // Quick format check
   if (!ip || ip.trim() !== ip) return false;
 
   // Reject zone identifiers
@@ -781,16 +776,13 @@ export function isValidIPv6(ip: string): boolean {
   const doubleColonCount = (ip.match(/::/g) || []).length;
   if (doubleColonCount > 1) return false; // Only one :: allowed
 
-  // Split by ::
   if (ip.includes('::')) {
     const [left, right] = ip.split('::');
     const leftGroups = left ? left.split(':') : [];
     const rightGroups = right ? right.split(':') : [];
 
-    // Check if total groups <= 8
     if (leftGroups.length + rightGroups.length >= 8) return false;
 
-    // Validate each group
     const allGroups = [...leftGroups, ...rightGroups];
     for (const group of allGroups) {
       if (group.length === 0) continue; // Empty group is ok in split result
@@ -1108,7 +1100,7 @@ export const convertToOrderBy = <
 
 /**
  * Reverses `convertToOrderBy`: converts the first entry of a GraphQL v2
- * OrderBy array back to a UI order string (e.g., for a `BAITableAstryx`'s `order`
+ * OrderBy array back to a UI order string (e.g., for a `BAITable`'s `order`
  * prop, or to persist the current sort to the URL).
  *
  * @param orderBy - An OrderBy array (or its first entry's `field`/`direction`).

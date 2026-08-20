@@ -31,7 +31,7 @@ Use this skill when the user wants to:
 - Create, rebase, push, or sync a stack of dependent branches
 - Navigate between layers of a branch stack
 - View the status of stacked PRs
-- Tear down and rebuild a stack to remove, reorder, or rename branches
+- Restructure a stack — fold, remove, reorder, or rename branches
 
 ## Prerequisites
 
@@ -69,6 +69,7 @@ git config remote.pushDefault origin     # if multiple remotes exist (skips remo
 - ❌ `gh stack add` without a branch name — always provide a branch name
 - ❌ `gh stack checkout` without an argument — always provide a PR number or branch name
 - ❌ `gh stack checkout <pr-number>` when a different local stack already exists on those branches — this triggers an unbypassable conflict resolution prompt; use `gh stack unstack` first to remove the local stack, then retry the checkout
+- ❌ `gh stack modify` — a pure interactive TUI (fold/drop/insert/reorder/rename, staged and applied with Ctrl+S) with no non-interactive mode; its only flags (`--abort`, `--continue`) are for conflict recovery, not scripting. Agents restructure with the unstack → re-init sequence instead (see "Restructure a stack" below); suggest `gh stack modify` to a human when they will drive it themselves.
 
 ## Thinking about stack structure
 
@@ -164,6 +165,7 @@ Small, incidental fixes (e.g., fixing a typo you noticed) can go in the current 
 | Check out by branch (local only) | `gh stack checkout feature-auth` |
 | Tear down the current stack to restructure it | `gh stack unstack` |
 | Tear down a specific stack by number | `gh stack unstack 7` |
+| Restructure interactively (humans only — TUI) | `gh stack modify` |
 
 ---
 
@@ -385,12 +387,23 @@ echo "$output" | jq -r '.currentBranch'
 echo "$output" | jq '[.branches[] | .isMerged] | all'
 ```
 
-### Restructure a stack (remove a branch, reorder, or rename)
+### Restructure a stack (fold, remove, reorder, or rename branches)
 
-Use `unstack` to tear down the stack, make structural changes, then re-init:
+Two routes; pick by who is driving.
+
+**Humans: `gh stack modify`.** An interactive TUI that stages fold / drop /
+insert / reorder / rename operations and applies them together on Ctrl+S
+(quitting without Ctrl+S changes nothing). After applying, run
+`gh stack submit --auto` to push and update the PRs. On conflicts it pauses —
+resolve, then `gh stack modify --continue`, or `gh stack modify --abort` to
+restore the pre-modify state. **Agents must not run it** — it has no
+non-interactive mode (see the agent rules above).
+
+**Agents: unstack → re-init.** Tear down the stack, make structural changes,
+then re-init:
 
 ```bash
-# 1. Remove the stack (locally and on GitHub)
+# 1. Remove the stack (locally and on GitHub; the PRs survive)
 gh stack unstack
 
 # 2. Make structural changes — e.g. delete a branch, reorder, rename
@@ -398,7 +411,23 @@ git branch -m old-branch-1 new-branch-1
 
 # 3. Re-create the stack with the new structure
 gh stack init --base main new-branch-1 new-branch-2 new-branch-3
+
+# 4. Re-link the surviving branches' PRs on GitHub
+gh stack submit --auto
 ```
+
+`submit` only finds or creates a PR per **current** branch name — it never
+closes the PR of a removed branch or of a renamed branch's old name (a rename
+would otherwise leave the old PR open next to a freshly created one). Close
+those PRs explicitly (`gh pr close <N>`) between steps 2 and 4, and after a
+rename retarget any PR that used the old name as its base.
+
+Folding a bottom branch into the one above it needs no commit surgery — the
+upper branch already contains the lower branch's commits. After `unstack`,
+retarget the upper PR's base (`gh api repos/{owner}/{repo}/pulls/<N> -X PATCH
+-f base=<new-base>` — GitHub blocks base changes while the PR is in a stack,
+which is why `unstack` comes first), close the lower PR, delete its branch,
+then re-init with the remaining branches.
 
 ---
 

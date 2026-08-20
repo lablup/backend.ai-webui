@@ -14,10 +14,9 @@ import { loadMonacoEditor } from '../helper/monacoEditor';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
+import type { RcFile } from './FileUploadManager';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
-import type { RcFile } from './FileUploadManager';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
@@ -26,6 +25,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  BAISkeleton,
   VFolderFile,
   convertToDecimalUnit,
   useConnectedBAIClient,

@@ -1,6 +1,6 @@
 import {
-  BAITableAstryx,
-  BAIAstryxTableProps,
+  BAITable,
+  BAITableProps,
   BAIColumnType,
   BAIText,
   BooleanTag,
@@ -45,7 +45,7 @@ const isEnableSorter = (key: string) => {
 };
 
 interface BAIUserNodesProps extends Omit<
-  BAIAstryxTableProps<UserNodeInList>,
+  BAITableProps<UserNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
   usersFrgmt: BAIUserNodesFragment$key;
@@ -298,7 +298,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
     // to-astryx ticket 25: migrated to the Astryx engine. antd's
     // `scroll={{ x: 'max-content' }}` is gone — Astryx's own scroll wrapper
     // already handles horizontal overflow.
-    <BAITableAstryx
+    <BAITable
       resizable
       rowKey={'id'}
       size="small"

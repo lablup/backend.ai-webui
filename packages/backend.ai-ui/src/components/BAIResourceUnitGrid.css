@@ -1,0 +1,84 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIResourceUnitGrid> (FR-3569). Imported by the
+ component itself (P17).
+
+ The seven muted group hues are the driving-dev-approved palette from the
+ session-resource-grid prototype (#8789 reaction, 2026-08-15). They live here
+ as component custom properties (no theme token carries them), paired
+ light/dark via `light-dark()` like the built theme's own tokens; index N on
+ light must stay paired with index N on dark because hue overrides are stored
+ by palette index. The component resolves concrete values at runtime from
+ these properties for the WCAG letter-ink decision.
+
+ The two ink properties are literal by design: they contrast the CELL FILL
+ (chosen per-cell by luminance), not the page, so they must not flip with the
+ theme mode — same rationale as the prototype's mode-invariant chart gray
+ ramp endpoints.
+*/
+.bai-resource-unit-grid {
+  --bai-resource-unit-grid-group-1: light-dark(#8c50bc, #be81ef);
+  --bai-resource-unit-grid-group-2: light-dark(#3469d6, #749ded);
+  --bai-resource-unit-grid-group-3: light-dark(#42825c, #74cb9a);
+  --bai-resource-unit-grid-group-4: light-dark(#417c99, #83c2de);
+  --bai-resource-unit-grid-group-5: light-dark(#b05f1d, #e9d149);
+  --bai-resource-unit-grid-group-6: light-dark(#b84134, #e6786d);
+  --bai-resource-unit-grid-group-7: light-dark(#6c6e76, #8d8f97);
+  --bai-resource-unit-grid-cell-stroke: var(--color-border);
+  /* Translucent so a partial-fill cell stays readable even when the unit's
+     own fill is the low-utilization bin (often the same muted token). */
+  --bai-resource-unit-grid-cell-empty: color-mix(
+    in srgb,
+    var(--color-background-muted) 60%,
+    transparent
+  );
+  --bai-resource-unit-grid-ink-dark: #262626;
+  --bai-resource-unit-grid-ink-light: #fafafa;
+}
+
+.bai-resource-unit-grid-wrapper {
+  position: relative;
+}
+
+/* Screen-reader-only (not display:none, which removes it from the AT tree). */
+.bai-resource-unit-grid-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bai-resource-unit-grid-svg {
+  display: block;
+}
+
+.bai-resource-unit-grid-svg--clickable {
+  cursor: pointer;
+}
+
+.bai-resource-unit-grid-swatch {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Fixed positioning escapes the host card's overflow clipping; coordinates
+   are set inline from the wrapper's measured rect. Border color is set
+   inline to the hovered group's hue. */
+.bai-resource-unit-grid-popover {
+  position: fixed;
+  z-index: 1000;
+  background: var(--color-background-popover);
+  box-shadow: var(--shadow-med);
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--radius-element);
+  padding: var(--spacing-2);
+  min-width: 200px;
+  max-width: 320px;
+}

@@ -20,7 +20,6 @@ import { theme } from '../../theme-shim';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from '../AutoUpdateFetchKeyButton';
-import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
   DomainFairShare,
@@ -44,6 +43,7 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { Step, Stepper } from '@astryxdesign/lab';
 import {
+  BAISkeleton,
   BAIQuestionIconWithTooltip,
   BAIBackButton,
   BAIButton,
@@ -610,7 +610,7 @@ const FairShareList: React.FC = () => {
           </BAIFlex>
         </BAIFlex>
 
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           {currentStep === 'resource-group' && (
             <ResourceGroupFairShareTable
               resourceGroupNodeFragment={

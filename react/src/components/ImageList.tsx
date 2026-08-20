@@ -24,16 +24,16 @@ import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import BAISelectionLabel from './astryx-bui/BAISelectionLabel';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
   BAIPropertyFilter,
   BAIResourceNumberWithIcon,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
@@ -128,7 +128,7 @@ const ImageList: React.FC<ImageListProps> = ({
   const projectSelect = (
     <BAIFlex gap="xs" align="center" wrap="wrap">
       <Text color="secondary">{t('general.Project')}</Text>
-      <Suspense fallback={<BAISkeletonAstryx variant="input" size="small" />}>
+      <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
         <ProjectSelectForAdminPage
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}
@@ -319,7 +319,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // The record arrives as `render`'s SECOND argument — this column is
       // computed and has no `dataIndex`, so the first argument (the cell
       // value) is `undefined`. Reading the row off the first argument is an
-      // rc-table quirk that `BAITableAstryx` does not reproduce; taking it
+      // rc-table quirk that `BAITable` does not reproduce; taking it
       // from the second is the Astryx/antd `(value, record, index)` contract.
       render: (_value, row) => (
         // `maxLines={1}` for the same reason as the Digest column below:
@@ -597,7 +597,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAITableAstryx
+        <BAITable
           resizable
           rowKey="id"
           pagination={{

@@ -6,8 +6,7 @@ import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__genera
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import { safeDecodeUuid } from 'backend.ai-ui';
+import { BAISkeleton, safeDecodeUuid } from 'backend.ai-ui';
 import React, { Suspense, useEffect, useEffectEvent } from 'react';
 import { useQueryLoader } from 'react-relay';
 
@@ -76,7 +75,7 @@ const DeploymentAuditLogTab: React.FC<DeploymentAuditLogTabProps> = ({
   return (
     <BAIErrorBoundary>
       {auditLogQueryRef ? (
-        <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+        <Suspense fallback={<BAISkeleton rows={4} />}>
           <ScopedAuditLog
             queryRef={auditLogQueryRef}
             onReload={reloadAuditLogQuery}
@@ -84,7 +83,7 @@ const DeploymentAuditLogTab: React.FC<DeploymentAuditLogTabProps> = ({
           />
         </Suspense>
       ) : (
-        <BAISkeletonAstryx rows={4} />
+        <BAISkeleton rows={4} />
       )}
     </BAIErrorBoundary>
   );

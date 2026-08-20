@@ -34,7 +34,6 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormCheckbox,
   AstryxFormTextArea,
@@ -48,6 +47,7 @@ import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIAlert,
   BAIButton,
   BAIDomainSelect,
@@ -56,7 +56,7 @@ import {
   BAIModalProps,
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   badgeVariantForTagColor,
   useBAILogger,
@@ -680,7 +680,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // error/mask cell renderer, per-field `onCell` background styling) and the
   // failed-rows grid as a raw antd `Table` island, because no Astryx-backed
   // table existed in that ticket's scope. Ticket 30-D closed that frontier:
-  // both grids now render through `BAITableAstryx`, which accepts this exact
+  // both grids now render through `BAITable`, which accepts this exact
   // antd-shaped column model (`render` / `onCell` / `width` / `dataIndex`)
   // unchanged. The cell renderers' last two antd primitives closed in
   // final-A: `Typography.Text` -> `BAIText` (a rename — BAIText's public prop
@@ -985,7 +985,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               failCount: failedRows.length,
             })}
           />
-          <BAITableAstryx
+          <BAITable
             size="small"
             rowKey="index"
             dataSource={failedRows}
@@ -1220,7 +1220,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               label={t('credential.Domain')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<BAISkeletonAstryx />}>
+              <Suspense fallback={<BAISkeleton />}>
                 <BAIDomainSelect
                   value={globalDefaults.domainName}
                   onChange={(v) => {
@@ -1241,7 +1241,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             >
               <Suspense
                 key={globalDefaults.domainName}
-                fallback={<BAISkeletonAstryx />}
+                fallback={<BAISkeleton />}
               >
                 <ProjectSelect
                   key={globalDefaults.domainName}
@@ -1270,7 +1270,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               label={t('credential.UserResourcePolicy')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<BAISkeletonAstryx />}>
+              <Suspense fallback={<BAISkeleton />}>
                 <UserResourcePolicySelect
                   value={globalDefaults.resourcePolicy}
                   onChange={(v) =>
@@ -1463,7 +1463,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 for that class exists anywhere in the repo, and the invalid
                 state is already carried by the validity icon column plus the
                 per-cell error background that `onCell` paints. */}
-            <BAITableAstryx<ValidatedRow>
+            <BAITable<ValidatedRow>
               size="small"
               rowKey="key"
               dataSource={displayRows}

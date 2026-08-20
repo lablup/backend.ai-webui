@@ -16,6 +16,8 @@ export { default as BAICompactGroup } from './BAICompactGroup';
 export type { BAICompactGroupProps } from './BAICompactGroup';
 export { default as BAIMetadataList } from './BAIMetadataList';
 export type { BAIMetadataListProps } from './BAIMetadataList';
+export { BAIMetadataListItem } from './BAIMetadataList';
+export type { BAIMetadataListItemProps } from './BAIMetadataList';
 export {
   default as BAIPropertyFilter,
   mergeFilterValues,
@@ -78,6 +80,12 @@ export type {
 } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
+export { default as BAISkeleton } from './BAISkeleton';
+export type {
+  BAISkeletonProps,
+  BAISkeletonSize,
+  BAISkeletonVariant,
+} from './BAISkeleton';
 export { default as BAIBulkErrorModal } from './BAIBulkErrorModal';
 export type { BAIBulkErrorModalProps } from './BAIBulkErrorModal';
 export { default as BAIDeleteConfirmModal } from './BAIDeleteConfirmModal';
@@ -192,6 +200,14 @@ export type {
 export { default as StorageUsageBadge } from './StorageUsageBadge';
 export type { StorageUsageBadgeProps } from './StorageUsageBadge';
 export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
+export { default as BAIResourceUnitGrid } from './BAIResourceUnitGrid';
+export type {
+  BAIResourceUnitGridProps,
+  BAIUnitGridGroup,
+  BAIUnitGridUnit,
+} from './BAIResourceUnitGrid';
+export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
+export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

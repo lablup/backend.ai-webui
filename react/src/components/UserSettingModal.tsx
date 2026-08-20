@@ -25,7 +25,6 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -42,6 +41,7 @@ import type {
   SearchSource,
 } from '@astryxdesign/core/Typeahead';
 import {
+  BAISkeleton,
   BAIAlert,
   BAICompactGroup,
   BAIDomainSelect,
@@ -276,7 +276,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           mainAccessKey
         }
         security {
-          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
           sudoSessionEnabled
           allowedClientIp
         }
@@ -630,7 +632,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       loading={deferredOpen !== baiModalProps.open}
       {...baiModalProps}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         <Form
           ref={formRef}
           preserve={false}

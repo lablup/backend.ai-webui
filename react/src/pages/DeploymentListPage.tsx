@@ -15,7 +15,6 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -27,6 +26,7 @@ import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
@@ -491,7 +491,7 @@ const DeploymentListPage: React.FC = () => {
         title={t('webui.menu.Deployments')}
         styles={{ body: { paddingTop: 0 } }}
       >
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           <DeploymentListPageContent />
         </Suspense>
       </BAICard>

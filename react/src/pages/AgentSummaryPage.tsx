@@ -3,8 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import AgentSummaryList from '../components/AgentSummaryList';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
-import { BAICard } from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +34,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
       tabList={[{ key: 'agent-summary', label: t('webui.menu.AgentSummary') }]}
     >
       {curTabKey === 'agent-summary' ? (
-        <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+        <Suspense fallback={<BAISkeleton rows={4} />}>
           <AgentSummaryList />
         </Suspense>
       ) : null}

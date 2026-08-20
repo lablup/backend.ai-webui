@@ -154,10 +154,12 @@ describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR
     // points at the form-item name while the real control is labelled by the
     // unit selector, so `getByLabelText('mem')` finds the label but no
     // control. Reach the input through its form-item row instead.
+    // Astryx 0.4.0's NumberInput is a text-backed spinbutton (#4896), so
+    // match the role, not `input[type="number"]`.
     const memInput = screen
       .getByText('mem')
       .closest('[data-bai-form-item]')!
-      .querySelector('input[type="number"]')!;
+      .querySelector('input[role="spinbutton"]')!;
     await user.type(memInput, '1');
     await user.click(screen.getByRole('button', { name: /button.Create/ }));
 

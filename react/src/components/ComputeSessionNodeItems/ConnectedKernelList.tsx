@@ -16,7 +16,7 @@ import {
   badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
   BAIDoubleTag,
   BAIId,
@@ -178,7 +178,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
           });
         }}
       /> */}
-      <BAITableAstryx
+      <BAITable
         bordered
         // loading={isPendingFilter}
         rowKey="id"

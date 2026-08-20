@@ -9,8 +9,6 @@
  Astryx `Selector`, and copyable values use `BAIText copyable`.
 
  PILOT-DECISIONs:
- - The copy affordance on the "Path" LABEL moves next to the path VALUE:
-   `MetadataListItem.label` is a plain string (P2).
  - The disabled 'rw' option's inline Tooltip is dropped — Astryx `Selector`
    options take string labels; the client-side guard in `onChange` still
    blocks the restricted transition.
@@ -25,14 +23,12 @@ import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles'
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataList } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIMetadataListItem,
   filterOutEmpty,
   toLocalId,
   useErrorMessageResolver,
@@ -153,13 +149,12 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const items = filterOutEmpty([
     !vfolderNode?.unmanagedPath && {
       key: 'path',
-      label: t('data.folders.Path'),
-      children: (
-        <HStack gap={1} align="start" wrap="wrap">
-          <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />
-          <BAIText copyable={{ text: vfolderPath }} />
-        </HStack>
+      label: (
+        <BAIText copyable={{ text: vfolderPath }}>
+          {t('data.folders.Path')}
+        </BAIText>
       ),
+      children: <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />,
     },
     {
       key: 'status',
@@ -341,9 +336,9 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   return (
     <MetadataList columns="single" {...props}>
       {items.map((item) => (
-        <MetadataListItem key={item.key} label={item.label as string}>
+        <BAIMetadataListItem key={item.key} label={item.label}>
           {item.children}
-        </MetadataListItem>
+        </BAIMetadataListItem>
       ))}
     </MetadataList>
   );

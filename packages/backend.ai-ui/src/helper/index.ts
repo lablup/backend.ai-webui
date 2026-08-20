@@ -10,7 +10,7 @@ export * from './astryxTagVariant';
  It adapted the `sorter` argument of antd `Table.onChange` into the Backend.AI
  `-field` order string, and the antd `BAITable` was its only caller. With that
  engine deleted the function had no consumer left (the Astryx engine builds
- the order string directly from `TableSortState` in `BAITableAstryx`), and its
+ the order string directly from `TableSortState` in `BAITable`), and its
  `SorterResult` parameter was the SOLE antd import in this module — which the
  import-graph gate ranks as a 606-file taint hub. Dropping it makes
  `helper/index.ts` antd-free.

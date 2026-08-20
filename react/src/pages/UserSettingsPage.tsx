@@ -15,7 +15,6 @@ import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import {
   useBAISettingGeneralState,
@@ -28,6 +27,7 @@ import {
 import { useThemeMode } from '../hooks/useThemeMode';
 import { Button } from '@astryxdesign/core/Button';
 import {
+  BAISkeleton,
   BAICard,
   filterOutEmpty,
   useSessionStorageState,
@@ -134,6 +134,8 @@ const UserPreferencesPage = () => {
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
   ] = useBAISettingUserState('experimental_import_from_huggingface');
+  const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
+    useBAISettingUserState('experimental_session_resource_grid');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -478,6 +480,15 @@ const UserPreferencesPage = () => {
           value: experimentalImportFromHuggingFace,
           onChange: setExperimentalImportFromHuggingFace,
         },
+        {
+          'data-testid': 'items-experimental-session-resource-grid',
+          type: 'checkbox',
+          title: t('userSettings.SessionResourceGrid'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalSessionResourceGrid,
+          onChange: setExperimentalSessionResourceGrid,
+        },
       ],
     },
   ];
@@ -506,7 +517,7 @@ const UserPreferencesPage = () => {
           },
         ]}
       >
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           {currentTab === 'general' && (
             <BAIErrorBoundary>
               <SettingList
@@ -530,7 +541,7 @@ const UserPreferencesPage = () => {
                   onReload={loadLoginSessionQuery}
                 />
               ) : (
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               )}
             </BAIErrorBoundary>
           )}
@@ -542,7 +553,7 @@ const UserPreferencesPage = () => {
                   onReload={loadLoginHistoryQuery}
                 />
               ) : (
-                <BAISkeletonAstryx />
+                <BAISkeleton />
               )}
             </BAIErrorBoundary>
           )}

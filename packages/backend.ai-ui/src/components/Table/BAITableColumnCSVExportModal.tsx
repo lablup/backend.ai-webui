@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- to-astryx TICKET 30-D — Astryx-native CSV column picker for `BAITableAstryx`.
+ to-astryx TICKET 30-D — Astryx-native CSV column picker for `BAITable`.
 
  The antd version rendered an antd `Table` (one column, a `Checkbox` per row)
  inside an antd `Modal` wrapped in a `Form` whose only field was the search

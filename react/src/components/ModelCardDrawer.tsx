@@ -11,7 +11,6 @@ import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
@@ -22,6 +21,7 @@ import {
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import {
+  BAISkeleton,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
@@ -169,7 +169,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
       >
         <VStack gap={4} align="stretch">
           {isLoadingCard ? (
-            <BAISkeletonAstryx rows={6} />
+            <BAISkeleton rows={6} />
           ) : (
             modelCard && (
               <BAIFlex direction="column" align="stretch" gap="sm">
@@ -269,7 +269,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                       <ErrorBoundaryWithNullFallback>
                         <Suspense
                           fallback={
-                            <BAISkeletonAstryx variant="input" size="small" />
+                            <BAISkeleton variant="input" size="small" />
                           }
                         >
                           <BAILink

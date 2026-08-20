@@ -11,7 +11,7 @@ import {
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIText,
   badgeVariantForTagColor,
@@ -290,7 +290,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
       size="small"
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}

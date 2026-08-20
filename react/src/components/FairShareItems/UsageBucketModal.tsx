@@ -5,7 +5,6 @@
 import { UsageBucketModal_DomainFragment$key } from '../../__generated__/UsageBucketModal_DomainFragment.graphql';
 import { UsageBucketModal_ProjectFragment$key } from '../../__generated__/UsageBucketModal_ProjectFragment.graphql';
 import { UsageBucketModal_UserFragment$key } from '../../__generated__/UsageBucketModal_UserFragment.graphql';
-import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import UsageBucketChartContent from './UsageBucketChartContent';
 import type { ISODateString } from '@astryxdesign/core/Calendar';
 import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
@@ -15,6 +14,7 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import {
+  BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
@@ -277,7 +277,7 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
           ) : null}
         </MetadataList>
 
-        <Suspense fallback={<BAISkeletonAstryx variant="paragraph" rows={8} />}>
+        <Suspense fallback={<BAISkeleton variant="paragraph" rows={8} />}>
           <UsageBucketChartContent
             domainFairShareFrgmt={domainFairShares}
             projectFairShareFrgmt={projectFairShares}

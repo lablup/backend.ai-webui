@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "ที่จัดสรร / ที่ร้องขอ"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "เปลี่ยนสีกลุ่ม",
+    "ResourceGrid": "ตารางทรัพยากร",
+    "UseColorN": "ใช้สี {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "ไม่ จำกัด"
   },

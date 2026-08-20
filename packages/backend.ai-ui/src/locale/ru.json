@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Выделено / Запрошено"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Изменить цвет группы",
+    "ResourceGrid": "Сетка ресурсов",
+    "UseColorN": "Использовать цвет {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Неограниченный"
   },

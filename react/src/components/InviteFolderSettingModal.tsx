@@ -6,7 +6,7 @@
  decision); its controls become Astryx via the `astryxFormControls` adapters
  and `BAIFormItem` carries the visuals. The invite row's `Descriptions title`
  wrapper (used purely as a section heading) becomes a `Heading`; the invitee
- table is `BAITableAstryx` (Astryx engine since ticket 30-D) with Astryx cells.
+ table is `BAITable` (Astryx engine since ticket 30-D) with Astryx cells.
 
  PILOT-DECISIONs:
  - antd `Input.onPressEnter` has no `TextInput` equivalent — Enter-to-invite
@@ -31,7 +31,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
-import { BAITableAstryx, useErrorMessageResolver } from 'backend.ai-ui';
+import { BAITable, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon } from 'lucide-react';
 import React, { useRef } from 'react';
@@ -257,7 +257,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
             />
           </HStack>
 
-          <BAITableAstryx<Invitee>
+          <BAITable<Invitee>
             bordered
             pagination={false}
             loading={isFetching}

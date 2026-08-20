@@ -11,8 +11,8 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { ProjectContextOrNull } from '../types/projectContext';
 import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -22,19 +22,19 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAISkeleton } from 'backend.ai-ui';
 import {
-  BAIButton,
   BAICard,
   BAIColumnType,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -141,7 +141,7 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
       styles={{ body: { paddingTop: 0 } }}
     >
       <BAIErrorBoundary>
-        <Suspense fallback={<BAISkeletonAstryx />}>
+        <Suspense fallback={<BAISkeleton />}>
           <DeploymentReplicasCardContent
             deploymentFrgmt={deploymentFrgmt}
             deploymentId={deploymentId}
@@ -377,13 +377,17 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         <BAIFlex align="center" gap="xs">
           <ReplicaStatusTag status={toReplicaTagStatus(value)} />
           {supportsRouteSchedulingHistory && (
-            <Tooltip content={t('route.RouteSchedulingHistory')}>
-              <BAIButton
-                type="link"
-                icon={<History size="1em" />}
-                size="small"
-                style={{ padding: 0 }}
-                action={async () => {
+            // `IconButton`'s own `label`/`tooltip` — the wrapping `Tooltip` left
+            // the button with no accessible name (it resolved to "Action"),
+            // and `type="link"` lost the accent tint (FR-3572).
+            <IconButton
+              className="bai-action-accent"
+              variant="ghost"
+              size="sm"
+              icon={<History size="1em" />}
+              label={t('route.RouteSchedulingHistory')}
+              tooltip={t('route.RouteSchedulingHistory')}
+              clickAction={async () => {
                   const id = safeDecodeUuid(record.id) ?? record.id;
                   // Render-as-you-fetch: start the request in the open event.
                   loadRouteHistoryQuery(
@@ -397,10 +401,9 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
                       fetchPolicy: 'store-and-network',
                     },
                   );
-                  setIsRouteHistoryOpen(true);
-                }}
-              />
-            </Tooltip>
+                setIsRouteHistoryOpen(true);
+              }}
+            />
           )}
         </BAIFlex>
       ),
@@ -581,7 +584,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
           }}
         />
       </BAIFlex>
-      <BAITableAstryx<ReplicaNode>
+      <BAITable<ReplicaNode>
         rowKey={(record) => record.id}
         dataSource={replicas}
         columns={columns}

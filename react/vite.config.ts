@@ -1001,6 +1001,10 @@ export default defineConfig(({ command, mode }) => {
         // entry CSS (see check_stylex_injection there).
         cssInjectionTarget: (fileName: string) =>
           /assets\/index-[^/]*\.css$/.test(fileName),
+        // Must differ from Astryx's 'x': content-hashed class names collide
+        // across compilers, and this unlayered output then hijacks Astryx's
+        // own atomics app-wide in production builds (FR-3534).
+        classNamePrefix: 'webui',
         // Anchor class-name hashing to the repo root so hashes stay stable
         // across react/ and (future) packages/backend.ai-ui builds.
         unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },

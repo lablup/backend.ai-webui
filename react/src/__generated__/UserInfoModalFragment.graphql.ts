@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0b5b4c9daa0942f8a9b340535ff954a6>>
+ * @generated SignedSource<<3089d654ffa5a269f3af6836bb88eca9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,7 +37,7 @@ export type UserInfoModalFragment$data = {
   } | null | undefined;
   readonly security: {
     readonly sudoSessionEnabled: boolean;
-    readonly totpActivated: boolean | null | undefined;
+    readonly totpActivated?: boolean | null | undefined;
   };
   readonly status: {
     readonly needPasswordChange: boolean | null | undefined;
@@ -134,11 +134,18 @@ const node: ReaderFragment = {
       "plural": false,
       "selections": [
         {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "totpActivated",
-          "storageKey": null
+          "condition": "isNotSupportTotp",
+          "kind": "Condition",
+          "passingValue": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "totpActivated",
+              "storageKey": null
+            }
+          ]
         },
         {
           "alias": null,
@@ -252,6 +259,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "42b0c8c3a83e175bf5e1e5ab56f161e3";
+(node as any).hash = "cfb112c9d88e1c237eb282c33349c340";
 
 export default node;

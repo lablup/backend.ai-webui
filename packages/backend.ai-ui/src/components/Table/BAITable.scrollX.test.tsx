@@ -3,12 +3,9 @@
  value mapping, and the PER-COLUMN max-width release — a table-wide release
  would let auto layout push a resized column back to its content width.
 */
-import {
-  dimLayerOf,
-  renderScrollTable,
-} from './BAITableAstryx.scrollTestFixtures';
+import { dimLayerOf, renderScrollTable } from './BAITable.scrollTestFixtures';
 
-describe('BAITableAstryx scroll.x', () => {
+describe('BAITable scroll.x', () => {
   it.each([
     ['max-content' as const, 'max-content'],
     [800 as const, '800px'],

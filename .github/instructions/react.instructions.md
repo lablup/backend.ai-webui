@@ -29,7 +29,7 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 ## Component system: BAI first, Astryx second, antd never
 
 - **Reach for a `backend.ai-ui` component first** — `BAIFlex`, `BAIButton`, `BAIModal`,
-  `BAICard`, `BAIText`, `BAITableAstryx`, … They own this project's defaults and wrap the
+  `BAICard`, `BAIText`, `BAITable`, … They own this project's defaults and wrap the
   Astryx internals.
 - When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. Discover
   before writing: `astryx search "<thing>"`, `astryx component <Name>`. The CLI lives in

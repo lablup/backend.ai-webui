@@ -34,6 +34,7 @@ export type FetchKeyAutoUpdateSettingId =
   // Other admin / detail surfaces
   | 'project-admin-users'
   | 'agent-detail'
+  | 'agent-detail-sessions'
   | 'agent-list'
   | 'storage-proxy-list'
   | 'scoped-audit-log'

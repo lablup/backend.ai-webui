@@ -17,7 +17,7 @@ import {
   BAIDoubleTag,
   BAIFlex,
   BAIId,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   badgeVariantForStatus,
   badgeVariantForTagColor,
@@ -243,7 +243,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
 
   return (
     <>
-      <BAITableAstryx<RoleNodeInList>
+      <BAITable<RoleNodeInList>
         rowKey="id"
         dataSource={roles as RoleNodeInList[]}
         columns={displayedColumns}

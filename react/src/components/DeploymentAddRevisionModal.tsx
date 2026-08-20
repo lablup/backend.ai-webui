@@ -55,7 +55,6 @@ import ResourceAllocationFormItems, {
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
-import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -74,6 +73,7 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import {
+  BAISkeleton,
   BAIAvailablePresetSelectAstryx,
   BAIFlex,
   BAIModal,
@@ -2085,7 +2085,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
           <SectionHeader>{t('session.launcher.Environments')}</SectionHeader>
 
-          <Suspense fallback={<BAISkeletonAstryx rows={2} />}>
+          <Suspense fallback={<BAISkeleton rows={2} />}>
             <ImageEnvironmentSelectFormItems />
           </Suspense>
           <EnvVarFormList
@@ -2099,7 +2099,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             {t('deployment.step.ClusterAndResources')}
           </SectionHeader>
           {deploymentProject ? (
-            <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
               <ResourceAllocationFormItems
                 project={deploymentProject}
                 enableResourcePresets
@@ -2117,7 +2117,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             trigger={t('session.launcher.AdvancedSettings')}
             defaultIsOpen={false}
           >
-            <Suspense fallback={<BAISkeletonAstryx />}>
+            <Suspense fallback={<BAISkeleton />}>
               <BAIFormItem
                 noStyle
                 dependencies={['modelFolderId', 'mount_id_map', 'mount_ids']}

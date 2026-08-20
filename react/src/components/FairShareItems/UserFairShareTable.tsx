@@ -14,7 +14,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
@@ -244,7 +244,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         rowKey={'userUuid'}
         {...tableProps}
         dataSource={userFairShares || []}

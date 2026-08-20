@@ -8,14 +8,19 @@ import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection
 import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFallback';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
-import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { downloadCSV } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import { Collapsible, CollapsibleGroup } from '@astryxdesign/core/Collapsible';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Switch } from '@astryxdesign/core/Switch';
-import { BAIButton, BAICard, BAIFlex, useFetchKey } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  BAIButton,
+  BAICard,
+  BAIFlex,
+  useFetchKey,
+} from 'backend.ai-ui';
 import { Download, EllipsisVertical, RotateCw } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
@@ -143,7 +148,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.ContentSecurityPolicy'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             <CspDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}
@@ -159,7 +164,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.StorageProxy'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             <StorageProxyDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}
@@ -175,7 +180,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.EndpointConnectivity'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             <EndpointDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}
@@ -191,7 +196,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.WebServerConfig'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<BAISkeletonAstryx />}>
+          <Suspense fallback={<BAISkeleton />}>
             <WebServerConfigDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}

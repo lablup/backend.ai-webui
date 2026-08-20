@@ -15,16 +15,16 @@ import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated_
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { theme } from '../../theme-shim';
-import DomainResourceGroupAlert from './DomainResourceGroupAlert';
-import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
-import UserResourceGroupAlert from './UserResourceGroupAlert';
-import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from '../astryxFormControls';
+import DomainResourceGroupAlert from './DomainResourceGroupAlert';
+import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
+import UserResourceGroupAlert from './UserResourceGroupAlert';
 import { Banner } from '@astryxdesign/core/Banner';
 import {
+  BAISkeleton,
   BAIQuestionIconWithTooltip,
   BAIBulkEditFormItem,
   BAIFlex,
@@ -520,7 +520,7 @@ const FairShareWeightSettingModal: React.FC<
       }}
       onOk={handleOk}
     >
-      <Suspense fallback={<BAISkeletonAstryx />}>
+      <Suspense fallback={<BAISkeleton />}>
         {resourceGroup && resourceGroup?.scheduler?.type !== 'FAIR_SHARE' && (
           <Banner
             status="warning"

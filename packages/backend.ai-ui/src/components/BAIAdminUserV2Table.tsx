@@ -2,7 +2,7 @@ import {
   BAIColumnType,
   BAIFlex,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAITagList,
   BAIText,
@@ -85,8 +85,16 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           mainAccessKey
         }
         security {
-          totpActivated @skipOnClient(if: $isNotSupportTotp)
-          totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
+          # @skipOnClient strips the field from the request text; the standard
+          # @skip keeps Relay's own operation in step, so the store is not left
+          # permanently missing these fields (which would defeat every
+          # store-or-network cache hit).
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
+          totpActivatedAt
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
           sudoSessionEnabled
           allowedClientIp
         }
@@ -321,7 +329,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx<UserV2InList>
+    <BAITable<UserV2InList>
       resizable
       rowKey="id"
       size="small"

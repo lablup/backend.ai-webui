@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
- (`BAITableAstryx`, Astryx engine). Cells and satellites are Astryx:
+ (`BAITable`, Astryx engine). Cells and satellites are Astryx:
  `BAINameActionCellAstryx`, `Badge` + the ticket-13 status lookup, `Text`,
- `BAIText copyable`, `BAIModalAstryx` (host-quota modal), `BAISkeletonAstryx`.
+ `BAIText copyable`, `BAIModalAstryx` (host-quota modal), `BAISkeleton`.
 */
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';
@@ -37,15 +37,15 @@ import BAIModal from './astryx-bui/BAIModalAstryx';
 import BAINameActionCell from './astryx-bui/BAINameActionCellAstryx';
 import type { BAINameActionCellAstryxAction } from './astryx-bui/BAINameActionCellAstryx';
 import BAIQuestionIconWithTooltip from './astryx-bui/BAIQuestionIconWithTooltipAstryx';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIAlertIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
   StorageUsageBadge,
@@ -637,7 +637,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         resizable
         rowKey={(record) => record.id}
         size="small"

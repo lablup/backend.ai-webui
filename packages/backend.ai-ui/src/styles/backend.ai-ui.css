@@ -120,6 +120,24 @@
         var(--text-supporting-leading)
     );
   }
+
+  /* Astryx paints placeholders with `--color-text-secondary`, which this theme
+     pins at entered-text strength (FR-3543). */
+  :root {
+    --bai-color-text-placeholder: light-dark(
+      rgba(0, 0, 0, 0.45),
+      rgba(255, 255, 255, 0.45)
+    );
+  }
+
+  /* `:placeholder-shown` only — NumberInput paints its invalid VALUE with the
+     same token. */
+  input:placeholder-shown,
+  textarea:placeholder-shown,
+  .astryx-selector,
+  .astryx-chat-composer-input > [aria-hidden='true'] {
+    --color-text-secondary: var(--bai-color-text-placeholder);
+  }
 }
 
 /* Keyframes are not layerable — `@keyframes` inside `@layer` is legal but the

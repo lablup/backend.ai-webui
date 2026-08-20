@@ -8,11 +8,16 @@ import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { theme } from '../../theme-shim';
-import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import type { Monaco } from '@monaco-editor/react';
-import { BAIFlex, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  useBAILogger,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ExternalLink, Import } from 'lucide-react';
 import React, { Suspense, useRef, useState } from 'react';
@@ -56,7 +61,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
         width: '100%',
       }}
     >
-      <BAISkeletonAstryx rows={6} />
+      <BAISkeleton rows={6} />
     </div>
   );
 

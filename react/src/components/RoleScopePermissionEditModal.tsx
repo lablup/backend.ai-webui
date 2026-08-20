@@ -36,7 +36,7 @@ import {
   BAIListAlert,
   BAIModal,
   type BAIModalProps,
-  BAITableAstryx,
+  BAITable,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
@@ -848,7 +848,7 @@ const RoleScopePermissionEditModal: React.FC<
             // required `title` (MAPPING §4).
             <EmptyState title={t('rbac.NoPermissionsToDisplay')} />
           ) : (
-            <BAITableAstryx
+            <BAITable
               rowKey="entityType"
               columns={columns}
               dataSource={entities}

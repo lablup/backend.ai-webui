@@ -7,7 +7,7 @@ import { MountedVFolderLinksLegacyLazyFolderLinkFragment$key } from '../__genera
 import { MountedVFolderLinksQuery } from '../__generated__/MountedVFolderLinksQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import FolderLink from './FolderLink';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import { BAISkeleton } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -60,7 +60,7 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
   ) : session.row_id ? (
     // TODO: This part can be removed once compatibility with v25.4.0 is no longer needed.
     // antd `Skeleton.Input size="small" active block` → the
-    // `BAISkeletonAstryx` input variant (MAPPING "Also COMPOSITION"):
+    // `BAISkeleton` input variant (MAPPING "Also COMPOSITION"):
     // `active` is always-on behaviour and `block` is already the default
     // full width.
     <Suspense fallback={<BAISkeleton variant="input" size="small" />}>

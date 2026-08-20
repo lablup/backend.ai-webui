@@ -328,9 +328,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   placeholder={t('data.SearchByName')}
                   applyLabel={t('button.Apply')}
                   contentSearchFieldKey="name"
-                  resultCount={t('general.TotalItems', {
-                    total: vfolder_nodes?.count ?? 0,
-                  })}
                   filterProperties={[
                     {
                       key: 'name',

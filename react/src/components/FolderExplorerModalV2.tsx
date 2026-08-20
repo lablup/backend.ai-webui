@@ -40,11 +40,11 @@ import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import { VStack } from '@astryxdesign/core/Stack';
 import {
+  BAISkeleton,
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAILink,
@@ -342,7 +342,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       enableEdit={hasUploadContentPermission}
       // NOTE: the legacy `tableProps.scroll` ({x:'max-content'} at `xl`,
       // plus a `y: calc(100vh - 400px)` body cap below it) is gone on purpose:
-      // `BAITableAstryx` accepts and ignores `scroll` (Astryx's own scroll
+      // `BAITable` accepts and ignores `scroll` (Astryx's own scroll
       // wrapper owns horizontal overflow), and the dialog body is the scroll
       // container for the vertical axis now.
       style={{
@@ -530,13 +530,20 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {fileExplorerElement}
                   </div>
-                  <ResizeHandle
-                    direction="horizontal"
-                    isReversed
-                    hasDivider
-                    label={t('explorer.Metadata')}
-                    resizable={infoPanel.props}
-                  />
+                  {/* The handle's own `height: 100%` resolves to `auto` here —
+                      this row is sized by `min-height` only, which makes the
+                      percentage indefinite, collapsing the handle (divider +
+                      pill) to ~30px pinned at the top, over the tab strip. A
+                      stretched flex wrapper gives it a definite height. */}
+                  <div style={{ display: 'flex', alignSelf: 'stretch' }}>
+                    <ResizeHandle
+                      direction="horizontal"
+                      isReversed
+                      hasDivider
+                      label={t('explorer.Metadata')}
+                      resizable={infoPanel.props}
+                    />
+                  </div>
                   <div style={{ width: infoPanel.size, flexShrink: 0 }}>
                     {vFolderInfoPanelElement}
                   </div>
