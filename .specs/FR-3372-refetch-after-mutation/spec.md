@@ -35,13 +35,13 @@ Setting modal 계열이 create/update를 한 컴포넌트에서 분기하면서 
 
 prop 선언은 `onRequestClose: (success: boolean) => void`입니다. 성공을 `false`로 보고하는 것은 계약 위반이며, refetch 억제를 위한 우회입니다.
 
-### B. payload에 `id` 누락 — 네트워크 비용만 지불
+### B. ~~payload에 `id` 누락 — 네트워크 비용만 지불~~ (철회)
 
 | 위치                                       | 내용                                                       |
 | ------------------------------------------ | ---------------------------------------------------------- |
-| `AutoScalingRuleEditorModalLegacy.tsx:136` | `rule { metric_name … }` 8개 필드를 반환하면서 `id` 미선택 |
+| `AutoScalingRuleEditorModalLegacy.tsx:136` | ~~`rule { metric_name … }` 8개 필드를 반환하면서 `id` 미선택~~ |
 
-Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payload는 분리된 레코드에 기록되고 병합되지 않습니다. 데이터를 받아오고도 UI를 갱신하지 못합니다.
+**리뷰에서 no-op으로 철회.** Relay 컴파일러는 node-identifiable 타입의 selection에 `id`를 자동으로 추가하므로 병합은 원래부터 정상 동작했습니다. 명시적 `id`는 가독성 관례일 뿐 수정이 아닙니다.
 
 ### C. 부분 커버리지 — refetch도 없고 store 갱신도 없음
 
@@ -89,7 +89,7 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 | ------------------------------------------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `AdminUserManagement.tsx:189`              | `user { id }`               | `BAIAdminUserV2Table`이 `status.status` 등 14개. **이 mutation이 바로 상태 토글**이라 바꾼 값 자체가 안 돌아옴                          |
 | `DeploymentSettingModal.tsx:103`           | `deployment { id }`         | `BAIModelDeploymentNodes`·`DeploymentBasicInfoCard` 등 8개 fragment가 `metadata.name`, `metadata.tags`, `networkAccess.openToPublic` 등 |
-| `AutoScalingRuleEditorModalLegacy.tsx:136` | `rule { …8개 }` (`id` 없음) | 병합 자체가 불가 — B 항목과 동일 건                                                                                                     |
+| `AutoScalingRuleEditorModalLegacy.tsx:136` | `rule { …8개 }` (`id` 없음) | ~~병합 자체가 불가~~ — B 항목과 동일 건, **B와 함께 철회** (컴파일러가 `id` 자동 추가)                                                  |
 | `ResourceGroupFairShareSettingModal.tsx`   | `resourceGroup { id name }` | `ResourceGroupFairShareTable`이 편집 대상인 `fairShareSpec.*` 4개                                                                       |
 | `AdminDeploymentPresetSettingPage.tsx`     | 일부 spread + `id name`     | `AdminDeploymentPresetNodes` 등이 `cluster.*`, `deploymentDefaults.*`, `execution.*` 등 13~15개                                         |
 
@@ -206,13 +206,19 @@ onRequestClose={(success) => {
 의존성이 없어 병렬 진행이 가능합니다.
 
 1. ~~**죽은 refetch 제거 (E-3)**~~ — **완료. 제거 대상 없음.** `RBACManagementPage.tsx:202`·`:181`, `ReservoirArtifactDetailPage.tsx:329` 모두 바뀌는 필드가 목록의 필터 조건이라 refetch가 정당했습니다. 코드 변경 없이 이 문서만 정정했습니다 (E-3 참조). 나머지 단계는 이 단계를 참조 구현으로 삼지 말고, **먼저 목록 쿼리의 필터 인자부터 확인**하십시오
-2. ~~**한 줄 payload 버그 (B) 수정**~~ — **완료.** `AutoScalingRuleEditorModalLegacy`의 modify·create 양쪽 `rule`에 `id` 추가(create 쪽도 같은 결함이었습니다). `MyKeypairManagementModal`은 `id`를 추가했다가 **의도적으로 되돌렸습니다** — 목록이 `isActive`로 필터하는데 토글이 그 값을 뒤집으므로 행은 patch가 아니라 evict 대상이고, 병합 가능해 보이는 payload는 실제로 일하는 refetch를 지우게 유도하는 함정이기 때문입니다 (5단계 참조)
+2. ~~**한 줄 payload 버그 (B) 수정**~~ — **철회 (no-op).** 리뷰에서 확인된 대로 Relay 컴파일러가 node-identifiable 타입에 `id`를 자동 추가하므로 B는 애초에 버그가 아니었습니다. `AutoScalingRuleEditorModalLegacy`에 추가한 명시적 `id` 2줄은 가독성 관례로만 남깁니다. `MyKeypairManagementModal`은 손대지 않습니다 — 목록이 `isActive`로 필터하는데 토글이 그 값을 뒤집으므로 행은 patch가 아니라 evict 대상입니다 (5단계 참조)
 3. ~~**C 수정**~~ — **완료.** `UserSettingModal` update payload에 `projects { edges { node { id } } }` 추가. 모달 자신의 fragment와 필드 단위로 일치시켰습니다. create payload는 신규 노드라 대상 아님
 4. ~~**A 제거**~~ — **완료. 단 결과는 refetch 제거가 아니라 버그 수정.** `onRequestClose(false)` 우회를 걷어내 update 성공이 `true`를 반환합니다. 호출부 `AdminUserManagement`는 create/edit **인스턴스를 이미 분리해 렌더링**하므로(`:611`·`:623`) 분기 자체가 필요 없었습니다. 다만 refetch는 **양쪽 다 유지**합니다 — 쿼리 필터에 `status`가 무조건 들어가고(`:119-123`) 모달이 그 `status`를 편집하므로, ACTIVE 탭에서 사용자를 비활성화하면 행이 빠져야 합니다. 즉 기존 `false` 우회는 refetch를 건너뛰어 **stale row를 남기고 있었습니다**
 5. ~~**행 단위 토글 (E-2)**~~ — **완료. 제거 대상 없음.** 토글 대상이 예외 없이 목록의 필터 인자였습니다. 유지 확정: `MyKeypairManagementModal`(`isActive` 필터), `ProjectPage`(`is_active == true/false`가 필터 문자열에 하드코딩), `AdminUserManagement`(`status` 무조건 필터 + `status` 정렬 키), `ContainerRegistryList`(필터는 아니지만 `Domain` 병합 불가라 refetch가 유일한 갱신 경로), `RBACManagementPage`(1단계)
 6. ~~**D — selection 보강**~~ — **완료.** `NODE_NOT_SELECTED` 5건은 **오분류라 제외**(위 D 참조). `GAP` D-1 확정 건 중 병합 가능한 것만 보강했습니다 — `ResourceGroupFairShareSettingModal`(`fairShareSpec` 4종), `DeploymentSettingModal`(`metadata`·`networkAccess`·`replicaState`), `AdminDeploymentPresetSettingPage`(`updatedAt`·`runtimeVariant`·`image`). payload selection은 fragment spread가 아니라 **명시 필드 나열**로 통일했습니다 — payload가 무엇을 반환하는지 그 자리에서 읽히도록 한 리뷰 결정이며, 폼에 편집 필드를 추가할 때 payload에도 같이 넣어야 합니다. `AdminUserManagement`는 보강해도 행이 항상 탭에서 빠지므로 하지 않았습니다
 
-**이 PR에서 실제로 제거한 refetch는 `FairShareList`의 `afterUpdate` 1건뿐입니다.** fair-share 스펙 값이 `ResourceGroupFilter`·`ResourceGroupOrderField` 어디에도 없어 행의 소속·순서가 바뀔 수 없는, 유일하게 확인된 순수 필드 수정 경로였습니다.
+**이 PR에서 update 경로의 refetch를 제거·조건화한 곳은 3건입니다.**
+
+- `FairShareList` — `afterUpdate` 체인 **제거**. fair-share 스펙 값이 `ResourceGroupFilter`·`ResourceGroupOrderField` 어디에도 없어 행의 소속·순서가 바뀔 수 없습니다
+- `DeploymentAutoScalingCard` — `if (success && !editingRuleId)`로 **조건화** (create만 refetch). 목록은 `CREATED_AT` 정렬·`createdAt`/`lastTriggeredAt` 필터뿐이라 폼이 편집하는 필드와 겹치지 않습니다
+- `ContainerRegistryList` — `onOk('create' | 'modify')`의 refetch를 create 분기로 **이동**. 목록의 필터·정렬은 `registry_name` 하나인데 edit 폼이 그 필드를 비활성화합니다
+
+deployment 목록 3곳(`DeploymentListPage`·`AdminDeployment`·`ProjectAdminDeploymentsPage`)은 이 PR 진행 중 main(FR-3256·FR-3410)이 같은 판정을 먼저 적용해 **hunk가 rebase에서 해소**됐고, `name`·`tags`·`openToPublic`이 필터 속성인 `DeploymentListPage`류는 필터 규칙에 따라 update refetch를 유지합니다.
 
 ## 검증
 

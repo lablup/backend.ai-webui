@@ -100,7 +100,6 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - **Astryx UI fixes**: `astryx-fix` skill (assignee gate before starting, measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
 - **Astryx UI bug reporting**: `astryx-bug-report` skill (capture-only intake for visual / behavioral defects and `discussion` items — "is this intended?" / "propose X instead" — filed under epic FR-3491 as Bugs and Tasks respectively, duplicate + relates scan). Use it when the ask is "record this", `astryx-fix` when it is "fix this".
 - **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). It ships with the CLI (`packages/backend.ai-agent-cli/skill/`), not as a repository skill: install it per user with `pnpm run bai-agent init --skill --no-login`. Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
-- **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 - **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
 
 Component-authoring patterns (Relay tables, selects, modals, forms, layout) have no

@@ -18,8 +18,8 @@ The rule this skill exists to enforce:
 > Update mutations should return the changed fields so Relay patches the
 > normalized store by `id`. Refetch only when **list membership** changes.
 
-`react-async-actions` §6 states the same hierarchy in brief. This skill is the
-detailed treatment: how to tell the cases apart, and what to do in each.
+This skill is the detailed treatment: how to tell the cases apart, and what
+to do in each.
 
 ## Activation Triggers
 
@@ -35,9 +35,15 @@ Ask **what changed**, not **did it succeed**.
 | What the mutation changed                                            | What to do                                                                            |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | **Fields of an entity already in the store** (update)                | Select the changed fields on the returned node. Relay merges by `id`. **No refetch.** |
+| Same, but a changed field is in the list's **filter/orderBy**        | **Keep the refetch.** The row's membership or position under the current predicate may have changed — patching leaves it visible under a stale filter (§7). |
 | Same, but the payload returns only `ok`/`msg` (legacy)               | Keep the refetch and comment why (§4). Nothing to merge.                              |
 | **List membership** — a row added or removed (create/delete)         | Refetch the list (§6). Don't patch the connection.                                    |
 | Server-derived fields you did not send (computed status, timestamps) | Select those too; refetch only if the server cannot return them (§7).                 |
+
+The filter/orderBy row is the check that does the most work in practice: in
+the FR-3378 audit it kept the refetch at 28 of the 33 candidate call sites.
+Diff the fields the mutation can change against the list query's filterable
+and sortable properties before dropping anything.
 
 ## 2. Update: fill the selection set
 
@@ -68,11 +74,11 @@ modify_user(email: $email, props: $props) {
 }
 ```
 
-If the consumer has no reusable fragment, hand-list every field the UI reads —
-including `id`. **`id` is mandatory**: Relay keys normalized records by node id,
-so a payload without it is written to a detached record and merged nowhere.
-`AutoScalingRuleEditorModalLegacy.tsx` gets this wrong — it returns all eight
-`rule` fields but omits `id`, paying full network cost for zero store update.
+If the consumer has no reusable fragment, hand-list every field the UI reads.
+Relay keys normalized records by node id, but on types that implement `Node`
+the compiler adds `id` to the network operation automatically — writing it
+explicitly is a readability convention, not a correctness requirement. The
+real gaps are always missing **fields**, not a missing `id`.
 
 ### ⚠️ Partial coverage is worse than refetching
 
@@ -178,17 +184,11 @@ One instance serving both paths:
 
 When the caller renders **separate instances** for create and edit — as
 `AdminUserManagement` does with `userSettingFrgmt={selectedUser}` and
-`={null}` — the branch collapses: the edit instance simply never refetches.
-
-```tsx
-<UserSettingModal
-  userSettingFrgmt={selectedUserForSettingModal}
-  onRequestClose={() => {
-    setSelectedUserForSettingModal(null);
-    // no refetch: the update mutation returns the node and Relay patches it
-  }}
-/>
-```
+`={null}` — the branch collapses. But run the filter/orderBy check (§1)
+before dropping the edit instance's refetch: `AdminUserManagement`'s list
+filters on `status` unconditionally and this modal edits `status`, so its
+edit path **keeps** the refetch — patching the row would leave it visible on
+the wrong status tab under a stale predicate.
 
 If a caller genuinely cannot know, enrich the result rather than lying about
 success — `ContainerRegistryEditorModal` already passes
@@ -213,6 +213,11 @@ Treat it as an exception that predates this rule, not a pattern to copy.
 Create and delete are settled by §6. An **update** may also legitimately
 refetch when:
 
+- **A changed field is in the list query's filter or orderBy.** The row's
+  membership or position under the current predicate may have changed;
+  patching the record leaves it rendered under a filter it no longer matches.
+  This is the §1 filter/orderBy row, and the most common reason to keep an
+  update-path refetch.
 - The mutation has **side effects on other entities** the payload doesn't cover
   (e.g. changing a resource policy recomputes several users' quotas).
 - **Aggregates** shown alongside the list (counts, totals, usage) are computed
@@ -235,7 +240,8 @@ matchable the same way.
 ## Review Checklist
 
 - [ ] No `if (success) updateFetchKey()` where the mutation was an **update**
-- [ ] Every update mutation payload selects `id` plus the fields the UI reads
+- [ ] Changed fields diffed against the list's **filter/orderBy** properties — any overlap keeps the refetch
+- [ ] Every update mutation payload selects the fields the UI reads
 - [ ] Prefer spreading the consumer's fragment over hand-listing fields
 - [ ] Schema checked (`data/schema.graphql`) before concluding a refetch is required
 - [ ] Legacy `ok`/`msg`-only mutation → refetch kept, with a comment saying why
@@ -245,8 +251,5 @@ matchable the same way.
 
 ## Related
 
-- `react-async-actions` — §6 refetch hierarchy; this skill is its detailed form
-- `relay-patterns` — fragment architecture and naming conventions
-- `react-modal-drawer` — the `onRequestClose` convention
-- `react-suspense-fetching` — `fetchKey` / `useFetchKey` refresh primitive
+- `.specs/FR-3372-refetch-after-mutation/spec.md` — the remediation spec this skill distills
 - FR-3170 — the audit epic; FR-3372 — this analysis
