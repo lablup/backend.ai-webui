@@ -346,6 +346,12 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   **Start From URL** dialog on the Start page, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model
   deployment is also available in your installation.
+- **Session resource grid view**: Adds a **View mode** toggle -- **Table** or
+  **Grid** -- above the session list on the Sessions page and on the Admin
+  Session page. **Grid** replaces the table with one cell per session, colored
+  by the session's live resource utilization. The toggle appears only while
+  this feature is enabled; for the grid's own controls, see
+  [Session List View](#session-list-view-and-refresh).
 
 ## Logs tab
 
