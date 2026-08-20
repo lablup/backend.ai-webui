@@ -68,7 +68,8 @@ const UpdateUsersModal = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const { isTOTPSupported } = useTOTPSupported();
+  const { isTOTPSupported, isLoading: isTOTPSupportLoading } =
+    useTOTPSupported();
   const formRef = useRef<FormInstance<UpdateUsersFormValues>>(null);
   const [isPending, setIsPending] = useState(false);
   const users = useFragment(
@@ -152,7 +153,9 @@ const UpdateUsersModal = ({
       {...modalProps}
       okButtonProps={{
         ...modalProps.okButtonProps,
-        disabled: users.length === 0,
+        // Block submit until the TOTP capability resolves — `isNotSupportTotp`
+        // is baked into the mutation variables and must not read `undefined`.
+        disabled: users.length === 0 || isTOTPSupportLoading,
       }}
       onOk={(e) => {
         formRef.current
