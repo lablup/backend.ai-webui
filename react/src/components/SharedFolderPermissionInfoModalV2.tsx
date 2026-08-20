@@ -14,7 +14,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
+import './astryx-bui/astryxBui.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
@@ -23,6 +23,7 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
+import { BAIPopconfirmAstryx as BAIPopconfirm } from 'backend.ai-ui';
 import {
   filterOutNullAndUndefined,
   BAITable,

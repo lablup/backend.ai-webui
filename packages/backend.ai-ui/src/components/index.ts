@@ -208,6 +208,26 @@ export type {
 } from './BAIResourceUnitGrid';
 export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
 export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
+export { default as BAIPopconfirmAstryx } from './BAIPopconfirmAstryx';
+export type { BAIPopconfirmAstryxProps } from './BAIPopconfirmAstryx';
+export { default as BAIBadgeCountAstryx } from './BAIBadgeCountAstryx';
+export type { BAIBadgeCountAstryxProps } from './BAIBadgeCountAstryx';
+export { default as BAINotificationStackAstryx } from './BAINotificationStackAstryx';
+export type {
+  BAINotificationStackAstryxProps,
+  BAINotificationStackItem,
+} from './BAINotificationStackAstryx';
+export { toBAINotificationStackItems } from './BAINotificationStackAdapter';
+export type {
+  BAINotificationSource,
+  ToBAINotificationStackItemsOptions,
+} from './BAINotificationStackAdapter';
+export { default as BAIVFolderDeleteButtonAstryx } from './BAIVFolderDeleteButtonAstryx';
+export type { BAIVFolderDeleteButtonAstryxProps } from './BAIVFolderDeleteButtonAstryx';
+export { default as BAIVFolderDeleteButtonV2Astryx } from './BAIVFolderDeleteButtonV2Astryx';
+export type { BAIVFolderDeleteButtonV2AstryxProps } from './BAIVFolderDeleteButtonV2Astryx';
+export { default as BAIDrawerAstryx } from './BAIDrawerAstryx';
+export type { BAIDrawerAstryxProps } from './BAIDrawerAstryx';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

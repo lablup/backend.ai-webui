@@ -9,10 +9,10 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { theme } from '../theme-shim';
 import BAIPanelItem from './BAIPanelItem';
-import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIBadgeCountAstryx,
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,

@@ -6,15 +6,14 @@ import { RoleDetailDrawerFragment$key } from '../__generated__/RoleDetailDrawerF
 import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerRefetchQuery.graphql';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
-import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import {
+import { BAIDrawerAstryx as BAIDrawer ,
   BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIText,
   useFetchKey,
 } from 'backend.ai-ui';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

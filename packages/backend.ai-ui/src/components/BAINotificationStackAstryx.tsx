@@ -57,7 +57,7 @@
      folder glyph arrives with the `content` renderer. The `icon` prop below
      stays available for a call site that needs it alone.
 */
-import './astryxBui.css';
+import './BAINotificationStackAstryx.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import type { BannerStatus } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';

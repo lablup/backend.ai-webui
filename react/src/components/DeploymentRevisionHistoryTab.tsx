@@ -15,12 +15,12 @@ import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
+import { BAIPopconfirmAstryx } from 'backend.ai-ui';
 import {
   type BAIColumnType,
   BAIFetchKeyButton,

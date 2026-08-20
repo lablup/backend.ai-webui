@@ -15,7 +15,6 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
-import BAIVFolderDeleteButton from '../components/astryx-bui/BAIVFolderDeleteButtonAstryx';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -27,6 +26,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIVFolderDeleteButtonAstryx as BAIVFolderDeleteButton,
   BAICard,
   BAIPropertyFilter,
   BAISelectionLabel,

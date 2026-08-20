@@ -35,7 +35,7 @@
  pass `variant="error"` explicitly.** That is the point — the colour becomes a
  visible decision at each of the 8 sites instead of an invisible default.
 */
-import './astryxBui.css';
+import './BAIBadgeCountAstryx.css';
 import { Badge } from '@astryxdesign/core/Badge';
 import type { BadgeProps } from '@astryxdesign/core/Badge';
 import React from 'react';

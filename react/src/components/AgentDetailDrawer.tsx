@@ -5,8 +5,7 @@
 import { AgentDetailDrawerFragment$key } from '../__generated__/AgentDetailDrawerFragment.graphql';
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import { BAISkeleton, toLocalId, useBAILogger } from 'backend.ai-ui';
+import { BAIDrawerAstryx as BAIDrawer , BAISkeleton, toLocalId, useBAILogger } from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useRefetchableFragment } from 'react-relay';

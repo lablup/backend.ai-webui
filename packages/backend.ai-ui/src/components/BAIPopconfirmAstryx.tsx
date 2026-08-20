@@ -7,7 +7,7 @@
  MAPPING.md §2: antd `Popconfirm` (11 files / 13 sites) is verdict **NONE** —
  "`Popover` + buttons, or escalate to `AlertDialog`". This builds the first
  option, because the tier matters: `.claude/rules/destructive-confirmation.md`
- reserves the modal-with-typed-string (`BAIDeleteConfirmModalAstryx`, brought
+ reserves the modal-with-typed-string (`BAIDeleteConfirmModal`, brought
  in with the modal family) for IRREVERSIBLE actions, and keeps the anchored
  one-click
  confirmation for the REVERSIBLE tier — deactivate a keypair, set-as-main,
@@ -51,13 +51,13 @@
  `alignment`, `width`, `isModal`, `hasLightDismiss`, … all pass through).
  `content` is Omitted because this component OWNS the content.
 */
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { Button } from '@astryxdesign/core/Button';
 import { Popover } from '@astryxdesign/core/Popover';
 import type { PopoverProps } from '@astryxdesign/core/Popover';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface BAIPopconfirmAstryxProps extends Omit<
   PopoverProps,
@@ -67,9 +67,9 @@ export interface BAIPopconfirmAstryxProps extends Omit<
   title: React.ReactNode;
   /** Supporting line under the title. antd `description`. */
   description?: React.ReactNode;
-  /** Confirm button label. Defaults to the shared `button.Confirm` string. */
+  /** Confirm button label. Defaults to the shared `general.button.Confirm` string. */
   okText?: string;
-  /** Cancel button label. Defaults to the shared `button.Cancel` string. */
+  /** Cancel button label. Defaults to the shared `general.button.Cancel` string. */
   cancelText?: string;
   /**
    * Confirm styled as destructive — antd's `okType="danger"` and
@@ -111,7 +111,7 @@ const BAIPopconfirmAstryx: React.FC<BAIPopconfirmAstryxProps> = ({
   ...popoverProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(false);
   const isControlled = controlledIsOpen !== undefined;
   const isOpen = isControlled ? controlledIsOpen : uncontrolledIsOpen;
@@ -148,7 +148,7 @@ const BAIPopconfirmAstryx: React.FC<BAIPopconfirmAstryxProps> = ({
   }, [isOpen]);
 
   const accessibleLabel =
-    label ?? (typeof title === 'string' ? title : t('button.Confirm'));
+    label ?? (typeof title === 'string' ? title : t('general.button.Confirm'));
 
   return (
     <Popover
@@ -183,7 +183,7 @@ const BAIPopconfirmAstryx: React.FC<BAIPopconfirmAstryxProps> = ({
               ref={cancelRef}
               size="sm"
               variant="secondary"
-              label={cancelText ?? t('button.Cancel')}
+              label={cancelText ?? t('general.button.Cancel')}
               onClick={(e) => {
                 onCancel?.(e);
                 setIsOpen(false);
@@ -193,7 +193,7 @@ const BAIPopconfirmAstryx: React.FC<BAIPopconfirmAstryxProps> = ({
               size="sm"
               variant={isDanger ? 'destructive' : 'primary'}
               isDisabled={isOkDisabled}
-              label={okText ?? t('button.Confirm')}
+              label={okText ?? t('general.button.Confirm')}
               // `clickAction` IS antd-BAIButton's hand-rolled `action` prop,
               // native: pending state, re-entry guard, and error propagation.
               clickAction={async (e) => {

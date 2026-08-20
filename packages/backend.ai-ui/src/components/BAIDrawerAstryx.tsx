@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIDrawerAstryx.css';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -9,7 +10,6 @@ import { HStack, StackItem, VStack } from '@astryxdesign/core/Stack';
 import { Drawer } from '@astryxdesign/lab';
 import { X } from 'lucide-react';
 import React, { type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface BAIDrawerAstryxProps {
   /** Whether the drawer is open. antd `Drawer`'s `open`. */
@@ -98,7 +98,7 @@ const BAIDrawerAstryx: React.FC<BAIDrawerAstryxProps> = ({
   children,
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   // lab `Drawer` requires a non-empty accessible name.
   const accessibleName =
@@ -137,7 +137,7 @@ const BAIDrawerAstryx: React.FC<BAIDrawerAstryxProps> = ({
             >
               <IconButton
                 icon={<X size="1em" />}
-                label={t('button.Close')}
+                label={t('general.button.Close')}
                 variant="ghost"
                 size="sm"
                 onClick={() => onClose?.()}
