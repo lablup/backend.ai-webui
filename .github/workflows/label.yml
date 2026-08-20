@@ -1,25 +1,51 @@
-# This workflow will triage pull requests and apply a label based on the
-# paths that are modified in the pull request.
+# All PR triage in one run: path labels (.github/labeler.yml config), size
+# label, linked-issue label/milestone copy, author assign. Previously three
+# separate pull_request_target workflows racing on every push.
 #
-# To use this workflow, you will need to set up a .github/labeler.yml
-# file with configuration.  For more information, see:
-# https://github.com/actions/labeler/blob/master/README.md
-
+# No checkout — none of these actions needs one; keep it that way on
+# pull_request_target (checking out PR code here would run it with secrets).
 name: Labeler
 on:
-- pull_request_target
+  pull_request_target:
+    # `labeled`/`unlabeled` deliberately absent: auto-label-in-issue reads the
+    # linked ISSUE's labels, never the PR's. `edited` covers body edits that
+    # change closing refs.
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
   triage:
+    # Job-level (not workflow-level) concurrency: assign-author below must
+    # never be cancelled, and a workflow-level cancel would kill the whole run.
+    concurrency:
+      # PR-number keyed: fork PRs sharing a branch name must not collide.
+      group: labeler-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     permissions:
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/labeler@v6
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-    - name: size-label
-      uses: "lablup/size-label-action@master"
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: actions/labeler@v6
+        continue-on-error: true
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: size-label
+        uses: "lablup/size-label-action@master"
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: lablup/auto-label-in-issue@1.4.0
+        continue-on-error: true
+
+  # Separate, non-cancellable job: this is the one action later events cannot
+  # replay, so a synchronize arriving right after `opened` must not cancel it.
+  # Fires only on opened/reopened, so the common synchronize push still
+  # allocates a single job.
+  assign-author:
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: toshimaru/auto-author-assign@v1.6.2
+        continue-on-error: true
