@@ -8,6 +8,7 @@ import {
 } from '../helper/announcementSummary';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
+import './AnnouncementBanner.css';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -68,7 +69,13 @@ const AnnouncementBanner: React.FC = () => {
         // its header on `description == null && hasActions`, which misaligns
         // the icon and Edit button against a multi-line announcement
         // (FR-3482).
-        title={isCollapsible ? summarizeAnnouncement(message) : null}
+        title={
+          isCollapsible ? (
+            <span className="webui-announcement-summary">
+              {summarizeAnnouncement(message)}
+            </span>
+          ) : null
+        }
         description={isCollapsible ? undefined : fullMarkdown}
         endContent={
           isSuperAdmin ? (

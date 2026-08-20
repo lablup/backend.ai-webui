@@ -17,7 +17,7 @@ export const SUMMARY_MAX_LENGTH = 120;
  * by the requires-a-letter-or-digit filter.
  */
 const announcementFirstLine = (message: string): string => {
-  const plain = message
+  let plain = message
     .replace(/<!--[\s\S]*?-->/g, ' ')
     // Paired code fences first; an UNCLOSED opening fence swallows the rest
     // (better no summary than leaking code into the title).
@@ -33,8 +33,16 @@ const announcementFirstLine = (message: string): string => {
     // plain-text `1 < 2 and 3 > 2` survives. The output is rendered as a React
     // text node (Banner title) — this is display cleanup, not an HTML
     // sanitizer.
-    .replace(/<(https?:\/\/[^>\s]+)>/g, '$1')
-    .replace(/<\/?[a-zA-Z][a-zA-Z0-9-]*(\s[^>\n]*)?\/?>/g, '')
+    .replace(/<(https?:\/\/[^>\s]+)>/g, '$1');
+  // Strip tags to a fixpoint so text reassembled by a removal (`<scr<b>ipt>`)
+  // cannot survive a single pass (CodeQL
+  // js/incomplete-multi-character-sanitization).
+  let previous;
+  do {
+    previous = plain;
+    plain = plain.replace(/<\/?[a-zA-Z][a-zA-Z0-9-]*(\s[^>\n]*)?\/?>/g, '');
+  } while (plain !== previous);
+  plain = plain
     .replace(/\*\*([^*]+)\*\*/g, '$1')
     .replace(/__([^_]+)__/g, '$1')
     .replace(/~~([^~]+)~~/g, '$1')
@@ -44,7 +52,11 @@ const announcementFirstLine = (message: string): string => {
       .split(/\r?\n/)
       .map((line) =>
         line
-          .replace(/^[\s#>-]+/, '')
+          // Block markers: headings, quotes, and `-`/`*`/`+` bullets…
+          .replace(/^[\s#>*+-]+/, '')
+          // …numbered-list markers…
+          .replace(/^\d+[.)]\s+/, '')
+          // …and task-list checkboxes.
           .replace(/^\[[ xX]\]\s*/, '')
           .trim(),
       )

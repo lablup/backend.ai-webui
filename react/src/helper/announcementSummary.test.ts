@@ -82,6 +82,24 @@ describe('summarizeAnnouncement', () => {
     expect(summary.includes('�')).toBe(false);
   });
 
+  it('strips list markers of every flavor', () => {
+    expect(summarizeAnnouncement('* Maintenance window')).toBe(
+      'Maintenance window',
+    );
+    expect(summarizeAnnouncement('+ Maintenance window')).toBe(
+      'Maintenance window',
+    );
+    expect(summarizeAnnouncement('1. Maintenance window')).toBe(
+      'Maintenance window',
+    );
+  });
+
+  it('strips tags that reassemble across a removal pass', () => {
+    expect(
+      summarizeAnnouncement('<scr<b>ipt>alert</scr</b>ipt> Notice'),
+    ).not.toContain('<script');
+  });
+
   it('skips table rows and setext underlines', () => {
     expect(summarizeAnnouncement('| a | b |\n|---|---|\nProse here')).toBe(
       'Prose here',

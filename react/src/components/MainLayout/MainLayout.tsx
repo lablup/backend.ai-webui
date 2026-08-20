@@ -56,18 +56,11 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
 );
 
 /**
- * FR-3612: Astryx `AppShell` is now the shell frame, completing the half of
- * MAPPING §5 that FR-3482 deferred. The three blockers that deferred it are
- * resolved without giving up the original layout:
- * - scroll ownership — the app's scroll container (published via
- *   `mainContentDivRefState`, scroll parent of the sticky header) now lives
- *   INSIDE the main slot at `height: 100%`, so AppShell's own scroller never
- *   engages and the ref/sticky contracts are untouched;
- * - `topNav` stays deliberately unused — the header remains in the content
- *   column beside the sider's brand band (original-fidelity);
- * - `BAIContentWithDrawerArea` wraps the main slot's children unchanged.
- * In exchange the shell owns the skip link, the landmarks, the `banner` slot
- * (announcement) and the mobile drawer swap (`WebUIMobileNav`).
+ * FR-3612: Astryx `AppShell` is the shell frame. Two contracts must hold: the
+ * app's scroll container stays INSIDE the main slot at `height: 100%` (pages
+ * and the sticky header depend on `mainContentDivRefState`; AppShell's own
+ * scroller must never engage), and `topNav` stays unused on purpose (the
+ * header lives in the content column). Full rationale: PR #8935.
  */
 function MainLayout() {
   'use memo';
