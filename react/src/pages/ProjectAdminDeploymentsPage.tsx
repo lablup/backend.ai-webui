@@ -70,6 +70,7 @@ const ProjectAdminDeploymentsContent: React.FC<
   const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
     null,
   );
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
@@ -338,7 +339,10 @@ const ProjectAdminDeploymentsContent: React.FC<
                               title: t('deployment.EditDeployment'),
                               icon: <SquarePenIcon />,
                               disabled: destroying,
-                              onClick: () => setEditingDeploymentId(record.id),
+                              onClick: () => {
+                                setEditingDeploymentId(record.id);
+                                setIsEditModalOpen(true);
+                              },
                             },
                             {
                               key: 'delete',
@@ -405,18 +409,24 @@ const ProjectAdminDeploymentsContent: React.FC<
           }}
         />
       </BAIFlex>
-      {/* Edit-only call site: the deployment already belongs to a project, so
-          the props union rejects a `project` here entirely (ADR-0001). That
-          member requires a non-null fragment, hence the guard. */}
+      {/* Edit-only call site: the props union rejects `project` here (ADR-0001)
+          and requires a non-null fragment, hence the guard. Closing only drops
+          `open`; the id is cleared in `afterClose`, so the fragment stays
+          non-null and the edit content survives the exit animation. */}
       {editingDeployment != null && (
-        <DeploymentSettingModal
-          open
-          deploymentFrgmt={editingDeployment}
-          onRequestClose={(success) => {
-            setEditingDeploymentId(null);
-            if (success) updateFetchKey();
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <DeploymentSettingModal
+            open={isEditModalOpen}
+            deploymentFrgmt={editingDeployment}
+            onRequestClose={(success) => {
+              setIsEditModalOpen(false);
+              if (success) updateFetchKey();
+            }}
+            afterClose={() => {
+              setEditingDeploymentId(null);
+            }}
+          />
+        </BAIUnmountAfterClose>
       )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}

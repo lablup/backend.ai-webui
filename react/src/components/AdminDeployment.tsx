@@ -117,6 +117,7 @@ const AdminDeployment = ({
   const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
     null,
   );
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
@@ -383,7 +384,10 @@ const AdminDeployment = ({
                               title: t('deployment.EditDeployment'),
                               icon: <SquarePenIcon />,
                               disabled: destroying,
-                              onClick: () => setEditingDeploymentId(record.id),
+                              onClick: () => {
+                                setEditingDeploymentId(record.id);
+                                setIsEditModalOpen(true);
+                              },
                             },
                             {
                               key: 'delete',
@@ -449,24 +453,23 @@ const AdminDeployment = ({
           }}
         />
       </BAIFlex>
-      {/* Edit-only call site: the deployment already belongs to a project, so
-          the props union rejects a `project` here entirely (ADR-0001). That
-          member requires a non-null fragment, hence the guard. */}
+      {/* Edit-only call site: the props union rejects `project` here (ADR-0001)
+          and requires a non-null fragment, hence the guard. Closing only drops
+          `open`; the id is cleared in `afterClose`, so the fragment stays
+          non-null and the edit content survives the exit animation. */}
       {editingDeployment != null && (
-        <DeploymentSettingModal
-          open
-          deploymentFrgmt={editingDeployment}
-          onRequestClose={(success) => {
-            setEditingDeploymentId(null);
-            // A create adds a new row the offset query can't know about, so it
-            // needs a refetch. An update returns every field, so Relay merges
-            // the record by id into the store and the list reflects it without
-            // one.
-            if (success && editingDeployment === null) {
-              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-            }
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <DeploymentSettingModal
+            open={isEditModalOpen}
+            deploymentFrgmt={editingDeployment}
+            onRequestClose={() => {
+              setIsEditModalOpen(false);
+            }}
+            afterClose={() => {
+              setEditingDeploymentId(null);
+            }}
+          />
+        </BAIUnmountAfterClose>
       )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
