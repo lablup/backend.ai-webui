@@ -19,7 +19,13 @@ import { dataAttr } from '@astryxdesign/core/naming';
 import { useThemeName } from '@astryxdesign/core/theme';
 import { devWarn, mergeRefs } from '@astryxdesign/core/utils';
 import classNames from 'classnames';
-import React, { useEffect, useId, useLayoutEffect, useRef } from 'react';
+import React, {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 /**
@@ -51,16 +57,24 @@ function floorToModalBand(zIndex: number): number {
 }
 
 // Module-level: inside `'use memo'` the compiler rewrites a read-then-increment.
-const openDialogs: Array<{ level: number; root: HTMLElement | null }> = [];
+const openDialogs: Array<{
+  level: number;
+  root: HTMLElement | null;
+  setIsTopmost: (isTopmost: boolean) => void;
+}> = [];
 
 /**
- * Only the topmost portal stays interactive: a covered dialog's `useFocusTrap`
- * otherwise redirects Tab back into itself — measured, Tab inside a nested
- * dialog landed on the parent's last button.
+ * Only the topmost portal stays interactive. A covered dialog must both drop
+ * its focus trap and go `inert`: the trap alone lets Tab escape to the parent's
+ * last button, and `inert` alone freezes Tab entirely — Astryx ≥0.4.4 excludes
+ * `inert` subtrees when collecting focusables, so the covered trap sees none
+ * and swallows the key rather than letting the topmost trap cycle.
  */
 function syncCoveredDialogs(): void {
-  openDialogs.forEach(({ root }, index) => {
-    if (index === openDialogs.length - 1) {
+  openDialogs.forEach(({ root, setIsTopmost }, index) => {
+    const isTopmost = index === openDialogs.length - 1;
+    setIsTopmost(isTopmost);
+    if (isTopmost) {
       root?.removeAttribute('inert');
     } else {
       root?.setAttribute('inert', '');
@@ -68,12 +82,15 @@ function syncCoveredDialogs(): void {
   });
 }
 
-function claimDialogLevel(root: HTMLElement | null): number {
+function claimDialogLevel(
+  root: HTMLElement | null,
+  setIsTopmost: (isTopmost: boolean) => void,
+): number {
   const level = Math.min(
     (openDialogs.at(-1)?.level ?? -1) + 1,
     MAX_DIALOG_LEVEL,
   );
-  openDialogs.push({ level, root });
+  openDialogs.push({ level, root, setIsTopmost });
   syncCoveredDialogs();
   return level;
 }
@@ -193,8 +210,11 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
 
   // Its shared stack resolves Escape topmost-only, so a popover nested in the
   // modal keeps single-Escape dismissal; it also restores focus on deactivate.
+  // A covered dialog drops its trap; see `syncCoveredDialogs`.
+  const [isTopmost, setIsTopmost] = useState(true);
+
   const { containerRef, focusFirst } = useFocusTrap<HTMLDivElement>({
-    isActive: isOpen,
+    isActive: isOpen && isTopmost,
     onEscape: handleEscape,
   });
 
@@ -230,7 +250,7 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
     if (!isOpen) {
       return;
     }
-    const level = claimDialogLevel(rootRef.current);
+    const level = claimDialogLevel(rootRef.current, setIsTopmost);
     rootRef.current?.style.setProperty(
       '--bai-dialog-portal-level',
       String(level),
