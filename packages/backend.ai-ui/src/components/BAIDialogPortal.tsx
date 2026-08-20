@@ -20,13 +20,7 @@ import { dataAttr } from '@astryxdesign/core/naming';
 import { useThemeName } from '@astryxdesign/core/theme';
 import { devWarn, mergeRefs } from '@astryxdesign/core/utils';
 import classNames from 'classnames';
-import React, {
-  useEffect,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useId, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 const HEADING_SELECTOR = '[role="heading"], h1, h2, h3, h4, h5, h6';
