@@ -12,25 +12,19 @@ on:
     # change closing refs.
     types: [opened, synchronize, reopened, edited]
 
-concurrency:
-  # PR-number keyed: fork PRs sharing a branch name must not collide.
-  group: labeler-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 jobs:
   triage:
+    # Job-level (not workflow-level) concurrency: assign-author below must
+    # never be cancelled, and a workflow-level cancel would kill the whole run.
+    concurrency:
+      # PR-number keyed: fork PRs sharing a branch name must not collide.
+      group: labeler-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     permissions:
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      # First: the only step later events cannot replay (it fires on opened/
-      # reopened only), so a synchronize arriving right after `opened` cannot
-      # cancel the run before the author is assigned.
-      - name: Assign author
-        if: github.event.action == 'opened' || github.event.action == 'reopened'
-        uses: toshimaru/auto-author-assign@v1.6.2
-        continue-on-error: true
       - uses: actions/labeler@v6
         continue-on-error: true
         with:
@@ -41,4 +35,17 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - uses: lablup/auto-label-in-issue@1.4.0
+        continue-on-error: true
+
+  # Separate, non-cancellable job: this is the one action later events cannot
+  # replay, so a synchronize arriving right after `opened` must not cancel it.
+  # Fires only on opened/reopened, so the common synchronize push still
+  # allocates a single job.
+  assign-author:
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: toshimaru/auto-author-assign@v1.6.2
         continue-on-error: true
