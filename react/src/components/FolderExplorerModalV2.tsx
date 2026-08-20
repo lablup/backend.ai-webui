@@ -78,6 +78,10 @@ const EXPLORER_MAX_HEIGHT = '95vh';
 // 419px and the whole toolbar 437px (viewport 1600, `xl` two-pane layout).
 const EXPLORER_MIN_WIDTH = 440;
 
+// The row's non-panel width: `--spacing-2` on each side of the 1px handle.
+// Measured 1392 - 655 - 720 = 17 at viewport 1600.
+const SPLIT_HANDLE_WIDTH = 17;
+
 export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
   _openDeleteMultipleFileDialog: () => void;
@@ -134,10 +138,30 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
+  // Observed so the drag can be clamped against the real row width. Without a
+  // `maxSizePx` the resizable's size keeps growing past what flexbox renders,
+  // and dragging back has to unwind that dead travel first (measured 685px).
+  const [splitRowWidth, setSplitRowWidth] = useState(0);
+  const observeSplitRow = (node: HTMLDivElement | null) => {
+    if (!node) return;
+    // `offsetWidth`, not `getBoundingClientRect()`: the latter is scaled by the
+    // dialog's entrance transform, so the first read lands at 95% and the
+    // observer never corrects it (the layout box never changed).
+    const measure = () => setSplitRowWidth(node.offsetWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => ro.disconnect();
+  };
+
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
   const infoPanel = useResizable({
     defaultSize: '45%',
     minSizePx: 550,
+    maxSizePx:
+      splitRowWidth > 0
+        ? Math.max(550, splitRowWidth - EXPLORER_MIN_WIDTH - SPLIT_HANDLE_WIDTH)
+        : undefined,
   });
 
   const deferredOpen = useDeferredValue(modalProps.open);
@@ -522,6 +546,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 // `gap` applies on BOTH sides of the handle, so half the legacy
                 // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
                 <div
+                  ref={observeSplitRow}
                   style={{
                     display: 'flex',
                     flex: 1,
