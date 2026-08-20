@@ -111,14 +111,20 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/build/**', '**/__generated__/**'],
 
+    // CI-only: the transform cache (node_modules/.experimental-vitest-cache)
+    // is persisted by actions/cache in vitest-react.yml, cutting warm re-push
+    // runs by ~45s. Escape hatch: `pnpm exec vitest --clearCache`.
+    experimental: { fsModuleCache: !!process.env.CI },
+
     // Coverage settings: V8 provider is the fastest (Node's built-in V8
-    // inspector with no Babel transform). `json-summary` is what
+    // inspector with no Babel transform). `json` + `json-summary` are what
     // `davelosert/vitest-coverage-report-action` consumes for the PR comment;
-    // `text` keeps a console summary; `html` lets developers open
-    // `coverage/index.html` locally for inline drill-down.
+    // `text` keeps a console summary. No `html`: nothing uploads `coverage/`
+    // in CI (it was ~26 MB of discarded writes); pass `--coverage.reporter
+    // html` locally for the drill-down UI.
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'json-summary', 'html'],
+      reporter: ['text', 'json', 'json-summary'],
       reportsDirectory: 'coverage',
       include: ['src/**/*.{ts,tsx}'],
       exclude: [

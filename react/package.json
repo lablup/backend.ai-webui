@@ -100,6 +100,7 @@
     "test": "vitest run",
     "relay": "relay-compiler",
     "lint": "eslint ./src --max-warnings=0 --no-warn-ignored",
+    "lint:ci": "eslint ./src --max-warnings=0 --no-warn-ignored --cache --cache-strategy content --cache-location .eslintcache",
     "format": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "format-fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'"
   },
