@@ -132,6 +132,12 @@ vi.mock('react-i18next', async (importOriginal) => {
     useTranslation: () => ({
       t: (key: string, options?: Record<string, unknown>) =>
         key === 'webui.search.FoundIn' ? `Found in ${options?.text}` : key,
+      // The trigger hands this to `warmGlobalSearch` from its idle preload.
+      i18n: {
+        language: 'en',
+        resolvedLanguage: 'en',
+        getFixedT: () => (key: string) => key,
+      },
     }),
   };
 });

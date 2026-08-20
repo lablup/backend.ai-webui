@@ -34,7 +34,7 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isDarkMode } = useThemeMode();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -44,13 +44,17 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
     { keys: 'mod+k', allowInInputs: true, onPress: () => setIsOpen(true) },
   ]);
 
-  // Warm the chunk while the header is idle: `import()` caches its module
-  // promise, so the first open reuses it instead of paying the fetch.
+  // Warm the chunk AND the artifacts it builds while the header is idle:
+  // `import()` caches its module promise, and `warmGlobalSearch` resolves the
+  // whole index against the current locale and English, so neither the first
+  // open nor the first keystroke pays for them.
   useEffect(() => {
-    const warm = () => void importPalette();
+    const warm = () => {
+      void importPalette().then((palette) => palette.warmGlobalSearch(i18n));
+    };
     if (typeof requestIdleCallback === 'function') requestIdleCallback(warm);
     else setTimeout(warm, 200);
-  }, []);
+  }, [i18n]);
 
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 

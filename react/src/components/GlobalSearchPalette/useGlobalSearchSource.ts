@@ -6,34 +6,23 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
-import { buildActionHits, buildHits, toMenuSources } from './buildHits';
+import { toMenuSources } from './buildHits';
 import type { GroupedMenuNode } from './buildHits';
-import { RECENT_HIT_ID_PREFIX, baseHitId, rankHits } from './rank';
-import type {
-  HitTranslator,
-  SearchConfigFlags,
-  SearchContext,
-  SearchHit,
-} from './types';
+import { baseHitId, rankHits, warmRanker } from './rank';
+import {
+  getBootstrapRows,
+  getSearchArtifacts,
+  getTranslators,
+} from './searchArtifacts';
+import type { SearchConfigFlags, SearchContext, SearchHit } from './types';
 import { useRecentSearchHits } from './useRecentSearchHits';
-import { isHitVisible } from './visibility';
 import type { SearchSource } from '@astryxdesign/core/Typeahead';
 import { useBAILogger } from 'backend.ai-ui';
-import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/**
- * `postProcess: []` bypasses the dev-only `copyableI18nKey` processor, which
- * returns JSX; the ranker needs plain strings in every environment.
- */
-export const toTranslator = (translate: TFunction): HitTranslator => {
-  return (key: string) => {
-    const value = translate(key, { postProcess: [] });
-    return _.isString(value) ? value : key;
-  };
-};
+export { toTranslator } from './searchArtifacts';
 
 /** The one place the palette reads deployment config off the client. */
 export const toSearchConfigFlags = (baiClient: {
@@ -50,12 +39,13 @@ export interface GlobalSearchSource extends SearchSource<SearchHit> {
 /**
  * The palette's `SearchSource`: every visible page / tab / setting hit, ranked
  * against the current locale and English. Empty query shows recents plus the
- * full page list, grouped the way the sidebar is.
+ * full page list, grouped the way the sidebar is. The hits themselves and the
+ * bootstrap rows come from `searchArtifacts`, whose cache outlives this hook.
  */
 export const useGlobalSearchSource = (): GlobalSearchSource => {
   'use memo';
 
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const currentUserRole = useCurrentUserRole();
   const projectName = useActiveProjectName();
@@ -64,8 +54,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
   const [recentSearchHits] = useRecentSearchHits();
   const { logger } = useBAILogger();
 
-  const translate = toTranslator(t);
-  const translateEn = toTranslator(i18n.getFixedT('en'));
+  const { t: translate, tEn: translateEn } = getTranslators(i18n);
 
   const menuSources = [
     ...toMenuSources(groupedGeneralMenu as Array<GroupedMenuNode>, {
@@ -93,45 +82,24 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
     tEn: translateEn,
   };
 
-  const hits = _.filter(
-    [
-      ...buildHits({
-        menuSources,
-        projectName,
-        t: translate,
-        fallbackGroup: translate('webui.menu.groupName.General'),
-      }),
-      // Actions come last so their groups trail the sidebar's in the empty
-      // state, which is the order `CommandPalette` renders headings in.
-      ...buildActionHits({
-        t: translate,
-        groupLabels: {
-          create: translate('webui.search.group.Create'),
-          appearance: translate('webui.search.group.Appearance'),
-          panels: translate('webui.search.group.PanelsAndHelp'),
-        },
-      }),
-    ],
-    (hit) => isHitVisible(hit, ctx),
+  const artifacts = getSearchArtifacts({
+    menuSources,
+    projectName,
+    ctx,
+    fallbackGroup: translate('webui.menu.groupName.General'),
+    groupLabels: {
+      create: translate('webui.search.group.Create'),
+      appearance: translate('webui.search.group.Appearance'),
+      panels: translate('webui.search.group.PanelsAndHelp'),
+    },
+  });
+  const { hits, hitById } = artifacts;
+  const bootstrapRows = getBootstrapRows(
+    artifacts,
+    recentSearchHits,
+    translate,
   );
-  const hitById = _.keyBy(hits, 'id');
   const recentIds = _.map(recentSearchHits, 'id');
-
-  const recentRows = _.compact(
-    _.map(recentSearchHits, (recent): SearchHit | null => {
-      const hit = hitById[recent.id];
-      if (!hit) return null;
-      const group = translate('webui.search.Recent');
-      return {
-        ...hit,
-        id: `${RECENT_HIT_ID_PREFIX}${hit.id}`,
-        group,
-        auxiliaryData: { group },
-      };
-    }),
-  );
-  const pageRows = _.filter(hits, (hit) => hit.kind === 'page');
-  const actionRows = _.filter(hits, (hit) => hit.kind === 'action');
 
   // Index drift is silent otherwise: a menu page with no indexed entry simply
   // never appears in the palette.
@@ -154,6 +122,19 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
     }
   }, [missingMenuKeysSignature]);
 
+  // The ranker's index is the first keystroke's whole cost. Build it while the
+  // user is still reading the bootstrap list; the header's idle warm-up cannot,
+  // because on a genuine first open the hits do not exist yet.
+  useEffect(() => {
+    const warm = () => warmRanker(hits, translate, translateEn);
+    if (typeof requestIdleCallback === 'function') {
+      const handle = requestIdleCallback(warm);
+      return () => cancelIdleCallback(handle);
+    }
+    const handle = window.setTimeout(warm, 0);
+    return () => window.clearTimeout(handle);
+  }, [hits, translate, translateEn]);
+
   return {
     search: (query: string) =>
       rankHits(query, hits, {
@@ -161,8 +142,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
         tEn: translateEn,
         recentIds,
       }),
-    // Recents repeat below in the full list on purpose, the way VS Code does.
-    bootstrap: () => [...recentRows, ...pageRows, ...actionRows],
+    bootstrap: () => bootstrapRows,
     getHit: (id: string) => hitById[baseHitId(id)],
   };
 };
