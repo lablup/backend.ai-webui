@@ -47,11 +47,17 @@
 }
 
 /* Flex min-width defaults to `auto`, so a long unbreakable value would drag
-   the copy control out of a fixed cell instead of wrapping. */
+   the copy control out of a fixed cell instead of wrapping. `overflow-wrap`
+   only fires where wrapping is allowed: Astryx's own `astryx-table-cell` is
+   `white-space: nowrap`, which inherits in, so inside a table the text keeps
+   its single line and must clip to its own box instead of painting over the
+   copy control (FR-3608). */
 .bai-text-row > .astryx-text,
 .bai-text-row > .bai-text-code {
   min-width: 0;
   overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* antd `Typography.Text mark` — the highlighter. */
