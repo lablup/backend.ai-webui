@@ -18,9 +18,10 @@
 /*
  Surface-context override for the band — what `MediaTheme` does, expressed as
  scoped CSS because the close button is MobileNav's own child (we cannot wrap
- it in a provider). `WebUIMobileNav` measures the band's luminance and picks
- the class, so the close glyph flips light/dark automatically with the theme.
- Not a `:root` token override (that path is reserved for the theme engine).
+ it in a provider). `WebUIMobileNav` picks the class by the same rule the
+ header band's right-side buttons use (reversed surface: on-dark in light
+ mode, on-light in dark). Not a `:root` token override (that path is reserved
+ for the theme engine).
 */
 .webui-mobile-nav--on-dark > div > div:first-child {
   color: var(--color-on-dark);

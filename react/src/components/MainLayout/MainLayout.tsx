@@ -27,6 +27,7 @@ import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
+import MainLayoutOverlayScrollbar from './MainLayoutOverlayScrollbar';
 import WebUIHeader from './WebUIHeader';
 import WebUIMobileNav from './WebUIMobileNav';
 import WebUISider from './WebUISider';
@@ -181,17 +182,16 @@ function MainLayout() {
               ref={contentScrollFlexRef}
               direction="column"
               align="stretch"
+              // Native scrollbar hidden; MainLayoutOverlayScrollbar paints an
+              // overlay thumb instead, so content width never shifts with
+              // scrollability (see MainLayout.css).
+              className="main-layout-content-scroll"
               style={{
                 paddingLeft: token.paddingContentHorizontalLG,
                 paddingRight: token.paddingContentHorizontalLG,
                 paddingBottom: token.paddingContentVertical,
                 height: '100%',
                 overflow: 'auto',
-                // Reserve the (2px, see MainLayout.css) scrollbar gutter even
-                // when nothing overflows, so content width doesn't shift as
-                // pages cross the overflow threshold. True overlay scrollbars
-                // (`overflow: overlay`) were removed from Chromium.
-                scrollbarGutter: 'stable',
               }}
             >
               <BAIErrorBoundary>
@@ -307,6 +307,7 @@ function MainLayout() {
                 </ErrorBoundaryWithNullFallback>
               </BAIErrorBoundary>
             </BAIFlex>
+            <MainLayoutOverlayScrollbar targetRef={contentScrollFlexRef} />
           </BAIContentWithDrawerArea>
         </AppShell>
       </Suspense>

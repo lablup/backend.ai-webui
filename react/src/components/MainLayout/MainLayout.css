@@ -46,6 +46,59 @@
   overflow: visible;
 }
 
+/* FR-3612: the main content column paints its OWN overlay scrollbar
+   (MainLayoutOverlayScrollbar) over the content, so the native bar — which
+   always consumes layout space — is hidden here. Content width therefore
+   never changes with scrollability. */
+.main-layout-content-scroll {
+  scrollbar-width: none;
+}
+
+.main-layout-content-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.main-layout-overlay-scrollbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  /* Never intercept clicks meant for content under it. */
+  pointer-events: none;
+  /* Above the sticky header (z-index 100, MainLayout.tsx). */
+  z-index: 101;
+}
+
+.main-layout-overlay-scrollbar[data-scrollable='false'] {
+  display: none;
+}
+
+.main-layout-overlay-scrollbar[data-visible='true'],
+.main-layout-overlay-scrollbar:hover {
+  opacity: 1;
+}
+
+.main-layout-overlay-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  width: 6px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-border-emphasized);
+}
+
+/* Only a VISIBLE thumb is grabbable — an invisible one must not steal
+   clicks/drags from content at the right edge. */
+.main-layout-overlay-scrollbar[data-visible='true']
+  .main-layout-overlay-scrollbar-thumb,
+.main-layout-overlay-scrollbar:hover .main-layout-overlay-scrollbar-thumb {
+  pointer-events: auto;
+  cursor: default;
+}
+
 /* Top/bottom breathing room for the stacked layout alerts. */
 .main-layout-alert-wrapper > *:first-child {
   margin-top: var(--spacing-4);
