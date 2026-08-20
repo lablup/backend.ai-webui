@@ -96,8 +96,10 @@
     "ErrorOccurred": "Ralat berlaku"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Kosongkan Cari pilihan",
     "NoResults": "Tiada keputusan",
-    "Search": "Cari"
+    "Search": "Cari…",
+    "SearchOptions": "Cari pilihan"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"

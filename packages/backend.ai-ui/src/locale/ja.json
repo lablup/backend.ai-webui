@@ -96,8 +96,10 @@
     "ErrorOccurred": "問題が発生しました。"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "オプションを検索 をクリア",
     "NoResults": "結果がありません",
-    "Search": "検索"
+    "Search": "検索…",
+    "SearchOptions": "オプションを検索"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "コンテナレジストリを選択"

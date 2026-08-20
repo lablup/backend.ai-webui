@@ -96,8 +96,10 @@
     "ErrorOccurred": "Wystąpił błąd"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Wyczyść Szukaj wśród opcji",
     "NoResults": "Brak wyników",
-    "Search": "Wyszukiwanie"
+    "Search": "Szukaj…",
+    "SearchOptions": "Szukaj wśród opcji"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Wybierz rejestr kontenerów"

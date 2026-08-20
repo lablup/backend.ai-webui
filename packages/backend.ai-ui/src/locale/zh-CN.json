@@ -96,8 +96,10 @@
     "ErrorOccurred": "发生错误"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "清除 搜索选项",
     "NoResults": "无结果",
-    "Search": "搜索"
+    "Search": "搜索…",
+    "SearchOptions": "搜索选项"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "选择容器镜像仓库"

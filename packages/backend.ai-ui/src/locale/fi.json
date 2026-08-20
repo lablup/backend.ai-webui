@@ -96,8 +96,10 @@
     "ErrorOccurred": "Tapahtui virhe"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
     "NoResults": "Ei tuloksia",
-    "Search": "Etsi"
+    "Search": "Hae…",
+    "SearchOptions": "Hae vaihtoehdoista"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Valitse konttirekisteri"

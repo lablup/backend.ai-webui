@@ -1,0 +1,205 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAIComplexSelect`'s popup body, shaped like Astryx `Selector`'s (FR-3603).
+
+ `ComplexSelector` hands the popup body back as a render prop, which is the
+ whole reason this component exists (`onPopupScroll -> loadNext` has nowhere
+ else to attach). The cost is that the body's chrome is ours to draw, and it
+ drifted: a bordered `TextInput` where `Selector` draws a borderless search
+ row, and `Item isSelected` (an accent-muted wash) where `Selector` marks the
+ chosen row with weight alone.
+
+ Every metric below was measured off an open Astryx `Selector` panel in the
+ running app, against a dev server whose Vite pre-bundle was known-fresh. That
+ caveat is load-bearing: a stale pre-bundle served an older Astryx whose panel
+ search was a bordered `TextInput`, and matching THAT produced a fix aimed at
+ the wrong target.
+
+ CSS rather than `xstyle` because this workspace has no StyleX compiler; the
+ `@layer components` + token route is the sanctioned one (see
+ `BAICompactGroup.css`'s header for the full three-route analysis). Astryx's
+ `PanelSearchInput` is used by `Selector` but not exported, so the search row
+ is rebuilt against the same tokens; `SelectorOption`, `useIndicator` and
+ `themeProps` are public API and are used directly.
+*/
+
+@layer components {
+  /* --- Popup surface ------------------------------------------------------
+
+     `ComplexSelector` wraps the render-prop body in a content box carrying
+     `padding: var(--spacing-3)`; `Selector` puts its panel content straight on
+     the popover surface. Our body IS a Selector-shaped panel — it brings the
+     same gutters `Selector`'s does — so that box added a second 12px inset on
+     top of them: every row sat 12px further in than the equivalent BAISelect
+     row, and the divider could not reach the panel edge. Zeroing it is safe
+     because `BAIComplexSelect` is the only consumer of `ComplexSelector` in
+     this app. */
+  .astryx-complex-selector-popup > div {
+    padding: 0;
+  }
+
+  /* --- Search row (Astryx `Field/PanelSearchInput`) ------------------------
+
+     A dropdown panel is already a bordered, elevated surface, so a bordered
+     field inside it draws a second box within that box. `Selector` therefore
+     draws a seamless row instead: magnifier, borderless input, clear button,
+     separated from the options by a divider the panel owns. The gutter matches
+     the option list's, so the field and the rows share one left edge. */
+  .bai-complex-select__search {
+    padding-block: var(--spacing-1);
+    /* `+ border-width` is Astryx's own correction: the trigger's text inset
+       includes its border, so the panel mirrors that extra pixel to keep the
+       search field, the option rows and the closed control on one left edge. */
+    padding-inline: calc(var(--spacing-1) + var(--border-width));
+  }
+
+  /* The field proper — the same box an option row draws. Focus rings THIS,
+     not the full-width row. */
+  .bai-complex-select__search-field {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    width: 100%;
+    padding-block: var(--spacing-1-5);
+    padding-inline: var(--spacing-2);
+    border-radius: var(--radius-element);
+    transition: box-shadow var(--duration-fast) var(--ease-standard);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bai-complex-select__search-field {
+      transition-duration: 0s;
+    }
+  }
+
+  /* Inset, not the shared 3px-offset outline: the field is inset from the
+     panel edge, so an outline at that offset would land on the panel's own
+     border and the divider. Gated on `data-keyboard-focus` because
+     `:focus-visible` matches a text input focused by POINTER as well, and the
+     panel autofocuses this input on open. */
+  .bai-complex-select__search-field[data-keyboard-focus='true']:has(
+      input:focus-visible
+    ) {
+    box-shadow: inset 0 0 0 2px var(--color-accent);
+  }
+
+  .bai-complex-select__search-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .bai-complex-select__search-input {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    border-width: 0;
+    border-style: none;
+    background-color: transparent;
+    color: var(--color-text-primary);
+    font-family: var(--font-family-body);
+    font-size: var(--text-label-size);
+    line-height: var(--text-label-leading);
+    /* The field draws the focus ring, so the bare input must not draw a second
+       one inside it. */
+    outline: none;
+  }
+
+  /* Keeps iOS from zooming the page on focus. */
+  @media (pointer: coarse) {
+    .bai-complex-select__search-input {
+      font-size: max(1rem, var(--text-label-size));
+    }
+  }
+
+  .bai-complex-select__search-input::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  /* --- Option list (Astryx `Selector` `styles.dropdown`) ------------------ */
+
+  .bai-complex-select__listbox {
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding-block: var(--spacing-1);
+    /* The trigger's text inset includes its border; mirror that extra pixel in
+       the menu so the rows line up with the closed control's label. */
+    padding-inline: calc(var(--spacing-1) + var(--border-width));
+  }
+
+  .bai-complex-select__empty {
+    padding: var(--spacing-3);
+    text-align: center;
+  }
+
+  /* --- Option row (Astryx `Selector` `styles.item`) ----------------------- */
+
+  .bai-complex-select__option {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+    width: 100%;
+    padding-block: var(--spacing-1-5);
+    padding-inline: var(--spacing-2);
+    border-radius: var(--radius-element);
+    color: var(--color-text-primary);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: start;
+    outline: none;
+  }
+
+  .bai-complex-select__option[data-size='sm'] {
+    padding-block: var(--spacing-1);
+  }
+
+  .bai-complex-select__option[data-highlighted='true'] {
+    background-color: var(--color-overlay-hover);
+  }
+
+  /* Weight alone — NOT a background. `Item`'s accent-muted wash is right for a
+     list item and wrong for a dropdown option: it competes with the highlight
+     that tracks the pointer, so a hovered list showed two "current" rows. */
+  .bai-complex-select__option[data-selected='true'] {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .bai-complex-select__option[data-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .bai-complex-select__option-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Reserved on every row, so a row occupies the same geometry whether or not
+     it is the chosen one. `min-width` rather than `width`: a theme can replace
+     `check` with a larger indicator (a radio is 20px at `sm`). */
+  .bai-complex-select__option-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 1rem;
+  }
+
+  /* --- Panel foot -------------------------------------------------------- */
+
+  .bai-complex-select__foot {
+    padding-block: var(--spacing-1);
+    padding-inline: calc(var(--spacing-2) + var(--border-width));
+  }
+}

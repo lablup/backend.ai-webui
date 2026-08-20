@@ -96,8 +96,10 @@
     "ErrorOccurred": "เกิดข้อผิดพลาด"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "ล้าง ค้นหาตัวเลือก",
     "NoResults": "ไม่พบผลลัพธ์",
-    "Search": "ค้นหา"
+    "Search": "ค้นหา…",
+    "SearchOptions": "ค้นหาตัวเลือก"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"

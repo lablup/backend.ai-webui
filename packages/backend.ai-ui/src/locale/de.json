@@ -96,8 +96,10 @@
     "ErrorOccurred": "Ein Fehler ist aufgetreten"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Optionen durchsuchen löschen",
     "NoResults": "Keine Ergebnisse",
-    "Search": "Suche"
+    "Search": "Suchen…",
+    "SearchOptions": "Optionen durchsuchen"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Container-Registry auswählen"

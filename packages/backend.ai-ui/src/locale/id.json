@@ -96,8 +96,10 @@
     "ErrorOccurred": "Terjadi kesalahan"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Hapus Cari opsi",
     "NoResults": "Tidak ada hasil",
-    "Search": "Pencarian"
+    "Search": "Cari…",
+    "SearchOptions": "Cari opsi"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Container"

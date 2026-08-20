@@ -96,8 +96,10 @@
     "ErrorOccurred": "Bir hata oluştu"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
-    "Search": "Arama"
+    "Search": "Ara…",
+    "SearchOptions": "Seçenekleri ara"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"

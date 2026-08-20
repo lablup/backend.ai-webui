@@ -96,8 +96,10 @@
     "ErrorOccurred": "Đã xảy ra lỗi"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Xóa Tìm trong các tùy chọn",
     "NoResults": "Không có kết quả",
-    "Search": "Tìm kiếm"
+    "Search": "Tìm kiếm…",
+    "SearchOptions": "Tìm trong các tùy chọn"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Chọn kho lưu trữ container"

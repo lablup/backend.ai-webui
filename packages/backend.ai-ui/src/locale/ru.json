@@ -96,8 +96,10 @@
     "ErrorOccurred": "Произошла ошибка"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Очистить Поиск по вариантам",
     "NoResults": "Нет результатов",
-    "Search": "Поиск"
+    "Search": "Поиск…",
+    "SearchOptions": "Поиск по вариантам"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Выберите реестр контейнеров"
