@@ -2813,6 +2813,7 @@
       "ConfirmAndRun": "Я проверил и начну",
       "ConnectUrlIsNotValid": "URL-адрес подключения недействителен.",
       "DownloadSSHKey": "Скачать ключ SSH",
+      "FailedToStartAppService": "Не удалось запустить службу приложения.",
       "LaunchingApp": "Запуск приложения {{appName}}...",
       "NoExistingConnectionExample": "Нет примера подключения для копирования.",
       "OpenVSCodeRemote": "Открыть локальный Visual Studio Code",

@@ -2814,6 +2814,7 @@
       "ConfirmAndRun": "ฉันได้ตรวจสอบแล้วและจะเริ่มต้น",
       "ConnectUrlIsNotValid": "URL การเชื่อมต่อไม่ถูกต้อง",
       "DownloadSSHKey": "ดาวน์โหลดคีย์ SSH",
+      "FailedToStartAppService": "ไม่สามารถเริ่มต้นบริการแอปได้",
       "LaunchingApp": "กำลังเรียกใช้แอป {{appName}}.",
       "NoExistingConnectionExample": "ไม่มีตัวอย่างการเชื่อมต่อที่จะคัดลอก",
       "OpenVSCodeRemote": "เปิด Visual Studio Code ในเครื่อง",

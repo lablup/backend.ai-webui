@@ -2815,6 +2815,7 @@
       "ConfirmAndRun": "Tôi đã kiểm tra và tôi sẽ bắt đầu",
       "ConnectUrlIsNotValid": "URL kết nối không hợp lệ.",
       "DownloadSSHKey": "Tải xuống SSH Key",
+      "FailedToStartAppService": "Không thể khởi động dịch vụ ứng dụng.",
       "LaunchingApp": "Đang khởi chạy ứng dụng {{appName}}.",
       "NoExistingConnectionExample": "Không có ví dụ kết nối nào được sao chép.",
       "OpenVSCodeRemote": "Mở mã Visual Studio cục bộ",

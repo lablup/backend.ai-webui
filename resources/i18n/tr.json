@@ -2813,6 +2813,7 @@
       "ConfirmAndRun": "kontrol ettim başlıyorum",
       "ConnectUrlIsNotValid": "Bağlantı URL'si geçerli değil.",
       "DownloadSSHKey": "SSH Anahtarını İndirin",
+      "FailedToStartAppService": "Uygulama hizmeti başlatılamadı.",
       "LaunchingApp": "{{appName}} uygulaması başlatılıyor.",
       "NoExistingConnectionExample": "Kopyalanacak Bağlantı Örneği Yok.",
       "OpenVSCodeRemote": "Yerel Visual Studio Kodunu açın",

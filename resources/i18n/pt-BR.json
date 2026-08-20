@@ -2813,6 +2813,7 @@
       "ConfirmAndRun": "Eu verifiquei e vou começar",
       "ConnectUrlIsNotValid": "O URL de conexão não é válido.",
       "DownloadSSHKey": "Baixar chave SSH",
+      "FailedToStartAppService": "Falha ao iniciar o serviço de aplicativo.",
       "LaunchingApp": "Iniciando o aplicativo {{appName}}.",
       "NoExistingConnectionExample": "Não há exemplo de ligação a copiar.",
       "OpenVSCodeRemote": "Abrir o código local do Visual Studio",

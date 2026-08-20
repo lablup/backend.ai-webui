@@ -2814,6 +2814,7 @@
       "ConfirmAndRun": "Шалгасан тул эхлүүлж болно",
       "ConnectUrlIsNotValid": "Холбох URL буруу байна.",
       "DownloadSSHKey": "SSH түлхүүр татаж авах",
+      "FailedToStartAppService": "Апп үйлчилгээг эхлүүлж чадсангүй.",
       "LaunchingApp": "{{appName}} апп эхлүүлж байна.",
       "NoExistingConnectionExample": "Хуулбарлах холболтын жишээ байхгүй.",
       "OpenVSCodeRemote": "Орон нутгийн Visual Studio кодыг нээнэ үү",
