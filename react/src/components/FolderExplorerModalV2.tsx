@@ -73,6 +73,11 @@ import { graphql, useLazyLoadQuery, useQueryLoader } from 'react-relay';
  */
 const EXPLORER_MAX_HEIGHT = '95vh';
 
+// Floor for the explorer pane, so the drag cannot shrink it until `overflow:
+// hidden` clips its toolbar out of reach. Measured: the action group needs
+// 419px and the whole toolbar 437px (viewport 1600, `xl` two-pane layout).
+const EXPLORER_MIN_WIDTH = 440;
+
 export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
   _openDeleteMultipleFileDialog: () => void;
@@ -524,7 +529,13 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                     gap: 'var(--spacing-2)',
                   }}
                 >
-                  <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      minWidth: EXPLORER_MIN_WIDTH,
+                      overflow: 'hidden',
+                    }}
+                  >
                     {fileExplorerElement}
                   </div>
                   {/* The handle's own `height: 100%` resolves to `auto` here —
