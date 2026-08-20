@@ -1,0 +1,33 @@
+# Canonical Node + pnpm setup for this repo's workflows.
+#
+# setup-node's `cache: "pnpm"` caches the pnpm store; do NOT add a second
+# explicit `actions/cache` on the store next to this action — the removed
+# duplicate cost ~23s of restore + post-save per job and double cache storage
+# (the account was over the 10 GB cap; see the PR that introduced this action).
+name: Setup Node + pnpm
+description: pnpm + node (with setup-node's pnpm store cache) + optional install
+inputs:
+  install:
+    description: Run pnpm install
+    default: "true"
+  install-args:
+    description: Extra args for pnpm install
+    default: ""
+  registry-url:
+    description: npm registry URL (publish workflows)
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v5
+      with:
+        run_install: false
+    - uses: actions/setup-node@v6.4.0
+      with:
+        node-version-file: ".nvmrc"
+        cache: "pnpm"
+        registry-url: ${{ inputs.registry-url }}
+    - if: inputs.install == 'true'
+      name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile ${{ inputs.install-args }}
