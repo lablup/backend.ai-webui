@@ -25,6 +25,17 @@
   pointer-events: none;
 }
 
+/* The overlay paints in `light-dark()` tokens, so it would otherwise inherit an
+   inverted ancestor's scheme — the header band gave the alert dot the red meant
+   for the opposite surface (FR-3610). Mirrors the theme's own `html[data-theme]`
+   mapping so a status accent always tracks the app mode. */
+html[data-theme='light'] .bai-badge-count-overlay {
+  color-scheme: light;
+}
+html[data-theme='dark'] .bai-badge-count-overlay {
+  color-scheme: dark;
+}
+
 /* antd `size="small"`: a denser pill for tab rails and table headers. Astryx
    `Badge` has no size prop, so the override targets the single child BY
    POSITION — not by an Astryx class name, which would be the P6 failure mode
