@@ -3,8 +3,17 @@ name: Storybook Story Check
 on:
   pull_request:
     types: [ready_for_review]
+    # Verbatim copies of the dorny filters the job applies at the filter step,
+    # hoisted to event level so story/test-only PRs skip the runner entirely.
+    # The in-job dorny/paths-filter stays — it produces the changed-file list.
     paths:
       - "packages/backend.ai-ui/src/components/**/*.tsx"
+      - "!packages/backend.ai-ui/src/components/**/*.stories.tsx"
+      - "!packages/backend.ai-ui/src/components/**/*.test.tsx"
+
+concurrency:
+  group: storybook-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
