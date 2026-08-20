@@ -26,11 +26,19 @@ interface ContainerLogModalProps extends BAIModalProps {
   defaultKernelId?: string;
 }
 
-// Astryx `Dialog` caps its height at 75vh unless given `maxHeight`, so the tall
-// body this viewer asks for overflowed into a scrollbar. The two budgets must
-// stay in step: the body plus the header chrome has to fit the cap (FR-3601).
-const MODAL_MAX_HEIGHT = 'calc(100vh - 64px)';
-const LOG_BODY_HEIGHT = 'calc(100vh - 160px)';
+/**
+ * Height cap for the log dialog — the `95vh` the sibling full-height viewers
+ * use (`VFolderTextFileEditorModal`, `FolderExplorerModalV2`). Astryx `Dialog`
+ * otherwise caps itself at 75vh, well under the body this viewer asks for.
+ *
+ * The body is measured against that same cap rather than the viewport, so the
+ * two cannot cross over on a tall screen. It subtracts only the chrome above
+ * it: the dialog's own block padding (a published theme token) and the header
+ * row (measured 52px; this modal renders `footer={null}`).
+ */
+const LOG_MODAL_MAX_HEIGHT = '95vh';
+const LOG_MODAL_HEADER_HEIGHT = '52px';
+const LOG_BODY_HEIGHT = `calc(${LOG_MODAL_MAX_HEIGHT} - ${LOG_MODAL_HEADER_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`;
 
 const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   sessionFrgmt,
@@ -149,7 +157,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         </BAIFlex>
       }
       width={'100%'}
-      maxHeight={MODAL_MAX_HEIGHT}
+      maxHeight={LOG_MODAL_MAX_HEIGHT}
       styles={{
         header: {
           width: '100%',
