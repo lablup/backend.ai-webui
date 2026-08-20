@@ -16,8 +16,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -30,6 +28,8 @@ import { Heading, Text } from '@astryxdesign/core/Text';
 import {
   filterOutNullAndUndefined,
   BAITable,
+  BAIModal,
+  type BAIModalProps,
   BAIText,
   useErrorMessageResolver,
   toGlobalId,
@@ -89,6 +89,8 @@ const SharedFolderPermissionInfoModal: React.FC<
         if (!next) onRequestClose();
       }}
       title={t('data.SharedFolderPermission')}
+      maskClosable={false}
+      footer={null}
       {...modalProps}
     >
       <VStack align="stretch" gap={5}>

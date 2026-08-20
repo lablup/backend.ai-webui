@@ -77,19 +77,20 @@
    tabsMarginBottom = -padding - lineWidth = -17px  (welds the tabs' own rail
                                               onto the head's bottom border)
 
- Every value below is a token; the only arithmetic is the bleed/inset identity,
- which is derived from the `padding` step `BAICard` hands Astryx `Card`
- (`padding={6}` = `--spacing-6`, `padding={3}` for `size="small"`).  Astryx
- `Card`'s bordered variant subtracts the border width from its padding so that
- border + padding == the padding token, so the inset does the same and the rail
- lands exactly between the card's side borders — as antd's head border did.
+ Every value below is a token; the only arithmetic is the bleed/inset identity.
+ Astryx `Card` reflects whatever `padding` step it resolved (the `size`-derived
+ default or an explicit `padding` prop) as `--container-padding-inline-start`
+ on the same element, and its bordered variant subtracts the border width from
+ its padding so that border + padding == the padding token. The inset derives
+ from that reflected var and does the same subtraction, so the rail lands
+ exactly between the card's side borders — as antd's head border did — for
+ every padding step. `max()` keeps `padding={0}` from going negative.
 */
 .bai-card {
-  --bai-card-inset: calc(var(--spacing-6) - var(--border-width));
-}
-
-.bai-card--compact {
-  --bai-card-inset: calc(var(--spacing-3) - var(--border-width));
+  --bai-card-inset: max(
+    0px,
+    calc(var(--container-padding-inline-start) - var(--border-width))
+  );
 }
 
 .bai-card__tabs {

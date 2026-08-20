@@ -7,7 +7,7 @@
  cells is Astryx: `BAINameActionCellAstryx` (name + row actions),
  `Badge` + the repo-global status lookup (ticket 13) for the status tag,
  `Text` for text cells, `BAIText copyable` for the copyable id, and
- `BAIDeleteConfirmModalAstryx` for the typed destructive confirm.
+ `BAIDeleteConfirmModal` (BUI) for the typed destructive confirm.
 */
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import {
@@ -30,9 +30,6 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import BAIDeleteConfirmModal from './astryx-bui/BAIDeleteConfirmModalAstryx';
-import BAINameActionCell from './astryx-bui/BAINameActionCellAstryx';
-import type { BAINameActionCellAstryxAction } from './astryx-bui/BAINameActionCellAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import type { BadgeVariant } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
@@ -41,6 +38,9 @@ import { Text } from '@astryxdesign/core/Text';
 import {
   BAITable,
   BAITableProps,
+  BAIDeleteConfirmModal,
+  BAINameActionCell,
+  type BAINameActionCellAction,
   BAIUnmountAfterClose,
   badgeVariantForStatus,
   BAIText,
@@ -182,98 +182,93 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const vfolderId = toLocalId(vfolder.id ?? '');
   const folderPath = generateFolderPath(vfolderId);
 
-  const actions: Array<BAINameActionCellAstryxAction> =
-    filterOutNullAndUndefined([
-      // Start Service (model folders only, active only)
-      isModelFolder && !isDeleted
-        ? {
-            key: 'start-service',
-            title: t('modelService.DeployAsService'),
-            icon: <RocketIcon />,
-            disabled: !!noDeployTooltip,
-            disabledReason: noDeployTooltip,
-            // Use `action` (not `onClick`) so the state update that mounts
-            // `<VFolderDeployModal>` (which suspends on its preloaded query)
-            // runs inside `startTransition` — the page stays interactive
-            // while the preloaded query resolves, instead of flashing the
-            // modal's Suspense fallback.
-            action: async () => {
-              onStartServiceFallback(vfolderId);
-            },
-          }
-        : null,
-      // Share (active folders only)
-      !isDeleted
-        ? {
-            key: 'share',
-            title: t('button.Share'),
-            icon: <Share2Icon />,
-            onClick: onShare,
-          }
-        : null,
-      // Move to trash (active folders only)
-      !isDeleted
-        ? {
-            key: 'delete',
-            title: t('data.folders.MoveToTrash'),
-            icon: <TrashIcon />,
-            type: 'danger' as const,
-            disabled:
-              !hasDeletePermission ||
-              isPipelineFolder ||
-              isProjectFolderManagedElsewhere,
-            disabledReason: isPipelineFolder
-              ? t('data.folders.CannotDeletePipelineFolder')
-              : (projectFolderAdminHint ??
-                t('data.folders.NoDeletePermission')),
-            onClick: onDelete,
-          }
-        : null,
-      // Restore (deleted folders only)
-      isDeleted
-        ? {
-            key: 'restore',
-            title: t('data.folders.Restore'),
-            icon: <RotateCcwIcon />,
-            disabled:
-              vfolder?.status !== 'delete-pending' ||
-              isPipelineFolder ||
-              isProjectFolderManagedElsewhere,
-            disabledReason: isPipelineFolder
-              ? t('data.folders.CannotRestorePipelineFolder')
-              : isProjectFolderManagedElsewhere
-                ? (projectFolderAdminHint ??
-                  t('data.folders.NoRestorePermission'))
-                : undefined,
-            // antd `Popconfirm` has no Astryx counterpart, so the action
-            // declares an Astryx-shaped confirm and the cell builds the
-            // popover from `Popover` + two `Button`s.
-            confirm: {
-              title: t('data.folders.Restore'),
-              description: vfolder?.name ?? undefined,
-              confirmLabel: t('button.Confirm'),
-              cancelLabel: t('button.Cancel'),
-              onConfirm: onRestore,
-            },
-          }
-        : null,
-      // Delete from trash bin (deleted folders only)
-      isDeleted
-        ? {
-            key: 'delete-forever',
-            title: t('data.folders.Delete'),
-            icon: <Trash2Icon />,
-            type: 'danger' as const,
-            disabled:
-              vfolder?.status !== 'delete-pending' ||
-              isProjectFolderManagedElsewhere,
-            disabledReason: isProjectFolderManagedElsewhere
-              ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
+  const actions: Array<BAINameActionCellAction> = filterOutNullAndUndefined([
+    // Start Service (model folders only, active only)
+    isModelFolder && !isDeleted
+      ? {
+          key: 'start-service',
+          title: t('modelService.DeployAsService'),
+          icon: <RocketIcon />,
+          disabled: !!noDeployTooltip,
+          disabledReason: noDeployTooltip,
+          // Use `action` (not `onClick`) so the state update that mounts
+          // `<VFolderDeployModal>` (which suspends on its preloaded query)
+          // runs inside `startTransition` — the page stays interactive
+          // while the preloaded query resolves, instead of flashing the
+          // modal's Suspense fallback.
+          action: async () => {
+            onStartServiceFallback(vfolderId);
+          },
+        }
+      : null,
+    // Share (active folders only)
+    !isDeleted
+      ? {
+          key: 'share',
+          title: t('button.Share'),
+          icon: <Share2Icon />,
+          onClick: onShare,
+        }
+      : null,
+    // Move to trash (active folders only)
+    !isDeleted
+      ? {
+          key: 'delete',
+          title: t('data.folders.MoveToTrash'),
+          icon: <TrashIcon />,
+          type: 'danger' as const,
+          disabled:
+            !hasDeletePermission ||
+            isPipelineFolder ||
+            isProjectFolderManagedElsewhere,
+          disabledReason: isPipelineFolder
+            ? t('data.folders.CannotDeletePipelineFolder')
+            : (projectFolderAdminHint ?? t('data.folders.NoDeletePermission')),
+          onClick: onDelete,
+        }
+      : null,
+    // Restore (deleted folders only)
+    isDeleted
+      ? {
+          key: 'restore',
+          title: t('data.folders.Restore'),
+          icon: <RotateCcwIcon />,
+          disabled:
+            vfolder?.status !== 'delete-pending' ||
+            isPipelineFolder ||
+            isProjectFolderManagedElsewhere,
+          disabledReason: isPipelineFolder
+            ? t('data.folders.CannotRestorePipelineFolder')
+            : isProjectFolderManagedElsewhere
+              ? (projectFolderAdminHint ??
+                t('data.folders.NoRestorePermission'))
               : undefined,
-            onClick: onDeleteForever,
-          }
-        : null,
-    ]);
+          popConfirm: {
+            title: t('data.folders.Restore'),
+            description: vfolder?.name ?? undefined,
+            okText: t('button.Confirm'),
+            cancelText: t('button.Cancel'),
+            onConfirm: onRestore,
+          },
+        }
+      : null,
+    // Delete from trash bin (deleted folders only)
+    isDeleted
+      ? {
+          key: 'delete-forever',
+          title: t('data.folders.Delete'),
+          icon: <Trash2Icon />,
+          type: 'danger' as const,
+          disabled:
+            vfolder?.status !== 'delete-pending' ||
+            isProjectFolderManagedElsewhere,
+          disabledReason: isProjectFolderManagedElsewhere
+            ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
+            : undefined,
+          onClick: onDeleteForever,
+        }
+      : null,
+  ]);
 
   return (
     <BAINameActionCell
@@ -701,7 +696,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           folder name is typed exactly. */}
       <BAIDeleteConfirmModal
         isOpen={!!deletingVFolder}
-        onAction={() => {
+        maskClosable={false}
+        onOk={() => {
           deleteFromTrashBinMutation.mutate(deletingVFolder?.id ?? '', {
             onSuccess: (_result, vfolderId) => {
               onRemoveRow?.(vfolderId);
@@ -740,14 +736,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         inputLabel={t('dialog.PleaseTypeToConfirm', {
           confirmText: deletingVFolder?.name ?? '',
         })}
-        inputPlaceholder={deletingVFolder?.name ?? ''}
+        inputProps={{ placeholder: deletingVFolder?.name ?? '' }}
         title={t('dialog.title.DeleteForever')}
         description={t('data.folders.DeleteForeverDescription', {
           folderName: deletingVFolder?.name ?? '',
         })}
         cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
-        actionLabel={t('data.folders.DeleteForever')}
-        cancelLabel={t('button.Cancel')}
+        okText={t('data.folders.DeleteForever')}
+        cancelText={t('button.Cancel')}
       />
       <InviteFolderSettingModal
         onRequestClose={() => {

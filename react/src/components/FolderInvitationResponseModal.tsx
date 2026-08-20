@@ -16,8 +16,6 @@ import {
   useVFolderInvitations,
 } from '../hooks/useVFolderInvitations';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { List, ListItem } from '@astryxdesign/core/List';
@@ -26,7 +24,11 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { HStack } from '@astryxdesign/core/Stack';
-import { useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  type BAIModalProps,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { FolderIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
@@ -144,6 +146,8 @@ const FolderInvitationResponseModal: React.FC<
         if (!next) onCancel?.();
       }}
       title={t('data.InvitedFolders')}
+      maskClosable={false}
+      footer={null}
       {...baiModalProps}
     >
       {_.isEmpty(invitations) ? (

@@ -187,63 +187,11 @@
   }
 }
 
-/* Ticket 16 (Data/VFolder pages) — BAINameActionCellAstryx. These are the five
-   `createStyles` rules from BUI's `BAINameActionCell`, moved out of `antd-style`
-   and re-expressed with Astryx theme CSS vars (imported from the pilot's final
-   sweep). Nothing here targets `.ant-*` (P6). */
-.bai-name-action-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  min-width: 0;
-  position: relative;
-}
-
-.bai-name-action-cell-title-area {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.bai-name-action-cell-title-icon {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-
-.bai-name-action-cell-actions {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.bai-name-action-cell-actions-hidden {
-  max-width: 0;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease;
-}
-
-.bai-name-action-cell-hover:hover .bai-name-action-cell-actions,
-.bai-name-action-cell-hover:has(:focus-visible) .bai-name-action-cell-actions {
-  max-width: none;
-  overflow: visible;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.bai-name-action-cell-default {
-  color: var(--color-text-accent);
-}
-
 /* P19 (pilot sweep finding, preserved): the semantic error token is the SOLID
    `--color-error`; the text-tier member of the red hue family is
-   `--color-text-red`, which is what a danger text action needs. */
+   `--color-text-red`, which is what a danger text action needs. Kept after the
+   FR-3533 fold of BAINameActionCellAstryx because host call sites and the
+   VFolder delete buttons still tint via this class. */
 .bai-name-action-cell-danger {
   color: var(--color-text-red);
 }

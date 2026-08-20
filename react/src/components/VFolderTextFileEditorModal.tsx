@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Ticket 16 — modal shell converted to `BAIModalAstryx` (the unsaved-changes
+ Ticket 16 — modal shell converted to BUI `BAIModal` (the unsaved-changes
  dialog below was already Astryx from the app-shim migration). PILOT-DECISION:
  the antd modal's JSX title ("Edit File — name (size)") splits into the
  Astryx `DialogHeader`'s string `title` + `subtitle` (P2). `keyboard={false}`
@@ -15,8 +15,6 @@ import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
 import type { RcFile } from './FileUploadManager';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
@@ -26,6 +24,8 @@ import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   BAISkeleton,
+  BAIModal,
+  type BAIModalProps,
   VFolderFile,
   convertToDecimalUnit,
   useConnectedBAIClient,
@@ -335,11 +335,12 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
       maxHeight={'95vh'}
       title={t('data.explorer.EditFile')}
       subtitle={fileInfo ? `${fileInfo.name}${fileSizeSuffix}` : undefined}
-      actionLabel={t('button.Save')}
-      cancelLabel={t('button.Cancel')}
-      isActionLoading={saveMutation.isPending}
-      isActionDisabled={!!loadError}
-      onAction={() => saveMutation.mutate()}
+      maskClosable={false}
+      okText={t('button.Save')}
+      cancelText={t('button.Cancel')}
+      confirmLoading={saveMutation.isPending}
+      okButtonProps={{ disabled: !!loadError }}
+      onOk={() => saveMutation.mutate()}
       isOpen={modalProps.open}
       onOpenChange={(next) => {
         if (!next) handleRequestClose();

@@ -23,7 +23,6 @@ import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import BAISelectionLabel from './astryx-bui/BAISelectionLabel';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -32,6 +31,7 @@ import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
   BAIPropertyFilter,
+  BAISelectionLabel,
   BAIResourceNumberWithIcon,
   BAITable,
   BAIUnmountAfterClose,
