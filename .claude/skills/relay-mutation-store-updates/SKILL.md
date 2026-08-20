@@ -35,15 +35,18 @@ Ask **what changed**, not **did it succeed**.
 | What the mutation changed                                            | What to do                                                                            |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | **Fields of an entity already in the store** (update)                | Select the changed fields on the returned node. Relay merges by `id`. **No refetch.** |
-| Same, but a changed field is in the list's **filter/orderBy**        | **Keep the refetch.** The row's membership or position under the current predicate may have changed — patching leaves it visible under a stale filter (§7). |
+| Same, but a changed field is in the list's **filter/orderBy**        | **Still no refetch — patch the row.** The row may stop matching the active filter, and that is accepted (§7): the user should see the values they just edited on the row they touched, and every list carries a manual refresh (`BAIFetchKeyButton`) for re-evaluating the predicate. |
 | Same, but the payload returns only `ok`/`msg` (legacy)               | Keep the refetch and comment why (§4). Nothing to merge.                              |
 | **List membership** — a row added or removed (create/delete)         | Refetch the list (§6). Don't patch the connection.                                    |
 | Server-derived fields you did not send (computed status, timestamps) | Select those too; refetch only if the server cannot return them (§7).                 |
 
-The filter/orderBy row is the check that does the most work in practice: in
-the FR-3378 audit it kept the refetch at 28 of the 33 candidate call sites.
-Diff the fields the mutation can change against the list query's filterable
-and sortable properties before dropping anything.
+**Policy inverted during the FR-3378 review (2026-08-20).** The original rule
+kept the refetch whenever a changed field overlapped the list's filter/orderBy
+(28 of the 33 audited call sites). That eviction-first stance is retired: a row
+that no longer matches the active predicate staying visible — showing exactly
+what was just edited — is the intended UX, and the manual refresh button is the
+sanctioned way to re-run the predicate. Rows under a stale filter are a feature
+here, not a leak.
 
 ## 2. Update: fill the selection set
 
@@ -213,11 +216,10 @@ Treat it as an exception that predates this rule, not a pattern to copy.
 Create and delete are settled by §6. An **update** may also legitimately
 refetch when:
 
-- **A changed field is in the list query's filter or orderBy.** The row's
-  membership or position under the current predicate may have changed;
-  patching the record leaves it rendered under a filter it no longer matches.
-  This is the §1 filter/orderBy row, and the most common reason to keep an
-  update-path refetch.
+- ~~A changed field is in the list query's filter or orderBy~~ — **no longer a
+  reason to refetch** (policy inverted 2026-08-20, see §1): the patched row
+  staying visible under a stale predicate is accepted, because the user should
+  see their edit in place and can re-run the filter with the manual refresh.
 - The mutation has **side effects on other entities** the payload doesn't cover
   (e.g. changing a resource policy recomputes several users' quotas).
 - **Aggregates** shown alongside the list (counts, totals, usage) are computed
@@ -240,7 +242,7 @@ matchable the same way.
 ## Review Checklist
 
 - [ ] No `if (success) updateFetchKey()` where the mutation was an **update**
-- [ ] Changed fields diffed against the list's **filter/orderBy** properties — any overlap keeps the refetch
+- [ ] No refetch added *because* a changed field is a filter/orderBy property — stale-under-filter is accepted; the manual refresh covers re-evaluation
 - [ ] Every update mutation payload selects the fields the UI reads
 - [ ] Prefer spreading the consumer's fragment over hand-listing fields
 - [ ] Schema checked (`data/schema.graphql`) before concluding a refetch is required

@@ -1,5 +1,14 @@
 # Mutation 이후 refetch 패턴 정리
 
+> **정책 반전 (2026-08-20, FR-3378 리뷰 중 결정).** 아래 본문이 반복적으로 적용한
+> "변경 필드가 목록의 filter/orderBy에 있으면 refetch(evict) 유지" 규칙은 폐기되었다.
+> 현재 규칙: **filter/orderBy 겹침도 refetch 사유가 아니다** — 수정된 행이 현재
+> 필터와 안 맞은 채 남아 보이는 것은 의도된 UX(사용자가 방금 고친 값을 그 자리에서
+> 확인)이며, 필터 재평가는 수동 새로고침 버튼(`BAIFetchKeyButton`)의 몫이다.
+> 본문의 evict 판정 서술은 감사 당시의 기록으로만 남긴다. 현행 규칙의 원문은
+> `.claude/skills/relay-mutation-store-updates/SKILL.md` §1·§7.
+
+
 > **Epic**: FR-3170
 > **Spec Task**: FR-3372
 > **Status**: Draft
