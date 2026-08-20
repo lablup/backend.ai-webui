@@ -1,9 +1,8 @@
-# Per-package `tsc --noEmit`. Before this, the only type check in CI was
-# `backend-ai-client-ci.yml`'s, scoped to one package by its path filter;
-# `scripts/verify.sh` covers more but no workflow invokes it, and the Husky
-# hook runs only ESLint + Prettier.
-#
-# One job per package rather than one sweep, so a failure names the package.
+# Per-package `tsc --noEmit`, the backend.ai-client package checks (lint/test/
+# build, formerly backend-ai-client-ci.yml), and the Relay drift check
+# (formerly relay-drift.yml) — one job, lanes run as parallel shell processes.
+# The per-package naming the old 5-job matrix provided now comes from the
+# `::group::` / `::error title=` annotations each lane emits.
 #
 # These checks are advisory. Do not add them to a ruleset without first moving
 # the path filter inside the workflow: an event-level `paths:` miss means the
@@ -22,6 +21,11 @@ on:
       - "tsconfig.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - "data/schema.graphql"
+      - "data/client-directives.graphql"
+      - "relay.config.js"
+      - "relay-base.config.js"
+      - "package.json"
       - ".github/workflows/typecheck.yml"
   push:
     branches: [main]
@@ -34,6 +38,11 @@ on:
       - "tsconfig.json"
       - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
+      - "data/schema.graphql"
+      - "data/client-directives.graphql"
+      - "relay.config.js"
+      - "relay-base.config.js"
+      - "package.json"
 
 permissions:
   contents: read
@@ -47,66 +56,76 @@ concurrency:
 
 jobs:
   typecheck:
-    name: typecheck (${{ matrix.package }})
+    name: typecheck
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Root `tsconfig.json` covers `src/**` — the Backend.AI client library
-          # and the wsproxy. Its `noEmit` is unset, hence the explicit flag.
-          - package: root
-            command: pnpm exec tsc --noEmit -p tsconfig.json
-            relay: false
-          # `react/tsconfig.json` also pulls in `../packages/backend.ai-{ui,client}/src`
-          # via `paths`, so this job is what catches a BUI change breaking the app.
-          # It excludes BUI's tests/stories, which the backend.ai-ui job below covers.
-          - package: react
-            command: pnpm --prefix ./react exec tsc --noEmit
-            relay: true
-          # BUI's own tsconfig additionally includes its tests, stories,
-          # `vite.config.ts` and `setupTests.ts`.
-          - package: backend.ai-ui
-            command: pnpm --filter backend.ai-ui exec tsc --noEmit
-            relay: true
-          # Overlaps `backend-ai-client-ci.yml`, which type-checks this package
-          # only when its own paths change. Kept here so the package is covered
-          # when something else (e.g. the lockfile) moves its types.
-          - package: backend.ai-client
-            command: pnpm --filter backend.ai-client exec tsc --noEmit
-            relay: false
-          - package: backend.ai-docs-toolkit
-            command: pnpm --filter backend.ai-docs-toolkit exec tsc --noEmit
-            relay: false
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
-        with:
-          run_install: false
-      - uses: actions/setup-node@v6.4.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-      - name: Get pnpm store directory
-        shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      - uses: actions/cache@v5
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      # Relay artifacts are committed, so `tsc` would run without this. Compiling
-      # first means the check sees the types the current `graphql` tags actually
-      # produce, not a stale `__generated__` — the same order `vitest.yml` uses.
-      # `relay-drift.yml` reports the drift itself; this keeps it from hiding a
-      # type error behind it.
+      - uses: ./.github/actions/setup-node-pnpm
+      # Unconditional: the Rust relay-compiler is a 0-2s incremental no-op on
+      # the committed __generated__, and the drift check below depends on it.
+      # Compiling first also means tsc sees the types the current `graphql`
+      # tags actually produce, not a stale `__generated__`.
       - name: Run relay-compiler
-        if: matrix.relay
         run: pnpm run relay
-      - name: Typecheck ${{ matrix.package }}
-        run: ${{ matrix.command }}
+      # Lanes:
+      #   root       — root tsconfig.json covers src/** (client library +
+      #                wsproxy); its `noEmit` is unset, hence the explicit flag.
+      #   react      — also pulls in ../packages/backend.ai-{ui,client}/src via
+      #                `paths`, so this lane catches a BUI change breaking the
+      #                app. Excludes BUI's tests/stories (the backend.ai-ui
+      #                lane covers those).
+      #   backend.ai-ui / backend.ai-client / backend.ai-docs-toolkit — each
+      #                package's own tsconfig.
+      #   client-*   — the backend.ai-client package checks that used to live
+      #                in backend-ai-client-ci.yml.
+      # All tsc lanes are --noEmit and the client build writes only dist/, so
+      # nothing here can dirty the __generated__ scope the drift check reads.
+      - name: Typecheck and package checks (parallel)
+        run: |
+          set +e
+          names=(root react backend.ai-ui backend.ai-client backend.ai-docs-toolkit client-lint client-test client-build)
+          cmds=(
+            "pnpm exec tsc --noEmit -p tsconfig.json"
+            "pnpm --prefix ./react exec tsc --noEmit"
+            "pnpm --filter backend.ai-ui exec tsc --noEmit"
+            "pnpm --filter backend.ai-client exec tsc --noEmit"
+            "pnpm --filter backend.ai-docs-toolkit exec tsc --noEmit"
+            "pnpm --filter backend.ai-client run lint"
+            "pnpm --filter backend.ai-client run test"
+            "pnpm --filter backend.ai-client run build"
+          )
+          pids=()
+          for i in "${!names[@]}"; do
+            bash -c "${cmds[$i]}" > "/tmp/check-${names[$i]}.log" 2>&1 &
+            pids+=($!)
+          done
+          fail=0
+          for i in "${!pids[@]}"; do
+            if wait "${pids[$i]}"; then s=PASS; else s=FAIL; fail=1; fi
+            echo "::group::check ${names[$i]} — $s"
+            cat "/tmp/check-${names[$i]}.log"
+            echo "::endgroup::"
+            [ "$s" = FAIL ] && echo "::error title=Check failed (${names[$i]})::see the 'check ${names[$i]}' group above"
+          done
+          exit $fail
+      # Guarded !cancelled() so a tsc failure does not hide drift and drift
+      # does not preempt the type errors. Mirrors `check_relay_drift` in
+      # scripts/verify.sh. Uses `git status --porcelain` (not `git diff`) so
+      # newly-added generated files — e.g. when a PR adds a new fragment — are
+      # detected too; plain diff only sees tracked files.
+      - name: Check for drift in __generated__
+        if: ${{ !cancelled() }}
+        run: |
+          dirty=$(git status --porcelain -- \
+            'react/src/__generated__' \
+            'packages/backend.ai-ui/src/__generated__')
+          if [ -n "$dirty" ]; then
+            echo "$dirty"
+            echo ""
+            echo "::error title=Relay drift::Relay generated artifacts are out of sync. Run \`pnpm relay\` locally and commit the changes under __generated__."
+            git diff -- \
+              'react/src/__generated__' \
+              'packages/backend.ai-ui/src/__generated__' || true
+            exit 1
+          fi
+          echo "Relay generated artifacts are up to date."
