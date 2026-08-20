@@ -550,6 +550,9 @@ importers:
       '@astryxdesign/core':
         specifier: 'catalog:'
         version: 0.4.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/lab':
+        specifier: 'catalog:'
+        version: 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.4.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/theme-neutral':
         specifier: 'catalog:'
         version: 0.4.4(@astryxdesign/core@0.4.4(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
