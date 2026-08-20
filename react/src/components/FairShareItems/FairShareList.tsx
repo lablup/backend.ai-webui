@@ -76,18 +76,21 @@ const FairShareList: React.FC = () => {
         ? 'project'
         : 'user';
 
-  // order/filter/current are owned by the step components but share the same
-  // URL keys across steps, so they must be cleared on every step transition.
+  // order/filter/current/pageSize are owned by the step components but share
+  // the same URL keys across steps, so they must be cleared on every step
+  // transition.
   const [, setPerStepQueryParams] = useQueryStates({
     order: parseAsString,
     filter: parseAsJson<any>((value) => value),
     current: parseAsInteger,
+    pageSize: parseAsInteger,
   });
   const resetPerStepQueryParams = () => {
     setPerStepQueryParams({
       order: null,
       filter: null,
       current: null,
+      pageSize: null,
     });
   };
 
