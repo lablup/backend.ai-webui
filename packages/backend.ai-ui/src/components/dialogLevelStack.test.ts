@@ -119,6 +119,24 @@ describe('dialogLevelStack', () => {
     expect(entry.zIndex).toBe(BAI_Z_INDEX.modalBase);
   });
 
+  // The focus trap gates on this flag, not on `inert`: Astryx >=0.4.4 drops
+  // `inert` subtrees from its focusables, so a covered trap left active sees
+  // none and swallows Tab instead of letting the top one cycle (FR-3578).
+  it('tells each entry whether it is the topmost one', () => {
+    const lowerFlags: Array<boolean> = [];
+    const upperFlags: Array<boolean> = [];
+
+    claim(makeRoot(), (isTopmost) => lowerFlags.push(isTopmost));
+    expect(lowerFlags).toEqual([true]);
+
+    const upper = claim(makeRoot(), (isTopmost) => upperFlags.push(isTopmost));
+    expect(lowerFlags.at(-1)).toBe(false);
+    expect(upperFlags.at(-1)).toBe(true);
+
+    releaseDialogLevel(upper);
+    expect(lowerFlags.at(-1)).toBe(true);
+  });
+
   // Past the ceiling the level repeats, so a release resolved by level would
   // splice — and un-inert — the wrong, still-open entry.
   it('releases by identity when two entries share the clamped level', () => {
