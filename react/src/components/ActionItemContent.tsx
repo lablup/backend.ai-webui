@@ -19,7 +19,6 @@ interface StartItemContentProps {
   onClick?: () => void;
   to?: To;
   themeColor?: string;
-  itemRole?: 'user' | 'admin';
   type?: 'simple' | 'default';
   style?: React.CSSProperties;
 }
@@ -33,13 +32,11 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   to,
   themeColor,
   type = 'default',
-  itemRole = 'user',
   style,
 }) => {
   const { token } = theme.useToken();
   const containerRef = useRef<HTMLDivElement>(null);
-  const accentColor =
-    themeColor ?? (itemRole === 'user' ? token.colorPrimary : token.colorInfo);
+  const accentColor = themeColor ?? token.colorPrimary;
   const accentColorWithAlpha = `rgba(${parseInt(accentColor.slice(1, 3), 16)}, ${parseInt(accentColor.slice(3, 5), 16)}, ${parseInt(accentColor.slice(5, 7), 16)}, 0.15)`;
 
   // PILOT-DECISION: antd `Button type="primary"` hand-painted with
