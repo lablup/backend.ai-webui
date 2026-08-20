@@ -29,10 +29,14 @@
   // two independently content-hashed standalone scripts with no shared
   // module, so the duplication is deliberate.
   //
-  // Shortcuts must fire on the same physical key regardless of the
-  // active input language. `e.key` is the *character the layout/IME
-  // produced*: with a Hangul IME active, Cmd-K reports `e.key === 'ㅏ'`
-  // (or 'Process' mid-composition), so a plain `e.key === 'k'` check
+  // For MODIFIER CHORDS ONLY (Cmd/Ctrl+K). Bare printable shortcuts must
+  // keep matching on the produced character, or Shift variants collide —
+  // e.g. Shift+/ reports key '?' with code 'Slash'.
+  //
+  // A chord must fire on the same physical key regardless of the active
+  // input language. `e.key` is the *character the layout/IME produced*:
+  // with a Hangul IME active, Cmd-K reports `e.key === 'ㅏ'` (or
+  // 'Process' mid-composition), so a plain `e.key === 'k'` check
   // silently stops matching. `e.code` names the physical key ('KeyK')
   // and is layout- and IME-independent.
   //

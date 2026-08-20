@@ -35,10 +35,13 @@
   // independently content-hashed standalone scripts with no shared
   // module, so the duplication is deliberate.
   //
-  // Shortcuts must fire on the same physical key regardless of the
-  // active input language. `e.key` is the *character the layout/IME
-  // produced*: with a Hangul IME active, Cmd-K reports `e.key === 'ㅏ'`
-  // (or 'Process' mid-composition), so a plain `e.key === "k"` check
+  // For MODIFIER CHORDS ONLY (Cmd/Ctrl+K). Bare printable shortcuts like
+  // `/` must keep matching on the produced character — see `isSlash`.
+  //
+  // A chord must fire on the same physical key regardless of the active
+  // input language. `e.key` is the *character the layout/IME produced*:
+  // with a Hangul IME active, Cmd-K reports `e.key === 'ㅏ'` (or
+  // 'Process' mid-composition), so a plain `e.key === "k"` check
   // silently stops matching. `e.code` names the physical key ("KeyK")
   // and is layout- and IME-independent.
   //
@@ -511,11 +514,12 @@
     var key = e.key;
     var isCmdK =
       (e.metaKey || e.ctrlKey) && matchesShortcutKey(e, "KeyK", "k");
-    var isSlash =
-      matchesShortcutKey(e, "Slash", "/") &&
-      !e.metaKey &&
-      !e.ctrlKey &&
-      !e.altKey;
+    // `/` is matched by the character the layout produced, NOT by physical
+    // key. The `e.code` fallback exists for chords whose letter an IME
+    // swaps out (Cmd-K → "ㅏ"); a Hangul IME does not remap the `/` key,
+    // so `/` never needed it — and taking it would misfire, since Shift+/
+    // reports key "?" with code "Slash" and would open the palette on "?".
+    var isSlash = key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey;
     var inField =
       document.activeElement &&
       (document.activeElement.tagName === "INPUT" ||

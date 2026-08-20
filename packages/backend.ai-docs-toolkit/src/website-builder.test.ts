@@ -2057,6 +2057,15 @@ describe("keyboard shortcuts — single owner, layout-independent", () => {
     }
   });
 
+  it("matches `/` by produced character, not physical key", () => {
+    // The physical-key fallback is for chords whose letter an IME swaps
+    // out. Applying it to `/` would also fire on Shift+/ — same `Slash`
+    // code, but the character is "?", which is not the shortcut.
+    const code = codeOnly(interactionsSource);
+    assert.match(code, /var isSlash =\s*key === "\/"/);
+    assert.doesNotMatch(code, /matchesShortcutKey\(e, "Slash"/);
+  });
+
   it("does not gate Cmd-K on defaultPrevented", () => {
     // The old `(isCmdK || ...) && !e.defaultPrevented` guard is exactly
     // what let search.js disable the shortcut. `/` keeps the guard

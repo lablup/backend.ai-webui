@@ -58,6 +58,23 @@ test("`/` opens the palette when not typing in a field", async ({ page }) => {
   await expect(page.locator(palette)).toBeVisible();
 });
 
+// `/` is a bare printable shortcut, so it matches on the produced
+// character — never on the physical key. "?" sits on the same physical
+// `Slash` key but is not the shortcut. Routing `/` through the
+// physical-key fallback would open the palette on every question mark.
+//
+// Press "?" rather than "Shift+/": Playwright applies no shift-layout
+// translation to a chord, so `press("Shift+/")` reports key "/" and
+// tests nothing. `press("?")` reports key "?" with code "Slash" — the
+// same shape a real US-layout keyboard produces.
+test("`?` (same physical key as `/`) does not open the palette", async ({
+  page,
+}) => {
+  await page.goto(PAGE);
+  await page.keyboard.press("?");
+  await expect(page.locator(palette)).toBeHidden();
+});
+
 // Playwright's keyboard API always reports a `key` consistent with a US
 // layout, so an IME cannot be driven directly. Dispatching the event
 // shape a Hangul IME actually produces — physical `KeyK`, but `key` set
