@@ -46,13 +46,16 @@ beforeAll(() => {
       matches: evaluateQuery(query, viewportWidth),
       evaluate: () => evaluateQuery(query, viewportWidth),
       listeners,
-      addEventListener: (_type: string, cb: () => void) => listeners.add(cb),
-      removeEventListener: (_type: string, cb: () => void) =>
-        listeners.delete(cb),
+      addEventListener: (_type: string, cb: () => void) => {
+        listeners.add(cb);
+      },
+      removeEventListener: (_type: string, cb: () => void) => {
+        listeners.delete(cb);
+      },
     };
     mockLists.push(list);
     return list;
-  }) as typeof window.matchMedia;
+  }) as unknown as typeof window.matchMedia;
 });
 
 const Probe: React.FC<{ id: string }> = ({ id }) => {
