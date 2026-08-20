@@ -34,6 +34,8 @@ export const toSearchConfigFlags = (baiClient: {
 export interface GlobalSearchSource extends SearchSource<SearchHit> {
   /** Astryx signals selection by id only; ids may carry `recent:` / `#found=`. */
   getHit: (id: string) => SearchHit | undefined;
+  /** Read by the swizzled `CommandPalette` to seed its first render commit. */
+  bootstrapSync: () => Array<SearchHit>;
 }
 
 /**
@@ -143,6 +145,10 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
         recentIds,
       }),
     bootstrap: () => bootstrapRows,
+    // The same rows `bootstrap()` returns — `getSearchArtifacts` already built
+    // them during this render — declared sync so the palette can commit them
+    // with its first render instead of awaiting a transition.
+    bootstrapSync: () => bootstrapRows,
     getHit: (id: string) => hitById[baseHitId(id)],
   };
 };

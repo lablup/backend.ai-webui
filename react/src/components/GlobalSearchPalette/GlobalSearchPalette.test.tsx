@@ -168,6 +168,10 @@ vi.mock('./useRecentSearchHits', () => ({
   useRecentSearchHits: () => [[], { push: pushRecent, clear: vi.fn() }],
 }));
 
+// Production's source answers the empty query synchronously; a generic Astryx
+// source does not. Flip this to cover the async fallback.
+let hasSyncBootstrap = true;
+
 vi.mock('./useGlobalSearchSource', () => ({
   toTranslator: () => (key: string) => key,
   toSearchConfigFlags: () => ({ fasttrackEndpoint: null }),
@@ -179,6 +183,7 @@ vi.mock('./useGlobalSearchSource', () => ({
           hit.label.toLowerCase().includes(query.toLowerCase()),
         ),
       bootstrap: () => bootstrapGate.result(hits),
+      ...(hasSyncBootstrap ? { bootstrapSync: () => hits } : {}),
       getHit: (id: string) => hits.find((hit) => hit.id === id),
     };
   },
@@ -203,10 +208,13 @@ describe('GlobalSearchPalette', () => {
     vi.clearAllMocks();
     suspension.release();
     bootstrapGate.release(hits);
+    hasSyncBootstrap = true;
   });
 
   it('fills the list with skeleton rows while bootstrap is pending, never the default copy', async () => {
     const user = userEvent.setup();
+    // Only a source without `bootstrapSync` can ever have a pending bootstrap.
+    hasSyncBootstrap = false;
     bootstrapGate.hold();
     render(<GlobalSearchPaletteButton />);
     await user.click(screen.getByRole('button', { name: 'webui.menu.Search' }));
@@ -311,6 +319,53 @@ describe('GlobalSearchPalette', () => {
     const iconSlot = textColumn.previousElementSibling as HTMLElement;
     expect(iconSlot).toBeTruthy();
     expect(iconSlot.querySelector('svg')).toBeTruthy();
+  });
+
+  it("commits the whole bootstrap list with the palette's first render", async () => {
+    const user = userEvent.setup();
+    let sawPlaceholder = false;
+    const scan = (records: Array<MutationRecord>) => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (
+            node instanceof HTMLElement &&
+            (node.matches('.astryx-skeleton') ||
+              node.querySelector('.astryx-skeleton') !== null)
+          ) {
+            sawPlaceholder = true;
+          }
+        }
+      }
+    };
+    const observer = new MutationObserver(scan);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    render(<GlobalSearchPaletteButton />);
+    await user.click(screen.getByRole('button', { name: 'webui.menu.Search' }));
+
+    // Deliberately no `waitFor`: every row has to be in the same commit that
+    // mounted the dialog, which is the commit the browser paints.
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('Sessions')).toBeInTheDocument();
+    expect(screen.getByText('Auto logout')).toBeInTheDocument();
+    expect(screen.getByText('Toggle sidebar')).toBeInTheDocument();
+
+    scan(observer.takeRecords());
+    observer.disconnect();
+    expect(sawPlaceholder).toBe(false);
+  });
+
+  it('falls back to the async bootstrap for a source without bootstrapSync', async () => {
+    hasSyncBootstrap = false;
+    const user = userEvent.setup();
+
+    render(<GlobalSearchPaletteButton />);
+    await user.click(screen.getByRole('button', { name: 'webui.menu.Search' }));
+
+    await waitFor(() =>
+      expect(screen.getByText('Sessions')).toBeInTheDocument(),
+    );
+    expect(screen.getByText('Toggle sidebar')).toBeInTheDocument();
   });
 
   it('shows the no-results copy for a query that matches nothing', async () => {
