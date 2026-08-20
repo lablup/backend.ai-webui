@@ -255,8 +255,11 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             }}
             onClick={(e) => {
               e.stopPropagation();
-              const targetEl = e.target as HTMLElement;
-              if (targetEl.closest('button')) return;
+              // The directory name itself is an Astryx `Link` <button> (no
+              // href), so excluding every <button> swallowed the navigating
+              // click; the rename trigger stops propagation on its own, and
+              // only its inline <form> has to be excluded here (FR-3602).
+              if ((e.target as HTMLElement).closest('form')) return;
               if (record.type === 'DIRECTORY') {
                 navigateDown(name);
                 setSelectedItems([]);
