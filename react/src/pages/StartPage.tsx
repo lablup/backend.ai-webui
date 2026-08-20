@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AstryxSecondaryTheme } from '../astryx-theme';
 import ActionItemContent from '../components/ActionItemContent';
 import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
-import { AstryxSecondaryTheme } from '../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -15,6 +15,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { MenuKeys } from '../hooks/useWebUIMenuItems';
+import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
 import {
@@ -41,6 +42,7 @@ interface StartPageBoardItem extends BAIBoardItem {
 const StartPage: React.FC = () => {
   const { t } = useTranslation();
 
+  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const blockList = baiClient?._config?.blockList ?? [];
@@ -220,14 +222,10 @@ const StartPage: React.FC = () => {
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
       data: {
-        // The deployment card takes the SECONDARY accent. This was
-        // `ThemeSecondaryProvider`, an antd `ConfigProvider` overriding
-        // `colorPrimary` — dead since `ActionItemContent` became Astryx.
-        // `AstryxSecondaryTheme` is the counterpart that reaches the Astryx
-        // `Button` again (ticket 02). The card's title/icon colours still come
-        // from the app-level theme-shim token object, which is not
-        // per-subtree, so they keep the brand accent — recorded in
-        // MERGE-CHECKLIST as a known partial-fidelity item.
+        // The deployment card takes the SECONDARY accent. `AstryxSecondaryTheme`
+        // reaches the Astryx `Button`; the title/icon read the app-level
+        // theme-shim token object instead (not per-subtree), so they need the
+        // accent passed explicitly via `themeColor`.
         content: (
           <AstryxSecondaryTheme>
             <ActionItemContent
@@ -235,6 +233,7 @@ const StartPage: React.FC = () => {
               description={t('start.StartDeploymentDesc')}
               buttonText={t('start.button.StartDeployment')}
               icon={<Grid2x2Plus size="1em" />}
+              themeColor={token.colorSuccess}
               onClick={() => webuiNavigate(buildProjectPath('deployments'))}
             />
           </AstryxSecondaryTheme>
