@@ -36,6 +36,9 @@
 */
 .main-layout-main-content {
   transition: margin-right 0.3s ease;
+  /* FR-3612: fill AppShell's main slot so the scroll column inside can size
+     itself with `height: 100%` (it owned `100vh` before AppShell). */
+  height: 100%;
 }
 
 .main-layout-main-content.margin-style {

@@ -1,0 +1,19 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <WebUIMobileNav> (P17). The accent band behind the
+ drawer-header logo — the wordmark assets are band artwork (white /
+ near-black fills) and disappear on the drawer's plain surface without it.
+ An inset chip-sized cousin of the rail's full-bleed band
+ (`.bai-sider .logo-and-text-container`), sized to MobileNav's header row.
+*/
+
+.webui-mobile-nav-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  background-color: var(--color-accent);
+  padding-inline: var(--spacing-4);
+  padding-block: var(--spacing-2);
+}

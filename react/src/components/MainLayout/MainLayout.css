@@ -36,6 +36,16 @@
   background-color: var(--color-border);
 }
 
+/* FR-3612: AppShell renders the sideNav slot in a LayoutPanel that is
+   `overflow: auto` in fill mode, which would re-clip the hover collapse
+   toggle (it protrudes translateX(12px) past the rail — see BAISider) and
+   the rail's box-shadow, and paint a permanent horizontal scrollbar.
+   SideNav owns its own internal scroll column, so the panel never needs to
+   scroll. Unlayered app CSS beats the @layer'd StyleX rule. */
+.astryx-app-shell-sidenav.astryx-layout-panel {
+  overflow: visible;
+}
+
 /* Top/bottom breathing room for the stacked layout alerts. */
 .main-layout-alert-wrapper > *:first-child {
   margin-top: var(--spacing-4);

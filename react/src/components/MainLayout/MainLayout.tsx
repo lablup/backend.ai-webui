@@ -12,6 +12,7 @@ import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import { theme } from '../../theme-shim';
+import AnnouncementBanner from '../AnnouncementBanner';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
@@ -27,13 +28,16 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
+import WebUIMobileNav from './WebUIMobileNav';
 import WebUISider from './WebUISider';
+import { AppShell, useAppShellMobile } from '@astryxdesign/core/AppShell';
 import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
   Suspense,
   useEffect,
+  useEffectEvent,
   useLayoutEffect,
   useRef,
   useState,
@@ -51,22 +55,47 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   },
 );
 
+/**
+ * FR-3612: Astryx `AppShell` is now the shell frame, completing the half of
+ * MAPPING §5 that FR-3482 deferred. The three blockers that deferred it are
+ * resolved without giving up the original layout:
+ * - scroll ownership — the app's scroll container (published via
+ *   `mainContentDivRefState`, scroll parent of the sticky header) now lives
+ *   INSIDE the main slot at `height: 100%`, so AppShell's own scroller never
+ *   engages and the ref/sticky contracts are untouched;
+ * - `topNav` stays deliberately unused — the header remains in the content
+ *   column beside the sider's brand band (original-fidelity);
+ * - `BAIContentWithDrawerArea` wraps the main slot's children unchanged.
+ * In exchange the shell owns the skip link, the landmarks, the `banner` slot
+ * (announcement) and the mobile drawer swap (`WebUIMobileNav`).
+ */
 function MainLayout() {
   'use memo';
   const navigate = useWebUINavigate();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const matches = useMatches();
   // @ts-ignore
   const isHiddenBreadcrumb = _.last(matches)?.handle?.hideBreadcrumb ?? false;
+  const location = useLocation();
+  const pageTestId = usePageTestId();
 
   const [prevCompactSidebarActive, setPrevCompactSidebarActive] =
     useState(compactSidebarActive);
   if (prevCompactSidebarActive !== compactSidebarActive) {
     setPrevCompactSidebarActive(compactSidebarActive);
     setSideCollapsed(!!compactSidebarActive);
+  }
+
+  // Close the mobile nav drawer once a menu selection navigates
+  // (adjust-state-during-render, same pattern as the compact-sidebar sync).
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname);
+    setIsMobileNavOpen(false);
   }
 
   useKeyboardShortcut(
@@ -81,7 +110,6 @@ function MainLayout() {
     },
   );
 
-  // const currentDomainName = useCurrentDomainValue();
   const { token } = theme.useToken();
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
@@ -114,32 +142,47 @@ function MainLayout() {
   const headerHeight = Number(token.Layout?.headerHeight) || 60;
 
   return (
-    <LayoutWithPageTestId>
+    <>
       <CSSTokenVariables />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
-        <WebUISider
-          collapsed={sideCollapsed}
-          onBreakpoint={(broken) => {
-            if (broken) {
-              setSideCollapsed(true);
-            } else {
-              !compactSidebarActive && setSideCollapsed(false);
-            }
-          }}
-          onCollapse={(collapsed, type) => {
-            type === 'clickTrigger' && setSideCollapsed(collapsed);
-          }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            flex: 'auto',
-            minWidth: 0,
-            backgroundColor: 'transparent',
+        <AppShell
+          data-testid={pageTestId}
+          // `wash` paints `--color-background-body` behind nav and content —
+          // the same token the `body`/splash backdrop already uses.
+          variant="wash"
+          height="fill"
+          contentPadding={0}
+          banner={
+            <ErrorBoundaryWithNullFallback>
+              <Suspense fallback={null}>
+                <AnnouncementBanner />
+              </Suspense>
+            </ErrorBoundaryWithNullFallback>
+          }
+          sideNav={
+            <WebUISider
+              collapsed={sideCollapsed}
+              onCollapse={(collapsed, type) => {
+                type === 'clickTrigger' && setSideCollapsed(collapsed);
+              }}
+            />
+          }
+          mobileNav={{
+            // The header's own hamburger opens the drawer (via the AppShell
+            // mobile context) — no auto toggle bar.
+            hasToggle: false,
+            breakpoint: 'md',
+            isOpen: isMobileNavOpen,
+            onOpenChange: setIsMobileNavOpen,
+            content: (
+              <Suspense fallback={null}>
+                <WebUIMobileNav />
+              </Suspense>
+            ),
           }}
         >
+          <MobileNavStateSync onLeaveMobile={() => setIsMobileNavOpen(false)} />
           <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
             <BAIFlex
               ref={contentScrollFlexRef}
@@ -149,7 +192,7 @@ function MainLayout() {
                 paddingLeft: token.paddingContentHorizontalLG,
                 paddingRight: token.paddingContentHorizontalLG,
                 paddingBottom: token.paddingContentVertical,
-                height: '100vh',
+                height: '100%',
                 overflow: 'auto',
               }}
             >
@@ -172,9 +215,7 @@ function MainLayout() {
                       />
                     }
                   >
-                    <WebUIHeader
-                      onClickMenuIcon={() => setSideCollapsed((v) => !v)}
-                    />
+                    <WebUIHeader />
                   </Suspense>
                   {/* sticky Alert components with banner props */}
                   <ErrorBoundaryWithNullFallback>
@@ -269,11 +310,32 @@ function MainLayout() {
               </BAIErrorBoundary>
             </BAIFlex>
           </BAIContentWithDrawerArea>
-        </div>
+        </AppShell>
       </Suspense>
-    </LayoutWithPageTestId>
+    </>
   );
 }
+
+/**
+ * Resets the drawer's controlled open state when the viewport leaves mobile.
+ * Reads AppShell's OWN breakpoint verdict from the mobile context (it must be
+ * the exact complement — a second media query would disagree at exactly 768px)
+ * so a stale `true` can't pop the drawer back open on the next rotation below
+ * the breakpoint.
+ */
+const MobileNavStateSync: React.FC<{ onLeaveMobile: () => void }> = ({
+  onLeaveMobile,
+}) => {
+  'use memo';
+  const { isMobile } = useAppShellMobile();
+  const onLeave = useEffectEvent(onLeaveMobile);
+  useEffect(() => {
+    if (!isMobile) {
+      onLeave();
+    }
+  }, [isMobile]);
+  return null;
+};
 
 /**
  * Feeds the server's resource slots to `backend.ai-ui`. Sits inside the routed
@@ -329,16 +391,9 @@ const AutoAdminPrimaryColorProvider = ({
   const isAdminScope = useRouteScope() !== 'project';
   if (isAdminScope) {
     return (
-      // `AstryxAdminTheme` is now the WHOLE accent swap. It used to be paired
-      // with an antd `ConfigProvider` (`colorPrimary: primaryColors.admin`)
-      // plus an antd `<App>` for the message/modal/notification holders,
-      // because the two libraries' theme switches were independent (MAPPING
-      // §5) and both had to be driven. The final switch removed the antd side
-      // entirely: no antd component is left to theme, and the `App` holders
-      // were replaced by `BAIAppProvider` (app-shim, ticket 04), which is
-      // mounted once app-wide in `DefaultProviders`. Dropping the `App`
-      // wrapper also drops the `display: contents` workaround its structural
-      // div needed.
+      // `AstryxAdminTheme` is the whole accent swap — the antd
+      // `ConfigProvider` + `App` pairing it replaced went away with the final
+      // switch (FR-3482 tickets 04/35).
       <AstryxAdminTheme>{children}</AstryxAdminTheme>
     );
   }
@@ -347,53 +402,21 @@ const AutoAdminPrimaryColorProvider = ({
 };
 
 /**
- * PILOT-DECISION (the frame): antd `Layout` → a plain flex row, and Astryx
- * **`AppShell` is deliberately NOT adopted** even though MAPPING §5 names it
- * as `Layout`'s destination. `AppShell` is an opinionated frame, not a
- * translation of this one:
- *
- *  - It owns the scroll containers and renders its own `<main>`. This layout
- *    publishes ITS scroll container through a jotai atom
- *    (`mainContentDivRefState`) that pages read for scroll-to-top and
- *    infinite scroll, and it relies on that same element being the scroll
- *    parent for the sticky header. `AppShell` exposes no ref to its scroller,
- *    so adopting it would mean nesting a second scroll container inside
- *    `main` — which breaks the sticky header outright.
- *  - Its `topNav` slot spans the FULL width, above the side nav. This app's
- *    header spans only the content column, beside the sider's own branded
- *    logo band. Moving it into `topNav` would relocate the brand bar, i.e.
- *    change the layout rather than port it (original-fidelity rule).
- *  - `BAIContentWithDrawerArea` shifts the content region when the
- *    notification drawer opens; there is no `AppShell` slot for that.
- *
- * `SideNav` — the other half of the §5 recipe — IS adopted (see `BAISider`).
- * Revisit `AppShell` at ticket 35, when the notification drawer and the
- * scroll-ref consumers have themselves moved.
+ * Stable page test id for e2e (`page-<menuKey>`), scope-aware so
+ * `/project/<name>/session` and `/admin/session` don't leak the project name
+ * into the selector; falls back to the cleaned pathname for routes without a
+ * feature handle (login utils, error, etc.). Applied to the AppShell root.
  */
-const LayoutWithPageTestId: React.FC<{
-  children?: React.ReactNode;
-}> = (props) => {
+const usePageTestId = () => {
   'use memo';
   const location = useLocation();
-  // Prefer the scope-aware menu key (route handle) so the page test id stays
-  // stable across the scope-prefixed URLs (e.g. `/project/<name>/session` and
-  // `/admin/session` both yield `page-session` / `page-admin-session` rather
-  // than leaking the project name into the selector). Fall back to the cleaned
-  // pathname for routes without a feature handle (login utils, error, etc.).
   const currentMenuKey = useCurrentMenuKey();
   const cleanPath = location.pathname.replace(/^\//, '').replace(/\//g, '-');
-  const pageTest = currentMenuKey
+  return currentMenuKey
     ? `page-${currentMenuKey}`
     : cleanPath
       ? `page-${cleanPath}`
       : 'page-root';
-  return (
-    <div
-      {...props}
-      style={{ display: 'flex', flexDirection: 'row', minHeight: '100vh' }}
-      data-testid={pageTest}
-    />
-  );
 };
 
 /**
