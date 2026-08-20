@@ -3,17 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  AdminUserManagementQuery,
+  AdminUserManagementQuery as AdminUserManagementQueryType,
   AdminUserManagementQuery$data,
   UserV2Filter,
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { App } from '../app-shim';
-import { convertToOrderBy } from '../helper';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTOTPSupported } from '../hooks/backendai';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { theme } from '../theme-shim';
@@ -36,14 +34,11 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAIUnmountAfterClose,
-  INITIAL_FETCH_KEY,
   UserV2InList,
-  availableUserV2SorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
-  useFetchKey,
   useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -56,39 +51,73 @@ import {
   SquarePenIcon,
   UndoIcon,
 } from 'lucide-react';
-import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  useMutation,
+  usePreloadedQuery,
+  type PreloadedQuery,
+  type UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
 
-interface AdminUserManagementProps {}
+export const AdminUserManagementQuery = graphql`
+  query AdminUserManagementQuery(
+    $filter: UserV2Filter
+    $orderBy: [UserV2OrderBy!]
+    $limit: Int
+    $offset: Int
+    $isNotSupportTotp: Boolean!
+  ) {
+    adminUsersV2(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) {
+      count
+      edges {
+        node {
+          id
+          basicInfo {
+            email
+          }
+          ...BAIAdminUserV2TableFragment
+          ...PurgeUsersModalFragment
+          ...UpdateUsersModalFragment
+          ...UserInfoModalFragment
+          ...UserSettingModalFragment
+        }
+      }
+    }
+  }
+`;
+
+export const USER_LIST_DEFAULT_PAGE_SIZE = 10;
+
+interface AdminUserManagementProps {
+  queryRef: PreloadedQuery<AdminUserManagementQueryType>;
+  onReload: (
+    variables: AdminUserManagementQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+}
 
 type UserNode = NonNullable<
   NonNullable<AdminUserManagementQuery$data['adminUsersV2']>['edges']
 >[number];
 
-const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
+const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
+  queryRef,
+  onReload,
+}) => {
   'use memo';
 
   const { logger } = useBAILogger();
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [fetchKey, updateFetchKey] = useFetchKey();
 
   const bailClient = useSuspendedBackendaiClient();
-
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      filter: parseAsJson<UserV2Filter>((value) => value as UserV2Filter),
-      order: parseAsStringLiteral(availableUserV2SorterValues),
-      status: parseAsStringLiteral(['ACTIVE', 'INACTIVE']).withDefault(
-        'ACTIVE',
-      ),
-    },
-    {
-      history: 'replace',
-    },
-  );
   const { message } = App.useApp();
 
   const [selectedUserForInfoModal, setSelectedUserForInfoModal] = useState<
@@ -108,35 +137,20 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
   const [openUpdateUsersModal, { toggle: toggleUpdateUsersModal }] =
     useToggle(false);
 
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
-    current: 1,
-    pageSize: 10,
-  });
+  // The page owns URL state and the fetch; this component derives every
+  // filter/order/pagination control from the last requested variables and
+  // funnels changes back through `onReload`.
+  const variables = queryRef.variables;
+  const isTOTPSupported = !variables.isNotSupportTotp;
+  const statusValue =
+    variables.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
+  const propertyFilterValue = _.omit(variables.filter ?? {}, 'status');
+  const orderValue = convertFirstOrderByToString(variables.orderBy);
+  const pageSize = variables.limit ?? USER_LIST_DEFAULT_PAGE_SIZE;
+  const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 
-  const { isTOTPSupported } = useTOTPSupported();
-
-  const statusFilter =
-    queryParams.status === 'ACTIVE'
-      ? ({ equals: 'ACTIVE' } as const)
-      : ({ notEquals: 'ACTIVE' } as const);
-
-  const queryVariables = {
-    filter: {
-      ...(queryParams.filter ?? {}),
-      status: statusFilter,
-    },
-    orderBy: convertToOrderBy<Required<UserV2OrderBy>>(queryParams.order),
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-    isNotSupportTotp: !isTOTPSupported,
-  };
-
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isPending = deferredQueryRef !== queryRef;
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminUserManagement',
@@ -144,46 +158,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
 
   const { supportedFields, exportCSV } = useCSVExport('users');
 
-  const { adminUsersV2 } = useLazyLoadQuery<AdminUserManagementQuery>(
-    graphql`
-      query AdminUserManagementQuery(
-        $filter: UserV2Filter
-        $orderBy: [UserV2OrderBy!]
-        $limit: Int
-        $offset: Int
-        $isNotSupportTotp: Boolean!
-      ) {
-        adminUsersV2(
-          filter: $filter
-          orderBy: $orderBy
-          limit: $limit
-          offset: $offset
-        ) {
-          count
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-              }
-              ...BAIAdminUserV2TableFragment
-              ...PurgeUsersModalFragment
-              ...UpdateUsersModalFragment
-              ...UserInfoModalFragment
-              ...UserSettingModalFragment
-            }
-          }
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
+  const { adminUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
+    AdminUserManagementQuery,
+    deferredQueryRef,
   );
 
   // >= 26.4.0: adminUpdateUserV2 — status toggle keyed by userId.
@@ -259,7 +236,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
                   setSelectedUserList((prev) =>
                     prev.filter((user) => user?.node?.id !== record?.id),
                   );
-                  updateFetchKey();
+                  onReload(variables, { fetchPolicy: 'network-only' });
                 };
 
                 if (record?.id) {
@@ -426,11 +403,18 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
       <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
         <BAIFlex direction="row" gap={'sm'} align="start" wrap="wrap">
           <BAIRadioGroup
-            value={queryParams.status}
+            value={statusValue}
             onChange={(e) => {
-              setQueryParams({ status: e.target.value });
-              setTablePaginationOption({
-                current: 1,
+              onReload({
+                ...variables,
+                filter: {
+                  ...propertyFilterValue,
+                  status:
+                    e.target.value === 'ACTIVE'
+                      ? { equals: 'ACTIVE' }
+                      : { notEquals: 'ACTIVE' },
+                },
+                offset: 0,
               });
               setSelectedUserList([]);
             }}
@@ -448,10 +432,20 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           />
           <BAIGraphQLPropertyFilter<UserV2Filter>
             filterProperties={filterProperties}
-            value={queryParams.filter ?? undefined}
+            value={
+              _.isEmpty(propertyFilterValue)
+                ? undefined
+                : (propertyFilterValue as UserV2Filter)
+            }
             onChange={(value) => {
-              setQueryParams({ filter: value ?? null });
-              setTablePaginationOption({ current: 1 });
+              onReload({
+                ...variables,
+                filter: {
+                  ...(value ?? {}),
+                  status: variables.filter?.status,
+                },
+                offset: 0,
+              });
               setSelectedUserList([]);
             }}
           />
@@ -467,7 +461,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
                 icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                 onClick={toggleUpdateUsersModal}
               />
-              {queryParams.status === 'INACTIVE' && (
+              {statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
                     <Trash2 style={{ color: token.colorError }} size="1em" />
@@ -478,9 +472,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             </BAIFlex>
           )}
           <BAIFetchKeyButton
-            loading={deferredFetchKey !== fetchKey}
-            value={fetchKey}
-            onChange={updateFetchKey}
+            loading={isPending}
+            onChange={() => {
+              onReload(variables, { fetchPolicy: 'network-only' });
+            }}
           />
           {/* ONE attached control, not two adjacent buttons.
               `ButtonGroup` joins its children through CONTEXT, not through
@@ -567,7 +562,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               //
               // Reported as "default email column width 가 좁아서 컨트롤 버튼이
               // 모두 보이지 않음" (QA-FINDINGS Q-16). The column carries no
-              // width, so `BAITableAstryx` falls through to `proportional(1)`,
+              // width, so `BAITable` falls through to `proportional(1)`,
               // whose documented minimum is 120px; with 21 columns that is
               // 2452px against a 1600px viewport, so the flex share never
               // activates and EVERY column pins to that 120px floor. 120 minus
@@ -579,7 +574,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               // Legacy sized this column to its content: the antd table ran
               // `scroll={{ x: 'max-content' }}`, which puts rc-table in `auto`
               // layout (`git show origin/main:packages/backend.ai-ui/src/
-              // components/BAIAdminUserV2Table.tsx`), and `BAITableAstryx`
+              // components/BAIAdminUserV2Table.tsx`), and `BAITable`
               // accepts-and-ignores `scroll` by PILOT-DECISION. 320 = 200px of
               // email text + 8 gap + four 24px buttons with 2px gaps (102) +
               // 16 padding. The table already scrolls, so this takes nothing
@@ -590,14 +585,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           ];
         }}
         pagination={{
-          pageSize: tablePaginationOption.pageSize,
+          pageSize,
           total: adminUsersV2?.count || 0,
-          current: tablePaginationOption.current,
-          onChange: (current, pageSize) => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
+          current,
+          onChange: (nextCurrent, nextPageSize) => {
+            if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
+              onReload({
+                ...variables,
+                limit: nextPageSize,
+                offset: (nextCurrent - 1) * nextPageSize,
               });
               setSelectedUserList([]);
             }
@@ -618,14 +614,14 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           ),
         }}
         onChangeOrder={(nextOrder) => {
-          setQueryParams({ order: nextOrder });
+          onReload({
+            ...variables,
+            orderBy: convertToOrderBy<Required<UserV2OrderBy>>(nextOrder),
+          });
           setSelectedUserList([]);
         }}
-        order={queryParams.order}
-        loading={
-          deferredQueryVariables !== queryVariables ||
-          deferredFetchKey !== fetchKey
-        }
+        order={orderValue}
+        loading={isPending}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,
@@ -636,7 +632,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
                 supportedFields,
                 onExport: async (selectedExportKeys) => {
                   await exportCSV(selectedExportKeys, {
-                    status: [_.toLower(queryParams.status)],
+                    status: [_.toLower(statusValue)],
                   }).catch((err) => {
                     message.error(t('general.ErrorOccurred'));
                     logger.error(err);
@@ -660,7 +656,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onRequestClose={(success) => {
             setSelectedUserForSettingModal(null);
             if (success) {
-              updateFetchKey();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -674,7 +670,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             setOpenCreateModal(false);
             setOpenBulkCreateModal(false);
             if (success) {
-              updateFetchKey();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -685,7 +681,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onRequestClose={(success) => {
             setOpenBulkCreateCSVModal(false);
             if (success) {
-              updateFetchKey();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -696,7 +692,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onOk={() => {
             togglePurgeUsersModal();
             setSelectedUserList([]);
-            updateFetchKey();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }}
           onCancel={() => {
             togglePurgeUsersModal();
@@ -712,7 +708,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               prev.filter((user) => user?.node?.id !== purgeTargetId),
             );
             setPurgeTargetId(null);
-            updateFetchKey();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }}
           onCancel={() => {
             setPurgeTargetId(null);
@@ -730,7 +726,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onOk={() => {
             toggleUpdateUsersModal();
             setSelectedUserList([]);
-            updateFetchKey();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }}
           onCancel={() => {
             toggleUpdateUsersModal();

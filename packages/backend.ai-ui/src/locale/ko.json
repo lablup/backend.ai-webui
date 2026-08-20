@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "할당 자원 / 요청 자원"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "그룹 색상 변경",
+    "ResourceGrid": "자원 그리드",
+    "UseColorN": "색상 {{n}} 사용"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "제한없음"
   },

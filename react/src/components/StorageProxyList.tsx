@@ -21,7 +21,7 @@ import {
   BAIFlex,
   BAILink,
   BAIPureStorageIcon,
-  BAITableAstryx,
+  BAITable,
   BAIProgressWithLabel,
   BAIDoubleTag,
   BAIUnmountAfterClose,
@@ -276,7 +276,7 @@ const StorageProxyList = () => {
           }}
         />
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
         resizable
         size="small"
         rowKey={'id'}

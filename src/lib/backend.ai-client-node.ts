@@ -259,9 +259,6 @@ class Client {
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 15000;
-    //if (this._config.connectionMode === 'API') {
-    //this.getManagerVersion();
-    //}
   }
 
   /**
@@ -670,12 +667,8 @@ class Client {
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
-        //console.log("login succeed");
-      } else {
-        //console.log("login failed");
       }
     } catch (err) {
-      // console.log(err);
       return Promise.resolve(false);
     }
     return result.authenticated;
@@ -731,8 +724,6 @@ class Client {
             'Authentication failed. Check information and manager status.',
         };
       }
-      //console.log(err);
-      //return false;
     }
   }
 
@@ -785,8 +776,6 @@ class Client {
             'Authentication failed. Check information and manager status.',
         };
       }
-      //console.log(err);
-      //return false;
     }
   }
 
@@ -981,7 +970,6 @@ class Client {
     } else {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
-    //return this._wrapWithPromise(rqst);
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -1242,7 +1230,6 @@ class Client {
 
   async upload(sessionId, path, fs) {
     const formData = new FormData();
-    //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
     let rqst = this.newSignedRequest(
       'POST',
@@ -1330,7 +1317,6 @@ class Client {
       requestBody = JSON.stringify(body);
       authBody = requestBody;
     }
-    //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr;
     let hdrs;
     let uri = '';
@@ -1443,7 +1429,6 @@ class Client {
       credentials: 'include',
       mode: 'cors',
     });
-    //queryString = '/' + urlPrefix + queryString;
     let requestInfo = {
       method: method,
       headers: hdrs,
@@ -2673,32 +2658,6 @@ class Keypair {
       },
     };
     return this.client.query(q, v);
-    /** accessKey is no longer used */
-    /*
-    if (accessKey !== null && accessKey !== '') {
-      fields = fields.concat(['access_key', 'secret_key']);
-    } */
-    /* if (accessKey !== null && accessKey !== '') {
-      v = {
-        'user_id': userId,
-        'input': {
-          'is_active': isActive,
-          'is_admin': isAdmin,
-          'resource_policy': resourcePolicy,
-          'rate_limit': rateLimit,
-        },
-      };
-    } else {
-      v = {
-        'user_id': userId,
-        'input': {
-          'is_active': isActive,
-          'is_admin': isAdmin,
-          'resource_policy': resourcePolicy,
-          'rate_limit': rateLimit
-        },
-      };
-    } */
   }
 
   /**
@@ -3685,8 +3644,6 @@ class Domain {
    * };
    */
   async update(domain_name = false, input) {
-    //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-    //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
       let q =
         `mutation($name: String!, $input: ModifyDomainInput!) {` +

@@ -202,6 +202,9 @@ export interface BAIPowerSearchChromeProps {
   /**
    * Pre-formatted result count. Passed to PowerSearch as a STRING so the host's
    * own pluralisation wins over Astryx's "N results".
+   *
+   * @deprecated FR-3588 — Power search shows no result count. Kept only so the
+   * published API stays source-compatible; drop it in the next major.
    */
   resultCount?: string;
   /**

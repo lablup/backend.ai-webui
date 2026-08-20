@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 15;
+export const THEME_NAME_REV = 18;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -508,6 +508,18 @@ const STATUS_TEXT_COLORS = {
   },
 };
 
+// Astryx fills `.astryx-banner.info` from `--color-accent-muted`, which the
+// theme points at `--color-background-blue` — dark-only alpha (`#9eb7ff3D` =
+// 24%), so page content read through the notification cards. `#393f50` is that
+// fill composited over the dark page: same colour, opaque (FR-3554).
+const BANNER_OPAQUE_INFO_SURFACE = {
+  banner: {
+    'status:info': {
+      '--color-accent-muted': 'light-dark(#c4ddfb, #393f50)',
+    },
+  },
+};
+
 const SIDE_NAV_DENSITY = {
   // `SideNav`'s own StyleX sets `background-color: inherit` on the root AND on
   // its sticky top/bottom bands — it assumes an `AppShell` ancestor paints the
@@ -646,6 +658,20 @@ const FIELD_PAGE_OVERLAYS = {
  * flip/shift that Astryx's popover positioning already does is what keeps a
  * genuinely long menu on screen.
  */
+/**
+ * Pins the `ComplexSelector` field to the element-size ramp `Selector` uses.
+ * Astryx 0.4.0 sized it `min-height` + padding (40px at md, vs `Selector`'s
+ * 32px, so the two engines sat at different heights in one toolbar row); 0.4.3
+ * sets the same `height` itself, leaving this a redundant pin. FR-3536.
+ */
+const COMPLEX_SELECTOR_HEIGHT_PARITY = {
+  'complex-selector': {
+    base: { height: 'var(--size-element-md)' },
+    'size:sm': { height: 'var(--size-element-sm)' },
+    'size:lg': { height: 'var(--size-element-lg)' },
+  },
+};
+
 const ANTD_DROPDOWN_DENSITY = {
   'dropdown-menu': {
     base: {
@@ -752,6 +778,10 @@ const ANTD_HOVER_PARITY = {
       // trigger's context — a `<button>` trigger (SegmentedControl) leaks its
       // UA-default `center` down to the popover text. FR-3537.
       textAlign: 'start',
+      // Same leak, one property over: Astryx tooltips are NOT portalled, so a
+      // truncating trigger's `nowrap` reaches the bubble and its 300px content
+      // cap can no longer wrap — the text paints outside the surface. FR-3573.
+      whiteSpace: 'normal',
     },
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
@@ -920,6 +950,7 @@ export const computeThemeName = (
       ANTD_STATUS_ON_COLORS,
       ANTD_DIALOG_SURFACE,
       ANTD_DROPDOWN_DENSITY,
+      COMPLEX_SELECTOR_HEIGHT_PARITY,
       FIELD_PAGE_OVERLAYS,
     ]),
   );
@@ -1036,8 +1067,10 @@ export function buildBackendAiTheme(
     components: {
       ...SIDE_NAV_DENSITY,
       ...STATUS_TEXT_COLORS,
+      ...BANNER_OPAQUE_INFO_SURFACE,
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
+      ...COMPLEX_SELECTOR_HEIGHT_PARITY,
       ...FIELD_PAGE_OVERLAYS,
       ...ANTD_HOVER_PARITY,
     },

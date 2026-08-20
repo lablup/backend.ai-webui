@@ -13,7 +13,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import type { BAITableProps } from 'backend.ai-ui';
@@ -148,7 +148,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
   );
 
   return (
-    <BAITableAstryx<AutoScalingRuleNode>
+    <BAITable<AutoScalingRuleNode>
       rowKey="id"
       columns={[
         {

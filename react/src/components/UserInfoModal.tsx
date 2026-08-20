@@ -50,7 +50,9 @@ const UserInfoModal: React.FC<Props> = ({
           needPasswordChange
         }
         security {
-          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
           sudoSessionEnabled
         }
         organization {

@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <BAITableAstryx> (to-astryx ticket 30-D). Replaces
- `BAITable.css`, which is gone with the antd engine.
+ Co-located styles for <BAITable>. Renamed from `BAITableAstryx.css` in
+ FR-3564; the antd engine's own stylesheet is gone.
 
  Two rules survive the engine swap.
 
@@ -24,7 +24,7 @@
     so a table that really IS the card's only content sits flush against the
     card's top/bottom edges, and a table with siblings does not.
 
-    `BAITableAstryx` wraps Astryx's `<Table>` in its own dim layer (the
+    `BAITable` wraps Astryx's `<Table>` in its own dim layer (the
     loading-state opacity wrapper) and renders the pagination bar as a SIBLING
     of that layer. That makes Astryx's scroll wrapper the ONLY child of the dim
     layer, so it matches BOTH `:first-child` AND `:last-child` regardless of
@@ -57,7 +57,7 @@
   /*
    Unblock the header's clip wrapper inside Astryx's sort button.
 
-   `BAITableAstryx` already wraps every header label in an
+   `BAITable` already wraps every header label in an
    `overflow: hidden; text-overflow: ellipsis` span, because Astryx's own
    `overflowStyles.cell` clip is cancelled on the `<th>` by
    `useTableColumnResize` (which needs `overflow: visible` so its drag handle
@@ -115,7 +115,7 @@
    Astryx paints no background on `th`, so a sticky header needs its own opaque
    base — the same token the sticky-column plugin uses, so a pinned corner
    matches. z-index 2 clears pinned BODY cells (z 1); this layer outranks the
-   plugin's `astryx-base` z 3 on pinned HEADER cells, which BAITableAstryx
+   plugin's `astryx-base` z 3 on pinned HEADER cells, which BAITable
    restores inline. `overflow` is untouched: the resize drag handle needs
    `visible` to reach through the body.
 
@@ -133,5 +133,64 @@
       --table-sticky-background,
       var(--color-background-card)
     );
+  }
+}
+
+@layer components {
+  /*
+   antd-style header band. The wash is painted card-base + muted-overlay so it
+   stays opaque under the scroll-y sticky header (--color-background-muted
+   alone is semi-transparent). The between-columns split is a background layer,
+   not a `th::after` (collides with the sticky-columns plugin's edge-shadow
+   pseudo) and not a positioned child (a positioned `th` would fight the
+   scroll-y `position: sticky` above). 1.6em inset height = antd's
+   `headerSplitColor` rule.
+  */
+  .bai-table-astryx-dim-layer thead th {
+    background-color: var(--color-background-card);
+    background-image: linear-gradient(
+      var(--color-background-muted),
+      var(--color-background-muted)
+    );
+  }
+
+  /*
+   Only where a resize handle actually exists — the injected selection column
+   and the last column render none, so they get no split (FR-3566 follow-up).
+   `:not(table table)` keeps the split off tables nested inside cells /
+   expandedRowRender (whose own wrapper may be bordered), as above.
+  */
+  .bai-table-astryx-header-split
+    table:not(table table)
+    > thead
+    th:has([role='separator']) {
+    background-image:
+      linear-gradient(
+        var(--color-border-emphasized),
+        var(--color-border-emphasized)
+      ),
+      linear-gradient(
+        var(--color-background-muted),
+        var(--color-background-muted)
+      );
+    background-repeat: no-repeat;
+    background-position:
+      right center,
+      0 0;
+    background-size:
+      var(--border-width) 1.6em,
+      100% 100%;
+  }
+
+  /*
+   On a SORTABLE header Astryx anchors the resize handle (`right: 0`) to the
+   inner flex wrapper around the sort button, which sits one cell-padding
+   (8px measured) inside the `<th>` — so the whole 8px hit zone misses the
+   actual column boundary. Un-positioning that wrapper re-anchors the handle
+   to the `<th>` (always positioned: relative, or sticky under scroll-y),
+   identical to non-sortable headers. FR-3566.
+  */
+  .bai-table-astryx-dim-layer thead th > div:has(> [role='separator']) {
+    position: static;
   }
 }

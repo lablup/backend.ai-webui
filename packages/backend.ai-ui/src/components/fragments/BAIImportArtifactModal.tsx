@@ -18,7 +18,7 @@ import BAIFlex from '../BAIFlex';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { BAIColumnsType, BAITableAstryx } from '../Table';
+import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
@@ -240,7 +240,7 @@ const BAIImportArtifactModal = ({
           {selectedArtifact && (
             <BAIArtifactDescriptions artifactFrgmt={selectedArtifact} />
           )}
-          <BAITableAstryx<ArtifactRevision>
+          <BAITable<ArtifactRevision>
             columns={filterOutEmpty(columns)}
             dataSource={filterOutNullAndUndefined(filteredSelectedRevisions)}
             pagination={{

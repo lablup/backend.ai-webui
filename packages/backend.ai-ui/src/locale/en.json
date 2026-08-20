@@ -364,6 +364,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Allocated / Requested"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Change group color",
+    "ResourceGrid": "Resource grid",
+    "UseColorN": "Use color {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
   },

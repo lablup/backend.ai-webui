@@ -36,7 +36,7 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAIStorageHostSelectAstryx,
-  BAITableAstryx,
+  BAITable,
   type BAITableSettings,
   BAIText,
   BAITag,
@@ -399,7 +399,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx<ModelCardNode>
+      <BAITable<ModelCardNode>
         rowKey="id"
         dataSource={modelCards as ModelCardNode[]}
         columns={columns}

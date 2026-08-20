@@ -10,7 +10,7 @@ import {
   BAIIntervalView,
   BAISessionClusterModeV2,
   BAISessionTypeTagV2,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAITag,
   filterOutEmpty,
@@ -382,7 +382,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
 
   return (
     <BAIFlex direction="column" align="stretch">
-      <BAITableAstryx
+      <BAITable
         resizable
         rowKey="id"
         size="small"

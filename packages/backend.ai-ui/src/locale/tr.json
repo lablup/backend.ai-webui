@@ -340,6 +340,11 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Ayrılan / İstenen"
   },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Grup rengini değiştir",
+    "ResourceGrid": "Kaynak ızgarası",
+    "UseColorN": "Renk {{n}} kullan"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Sınırsız"
   },

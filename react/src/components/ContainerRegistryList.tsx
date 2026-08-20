@@ -25,7 +25,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIPropertyFilter,
-  BAITableAstryx,
+  BAITable,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
   filterOutNullAndUndefined,
@@ -479,7 +479,7 @@ const ContainerRegistryList: React.FC<{
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
         rowKey={(record) => record.id}
         pagination={{
           pageSize: tablePaginationOption.pageSize,

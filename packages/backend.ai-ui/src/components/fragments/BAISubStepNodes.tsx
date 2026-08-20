@@ -14,10 +14,10 @@ import BAISchedulingResultBadge, {
 } from '../BAISchedulingResultBadge';
 import BAIText from '../BAIText';
 import {
-  BAIAstryxTableProps,
+  BAITableProps,
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
 } from '../Table';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -43,7 +43,7 @@ const isEnableSorter = (key: string) => {
 };
 
 export interface BAISubStepNodesProps extends Omit<
-  BAIAstryxTableProps<SubStepInList>,
+  BAITableProps<SubStepInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
   subStepsFrgmt: BAISubStepNodesFragment$key;
@@ -180,7 +180,7 @@ const BAISubStepNodes = ({
     // to-astryx ticket 25: migrated to the Astryx engine. This table renders
     // INSIDE an expanded row of `BAISchedulingHistoryNodes`, so it also proves
     // the nested-table case (`onCell` cell styles, `fixed: 'left'`).
-    <BAITableAstryx
+    <BAITable
       rowKey="step"
       size="small"
       dataSource={dataSource}

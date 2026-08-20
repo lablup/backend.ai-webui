@@ -276,7 +276,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           mainAccessKey
         }
         security {
-          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
           sudoSessionEnabled
           allowedClientIp
         }

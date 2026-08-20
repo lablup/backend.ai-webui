@@ -31,7 +31,7 @@ import {
   BAIUserUnionIcon,
   BAIFlex,
   BAILink,
-  BAITableAstryx,
+  BAITable,
   useEventNotStable,
   useUpdatableState,
   type BAIColumnsType,
@@ -674,7 +674,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         </ButtonGroup>
       </BAIFlex>
       <Form form={internalForm} component={false}>
-        <BAITableAstryx
+        <BAITable
           // size="small"
           rowKey={getRowKey}
           rowSelection={{
