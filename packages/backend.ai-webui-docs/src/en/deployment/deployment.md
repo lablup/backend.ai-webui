@@ -54,10 +54,10 @@ The modal contains the following fields:
 - **Tags**: Optional labels for organizing and filtering deployments. Press Enter or comma to add.
 - **Open to Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 
-:::warning[The resource group is fixed at creation]
-A warning notice sits under the **Resource Group** field from the moment the modal opens: *"The resource group selected at creation cannot be changed."* The resource group belongs to the deployment rather than to a revision, so you cannot move a deployment to a different resource group later — not by editing the deployment and not by adding a new revision. Pick the right one before you create the deployment; if you need a different resource group, create a new deployment.
+:::warning[The resource group and public access are fixed at creation]
+From the moment the modal opens, a warning notice sits under the **Resource Group** field — *"The resource group selected at creation cannot be changed."* — and another under the **Open to Public** field — *"The public access setting selected at creation cannot be changed."*
 
-**Open to Public** is fixed in the same way. In the **Edit Deployment** modal the checkbox is read-only and its tooltip reads *"Cannot be changed after creation."*
+The resource group belongs to the deployment rather than to a revision, so you cannot move a deployment to a different resource group later — not by editing the deployment and not by adding a new revision. **Open to Public** is fixed in the same way: in the **Edit Deployment** modal the checkbox is read-only and the same notice is shown under it. Pick both values before you create the deployment; if you need different ones, create a new deployment.
 :::
 
 Click `Create` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision.
