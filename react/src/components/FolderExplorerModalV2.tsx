@@ -82,6 +82,12 @@ const EXPLORER_MIN_WIDTH = 440;
 // Measured 1392 - 655 - 720 = 17 at viewport 1600.
 const SPLIT_HANDLE_WIDTH = 17;
 
+// Stacked (< xl) info panel height: default fits the metadata list without an
+// inner scroll (measured 430px at viewport 800); min keeps the tab strip and
+// a few rows reachable.
+const STACKED_INFO_PANEL_DEFAULT_HEIGHT = 440;
+const STACKED_INFO_PANEL_MIN_HEIGHT = 160;
+
 export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
   _openDeleteMultipleFileDialog: () => void;
@@ -162,6 +168,15 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       splitRowWidth > 0
         ? Math.max(550, splitRowWidth - EXPLORER_MIN_WIDTH - SPLIT_HANDLE_WIDTH)
         : undefined,
+  });
+
+  // Below `xl` the panes stack, so the split flips to the block axis: the
+  // handle sits above the info panel and drags its HEIGHT (FR-3516). A pixel
+  // default — useResizable resolves '%' against window.innerWidth, the wrong
+  // axis here.
+  const stackedInfoPanel = useResizable({
+    defaultSize: STACKED_INFO_PANEL_DEFAULT_HEIGHT,
+    minSizePx: STACKED_INFO_PANEL_MIN_HEIGHT,
   });
 
   const deferredOpen = useDeferredValue(modalProps.open);
@@ -595,7 +610,25 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               ) : (
                 <VStack align="stretch" gap={6}>
                   {fileExplorerElement}
-                  {vFolderInfoPanelElement}
+                  <ResizeHandle
+                    direction="vertical"
+                    isReversed
+                    hasDivider
+                    // `center` routes the grab zone away from `hitAreaOffsetY`,
+                    // the inline-axis mirror of the FR-3591 offset bug.
+                    pillPlacement="center"
+                    label={t('explorer.Metadata')}
+                    resizable={stackedInfoPanel.props}
+                  />
+                  <div
+                    style={{
+                      height: stackedInfoPanel.size,
+                      flexShrink: 0,
+                      overflow: 'auto',
+                    }}
+                  >
+                    {vFolderInfoPanelElement}
+                  </div>
                 </VStack>
               )
             ) : null}
