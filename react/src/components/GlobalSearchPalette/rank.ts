@@ -134,6 +134,19 @@ const prepare = (
   return prepared;
 };
 
+/**
+ * Builds the ranker's records and Fuse index ahead of the first query, so the
+ * keystroke that would have paid for them is free. Cached on the hit array's
+ * identity, which the module-level artifact cache keeps stable across opens.
+ */
+export const warmRanker = (
+  hits: ReadonlyArray<SearchHit>,
+  t: HitTranslator,
+  tEn: HitTranslator,
+): void => {
+  prepare(hits, t, tEn);
+};
+
 /** Setting descriptions carry inline markup (`<br />`, `<b>`); a row is one line. */
 export const plainText = (text: string): string =>
   _.trim(text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' '));

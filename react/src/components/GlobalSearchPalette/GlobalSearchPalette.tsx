@@ -33,6 +33,11 @@ import { Settings } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+// The header trigger warms the artifacts through this re-export, in the same
+// idle callback that preloads this chunk — the index must not reach the entry
+// bundle through a static import from the button.
+export { warmGlobalSearch } from './searchArtifacts';
+
 const styles = stylex.create({
   // Flex items default to `min-width: auto`, which lets a long "found in" line
   // push past the dialog instead of truncating at `maxLines`.
