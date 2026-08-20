@@ -399,6 +399,7 @@
 
   .astryx-button.primary {
     --color-overlay-hover: rgba(255,255,255,0.16);
+    --color-accent: var(--color-text-accent);
   }
 
   .astryx-button.secondary {

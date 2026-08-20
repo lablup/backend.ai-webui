@@ -312,7 +312,8 @@ export const baiR18DefaultBrandH161l5ohTheme = {
         "--color-overlay-hover": "rgba(255,255,255,0.16)"
       },
       "variant:primary": {
-        "--color-overlay-hover": "rgba(255,255,255,0.16)"
+        "--color-overlay-hover": "rgba(255,255,255,0.16)",
+        "--color-accent": "var(--color-text-accent)"
       },
       "variant:secondary": {
         "--color-neutral": "var(--color-background-surface)",
