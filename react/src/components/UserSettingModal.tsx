@@ -32,7 +32,7 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextArea,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { Tokenizer } from '@astryxdesign/core/Tokenizer';

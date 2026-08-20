@@ -29,7 +29,7 @@ import {
   TOTPActivateForm,
   type TOTPActivateFormData,
 } from './TOTPActivateModal';
-import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import {
@@ -726,7 +726,7 @@ const ResetPasswordRequiredInline: React.FC<{
     // PILOT-DECISION: the bare antd `Modal` becomes BUI `BAIModal` — the
     // frontier wrapper this file already uses everywhere else — rather than a
     // second dialog vocabulary. `BAIModal` is rebased on Astryx `Dialog` by
-    // ticket 30; converting this one call site to `BAIModalAstryx` now would
+    // ticket 30; converting this one call site to the pilot dialog now would
     // split the login screen across two dialog implementations.
     <BAIModal
       open={open}

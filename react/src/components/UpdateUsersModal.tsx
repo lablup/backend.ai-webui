@@ -17,7 +17,7 @@ import UserResourcePolicySelect from './UserResourcePolicySelect';
 import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import {
   BAIDomainSelect,
   BAIFlex,

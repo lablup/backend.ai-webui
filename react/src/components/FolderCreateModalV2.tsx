@@ -60,7 +60,7 @@ const MODAL_WIDTH = 650;
 // Ticket 16: the `createStyles` block is gone. It held two rule sets, and BOTH
 // were the P6 failure mode — `.ant-form-item-*` (dead once `Form.Item` became
 // `BAIFormItem`) and `.ant-modal-body` (dead once `BAIModal` became
-// `BAIModalAstryx`, which renders no such element).
+// Astryx-based, which renders no such element).
 
 interface FolderCreateFormItemsType {
   name: string;

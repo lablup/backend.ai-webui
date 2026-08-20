@@ -428,6 +428,11 @@ const BAIModal: React.FC<BAIModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
+  // Nothing is rendered while closed — see PILOT-DECISION 3. Every hook has
+  // already run, so returning here skips building the header/footer trees on
+  // closed-modal re-renders.
+  if (!isVisible) return null;
+
   const hasWindowControls = !!windowActions && windowActions.length > 0;
   const activeActions: Array<WindowAction> = windowActions ?? [];
   const effectiveWindowState: WindowState = hasWindowControls
@@ -720,10 +725,6 @@ const BAIModal: React.FC<BAIModalProps> = ({
       className={classNames?.header}
     />
   );
-
-  // Nothing is rendered while closed — see PILOT-DECISION 3. Hooks above have
-  // already run, so this early return is safe.
-  if (!isVisible) return null;
 
   return (
     <Dialog

@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import BAITourAstryx from './astryx-bui/BAITourAstryx';
-import { useTourTargets } from './astryx-bui/useTourTargets';
+import BAITourAstryx from './BAITourAstryx';
 import { TourStep } from '@astryxdesign/lab';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import useTourTargets from './useTourTargets';
 
 /**
  * PILOT-DECISION: public props narrowed from antd's

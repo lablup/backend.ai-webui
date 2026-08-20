@@ -10,7 +10,7 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSelector } from './astryx-bui/astryxFormControls';
+import { AstryxFormSelector } from './astryxFormControls';
 import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
 import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
 import { Text } from '@astryxdesign/core/Text';

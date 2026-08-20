@@ -208,6 +208,8 @@ export type {
 } from './BAIResourceUnitGrid';
 export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
 export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
+export { default as BAISegmentedControlItemAstryx } from './BAISegmentedControlItemAstryx';
+export type { BAISegmentedControlItemAstryxProps } from './BAISegmentedControlItemAstryx';
 export { default as BAIPopconfirmAstryx } from './BAIPopconfirmAstryx';
 export type { BAIPopconfirmAstryxProps } from './BAIPopconfirmAstryx';
 export { default as BAIBadgeCountAstryx } from './BAIBadgeCountAstryx';

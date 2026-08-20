@@ -8,21 +8,11 @@
 
  ## Why there is exactly one of these now (ticket 30)
 
- Two copies of this module grew in parallel: the pilot's
- (`components/astryxFormControls.tsx`, ported in ticket 10 and extended by
- tickets 16/17/19/23) and the page-group tickets'
- (`components/astryx-bui/astryxFormControls.tsx`, ticket 18, extended by 20).
- They exported the SAME seven component names with quietly different prop
- surfaces — `allowClear` vs `hasClear`, `number | string | null` vs
- `number | null`, one with `startIcon`/`onValueChange`, the other with
- `width`/`onBlur`/`data-testid`. Nothing failed, because each call site
- imported from whichever file its ticket happened to touch; but "which
- `AstryxFormTextInput` is this?" had become a per-file question and the two
- drifted further with every page migrated.
-
- This file is now the single implementation, carrying the UNION of both prop
- surfaces. `astryx-bui/astryxFormControls.tsx` re-exports it verbatim so the
- ~30 call sites on that path keep working; new code should import from here.
+ A twin of this module once grew in parallel at
+ `components/astryx-bui/astryxFormControls.tsx` (since deleted), with the
+ same seven export names and quietly different prop surfaces. This file is the
+ single implementation, carrying the UNION of both surfaces — do not re-fork
+ it (see `.claude/rules/bui-component-home.md`).
 
  ## THREE deltas make raw Astryx controls unusable as direct `Form.Item`
  children (pilot patterns P3/P4; each is a codemod / lint-rule candidate):

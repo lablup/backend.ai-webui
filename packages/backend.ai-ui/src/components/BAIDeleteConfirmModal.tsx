@@ -32,8 +32,8 @@
  2. **"This action cannot be undone." becomes a `Banner status="error"`.**
     Astryx `Text` has no danger colour (its `color` set is
     primary/secondary/disabled/placeholder/accent/inherit), and the banner
-    restores both the colour and an icon. Same call as the already-shipped
-    `BAIDeleteConfirmModalAstryx`, so the two delete surfaces still look alike.
+    restores both the colour and an icon.
+
  3. **`inputLabel` stays `ReactNode`.** `TextInput.label` is a plain `string`
     that doubles as the accessible name, so a rich label is rendered above the
     field and the field carries the flattened text with `isLabelHidden`.

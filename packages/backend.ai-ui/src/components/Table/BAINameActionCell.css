@@ -15,9 +15,8 @@
  the action group through `.bai-name-action-cell-actions`. They stay.
 
  The styling hooks that used to be emotion hashes are namespaced `bai-nac-*`
- instead of reusing the `bai-name-action-cell-*` family, because the app's
- Astryx rebuild (`react/src/components/astryx-bui/astryxBui.css`, ticket 16)
- already owns that family with DIFFERENT action-button colours. Two sheets
+ instead of reusing the `bai-name-action-cell-*` family, whose only survivor
+ (`-danger`) lives in `../styles/dangerAction.css`. Two sheets
  defining one class name is decided by load order, which is exactly the kind
  of silent, environment-dependent drift this migration keeps tripping over.
 

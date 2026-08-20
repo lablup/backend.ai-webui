@@ -20,8 +20,8 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
-import '../components/astryx-bui/astryxBui.css';
-import { BAIVFolderDeleteButtonV2Astryx as BAIVFolderDeleteButtonV2 ,
+import {
+  BAIVFolderDeleteButtonV2Astryx as BAIVFolderDeleteButtonV2,
   BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract

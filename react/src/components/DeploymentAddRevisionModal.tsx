@@ -60,7 +60,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextArea,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';

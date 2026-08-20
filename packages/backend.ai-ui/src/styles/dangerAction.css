@@ -1,6 +1,6 @@
-/* Residue of the astryx-bui gap-component sheet (FR-3533): every component
-   block moved into backend.ai-ui next to its component. Only the shared danger
-   tint remains, for the host call sites that apply it directly.
+/* Danger tint for text/icon actions, the pair of `.bai-action-accent`
+   (same barrel-owned pattern: used by BUI components AND app-side call sites
+   under react/src, so no single component owns it).
 
    P19 (pilot sweep finding, preserved): the semantic error token is the SOLID
    `--color-error`; the text-tier member of the red hue family is

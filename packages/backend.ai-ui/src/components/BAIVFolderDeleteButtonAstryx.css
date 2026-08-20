@@ -1,7 +1,0 @@
-/* P19 (pilot sweep finding, preserved): the semantic error token is the SOLID
-   `--color-error`; the text-tier member of the red hue family is
-   `--color-text-red`, which is what a danger text action needs. Shared by
-   BAIVFolderDeleteButtonAstryx and BAIVFolderDeleteButtonV2Astryx. */
-.bai-name-action-cell-danger {
-  color: var(--color-text-red);
-}

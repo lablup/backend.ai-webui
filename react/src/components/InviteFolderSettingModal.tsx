@@ -21,15 +21,14 @@ import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import './astryx-bui/astryxBui.css';
 import { AstryxFormSelector, AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
-import { BAIPopconfirmAstryx as BAIPopconfirm } from 'backend.ai-ui';
 import {
+  BAIPopconfirmAstryx as BAIPopconfirm,
   BAIModal,
   type BAIModalProps,
   BAIQuestionIconWithTooltip,
