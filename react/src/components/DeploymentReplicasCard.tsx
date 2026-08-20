@@ -11,7 +11,6 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
@@ -25,7 +24,6 @@ import SessionDetailDrawer from './SessionDetailDrawer';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAICard,
@@ -47,7 +45,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { History, CircleHelp } from 'lucide-react';
+import { History } from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
@@ -123,19 +121,15 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   return (
     <BAICard
       title={
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.Replicas')}
-          <Tooltip content={t('deployment.tab.description.Replicas')}>
-            <CircleHelp
-              style={{ color: token.colorTextDescription }}
-              size="1em"
-            />
-          </Tooltip>
+          <BAIQuestionIconWithTooltip
+            title={t('deployment.tab.description.Replicas')}
+          />
         </BAIFlex>
       }
       styles={{ body: { paddingTop: 0 } }}
