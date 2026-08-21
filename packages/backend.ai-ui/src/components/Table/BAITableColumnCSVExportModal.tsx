@@ -30,7 +30,7 @@
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
-import BAIDialogPortal from '../BAIDialogPortal';
+import BAIDialog from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
@@ -176,7 +176,7 @@ const BAITableColumnCSVExportModal = <T,>({
   if (!open) return null;
 
   return (
-    <BAIDialogPortal
+    <BAIDialog
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose?.(false);
@@ -262,7 +262,7 @@ const BAITableColumnCSVExportModal = <T,>({
         }
         style={{ minWidth: 0 }}
       />
-    </BAIDialogPortal>
+    </BAIDialog>
   );
 };
 

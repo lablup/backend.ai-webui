@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIDialogPortal` — Astryx `Dialog`'s surface portalled into `document.body`
+ `BAIDialog` — Astryx `Dialog`'s surface portalled into `document.body`
  instead of a native `<dialog>` promoted with `showModal()`. Leaving the top
  layer is the point: no page container is inert — only covered dialog roots are
  — so the notification stack paints above it and stays clickable (FR-3578).
@@ -11,7 +11,7 @@
  `null` when closed, and children stay mounted as the native `<dialog>` did.
 */
 import { BAI_Z_INDEX } from '../styles/zIndexLadder';
-import './BAIDialogPortal.css';
+import './BAIDialog.css';
 import { Dialog } from '@astryxdesign/core/Dialog';
 import type { DialogPosition, DialogProps } from '@astryxdesign/core/Dialog';
 import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
@@ -48,7 +48,7 @@ function floorToModalBand(zIndex: number): number {
     return zIndex;
   }
   devWarn(
-    'BAIDialogPortal',
+    'BAIDialog',
     `zIndex ${zIndex} is below the modal band base ` +
       `(${BAI_Z_INDEX.modalBase}); clamping. Pass a layer from ` +
       '`BAI_Z_INDEX` rather than a literal, or drop the prop.',
@@ -153,7 +153,7 @@ function resolveDialogPortalPosition(
   };
 }
 
-export interface BAIDialogPortalProps extends Omit<
+export interface BAIDialogProps extends Omit<
   DialogProps,
   'ref' | 'isInline' | 'width' | 'aria-modal'
 > {
@@ -172,7 +172,7 @@ export interface BAIDialogPortalProps extends Omit<
   zIndex?: number;
 }
 
-const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
+const BAIDialog: React.FC<BAIDialogProps> = ({
   isOpen,
   onOpenChange,
   width = 400,
@@ -244,17 +244,14 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
   const wrapRef = mergeRefs<HTMLDivElement>(ref, containerRef);
 
   // Written to the DOM rather than to state: the value must be right at first
-  // paint, and `--bai-dialog-portal-level` is a property React never manages.
+  // paint, and `--bai-dialog-level` is a property React never manages.
   const rootRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     if (!isOpen) {
       return;
     }
     const level = claimDialogLevel(rootRef.current, setIsTopmost);
-    rootRef.current?.style.setProperty(
-      '--bai-dialog-portal-level',
-      String(level),
-    );
+    rootRef.current?.style.setProperty('--bai-dialog-level', String(level));
     return () => {
       releaseDialogLevel(level);
     };
@@ -276,12 +273,12 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
       trigger !== document.body
     ) {
       const { x, y } = getDialogDirection(trigger);
-      node.style.setProperty('--bai-dialog-portal-dir-x', `${x}px`);
-      node.style.setProperty('--bai-dialog-portal-dir-y', `${y}px`);
+      node.style.setProperty('--bai-dialog-dir-x', `${x}px`);
+      node.style.setProperty('--bai-dialog-dir-y', `${y}px`);
     }
     return () => {
-      node.style.removeProperty('--bai-dialog-portal-dir-x');
-      node.style.removeProperty('--bai-dialog-portal-dir-y');
+      node.style.removeProperty('--bai-dialog-dir-x');
+      node.style.removeProperty('--bai-dialog-dir-y');
     };
   }, [isOpen, containerRef]);
 
@@ -315,7 +312,7 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
     }
     hasWarnedRef.current = true;
     devWarn(
-      'BAIDialogPortal',
+      'BAIDialog',
       'open dialog has no accessible name. Add a DialogHeader ' +
         'with a `title`, or pass `aria-label`/`aria-labelledby`.',
     );
@@ -342,14 +339,11 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
   return createPortal(
     <div
       ref={rootRef}
-      className={classNames(
-        'bai-dialog-portal',
-        !isOpen && 'bai-dialog-portal--closed',
-      )}
+      className={classNames('bai-dialog', !isOpen && 'bai-dialog--closed')}
       style={
         zIndex != null
           ? ({
-              '--bai-dialog-portal-z': floorToModalBand(zIndex),
+              '--bai-dialog-z': floorToModalBand(zIndex),
             } as React.CSSProperties)
           : undefined
       }
@@ -360,13 +354,13 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
         [dataAttr('theme')]: themeName ?? undefined,
       }}
     >
-      <div ref={maskRef} className="bai-dialog-portal__mask" />
+      <div ref={maskRef} className="bai-dialog__mask" />
       <div
         {...(rest as React.HTMLAttributes<HTMLDivElement>)}
         ref={wrapRef}
         className={classNames(
-          'bai-dialog-portal__wrap',
-          hasPosition && 'bai-dialog-portal__wrap--positioned',
+          'bai-dialog__wrap',
+          hasPosition && 'bai-dialog__wrap--positioned',
         )}
         // Astryx applies `width` to the surface, where a percentage would
         // resolve against the wrap rather than the viewport. `maxHeight` stays
@@ -407,6 +401,6 @@ const BAIDialogPortal: React.FC<BAIDialogPortalProps> = ({
   );
 };
 
-BAIDialogPortal.displayName = 'BAIDialogPortal';
+BAIDialog.displayName = 'BAIDialog';
 
-export default BAIDialogPortal;
+export default BAIDialog;

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  to-astryx PHASE 3 / ticket B — `BAIModal` rebuilt on Astryx `Dialog`, since
- FR-3578 through `BAIDialogPortal` (same surface, portalled instead of promoted
+ FR-3578 through `BAIDialog` (same surface, portalled instead of promoted
  into the top layer, so notices stay above it).
 
  This is an **in-place frontier rewrite**: the rendering stack underneath is
@@ -44,14 +44,14 @@
  3. **`destroyOnHidden` / `destroyOnClose` are always on.** This component
     renders no children while closed, which is stricter than antd's default.
  4. **A minimized modal stays modal.** antd dropped the mask so the page behind
-    stayed interactive; `BAIDialogPortal` always paints one. Minimize therefore
+    stayed interactive; `BAIDialog` always paints one. Minimize therefore
     collapses the dialog to a title bar parked at `minimizedPlacement` but does
     not release the page.
  5. **`mask={false}`, `getContainer`, `forceRender`, `wrapClassName`,
     `rootClassName`, `modalRender`, `transitionName`, `mousePosition`,
     `scrollLock`, `focusTriggerAfterClose`, `stickyTitle`** are accepted and
     ignored: each names a mechanism antd owned (a portal target, a
-    rendered-but-hidden tree, a CSS-transition name) that `BAIDialogPortal`
+    rendered-but-hidden tree, a CSS-transition name) that `BAIDialog`
     now owns. `stickyTitle` in particular is unconditionally true — Astryx
     `Layout` keeps the header slot outside the scrolling content.
     `zIndex` is the exception: the modal is a portalled div with a real
@@ -72,7 +72,7 @@
  that reproduces none of it.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import BAIDialogPortal from './BAIDialogPortal';
+import BAIDialog from './BAIDialog';
 import BAISkeleton from './BAISkeleton';
 import { Button } from '@astryxdesign/core/Button';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
@@ -265,7 +265,7 @@ export interface BAIModalProps {
   keyboard?: boolean;
   /**
    * antd's mask config. Only `closable` is honoured (as `maskClosable`); the
-   * backdrop itself is owned by `BAIDialogPortal` and is never removable.
+   * backdrop itself is owned by `BAIDialog` and is never removable.
    */
   mask?: boolean | { closable?: boolean; blur?: boolean };
 
@@ -711,7 +711,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   );
 
   return (
-    <BAIDialogPortal
+    <BAIDialog
       isOpen
       onOpenChange={(next) => {
         if (!next) void handleCancel();
@@ -758,7 +758,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
           )
         }
       />
-    </BAIDialogPortal>
+    </BAIDialog>
   );
 };
 

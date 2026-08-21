@@ -6,7 +6,7 @@ import type { Mock } from 'vitest';
 // Factory mock keeps the whole component library out of this hook's test graph.
 // It has to restate `BAI_MODAL_OPEN_ATTRIBUTE`, so this suite cannot catch a
 // rename of the real constant — the gate on the DOM contract is
-// `BAIDialogPortal.test.tsx`, which asserts the attribute the component emits.
+// `BAIDialog.test.tsx`, which asserts the attribute the component emits.
 vi.mock('backend.ai-ui', () => ({
   BAI_MODAL_OPEN_ATTRIBUTE: 'data-bai-modal-open',
   useEventListener: vi.fn((event, handler) => {
@@ -120,7 +120,7 @@ describe('useKeyboardShortcut', () => {
   });
 
   describe('Modal detection', () => {
-    // Both roots the selector covers: BAIDialogPortal's marked div, and the lab
+    // Both roots the selector covers: BAIDialog's marked div, and the lab
     // `Drawer`'s still-native `<dialog>`.
     it.each([
       ['a portal modal', 'div', BAI_MODAL_OPEN_ATTRIBUTE],
