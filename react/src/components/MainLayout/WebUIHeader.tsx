@@ -13,6 +13,7 @@ import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
+import { useAppShellMobile } from '@astryxdesign/core/AppShell';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { MediaTheme } from '@astryxdesign/core/theme';
 import {
@@ -24,12 +25,15 @@ import { MenuIcon } from 'lucide-react';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export interface WebUIHeaderProps extends BAIFlexProps {
-  onClickMenuIcon?: () => void;
-}
+export interface WebUIHeaderProps extends BAIFlexProps {}
 
-const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
+const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
+  'use memo';
   const { token } = theme.useToken();
+  // FR-3612: hamburger visibility and action come from AppShell's mobile
+  // context, so the header and the shell share one breakpoint verdict (no
+  // off-by-one band around 768px between two media queries).
+  const { isMobile, openMobileNav } = useAppShellMobile();
   const { isDarkMode } = useThemeMode();
   // The brand band is a REVERSED surface: its content polarity is the opposite
   // of the app's, so it is "on dark" in light mode and "on light" in dark.
@@ -78,13 +82,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             `--color-icon-primary` onto `--color-on-{dark,light}`. It renders
             `display: contents`, so it costs no layout. */}
         <MediaTheme mode={bandMediaMode}>
-          {!gridBreakpoint.sm && (
+          {isMobile && (
             <IconButton
               icon={<MenuIcon size="1em" />}
               variant="ghost"
               label={t('webui.menu.Menu')}
               onClick={() => {
-                onClickMenuIcon?.();
+                openMobileNav();
               }}
               className="non-draggable"
               style={{

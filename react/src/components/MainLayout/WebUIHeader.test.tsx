@@ -14,8 +14,10 @@
  * The selector itself is stubbed; its internals are not under test here.
  */
 import WebUIHeader from './WebUIHeader';
+import { AppShellMobileContext } from '@astryxdesign/core/AppShell';
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -30,7 +32,6 @@ vi.mock('react-i18next', async (importOriginal) => {
     useTranslation: () => ({ t: (key: string) => key }),
   };
 });
-
 
 // The header only reads `supports()` / `_config` off the client.
 vi.mock('../../hooks', () => ({
@@ -81,6 +82,44 @@ const renderHeaderAt = (
   return render(<RouterProvider router={router} />);
 };
 
+/**
+ * FR-3612: the hamburger is driven by AppShell's mobile context. Outside an
+ * AppShell the context defaults to `isMobile: false`, so mobile behavior is
+ * exercised by providing the context value directly.
+ */
+const appShellMobileValue = (
+  overrides: Partial<React.ContextType<typeof AppShellMobileContext>>,
+): React.ContextType<typeof AppShellMobileContext> => ({
+  isMobile: false,
+  isMobileNavOpen: false,
+  toggleMobileNav: () => {},
+  openMobileNav: () => {},
+  closeMobileNav: () => {},
+  isMobileNavEnabled: true,
+  hasAutoToggle: false,
+  ...overrides,
+});
+
+const renderHeaderWithMobileContext = (
+  value: React.ContextType<typeof AppShellMobileContext>,
+): ReturnType<typeof render> => {
+  const router = createMemoryRouter(
+    [
+      {
+        path: '/project/default/session',
+        element: (
+          <AppShellMobileContext value={value}>
+            <WebUIHeader />
+          </AppShellMobileContext>
+        ),
+        handle: { scope: 'project', menuKey: 'session' },
+      },
+    ],
+    { initialEntries: ['/project/default/session'] },
+  );
+  return render(<RouterProvider router={router} />);
+};
+
 describe('WebUIHeader project selector gating (FR-3414)', () => {
   it.each([
     ['/admin/session', 'admin-session'],
@@ -127,5 +166,24 @@ describe('WebUIHeader project selector gating (FR-3414)', () => {
     expect(
       screen.getByTestId('header-project-select-stub'),
     ).toBeInTheDocument();
+  });
+});
+
+describe('WebUIHeader mobile hamburger (FR-3612)', () => {
+  it('hides the hamburger above the mobile breakpoint', () => {
+    renderHeaderWithMobileContext(appShellMobileValue({ isMobile: false }));
+    expect(
+      screen.queryByRole('button', { name: 'webui.menu.Menu' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the hamburger below the breakpoint and opens the drawer', () => {
+    const openMobileNav = vi.fn();
+    renderHeaderWithMobileContext(
+      appShellMobileValue({ isMobile: true, openMobileNav }),
+    );
+    const hamburger = screen.getByRole('button', { name: 'webui.menu.Menu' });
+    fireEvent.click(hamburger);
+    expect(openMobileNav).toHaveBeenCalledTimes(1);
   });
 });

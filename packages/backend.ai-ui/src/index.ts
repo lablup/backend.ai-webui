@@ -26,6 +26,9 @@ export * from './helper';
 export * from './hooks';
 export * from './icons';
 export * from './tests';
+// The z-index ladder. Its module imports the matching custom properties, so
+// consuming a name from JS also guarantees the CSS side is loaded.
+export * from './styles/zIndexLadder';
 export * from './theme-shim';
 export * from './app-shim';
 // The self-hosted form engine (tickets 34 + 35). `Form` is exported as a NAMED

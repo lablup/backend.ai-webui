@@ -1,3 +1,4 @@
+import { OPEN_MODAL_ROOT_SELECTOR } from '../helper/openModalRoot';
 import { useEventListener } from 'backend.ai-ui';
 
 /**
@@ -47,13 +48,7 @@ const useKeyboardShortcut = (
     return false;
   };
 
-  // `dialog[open]` covers every modal in the app (`BAIModal`, the app-shim's
-  // imperative confirm/alert dialogs) — they are native `<dialog>` elements
-  // opened with `showModal()`. The `.ant-modal` alternative that used to sit
-  // beside it is gone with antd: nothing renders that class any more, so
-  // keeping it would only make the selector look like it covers a case it
-  // cannot.
-  const isModalOpen = () => document.querySelector('dialog[open]');
+  const isModalOpen = () => document.querySelector(OPEN_MODAL_ROOT_SELECTOR);
 
   /**
    * Handles the keydown event, invoking the handler if conditions are met.
