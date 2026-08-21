@@ -21,11 +21,9 @@
  with no callback), plus per-task ok-button loading state.
 
  Branching (answers/07 §4): `confirm` with plain-text title/content renders the
- WAI-ARIA alert-dialog shape — `role="alertdialog"`, no header X, cancel
- preselected — which needs `purpose="form"` plus an explicit `role`, since
- `purpose="required"` would buy the role by disabling Escape. Everything else
- gets the `DialogHeader` + `Layout` shape. Both keep antd's confirm-family
- dismissal: Escape yes, backdrop no.
+ WAI-ARIA alert-dialog shape, which is `BAIAlertDialog`. Everything else gets
+ the `DialogHeader` + `Layout` shape on `BAIDialog`. Both keep antd's
+ confirm-family dismissal: Escape yes, backdrop no.
 
  Promise/close semantics (all antd-matching):
  - `onOk` returning a promise puts the ok button into loading and closes only
@@ -34,14 +32,13 @@
  - `.destroy()` closes without firing onOk/onCancel.
  - `.update()` throws — 0 real usages repo-wide (answers/07 §1.1), kept loud.
 */
+import BAIAlertDialog from '../components/BAIAlertDialog';
 import BAIDialog from '../components/BAIDialog';
 import { Button } from '@astryxdesign/core/Button';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
-import { Heading } from '@astryxdesign/core/Heading';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import React, { isValidElement, useId, useSyncExternalStore } from 'react';
+import React, { isValidElement, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 
 export type ModalKind = 'confirm' | 'info' | 'success' | 'error' | 'warning';
@@ -251,9 +248,6 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
     options.okType === 'danger' || options.okButtonProps?.danger === true;
   const okLabel = toText(options.okText) || 'OK';
   const cancelLabel = toText(options.cancelText) || 'Cancel';
-  const id = useId();
-  const titleId = `${id}-title`;
-  const descriptionId = `${id}-desc`;
 
   // Escape, the mask, the header X and the cancel button all land here.
   const handleOpenChange = (open: boolean) => {
@@ -279,47 +273,21 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
     isPlainText(options.content)
   ) {
     return (
-      <BAIDialog
+      <BAIAlertDialog
         isOpen
         onOpenChange={handleOpenChange}
         width={options.width}
         zIndex={options.zIndex}
-        purpose="form"
-        role="alertdialog"
-        aria-labelledby={titleId}
-        aria-describedby={descriptionId}
-      >
-        <Layout
-          content={
-            <LayoutContent>
-              <Heading level={2} id={titleId}>
-                {toText(options.title)}
-              </Heading>
-              <Text type="body" color="secondary" id={descriptionId}>
-                {toText(options.content)}
-              </Text>
-            </LayoutContent>
-          }
-          footer={
-            <LayoutFooter>
-              <HStack justify="end" gap={2} align="center">
-                <Button
-                  label={cancelLabel}
-                  // Astryx `AlertDialog`'s own Cancel variant — this branch
-                  // reproduces that component, the one below reproduces
-                  // `Dialog` + `Layout`, so the two differ on purpose.
-                  variant="ghost"
-                  isDisabled={options.cancelButtonProps?.disabled}
-                  onClick={() => runCancel(task)}
-                  // WAI-ARIA alert-dialog: preselect the safest choice.
-                  data-autofocus=""
-                />
-                {okButton}
-              </HStack>
-            </LayoutFooter>
-          }
-        />
-      </BAIDialog>
+        title={toText(options.title)}
+        description={toText(options.content)}
+        cancelLabel={cancelLabel}
+        isCancelDisabled={options.cancelButtonProps?.disabled}
+        actionLabel={okLabel}
+        actionVariant={isDanger ? 'destructive' : 'primary'}
+        isActionLoading={task.isLoading}
+        isActionDisabled={options.okButtonProps?.disabled}
+        onAction={() => runOk(task)}
+      />
     );
   }
 
