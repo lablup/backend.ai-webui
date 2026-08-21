@@ -9,20 +9,28 @@
  */
 export const SUMMARY_MAX_LENGTH = 120;
 
+/** Replaces a match with blank lines, so source line indices survive masking. */
+const blankOut = (match: string): string => match.replace(/[^\n]/g, '');
+
 /**
- * First "prose" line of the announcement as plain text. Markdown syntax is
- * stripped only where it can be done safely (paired constructs); markers used
- * literally (`my_var`, `~2 hours`, `2**10`) survive. Lines that are pure
- * syntax residue (table rows, setext underlines, a lone backtick) are skipped
- * by the requires-a-letter-or-digit filter.
+ * The source split into lines with comments and fenced code blanked out. An
+ * UNCLOSED opening fence swallows the rest: better no headline than one lifted
+ * out of a code block.
  */
-const announcementFirstLine = (message: string): string => {
-  let plain = message
-    .replace(/<!--[\s\S]*?-->/g, ' ')
-    // Paired code fences first; an UNCLOSED opening fence swallows the rest
-    // (better no summary than leaking code into the title).
-    .replace(/(```|~~~)[\s\S]*?\1/g, ' ')
-    .replace(/(```|~~~)[\s\S]*$/, ' ')
+const maskedLines = (message: string): Array<string> =>
+  message
+    .replace(/<!--[\s\S]*?-->/g, blankOut)
+    .replace(/(```|~~~)[\s\S]*?\1/g, blankOut)
+    .replace(/(```|~~~)[\s\S]*$/, blankOut)
+    .split(/\r?\n/);
+
+/**
+ * One source line as plain text. Markdown is stripped only where it can be
+ * done safely (paired constructs); markers used literally (`my_var`,
+ * `~2 hours`, `2**10`) survive.
+ */
+const toProse = (line: string): string => {
+  let text = line
     .replace(/`([^`]*)`/g, '$1')
     .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
@@ -39,57 +47,95 @@ const announcementFirstLine = (message: string): string => {
   // js/incomplete-multi-character-sanitization).
   let previous;
   do {
-    previous = plain;
-    plain = plain.replace(/<\/?[a-zA-Z][a-zA-Z0-9-]*(\s[^>\n]*)?\/?>/g, '');
-  } while (plain !== previous);
-  plain = plain
-    .replace(/\*\*([^*]+)\*\*/g, '$1')
-    .replace(/__([^_]+)__/g, '$1')
-    .replace(/~~([^~]+)~~/g, '$1')
-    .replace(/\*([^*\n]+)\*/g, '$1');
+    previous = text;
+    text = text.replace(/<\/?[a-zA-Z][a-zA-Z0-9-]*(\s[^>\n]*)?\/?>/g, '');
+  } while (text !== previous);
   return (
-    plain
-      .split(/\r?\n/)
-      .map((line) =>
-        line
-          // Block markers: headings, quotes, and `-`/`*`/`+` bullets…
-          .replace(/^[\s#>*+-]+/, '')
-          // …numbered-list markers…
-          .replace(/^\d+[.)]\s+/, '')
-          // …and task-list checkboxes.
-          .replace(/^\[[ xX]\]\s*/, '')
-          .trim(),
-      )
-      .find((line) => /[\p{L}\p{N}]/u.test(line) && !/^\|.*\|$/.test(line)) ??
-    ''
+    text
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/__([^_]+)__/g, '$1')
+      .replace(/~~([^~]+)~~/g, '$1')
+      .replace(/\*([^*\n]+)\*/g, '$1')
+      // Block markers: headings, quotes, `-`/`*`/`+` bullets, numbered-list
+      // markers and task-list checkboxes.
+      .replace(/^[\s#>*+-]+/, '')
+      .replace(/^\d+[.)]\s+/, '')
+      .replace(/^\[[ xX]\]\s*/, '')
+      .trim()
   );
 };
 
+/** Lines that are pure syntax residue (table rows, setext rules) are not prose. */
+const isProse = (text: string): boolean =>
+  /[\p{L}\p{N}]/u.test(text) && !/^\|.*\|$/.test(text);
+
+/** Index of the source line the headline comes from, or -1. */
+const findHeadlineIndex = (message: string): number =>
+  maskedLines(message).findIndex((line) => isProse(toProse(line)));
+
+export interface AnnouncementParts {
+  /**
+   * The announcement's first prose line as plain text, NOT truncated — the
+   * banner uses it as the title.
+   */
+  headline: string;
+  /**
+   * The source markdown with the headline's own line removed, so expanding
+   * adds only what the title does not already show. Empty when the headline
+   * was the whole announcement.
+   */
+  body: string;
+}
+
 /**
- * One-line summary for the collapsed banner title. Truncation counts Unicode
- * code points (`Array.from`), not UTF-16 units, so an emoji at the cutoff is
- * dropped whole rather than split into a replacement character.
+ * Splits an announcement into its title line and the rest of the source.
+ *
+ * The body is the ORIGINAL markdown minus exactly one line, located by index
+ * rather than by matching the stripped text back onto the source — so
+ * headings, list items and links keep rendering the way the author wrote
+ * them, and nothing but the title line can go missing.
+ */
+export const splitAnnouncement = (message: string): AnnouncementParts => {
+  const index = findHeadlineIndex(message);
+  if (index < 0) {
+    return { headline: '', body: message };
+  }
+  const rest = message.split(/\r?\n/);
+  const headline = toProse(maskedLines(message)[index]);
+  rest.splice(index, 1);
+  return {
+    headline,
+    body: rest
+      .join('\n')
+      .replace(/^\s*\n/, '')
+      .trimEnd(),
+  };
+};
+
+/**
+ * The headline, cut to one line for the collapsed banner title. Truncation
+ * counts Unicode code points (`Array.from`), not UTF-16 units, so an emoji at
+ * the cutoff is dropped whole rather than split into a replacement character.
  */
 export const summarizeAnnouncement = (message: string): string => {
-  const codePoints = Array.from(announcementFirstLine(message));
+  const codePoints = Array.from(splitAnnouncement(message).headline);
   return codePoints.length > SUMMARY_MAX_LENGTH
     ? `${codePoints.slice(0, SUMMARY_MAX_LENGTH).join('').trimEnd()}…`
     : codePoints.join('');
 };
 
 /**
- * True when the summary alone loses content (multi-line or over-length) AND a
- * usable summary exists — a message whose first line strips to nothing (e.g.
- * it opens with a code block) renders in full instead of behind an empty
- * title.
+ * True when expanding would reveal something the collapsed title does not
+ * already show — either more content below it, or the part of a long headline
+ * the cutoff cropped. An announcement with no usable headline (it opens with
+ * a code block, say) renders in full instead of behind an empty title.
  */
 export const isAnnouncementCollapsible = (message: string): boolean => {
-  const firstLine = announcementFirstLine(message);
-  if (firstLine.length === 0) {
+  const { headline, body } = splitAnnouncement(message);
+  if (headline.length === 0) {
     return false;
   }
   return (
-    /\r?\n\s*\S/.test(message.trim()) ||
-    Array.from(firstLine).length > SUMMARY_MAX_LENGTH
+    body.trim().length > 0 || Array.from(headline).length > SUMMARY_MAX_LENGTH
   );
 };

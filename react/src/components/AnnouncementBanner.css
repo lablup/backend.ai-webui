@@ -26,6 +26,15 @@
   text-overflow: ellipsis;
 }
 
+/* Expanded, the same first line becomes the banner's heading: it keeps its
+   place but is no longer cut off, so a long one wraps instead of hiding the
+   part the collapsed cutoff cropped. */
+.webui-announcement-headline {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-weight: var(--font-weight-semibold);
+}
+
 .webui-announcement-toggle {
   flex-shrink: 0;
 }

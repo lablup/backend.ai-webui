@@ -5,6 +5,7 @@
 import {
   SUMMARY_MAX_LENGTH,
   isAnnouncementCollapsible,
+  splitAnnouncement,
   summarizeAnnouncement,
 } from './announcementSummary';
 import { describe, expect, it } from 'vitest';
@@ -112,6 +113,47 @@ describe('summarizeAnnouncement', () => {
     const summary = summarizeAnnouncement(long);
     expect(summary.endsWith('…')).toBe(true);
     expect(summary.length).toBeLessThanOrEqual(SUMMARY_MAX_LENGTH + 1);
+  });
+});
+
+describe('splitAnnouncement', () => {
+  it('keeps the body byte-identical apart from the headline line', () => {
+    const { headline, body } = splitAnnouncement(
+      '# Scheduled maintenance\n\n- 10pm UTC\n- ~2 hours\n\nSee [docs](https://x.dev).',
+    );
+    expect(headline).toBe('Scheduled maintenance');
+    expect(body).toBe('- 10pm UTC\n- ~2 hours\n\nSee [docs](https://x.dev).');
+  });
+
+  it('removes the headline line only, not a later line that repeats it', () => {
+    const { body } = splitAnnouncement('Notice\n\nNotice');
+    expect(body).toBe('Notice');
+  });
+
+  it('returns an empty body when the headline is the whole message', () => {
+    expect(splitAnnouncement('Just one line').body).toBe('');
+  });
+
+  it('does not lift a headline out of a code block', () => {
+    const { headline, body } = splitAnnouncement('```\ncode only\n```');
+    expect(headline).toBe('');
+    expect(body).toBe('```\ncode only\n```');
+  });
+
+  it('drops the prose line that follows a code block, keeping the block', () => {
+    const { headline, body } = splitAnnouncement(
+      '```\nsome code\n```\nReal notice\nmore text',
+    );
+    expect(headline).toBe('Real notice');
+    expect(body).toBe('```\nsome code\n```\nmore text');
+  });
+
+  it('preserves the first line of a numbered list after removing the headline', () => {
+    const { headline, body } = splitAnnouncement(
+      'Title\n\n1. first\n2. second',
+    );
+    expect(headline).toBe('Title');
+    expect(body).toBe('1. first\n2. second');
   });
 });
 

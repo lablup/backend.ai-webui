@@ -4,6 +4,7 @@
  */
 import {
   isAnnouncementCollapsible,
+  splitAnnouncement,
   summarizeAnnouncement,
 } from '../helper/announcementSummary';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -51,14 +52,18 @@ const AnnouncementBanner: React.FC = () => {
     return null;
   }
 
-  // Must be the same renderer as the editor preview (FR-3402); the banner
-  // sits above the page h1, so markdown `#` starts at h3.
-  const fullMarkdown = (
+  // Must use the same renderer settings as the editor preview (FR-3402); the
+  // banner sits above the page h1, so markdown `#` starts at h3.
+  const renderMarkdown = (source: string) => (
     <Markdown density="compact" headingLevelStart={3} autolink="gfm">
-      {message}
+      {source}
     </Markdown>
   );
   const isCollapsible = isAnnouncementCollapsible(message);
+  // The first line is the banner's title in both states, so the expanded body
+  // is the source WITHOUT it — expanding adds only what the title does not
+  // already show.
+  const { headline, body } = splitAnnouncement(message);
 
   return (
     <>
@@ -67,21 +72,25 @@ const AnnouncementBanner: React.FC = () => {
         container="section"
         isDismissable
         onDismiss={() => setDismissedMessage(message)}
-        // Collapsible shape: one-line summary in `title` with the expand
-        // toggle right beside it; the full markdown moves into `description`
-        // once expanded, and the summary steps aside so the announcement's
-        // first line is not shown twice. Short shape: body in `description`,
-        // not `title` — Banner centres its header on
+        // Collapsible shape: the first line is the title in BOTH states, with
+        // the expand toggle right beside it — collapsed it is cut to one row,
+        // expanded it shows in full (so a cropped long line is never lost) and
+        // `description` adds the rest of the source below it. Short shape:
+        // body in `description`, not `title` — Banner centres its header on
         // `description == null && hasActions`, which misaligns the icon and
         // Edit button against a multi-line announcement (FR-3482).
         title={
           isCollapsible ? (
             <span className="webui-announcement-title">
-              {!isExpanded && (
-                <span className="webui-announcement-summary">
-                  {summarizeAnnouncement(message)}
-                </span>
-              )}
+              <span
+                className={
+                  isExpanded
+                    ? 'webui-announcement-headline'
+                    : 'webui-announcement-summary'
+                }
+              >
+                {isExpanded ? headline : summarizeAnnouncement(message)}
+              </span>
               <Button
                 className="webui-announcement-toggle"
                 variant="ghost"
@@ -104,7 +113,11 @@ const AnnouncementBanner: React.FC = () => {
           ) : null
         }
         description={
-          isCollapsible ? (isExpanded ? fullMarkdown : undefined) : fullMarkdown
+          isCollapsible
+            ? isExpanded && body.length > 0
+              ? renderMarkdown(body)
+              : undefined
+            : renderMarkdown(message)
         }
         endContent={
           isSuperAdmin ? (
