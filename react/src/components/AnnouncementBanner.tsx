@@ -19,16 +19,16 @@ import {
   useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
  * The system announcement as AppShell's top banner (FR-3612), replacing the
  * StartPage-only `AnnouncementAlert`. A long announcement renders collapsed —
- * one-line summary plus Banner's built-in expand toggle revealing the full
- * markdown. Dismissal is remembered per session and per message, so a new
- * announcement resurfaces the banner.
+ * a one-line summary followed by an explicit labelled expand toggle revealing
+ * the full markdown. Dismissal is remembered per session and per message, so
+ * a new announcement resurfaces the banner.
  */
 const AnnouncementBanner: React.FC = () => {
   'use memo';
@@ -37,6 +37,10 @@ const AnnouncementBanner: React.FC = () => {
   const userRole = useCurrentUserRole();
   const isSuperAdmin = userRole === 'superadmin';
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
+  // Expansion is owned here rather than by Banner's `children` slot: Banner's
+  // own toggle is uncontrolled (`defaultIsExpanded` only) and sits at the far
+  // end of the header, away from the text it reveals.
+  const [isExpanded, { toggle: toggleExpanded }] = useToggle(false);
   const { data: announcement } = useSuspenseGetAnnouncement();
   const [dismissedMessage, setDismissedMessage] = useSessionStorageState<
     string | undefined
@@ -63,20 +67,42 @@ const AnnouncementBanner: React.FC = () => {
         container="section"
         isDismissable
         onDismiss={() => setDismissedMessage(message)}
-        // Collapsed shape: summary in `title`, full markdown in the
-        // collapsible `children` area (Banner adds the expand toggle).
-        // Short shape: body in `description`, not `title` — Banner centres
-        // its header on `description == null && hasActions`, which misaligns
-        // the icon and Edit button against a multi-line announcement
-        // (FR-3482).
+        // Collapsible shape: one-line summary in `title` with the expand
+        // toggle right beside it; the full markdown moves into `description`
+        // once expanded. Short shape: body in `description`, not `title` —
+        // Banner centres its header on `description == null && hasActions`,
+        // which misaligns the icon and Edit button against a multi-line
+        // announcement (FR-3482).
         title={
           isCollapsible ? (
-            <span className="webui-announcement-summary">
-              {summarizeAnnouncement(message)}
+            <span className="webui-announcement-title">
+              <span className="webui-announcement-summary">
+                {summarizeAnnouncement(message)}
+              </span>
+              <Button
+                className="webui-announcement-toggle"
+                variant="ghost"
+                size="sm"
+                label={t(
+                  isExpanded
+                    ? 'notification.SeeSummary'
+                    : 'notification.SeeDetail',
+                )}
+                endContent={
+                  isExpanded ? (
+                    <ChevronUpIcon size="1em" />
+                  ) : (
+                    <ChevronDownIcon size="1em" />
+                  )
+                }
+                onClick={toggleExpanded}
+              />
             </span>
           ) : null
         }
-        description={isCollapsible ? undefined : fullMarkdown}
+        description={
+          isCollapsible ? (isExpanded ? fullMarkdown : undefined) : fullMarkdown
+        }
         endContent={
           isSuperAdmin ? (
             <Button
@@ -88,9 +114,7 @@ const AnnouncementBanner: React.FC = () => {
             />
           ) : undefined
         }
-      >
-        {isCollapsible ? fullMarkdown : undefined}
-      </Banner>
+      />
       {isSuperAdmin && (
         <BAIUnmountAfterClose>
           <AnnouncementEditModal

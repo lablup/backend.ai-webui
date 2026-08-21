@@ -5,13 +5,27 @@
  Co-located styles for <AnnouncementBanner> (P17). Banner's title slot wraps
  (`overflow-wrap: anywhere`), so the character-count cutoff alone would still
  span several rows at phone widths / with wide CJK text — the collapsed
- summary must stay a single ellipsized row (the full text lives in the
- expandable children).
+ summary must stay a single ellipsized row, with the expand toggle sitting
+ immediately after it (not at the banner's far edge) so the affordance reads
+ as part of the announcement text.
 */
 
+.webui-announcement-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
 .webui-announcement-summary {
-  display: block;
+  /* Shrinkable, so the toggle keeps its place as the text ellipsizes. */
+  flex: 0 1 auto;
+  min-width: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.webui-announcement-toggle {
+  flex-shrink: 0;
 }

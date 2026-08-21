@@ -46,15 +46,17 @@
   overflow: visible;
 }
 
-/* FR-3612: the main content column paints its OWN overlay scrollbar
-   (MainLayoutOverlayScrollbar) over the content, so the native bar — which
-   always consumes layout space — is hidden here. Content width therefore
-   never changes with scrollability. */
-.main-layout-content-scroll {
+/* FR-3612: where native scrollbars consume layout width, the main content
+   column paints its OWN overlay scrollbar (MainLayoutOverlayScrollbar) over
+   the content and hides the native bar, so content width never changes with
+   scrollability. The attribute is set by that component only after it measures
+   that this platform's bars are NOT already overlays — mobile and macOS
+   trackpads keep their native indicator untouched. */
+.main-layout-content-scroll[data-custom-scrollbar='true'] {
   scrollbar-width: none;
 }
 
-.main-layout-content-scroll::-webkit-scrollbar {
+.main-layout-content-scroll[data-custom-scrollbar='true']::-webkit-scrollbar {
   display: none;
 }
 
@@ -64,21 +66,16 @@
   right: 0;
   bottom: 0;
   width: 8px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  /* Never intercept clicks meant for content under it. */
+  /* Never intercept clicks meant for content under it — only the thumb does. */
   pointer-events: none;
   /* Above the sticky header (z-index 100, MainLayout.tsx). */
   z-index: 101;
 }
 
+/* Presence IS the scrollability cue: the thumb stays put the whole time the
+   content overflows rather than fading out when scrolling stops. */
 .main-layout-overlay-scrollbar[data-scrollable='false'] {
   display: none;
-}
-
-.main-layout-overlay-scrollbar[data-visible='true'],
-.main-layout-overlay-scrollbar:hover {
-  opacity: 1;
 }
 
 .main-layout-overlay-scrollbar-thumb {
@@ -88,15 +85,15 @@
   width: 6px;
   border-radius: var(--radius-full);
   background-color: var(--color-border-emphasized);
-}
-
-/* Only a VISIBLE thumb is grabbable — an invisible one must not steal
-   clicks/drags from content at the right edge. */
-.main-layout-overlay-scrollbar[data-visible='true']
-  .main-layout-overlay-scrollbar-thumb,
-.main-layout-overlay-scrollbar:hover .main-layout-overlay-scrollbar-thumb {
   pointer-events: auto;
   cursor: default;
+  transition: background-color 0.15s ease;
+}
+
+.main-layout-overlay-scrollbar-thumb:hover,
+.main-layout-overlay-scrollbar[data-dragging='true']
+  .main-layout-overlay-scrollbar-thumb {
+  background-color: var(--color-text-disabled);
 }
 
 /* Top/bottom breathing room for the stacked layout alerts. */
