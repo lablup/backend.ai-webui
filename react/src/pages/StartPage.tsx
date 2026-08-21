@@ -2,12 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AstryxSecondaryTheme } from '../astryx-theme';
 import ActionItemContent from '../components/ActionItemContent';
-import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
-import { AstryxSecondaryTheme } from '../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -294,7 +293,6 @@ const StartPage: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap={'md'} align="stretch">
-      <AnnouncementAlert showIcon closable />
       <BAIBoard
         movable
         items={boardItems}

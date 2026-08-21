@@ -67,14 +67,18 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
       // The conversion had landed on step 5 (20px).
       gap={4}
       width="100%"
+      // Wraps so the FileBrowser/SFTP groups drop under the title instead of
+      // clipping into the modal's close button at narrow widths (FR-3606).
+      wrap="wrap"
       {...({ 'data-testid': 'folder-explorer-header' } as object)}
     >
       <HStack
         align="center"
         // Legacy `BAIFlex gap="xs"` = antd `sizeXS` = 8px = step 2.
         gap={2}
-        // reset font weight set by the modal header
-        style={{ flex: 1, fontWeight: 'normal', ...titleStyle }}
+        // reset font weight set by the modal header; the min width keeps a
+        // readable slice of the name and is the wrap trigger for the actions
+        style={{ flex: 1, minWidth: 180, fontWeight: 'normal', ...titleStyle }}
         {...({ 'data-testid': 'folder-explorer-title' } as object)}
       >
         {vfolderNode ? (
@@ -117,6 +121,8 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
         // Legacy `BAIFlex gap={token.marginSM}` = 12px = `--spacing-3` (step 3).
         // The conversion had landed on step 2 (8px), crowding the two buttons.
         gap={3}
+        // Keeps the group right-aligned on its own row once wrapped.
+        style={{ marginLeft: 'auto' }}
         {...({ 'data-testid': 'folder-explorer-actions' } as object)}
       >
         {vfolderNode && !vfolderNode?.unmanagedPath ? (

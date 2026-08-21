@@ -872,8 +872,8 @@ importers:
         specifier: 'catalog:'
         version: 1.29.0(react@19.2.8)
       markdown-to-jsx:
-        specifier: ^7.7.17
-        version: 7.7.17(react@19.2.8)
+        specifier: ^9.10.2
+        version: 9.10.2(react@19.2.8)
       marked:
         specifier: 'catalog:'
         version: 16.4.2
@@ -8392,13 +8392,22 @@ packages:
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
 
-  markdown-to-jsx@7.7.17:
-    resolution: {integrity: sha512-7mG/1feQ0TX5I7YyMZVDgCC/y2I3CiEhIRQIhyov9nGBP5eoVrOXXHuL5ZP8GRfxVZKRiXWJgwXkb9It+nQZfQ==}
-    engines: {node: '>= 10'}
+  markdown-to-jsx@9.10.2:
+    resolution: {integrity: sha512-iR9GadlIox0q1uXnpqdxpF02Vb1WDmZ/QIXWjBR5htzjUEEhyIWbM65LuVKavdwJaVo4q95C/F2OOyNjWe91ig==}
+    engines: {node: '>= 18'}
     peerDependencies:
-      react: '>= 0.14.0'
+      react: '>= 16.0.0'
+      react-native: '*'
+      solid-js: '>=1.0.0'
+      vue: '>=3.0.0'
     peerDependenciesMeta:
       react:
+        optional: true
+      react-native:
+        optional: true
+      solid-js:
+        optional: true
+      vue:
         optional: true
 
   marked@12.0.2:
@@ -19626,7 +19635,7 @@ snapshots:
 
   markdown-table@3.0.4: {}
 
-  markdown-to-jsx@7.7.17(react@19.2.8):
+  markdown-to-jsx@9.10.2(react@19.2.8):
     optionalDependencies:
       react: 19.2.8
 
@@ -23528,7 +23537,7 @@ time:
   lodash-es@4.18.1: '2026-04-01T21:04:15.518Z'
   lodash@4.18.1: '2026-04-01T21:01:20.458Z'
   lucide-react@1.29.0: '2026-08-06T11:51:53.703Z'
-  markdown-to-jsx@7.7.17: '2025-10-24T03:49:28.787Z'
+  markdown-to-jsx@9.10.2: '2026-08-03T17:49:48.169Z'
   marked@12.0.2: '2024-04-19T05:13:06.397Z'
   marked@16.4.2: '2025-11-06T22:29:20.004Z'
   mime-types@2.1.35: '2022-03-12T18:04:43.042Z'

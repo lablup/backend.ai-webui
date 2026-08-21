@@ -117,6 +117,10 @@ export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnit
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIAppShell } from './BAIAppShell';
+export type { BAIAppShellProps, BAIAppShellDrawer } from './BAIAppShell';
+export { default as BAIOverlayScrollbar } from './BAIOverlayScrollbar';
+export type { BAIOverlayScrollbarProps } from './BAIOverlayScrollbar';
 export { default as BAIColorPicker, toHexColor } from './BAIColorPicker';
 export type { BAIColorPickerProps } from './BAIColorPicker';
 export { default as BAIListAlert } from './BAIListAlert';
@@ -230,6 +234,12 @@ export { default as BAIVFolderDeleteButtonV2Astryx } from './BAIVFolderDeleteBut
 export type { BAIVFolderDeleteButtonV2AstryxProps } from './BAIVFolderDeleteButtonV2Astryx';
 export { default as BAIDrawerAstryx } from './BAIDrawerAstryx';
 export type { BAIDrawerAstryxProps } from './BAIDrawerAstryx';
+export { default as BAIDialog } from './BAIDialog';
+export type { BAIDialogProps } from './BAIDialog';
+export { default as BAIAlertDialog } from './BAIAlertDialog';
+export type { BAIAlertDialogProps } from './BAIAlertDialog';
+// `react/`'s `BAIDrawerPortal` joins this stack — one ladder for both (FR-3585).
+export { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

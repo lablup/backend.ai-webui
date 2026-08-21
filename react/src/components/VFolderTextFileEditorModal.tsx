@@ -17,8 +17,6 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import type { RcFile } from './FileUploadManager';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
-import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -250,69 +248,48 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
     setIsUnsavedConfirmOpen(true);
   };
 
-  // TICKET-11 gap rewrite (answers/07 §5): antd modal.confirm's 3-button
-  // `footer` render-prop (Save / Don't Save / Cancel + `.destroy()`) has no
-  // shim/Astryx analog — AlertDialog is a fixed 2-button footer. This is the
-  // one bespoke dialog: a controlled Astryx Dialog with a hand-built footer,
-  // same composition technique as the shim's ReactNode branch.
+  // A 3-button footer (Save / Don't Save / Cancel) has no generated-action
+  // analog, so it goes through `BAIModal`'s full `footer` override. It opens on
+  // top of the editor modal; the portal's level stack stacks it.
   const closeUnsavedConfirm = () => setIsUnsavedConfirmOpen(false);
   const unsavedConfirmDialog = (
-    <Dialog
+    <BAIModal
       isOpen={isUnsavedConfirmOpen}
-      onOpenChange={(open) => {
-        if (!open) {
-          closeUnsavedConfirm();
-        }
-      }}
-      purpose="form"
-    >
-      <Layout
-        header={
-          <DialogHeader
-            title={t('data.explorer.EditFileUnsavedChangesTitle', {
-              fileName: fileInfo?.name,
-            })}
-            onOpenChange={(open) => {
-              if (!open) {
-                closeUnsavedConfirm();
-              }
+      onOpenChange={closeUnsavedConfirm}
+      // `BAIModal`'s vocabulary for Astryx `purpose="form"`: the backdrop does
+      // not dismiss (unsaved work), Escape still does.
+      maskClosable={false}
+      title={t('data.explorer.EditFileUnsavedChangesTitle', {
+        fileName: fileInfo?.name,
+      })}
+      footer={
+        <HStack justify="end" gap={2} align="center">
+          <Button
+            label={t('button.Cancel')}
+            variant="secondary"
+            onClick={closeUnsavedConfirm}
+          />
+          <Button
+            label={t('button.DontSave')}
+            variant="secondary"
+            onClick={() => {
+              closeUnsavedConfirm();
+              onRequestClose();
             }}
           />
-        }
-        content={
-          <LayoutContent>
-            {t('data.explorer.EditFileUnsavedChangesDescription')}
-          </LayoutContent>
-        }
-        footer={
-          <LayoutFooter>
-            <HStack justify="end" gap={2} align="center">
-              <Button
-                label={t('button.Cancel')}
-                variant="secondary"
-                onClick={closeUnsavedConfirm}
-              />
-              <Button
-                label={t('button.DontSave')}
-                variant="secondary"
-                onClick={() => {
-                  closeUnsavedConfirm();
-                  onRequestClose();
-                }}
-              />
-              <Button
-                label={t('button.Save')}
-                variant="primary"
-                onClick={() => {
-                  closeUnsavedConfirm();
-                  saveMutation.mutate();
-                }}
-              />
-            </HStack>
-          </LayoutFooter>
-        }
-      />
-    </Dialog>
+          <Button
+            label={t('button.Save')}
+            variant="primary"
+            onClick={() => {
+              closeUnsavedConfirm();
+              saveMutation.mutate();
+            }}
+          />
+        </HStack>
+      }
+    >
+      {t('data.explorer.EditFileUnsavedChangesDescription')}
+    </BAIModal>
   );
 
   const skeletonWithPadding = (
