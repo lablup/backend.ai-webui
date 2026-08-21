@@ -15,8 +15,8 @@ import '@testing-library/jest-dom';
 // polling uses `setTimeout`, which never fires under faked timers.
 // (None of our test code references `jest.*` directly anymore; this is
 // purely a `@testing-library/dom` integration hook.)
-import { cleanup, configure } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import { configure } from '@testing-library/react';
+import { vi } from 'vitest';
 
 (globalThis as any).jest = vi;
 
@@ -29,104 +29,6 @@ import { afterEach, vi } from 'vitest';
 // just 5s later. `testTimeout` in vitest.config.ts is raised past this so the
 // assertion's own diff surfaces instead of a bare test timeout. FR-3617.
 configure({ asyncUtilTimeout: 5000 });
-
-// `isolate: false` shares the source-module registry across test files, so a
-// file's `vi.mock` never reaches an importer another file already evaluated.
-// This setup file re-runs before each test file: dropping the source-module
-// cache here restores per-file mock semantics while keeping the shared jsdom
-// environment and transform caches that make no-isolate fast.
-vi.resetModules();
-
-// Non-React residue survives RTL cleanup in the shared environment (Astryx's
-// live-region singleton nodes, scroll-lock leftovers, body/html attributes):
-// start each file with the pristine document a fresh jsdom would give it.
-// Astryx re-attaches its live regions on the next announcement, so removal is safe.
-if (typeof document !== 'undefined') {
-  document.body.replaceChildren();
-  for (const el of [document.body, document.documentElement]) {
-    for (const { name } of Array.from(el.attributes)) {
-      el.removeAttribute(name);
-    }
-  }
-  // Web storage is per-jsdom under isolation; keep that per-file guarantee.
-  localStorage.clear();
-  sessionStorage.clear();
-}
-
-// window/document listeners registered by one file (e.g. TabCount's anonymous
-// `beforeunload`) would otherwise run with stale module state during later
-// files' events. Wrap add/removeEventListener once per worker to track live
-// registrations; each per-file re-run of this setup disposes the leftovers.
-// Only project-code registrations are tracked: node_modules registrants (e.g.
-// react-dom's once-per-document `selectionchange`) stay cached across files
-// and would not re-register after removal.
-type TrackedListener = {
-  type: string;
-  listener: EventListenerOrEventListenerObject | null;
-  options?: boolean | AddEventListenerOptions;
-  remove: EventTarget['removeEventListener'];
-};
-const listenerTracker: { installed: boolean; live: TrackedListener[] } = ((
-  globalThis as any
-).__baiTestListenerTracker ??= { installed: false, live: [] });
-if (!listenerTracker.installed && typeof document !== 'undefined') {
-  listenerTracker.installed = true;
-  const captureOf = (options?: boolean | AddEventListenerOptions) =>
-    typeof options === 'boolean' ? options : !!options?.capture;
-  // globalThis and window can hold distinct copies of the same methods.
-  for (const holder of new Set<EventTarget>([
-    globalThis as unknown as EventTarget,
-    window,
-    document,
-  ])) {
-    const originalAdd = holder.addEventListener.bind(holder);
-    const originalRemove = holder.removeEventListener.bind(holder);
-    holder.addEventListener = (
-      type: string,
-      listener: EventListenerOrEventListenerObject | null,
-      options?: boolean | AddEventListenerOptions,
-    ) => {
-      // Stack frame 0 is "Error", 1 is this wrapper; 2 is the registrant.
-      const caller = (new Error().stack ?? '').split('\n')[2] ?? '';
-      if (!caller.includes('node_modules')) {
-        listenerTracker.live.push({
-          type,
-          listener,
-          options,
-          remove: originalRemove,
-        });
-      }
-      originalAdd(type, listener, options);
-    };
-    holder.removeEventListener = (
-      type: string,
-      listener: EventListenerOrEventListenerObject | null,
-      options?: boolean | EventListenerOptions,
-    ) => {
-      const index = listenerTracker.live.findIndex(
-        (entry) =>
-          entry.remove === originalRemove &&
-          entry.type === type &&
-          entry.listener === listener &&
-          captureOf(entry.options) === captureOf(options),
-      );
-      if (index !== -1) {
-        listenerTracker.live.splice(index, 1);
-      }
-      originalRemove(type, listener, options);
-    };
-  }
-}
-for (const entry of listenerTracker.live.splice(0)) {
-  entry.remove(entry.type, entry.listener, entry.options);
-}
-
-// RTL's auto-cleanup registers its afterEach at module-import time, which the
-// shared module registry of `isolate: false` only executes for the first test
-// file per worker — register it explicitly so every file unmounts its DOM.
-afterEach(() => {
-  cleanup();
-});
 
 // jsdom implements `<dialog>` as an element but not its modal API, so any
 // component built on Astryx `Dialog` (every `BAIModalAstryx`, drawer and

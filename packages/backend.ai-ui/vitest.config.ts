@@ -45,9 +45,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    // Reuse the worker environment across test files; setupTests.ts restores
-    // per-file DOM and source-module freshness. Escape hatch: `vitest run --isolate`.
-    isolate: false,
     setupFiles: [
       resolve(__dirname, 'setupTests.ts'),
     ],
