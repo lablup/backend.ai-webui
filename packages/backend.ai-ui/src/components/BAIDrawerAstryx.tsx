@@ -102,27 +102,17 @@ const BAIDrawerAstryx: React.FC<BAIDrawerAstryxProps> = ({
             wrap="nowrap"
             className="bai-drawer-header-title"
           >
-            <HStack
-              align="center"
-              gap={0}
-              wrap="nowrap"
-              className="bai-drawer-header-title"
-            >
-              <IconButton
-                icon={<X size="1em" />}
-                label={t('general.button.Close')}
-                variant="ghost"
-                size="sm"
-                onClick={() => onClose?.()}
-              />
-              {title !== undefined ? (
-                <Heading level={5} className="bai-drawer-title">
-                  {title}
-                </Heading>
-              ) : null}
-            </HStack>
-            {extra !== undefined ? (
-              <div className="bai-drawer-extra">{extra}</div>
+            <IconButton
+              icon={<X size="1em" />}
+              label={t('general.button.Close')}
+              variant="ghost"
+              size="sm"
+              onClick={() => onClose?.()}
+            />
+            {title !== undefined ? (
+              <Heading level={5} className="bai-drawer-title">
+                {title}
+              </Heading>
             ) : null}
           </HStack>
           {extra !== undefined ? (
