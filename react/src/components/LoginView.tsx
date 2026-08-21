@@ -537,7 +537,6 @@ const LoginView: React.FC<{
                 okText: t('login.Login'),
                 cancelText: t('button.Cancel'),
                 centered: true,
-                zIndex: 10001,
                 onOk: () => {
                   forceLoginApprovedRef.current = true;
                   setIsLoading(true);
@@ -1113,85 +1112,68 @@ const LoginView: React.FC<{
   // eslint-disable-next-line react-hooks/refs -- see comment above
   const expiredCredentials = expiredCredentialsRef.current;
 
-  // Wrapper creates a stacking context above the splash overlay (z-index 10001 > splash 10000).
-  // Zero-sized so it doesn't intercept pointer events. Child modals use
-  // position:fixed internally so they are visible and interactive.
+  // The login screen background (Diagonal Weave + version/copyright metadata)
+  // is the persisted splash from index.html, switched to backdrop mode by
+  // __enterLoginBackdrop().
   return (
     <>
-      {/* The login screen background (Diagonal Weave + version/copyright
-          metadata) is the persisted splash element from index.html, switched
-          to backdrop mode via __enterLoginBackdrop(). It sits at z-index
-          10000, below the login panel wrapper (10001). */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: 0,
-          height: 0,
-          zIndex: 10001,
-          overflow: 'visible',
+      <LoginFormPanel
+        isOpen={isLoginPanelOpen}
+        isLoading={isLoading}
+        loginError={loginError}
+        onClearLoginError={() => setLoginError(null)}
+        connectionMode={connectionMode}
+        loginConfig={loginConfig}
+        apiEndpoint={apiEndpoint}
+        otpRequired={otpRequired}
+        needsOtpRegistration={needsOtpRegistration}
+        totpRegistrationToken={totpRegistrationToken}
+        needToResetPassword={needToResetPassword}
+        expiredCredentials={expiredCredentials}
+        showSignupModal={showSignupModal}
+        signupPreloadedToken={signupPreloadedToken}
+        showEndpointInput={showEndpointInput}
+        isEndpointDisabled={isEndpointDisabled}
+        form={form}
+        endpointMenuItems={endpointMenuItems}
+        onKeyDown={handleKeyDown}
+        onLogin={handleLogin}
+        onConnectionModeChange={handleConnectionModeChange}
+        onShowSignupDialog={showSignupDialog}
+        onSAMLLogin={handleSAMLLogin}
+        onOpenIDLogin={handleOpenIDLogin}
+        onSetApiEndpoint={setApiEndpoint}
+        onSetOtpRequired={setOtpRequired}
+        onSetNeedsOtpRegistration={setNeedsOtpRegistration}
+        onSetNeedToResetPassword={(v: boolean) => {
+          setNeedToResetPassword(v);
+          if (!v) expiredCredentialsRef.current = null;
         }}
-      >
-        <LoginFormPanel
-          isOpen={isLoginPanelOpen}
-          isLoading={isLoading}
-          loginError={loginError}
-          onClearLoginError={() => setLoginError(null)}
-          connectionMode={connectionMode}
-          loginConfig={loginConfig}
-          apiEndpoint={apiEndpoint}
-          otpRequired={otpRequired}
-          needsOtpRegistration={needsOtpRegistration}
-          totpRegistrationToken={totpRegistrationToken}
-          needToResetPassword={needToResetPassword}
-          expiredCredentials={expiredCredentials}
-          showSignupModal={showSignupModal}
-          signupPreloadedToken={signupPreloadedToken}
-          showEndpointInput={showEndpointInput}
-          isEndpointDisabled={isEndpointDisabled}
-          form={form}
-          endpointMenuItems={endpointMenuItems}
-          onKeyDown={handleKeyDown}
-          onLogin={handleLogin}
-          onConnectionModeChange={handleConnectionModeChange}
-          onShowSignupDialog={showSignupDialog}
-          onSAMLLogin={handleSAMLLogin}
-          onOpenIDLogin={handleOpenIDLogin}
-          onSetApiEndpoint={setApiEndpoint}
-          onSetOtpRequired={setOtpRequired}
-          onSetNeedsOtpRegistration={setNeedsOtpRegistration}
-          onSetNeedToResetPassword={(v: boolean) => {
-            setNeedToResetPassword(v);
-            if (!v) expiredCredentialsRef.current = null;
-          }}
-          onSetShowSignupModal={setShowSignupModal}
-        />
+        onSetShowSignupModal={setShowSignupModal}
+      />
 
-        {/* Block/Error Panel */}
-        <BAIModal
-          open={isBlockPanelOpen && blockMessage !== ''}
-          title={blockType || undefined}
-          footer={
-            <Button
-              width="100%"
-              onClick={() => {
-                setIsBlockPanelOpen(false);
-                open();
-              }}
-              label={t('login.CancelLogin')}
-            />
-          }
-          closable={false}
-          mask={{ closable: false }}
-          getContainer={false}
-          destroyOnHidden
-        >
-          <div style={{ textAlign: 'center', paddingTop: 15 }}>
-            {blockMessage}
-          </div>
-        </BAIModal>
-      </div>
+      {/* Block/Error Panel */}
+      <BAIModal
+        open={isBlockPanelOpen && blockMessage !== ''}
+        title={blockType || undefined}
+        footer={
+          <Button
+            width="100%"
+            onClick={() => {
+              setIsBlockPanelOpen(false);
+              open();
+            }}
+            label={t('login.CancelLogin')}
+          />
+        }
+        closable={false}
+        mask={{ closable: false }}
+        destroyOnHidden
+      >
+        <div style={{ textAlign: 'center', paddingTop: 15 }}>
+          {blockMessage}
+        </div>
+      </BAIModal>
     </>
   );
 };

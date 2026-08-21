@@ -1742,12 +1742,12 @@ export class Client {
   /**
    * Rename session to another name.
    *
-   * @param {string} sessionId - current session name
-   * @param {string} newId - new session name
+   * @param {string} sessionId - ID (UUID) of the session
+   * @param {string} newName - new session name
    */
-  async rename(sessionId: string, newId: string): Promise<any> {
+  async rename(sessionId: string, newName: string): Promise<any> {
     let params = {
-      name: newId,
+      name: newName,
     };
     let rqst = this.newSignedRequest(
       'POST',
