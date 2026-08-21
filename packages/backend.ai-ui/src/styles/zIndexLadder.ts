@@ -13,7 +13,7 @@
  | `splash` | 900 | `index.html` `#splash`, which stays mounted as the logged-out backdrop. It sits BELOW `modalBase` deliberately: every dialog is a `document.body` portal now, so no login-screen wrapper can lift one over a splash that outranks the band |
  | `loginHost` | 950 | `InteractiveLoginPage`'s full-viewport card host |
  | (theme-shim) | 1000–1002 | a SECOND vocabulary this ladder does not own: `theme-shim`'s `zIndexPopupBase` (1000, operator-settable through `resources/antdThemeConfig.schema.json`), read by `FolderExplorerModal` (`+ 2`); lab `Drawer`'s non-modal base is 1000 too, and `DragAndDrop` sits at 1001 |
- | `modalBase` | 1100 | `BAIDialogPortal`, plus `BAI_Z_INDEX_MODAL_LEVEL_STEP` per nesting level |
+ | `modalBase` | 1100 | `BAIDialog`, plus `BAI_Z_INDEX_MODAL_LEVEL_STEP` per nesting level |
  | `loginSideHelp` | 1101 | `LoginFormPanel`'s side help panel — a fixed sibling anchored to the base modal's edge, so it clears that modal's mask but not a modal opened on top of it |
  | `notification` | 11000 | `.bai-notification-stack` |
  | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, lab `Drawer` — not stackable against this ladder |
@@ -35,5 +35,5 @@ export const BAI_Z_INDEX = {
   notification: 11000,
 } as const;
 
-/** Each nested `BAIDialogPortal` claims one step above `modalBase`. */
+/** Each nested `BAIDialog` claims one step above `modalBase`. */
 export const BAI_Z_INDEX_MODAL_LEVEL_STEP = 10;

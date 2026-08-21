@@ -14,7 +14,7 @@ import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
 import { MediaTheme } from '@astryxdesign/core/theme';
 import { render, screen } from '@testing-library/react';
-import { BAIDialogPortal } from 'backend.ai-ui';
+import { BAIDialog } from 'backend.ai-ui';
 import { describe, expect, it, vi } from 'vitest';
 
 // `useCustomThemeConfig` reaches into `useBAISetting`, which drags in
@@ -78,9 +78,9 @@ describe('nested Astryx theme across a portal', () => {
 
   it('keeps a portalled modal on the admin theme it was opened from', () => {
     renderInAdminRegion(
-      <BAIDialogPortal isOpen onOpenChange={vi.fn()}>
+      <BAIDialog isOpen onOpenChange={vi.fn()}>
         {modalBody}
-      </BAIDialogPortal>,
+      </BAIDialog>,
     );
 
     expect(
@@ -91,9 +91,9 @@ describe('nested Astryx theme across a portal', () => {
   it('escapes a MediaTheme band instead of inheriting its on-dark tokens', () => {
     renderInAdminRegion(
       <MediaTheme mode="dark">
-        <BAIDialogPortal isOpen onOpenChange={vi.fn()}>
+        <BAIDialog isOpen onOpenChange={vi.fn()}>
           {modalBody}
-        </BAIDialogPortal>
+        </BAIDialog>
       </MediaTheme>,
     );
 

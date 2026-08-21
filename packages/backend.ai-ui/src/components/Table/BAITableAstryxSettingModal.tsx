@@ -24,7 +24,7 @@
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
-import BAIDialogPortal from '../BAIDialogPortal';
+import BAIDialog from '../BAIDialog';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
@@ -196,7 +196,7 @@ const BAITableAstryxSettingModal: React.FC<BAITableAstryxSettingModalProps> = ({
   );
 
   return (
-    <BAIDialogPortal
+    <BAIDialog
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose(undefined);
@@ -275,7 +275,7 @@ const BAITableAstryxSettingModal: React.FC<BAITableAstryxSettingModalProps> = ({
         style={{ minWidth: 0 }}
       />
       <span style={{ display: 'none' }} data-token={token.colorText} />
-    </BAIDialogPortal>
+    </BAIDialog>
   );
 };
 

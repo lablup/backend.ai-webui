@@ -168,7 +168,7 @@ describe('app-shim modal', () => {
   });
 
   // The escape hatch for a surface the ladder does not cover; values below the
-  // band base are floored instead (see BAIDialogPortal.test.tsx).
+  // band base are floored instead (see BAIDialog.test.tsx).
   it('forwards zIndex to the portal root', () => {
     const handle = modal.confirm({ title: 'T', content: 'C', zIndex: 10001 });
     render(<AppShimModalHost />);
@@ -176,8 +176,8 @@ describe('app-shim modal', () => {
     expect(
       screen
         .getByRole('alertdialog')
-        .closest<HTMLElement>('.bai-dialog-portal')
-        ?.style.getPropertyValue('--bai-dialog-portal-z'),
+        .closest<HTMLElement>('.bai-dialog')
+        ?.style.getPropertyValue('--bai-dialog-z'),
     ).toBe('10001');
     handle.destroy();
   });

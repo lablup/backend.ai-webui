@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  to-astryx ticket 04 — antd `modal.confirm/error/info/...` drop-in composed on
- `BAIDialogPortal` (Astryx `Dialog`'s surface, portalled — FR-3578).
+ `BAIDialog` (Astryx `Dialog`'s surface, portalled — FR-3578).
 
  antd call-site contract preserved:
 
@@ -34,7 +34,7 @@
  - `.destroy()` closes without firing onOk/onCancel.
  - `.update()` throws — 0 real usages repo-wide (answers/07 §1.1), kept loud.
 */
-import BAIDialogPortal from '../components/BAIDialogPortal';
+import BAIDialog from '../components/BAIDialog';
 import { Button } from '@astryxdesign/core/Button';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -279,7 +279,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
     isPlainText(options.content)
   ) {
     return (
-      <BAIDialogPortal
+      <BAIDialog
         isOpen
         onOpenChange={handleOpenChange}
         width={options.width}
@@ -319,12 +319,12 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
             </LayoutFooter>
           }
         />
-      </BAIDialogPortal>
+      </BAIDialog>
     );
   }
 
   return (
-    <BAIDialogPortal
+    <BAIDialog
       isOpen
       onOpenChange={handleOpenChange}
       width={options.width}
@@ -359,14 +359,14 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
           </LayoutFooter>
         }
       />
-    </BAIDialogPortal>
+    </BAIDialog>
   );
 };
 
 /**
  * Renders every pending imperative modal task. Mounted exactly once by
  * `<BAIAppProvider>`. Concurrent tasks each get their own portal, and
- * `BAIDialogPortal`'s level stack keeps them in call order.
+ * `BAIDialog`'s level stack keeps them in call order.
  */
 export const AppShimModalHost: React.FC = () => {
   'use memo';

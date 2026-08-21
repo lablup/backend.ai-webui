@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIDialogPortal` — the contract T5/T6 build on: no native `<dialog>` (so
+ `BAIDialog` — the contract T5/T6 build on: no native `<dialog>` (so
  nothing is inert), the `.astryx-dialog` surface, the `getByRole('dialog',
  {name})` wiring every e2e spec uses, and purpose-gated dismissal.
 
@@ -10,7 +10,7 @@
  `<dialog>` would NOT fail on its own — the tag is asserted explicitly.
 */
 import { BAI_Z_INDEX } from '../styles/zIndexLadder';
-import BAIDialogPortal from './BAIDialogPortal';
+import BAIDialog from './BAIDialog';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
 import { Theme, defineTheme } from '@astryxdesign/core/theme';
@@ -20,11 +20,11 @@ import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 const renderPortal = (
-  props: Partial<React.ComponentProps<typeof BAIDialogPortal>> = {},
+  props: Partial<React.ComponentProps<typeof BAIDialog>> = {},
 ) => {
   const onOpenChange = vi.fn();
   const result = render(
-    <BAIDialogPortal isOpen onOpenChange={onOpenChange} {...props}>
+    <BAIDialog isOpen onOpenChange={onOpenChange} {...props}>
       <Layout
         header={<DialogHeader title="Portal title" />}
         content={
@@ -33,7 +33,7 @@ const renderPortal = (
           </LayoutContent>
         }
       />
-    </BAIDialogPortal>,
+    </BAIDialog>,
   );
   return { ...result, onOpenChange };
 };
@@ -44,18 +44,18 @@ const outerTheme = defineTheme({ name: 'portal-outer', tokens: {} });
 const innerTheme = defineTheme({ name: 'portal-inner', tokens: {} });
 
 const getMask = () =>
-  document.querySelector('.bai-dialog-portal__mask') as HTMLElement;
+  document.querySelector('.bai-dialog__mask') as HTMLElement;
 
 const getSurface = () =>
   screen
     .getByRole('dialog')
     .querySelector('.astryx-dialog') as HTMLElement | null;
 
-describe('BAIDialogPortal', () => {
+describe('BAIDialog', () => {
   it('portals to document.body without a native <dialog>', () => {
     renderPortal();
 
-    const root = document.body.querySelector('.bai-dialog-portal');
+    const root = document.body.querySelector('.bai-dialog');
     expect(root).not.toBeNull();
     expect(root?.parentElement).toBe(document.body);
     expect(document.querySelector('dialog')).toBeNull();
@@ -72,9 +72,9 @@ describe('BAIDialogPortal', () => {
     render(
       <div id="app-root">
         <button type="button">Behind</button>
-        <BAIDialogPortal isOpen onOpenChange={vi.fn()} aria-label="modal">
+        <BAIDialog isOpen onOpenChange={vi.fn()} aria-label="modal">
           <Layout content={<LayoutContent>body</LayoutContent>} />
-        </BAIDialogPortal>
+        </BAIDialog>
       </div>,
     );
 
@@ -172,12 +172,12 @@ describe('BAIDialogPortal', () => {
     const second = renderPortal();
 
     const roots = Array.from(
-      document.body.querySelectorAll<HTMLElement>('.bai-dialog-portal'),
+      document.body.querySelectorAll<HTMLElement>('.bai-dialog'),
     );
     expect(roots).toHaveLength(2);
     expect(
       roots.map((root) =>
-        Number(root.style.getPropertyValue('--bai-dialog-portal-level')),
+        Number(root.style.getPropertyValue('--bai-dialog-level')),
       ),
     ).toEqual([0, 1]);
 
@@ -192,20 +192,20 @@ describe('BAIDialogPortal', () => {
     const Nested: React.FC = () => {
       const [isInnerOpen, setIsInnerOpen] = useState(false);
       return (
-        <BAIDialogPortal isOpen onOpenChange={vi.fn()} aria-label="outer">
+        <BAIDialog isOpen onOpenChange={vi.fn()} aria-label="outer">
           <button type="button" onClick={() => setIsInnerOpen(true)}>
             open inner
           </button>
           <button type="button">outer-b</button>
-          <BAIDialogPortal
+          <BAIDialog
             isOpen={isInnerOpen}
             onOpenChange={vi.fn()}
             aria-label="inner"
           >
             <button type="button">inner-a</button>
             <button type="button">inner-b</button>
-          </BAIDialogPortal>
-        </BAIDialogPortal>
+          </BAIDialog>
+        </BAIDialog>
       );
     };
     render(<Nested />);
@@ -215,8 +215,8 @@ describe('BAIDialogPortal', () => {
     expect(
       Number(
         inner
-          .closest<HTMLElement>('.bai-dialog-portal')
-          ?.style.getPropertyValue('--bai-dialog-portal-level'),
+          .closest<HTMLElement>('.bai-dialog')
+          ?.style.getPropertyValue('--bai-dialog-level'),
       ),
     ).toBe(1);
 
@@ -233,8 +233,8 @@ describe('BAIDialogPortal', () => {
     renderPortal({ zIndex: 10001 });
     expect(
       document
-        .querySelector<HTMLElement>('.bai-dialog-portal')
-        ?.style.getPropertyValue('--bai-dialog-portal-z'),
+        .querySelector<HTMLElement>('.bai-dialog')
+        ?.style.getPropertyValue('--bai-dialog-z'),
     ).toBe('10001');
   });
 
@@ -243,16 +243,16 @@ describe('BAIDialogPortal', () => {
     renderPortal({ zIndex: 1002 });
     expect(
       document
-        .querySelector<HTMLElement>('.bai-dialog-portal')
-        ?.style.getPropertyValue('--bai-dialog-portal-z'),
+        .querySelector<HTMLElement>('.bai-dialog')
+        ?.style.getPropertyValue('--bai-dialog-z'),
     ).toBe(String(BAI_Z_INDEX.modalBase));
   });
 
   it('keeps children mounted but unnamed while closed', () => {
     renderPortal({ isOpen: false });
 
-    const root = document.body.querySelector('.bai-dialog-portal');
-    expect(root?.className).toContain('bai-dialog-portal--closed');
+    const root = document.body.querySelector('.bai-dialog');
+    expect(root?.className).toContain('bai-dialog--closed');
     expect(root?.hasAttribute('data-bai-modal-open')).toBe(false);
     expect(document.querySelector('[role="dialog"]')).toBeNull();
     expect(screen.getByText('Inside')).toBeInTheDocument();
@@ -262,17 +262,15 @@ describe('BAIDialogPortal', () => {
     render(
       <Theme theme={outerTheme} mode="light">
         <Theme theme={innerTheme} mode="light">
-          <BAIDialogPortal isOpen onOpenChange={vi.fn()} aria-label="modal">
+          <BAIDialog isOpen onOpenChange={vi.fn()} aria-label="modal">
             <Layout content={<LayoutContent>body</LayoutContent>} />
-          </BAIDialogPortal>
+          </BAIDialog>
         </Theme>
       </Theme>,
     );
 
     expect(
-      document
-        .querySelector('.bai-dialog-portal')
-        ?.getAttribute('data-astryx-theme'),
+      document.querySelector('.bai-dialog')?.getAttribute('data-astryx-theme'),
     ).toBe(innerTheme.name);
   });
 
@@ -280,9 +278,7 @@ describe('BAIDialogPortal', () => {
     renderPortal();
 
     expect(
-      document
-        .querySelector('.bai-dialog-portal')
-        ?.hasAttribute('data-astryx-theme'),
+      document.querySelector('.bai-dialog')?.hasAttribute('data-astryx-theme'),
     ).toBe(false);
   });
 
@@ -290,7 +286,7 @@ describe('BAIDialogPortal', () => {
     renderPortal({ position: { bottom: 0, end: 16 } });
 
     const wrap = screen.getByRole('dialog');
-    expect(wrap.className).toContain('bai-dialog-portal__wrap--positioned');
+    expect(wrap.className).toContain('bai-dialog__wrap--positioned');
     expect(wrap.style.insetInlineEnd).toBe('16px');
     expect(wrap.style.insetInlineStart).toBe('auto');
     expect(wrap.style.bottom).toBe('0px');

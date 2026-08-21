@@ -4,7 +4,7 @@
  */
 import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 
-// A `BAIDialogPortal` root, or any open native `<dialog>` — after FR-3578 that
+// A `BAIDialog` root, or any open native `<dialog>` — after FR-3578 that
 // is drawers, plus anything opened with `.show()`.
 const OPEN_MODAL_ROOTS = [
   `[${BAI_MODAL_OPEN_ATTRIBUTE}]`,
