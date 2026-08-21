@@ -31,15 +31,26 @@ describe('queryWithinOpenModal', () => {
     );
   });
 
-  // The covered root is `inert`, so a match inside it is unreachable — and it
-  // is the one document order reaches first.
-  it('prefers the topmost root when a modal covers another', () => {
+  // Document order reaches the covered root first, and it is the one the level
+  // stack marked `inert` — its match is unreachable.
+  it('skips a covered root when a modal covers another', () => {
     const outer = openModal('outer');
     openModal('inner');
     outer.toggleAttribute('inert', true);
 
     expect(queryWithinOpenModal<HTMLInputElement>('.target')?.value).toBe(
       'inner',
+    );
+  });
+
+  // A drawer is a native `<dialog>` the level stack does not track, so nothing
+  // inerts the modal it covers — only the ordering separates them.
+  it('prefers the last open root when none is inert', () => {
+    openModal('first');
+    openModal('second');
+
+    expect(queryWithinOpenModal<HTMLInputElement>('.target')?.value).toBe(
+      'second',
     );
   });
 });

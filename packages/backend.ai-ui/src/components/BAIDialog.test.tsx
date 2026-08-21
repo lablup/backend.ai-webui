@@ -17,7 +17,7 @@ import { Theme, defineTheme } from '@astryxdesign/core/theme';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const renderPortal = (
   props: Partial<React.ComponentProps<typeof BAIDialog>> = {},
@@ -63,30 +63,17 @@ const zOf = (root: HTMLElement) =>
 
 // jsdom treats `inert` as inert markup only. The spec's blur-what-is-inside is
 // the half the level stack's focus restore has to survive, so model just that.
-const blurOnInert = () => {
-  const toggleAttribute = Element.prototype.toggleAttribute;
-  vi.spyOn(Element.prototype, 'toggleAttribute').mockImplementation(function (
-    this: Element,
-    name: string,
-    force?: boolean,
-  ) {
-    const result = toggleAttribute.call(this, name, force);
+const blurOnInert = (root: HTMLElement) => {
+  const toggleAttribute = root.toggleAttribute.bind(root);
+  vi.spyOn(root, 'toggleAttribute').mockImplementation((name, force) => {
+    const result = toggleAttribute(name, force);
     const active = document.activeElement;
-    if (
-      name === 'inert' &&
-      this.hasAttribute('inert') &&
-      active instanceof HTMLElement &&
-      this.contains(active)
-    ) {
+    if (root.hasAttribute('inert') && active instanceof HTMLElement) {
       active.blur();
     }
     return result;
   });
 };
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
 
 describe('BAIDialog', () => {
   it('portals to document.body without a native <dialog>', () => {
@@ -310,7 +297,6 @@ describe('BAIDialog', () => {
   // Astryx's restore snapshots in a passive effect, after the covering root
   // went `inert` — it captures `<body>` and closing lands focus nowhere.
   it('restores focus to the trigger inside the dialog that opened it', async () => {
-    blurOnInert();
     const user = userEvent.setup();
     const Nested: React.FC = () => {
       const [isInnerOpen, setIsInnerOpen] = useState(false);
@@ -330,6 +316,7 @@ describe('BAIDialog', () => {
       );
     };
     render(<Nested />);
+    blurOnInert(dialogRoot('outer'));
 
     const trigger = screen.getByRole('button', { name: 'open inner' });
     await user.click(trigger);
