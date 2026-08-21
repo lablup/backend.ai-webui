@@ -23,6 +23,7 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import type { FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
+import { queryWithinOpenModal } from '../helper/openModalRoot';
 import {
   formatShellCommand,
   tokenizeShellCommand,
@@ -1073,34 +1074,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     );
   };
 
-  // antd's built-in `scrollToFirstError` walks `errorFields` in field
-  // *registration* order, not DOM order — and `form.getFieldsError()` has the
-  // same registration-order problem — so DOM order is still resolved by
-  // querying the document. The status surface queried is no longer antd's
-  // `.ant-form-item-has-error` class (gone with the antd visual layer) but
-  // BAIFormItem's own `data-status="error"` attribute (see BAIFormItem.tsx,
-  // which also aggregates nested noStyle children's errors into the wrapper).
-  //
-  // Ticket 35 dropped the `.ant-form-item-has-error` fallback that used to sit
-  // beside it. It was there for the embedded sections that still rendered raw
-  // antd Form.Items (ImageEnvironmentSelectFormItems /
-  // ResourceAllocationFormItems / EnvVarFormList / VFolderTableFormItem); with
-  // the alias pointed at the self-hosted engine those sections render the BAI
-  // shell too, so the antd branch can no longer match anything (P6).
-  //
-  // The SCOPE moved for the same reason. It was `.ant-modal-body`, BAIModal's
-  // DOM back when BAIModal was still antd-based; BAIModal renders an Astryx
-  // `Dialog` now, so that prefix matches nothing and the whole query silently
-  // returned null — the form would submit-fail with no scroll. `dialog[open]`
-  // is the equivalent and is stable: every modal in the app is a native
-  // `<dialog>` opened with `showModal()` (the same anchor
-  // `useKeyboardShortcut` uses to detect an open modal).
+  // `scrollToFirstError` walks `errorFields` in field *registration* order, not
+  // DOM order, so DOM order is resolved by querying the document instead — the
+  // first match is the errored item highest on screen. The status surface is
+  // BAIFormItem's `data-status="error"` (see BAIFormItem.tsx, which aggregates
+  // nested noStyle children's errors into the wrapper).
   const handleFinishFailed = () => {
     requestAnimationFrame(() => {
-      // querySelector over a compound selector returns the first match in
-      // document order, i.e. the errored item highest on screen.
-      const firstErrorEl = document.querySelector<HTMLElement>(
-        'dialog[open] [data-bai-form-item][data-status="error"]',
+      const firstErrorEl = queryWithinOpenModal(
+        '[data-bai-form-item][data-status="error"]',
       );
       if (firstErrorEl) {
         firstErrorEl.scrollIntoView({

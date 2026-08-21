@@ -1,11 +1,14 @@
 import useKeyboardShortcut from './useKeyboardShortcut';
 import { renderHook } from '@testing-library/react';
+import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 import type { Mock } from 'vitest';
 
-// Mock BUI's `useEventListener` (the ahooks replacement). `useKeyboardShortcut`
-// imports nothing else from `backend.ai-ui`, so a factory mock is enough and
-// keeps the whole component library out of this hook's test graph.
+// Factory mock keeps the whole component library out of this hook's test graph.
+// It has to restate `BAI_MODAL_OPEN_ATTRIBUTE`, so this suite cannot catch a
+// rename of the real constant — the gate on the DOM contract is
+// `BAIDialog.test.tsx`, which asserts the attribute the component emits.
 vi.mock('backend.ai-ui', () => ({
+  BAI_MODAL_OPEN_ATTRIBUTE: 'data-bai-modal-open',
   useEventListener: vi.fn((event, handler) => {
     // Store handler for testing
     (global as any).__eventListeners = (global as any).__eventListeners || {};
@@ -39,6 +42,12 @@ describe('useKeyboardShortcut', () => {
       handler(event);
     }
     return event;
+  };
+
+  const appendOpenModalRoot = (tagName: string, attribute: string) => {
+    const root = document.createElement(tagName);
+    root.setAttribute(attribute, '');
+    document.body.appendChild(root);
   };
 
   describe('Basic functionality', () => {
@@ -111,28 +120,22 @@ describe('useKeyboardShortcut', () => {
   });
 
   describe('Modal detection', () => {
-    // The hook detects an open modal as `dialog[open]`. It used to also accept
-    // `.ant-modal`, and these fixtures built a `<div class="ant-modal">`;
-    // nothing renders that class since antd was removed, and every modal in
-    // the app (`BAIModal`, the app-shim's imperative dialogs) is a native
-    // `<dialog>` opened with `showModal()`. Building the real element is also
-    // a stronger fixture than a class-named div — it can only pass if the
-    // selector matches what the app actually mounts.
-    const appendOpenDialog = () => {
-      const dialog = document.createElement('dialog');
-      dialog.setAttribute('open', '');
-      document.body.appendChild(dialog);
-      return dialog;
-    };
+    // Both roots the selector covers: BAIDialog's marked div, and the lab
+    // `Drawer`'s still-native `<dialog>`.
+    it.each([
+      ['a portal modal', 'div', BAI_MODAL_OPEN_ATTRIBUTE],
+      ['a native dialog (drawer)', 'dialog', 'open'],
+    ])(
+      'should not trigger handler when %s is open',
+      (_label, tagName, attribute) => {
+        appendOpenModalRoot(tagName, attribute);
 
-    it('should not trigger handler when modal is open', () => {
-      appendOpenDialog();
+        renderHook(() => useKeyboardShortcut(mockHandler));
+        triggerKeydown({ key: 'a' });
 
-      renderHook(() => useKeyboardShortcut(mockHandler));
-      triggerKeydown({ key: 'a' });
-
-      expect(mockHandler).not.toHaveBeenCalled();
-    });
+        expect(mockHandler).not.toHaveBeenCalled();
+      },
+    );
 
     it('should trigger handler when a dialog is present but closed', () => {
       document.body.appendChild(document.createElement('dialog'));
@@ -274,9 +277,7 @@ describe('useKeyboardShortcut', () => {
       document.body.appendChild(input);
       input.focus();
 
-      const modal = document.createElement('dialog');
-      modal.setAttribute('open', '');
-      document.body.appendChild(modal);
+      appendOpenModalRoot('div', BAI_MODAL_OPEN_ATTRIBUTE);
 
       renderHook(() => useKeyboardShortcut(mockHandler));
       triggerKeydown({ key: 'a' });

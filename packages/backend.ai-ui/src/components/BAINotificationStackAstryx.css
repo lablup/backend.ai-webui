@@ -16,10 +16,10 @@
   gap: var(--spacing-3);
   width: 384px; /* antd's notification width; not on the spacing scale. */
   max-width: calc(100vw - var(--spacing-6) * 2);
-  /* The theme-shim owns `zIndexPopupBase` (verdict `self`, value 1000) because
-     Astryx layering is a LayerProvider concern with no token. Kept in one
-     place here rather than repeated per item. */
-  z-index: 1000;
+  /* Top of the ladder (`../styles/zIndexLadder.ts`), so a notice clears every
+     layer on it — including the whole modal band. It does NOT clear the CSS top
+     layer: lab `Drawer` is still a native `<dialog>` and paints over notices. */
+  z-index: var(--bai-z-notification);
   pointer-events: none;
 }
 

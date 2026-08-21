@@ -9,6 +9,9 @@
  PILOT-DECISION — antd's `directory` is DROPPED; `FileInput` has no equivalent.
  Multi-FILE drag-and-drop and dropping a folder still work (both go through
  `DataTransfer`); picking a folder from the file dialog does not.
+
+ The overlay's z-index is a context-local literal, not a rung on `BAI_Z_INDEX`
+ (`src/styles/zIndexLadder.ts`): it stacks over the explorer body, not the window.
 */
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import './DragAndDrop.css';

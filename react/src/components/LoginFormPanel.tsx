@@ -45,6 +45,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAI_Z_INDEX,
   BAIModal,
   BAIFlex,
   useBAILogger,
@@ -159,15 +160,13 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       <BAIModal
         open={isOpen}
         closable={false}
-        // The login screen backdrop (weave + version/copyright metadata) is the
-        // persisted splash element behind this modal (z-index 10000). The modal
-        // mask dims that backdrop, so the metadata reads softly behind the mask.
+        // The mask dims the persisted splash behind it, softening the weave and
+        // the version/copyright metadata the login screen uses as its backdrop.
         mask={!needToResetPassword}
         keyboard={false}
         maskClosable={false}
         footer={null}
         width={modalWidth}
-        getContainer={false}
         title={
           // A flex row, not `textAlign: center`: as an inline image the 35px
           // logo sat in a 27px line box (the dialog's 16px/24px base) and
@@ -576,7 +575,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             boxShadow: token.boxShadowSecondary,
             padding: token.paddingLG,
             overflow: 'auto',
-            zIndex: 1060,
+            zIndex: BAI_Z_INDEX.loginSideHelp,
           }}
         >
           <BAIFlex
@@ -737,8 +736,6 @@ const ResetPasswordRequiredInline: React.FC<{
       footer={null}
       width={450}
       destroyOnHidden
-      zIndex={1002}
-      getContainer={false}
     >
       <BAIFlex
         direction="column"
@@ -906,7 +903,6 @@ const TOTPActivateInline: React.FC<{
       confirmLoading={activateMutation.isPending}
       open={open}
       onCancel={onCancel}
-      getContainer={false}
       destroyOnHidden
       onOk={handleOk}
       loading={!isSuccess}
@@ -982,7 +978,6 @@ const ChangePasswordEmailModal: React.FC<{
       confirmLoading={mutation.isPending}
       okText={t('login.EmailSendButton')}
       destroyOnHidden
-      getContainer={false}
     >
       <Text as="p" display="block">
         {t('login.DescChangePasswordEmail')}

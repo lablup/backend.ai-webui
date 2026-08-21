@@ -34,6 +34,7 @@ import WebUISiderFooter from './WebUISiderFooter';
 import WebUISiderLogo from './WebUISiderLogo';
 import WebUISiderNavigation from './WebUISiderNavigation';
 import {
+  BAI_Z_INDEX,
   BAIAppShell,
   BAIFlex,
   BAIOverlayScrollbar,
@@ -50,11 +51,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useMatches, useLocation } from 'react-router-dom';
-
-// Z-index for header in MainLayout. Should be higher than any other elements in the page content.
-// Since fixed column z-index in antd table is dynamically calculated based on the number of columns,
-// we use a safe fixed value of 100. See: https://github.com/react-component/table/blob/master/src/utils/fixUtil.ts
-export const HEADER_Z_INDEX_IN_MAIN_LAYOUT = 100;
 
 export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   {
@@ -210,7 +206,7 @@ function MainLayout() {
                     margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
                     position: 'sticky',
                     top: 0,
-                    zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
+                    zIndex: BAI_Z_INDEX.appHeader,
                   }}
                 >
                   <Suspense
