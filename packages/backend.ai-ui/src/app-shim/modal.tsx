@@ -67,10 +67,7 @@ export interface ModalShimFuncProps {
   onOk?: () => unknown;
   onCancel?: () => unknown;
   width?: number | string;
-  /**
-   * Stacking override for the portal root, floored at `BAI_Z_INDEX.modalBase`;
-   * reach for a `BAI_Z_INDEX` layer before a literal.
-   */
+  /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
   zIndex?: number;
   /**
    * PILOT-DECISION: the following antd props are accepted for call-site

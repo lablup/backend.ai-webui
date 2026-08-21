@@ -11,11 +11,7 @@
  `null` when closed, and children stay mounted as the native `<dialog>` did.
 */
 import './BAIDialog.css';
-import {
-  BAI_MODAL_OPEN_ATTRIBUTE,
-  floorToModalBand,
-  useDialogLevel,
-} from './dialogLevelStack';
+import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 import { Dialog } from '@astryxdesign/core/Dialog';
 import type { DialogPosition, DialogProps } from '@astryxdesign/core/Dialog';
 import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
@@ -28,6 +24,26 @@ import { createPortal } from 'react-dom';
 
 const HEADING_SELECTOR = '[role="heading"], h1, h2, h3, h4, h5, h6';
 const DIALOG_SELECTOR = 'dialog, [role="dialog"], [role="alertdialog"]';
+
+/**
+ * Astryx's own restore snapshots in a passive effect, by which time the level
+ * stack has inerted the covering root and blurred the trigger — it captures
+ * `<body>`. Guarded like theirs, so a focus a consumer moved on purpose stays.
+ */
+function restoreTriggerFocus(
+  trigger: HTMLElement | null,
+  root: HTMLElement | null,
+): void {
+  const active = document.activeElement;
+  const focusWasLost =
+    active == null ||
+    active === document.body ||
+    active === document.documentElement ||
+    root?.contains(active) === true;
+  if (focusWasLost && trigger?.isConnected) {
+    trigger.focus();
+  }
+}
 
 /**
  * The dialog's own title, by its ARIA role rather than by an Astryx class or
@@ -89,8 +105,11 @@ export interface BAIDialogProps extends Omit<
    */
   width?: number | string;
   /**
-   * Stacking override for the portal root, floored at `BAI_Z_INDEX.modalBase`.
-   * `style` reaches the inner Dialog surface, so `style={{ zIndex }}` does not.
+   * Raises the portal root within the modal band, as a request the level stack
+   * resolves (`resolveDialogZIndex`): a dialog opened later is still placed
+   * above this one, and a value outside the band is ignored. Pass a
+   * `BAI_Z_INDEX` layer, not a literal. `style` reaches the inner Dialog
+   * surface, so `style={{ zIndex }}` does not.
    */
   zIndex?: number;
 }
@@ -132,15 +151,36 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
   };
 
   const rootRef = useRef<HTMLDivElement>(null);
+  // Ahead of `useDialogLevel`, which inerts the covering root — the browser
+  // blurs whatever that subtree held.
+  const triggerRef = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    if (isOpen) {
+      triggerRef.current = document.activeElement as HTMLElement | null;
+    }
+  }, [isOpen]);
   // Its shared stack resolves Escape topmost-only, so a popover nested in the
   // modal keeps single-Escape dismissal; it also restores focus on deactivate.
   // A covered dialog drops its trap; see `syncCoveredDialogs`.
-  const isTopmost = useDialogLevel(rootRef, isOpen, '--bai-dialog-level');
+  // It also owns the root's z-index, so an explicit `zIndex` goes through the
+  // stack rather than around it (one order decides paint AND inertness).
+  const isTopmost = useDialogLevel(rootRef, isOpen, zIndex);
 
   const { containerRef, focusFirst } = useFocusTrap<HTMLDivElement>({
     isActive: isOpen && isTopmost,
     onEscape: handleEscape,
   });
+
+  // Declared after the trap on purpose: its document-level capture listener is
+  // still installed during earlier cleanups and would pull focus straight back
+  // into the closing dialog.
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const root = rootRef.current;
+    return () => restoreTriggerFocus(triggerRef.current, root);
+  }, [isOpen]);
 
   useScrollLock(isOpen);
 
@@ -250,13 +290,6 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
     <div
       ref={rootRef}
       className={classNames('bai-dialog', !isOpen && 'bai-dialog--closed')}
-      style={
-        zIndex != null
-          ? ({
-              '--bai-dialog-z': floorToModalBand(zIndex),
-            } as React.CSSProperties)
-          : undefined
-      }
       onMouseDown={handleMouseDown}
       onClick={handleClick}
       {...{

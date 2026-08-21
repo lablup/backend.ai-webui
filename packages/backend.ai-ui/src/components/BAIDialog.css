@@ -9,18 +9,12 @@
 */
 
 @layer components {
-  /* Base and step come from the ladder (`src/styles/zIndexLadder.css`); the
-     component writes only the level. An explicit `zIndex` prop lands inline
-     and wins, floored at the base by `BAIDialog.tsx`. */
+  /* The band base is only the fallback for a root that has not claimed yet —
+     `dialogLevelStack.ts` resolves and writes the real value on open. */
   .bai-dialog {
-    --bai-dialog-level: 0;
-    --bai-dialog-z: calc(
-      var(--bai-z-modal-base) + var(--bai-dialog-level) *
-        var(--bai-z-modal-level-step)
-    );
     position: fixed;
     inset: 0;
-    z-index: var(--bai-dialog-z);
+    z-index: var(--bai-dialog-z, var(--bai-z-modal-base));
     display: flex;
     align-items: center;
     justify-content: center;

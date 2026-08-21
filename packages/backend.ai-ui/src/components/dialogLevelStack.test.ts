@@ -6,6 +6,10 @@
  released entry leaves nothing behind on a root that outlives it.
 */
 import {
+  BAI_Z_INDEX,
+  BAI_Z_INDEX_MODAL_LEVEL_STEP,
+} from '../styles/zIndexLadder';
+import {
   MAX_DIALOG_LEVEL,
   claimDialogLevel,
   releaseDialogLevel,
@@ -24,9 +28,10 @@ const makeRoot = () => {
 const claimed: Array<DialogLevelEntry> = [];
 const claim = (
   root: HTMLElement | null,
+  requestedZIndex?: number,
   setIsTopmost: (isTopmost: boolean) => void = () => {},
 ) => {
-  const entry = claimDialogLevel(root, setIsTopmost);
+  const entry = claimDialogLevel(root, setIsTopmost, requestedZIndex);
   claimed.push(entry);
   return entry;
 };
@@ -77,15 +82,41 @@ describe('dialogLevelStack', () => {
     const lowerFlags: Array<boolean> = [];
     const upperFlags: Array<boolean> = [];
 
-    claim(makeRoot(), (isTopmost) => lowerFlags.push(isTopmost));
-    expect(lowerFlags).toEqual([true]);
+    const lower = claim(makeRoot(), undefined, (isTopmost) =>
+      lowerFlags.push(isTopmost),
+    );
+    // A claim starts topmost, so only flips are published — an identical
+    // setState from a layout effect still costs a pre-paint render.
+    expect(lower.isTopmost).toBe(true);
+    expect(lowerFlags).toEqual([]);
 
-    const upper = claim(makeRoot(), (isTopmost) => upperFlags.push(isTopmost));
-    expect(lowerFlags.at(-1)).toBe(false);
-    expect(upperFlags.at(-1)).toBe(true);
+    const upper = claim(makeRoot(), undefined, (isTopmost) =>
+      upperFlags.push(isTopmost),
+    );
+    expect(lowerFlags).toEqual([false]);
+    expect(upperFlags).toEqual([]);
 
     releaseDialogLevel(upper);
-    expect(lowerFlags.at(-1)).toBe(true);
+    expect(lowerFlags).toEqual([false, true]);
+  });
+
+  // One effective order: the entry the stack inerts must also be the one that
+  // paints lower, whatever `zIndex` it asked for.
+  it('resolves every claim above the current top, override or not', () => {
+    const overridden = claim(makeRoot(), 10001);
+    expect(overridden.zIndex).toBe(10001);
+
+    expect(claim(makeRoot()).zIndex).toBe(10001 + BAI_Z_INDEX_MODAL_LEVEL_STEP);
+  });
+
+  it('ignores an override below the modal band base', () => {
+    expect(claim(makeRoot(), 1002).zIndex).toBe(BAI_Z_INDEX.modalBase);
+  });
+
+  it('ignores an override that would reach the notice stack', () => {
+    const entry = claim(makeRoot(), BAI_Z_INDEX.notification + 1);
+
+    expect(entry.zIndex).toBe(BAI_Z_INDEX.modalBase);
   });
 
   // Past the ceiling the level repeats, so a release resolved by level would
