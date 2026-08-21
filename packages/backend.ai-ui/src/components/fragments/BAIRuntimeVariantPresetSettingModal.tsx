@@ -32,7 +32,9 @@ import { PayloadError } from 'relay-runtime';
 
 type UIType = 'SLIDER' | 'NUMBER_INPUT' | 'SELECT' | 'CHECKBOX' | 'TEXT_INPUT';
 
-const READ_UI_TYPE_TO_FORM_UI_TYPE: Record<string, UIType> = {
+// `Partial<>` because the read side types `UIOption.uiType` as an open
+// `String!`, so a newer manager can serve a control type this build predates.
+const READ_UI_TYPE_TO_FORM_UI_TYPE: Partial<Record<string, UIType>> = {
   slider: 'SLIDER',
   number_input: 'NUMBER_INPUT',
   select: 'SELECT',
@@ -201,6 +203,15 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
       : undefined,
   );
 
+  // A control type this build does not know about cannot be represented in the
+  // form, so the builder would emit `undefined` and we would send an explicit
+  // `uiOption: null` — which the manager reads as "clear it" (the input field
+  // is SENTINEL-defaulted). Omit the key instead and leave the server's value
+  // alone.
+  const hasUnknownUIType =
+    !!preset?.uiOption?.uiType &&
+    !READ_UI_TYPE_TO_FORM_UI_TYPE[preset.uiOption.uiType];
+
   const [commitCreate, isInFlightCreate] =
     useMutation<BAIRuntimeVariantPresetSettingModalCreateMutation>(graphql`
       mutation BAIRuntimeVariantPresetSettingModalCreateMutation(
@@ -329,7 +340,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           ? {
               category: normalizeOptionalText(values.category),
               displayName: normalizeOptionalText(values.displayName),
-              uiOption: buildUIOptionInput(values) ?? null,
+              ...(hasUnknownUIType
+                ? {}
+                : { uiOption: buildUIOptionInput(values) ?? null }),
             }
           : {};
         if (preset) {
