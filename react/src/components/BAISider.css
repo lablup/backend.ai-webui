@@ -228,8 +228,9 @@
  * `.bai-sider`, so no other `SideNav` and no other property is affected.
  */
 /*
- * `.bai-nav-surface` is the mobile nav drawer (FR-3612), which renders the
- * SAME menu outside a `SideNav`. Every rule below states a NAV-SURFACE metric
+ * `.bai-nav-surface` is applied by BUI's `BAIAppShell` drawer (FR-3612), which
+ * renders the SAME menu outside a `SideNav`. Every rule below states a
+ * NAV-SURFACE metric
  * that both must share, so each is scoped to either class; rail chrome (the
  * logo band, the collapse toggle, `--collapsed`) stays `.bai-sider`-only.
  * `:is()` takes its most specific argument, so the rail's specificity is

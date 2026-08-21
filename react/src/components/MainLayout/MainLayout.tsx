@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AstryxAdminTheme } from '../../astryx-theme';
+import { AstryxAdminTheme, AstryxReverseTheme } from '../../astryx-theme';
 import { useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
@@ -15,6 +15,7 @@ import { theme } from '../../theme-shim';
 import AnnouncementBanner from '../AnnouncementBanner';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
+import { SIDER_WIDTH } from '../BAISider';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
@@ -27,22 +28,27 @@ import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import './MainLayout.css';
-import MainLayoutOverlayScrollbar from './MainLayoutOverlayScrollbar';
 import WebUIHeader from './WebUIHeader';
-import WebUIMobileNav from './WebUIMobileNav';
-import WebUISider from './WebUISider';
-import { AppShell, useAppShellMobile } from '@astryxdesign/core/AppShell';
-import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
+import WebUISider, { useSiderThemeReversed } from './WebUISider';
+import WebUISiderFooter from './WebUISiderFooter';
+import WebUISiderLogo from './WebUISiderLogo';
+import WebUISiderNavigation from './WebUISiderNavigation';
+import {
+  BAIAppShell,
+  BAIFlex,
+  BAIOverlayScrollbar,
+  BAIResourceSlotsProvider,
+} from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
   Suspense,
   useEffect,
-  useEffectEvent,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Outlet, useMatches, useLocation } from 'react-router-dom';
 
 // Z-index for header in MainLayout. Should be higher than any other elements in the page content.
@@ -57,19 +63,23 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
 );
 
 /**
- * FR-3612: Astryx `AppShell` is the shell frame. Two contracts must hold: the
- * app's scroll container stays INSIDE the main slot at `height: 100%` (pages
- * and the sticky header depend on `mainContentDivRefState`; AppShell's own
- * scroller must never engage), and `topNav` stays unused on purpose (the
- * header lives in the content column). Full rationale: PR #8935.
+ * FR-3612: BUI's `BAIAppShell` (Astryx `AppShell` + mobile drawer) is the shell
+ * frame. Two contracts must hold: the app's scroll container stays INSIDE the
+ * main slot at `height: 100%` (pages and the sticky header depend on
+ * `mainContentDivRefState`; AppShell's own scroller must never engage), and
+ * `topNav` stays unused on purpose (the header lives in the content column).
+ * Full rationale: PR #8935.
  */
 function MainLayout() {
   'use memo';
+  const { t } = useTranslation();
   const navigate = useWebUINavigate();
   const [compactSidebarActive] = useBAISettingUserState('compact_sidebar');
   const [sideCollapsed, setSideCollapsed] =
     useState<boolean>(!!compactSidebarActive);
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  // The operator's `sider.theme` polarity override applies to the drawer's
+  // navigation surface too.
+  const shouldReverse = useSiderThemeReversed();
 
   const matches = useMatches();
   // @ts-ignore
@@ -82,14 +92,6 @@ function MainLayout() {
   if (prevCompactSidebarActive !== compactSidebarActive) {
     setPrevCompactSidebarActive(compactSidebarActive);
     setSideCollapsed(!!compactSidebarActive);
-  }
-
-  // Close the mobile nav drawer once a menu selection navigates
-  // (adjust-state-during-render, same pattern as the compact-sidebar sync).
-  const [prevPathname, setPrevPathname] = useState(location.pathname);
-  if (prevPathname !== location.pathname) {
-    setPrevPathname(location.pathname);
-    setIsMobileNavOpen(false);
   }
 
   useKeyboardShortcut(
@@ -140,13 +142,13 @@ function MainLayout() {
       <CSSTokenVariables />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
-        <AppShell
+        <BAIAppShell
           data-testid={pageTestId}
           // `wash` paints `--color-background-body` behind nav and content —
           // the same token the `body`/splash backdrop already uses.
           variant="wash"
-          height="fill"
           contentPadding={0}
+          pathname={location.pathname}
           banner={
             <ErrorBoundaryWithNullFallback>
               <Suspense fallback={null}>
@@ -162,29 +164,37 @@ function MainLayout() {
               }}
             />
           }
-          mobileNav={{
-            // The header's own hamburger opens the drawer (via the AppShell
-            // mobile context) — no auto toggle bar.
-            hasToggle: false,
-            breakpoint: 'md',
-            isOpen: isMobileNavOpen,
-            onOpenChange: setIsMobileNavOpen,
-            content: (
-              <Suspense fallback={null}>
-                <WebUIMobileNav />
-              </Suspense>
+          drawer={{
+            'data-testid': 'webui-mobile-nav',
+            header: <WebUISiderLogo />,
+            label: t('webui.menu.Menu'),
+            // The rail's own width, so a menu row is the same size on both
+            // surfaces.
+            width: SIDER_WIDTH,
+            wrap: (drawer) =>
+              shouldReverse ? (
+                <AstryxReverseTheme>{drawer}</AstryxReverseTheme>
+              ) : (
+                drawer
+              ),
+            children: (
+              <>
+                <WebUISiderNavigation />
+                <WebUISiderFooter />
+              </>
             ),
           }}
         >
-          <MobileNavStateSync onLeaveMobile={() => setIsMobileNavOpen(false)} />
           <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
             <BAIFlex
               ref={contentScrollFlexRef}
               direction="column"
               align="stretch"
-              // Native scrollbar hidden; MainLayoutOverlayScrollbar paints an
-              // overlay thumb instead, so content width never shifts with
-              // scrollability (see MainLayout.css).
+              // Stable hook for e2e and page-level styles. The native scrollbar
+              // is hidden by `BAIOverlayScrollbar` below (it sets
+              // `data-bai-custom-scrollbar` on this element) and an overlay
+              // thumb is painted instead, so content width never shifts with
+              // scrollability.
               className="main-layout-content-scroll"
               style={{
                 paddingLeft: token.paddingContentHorizontalLG,
@@ -307,34 +317,13 @@ function MainLayout() {
                 </ErrorBoundaryWithNullFallback>
               </BAIErrorBoundary>
             </BAIFlex>
-            <MainLayoutOverlayScrollbar targetRef={contentScrollFlexRef} />
+            <BAIOverlayScrollbar targetRef={contentScrollFlexRef} />
           </BAIContentWithDrawerArea>
-        </AppShell>
+        </BAIAppShell>
       </Suspense>
     </>
   );
 }
-
-/**
- * Resets the drawer's controlled open state when the viewport leaves mobile.
- * Reads AppShell's OWN breakpoint verdict from the mobile context (it must be
- * the exact complement — a second media query would disagree at exactly 768px)
- * so a stale `true` can't pop the drawer back open on the next rotation below
- * the breakpoint.
- */
-const MobileNavStateSync: React.FC<{ onLeaveMobile: () => void }> = ({
-  onLeaveMobile,
-}) => {
-  'use memo';
-  const { isMobile } = useAppShellMobile();
-  const onLeave = useEffectEvent(onLeaveMobile);
-  useEffect(() => {
-    if (!isMobile) {
-      onLeave();
-    }
-  }, [isMobile]);
-  return null;
-};
 
 /**
  * Feeds the server's resource slots to `backend.ai-ui`. Sits inside the routed

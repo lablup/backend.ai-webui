@@ -16,9 +16,12 @@
 */
 
 /* Scrollbar styling, app-wide. */
-/* Firefox */
+/* Firefox — `scrollbar-width` only accepts auto|thin|none; the `2px` this
+   rule carried since the antd era was invalid and parse-dropped, so Firefox
+   was showing full-width default bars. `thin` is the valid analogue of the
+   2px webkit bar below. */
 * {
-  scrollbar-width: 2px;
+  scrollbar-width: thin;
   scrollbar-color: var(--color-border) var(--color-background-popover);
 }
 
@@ -36,65 +39,9 @@
   background-color: var(--color-border);
 }
 
-/* FR-3612: AppShell renders the sideNav slot in a LayoutPanel that is
-   `overflow: auto` in fill mode, which would re-clip the hover collapse
-   toggle (it protrudes translateX(12px) past the rail — see BAISider) and
-   the rail's box-shadow, and paint a permanent horizontal scrollbar.
-   SideNav owns its own internal scroll column, so the panel never needs to
-   scroll. Unlayered app CSS beats the @layer'd StyleX rule. */
-.astryx-app-shell-sidenav.astryx-layout-panel {
-  overflow: visible;
-}
-
-/* FR-3612: where native scrollbars consume layout width, the main content
-   column paints its OWN overlay scrollbar (MainLayoutOverlayScrollbar) over
-   the content and hides the native bar, so content width never changes with
-   scrollability. The attribute is set by that component only after it measures
-   that this platform's bars are NOT already overlays — mobile and macOS
-   trackpads keep their native indicator untouched. */
-.main-layout-content-scroll[data-custom-scrollbar='true'] {
-  scrollbar-width: none;
-}
-
-.main-layout-content-scroll[data-custom-scrollbar='true']::-webkit-scrollbar {
-  display: none;
-}
-
-.main-layout-overlay-scrollbar {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 8px;
-  /* Never intercept clicks meant for content under it — only the thumb does. */
-  pointer-events: none;
-  /* Above the sticky header (z-index 100, MainLayout.tsx). */
-  z-index: 101;
-}
-
-/* Presence IS the scrollability cue: the thumb stays put the whole time the
-   content overflows rather than fading out when scrolling stops. */
-.main-layout-overlay-scrollbar[data-scrollable='false'] {
-  display: none;
-}
-
-.main-layout-overlay-scrollbar-thumb {
-  position: absolute;
-  top: 0;
-  right: 2px;
-  width: 6px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-border-emphasized);
-  pointer-events: auto;
-  cursor: default;
-  transition: background-color 0.15s ease;
-}
-
-.main-layout-overlay-scrollbar-thumb:hover,
-.main-layout-overlay-scrollbar[data-dragging='true']
-  .main-layout-overlay-scrollbar-thumb {
-  background-color: var(--color-text-disabled);
-}
+/* The sideNav-panel overflow fix and the main column's overlay scrollbar moved
+   to BUI with the shell itself (FR-3612): see `BAIAppShell.css` and
+   `BAIOverlayScrollbar.css` in packages/backend.ai-ui. */
 
 /* Top/bottom breathing room for the stacked layout alerts. */
 .main-layout-alert-wrapper > *:first-child {

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import './BAIOverlayScrollbar.css';
 import React, { useLayoutEffect, useRef, useSyncExternalStore } from 'react';
 
 const MIN_THUMB_HEIGHT = 24;
@@ -19,7 +20,7 @@ const MIN_THUMB_HEIGHT = 24;
  * exactly the "can't tell it scrolls" problem this component exists to fix.
  *
  * Module-level singleton + stable boolean snapshot, per the store contract
- * `useSyncExternalStore` requires (see BUI `theme-shim/breakpoints.ts`).
+ * `useSyncExternalStore` requires (see `theme-shim/breakpoints.ts`).
  */
 const COARSE_POINTER_QUERY = '(pointer: coarse)';
 let coarsePointerQueryList: MediaQueryList | null = null;
@@ -41,19 +42,28 @@ const getIsTouchPrimary = (): boolean => getCoarsePointerQueryList().matches;
 // Assume touch on the server so nothing is hidden before hydration measures.
 const getIsTouchPrimaryOnServer = (): boolean => true;
 
+export interface BAIOverlayScrollbarProps {
+  /** The scroll container this thumb tracks. */
+  targetRef: React.RefObject<HTMLElement | null>;
+}
+
 /**
- * Overlay scrollbar for the main content column (FR-3612). On pointer-driven
- * platforms the native bar is hidden on that column and this thumb is painted
- * OVER the content instead, so scrollability never changes the content width
- * — `overflow: overlay` is gone from Chromium, and `scrollbar-gutter: stable`
+ * Overlay scrollbar for a scroll column. On pointer-driven platforms the
+ * native bar is hidden on the target and this thumb is painted OVER the
+ * content instead, so scrollability never changes the content width —
+ * `overflow: overlay` is gone from Chromium, and `scrollbar-gutter: stable`
  * leaves a permanently empty strip. The thumb stays visible the whole time the
  * content is scrollable, so its presence is the scrollability cue, and it can
  * be dragged. All updates write straight to the DOM — no React state, so
  * scrolling stays out of the render loop.
+ *
+ * Contract: render it inside the target's POSITIONED ancestor (the track is
+ * `position: absolute`). On touch-primary platforms it renders `null` and
+ * leaves the native indicator alone.
  */
-const MainLayoutOverlayScrollbar: React.FC<{
-  targetRef: React.RefObject<HTMLElement | null>;
-}> = ({ targetRef }) => {
+const BAIOverlayScrollbar: React.FC<BAIOverlayScrollbarProps> = ({
+  targetRef,
+}) => {
   'use memo';
   const trackRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
@@ -71,10 +81,10 @@ const MainLayoutOverlayScrollbar: React.FC<{
       return;
     }
 
-    // Opts the column into hiding its native bar (MainLayout.css). Set here,
-    // not in markup, so the native bar stays untouched on platforms that never
-    // reserved space for it.
-    el.dataset.customScrollbar = 'true';
+    // Opts the target into hiding its native bar (BAIOverlayScrollbar.css).
+    // Set here, not in markup, so the native bar stays untouched on platforms
+    // that never reserved space for it.
+    el.dataset.baiCustomScrollbar = 'true';
 
     let rafId: number | undefined;
 
@@ -150,7 +160,7 @@ const MainLayoutOverlayScrollbar: React.FC<{
     layout();
 
     return () => {
-      delete el.dataset.customScrollbar;
+      delete el.dataset.baiCustomScrollbar;
       el.removeEventListener('scroll', scheduleLayout);
       resizeObserver.disconnect();
       mutationObserver.disconnect();
@@ -169,13 +179,13 @@ const MainLayoutOverlayScrollbar: React.FC<{
   return (
     <div
       ref={trackRef}
-      className="main-layout-overlay-scrollbar"
+      className="bai-overlay-scrollbar"
       data-scrollable="false"
       aria-hidden="true"
     >
-      <div ref={thumbRef} className="main-layout-overlay-scrollbar-thumb" />
+      <div ref={thumbRef} className="bai-overlay-scrollbar-thumb" />
     </div>
   );
 };
 
-export default MainLayoutOverlayScrollbar;
+export default BAIOverlayScrollbar;

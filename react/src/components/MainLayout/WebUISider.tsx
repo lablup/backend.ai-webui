@@ -21,7 +21,7 @@ interface WebUISiderProps {
 /**
  * The inline sider rail, mounted in AppShell's `sideNav` slot above the
  * mobile breakpoint (FR-3612). Below it, AppShell unmounts the rail and the
- * same navigation renders inside `WebUIMobileNav`'s drawer instead — the old
+ * same navigation renders inside `BAIAppShell`'s drawer instead — the old
  * `onBreakpoint` auto-collapse is gone with it.
  */
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
