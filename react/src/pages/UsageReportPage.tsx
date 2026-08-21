@@ -3,10 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import '../components/UsageReport/UsageReport.css';
-import UsageReportChartsGrid from '../components/UsageReport/UsageReportChartsGrid';
-import UsageReportFootnote from '../components/UsageReport/UsageReportFootnote';
-import UsageReportHeader from '../components/UsageReport/UsageReportHeader';
-import UsageReportTopUsersTable from '../components/UsageReport/UsageReportTopUsersTable';
+import UsageReportDocument from '../components/UsageReport/UsageReportDocument';
+import UserUsageReportView from '../components/UsageReport/UserUsageReportView';
 import { getMockUsageReportData } from '../components/UsageReport/mockUsageReportData';
 import {
   formatPeriodLabel,
@@ -25,7 +23,7 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
-import { BAIAlert, BAIButton, BAIFlex, BAIText } from 'backend.ai-ui';
+import { BAIButton, BAIFlex, BAISkeleton, BAIText } from 'backend.ai-ui';
 import {
   ChevronLeft,
   ChevronRight,
@@ -33,7 +31,7 @@ import {
   FileSpreadsheet,
   ImageIcon,
 } from 'lucide-react';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
@@ -52,7 +50,6 @@ const UsageReportPage: React.FC = () => {
   const period = resolvePeriod(periodType, searchParams.get('periodStart'));
   const periodLabel = formatPeriodLabel(period);
 
-  const data = getMockUsageReportData(scope, period);
   const scopeLabel =
     scope === 'admin'
       ? t('usageReport.WholeCluster')
@@ -149,29 +146,22 @@ const UsageReportPage: React.FC = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <div className="usage-report">
-        <UsageReportHeader
-          data={data}
+      {scope === 'user' ? (
+        <Suspense fallback={<BAISkeleton />}>
+          <UserUsageReportView
+            period={period}
+            periodLabel={periodLabel}
+            scopeLabel={scopeLabel}
+          />
+        </Suspense>
+      ) : (
+        // Admin scope keeps the W1 mock until W3 wires real data.
+        <UsageReportDocument
+          data={getMockUsageReportData(scope, period)}
           periodLabel={periodLabel}
           scopeLabel={scopeLabel}
         />
-        {data.coverage.utilizationTruncated && (
-          <BAIAlert
-            className="usage-report-truncation"
-            type="warning"
-            showIcon
-            title={t('usageReport.UtilizationDataPartial')}
-            description={t('usageReport.UtilizationDataPartialDescription', {
-              days: data.coverage.retentionDays ?? '—',
-            })}
-          />
-        )}
-        <UsageReportChartsGrid dailySeries={data.dailySeries} />
-        {scope === 'admin' && (
-          <UsageReportTopUsersTable topUsers={data.topUsers ?? []} />
-        )}
-        <UsageReportFootnote data={data} />
-      </div>
+      )}
     </BAIFlex>
   );
 };

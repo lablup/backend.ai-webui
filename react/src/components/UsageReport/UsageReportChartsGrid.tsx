@@ -105,10 +105,13 @@ const DailyBarChart: React.FC<{
 
 interface UsageReportChartsGridProps {
   dailySeries: UsageReportDailyPoint[];
+  /** Shown under the utilization empty placeholder (e.g. version gate). */
+  utilizationEmptyDescription?: string;
 }
 
 const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
   dailySeries,
+  utilizationEmptyDescription,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -149,7 +152,10 @@ const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
         ]) ? (
           <UtilizationChart series={series} />
         ) : (
-          <UsageReportEmptySection height={CHART_HEIGHT} />
+          <UsageReportEmptySection
+            height={CHART_HEIGHT}
+            description={utilizationEmptyDescription}
+          />
         )}
       </BAICard>
       {barCharts.map(({ key, title, color }) => (

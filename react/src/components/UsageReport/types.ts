@@ -54,6 +54,14 @@ export interface UsageReportCoverage {
   utilizationStartDate: string | null;
   /** Utilization retention window (days), null when unknown. */
   retentionDays: number | null;
+  /** Fraction (0–1) of period days with utilization data, null when unknown. */
+  utilizationCoverage?: number | null;
+  /** Fraction (0–1) of period days with allocation data, null when unknown. */
+  allocationCoverage?: number | null;
+  /** True when allocation bins do not cover the whole period. */
+  allocationTruncated?: boolean;
+  /** True when the manager lacks user-metrics support (< 25.6.0). */
+  utilizationUnsupported?: boolean;
 }
 
 export interface UsageReportData {

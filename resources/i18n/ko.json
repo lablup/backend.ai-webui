@@ -3492,6 +3492,8 @@
     "UsedTime": "사용 시간"
   },
   "usageReport": {
+    "AllocationDataPartial": "이 기간의 할당 데이터가 일부만 존재합니다",
+    "AllocationDataPartialDescription": "할당 통계는 최근 30일까지만 제공되므로, 할당 차트와 합계가 기간 전체를 포함하지 못할 수 있습니다.",
     "AvgCPUUtilization": "평균 CPU 사용률",
     "AvgGPUUtilization": "평균 GPU 사용률",
     "CPUHours": "CPU-시간",
@@ -3519,6 +3521,7 @@
     "UtilizationDataPartial": "이 기간의 사용률 데이터가 일부만 제공됩니다",
     "UtilizationDataPartialDescription": "사용률 지표는 {{days}}일 동안만 보존되므로, 사용률 차트는 데이터가 있는 시점부터 표시됩니다. 할당 총계는 전체 기간을 포함합니다.",
     "UtilizationPercent": "사용률 (%)",
+    "UtilizationRequiresManagerVersion": "사용률 메트릭은 Backend.AI 매니저 25.6.0 이상이 필요합니다.",
     "Weekly": "주간",
     "WeeklyReportTitle": "주간 자원 사용량 리포트",
     "WholeCluster": "전체 클러스터"
