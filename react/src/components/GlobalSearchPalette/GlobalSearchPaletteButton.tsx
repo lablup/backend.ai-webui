@@ -54,7 +54,9 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
     };
     if (typeof requestIdleCallback === 'function') requestIdleCallback(warm);
     else setTimeout(warm, 200);
-  }, [i18n]);
+    // `changeLanguage` mutates this same `i18n` instance, so the locale must
+    // be its own dependency for a language switch to re-warm the index.
+  }, [i18n, i18n.resolvedLanguage]);
 
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 
