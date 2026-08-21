@@ -158,6 +158,10 @@ vi.mock('../hooks/useDefaultImagesWithFallback', () => ({
   useDefaultSystemSSHImageWithFallback: () => ({
     systemSSHImage: 'cr.backend.ai/stable/ssh:latest@x86_64',
   }),
+  // `useStartSession` imports this too. Under `isolate: false` the factory is
+  // shared with whatever file runs next, so omitting it makes an unrelated
+  // suite throw mid-render and hang. Same stub the sibling button tests use.
+  useResolveImageReference: () => async (imageString?: string) => imageString,
 }));
 
 vi.mock('./FolderExplorerOpener', () => ({
