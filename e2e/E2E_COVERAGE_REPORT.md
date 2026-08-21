@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 314 / 459 features covered (68%)**
+**Overall (in-scope routes): 310 / 455 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
@@ -48,9 +48,10 @@
 | Plugin System            | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`     |    16    |   12    | 🔶 75%  |
+| Deployments              | `/deployments`, `/deployments/:id`     |    17    |   14    | 🔶 82%  |
+| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    3     |    3    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **475**  | **326** | **69%** |
+| **Total**                |                                        | **474**  | **326** | **69%** |
 
 ---
 
@@ -300,15 +301,62 @@
 
 ### 7b. Deployment — Add Revision (`/deployments/:deploymentId`)
 
-**Test files:** [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+**Test files:**
+
+- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+- [`e2e/serving/add-revision-command-shell.spec.ts`](serving/add-revision-command-shell.spec.ts) (hybrid mock — real deployment shell + live model folder, modal-internal GraphQL stubbed; FR-3205)
+- [`e2e/serving/add-revision-runtime-defaults.spec.ts`](serving/add-revision-runtime-defaults.spec.ts) (hybrid mock — real deployment shell, runtime-variant / defaults GraphQL stubbed; FR-3342)
+
+**Shared drivers / mocks:** [`e2e/serving/add-revision-support.ts`](serving/add-revision-support.ts), [`e2e/serving/mocking/add-revision-mock.ts`](serving/mocking/add-revision-mock.ts)
 
 **Modal:** `DeploymentAddRevisionModal` (Advanced/Custom mode)
 
-| Feature                                                                      | Status | Test                                                                     |
-| ---------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
-| Manual image name accepted → revision mutation carries resolved id (FR-3278) | ✅     | `a manually entered image is accepted and submitted as a resolved image` |
+| Feature                                                                                                                                                                                                                            | Status | Test                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Manual image name accepted → revision mutation carries resolved id (FR-3278)                                                                                                                                                       | ✅     | `a manually entered image is accepted and submitted as a resolved image`                                                              |
+| Custom-mode Start Command: Execution (Shell/Exec) + Shell input appear immediately, no Basic/Advanced toggle (FR-3205; toggle removed per devops feedback, 2026-08-07)                                                             | ✅     | `Admin sees Execution and Shell controls immediately, and Exec hides Shell`                                                           |
+| Start Command is optional — empty submit reaches the mutation (FR-3205)                                                                                                                                                            | ✅     | `Admin can add a revision with an empty Start Command (the command is optional)`                                                      |
+| Raw command sent verbatim (no tokenization), shell = `/bin/bash` by default when left unchanged (FR-3205)                                                                                                                          | ✅     | `Admin submits the raw command verbatim, with shell = /bin/bash (the default) when left unchanged`                                    |
+| Shell mode submits `shell` = the chosen shell binary (FR-3205)                                                                                                                                                                     | ✅     | `Admin submits shell = the chosen shell binary when Shell mode overrides the default`                                                 |
+| Exec mode submits `shell` = null (FR-3205)                                                                                                                                                                                         | ✅     | `Admin submits shell = null in Exec mode`                                                                                             |
+| Model Definition File Path restored under Advanced Settings, optional (FR-3205)                                                                                                                                                    | ✅     | `Admin finds the restored Model Definition File Path under Advanced Settings`                                                         |
+| Config-reading variant shows Service Configuration; hides runtime-parameter presets (FR-3342)                                                                                                                                      | ✅     | `Admin sees the Service Configuration section for a config-reading variant (custom)`                                                  |
+| Non-config-reading variant shows runtime presets + default-command warning note (FR-3342)                                                                                                                                          | ✅     | `Admin sees runtime-parameter presets and the default-command note for a non-config-reading variant (vllm)`                           |
+| DB `defaultModelDefinition` drives command / port / health-check placeholders (FR-3342)                                                                                                                                            | ✅     | `Admin sees the variant defaultModelDefinition fill the command / port / health-check placeholders`                                   |
+| vfolder `model-definition.yaml` overrides DB-default placeholders (two-layer precedence) (FR-3342)                                                                                                                                 | ✅     | `Admin sees a selected model folder’s model-definition.yaml override the DB-default … placeholders`                                   |
+| Partial vfolder `model-definition.yaml` overrides only its defined fields; the rest fall back to the DB baseline field-by-field (FR-3342)                                                                                          | ✅     | `Admin sees a partial model-definition.yaml override only the fields it defines, falling back to the DB baseline for the rest`        |
+| Model Definition File Path value does not feed back into the command placeholder (FR-3342)                                                                                                                                         | ✅     | `Admin sees the Model Definition File Path leave the command placeholder unchanged`                                                   |
+| Model Definition File Path hidden for a non-config-reading variant (FR-3342)                                                                                                                                                       | ✅     | asserted inside `… default-command note for a non-config-reading variant (vllm)`                                                      |
+| Old-manager name-based `readsVfolderConfigFiles` fallback, reachable from a fresh variant select — `BAIRuntimeVariantSelect` resolves the omitted flag via `?? name === 'custom'` before the modal ever sees `undefined` (FR-3342) | ✅     | `Admin sees the custom service config for an old-manager variant (readsVfolderConfigFiles omitted, name === custom)`                  |
+| Old-manager name-based `readsVfolderConfigFiles` fallback via the "Load current revision" prefill path                                                                                                                             | ⏸️     | deferred — needs a full `DeploymentDetailPageQuery` mock with a `currentRevision` whose variant name is `custom` and the flag omitted |
+| Command prefill suppressed when the source revision's variant does not read config files (FR-3342)                                                                                                                                 | ⏸️     | same prefill path as the row above — needs the deferred `DeploymentDetailPageQuery` mock                                              |
+| `definitionPath` sent as null for a non-config-reading variant (FR-3342)                                                                                                                                                           | ⏸️     | submit-path guard; the field is unreachable in the UI for those variants, so only the mutation payload shows it                       |
 
-**Coverage: 🔶 1 feature (regression guard for FR-3278)**
+**Coverage: ✅ 15 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults); 3 deferred**
+
+> The FR-3205 preset-side change (the Admin Deployment Preset form no longer coerces
+> Basic mode's `shell` to the client default) has its own suite — see
+> "7c. Admin Deployment Preset — Service Configuration" below.
+
+---
+
+### 7c. Admin Deployment Preset — Service Configuration (`/admin/deployments/deployment-presets/new`)
+
+**Test files:**
+
+- [`e2e/serving/admin-preset-service-config.spec.ts`](serving/admin-preset-service-config.spec.ts) (hybrid mock — real login + navigation to the create-preset wizard, page-internal GraphQL stubbed by operation name; FR-3474)
+
+**Shared mocks:** [`e2e/serving/mocking/admin-preset-mock.ts`](serving/mocking/admin-preset-mock.ts)
+
+**Page:** `AdminDeploymentPresetSettingPageContent` (create-preset wizard, Basic Info step)
+
+| Feature                                                                                                                                                                                                                            | Status | Test                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Service Configuration shown for a config-reading variant; Start Command / Port optional (BA-6613); Execution/Shell always visible, no Basic/Advanced toggle; Shell pre-filled with the backend default; Exec hides Shell (FR-3474) | ✅     | `Admin sees Service Configuration is optional, Execution/Shell always visible with Shell pre-filled, and Exec hides Shell` |
+| Full Create submission carries Service Configuration / Health Check / Pre-Start Actions in the expected nested `modelDefinition.models[0].service` shape (FR-3474)                                                                 | ✅     | `Admin creates a preset carrying Service Configuration, Health Check, and a Pre-Start Action`                              |
+| Leaving Start Command and Port blank still submits successfully — `command` omitted, `port` falls back to the submit-mapping layer's default (FR-3474/BA-6613)                                                                     | ✅     | `Admin creates a preset with Start Command and Port left blank`                                                            |
+
+**Coverage: ✅ 3 features**
 
 ---
 
@@ -1262,26 +1310,6 @@ To efficiently build new E2E tests, these POMs should be created:
 
 ---
 
-### 30. Project-Agnostic Scope — header project context (the project-agnostic `/admin/*` routes)
-
-**Test files:** [`e2e/admin-scope/admin-header-project-selector.spec.ts`](admin-scope/admin-header-project-selector.spec.ts), [`e2e/admin-scope/admin-data-folder-create.spec.ts`](admin-scope/admin-data-folder-create.spec.ts)
-
-FR-3414 / FR-3415 / ADR-0001: the project-agnostic routes — every `/admin/*`
-route except `admin-dashboard`, which still depends on the ambient project and
-is deliberately out of scope — operate above project scope — the header project selector is hidden there, folder creation asks for the target project inside the modal, and the Environments page selects its project in the page. The route list is derived from `react/src/helper/projectAgnosticRoutes.ts` (minus the feature-flag-gated `scheduler` / `rbac` / `reservoir`, which are not navigable on every test cluster), so a newly gated page is covered automatically.
-
-| Feature                                                                  | Covered | Test                                                                               |
-| ------------------------------------------------------------------------ | :-----: | ---------------------------------------------------------------------------------- |
-| Header project selector absent on every project-agnostic route           |   ✅    | `selector is absent on every project-agnostic route`                               |
-| Environments page offers in-page project selection instead               |   ✅    | `the Environments page selects its project in the page, not the header`            |
-| Header project selector present on the user Data page                    |   ✅    | `selector is present on the user Data page`                                        |
-| Leaving an admin route restores the previous selection untouched         |   ✅    | `leaving an admin route restores the previous selection untouched`                 |
-| Folder created from admin Data page lands in the in-modal chosen project |   ✅    | `folder created from the admin Data page lands in the project chosen in the modal` |
-
-**Coverage: 5 / 5 features (100%)**
-
----
-
 ## Coverage Matrix (Quick Reference)
 
 | Page Route                             | Functional Tests | Visual Tests | Priority |
@@ -1319,7 +1347,6 @@ is deliberately out of scope — operate above project scope — the header proj
 | App Launcher (modal)                   |        🔶        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
-| `/admin/{session,deployments,data}`    |        ✅        |      ❌      |    -     |
 
 ---
 
