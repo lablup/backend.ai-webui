@@ -13,8 +13,10 @@ import type { SetStateAction } from 'react';
  */
 export const notificationDrawerOpenState = atom(false);
 
-export const useNotificationDrawerState = () =>
-  useAtom(notificationDrawerOpenState);
+export const useNotificationDrawerState = () => {
+  'use memo';
+  return useAtom(notificationDrawerOpenState);
+};
 
 /** `null` follows the `compact_sidebar` setting; a boolean is a manual choice. */
 const siderCollapsedOverrideState = atom<boolean | null>(null);
