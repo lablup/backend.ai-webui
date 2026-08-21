@@ -109,9 +109,6 @@ export default defineConfig({
     // that exhausts its budget is cut off by the runner and reports a bare
     // timeout instead of the assertion diff that names the cause. FR-3617.
     testTimeout: 15_000,
-    // Reuse the worker environment across test files; setupTests.ts restores
-    // per-file DOM and source-module freshness. Escape hatch: `vitest run --isolate`.
-    isolate: false,
     setupFiles: [
       resolve(__dirname, 'src/setupTests.ts'),
     ],
