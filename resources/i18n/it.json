@@ -105,6 +105,7 @@
       "ModelPath": "Percorso modello",
       "ModelPathPlaceholder": "es., /models/my-model",
       "Port": "Porta",
+      "PortInheritTooltip": "Lasciare vuoto per ereditare la porta predefinita della variante di runtime.",
       "PreStartActions": "Azioni pre-avvio",
       "Shell": "Shell",
       "StartCommand": "Comando di avvio",

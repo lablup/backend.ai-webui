@@ -105,6 +105,7 @@
       "ModelPath": "모델 경로",
       "ModelPathPlaceholder": "예: /models/my-model",
       "Port": "포트",
+      "PortInheritTooltip": "비워두면 런타임의 기본 포트를 상속합니다.",
       "PreStartActions": "사전 실행 동작",
       "Shell": "셸",
       "StartCommand": "실행 명령어",

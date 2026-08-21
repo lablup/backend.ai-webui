@@ -105,6 +105,7 @@
       "ModelPath": "Laluan Model",
       "ModelPathPlaceholder": "cth., /models/my-model",
       "Port": "Port",
+      "PortInheritTooltip": "Biarkan kosong untuk mewarisi port lalai bagi varian runtime.",
       "PreStartActions": "Tindakan Pra-Mula",
       "Shell": "Shell",
       "StartCommand": "Perintah Mula",

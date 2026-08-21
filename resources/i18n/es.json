@@ -105,6 +105,7 @@
       "ModelPath": "Ruta del modelo",
       "ModelPathPlaceholder": "p. ej., /models/my-model",
       "Port": "Puerto",
+      "PortInheritTooltip": "Déjelo vacío para heredar el puerto predeterminado de la variante de tiempo de ejecución.",
       "PreStartActions": "Acciones previas al inicio",
       "Shell": "Shell",
       "StartCommand": "Comando de inicio",

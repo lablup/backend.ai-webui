@@ -9,7 +9,9 @@ import type { FormInstance } from '../form-engine';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
+  resolvesReadsVfolderConfigFiles,
 } from '../helper/modelServiceCommand';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -243,6 +245,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const screens = useBAIBreakpoint();
+  const baiClient = useSuspendedBackendaiClient();
+  // BA-7210 / FR-3481: managers this version+ resolve an omitted model
+  // name/modelPath from the runtime variant baseline / model mount
+  // destination at revision resolution, so the form can stop requiring them.
+  const supportsNullableModelDefinition = baiClient.supports(
+    'preset-model-config-type',
+  );
 
   const preset = useFragment(
     graphql`
@@ -451,6 +460,60 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     form,
   );
 
+  // Legacy managers (`PresetModelConfigInput.name`/`modelPath` are required,
+  // non-empty strings pre-BA-7210) cannot submit Service Configuration
+  // (Command/Port/etc.) independently of Model Definition — see
+  // `buildModelDefinitionInput` in AdminDeploymentPresetSettingPage.tsx.
+  // Used below to nest Service Configuration inside the Model Definition
+  // card for legacy managers, instead of showing it in Step 1 where it
+  // would silently be dropped on submit if the switch is off.
+  const runtimeVariantIdWatched = Form.useWatch('runtimeVariantId', form);
+  const selectedRuntimeVariantForServiceConfig = runtimeVariants.find(
+    (rt) => toLocalId(rt.id) === runtimeVariantIdWatched,
+  );
+  const readsVfolderConfigFiles = resolvesReadsVfolderConfigFiles(
+    selectedRuntimeVariantForServiceConfig,
+  );
+
+  // Shared between the two render sites below (Step 1 for nullable-capable
+  // managers, nested in the Model Definition card for legacy managers).
+  // Health Check and Pre-Start Actions have the same constraint as Service
+  // Configuration — all three live inside `PresetModelServiceConfigInput`,
+  // nested inside `PresetModelConfigInput` which requires a real name/
+  // modelPath pre-BA-7210 — so all three move together.
+  const renderServiceConfigurationFormItems = () => (
+    <ServiceConfigurationFormItems
+      namePrefix={['modelDefinition', 'models', 0, 'service']}
+      placeholders={{
+        command: t('adminDeploymentPreset.modelDef.StartCommandPlaceholder'),
+        port: t('general.Example', { value: '8080' }),
+      }}
+      portTooltipExtra={
+        supportsNullableModelDefinition
+          ? t('adminDeploymentPreset.modelDef.PortInheritTooltip')
+          : undefined
+      }
+    />
+  );
+  const renderHealthCheckAndPreStartActionsFormItems = () => (
+    <>
+      <ModelServiceHealthCheckFormItems
+        namePrefix={['modelDefinition', 'models', 0, 'service']}
+        placeholders={{
+          path: t('general.Example', { value: '/health' }),
+          interval: t('general.Example', { value: '10' }),
+          maxRetries: t('general.Example', { value: '10' }),
+          maxWaitTime: t('general.Example', { value: '15' }),
+          expectedStatusCode: t('general.Example', { value: '200' }),
+          initialDelay: t('general.Example', { value: '60' }),
+        }}
+      />
+      <PreStartActionsFormList
+        namePrefix={['modelDefinition', 'models', 0, 'service']}
+      />
+    </>
+  );
+
   const initialValues: Partial<AdminDeploymentPresetFormValue> = useMemo(() => {
     if (mode === 'edit' && preset) {
       return {
@@ -511,9 +574,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           ? {
               // The model definition switch gates name/path/metadata (Step 2).
               // A model that only carries service data (port, command, health
-              // check) was created with the switch OFF — treat it as disabled.
-              // Name/path are optional even when the switch is ON (e.g. a
-              // metadata-only definition), so metadata presence also counts.
+              // check) was created with the switch OFF — treat it as disabled
+              // so the required name/path fields don't trigger validation.
+              // BA-7210: a sparse preset can have name/modelPath both null
+              // (inheriting from the variant baseline) while still carrying
+              // metadata, so check that too — otherwise editing such a
+              // preset shows the switch off, hides its metadata, and the
+              // next save drops it.
               enabled: preset.modelDefinition.models.some(
                 (m) => !!m.name || !!m.modelPath || !!m.metadata,
               ),
@@ -528,11 +595,16 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   startCommand: m.service?.startCommand,
                 });
                 return {
-                  name: m.name,
-                  modelPath: m.modelPath,
+                  // BA-7210 (26.9.0+): `name`/`modelPath` are nullable in the
+                  // output now (a sparse preset omits them to inherit the
+                  // variant baseline at revision resolution). Fall back to
+                  // '' for prefill until the capability-gated "inherited"
+                  // UX (FR-3481) lands; older managers never send null here.
+                  name: m.name ?? '',
+                  modelPath: m.modelPath ?? '',
                   service: m.service
                     ? {
-                        port: m.service.port,
+                        port: m.service.port ?? undefined,
                         shell: commandModeState.shell,
                         startCommand: commandModeState.command,
                         execution: commandModeState.execution,
@@ -851,58 +923,37 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             </BAIFormItem>
 
             {/* Service Configuration (port, command, shell) — shown only when
-                the selected runtime variant reads vfolder config files (custom).
-                Matches the revision modal's Collapse pattern (FR-3205). */}
-            <BAIFormItem dependencies={['runtimeVariantId']} noStyle>
-              {(formArg) => {
-                const { getFieldValue } =
-                  formArg as FormInstance<AdminDeploymentPresetFormValue>;
-                const variantId = getFieldValue('runtimeVariantId');
-                const variant = runtimeVariants.find(
-                  (rt) => toLocalId(rt.id) === variantId,
-                );
-                const variantName = variant?.name;
-                const reads =
-                  variant?.readsVfolderConfigFiles ?? variantName === 'custom';
-                if (!reads) return null;
-                return (
-                  <div
-                    style={{
-                      marginTop: -token.margin,
-                      marginBottom: token.marginLG,
-                    }}
-                  >
-                    <ServiceConfigurationFormItems
-                      namePrefix={['modelDefinition', 'models', 0, 'service']}
-                      placeholders={{
-                        command: t(
-                          'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
-                        ),
-                        port: t('general.Example', { value: '8080' }),
-                      }}
-                    />
-                  </div>
-                );
-              }}
-            </BAIFormItem>
+                the selected runtime variant reads vfolder config files
+                (custom) AND the manager supports submitting it independently
+                of Model Definition (26.9.0+, `preset-model-config-type`).
+                Legacy managers require a real name/modelPath alongside any
+                service data (`PresetModelConfigInput.name`/`modelPath` were
+                required, non-empty strings pre-BA-7210) — showing this here
+                would let a user "set" values that silently never get
+                submitted unless Model Definition is also on. For legacy
+                managers it's rendered nested inside the Model Definition
+                card instead (below). Matches the revision modal's Collapse
+                pattern (FR-3205). Reuses the `readsVfolderConfigFiles`
+                already watched above instead of re-deriving it here. */}
+            {readsVfolderConfigFiles && supportsNullableModelDefinition && (
+              <div
+                style={{
+                  marginTop: -token.margin,
+                  marginBottom: token.marginLG,
+                }}
+              >
+                {renderServiceConfigurationFormItems()}
+              </div>
+            )}
 
-            {/* Health Check — always visible regardless of runtime variant */}
-            <ModelServiceHealthCheckFormItems
-              namePrefix={['modelDefinition', 'models', 0, 'service']}
-              placeholders={{
-                path: t('general.Example', { value: '/health' }),
-                interval: t('general.Example', { value: '10' }),
-                maxRetries: t('general.Example', { value: '10' }),
-                maxWaitTime: t('general.Example', { value: '15' }),
-                expectedStatusCode: t('general.Example', { value: '200' }),
-                initialDelay: t('general.Example', { value: '60' }),
-              }}
-            />
-
-            {/* Pre-Start Actions — always visible regardless of runtime variant */}
-            <PreStartActionsFormList
-              namePrefix={['modelDefinition', 'models', 0, 'service']}
-            />
+            {/* Health Check + Pre-Start Actions — regardless of runtime
+                variant, but (like Service Configuration above) only
+                independently of Model Definition on managers that can
+                submit them without a real name/modelPath (26.9.0+). Legacy
+                managers get these nested inside the Model Definition card
+                instead (below). */}
+            {supportsNullableModelDefinition &&
+              renderHealthCheckAndPreStartActionsFormItems()}
 
             <BAIFormItem
               name="imageId"
@@ -1164,20 +1215,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             }}
           >
             {modelDefinitionEnabled ? (
-              <Form.List name={['modelDefinition', 'models']}>
-                {(fields) => {
-                  const firstField = fields[0];
-                  if (!firstField) return null;
-                  const { key, name, ...rest } = firstField;
-                  return (
-                    <ModelConfigItem
-                      key={key}
-                      listItemName={name}
-                      restField={rest}
-                    />
-                  );
-                }}
-              </Form.List>
+              <ModelConfigItem
+                readsVfolderConfigFiles={readsVfolderConfigFiles}
+              />
             ) : null}
           </BAICard>
 

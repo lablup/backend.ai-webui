@@ -123,3 +123,37 @@ export function resolveCommandShell(params: {
   if (execution === 'exec') return null;
   return shell?.trim() || DEFAULT_MODEL_SERVICE_SHELL;
 }
+
+/**
+ * Whether a runtime variant reads the vfolder config files (i.e. is a
+ * "custom" variant that exposes Service Configuration/command/port fields).
+ * `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
+ * undefined, so this falls back to the legacy `name === 'custom'` heuristic
+ * — NEVER `?? false`, which would hide those fields for legacy managers
+ * running a custom variant.
+ */
+export function resolvesReadsVfolderConfigFiles(
+  variant?: { name?: string; readsVfolderConfigFiles?: boolean | null } | null,
+): boolean {
+  return variant?.readsVfolderConfigFiles ?? variant?.name === 'custom';
+}
+
+/**
+ * Parse a Pre-Start Action's `args` field (a JSON-object string typed in the
+ * form) into the object shape the mutation input expects. Falls back to `{}`
+ * on invalid JSON rather than failing the whole submit.
+ */
+export function preStartActionsToInput(
+  preStartActions?: ReadonlyArray<{ action: string; args?: string }>,
+): Array<{ action: string; args: Record<string, unknown> }> {
+  return (preStartActions ?? []).map((a) => ({
+    action: a.action,
+    args: (() => {
+      try {
+        return JSON.parse(a.args || '{}');
+      } catch {
+        return {};
+      }
+    })(),
+  }));
+}

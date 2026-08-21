@@ -983,6 +983,18 @@ export class Client {
       // deprecated `startCommand` token list and never receive `shell`.
       this._features['model-service-command-string'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
+      // .modelDefinition` moves from `ModelDefinition` to a new
+      // `PresetModelDefinition` type (mirrored down to `PresetModelConfig` /
+      // `PresetModelServiceConfig`), with `name`/`modelPath`/`port` now
+      // nullable — a sparse preset omits them to inherit the runtime variant
+      // baseline's name / the model mount destination / the variant
+      // baseline's port at revision resolution. Older managers keep
+      // returning the old non-null shape, so call sites must not treat an
+      // omitted field as "inherit from variant" unless this flag is set.
+      this._features['preset-model-config-type'] = true;
+    }
   }
 
   /**

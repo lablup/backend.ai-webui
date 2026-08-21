@@ -105,6 +105,7 @@
       "ModelPath": "Mallin polku",
       "ModelPathPlaceholder": "esim. /models/my-model",
       "Port": "Portti",
+      "PortInheritTooltip": "Jätä tyhjäksi, niin ajonaikaisen variantin oletusportti peritään.",
       "PreStartActions": "Käynnistystä edeltävät toiminnot",
       "Shell": "Shell",
       "StartCommand": "Käynnistyskomento",

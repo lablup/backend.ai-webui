@@ -26,6 +26,13 @@ export interface ServiceConfigurationFormItemsProps {
     command: string;
     port: string;
   }>;
+  /**
+   * BA-7210 / FR-3481: appended below the base Port tooltip text when the
+   * caller's manager supports inheriting an omitted port from the runtime
+   * variant baseline. Only the preset page passes this (gated on
+   * `preset-model-config-type`); the revision modal never inherits a port.
+   */
+  portTooltipExtra?: string;
 }
 
 // Shared between DeploymentAddRevisionModal.tsx (namePrefix: []) and
@@ -47,7 +54,7 @@ export interface ServiceConfigurationFormItemsProps {
 // more explicit, at the cost of one more always-visible field.
 const ServiceConfigurationFormItems: React.FC<
   ServiceConfigurationFormItemsProps
-> = ({ namePrefix, placeholders }) => {
+> = ({ namePrefix, placeholders, portTooltipExtra }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -209,7 +216,17 @@ const ServiceConfigurationFormItems: React.FC<
       <Form.Item
         name={[...namePrefix, 'port']}
         label={t('modelService.Port')}
-        tooltip={t('modelService.PortTooltip')}
+        tooltip={
+          portTooltipExtra ? (
+            <span style={{ whiteSpace: 'pre-line' }}>
+              {t('modelService.PortTooltip')}
+              {'\n\n'}
+              {portTooltipExtra}
+            </span>
+          ) : (
+            t('modelService.PortTooltip')
+          )
+        }
         // antd's Collapse panel used to supply the section's bottom padding;
         // the flat Astryx Collapsible doesn't, so the last field keeps an
         // explicit gap before whatever section follows.

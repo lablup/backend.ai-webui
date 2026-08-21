@@ -105,6 +105,7 @@
       "ModelPath": "Đường dẫn mô hình",
       "ModelPathPlaceholder": "vd.: /models/my-model",
       "Port": "Cổng",
+      "PortInheritTooltip": "Để trống để kế thừa cổng mặc định của biến thể runtime.",
       "PreStartActions": "Hành động trước khởi động",
       "Shell": "Shell",
       "StartCommand": "Lệnh khởi động",

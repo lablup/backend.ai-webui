@@ -105,6 +105,7 @@
       "ModelPath": "Jalur Model",
       "ModelPathPlaceholder": "mis., /models/my-model",
       "Port": "Port",
+      "PortInheritTooltip": "Kosongkan untuk mewarisi port default dari varian runtime.",
       "PreStartActions": "Tindakan Pra-Mulai",
       "Shell": "Shell",
       "StartCommand": "Perintah Mulai",

@@ -105,6 +105,7 @@
       "ModelPath": "模型路徑",
       "ModelPathPlaceholder": "例如：/models/my-model",
       "Port": "連接埠",
+      "PortInheritTooltip": "留空以繼承執行時變體的預設連接埠。",
       "PreStartActions": "啟動前動作",
       "Shell": "Shell",
       "StartCommand": "啟動指令",

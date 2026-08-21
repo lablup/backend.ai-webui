@@ -105,6 +105,7 @@
       "ModelPath": "Ścieżka modelu",
       "ModelPathPlaceholder": "np. /models/my-model",
       "Port": "Port",
+      "PortInheritTooltip": "Pozostaw puste, aby odziedziczyć domyślny port wariantu uruchomieniowego.",
       "PreStartActions": "Akcje przed uruchomieniem",
       "Shell": "Shell",
       "StartCommand": "Polecenie uruchomienia",

@@ -105,6 +105,7 @@
       "ModelPath": "モデルパス",
       "ModelPathPlaceholder": "例: /models/my-model",
       "Port": "ポート",
+      "PortInheritTooltip": "空のままにすると、ランタイムバリアントのデフォルトのポートを継承します。",
       "PreStartActions": "起動前アクション",
       "Shell": "シェル",
       "StartCommand": "起動コマンド",

@@ -105,6 +105,7 @@
       "ModelPath": "Загварын зам",
       "ModelPathPlaceholder": "жш.: /models/my-model",
       "Port": "Порт",
+      "PortInheritTooltip": "Хоосон орхивол гүйцэтгэх орчны хувилбарын өгөгдмөл портыг өвлөнө.",
       "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд",
       "Shell": "Shell",
       "StartCommand": "Эхлүүлэх тушаал",

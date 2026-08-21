@@ -105,6 +105,7 @@
       "ModelPath": "Model Yolu",
       "ModelPathPlaceholder": "örn. /models/my-model",
       "Port": "Port",
+      "PortInheritTooltip": "Çalışma zamanı çeşidinin varsayılan portunu devralmak için boş bırakın.",
       "PreStartActions": "Başlatma Öncesi Eylemler",
       "Shell": "Shell",
       "StartCommand": "Başlatma Komutu",

@@ -105,6 +105,7 @@
       "ModelPath": "Путь к модели",
       "ModelPathPlaceholder": "напр., /models/my-model",
       "Port": "Порт",
+      "PortInheritTooltip": "Оставьте пустым, чтобы унаследовать порт по умолчанию от варианта среды выполнения.",
       "PreStartActions": "Действия перед запуском",
       "Shell": "Shell",
       "StartCommand": "Команда запуска",

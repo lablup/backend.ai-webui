@@ -49,9 +49,9 @@
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`     |    17    |   14    | 🔶 82%  |
-| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    3     |    3    | ✅ 100% |
+| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    4     |    4    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **474**  | **326** | **69%** |
+| **Total**                |                                        | **475**  | **327** | **69%** |
 
 ---
 
@@ -350,13 +350,14 @@
 
 **Page:** `AdminDeploymentPresetSettingPageContent` (create-preset wizard, Basic Info step)
 
-| Feature                                                                                                                                                                                                                            | Status | Test                                                                                                                       |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
-| Service Configuration shown for a config-reading variant; Start Command / Port optional (BA-6613); Execution/Shell always visible, no Basic/Advanced toggle; Shell pre-filled with the backend default; Exec hides Shell (FR-3474) | ✅     | `Admin sees Service Configuration is optional, Execution/Shell always visible with Shell pre-filled, and Exec hides Shell` |
-| Full Create submission carries Service Configuration / Health Check / Pre-Start Actions in the expected nested `modelDefinition.models[0].service` shape (FR-3474)                                                                 | ✅     | `Admin creates a preset carrying Service Configuration, Health Check, and a Pre-Start Action`                              |
-| Leaving Start Command and Port blank still submits successfully — `command` omitted, `port` falls back to the submit-mapping layer's default (FR-3474/BA-6613)                                                                     | ✅     | `Admin creates a preset with Start Command and Port left blank`                                                            |
+| Feature                                                                                                                                                                                                                                                                                                     | Status | Test                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service Configuration shown for a config-reading variant; Start Command / Port optional (BA-6613); Execution/Shell always visible, no Basic/Advanced toggle; Shell pre-filled with the backend default; Exec hides Shell (FR-3474)                                                                          | ✅     | `Admin sees Service Configuration is optional, Execution/Shell always visible with Shell pre-filled, and Exec hides Shell`                         |
+| Full Create submission carries Service Configuration / Health Check / Pre-Start Actions in the expected nested `modelDefinition.models[0].service` shape (FR-3474)                                                                                                                                          | ✅     | `Admin creates a preset carrying Service Configuration, Health Check, and a Pre-Start Action`                                                      |
+| Leaving Start Command and Port blank still submits successfully — `command` omitted, `port` falls back to the submit-mapping layer's default (FR-3474/BA-6613)                                                                                                                                              | ✅     | `Admin creates a preset with Start Command and Port left blank`                                                                                    |
+| Legacy manager (`preset-model-config-type` off): Service Configuration/Health Check/Pre-Start Actions render nested inside Model Definition rather than independently in Basic Info, and the create mutation still carries the required `name`/`modelPath` plus the full nested `service` payload (FR-3481) | ✅     | `Admin sees Service Configuration/Health Check/Pre-Start Actions nested inside Model Definition, and the mutation carries required name/modelPath` |
 
-**Coverage: ✅ 3 features**
+**Coverage: ✅ 4 features**
 
 ---
 

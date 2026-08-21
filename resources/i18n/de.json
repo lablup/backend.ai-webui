@@ -105,6 +105,7 @@
       "ModelPath": "Modellpfad",
       "ModelPathPlaceholder": "z. B. /models/my-model",
       "Port": "Port",
+      "PortInheritTooltip": "Leer lassen, um den Standardport der Laufzeitvariante zu übernehmen.",
       "PreStartActions": "Vorab-Aktionen",
       "Shell": "Shell",
       "StartCommand": "Startbefehl",

@@ -105,6 +105,7 @@
       "ModelPath": "Διαδρομή μοντέλου",
       "ModelPathPlaceholder": "π.χ., /models/my-model",
       "Port": "Θύρα",
+      "PortInheritTooltip": "Αφήστε κενό για να κληρονομήσετε την προεπιλεγμένη θύρα της παραλλαγής χρόνου εκτέλεσης.",
       "PreStartActions": "Ενέργειες πριν την εκκίνηση",
       "Shell": "Shell",
       "StartCommand": "Εντολή εκκίνησης",
