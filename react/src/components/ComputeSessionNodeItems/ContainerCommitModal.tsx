@@ -61,7 +61,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
           backgroundTask: {
             status: 'pending',
             promise: baiClient.computeSession.convertSessionToImage(
-              session?.name ?? '',
+              session?.row_id ?? '',
               values.imageName,
             ),
             onChange: {
