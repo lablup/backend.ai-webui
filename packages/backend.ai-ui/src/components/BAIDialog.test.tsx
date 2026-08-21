@@ -17,7 +17,7 @@ import { Theme, defineTheme } from '@astryxdesign/core/theme';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const renderPortal = (
   props: Partial<React.ComponentProps<typeof BAIDialog>> = {},
@@ -50,6 +50,43 @@ const getSurface = () =>
   screen
     .getByRole('dialog')
     .querySelector('.astryx-dialog') as HTMLElement | null;
+
+const dialogRoot = (name?: string) =>
+  (name == null
+    ? document.querySelector('.bai-dialog')
+    : screen
+        .getByRole('dialog', { name })
+        .closest('.bai-dialog')) as HTMLElement;
+
+const zOf = (root: HTMLElement) =>
+  Number(root.style.getPropertyValue('--bai-dialog-z'));
+
+// jsdom treats `inert` as inert markup only. The spec's blur-what-is-inside is
+// the half the level stack's focus restore has to survive, so model just that.
+const blurOnInert = () => {
+  const toggleAttribute = Element.prototype.toggleAttribute;
+  vi.spyOn(Element.prototype, 'toggleAttribute').mockImplementation(function (
+    this: Element,
+    name: string,
+    force?: boolean,
+  ) {
+    const result = toggleAttribute.call(this, name, force);
+    const active = document.activeElement;
+    if (
+      name === 'inert' &&
+      this.hasAttribute('inert') &&
+      active instanceof HTMLElement &&
+      this.contains(active)
+    ) {
+      active.blur();
+    }
+    return result;
+  });
+};
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('BAIDialog', () => {
   it('portals to document.body without a native <dialog>', () => {
@@ -211,13 +248,8 @@ describe('BAIDialog', () => {
     render(<Nested />);
 
     await user.click(screen.getByRole('button', { name: 'open inner' }));
-    const inner = screen.getByRole('dialog', { name: 'inner' });
     expect(
-      Number(
-        inner
-          .closest<HTMLElement>('.bai-dialog')
-          ?.style.getPropertyValue('--bai-dialog-level'),
-      ),
+      Number(dialogRoot('inner').style.getPropertyValue('--bai-dialog-level')),
     ).toBe(1);
 
     screen.getByRole('button', { name: 'inner-a' }).focus();
@@ -227,25 +259,84 @@ describe('BAIDialog', () => {
     );
   });
 
-  // Overrides the same custom property the level feeds, so there is one channel
-  // deciding the root's z-index rather than two.
+  // The prop reaches the stack; `dialogLevelStack.test.ts` owns what it
+  // resolves to.
   it('honours an explicit zIndex override', () => {
     renderPortal({ zIndex: 10001 });
-    expect(
-      document
-        .querySelector<HTMLElement>('.bai-dialog')
-        ?.style.getPropertyValue('--bai-dialog-z'),
-    ).toBe('10001');
+    expect(zOf(dialogRoot())).toBe(10001);
   });
 
   // A stale number below the band would render the modal invisible.
   it('floors an override below the modal band base', () => {
     renderPortal({ zIndex: 1002 });
-    expect(
-      document
-        .querySelector<HTMLElement>('.bai-dialog')
-        ?.style.getPropertyValue('--bai-dialog-z'),
-    ).toBe(String(BAI_Z_INDEX.modalBase));
+    expect(zOf(dialogRoot())).toBe(BAI_Z_INDEX.modalBase);
+  });
+
+  it('paints a dialog opened later above an earlier zIndex override', async () => {
+    const user = userEvent.setup();
+    const Pair: React.FC = () => {
+      const [isSecondOpen, setIsSecondOpen] = useState(false);
+      return (
+        <>
+          <BAIDialog
+            isOpen
+            onOpenChange={vi.fn()}
+            aria-label="first"
+            zIndex={10001}
+          >
+            <button type="button" onClick={() => setIsSecondOpen(true)}>
+              open second
+            </button>
+          </BAIDialog>
+          <BAIDialog
+            isOpen={isSecondOpen}
+            onOpenChange={vi.fn()}
+            aria-label="second"
+          />
+        </>
+      );
+    };
+    render(<Pair />);
+    await user.click(screen.getByRole('button', { name: 'open second' }));
+
+    const first = dialogRoot('first');
+    const second = dialogRoot('second');
+
+    expect(zOf(second)).toBeGreaterThan(zOf(first));
+    expect(first.hasAttribute('inert')).toBe(true);
+    expect(second.hasAttribute('inert')).toBe(false);
+  });
+
+  // Astryx's restore snapshots in a passive effect, after the covering root
+  // went `inert` — it captures `<body>` and closing lands focus nowhere.
+  it('restores focus to the trigger inside the dialog that opened it', async () => {
+    blurOnInert();
+    const user = userEvent.setup();
+    const Nested: React.FC = () => {
+      const [isInnerOpen, setIsInnerOpen] = useState(false);
+      return (
+        <BAIDialog isOpen onOpenChange={vi.fn()} aria-label="outer">
+          <button type="button" onClick={() => setIsInnerOpen(true)}>
+            open inner
+          </button>
+          <BAIDialog
+            isOpen={isInnerOpen}
+            onOpenChange={() => setIsInnerOpen(false)}
+            aria-label="inner"
+          >
+            <button type="button">inner-a</button>
+          </BAIDialog>
+        </BAIDialog>
+      );
+    };
+    render(<Nested />);
+
+    const trigger = screen.getByRole('button', { name: 'open inner' });
+    await user.click(trigger);
+    expect(document.activeElement).not.toBe(trigger);
+
+    await user.keyboard('{Escape}');
+    expect(document.activeElement).toBe(trigger);
   });
 
   it('keeps children mounted but unnamed while closed', () => {

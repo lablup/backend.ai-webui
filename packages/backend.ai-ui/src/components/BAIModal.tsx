@@ -55,8 +55,7 @@
     now owns. `stickyTitle` in particular is unconditionally true — Astryx
     `Layout` keeps the header slot outside the scrolling content.
     `zIndex` is the exception: the modal is a portalled div with a real
-    z-index since FR-3578, so a passed value is forwarded, floored at
-    `BAI_Z_INDEX.modalBase`.
+    z-index since FR-3578, so a passed value is forwarded, not ignored.
  6. **`afterClose` fires from an effect on the `open` transition**, not from a
     transition-end event, so it lands a frame earlier than antd's. This is what
     `BAIUnmountAfterClose` subscribes to and it keeps working unchanged.
@@ -295,7 +294,7 @@ export interface BAIModalProps {
   classNames?: SemanticOrFn<BAIModalSemanticClassNames>;
   'aria-label'?: string;
   'data-testid'?: string;
-  /** Overrides the portal's stacking level; floored at the modal band base. */
+  /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
   zIndex?: number;
 
   /* ------------------------------------- accepted and ignored (see header) */
