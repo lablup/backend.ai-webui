@@ -2,10 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- The one level stack every portalled modal surface shares — `BAIDialog` here
- and `BAIDrawerPortal` in `react/` (FR-3585). One stack is what lets a modal
- opened from inside a drawer paint above it and inert it, the semantics
- `showModal()` chronology used to give before either left the top layer.
+ The one level stack every portalled modal surface shares. One stack is what
+ lets a surface opened from inside another paint above it and inert it.
 */
 import { BAI_Z_INDEX } from '../styles/zIndexLadder';
 import { devWarn } from '@astryxdesign/core/utils';
@@ -26,15 +24,12 @@ export const MAX_DIALOG_LEVEL = 80;
  * The `zIndex` escape hatch is reachable from every `<BAIModal>`, and a number
  * below the band is always stale — degrade to "on top" rather than invisible.
  */
-export function floorToModalBand(
-  zIndex: number,
-  componentName = 'BAIDialog',
-): number {
+export function floorToModalBand(zIndex: number): number {
   if (zIndex >= BAI_Z_INDEX.modalBase) {
     return zIndex;
   }
   devWarn(
-    componentName,
+    'BAIDialog',
     `zIndex ${zIndex} is below the modal band base ` +
       `(${BAI_Z_INDEX.modalBase}); clamping. Pass a layer from ` +
       '`BAI_Z_INDEX` rather than a literal, or drop the prop.',
@@ -64,9 +59,7 @@ function syncCoveredDialogs(): void {
   openDialogs.forEach(({ root, setIsTopmost }, index) => {
     const shouldBeInert = index !== openDialogs.length - 1;
     setIsTopmost(!shouldBeInert);
-    if (root && shouldBeInert !== root.hasAttribute('inert')) {
-      root.toggleAttribute('inert', shouldBeInert);
-    }
+    root?.toggleAttribute('inert', shouldBeInert);
   });
 }
 
