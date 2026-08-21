@@ -38,8 +38,8 @@ import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
-import { toProjectContext } from './types/projectContext';
 import { theme } from './theme-shim';
+import { toProjectContext } from './types/projectContext';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
@@ -114,6 +114,7 @@ const ReservoirArtifactDetailPage = React.lazy(
 );
 
 const SchedulerPage = React.lazy(() => import('./pages/SchedulerPage'));
+const UsageReportPage = React.lazy(() => import('./pages/UsageReportPage'));
 const BrandingPage = React.lazy(() => import('./pages/BrandingPage'));
 const RBACManagementPage = React.lazy(
   () => import('./pages/RBACManagementPage'),
@@ -1398,6 +1399,16 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: '/logs',
     handle: { labelKey: 'webui.menu.Logs' },
+  },
+  {
+    // Print-friendly usage-report document (FR-3620); scope/period in the URL.
+    path: '/report/usage',
+    handle: { hideBreadcrumb: true },
+    element: (
+      <Suspense fallback={<BAISkeleton rows={4} />}>
+        <UsageReportPage />
+      </Suspense>
+    ),
   },
   {
     path: '/error',

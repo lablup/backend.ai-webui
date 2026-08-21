@@ -1,0 +1,78 @@
+/* Usage report document layout (FR-3620 W1). Print skeleton is first-pass;
+   W4 hardens it (fixed chart widths, page-break tuning, Electron parity). */
+
+.usage-report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  max-width: 1120px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.usage-report-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+}
+
+.usage-report-kpi {
+  min-width: 88px;
+}
+
+.usage-report-kpi-label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.usage-report-kpi-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.usage-report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4);
+}
+
+@media (max-width: 768px) {
+  .usage-report-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  .usage-report-control-bar {
+    display: none !important;
+  }
+
+  .usage-report {
+    max-width: none;
+    gap: var(--spacing-3);
+  }
+
+  .usage-report-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .usage-report-card {
+    break-inside: avoid;
+  }
+
+  .usage-report-top-users {
+    break-before: page;
+  }
+
+  /* First-pass width pin so ResponsiveContainer does not collapse in print;
+     W4 replaces this with exact per-chart pinning. */
+  .usage-report-chart .recharts-responsive-container {
+    width: 100% !important;
+    min-width: 80mm;
+  }
+}
