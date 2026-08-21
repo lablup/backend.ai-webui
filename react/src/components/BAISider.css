@@ -227,7 +227,15 @@
  * ID-weight declaration. It is narrow by construction: one property, scoped to
  * `.bai-sider`, so no other `SideNav` and no other property is affected.
  */
-.bai-sider .astryx-side-nav-item {
+/*
+ * `.bai-nav-surface` is the mobile nav drawer (FR-3612), which renders the
+ * SAME menu outside a `SideNav`. Every rule below states a NAV-SURFACE metric
+ * that both must share, so each is scoped to either class; rail chrome (the
+ * logo band, the collapse toggle, `--collapsed`) stays `.bai-sider`-only.
+ * `:is()` takes its most specific argument, so the rail's specificity is
+ * unchanged.
+ */
+:is(.bai-sider, .bai-nav-surface) .astryx-side-nav-item {
   border-radius: 20px !important;
 }
 
@@ -245,7 +253,7 @@
  * Only the enabled anchor needs it: a disabled item is not rendered as an
  * anchor, so its `--color-text-disabled` treatment is untouched.
  */
-.bai-sider a.astryx-side-nav-item {
+:is(.bai-sider, .bai-nav-surface) a.astryx-side-nav-item {
   color: var(--color-text-primary);
 }
 
@@ -256,15 +264,17 @@
  * same Astryx tokens the component itself uses (`navItemStyles`), so the
  * rail behaves exactly as Astryx intends while the antd providers remain.
  */
-.bai-sider a.astryx-side-nav-item[data-selected='selected'] {
+:is(.bai-sider, .bai-nav-surface)
+  a.astryx-side-nav-item[data-selected='selected'] {
   background-color: var(--color-neutral);
 }
 
-.bai-sider a.astryx-side-nav-item:hover {
+:is(.bai-sider, .bai-nav-surface) a.astryx-side-nav-item:hover {
   background-color: var(--color-overlay-hover);
 }
 
-.bai-sider a.astryx-side-nav-item[data-selected='selected']:hover {
+:is(.bai-sider, .bai-nav-surface)
+  a.astryx-side-nav-item[data-selected='selected']:hover {
   background-color: var(--color-neutral);
 }
 
@@ -385,11 +395,15 @@
  * single-class (0,1,0); these selectors outrank it on specificity, the same
  * mechanism the `a.astryx-side-nav-item` rules above rely on.
  */
-.bai-sider .astryx-side-nav-section > div:first-child {
+:is(.bai-sider, .bai-nav-surface) .astryx-side-nav-section > div:first-child {
   padding-inline-start: var(--spacing-6);
 }
 
-.bai-sider .astryx-side-nav-section > div:first-child > span > span {
+:is(.bai-sider, .bai-nav-surface)
+  .astryx-side-nav-section
+  > div:first-child
+  > span
+  > span {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
 }

@@ -4,6 +4,7 @@
  */
 import { AstryxReverseTheme } from '../../astryx-theme';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { SIDER_WIDTH } from '../BAISider';
 import './WebUIMobileNav.css';
 import { useSiderThemeReversed } from './WebUISider';
 import WebUISiderFooter from './WebUISiderFooter';
@@ -43,6 +44,9 @@ const WebUIMobileNav: React.FC = () => {
         isDarkMode ? 'webui-mobile-nav--on-light' : 'webui-mobile-nav--on-dark',
       )}
       label={t('webui.menu.Menu')}
+      // The rail's own width, so a menu row is the same size on both surfaces
+      // (MobileNav's own default is 320px).
+      width={SIDER_WIDTH}
       // Pin the drawer to the start edge (where the rail lives) instead of
       // `auto`, whose trigger-position heuristic defaults to `end` when no
       // trigger position is readable.
@@ -56,9 +60,15 @@ const WebUIMobileNav: React.FC = () => {
       {/* `drawer-content` render mode makes every `SideNavItem` close the
           drawer on activation (the pathname-change reset in MainLayout only
           covers taps that navigate — not FastTrack's window.open item or
-          re-tapping the current page). */}
+          re-tapping the current page).
+
+          `bai-nav-surface` opts this menu into the nav metrics the rail
+          defines (BAISider.css) — pill radius, group-heading size and indent —
+          which are otherwise `.bai-sider`-scoped. `gap={0}`: a stack gap here
+          lands BETWEEN the menu's own sections and stretches the row pitch
+          past the rail's 44px; the footer brings its own divider and spacing. */}
       <SideNavRenderContext value="drawer-content">
-        <VStack align="stretch" gap={4}>
+        <VStack className="bai-nav-surface" align="stretch" gap={0}>
           <WebUISiderNavigation />
           <WebUISiderFooter />
         </VStack>
