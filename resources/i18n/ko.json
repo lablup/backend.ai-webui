@@ -3510,6 +3510,8 @@
     "GPUHoursPerDay": "일별 GPU-시간",
     "GeneratedOn": "{{timestamp}} 생성 · 클러스터 {{cluster}}",
     "Methodology": "총계(GPU-시간, CPU-시간, 세션 수)는 자원 할당 통계로 계산되며, 사용률(%)은 Prometheus 집계값입니다.",
+    "MethodologySessionsLaunched": "세션 수는 기간 중에 시작된 세션 수입니다.",
+    "MethodologySessionsPeak": "세션 수는 동시 실행 세션의 최대값입니다(이 데이터 소스는 시작 횟수를 제공하지 않습니다).",
     "Monthly": "월간",
     "MonthlyReportTitle": "월간 자원 사용량 리포트",
     "MyUsage": "내 사용량",

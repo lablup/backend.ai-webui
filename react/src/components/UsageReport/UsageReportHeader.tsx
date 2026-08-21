@@ -43,10 +43,14 @@ const UsageReportHeader: React.FC<UsageReportHeaderProps> = ({
   const { t } = useTranslation();
   const { themeConfig } = useCustomThemeConfig();
   const { mode } = useTheme();
-  const lightLogoSrc =
-    themeConfig?.logo?.src || '/manifest/backend.ai-webui-white.svg';
+  // Page-tone surface: `srcDark` carries the dark glyphs for light
+  // backgrounds, `src` the white glyphs for dark ones (as LoginFormPanel).
+  const lightSurfaceLogoSrc =
+    themeConfig?.logo?.srcDark || '/manifest/backend.ai-webui-black.svg';
   const logoSrc =
-    mode === 'dark' ? themeConfig?.logo?.srcDark || lightLogoSrc : lightLogoSrc;
+    mode === 'dark'
+      ? themeConfig?.logo?.src || '/manifest/backend.ai-webui-white.svg'
+      : lightSurfaceLogoSrc;
   const logoStyle = {
     width: themeConfig?.logo?.size?.width || 159,
     height: themeConfig?.logo?.size?.height || 24,
@@ -68,11 +72,11 @@ const UsageReportHeader: React.FC<UsageReportHeaderProps> = ({
           src={logoSrc}
           style={logoStyle}
         />
-        {/* Print is forced light, so it always uses the light logo. */}
+        {/* Print is forced light, so it always uses the light-surface logo. */}
         <img
           className="usage-report-logo-print"
           alt={logoAlt}
-          src={lightLogoSrc}
+          src={lightSurfaceLogoSrc}
           style={logoStyle}
         />
         <Heading level={3}>

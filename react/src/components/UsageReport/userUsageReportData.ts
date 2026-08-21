@@ -142,12 +142,14 @@ export const assembleUserUsageReportData = ({
   allocationByDay,
   utilizationByDay,
   utilizationAvgs,
+  clusterName,
 }: {
   period: UsageReportPeriod;
   allocationByDay: Record<string, DailyAllocation>;
   /** null = user-metrics unsupported by the manager. */
   utilizationByDay: UtilizationByDay | null;
   utilizationAvgs: UsageReportUtilizationAvgs;
+  clusterName: string | null;
 }): UsageReportData => {
   const days = listPeriodDays(period);
   const dailySeries: UsageReportDailyPoint[] = days.map((date) => {
@@ -207,7 +209,8 @@ export const assembleUserUsageReportData = ({
         allocationCoveredDays > 0 && allocationCoveredDays < days.length,
       utilizationUnsupported: utilizationByDay == null,
     },
+    sessionsSemantics: 'peakConcurrent',
     generatedAt: dayjs().toISOString(),
-    clusterName: null,
+    clusterName,
   };
 };

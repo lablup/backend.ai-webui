@@ -77,3 +77,33 @@ your preference.
 More detailed statistics are shown in the admin-only Control-Panel.
 
 ![](../images/user_session_history.png)
+
+<a id="usage-report"></a>
+
+## Usage report
+
+You can turn your usage into a self-contained report document and export it. Click the **Export report**
+button at the upper right of the Statistics page, or use the **Usage report** item on the dashboard, to
+open the report page.
+
+The report covers a calendar week or month:
+
+- **Period type**: Switch between **Weekly** and **Monthly** with the toggle in the control bar.
+- **Period**: Move to the previous or next period with the arrow buttons. The report opens on the last
+  complete week or month.
+
+The document shows GPU-hours, CPU-hours, and session totals, daily utilization and allocation charts,
+and a methodology footnote. Sections without data keep their place with a "No data for this period"
+placeholder, and a notice appears when utilization metrics cover only part of the period.
+
+Use the buttons at the upper right of the control bar to export the report:
+
+- **PDF**: Opens the browser print dialog (choose "Save as PDF"). The desktop app saves the PDF
+  directly to a file.
+- **PNG**: Saves the report as an image.
+- **CSV**: Downloads the daily series and totals as a CSV file.
+
+:::note
+Administrators (superadmin) can additionally switch the report **Scope** to **Whole cluster** — for
+example from the admin dashboard's Usage report item — which adds a table of top users by GPU-hours.
+:::

@@ -20,15 +20,21 @@ import {
   buildTopUsers,
   parseUsagePeriodRecords,
 } from './adminUsageReportData';
-import { UsageReportData, UsageReportPeriod } from './types';
 import {
+  UsageReportData,
+  UsageReportPeriod,
+  UsageReportTopUser,
+} from './types';
+import {
+  DailyAllocation,
   buildAllocationByDay,
   buildUtilizationPercentByDay,
   percentFromAvgValues,
 } from './userUsageReportData';
-import { toLocalId } from 'backend.ai-ui';
+import { toLocalId, useBAILogger } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { graphql, useLazyLoadQuery, useRelayEnvironment } from 'react-relay';
 
 interface AdminUsageReportViewProps {
@@ -38,32 +44,17 @@ interface AdminUsageReportViewProps {
   onData?: (data: UsageReportData) => void;
 }
 
-const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
-  'use memo';
-  const relayEnvironment = useRelayEnvironment();
-  // Idempotent: query the report's reserved presets, create the missing ones.
-  const { data: presetIds } = useSuspenseTanQuery<UsageReportPresetIds>({
-    queryKey: ['UsageReportAdminPresets'],
-    staleTime: Infinity,
-    queryFn: () => ensureUsageReportPresets(relayEnvironment),
-  });
-  return <AdminAllocationLoader {...props} presetIds={presetIds} />;
-};
-
-interface AdminAllocationLoaderProps extends AdminUsageReportViewProps {
-  presetIds: UsageReportPresetIds;
-}
-
 interface AdminAllocationResult {
   records: UsagePeriodRecord[];
   statsBins: UserStatsData[];
   recordsAvailable: boolean;
 }
 
-const AdminAllocationLoader: React.FC<AdminAllocationLoaderProps> = (props) => {
+const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
   'use memo';
+  const { period, periodLabel, scopeLabel, onData } = props;
   const baiClient = useSuspendedBackendaiClient();
-  const { period } = props;
+  const { logger } = useBAILogger();
   const { data: allocation } = useSuspenseTanQuery<AdminAllocationResult>({
     queryKey: ['UsageReportAdminAllocation', period.startDate, period.endDate],
     queryFn: async () => {
@@ -87,11 +78,71 @@ const AdminAllocationLoader: React.FC<AdminAllocationLoaderProps> = (props) => {
       };
     },
   });
-  return <AdminUtilizationMetrics {...props} allocation={allocation} />;
+
+  const allocationProps: AdminAllocationProps = {
+    allocationByDay: allocation.recordsAvailable
+      ? buildAllocationByDayFromRecords(allocation.records, period)
+      : buildAllocationByDay(allocation.statsBins, period),
+    allocationComplete: allocation.recordsAvailable,
+    topUsers: buildTopUsers(allocation.records, period),
+    clusterName: baiClient._config._endpointHost || null,
+  };
+
+  // Utilization is best-effort (spec §5): preset seeding or Prometheus
+  // failures degrade to the allocation-only document, not the error view.
+  return (
+    <ErrorBoundary
+      resetKeys={[period.startDate, period.endDate]}
+      onError={(error) => {
+        logger.warn('usage-report utilization degraded to allocation:', error);
+      }}
+      fallback={
+        <UsageReportDocument
+          data={assembleAdminUsageReportData({
+            period,
+            ...allocationProps,
+            utilizationByDay: { cpu: {}, gpu: {}, mem: {} },
+            utilizationAvgs: {
+              cpuPercent: null,
+              gpuPercent: null,
+              memPercent: null,
+            },
+          })}
+          periodLabel={periodLabel}
+          scopeLabel={scopeLabel}
+          onData={onData}
+        />
+      }
+    >
+      <AdminPresetLoader {...props} {...allocationProps} />
+    </ErrorBoundary>
+  );
 };
 
-interface AdminUtilizationMetricsProps extends AdminAllocationLoaderProps {
-  allocation: AdminAllocationResult;
+interface AdminAllocationProps {
+  allocationByDay: Record<string, DailyAllocation>;
+  allocationComplete: boolean;
+  topUsers: UsageReportTopUser[];
+  clusterName: string | null;
+}
+
+interface AdminPresetLoaderProps
+  extends AdminUsageReportViewProps, AdminAllocationProps {}
+
+const AdminPresetLoader: React.FC<AdminPresetLoaderProps> = (props) => {
+  'use memo';
+  const relayEnvironment = useRelayEnvironment();
+  // Idempotent: query the report's reserved presets, create the missing ones.
+  const { data: presetIds } = useSuspenseTanQuery<UsageReportPresetIds>({
+    queryKey: ['UsageReportAdminPresets'],
+    staleTime: Infinity,
+    queryFn: () => ensureUsageReportPresets(relayEnvironment),
+  });
+  return <AdminUtilizationMetrics {...props} presetIds={presetIds} />;
+};
+
+interface AdminUtilizationMetricsProps extends AdminPresetLoaderProps {
+  presetIds: UsageReportPresetIds;
 }
 
 type PresetResult = AdminUsageReportViewUtilizationQuery$data['cpu_series'];
@@ -116,13 +167,20 @@ const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
   scopeLabel,
   onData,
   presetIds,
-  allocation,
+  allocationByDay,
+  allocationComplete,
+  topUsers,
+  clusterName,
 }) => {
   'use memo';
   const periodStart = dayjs(period.startDate).startOf('day');
   const now = dayjs();
   const periodEndRaw = dayjs(period.endDate).endOf('day');
-  const periodEnd = periodEndRaw.isAfter(now) ? now : periodEndRaw;
+  const clampedEnd = periodEndRaw.isAfter(now) ? now : periodEndRaw;
+  // A future ?periodStart= must not yield start > end (Prometheus rejects it).
+  const periodEnd = clampedEnd.isBefore(periodStart)
+    ? periodStart.add(1, 'second')
+    : clampedEnd;
   const periodHours = Math.max(
     1,
     Math.ceil(periodEnd.diff(periodStart, 'hour', true)),
@@ -255,11 +313,10 @@ const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
 
   const data = assembleAdminUsageReportData({
     period,
-    allocationByDay: allocation.recordsAvailable
-      ? buildAllocationByDayFromRecords(allocation.records, period)
-      : buildAllocationByDay(allocation.statsBins, period),
-    allocationComplete: allocation.recordsAvailable,
-    topUsers: buildTopUsers(allocation.records, period),
+    allocationByDay,
+    allocationComplete,
+    topUsers,
+    clusterName,
     utilizationByDay: { cpu: cpuByDay, gpu: gpuByDay, mem: memByDay },
     utilizationAvgs: {
       cpuPercent:

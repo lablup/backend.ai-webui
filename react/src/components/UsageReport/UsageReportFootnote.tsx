@@ -23,7 +23,10 @@ const UsageReportFootnote: React.FC<UsageReportFootnoteProps> = ({ data }) => {
       gap="xxs"
     >
       <BAIText type="secondary" size="sm">
-        {t('usageReport.Methodology')}
+        {t('usageReport.Methodology')}{' '}
+        {data.sessionsSemantics === 'launched'
+          ? t('usageReport.MethodologySessionsLaunched')
+          : t('usageReport.MethodologySessionsPeak')}
       </BAIText>
       <BAIText type="secondary" size="sm">
         {t('usageReport.GeneratedOn', {

@@ -73,6 +73,8 @@ export interface UsageReportData {
   /** Admin scope only. */
   topUsers?: UsageReportTopUser[];
   coverage: UsageReportCoverage;
+  /** How `sessions` figures were counted; disclosed in the footnote. */
+  sessionsSemantics: 'launched' | 'peakConcurrent';
   /** ISO timestamp of report generation. */
   generatedAt: string;
   clusterName: string | null;

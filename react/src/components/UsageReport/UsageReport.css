@@ -52,7 +52,9 @@
   display: none;
 }
 
-@page {
+/* Named page: this stylesheet stays loaded after the lazy route chunk, so an
+   unscoped @page would silently force A4/12mm on every other page's print. */
+@page usage-report {
   size: A4;
   margin: 12mm;
 }
@@ -101,6 +103,7 @@
   }
 
   .usage-report {
+    page: usage-report;
     max-width: none;
     gap: var(--spacing-3);
     -webkit-print-color-adjust: exact;

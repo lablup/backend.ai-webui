@@ -3494,6 +3494,8 @@
     "GPUHoursPerDay": "GPU-hours / day",
     "GeneratedOn": "Generated on {{timestamp}} · cluster {{cluster}}",
     "Methodology": "Totals (GPU-hours, CPU-hours, sessions) are computed from allocation statistics; utilization percentages are Prometheus aggregates.",
+    "MethodologySessionsLaunched": "Session counts are sessions launched during the period.",
+    "MethodologySessionsPeak": "Session counts are peak concurrent sessions (this data source carries no launch counts).",
     "Monthly": "Monthly",
     "MonthlyReportTitle": "Monthly Resource Usage Report",
     "MyUsage": "My usage",

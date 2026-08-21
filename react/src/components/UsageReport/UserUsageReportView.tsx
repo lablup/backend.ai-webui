@@ -19,8 +19,10 @@ import {
   buildUtilizationPercentByDay,
   percentFromAvgValues,
 } from './userUsageReportData';
+import { useBAILogger } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface UserUsageReportViewProps {
@@ -38,8 +40,10 @@ const UserUsageReportView: React.FC<UserUsageReportViewProps> = ({
 }) => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
+  const { logger } = useBAILogger();
   const { data: statsData } = useUserUsageStats();
   const allocationByDay = buildAllocationByDay(statsData, period);
+  const clusterName: string | null = baiClient._config._endpointHost || null;
 
   // user_utilization_metric needs manager >= 25.6.0 (spec §5).
   if (!baiClient.supports('user-metrics')) {
@@ -54,6 +58,7 @@ const UserUsageReportView: React.FC<UserUsageReportViewProps> = ({
             gpuPercent: null,
             memPercent: null,
           },
+          clusterName,
         })}
         periodLabel={periodLabel}
         scopeLabel={scopeLabel}
@@ -61,19 +66,48 @@ const UserUsageReportView: React.FC<UserUsageReportViewProps> = ({
       />
     );
   }
+  // Utilization is best-effort (spec §5): a failed metrics query degrades to
+  // the allocation-only document instead of erroring the whole report.
   return (
-    <UserUtilizationLoader
-      period={period}
-      periodLabel={periodLabel}
-      scopeLabel={scopeLabel}
-      onData={onData}
-      allocationByDay={allocationByDay}
-    />
+    <ErrorBoundary
+      resetKeys={[period.startDate, period.endDate]}
+      onError={(error) => {
+        logger.warn('usage-report utilization degraded to allocation:', error);
+      }}
+      fallback={
+        <UsageReportDocument
+          data={assembleUserUsageReportData({
+            period,
+            allocationByDay,
+            utilizationByDay: { cpu: {}, gpu: {}, mem: {} },
+            utilizationAvgs: {
+              cpuPercent: null,
+              gpuPercent: null,
+              memPercent: null,
+            },
+            clusterName,
+          })}
+          periodLabel={periodLabel}
+          scopeLabel={scopeLabel}
+          onData={onData}
+        />
+      }
+    >
+      <UserUtilizationLoader
+        period={period}
+        periodLabel={periodLabel}
+        scopeLabel={scopeLabel}
+        onData={onData}
+        allocationByDay={allocationByDay}
+        clusterName={clusterName}
+      />
+    </ErrorBoundary>
   );
 };
 
 interface UserUtilizationLoaderProps extends UserUsageReportViewProps {
   allocationByDay: Record<string, DailyAllocation>;
+  clusterName: string | null;
 }
 
 // The accelerator util metric name (cuda_util, rocm_util, ...) is only known
@@ -110,6 +144,7 @@ const UserUtilizationMetrics: React.FC<UserUtilizationMetricsProps> = ({
   scopeLabel,
   onData,
   allocationByDay,
+  clusterName,
   gpuMetricName,
 }) => {
   'use memo';
@@ -279,6 +314,7 @@ const UserUtilizationMetrics: React.FC<UserUtilizationMetricsProps> = ({
         memCapacity?.avg_value,
       ),
     },
+    clusterName,
   });
 
   return (

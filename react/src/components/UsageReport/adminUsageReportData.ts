@@ -24,6 +24,8 @@ const round1 = (v: number) => Math.round(v * 10) / 10;
 /** One per-kernel row of `GET /resource/usage/period`, normalized. */
 export interface UsagePeriodRecord {
   email: string | null;
+  /** null = payload carries no session identity for this row. */
+  sessionId: string | null;
   cpuAllocated: number;
   gpuAllocated: number;
   createdAt: Dayjs | null;
@@ -74,6 +76,10 @@ export const parseUsagePeriodRecords = (
           : typeof row.access_key === 'string' && row.access_key
             ? row.access_key
             : null,
+      sessionId:
+        typeof row.session_id === 'string' && row.session_id
+          ? row.session_id
+          : null,
       cpuAllocated: toNumber(row.cpu_allocated),
       gpuAllocated: toNumber(row.gpu_allocated),
       createdAt: created?.isValid() ? created : null,
@@ -106,8 +112,10 @@ const overlapHours = (
 
 /**
  * Per-day allocation from per-kernel records: allocation × overlap hours per
- * day, sessions = kernels launched that day. Records cover the whole period,
- * so report-visible days get explicit zeros (zero usage, not missing data).
+ * day, sessions = sessions launched that day (a multi-container session's
+ * kernel rows share one `session_id` and count once). Records cover the whole
+ * period, so report-visible days get explicit zeros (zero usage, not missing
+ * data).
  */
 export const buildAllocationByDayFromRecords = (
   records: UsagePeriodRecord[],
@@ -121,13 +129,19 @@ export const buildAllocationByDayFromRecords = (
       byDay[day] = { cpuHours: 0, gpuHours: 0, sessions: 0 };
     }
   });
+  const countedSessionIds = new Set<string>();
   records.forEach((record) => {
     if (!record.createdAt) {
       return;
     }
     const launchEntry = byDay[record.createdAt.format('YYYY-MM-DD')];
     if (launchEntry) {
-      launchEntry.sessions += 1;
+      if (record.sessionId == null) {
+        launchEntry.sessions += 1;
+      } else if (!countedSessionIds.has(record.sessionId)) {
+        countedSessionIds.add(record.sessionId);
+        launchEntry.sessions += 1;
+      }
     }
     const rawEnd = record.terminatedAt ?? periodEnd;
     const end = rawEnd.isBefore(periodEnd) ? rawEnd : periodEnd;
@@ -158,7 +172,12 @@ export const buildTopUsers = (
   const windowEnd = clipPeriodEnd(period);
   const byUser = new Map<
     string,
-    { gpuHours: number; cpuHours: number; sessions: number }
+    {
+      gpuHours: number;
+      cpuHours: number;
+      sessionIds: Set<string>;
+      unkeyedSessions: number;
+    }
   >();
   records.forEach((record) => {
     if (!record.email) {
@@ -168,11 +187,17 @@ export const buildTopUsers = (
     const entry = byUser.get(record.email) ?? {
       gpuHours: 0,
       cpuHours: 0,
-      sessions: 0,
+      sessionIds: new Set<string>(),
+      unkeyedSessions: 0,
     };
     entry.gpuHours += record.gpuAllocated * hours;
     entry.cpuHours += record.cpuAllocated * hours;
-    entry.sessions += 1;
+    // Per-kernel rows of one cluster session share a session_id; count once.
+    if (record.sessionId == null) {
+      entry.unkeyedSessions += 1;
+    } else {
+      entry.sessionIds.add(record.sessionId);
+    }
     byUser.set(record.email, entry);
   });
   return [...byUser.entries()]
@@ -183,7 +208,7 @@ export const buildTopUsers = (
       email,
       gpuHours: round1(entry.gpuHours),
       cpuHours: round1(entry.cpuHours),
-      sessions: entry.sessions,
+      sessions: entry.sessionIds.size + entry.unkeyedSessions,
     }));
 };
 
@@ -194,6 +219,7 @@ export const assembleAdminUsageReportData = ({
   topUsers,
   utilizationByDay,
   utilizationAvgs,
+  clusterName,
 }: {
   period: UsageReportPeriod;
   allocationByDay: Record<string, DailyAllocation>;
@@ -202,6 +228,7 @@ export const assembleAdminUsageReportData = ({
   topUsers: UsageReportTopUser[];
   utilizationByDay: UtilizationByDay;
   utilizationAvgs: UsageReportUtilizationAvgs;
+  clusterName: string | null;
 }): UsageReportData => {
   const days = listPeriodDays(period);
   const dailySeries: UsageReportDailyPoint[] = days.map((date) => {
@@ -264,7 +291,8 @@ export const assembleAdminUsageReportData = ({
         allocationCoveredDays > 0 &&
         allocationCoveredDays < days.length,
     },
+    sessionsSemantics: allocationComplete ? 'launched' : 'peakConcurrent',
     generatedAt: dayjs().toISOString(),
-    clusterName: null,
+    clusterName,
   };
 };
