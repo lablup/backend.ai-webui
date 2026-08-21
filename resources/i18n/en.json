@@ -3484,6 +3484,8 @@
     "CPUHoursPerDay": "CPU-hours / day",
     "ExportCSV": "CSV",
     "ExportPDF": "PDF",
+    "ExportPDFFailed": "Failed to export the PDF.",
+    "ExportPDFSaved": "PDF saved to {{path}}.",
     "ExportPNG": "PNG",
     "GPUHours": "GPU-hours",
     "GPUHoursPerDay": "GPU-hours / day",

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import AdminUsageReportView from '../components/UsageReport/AdminUsageReportView';
 import '../components/UsageReport/UsageReport.css';
 import UserUsageReportView from '../components/UsageReport/UserUsageReportView';
@@ -22,7 +23,13 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
-import { BAIButton, BAIFlex, BAISkeleton, BAIText } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAIFlex,
+  BAISkeleton,
+  BAIText,
+  useBAILogger,
+} from 'backend.ai-ui';
 import {
   ChevronLeft,
   ChevronRight,
@@ -37,6 +44,8 @@ import { useSearchParams } from 'react-router-dom';
 const UsageReportPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
@@ -58,6 +67,24 @@ const UsageReportPage: React.FC = () => {
     scope === 'admin'
       ? t('usageReport.WholeCluster')
       : userInfo.email || t('usageReport.MyUsage');
+
+  const exportPDF = async () => {
+    const bridge = globalThis.electronPrintAPI;
+    if (globalThis.isElectron && bridge?.printToPDF) {
+      const fileName = `usage-report-${scope}-${period.startDate}.pdf`;
+      const result = await bridge.printToPDF(fileName);
+      if (result?.error) {
+        logger.error('usage-report print-to-pdf failed:', result.error);
+        message.error(t('usageReport.ExportPDFFailed'));
+      } else if (!result?.canceled && result?.filePath) {
+        message.success(
+          t('usageReport.ExportPDFSaved', { path: result.filePath }),
+        );
+      }
+    } else {
+      window.print();
+    }
+  };
 
   const updateParams = (updates: Record<string, string | null>) => {
     setSearchParams(
@@ -139,9 +166,9 @@ const UsageReportPage: React.FC = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {/* Enabled in W4 (PDF) / W5 (PNG, CSV). */}
+        {/* PNG/CSV enabled in W5. */}
         <BAIFlex align="center" gap="xs">
-          <BAIButton disabled icon={<FileDown size="1em" />}>
+          <BAIButton icon={<FileDown size="1em" />} action={exportPDF}>
             {t('usageReport.ExportPDF')}
           </BAIButton>
           <BAIButton disabled icon={<ImageIcon size="1em" />}>

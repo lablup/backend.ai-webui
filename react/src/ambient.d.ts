@@ -70,6 +70,18 @@ declare module globalThis {
       checked: boolean;
     };
   };
+  // Electron preload bridge for silent usage-report PDF export (FR-3620 W4);
+  // absent in the browser, where the renderer falls back to window.print().
+  // eslint-disable-next-line no-var
+  var electronPrintAPI:
+    | {
+        printToPDF: (defaultFileName: string) => Promise<{
+          canceled: boolean;
+          filePath?: string;
+          error?: string;
+        }>;
+      }
+    | undefined;
   // eslint-disable-next-line no-var
   var backendaiclient: BackendAIClient | null | undefined;
   // eslint-disable-next-line no-var

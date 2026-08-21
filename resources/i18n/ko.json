@@ -3500,6 +3500,8 @@
     "CPUHoursPerDay": "일별 CPU-시간",
     "ExportCSV": "CSV",
     "ExportPDF": "PDF",
+    "ExportPDFFailed": "PDF 내보내기에 실패했습니다.",
+    "ExportPDFSaved": "PDF를 {{path}} 경로에 저장했습니다.",
     "ExportPNG": "PNG",
     "GPUHours": "GPU-시간",
     "GPUHoursPerDay": "일별 GPU-시간",

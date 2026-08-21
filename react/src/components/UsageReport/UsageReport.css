@@ -1,5 +1,5 @@
-/* Usage report document layout (FR-3620 W1). Print skeleton is first-pass;
-   W4 hardens it (fixed chart widths, page-break tuning, Electron parity). */
+/* Usage report document layout (FR-3620 W1); print rules hardened in W4
+   (browser window.print and Electron printToPDF share this stylesheet). */
 
 .usage-report {
   display: flex;
@@ -42,37 +42,101 @@
   }
 }
 
+/* Screen shows the theme-mode logo; print always shows the light one. */
+.usage-report-logo-screen,
+.usage-report-logo-print {
+  display: block;
+}
+
+.usage-report-logo-print {
+  display: none;
+}
+
 @page {
   size: A4;
   margin: 12mm;
 }
 
 @media print {
-  .usage-report-control-bar {
+  /* The report always prints light. Theme tokens resolve via light-dark(),
+     so forcing color-scheme flips the whole document (spec §6). */
+  html:has(.usage-report),
+  body:has(.usage-report),
+  body:has(.usage-report) * {
+    color-scheme: light !important;
+  }
+
+  /* Unclip the scroll chain so the report paginates instead of printing a
+     single clipped viewport. */
+  html:has(.usage-report),
+  body:has(.usage-report),
+  body:has(.usage-report) .astryx-app-shell,
+  body:has(.usage-report) #astryx-app-shell-main,
+  body:has(.usage-report) .main-layout-content-scroll {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  body:has(.usage-report) .main-layout-content-scroll {
+    padding: 0 !important;
+  }
+
+  /* App chrome: side nav, app/announcement headers, sticky alerts, and the
+     report's own control bar stay out of the printed document. */
+  body:has(.usage-report) .astryx-app-shell-sidenav,
+  body:has(.usage-report) .astryx-app-shell-header,
+  body:has(.usage-report) .bai-webui-header,
+  body:has(.usage-report) .main-layout-alert-wrapper,
+  body:has(.usage-report) .usage-report-control-bar {
     display: none !important;
+  }
+
+  .usage-report-logo-screen {
+    display: none !important;
+  }
+
+  .usage-report-logo-print {
+    display: block !important;
   }
 
   .usage-report {
     max-width: none;
     gap: var(--spacing-3);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
+  /* A4 portrait content box is 186mm (210mm - 2 x 12mm margin). */
   .usage-report-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 90mm);
+    justify-content: space-between;
+    gap: 6mm 0;
   }
 
-  .usage-report-card {
+  .usage-report-header,
+  .usage-report-truncation,
+  .usage-report-card,
+  .usage-report-footnote {
     break-inside: avoid;
   }
 
   .usage-report-top-users {
     break-before: page;
+    break-inside: avoid;
   }
 
-  /* First-pass width pin so ResponsiveContainer does not collapse in print;
-     W4 replaces this with exact per-chart pinning. */
-  .usage-report-chart .recharts-responsive-container {
+  /* Pin ResponsiveContainer output to the print column. The on-screen SVG
+     keeps its viewBox, so scaling it stays vector. */
+  .usage-report-chart .recharts-responsive-container,
+  .usage-report-chart .recharts-wrapper {
+    width: 82mm !important;
+    height: auto !important;
+    max-width: 100%;
+  }
+
+  .usage-report-chart .recharts-wrapper svg.recharts-surface {
     width: 100% !important;
-    min-width: 80mm;
+    height: auto !important;
   }
 }

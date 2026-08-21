@@ -43,10 +43,15 @@ const UsageReportHeader: React.FC<UsageReportHeaderProps> = ({
   const { t } = useTranslation();
   const { themeConfig } = useCustomThemeConfig();
   const { mode } = useTheme();
+  const lightLogoSrc =
+    themeConfig?.logo?.src || '/manifest/backend.ai-webui-white.svg';
   const logoSrc =
-    mode === 'dark'
-      ? themeConfig?.logo?.srcDark || '/manifest/backend.ai-webui-white.svg'
-      : themeConfig?.logo?.src || '/manifest/backend.ai-webui-white.svg';
+    mode === 'dark' ? themeConfig?.logo?.srcDark || lightLogoSrc : lightLogoSrc;
+  const logoStyle = {
+    width: themeConfig?.logo?.size?.width || 159,
+    height: themeConfig?.logo?.size?.height || 24,
+  };
+  const logoAlt = themeConfig?.logo?.alt || 'Backend.AI Logo';
 
   return (
     <BAIFlex
@@ -58,13 +63,17 @@ const UsageReportHeader: React.FC<UsageReportHeaderProps> = ({
     >
       <BAIFlex direction="column" align="start" gap="xxs">
         <img
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          className="usage-report-logo-screen"
+          alt={logoAlt}
           src={logoSrc}
-          style={{
-            width: themeConfig?.logo?.size?.width || 159,
-            height: themeConfig?.logo?.size?.height || 24,
-            display: 'block',
-          }}
+          style={logoStyle}
+        />
+        {/* Print is forced light, so it always uses the light logo. */}
+        <img
+          className="usage-report-logo-print"
+          alt={logoAlt}
+          src={lightLogoSrc}
+          style={logoStyle}
         />
         <Heading level={3}>
           {data.period.periodType === 'weekly'

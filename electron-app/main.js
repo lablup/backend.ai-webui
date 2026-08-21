@@ -355,6 +355,34 @@ app.once('ready', function () {
   Menu.setApplicationMenu(appmenu);
 });
 
+// FR-3620 W4: silent print-to-PDF for the usage report. The renderer's print
+// CSS drives layout (preferCSSPageSize honors its @page A4 rule).
+ipcMain.handle('usage-report:print-to-pdf', async (event, defaultFileName) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  const { canceled, filePath } = await dialog.showSaveDialog(win, {
+    defaultPath:
+      typeof defaultFileName === 'string' && defaultFileName !== ''
+        ? defaultFileName
+        : 'usage-report.pdf',
+    filters: [{ name: 'PDF', extensions: ['pdf'] }],
+  });
+  if (canceled || !filePath) {
+    return { canceled: true };
+  }
+  try {
+    const pdfData = await event.sender.printToPDF({
+      preferCSSPageSize: true,
+      landscape: false,
+      printBackground: true,
+    });
+    await fs.writeFile(filePath, pdfData);
+    return { canceled: false, filePath };
+  } catch (err) {
+    console.error('usage-report print-to-pdf failed:', err);
+    return { canceled: false, error: String(err) };
+  }
+});
+
 function createWindow() {
   // Create the browser window.
   devtools = null;
