@@ -5,13 +5,14 @@
 import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 
 // A portal root (`BAIDialog`, the `BAIModal` app launcher among them, and
-// `BAIDrawerPortal` since FR-3585), or an open native `<dialog>` — which since
-// FR-3585 is only the two non-scrim drawers. Tours are popovers, not dialogs.
-// `:not([inert])` drops the roots the level stack covered, whose contents no
-// one can reach.
+// `BAIDrawerPortal` since FR-3585), or an open native `<dialog>` that is
+// actually MODAL. `[aria-modal="true"]` stands in for `:modal` (jsdom cannot
+// match it) and keeps the non-scrim `show()` drawers out — an open
+// notification drawer must not suppress its own `]` toggle (FR-3619).
+// `:not([inert])` drops the roots the level stack covered.
 const OPEN_MODAL_ROOTS = [
   `[${BAI_MODAL_OPEN_ATTRIBUTE}]:not([inert])`,
-  'dialog[open]:not([inert])',
+  'dialog[open][aria-modal="true"]:not([inert])',
 ] as const;
 
 export const OPEN_MODAL_ROOT_SELECTOR = OPEN_MODAL_ROOTS.join(', ');
