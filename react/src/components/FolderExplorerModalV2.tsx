@@ -577,6 +577,10 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                       direction="horizontal"
                       isReversed
                       hasDivider
+                      // `center` also routes the grab zone away from
+                      // `hitAreaOffsetX`, whose block-axis `-50%` shifts a
+                      // `top/bottom: 0` box off the divider (FR-3591).
+                      pillPlacement="center"
                       label={t('explorer.Metadata')}
                       resizable={infoPanel.props}
                     />
