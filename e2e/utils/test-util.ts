@@ -140,8 +140,11 @@ export async function login(
     .catch(() => {});
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
-  // Expand the endpoint section if it's not already visible
-  const endpointInput = page.getByLabel('Endpoint');
+  // Astryx Button exposes no aria-label — its accessible name is the visible text.
+  const loginButton = page.getByRole('button', { name: 'Login', exact: true });
+  // Expand the endpoint section if it's not already visible. Must be the role
+  // locator: getByLabel('Endpoint') is ambiguous once the section is open.
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -161,17 +164,14 @@ export async function login(
   const maxAttempts = 3;
   const retryDelayMs = 5000;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    await page.getByLabel('Login', { exact: true }).click();
+    await loginButton.click();
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
         timeout: 30000,
       });
       return;
     } catch (error) {
-      const stillOnLoginForm = await page
-        .getByLabel('Login', { exact: true })
-        .isVisible()
-        .catch(() => false);
+      const stillOnLoginForm = await loginButton.isVisible().catch(() => false);
       if (!stillOnLoginForm) {
         // The login was accepted (the form is gone) and the app is just
         // booting slowly — keep waiting instead of re-submitting.
