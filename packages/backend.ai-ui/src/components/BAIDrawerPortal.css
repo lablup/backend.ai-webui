@@ -9,7 +9,7 @@
 */
 
 @layer components {
-  /* Same band and step as `BAIDialogPortal` (`backend.ai-ui/src/styles/
+  /* Same band and step as `BAIDialog` (`backend.ai-ui/src/styles/
      zIndexLadder.css`), so a modal opened later claims a level above the
      drawer and paints over it. */
   .bai-drawer-portal {
