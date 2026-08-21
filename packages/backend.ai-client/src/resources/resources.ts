@@ -305,4 +305,41 @@ export class Resources {
     // return this.client._wrapWithPromise(rqst);
     return this.client._wrapWithPromise(rqst, false, null);
   }
+
+  /**
+   * Per-kernel usage records over an arbitrary date range (admin only).
+   * Mirrors the manager's `GET /resource/usage/period` handler: `start_date` /
+   * `end_date` as `YYYYMMDD`, optional `project_id`.
+   */
+  async usage_per_period(
+    startDate: string,
+    endDate: string,
+    projectId: string | null = null,
+  ): Promise<any> {
+    const params = new URLSearchParams({
+      start_date: startDate,
+      end_date: endDate,
+    });
+    if (projectId) {
+      params.set('project_id', projectId);
+    }
+    const rqst = this.client.newSignedRequest(
+      'GET',
+      `/resource/usage/period?${params.toString()}`,
+      null,
+    );
+    return this.client._wrapWithPromise(rqst, false, null);
+  }
+
+  /**
+   * Cluster-wide statistics for the trailing month (superadmin only).
+   */
+  async admin_stats(): Promise<any> {
+    const rqst = this.client.newSignedRequest(
+      'GET',
+      '/resource/stats/admin/month',
+      null,
+    );
+    return this.client._wrapWithPromise(rqst, false, null);
+  }
 }

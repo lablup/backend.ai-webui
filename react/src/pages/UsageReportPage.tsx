@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import AdminUsageReportView from '../components/UsageReport/AdminUsageReportView';
 import '../components/UsageReport/UsageReport.css';
-import UsageReportDocument from '../components/UsageReport/UsageReportDocument';
 import UserUsageReportView from '../components/UsageReport/UserUsageReportView';
-import { getMockUsageReportData } from '../components/UsageReport/mockUsageReportData';
 import {
   formatPeriodLabel,
   isLastCompletePeriod,
@@ -17,7 +16,7 @@ import {
   UsageReportScope,
 } from '../components/UsageReport/types';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   SegmentedControl,
@@ -38,13 +37,18 @@ import { useSearchParams } from 'react-router-dom';
 const UsageReportPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
+  const userRole = useCurrentUserRole();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // TODO: default scope by role + RouteAccessGuard (spec §3); param-only in W1.
+  // Admin scope needs superadmin + the 26.4.2 preset-result API (spec §5).
+  const canUseAdminScope =
+    userRole === 'superadmin' && baiClient.supports('prometheus-query-preset');
   const scope: UsageReportScope =
-    searchParams.get('scope') === 'admin' ? 'admin' : 'user';
+    canUseAdminScope && searchParams.get('scope') === 'admin'
+      ? 'admin'
+      : 'user';
   const periodType: UsageReportPeriodType =
     searchParams.get('period') === 'monthly' ? 'monthly' : 'weekly';
   const period = resolvePeriod(periodType, searchParams.get('periodStart'));
@@ -82,20 +86,22 @@ const UsageReportPage: React.FC = () => {
         gap="sm"
       >
         <BAIFlex align="center" wrap="wrap" gap="sm">
-          <SegmentedControl
-            label={t('usageReport.Scope')}
-            value={scope}
-            onChange={(value) => updateParams({ scope: value })}
-          >
-            <SegmentedControlItem
-              value="user"
-              label={t('usageReport.MyUsage')}
-            />
-            <SegmentedControlItem
-              value="admin"
-              label={t('usageReport.WholeCluster')}
-            />
-          </SegmentedControl>
+          {canUseAdminScope && (
+            <SegmentedControl
+              label={t('usageReport.Scope')}
+              value={scope}
+              onChange={(value) => updateParams({ scope: value })}
+            >
+              <SegmentedControlItem
+                value="user"
+                label={t('usageReport.MyUsage')}
+              />
+              <SegmentedControlItem
+                value="admin"
+                label={t('usageReport.WholeCluster')}
+              />
+            </SegmentedControl>
+          )}
           <SegmentedControl
             label={t('usageReport.PeriodType')}
             value={periodType}
@@ -155,12 +161,13 @@ const UsageReportPage: React.FC = () => {
           />
         </Suspense>
       ) : (
-        // Admin scope keeps the W1 mock until W3 wires real data.
-        <UsageReportDocument
-          data={getMockUsageReportData(scope, period)}
-          periodLabel={periodLabel}
-          scopeLabel={scopeLabel}
-        />
+        <Suspense fallback={<BAISkeleton />}>
+          <AdminUsageReportView
+            period={period}
+            periodLabel={periodLabel}
+            scopeLabel={scopeLabel}
+          />
+        </Suspense>
       )}
     </BAIFlex>
   );
