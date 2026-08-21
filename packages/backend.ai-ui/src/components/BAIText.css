@@ -60,6 +60,16 @@
   text-overflow: ellipsis;
 }
 
+/* `code` nests the text INSIDE the chip, and the chip is a flex box, where
+   `text-overflow` has no effect — so the value was hard-cut with no ellipsis.
+   The chip still clips (its background must not spill); the ellipsis belongs
+   on the text itself, which needs `min-width: 0` to shrink as a flex item. */
+.bai-text-row > .bai-text-code > .astryx-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* antd `Typography.Text mark` — the highlighter. */
 .bai-text-mark {
   padding: 0 0.2em;
