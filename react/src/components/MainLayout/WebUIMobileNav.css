@@ -13,6 +13,9 @@
 
 .webui-mobile-nav > div > div:first-child {
   background-color: var(--color-accent);
+  /* The rail's brand band height (`.bai-sider .logo-and-text-container`),
+     restated because MobileNav sizes its header row from its content (48px). */
+  height: 60px;
 }
 
 /*
@@ -39,4 +42,7 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  /* The header row already carries 8px, so 24px more puts the brand mark at
+     the rail's 32px inset — the optical left edge every nav row's icon uses. */
+  padding-inline-start: var(--spacing-6);
 }
