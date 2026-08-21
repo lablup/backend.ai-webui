@@ -68,7 +68,10 @@ describe('backendAiTheme', () => {
       Record<string, string> | undefined;
 
     it.each([
-      ['--color-overlay-hover', 'light-dark(rgba(0,0,0,0.06), #262626)'],
+      [
+        '--color-overlay-hover',
+        'light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))',
+      ],
       [
         '--color-overlay-pressed',
         'light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))',
