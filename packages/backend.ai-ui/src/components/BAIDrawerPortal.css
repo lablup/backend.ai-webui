@@ -9,17 +9,13 @@
 */
 
 @layer components {
-  /* Same band and step as `BAIDialog` (`backend.ai-ui/src/styles/
-     zIndexLadder.css`), so a modal opened later claims a level above the
-     drawer and paints over it. */
+  /* One stack with `BAIDialog`: `dialogLevelStack.ts` resolves and writes
+     `--bai-dialog-z` on this root too, so a modal opened later paints over the
+     drawer. The band base is the fallback for a root that has not claimed. */
   .bai-drawer-portal {
-    --bai-drawer-portal-level: 0;
     position: fixed;
     inset: 0;
-    z-index: calc(
-      var(--bai-z-modal-base) + var(--bai-drawer-portal-level) *
-        var(--bai-z-modal-level-step)
-    );
+    z-index: var(--bai-dialog-z, var(--bai-z-modal-base));
   }
 
   /* Closed but still rendered: lab keeps the panel sliding out for one
