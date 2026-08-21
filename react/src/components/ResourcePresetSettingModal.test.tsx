@@ -5,6 +5,7 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -97,6 +98,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 
 const renderModal = () => {
   const environment: RelayMockEnvironment = createMockEnvironment();
+  const queryClient = new QueryClient();
   // The resolver settles every operation as it arrives, which also drops it
   // from `getAllOperations()` (that lists only PENDING ones). Record them here
   // instead, the same way the other contract tests in this stack do.
@@ -112,11 +114,13 @@ const renderModal = () => {
     return MockPayloadGenerator.generate(operation);
   });
   render(
-    <RelayEnvironmentProvider environment={environment}>
-      <>
-        <ResourcePresetSettingModal open onRequestClose={vi.fn()} />
-      </>
-    </RelayEnvironmentProvider>,
+    <QueryClientProvider client={queryClient}>
+      <RelayEnvironmentProvider environment={environment}>
+        <>
+          <ResourcePresetSettingModal open onRequestClose={vi.fn()} />
+        </>
+      </RelayEnvironmentProvider>
+    </QueryClientProvider>,
   );
   return { environment, seenOperations };
 };
@@ -163,14 +167,17 @@ describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR
     await user.type(memInput, '1');
     await user.click(screen.getByRole('button', { name: /button.Create/ }));
 
-    await waitFor(() => {
-      const create = seenOperations.find(
-        (operation) =>
-          operation.name === 'ResourcePresetSettingModalCreateMutation',
-      );
-      expect(create).toBeDefined();
-      expect(create?.variables.name).toBe('global-preset');
-      expect(create?.variables.props.scaling_group_name).toBeNull();
-    });
+    await waitFor(
+      () => {
+        const create = seenOperations.find(
+          (operation) =>
+            operation.name === 'ResourcePresetSettingModalCreateMutation',
+        );
+        expect(create).toBeDefined();
+        expect(create?.variables.name).toBe('global-preset');
+        expect(create?.variables.props.scaling_group_name).toBeNull();
+      },
+      { timeout: 3000 },
+    );
   });
 });

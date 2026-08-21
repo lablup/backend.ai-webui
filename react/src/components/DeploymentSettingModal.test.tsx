@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import DeploymentSettingModal from './DeploymentSettingModal';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -84,16 +85,19 @@ const renderModal = (
   onRequestClose = vi.fn(),
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
+  const queryClient = new QueryClient();
   render(
-    <RelayEnvironmentProvider environment={environment}>
-      <>
-        <DeploymentSettingModal
-          open
-          project={project}
-          onRequestClose={onRequestClose}
-        />
-      </>
-    </RelayEnvironmentProvider>,
+    <QueryClientProvider client={queryClient}>
+      <RelayEnvironmentProvider environment={environment}>
+        <>
+          <DeploymentSettingModal
+            open
+            project={project}
+            onRequestClose={onRequestClose}
+          />
+        </>
+      </RelayEnvironmentProvider>
+    </QueryClientProvider>,
   );
   return { environment, onRequestClose };
 };
