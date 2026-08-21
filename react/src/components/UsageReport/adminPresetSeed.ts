@@ -10,7 +10,7 @@ import { commitMutation, fetchQuery, graphql } from 'react-relay';
 import type { IEnvironment } from 'relay-runtime';
 
 /** Reserved name prefix; presets under it belong to the usage report. */
-export const USAGE_REPORT_PRESET_PREFIX = 'webui-usage-report/';
+const USAGE_REPORT_PRESET_PREFIX = 'webui-usage-report/';
 
 const UTILIZATION_GAUGE = 'backendai_container_utilization';
 
@@ -41,7 +41,7 @@ export type UsageReportPresetKey =
   | 'gpuUtilAvg'
   | 'memUtilAvg';
 
-export interface UsageReportPresetDefinition {
+interface UsageReportPresetDefinition {
   key: UsageReportPresetKey;
   name: string;
   queryTemplate: string;
@@ -49,7 +49,7 @@ export interface UsageReportPresetDefinition {
   timeWindow: string | null;
 }
 
-export const USAGE_REPORT_PRESET_DEFINITIONS: UsageReportPresetDefinition[] = [
+const USAGE_REPORT_PRESET_DEFINITIONS: UsageReportPresetDefinition[] = [
   {
     key: 'cpuUtilSeries',
     name: `${USAGE_REPORT_PRESET_PREFIX}cpu-util`,

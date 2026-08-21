@@ -12,9 +12,7 @@ const unitOf = (periodType: UsageReportPeriodType) =>
   periodType === 'weekly' ? 'isoWeek' : ('month' as const);
 
 /** Start of the last complete calendar week/month (spec §1: default anchor). */
-export const getDefaultPeriodStart = (
-  periodType: UsageReportPeriodType,
-): Dayjs =>
+const getDefaultPeriodStart = (periodType: UsageReportPeriodType): Dayjs =>
   dayjs()
     .startOf(unitOf(periodType))
     .subtract(1, periodType === 'weekly' ? 'week' : 'month');

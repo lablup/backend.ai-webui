@@ -111,8 +111,7 @@ const UsageReportPage: React.FC = () => {
   const exportPDF = async () => {
     const bridge = globalThis.electronPrintAPI;
     if (globalThis.isElectron && bridge?.printToPDF) {
-      const fileName = `usage-report-${scope}-${period.startDate}.pdf`;
-      const result = await bridge.printToPDF(fileName);
+      const result = await bridge.printToPDF(`${exportFileName}.pdf`);
       if (result?.error) {
         logger.error('usage-report print-to-pdf failed:', result.error);
         message.error(t('usageReport.ExportPDFFailed'));
