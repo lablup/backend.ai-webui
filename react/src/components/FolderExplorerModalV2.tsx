@@ -73,6 +73,15 @@ import { graphql, useLazyLoadQuery, useQueryLoader } from 'react-relay';
  */
 const EXPLORER_MAX_HEIGHT = '95vh';
 
+// Floor for the explorer pane, so the drag cannot shrink it until `overflow:
+// hidden` clips its toolbar out of reach. Measured: the action group needs
+// 419px and the whole toolbar 437px (viewport 1600, `xl` two-pane layout).
+const EXPLORER_MIN_WIDTH = 440;
+
+// The row's non-panel width: `--spacing-2` on each side of the 1px handle.
+// Measured 1392 - 655 - 720 = 17 at viewport 1600.
+const SPLIT_HANDLE_WIDTH = 17;
+
 export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
   _openDeleteMultipleFileDialog: () => void;
@@ -129,10 +138,30 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
+  // Observed so the drag can be clamped against the real row width. Without a
+  // `maxSizePx` the resizable's size keeps growing past what flexbox renders,
+  // and dragging back has to unwind that dead travel first (measured 685px).
+  const [splitRowWidth, setSplitRowWidth] = useState(0);
+  const observeSplitRow = (node: HTMLDivElement | null) => {
+    if (!node) return;
+    // `offsetWidth`, not `getBoundingClientRect()`: the latter is scaled by the
+    // dialog's entrance transform, so the first read lands at 95% and the
+    // observer never corrects it (the layout box never changed).
+    const measure = () => setSplitRowWidth(node.offsetWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => ro.disconnect();
+  };
+
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
   const infoPanel = useResizable({
     defaultSize: '45%',
     minSizePx: 550,
+    maxSizePx:
+      splitRowWidth > 0
+        ? Math.max(550, splitRowWidth - EXPLORER_MIN_WIDTH - SPLIT_HANDLE_WIDTH)
+        : undefined,
   });
 
   const deferredOpen = useDeferredValue(modalProps.open);
@@ -515,15 +544,13 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
 
             {vfolderNode && !hasNoPermissions ? (
               xl ? (
-                // antd `Splitter` → Astryx `useResizable` + `ResizeHandle`:
-                // explorer fills the remaining space, the info panel keeps a
-                // drag-resizable width (default 45%, min 550px). `gap` restores
-                // the legacy `Splitter style={{ gap: token.size }}` — 16px of
-                // total separation between the two panes, which the conversion
-                // dropped (the 1px handle sat flush against both). The flex gap
-                // applies on BOTH sides of the handle, so half the legacy value
-                // (`--spacing-2`) reproduces it: 8 + 1 + 8 = 17px.
+                // antd `Splitter` owned containment — panel sizes always summed
+                // to the container and each panel clipped. `useResizable` only
+                // yields a number, so the panes carry it themselves (FR-3590).
+                // `gap` applies on BOTH sides of the handle, so half the legacy
+                // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
                 <div
+                  ref={observeSplitRow}
                   style={{
                     display: 'flex',
                     flex: 1,
@@ -531,7 +558,13 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                     gap: 'var(--spacing-2)',
                   }}
                 >
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      minWidth: EXPLORER_MIN_WIDTH,
+                      overflow: 'hidden',
+                    }}
+                  >
                     {fileExplorerElement}
                   </div>
                   {/* The handle's own `height: 100%` resolves to `auto` here —
@@ -548,7 +581,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                       resizable={infoPanel.props}
                     />
                   </div>
-                  <div style={{ width: infoPanel.size, flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: infoPanel.size,
+                      flexShrink: 1,
+                      minWidth: 0,
+                      overflow: 'hidden',
+                    }}
+                  >
                     {vFolderInfoPanelElement}
                   </div>
                 </div>
