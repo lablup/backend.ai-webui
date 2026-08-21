@@ -9,12 +9,12 @@
  which promotes nothing (FR-3585).
 */
 import './BAIDrawerPortal.css';
+import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
 import { dataAttr } from '@astryxdesign/core/naming';
 import { useThemeName } from '@astryxdesign/core/theme';
 import { mergeRefs } from '@astryxdesign/core/utils';
 import { Drawer, type DrawerProps } from '@astryxdesign/lab';
-import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 import classNames from 'classnames';
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
@@ -39,7 +39,7 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   'use memo';
 
   // Theme CSS is `@scope`d to `[data-astryx-theme]`, and the portal escapes DOM
-  // ancestry — re-emit the nearest theme's NAME as `BAIDialogPortal` does.
+  // ancestry — re-emit the nearest theme's NAME as `BAIDialog` does.
   const themeName = useThemeName();
 
   // Modality restored by hand: `show()` traps nothing. Escape stays lab's — its

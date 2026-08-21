@@ -9,13 +9,13 @@
  NOTE: `setupTests` polyfills showModal/show/close, so a `showModal()` would NOT
  fail on its own — the two calls are spied on explicitly.
 */
+import BAIDialog from './BAIDialog';
 import BAIDrawerAstryx from './BAIDrawerAstryx';
 import BAIDrawerPortal from './BAIDrawerPortal';
+import { BAI_MODAL_OPEN_ATTRIBUTE } from './dialogLevelStack';
 import { Theme, defineTheme } from '@astryxdesign/core/theme';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import BAIDialogPortal from './BAIDialogPortal';
-import { BAI_MODAL_OPEN_ATTRIBUTE } from './dialogLevelStack';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -58,13 +58,13 @@ const Nested: React.FC<{
       <button type="button" onClick={() => setIsModalOpen(true)}>
         Deploy
       </button>
-      <BAIDialogPortal
+      <BAIDialog
         isOpen={isModalOpen}
         onOpenChange={onModalOpenChange}
         aria-label="deploy"
       >
         <button type="button">Confirm</button>
-      </BAIDialogPortal>
+      </BAIDialog>
     </BAIDrawerPortal>
   );
 };
@@ -131,14 +131,12 @@ describe('BAIDrawerPortal', () => {
 
     const drawerRoot = getRoot() as HTMLElement;
     const modalRoot = document.querySelector<HTMLElement>(
-      '.bai-dialog-portal',
+      '.bai-dialog',
     ) as HTMLElement;
     expect(drawerRoot.style.getPropertyValue('--bai-drawer-portal-level')).toBe(
       '0',
     );
-    expect(modalRoot.style.getPropertyValue('--bai-dialog-portal-level')).toBe(
-      '1',
-    );
+    expect(modalRoot.style.getPropertyValue('--bai-dialog-level')).toBe('1');
     expect(drawerRoot.hasAttribute('inert')).toBe(true);
     expect(modalRoot.hasAttribute('inert')).toBe(false);
 
