@@ -725,7 +725,12 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               />
             </Form.Item>
             {uiType === 'SLIDER' ? (
-              <BAIFlex gap="sm" align="start" style={{ width: '100%' }}>
+              <BAIFlex
+                gap="sm"
+                align="start"
+                wrap="wrap"
+                style={{ width: '100%' }}
+              >
                 <Form.Item
                   label={t(
                     'comp:BAIRuntimeVariantPresetSettingModal.SliderMin',
@@ -739,7 +744,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                       ),
                     },
                   ]}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, minWidth: 0 }}
                 >
                   <AstryxFormNumberInput
                     label={t(
@@ -784,7 +789,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                       },
                     }),
                   ]}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, minWidth: 0 }}
                 >
                   <AstryxFormNumberInput
                     label={t(
@@ -820,7 +825,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                       },
                     },
                   ]}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, minWidth: 0 }}
                 >
                   <AstryxFormNumberInput
                     label={t(
@@ -832,13 +837,18 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               </BAIFlex>
             ) : null}
             {uiType === 'NUMBER_INPUT' ? (
-              <BAIFlex gap="sm" align="start" style={{ width: '100%' }}>
+              <BAIFlex
+                gap="sm"
+                align="start"
+                wrap="wrap"
+                style={{ width: '100%' }}
+              >
                 <Form.Item
                   label={t(
                     'comp:BAIRuntimeVariantPresetSettingModal.NumberMin',
                   )}
                   name="numberMin"
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, minWidth: 0 }}
                 >
                   <AstryxFormNumberInput
                     label={t(
@@ -877,7 +887,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                       },
                     }),
                   ]}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, minWidth: 0 }}
                 >
                   <AstryxFormNumberInput
                     label={t(
@@ -918,7 +928,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                           <Form.Item
                             {...restField}
                             name={[name, 'value']}
-                            style={{ marginBottom: 0, flex: 1 }}
+                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                             rules={[
                               {
                                 required: true,
@@ -940,7 +950,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                           <Form.Item
                             {...restField}
                             name={[name, 'label']}
-                            style={{ marginBottom: 0, flex: 1 }}
+                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                             rules={[
                               {
                                 required: true,
@@ -964,6 +974,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                             danger
                             icon={<Trash2 />}
                             aria-label={t('general.button.Delete')}
+                            style={{ flexShrink: 0 }}
                             onClick={() => remove(name)}
                           />
                         </BAIFlex>
