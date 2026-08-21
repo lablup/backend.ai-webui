@@ -46,11 +46,7 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   // dialog `keydown` already closes the top drawer, and a second handler here
   // would call `onClose` twice.
   const rootRef = useRef<HTMLDivElement>(null);
-  const isTopmost = useDialogLevel(
-    rootRef,
-    isOpen,
-    '--bai-drawer-portal-level',
-  );
+  const isTopmost = useDialogLevel(rootRef, isOpen);
 
   const { containerRef, focusFirst } = useFocusTrap<HTMLDivElement>({
     isActive: isOpen && isTopmost,

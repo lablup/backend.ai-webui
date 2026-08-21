@@ -133,10 +133,14 @@ describe('BAIDrawerPortal', () => {
     const modalRoot = document.querySelector<HTMLElement>(
       '.bai-dialog',
     ) as HTMLElement;
-    expect(drawerRoot.style.getPropertyValue('--bai-drawer-portal-level')).toBe(
-      '0',
-    );
+    expect(drawerRoot.style.getPropertyValue('--bai-dialog-level')).toBe('0');
     expect(modalRoot.style.getPropertyValue('--bai-dialog-level')).toBe('1');
+    // One stack, so the later claim also paints higher.
+    expect(
+      Number(modalRoot.style.getPropertyValue('--bai-dialog-z')),
+    ).toBeGreaterThan(
+      Number(drawerRoot.style.getPropertyValue('--bai-dialog-z')),
+    );
     expect(drawerRoot.hasAttribute('inert')).toBe(true);
     expect(modalRoot.hasAttribute('inert')).toBe(false);
 
