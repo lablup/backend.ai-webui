@@ -235,8 +235,11 @@ export type { BAIVFolderDeleteButtonV2AstryxProps } from './BAIVFolderDeleteButt
 export { default as BAIDrawerAstryx } from './BAIDrawerAstryx';
 export type { BAIDrawerAstryxProps } from './BAIDrawerAstryx';
 export { default as BAIDialog } from './BAIDialog';
-export { BAI_MODAL_OPEN_ATTRIBUTE } from './BAIDialog';
 export type { BAIDialogProps } from './BAIDialog';
+export { default as BAIAlertDialog } from './BAIAlertDialog';
+export type { BAIAlertDialogProps } from './BAIAlertDialog';
+// `react/`'s `BAIDrawerPortal` joins this stack — one ladder for both (FR-3585).
+export { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 export * from './Table';
 export * from './fragments';
 export * from './provider';
