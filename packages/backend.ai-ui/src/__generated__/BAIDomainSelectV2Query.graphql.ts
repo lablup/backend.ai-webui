@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6fc2e5ed3814d079860f42151865b648>>
+ * @generated SignedSource<<74f1288ffaef2660eec29b8e014035e9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,10 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type RoleFormModalDomainV2Query$variables = Record<PropertyKey, never>;
-export type RoleFormModalDomainV2Query$data = {
+export type BAIDomainSelectV2Query$variables = {
+  isActive?: boolean | null | undefined;
+};
+export type BAIDomainSelectV2Query$data = {
   readonly adminDomainsV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -22,22 +24,33 @@ export type RoleFormModalDomainV2Query$data = {
     }>;
   } | null | undefined;
 };
-export type RoleFormModalDomainV2Query = {
-  response: RoleFormModalDomainV2Query$data;
-  variables: RoleFormModalDomainV2Query$variables;
+export type BAIDomainSelectV2Query = {
+  response: BAIDomainSelectV2Query$data;
+  variables: BAIDomainSelectV2Query$variables;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "isActive"
+  }
+],
+v1 = [
+  {
     "alias": null,
     "args": [
       {
-        "kind": "Literal",
-        "name": "filter",
-        "value": {
-          "isActive": true
-        }
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "isActive",
+            "variableName": "isActive"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "filter"
       }
     ],
     "concreteType": "DomainV2Connection",
@@ -93,37 +106,37 @@ var v0 = [
         "storageKey": null
       }
     ],
-    "storageKey": "adminDomainsV2(filter:{\"isActive\":true})"
+    "storageKey": null
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RoleFormModalDomainV2Query",
-    "selections": (v0/*: any*/),
+    "name": "BAIDomainSelectV2Query",
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RoleFormModalDomainV2Query",
-    "selections": (v0/*: any*/)
+    "name": "BAIDomainSelectV2Query",
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "67ef48fc2cdfda8deecab406e3c711d8",
+    "cacheID": "c4e5c8625a449e2f1e0f14d42ea01c95",
     "id": null,
     "metadata": {},
-    "name": "RoleFormModalDomainV2Query",
+    "name": "BAIDomainSelectV2Query",
     "operationKind": "query",
-    "text": "query RoleFormModalDomainV2Query {\n  adminDomainsV2(filter: {isActive: true}) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIDomainSelectV2Query(\n  $isActive: Boolean\n) {\n  adminDomainsV2(filter: {isActive: $isActive}) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "970b57a9079d1455b2b6474731ef4663";
+(node as any).hash = "41a40f7df72ed61abf78b3b4e5550fc0";
 
 export default node;

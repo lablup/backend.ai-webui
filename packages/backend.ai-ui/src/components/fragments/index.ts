@@ -81,6 +81,8 @@ export type {
   AstryxContainerRegistryNode,
 } from './BAIAdminContainerRegistrySelectAstryx';
 export { default as BAIDomainSelect } from './BAIDomainSelect';
+export { default as BAIDomainSelectV2 } from './BAIDomainSelectV2';
+export type { BAIDomainSelectV2Props } from './BAIDomainSelectV2';
 export { default as BAIProjectSettingModal } from './BAIProjectSettingModal';
 export type { BAIProjectSettingModalFragmentKey } from './BAIProjectSettingModal';
 export { default as BAIProjectResourcePolicySelect } from './BAIProjectResourcePolicySelect';

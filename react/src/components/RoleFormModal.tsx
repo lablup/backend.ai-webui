@@ -7,7 +7,6 @@ import {
   RoleFormModalCreateMutation,
 } from '../__generated__/RoleFormModalCreateMutation.graphql';
 import { RoleFormModalDomainQuery } from '../__generated__/RoleFormModalDomainQuery.graphql';
-import { RoleFormModalDomainV2Query } from '../__generated__/RoleFormModalDomainV2Query.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
@@ -29,6 +28,7 @@ import {
   BAIAdminResourceGroupSelectAstryx,
   BAIAdminSessionSelectAstryx,
   BAIButton,
+  BAIDomainSelectV2,
   BAIFlex,
   BAIKeypairSelectAstryx,
   BAIModal,
@@ -144,57 +144,30 @@ const LegacyDomainScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
   );
 };
 
-const DomainUuidScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
-  onChange,
-  // `AstryxFormSelector` hides its label unconditionally.
+const DomainScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
+  // `BAISelect` hides its label by default too.
   isLabelHidden: _isLabelHidden,
   isDisabled,
+  onChange,
   ...props
 }) => {
-  'use memo';
-  const { adminDomainsV2 } = useLazyLoadQuery<RoleFormModalDomainV2Query>(
-    graphql`
-      query RoleFormModalDomainV2Query {
-        adminDomainsV2(filter: { isActive: true }) {
-          edges {
-            node {
-              id
-              basicInfo {
-                name
-              }
-            }
-          }
-        }
-      }
-    `,
-    {},
-    { fetchPolicy: 'store-and-network' },
-  );
-  return (
-    <AstryxFormSelector
-      {...props}
-      hasSearch
-      disabled={isDisabled}
-      onChange={(next) => onChange?.(next ?? undefined)}
-      options={
-        adminDomainsV2?.edges?.map((edge) => ({
-          value: edge?.node ? toLocalId(edge.node.id) : '',
-          label: edge?.node?.basicInfo?.name ?? '',
-        })) ?? []
-      }
-    />
-  );
-};
-
-const DomainScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
   // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
   // older managers expect the domain name. FR-3618.
   return baiClient.supports('rbac-domain-scope-uuid') ? (
-    <DomainUuidScopeIdSelect {...props} />
+    <BAIDomainSelectV2
+      {...props}
+      showSearch
+      disabled={isDisabled}
+      onChange={(next) => onChange?.(next ?? undefined)}
+    />
   ) : (
-    <LegacyDomainScopeIdSelect {...props} />
+    <LegacyDomainScopeIdSelect
+      {...props}
+      isDisabled={isDisabled}
+      onChange={onChange}
+    />
   );
 };
 
