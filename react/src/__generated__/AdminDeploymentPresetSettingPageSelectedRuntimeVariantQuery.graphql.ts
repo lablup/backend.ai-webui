@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f093ad65da3f42c0dfde0c95bf5d19f6>>
+ * @generated SignedSource<<c67ef780ffdcce3a55b856b295442d28>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,20 +9,20 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BAIRuntimeVariantSelectAstryxValueQuery$variables = {
+export type AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$variables = {
   id: string;
   skip: boolean;
 };
-export type BAIRuntimeVariantSelectAstryxValueQuery$data = {
+export type AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$data = {
   readonly runtimeVariant?: {
     readonly id: string;
     readonly name: string;
     readonly readsVfolderConfigFiles: boolean;
   } | null | undefined;
 };
-export type BAIRuntimeVariantSelectAstryxValueQuery = {
-  response: BAIRuntimeVariantSelectAstryxValueQuery$data;
-  variables: BAIRuntimeVariantSelectAstryxValueQuery$variables;
+export type AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery = {
+  response: AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$data;
+  variables: AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -90,7 +90,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIRuntimeVariantSelectAstryxValueQuery",
+    "name": "AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -99,20 +99,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "BAIRuntimeVariantSelectAstryxValueQuery",
+    "name": "AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b5d8b89f912aded0ac4b7ef8d6f52ab5",
+    "cacheID": "cd58beb3cbb50f38bb8a66f53ef1a0ce",
     "id": null,
     "metadata": {},
-    "name": "BAIRuntimeVariantSelectAstryxValueQuery",
+    "name": "AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery",
     "operationKind": "query",
-    "text": "query BAIRuntimeVariantSelectAstryxValueQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
+    "text": "query AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fd4eee3f426e3f5988ae177fc1d3d8b0";
+(node as any).hash = "d88300a88be743c8c68cc0af8e111574";
 
 export default node;

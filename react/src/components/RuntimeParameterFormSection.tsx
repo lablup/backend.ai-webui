@@ -12,6 +12,7 @@ import {
 } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
 import InputNumberWithSlider from './InputNumberWithSlider';
+import './collapsible-section.css';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -241,6 +242,7 @@ const RuntimeParameterFormSection: React.FC<
     // lists `ghost`/`bordered`/`size` as collapsing to `density`, which this
     // build does not expose).
     <Collapsible
+      className="bai-collapsible-section"
       defaultIsOpen
       trigger={
         <BAIFlex justify="between" align="center" style={{ flex: 1 }}>

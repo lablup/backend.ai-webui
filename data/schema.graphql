@@ -13229,10 +13229,10 @@ input PresetModelConfigInput
   @join__type(graph: STRAWBERRY)
 {
   """Name of the model."""
-  name: String!
+  name: String = null
 
   """Path to the model file."""
-  modelPath: String!
+  modelPath: String = null
 
   """Configuration for the model service."""
   service: PresetModelServiceConfigInput!

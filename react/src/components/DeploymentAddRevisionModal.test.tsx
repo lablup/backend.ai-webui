@@ -5,6 +5,7 @@
 import '../../__test__/matchMedia.mock.js';
 import type { DeploymentAddRevisionModalTestQuery } from '../__generated__/DeploymentAddRevisionModalTestQuery.graphql';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import { Suspense } from 'react';
@@ -191,6 +192,7 @@ const TestRenderer: React.FC = () => {
 
 const renderModal = (metadata: DeploymentMetadataMock) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
+  const queryClient = new QueryClient();
   environment.mock.queueOperationResolver((operation) =>
     MockPayloadGenerator.generate(operation, {
       ModelDeploymentMetadata: () => metadata,
@@ -200,13 +202,15 @@ const renderModal = (metadata: DeploymentMetadataMock) => {
     }),
   );
   render(
-    <RelayEnvironmentProvider environment={environment}>
-      <>
-        <Suspense fallback={null}>
-          <TestRenderer />
-        </Suspense>
-      </>
-    </RelayEnvironmentProvider>,
+    <QueryClientProvider client={queryClient}>
+      <RelayEnvironmentProvider environment={environment}>
+        <>
+          <Suspense fallback={null}>
+            <TestRenderer />
+          </Suspense>
+        </>
+      </RelayEnvironmentProvider>
+    </QueryClientProvider>,
   );
   return { environment };
 };
