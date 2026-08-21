@@ -44,10 +44,16 @@ describe('useKeyboardShortcut', () => {
     return event;
   };
 
-  const appendOpenModalRoot = (tagName: string, attribute: string) => {
+  const appendOpenModalRoot = (
+    tagName: string,
+    attributes: Record<string, string>,
+  ) => {
     const root = document.createElement(tagName);
-    root.setAttribute(attribute, '');
+    Object.entries(attributes).forEach(([name, value]) =>
+      root.setAttribute(name, value),
+    );
     document.body.appendChild(root);
+    return root;
   };
 
   describe('Basic functionality', () => {
@@ -121,15 +127,15 @@ describe('useKeyboardShortcut', () => {
 
   describe('Modal detection', () => {
     // Both roots the selector covers: a portal root (BAIDialog, the
-    // BAIModal launcher, and since FR-3585 the scrimmed drawer), and the native
-    // `<dialog>` the two non-scrim drawers still open.
+    // BAIModal launcher, and since FR-3585 the scrimmed drawer), and a native
+    // `<dialog>` that is actually modal (`aria-modal`).
     it.each([
-      ['a portal modal', 'div', BAI_MODAL_OPEN_ATTRIBUTE],
-      ['a native dialog', 'dialog', 'open'],
-    ])(
+      ['a portal modal', 'div', { [BAI_MODAL_OPEN_ATTRIBUTE]: '' }],
+      ['a modal native dialog', 'dialog', { open: '', 'aria-modal': 'true' }],
+    ] as const)(
       'should not trigger handler when %s is open',
-      (_label, tagName, attribute) => {
-        appendOpenModalRoot(tagName, attribute);
+      (_label, tagName, attributes) => {
+        appendOpenModalRoot(tagName, attributes);
 
         renderHook(() => useKeyboardShortcut(mockHandler));
         triggerKeydown({ key: 'a' });
@@ -137,6 +143,18 @@ describe('useKeyboardShortcut', () => {
         expect(mockHandler).not.toHaveBeenCalled();
       },
     );
+
+    // The non-scrim drawers open with `show()`: page interactive, shortcuts
+    // too — an open notification drawer must not eat its own `]` toggle
+    // (FR-3619).
+    it('should trigger handler when only a non-modal dialog is open', () => {
+      appendOpenModalRoot('dialog', { open: '' });
+
+      renderHook(() => useKeyboardShortcut(mockHandler));
+      triggerKeydown({ key: 'a' });
+
+      expect(mockHandler).toHaveBeenCalledTimes(1);
+    });
 
     it('should trigger handler when a dialog is present but closed', () => {
       document.body.appendChild(document.createElement('dialog'));
@@ -278,7 +296,7 @@ describe('useKeyboardShortcut', () => {
       document.body.appendChild(input);
       input.focus();
 
-      appendOpenModalRoot('div', BAI_MODAL_OPEN_ATTRIBUTE);
+      appendOpenModalRoot('div', { [BAI_MODAL_OPEN_ATTRIBUTE]: '' });
 
       renderHook(() => useKeyboardShortcut(mockHandler));
       triggerKeydown({ key: 'a' });
