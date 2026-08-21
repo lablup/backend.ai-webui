@@ -340,7 +340,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           ? {
               category: normalizeOptionalText(values.category),
               displayName: normalizeOptionalText(values.displayName),
-              ...(hasUnknownUIType
+              // Only hold back while the form still has no representable
+              // type — once the admin picks a supported one, that selection
+              // must reach the server.
+              ...(hasUnknownUIType && values.uiType === undefined
                 ? {}
                 : { uiOption: buildUIOptionInput(values) ?? null }),
             }
