@@ -1440,6 +1440,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/chat/:id?`                           |        ✅        |      ✅      |    -     |
 | App Launcher (modal)                   |        🔶        |      ❌      |    -     |
 | `/applauncher`, `/edu-applauncher`     |        🔶        |      ❌      |    -     |
+| Global Search Palette (header)         |        ✅        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
 
