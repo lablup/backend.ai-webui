@@ -36,6 +36,12 @@
 */
 .main-layout-main-content {
   transition: margin-right 0.3s ease;
+  /* FR-3612: fill AppShell's main slot so the scroll column inside can size
+     itself with `height: 100%` (it owned `100vh` before AppShell), and anchor
+     the overlay scrollbar (`BAIOverlayScrollbar`) to the content edge —
+     it follows the notification drawer's margin shift for free. */
+  height: 100%;
+  position: relative;
 }
 
 .main-layout-main-content.margin-style {

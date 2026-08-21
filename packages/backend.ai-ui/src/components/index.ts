@@ -117,6 +117,10 @@ export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnit
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIAppShell } from './BAIAppShell';
+export type { BAIAppShellProps, BAIAppShellDrawer } from './BAIAppShell';
+export { default as BAIOverlayScrollbar } from './BAIOverlayScrollbar';
+export type { BAIOverlayScrollbarProps } from './BAIOverlayScrollbar';
 export { default as BAIColorPicker, toHexColor } from './BAIColorPicker';
 export type { BAIColorPickerProps } from './BAIColorPicker';
 export { default as BAIListAlert } from './BAIListAlert';
