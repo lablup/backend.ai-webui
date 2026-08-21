@@ -93,11 +93,6 @@ describe('generated search index', () => {
       (a, e) => a + e.settings.length,
       0,
     );
-    console.log(
-      `?tab=: ${tabPages.length} pages / ${tabKeys} keys; ` +
-        `tabs labelled: ${allTabs.filter((t) => t.labelKey).length}/${allTabs.length}; ` +
-        `settings: ${settingPages.length} pages / ${settingItems} items`,
-    );
     expect(tabPages.length).toBeGreaterThanOrEqual(INVENTORY.tabPages);
     expect(tabKeys).toBeGreaterThanOrEqual(INVENTORY.tabKeys);
     expect(allTabs.filter((t) => t.labelKey).length).toBeGreaterThanOrEqual(

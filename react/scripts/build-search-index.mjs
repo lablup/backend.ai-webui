@@ -149,7 +149,8 @@ const require_ = createRequire(path.join(REACT_DIR, 'package.json'));
 const ts = require_('typescript');
 const { transformWithEsbuild } = await import(require_.resolve('vite'));
 
-const rel = (f) => path.relative(ROOT, f);
+// POSIX-normalized: every CONFIG constant compares with `/` separators.
+const rel = (f) => path.relative(ROOT, f).split(path.sep).join('/');
 const byString = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 // ---------------------------------------------------------------------------

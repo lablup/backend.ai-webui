@@ -96,7 +96,7 @@
     "vitest": "vitest run",
     "vitest:watch": "vitest",
     "build": "pnpm run build:only && cp -r ./build/* ../build/web/",
-    "build:only": "pnpm run relay && NODE_OPTIONS='--max-old-space-size=4096' vite build",
+    "build:only": "pnpm run relay && pnpm run search-index && NODE_OPTIONS='--max-old-space-size=4096' vite build",
     "test": "vitest run",
     "relay": "relay-compiler",
     "search-index": "node scripts/build-search-index.mjs",
