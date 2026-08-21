@@ -158,6 +158,8 @@ vi.mock('../hooks/useDefaultImagesWithFallback', () => ({
   useDefaultSystemSSHImageWithFallback: () => ({
     systemSSHImage: 'cr.backend.ai/stable/ssh:latest@x86_64',
   }),
+  // Fixtures are already fully qualified, which the real hook passes through.
+  useResolveImageReference: () => async (imageString?: string) => imageString,
 }));
 
 vi.mock('./FolderExplorerOpener', () => ({
