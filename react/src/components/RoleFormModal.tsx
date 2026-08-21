@@ -6,7 +6,6 @@ import {
   RBACElementType,
   RoleFormModalCreateMutation,
 } from '../__generated__/RoleFormModalCreateMutation.graphql';
-import { RoleFormModalDomainQuery } from '../__generated__/RoleFormModalDomainQuery.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
@@ -28,6 +27,7 @@ import {
   BAIAdminResourceGroupSelectAstryx,
   BAIAdminSessionSelectAstryx,
   BAIButton,
+  BAIDomainSelect,
   BAIDomainSelectV2,
   BAIFlex,
   BAIKeypairSelectAstryx,
@@ -107,70 +107,6 @@ type ScopeIdBranchProps = Omit<ScopeIdSelectProps, 'scopeType'> & {
   isLabelHidden?: boolean;
 };
 
-const LegacyDomainScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
-  onChange,
-  // `AstryxFormSelector` hides its label unconditionally.
-  isLabelHidden: _isLabelHidden,
-  isDisabled,
-  ...props
-}) => {
-  'use memo';
-  const { domains } = useLazyLoadQuery<RoleFormModalDomainQuery>(
-    graphql`
-      query RoleFormModalDomainQuery($is_active: Boolean) {
-        domains(is_active: $is_active) {
-          name
-        }
-      }
-    `,
-    { is_active: true },
-    { fetchPolicy: 'store-and-network' },
-  );
-  // Domains are a small, single-shot, static option list — CONVERSION-BRIEF
-  // §2.E keeps those on `AstryxFormSelector`, not on `BAIComplexSelect`.
-  return (
-    <AstryxFormSelector
-      {...props}
-      hasSearch
-      disabled={isDisabled}
-      onChange={(next) => onChange?.(next ?? undefined)}
-      options={
-        domains?.map((d) => ({
-          value: d?.name ?? '',
-          label: d?.name ?? '',
-        })) ?? []
-      }
-    />
-  );
-};
-
-const DomainScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
-  // `BAISelect` hides its label by default too.
-  isLabelHidden: _isLabelHidden,
-  isDisabled,
-  onChange,
-  ...props
-}) => {
-  'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
-  // older managers expect the domain name. FR-3618.
-  return baiClient.supports('rbac-domain-scope-uuid') ? (
-    <BAIDomainSelectV2
-      {...props}
-      showSearch
-      disabled={isDisabled}
-      onChange={(next) => onChange?.(next ?? undefined)}
-    />
-  ) : (
-    <LegacyDomainScopeIdSelect
-      {...props}
-      isDisabled={isDisabled}
-      onChange={onChange}
-    />
-  );
-};
-
 const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   'use memo';
   const queryRef = useLazyLoadQuery<RoleFormModalResourceGroupQuery>(
@@ -191,6 +127,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
   const branchProps: ScopeIdBranchProps = {
@@ -208,9 +145,22 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     />
   );
   if (scopeType === 'DOMAIN') {
+    // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
+    // older managers expect the domain name. FR-3618.
+    const domainSelectProps = {
+      showSearch: true,
+      placeholder: selectProps.placeholder,
+      disabled: selectProps.isDisabled,
+      value: selectProps.value,
+      onChange: selectProps.onChange,
+    };
     return (
       <Suspense fallback={fallback}>
-        <DomainScopeIdSelect {...branchProps} />
+        {baiClient.supports('rbac-domain-scope-uuid') ? (
+          <BAIDomainSelectV2 {...domainSelectProps} />
+        ) : (
+          <BAIDomainSelect {...domainSelectProps} />
+        )}
       </Suspense>
     );
   }
