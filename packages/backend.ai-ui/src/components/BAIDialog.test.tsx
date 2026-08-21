@@ -67,8 +67,11 @@ const blurOnInert = (root: HTMLElement) => {
   const toggleAttribute = root.toggleAttribute.bind(root);
   vi.spyOn(root, 'toggleAttribute').mockImplementation((name, force) => {
     const result = toggleAttribute(name, force);
+    if (name !== 'inert' || !root.hasAttribute('inert')) {
+      return result;
+    }
     const active = document.activeElement;
-    if (root.hasAttribute('inert') && active instanceof HTMLElement) {
+    if (active instanceof HTMLElement && root.contains(active)) {
       active.blur();
     }
     return result;
