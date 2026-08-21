@@ -47,6 +47,10 @@ export { default as ResourceStatistics } from './ResourceStatistics';
 export { processMemoryValue, convertToNumber } from './ResourceStatistics';
 export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
+export {
+  default as BAIIconWithTooltip,
+  type BAIIconWithTooltipProps,
+} from './BAIIconWithTooltip';
 export { default as BAIQuestionIconWithTooltip } from './BAIQuestionIconWithTooltip';
 export { default as BAILink } from './BAILink';
 export type { BAILinkProps } from './BAILink';

@@ -37,13 +37,13 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   BAIAlertIconWithTooltip,
   BAIModal,
   BAINameActionCell,
   type BAINameActionCellAction,
+  BAIIconWithTooltip,
   BAIQuestionIconWithTooltip,
   BAITable,
   BAITableProps,
@@ -328,24 +328,11 @@ const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
   return (
     <HStack gap={2} align="center">
       {usage ? (
-        // Astryx Tooltip needs an interactive child (P8): the badge is
-        // wrapped in an unstyled button carrying the status as its name.
-        <Tooltip
+        <BAIIconWithTooltip
           content={t('data.usage.HostStatusTooltip', { status: usageLabel })}
-        >
-          <button
-            type="button"
-            aria-label={usageLabel}
-            style={{
-              all: 'unset',
-              cursor: 'help',
-              display: 'inline-flex',
-              alignItems: 'center',
-            }}
-          >
-            <StorageUsageBadge percent={usagePercent} />
-          </button>
-        </Tooltip>
+          icon={<StorageUsageBadge percent={usagePercent} />}
+          style={{ alignItems: 'center' }}
+        />
       ) : null}
       <Text>{host}</Text>
     </HStack>
