@@ -960,6 +960,12 @@ export class Client {
       // nested field (DataLoader-resolved name/description). FR-3256.
       this._features['runtime-variant-preset-runtime-variant-field'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7234 / backend #13538 — DomainV2 `id` became the domain uuid, and
+      // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
+      // managers expect the domain name there instead. FR-3618.
+      this._features['rbac-domain-scope-uuid'] = true;
+    }
   }
 
   /**
