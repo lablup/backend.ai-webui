@@ -34,6 +34,7 @@
 */
 import BAIAlertDialog from '../components/BAIAlertDialog';
 import BAIDialog from '../components/BAIDialog';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { Button } from '@astryxdesign/core/Button';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
@@ -243,11 +244,12 @@ function toText(node: ReactNode): string {
 
 const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
   'use memo';
+  const { t } = useBAIi18n();
   const { kind, options } = task;
   const isDanger =
     options.okType === 'danger' || options.okButtonProps?.danger === true;
   const okLabel = toText(options.okText) || 'OK';
-  const cancelLabel = toText(options.cancelText) || 'Cancel';
+  const cancelLabel = toText(options.cancelText) || undefined;
 
   // Escape, the mask, the header X and the cancel button all land here.
   const handleOpenChange = (open: boolean) => {
@@ -255,17 +257,6 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
       runCancel(task);
     }
   };
-
-  const okButton = (
-    <Button
-      label={okLabel}
-      // antd's confirm default is a plain primary ok, not a destructive one.
-      variant={isDanger ? 'destructive' : 'primary'}
-      isLoading={task.isLoading}
-      isDisabled={options.okButtonProps?.disabled}
-      onClick={() => runOk(task)}
-    />
-  );
 
   if (
     kind === 'confirm' &&
@@ -316,13 +307,20 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
             <HStack justify="end" gap={2} align="center">
               {kind === 'confirm' && (
                 <Button
-                  label={cancelLabel}
+                  label={cancelLabel ?? t('general.button.Cancel')}
                   variant="secondary"
                   isDisabled={options.cancelButtonProps?.disabled}
                   onClick={() => runCancel(task)}
                 />
               )}
-              {okButton}
+              <Button
+                label={okLabel}
+                // antd's confirm default is a plain primary ok, not destructive.
+                variant={isDanger ? 'destructive' : 'primary'}
+                isLoading={task.isLoading}
+                isDisabled={options.okButtonProps?.disabled}
+                onClick={() => runOk(task)}
+              />
             </HStack>
           </LayoutFooter>
         }

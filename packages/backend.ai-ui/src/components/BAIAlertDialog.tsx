@@ -7,6 +7,13 @@
  portalled surface, so it leaves the top layer like every other BUI modal
  (FR-3578). Astryx `AlertDialog`'s own off-top-layer path is `isInline`, which
  hard-codes `role="group"` and hides the ids behind `useId` — see the commit.
+
+ NOT the irreversible-delete tier: that is `BAIDeleteConfirmModal` with
+ `requireConfirmInput` (`.claude/rules/destructive-confirmation.md`).
+
+ SYNC: the anatomy below is a copy of `@astryxdesign/core/AlertDialog`
+ (no reachable ids on its inline path); on an Astryx bump diff its footer order,
+ button variants and id wiring against this file.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIDialog from './BAIDialog';
@@ -35,7 +42,7 @@ export interface BAIAlertDialogProps
       | 'isActionLoading'
       | 'onAction'
     > {
-  /** Astryx `AlertDialog` has no equivalent; Escape still cancels. */
+  /** Escape still cancels even with both buttons disabled. */
   isCancelDisabled?: boolean;
   isActionDisabled?: boolean;
 }
