@@ -11,6 +11,7 @@ import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
+import UsageReportDashboardItem from '../components/UsageReport/UsageReportDashboardItem';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -18,8 +19,8 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { toProjectContext } from '../types/projectContext';
 import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import {
   BAISkeleton,
   filterOutEmpty,
@@ -122,6 +123,20 @@ const AdminDashboardPage: React.FC = () => {
         ),
       },
     },
+    // Mirrors the report view's admin-scope gate (spec §3, W6).
+    _.isEqual(userRole, 'superadmin') &&
+      baiClient.supports('prometheus-query-preset') && {
+        id: 'usageReport',
+        rowSpan: 2,
+        columnSpan: 1,
+        definition: {
+          minRowSpan: 2,
+          minColumnSpan: 1,
+        },
+        data: {
+          content: <UsageReportDashboardItem scope="admin" />,
+        },
+      },
     isAvailableTotalResourcePanel && {
       id: 'totalResourceWithinResourceGroup',
       rowSpan: 2,

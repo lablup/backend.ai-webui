@@ -5,9 +5,14 @@
 import AllocationHistory from '../components/AllocationHistory';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
-import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useTabQuerySnapshot,
+  useWebUINavigate,
+} from '../hooks';
 import { theme } from '../theme-shim';
-import { BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { BAIButton, BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { FileChartColumn } from 'lucide-react';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,11 +31,28 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const { token } = theme.useToken();
 
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
+  const webuiNavigate = useWebUINavigate();
 
   return (
     <BAICard
       activeTabKey={currentTab}
       onTabChange={onTabChange}
+      extra={
+        // Mirrors the report view's user-scope gate (spec §3, W6).
+        baiClient?.supports('user-metrics') ? (
+          <BAIButton
+            icon={<FileChartColumn size="1em" />}
+            onClick={() =>
+              webuiNavigate({
+                pathname: '/report/usage',
+                search: new URLSearchParams({ scope: 'user' }).toString(),
+              })
+            }
+          >
+            {t('usageReport.ExportReport')}
+          </BAIButton>
+        ) : undefined
+      }
       tabList={filterOutEmpty([
         {
           key: 'allocation-history',

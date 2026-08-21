@@ -15,6 +15,7 @@ import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
+import UsageReportDashboardItem from '../components/UsageReport/UsageReportDashboardItem';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -23,8 +24,8 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { toProjectContext } from '../types/projectContext';
 import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import {
   BAISkeleton,
   BAIBoardItemErrorBoundary,
@@ -247,6 +248,19 @@ const DashboardPage: React.FC = () => {
             </Suspense>
           </BAIBoardItemErrorBoundary>
         ),
+      },
+    },
+    // Mirrors the report view's user-scope gate (spec §3, W6).
+    baiClient.supports('user-metrics') && {
+      id: 'usageReport',
+      rowSpan: 2,
+      columnSpan: 1,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 1,
+      },
+      data: {
+        content: <UsageReportDashboardItem scope="user" />,
       },
     },
     isAvailableTotalResourcePanel && {
