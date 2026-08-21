@@ -11,7 +11,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import useUserUsageStats from '../../hooks/useUserUsageStats';
 import UsageReportDocument from './UsageReportDocument';
-import { UsageReportPeriod } from './types';
+import { UsageReportData, UsageReportPeriod } from './types';
 import {
   DailyAllocation,
   assembleUserUsageReportData,
@@ -27,12 +27,14 @@ interface UserUsageReportViewProps {
   period: UsageReportPeriod;
   periodLabel: string;
   scopeLabel: string;
+  onData?: (data: UsageReportData) => void;
 }
 
 const UserUsageReportView: React.FC<UserUsageReportViewProps> = ({
   period,
   periodLabel,
   scopeLabel,
+  onData,
 }) => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
@@ -55,6 +57,7 @@ const UserUsageReportView: React.FC<UserUsageReportViewProps> = ({
         })}
         periodLabel={periodLabel}
         scopeLabel={scopeLabel}
+        onData={onData}
       />
     );
   }
@@ -63,6 +66,7 @@ const UserUsageReportView: React.FC<UserUsageReportViewProps> = ({
       period={period}
       periodLabel={periodLabel}
       scopeLabel={scopeLabel}
+      onData={onData}
       allocationByDay={allocationByDay}
     />
   );
@@ -104,6 +108,7 @@ const UserUtilizationMetrics: React.FC<UserUtilizationMetricsProps> = ({
   period,
   periodLabel,
   scopeLabel,
+  onData,
   allocationByDay,
   gpuMetricName,
 }) => {
@@ -281,6 +286,7 @@ const UserUtilizationMetrics: React.FC<UserUtilizationMetricsProps> = ({
       data={data}
       periodLabel={periodLabel}
       scopeLabel={scopeLabel}
+      onData={onData}
     />
   );
 };

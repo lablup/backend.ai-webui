@@ -45,6 +45,7 @@
     "gpt-tokenizer": "^3.4.0",
     "graphql": "catalog:",
     "graphql-sse": "^2.6.0",
+    "html-to-image": "1.11.13",
     "i18next": "catalog:",
     "i18next-http-backend": "^3.0.6",
     "jotai": "^2.20.2",

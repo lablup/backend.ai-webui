@@ -8,23 +8,31 @@ import UsageReportHeader from './UsageReportHeader';
 import UsageReportTopUsersTable from './UsageReportTopUsersTable';
 import { UsageReportData } from './types';
 import { BAIAlert } from 'backend.ai-ui';
-import React from 'react';
+import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface UsageReportDocumentProps {
   data: UsageReportData;
   periodLabel: string;
   scopeLabel: string;
+  /** Reports the assembled data upward (page-level CSV export). */
+  onData?: (data: UsageReportData) => void;
 }
 
 const UsageReportDocument: React.FC<UsageReportDocumentProps> = ({
   data,
   periodLabel,
   scopeLabel,
+  onData,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { coverage } = data;
+
+  const emitData = useEffectEvent(() => onData?.(data));
+  useEffect(() => {
+    emitData();
+  }, [data]);
 
   return (
     <div className="usage-report">

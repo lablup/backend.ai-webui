@@ -20,7 +20,7 @@ import {
   buildTopUsers,
   parseUsagePeriodRecords,
 } from './adminUsageReportData';
-import { UsageReportPeriod } from './types';
+import { UsageReportData, UsageReportPeriod } from './types';
 import {
   buildAllocationByDay,
   buildUtilizationPercentByDay,
@@ -35,6 +35,7 @@ interface AdminUsageReportViewProps {
   period: UsageReportPeriod;
   periodLabel: string;
   scopeLabel: string;
+  onData?: (data: UsageReportData) => void;
 }
 
 const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
@@ -113,6 +114,7 @@ const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
   period,
   periodLabel,
   scopeLabel,
+  onData,
   presetIds,
   allocation,
 }) => {
@@ -277,6 +279,7 @@ const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
       data={data}
       periodLabel={periodLabel}
       scopeLabel={scopeLabel}
+      onData={onData}
     />
   );
 };

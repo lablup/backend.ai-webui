@@ -13,9 +13,12 @@ import {
   shiftPeriodStart,
 } from '../components/UsageReport/period';
 import {
+  UsageReportData,
   UsageReportPeriodType,
   UsageReportScope,
 } from '../components/UsageReport/types';
+import { buildUsageReportCsv } from '../components/UsageReport/usageReportCsv';
+import { downloadBlob, downloadCSV } from '../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -30,6 +33,7 @@ import {
   BAIText,
   useBAILogger,
 } from 'backend.ai-ui';
+import { toBlob } from 'html-to-image';
 import {
   ChevronLeft,
   ChevronRight,
@@ -37,7 +41,7 @@ import {
   FileSpreadsheet,
   ImageIcon,
 } from 'lucide-react';
-import React, { Suspense } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
@@ -68,6 +72,42 @@ const UsageReportPage: React.FC = () => {
       ? t('usageReport.WholeCluster')
       : userInfo.email || t('usageReport.MyUsage');
 
+  const reportDataRef = useRef<UsageReportData | null>(null);
+  const handleReportData = (data: UsageReportData) => {
+    reportDataRef.current = data;
+  };
+  const exportFileName = `usage-report_${scope}_${periodType}_${period.startDate}`;
+
+  const exportPNG = async () => {
+    const reportElement = document.querySelector<HTMLElement>('.usage-report');
+    if (!reportElement) {
+      message.warning(t('usageReport.ReportNotReadyYet'));
+      return;
+    }
+    try {
+      const blob = await toBlob(reportElement, {
+        pixelRatio: 2,
+        backgroundColor: getComputedStyle(document.body).backgroundColor,
+      });
+      if (!blob) {
+        throw new Error('html-to-image returned no blob');
+      }
+      downloadBlob(blob, `${exportFileName}.png`);
+    } catch (error) {
+      logger.error('usage-report PNG export failed:', error);
+      message.error(t('usageReport.ExportPNGFailed'));
+    }
+  };
+
+  const exportCSV = () => {
+    const data = reportDataRef.current;
+    if (!data) {
+      message.warning(t('usageReport.ReportNotReadyYet'));
+      return;
+    }
+    downloadCSV(buildUsageReportCsv(data), `${exportFileName}.csv`);
+  };
+
   const exportPDF = async () => {
     const bridge = globalThis.electronPrintAPI;
     if (globalThis.isElectron && bridge?.printToPDF) {
@@ -87,6 +127,8 @@ const UsageReportPage: React.FC = () => {
   };
 
   const updateParams = (updates: Record<string, string | null>) => {
+    // Drop the previous document's data so CSV never exports a stale period.
+    reportDataRef.current = null;
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
@@ -166,15 +208,14 @@ const UsageReportPage: React.FC = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {/* PNG/CSV enabled in W5. */}
         <BAIFlex align="center" gap="xs">
           <BAIButton icon={<FileDown size="1em" />} action={exportPDF}>
             {t('usageReport.ExportPDF')}
           </BAIButton>
-          <BAIButton disabled icon={<ImageIcon size="1em" />}>
+          <BAIButton icon={<ImageIcon size="1em" />} action={exportPNG}>
             {t('usageReport.ExportPNG')}
           </BAIButton>
-          <BAIButton disabled icon={<FileSpreadsheet size="1em" />}>
+          <BAIButton icon={<FileSpreadsheet size="1em" />} onClick={exportCSV}>
             {t('usageReport.ExportCSV')}
           </BAIButton>
         </BAIFlex>
@@ -185,6 +226,7 @@ const UsageReportPage: React.FC = () => {
             period={period}
             periodLabel={periodLabel}
             scopeLabel={scopeLabel}
+            onData={handleReportData}
           />
         </Suspense>
       ) : (
@@ -193,6 +235,7 @@ const UsageReportPage: React.FC = () => {
             period={period}
             periodLabel={periodLabel}
             scopeLabel={scopeLabel}
+            onData={handleReportData}
           />
         </Suspense>
       )}

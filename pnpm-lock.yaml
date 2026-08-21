@@ -844,6 +844,9 @@ importers:
       graphql-sse:
         specifier: ^2.6.0
         version: 2.6.0(graphql@16.14.2)
+      html-to-image:
+        specifier: 1.11.13
+        version: 1.11.13
       i18next:
         specifier: 'catalog:'
         version: 25.10.10(typescript@6.0.3)
@@ -7441,6 +7444,9 @@ packages:
 
   html-parse-stringify@3.1.0:
     resolution: {integrity: sha512-E0oAXcELOtsXe+BmpJ2EZyedbldPpriV5vICzEuo6xjC/D1lDukOI7KrpfQGF2Qc4wWEy0nk3bFORS2K5ZAhFQ==}
+
+  html-to-image@1.11.13:
+    resolution: {integrity: sha512-cuOPoI7WApyhBElTTb9oqsawRvZ0rHhaHwghRLlTuffoD1B2aDemlCruLeZrUIIdvG7gs9xeELEPm6PhuASqrg==}
 
   html-url-attributes@3.0.1:
     resolution: {integrity: sha512-ol6UPyBWqsrO6EJySPz2O7ZSr856WDrEzM5zMqp+FJJLGMW35cLYmmZnl0vztAZxRUoNZJFTCohfjuIJ8I4QBQ==}
@@ -18635,6 +18641,8 @@ snapshots:
     dependencies:
       void-elements: 3.1.0
 
+  html-to-image@1.11.13: {}
+
   html-url-attributes@3.0.1: {}
 
   html-void-elements@3.0.0: {}
@@ -23521,6 +23529,7 @@ time:
   graphql-sse@2.6.0: '2025-10-22T16:19:37.488Z'
   graphql@16.14.2: '2026-06-09T09:08:23.122Z'
   handlebars@4.7.9: '2026-03-26T20:46:39.280Z'
+  html-to-image@1.11.13: '2025-02-14T01:43:48.709Z'
   https-proxy-agent@7.0.6: '2024-12-07T03:32:09.302Z'
   husky@9.1.7: '2024-11-18T15:28:26.026Z'
   i18next-http-backend@3.0.6: '2026-04-23T15:39:30.348Z'
