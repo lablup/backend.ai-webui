@@ -92,17 +92,16 @@ const buildModelDefinitionInput = (
             port: hasCommandData ? (service.port ?? 8000) : 8000,
             // Start Command (FR-3205): when enabled (26.8.0+ by client policy)
             // send the raw command string in `command` plus a `shell` derived
-            // from the Basic/Advanced controls. On older managers fall back to
-            // the deprecated tokenized `startCommand`. When the variant does
-            // not read config files, omit command/shell entirely.
+            // from the Execution/Shell controls. On older managers fall back
+            // to the deprecated tokenized `startCommand`. When the variant
+            // does not read config files, omit command/shell entirely.
             ...(hasCommandData
               ? supportsCommandShell
                 ? {
                     command: service.startCommand || null,
                     shell: service.startCommand
                       ? resolveCommandShell({
-                          advanced: !!service.commandAdvanced,
-                          execution: service.commandExecution ?? 'shell',
+                          execution: service.execution ?? 'shell',
                           shell: service.shell,
                         })
                       : undefined,

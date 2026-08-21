@@ -116,6 +116,11 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.BasicInfo')}
         extra={editLink(0, 'preset-form-card-basic')}
       >
+        {/* Field order below mirrors the Basic Info step's actual input
+            order (name → description → runtime → runtime params → service
+            configuration → health check → pre-start actions → image), not
+            the order fields were originally added to this summary — see
+            AdminDeploymentPresetSettingPageContent.tsx's Basic Info card. */}
         <MetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.Name')}>
             <Text weight="semibold">{values.name || '-'}</Text>
@@ -127,15 +132,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
           )}
           <MetadataListItem label={t('adminDeploymentPreset.Runtime')}>
             {runtimeName || '-'}
-          </MetadataListItem>
-          <MetadataListItem label={t('adminDeploymentPreset.Image')}>
-            {imageReference ? (
-              <BAIText code copyable style={{ wordBreak: 'break-all' }}>
-                {imageReference}
-              </BAIText>
-            ) : (
-              '-'
-            )}
           </MetadataListItem>
           {runtimeParamRows.length > 0 && (
             <MetadataListItem label={t('modelService.RuntimeParamTitle')}>
@@ -153,9 +149,15 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             const svc = values.modelDefinition?.models?.[0]?.service;
             return (
               <>
-                {svc?.port != null && (
-                  <MetadataListItem label={t('modelService.Port')}>
-                    {svc.port}
+                {/* Exec mode sends `shell: null` regardless of what's typed
+                    in the (now-hidden) Shell input — resolveCommandShell()
+                    discards it. The field's stale value otherwise lingers in
+                    the form store after switching Execution away from
+                    Shell, so gate the display on the mode actually being
+                    submitted, not just on the raw value being present. */}
+                {svc?.shell && svc?.execution !== 'exec' && (
+                  <MetadataListItem label={t('modelService.Shell')}>
+                    <Code>{svc.shell}</Code>
                   </MetadataListItem>
                 )}
                 {svc?.startCommand && (
@@ -165,20 +167,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     </SourceCodeView>
                   </MetadataListItem>
                 )}
-                {svc?.shell && (
-                  <MetadataListItem label={t('modelService.Shell')}>
-                    <Code>{svc.shell}</Code>
-                  </MetadataListItem>
-                )}
-                {(svc?.preStartActions?.length ?? 0) > 0 && (
-                  <MetadataListItem label={t('modelService.PreStartActions')}>
-                    <BAIFlex direction="column" align="start" gap="xxs">
-                      {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
-                        <Code key={ai} style={{ display: 'block' }}>
-                          {a?.action}: {a?.args || '{}'}
-                        </Code>
-                      ))}
-                    </BAIFlex>
+                {svc?.port != null && (
+                  <MetadataListItem label={t('modelService.Port')}>
+                    {svc.port}
                   </MetadataListItem>
                 )}
                 <MetadataListItem
@@ -246,9 +237,29 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     )}
                   </>
                 )}
+                {(svc?.preStartActions?.length ?? 0) > 0 && (
+                  <MetadataListItem label={t('modelService.PreStartActions')}>
+                    <BAIFlex direction="column" align="start" gap="xxs">
+                      {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
+                        <Code key={ai} style={{ display: 'block' }}>
+                          {a?.action}: {a?.args || '{}'}
+                        </Code>
+                      ))}
+                    </BAIFlex>
+                  </MetadataListItem>
+                )}
               </>
             );
           })()}
+          <MetadataListItem label={t('adminDeploymentPreset.Image')}>
+            {imageReference ? (
+              <BAIText code copyable style={{ wordBreak: 'break-all' }}>
+                {imageReference}
+              </BAIText>
+            ) : (
+              '-'
+            )}
+          </MetadataListItem>
         </MetadataList>
       </BAICard>
 
@@ -424,6 +435,13 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.metadata.version}
                     </MetadataListItem>
                   )}
+                  {m.metadata?.license && (
+                    <MetadataListItem
+                      label={t('adminDeploymentPreset.modelDef.License')}
+                    >
+                      {m.metadata.license}
+                    </MetadataListItem>
+                  )}
                   {m.metadata?.description && (
                     <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Description')}
@@ -480,13 +498,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                           />
                         ))}
                       </HStack>
-                    </MetadataListItem>
-                  )}
-                  {m.metadata?.license && (
-                    <MetadataListItem
-                      label={t('adminDeploymentPreset.modelDef.License')}
-                    >
-                      {m.metadata.license}
                     </MetadataListItem>
                   )}
                 </MetadataList>
