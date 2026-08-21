@@ -947,8 +947,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       readsVfolderConfigFiles &&
       !!service &&
       (!!service.command || (service.startCommand?.length ?? 0) > 0);
-    // Reconstruct the command string and Basic/Advanced + Execution + Shell UI
-    // state from whichever field the revision carries (FR-3205).
+    // Reconstruct the command string and Execution + Shell UI state from
+    // whichever field the revision carries (FR-3205).
     const commandModeState = deriveCommandModeState({
       command: service?.command,
       shell: service?.shell,
