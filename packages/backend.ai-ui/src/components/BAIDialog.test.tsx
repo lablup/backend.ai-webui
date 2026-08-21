@@ -282,7 +282,9 @@ describe('BAIDialog', () => {
             isOpen={isSecondOpen}
             onOpenChange={vi.fn()}
             aria-label="second"
-          />
+          >
+            <button type="button">inside second</button>
+          </BAIDialog>
         </>
       );
     };
