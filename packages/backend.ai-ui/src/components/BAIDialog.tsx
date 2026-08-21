@@ -17,7 +17,7 @@ import type { DialogPosition, DialogProps } from '@astryxdesign/core/Dialog';
 import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
 import { dataAttr } from '@astryxdesign/core/naming';
 import { useThemeName } from '@astryxdesign/core/theme';
-import { devWarn, mergeRefs } from '@astryxdesign/core/utils';
+import { devWarn, isFocusDetached, mergeRefs } from '@astryxdesign/core/utils';
 import classNames from 'classnames';
 import React, { useEffect, useId, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
@@ -28,18 +28,14 @@ const DIALOG_SELECTOR = 'dialog, [role="dialog"], [role="alertdialog"]';
 /**
  * Astryx's own restore snapshots in a passive effect, by which time the level
  * stack has inerted the covering root and blurred the trigger — it captures
- * `<body>`. Guarded like theirs, so a focus a consumer moved on purpose stays.
+ * `<body>`.
  */
 function restoreTriggerFocus(
   trigger: HTMLElement | null,
   root: HTMLElement | null,
 ): void {
-  const active = document.activeElement;
   const focusWasLost =
-    active == null ||
-    active === document.body ||
-    active === document.documentElement ||
-    root?.contains(active) === true;
+    isFocusDetached() || root?.contains(document.activeElement) === true;
   if (focusWasLost && trigger?.isConnected) {
     trigger.focus();
   }
@@ -171,15 +167,20 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
     onEscape: handleEscape,
   });
 
-  // Declared after the trap on purpose: its document-level capture listener is
-  // still installed during earlier cleanups and would pull focus straight back
-  // into the closing dialog.
+  // Passive, not layout: React restores the selection it captured before the
+  // commit at the end of the mutation phase, undoing a focus moved any earlier.
+  // Traced to `flushMutationEffects`; the nested-dialog test pins it.
   useEffect(() => {
     if (!isOpen) {
       return;
     }
     const root = rootRef.current;
-    return () => restoreTriggerFocus(triggerRef.current, root);
+    return () => {
+      restoreTriggerFocus(triggerRef.current, root);
+      // A closed dialog keeps its children mounted, so an un-nulled ref pins
+      // the trigger's DOM node for the instance's life.
+      triggerRef.current = null;
+    };
   }, [isOpen]);
 
   useScrollLock(isOpen);
@@ -214,7 +215,9 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
     if (!isOpen || !node) {
       return;
     }
-    const trigger = document.activeElement;
+    // The snapshot, not `document.activeElement`: by here the level stack has
+    // inerted the covering root, so a nested dialog would measure from nothing.
+    const trigger = triggerRef.current;
     // Under reduced motion the CSS sets `animation-name: none`, so nothing
     // would read the measurement.
     if (
