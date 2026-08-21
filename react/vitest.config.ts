@@ -105,9 +105,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    // Reuse the worker environment across test files; setupTests.ts restores
-    // per-file DOM and source-module freshness. Escape hatch: `vitest run --isolate`.
-    isolate: false,
+    // Must stay above `setupTests.ts`'s 5s `asyncUtilTimeout`, or a `waitFor`
+    // that exhausts its budget is cut off by the runner and reports a bare
+    // timeout instead of the assertion diff that names the cause. FR-3617.
+    testTimeout: 15_000,
     setupFiles: [
       resolve(__dirname, 'src/setupTests.ts'),
     ],

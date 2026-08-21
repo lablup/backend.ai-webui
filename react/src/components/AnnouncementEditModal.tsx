@@ -257,9 +257,9 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                 overflow: 'auto',
               }}
             >
-              {/* Must stay byte-identical to AnnouncementAlert's props — a
-                  preview that renders differently from the published banner
-                  is the whole of FR-3402. */}
+              {/* Must stay byte-identical to AnnouncementBanner's expanded
+                  markdown props — a preview that renders differently from the
+                  published banner is the whole of FR-3402. */}
               <Markdown density="compact" headingLevelStart={3} autolink="gfm">
                 {message}
               </Markdown>

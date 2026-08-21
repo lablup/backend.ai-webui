@@ -128,23 +128,45 @@ function getServerSnapshot(): BAIScreenMap {
   return SERVER_SNAPSHOT;
 }
 
+/**
+ * One shared media-query handler fanning out to every subscriber. A
+ * per-subscriber handler comparing against the shared `cachedSnapshot` would
+ * notify only the FIRST subscriber per flip — the first handler updates the
+ * cache, so every later handler sees "no change" and skips its own component
+ * (FR-3606: the folder explorer stayed in a stale layout until reload).
+ */
+const storeListeners = new Set<() => void>();
+
+function handleMediaChange() {
+  const next = computeSnapshot();
+  // Keep the object identity stable unless a boolean actually flipped, so the
+  // 2nd..6th `change` events of one crossing don't re-render subscribers.
+  const changed =
+    !cachedSnapshot ||
+    BAI_BREAKPOINT_KEYS.some((key) => cachedSnapshot?.[key] !== next[key]);
+  if (changed) {
+    cachedSnapshot = next;
+    storeListeners.forEach((listener) => listener());
+  }
+}
+
 function subscribe(onStoreChange: () => void): () => void {
-  const handler = () => {
-    const next = computeSnapshot();
-    // Only publish a new object identity when a boolean actually flipped, so a
-    // resize inside one step does not re-render 18 components for nothing.
-    const changed =
-      !cachedSnapshot ||
-      BAI_BREAKPOINT_KEYS.some((key) => cachedSnapshot?.[key] !== next[key]);
-    if (changed) {
-      cachedSnapshot = next;
-      onStoreChange();
-    }
-  };
-  const lists = getMediaQueryLists();
-  lists.forEach((list) => list.addEventListener('change', handler));
+  if (storeListeners.size === 0) {
+    getMediaQueryLists().forEach((list) =>
+      list.addEventListener('change', handleMediaChange),
+    );
+    // The cache is not maintained while nothing is attached — refresh it (and
+    // notify, via React's post-subscribe re-check) in case it went stale.
+    handleMediaChange();
+  }
+  storeListeners.add(onStoreChange);
   return () => {
-    lists.forEach((list) => list.removeEventListener('change', handler));
+    storeListeners.delete(onStoreChange);
+    if (storeListeners.size === 0) {
+      getMediaQueryLists().forEach((list) =>
+        list.removeEventListener('change', handleMediaChange),
+      );
+    }
   };
 }
 

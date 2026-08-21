@@ -54,7 +54,7 @@
     "lexical": "0.46.0",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
-    "markdown-to-jsx": "^7.7.17",
+    "markdown-to-jsx": "^9.10.2",
     "marked": "catalog:",
     "monaco-editor": "^0.55.1",
     "nanoid": "^5.1.16",

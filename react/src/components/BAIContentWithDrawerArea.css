@@ -16,26 +16,24 @@
  `drawerWidth` is a prop, so it arrives as a custom property the component
  sets inline on its own element (`--bai-drawer-area-width`).
 
- `drawerStyle` used to select whether the drawer-panel rule was emitted at
- all. That element lives in the TOP LAYER (a native `<dialog>`), so it cannot
- read a custom property set on the content div. Rather than reach for an
- imperative attribute toggle, the rule keys off the content div's own
- `margin-style` class through `:has()` — declarative, and it reproduces the
- original's global (all-drawers) scope exactly. Chromium 105+/Safari 15.4+/
- Firefox 121+, i.e. every browser this app supports and Electron 35's
- Chromium.
-
- to-astryx phase 3 wave 2 (partition C): the drawer target moved from
- `ant-drawer-content-wrapper` to `.astryx-drawer`. `WEBUINotificationDrawer`
- — the drawer whose open state drives `margin-style` in the first place — is
- now the lab `Drawer`, so the antd selector became DEAD (P6: it still
- compiles and silently stops applying). The scope is unchanged: the rule fires
- only while the notification drawer holds the layout in margin-style.
+ `drawerStyle` used to select whether the drawer-panel rule was emitted at all.
+ The drawer panel is never a descendant of the content div — non-scrim drawers
+ are top-layer-free native `<dialog>`s and scrimmed ones are `document.body`
+ portals (FR-3585) — so it cannot read a custom property set there. The rule
+ keys off the content div's own `margin-style` class through `:has()` instead
+ (Chromium 105+/Safari 15.4+/Firefox 121+). It fires only while the
+ notification drawer holds the layout in margin-style.
 
  Token mapping (P19-checked): theme.colorBorder -> var(--color-border-emphasized).
 */
 .main-layout-main-content {
   transition: margin-right 0.3s ease;
+  /* FR-3612: fill AppShell's main slot so the scroll column inside can size
+     itself with `height: 100%` (it owned `100vh` before AppShell), and anchor
+     the overlay scrollbar (`BAIOverlayScrollbar`) to the content edge —
+     it follows the notification drawer's margin shift for free. */
+  height: 100%;
+  position: relative;
 }
 
 .main-layout-main-content.margin-style {
