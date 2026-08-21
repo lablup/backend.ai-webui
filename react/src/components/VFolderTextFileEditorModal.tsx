@@ -256,7 +256,9 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
     <BAIModal
       isOpen={isUnsavedConfirmOpen}
       onOpenChange={closeUnsavedConfirm}
-      purpose="form"
+      // `BAIModal`'s vocabulary for Astryx `purpose="form"`: the backdrop does
+      // not dismiss (unsaved work), Escape still does.
+      maskClosable={false}
       title={t('data.explorer.EditFileUnsavedChangesTitle', {
         fileName: fileInfo?.name,
       })}
