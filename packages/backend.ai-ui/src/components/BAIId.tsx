@@ -21,7 +21,9 @@ const BAIId: React.FC<BAIIdProps> = ({
   uuid,
   globalId,
   copyable = true,
-  ellipsis = true,
+  // An id is clamped to 100px, so it is almost always truncated; without the
+  // tooltip slot there is no way to read the value it holds (FR-3608).
+  ellipsis = { tooltip: true },
   monospace = true,
   style,
   ...restProps

@@ -246,7 +246,11 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
           <BAIFlex direction="column" align="stretch" gap="sm">
             <Text>{t('deployment.accessToken.Created')}</Text>
             {createdToken ? (
-              <BAIText copyable={{ text: createdToken.token }} ellipsis code>
+              <BAIText
+                copyable={{ text: createdToken.token }}
+                ellipsis={{ tooltip: true }}
+                code
+              >
                 {createdToken.token}
               </BAIText>
             ) : null}
@@ -371,7 +375,7 @@ const DeploymentAccessTokensTable: React.FC<
                   title={
                     <BAIText
                       copyable={{ text: row.token }}
-                      ellipsis
+                      ellipsis={{ tooltip: true }}
                       style={{ maxWidth: 200 }}
                     >
                       {row.token}
