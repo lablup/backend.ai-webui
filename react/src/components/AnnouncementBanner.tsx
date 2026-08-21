@@ -69,16 +69,19 @@ const AnnouncementBanner: React.FC = () => {
         onDismiss={() => setDismissedMessage(message)}
         // Collapsible shape: one-line summary in `title` with the expand
         // toggle right beside it; the full markdown moves into `description`
-        // once expanded. Short shape: body in `description`, not `title` —
-        // Banner centres its header on `description == null && hasActions`,
-        // which misaligns the icon and Edit button against a multi-line
-        // announcement (FR-3482).
+        // once expanded, and the summary steps aside so the announcement's
+        // first line is not shown twice. Short shape: body in `description`,
+        // not `title` — Banner centres its header on
+        // `description == null && hasActions`, which misaligns the icon and
+        // Edit button against a multi-line announcement (FR-3482).
         title={
           isCollapsible ? (
             <span className="webui-announcement-title">
-              <span className="webui-announcement-summary">
-                {summarizeAnnouncement(message)}
-              </span>
+              {!isExpanded && (
+                <span className="webui-announcement-summary">
+                  {summarizeAnnouncement(message)}
+                </span>
+              )}
               <Button
                 className="webui-announcement-toggle"
                 variant="ghost"
