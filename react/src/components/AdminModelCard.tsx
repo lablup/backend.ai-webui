@@ -296,7 +296,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       render: (projectId) => (
-        <BAIText copyable ellipsis style={{ maxWidth: 150 }}>
+        <BAIText
+          copyable
+          ellipsis={{ tooltip: true }}
+          style={{ maxWidth: 150 }}
+        >
           {projectId}
         </BAIText>
       ),

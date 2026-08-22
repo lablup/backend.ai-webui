@@ -175,7 +175,7 @@ const BAIRuntimeVariantPresetTable = ({
         sorter: isEnableSorter('key'),
         render: (__, record) =>
           record.targetSpec?.key ? (
-            <BAIText code copyable>
+            <BAIText code copyable ellipsis={{ tooltip: true }}>
               {record.targetSpec.key}
             </BAIText>
           ) : (
