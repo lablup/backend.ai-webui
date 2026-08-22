@@ -37,7 +37,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
     <BAICard
       activeTabKey={currentTab}
       onTabChange={onTabChange}
-      extra={
+      tabBarExtraContent={
         // Mirrors the report view's user-scope gate (spec §3, W6).
         baiClient?.supports('user-metrics') ? (
           <BAIButton

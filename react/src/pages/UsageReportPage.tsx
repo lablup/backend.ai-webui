@@ -85,8 +85,14 @@ const UsageReportPage: React.FC = () => {
       return;
     }
     try {
+      // Capture the full document, not the on-screen clip: a scrolled ancestor
+      // makes html-to-image cut the render at the viewport otherwise.
+      const { scrollWidth, scrollHeight } = reportElement;
       const blob = await toBlob(reportElement, {
         pixelRatio: 2,
+        width: scrollWidth,
+        height: scrollHeight,
+        style: { overflow: 'visible', maxWidth: 'none' },
         backgroundColor: getComputedStyle(document.body).backgroundColor,
       });
       if (!blob) {

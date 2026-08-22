@@ -128,10 +128,10 @@ const AdminDashboardPage: React.FC = () => {
       baiClient.supports('prometheus-query-preset') && {
         id: 'usageReport',
         rowSpan: 2,
-        columnSpan: 1,
+        columnSpan: 2,
         definition: {
           minRowSpan: 2,
-          minColumnSpan: 1,
+          minColumnSpan: 2,
         },
         data: {
           content: <UsageReportDashboardItem scope="admin" />,

@@ -254,10 +254,10 @@ const DashboardPage: React.FC = () => {
     baiClient.supports('user-metrics') && {
       id: 'usageReport',
       rowSpan: 2,
-      columnSpan: 1,
+      columnSpan: 2,
       definition: {
         minRowSpan: 2,
-        minColumnSpan: 1,
+        minColumnSpan: 2,
       },
       data: {
         content: <UsageReportDashboardItem scope="user" />,
