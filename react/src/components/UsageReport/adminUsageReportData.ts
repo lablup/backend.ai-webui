@@ -24,6 +24,7 @@ const round1 = (v: number) => Math.round(v * 10) / 10;
 /** One per-kernel row of `GET /resource/usage/period`, normalized. */
 export interface UsagePeriodRecord {
   email: string | null;
+  accessKey: string | null;
   /** null = payload carries no session identity for this row. */
   sessionId: string | null;
   cpuAllocated: number;
@@ -70,12 +71,11 @@ export const parseUsagePeriodRecords = (
       ? dayjs(String(row.terminated_at))
       : null;
     return {
-      email:
-        typeof row.email === 'string' && row.email
-          ? row.email
-          : typeof row.access_key === 'string' && row.access_key
-            ? row.access_key
-            : null,
+      email: typeof row.email === 'string' && row.email ? row.email : null,
+      accessKey:
+        typeof row.access_key === 'string' && row.access_key
+          ? row.access_key
+          : null,
       sessionId:
         typeof row.session_id === 'string' && row.session_id
           ? row.session_id
@@ -173,6 +173,8 @@ export const buildTopUsers = (
   const byUser = new Map<
     string,
     {
+      email: string | null;
+      accessKey: string | null;
       gpuHours: number;
       cpuHours: number;
       sessionIds: Set<string>;
@@ -180,16 +182,21 @@ export const buildTopUsers = (
     }
   >();
   records.forEach((record) => {
-    if (!record.email) {
+    const userKey = record.email ?? record.accessKey;
+    if (!userKey) {
       return;
     }
     const hours = overlapHours(record, windowStart, windowEnd);
-    const entry = byUser.get(record.email) ?? {
+    const entry = byUser.get(userKey) ?? {
+      email: record.email,
+      accessKey: record.accessKey,
       gpuHours: 0,
       cpuHours: 0,
       sessionIds: new Set<string>(),
       unkeyedSessions: 0,
     };
+    entry.email ??= record.email;
+    entry.accessKey ??= record.accessKey;
     entry.gpuHours += record.gpuAllocated * hours;
     entry.cpuHours += record.cpuAllocated * hours;
     // Per-kernel rows of one cluster session share a session_id; count once.
@@ -198,14 +205,15 @@ export const buildTopUsers = (
     } else {
       entry.sessionIds.add(record.sessionId);
     }
-    byUser.set(record.email, entry);
+    byUser.set(userKey, entry);
   });
-  return [...byUser.entries()]
-    .sort(([, a], [, b]) => b.gpuHours - a.gpuHours || b.cpuHours - a.cpuHours)
+  return [...byUser.values()]
+    .sort((a, b) => b.gpuHours - a.gpuHours || b.cpuHours - a.cpuHours)
     .slice(0, limit)
-    .map(([email, entry], index) => ({
+    .map((entry, index) => ({
       rank: index + 1,
-      email,
+      email: entry.email,
+      accessKey: entry.accessKey,
       gpuHours: round1(entry.gpuHours),
       cpuHours: round1(entry.cpuHours),
       sessions: entry.sessionIds.size + entry.unkeyedSessions,

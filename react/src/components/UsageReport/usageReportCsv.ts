@@ -61,12 +61,15 @@ export const buildUsageReportCsv = (data: UsageReportData): string => {
 
   if (data.scope === 'admin' && data.topUsers?.length) {
     lines.push('');
-    lines.push(toLine(['rank', 'user', 'gpuHours', 'cpuHours', 'sessions']));
+    lines.push(
+      toLine(['rank', 'user', 'accessKey', 'gpuHours', 'cpuHours', 'sessions']),
+    );
     data.topUsers.forEach((user) => {
       lines.push(
         toLine([
           user.rank,
           user.email,
+          user.accessKey,
           user.gpuHours,
           user.cpuHours,
           user.sessions,

@@ -4,7 +4,7 @@
  */
 import UsageReportEmptySection from './UsageReportEmptySection';
 import { UsageReportTopUser } from './types';
-import { BAICard, BAIColumnsType, BAITable } from 'backend.ai-ui';
+import { BAICard, BAIColumnsType, BAITable, BAIText } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,6 +28,15 @@ const UsageReportTopUsersTable: React.FC<UsageReportTopUsersTableProps> = ({
       key: 'email',
       title: t('usageReport.User'),
       dataIndex: 'email',
+      render: (email: string | null) =>
+        email ? <BAIText copyable>{email}</BAIText> : '—',
+    },
+    {
+      key: 'accessKey',
+      title: t('general.AccessKey'),
+      dataIndex: 'accessKey',
+      render: (accessKey: string | null) =>
+        accessKey ? <BAIText copyable>{accessKey}</BAIText> : '—',
     },
     {
       key: 'gpuHours',
@@ -58,7 +67,7 @@ const UsageReportTopUsersTable: React.FC<UsageReportTopUsersTableProps> = ({
       {topUsers.length ? (
         <BAITable
           size="small"
-          rowKey="email"
+          rowKey="rank"
           columns={columns}
           dataSource={topUsers}
           pagination={false}

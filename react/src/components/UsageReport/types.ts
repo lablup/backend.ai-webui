@@ -41,7 +41,8 @@ export interface UsageReportUtilizationAvgs {
 
 export interface UsageReportTopUser {
   rank: number;
-  email: string;
+  email: string | null;
+  accessKey: string | null;
   gpuHours: number;
   cpuHours: number;
   sessions: number;
