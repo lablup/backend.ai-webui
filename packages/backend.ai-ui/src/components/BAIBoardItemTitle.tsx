@@ -33,7 +33,9 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
         flexShrink: 0,
         position: 'sticky',
         top: 0,
-        backgroundColor: token.colorBgContainer,
+        // The token, not `theme.useToken()`: the shim resolves tokens against
+        // the ROOT scope, which would miss a board item's elevated surface.
+        backgroundColor: 'var(--color-background-surface)',
         zIndex: Z_INDEX_IN_BAI_BOARD_ITEM_TITLE,
         ...style,
       }}

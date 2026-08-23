@@ -76,10 +76,39 @@
   display: none !important;
 }
 
+/* Board items sit ON the page, so their surface must read as elevated — but
+   the theme's `surface` is DARKER than `body` in dark (#141414 vs #191919).
+   `popover` is the one surface token that is lighter, and it is #FFFFFF in
+   light, i.e. exactly what the card already draws there.
+
+   Everything inside the item that paints an opaque surface has to land on the
+   SAME colour or it prints a stripe across the card, and they read four
+   different names: the card body and `BAIBoardItemTitle`'s sticky band take
+   `--color-background-surface`; Astryx's pinned table cells take
+   `--table-sticky-background`; `BAITable`'s header band takes
+   `--color-background-card`. Pointing all of them at one value is why the
+   tokens are redefined here rather than the card being painted directly. */
+.bai-board-item {
+  --bai-board-item-surface: var(--color-background-popover);
+  --color-background-surface: var(--bai-board-item-surface);
+  --color-background-card: var(--bai-board-item-surface);
+  --table-sticky-background: var(--bai-board-item-surface);
+}
+
 .bai-board-item > div:first-child {
   border-radius: var(--radius-container) !important;
   background-color: var(--color-background-surface) !important;
   border: var(--border-width) solid var(--color-border) !important;
+  box-shadow: var(--shadow-low);
+  transition:
+    box-shadow var(--duration-fast) ease,
+    border-color var(--duration-fast) ease;
+}
+
+.bai-board-item:hover > div:first-child,
+.bai-board-item:focus-within > div:first-child {
+  border-color: var(--color-border-emphasized) !important;
+  box-shadow: var(--shadow-med);
 }
 
 .bai-board-item:has([data-bai-board-item-status='error']) > div:first-child {
@@ -99,4 +128,31 @@
 
 .bai-board-item-disable-border > div:first-child {
   border: none !important;
+  box-shadow: none;
+}
+.bai-board-item-disable-border:hover > div:first-child,
+.bai-board-item-disable-border:focus-within > div:first-child {
+  box-shadow: none;
+}
+
+/* Drag/resize affordances are resting noise on eight cards at once. Reveal
+   them on pointer hover or keyboard focus; the layout box stays either way. */
+.bai-board-item .bai_board_handle,
+.bai-board-item .bai_board_resizer {
+  opacity: 0;
+  transition: opacity var(--duration-fast) ease;
+}
+.bai-board-item:hover .bai_board_handle,
+.bai-board-item:hover .bai_board_resizer,
+.bai-board-item:focus-within .bai_board_handle,
+.bai-board-item:focus-within .bai_board_resizer {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bai-board-item > div:first-child,
+  .bai-board-item .bai_board_handle,
+  .bai-board-item .bai_board_resizer {
+    transition: none;
+  }
 }
