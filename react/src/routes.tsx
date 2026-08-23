@@ -1402,11 +1402,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     // route survives only to convert legacy `?tab=` deep links into it.
     path: '/usersettings',
     handle: { labelKey: 'webui.menu.Settings&Logs' },
-    element: (
-      <Suspense fallback={<BAISkeleton rows={4} />}>
-        <UserSettingsRouteRedirect />
-      </Suspense>
-    ),
+    element: <UserSettingsRouteRedirect />,
   },
   {
     path: '/logs',

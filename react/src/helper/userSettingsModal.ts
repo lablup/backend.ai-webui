@@ -46,6 +46,15 @@ export const buildUserSettingsSearch = (
 };
 
 /**
+ * React Router matches paths case-insensitively and tolerates a trailing slash,
+ * while `location.pathname` keeps whatever the URL spelled. Comparing raw would
+ * let `/UserSettings` slip past both guards below and trap the modal in a
+ * close -> shim -> reopen loop.
+ */
+export const isUserSettingsPath = (pathname: string): boolean =>
+  pathname.replace(/\/+$/, '').toLowerCase() === USER_SETTINGS_ROUTE;
+
+/**
  * Last location that was not the settings route, so the redirect shim can put
  * the modal back over the page the user was actually looking at. A cache, not
  * state: `null` simply means "cold load".
@@ -55,7 +64,7 @@ let lastNonSettingsLocation: { pathname: string; search: string } | null = null;
 export const rememberNonSettingsLocation = (
   location: Pick<Location, 'pathname' | 'search'>,
 ) => {
-  if (location.pathname === USER_SETTINGS_ROUTE) return;
+  if (isUserSettingsPath(location.pathname)) return;
   lastNonSettingsLocation = {
     pathname: location.pathname,
     search: location.search,

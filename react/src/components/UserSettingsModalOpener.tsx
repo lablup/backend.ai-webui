@@ -4,9 +4,9 @@
  */
 import {
   coerceUserSettingsCategory,
+  isUserSettingsPath,
   rememberNonSettingsLocation,
   USER_SETTINGS_PARAM,
-  USER_SETTINGS_ROUTE,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -50,7 +50,7 @@ const UserSettingsModalOpener = () => {
   const close = () => {
     // A cold deep link leaves the modal over an empty shell; closing there has
     // to land on a real page.
-    if (location.pathname === USER_SETTINGS_ROUTE) {
+    if (isUserSettingsPath(location.pathname)) {
       navigate(defaultMenuPath, { replace: true });
       return;
     }

@@ -61,7 +61,7 @@ const HEADER_STICKY: CSSProperties = {
   position: 'sticky',
   top: 0,
   paddingInline: 'var(--spacing-4)',
-  paddingBlockStart: 'var(--spacing-4)',
+  paddingBlock: 'var(--spacing-4) var(--spacing-2)',
   backgroundColor: 'var(--color-background-surface)',
   zIndex: 1,
 };
@@ -69,6 +69,11 @@ const HEADER_STICKY: CSSProperties = {
 const PANE_INSET: CSSProperties = {
   paddingInline: 'var(--spacing-4)',
   paddingBlockEnd: 'var(--spacing-4)',
+  // Its own stacking context, so a pane's internal layering — BAITable's pinned
+  // column and sticky header cells reach z-index 3 — cannot outrank the header
+  // bar above it.
+  position: 'relative',
+  zIndex: 0,
 };
 
 // 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
@@ -282,7 +287,10 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
                 {showNavOnly ? (
                   categoryNav
                 ) : (
-                  <BAIErrorBoundary>
+                  // Keyed so a failed category does not latch the whole
+                  // surface: the page this replaced mounted one boundary per
+                  // tab, which switching tabs unmounted.
+                  <BAIErrorBoundary key={category}>
                     <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
                   </BAIErrorBoundary>
                 )}

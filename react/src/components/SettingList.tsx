@@ -282,7 +282,14 @@ const SettingList: React.FC<SettingPageProps> = ({
   return (
     <>
       <BAIFlex direction="column" gap={'md'} align="stretch">
-        <BAIFlex justify="start" gap={'xs'} wrap="wrap">
+        {/* Wrapping only where the row is narrow (the settings modal's pane);
+            the full-width admin pages keep the single-row layout the search
+            field's `width="100%"` was sized against. */}
+        <BAIFlex
+          justify="start"
+          gap={'xs'}
+          wrap={hideGroupNav ? 'wrap' : 'nowrap'}
+        >
           {!!showSearchBar && (
             <TextInput
               label={t('settings.SearchPlaceholder')}

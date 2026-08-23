@@ -6,6 +6,7 @@ import {
   buildUserSettingsSearch,
   coerceUserSettingsCategory,
   forgetNonSettingsLocation,
+  isUserSettingsPath,
   peekNonSettingsLocation,
   rememberNonSettingsLocation,
   USER_SETTINGS_ROUTE,
@@ -49,6 +50,26 @@ describe('buildUserSettingsSearch', () => {
   });
 });
 
+describe('isUserSettingsPath', () => {
+  // React Router matches the route case-insensitively and with a trailing
+  // slash, so the guards that read `location.pathname` have to as well.
+  it.each([
+    '/usersettings',
+    '/usersettings/',
+    '/UserSettings',
+    '/USERSETTINGS//',
+  ])('recognises %s', (pathname) => {
+    expect(isUserSettingsPath(pathname)).toBe(true);
+  });
+
+  it.each(['/usersettings2', '/admin/usersettings', '/session', '/'])(
+    'rejects %s',
+    (pathname) => {
+      expect(isUserSettingsPath(pathname)).toBe(false);
+    },
+  );
+});
+
 describe('background location tracking', () => {
   beforeEach(() => {
     forgetNonSettingsLocation();
@@ -69,15 +90,16 @@ describe('background location tracking', () => {
     });
   });
 
-  it('ignores the settings route itself', () => {
-    rememberNonSettingsLocation({ pathname: '/session', search: '' });
-    rememberNonSettingsLocation({
-      pathname: USER_SETTINGS_ROUTE,
-      search: '?tab=logs',
-    });
-    expect(peekNonSettingsLocation()).toEqual({
-      pathname: '/session',
-      search: '',
-    });
-  });
+  it.each([USER_SETTINGS_ROUTE, '/UserSettings', '/usersettings/'])(
+    'ignores the settings route itself (%s)',
+    (pathname) => {
+      forgetNonSettingsLocation();
+      rememberNonSettingsLocation({ pathname: '/session', search: '' });
+      rememberNonSettingsLocation({ pathname, search: '?tab=logs' });
+      expect(peekNonSettingsLocation()).toEqual({
+        pathname: '/session',
+        search: '',
+      });
+    },
+  );
 });
