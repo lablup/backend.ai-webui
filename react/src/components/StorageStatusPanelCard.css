@@ -1,0 +1,18 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for the folder-status board item (P17). Tokens only (P19).
+*/
+
+.folder-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-3);
+}
+
+.folder-status-cell {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-element);
+  padding: var(--spacing-4);
+}

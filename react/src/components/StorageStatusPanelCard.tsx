@@ -9,6 +9,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { theme } from '../theme-shim';
 import BAIPanelItem from './BAIPanelItem';
+import './StorageStatusPanelCard.css';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
@@ -16,7 +17,6 @@ import {
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,
-  BAIRowWrapWithDividers,
   useUpdateEffect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -28,8 +28,6 @@ interface StorageStatusPanelProps extends BAIFlexProps {
   fetchKey?: string;
   onRequestBadgeClick?: () => void;
 }
-
-const PANEL_ITEM_MAX_WIDTH = 90; // Adjusted max width for panel items
 
 // Dashboard board-item body for folder-status counts. Uses the shared
 // `BAIBoardItemTitle` so the title reserves space for the board drag handle
@@ -144,94 +142,85 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       {...flexProps}
     >
       <BAIBoardItemTitle title={t('data.FolderStatus')} />
-      <BAIRowWrapWithDividers
-        rowGap={token.marginXL}
-        columnGap={token.marginXL}
-        dividerColor={token.colorBorder}
-        dividerInset={token.marginXS}
-        dividerWidth={token.lineWidth}
-      >
-        <BAIPanelItem
-          title={t('data.MyFolders')}
-          value={createdCount}
-          unit={
-            user_resource_policy?.max_vfolder_count
-              ? `/ ${user_resource_policy?.max_vfolder_count}`
-              : undefined
-          }
-          style={{
-            maxWidth: PANEL_ITEM_MAX_WIDTH,
-          }}
-          color={token.colorText}
-        />
-        <BAIPanelItem
-          title={t('data.ProjectFolders')}
-          value={projectCount}
-          unit={
-            project_resource_policy?.max_vfolder_count
-              ? `/ ${project_resource_policy?.max_vfolder_count}`
-              : undefined
-          }
-          style={{
-            maxWidth: PANEL_ITEM_MAX_WIDTH,
-          }}
-          color={token.colorText}
-        />
-        <BAIPanelItem
-          title={
-            invitationCount > 0 ? (
-              // Add <a></a> to make tooltip clickable
-              <a
-                onClick={() => {
-                  onRequestBadgeClick?.();
-                }}
-              >
-                {/* PILOT-DECISION: the antd-arrow-nudging createStyles block
+      <div className="folder-status-grid">
+        <div className="folder-status-cell">
+          <BAIPanelItem
+            title={t('data.MyFolders')}
+            value={createdCount}
+            unit={
+              user_resource_policy?.max_vfolder_count
+                ? `/ ${user_resource_policy?.max_vfolder_count}`
+                : undefined
+            }
+            color={token.colorText}
+          />
+        </div>
+        <div className="folder-status-cell">
+          <BAIPanelItem
+            title={t('data.ProjectFolders')}
+            value={projectCount}
+            unit={
+              project_resource_policy?.max_vfolder_count
+                ? `/ ${project_resource_policy?.max_vfolder_count}`
+                : undefined
+            }
+            color={token.colorText}
+          />
+        </div>
+        <div className="folder-status-cell">
+          <BAIPanelItem
+            title={
+              invitationCount > 0 ? (
+                // Add <a></a> to make tooltip clickable
+                <a
+                  onClick={() => {
+                    onRequestBadgeClick?.();
+                  }}
+                >
+                  {/* PILOT-DECISION: the antd-arrow-nudging createStyles block
                     (.ant-tooltip-*) is dead CSS after the Astryx Tooltip swap
                     (P6) and was deleted rather than translated; Astryx tooltip
                     placement/alignment covers the intent. antd
                     placement="topRight" -> placement="above" alignment="end". */}
-                <Tooltip
-                  content={t('data.InvitedFoldersTooltip', {
-                    count: invitationCount,
-                  })}
-                  placement="above"
-                  alignment="end"
-                >
-                  <BAIBadgeCountAstryx
-                    count={`+${invitationCount}`}
-                    // PILOT-DECISION: antd's count Badge was implicitly red;
-                    // Astryx Badge defaults to neutral, so the pending-
-                    // invitation semantics are restated explicitly (the
-                    // per-site colour decision BAIBadgeCountAstryx documents).
-                    variant="error"
-                    offset={[-token.sizeXS, -token.sizeXS]}
-                    // As in the antd version: lift the overlay above the
-                    // sticky BAIBoardItemTitle band so the pill is not
-                    // painted over (the original passed zIndex 50 to Badge).
-                    style={{ zIndex: 50 }}
-                    title={t('data.InvitedFoldersTooltip', {
+                  <Tooltip
+                    content={t('data.InvitedFoldersTooltip', {
                       count: invitationCount,
                     })}
+                    placement="above"
+                    alignment="end"
                   >
-                    <Text size="lg">{t('data.InvitedFolders')}</Text>
-                  </BAIBadgeCountAstryx>
-                </Tooltip>
-              </a>
-            ) : (
-              <Text size="lg">{t('data.InvitedFolders')}</Text>
-            )
-          }
-          value={
-            // PILOT-DECISION: antd fontSizeHeading1 (38px) has no Astryx text
-            // step; size="4xl" is the closest on the Astryx ramp.
-            <Text size="4xl">{invitedCount}</Text>
-          }
-          style={{
-            maxWidth: PANEL_ITEM_MAX_WIDTH,
-          }}
-        />
-      </BAIRowWrapWithDividers>
+                    <BAIBadgeCountAstryx
+                      count={`+${invitationCount}`}
+                      // PILOT-DECISION: antd's count Badge was implicitly red;
+                      // Astryx Badge defaults to neutral, so the pending-
+                      // invitation semantics are restated explicitly (the
+                      // per-site colour decision BAIBadgeCountAstryx documents).
+                      variant="error"
+                      offset={[-token.sizeXS, -token.sizeXS]}
+                      // As in the antd version: lift the overlay above the
+                      // sticky BAIBoardItemTitle band so the pill is not
+                      // painted over (the original passed zIndex 50 to Badge).
+                      style={{ zIndex: 50 }}
+                      title={t('data.InvitedFoldersTooltip', {
+                        count: invitationCount,
+                      })}
+                    >
+                      <Text size="lg">{t('data.InvitedFolders')}</Text>
+                    </BAIBadgeCountAstryx>
+                  </Tooltip>
+                </a>
+              ) : (
+                <Text size="lg">{t('data.InvitedFolders')}</Text>
+              )
+            }
+            value={
+              // PILOT-DECISION: antd fontSizeHeading1 (38px) has no Astryx text
+              // step; size="4xl" is the closest on the Astryx ramp.
+              <Text size="4xl">{invitedCount}</Text>
+            }
+          />
+        </div>
+      </div>
     </BAIFlex>
   );
 };

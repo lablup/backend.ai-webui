@@ -41,6 +41,10 @@ export type {
   BAIGraphQLPropertyFilterProps,
 } from './BAIGraphQLPropertyFilter';
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
+export { default as BAIMeterRow } from './BAIMeterRow';
+export type { BAIMeterRowProps } from './BAIMeterRow';
+export { default as BAIShareBar } from './BAIShareBar';
+export type { BAIShareBarProps, BAIShareBarSegment } from './BAIShareBar';
 export { default as BAIStatistic } from './BAIStatistic';
 export type { BAIStatisticProps } from './BAIStatistic';
 export { default as ResourceStatistics } from './ResourceStatistics';

@@ -1,10 +1,10 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
-import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
+import BAIMeterRow from './BAIMeterRow';
+import { BAIStatisticProps } from './BAIStatistic';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 interface ResourceData {
@@ -29,8 +29,10 @@ interface ResourceData {
 interface ResourceStatisticsProps {
   resourceData: ResourceData;
   displayType: 'used' | 'free';
-  progressMode?: BAIStatisticProps['progressMode'];
   precision?: number;
+  /** Accepted and ignored — the notch strip is a continuous track now.
+      Kept so `backend.ai-ui`'s published surface does not break. */
+  progressMode?: BAIStatisticProps['progressMode'];
   progressSteps?: number;
 }
 
@@ -56,12 +58,9 @@ export const convertToNumber = (value: any): number => {
 const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
   resourceData,
   displayType,
-  progressMode = 'hidden',
-  progressSteps,
   precision = 2,
 }) => {
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
 
   const hasResources =
     resourceData.cpu ||
@@ -69,76 +68,33 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
     resourceData.accelerators.length > 0;
 
   if (!hasResources) {
+    // `EmptyState` with no `icon` is the frame-only variant this slot wants.
     return (
-      // to-astryx W2-D: antd `Empty` -> Astryx `EmptyState` (MAPPING §4).
-      // `description` -> the REQUIRED `title` string, and
-      // `image={Empty.PRESENTED_IMAGE_SIMPLE}` is dropped: Astryx has no
-      // preset illustration set (`icon` takes a node you choose), and the
-      // simple preset was antd's "no illustration, just the frame" option —
-      // which is what `EmptyState` renders with no `icon`.
       <EmptyState title={t('comp:ResourceStatistics.NoResourcesData') || ''} />
     );
   }
 
-  return (
-    <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
-      <BAIRowWrapWithDividers>
-        {resourceData.cpu && (
-          <BAIStatistic
-            current={resourceData.cpu[displayType].current}
-            total={resourceData.cpu[displayType].total}
-            title={resourceData.cpu.metadata.title}
-            unit={resourceData.cpu.metadata.displayUnit}
-            progressMode={progressMode}
-            progressSteps={progressSteps}
-            precision={precision}
-            style={{
-              color: displayType === 'free' ? token.colorSuccess : undefined,
-            }}
-          />
-        )}
-        {resourceData.memory && (
-          <BAIStatistic
-            current={resourceData.memory[displayType].current}
-            total={resourceData.memory[displayType].total}
-            title={resourceData.memory.metadata.title}
-            unit={resourceData.memory.metadata.displayUnit}
-            progressMode={progressMode}
-            progressSteps={progressSteps}
-            precision={precision}
-            style={{
-              color: displayType === 'free' ? token.colorSuccess : undefined,
-            }}
-          />
-        )}
-      </BAIRowWrapWithDividers>
+  const rows = _.compact([
+    resourceData.cpu && { key: 'cpu', ...resourceData.cpu },
+    resourceData.memory && { key: 'memory', ...resourceData.memory },
+    ...resourceData.accelerators,
+  ]);
 
-      {resourceData.accelerators.length > 0 && (
-        <BAIRowWrapWithDividers
-          dividerColor={token.colorBorder}
-          style={{
-            backgroundColor: token.colorBgLayout,
-            borderRadius: token.borderRadiusLG,
-            padding: token.padding,
-          }}
-        >
-          {resourceData.accelerators.map((acc) => (
-            <BAIStatistic
-              key={acc.key}
-              current={acc[displayType].current}
-              total={acc[displayType].total}
-              title={acc.metadata.title}
-              unit={acc.metadata.displayUnit}
-              progressMode={progressMode}
-              progressSteps={progressSteps}
-              precision={precision}
-              style={{
-                color: displayType === 'free' ? token.colorSuccess : undefined,
-              }}
-            />
-          ))}
-        </BAIRowWrapWithDividers>
-      )}
+  return (
+    <BAIFlex direction="column" align="stretch" gap={'lg'}>
+      {_.map(rows, (row) => (
+        <BAIMeterRow
+          key={row.key}
+          title={row.metadata.title}
+          current={row[displayType].current}
+          total={row[displayType].total}
+          // The track always draws consumption, so a full bar reads the same
+          // whether the card is showing "used" or "free".
+          utilized={row.used.current}
+          unit={row.metadata.displayUnit}
+          precision={precision}
+        />
+      ))}
     </BAIFlex>
   );
 };

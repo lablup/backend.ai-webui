@@ -11,6 +11,7 @@ import QuotaPerStorageVolumePanelCard, {
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { HardDrive } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -54,10 +55,16 @@ const QuotaPerStorageVolumeDashboardItem: React.FC = () => {
       {defaultVolumeInfo ? (
         <QuotaPerStorageVolumePanelCard defaultVolumeInfo={defaultVolumeInfo} />
       ) : (
-        // PILOT-DECISION: antd Empty PRESENTED_IMAGE_SIMPLE -> Astryx
-        // EmptyState (DIRECT); the simple-image variant has no counterpart and
-        // is dropped — EmptyState's compact variant fits the board-item slot.
-        <EmptyState title={t('storageHost.QuotaDoesNotSupported')} isCompact />
+        // The board reserves two rows for this slot whether or not a quota
+        // host exists, so the placeholder centres in what it is given rather
+        // than sitting as one bold line under the title.
+        <BAIFlex direction="column" justify="center" style={{ flex: 1 }}>
+          <EmptyState
+            title={t('storageHost.QuotaDoesNotSupported')}
+            icon={<HardDrive size={24} />}
+            isCompact
+          />
+        </BAIFlex>
       )}
     </BAIFlex>
   );

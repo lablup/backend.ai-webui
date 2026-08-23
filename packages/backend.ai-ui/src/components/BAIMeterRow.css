@@ -1,0 +1,75 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIMeterRow> (P17). Astryx `ProgressBar` is close, but
+ it owns its own label/height and cannot carry the threshold colour, so the
+ track is composed here from tokens (P19).
+
+ Unlayered, matching the other co-located BUI stylesheets.
+*/
+
+.bai-meter-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.bai-meter-row__line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.bai-meter-row__value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bai-meter-row__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.bai-meter-row__track {
+  flex: 1;
+  min-width: 0;
+  height: var(--spacing-2);
+  border-radius: var(--radius-full);
+  background-color: var(--color-background-muted);
+  overflow: hidden;
+}
+
+.bai-meter-row__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--duration-medium) ease;
+}
+
+/* Utilization thresholds. Semantic tokens only — the brand accent is
+   deliberately NOT used here, so colour means severity and nothing else. */
+.bai-meter-row__fill--ok {
+  background-color: var(--color-success);
+}
+.bai-meter-row__fill--warning {
+  background-color: var(--color-warning);
+}
+.bai-meter-row__fill--error {
+  background-color: var(--color-error);
+}
+
+.bai-meter-row__pct {
+  min-width: 3.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bai-meter-row__fill {
+    transition: none;
+  }
+}

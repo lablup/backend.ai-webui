@@ -4,12 +4,12 @@
  */
 import { SessionCountDashboardItemFragment$key } from '../__generated__/SessionCountDashboardItemFragment.graphql';
 import { theme } from '../theme-shim';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,
-  BAIRowWrapWithDividers,
-  BAIStatistic,
+  BAIShareBar,
   BAIFetchKeyButton,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -75,9 +75,35 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
 
   const { myInteractive, myBatch, myInference, myUpload } = data || {};
 
-  const renderBAIPanelItem = (title: string, value: number) => (
-    <BAIStatistic title={title} current={value} progressMode="hidden" />
-  );
+  // Astryx's named hue ramp, one per session type — categorical, so no
+  // semantic (success/warning/error) token belongs here.
+  const segments = [
+    {
+      key: 'interactive',
+      label: t('session.Interactive'),
+      value: myInteractive?.count || 0,
+      color: 'var(--color-icon-blue)',
+    },
+    {
+      key: 'batch',
+      label: t('session.Batch'),
+      value: myBatch?.count || 0,
+      color: 'var(--color-icon-purple)',
+    },
+    {
+      key: 'inference',
+      label: t('session.Inference'),
+      value: myInference?.count || 0,
+      color: 'var(--color-icon-teal)',
+    },
+    {
+      key: 'system',
+      label: t('session.System'),
+      value: myUpload?.count || 0,
+      color: 'var(--color-icon-gray)',
+    },
+  ];
+  const total = _.sumBy(segments, 'value');
 
   return (
     <BAIFlex
@@ -114,20 +140,11 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
           />
         }
       />
-      <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
-        <BAIRowWrapWithDividers
-          style={{
-            paddingBlock: token.padding,
-          }}
-        >
-          {renderBAIPanelItem(
-            t('session.Interactive'),
-            myInteractive?.count || 0,
-          )}
-          {renderBAIPanelItem(t('session.Batch'), myBatch?.count || 0)}
-          {renderBAIPanelItem(t('session.Inference'), myInference?.count || 0)}
-          {renderBAIPanelItem(t('session.System'), myUpload?.count || 0)}
-        </BAIRowWrapWithDividers>
+      <BAIFlex direction="column" align="stretch" gap={'sm'}>
+        <Text type="display-3" hasTabularNumbers>
+          {total}
+        </Text>
+        <BAIShareBar segments={segments} />
       </BAIFlex>
     </BAIFlex>
   );

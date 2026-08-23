@@ -1,0 +1,60 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIShareBar> (P17). Astryx has no stacked-proportion
+ bar, so the track is composed here from tokens (P19).
+
+ Unlayered, matching the other co-located BUI stylesheets.
+*/
+
+.bai-share-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.bai-share-bar__track {
+  display: flex;
+  height: var(--spacing-2);
+  border-radius: var(--radius-full);
+  background-color: var(--color-background-muted);
+  overflow: hidden;
+}
+
+.bai-share-bar__segment {
+  display: block;
+  height: 100%;
+  transition: width var(--duration-medium) ease;
+}
+
+.bai-share-bar__legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-1) var(--spacing-6);
+}
+
+.bai-share-bar__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.bai-share-bar__dot {
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  border-radius: var(--radius-full);
+  flex: none;
+}
+
+.bai-share-bar__count {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bai-share-bar__segment {
+    transition: none;
+  }
+}
