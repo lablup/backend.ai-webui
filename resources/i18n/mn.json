@@ -726,6 +726,7 @@
     "Used": "Ашиг ашиглагдсан",
     "editSider": {
       "Empty": "Одоогоор тусгайлсан самбар алга байна",
+      "GridDisabled": "Туршилтын тохиргоонд торон харагдац идэвхгүй байна",
       "RequiresSuperadmin": "Зөвхөн супер админ",
       "ResetLayout": "Байрлалыг дахин тохируулах",
       "ResetLayoutDescription": "Самбарын байрлалыг анхдагч байдалд нь буцаана. Тусгайлсан самбарууд хадгалагдана.",
@@ -3058,7 +3059,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Сүлжээ",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3081,7 +3082,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Хүснэгт",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

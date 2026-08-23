@@ -726,6 +726,7 @@
     "Used": "ใช้แล้ว",
     "editSider": {
       "Empty": "ยังไม่มีแผงที่กำหนดเอง",
+      "GridDisabled": "มุมมองแบบกริดถูกปิดอยู่ในการตั้งค่าทดลอง",
       "RequiresSuperadmin": "เฉพาะผู้ดูแลระบบสูงสุดเท่านั้น",
       "ResetLayout": "รีเซ็ตการจัดวาง",
       "ResetLayoutDescription": "คืนค่าการจัดวางแผงเป็นค่าเริ่มต้น แผงที่กำหนดเองจะยังคงอยู่",
@@ -3057,7 +3058,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "กริด",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3080,7 +3081,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "ตาราง",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

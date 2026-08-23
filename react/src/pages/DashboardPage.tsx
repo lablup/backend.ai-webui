@@ -126,6 +126,7 @@ const DashboardPage: React.FC = () => {
   const {
     panels,
     availableResources,
+    gridEnabled,
     customDefaultLayout,
     customContentById,
     addPanel,
@@ -480,6 +481,7 @@ const DashboardPage: React.FC = () => {
         <DashboardEditSider
           panels={panels}
           availableResources={availableResources}
+          gridEnabled={gridEnabled}
           onRequestAdd={() => setPanelModalState({ open: true })}
           onRequestEdit={(panel) => setPanelModalState({ open: true, panel })}
           onRemove={removePanel}
@@ -493,12 +495,13 @@ const DashboardPage: React.FC = () => {
         // Unmount after the close animation so every open starts from a fresh
         // instance. A `key` alone is not enough: two consecutive Adds share the
         // same key, so the modal is never remounted and its preview-driven
-        // state (sort order) leaks from one new panel into the next.
+        // state (sort order, grid view) leaks from one new panel into the next.
         <BAIUnmountAfterClose>
           <DashboardPanelModal
             open={panelModalState.open}
             initialPanel={panelModalState.panel}
             availableResources={availableResources}
+            gridEnabled={gridEnabled}
             onRequestClose={() => setPanelModalState({ open: false })}
             onSubmit={(input) => {
               if (panelModalState.panel) {

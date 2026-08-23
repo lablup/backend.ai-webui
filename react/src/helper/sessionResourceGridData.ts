@@ -18,6 +18,30 @@ export const sessionGridModeValues = ['resource', 'kernel'] as const;
 export type SessionGridMode = (typeof sessionGridModeValues)[number];
 export const sessionGridMemUnitValues = ['1', '2', '4', '8'] as const;
 export type SessionGridMemUnit = (typeof sessionGridMemUnitValues)[number];
+export const sessionGridLayoutValues = ['serpentine', 'wordwrap'] as const;
+export type SessionGridLayout = (typeof sessionGridLayoutValues)[number];
+
+/**
+ * The grid's five view settings as one value. `SessionResourceGrid` keeps them
+ * in URL query-state by default; a controlled host (the dashboard panel) owns
+ * them instead. Plain JSON so it can live in a persisted panel descriptor.
+ */
+export interface SessionGridViewParams {
+  gridMode: SessionGridMode;
+  gridResource: string;
+  gridMetric: string;
+  gridMemUnit: SessionGridMemUnit;
+  gridLayout: SessionGridLayout;
+}
+
+/** Must stay in sync with the `withDefault(...)` values in SessionResourceGrid. */
+export const DEFAULT_SESSION_GRID_VIEW: SessionGridViewParams = {
+  gridMode: 'resource',
+  gridResource: 'cpu',
+  gridMetric: 'cpu_util',
+  gridMemUnit: '1',
+  gridLayout: 'serpentine',
+};
 
 /** Statuses whose kernels report meaningful live_stat. */
 export const LIVE_SESSION_STATUSES = [

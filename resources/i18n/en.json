@@ -713,6 +713,7 @@
     "Used": "Used",
     "editSider": {
       "Empty": "No custom panels yet",
+      "GridDisabled": "Grid view is off in experimental settings",
       "RequiresSuperadmin": "Superadmin only",
       "ResetLayout": "Reset layout",
       "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",

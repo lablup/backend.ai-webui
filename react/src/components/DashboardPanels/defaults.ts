@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { generateUUID } from '../../helper/uuid';
 import type { BAIBoardItem } from '../BAIBoard';
 import type { PanelInput, PanelType, PersistedPanel } from './types';
@@ -28,6 +29,14 @@ export const DEFAULT_PANEL_LAYOUTS: Record<
     columnSpan: 1,
     definition: { minRowSpan: 2, minColumnSpan: 1 },
   },
+  // The grid's value is breadth (many sessions side by side) and its content
+  // grows unbounded, so it seeds full width like the built-in `activeAgents`.
+  // The lattice reflows to the measured width, so it may still be shrunk.
+  sessionResourceGrid: {
+    rowSpan: 4,
+    columnSpan: 4,
+    definition: { minRowSpan: 2, minColumnSpan: 2 },
+  },
 };
 
 export const createPanel = (input: PanelInput): PersistedPanel => ({
@@ -41,5 +50,10 @@ export const createPanel = (input: PanelInput): PersistedPanel => ({
     title: input.title,
     filter: input.filter ?? null,
     order: input.order ?? null,
+    // Only grid panels carry view settings; other kinds keep the field null.
+    gridView:
+      input.panelType === 'sessionResourceGrid'
+        ? (input.gridView ?? DEFAULT_SESSION_GRID_VIEW)
+        : null,
   },
 });

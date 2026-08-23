@@ -726,6 +726,7 @@
     "Used": "使用済み",
     "editSider": {
       "Empty": "カスタムパネルはまだありません",
+      "GridDisabled": "実験的設定でグリッド表示がオフになっています",
       "RequiresSuperadmin": "スーパー管理者専用",
       "ResetLayout": "レイアウトを初期化",
       "ResetLayoutDescription": "パネルの配置をデフォルトに戻します。カスタムパネルは維持されます。",
@@ -3058,7 +3059,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "グリッド",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3081,7 +3082,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "テーブル",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

@@ -3,6 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
+import {
+  DEFAULT_SESSION_GRID_VIEW,
+  type SessionGridViewParams,
+} from '../../helper/sessionResourceGridData';
 import { theme } from '../../theme-shim';
 import {
   AstryxFormSegmented,
@@ -13,6 +17,8 @@ import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
 import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
+import { SessionResourceGridContent } from './SessionResourceGridPanel';
+import { availablePanelTypes, panelTypeLabelKeys } from './panelRegistry';
 import { resourceRegistry } from './resourceRegistry';
 import type {
   PanelInput,
@@ -39,6 +45,8 @@ export interface DashboardPanelModalProps {
   initialPanel?: PersistedPanel;
   /** Resources the current role may query (drives the resource selector). */
   availableResources: ReadonlyArray<ResourceKey>;
+  /** `experimental_session_resource_grid` — gates the grid kind. */
+  gridEnabled?: boolean;
   onSubmit: (input: PanelInput) => void;
   /** Forwarded so `BAIUnmountAfterClose` can unmount this after the exit. */
   afterClose?: () => void;
@@ -62,6 +70,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   onRequestClose,
   initialPanel,
   availableResources,
+  gridEnabled = false,
   onSubmit,
   afterClose,
 }) => {
@@ -83,6 +92,11 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   const [order, setOrder] = useState<string | null>(
     initialPanel?.descriptor.order ?? null,
   );
+  // Same idea for the grid's view settings: the preview's own toolbar edits
+  // them, and OK persists them into the descriptor.
+  const [gridView, setGridView] = useState<SessionGridViewParams>(
+    initialPanel?.descriptor.gridView ?? DEFAULT_SESSION_GRID_VIEW,
+  );
 
   const resourceType = (Form.useWatch('resourceType', form) ??
     initialResource) as ResourceKey;
@@ -91,15 +105,23 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
     'resourceTable') as PanelType;
   const filter = Form.useWatch('filter', form) ?? undefined;
   const config = resourceRegistry[resourceType];
+  // A saved grid panel keeps offering the grid kind even with the flag off, so
+  // editing it cannot silently rewrite the user's stored view.
+  const panelTypeOptions = availablePanelTypes(resourceType, {
+    gridEnabled,
+    forcePanelType: initialPanel?.panelType,
+  });
 
   const handleOk = () => {
     const values = form.getFieldsValue();
+    const nextPanelType = values.panelType ?? panelType;
     onSubmit({
-      panelType: values.panelType ?? panelType,
+      panelType: nextPanelType,
       resourceType: values.resourceType ?? initialResource,
       title: values.title?.trim() || undefined,
       filter: values.filter ?? null,
       order,
+      gridView: nextPanelType === 'sessionResourceGrid' ? gridView : null,
     });
     onRequestClose();
   };
@@ -129,11 +151,22 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           filter: initialPanel?.descriptor.filter ?? undefined,
         }}
         onValuesChange={(changed: Partial<PanelFormValues>) => {
-          // A resource switch invalidates the condition and sort of the old one.
+          // A resource switch invalidates the condition and sort of the old one,
+          // and can invalidate the kind too (grid is session-only).
           if (changed.resourceType) {
             form.setFieldsValue({ filter: undefined });
             setOrder(null);
+            setGridView(DEFAULT_SESSION_GRID_VIEW);
+            const nextTypes = availablePanelTypes(changed.resourceType, {
+              gridEnabled,
+              forcePanelType: initialPanel?.panelType,
+            });
+            if (!nextTypes.includes(form.getFieldValue('panelType'))) {
+              form.setFieldsValue({ panelType: 'resourceTable' });
+            }
           }
+          // Switching only the kind keeps the condition and sort: the session
+          // table and grid read the same minilang filter and order strings.
         }}
       >
         <BAIFlex direction="row" align="start" gap="md" wrap="wrap">
@@ -144,16 +177,10 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           >
             <AstryxFormSegmented
               label={t('dashboard.panelModal.PanelType')}
-              options={[
-                {
-                  value: 'resourceTable',
-                  label: t('dashboard.panelModal.Table'),
-                },
-                {
-                  value: 'resourceCount',
-                  label: t('dashboard.panelModal.Count'),
-                },
-              ]}
+              options={panelTypeOptions.map((type) => ({
+                value: type,
+                label: t(panelTypeLabelKeys[type]),
+              }))}
             />
           </Form.Item>
           <Form.Item
@@ -227,6 +254,22 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
                       }}
                     />
                   </BAIFlex>
+                ) : panelType === 'sessionResourceGrid' ? (
+                  // The grid's own toolbar IS this panel kind's settings UI —
+                  // the same symmetry as sorting the table preview to set the
+                  // panel's order. `gridView` stays out of the key so toggling a
+                  // setting doesn't remount and refetch.
+                  <SessionResourceGridContent
+                    key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                    descriptor={{
+                      resourceType,
+                      filter: filter ?? null,
+                      order,
+                      gridView,
+                    }}
+                    onChangeViewParams={setGridView}
+                    disableSessionDetail
+                  />
                 ) : config.kind === 'deploymentNodes' ? (
                   <DeploymentNodesPanelContent
                     key={`${resourceType}:${JSON.stringify(filter ?? null)}`}

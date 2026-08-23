@@ -726,6 +726,7 @@
     "Used": "用过的",
     "editSider": {
       "Empty": "暂无自定义面板",
+      "GridDisabled": "网格视图在实验性设置中已关闭",
       "RequiresSuperadmin": "仅限超级管理员",
       "ResetLayout": "重置布局",
       "ResetLayoutDescription": "将面板布局恢复为默认设置。自定义面板将被保留。",
@@ -3058,7 +3059,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "网格",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3081,7 +3082,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "表格",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

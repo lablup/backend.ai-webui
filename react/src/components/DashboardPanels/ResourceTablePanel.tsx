@@ -4,21 +4,13 @@
  */
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { theme } from '../../theme-shim';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
-import PanelEditControls from './PanelEditControls';
+import PanelFrame from './PanelFrame';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
-import {
-  BAIBoardItemTitle,
-  BAIFetchKeyButton,
-  BAIFlex,
-  BAISkeleton,
-  BAITable,
-  useFetchKey,
-} from 'backend.ai-ui';
-import React, { Suspense, useDeferredValue, useTransition } from 'react';
+import { BAISkeleton, BAITable } from 'backend.ai-ui';
+import React, { Suspense, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -48,51 +40,11 @@ const ResourceTablePanel: React.FC<ResourceTablePanelProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const title = resolvePanelTitle(descriptor, t);
-  const [localFetchKey, updateLocalFetchKey] = useFetchKey();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      style={{ paddingInline: token.paddingXL, height: '100%' }}
-    >
-      <BAIBoardItemTitle
-        title={title}
-        extra={
-          <BAIFlex align="center" gap="xxs">
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => {
-                  updateLocalFetchKey();
-                });
-              }}
-              type="text"
-              style={{ backgroundColor: 'transparent' }}
-            />
-            <PanelEditControls
-              title={title}
-              onEdit={onEdit}
-              onRemove={onRemove}
-            />
-          </BAIFlex>
-        }
-      />
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          marginBottom: token.margin,
-        }}
-      >
+    <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
+      {(localFetchKey) => (
         <Suspense fallback={<BAISkeleton />}>
           {/* Keyed by the query-shaping config so a descriptor edit (filter/order)
               resets pagination AND retries out of a stuck error state. */}
@@ -118,8 +70,8 @@ const ResourceTablePanel: React.FC<ResourceTablePanelProps> = ({
             />
           )}
         </Suspense>
-      </BAIFlex>
-    </BAIFlex>
+      )}
+    </PanelFrame>
   );
 };
 

@@ -726,6 +726,7 @@
     "Used": "Gebraucht",
     "editSider": {
       "Empty": "Noch keine benutzerdefinierten Panels",
+      "GridDisabled": "Rasteransicht ist in den experimentellen Einstellungen deaktiviert",
       "RequiresSuperadmin": "Nur für Superadmins",
       "ResetLayout": "Layout zurücksetzen",
       "ResetLayoutDescription": "Stellt die Standardanordnung der Panels wieder her. Benutzerdefinierte Panels bleiben erhalten.",
@@ -3058,7 +3059,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Raster",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3081,7 +3082,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tabelle",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

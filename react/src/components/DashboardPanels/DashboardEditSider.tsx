@@ -15,6 +15,8 @@ import { useTranslation } from 'react-i18next';
 export interface DashboardEditSiderProps {
   panels: ReadonlyArray<PersistedPanel>;
   availableResources: ReadonlyArray<ResourceKey>;
+  /** `experimental_session_resource_grid` — off ⇒ grid panels show as tables. */
+  gridEnabled?: boolean;
   onRequestAdd: () => void;
   onRequestEdit: (panel: PersistedPanel) => void;
   onRemove: (id: string) => void;
@@ -31,6 +33,7 @@ export interface DashboardEditSiderProps {
 const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
   panels,
   availableResources,
+  gridEnabled = false,
   onRequestAdd,
   onRequestEdit,
   onRemove,
@@ -76,6 +79,8 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                 panel.descriptor.resourceType,
             );
             const isAvailable = availableSet.has(panel.descriptor.resourceType);
+            const isGridDegraded =
+              panel.panelType === 'sessionResourceGrid' && !gridEnabled;
             return (
               <BAIFlex
                 key={panel.id}
@@ -98,9 +103,11 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                     type="secondary"
                     style={{ fontSize: token.fontSizeSM }}
                   >
-                    {isAvailable
-                      ? resourceLabel
-                      : `${resourceLabel} · ${t('dashboard.editSider.RequiresSuperadmin')}`}
+                    {!isAvailable
+                      ? `${resourceLabel} · ${t('dashboard.editSider.RequiresSuperadmin')}`
+                      : isGridDegraded
+                        ? `${resourceLabel} · ${t('dashboard.editSider.GridDisabled')}`
+                        : resourceLabel}
                   </BAIText>
                 </BAIFlex>
                 <BAIFlex direction="row" align="center" gap="xxs">

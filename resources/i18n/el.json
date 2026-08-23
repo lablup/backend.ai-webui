@@ -726,6 +726,7 @@
     "Used": "Μεταχειρισμένος",
     "editSider": {
       "Empty": "Δεν υπάρχουν ακόμη προσαρμοσμένοι πίνακες",
+      "GridDisabled": "Η προβολή πλέγματος είναι απενεργοποιημένη στις πειραματικές ρυθμίσεις",
       "RequiresSuperadmin": "Μόνο για υπερδιαχειριστές",
       "ResetLayout": "Επαναφορά διάταξης",
       "ResetLayoutDescription": "Επαναφέρει την προεπιλεγμένη διάταξη των πινάκων. Οι προσαρμοσμένοι πίνακες διατηρούνται.",
@@ -3056,7 +3057,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Πλέγμα",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3079,7 +3080,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Πίνακας",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

@@ -726,6 +726,7 @@
     "Used": "사용 중",
     "editSider": {
       "Empty": "아직 커스텀 패널이 없습니다",
+      "GridDisabled": "실험실 설정에서 그리드 보기가 꺼져 있습니다",
       "RequiresSuperadmin": "슈퍼 관리자 전용",
       "ResetLayout": "기본 배치로 초기화",
       "ResetLayoutDescription": "패널 배치를 기본값으로 되돌립니다. 커스텀 패널은 유지됩니다.",

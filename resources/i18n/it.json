@@ -726,6 +726,7 @@
     "Used": "Usato",
     "editSider": {
       "Empty": "Non ci sono ancora pannelli personalizzati",
+      "GridDisabled": "La visualizzazione a griglia è disattivata nelle impostazioni sperimentali",
       "RequiresSuperadmin": "Solo superamministratori",
       "ResetLayout": "Reimposta layout",
       "ResetLayoutDescription": "Ripristina la disposizione predefinita dei pannelli. I pannelli personalizzati vengono mantenuti.",
@@ -3056,7 +3057,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Griglia",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3079,7 +3080,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tabella",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

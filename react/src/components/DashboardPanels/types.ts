@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { SessionGridViewParams } from '../../helper/sessionResourceGridData';
 import type {
   BAIColumnsType,
   BAIGraphQLFilterProperty,
@@ -22,8 +23,12 @@ import type { GraphQLTaggedNode, OperationType } from 'relay-runtime';
 /** Data sources a panel can list. Regular-user scope: no admin-only resources. */
 export type ResourceKey = 'session' | 'deployment' | 'vfolder';
 
-/** Panel kinds the registry can render: table rows or a single count stat. */
-export type PanelType = 'resourceTable' | 'resourceCount';
+/**
+ * Panel kinds the registry can render: table rows, a single count stat, or the
+ * session resource grid (session resource only, experimental — FR-3570).
+ */
+export type PanelType =
+  'resourceTable' | 'resourceCount' | 'sessionResourceGrid';
 
 /**
  * Serializable, persisted per-panel configuration. MUST stay plain JSON (no JSX,
@@ -43,12 +48,17 @@ export interface PanelDescriptor {
   filter?: GraphQLFilter | string | null;
   /** Sort order string, e.g. `'-createdAt'`; falls back to the resource default. */
   order?: string | null;
+  /**
+   * View settings for a `sessionResourceGrid` panel (null on other kinds).
+   * Plain JSON, like every other descriptor field, so it survives localStorage.
+   */
+  gridView?: SessionGridViewParams | null;
 }
 
 /** The fields the panel modal collects when creating or editing a panel. */
 export type PanelInput = Pick<
   PanelDescriptor,
-  'resourceType' | 'filter' | 'title' | 'order'
+  'resourceType' | 'filter' | 'title' | 'order' | 'gridView'
 > & {
   panelType: PanelType;
 };

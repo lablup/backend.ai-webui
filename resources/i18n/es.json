@@ -726,6 +726,7 @@
     "Used": "Usado",
     "editSider": {
       "Empty": "Aún no hay paneles personalizados",
+      "GridDisabled": "La vista de cuadrícula está desactivada en la configuración experimental",
       "RequiresSuperadmin": "Solo superadministradores",
       "ResetLayout": "Restablecer diseño",
       "ResetLayoutDescription": "Restaura la disposición predeterminada de los paneles. Los paneles personalizados se conservan.",
@@ -3056,7 +3057,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Cuadrícula",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3079,7 +3080,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tabla",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

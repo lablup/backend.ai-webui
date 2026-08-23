@@ -726,6 +726,7 @@
     "Used": "Utilisé",
     "editSider": {
       "Empty": "Aucun panneau personnalisé pour le moment",
+      "GridDisabled": "L'affichage en grille est désactivé dans les paramètres expérimentaux",
       "RequiresSuperadmin": "Réservé aux superadministrateurs",
       "ResetLayout": "Réinitialiser la disposition",
       "ResetLayoutDescription": "Restaure la disposition par défaut des panneaux. Les panneaux personnalisés sont conservés.",
@@ -3059,7 +3060,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Grille",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3082,7 +3083,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tableau",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

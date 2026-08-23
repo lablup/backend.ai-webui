@@ -4,20 +4,17 @@
  */
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { theme } from '../../theme-shim';
-import PanelEditControls from './PanelEditControls';
+import PanelFrame from './PanelFrame';
 import type { ResourceTablePanelProps } from './ResourceTablePanel';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
 import {
-  BAIBoardItemTitle,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIRowWrapWithDividers,
   BAISkeleton,
   BAIStatistic,
-  useFetchKey,
 } from 'backend.ai-ui';
-import React, { Suspense, useDeferredValue, useTransition } from 'react';
+import React, { Suspense, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLazyLoadQuery } from 'react-relay';
 
@@ -37,51 +34,23 @@ const ResourceCountPanel: React.FC<ResourceTablePanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const title = resolvePanelTitle(descriptor, t);
-  const [localFetchKey, updateLocalFetchKey] = useFetchKey();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      style={{ paddingInline: token.paddingXL, height: '100%' }}
-    >
-      <BAIBoardItemTitle
-        title={title}
-        extra={
-          <BAIFlex align="center" gap="xxs">
-            <BAIFetchKeyButton
-              size="small"
-              loading={isPendingRefetch}
-              value=""
-              onChange={() => {
-                startRefetchTransition(() => {
-                  updateLocalFetchKey();
-                });
-              }}
-              type="text"
-              style={{ backgroundColor: 'transparent' }}
-            />
-            <PanelEditControls
-              title={title}
-              onEdit={onEdit}
-              onRemove={onRemove}
-            />
-          </BAIFlex>
-        }
-      />
-      <BAIFlex direction="row" wrap="wrap" gap="lg">
-        <BAIRowWrapWithDividers style={{ paddingBlock: token.padding }}>
-          <Suspense fallback={<BAISkeleton />}>
-            <ResourceCountContent
-              key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
-              descriptor={descriptor}
-              fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
-            />
-          </Suspense>
-        </BAIRowWrapWithDividers>
-      </BAIFlex>
-    </BAIFlex>
+    <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
+      {(localFetchKey) => (
+        <BAIFlex direction="row" wrap="wrap" gap="lg">
+          <BAIRowWrapWithDividers style={{ paddingBlock: token.padding }}>
+            <Suspense fallback={<BAISkeleton />}>
+              <ResourceCountContent
+                key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}
+                descriptor={descriptor}
+                fetchKey={`${fetchKey ?? ''}:${localFetchKey}`}
+              />
+            </Suspense>
+          </BAIRowWrapWithDividers>
+        </BAIFlex>
+      )}
+    </PanelFrame>
   );
 };
 
