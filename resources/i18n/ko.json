@@ -725,20 +725,22 @@
     "Free": "사용 가능",
     "Used": "사용 중",
     "editSider": {
-      "Empty": "아직 커스텀 패널이 없습니다",
-      "GridDisabled": "실험실 설정에서 그리드 보기가 꺼져 있습니다",
+      "Empty": "아직 사용자 정의 패널이 없습니다",
+      "GridDisabled": "그리드 보기 꺼짐 (실험적 기능)",
       "RequiresSuperadmin": "슈퍼 관리자 전용",
       "ResetLayout": "기본 배치로 초기화",
-      "ResetLayoutDescription": "패널 배치를 기본값으로 되돌립니다. 커스텀 패널은 유지됩니다.",
-      "Title": "커스텀 패널"
+      "ResetLayoutDescription": "패널 배치를 기본값으로 되돌립니다. 사용자 정의 패널은 유지됩니다.",
+      "Title": "사용자 정의 패널"
     },
     "panelModal": {
       "AddPanel": "패널 추가",
       "Condition": "조건",
       "Count": "카운트",
+      "DataSource": "데이터 소스",
+      "DataSourceRequired": "데이터 소스를 선택하세요",
       "EditPanel": "패널 수정",
       "PanelType": "패널 형식",
-      "Resource": "리소스",
+      "PanelTypeRequired": "패널 형식을 선택하세요",
       "Table": "테이블",
       "TitleDescription": "패널 머리글로 표시됩니다 — 조건을 설명하는 제목을 권장합니다.",
       "TitleOptional": "제목 (선택)"
@@ -3534,7 +3536,7 @@
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
     "ConfigFilename": "구성 파일 이름 선택",
     "CurrentSSHPublicKey": "현재 공개 키: ",
-    "CustomDashboardPanels": "커스텀 대시보드 패널",
+    "CustomDashboardPanels": "사용자 정의 대시보드 패널",
     "DarkMode": "다크 모드",
     "DarkTheme": "다크 모드",
     "Default": "기본",

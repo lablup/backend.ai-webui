@@ -726,7 +726,7 @@
     "Used": "ใช้แล้ว",
     "editSider": {
       "Empty": "ยังไม่มีแผงที่กำหนดเอง",
-      "GridDisabled": "มุมมองแบบกริดถูกปิดอยู่ในการตั้งค่าทดลอง",
+      "GridDisabled": "ปิดมุมมองกริด (คุณสมบัติทดลอง)",
       "RequiresSuperadmin": "เฉพาะผู้ดูแลระบบสูงสุดเท่านั้น",
       "ResetLayout": "รีเซ็ตการจัดวาง",
       "ResetLayoutDescription": "คืนค่าการจัดวางแผงเป็นค่าเริ่มต้น แผงที่กำหนดเองจะยังคงอยู่",
@@ -736,9 +736,11 @@
       "AddPanel": "เพิ่มแผง",
       "Condition": "เงื่อนไข",
       "Count": "จำนวน",
+      "DataSource": "แหล่งข้อมูล",
+      "DataSourceRequired": "เลือกแหล่งข้อมูล",
       "EditPanel": "แก้ไขแผง",
       "PanelType": "ประเภทแผง",
-      "Resource": "ทรัพยากร",
+      "PanelTypeRequired": "เลือกประเภทแผง",
       "Table": "ตาราง",
       "TitleDescription": "แสดงเป็นหัวเรื่องของแผง — ใช้เพื่ออธิบายเงื่อนไข",
       "TitleOptional": "ชื่อ (ไม่บังคับ)"

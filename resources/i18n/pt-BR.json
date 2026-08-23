@@ -726,7 +726,7 @@
     "Used": "Usado",
     "editSider": {
       "Empty": "Ainda não há painéis personalizados",
-      "GridDisabled": "A visualização em grade está desativada nas configurações experimentais",
+      "GridDisabled": "Visualização em grade desativada (Recursos experimentais)",
       "RequiresSuperadmin": "Apenas superadministradores",
       "ResetLayout": "Redefinir layout",
       "ResetLayoutDescription": "Restaura a disposição padrão dos painéis. Os painéis personalizados são mantidos.",
@@ -736,9 +736,11 @@
       "AddPanel": "Adicionar painel",
       "Condition": "Condição",
       "Count": "Contagem",
+      "DataSource": "Fonte de dados",
+      "DataSourceRequired": "Selecione uma fonte de dados",
       "EditPanel": "Editar painel",
       "PanelType": "Tipo de painel",
-      "Resource": "Recurso",
+      "PanelTypeRequired": "Selecione um tipo de painel",
       "Table": "Tabela",
       "TitleDescription": "Exibido como cabeçalho do painel — use-o para descrever a condição.",
       "TitleOptional": "Título (opcional)"

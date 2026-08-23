@@ -112,16 +112,18 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
     forcePanelType: initialPanel?.panelType,
   });
 
-  const handleOk = () => {
-    const values = form.getFieldsValue();
-    const nextPanelType = values.panelType ?? panelType;
+  // Panel kind and data source are required: they decide which query runs, so
+  // a panel without them cannot render at all. Validation gates the submit,
+  // and the modal stays open with the offending field marked.
+  const handleOk = async () => {
+    const values = await form.validateFields();
     onSubmit({
-      panelType: nextPanelType,
-      resourceType: values.resourceType ?? initialResource,
+      panelType: values.panelType,
+      resourceType: values.resourceType,
       title: values.title?.trim() || undefined,
       filter: values.filter ?? null,
       order,
-      gridView: nextPanelType === 'sessionResourceGrid' ? gridView : null,
+      gridView: values.panelType === 'sessionResourceGrid' ? gridView : null,
     });
     onRequestClose();
   };
@@ -173,6 +175,13 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           <Form.Item
             name="panelType"
             label={t('dashboard.panelModal.PanelType')}
+            required
+            rules={[
+              {
+                required: true,
+                message: t('dashboard.panelModal.PanelTypeRequired'),
+              },
+            ]}
             style={{ flexShrink: 0 }}
           >
             <AstryxFormSegmented
@@ -185,11 +194,18 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           </Form.Item>
           <Form.Item
             name="resourceType"
-            label={t('dashboard.panelModal.Resource')}
+            label={t('dashboard.panelModal.DataSource')}
+            required
+            rules={[
+              {
+                required: true,
+                message: t('dashboard.panelModal.DataSourceRequired'),
+              },
+            ]}
             style={{ flex: 1, minWidth: 180 }}
           >
             <AstryxFormSelector
-              label={t('dashboard.panelModal.Resource')}
+              label={t('dashboard.panelModal.DataSource')}
               options={resourceOptions.map((key) => ({
                 value: key,
                 label: t(resourceRegistry[key].labelKey),

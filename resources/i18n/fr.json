@@ -726,7 +726,7 @@
     "Used": "Utilisé",
     "editSider": {
       "Empty": "Aucun panneau personnalisé pour le moment",
-      "GridDisabled": "L'affichage en grille est désactivé dans les paramètres expérimentaux",
+      "GridDisabled": "Vue en grille désactivée (Fonctionnalités expérimentales)",
       "RequiresSuperadmin": "Réservé aux superadministrateurs",
       "ResetLayout": "Réinitialiser la disposition",
       "ResetLayoutDescription": "Restaure la disposition par défaut des panneaux. Les panneaux personnalisés sont conservés.",
@@ -736,9 +736,11 @@
       "AddPanel": "Ajouter un panneau",
       "Condition": "Condition",
       "Count": "Nombre",
+      "DataSource": "Source de données",
+      "DataSourceRequired": "Sélectionnez une source de données",
       "EditPanel": "Modifier le panneau",
       "PanelType": "Type de panneau",
-      "Resource": "Ressource",
+      "PanelTypeRequired": "Sélectionnez un type de panneau",
       "Table": "Tableau",
       "TitleDescription": "Affiché comme en-tête du panneau — utilisez-le pour décrire la condition.",
       "TitleOptional": "Titre (facultatif)"

@@ -726,7 +726,7 @@
     "Used": "使用済み",
     "editSider": {
       "Empty": "カスタムパネルはまだありません",
-      "GridDisabled": "実験的設定でグリッド表示がオフになっています",
+      "GridDisabled": "グリッド表示オフ (実験的機能)",
       "RequiresSuperadmin": "スーパー管理者専用",
       "ResetLayout": "レイアウトを初期化",
       "ResetLayoutDescription": "パネルの配置をデフォルトに戻します。カスタムパネルは維持されます。",
@@ -736,9 +736,11 @@
       "AddPanel": "パネルを追加",
       "Condition": "条件",
       "Count": "カウント",
+      "DataSource": "データソース",
+      "DataSourceRequired": "データソースを選択してください",
       "EditPanel": "パネルを編集",
       "PanelType": "パネル形式",
-      "Resource": "リソース",
+      "PanelTypeRequired": "パネル形式を選択してください",
       "Table": "テーブル",
       "TitleDescription": "パネルの見出しとして表示されます。条件を説明するタイトルをおすすめします。",
       "TitleOptional": "タイトル（オプション）"

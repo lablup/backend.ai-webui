@@ -713,7 +713,7 @@
     "Used": "Used",
     "editSider": {
       "Empty": "No custom panels yet",
-      "GridDisabled": "Grid view is off in experimental settings",
+      "GridDisabled": "Grid view off (Experimental features)",
       "RequiresSuperadmin": "Superadmin only",
       "ResetLayout": "Reset layout",
       "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",
@@ -723,9 +723,11 @@
       "AddPanel": "Add panel",
       "Condition": "Condition",
       "Count": "Count",
+      "DataSource": "Data source",
+      "DataSourceRequired": "Select a data source",
       "EditPanel": "Edit panel",
       "PanelType": "Panel type",
-      "Resource": "Resource",
+      "PanelTypeRequired": "Select a panel type",
       "Table": "Table",
       "TitleDescription": "Shown as the panel header — use it to describe the condition.",
       "TitleOptional": "Title (optional)"

@@ -726,7 +726,7 @@
     "Used": "Digunakan",
     "editSider": {
       "Empty": "Belum ada panel kustom",
-      "GridDisabled": "Tampilan kisi dinonaktifkan pada pengaturan eksperimental",
+      "GridDisabled": "Tampilan kisi nonaktif (Fitur eksperimental)",
       "RequiresSuperadmin": "Hanya superadmin",
       "ResetLayout": "Atur ulang tata letak",
       "ResetLayoutDescription": "Mengembalikan susunan panel ke pengaturan default. Panel kustom tetap dipertahankan.",
@@ -736,9 +736,11 @@
       "AddPanel": "Tambah panel",
       "Condition": "Kondisi",
       "Count": "Jumlah",
+      "DataSource": "Sumber data",
+      "DataSourceRequired": "Pilih sumber data",
       "EditPanel": "Sunting panel",
       "PanelType": "Jenis panel",
-      "Resource": "Sumber daya",
+      "PanelTypeRequired": "Pilih jenis panel",
       "Table": "Tabel",
       "TitleDescription": "Ditampilkan sebagai judul panel — gunakan untuk menjelaskan kondisinya.",
       "TitleOptional": "Judul (opsional)"

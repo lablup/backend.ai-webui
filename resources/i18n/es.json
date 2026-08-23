@@ -726,7 +726,7 @@
     "Used": "Usado",
     "editSider": {
       "Empty": "Aún no hay paneles personalizados",
-      "GridDisabled": "La vista de cuadrícula está desactivada en la configuración experimental",
+      "GridDisabled": "Vista de cuadrícula desactivada (Funciones experimentales)",
       "RequiresSuperadmin": "Solo superadministradores",
       "ResetLayout": "Restablecer diseño",
       "ResetLayoutDescription": "Restaura la disposición predeterminada de los paneles. Los paneles personalizados se conservan.",
@@ -736,9 +736,11 @@
       "AddPanel": "Añadir panel",
       "Condition": "Condición",
       "Count": "Recuento",
+      "DataSource": "Fuente de datos",
+      "DataSourceRequired": "Seleccione una fuente de datos",
       "EditPanel": "Editar panel",
       "PanelType": "Tipo de panel",
-      "Resource": "Recurso",
+      "PanelTypeRequired": "Seleccione un tipo de panel",
       "Table": "Tabla",
       "TitleDescription": "Se muestra como encabezado del panel; úselo para describir la condición.",
       "TitleOptional": "Título (opcional)"

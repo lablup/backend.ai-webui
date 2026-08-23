@@ -726,7 +726,7 @@
     "Used": "Gebraucht",
     "editSider": {
       "Empty": "Noch keine benutzerdefinierten Panels",
-      "GridDisabled": "Rasteransicht ist in den experimentellen Einstellungen deaktiviert",
+      "GridDisabled": "Rasteransicht aus (Experimentelle Funktionen)",
       "RequiresSuperadmin": "Nur für Superadmins",
       "ResetLayout": "Layout zurücksetzen",
       "ResetLayoutDescription": "Stellt die Standardanordnung der Panels wieder her. Benutzerdefinierte Panels bleiben erhalten.",
@@ -736,9 +736,11 @@
       "AddPanel": "Panel hinzufügen",
       "Condition": "Bedingung",
       "Count": "Anzahl",
+      "DataSource": "Datenquelle",
+      "DataSourceRequired": "Datenquelle auswählen",
       "EditPanel": "Panel bearbeiten",
       "PanelType": "Paneltyp",
-      "Resource": "Ressource",
+      "PanelTypeRequired": "Paneltyp auswählen",
       "Table": "Tabelle",
       "TitleDescription": "Wird als Panel-Überschrift angezeigt – beschreiben Sie damit die Bedingung.",
       "TitleOptional": "Titel (optional)"

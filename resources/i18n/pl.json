@@ -726,7 +726,7 @@
     "Used": "Używany",
     "editSider": {
       "Empty": "Brak paneli niestandardowych",
-      "GridDisabled": "Widok siatki jest wyłączony w ustawieniach eksperymentalnych",
+      "GridDisabled": "Widok siatki wyłączony (Funkcje eksperymentalne)",
       "RequiresSuperadmin": "Tylko superadministrator",
       "ResetLayout": "Resetuj układ",
       "ResetLayoutDescription": "Przywraca domyślny układ paneli. Panele niestandardowe zostaną zachowane.",
@@ -736,9 +736,11 @@
       "AddPanel": "Dodaj panel",
       "Condition": "Warunek",
       "Count": "Liczba",
+      "DataSource": "Źródło danych",
+      "DataSourceRequired": "Wybierz źródło danych",
       "EditPanel": "Edytuj panel",
       "PanelType": "Typ panelu",
-      "Resource": "Zasób",
+      "PanelTypeRequired": "Wybierz typ panelu",
       "Table": "Tabela",
       "TitleDescription": "Wyświetlany jako nagłówek panelu — użyj go do opisania warunku.",
       "TitleOptional": "Tytuł (opcjonalnie)"

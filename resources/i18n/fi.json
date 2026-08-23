@@ -726,7 +726,7 @@
     "Used": "Käytetty",
     "editSider": {
       "Empty": "Ei vielä mukautettuja paneeleja",
-      "GridDisabled": "Ruudukkonäkymä on pois päältä kokeellisissa asetuksissa",
+      "GridDisabled": "Ruudukkonäkymä pois (Kokeelliset ominaisuudet)",
       "RequiresSuperadmin": "Vain superadmin-käyttäjille",
       "ResetLayout": "Palauta asettelu",
       "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
@@ -736,9 +736,11 @@
       "AddPanel": "Lisää paneeli",
       "Condition": "Ehto",
       "Count": "Lukumäärä",
+      "DataSource": "Tietolähde",
+      "DataSourceRequired": "Valitse tietolähde",
       "EditPanel": "Muokkaa paneelia",
       "PanelType": "Paneelin tyyppi",
-      "Resource": "Resurssi",
+      "PanelTypeRequired": "Valitse paneelin tyyppi",
       "Table": "Taulukko",
       "TitleDescription": "Näytetään paneelin otsikkona – kuvaa sillä ehto.",
       "TitleOptional": "Otsikko (valinnainen)"
