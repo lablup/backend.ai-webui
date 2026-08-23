@@ -9,7 +9,6 @@ navTitle: Admin Features
 Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
-<!-- TODO: Re-capture admin_user_page.png to show the Admin Settings sidebar and the Users list. -->
 
 
 
@@ -1829,7 +1828,7 @@ bar at the top of the page filters the list when you are looking for a specific 
 **Announcement**
 
 - **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
-  to every user at the top of the page. See the [System announcement](#system-announcement) section below.
+  to every user at the top of every page. See the [System announcement](#system-announcement) section below.
 
 :::note
 We will continue to add other settings needed for management, such as
@@ -1840,7 +1839,7 @@ removing unused images or registering periodic maintenance schedules.
 
 ### System announcement
 
-Superadmins can publish a short message that every user sees as a banner at the top of the page — for
+Superadmins can publish a short message that every user sees as a banner at the top of every page — for
 example, a planned maintenance window. The announcement is written in Markdown and is managed entirely
 from the WebUI, whether or not one has been published before.
 
@@ -1848,7 +1847,8 @@ Open the editor in either of two ways:
 
 - From the Maintenance page, click **Edit Announcement** in the **System announcement** row. This works
   even when no announcement exists yet, so it is the way to publish the first one.
-- From the announcement banner itself on the start page, when one is already published.
+- From the announcement banner itself, when one is already published. Because the banner sits at the top
+  of every page, a superadmin can open the editor from anywhere in the WebUI.
 
 ![](../images/announcement_edit_modal.png)
 
