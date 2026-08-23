@@ -54,11 +54,21 @@ import { useQueryLoader } from 'react-relay';
 const DIALOG_HEIGHT: CSSProperties = { height: '85vh' };
 
 // The header rides along the scrolling pane; Astryx has no sticky prop for it.
+// The pane's own inset lives on these two blocks rather than on `LayoutContent`,
+// so the stuck bar covers the full width and nothing scrolls through the gap a
+// `padding`ed scrollport would leave above it.
 const HEADER_STICKY: CSSProperties = {
   position: 'sticky',
   top: 0,
+  paddingInline: 'var(--spacing-4)',
+  paddingBlockStart: 'var(--spacing-4)',
   backgroundColor: 'var(--color-background-surface)',
   zIndex: 1,
+};
+
+const PANE_INSET: CSSProperties = {
+  paddingInline: 'var(--spacing-4)',
+  paddingBlockEnd: 'var(--spacing-4)',
 };
 
 // 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
@@ -240,7 +250,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
           )
         }
         content={
-          <LayoutContent isScrollable padding={4}>
+          <LayoutContent isScrollable padding={0}>
             <VStack gap={4}>
               <VStack style={HEADER_STICKY}>
                 <DialogHeader
@@ -268,13 +278,15 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
                   endContent={<WEBUIHelpButton />}
                 />
               </VStack>
-              {showNavOnly ? (
-                categoryNav
-              ) : (
-                <BAIErrorBoundary>
-                  <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
-                </BAIErrorBoundary>
-              )}
+              <VStack style={PANE_INSET}>
+                {showNavOnly ? (
+                  categoryNav
+                ) : (
+                  <BAIErrorBoundary>
+                    <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
+                  </BAIErrorBoundary>
+                )}
+              </VStack>
             </VStack>
           </LayoutContent>
         }
