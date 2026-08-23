@@ -5,7 +5,6 @@
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import { Button } from '@astryxdesign/core/Button';
@@ -33,6 +32,8 @@ type UserConfigScript = {
   permission: string;
   data: string;
 };
+
+export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
 interface BootstrapScriptEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;

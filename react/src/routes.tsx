@@ -20,6 +20,7 @@ import RouteAccessGuard from './components/RouteAccessGuard';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
+import UserSettingsRouteRedirect from './components/UserSettingsRouteRedirect';
 import WebUINavigate from './components/WebUINavigate';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
@@ -66,7 +67,6 @@ const AdminDashboardPage = React.lazy(
 );
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
-const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
 );
@@ -82,6 +82,9 @@ const FolderInvitationResponseModalOpener = React.lazy(
 );
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
+);
+const UserSettingsModalOpener = React.lazy(
+  () => import('./components/UserSettingsModalOpener'),
 );
 
 const DeploymentListPage = React.lazy(
@@ -1395,11 +1398,13 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   // --- Global, no-prefix, unchanged ---
   {
+    // The settings surface is a modal now (`UserSettingsModalOpener`); this
+    // route survives only to convert legacy `?tab=` deep links into it.
     path: '/usersettings',
     handle: { labelKey: 'webui.menu.Settings&Logs' },
     element: (
       <Suspense fallback={<BAISkeleton rows={4} />}>
-        <UserSettingsPage />
+        <UserSettingsRouteRedirect />
       </Suspense>
     ),
   },
@@ -1718,6 +1723,14 @@ export const routes: RouteObject[] = [
               </ErrorBoundaryWithNullFallback>
               <ErrorBoundaryWithNullFallback>
                 <FileUploadManager />
+              </ErrorBoundaryWithNullFallback>
+            </Suspense>
+            {/* Its own boundary: the opener suspends on the client, and
+                sharing the block above would unmount `FileUploadManager`
+                and drop in-flight uploads. */}
+            <Suspense fallback={null}>
+              <ErrorBoundaryWithNullFallback>
+                <UserSettingsModalOpener />
               </ErrorBoundaryWithNullFallback>
             </Suspense>
           </STokenGuard>

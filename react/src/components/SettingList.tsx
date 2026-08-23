@@ -70,6 +70,12 @@ interface SettingPageProps {
   primaryButton?: ReactNode;
   extraButton?: ReactNode;
   onReset?: () => void;
+  /**
+   * Drop the group nav column and render every group stacked. For hosts that
+   * already own a category rail — the user-settings modal — where a second
+   * `LayoutPanel` would be a nav inside a nav and a `Layout` inside a `Layout`.
+   */
+  hideGroupNav?: boolean;
 }
 
 const GroupSettingItems: React.FC<
@@ -129,6 +135,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   primaryButton,
   extraButton,
   onReset,
+  hideGroupNav = false,
 }) => {
   'use memo';
 
@@ -239,23 +246,26 @@ const SettingList: React.FC<SettingPageProps> = ({
     </BAIFlex>
   );
 
+  const allGroupsPane =
+    totalItemCount > 0 ? (
+      <BAIFlex direction="column" align="stretch" gap={'xl'}>
+        {_.map(filteredSettingGroups, (group) => (
+          <GroupSettingItems
+            data-testid={group?.['data-testid']}
+            key={group.title}
+            group={group}
+            hideEmpty
+            arrivalTitle={arrivalTitle}
+          />
+        ))}
+      </BAIFlex>
+    ) : (
+      <EmptyState title={t('settings.NoChangesToDisplay')} isCompact />
+    );
+
   const settingsPane =
     activeTabKey === ALL_NAV_KEY ? (
-      totalItemCount > 0 ? (
-        <BAIFlex direction="column" align="stretch" gap={'xl'}>
-          {_.map(filteredSettingGroups, (group) => (
-            <GroupSettingItems
-              data-testid={group?.['data-testid']}
-              key={group.title}
-              group={group}
-              hideEmpty
-              arrivalTitle={arrivalTitle}
-            />
-          ))}
-        </BAIFlex>
-      ) : (
-        <EmptyState title={t('settings.NoChangesToDisplay')} isCompact />
-      )
+      allGroupsPane
     ) : activeGroup && activeGroup.settingItems.length > 0 ? (
       <BAIFlex direction="column" align="stretch" gap={'xl'}>
         <GroupSettingItems
@@ -272,7 +282,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   return (
     <>
       <BAIFlex direction="column" gap={'md'} align="stretch">
-        <BAIFlex justify="start" gap={'xs'}>
+        <BAIFlex justify="start" gap={'xs'} wrap="wrap">
           {!!showSearchBar && (
             <TextInput
               label={t('settings.SearchPlaceholder')}
@@ -310,7 +320,9 @@ const SettingList: React.FC<SettingPageProps> = ({
           )}
           {primaryButton}
         </BAIFlex>
-        {isNarrow && narrowView === 'nav' ? (
+        {hideGroupNav ? (
+          allGroupsPane
+        ) : isNarrow && narrowView === 'nav' ? (
           navList
         ) : (
           <Layout

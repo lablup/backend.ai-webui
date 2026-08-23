@@ -1,0 +1,69 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import type { Location } from 'react-router-dom';
+
+/**
+ * User settings live in a modal that opens over whatever page the user is on,
+ * driven by this query param. `/usersettings` survives only as a redirect shim
+ * for the legacy `?tab=` deep links (`UserSettingsRouteRedirect`).
+ */
+export const USER_SETTINGS_PARAM = 'settings';
+export const USER_SETTINGS_ROUTE = '/usersettings';
+
+export const USER_SETTINGS_CATEGORIES = [
+  'general',
+  'logs',
+  'login-sessions',
+  'login-history',
+] as const;
+
+export type UserSettingsCategory = (typeof USER_SETTINGS_CATEGORIES)[number];
+
+/** Absent means closed; present-but-unknown falls back to the first category. */
+export const coerceUserSettingsCategory = (
+  raw: string | null | undefined,
+): UserSettingsCategory | null =>
+  raw == null || raw === ''
+    ? null
+    : (USER_SETTINGS_CATEGORIES as ReadonlyArray<string>).includes(raw)
+      ? (raw as UserSettingsCategory)
+      : 'general';
+
+/**
+ * Merge the category into a page's search string. The page's own `tab` is left
+ * alone — it belongs to the page underneath, and the help button reads the
+ * category rather than `tab` while the modal is open.
+ */
+export const buildUserSettingsSearch = (
+  search: string,
+  category: UserSettingsCategory,
+): string => {
+  const params = new URLSearchParams(search);
+  params.set(USER_SETTINGS_PARAM, category);
+  return `?${params.toString()}`;
+};
+
+/**
+ * Last location that was not the settings route, so the redirect shim can put
+ * the modal back over the page the user was actually looking at. A cache, not
+ * state: `null` simply means "cold load".
+ */
+let lastNonSettingsLocation: { pathname: string; search: string } | null = null;
+
+export const rememberNonSettingsLocation = (
+  location: Pick<Location, 'pathname' | 'search'>,
+) => {
+  if (location.pathname === USER_SETTINGS_ROUTE) return;
+  lastNonSettingsLocation = {
+    pathname: location.pathname,
+    search: location.search,
+  };
+};
+
+export const peekNonSettingsLocation = () => lastNonSettingsLocation;
+
+export const forgetNonSettingsLocation = () => {
+  lastNonSettingsLocation = null;
+};
