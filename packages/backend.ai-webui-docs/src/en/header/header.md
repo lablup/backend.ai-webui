@@ -102,6 +102,12 @@ button in the top bar. The user's display name may also be hidden, showing only
 the avatar icon for the user menu. The project label text is hidden on very
 small screens.
 
+Tapping the menu icon opens a navigation drawer that slides in from the side and
+contains the same menu as the sidebar, topped by a brand-colored header with the
+Backend.AI logo. Close the drawer with the close button in its header or by
+tapping the area outside it; selecting a menu item also closes it as soon as the
+page changes.
+
 <a id="user-menu"></a>
 
 ## User menu
