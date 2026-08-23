@@ -17,12 +17,12 @@ import { Badge } from '@astryxdesign/core/Badge';
 import {
   AgentNodeInList,
   BAIAgentTable,
+  BAIAgentTableProps,
   BAIColumnType,
   BAIDoubleTag,
   BAIFlex,
   BAIFlexProps,
   BAIPropertyFilter,
-  BAITableProps,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForStatus,
@@ -41,11 +41,10 @@ type Agent = NonNullable<
 >['node'];
 
 interface AgentListProps {
-  // `BAITableProps` keeps the antd-SHAPED contract (`dataSource`, not Astryx's
-  // `data`) on purpose — that is the ticket-25 migration seam. Since ticket
-  // 30-D it is an alias of the Astryx engine's own props type, and no antd
-  // declaration is reached (MAPPING §6).
-  tableProps?: Omit<BAITableProps<AgentNodeInList>, 'dataSource'>;
+  // Spread straight into `BAIAgentTable`, so the type is that component's —
+  // `BAITableProps` alone cannot express `customizeColumns`, which callers
+  // need to narrow the column set (see `ActiveAgents`).
+  tableProps?: Omit<BAIAgentTableProps, 'agentsFragment'>;
   headerProps?: BAIFlexProps;
   fetchKey?: string;
   onChangeFetchKey?: (key: string) => void;

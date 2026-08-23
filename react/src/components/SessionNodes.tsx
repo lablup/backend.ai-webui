@@ -68,6 +68,10 @@ interface SessionNodesProps extends Omit<
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;
   enablePriorityColumn?: boolean;
+  /** Narrow or reorder the column set — see `BAIAgentTable` for the shape. */
+  customizeColumns?: (
+    baseColumns: Array<BAIColumnType<SessionNodeInList>>,
+  ) => Array<BAIColumnType<SessionNodeInList>>;
   onChangeOrder?: (
     order: (typeof availableSessionSorterValues)[number] | null,
   ) => void;
@@ -79,6 +83,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   disableSorter,
   enablePriorityColumn,
   onChangeOrder,
+  customizeColumns,
   ...tableProps
 }) => {
   'use memo';
@@ -420,7 +425,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         rowKey={'id'}
         size="small"
         dataSource={filteredSessions}
-        columns={columns}
+        columns={customizeColumns ? customizeColumns(columns) : columns}
         onChangeOrder={(order) => {
           onChangeOrder?.(
             (order as (typeof availableSessionSorterValues)[number]) || null,

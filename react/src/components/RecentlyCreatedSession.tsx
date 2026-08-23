@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
-import { ProjectContextOrNull } from '../types/projectContext';
 import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import {
@@ -15,10 +15,26 @@ import {
   BAIFetchKeyButton,
   BAIBoardItemTitle,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
+
+// Same reason as `ActiveAgents`: the sessions table carries eighteen columns,
+// and an even split across the card leaves each one too narrow to render. A
+// dashboard card answers "what is running right now" and leaves the rest to
+// the sessions page.
+const DASHBOARD_COLUMNS: Array<{ key: string; width: number }> = [
+  { key: 'name', width: 240 },
+  { key: 'status', width: 130 },
+  { key: 'environment', width: 220 },
+  { key: 'cpu', width: 100 },
+  { key: 'mem', width: 110 },
+  { key: 'accelerator', width: 140 },
+  { key: 'elapsedTime', width: 160 },
+  { key: 'resourceGroup', width: 150 },
+];
 
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
@@ -128,6 +144,14 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             }}
             pagination={false}
             disableSorter
+            customizeColumns={(baseColumns) =>
+              _.compact(
+                _.map(DASHBOARD_COLUMNS, ({ key, width }) => {
+                  const column = _.find(baseColumns, { key });
+                  return column ? { ...column, width } : undefined;
+                }),
+              )
+            }
             style={{ overflowY: 'hidden' }}
           />
         </BAIFlex>
