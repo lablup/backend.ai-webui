@@ -726,6 +726,7 @@
     "Used": "Käytetty",
     "editSider": {
       "Empty": "Ei vielä mukautettuja paneeleja",
+      "GridDisabled": "Ruudukkonäkymä on pois päältä kokeellisissa asetuksissa",
       "RequiresSuperadmin": "Vain superadmin-käyttäjille",
       "ResetLayout": "Palauta asettelu",
       "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
@@ -3056,7 +3057,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Ruudukko",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3079,7 +3080,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Taulukko",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

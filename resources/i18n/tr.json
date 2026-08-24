@@ -726,6 +726,7 @@
     "Used": "Kullanılmış",
     "editSider": {
       "Empty": "Henüz özel panel yok",
+      "GridDisabled": "Izgara görünümü deneysel ayarlarda kapalı",
       "RequiresSuperadmin": "Yalnızca süper yönetici",
       "ResetLayout": "Düzeni sıfırla",
       "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
@@ -3056,7 +3057,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Izgara",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3079,7 +3080,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tablo",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

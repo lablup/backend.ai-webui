@@ -2,11 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DEFAULT_SESSION_GRID_VIEW } from '../../helper/sessionResourceGridData';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { BAIBoardItem } from '../BAIBoard';
 import { createPanel, DEFAULT_PANEL_LAYOUTS, DEFAULT_PANELS } from './defaults';
-import { panelRegistry } from './panelRegistry';
+import { effectivePanelType, panelRegistry } from './panelRegistry';
 import {
   availableResourceKeys,
   resolvePanelTitle,
@@ -34,6 +35,8 @@ export interface UseCustomPanelsResult {
   panels: ReadonlyArray<PersistedPanel>;
   /** Resource keys the current role may add/query. */
   availableResources: ReadonlyArray<ResourceKey>;
+  /** `experimental_session_resource_grid` — gates the grid panel kind. */
+  gridEnabled: boolean;
   /** Default layout entries for renderable custom panels, in stored order. */
   customDefaultLayout: Array<Omit<BAIBoardItem, 'data'>>;
   /** Board content per renderable panel id (stable element identity per id). */
@@ -87,6 +90,11 @@ export const useCustomPanels = ({
   const [, setLocalStorageBoardItems] = useBAISettingUserState(
     'dashboard_board_items',
   );
+  // FR-3570 opt-in. Off ⇒ grid panels render as the session table; the stored
+  // panelType is untouched so turning it back on restores the saved view.
+  const [gridEnabled] = useBAISettingUserState(
+    'experimental_session_resource_grid',
+  );
   const panels = !enabled
     ? []
     : storedPanels
@@ -129,6 +137,10 @@ export const useCustomPanels = ({
                 title: input.title,
                 filter: input.filter ?? null,
                 order: input.order ?? null,
+                gridView:
+                  input.panelType === 'sessionResourceGrid'
+                    ? (input.gridView ?? DEFAULT_SESSION_GRID_VIEW)
+                    : null,
               },
             }
           : panel,
@@ -168,7 +180,10 @@ export const useCustomPanels = ({
   // re-render reuses the element and the inner query doesn't re-suspend mid-drag.
   const customContentById = new Map<string, React.ReactNode>(
     renderablePanels.map((panel) => {
-      const Panel = panelRegistry[panel.panelType];
+      const Panel =
+        panelRegistry[
+          effectivePanelType(panel, { gridEnabled: !!gridEnabled })
+        ];
       const content: React.ReactNode = (
         <BAIBoardItemErrorBoundary
           // Keyed by kind AND descriptor so a config edit clears a stuck error
@@ -195,6 +210,7 @@ export const useCustomPanels = ({
   return {
     panels,
     availableResources,
+    gridEnabled: !!gridEnabled,
     customDefaultLayout,
     customContentById,
     addPanel,

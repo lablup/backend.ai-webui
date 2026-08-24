@@ -726,6 +726,7 @@
     "Used": "用過的",
     "editSider": {
       "Empty": "尚無自訂面板",
+      "GridDisabled": "格線檢視在實驗性設定中已關閉",
       "RequiresSuperadmin": "僅限超級管理員",
       "ResetLayout": "重置佈局",
       "ResetLayoutDescription": "將面板佈局恢復為預設設定。自訂面板將被保留。",
@@ -3060,7 +3061,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "網格",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3083,7 +3084,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "表格",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",

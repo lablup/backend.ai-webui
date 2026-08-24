@@ -84,9 +84,9 @@ positions once you turn it back on.
 :::
 
 Click the **Edit** button at the top right of the page to open the custom-panel
-sidebar, and **Close** to hide it again. The sidebar lists your
-custom panels. A custom panel is a table of a resource you select, narrowed by
-a condition you define. The panel itself shows only a title and a table, so
+sidebar, and **Close** to hide it again. The sidebar lists your custom panels. A
+custom panel shows a resource you select, narrowed by a condition you define.
+The panel itself shows only a title and its data, so
 give the panel a title that describes its condition.
 
 To add a panel, click the **Add** button in the sidebar. The panel dialog
@@ -94,8 +94,10 @@ contains the following fields:
 
 - **Resource**: The resource the panel lists. Choose **Sessions**, **Users**,
   or **Data & Storage**.
+- **Panel Type**: How the panel displays the resource. Choose **Table** or
+  **Count**. For the **Sessions** resource, **Grid** is also offered.
 - **Title**: An optional panel title. When omitted, the resource name is used.
-- **Condition**: A property filter that narrows the rows shown in the table.
+- **Condition**: A property filter that narrows the rows shown in the panel.
 
 A live preview below the fields shows the rows matching the current condition.
 Sorting a column in the preview sets the panel's sort order. Click **Add** to
@@ -104,10 +106,29 @@ place the panel on the board.
 ![](../images/dashboard_panel_modal.png)
 <!-- TODO: Capture screenshot of the add-panel dialog with the live preview -->
 
-To change a panel's resource, condition, or title later, click the pencil
-(**Edit**) icon next to the panel in the sidebar — or in the panel's header on
-the board — and save your changes. To remove a panel, click the trash
-(**Delete**) icon and confirm in the popup.
+**Grid** shows the session resource grid: each matching session's allocated
+resources as unit cells, colored by utilization. Clicking a session opens its
+detail drawer, the same as clicking a row in the table. The grid shows at most
+the first 100 matching sessions; a notice appears when there are more.
+
+The grid's display settings — resource or kernel mode, which resource or
+metric to show, memory unit, and layout — are chosen in the Add/Edit panel
+dialog's live preview and saved with the panel. The panel itself shows no
+controls for these settings, so create a second panel if you want a different
+view.
+
+:::note
+**Grid** is an experimental feature. It is offered in the **Panel Type**
+selector only when **Session resource grid view** is turned on under
+[Experimental features](#experimental-features). If it is turned off later,
+existing Grid panels keep their saved configuration but display as the
+session table until the setting is turned back on.
+:::
+
+To change a panel's resource, panel type, condition, or title later, click the
+pencil (**Edit**) icon next to the panel in the sidebar — or in the panel's
+header on the board — and save your changes. To remove a panel, click the
+trash (**Delete**) icon and confirm in the popup.
 
 :::note
 **Sessions** panels list the sessions of the current project and are available

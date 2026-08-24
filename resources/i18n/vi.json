@@ -726,6 +726,7 @@
     "Used": "Đã sử dụng",
     "editSider": {
       "Empty": "Chưa có bảng tùy chỉnh nào",
+      "GridDisabled": "Chế độ xem lưới đang tắt trong cài đặt thử nghiệm",
       "RequiresSuperadmin": "Chỉ dành cho siêu quản trị viên",
       "ResetLayout": "Đặt lại bố cục",
       "ResetLayoutDescription": "Khôi phục cách sắp xếp bảng mặc định. Các bảng tùy chỉnh vẫn được giữ nguyên.",
@@ -3058,7 +3059,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Lưới",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3081,7 +3082,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Bảng",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
