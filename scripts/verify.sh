@@ -208,6 +208,8 @@ check_z_index_ladder() {
 run_check "Relay" check_relay_drift
 # lint:ci = the cached eslint variant CI runs (content-hash cache; modified
 # files are always re-linted). Uncached equivalent: `pnpm -r lint`.
+# backend.ai-client's lint:ci is deliberately uncached: its type-aware
+# no-floating-promises rule can flag a caller whose own content is unchanged.
 run_check "Lint" pnpm -r --stream lint:ci
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit --incremental

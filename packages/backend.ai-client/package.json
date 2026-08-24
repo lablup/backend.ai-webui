@@ -47,7 +47,7 @@
     "vitest": "vitest run",
     "vitest:watch": "vitest",
     "lint": "eslint ./src",
-    "lint:ci": "eslint ./src --cache --cache-strategy content --cache-location .eslintcache",
+    "lint:ci": "eslint ./src",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "dependencies": {
