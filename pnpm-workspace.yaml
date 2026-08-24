@@ -5,10 +5,10 @@ packages:
 catalog:
   # Astryx pins are exact and move as one set: theme-neutral peer-requires the
   # exact core version, and the CLI generates artifacts read by that same core.
-  "@astryxdesign/cli": 0.4.7
-  "@astryxdesign/core": 0.4.7
+  "@astryxdesign/cli": 0.5.0
+  "@astryxdesign/core": 0.5.0
   "@astryxdesign/lab": 0.3.0-canary.12db2a1
-  "@astryxdesign/theme-neutral": 0.4.7
+  "@astryxdesign/theme-neutral": 0.5.0
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -48,7 +48,7 @@ catalog:
   jest-environment-jsdom: ^30.3.0
   jsonc-eslint-parser: ^2.4.2
   lodash-es: ^4.18.1
-  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.4.7,
+  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.5.0,
   # whose hard dependency is lucide-react ^1.18.0 (to-astryx ticket 07). All
   # 78 icon names the app imports exist in both 0.552 and 1.x (measured);
   # converging up dedupes the two installed majors into one instance.
@@ -87,11 +87,11 @@ minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
   - nuqs@2.9.2
-  # Astryx 0.4.7: published 2026-08-23, inside the 7-day window at adoption
-  # time. Remove after 2026-08-30.
-  - "@astryxdesign/core@0.4.7"
-  - "@astryxdesign/theme-neutral@0.4.7"
-  - "@astryxdesign/cli@0.4.7"
+  # Astryx 0.5.0: published 2026-08-24, inside the 7-day window at adoption
+  # time. Remove after 2026-08-31.
+  - "@astryxdesign/core@0.5.0"
+  - "@astryxdesign/theme-neutral@0.5.0"
+  - "@astryxdesign/cli@0.5.0"
   # Astryx Lab canary (to-astryx, ticket 18): MIGRATION-SPEC §1-④ decided
   # canary adoption with an exact pin; canary releases never age past the
   # quarantine window by design, so the exclusion is permanent while the
