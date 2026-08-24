@@ -2,18 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AdminUsageReportViewDefaultPresetQuery } from '../../__generated__/AdminUsageReportViewDefaultPresetQuery.graphql';
 import { AdminUsageReportViewKeypairEmailQuery } from '../../__generated__/AdminUsageReportViewKeypairEmailQuery.graphql';
-import {
-  AdminUsageReportViewUtilizationQuery,
-  AdminUsageReportViewUtilizationQuery$data,
-} from '../../__generated__/AdminUsageReportViewUtilizationQuery.graphql';
 import { UserStatsData, useSuspendedBackendaiClient } from '../../hooks';
 import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
 import UsageReportDocument from './UsageReportDocument';
 import {
-  UsageReportPresetIds,
-  ensureUsageReportPresets,
-} from './adminPresetSeed';
+  UsageReportPresetLookup,
+  resolveUsageReportPresets,
+} from './adminDefaultPresets';
 import {
   UsagePeriodRecord,
   assembleAdminUsageReportData,
@@ -30,7 +27,6 @@ import {
   DailyAllocation,
   buildAllocationByDay,
   buildUtilizationPercentByDay,
-  percentFromAvgValues,
 } from './userUsageReportData';
 import { toLocalId, useBAILogger } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -93,9 +89,10 @@ const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
     },
   });
 
-  // Stats bins include running sessions; period records on older managers are
-  // terminated-only. Prefer bins whenever their trailing-30d window covers the
-  // whole period (records still feed the top-users table).
+  // Stats bins cover only the trailing 30 days but count consistently across
+  // manager versions; period records on older managers are terminated-only.
+  // Prefer bins whenever their window covers the whole period (records still
+  // feed the top-users table).
   const statsCoverPeriod =
     allocation.statsBins.length > 0 &&
     !dayjs(period.startDate).isBefore(dayjs().subtract(30, 'day'), 'day');
@@ -110,8 +107,8 @@ const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
     clusterName: baiClient._config._endpointHost || null,
   };
 
-  // Utilization is best-effort (spec §5): preset seeding or Prometheus
-  // failures degrade to the allocation-only document, not the error view.
+  // Utilization is best-effort (spec §5): lookup or Prometheus failures
+  // degrade to the allocation-only document, not the error view.
   return (
     <ErrorBoundary
       resetKeys={[period.startDate, period.endDate]}
@@ -136,7 +133,7 @@ const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
         />
       }
     >
-      <AdminPresetLoader {...props} {...allocationProps} />
+      <AdminUtilizationLoader {...props} {...allocationProps} />
     </ErrorBoundary>
   );
 };
@@ -148,6 +145,231 @@ interface AdminAllocationProps {
   topUsers: UsageReportTopUser[];
   clusterName: string | null;
 }
+
+interface AdminUtilizationLoaderProps
+  extends AdminUsageReportViewProps, AdminAllocationProps {}
+
+const AdminUtilizationLoader: React.FC<AdminUtilizationLoaderProps> = (
+  props,
+) => {
+  'use memo';
+  const relayEnvironment = useRelayEnvironment();
+  // The manager seeds default container-utilization presets via migration;
+  // the report consumes them read-only (no WebUI-created presets).
+  const { data: lookup } = useSuspenseTanQuery<UsageReportPresetLookup>({
+    queryKey: ['UsageReportAdminDefaultPresets'],
+    staleTime: Infinity,
+    queryFn: () => resolveUsageReportPresets(relayEnvironment),
+  });
+  if (!lookup.presetId) {
+    // No usable seeded preset (pre-26.3 manager): utilization unsupported.
+    return (
+      <UsageReportDocument
+        data={assembleAdminUsageReportData({
+          period: props.period,
+          allocationByDay: props.allocationByDay,
+          allocationComplete: props.allocationComplete,
+          sessionsSemantics: props.sessionsSemantics,
+          topUsers: props.topUsers,
+          clusterName: props.clusterName,
+          utilizationByDay: { cpu: {}, gpu: {}, mem: {} },
+          utilizationAvgs: {
+            cpuPercent: null,
+            gpuPercent: null,
+            memPercent: null,
+          },
+          utilizationUnsupported: true,
+        })}
+        periodLabel={props.periodLabel}
+        scopeLabel={props.scopeLabel}
+        onData={props.onData}
+      />
+    );
+  }
+  return <AdminUtilizationMetrics {...props} lookup={lookup} />;
+};
+
+interface AdminUtilizationMetricsProps extends AdminUtilizationLoaderProps {
+  lookup: UsageReportPresetLookup;
+}
+
+type PresetSeries =
+  AdminUsageReportViewDefaultPresetQuery['response']['cpu_result'];
+
+/** Split one grouped-by-value_type execution into current/capacity points. */
+const pointsByValueType = (result: PresetSeries, valueType: string) =>
+  result?.result
+    ?.find((series) =>
+      series.metric.some(
+        (label) => label.key === 'value_type' && label.value === valueType,
+      ),
+    )
+    ?.values.map((point) => ({
+      timestamp: point.timestamp,
+      value: point.value,
+    })) ?? null;
+
+const meanOf = (byDay: Record<string, number>): number | null => {
+  const values = Object.values(byDay);
+  return values.length
+    ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+    : null;
+};
+
+const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
+  period,
+  periodLabel,
+  scopeLabel,
+  onData,
+  lookup,
+  allocationByDay,
+  allocationComplete,
+  sessionsSemantics,
+  topUsers,
+  clusterName,
+}) => {
+  'use memo';
+  const periodStart = dayjs(period.startDate).startOf('day');
+  const now = dayjs();
+  const periodEndRaw = dayjs(period.endDate).endOf('day');
+  const clampedEnd = periodEndRaw.isAfter(now) ? now : periodEndRaw;
+  // A future ?periodStart= must not yield start > end (Prometheus rejects it).
+  const periodEnd = clampedEnd.isBefore(periodStart)
+    ? periodStart.add(1, 'second')
+    : clampedEnd;
+
+  const queryData = useLazyLoadQuery<AdminUsageReportViewDefaultPresetQuery>(
+    graphql`
+      query AdminUsageReportViewDefaultPresetQuery(
+        $presetId: ID!
+        $range: QueryTimeRangeInput!
+        $cpuOptions: ExecuteQueryDefinitionOptionsInput!
+        $memOptions: ExecuteQueryDefinitionOptionsInput!
+        $gpuOptions: ExecuteQueryDefinitionOptionsInput!
+        $includeGpu: Boolean!
+      ) {
+        cpu_result: prometheusQueryPresetResult(
+          id: $presetId
+          timeRange: $range
+          options: $cpuOptions
+        ) {
+          result {
+            metric {
+              key
+              value
+            }
+            values {
+              timestamp
+              value
+            }
+          }
+        }
+        mem_result: prometheusQueryPresetResult(
+          id: $presetId
+          timeRange: $range
+          options: $memOptions
+        ) {
+          result {
+            metric {
+              key
+              value
+            }
+            values {
+              timestamp
+              value
+            }
+          }
+        }
+        gpu_result: prometheusQueryPresetResult(
+          id: $presetId
+          timeRange: $range
+          options: $gpuOptions
+        ) @include(if: $includeGpu) {
+          result {
+            metric {
+              key
+              value
+            }
+            values {
+              timestamp
+              value
+            }
+          }
+        }
+      }
+    `,
+    {
+      presetId: toLocalId(lookup.presetId ?? ''),
+      // Hourly samples, averaged into daily buckets client-side (as in W2).
+      range: {
+        start: periodStart.toISOString(),
+        end: periodEnd.toISOString(),
+        step: '1h',
+      },
+      cpuOptions: {
+        filterLabels: [{ key: 'container_metric_name', value: 'cpu_util' }],
+        groupLabels: ['value_type'],
+      },
+      memOptions: {
+        filterLabels: [{ key: 'container_metric_name', value: 'mem' }],
+        groupLabels: ['value_type'],
+      },
+      gpuOptions: {
+        filterLabels: [
+          {
+            key: 'container_metric_name',
+            value: lookup.gpuMetricName ?? 'cpu_util',
+          },
+        ],
+        groupLabels: ['value_type'],
+      },
+      includeGpu: lookup.gpuMetricName != null,
+    },
+    { fetchPolicy: 'store-and-network' },
+  );
+
+  const cpuByDay = buildUtilizationPercentByDay(
+    pointsByValueType(queryData.cpu_result, 'current'),
+    pointsByValueType(queryData.cpu_result, 'capacity'),
+    period,
+  );
+  const memByDay = buildUtilizationPercentByDay(
+    pointsByValueType(queryData.mem_result, 'current'),
+    pointsByValueType(queryData.mem_result, 'capacity'),
+    period,
+  );
+  const gpuByDay = queryData.gpu_result
+    ? buildUtilizationPercentByDay(
+        pointsByValueType(queryData.gpu_result, 'current'),
+        pointsByValueType(queryData.gpu_result, 'capacity'),
+        period,
+      )
+    : {};
+
+  const data = assembleAdminUsageReportData({
+    period,
+    allocationByDay,
+    allocationComplete,
+    sessionsSemantics,
+    topUsers,
+    clusterName,
+    utilizationByDay: { cpu: cpuByDay, gpu: gpuByDay, mem: memByDay },
+    utilizationAvgs: {
+      cpuPercent: meanOf(cpuByDay),
+      gpuPercent: meanOf(gpuByDay),
+      memPercent: meanOf(memByDay),
+    },
+  });
+
+  return (
+    <UsageReportDocument
+      data={data}
+      periodLabel={periodLabel}
+      scopeLabel={scopeLabel}
+      onData={onData}
+    />
+  );
+};
 
 // Older managers omit `email` from usage-period rows; recover it from the
 // keypair (KeyPair.user_id is the owner's email), best-effort per row.
@@ -178,222 +400,5 @@ const resolveTopUserEmails = (
       return { ...user, email: result?.keypair?.user_id ?? null };
     }),
   );
-
-interface AdminPresetLoaderProps
-  extends AdminUsageReportViewProps, AdminAllocationProps {}
-
-const AdminPresetLoader: React.FC<AdminPresetLoaderProps> = (props) => {
-  'use memo';
-  const relayEnvironment = useRelayEnvironment();
-  // Idempotent: query the report's reserved presets, create the missing ones.
-  const { data: presetIds } = useSuspenseTanQuery<UsageReportPresetIds>({
-    queryKey: ['UsageReportAdminPresets'],
-    staleTime: Infinity,
-    queryFn: () => ensureUsageReportPresets(relayEnvironment),
-  });
-  return <AdminUtilizationMetrics {...props} presetIds={presetIds} />;
-};
-
-interface AdminUtilizationMetricsProps extends AdminPresetLoaderProps {
-  presetIds: UsageReportPresetIds;
-}
-
-type PresetResult = AdminUsageReportViewUtilizationQuery$data['cpu_series'];
-
-const seriesPoints = (result: PresetResult) => result?.result?.[0]?.values;
-
-const lastValueOf = (result: PresetResult): string | null => {
-  const values = result?.result?.[0]?.values;
-  return values?.length ? values[values.length - 1].value : null;
-};
-
-const meanOf = (byDay: Record<string, number>): number | null => {
-  const values = Object.values(byDay);
-  return values.length
-    ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
-    : null;
-};
-
-const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
-  period,
-  periodLabel,
-  scopeLabel,
-  onData,
-  presetIds,
-  allocationByDay,
-  allocationComplete,
-  sessionsSemantics,
-  topUsers,
-  clusterName,
-}) => {
-  'use memo';
-  const periodStart = dayjs(period.startDate).startOf('day');
-  const now = dayjs();
-  const periodEndRaw = dayjs(period.endDate).endOf('day');
-  const clampedEnd = periodEndRaw.isAfter(now) ? now : periodEndRaw;
-  // A future ?periodStart= must not yield start > end (Prometheus rejects it).
-  const periodEnd = clampedEnd.isBefore(periodStart)
-    ? periodStart.add(1, 'second')
-    : clampedEnd;
-  const periodHours = Math.max(
-    1,
-    Math.ceil(periodEnd.diff(periodStart, 'hour', true)),
-  );
-
-  const queryData = useLazyLoadQuery<AdminUsageReportViewUtilizationQuery>(
-    graphql`
-      query AdminUsageReportViewUtilizationQuery(
-        $cpuSeriesId: ID!
-        $gpuSeriesId: ID!
-        $memSeriesId: ID!
-        $cpuAvgId: ID!
-        $gpuAvgId: ID!
-        $memAvgId: ID!
-        $seriesRange: QueryTimeRangeInput!
-        $avgRange: QueryTimeRangeInput!
-        $avgWindow: String!
-      ) {
-        cpu_series: prometheusQueryPresetResult(
-          id: $cpuSeriesId
-          timeRange: $seriesRange
-        ) {
-          result {
-            values {
-              timestamp
-              value
-            }
-          }
-        }
-        gpu_series: prometheusQueryPresetResult(
-          id: $gpuSeriesId
-          timeRange: $seriesRange
-        ) {
-          result {
-            values {
-              timestamp
-              value
-            }
-          }
-        }
-        mem_series: prometheusQueryPresetResult(
-          id: $memSeriesId
-          timeRange: $seriesRange
-        ) {
-          result {
-            values {
-              timestamp
-              value
-            }
-          }
-        }
-        cpu_avg: prometheusQueryPresetResult(
-          id: $cpuAvgId
-          timeRange: $avgRange
-          timeWindow: $avgWindow
-        ) {
-          result {
-            values {
-              timestamp
-              value
-            }
-          }
-        }
-        gpu_avg: prometheusQueryPresetResult(
-          id: $gpuAvgId
-          timeRange: $avgRange
-          timeWindow: $avgWindow
-        ) {
-          result {
-            values {
-              timestamp
-              value
-            }
-          }
-        }
-        mem_avg: prometheusQueryPresetResult(
-          id: $memAvgId
-          timeRange: $avgRange
-          timeWindow: $avgWindow
-        ) {
-          result {
-            values {
-              timestamp
-              value
-            }
-          }
-        }
-      }
-    `,
-    {
-      cpuSeriesId: toLocalId(presetIds.cpuUtilSeries),
-      gpuSeriesId: toLocalId(presetIds.gpuUtilSeries),
-      memSeriesId: toLocalId(presetIds.memUtilSeries),
-      cpuAvgId: toLocalId(presetIds.cpuUtilAvg),
-      gpuAvgId: toLocalId(presetIds.gpuUtilAvg),
-      memAvgId: toLocalId(presetIds.memUtilAvg),
-      // Hourly samples, averaged into daily buckets client-side (as in W2).
-      seriesRange: {
-        start: periodStart.toISOString(),
-        end: periodEnd.toISOString(),
-        step: '1h',
-      },
-      // Single evaluation at period end; `{window}` reaches back over it.
-      avgRange: {
-        start: periodEnd.toISOString(),
-        end: periodEnd.toISOString(),
-        step: '1h',
-      },
-      avgWindow: `${periodHours}h`,
-    },
-    { fetchPolicy: 'store-and-network' },
-  );
-
-  // The seeded ratio templates already yield percent; no capacity series.
-  const cpuByDay = buildUtilizationPercentByDay(
-    seriesPoints(queryData.cpu_series),
-    null,
-    period,
-  );
-  const gpuByDay = buildUtilizationPercentByDay(
-    seriesPoints(queryData.gpu_series),
-    null,
-    period,
-  );
-  const memByDay = buildUtilizationPercentByDay(
-    seriesPoints(queryData.mem_series),
-    null,
-    period,
-  );
-
-  const data = assembleAdminUsageReportData({
-    period,
-    allocationByDay,
-    allocationComplete,
-    sessionsSemantics,
-    topUsers,
-    clusterName,
-    utilizationByDay: { cpu: cpuByDay, gpu: gpuByDay, mem: memByDay },
-    utilizationAvgs: {
-      cpuPercent:
-        percentFromAvgValues(lastValueOf(queryData.cpu_avg), null) ??
-        meanOf(cpuByDay),
-      gpuPercent:
-        percentFromAvgValues(lastValueOf(queryData.gpu_avg), null) ??
-        meanOf(gpuByDay),
-      memPercent:
-        percentFromAvgValues(lastValueOf(queryData.mem_avg), null) ??
-        meanOf(memByDay),
-    },
-  });
-
-  return (
-    <UsageReportDocument
-      data={data}
-      periodLabel={periodLabel}
-      scopeLabel={scopeLabel}
-      onData={onData}
-    />
-  );
-};
 
 export default AdminUsageReportView;

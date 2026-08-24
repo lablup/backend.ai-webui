@@ -84,13 +84,18 @@ Per audience:
     `useUserUsageStats`). User monthly stays **best-effort permanently** —
     show available data + truncation banner; no backend ask.
 - **Admin global (superadmin-gated)**:
-  - Utilization: `prometheusQueryPresetResult` (manager ≥ 26.4.2) executing
-    **app-seeded presets** — the app defines its report presets in code and
-    creates them idempotently on first use (series preset per metric + an
-    `avg_over_time`-style instant preset for totals).
-  - Allocation: `GET /resource/usage/period` (arbitrary dates, per-kernel
-    records; needs a new backend.ai-client wrapper) and
-    `GET /resource/stats/admin/month`.
+  - Utilization: `prometheusQueryPresetResult` executing the **manager-seeded
+    default container-utilization presets** (alembic-seeded gauge templates
+    over `backendai_container_utilization`; filter `container_metric_name`,
+    group by `value_type` for current/capacity → percent client-side). The
+    WebUI creates **no presets of its own** (implementation revision,
+    2026-08-24 — the original app-seeding plan polluted the deployment preset
+    UI). Older managers without the preset catalog degrade to a "requires
+    manager support" placeholder.
+  - Allocation: `GET /resource/stats/admin/month` bins (running sessions
+    included) whenever the trailing-30d window covers the period; otherwise
+    `GET /resource/usage/period` per-kernel records (terminated-only on older
+    managers), which also feed the top-users table.
 - **Headline totals (hybrid)**: utilization totals server-side (seeded
   instant presets; user side derives `avg_value × period-hours`); allocation
   totals summed client-side from the returned bins/records (no totals API).

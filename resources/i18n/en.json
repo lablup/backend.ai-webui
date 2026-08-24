@@ -3482,6 +3482,7 @@
     "AvgGPUUtilization": "Avg GPU util",
     "CPUHours": "CPU-hours",
     "CPUHoursPerDay": "CPU-hours / day",
+    "ClusterUtilizationNeedsBackend": "Cluster-wide utilization metrics are not yet provided by this Backend.AI manager.",
     "DashboardItemDescription": "Build a weekly or monthly usage report and export it as PDF, PNG, or CSV.",
     "ExportCSV": "CSV",
     "ExportPDF": "PDF",

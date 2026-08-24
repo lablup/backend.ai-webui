@@ -225,6 +225,7 @@ export const assembleAdminUsageReportData = ({
   allocationByDay,
   allocationComplete,
   sessionsSemantics = 'launched',
+  utilizationUnsupported = false,
   topUsers,
   utilizationByDay,
   utilizationAvgs,
@@ -236,6 +237,8 @@ export const assembleAdminUsageReportData = ({
   allocationComplete: boolean;
   /** 'launched' for per-kernel records, 'peakConcurrent' for stats bins. */
   sessionsSemantics?: 'launched' | 'peakConcurrent';
+  /** No cluster-scope utilization API yet — TODO(needs-backend) FR-3645. */
+  utilizationUnsupported?: boolean;
   topUsers: UsageReportTopUser[];
   utilizationByDay: UtilizationByDay;
   utilizationAvgs: UsageReportUtilizationAvgs;
@@ -301,6 +304,7 @@ export const assembleAdminUsageReportData = ({
         !allocationComplete &&
         allocationCoveredDays > 0 &&
         allocationCoveredDays < days.length,
+      utilizationUnsupported,
     },
     sessionsSemantics,
     generatedAt: dayjs().toISOString(),

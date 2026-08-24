@@ -124,19 +124,18 @@ const AdminDashboardPage: React.FC = () => {
       },
     },
     // Mirrors the report view's admin-scope gate (spec §3, W6).
-    _.isEqual(userRole, 'superadmin') &&
-      baiClient.supports('prometheus-query-preset') && {
-        id: 'usageReport',
-        rowSpan: 2,
-        columnSpan: 2,
-        definition: {
-          minRowSpan: 2,
-          minColumnSpan: 2,
-        },
-        data: {
-          content: <UsageReportDashboardItem scope="admin" />,
-        },
+    _.isEqual(userRole, 'superadmin') && {
+      id: 'usageReport',
+      rowSpan: 2,
+      columnSpan: 2,
+      definition: {
+        minRowSpan: 2,
+        minColumnSpan: 2,
       },
+      data: {
+        content: <UsageReportDashboardItem scope="admin" />,
+      },
+    },
     isAvailableTotalResourcePanel && {
       id: 'totalResourceWithinResourceGroup',
       rowSpan: 2,

@@ -50,7 +50,7 @@ const UsageReportPage: React.FC = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const baiClient = useSuspendedBackendaiClient();
+  useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -67,9 +67,9 @@ const UsageReportPage: React.FC = () => {
     };
   }, []);
 
-  // Admin scope needs superadmin + the 26.4.2 preset-result API (spec §5).
-  const canUseAdminScope =
-    userRole === 'superadmin' && baiClient.supports('prometheus-query-preset');
+  // Admin scope: superadmin; utilization rides the 26.3+ default presets and
+  // degrades to a placeholder when the preset APIs are absent.
+  const canUseAdminScope = userRole === 'superadmin';
   const scope: UsageReportScope =
     canUseAdminScope && searchParams.get('scope') === 'admin'
       ? 'admin'

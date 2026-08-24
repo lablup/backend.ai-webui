@@ -65,7 +65,9 @@ const UsageReportDocument: React.FC<UsageReportDocumentProps> = ({
         dailySeries={data.dailySeries}
         utilizationEmptyDescription={
           coverage.utilizationUnsupported
-            ? t('usageReport.UtilizationRequiresManagerVersion')
+            ? data.scope === 'admin'
+              ? t('usageReport.ClusterUtilizationNeedsBackend')
+              : t('usageReport.UtilizationRequiresManagerVersion')
             : undefined
         }
       />

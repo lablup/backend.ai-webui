@@ -3498,6 +3498,7 @@
     "AvgGPUUtilization": "평균 GPU 사용률",
     "CPUHours": "CPU-시간",
     "CPUHoursPerDay": "일별 CPU-시간",
+    "ClusterUtilizationNeedsBackend": "클러스터 전체 사용률 지표는 아직 Backend.AI 매니저에서 제공되지 않습니다.",
     "DashboardItemDescription": "주간 또는 월간 사용량 리포트를 만들어 PDF, PNG, CSV로 내보낼 수 있습니다.",
     "ExportCSV": "CSV",
     "ExportPDF": "PDF",
