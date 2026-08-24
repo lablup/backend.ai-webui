@@ -63,6 +63,7 @@ const UsageReportDocument: React.FC<UsageReportDocumentProps> = ({
       )}
       <UsageReportChartsGrid
         dailySeries={data.dailySeries}
+        sessionsSemantics={data.sessionsSemantics}
         utilizationEmptyDescription={
           coverage.utilizationUnsupported
             ? data.scope === 'admin'

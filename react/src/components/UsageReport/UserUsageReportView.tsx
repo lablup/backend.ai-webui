@@ -17,7 +17,7 @@ import {
   assembleUserUsageReportData,
   buildAllocationByDay,
   buildUtilizationPercentByDay,
-  percentFromAvgValues,
+  meanOfDailyPercents,
 } from './userUsageReportData';
 import { useBAILogger } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -280,39 +280,32 @@ const UserUtilizationMetrics: React.FC<UserUtilizationMetricsProps> = ({
   const gpuCurrent = firstMetricOf(queryData.gpu_current);
   const gpuCapacity = firstMetricOf(queryData.gpu_capacity);
 
+  const cpuByDay = buildUtilizationPercentByDay(
+    cpuCurrent?.values,
+    cpuCapacity?.values,
+    period,
+  );
+  const gpuByDay = buildUtilizationPercentByDay(
+    gpuCurrent?.values,
+    gpuCapacity?.values,
+    period,
+  );
+  const memByDay = buildUtilizationPercentByDay(
+    memCurrent?.values,
+    memCapacity?.values,
+    period,
+  );
+
   const data = assembleUserUsageReportData({
     period,
     allocationByDay,
-    utilizationByDay: {
-      cpu: buildUtilizationPercentByDay(
-        cpuCurrent?.values,
-        cpuCapacity?.values,
-        period,
-      ),
-      gpu: buildUtilizationPercentByDay(
-        gpuCurrent?.values,
-        gpuCapacity?.values,
-        period,
-      ),
-      mem: buildUtilizationPercentByDay(
-        memCurrent?.values,
-        memCapacity?.values,
-        period,
-      ),
-    },
+    utilizationByDay: { cpu: cpuByDay, gpu: gpuByDay, mem: memByDay },
+    // KPI averages mirror the chart: mean of the plotted daily values, so the
+    // tiles and the tooltip figures can never disagree.
     utilizationAvgs: {
-      cpuPercent: percentFromAvgValues(
-        cpuCurrent?.avg_value,
-        cpuCapacity?.avg_value,
-      ),
-      gpuPercent: percentFromAvgValues(
-        gpuCurrent?.avg_value,
-        gpuCapacity?.avg_value,
-      ),
-      memPercent: percentFromAvgValues(
-        memCurrent?.avg_value,
-        memCapacity?.avg_value,
-      ),
+      cpuPercent: meanOfDailyPercents(cpuByDay),
+      gpuPercent: meanOfDailyPercents(gpuByDay),
+      memPercent: meanOfDailyPercents(memByDay),
     },
     clusterName,
   });

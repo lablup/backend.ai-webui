@@ -4,7 +4,7 @@
  */
 import UsageReportEmptySection from './UsageReportEmptySection';
 import { UsageReportDailyPoint } from './types';
-import { BAICard } from 'backend.ai-ui';
+import { BAICard, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -107,11 +107,13 @@ interface UsageReportChartsGridProps {
   dailySeries: UsageReportDailyPoint[];
   /** Shown under the utilization empty placeholder (e.g. version gate). */
   utilizationEmptyDescription?: string;
+  sessionsSemantics?: 'launched' | 'peakConcurrent';
 }
 
 const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
   dailySeries,
   utilizationEmptyDescription,
+  sessionsSemantics = 'launched',
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -124,16 +126,22 @@ const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
     {
       key: 'gpuHours' as const,
       title: t('usageReport.GPUHoursPerDay'),
+      tooltip: t('usageReport.TooltipGPUHours'),
       color: CHART_COLORS.gpu,
     },
     {
       key: 'cpuHours' as const,
       title: t('usageReport.CPUHoursPerDay'),
+      tooltip: t('usageReport.TooltipCPUHours'),
       color: CHART_COLORS.cpu,
     },
     {
       key: 'sessions' as const,
       title: t('usageReport.SessionsPerDay'),
+      tooltip:
+        sessionsSemantics === 'launched'
+          ? t('usageReport.TooltipSessionsLaunched')
+          : t('usageReport.TooltipSessionsPeak'),
       color: CHART_COLORS.sessions,
     },
   ];
@@ -144,6 +152,11 @@ const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
         className="usage-report-card usage-report-chart"
         size="small"
         title={t('usageReport.UtilizationPercent')}
+        extra={
+          <BAIQuestionIconWithTooltip
+            title={t('usageReport.TooltipUtilizationChart')}
+          />
+        }
       >
         {hasAny(series, [
           'cpuUtilPercent',
@@ -158,12 +171,13 @@ const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
           />
         )}
       </BAICard>
-      {barCharts.map(({ key, title, color }) => (
+      {barCharts.map(({ key, title, tooltip, color }) => (
         <BAICard
           key={key}
           className="usage-report-card usage-report-chart"
           size="small"
           title={title}
+          extra={<BAIQuestionIconWithTooltip title={tooltip} />}
         >
           {hasAny(series, [key]) ? (
             <DailyBarChart

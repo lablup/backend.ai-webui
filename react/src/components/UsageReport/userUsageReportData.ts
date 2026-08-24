@@ -114,21 +114,13 @@ export const buildUtilizationPercentByDay = (
 };
 
 /** KPI percent from the API's range `avg_value`s (current ÷ capacity). */
-export const percentFromAvgValues = (
-  avgCurrent: string | null | undefined,
-  avgCapacity: string | null | undefined,
+export const meanOfDailyPercents = (
+  byDay: Record<string, number>,
 ): number | null => {
-  const current = Number(avgCurrent);
-  if (avgCurrent == null || !Number.isFinite(current)) {
-    return null;
-  }
-  if (avgCapacity != null) {
-    const capacity = Number(avgCapacity);
-    return Number.isFinite(capacity) && capacity > 0
-      ? Math.round(clampPercent((current / capacity) * 100))
-      : null;
-  }
-  return Math.round(clampPercent(current));
+  const values = Object.values(byDay);
+  return values.length
+    ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+    : null;
 };
 
 export interface UtilizationByDay {

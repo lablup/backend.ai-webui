@@ -6,18 +6,22 @@ import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import { UsageReportData } from './types';
 import { Heading } from '@astryxdesign/core/Heading';
 import { useTheme } from '@astryxdesign/core/theme';
-import { BAIFlex, BAIText } from 'backend.ai-ui';
+import { BAIFlex, BAIQuestionIconWithTooltip, BAIText } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const KpiTile: React.FC<{ label: string; value: string }> = ({
+const KpiTile: React.FC<{ label: string; value: string; tooltip?: string }> = ({
   label,
   value,
+  tooltip,
 }) => {
   'use memo';
   return (
     <div className="usage-report-kpi">
-      <div className="usage-report-kpi-label">{label}</div>
+      <BAIFlex className="usage-report-kpi-label" gap="xxs" align="center">
+        {label}
+        {tooltip ? <BAIQuestionIconWithTooltip title={tooltip} /> : null}
+      </BAIFlex>
       <div className="usage-report-kpi-value">{value}</div>
     </div>
   );
@@ -92,22 +96,31 @@ const UsageReportHeader: React.FC<UsageReportHeaderProps> = ({
         <KpiTile
           label={t('usageReport.GPUHours')}
           value={formatCount(data.totals.gpuHours)}
+          tooltip={t('usageReport.TooltipGPUHours')}
         />
         <KpiTile
           label={t('usageReport.CPUHours')}
           value={formatCount(data.totals.cpuHours)}
+          tooltip={t('usageReport.TooltipCPUHours')}
         />
         <KpiTile
           label={t('usageReport.Sessions')}
           value={formatCount(data.totals.sessions)}
+          tooltip={
+            data.sessionsSemantics === 'launched'
+              ? t('usageReport.TooltipSessionsLaunched')
+              : t('usageReport.TooltipSessionsPeak')
+          }
         />
         <KpiTile
           label={t('usageReport.AvgGPUUtilization')}
           value={formatPercent(data.utilizationAvgs.gpuPercent)}
+          tooltip={t('usageReport.TooltipAvgUtilization')}
         />
         <KpiTile
           label={t('usageReport.AvgCPUUtilization')}
           value={formatPercent(data.utilizationAvgs.cpuPercent)}
+          tooltip={t('usageReport.TooltipAvgUtilization')}
         />
       </div>
     </BAIFlex>
