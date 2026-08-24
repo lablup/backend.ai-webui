@@ -708,8 +708,24 @@
     }
   },
   "dashboard": {
+    "Edit": "Edit",
     "Free": "Free",
-    "Used": "Used"
+    "Used": "Used",
+    "editSider": {
+      "Empty": "No custom panels yet",
+      "RequiresSuperadmin": "Superadmin only",
+      "ResetLayout": "Reset layout",
+      "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",
+      "Title": "Custom panels"
+    },
+    "panelModal": {
+      "AddPanel": "Add panel",
+      "Condition": "Condition",
+      "EditPanel": "Edit panel",
+      "Resource": "Resource",
+      "TitleDescription": "Shown as the panel header — use it to describe the condition.",
+      "TitleOptional": "Title (optional)"
+    }
   },
   "data": {
     "Active": "Active",
@@ -3498,6 +3514,7 @@
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "ConfigFilename": "Config file name",
     "CurrentSSHPublicKey": "Current public key: ",
+    "CustomDashboardPanels": "Custom dashboard panels",
     "DarkMode": "Dark mode",
     "DarkTheme": "Dark Mode",
     "Default": "Default",

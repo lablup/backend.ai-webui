@@ -721,8 +721,24 @@
     }
   },
   "dashboard": {
+    "Edit": "แก้ไข",
     "Free": "ฟรี",
-    "Used": "ใช้แล้ว"
+    "Used": "ใช้แล้ว",
+    "editSider": {
+      "Empty": "ยังไม่มีแผงที่กำหนดเอง",
+      "RequiresSuperadmin": "เฉพาะผู้ดูแลระบบสูงสุดเท่านั้น",
+      "ResetLayout": "รีเซ็ตการจัดวาง",
+      "ResetLayoutDescription": "คืนค่าการจัดวางแผงเป็นค่าเริ่มต้น แผงที่กำหนดเองจะยังคงอยู่",
+      "Title": "แผงที่กำหนดเอง"
+    },
+    "panelModal": {
+      "AddPanel": "เพิ่มแผง",
+      "Condition": "เงื่อนไข",
+      "EditPanel": "แก้ไขแผง",
+      "Resource": "ทรัพยากร",
+      "TitleDescription": "แสดงเป็นหัวเรื่องของแผง — ใช้เพื่ออธิบายเงื่อนไข",
+      "TitleOptional": "ชื่อ (ไม่บังคับ)"
+    }
   },
   "data": {
     "Active": "คล่องแคล่ว",
@@ -3510,6 +3526,7 @@
     "ClearSSHKeypairInput": "คู่คีย์ SSH ที่เขียนไว้จะถูกลบ คุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?",
     "ConfigFilename": "ชื่อไฟล์การกำหนดค่า",
     "CurrentSSHPublicKey": "คีย์สาธารณะปัจจุบัน: ",
+    "CustomDashboardPanels": "แผงแดชบอร์ดที่กำหนดเอง",
     "DarkMode": "โหมดมืด",
     "DarkTheme": "โหมดมืด",
     "Default": "ค่าเริ่มต้น",

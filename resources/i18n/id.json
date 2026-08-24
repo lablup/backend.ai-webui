@@ -721,8 +721,24 @@
     }
   },
   "dashboard": {
+    "Edit": "Sunting",
     "Free": "Bebas",
-    "Used": "Digunakan"
+    "Used": "Digunakan",
+    "editSider": {
+      "Empty": "Belum ada panel kustom",
+      "RequiresSuperadmin": "Hanya superadmin",
+      "ResetLayout": "Atur ulang tata letak",
+      "ResetLayoutDescription": "Mengembalikan susunan panel ke pengaturan default. Panel kustom tetap dipertahankan.",
+      "Title": "Panel kustom"
+    },
+    "panelModal": {
+      "AddPanel": "Tambah panel",
+      "Condition": "Kondisi",
+      "EditPanel": "Sunting panel",
+      "Resource": "Sumber daya",
+      "TitleDescription": "Ditampilkan sebagai judul panel — gunakan untuk menjelaskan kondisinya.",
+      "TitleOptional": "Judul (opsional)"
+    }
   },
   "data": {
     "Active": "Aktif",
@@ -3513,6 +3529,7 @@
     "ClearSSHKeypairInput": "Pasangan Kunci SSH tertulis akan dihapus. Apakah anda yakin ingin melanjutkan?",
     "ConfigFilename": "Nama file konfigurasi",
     "CurrentSSHPublicKey": "Kunci publik saat ini: ",
+    "CustomDashboardPanels": "Panel dasbor kustom",
     "DarkMode": "Mode Gelap",
     "DarkTheme": "Mode Gelap",
     "Default": "Bawaan",

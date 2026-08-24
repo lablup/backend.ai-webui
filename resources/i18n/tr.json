@@ -721,8 +721,24 @@
     }
   },
   "dashboard": {
+    "Edit": "Düzenle",
     "Free": "Özgür",
-    "Used": "Kullanılmış"
+    "Used": "Kullanılmış",
+    "editSider": {
+      "Empty": "Henüz özel panel yok",
+      "RequiresSuperadmin": "Yalnızca süper yönetici",
+      "ResetLayout": "Düzeni sıfırla",
+      "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
+      "Title": "Özel paneller"
+    },
+    "panelModal": {
+      "AddPanel": "Panel ekle",
+      "Condition": "Koşul",
+      "EditPanel": "Paneli düzenle",
+      "Resource": "Kaynak",
+      "TitleDescription": "Panel başlığı olarak gösterilir — koşulu açıklamak için kullanın.",
+      "TitleOptional": "Başlık (isteğe bağlı)"
+    }
   },
   "data": {
     "Active": "Aktif",
@@ -3509,6 +3525,7 @@
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar:",
+    "CustomDashboardPanels": "Özel kontrol paneli panelleri",
     "DarkMode": "Karanlık Mod",
     "DarkTheme": "Karanlık Mod",
     "Default": "Varsayılan",

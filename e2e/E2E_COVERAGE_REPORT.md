@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-08-18
+> **Last Updated:** 2026-08-22
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,14 +12,14 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 310 / 455 features covered (68%)**
+**Overall (in-scope routes): 312 / 457 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
 | Authentication           | `/interactive-login`                   |    37    |   35    | 🔶 95%  |
 | Change Password          | `/change-password`                     |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                               |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                           |    9     |    7    | 🔶 78%  |
+| Dashboard                | `/dashboard`                           |    11    |    9    | 🔶 82%  |
 | Session List             | `/session`                             |    23    |   15    | 🔶 65%  |
 | Session Launcher         | `/session/start`                       |    14    |    3    | 🔶 21%  |
 | Serving                  | `/serving`                             |    7     |    2    | 🔶 29%  |
@@ -51,7 +51,7 @@
 | Deployments              | `/deployments`, `/deployments/:id`     |    17    |   14    | 🔶 82%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    4     |    4    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **475**  | **327** | **69%** |
+| **Total**                |                                        | **477**  | **329** | **69%** |
 
 ---
 
@@ -169,9 +169,11 @@
 | Active agents list (admin)          | ❌     | -                                                                            |
 | Recent sessions list                | ✅     | `Admin can view the recently created sessions list on the Dashboard`         |
 | Auto-refresh (15s)                  | ❌     | -                                                                            |
-| Dashboard item drag/resize          | ✅     | `Admin can see resizable and movable widgets on the Dashboard`               |
+| Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                  |
+| Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                          |
+| Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`           |
 
-**Coverage: 🔶 7/9 features**
+**Coverage: 🔶 9/11 features**
 
 ---
 

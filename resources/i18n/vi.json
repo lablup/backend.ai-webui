@@ -721,8 +721,24 @@
     }
   },
   "dashboard": {
+    "Edit": "Chỉnh sửa",
     "Free": "Miễn phí",
-    "Used": "Đã sử dụng"
+    "Used": "Đã sử dụng",
+    "editSider": {
+      "Empty": "Chưa có bảng tùy chỉnh nào",
+      "RequiresSuperadmin": "Chỉ dành cho siêu quản trị viên",
+      "ResetLayout": "Đặt lại bố cục",
+      "ResetLayoutDescription": "Khôi phục cách sắp xếp bảng mặc định. Các bảng tùy chỉnh vẫn được giữ nguyên.",
+      "Title": "Bảng tùy chỉnh"
+    },
+    "panelModal": {
+      "AddPanel": "Thêm bảng",
+      "Condition": "Điều kiện",
+      "EditPanel": "Chỉnh sửa bảng",
+      "Resource": "Tài nguyên",
+      "TitleDescription": "Hiển thị làm tiêu đề của bảng — hãy dùng nó để mô tả điều kiện.",
+      "TitleOptional": "Tiêu đề (tùy chọn)"
+    }
   },
   "data": {
     "Active": "Tích cực",
@@ -3511,6 +3527,7 @@
     "ClearSSHKeypairInput": "Cặp khóa SSH đã viết sẽ bị xóa. Bạn có chắc chắn muốn tiếp tục không?",
     "ConfigFilename": "Định cấu hình tên tệp",
     "CurrentSSHPublicKey": "Khóa công khai hiện tại:",
+    "CustomDashboardPanels": "Bảng điều khiển tùy chỉnh",
     "DarkMode": "Chế độ tối",
     "DarkTheme": "Chế độ tối",
     "Default": "Mặc định",

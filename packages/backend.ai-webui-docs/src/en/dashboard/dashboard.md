@@ -51,20 +51,73 @@ When you are logged in as a superadmin, the Dashboard page also displays
 **Agent Statistics** and **Active Agents** panels alongside the standard user panels.
 These panels show cluster-wide agent health and resource utilization.
 
-## Customizing the dashboard layout
+## Customizing the Dashboard Layout
 
-You can customize the Dashboard layout by rearranging and resizing panels to
-suit your preferences.
+You can rearrange the board at any time — there is no mode to enter first:
 
 - **Move panels**: Drag a panel by its header to reposition it on the board.
 - **Resize panels**: Drag the bottom-right corner of a panel to adjust its
   size. Each panel has a minimum size to ensure its content remains readable.
 
+![](../images/dashboard_edit_mode.png)
+<!-- TODO: Capture screenshot of the dashboard in edit mode (board + edit sidebar) -->
+
 Your customized layout is automatically saved and persists across browser
 sessions. The layout is stored per user, so each user can have their own
-preferred arrangement.
+preferred arrangement. To discard your arrangement and restore the default
+one, click the **Reset layout** button at the bottom of the edit sidebar and
+confirm. Resetting the layout does not remove your custom panels.
 
 :::tip
 When the WebUI is updated with new dashboard panels, those panels will
 automatically appear on your dashboard even if you have a saved custom layout.
 :::
+
+### Custom Panels
+
+:::note[Experimental feature]
+The entire custom-panel feature is hidden until you turn on **Custom dashboard
+panels** in the [Experimental features](#experimental-features) section of the
+User Settings page. If you turn the feature off later, your existing custom
+panels are hidden — not deleted — and reappear with their saved board
+positions once you turn it back on.
+:::
+
+Click the **Edit** button at the top right of the page to open the custom-panel
+sidebar, and **Close** to hide it again. The sidebar lists your
+custom panels. A custom panel is a table of a resource you select, narrowed by
+a condition you define. The panel itself shows only a title and a table, so
+give the panel a title that describes its condition.
+
+To add a panel, click the **Add** button in the sidebar. The panel dialog
+contains the following fields:
+
+- **Resource**: The resource the panel lists. Choose **Sessions**, **Users**,
+  or **Data & Storage**.
+- **Title**: An optional panel title. When omitted, the resource name is used.
+- **Condition**: A property filter that narrows the rows shown in the table.
+
+A live preview below the fields shows the rows matching the current condition.
+Sorting a column in the preview sets the panel's sort order. Click **Add** to
+place the panel on the board.
+
+![](../images/dashboard_panel_modal.png)
+<!-- TODO: Capture screenshot of the add-panel dialog with the live preview -->
+
+To change a panel's resource, condition, or title later, click the pencil
+(**Edit**) icon next to the panel in the sidebar — or in the panel's header on
+the board — and save your changes. To remove a panel, click the trash
+(**Delete**) icon and confirm in the popup.
+
+:::note
+**Sessions** panels list the sessions of the current project and are available
+to every user. **Users** and **Data & Storage** panels are available to
+superadmins only. A panel whose resource your role cannot query remains listed
+in the sidebar but is not shown on the board.
+:::
+
+## Automatic Refresh
+
+The dashboard refreshes its data automatically every 15 seconds, so the panels
+always reflect recent activity without reloading the page. Custom panels
+refresh on the same cycle as the built-in panels.

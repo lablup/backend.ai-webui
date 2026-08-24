@@ -721,8 +721,24 @@
     }
   },
   "dashboard": {
+    "Edit": "Muokkaa",
     "Free": "Ilmainen",
-    "Used": "Käytetty"
+    "Used": "Käytetty",
+    "editSider": {
+      "Empty": "Ei vielä mukautettuja paneeleja",
+      "RequiresSuperadmin": "Vain superadmin-käyttäjille",
+      "ResetLayout": "Palauta asettelu",
+      "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
+      "Title": "Mukautetut paneelit"
+    },
+    "panelModal": {
+      "AddPanel": "Lisää paneeli",
+      "Condition": "Ehto",
+      "EditPanel": "Muokkaa paneelia",
+      "Resource": "Resurssi",
+      "TitleDescription": "Näytetään paneelin otsikkona – kuvaa sillä ehto.",
+      "TitleOptional": "Otsikko (valinnainen)"
+    }
   },
   "data": {
     "Active": "Aktiivinen",
@@ -3509,6 +3525,7 @@
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
     "ConfigFilename": "Konfigurointitiedoston nimi",
     "CurrentSSHPublicKey": "Nykyinen julkinen avain:",
+    "CustomDashboardPanels": "Mukautetut koontinäytön paneelit",
     "DarkMode": "Tumma tila",
     "DarkTheme": "Tumma tila",
     "Default": "Laiminlyönti",
