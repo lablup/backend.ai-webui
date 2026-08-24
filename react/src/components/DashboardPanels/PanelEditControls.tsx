@@ -4,7 +4,7 @@
  */
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { BAIFlex, BAIPopconfirmAstryx } from 'backend.ai-ui';
+import { BAIFlex, BAIPopconfirm } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import { SquarePenIcon, Trash2 } from 'lucide-react';
 import React from 'react';
@@ -45,7 +45,7 @@ const PanelEditControls: React.FC<PanelEditControlsProps> = ({
         />
       ) : null}
       {onRemove ? (
-        <BAIPopconfirmAstryx
+        <BAIPopconfirm
           title={t('dialog.ask.DoYouWantToDeleteSomething', { name: title })}
           isDanger
           onConfirm={onRemove}
@@ -57,7 +57,7 @@ const PanelEditControls: React.FC<PanelEditControlsProps> = ({
             tooltip={t('button.Delete')}
             icon={<Trash2 size="1em" />}
           />
-        </BAIPopconfirmAstryx>
+        </BAIPopconfirm>
       ) : null}
     </BAIFlex>
   );

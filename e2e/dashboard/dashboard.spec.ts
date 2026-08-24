@@ -268,7 +268,7 @@ test.describe(
         // The widget may show CPU/RAM statistics when the admin user has resource quota allocated
         // in the resource group, or show an empty state ("No resource data available") when no
         // quota is assigned. The skeleton loader disappears once data has been fetched either way.
-        // `MyResourceWithinResourceGroup.tsx` renders `BAISkeletonAstryx` while
+        // `MyResourceWithinResourceGroup.tsx` renders `BAISkeleton` while
         // loading, tagged `data-testid="my-resource-skeleton"` (Astryx
         // `Skeleton` has no default class to anchor on); the "paragraph"
         // variant renders several boxes sharing that testid, hence `.first()`.

@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import BAITourAstryx from './BAITourAstryx';
+import BAITour from './BAITour';
+import useTourTargets from './useTourTargets';
 import { TourStep } from '@astryxdesign/lab';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import useTourTargets from './useTourTargets';
 
 /**
  * PILOT-DECISION: public props narrowed from antd's
@@ -73,7 +73,7 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
   };
 
   return (
-    <BAITourAstryx
+    <BAITour
       isActive
       hasBackdrop
       isStepCountShown
@@ -105,7 +105,7 @@ const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
           {t('tourGuide.deploymentPreset.FixErrorAndTryAgainText')}
         </TourStep>
       ) : null}
-    </BAITourAstryx>
+    </BAITour>
   );
 };
 

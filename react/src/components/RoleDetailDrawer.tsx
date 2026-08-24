@@ -6,14 +6,15 @@ import { RoleDetailDrawerFragment$key } from '../__generated__/RoleDetailDrawerF
 import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerRefetchQuery.graphql';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
-import { BAIDrawerAstryx as BAIDrawer ,
+import { IconButton } from '@astryxdesign/core/IconButton';
+import {
+  BAIDrawer,
   BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIText,
   useFetchKey,
 } from 'backend.ai-ui';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,12 +56,12 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   //
   // RBACManagementPage drives `open` and `roleFrgmt` from the same URL param,
   // so closing nulls the ref in the SAME commit that flips `open` to false.
-  // `BAIDrawerAstryx` keeps the drawer mounted and fully laid out for the
+  // `BAIDrawer` keeps the drawer mounted and fully laid out for the
   // exit transition, so for that whole window the user is looking at a live
   // drawer whose title has fallen back to `rbac.RoleDetailInfo` and whose body
   // is empty — measured at 182ms, with the slide-out not starting until
   // ~630ms. The usual escape hatches do not apply: `BAIUnmountAfterClose` is a
-  // no-op here (`BAIDrawerAstryx` exposes no `afterClose`/`afterOpenChange` to
+  // no-op here (`BAIDrawer` exposes no `afterClose`/`afterOpenChange` to
   // hang it on), and keying the drawer on the role id would remount it on every
   // selection change and throw away the animation entirely.
   //

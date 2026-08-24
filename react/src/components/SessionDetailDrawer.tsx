@@ -7,7 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { BAIDrawerAstryx as BAIDrawer , BAISkeleton, useFetchKey } from 'backend.ai-ui';
+import { BAIDrawer, BAISkeleton, useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';

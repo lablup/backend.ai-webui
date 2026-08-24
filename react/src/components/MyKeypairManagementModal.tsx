@@ -23,7 +23,7 @@ import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIPopconfirmAstryx } from 'backend.ai-ui';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -506,7 +506,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                     return (
                       <BAIFlex gap="xxs">
                         {!isMain && (
-                          <BAIPopconfirmAstryx
+                          <BAIPopconfirm
                             title={t('credential.SetAsMain')}
                             description={t('credential.SetAsMainConfirm')}
                             okText={t('button.Confirm')}
@@ -538,7 +538,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                               variant="ghost"
                               size="sm"
                             />
-                          </BAIPopconfirmAstryx>
+                          </BAIPopconfirm>
                         )}
                         {isMain ? (
                           // PILOT-DECISION (P18, ticket-18 precedent): antd's
@@ -554,7 +554,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                             isDisabled
                           />
                         ) : (
-                          <BAIPopconfirmAstryx
+                          <BAIPopconfirm
                             title={t('credential.Deactivate')}
                             description={t('credential.DeactivateConfirm')}
                             okText={t('button.Confirm')}
@@ -572,14 +572,14 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                               variant="destructive"
                               size="sm"
                             />
-                          </BAIPopconfirmAstryx>
+                          </BAIPopconfirm>
                         )}
                       </BAIFlex>
                     );
                   }
                   return (
                     <BAIFlex gap="xxs">
-                      <BAIPopconfirmAstryx
+                      <BAIPopconfirm
                         title={t('credential.Restore')}
                         description={t('credential.RestoreConfirm')}
                         okText={t('button.Confirm')}
@@ -596,7 +596,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                           variant="ghost"
                           size="sm"
                         />
-                      </BAIPopconfirmAstryx>
+                      </BAIPopconfirm>
                       <IconButton
                         icon={<Trash2Icon size="1em" />}
                         label={t('credential.DeleteKeypair')}

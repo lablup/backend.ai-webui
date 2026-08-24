@@ -33,7 +33,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIAdminProjectSelectAstryx,
+  BAIAdminProjectSelect,
   BAIFlex,
   BAIPropertyFilter,
   BAIResourceUnitGridSkeleton,
@@ -354,7 +354,7 @@ const AdminComputeSessionListPage = () => {
                   type: 'string',
                   defaultOperator: '==',
                   renderInput: ({ onAddCondition }) => (
-                    <BAIAdminProjectSelectAstryx
+                    <BAIAdminProjectSelect
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden
