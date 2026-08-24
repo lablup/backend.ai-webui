@@ -5,6 +5,7 @@
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import { useThemeMode } from '../hooks/useThemeMode';
+import './BAINotificationButton.css';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
@@ -94,6 +95,8 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
           label={t('notification.Notifications')}
           icon={
             <BAIBadgeCount
+              // The band's inversion stops at the overlay — see the .css.
+              className="bai-notification-badge"
               hasDot={hasRunningBackgroundTask}
               variant="error"
               title={t('notification.Notifications')}
