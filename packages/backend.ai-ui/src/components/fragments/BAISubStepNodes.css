@@ -88,10 +88,9 @@
   overflow: hidden;
 }
 
+/* Typography lives on the header's `Text` (which also brings the ellipsis and
+   the truncate tooltip the fixed column widths need); only the band is here. */
 .bai-substep-table thead th {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
   background: var(--color-background-muted);
 }
 

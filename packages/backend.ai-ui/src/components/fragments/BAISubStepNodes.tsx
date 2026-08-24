@@ -22,7 +22,7 @@ import {
   BAISubStepNodesFragment$data,
   BAISubStepNodesFragment$key,
 } from '../../__generated__/BAISubStepNodesFragment.graphql';
-import { filterOutNullAndUndefined, newLineToBrElement } from '../../helper';
+import { filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
   SchedulingResult,
@@ -107,6 +107,22 @@ export const countExecutedSubSteps = (
   ).length;
 };
 
+/**
+ * 3a gives the message one line. A `<br>` is a FORCED break that
+ * `white-space: nowrap` never suppresses, so rendering the newlines as markup
+ * (what `newLineToBrElement` does, and what the stacked 2a layout wanted) would
+ * lay out one line box per fragment — a cell `height` is only a minimum, so the
+ * 32px row would grow with the message. Multi-line messages are the norm on a
+ * failed step: the recorder stores `str(e)`, and a placement failure joins its
+ * per-agent reasons with newlines.
+ *
+ * Collapsing them to spaces keeps the row at 32px AND fixes the hover tooltip,
+ * which Astryx builds from `textContent` — with `<br>`s that came back as
+ * "line onelinetwo".
+ */
+const toSingleLine = (message: string | null | undefined): string =>
+  message?.replace(/\s*\n\s*/g, ' ').trim() || '-';
+
 const toSchedulingResult = (
   result: SubStepInList['result'],
 ): SchedulingResult | null =>
@@ -169,14 +185,25 @@ const BAISubStepNodes = ({
             {/* The rail column is decoration, but the header cell has to exist
                 for the column count to line up. */}
             <th scope="col" />
-            <th scope="col">{t('comp:BAISubStepNodes.Step')}</th>
-            <th scope="col">{t('comp:BAISubStepNodes.Result')}</th>
-            <th scope="col" className="bai-substep-num">
-              {t('comp:BAISubStepNodes.Duration')}
-            </th>
-            <th scope="col">{t('comp:BAISubStepNodes.Time')}</th>
-            <th scope="col">{t('comp:BAISubStepNodes.ErrorCode')}</th>
-            <th scope="col">{t('comp:BAISubStepNodes.Message')}</th>
+            {(
+              [
+                ['Step', undefined],
+                ['Result', undefined],
+                ['Duration', 'bai-substep-num'],
+                ['Time', undefined],
+                ['ErrorCode', undefined],
+                ['Message', undefined],
+              ] as const
+            ).map(([key, cellClassName]) => (
+              <th scope="col" key={key} className={cellClassName}>
+                {/* `maxLines` for the ellipsis and the hover tooltip: the
+                    columns are fixed-width, and a one-word label like ru
+                    `Длительность` needs 103px in the 74px duration column. */}
+                <Text type="supporting" weight="medium" maxLines={1}>
+                  {t(`comp:BAISubStepNodes.${key}`)}
+                </Text>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -201,7 +228,10 @@ const BAISubStepNodes = ({
                   result ? resultSemanticColorMap[result] : 'default'
                 }
               >
-                <td className="bai-substep-rail-cell" aria-hidden />
+                {/* No `aria-hidden`: hiding it would leave the row owning
+                    six cells against seven column headers. Empty is right —
+                    the header cell above it is empty too. */}
+                <td className="bai-substep-rail-cell" />
                 <td>
                   <Text
                     type="code"
@@ -262,7 +292,7 @@ const BAISubStepNodes = ({
                   <Text type="supporting" maxLines={1}>
                     {isResultMarker
                       ? t('comp:BAISubStepNodes.ResultMarker')
-                      : newLineToBrElement(record.message ?? '-')}
+                      : toSingleLine(record.message)}
                   </Text>
                 </td>
               </tr>
