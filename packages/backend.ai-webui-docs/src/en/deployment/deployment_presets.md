@@ -82,7 +82,7 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
    - **Service Configuration** (appears when the selected runtime reads its configuration from the model folder, such as Custom): **Execution** (**Shell** or **Exec**), **Shell**, **Command** / **Command (argv)**, and **Port** — the same fields as the Add Revision modal, described in [Service configuration](#service-configuration) on the Deployments page. Leaving **Port** blank makes deployments created from this preset inherit the runtime variant's default port.
 
       :::note[Where the section appears]
-      On servers that can store these values independently of the model definition, **Service Configuration**, **Health Check**, and **Pre-Start Actions** sit on the **Basic Info** step, below the runtime fields. On older servers all three are nested inside the **Model Definition** card on the **Model & Execution** step instead, and they are saved only while the model definition is switched on.
+      **Service Configuration**, **Health Check**, and **Pre-Start Actions** all sit on the **Basic Info** step, below the runtime fields, and are saved independently of the model definition.
       :::
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
    - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
@@ -107,7 +107,8 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
    - **Model Definition** (optional): A switch in the card header turns the model definition on. When it is on, fill in **Model Name** and **Model Path** — both required — and, optionally, expand the **Metadata** section for the served model's title, author, version, license, description, task, category, architecture, framework, and labels.
 
    ![](../images/deployment_preset_create_modal.png)
-   <!-- TODO(screenshot): /admin/deployments/deployment-presets/new — show the Service Configuration section (Execution Shell/Exec, Shell, Command, Port) for the Custom runtime. Needs a manager reporting 26.8.0+ / 26.9.0+; the capture environment ran 26.8.0rc1, where those controls do not render. -->
+
+   ![](../images/deployment_preset_service_configuration.png)
 
 3. On the **Review** step, check the summary and click `Create` to save. A success notification confirms the preset has been created.
 
@@ -133,12 +134,9 @@ The **Basic Info** card summarizes, in the order the fields appear on step 1:
 
 The remaining cards summarize **Resources** (resource slots, resource options, cluster mode, cluster size), **Deployment** (replica count, revision history limit, Open to Public), and **Model & Execution** (startup command, bootstrap script, environment variables, and the model definition when enabled).
 
-   On servers that keep the service configuration inside the model definition, the **Shell**, **Command**, **Port**, and health check rows appear under the model definition in the **Model & Execution** card instead of on the **Basic Info** card — mirroring where you filled them in.
-
    The **Runtime** row appears when you create a preset **and** when you edit one, matching the fact that the runtime is editable on step 1 in both cases. Use it to confirm which runtime the preset will use before you save.
 
 ![](../images/deployment_preset_review_step.png)
-<!-- TODO(screenshot): Review step — capture once the Shell / Command / Port rows render (requires a manager that stores the service configuration independently of the model definition). -->
 
 :::note[Required parameters in presets]
 Administrators can mark individual Runtime Parameters as required. Required parameters display a red asterisk (★) next to the label. The save button stays disabled until all required parameters are filled in. Required parameter validation applies even to parameters on unvisited tabs.
@@ -155,7 +153,6 @@ The **Enable Health Check** toggle also applies to the vLLM/SGLang Advanced Mode
 3. Adjust the fields as needed. On the **Review** step, confirm the summary — including the **Runtime** row — and click `Save` to store your changes.
 
 ![](../images/deployment_preset_edit_wizard.png)
-<!-- TODO(screenshot): /admin/deployments/deployment-presets/{presetId}/edit — same step as the create wizard, once a manager that renders the Execution/Shell controls is available. -->
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 

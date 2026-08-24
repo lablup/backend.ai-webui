@@ -81,7 +81,7 @@
    - **サービス構成**（選択したランタイムが Custom のようにモデルフォルダーから設定を読み込む場合に表示）：**実行方式**（**Shell** または **Exec**）、**シェル**、**コマンド** / **コマンド (argv)**、**ポート** — Revision 追加モーダルと同じフィールドで、デプロイメントページの [サービス構成](#service-configuration) で説明しています。**ポート** を空欄にすると、このプリセットから作成されたデプロイメントはランタイムバリアントの既定ポートを引き継ぎます。
 
       :::note[セクションが表示される場所]
-      モデル定義とは独立してこれらの値を保存できるサーバでは、**サービス構成**、**ヘルスチェック**、**起動前アクション** が **基本情報** ステップのランタイム関連フィールドの下に表示されます。それ以前のサーバでは、3 つとも **モデル & 実行** ステップの **モデル定義** カード内に入れ子で表示され、モデル定義がオンのときにのみ保存されます。
+      **サービス構成**、**ヘルスチェック**、**起動前アクション** はいずれも **基本情報** ステップのランタイム関連フィールドの下に表示され、モデル定義とは独立して保存されます。
       :::
    - **リソース**：リソーススロット（CPU、メモリ、GPU）、共有メモリ、リソースオプション（キー／値ペア）。
    - **クラスター**：クラスターモード（Single Node または Multi Node）とクラスターサイズ。
@@ -106,7 +106,8 @@
    - **モデル定義**（任意）：カードヘッダーのスイッチでモデル定義を有効にします。有効にした場合は **モデル名** と **モデルパス**（どちらも必須）を入力し、必要に応じて **メタデータ** セクションを展開して、サービングするモデルのタイトル、作成者、バージョン、ライセンス、説明、タスク、カテゴリ、アーキテクチャ、フレームワーク、ラベルを入力します。
 
    ![](../images/deployment_preset_create_modal.png)
-   <!-- TODO(screenshot): /admin/deployments/deployment-presets/new — show the Service Configuration section (Execution Shell/Exec, Shell, Command, Port) for the Custom runtime. Needs a manager reporting 26.8.0+ / 26.9.0+; the capture environment ran 26.8.0rc1, where those controls do not render. -->
+
+   ![](../images/deployment_preset_service_configuration.png)
 
 3. **レビュー** ステップで内容を確認し、`作成` をクリックして保存します。成功通知が表示されます。
 
@@ -132,12 +133,9 @@
 
 残りのカードには、**リソース**（リソーススロット、リソースオプション、クラスターモード、クラスターサイズ）、**デプロイメント**（レプリカ数、リビジョン履歴の保持数、Open to Public）、**モデル & 実行**（スタートアップコマンド、ブートストラップスクリプト、環境変数、有効にしている場合はモデル定義）が要約されます。
 
-   サービス構成をモデル定義の中に保存するサーバでは、**シェル**、**コマンド**、**ポート**、およびヘルスチェックの行は **基本情報** カードではなく、**モデル & 実行** カードのモデル定義の下に表示されます。入力した場所と同じ位置に表示される、ということです。
-
    **ランタイム** の行は、プリセットを作成するときだけでなく **編集するとき** にも表示されます。どちらの場合もステップ 1 でランタイムを変更できるため、保存する前にこの行でプリセットが使用するランタイムを確認してください。
 
 ![](../images/deployment_preset_review_step.png)
-<!-- TODO(screenshot): Review step — capture once the Shell / Command / Port rows render (requires a manager that stores the service configuration independently of the model definition). -->
 
 :::note[プリセットの必須パラメータ]
 管理者は個々のランタイムパラメータを必須に指定できます。必須パラメータには、ラベルの横に赤いアスタリスク（★）が表示されます。すべての必須パラメータが入力されるまで、保存ボタンは無効のままになります。必須パラメータの検証は、まだ開いていないタブ上のパラメータにも適用されます。
@@ -150,7 +148,6 @@
 3. 必要な値を変更し、**レビュー** ステップで要約（**ランタイム** の行を含む）を確認してから `保存` をクリックして変更を反映します。
 
 ![](../images/deployment_preset_edit_wizard.png)
-<!-- TODO(screenshot): /admin/deployments/deployment-presets/{presetId}/edit — same step as the create wizard, once a manager that renders the Execution/Shell controls is available. -->
 
 プリセットを編集すると、**今後** 作成されるデプロイの既定値のみが変更されます。すでにこのプリセットから作成された既存のデプロイには影響しません。
 

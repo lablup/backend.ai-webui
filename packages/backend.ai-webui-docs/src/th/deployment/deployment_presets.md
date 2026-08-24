@@ -82,7 +82,7 @@
    - **การกำหนดค่าบริการ** (จะปรากฏเมื่อ runtime ที่เลือกอ่านการตั้งค่าจากโฟลเดอร์โมเดล เช่น Custom): **การรันคำสั่ง** (**Shell** หรือ **Exec**), **Shell**, **คำสั่ง** / **คำสั่ง (argv)** และ **พอร์ต** — เป็นฟิลด์ชุดเดียวกับในหน้าต่าง Add Revision ซึ่งอธิบายไว้ที่ [การกำหนดค่าบริการ](#service-configuration) ในหน้าการปรับใช้ หากเว้น **พอร์ต** ว่างไว้ deployment ที่สร้างจากพรีเซ็ตนี้จะสืบทอดพอร์ตเริ่มต้นของ runtime variant
 
       :::note[ตำแหน่งที่ส่วนนี้ปรากฏ]
-      บนเซิร์ฟเวอร์ที่สามารถเก็บค่าเหล่านี้แยกจากคำจำกัดความโมเดลได้ **การกำหนดค่าบริการ**, **การตรวจสอบสุขภาพ** และ **การกระทำก่อนเริ่ม** จะอยู่ในขั้นตอน **ข้อมูลพื้นฐาน** ใต้ฟิลด์ของ runtime ส่วนบนเซิร์ฟเวอร์รุ่นเก่ากว่า ทั้งสามส่วนจะซ้อนอยู่ในการ์ด **คำจำกัดความโมเดล** ของขั้นตอน **โมเดล & การประมวลผล** แทน และจะถูกบันทึกเฉพาะเมื่อเปิดใช้คำจำกัดความโมเดลเท่านั้น
+      **การกำหนดค่าบริการ**, **การตรวจสอบสุขภาพ** และ **การกระทำก่อนเริ่ม** ทั้งหมดจะอยู่ในขั้นตอน **ข้อมูลพื้นฐาน** ใต้ฟิลด์ของ runtime และถูกบันทึกแยกจากคำจำกัดความโมเดล
       :::
    - **ทรัพยากร**: resource slots (CPU, memory, GPU), หน่วยความจำที่แชร์ และตัวเลือกทรัพยากร (คู่ key/value)
    - **คลัสเตอร์**: cluster mode (Single Node หรือ Multi Node) และขนาดคลัสเตอร์
@@ -111,7 +111,8 @@
       :::
 
    ![](../images/deployment_preset_create_modal.png)
-   <!-- TODO(screenshot): /admin/deployments/deployment-presets/new — show the Service Configuration section (Execution Shell/Exec, Shell, Command, Port) for the Custom runtime. Needs a manager reporting 26.8.0+ / 26.9.0+; the capture environment ran 26.8.0rc1, where those controls do not render. -->
+
+   ![](../images/deployment_preset_service_configuration.png)
 
 3. ในขั้นตอน **การทบทวน** ให้ตรวจสอบสรุปข้อมูล แล้วคลิก `สร้าง` เพื่อบันทึก ระบบจะแสดงการแจ้งเตือนเมื่อสร้างพรีเซ็ตสำเร็จ
 
@@ -137,12 +138,9 @@
 
 การ์ดที่เหลือสรุป **ทรัพยากร** (resource slots, ตัวเลือกทรัพยากร, cluster mode, ขนาดคลัสเตอร์), **การปรับใช้** (จำนวน replica, จำนวน revision ที่เก็บไว้, Open to Public) และ **โมเดล & การประมวลผล** (คำสั่งเตรียมสภาพแวดล้อม, bootstrap script, environment variables และคำจำกัดความโมเดลเมื่อเปิดใช้งาน)
 
-   บนเซิร์ฟเวอร์ที่เก็บการกำหนดค่าบริการไว้ภายในคำจำกัดความโมเดล แถว **Shell**, **คำสั่ง**, **พอร์ต** และการตรวจสอบสุขภาพจะแสดงอยู่ใต้คำจำกัดความโมเดลในการ์ด **โมเดล & การประมวลผล** แทนที่จะอยู่ในการ์ด **ข้อมูลพื้นฐาน** ซึ่งตรงกับตำแหน่งที่คุณกรอกข้อมูลไว้
-
    แถว **Runtime** จะแสดงทั้งตอนที่คุณสร้างพรีเซ็ต **และ** ตอนที่คุณแก้ไขพรีเซ็ต เนื่องจากฟิลด์นี้แก้ไขได้ในขั้นตอนที่ 1 ทั้งสองกรณี ใช้แถวนี้เพื่อยืนยันว่าพรีเซ็ตจะใช้ runtime ใดก่อนบันทึก
 
 ![](../images/deployment_preset_review_step.png)
-<!-- TODO(screenshot): Review step — capture once the Shell / Command / Port rows render (requires a manager that stores the service configuration independently of the model definition). -->
 
 ### แก้ไขพรีเซ็ตการดีพลอย
 
@@ -151,7 +149,6 @@
 3. ปรับค่าตามต้องการ จากนั้นในขั้นตอน **การทบทวน** ให้ยืนยันสรุปข้อมูล รวมถึงแถว **Runtime** แล้วคลิก `บันทึก` เพื่อบันทึกการเปลี่ยนแปลง
 
 ![](../images/deployment_preset_edit_wizard.png)
-<!-- TODO(screenshot): /admin/deployments/deployment-presets/{presetId}/edit — same step as the create wizard, once a manager that renders the Execution/Shell controls is available. -->
 
 การแก้ไขพรีเซ็ตจะเปลี่ยนเฉพาะค่าเริ่มต้นของ deployment ที่จะสร้าง **ในอนาคต** เท่านั้น deployment ที่สร้างจากพรีเซ็ตนี้อยู่แล้วจะไม่ถูกแก้ไข
 

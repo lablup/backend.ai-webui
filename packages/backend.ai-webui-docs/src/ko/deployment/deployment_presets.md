@@ -82,7 +82,7 @@
    - **서비스 구성** (선택한 런타임이 Custom처럼 모델 폴더에서 설정을 읽는 경우에만 표시): **실행 방식**(**Shell** 또는 **Exec**), **셸**, **명령어** / **명령어 (argv)**, **포트** — 리비전 추가 모달과 동일한 필드이며, 배포 페이지의 [서비스 구성](#service-configuration) 에서 설명합니다. **포트** 를 비워 두면 이 프리셋으로 생성되는 배포가 런타임 변형의 기본 포트를 상속합니다.
 
       :::note[섹션이 표시되는 위치]
-      모델 정의와 별개로 이 값들을 저장할 수 있는 서버에서는 **서비스 구성**, **헬스 체크**, **시작 전 작업** 이 **기본 정보** 단계의 런타임 필드 아래에 표시됩니다. 이전 버전의 서버에서는 세 항목 모두 **모델 & 실행** 단계의 **모델 정의** 카드 안에 중첩되어 표시되며, 모델 정의가 켜져 있을 때만 저장됩니다.
+      **서비스 구성**, **헬스 체크**, **시작 전 작업** 은 모두 **기본 정보** 단계의 런타임 필드 아래에 표시되며, 모델 정의와 별개로 저장됩니다.
       :::
    - **이미지**: 배포에 사용할 컨테이너 이미지를 선택합니다.
    - **자원**: 자원 슬롯(CPU, 메모리, GPU), 공유 메모리, 자원 옵션(키/값 쌍).
@@ -112,7 +112,8 @@
       :::
 
    ![](../images/deployment_preset_create_modal.png)
-   <!-- TODO(screenshot): /admin/deployments/deployment-presets/new — show the Service Configuration section (Execution Shell/Exec, Shell, Command, Port) for the Custom runtime. Needs a manager reporting 26.8.0+ / 26.9.0+; the capture environment ran 26.8.0rc1, where those controls do not render. -->
+
+   ![](../images/deployment_preset_service_configuration.png)
 
 3. **검토** 단계에서 요약 내용을 확인한 뒤 `생성`을 클릭하여 저장합니다. 성공 알림이 표시됩니다.
 
@@ -138,12 +139,9 @@
 
 나머지 카드에는 **리소스**(자원 슬롯, 자원 옵션, 클러스터 모드, 클러스터 크기), **배포**(복제본 수, 리비전 기록 보관 수, Open to Public), **모델 & 실행**(실행 준비 명령어, 부트스트랩 스크립트, 환경 변수, 활성화한 경우 모델 정의)이 요약됩니다.
 
-   서비스 구성을 모델 정의 안에 저장하는 서버에서는 **셸**, **명령어**, **포트**, 헬스 체크 항목이 **기본 정보** 카드가 아니라 **모델 & 실행** 카드의 모델 정의 아래에 표시됩니다. 입력한 위치와 동일하게 표시되는 것입니다.
-
    **런타임** 항목은 프리셋을 생성할 때뿐 아니라 **수정할 때도** 표시됩니다. 두 경우 모두 1단계에서 런타임을 변경할 수 있으므로, 저장하기 전에 이 항목에서 프리셋이 사용할 런타임을 확인하세요.
 
 ![](../images/deployment_preset_review_step.png)
-<!-- TODO(screenshot): Review step — capture once the Shell / Command / Port rows render (requires a manager that stores the service configuration independently of the model definition). -->
 
 ### 배포 프리셋 수정
 
@@ -152,7 +150,6 @@
 3. 필요한 값을 수정한 뒤 **검토** 단계에서 요약 내용(**런타임** 항목 포함)을 확인하고 `저장`을 클릭하여 변경 사항을 반영합니다.
 
 ![](../images/deployment_preset_edit_wizard.png)
-<!-- TODO(screenshot): /admin/deployments/deployment-presets/{presetId}/edit — same step as the create wizard, once a manager that renders the Execution/Shell controls is available. -->
 
 프리셋을 수정하면 **이후** 생성되는 배포의 기본값만 변경됩니다. 이미 해당 프리셋으로 생성된 기존 배포에는 영향을 주지 않습니다.
 

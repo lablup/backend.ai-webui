@@ -109,7 +109,7 @@ Every revision mounts one model storage folder into each replica. The fields dir
 
 - **Model Folder**: The model storage folder to mount on each replica.
 - **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
-- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Leave it empty to mount the folder root. This field is shown only when the server supports mount subpaths.
+- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Leave it empty to mount the folder root.
 
 <a id="service-configuration"></a>
 
@@ -133,8 +133,6 @@ chmod +x /setup.sh; vllm serve /models
 
 In **Exec** mode the same line is split into arguments and executed directly, so those operators are passed through as literal text. Separate arguments with spaces and quote any argument that contains spaces — for example, `--name "my model"`. When you need shell syntax, switch **Execution** back to **Shell** rather than wrapping the command in `/bin/bash -c "..."` yourself.
 :::
-
-   On servers that do not support the execution mode setting, the **Execution** and **Shell** fields are not shown and the section offers a single **Start Command** field alongside **Port**. That command is executed without a shell, so it still needs an explicit `/bin/bash -c "..."` wrapper when it relies on shell operators.
 
 <a id="health-check-and-pre-start-actions"></a>
 
@@ -412,7 +410,7 @@ please refer to the [Explore Folder](#explore-folder) section.
 You can place a `deployment-config.yaml` file in a model folder to pre-configure the resources, environment, and runtime settings used when a deployment is created from that model. When the file is present, its values are used as **defaults**; anything you set at deployment time (in the Add Revision form or the API request) overrides them.
 
 :::note
-This file was previously named `service-definition.toml` (TOML format). The legacy `service-definition.toml` is still read as a fallback, but it is **deprecated** — prefer `deployment-config.yaml` for new model folders.
+A `service-definition.toml` file (TOML format) in the same folder is still read as a fallback, but it is **deprecated** — use `deployment-config.yaml` for your model folders.
 :::
 
 `deployment-config.yaml` is **optional** and does not gate deployment. You can deploy a model whether or not the file is present — a missing or malformed file is simply skipped. Together with the optional `model-definition.yaml` (which describes the model and inference server), it lets administrators ship sensible defaults alongside a model.
@@ -611,7 +609,7 @@ The **Audit Log** tab shows a chronological record of all actions taken on this 
 
 ### Replicas
 
-The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab, which replaced the previous enum-based status filter.
+The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab.
 
 ![](../images/replica_status_filter.png)
 
@@ -651,7 +649,7 @@ The rule list provides:
 
 - A property filter bar to filter rules by **Created At** and **Last Triggered** datetime ranges.
 - Server-side pagination.
-- The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set, so you no longer choose **Scale Out** or **Scale In** explicitly.
+- The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
 - Per-row edit and delete icons shown next to the condition summary in each row.
 
 Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:
