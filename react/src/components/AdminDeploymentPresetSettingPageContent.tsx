@@ -18,6 +18,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
 import { theme, useBAIBreakpoint } from '../theme-shim';
 import {
   STEP_KEYS,
@@ -252,6 +253,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const supportsNullableModelDefinition = baiClient.supports(
     'preset-model-config-type',
   );
+  const commonEnvVars = useCommonEnvVarConfigs();
 
   const preset = useFragment(
     graphql`
@@ -1177,7 +1179,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               label={t('adminDeploymentPreset.EnvironmentVariables')}
               style={{ marginBottom: 0 }}
             >
-              <EnvVarFormList name="environ" />
+              <EnvVarFormList name="environ" optionalEnvVars={commonEnvVars} />
             </BAIFormItem>
           </BAICard>
 

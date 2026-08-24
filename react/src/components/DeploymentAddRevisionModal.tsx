@@ -44,6 +44,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
 import { theme } from '../theme-shim';
 import type { ProjectContextOrNull } from '../types/projectContext';
 import {
@@ -451,6 +452,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
+  const commonEnvVars = useCommonEnvVarConfigs();
   // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput;
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   const supportsHealthCheckEnable = baiClient.supports(
@@ -2179,6 +2181,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           </Suspense>
           <EnvVarFormList
             name="environ"
+            optionalEnvVars={commonEnvVars}
             formItemProps={{
               validateTrigger: ['onChange', 'onBlur'],
             }}

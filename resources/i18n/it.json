@@ -2015,6 +2015,9 @@
     "AdditionalMounts": "Supporti aggiuntivi",
     "AdditionalMountsTooltip": "Cartelle aggiuntive non relative al modello montate in ogni replica insieme alla cartella del modello.",
     "AutoScalingRules": "Regole di ridimensionamento automatico",
+    "AwsAccessKeyId": "Il tuo ID della chiave di accesso AWS",
+    "AwsDefaultRegion": "es. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "La tua chiave di accesso segreta AWS",
     "BasePath": "Percorso base",
     "CommandArgvLabel": "Comando (argv)",
     "CommandExecHelper": "Viene eseguito direttamente come argomenti, senza shell — gli operatori (; && | $VAR, reindirizzamento, ecc.) vengono trattati come testo letterale. Separa gli argomenti con spazi; racchiudi tra virgolette quelli contenenti spazi (ad es. --name \"my model\").",
@@ -2034,6 +2037,9 @@
     "Finished": "Finito",
     "HealthCheck": "URL di controllo della salute",
     "HealthCheckTooltip": "Il percorso URL utilizzato per verificare se il servizio è in esecuzione (es. /health).",
+    "HfToken": "Il tuo token di accesso Hugging Face",
+    "HttpProxy": "es. http://proxy.example.com:8080",
+    "HttpsProxy": "es. https://proxy.example.com:8080",
     "Image": "Immagine",
     "ImageRequired": "L'immagine è obbligatoria.",
     "InitialDelay": "Periodo di grazia all'avvio",
@@ -2052,6 +2058,7 @@
     "ModelMountDestination": "Destinazione di montaggio per la cartella del modello",
     "ModelMountTooltip": "Il percorso in cui la cartella del modello è montata all'interno del container.",
     "NimApiKey": "La tua chiave API NGC",
+    "NoProxy": "es. localhost,127.0.0.1,.internal",
     "OpenFolder": "Vai alla cartella",
     "Port": "Porta",
     "PortTooltip": "Il numero di porta su cui il processo di servizio del modello è in ascolto.",
@@ -2092,7 +2099,8 @@
     "VllmModelName": "Nome del modello (es.: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Dimensione del parallelismo della pipeline (es. 2, 4)",
     "VllmQuantization": "es., awq, gptq, fp8",
-    "VllmTpSize": "Dimensione del parallelismo tensoriale (es. 2, 4, 8)"
+    "VllmTpSize": "Dimensione del parallelismo tensoriale (es. 2, 4, 8)",
+    "WandbApiKey": "La tua chiave API Weights & Biases"
   },
   "modelStore": {
     "Architecture": "Architettura",
