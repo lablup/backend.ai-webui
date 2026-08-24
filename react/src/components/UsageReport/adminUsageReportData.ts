@@ -224,6 +224,7 @@ export const assembleAdminUsageReportData = ({
   period,
   allocationByDay,
   allocationComplete,
+  sessionsSemantics = 'launched',
   topUsers,
   utilizationByDay,
   utilizationAvgs,
@@ -231,8 +232,10 @@ export const assembleAdminUsageReportData = ({
 }: {
   period: UsageReportPeriod;
   allocationByDay: Record<string, DailyAllocation>;
-  /** True when built from per-kernel records covering the whole period. */
+  /** True when the allocation source covers the whole period. */
   allocationComplete: boolean;
+  /** 'launched' for per-kernel records, 'peakConcurrent' for stats bins. */
+  sessionsSemantics?: 'launched' | 'peakConcurrent';
   topUsers: UsageReportTopUser[];
   utilizationByDay: UtilizationByDay;
   utilizationAvgs: UsageReportUtilizationAvgs;
@@ -277,10 +280,10 @@ export const assembleAdminUsageReportData = ({
     totals: {
       gpuHours: sumOf('gpuHours'),
       cpuHours: sumOf('cpuHours'),
-      // Records carry launches per day (sum); the stats-bin fallback carries
-      // peak concurrency (max), matching the user-scope semantics.
+      // Records carry launches per day (sum); stats bins carry peak
+      // concurrency (max), matching the user-scope semantics.
       sessions: sessionValues.length
-        ? allocationComplete
+        ? sessionsSemantics === 'launched'
           ? sessionValues.reduce((a, b) => a + b, 0)
           : Math.max(...sessionValues)
         : null,
@@ -299,7 +302,7 @@ export const assembleAdminUsageReportData = ({
         allocationCoveredDays > 0 &&
         allocationCoveredDays < days.length,
     },
-    sessionsSemantics: allocationComplete ? 'launched' : 'peakConcurrent',
+    sessionsSemantics,
     generatedAt: dayjs().toISOString(),
     clusterName,
   };

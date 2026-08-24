@@ -65,12 +65,10 @@
   display: none;
 }
 
-/* Named page: this stylesheet stays loaded after the lazy route chunk, so an
-   unscoped @page would silently force A4/12mm on every other page's print. */
-@page usage-report {
-  size: A4;
-  margin: 12mm;
-}
+/* No @page here: a named page forces a break before the report (blank first
+   page), and an unscoped one leaks A4/12mm into every other page's print
+   because this stylesheet outlives the lazy route chunk. UsageReportPage
+   injects a mount-scoped <style> with the plain @page rule instead. */
 
 @media print {
   /* The report always prints light. Theme tokens resolve via light-dark(),
@@ -116,7 +114,6 @@
   }
 
   .usage-report {
-    page: usage-report;
     max-width: none;
     gap: var(--spacing-3);
     -webkit-print-color-adjust: exact;

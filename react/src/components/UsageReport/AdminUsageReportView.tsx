@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AdminUsageReportViewKeypairEmailQuery } from '../../__generated__/AdminUsageReportViewKeypairEmailQuery.graphql';
 import {
   AdminUsageReportViewUtilizationQuery,
   AdminUsageReportViewUtilizationQuery$data,
@@ -35,7 +36,13 @@ import { toLocalId, useBAILogger } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { graphql, useLazyLoadQuery, useRelayEnvironment } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useLazyLoadQuery,
+  useRelayEnvironment,
+} from 'react-relay';
+import type { IEnvironment } from 'relay-runtime';
 
 interface AdminUsageReportViewProps {
   period: UsageReportPeriod;
@@ -48,12 +55,14 @@ interface AdminAllocationResult {
   records: UsagePeriodRecord[];
   statsBins: UserStatsData[];
   recordsAvailable: boolean;
+  topUsers: UsageReportTopUser[];
 }
 
 const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
   'use memo';
   const { period, periodLabel, scopeLabel, onData } = props;
   const baiClient = useSuspendedBackendaiClient();
+  const relayEnvironment = useRelayEnvironment();
   const { logger } = useBAILogger();
   const { data: allocation } = useSuspenseTanQuery<AdminAllocationResult>({
     queryKey: ['UsageReportAdminAllocation', period.startDate, period.endDate],
@@ -65,26 +74,39 @@ const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
         ),
         baiClient.resources.admin_stats(),
       ]);
+      const records =
+        periodResult.status === 'fulfilled'
+          ? parseUsagePeriodRecords(periodResult.value)
+          : [];
       return {
-        records:
-          periodResult.status === 'fulfilled'
-            ? parseUsagePeriodRecords(periodResult.value)
-            : [],
+        records,
         statsBins:
           statsResult.status === 'fulfilled' && Array.isArray(statsResult.value)
             ? statsResult.value
             : [],
         recordsAvailable: periodResult.status === 'fulfilled',
+        topUsers: await resolveTopUserEmails(
+          relayEnvironment,
+          buildTopUsers(records, period),
+        ),
       };
     },
   });
 
+  // Stats bins include running sessions; period records on older managers are
+  // terminated-only. Prefer bins whenever their trailing-30d window covers the
+  // whole period (records still feed the top-users table).
+  const statsCoverPeriod =
+    allocation.statsBins.length > 0 &&
+    !dayjs(period.startDate).isBefore(dayjs().subtract(30, 'day'), 'day');
+  const useStatsBins = statsCoverPeriod || !allocation.recordsAvailable;
   const allocationProps: AdminAllocationProps = {
-    allocationByDay: allocation.recordsAvailable
-      ? buildAllocationByDayFromRecords(allocation.records, period)
-      : buildAllocationByDay(allocation.statsBins, period),
-    allocationComplete: allocation.recordsAvailable,
-    topUsers: buildTopUsers(allocation.records, period),
+    allocationByDay: useStatsBins
+      ? buildAllocationByDay(allocation.statsBins, period)
+      : buildAllocationByDayFromRecords(allocation.records, period),
+    allocationComplete: statsCoverPeriod || allocation.recordsAvailable,
+    sessionsSemantics: useStatsBins ? 'peakConcurrent' : 'launched',
+    topUsers: allocation.topUsers,
     clusterName: baiClient._config._endpointHost || null,
   };
 
@@ -122,9 +144,40 @@ const AdminUsageReportView: React.FC<AdminUsageReportViewProps> = (props) => {
 interface AdminAllocationProps {
   allocationByDay: Record<string, DailyAllocation>;
   allocationComplete: boolean;
+  sessionsSemantics: 'launched' | 'peakConcurrent';
   topUsers: UsageReportTopUser[];
   clusterName: string | null;
 }
+
+// Older managers omit `email` from usage-period rows; recover it from the
+// keypair (KeyPair.user_id is the owner's email), best-effort per row.
+const topUserEmailQuery = graphql`
+  query AdminUsageReportViewKeypairEmailQuery($accessKey: String!) {
+    keypair(access_key: $accessKey) {
+      user_id
+    }
+  }
+`;
+
+const resolveTopUserEmails = (
+  environment: IEnvironment,
+  topUsers: UsageReportTopUser[],
+): Promise<UsageReportTopUser[]> =>
+  Promise.all(
+    topUsers.map(async (user) => {
+      if (user.email || !user.accessKey) {
+        return user;
+      }
+      const result = await fetchQuery<AdminUsageReportViewKeypairEmailQuery>(
+        environment,
+        topUserEmailQuery,
+        { accessKey: user.accessKey },
+      )
+        .toPromise()
+        .catch(() => null);
+      return { ...user, email: result?.keypair?.user_id ?? null };
+    }),
+  );
 
 interface AdminPresetLoaderProps
   extends AdminUsageReportViewProps, AdminAllocationProps {}
@@ -169,6 +222,7 @@ const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
   presetIds,
   allocationByDay,
   allocationComplete,
+  sessionsSemantics,
   topUsers,
   clusterName,
 }) => {
@@ -315,6 +369,7 @@ const AdminUtilizationMetrics: React.FC<AdminUtilizationMetricsProps> = ({
     period,
     allocationByDay,
     allocationComplete,
+    sessionsSemantics,
     topUsers,
     clusterName,
     utilizationByDay: { cpu: cpuByDay, gpu: gpuByDay, mem: memByDay },

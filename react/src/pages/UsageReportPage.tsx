@@ -41,7 +41,7 @@ import {
   FileSpreadsheet,
   ImageIcon,
 } from 'lucide-react';
-import React, { Suspense, useRef } from 'react';
+import React, { Suspense, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
@@ -54,6 +54,18 @@ const UsageReportPage: React.FC = () => {
   const [userInfo] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Mount-scoped @page: a named page would force a blank page before the
+  // report, and a rule in UsageReport.css would leak A4/12mm into every other
+  // page's print because the stylesheet outlives this lazy route.
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = '@page { size: A4; margin: 12mm; }';
+    document.head.appendChild(style);
+    return () => {
+      style.remove();
+    };
+  }, []);
 
   // Admin scope needs superadmin + the 26.4.2 preset-result API (spec §5).
   const canUseAdminScope =
