@@ -116,6 +116,9 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   <BAIText ellipsis>{label}</BAIText>
                   <BAIText
                     type="secondary"
+                    // One line, like the title above it: the caption is up to
+                    // three joined segments and wrapping made rows uneven.
+                    ellipsis={{ tooltip: caption }}
                     style={{ fontSize: token.fontSizeSM }}
                   >
                     {caption}

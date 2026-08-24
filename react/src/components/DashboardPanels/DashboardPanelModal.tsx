@@ -116,7 +116,16 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   // a panel without them cannot render at all. Validation gates the submit,
   // and the modal stays open with the offending field marked.
   const handleOk = async () => {
-    const values = await form.validateFields();
+    let values: PanelFormValues;
+    try {
+      values = await form.validateFields();
+    } catch {
+      // BAIModal calls onOk without awaiting it, so letting this reject would
+      // surface as an unhandled rejection. The rejection carries no
+      // information we act on: the form has already marked the offending
+      // fields and the modal stays open, which IS the feedback.
+      return;
+    }
     onSubmit({
       panelType: values.panelType,
       resourceType: values.resourceType,
