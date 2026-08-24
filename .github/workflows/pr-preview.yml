@@ -1,0 +1,130 @@
+# Build the per-PR Storybook preview and the data behind the PR Analysis Report.
+#
+# This is the UNPRIVILEGED half. It runs on `pull_request`, so on a fork PR it
+# gets a read-only token and can neither push to gh-pages nor comment — which is
+# exactly why it does neither. It only produces artifacts; `pr-preview-publish.yml`
+# picks them up from the trusted `workflow_run` context and does the writing.
+#
+# Gated on `packages/backend.ai-ui/**` at event level: measured over the last 120
+# PRs, 35 (29%) touch it, so the other ~71% never start a runner.
+
+name: PR Preview
+
+on:
+  pull_request:
+    paths:
+      - packages/backend.ai-ui/**
+      - .github/workflows/pr-preview.yml
+      - .github/scripts/pr-preview/**
+
+permissions:
+  contents: read
+
+concurrency:
+  # Keyed by PR number, not branch name: branch names are unique only within a
+  # repository, so two fork PRs both using e.g. `patch-1` would share a group and
+  # cancel each other's runs.
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Enough history for a three-dot diff against the base in the common
+          # case; analyze-pr.mjs deepens on its own when the base has moved past
+          # this window.
+          fetch-depth: 50
+
+      - name: Fetch base branch
+        run: git fetch --depth=50 origin "+refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}"
+
+      - uses: ./.github/actions/setup-node-pnpm
+
+      - name: Build Storybook
+        working-directory: ./packages/backend.ai-ui
+        run: pnpm run build-storybook
+
+      - name: Compute preview paths
+        id: urls
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          SHORT_HASH="$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)"
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+
+          echo "short_hash=${SHORT_HASH}" >> "$GITHUB_OUTPUT"
+          echo "storybook_url=https://${OWNER}.github.io/${REPO}/pr/${PR_NUMBER}/storybook/" >> "$GITHUB_OUTPUT"
+
+      - name: Analyze changed components
+        run: |
+          node .github/scripts/pr-preview/analyze-pr.mjs \
+            --base "origin/${{ github.base_ref }}" \
+            --head HEAD \
+            --storybook-index packages/backend.ai-ui/storybook-static/index.json \
+            --output analysis.json
+
+      - name: Build and measure the package bundle (head)
+        run: |
+          pnpm --filter backend.ai-ui build
+          node .github/scripts/pr-preview/measure-dist.mjs \
+            --dist packages/backend.ai-ui/dist \
+            --output bundle-head.json
+
+      # Rebuild the same package from the base's sources to get a comparable
+      # number. Only `src/` is swapped, so node_modules and the lockfile-resolved
+      # dependency graph stay put — which is also why this is skipped outright
+      # when the PR changes the lockfile: the two builds would not be comparable.
+      # Runs LAST, and best-effort: a failure here costs the delta column, nothing
+      # else.
+      - name: Build and measure the package bundle (base)
+        id: bundle-base
+        continue-on-error: true
+        run: |
+          if ! git diff --quiet "origin/${{ github.base_ref }}...HEAD" -- pnpm-lock.yaml; then
+            echo "Lockfile changed — skipping the base build (not comparable)."
+            exit 0
+          fi
+          rm -rf packages/backend.ai-ui/src
+          git checkout "origin/${{ github.base_ref }}" -- packages/backend.ai-ui/src
+          pnpm --filter backend.ai-ui build
+          node .github/scripts/pr-preview/measure-dist.mjs \
+            --dist packages/backend.ai-ui/dist \
+            --output bundle-base.json
+
+      - name: Write PR metadata for the trusted jobs
+        run: |
+          # pr-preview-publish.yml runs on workflow_run, where the PR number and
+          # the preview URL are not in the event payload. Persist them here.
+          cat > pr-meta.json <<EOF
+          {
+            "prNumber": "${{ github.event.pull_request.number }}",
+            "shortHash": "${{ steps.urls.outputs.short_hash }}",
+            "storybookUrl": "${{ steps.urls.outputs.storybook_url }}",
+            "runUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
+
+      - name: Upload Storybook artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-storybook-${{ steps.urls.outputs.short_hash }}
+          path: packages/backend.ai-ui/storybook-static/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload analysis artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-analysis
+          path: |
+            analysis.json
+            pr-meta.json
+            bundle-head.json
+            bundle-base.json
+          if-no-files-found: error
+          retention-days: 7

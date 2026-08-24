@@ -1,0 +1,236 @@
+# Publish what "PR Preview" built: deploy the Storybook preview to gh-pages and
+# post/update the PR Analysis Report comment.
+#
+# This is the PRIVILEGED half, and it runs on `workflow_run` rather than
+# `pull_request` on purpose. A `pull_request` workflow triggered from a fork gets
+# a read-only token: it cannot push to gh-pages and cannot comment, which is the
+# classic reason previews silently never appear for external contributors.
+# `workflow_run` runs from the base repository with the repo's own token, so fork
+# PRs and branch PRs go down one code path with no drift between them.
+#
+# SAFETY: nothing here checks out or executes PR-controlled code. It downloads
+# the static artifacts the build already produced and copies them into gh-pages.
+# Do not add a checkout of the PR head or a build step to this file.
+#
+# NOTE: `workflow_run` workflows only fire from the version on the default
+# branch, so this does nothing until it is merged to `main`.
+
+name: PR Preview Publish
+
+on:
+  workflow_run:
+    workflows: ["PR Preview"]
+    types: [completed]
+
+permissions: {}
+
+concurrency:
+  # Serialize per source branch (≈ per PR) so two pushes to the same PR don't
+  # race each other's gh-pages push. Cross-PR races are handled by the retry loop
+  # in the deploy step. Not cancel-in-progress: let an in-flight deploy finish.
+  group: pr-preview-publish-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      # On workflow_run, checkout defaults to the default branch — i.e. the
+      # reviewed copy of these scripts, never the PR's version of them.
+      - name: Check out the maintenance scripts
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts/pr-preview
+
+      - name: Download analysis artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-preview-analysis
+          path: pr-analysis
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Parse PR metadata
+        id: parse
+        run: |
+          if [ ! -f pr-analysis/pr-meta.json ]; then
+            echo "No pr-meta.json — the build produced nothing to publish."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          PR_NUMBER="$(jq -r '.prNumber // ""' pr-analysis/pr-meta.json)"
+          SHORT_HASH="$(jq -r '.shortHash // ""' pr-analysis/pr-meta.json)"
+
+          # These name a gh-pages path and an artifact. They come from a file the
+          # PR's own workflow wrote, so validate their shape before they reach a
+          # shell or a filesystem path.
+          echo "$PR_NUMBER" | grep -qE '^[0-9]+$' || { echo "::error::Bad PR number"; exit 1; }
+          echo "$SHORT_HASH" | grep -qE '^[0-9a-f]{7,40}$' || { echo "::error::Bad commit hash"; exit 1; }
+
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "short_hash=$SHORT_HASH" >> "$GITHUB_OUTPUT"
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+
+      - name: Download Storybook artifact
+        if: steps.parse.outputs.deploy == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-preview-storybook-${{ steps.parse.outputs.short_hash }}
+          path: storybook-dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        # An expired or never-produced artifact is not a failure — a preview is
+        # best-effort. The check below turns it into a clean skip.
+        continue-on-error: true
+
+      - name: Verify the artifact is usable
+        id: verify
+        if: steps.parse.outputs.deploy == 'true'
+        run: |
+          if [ -d storybook-dist ] && [ -n "$(ls -A storybook-dist 2>/dev/null)" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Storybook artifact missing or empty — skipping the deploy for this run."
+          fi
+
+      - name: Deploy to gh-pages
+        if: steps.parse.outputs.deploy == 'true' && steps.verify.outputs.ready == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.parse.outputs.pr_number }}
+        run: |
+          # A manual push with retry-on-conflict rather than a Pages action, so a
+          # concurrent cleanup or another PR's deploy just retries instead of
+          # failing the run.
+          set -euo pipefail
+          REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          WORK_DIR="$PWD"
+          PAGES_DIR="${RUNNER_TEMP}/gh-pages"
+          MAX_ATTEMPTS=5
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "::group::Attempt ${attempt} of ${MAX_ATTEMPTS}"
+            cd "$WORK_DIR"
+            rm -rf "$PAGES_DIR"
+
+            if git clone --depth=1 --single-branch --branch gh-pages "$REPO_URL" "$PAGES_DIR" 2>/dev/null; then
+              :
+            else
+              # First ever deploy: start the branch with no history to inherit.
+              echo "No gh-pages branch — creating it."
+              git init "$PAGES_DIR"
+              git -C "$PAGES_DIR" checkout -b gh-pages
+              git -C "$PAGES_DIR" remote add origin "$REPO_URL"
+              # Tell Pages not to run the content through Jekyll, which would
+              # drop Storybook's `_`-prefixed asset directories.
+              touch "$PAGES_DIR/.nojekyll"
+            fi
+
+            rm -rf "${PAGES_DIR}/pr/${PR_NUMBER}"
+            mkdir -p "${PAGES_DIR}/pr/${PR_NUMBER}/storybook"
+            cp -r storybook-dist/. "${PAGES_DIR}/pr/${PR_NUMBER}/storybook/"
+            touch "${PAGES_DIR}/.nojekyll"
+            node .github/scripts/pr-preview/write-index.mjs --root "$PAGES_DIR"
+
+            cd "$PAGES_DIR"
+            git add -A
+            git commit -m "Deploy PR #${PR_NUMBER} Storybook preview" \
+              || { echo "Nothing to commit."; echo "::endgroup::"; exit 0; }
+
+            if git push origin gh-pages; then
+              echo "Deployed on attempt ${attempt}."
+              echo "::endgroup::"
+              exit 0
+            fi
+
+            echo "Push failed (likely a concurrent update); retrying in $((attempt * 2))s."
+            echo "::endgroup::"
+            sleep $((attempt * 2))
+          done
+
+          echo "::error::Failed to deploy the PR preview after ${MAX_ATTEMPTS} attempts."
+          exit 1
+
+  comment:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      actions: read
+    steps:
+      # As above: default branch, and no setup-node — the report scripts use
+      # nothing beyond `node:fs` / `node:child_process`, so the runner image's
+      # preinstalled Node is enough and one fewer step has to go right.
+      - name: Check out the report scripts
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts/pr-preview
+
+      - name: Download analysis artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-preview-analysis
+          path: pr-analysis
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Post or update the PR Analysis Report
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs');
+            const { execFileSync } = require('node:child_process');
+
+            if (!fs.existsSync('pr-analysis/analysis.json') ||
+                !fs.existsSync('pr-analysis/pr-meta.json')) {
+              core.info('No analysis artifact — nothing to report.');
+              return;
+            }
+
+            const meta = JSON.parse(fs.readFileSync('pr-analysis/pr-meta.json', 'utf8'));
+            const prNumber = Number.parseInt(meta.prNumber, 10);
+            if (!Number.isInteger(prNumber) || prNumber <= 0) {
+              core.warning('No usable PR number in the metadata — cannot comment.');
+              return;
+            }
+
+            const args = [
+              '.github/scripts/pr-preview/generate-pr-comment.mjs',
+              '--analysis', 'pr-analysis/analysis.json',
+              '--meta', 'pr-analysis/pr-meta.json',
+            ];
+            if (fs.existsSync('pr-analysis/bundle-head.json')) {
+              args.push('--bundle-head', 'pr-analysis/bundle-head.json');
+            }
+            if (fs.existsSync('pr-analysis/bundle-base.json')) {
+              args.push('--bundle-base', 'pr-analysis/bundle-base.json');
+            }
+
+            const body = execFileSync('node', args, { encoding: 'utf8' });
+
+            const { owner, repo } = context.repo;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number: prNumber, per_page: 100,
+            });
+            const existing = comments.find(
+              (c) => c.user.type === 'Bot' && c.body.includes('PR Analysis Report'),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              core.info(`Updated the PR Analysis Report on #${prNumber}.`);
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: prNumber, body });
+              core.info(`Posted the PR Analysis Report on #${prNumber}.`);
+            }
