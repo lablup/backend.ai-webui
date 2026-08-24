@@ -21,17 +21,20 @@ import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
-import BAIQuestionIconWithTooltip from './astryx-bui/BAIQuestionIconWithTooltipAstryx';
 import { AstryxFormSelector, AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
-import { BAITable, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIPopconfirmAstryx as BAIPopconfirm,
+  BAIModal,
+  type BAIModalProps,
+  BAIQuestionIconWithTooltip,
+  BAITable,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon } from 'lucide-react';
 import React, { useRef } from 'react';
@@ -180,6 +183,8 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
         if (!next) onRequestClose();
       }}
       title={t('data.explorer.ShareFolder')}
+      maskClosable={false}
+      footer={null}
       width={550}
     >
       <VStack gap={6} align="stretch">

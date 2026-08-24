@@ -2,7 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- to-astryx PHASE 3 / ticket B — `BAIModal` rebuilt on Astryx `Dialog`.
+ to-astryx PHASE 3 / ticket B — `BAIModal` rebuilt on Astryx `Dialog`, since
+ FR-3578 through `BAIDialog` (same surface, portalled instead of promoted
+ into the top layer, so notices stay above it).
 
  This is an **in-place frontier rewrite**: the rendering stack underneath is
  entirely Astryx (`Dialog` + `Layout` + `DialogHeader` + `Button`), while the
@@ -34,25 +36,26 @@
 
  ## PILOT-DECISIONs (recorded in .specs/FR-3482-astryx-migration/issues/p3-b-modal-family.md)
 
- 1. **`draggable` is dropped.** Astryx `Dialog` is a native `<dialog>` in the
-    CSS top layer; `react-draggable` moved antd's positioned wrapper, which no
-    longer exists. Repo-wide usage before this change: **zero** outside
-    `BAIModal.stories.tsx`. The prop is still accepted (contract) and ignored.
+ 1. **`draggable` is dropped.** `react-draggable` moved antd's positioned
+    wrapper, which no longer exists. Repo-wide usage before this change:
+    **zero** outside `BAIModal.stories.tsx`. Still accepted and ignored.
  2. **`centered` is accepted and ignored** — Astryx dialogs are centred unless
     `position` is set (same call as ticket 04 / the app-shim).
  3. **`destroyOnHidden` / `destroyOnClose` are always on.** This component
     renders no children while closed, which is stricter than antd's default.
  4. **A minimized modal stays modal.** antd dropped the mask so the page behind
-    stayed interactive; a native `<dialog>` opened with `showModal()` always
-    has a backdrop. Minimize therefore collapses the dialog to a title bar
-    parked at `minimizedPlacement` but does not release the page.
- 5. **`mask={false}`, `zIndex`, `getContainer`, `forceRender`, `wrapClassName`,
+    stayed interactive; `BAIDialog` always paints one. Minimize therefore
+    collapses the dialog to a title bar parked at `minimizedPlacement` but does
+    not release the page.
+ 5. **`mask={false}`, `getContainer`, `forceRender`, `wrapClassName`,
     `rootClassName`, `modalRender`, `transitionName`, `mousePosition`,
     `scrollLock`, `focusTriggerAfterClose`, `stickyTitle`** are accepted and
-    ignored: each names a mechanism antd owned (a portal target, a stacking
-    number, a rendered-but-hidden tree, a CSS-transition name) that the
-    platform now owns. `stickyTitle` in particular is unconditionally true —
-    Astryx `Layout` keeps the header slot outside the scrolling content.
+    ignored: each names a mechanism antd owned (a portal target, a
+    rendered-but-hidden tree, a CSS-transition name) that `BAIDialog`
+    now owns. `stickyTitle` in particular is unconditionally true — Astryx
+    `Layout` keeps the header slot outside the scrolling content.
+    `zIndex` is the exception: the modal is a portalled div with a real
+    z-index since FR-3578, so a passed value is forwarded, not ignored.
  6. **`afterClose` fires from an effect on the `open` transition**, not from a
     transition-end event, so it lands a frame earlier than antd's. This is what
     `BAIUnmountAfterClose` subscribes to and it keeps working unchanged.
@@ -68,9 +71,10 @@
  that reproduces none of it.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import BAIDialog from './BAIDialog';
 import BAISkeleton from './BAISkeleton';
 import { Button } from '@astryxdesign/core/Button';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   Layout,
@@ -88,12 +92,6 @@ import {
   Minus,
 } from 'lucide-react';
 import React, { isValidElement, useEffect, useRef, useState } from 'react';
-
-/**
- * Kept for API compatibility. Native `<dialog>` renders in the CSS top layer,
- * where stacking is decided by the platform, so no z-index is applied.
- */
-export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 
 export type WindowState = 'default' | 'minimized' | 'maximized' | 'fullscreen';
 export type WindowAction = 'minimize' | 'maximize' | 'fullscreen';
@@ -266,7 +264,7 @@ export interface BAIModalProps {
   keyboard?: boolean;
   /**
    * antd's mask config. Only `closable` is honoured (as `maskClosable`); the
-   * backdrop itself is owned by the native `<dialog>` and is never removable.
+   * backdrop itself is owned by `BAIDialog` and is never removable.
    */
   mask?: boolean | { closable?: boolean; blur?: boolean };
 
@@ -296,6 +294,8 @@ export interface BAIModalProps {
   classNames?: SemanticOrFn<BAIModalSemanticClassNames>;
   'aria-label'?: string;
   'data-testid'?: string;
+  /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
+  zIndex?: number;
 
   /* ------------------------------------- accepted and ignored (see header) */
   centered?: boolean;
@@ -305,7 +305,6 @@ export interface BAIModalProps {
   stickyTitle?: boolean;
   forceRender?: boolean;
   getContainer?: unknown;
-  zIndex?: number;
   wrapClassName?: string;
   rootClassName?: string;
   rootStyle?: React.CSSProperties;
@@ -383,6 +382,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   minimizedPlacement = 'bottomRight',
   confirmBeforeClose,
   onConfirmClose,
+  zIndex,
   className,
   style,
   styles: stylesProp,
@@ -427,6 +427,11 @@ const BAIModal: React.FC<BAIModalProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
+
+  // Nothing is rendered while closed — see PILOT-DECISION 3. Every hook has
+  // already run, so returning here skips building the header/footer trees on
+  // closed-modal re-renders.
+  if (!isVisible) return null;
 
   const hasWindowControls = !!windowActions && windowActions.length > 0;
   const activeActions: Array<WindowAction> = windowActions ?? [];
@@ -486,27 +491,10 @@ const BAIModal: React.FC<BAIModalProps> = ({
   const isMaximized = effectiveWindowState === 'maximized';
   const isMinimized = effectiveWindowState === 'minimized';
 
-  // antd allowed a per-breakpoint width record. Astryx `Dialog.width` is a
-  // single value that already caps at `90vw`, so the record collapses to its
-  // largest declared entry (the desktop budget) — see RESPONSIVE-POLICY.
-  //
-  // `width="auto"` needs translating, not forwarding (QA-FINDINGS Q-21).
-  // Reported as "/admin/settings 페이지의 모든 모달 크기가 지나치게 크네요":
-  // the Overlay Network and Scheduler dialogs measured **1440px** wide against
-  // content that needs 301 and 288 — 4.8x, and exactly the `max-width: 90vw`
-  // clamp.
-  //
-  // In antd, `auto` meant shrink-to-fit, but only because `BAIModal` defaulted
-  // `centered` to true and antd's `.ant-modal-centered .ant-modal` is
-  // `display: inline-block` on top of `width: auto`. `centered` is one of this
-  // component's accepted-and-ignored props (PILOT-DECISION 2), and dropping it
-  // silently took the shrink-to-fit with it: on a native `<dialog>` the UA
-  // stylesheet keeps `inset-inline: 0` and Astryx keeps `margin: auto`, so
-  // `width: auto` resolves against the VIEWPORT rather than the content.
-  //
-  // `fit-content` is the CSS keyword that means what antd's `auto` meant here,
-  // and `Dialog.width` documents "any CSS value". The `max-width: 90vw` cap
-  // still applies. Measured after: 301 / 288px, i.e. the content width.
+  // A per-breakpoint width record collapses to its largest declared entry (the
+  // desktop budget; see RESPONSIVE-POLICY). `width="auto"` is TRANSLATED to
+  // `fit-content`, not forwarded: bare `auto` resolves against the viewport —
+  // measured 1440px where the content needed 301 / 288 (QA-FINDINGS Q-21).
   const resolvedWidth =
     typeof width === 'object'
       ? (Object.values(width).at(-1) ?? 520)
@@ -721,17 +709,14 @@ const BAIModal: React.FC<BAIModalProps> = ({
     />
   );
 
-  // Nothing is rendered while closed — see PILOT-DECISION 3. Hooks above have
-  // already run, so this early return is safe.
-  if (!isVisible) return null;
-
   return (
-    <Dialog
+    <BAIDialog
       isOpen
       onOpenChange={(next) => {
         if (!next) void handleCancel();
       }}
       width={dialogWidth}
+      {...(zIndex !== undefined ? { zIndex } : undefined)}
       {...(dialogMaxHeight !== undefined
         ? { maxHeight: dialogMaxHeight }
         : undefined)}
@@ -772,7 +757,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
           )
         }
       />
-    </Dialog>
+    </BAIDialog>
   );
 };
 

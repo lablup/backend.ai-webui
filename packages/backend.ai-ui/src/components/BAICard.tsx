@@ -160,6 +160,13 @@ export interface BAICardProps extends Omit<
   /** Callback function triggered when the extra button is clicked */
   onClickExtraButton?: () => void;
   size?: 'default' | 'small';
+  /**
+   * Astryx `Card` padding step; overrides the `size`-derived default (6, or 3
+   * for `size="small"`). The full-bleed tab strip follows it (BAICard.css).
+   */
+  padding?: React.ComponentProps<typeof Card>['padding'];
+  /** Astryx `Card` width passthrough. */
+  width?: React.ComponentProps<typeof Card>['width'];
   /** antd's nested/inner card treatment. */
   type?: 'inner';
   /** antd v5 `bordered` / antd v6 `variant` — both mean the same thing here. */
@@ -189,6 +196,8 @@ const BAICard: React.FC<BAICardProps> = ({
   extra,
   title,
   size,
+  padding,
+  width,
   type,
   bordered: _bordered,
   variant: _variant,
@@ -246,9 +255,6 @@ const BAICard: React.FC<BAICardProps> = ({
       {...cardProps}
       className={[
         'bai-card',
-        // `padding` is a StyleX prop with no reflected data attribute, so the
-        // card's own inset is republished as a class the co-located CSS can
-        // read (`--bai-card-inset`, used by the full-bleed tab strip).
         size === 'small' ? 'bai-card--compact' : '',
         status !== 'default' ? `bai-card--${status}` : '',
         // Kept verbatim: `.bai-card-error` is an existing hook the app styles
@@ -260,7 +266,8 @@ const BAICard: React.FC<BAICardProps> = ({
         .filter(Boolean)
         .join(' ')}
       variant={type === 'inner' ? 'muted' : 'default'}
-      padding={size === 'small' ? 3 : 6}
+      padding={padding ?? (size === 'small' ? 3 : 6)}
+      width={width}
     >
       <VStack gap={4} align="stretch">
         {cover}

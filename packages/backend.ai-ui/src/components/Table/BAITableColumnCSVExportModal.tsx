@@ -26,14 +26,15 @@
    half-empty one.
  - The Export button uses Astryx `Button.clickAction` (native async + loading)
    in place of `BAIButton`'s `action` prop; the close-on-success is ours, the
-   same way `BAIModalAstryx` does it.
+   same way the pilot modal did it.
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIDialog from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -175,7 +176,7 @@ const BAITableColumnCSVExportModal = <T,>({
   if (!open) return null;
 
   return (
-    <Dialog
+    <BAIDialog
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose?.(false);
@@ -261,7 +262,7 @@ const BAITableColumnCSVExportModal = <T,>({
         }
         style={{ minWidth: 0 }}
       />
-    </Dialog>
+    </BAIDialog>
   );
 };
 

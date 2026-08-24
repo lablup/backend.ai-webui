@@ -45,11 +45,13 @@
     "storybook": "portless run --force -- sh -c 'storybook dev -p $PORT'",
     "build-storybook": "storybook build",
     "lint": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored",
+    "lint:ci": "eslint ./src --ignore-pattern '**.graphql.**' --max-warnings=0 --no-warn-ignored --cache --cache-strategy content --cache-location .eslintcache",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "peerDependencies": {
     "@astryxdesign/core": "catalog:",
     "@astryxdesign/theme-neutral": "catalog:",
+    "@astryxdesign/lab": "catalog:",
     "@tanstack/react-query": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
@@ -77,6 +79,7 @@
   "devDependencies": {
     "@astryxdesign/core": "catalog:",
     "@astryxdesign/theme-neutral": "catalog:",
+    "@astryxdesign/lab": "catalog:",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",

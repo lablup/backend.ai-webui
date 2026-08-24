@@ -14,7 +14,7 @@ import {
   AstryxFormSwitch,
   AstryxFormTagsInput,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIModal,

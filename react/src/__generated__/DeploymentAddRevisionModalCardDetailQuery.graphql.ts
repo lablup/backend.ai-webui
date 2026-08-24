@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e121108cb0412403809ea604d2f61fc>>
+ * @generated SignedSource<<1952af985fce195622dc4dd599e43409>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -523,7 +523,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ModelDefinition",
+                        "concreteType": "PresetModelDefinition",
                         "kind": "LinkedField",
                         "name": "modelDefinition",
                         "plural": false,
@@ -531,7 +531,7 @@ return {
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "ModelConfig",
+                            "concreteType": "PresetModelConfig",
                             "kind": "LinkedField",
                             "name": "models",
                             "plural": true,
@@ -540,7 +540,7 @@ return {
                               {
                                 "alias": null,
                                 "args": null,
-                                "concreteType": "ModelServiceConfig",
+                                "concreteType": "PresetModelServiceConfig",
                                 "kind": "LinkedField",
                                 "name": "service",
                                 "plural": false,

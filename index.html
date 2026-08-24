@@ -49,13 +49,18 @@
        assignment here: an inline style outranks every rule above and froze the
        backdrop at its boot-time value, so toggling the theme mid-session left
        the page painting the previous mode until a reload. -->
+  <!-- `--bai-z-splash` mirrors the ladder in
+       `packages/backend.ai-ui/src/styles/zIndexLadder.ts`; this file is parsed
+       before any JS, so it cannot import it. verify.sh's z-index ladder gate
+       fails on drift. -->
   <style nonce="{{nonce}}">
+    :root { --bai-z-splash: 900; }
     html[data-theme="light"] { color-scheme: light; }
     html[data-theme="dark"] { color-scheme: dark; }
     body { margin: 0; background-color: var(--color-background-body, light-dark(#F7F7F6, #191919)); }
     #splash {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 10000; display: flex; align-items: center; justify-content: center;
+      z-index: var(--bai-z-splash); display: flex; align-items: center; justify-content: center;
       background-color: var(--color-background-body, light-dark(#F7F7F6, #191919));
       transition: opacity 0.3s ease-out;
     }
@@ -221,7 +226,7 @@
       //   metadata as the login screen background, hides only the loader.
       // - window.__dismissSplash(): called by MainLayout when the authenticated
       //   UI is ready (logged-in). Fades out and removes the whole splash so it
-      //   can't cover the app (it sits at z-index 10000).
+      //   can't cover the app (it sits at --bai-z-splash, above page content).
       //
       // A MutationObserver + timers serve as fallbacks for routes that call
       // neither (e.g. /verify-email, /change-password).

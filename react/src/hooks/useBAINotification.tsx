@@ -6,10 +6,12 @@ import { useWebUINavigate } from '.';
 import { BAINodeNotificationItemFragment$key } from '../__generated__/BAINodeNotificationItemFragment.graphql';
 import BAIMultiStepNotificationItem from '../components/BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from '../components/BAINodeNotificationItem';
-import { toBAINotificationStackItems } from '../components/astryx-bui/BAINotificationStackAdapter';
-import BAINotificationStackAstryx from '../components/astryx-bui/BAINotificationStackAstryx';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { useBAISettingUserState } from './useBAISetting';
+import {
+  toBAINotificationStackItems,
+  BAINotificationStackAstryx,
+} from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {

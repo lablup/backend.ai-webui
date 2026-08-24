@@ -336,7 +336,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         defaultHidden: true,
         render: (__, record) =>
           record.currentRevisionId ? (
-            <BAIText copyable ellipsis monospace style={{ maxWidth: 160 }}>
+            <BAIText
+              copyable
+              ellipsis={{ tooltip: true }}
+              monospace
+              style={{ maxWidth: 160 }}
+            >
               {record.currentRevisionId}
             </BAIText>
           ) : (

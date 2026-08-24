@@ -4,8 +4,7 @@
  */
 import { StorageHostDetailDrawerFragment$key } from '../__generated__/StorageHostDetailDrawerFragment.graphql';
 import StorageHostDetailDrawerContent from './StorageHostDetailDrawerContent';
-import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import { BAISkeleton, BAIFetchKeyButton } from 'backend.ai-ui';
+import { BAIDrawerAstryx as BAIDrawer , BAISkeleton, BAIFetchKeyButton } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

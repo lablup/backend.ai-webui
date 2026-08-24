@@ -127,7 +127,10 @@ export const astryxBrandTheme = defineTheme({
     '--color-border-emphasized': ['#D9D9D9', '#424242'] as [string, string],
     // KEEP IN SYNC with the interaction fills in `ANTD_NEUTRAL_SURFACES`
     // (catalog G-4) — without them dark-mode stories have no hover state.
-    '--color-overlay-hover': ['rgba(0,0,0,0.06)', '#262626'] as [string, string],
+    '--color-overlay-hover': ['rgba(0,0,0,0.06)', 'rgba(255,255,255,0.08)'] as [
+      string,
+      string,
+    ],
     '--color-overlay-pressed': [
       'rgba(0,0,0,0.15)',
       'rgba(255,255,255,0.18)',
@@ -141,6 +144,14 @@ export const astryxBrandTheme = defineTheme({
   // Storybook while looking correct in the app, which is exactly the kind of
   // silent divergence this mirror file exists to prevent.
   components: {
+    // KEEP IN SYNC with `ANTD_HOVER_PARITY.button` in
+    // `react/src/astryx-theme/backendAiTheme.ts` — without it Storybook keeps
+    // rendering the FR-3555 defect the app no longer has.
+    button: {
+      'variant:primary': {
+        '--color-accent': 'var(--color-text-accent)',
+      },
+    },
     text: {
       'color:danger': { color: 'var(--color-error)' },
       'color:warning': { color: 'var(--color-warning)' },

@@ -8,6 +8,7 @@ export interface BAIVFolderDeleteButtonProps extends BAIButtonProps {
   vfolderFrgmt: BAIVFolderDeleteButtonFragment$key;
 }
 
+/** @deprecated Use `BAIVFolderDeleteButtonAstryx` instead. */
 const BAIVFolderDeleteButton = ({
   vfolderFrgmt,
   ...buttonProps

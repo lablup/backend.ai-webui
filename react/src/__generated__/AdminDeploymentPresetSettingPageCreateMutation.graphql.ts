@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5fd4151c93dbeed64db2bc9a56772a03>>
+ * @generated SignedSource<<006967620d343fbc6984e0c3e55ebafb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -53,14 +53,14 @@ export type PresetModelDefinitionInput = {
 };
 export type PresetModelConfigInput = {
   metadata?: PresetModelMetadataInput | null | undefined;
-  modelPath: string;
-  name: string;
+  modelPath?: string | null | undefined;
+  name?: string | null | undefined;
   service: PresetModelServiceConfigInput;
 };
 export type PresetModelServiceConfigInput = {
   command?: string | null | undefined;
   healthCheck?: PresetModelHealthCheckInput | null | undefined;
-  port: number;
+  port?: number | null | undefined;
   preStartActions: ReadonlyArray<PreStartActionInput>;
   shell?: string | null | undefined;
   startCommand?: ReadonlyArray<string> | null | undefined;
@@ -440,7 +440,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ModelDefinition",
+                "concreteType": "PresetModelDefinition",
                 "kind": "LinkedField",
                 "name": "modelDefinition",
                 "plural": false,
@@ -448,7 +448,7 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "ModelConfig",
+                    "concreteType": "PresetModelConfig",
                     "kind": "LinkedField",
                     "name": "models",
                     "plural": true,
@@ -464,7 +464,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ModelServiceConfig",
+                        "concreteType": "PresetModelServiceConfig",
                         "kind": "LinkedField",
                         "name": "service",
                         "plural": false,
@@ -492,6 +492,13 @@ return {
                                 "storageKey": null
                               }
                             ],
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "command",
                             "storageKey": null
                           },
                           {
@@ -689,12 +696,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "39908cd22197e970143e7bb293833d4e",
+    "cacheID": "28725db454a5951b971d01a66869fc53",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetSettingPageCreateMutation(\n  $input: CreateDeploymentRevisionPresetInput!\n) {\n  adminCreateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetSettingPageCreateMutation(\n  $input: CreateDeploymentRevisionPresetInput!\n) {\n  adminCreateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();

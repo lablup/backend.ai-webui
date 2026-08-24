@@ -8,7 +8,6 @@ import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
-import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import {
   SegmentedControl,
@@ -16,7 +15,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { VStack } from '@astryxdesign/core/Stack';
 import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIDrawerAstryx as BAIDrawer, BAIFlex } from 'backend.ai-ui';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

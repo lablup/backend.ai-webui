@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e2eed56717cd3ccab54e1ba0c9b1e06>>
+ * @generated SignedSource<<2ec0b9a06808f834f8e4ba572645cc89>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,9 +50,10 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
         readonly title: string | null | undefined;
         readonly version: any | null | undefined;
       } | null | undefined;
-      readonly modelPath: string;
-      readonly name: string;
+      readonly modelPath: string | null | undefined;
+      readonly name: string | null | undefined;
       readonly service: {
+        readonly command: string | null | undefined;
         readonly healthCheck: {
           readonly enable: boolean;
           readonly expectedStatusCode: number;
@@ -62,7 +63,7 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
           readonly maxWaitTime: number;
           readonly path: string;
         } | null | undefined;
-        readonly port: number;
+        readonly port: number | null | undefined;
         readonly preStartActions: ReadonlyArray<{
           readonly action: string;
           readonly args: any;
@@ -340,7 +341,7 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "ModelDefinition",
+      "concreteType": "PresetModelDefinition",
       "kind": "LinkedField",
       "name": "modelDefinition",
       "plural": false,
@@ -348,7 +349,7 @@ return {
         {
           "alias": null,
           "args": null,
-          "concreteType": "ModelConfig",
+          "concreteType": "PresetModelConfig",
           "kind": "LinkedField",
           "name": "models",
           "plural": true,
@@ -364,7 +365,7 @@ return {
             {
               "alias": null,
               "args": null,
-              "concreteType": "ModelServiceConfig",
+              "concreteType": "PresetModelServiceConfig",
               "kind": "LinkedField",
               "name": "service",
               "plural": false,
@@ -392,6 +393,13 @@ return {
                       "storageKey": null
                     }
                   ],
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "command",
                   "storageKey": null
                 },
                 {
@@ -586,6 +594,6 @@ return {
 };
 })();
 
-(node as any).hash = "c83c328cdcc552d536aa078349408feb";
+(node as any).hash = "365bb99e33b267cb0450074bdb85afa9";
 
 export default node;

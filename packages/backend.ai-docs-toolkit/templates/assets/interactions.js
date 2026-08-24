@@ -31,6 +31,39 @@
 (function () {
   if (typeof document === "undefined") return;
 
+  // Keep in sync with the identical helper in search.js. These are two
+  // independently content-hashed standalone scripts with no shared
+  // module, so the duplication is deliberate.
+  //
+  // For MODIFIER CHORDS ONLY (Cmd/Ctrl+K). Bare printable shortcuts like
+  // `/` must keep matching on the produced character — see `isSlash`.
+  //
+  // A chord must fire on the same physical key regardless of the active
+  // input language. `e.key` is the *character the layout/IME produced*:
+  // with a Hangul IME active, Cmd-K reports `e.key === 'ㅏ'` (or
+  // 'Process' mid-composition), so a plain `e.key === "k"` check
+  // silently stops matching. `e.code` names the physical key ("KeyK")
+  // and is layout- and IME-independent.
+  //
+  // We prefer `e.key` when the layout produced a Latin letter, so
+  // non-QWERTY Latin layouts (Dvorak, Colemak) still trigger on the key
+  // the user sees labeled "K". We fall back to `e.code` only when the
+  // produced character is not a Latin letter — i.e. exactly the
+  // non-Latin-layout / IME case this guards against.
+  //
+  // The Latin test is by Unicode script, not `[a-z]`: an accented Latin
+  // layout that puts "é" or "ő" on this key is still Latin, so `e.key`
+  // must be trusted there rather than falling through to `e.code` and
+  // firing Cmd-K on Cmd-é. Property escapes need the `u` flag.
+  function matchesShortcutKey(e, code, char) {
+    var k = e.key;
+    if (typeof k === "string" && k.length === 1) {
+      if (k.toLowerCase() === char) return true;
+      if (/\p{Script=Latin}/u.test(k)) return false;
+    }
+    return e.code === code;
+  }
+
   // The BAI topbar may be absent on legacy F3 pages; topbar-dependent
   // wiring below is conditional so it no-ops cleanly. The global
   // keyboard shortcuts at the bottom of this file always register so
@@ -485,7 +518,12 @@
   document.addEventListener("keydown", function (e) {
     var key = e.key;
     var isCmdK =
-      (e.metaKey || e.ctrlKey) && (key === "k" || key === "K");
+      (e.metaKey || e.ctrlKey) && matchesShortcutKey(e, "KeyK", "k");
+    // `/` is matched by the character the layout produced, NOT by physical
+    // key. The `e.code` fallback exists for chords whose letter an IME
+    // swaps out (Cmd-K → "ㅏ"); a Hangul IME does not remap the `/` key,
+    // so `/` never needed it — and taking it would misfire, since Shift+/
+    // reports key "?" with code "Slash" and would open the palette on "?".
     var isSlash = key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey;
     var inField =
       document.activeElement &&
@@ -493,8 +531,13 @@
         document.activeElement.tagName === "TEXTAREA" ||
         document.activeElement.isContentEditable);
 
-    // Skip keys another handler already claimed (e.g. listbox type-ahead).
-    if ((isCmdK || (isSlash && !inField)) && !e.defaultPrevented) {
+    // Cmd-K is deliberately NOT gated on `defaultPrevented`: it is a
+    // modifier chord no other handler on the page legitimately claims,
+    // and gating it here is exactly what silently disabled the shortcut
+    // before (search.js preventDefault()-ed it first — see the note in
+    // that file). `/` keeps the guard because it is a bare printable
+    // key that other widgets may consume (e.g. listbox type-ahead).
+    if (isCmdK || (isSlash && !inField && !e.defaultPrevented)) {
       e.preventDefault();
       openPalette();
       return;

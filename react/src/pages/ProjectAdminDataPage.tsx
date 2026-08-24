@@ -20,9 +20,21 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
-import BAICard from '../components/astryx-bui/BAICardAstryx';
-import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
-import BAIVFolderDeleteButtonV2 from '../components/astryx-bui/BAIVFolderDeleteButtonV2Astryx';
+import {
+  BAIVFolderDeleteButtonV2Astryx as BAIVFolderDeleteButtonV2,
+  BAISkeleton,
+  // Translating frontier (ticket 28): the GraphQL-object property filter is a
+  // BUI antd composite shared with unmigrated pages; it keeps its contract
+  // here until the PowerSearch generalization covers the object-filter DSL.
+  BAICard,
+  BAIGraphQLPropertyFilter,
+  BAISelectionLabel,
+  INITIAL_FETCH_KEY,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  useFetchKey,
+  useToggle,
+} from 'backend.ai-ui';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -35,18 +47,6 @@ import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import {
-  BAISkeleton,
-  // Translating frontier (ticket 28): the GraphQL-object property filter is a
-  // BUI antd composite shared with unmigrated pages; it keeps its contract
-  // here until the PowerSearch generalization covers the object-filter DSL.
-  BAIGraphQLPropertyFilter,
-  INITIAL_FETCH_KEY,
-  filterOutEmpty,
-  filterOutNullAndUndefined,
-  useFetchKey,
-  useToggle,
-} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';

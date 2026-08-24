@@ -18,12 +18,12 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAIPopconfirmAstryx } from 'backend.ai-ui';
 import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -474,7 +474,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                     </BAIText>
                     {value === mainAccessKey && (
                       // Astryx `Tooltip` anchors to an interactive child (see
-                      // `BAIQuestionIconWithTooltipAstryx`) — this decorative
+                      // `BAIQuestionIconWithTooltip`) — this decorative
                       // status icon gets the same unstyled-button wrapper.
                       <Tooltip content={t('credential.MainAccessKey')}>
                         <button

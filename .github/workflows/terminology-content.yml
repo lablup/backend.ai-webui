@@ -61,6 +61,11 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  # Read-only whole-repo scan — cancelling a superseded run loses nothing.
+  group: terminology-content-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   terminology-content:
     runs-on: ubuntu-latest

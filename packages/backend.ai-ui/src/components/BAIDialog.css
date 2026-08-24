@@ -1,0 +1,81 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for `<BAIDialog>` — the mask, centering and entry
+ animation Astryx `Dialog` gets from the top layer and `::backdrop`, restated
+ for a portalled tree (the mask deliberately drops the blur). Plain CSS over
+ Astryx tokens: BUI's tsup build runs no StyleX compiler.
+*/
+
+@layer components {
+  /* The band base is only the fallback for a root that has not claimed yet —
+     `dialogLevelStack.ts` resolves and writes the real value on open. */
+  .bai-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: var(--bai-dialog-z, var(--bai-z-modal-base));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* A closed dialog keeps its children mounted, as the native `<dialog>` did. */
+  .bai-dialog--closed {
+    display: none;
+  }
+
+  /* Astryx `Dialog`'s `::backdrop` wash, without its `blur(2px)` — the tint
+     alone separates the surfaces, and the blur is the one repaint-heavy
+     property on screen while a modal is open. */
+  .bai-dialog__mask {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-overlay);
+  }
+
+  /* The animated element, kept separate from the mask so only this subtree is
+     affected while the keyframe's `transform` makes it a containing block for
+     `position: fixed` descendants. */
+  .bai-dialog__wrap {
+    --bai-dialog-dir-x: 0px;
+    --bai-dialog-dir-y: 16px;
+    position: relative;
+    display: flex;
+    /* The surface can be narrower than the wrap (Astryx caps it at 90vw, a
+       consumer `maxWidth` narrows it further), so centre the gutter that
+       leaves and let clicks in it reach the mask. */
+    justify-content: center;
+    pointer-events: none;
+    animation: bai-dialog-enter var(--duration-medium-max) var(--ease-standard)
+      backwards;
+  }
+
+  .bai-dialog__wrap > * {
+    pointer-events: auto;
+  }
+
+  /* `position` prop: statically placed instead of centered. */
+  .bai-dialog__wrap--positioned {
+    position: absolute;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bai-dialog__wrap {
+      animation-name: none;
+    }
+  }
+}
+
+@keyframes bai-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translate(var(--bai-dialog-dir-x), var(--bai-dialog-dir-y))
+      scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}

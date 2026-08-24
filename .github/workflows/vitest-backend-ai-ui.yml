@@ -1,0 +1,59 @@
+# See vitest-react.yml's header for the one-workflow-per-suite rationale.
+name: Vitest (backend.ai-ui)
+
+on:
+  pull_request:
+    paths:
+      - packages/backend.ai-ui/src/**
+      - packages/backend.ai-ui/package.json
+      - packages/backend.ai-ui/vitest.config.ts
+      - .github/workflows/vitest-backend-ai-ui.yml
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  # Keyed by PR number, not branch name: branch names are unique only within a
+  # repository, so two fork PRs both using e.g. `patch-1` would share a group and
+  # cancel each other's runs.
+  group: vitest-bui-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-ai-ui-vitest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/backend.ai-ui
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      # Lint stays in-job here: this suite is off the PR critical path (the
+      # react suite is ~2x longer), so a second runner isn't worth a slot.
+      - uses: actions/cache@v5
+        name: ESLint results cache
+        with:
+          path: packages/backend.ai-ui/.eslintcache
+          key: ${{ runner.os }}-eslint-bui-${{ hashFiles('**/pnpm-lock.yaml', 'packages/backend.ai-ui/eslint.config.js', 'packages/eslint-config-bai/**') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-bui-${{ hashFiles('**/pnpm-lock.yaml', 'packages/backend.ai-ui/eslint.config.js', 'packages/eslint-config-bai/**') }}-
+      - name: Run ESLint on backend.ai-ui
+        run: pnpm run lint:ci
+      - uses: actions/cache@v5
+        name: Vitest fs-module cache
+        with:
+          path: node_modules/.experimental-vitest-cache
+          key: ${{ runner.os }}-vitest-fsmod-bui-${{ hashFiles('**/pnpm-lock.yaml', 'packages/backend.ai-ui/vitest.config.ts') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-vitest-fsmod-bui-${{ hashFiles('**/pnpm-lock.yaml', 'packages/backend.ai-ui/vitest.config.ts') }}-
+      - name: Run relay-compiler
+        run: cd ../.. && pnpm run relay
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: ./packages/backend.ai-ui
+          name: backend-ai-ui-coverage

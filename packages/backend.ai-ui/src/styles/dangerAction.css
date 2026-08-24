@@ -1,0 +1,49 @@
+/* Danger tint for text/icon actions, the pair of `.bai-action-accent`
+   (same barrel-owned pattern: used by BUI components AND app-side call sites
+   under react/src, so no single component owns it).
+
+   P19 (pilot sweep finding, preserved): the semantic error token is the SOLID
+   `--color-error`; the text-tier member of the red hue family is
+   `--color-text-red`, which is what a danger text action needs. */
+.bai-name-action-cell-danger {
+  color: var(--color-text-red);
+}
+
+.bai-name-action-cell-disabled {
+  color: var(--color-text-disabled);
+}
+
+/* Ticket 16 — BAIListAlertAstryx scrollbar. The BUI original expressed these
+   through `antd-style` `createStyles` with `token.colorTextQuaternary`; Astryx
+   has no quaternary text token, and `--color-text-secondary` is the nearest
+   declared tier (P19: every name here is in the declared set). */
+.bai-list-alert-scroll {
+  scrollbar-color: var(--color-text-secondary) transparent;
+  scrollbar-width: thin;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar,
+.bai-list-alert-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+}
+
+/* antd's `message` rendered TOP-CENTER. Astryx's `ToastPosition` is four
+   corners only (`topEnd | topStart | bottomEnd | bottomStart`) and `inset`
+   takes px offsets, so a centered anchor is not expressible through the
+   component API — hence this rule rather than a prop (FR-3554).
+   `[popover][role='region']` is the toast viewport and nothing else: the only
+   other `role="region"` in Astryx is Carousel, which is not a popover. */
+[popover][role='region'] {
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}

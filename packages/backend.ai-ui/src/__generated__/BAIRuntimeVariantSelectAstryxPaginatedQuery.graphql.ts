@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<50aa296428b5ce0aee6884da5ef417c5>>
+ * @generated SignedSource<<501f91e4bbca74d8ceecd8869333f57a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -49,6 +49,7 @@ export type BAIRuntimeVariantSelectAstryxPaginatedQuery$data = {
       readonly node: {
         readonly id: string;
         readonly name: string;
+        readonly readsVfolderConfigFiles: boolean;
       };
     }>;
   } | null | undefined;
@@ -145,6 +146,13 @@ v3 = [
                 "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "readsVfolderConfigFiles",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -182,16 +190,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "547212280f3b733a4e492e0207ecea60",
+    "cacheID": "da38ef36c27c861e3adb7d261b9eb23e",
     "id": null,
     "metadata": {},
     "name": "BAIRuntimeVariantSelectAstryxPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIRuntimeVariantSelectAstryxPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: RuntimeVariantFilter\n) {\n  runtimeVariants(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query BAIRuntimeVariantSelectAstryxPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: RuntimeVariantFilter\n) {\n  runtimeVariants(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        readsVfolderConfigFiles @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a6af67f6e3300951d62f10c086f692a0";
+(node as any).hash = "9b5f9a092098ef073dc7daf80d68d51c";
 
 export default node;
