@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Lisää paneeli",
       "Condition": "Ehto",
+      "Count": "Lukumäärä",
       "EditPanel": "Muokkaa paneelia",
+      "PanelType": "Paneelin tyyppi",
       "Resource": "Resurssi",
+      "Table": "Taulukko",
       "TitleDescription": "Näytetään paneelin otsikkona – kuvaa sillä ehto.",
       "TitleOptional": "Otsikko (valinnainen)"
     }

@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "เพิ่มแผง",
       "Condition": "เงื่อนไข",
+      "Count": "จำนวน",
       "EditPanel": "แก้ไขแผง",
+      "PanelType": "ประเภทแผง",
       "Resource": "ทรัพยากร",
+      "Table": "ตาราง",
       "TitleDescription": "แสดงเป็นหัวเรื่องของแผง — ใช้เพื่ออธิบายเงื่อนไข",
       "TitleOptional": "ชื่อ (ไม่บังคับ)"
     }

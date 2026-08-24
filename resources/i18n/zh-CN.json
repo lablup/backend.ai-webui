@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "添加面板",
       "Condition": "条件",
+      "Count": "计数",
       "EditPanel": "编辑面板",
+      "PanelType": "面板类型",
       "Resource": "资源",
+      "Table": "表格",
       "TitleDescription": "显示为面板标题——建议用于描述筛选条件。",
       "TitleOptional": "标题（可选）"
     }

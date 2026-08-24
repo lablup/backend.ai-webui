@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "패널 추가",
       "Condition": "조건",
+      "Count": "카운트",
       "EditPanel": "패널 수정",
+      "PanelType": "패널 형식",
       "Resource": "리소스",
+      "Table": "테이블",
       "TitleDescription": "패널 머리글로 표시됩니다 — 조건을 설명하는 제목을 권장합니다.",
       "TitleOptional": "제목 (선택)"
     }

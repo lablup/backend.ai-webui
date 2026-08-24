@@ -5,7 +5,7 @@
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { BAIBoardItem } from '../BAIBoard';
-import { createPanel, DEFAULT_PANEL_LAYOUT, DEFAULT_PANELS } from './defaults';
+import { createPanel, DEFAULT_PANEL_LAYOUTS, DEFAULT_PANELS } from './defaults';
 import { panelRegistry } from './panelRegistry';
 import {
   availableResourceKeys,
@@ -103,11 +103,27 @@ export const useCustomPanels = ({
   };
 
   const updatePanel = (id: string, input: PanelInput) => {
+    // A kind switch changes what a sensible size is, but the persisted layout
+    // always wins over the default (see `reconcileBoardLayout`), so the entry
+    // has to be rewritten here — otherwise a table switched to a count keeps
+    // the table's spans forever. Same reason `removePanel` prunes the list.
+    const current = panels.find((panel) => panel.id === id);
+    if (current && current.panelType !== input.panelType) {
+      const layout =
+        DEFAULT_PANEL_LAYOUTS[input.panelType] ??
+        DEFAULT_PANEL_LAYOUTS.resourceTable;
+      setLocalStorageBoardItems((previous) =>
+        Array.isArray(previous)
+          ? previous.map((item) => (item.id === id ? { id, ...layout } : item))
+          : previous,
+      );
+    }
     setStoredPanels((previous) =>
       sanitizePanels(previous ?? DEFAULT_PANELS).map((panel) =>
         panel.id === id
           ? {
               ...panel,
+              panelType: input.panelType,
               descriptor: {
                 resourceType: input.resourceType,
                 title: input.title,
@@ -144,7 +160,8 @@ export const useCustomPanels = ({
   const customDefaultLayout: Array<Omit<BAIBoardItem, 'data'>> =
     renderablePanels.map((panel) => ({
       id: panel.id,
-      ...DEFAULT_PANEL_LAYOUT,
+      ...(DEFAULT_PANEL_LAYOUTS[panel.panelType] ??
+        DEFAULT_PANEL_LAYOUTS.resourceTable),
     }));
 
   // Element identity is keyed by panel id (not array position) so a layout-only
@@ -154,8 +171,10 @@ export const useCustomPanels = ({
       const Panel = panelRegistry[panel.panelType];
       const content: React.ReactNode = (
         <BAIBoardItemErrorBoundary
-          // Keyed by descriptor so a config edit clears a stuck error state.
-          key={JSON.stringify(panel.descriptor)}
+          // Keyed by kind AND descriptor so a config edit clears a stuck error
+          // state. The kind is not part of the descriptor, so without it a
+          // failed table stays in its fallback after a switch to a count.
+          key={`${panel.panelType}:${JSON.stringify(panel.descriptor)}`}
           title={resolvePanelTitle(panel.descriptor, t)}
           status="error"
         >

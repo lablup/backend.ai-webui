@@ -4,12 +4,22 @@
  */
 import { Form } from '../../form-engine';
 import { theme } from '../../theme-shim';
-import { AstryxFormSelector, AstryxFormTextInput } from '../astryxFormControls';
+import {
+  AstryxFormSegmented,
+  AstryxFormSelector,
+  AstryxFormTextInput,
+} from '../astryxFormControls';
 import { DeploymentNodesPanelContent } from './DeploymentNodesPanel';
+import { ResourceCountContent } from './ResourceCountPanel';
 import { ResourceTableContent } from './ResourceTablePanel';
 import { SessionNodesPanelContent } from './SessionNodesPanel';
 import { resourceRegistry } from './resourceRegistry';
-import type { PanelInput, PersistedPanel, ResourceKey } from './types';
+import type {
+  PanelInput,
+  PanelType,
+  PersistedPanel,
+  ResourceKey,
+} from './types';
 import {
   BAIBoardItemErrorBoundary,
   BAIFlex,
@@ -35,6 +45,7 @@ export interface DashboardPanelModalProps {
 }
 
 interface PanelFormValues {
+  panelType: PanelType;
   resourceType: ResourceKey;
   title?: string;
   filter?: GraphQLFilter | string | null;
@@ -75,12 +86,16 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
 
   const resourceType = (Form.useWatch('resourceType', form) ??
     initialResource) as ResourceKey;
+  const panelType = (Form.useWatch('panelType', form) ??
+    initialPanel?.panelType ??
+    'resourceTable') as PanelType;
   const filter = Form.useWatch('filter', form) ?? undefined;
   const config = resourceRegistry[resourceType];
 
   const handleOk = () => {
     const values = form.getFieldsValue();
     onSubmit({
+      panelType: values.panelType ?? panelType,
       resourceType: values.resourceType ?? initialResource,
       title: values.title?.trim() || undefined,
       filter: values.filter ?? null,
@@ -108,6 +123,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         form={form}
         layout="vertical"
         initialValues={{
+          panelType: initialPanel?.panelType ?? 'resourceTable',
           resourceType: initialResource,
           title: initialPanel?.descriptor.title,
           filter: initialPanel?.descriptor.filter ?? undefined,
@@ -121,6 +137,25 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         }}
       >
         <BAIFlex direction="row" align="start" gap="md" wrap="wrap">
+          <Form.Item
+            name="panelType"
+            label={t('dashboard.panelModal.PanelType')}
+            style={{ flexShrink: 0 }}
+          >
+            <AstryxFormSegmented
+              label={t('dashboard.panelModal.PanelType')}
+              options={[
+                {
+                  value: 'resourceTable',
+                  label: t('dashboard.panelModal.Table'),
+                },
+                {
+                  value: 'resourceCount',
+                  label: t('dashboard.panelModal.Count'),
+                },
+              ]}
+            />
+          </Form.Item>
           <Form.Item
             name="resourceType"
             label={t('dashboard.panelModal.Resource')}
@@ -173,13 +208,26 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         >
           {open ? (
             <BAIBoardItemErrorBoundary
-              // Keyed so an errored preview retries when the condition changes.
-              key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+              // Keyed so an errored preview retries when the condition changes
+              // — including the kind, or a table that failed keeps its fallback
+              // after switching to a count that would have rendered.
+              key={`${panelType}:${resourceType}:${JSON.stringify(filter ?? null)}`}
               title={t(config.labelKey)}
               status="error"
             >
               <Suspense fallback={<BAISkeleton />}>
-                {config.kind === 'deploymentNodes' ? (
+                {panelType === 'resourceCount' ? (
+                  <BAIFlex align="center" justify="center">
+                    <ResourceCountContent
+                      key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+                      descriptor={{
+                        resourceType,
+                        filter: filter ?? null,
+                        order,
+                      }}
+                    />
+                  </BAIFlex>
+                ) : config.kind === 'deploymentNodes' ? (
                   <DeploymentNodesPanelContent
                     key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
                     descriptor={{

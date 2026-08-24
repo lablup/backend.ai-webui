@@ -734,8 +734,11 @@
     "panelModal": {
       "AddPanel": "Panel ekle",
       "Condition": "Koşul",
+      "Count": "Sayı",
       "EditPanel": "Paneli düzenle",
+      "PanelType": "Panel türü",
       "Resource": "Kaynak",
+      "Table": "Tablo",
       "TitleDescription": "Panel başlığı olarak gösterilir — koşulu açıklamak için kullanın.",
       "TitleOptional": "Başlık (isteğe bağlı)"
     }
