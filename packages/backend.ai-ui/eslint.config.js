@@ -28,6 +28,20 @@ export default [
     },
   },
 
+  {
+    files: ["src/**/*.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "JSXAttribute[name.name='style'] Property[key.name='all']",
+          message:
+            "Inline `all:` resets break Astryx anchor positioning on Chromium >= 151 — the anchor-name CSSOM getter returns the CSS-wide keyword, which poisons addAnchorName's list and detaches the layer to the viewport top-left (FR-3589). Use an explicit reset, or BAIIconWithTooltip for tooltip triggers.",
+        },
+      ],
+    },
+  },
+
   // Enforce that BUI components access translations through the internal
   // `useBAIi18n` hook only. Direct imports of i18n primitives from
   // `react-i18next` would re-introduce React-Context-based lookup, which

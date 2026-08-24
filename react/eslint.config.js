@@ -89,6 +89,11 @@ export default [
           message:
             'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
         },
+        {
+          selector: "JSXAttribute[name.name='style'] Property[key.name='all']",
+          message:
+            "Inline `all:` resets break Astryx anchor positioning on Chromium >= 151 — the anchor-name CSSOM getter returns the CSS-wide keyword, which poisons addAnchorName's list and detaches the layer to the viewport top-left (FR-3589). Use an explicit reset, or BAIIconWithTooltip for tooltip triggers.",
+        },
       ],
     },
   },
