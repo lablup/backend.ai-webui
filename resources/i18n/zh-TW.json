@@ -2735,7 +2735,7 @@
     "InvalidRedirectURL": "應用程式無法啟動，因為 URL 無效。",
     "KernelExitCode": "內核退出代碼",
     "LastTry": "最后一次尝试",
-    "LaunchedWithDifferentAccessKey": "此會話使用與目前登入所用存取密鑰不同的密鑰建立。",
+    "LaunchedWithDifferentAccessKey": "此會話使用非預設存取密鑰建立。",
     "MEM": "内存",
     "MaxSessionLifetime": "最大会话寿命",
     "MaxSessionLifetimeDesc": "在会话创建后的这段时间内强制终止会话。它可以防止会话无限运行。",

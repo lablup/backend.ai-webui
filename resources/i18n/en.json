@@ -2720,7 +2720,7 @@
     "InvalidRedirectURL": "The app cannot be launched due to an invalid URL.",
     "KernelExitCode": "Kernel Exit Code",
     "LastTry": "Last Try",
-    "LaunchedWithDifferentAccessKey": "This session was created with an access key different from the one used by your current login.",
+    "LaunchedWithDifferentAccessKey": "This session was created with a key other than your default access key.",
     "MEM": "MEM",
     "MaxSessionLifetime": "Max Session Lifetime",
     "MaxSessionLifetimeDesc": "Force-terminate sessions after this time from creation. It prevents the session from running infinitely.",

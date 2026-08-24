@@ -2734,7 +2734,7 @@
     "InvalidRedirectURL": "Aplikasi tidak dapat diluncurkan karena URL tidak valid.",
     "KernelExitCode": "Kode keluar kernel",
     "LastTry": "Percobaan Terakhir",
-    "LaunchedWithDifferentAccessKey": "Sesi ini dibuat dengan kunci akses yang berbeda dari yang digunakan pada login Anda saat ini.",
+    "LaunchedWithDifferentAccessKey": "Sesi ini dibuat dengan kunci selain kunci akses default Anda.",
     "MEM": "Memori",
     "MaxSessionLifetime": "Sesi Maksimal Seumur Hidup",
     "MaxSessionLifetimeDesc": "Menghentikan paksa sesi setelah waktu pembuatan ini. Ini mencegah sesi berjalan tanpa batas.",

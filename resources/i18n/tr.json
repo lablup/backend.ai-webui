@@ -2731,7 +2731,7 @@
     "InvalidRedirectURL": "Geçersiz bir URL nedeniyle uygulama başlatılamıyor.",
     "KernelExitCode": "Çekirdek çıkış kodu",
     "LastTry": "Son Deneme",
-    "LaunchedWithDifferentAccessKey": "Bu oturum, mevcut oturum açmanızda kullanılan erişim anahtarından farklı bir anahtarla oluşturuldu.",
+    "LaunchedWithDifferentAccessKey": "Bu oturum, varsayılan erişim anahtarınızdan farklı bir anahtarla oluşturuldu.",
     "MEM": "Hafıza",
     "MaxSessionLifetime": "Maksimum Oturum Ömrü",
     "MaxSessionLifetimeDesc": "Oluşturulduktan bu süre sonra oturumları sonlandırmaya zorla. Oturumun sonsuza kadar çalışmasını engeller.",
