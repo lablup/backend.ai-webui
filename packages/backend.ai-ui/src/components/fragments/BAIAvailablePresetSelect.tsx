@@ -3,12 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  BAIAvailablePresetSelect — Relay-paginated, id-valued select (pattern B,
- the recipe used across the Astryx migration). Formerly
- `BAIAvailablePresetSelectAstryx`, the migration-era sibling of the antd
- component of this name; the antd original is gone, so this file owns the
- name. The OUTER value contract stays the plain key (`string` / `string[]`)
- the antd wrapper exposed — labelInValue lives strictly between this
- wrapper and `BAIComplexSelect`.
+ the recipe used across the Astryx migration). The OUTER value contract is
+ the plain key (`string` / `string[]`); labelInValue lives strictly
+ between this wrapper and `BAIComplexSelect`.
 
  PILOT-DECISIONs:
   - P26-3 the antd `optionRender` (name + secondary `description` line via
