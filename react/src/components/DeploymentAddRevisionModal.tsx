@@ -25,13 +25,13 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import type { FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
-import { queryWithinOpenModal } from '../helper/openModalRoot';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
   type CommandExecutionMode,
   deriveCommandModeState,
   resolveCommandShell,
 } from '../helper/modelServiceCommand';
+import { queryWithinOpenModal } from '../helper/openModalRoot';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import {
   modelDefinitionFromGraphQL,
@@ -96,7 +96,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAIRuntimeVariantSelectAstryx,
-  BAISelect,
+  BAIComplexSelect,
   BAIVFolderSelectAstryx,
   BAIVFolderSelectAstryxRef,
   convertToUUID,
@@ -368,6 +368,14 @@ const ModelCardPresetSelect: React.FC<
       {...selectProps}
     />
   );
+};
+
+// Suspense fallback for the self-fetching selects: the same `BAIComplexSelect`
+// they render, so the placeholder keeps their exact height and 100% width
+// (`BAISelect` sits on Astryx `Selector` — taller, and it ignores `flex: 1`).
+const SelectLoadingFallback: React.FC<{ label: string }> = ({ label }) => {
+  'use memo';
+  return <BAIComplexSelect label={label} isLabelHidden isLoading isDisabled />;
 };
 
 const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
@@ -1988,7 +1996,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   >
                     <BAIFlex direction="row" gap="xs">
                       <Suspense
-                        fallback={<BAISelect loading style={{ flex: 1 }} />}
+                        fallback={
+                          <SelectLoadingFallback
+                            label={t('deployment.ModelCard')}
+                          />
+                        }
                       >
                         <BAIFormItem
                           name="modelCardId"
@@ -2046,7 +2058,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   >
                     <BAIFlex direction="row" gap="xs">
                       <Suspense
-                        fallback={<BAISelect loading style={{ flex: 1 }} />}
+                        fallback={
+                          <SelectLoadingFallback
+                            label={t('deployment.ModelFolder')}
+                          />
+                        }
                       >
                         <BAIFormItem
                           name="modelFolderId"
@@ -2147,7 +2163,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   >
                     <BAIFlex direction="row" gap="xs">
                       <Suspense
-                        fallback={<BAISelect loading style={{ flex: 1 }} />}
+                        fallback={
+                          <SelectLoadingFallback
+                            label={t('modelStore.Preset')}
+                          />
+                        }
                       >
                         <BAIFormItem
                           name="revisionPresetId"
@@ -2226,7 +2246,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             required
           >
             <BAIFlex direction="row" gap="xs">
-              <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
+              <Suspense
+                fallback={
+                  <SelectLoadingFallback label={t('deployment.ModelFolder')} />
+                }
+              >
                 <BAIFormItem
                   name="modelFolderId"
                   // BAIFormItem drops `label` on noStyle items (the outer
@@ -2319,7 +2343,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               </BAIFormItem>
             )}
           </BAIFlex>
-          <Suspense fallback={<BAISelect loading style={{ width: '100%' }} />}>
+          <Suspense
+            fallback={
+              <SelectLoadingFallback label={t('deployment.RuntimeVariant')} />
+            }
+          >
             <BAIFormItem
               name="runtimeVariantId"
               label={t('deployment.RuntimeVariant')}
