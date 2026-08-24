@@ -269,7 +269,7 @@
     "UpdatedAt": "更新日時"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "その他の操作"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",

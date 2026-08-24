@@ -269,7 +269,7 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Бусад үйлдэл"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
