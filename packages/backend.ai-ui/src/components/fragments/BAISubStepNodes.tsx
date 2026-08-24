@@ -10,6 +10,10 @@
  entry whose result mirrors the parent's and whose `started_at == ended_at` —
  a RESULT MARKER rather than an executed step. Both facts are what the timeline
  renders: solid nodes for the steps, an open dashed node for the marker.
+
+ Every font size, weight and colour comes from the theme through Astryx `Text`
+ semantic types (`code` / `supporting`) and the `primary` / `secondary` colour
+ ramp — the co-located CSS carries geometry only.
 */
 import {
   BAISubStepNodesFragment$data,
@@ -115,84 +119,91 @@ const BAISubStepNodes = ({
       className={classNames('bai-substep-timeline', className)}
       {...divProps}
     >
-      {dataSource.map((record, index) => {
-        const result = toSchedulingResult(record.result);
-        const isLast = index === lastIndex;
-        const isResultMarker = isResultMarkerEntry(
-          record,
-          index,
-          dataSource.length,
-        );
-        const elapsed = formatElapsed(record.startedAt, record.endedAt);
+      <div className="bai-substep-list">
+        {dataSource.map((record, index) => {
+          const result = toSchedulingResult(record.result);
+          const isLast = index === lastIndex;
+          const isResultMarker = isResultMarkerEntry(
+            record,
+            index,
+            dataSource.length,
+          );
+          const elapsed = formatElapsed(record.startedAt, record.endedAt);
 
-        return (
-          <div className="bai-substep-item" key={`${record.step}-${index}`}>
-            <div className="bai-substep-rail" aria-hidden>
-              <span
+          return (
+            <div className="bai-substep-item" key={`${record.step}-${index}`}>
+              <div className="bai-substep-rail" aria-hidden>
+                <span
+                  className={classNames(
+                    'bai-substep-dot',
+                    isResultMarker && 'bai-substep-dot--marker',
+                  )}
+                  data-variant={
+                    result ? resultSemanticColorMap[result] : 'default'
+                  }
+                />
+                {!isLast ? <span className="bai-substep-connector" /> : null}
+              </div>
+              <div
                 className={classNames(
-                  'bai-substep-dot',
-                  isResultMarker && 'bai-substep-dot--marker',
+                  'bai-substep-body',
+                  isResultMarker && 'bai-substep-body--marker',
                 )}
-                data-variant={
-                  result ? resultSemanticColorMap[result] : 'default'
-                }
-              />
-              {!isLast ? <span className="bai-substep-connector" /> : null}
-            </div>
-            <div className="bai-substep-body">
-              <div className="bai-substep-header">
-                <Text
-                  type="code"
-                  weight="medium"
-                  color={isResultMarker ? 'secondary' : 'primary'}
-                >
-                  {record.step}
-                </Text>
-                <BAISchedulingResultBadge result={result} />
-                {isResultMarker ? (
-                  <span className="bai-substep-pill">
-                    <Text type="supporting" color="secondary">
-                      {t('comp:BAISubStepNodes.ResultMarker')}
-                    </Text>
-                  </span>
-                ) : elapsed ? (
-                  <Text type="code" size="sm" color="secondary">
-                    {elapsed}
+              >
+                <div className="bai-substep-header">
+                  <Text
+                    type="code"
+                    weight="medium"
+                    color={isResultMarker ? 'secondary' : 'primary'}
+                  >
+                    {record.step}
                   </Text>
+                  <BAISchedulingResultBadge result={result} />
+                  {isResultMarker ? (
+                    <span className="bai-substep-pill">
+                      <Text type="supporting">
+                        {t('comp:BAISubStepNodes.ResultMarker')}
+                      </Text>
+                    </span>
+                  ) : elapsed ? (
+                    <Text type="code" size="sm" color="secondary">
+                      {elapsed}
+                    </Text>
+                  ) : null}
+                </div>
+                {!isResultMarker && record.message ? (
+                  <div className="bai-substep-detail">
+                    <Text type="supporting">
+                      {newLineToBrElement(record.message)}
+                    </Text>
+                  </div>
+                ) : null}
+                {!isResultMarker && result === 'FAILURE' ? (
+                  <div className="bai-substep-error-code">
+                    <Text type="supporting">
+                      {t('comp:BAISubStepNodes.ErrorCode')}
+                    </Text>
+                    <span className="bai-substep-chip">
+                      <Text type="code" size="sm" color="secondary">
+                        {record.errorCode ?? '-'}
+                      </Text>
+                    </span>
+                  </div>
+                ) : null}
+                {!isResultMarker && record.startedAt && record.endedAt ? (
+                  <div className="bai-substep-detail bai-substep-detail--time">
+                    <Text type="code" size="sm" color="secondary">
+                      {`${dayjs(record.startedAt).format(TIME_FORMAT)} → ${dayjs(
+                        record.endedAt,
+                      ).format(TIME_FORMAT)}`}
+                    </Text>
+                  </div>
                 ) : null}
               </div>
-              {!isResultMarker && record.message ? (
-                <div className="bai-substep-detail">
-                  <Text size="sm" color="secondary">
-                    {newLineToBrElement(record.message)}
-                  </Text>
-                </div>
-              ) : null}
-              {!isResultMarker && result === 'FAILURE' ? (
-                <div className="bai-substep-error-code">
-                  <Text type="supporting">
-                    {t('comp:BAISubStepNodes.ErrorCode')}
-                  </Text>
-                  <span className="bai-substep-chip">
-                    <Text type="code" size="sm" color="secondary">
-                      {record.errorCode ?? '-'}
-                    </Text>
-                  </span>
-                </div>
-              ) : null}
-              {!isResultMarker && record.startedAt && record.endedAt ? (
-                <div className="bai-substep-detail">
-                  <Text type="code" size="sm" color="disabled">
-                    {`${dayjs(record.startedAt).format(TIME_FORMAT)} → ${dayjs(
-                      record.endedAt,
-                    ).format(TIME_FORMAT)}`}
-                  </Text>
-                </div>
-              ) : null}
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

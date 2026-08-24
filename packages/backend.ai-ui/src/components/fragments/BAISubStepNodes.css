@@ -9,27 +9,51 @@
  inside an expanded row has to invent its own column widths, which never line
  up with the parent's and fight it for horizontal space.
 
- Only the rail geometry lives here — every colour, radius and gap is an Astryx
- token, and all typography is Astryx `Text`.
+ Geometry only — every colour and every font size/weight comes from the theme
+ (Astryx `Text` semantic types and `--color-*` tokens); nothing here sets one.
 */
 .bai-substep-timeline {
-  /* The rail column and the dots are fixed geometry; no token carries them. */
+  /* Rail drawing. These are a figure, not spacing rungs, so no theme token
+     carries them; the values are the design's (2a). */
   --bai-substep-rail-width: 18px;
+  --bai-substep-rail-gap: 14px;
   --bai-substep-dot-size: 9px;
   --bai-substep-marker-size: 11px;
+  /* The larger marker ring needs 1px less top offset than the solid dot to
+     sit on the same text line. */
+  --bai-substep-marker-offset: 5px;
+  --bai-substep-node-gap: 18px;
+  --bai-substep-header-gap: 10px;
+  --bai-substep-detail-gap: 5px;
+  --bai-substep-chip-inset-block: 1px;
   /* Wide enough for a full error message line, narrow enough that the eye
      still tracks the rail. */
-  --bai-substep-max-width: 660px;
+  --bai-substep-list-max-width: 660px;
 
+  /* `BAITable` pads the detail cell uniformly with `paddingSM` through an
+     INLINE style, which no stylesheet rule can override — so cancel it with a
+     matching negative margin and re-apply the design's asymmetric inset:
+     flush to the row above, 20px below, 24px right. The start inset is
+     BAITable's own `EXPAND_COLUMN_WIDTH_FIRST`, which is what left-aligns the
+     timeline with the parent's first data column. */
+  --bai-substep-cell-padding: var(--spacing-3);
+  --bai-substep-inset-start: 56px;
+
+  margin: calc(-1 * var(--bai-substep-cell-padding));
+  padding-block: 0 var(--spacing-5);
+  padding-inline: var(--bai-substep-inset-start) var(--spacing-6);
+}
+
+.bai-substep-list {
   display: flex;
   flex-direction: column;
-  max-width: var(--bai-substep-max-width);
+  max-width: var(--bai-substep-list-max-width);
 }
 
 .bai-substep-item {
   display: grid;
   grid-template-columns: var(--bai-substep-rail-width) 1fr;
-  gap: var(--spacing-3);
+  gap: var(--bai-substep-rail-gap);
 }
 
 .bai-substep-rail {
@@ -54,7 +78,7 @@
 .bai-substep-dot--marker {
   width: var(--bai-substep-marker-size);
   height: var(--bai-substep-marker-size);
-  margin-top: var(--spacing-1);
+  margin-top: var(--bai-substep-marker-offset);
   border: calc(2 * var(--border-width)) dashed var(--bai-substep-dot-color);
   background: var(--color-background-card);
 }
@@ -84,21 +108,29 @@
 .bai-substep-body {
   /* Lets the message truncate instead of widening the grid column. */
   min-width: 0;
-  padding-bottom: var(--spacing-4);
+  padding-bottom: var(--bai-substep-node-gap);
 }
 
 .bai-substep-item:last-child .bai-substep-body {
   padding-bottom: 0;
 }
 
+.bai-substep-body--marker {
+  padding-top: var(--spacing-0-5);
+}
+
 .bai-substep-header {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--spacing-2);
+  gap: var(--bai-substep-header-gap);
 }
 
 .bai-substep-detail {
+  margin-top: var(--bai-substep-detail-gap);
+}
+
+.bai-substep-detail--time {
   margin-top: var(--spacing-1);
 }
 
@@ -112,7 +144,7 @@
 .bai-substep-chip {
   display: inline-flex;
   align-items: center;
-  padding: 0 var(--spacing-2);
+  padding: var(--bai-substep-chip-inset-block) var(--spacing-2);
   border: var(--border-width) solid var(--color-border-emphasized);
   border-radius: var(--radius-inner);
   background: var(--color-background-card);
@@ -121,7 +153,7 @@
 .bai-substep-pill {
   display: inline-flex;
   align-items: center;
-  padding: 0 var(--spacing-2);
+  padding: var(--bai-substep-chip-inset-block) var(--spacing-2);
   border-radius: var(--radius-full);
   background: var(--color-background-muted);
 }
