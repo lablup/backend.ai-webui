@@ -121,12 +121,12 @@ export type {
   ProjectVfolderNode,
   BAIProjectVfolderSelectAstryxRef,
 } from './BAIProjectVfolderSelectAstryx';
-export { default as BAIAvailablePresetSelectAstryx } from './BAIAvailablePresetSelectAstryx';
+export { default as BAIAvailablePresetSelect } from './BAIAvailablePresetSelect';
 export type {
-  BAIAvailablePresetSelectAstryxProps,
-  BAIAvailablePresetSelectAstryxRef,
-  AstryxDeploymentRevisionPresetNode,
-} from './BAIAvailablePresetSelectAstryx';
+  BAIAvailablePresetSelectProps,
+  BAIAvailablePresetSelectRef,
+  DeploymentRevisionPresetNode,
+} from './BAIAvailablePresetSelect';
 export { default as BAIRuntimeVariantSelectAstryx } from './BAIRuntimeVariantSelectAstryx';
 export type {
   BAIRuntimeVariantSelectAstryxProps,

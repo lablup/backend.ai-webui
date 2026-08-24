@@ -4,7 +4,7 @@
 
  ModelCardSelect — a Relay-paginated, id-valued single select over the model
  store's `projectModelCardsV2`, built on `BAIComplexSelect` (the same recipe as
- `BAIAvailablePresetSelectAstryx` / `AgentSelect`). The OUTER value contract is
+ `BAIAvailablePresetSelect` / `AgentSelect`). The OUTER value contract is
  a plain card local id (`string`); labelInValue lives strictly between this
  wrapper and `BAIComplexSelect`.
  */
@@ -51,7 +51,13 @@ export interface SelectedModelCard {
 
 export interface ModelCardSelectProps extends Omit<
   BAIComplexSelectProps,
-  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total' | 'multiple'
+  | 'options'
+  | 'value'
+  | 'onChange'
+  | 'searchValue'
+  | 'onSearch'
+  | 'total'
+  | 'multiple'
 > {
   /** Plain card local id (raw UUID). */
   value?: string | null;

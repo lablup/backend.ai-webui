@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<70740eeaf05ee7eeb71ce5d7207b00ce>>
+ * @generated SignedSource<<650157eb61d9f30c2154b7b723dd1c2c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,12 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BAIAvailablePresetSelectAstryxValueQuery$variables = {
+export type BAIAvailablePresetSelectValueQuery$variables = {
   first: number;
   ids?: ReadonlyArray<string> | null | undefined;
   skip: boolean;
 };
-export type BAIAvailablePresetSelectAstryxValueQuery$data = {
+export type BAIAvailablePresetSelectValueQuery$data = {
   readonly deploymentRevisionPresets?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -25,9 +25,9 @@ export type BAIAvailablePresetSelectAstryxValueQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIAvailablePresetSelectAstryxValueQuery = {
-  response: BAIAvailablePresetSelectAstryxValueQuery$data;
-  variables: BAIAvailablePresetSelectAstryxValueQuery$variables;
+export type BAIAvailablePresetSelectValueQuery = {
+  response: BAIAvailablePresetSelectValueQuery$data;
+  variables: BAIAvailablePresetSelectValueQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -141,7 +141,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAvailablePresetSelectAstryxValueQuery",
+    "name": "BAIAvailablePresetSelectValueQuery",
     "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -154,20 +154,20 @@ return {
       (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIAvailablePresetSelectAstryxValueQuery",
+    "name": "BAIAvailablePresetSelectValueQuery",
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "e823b1024471b14a0ec0c5904c56c06e",
+    "cacheID": "764a9eece49de50435dc438c94ee6e4c",
     "id": null,
     "metadata": {},
-    "name": "BAIAvailablePresetSelectAstryxValueQuery",
+    "name": "BAIAvailablePresetSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectAstryxValueQuery(\n  $ids: [UUID!]\n  $first: Int!\n  $skip: Boolean!\n) {\n  deploymentRevisionPresets(filter: {id: {in: $ids}}, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        name\n        description\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectValueQuery(\n  $ids: [UUID!]\n  $first: Int!\n  $skip: Boolean!\n) {\n  deploymentRevisionPresets(filter: {id: {in: $ids}}, first: $first) @skip(if: $skip) {\n    edges {\n      node {\n        id\n        name\n        description\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "998c8e1563cb35b553ba139a1471d4bd";
+(node as any).hash = "dcdae7e7805dee41d0a10741a101b9e1";
 
 export default node;

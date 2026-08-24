@@ -658,7 +658,7 @@ export async function cleanupDeploymentFixtures(
  * "Model Folder") and selects `optionName` — which must be unique on the
  * cluster, as every provisioned `e2e-dfx-*` name is.
  *
- * Both fields are `BAIComplexSelect`-backed (BAIAvailablePresetSelectAstryx /
+ * Both fields are `BAIComplexSelect`-backed (BAIAvailablePresetSelect /
  * BAIVFolderSelectAstryx): the Astryx ComplexSelector's field trigger is a
  * plain `<button>` whose accessible name is the field label
  * (`aria-haspopup="dialog"`, NOT a combobox), and its popup is a

@@ -102,6 +102,13 @@ export interface BAIVFolderSelectAstryxProps extends Omit<
    */
   requiredPermission?: BAIVFolderPermission;
   onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
+  /**
+   * Caller-known labels (keyed by the outer value) for values this select's
+   * own value query cannot resolve — e.g. a prefilled folder outside the
+   * current scope/filter. Used only when resolution misses; a resolved name
+   * always wins.
+   */
+  fallbackLabels?: Record<string, string>;
   ref?: React.Ref<BAIVFolderSelectAstryxRef>;
 }
 
@@ -116,6 +123,7 @@ const BAIVFolderSelectAstryx: React.FC<BAIVFolderSelectAstryxProps> = ({
   valuePropName = 'id',
   requiredPermission = 'read_attribute',
   onResolvedNamesChange,
+  fallbackLabels,
   multiple = false,
   isLoading,
   ref,
@@ -315,8 +323,13 @@ const BAIVFolderSelectAstryx: React.FC<BAIVFolderSelectAstryxProps> = ({
         selectedVFolderNodes?.edges,
         (e) => keyOfNode(e?.node) === key,
       );
-      // Echoing the key as its own label is the antd fallback, made explicit.
-      return { label: edge?.node?.name ?? key, value: key };
+      // Unresolvable value (folder deleted, or outside this select's
+      // scope/filter): prefer a caller-supplied label, then the readable
+      // local UUID — never the base64 global id.
+      const fallbackLabel =
+        fallbackLabels?.[key] ??
+        (valuePropName === 'id' ? (toLocalId(key) ?? key) : key);
+      return { label: edge?.node?.name ?? fallbackLabel, value: key };
     });
     if (multiple) return labeled;
     return labeled[0] ?? null;

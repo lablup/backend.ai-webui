@@ -91,7 +91,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import {
   BAISkeleton,
-  BAIAvailablePresetSelectAstryx,
+  BAIAvailablePresetSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -284,7 +284,7 @@ const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
 };
 
 // Loader for the preset-detail modal in this paginated context. The Preset
-// selector here (`BAIAvailablePresetSelectAstryx`) paginates independently of the
+// selector here (`BAIAvailablePresetSelect`) paginates independently of the
 // modal's main query, so we cannot spread `DeploymentPresetDetailModalFragment`
 // on a list edge. Instead, when the user opens the detail view, fire a tiny
 // singular query keyed by the selected presetId and hand the fragment ref
@@ -339,7 +339,7 @@ const ModelCardDetailLoader: React.FC<{
 };
 
 // Card-mode preset selector: the same self-fetching
-// `BAIAvailablePresetSelectAstryx` used for the folder source, scoped to the
+// `BAIAvailablePresetSelect` used for the folder source, scoped to the
 // selected model card's resource-compatible presets via `modelCardId`. That
 // routes the list through the top-level `modelCardAvailablePresets` query (the
 // same server-filtered subset `ModelCardDeployModal` deploys against,
@@ -350,16 +350,13 @@ const ModelCardDetailLoader: React.FC<{
 const ModelCardPresetSelect: React.FC<
   {
     modelCardId?: string;
-  } & Omit<
-    React.ComponentProps<typeof BAIAvailablePresetSelectAstryx>,
-    'modelCardId'
-  >
+  } & Omit<React.ComponentProps<typeof BAIAvailablePresetSelect>, 'modelCardId'>
 > = ({ modelCardId, ...selectProps }) => {
   'use memo';
   const { t } = useTranslation();
   const isDisabled = !modelCardId;
   return (
-    <BAIAvailablePresetSelectAstryx
+    <BAIAvailablePresetSelect
       modelCardId={modelCardId}
       isDisabled={isDisabled}
       description={
@@ -425,6 +422,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // is passed in via `sourceRevisionFrgmt`.
   const revisionPrefillFragment = graphql`
     fragment DeploymentAddRevisionModal_revisionSource on ModelRevision {
+      revisionPresetId @since(version: "26.4.4")
       clusterConfig {
         mode
         size
@@ -464,6 +462,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }
       modelMountConfig {
         vfolderId
+        vfolder {
+          id
+          name
+        }
         mountDestination
         definitionPath
         subpath @since(version: "26.4.4")
@@ -513,6 +515,17 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       revisionPrefillFragment,
       sourceRevisionFrgmt ?? null,
     );
+  // Display names for prefilled model folders the selector may not resolve
+  // itself (deleted, or outside its project scope — e.g. a model-store
+  // folder behind a card-born revision). Keyed by the folder's global id.
+  const revisionFolderFallbackLabels: Record<string, string> = _.fromPairs(
+    _.compact(
+      [currentRevision, sourceRevision].map((rev) => {
+        const vfolder = rev?.modelMountConfig?.vfolder;
+        return vfolder?.id && vfolder.name ? [vfolder.id, vfolder.name] : null;
+      }),
+    ),
+  );
   // ADR-0001 (FR-3411, derive-from-resource tier): adding a revision always
   // targets the deployment's own project — never the ambient header
   // selection. The id comes from the deployment metadata (`projectId`); the
@@ -600,6 +613,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // to Custom — the mode choice is always the user's, never forced by the
   // entry point.
   const [hasAppliedSourcePrefill, setHasAppliedSourcePrefill] = useState(false);
+  // One-shot guard for the Preset-form twin of the source prefill. Also set
+  // when the source revision carries no `revisionPresetId` and we flip to
+  // Custom instead, so toggling back to Preset does not re-trigger the flip.
+  const [hasAppliedSourcePresetPrefill, setHasAppliedSourcePresetPrefill] =
+    useState(false);
   // True between "user clicked Load current revision while in Preset mode"
   // and "the Custom form has mounted and we applied the prefill". setMode
   // is async, so we can't `setFieldsValue` on the Custom form synchronously
@@ -716,7 +734,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       })
       .catch(() => {
         if (cancelled) return;
-        // On error, assume presets exist — the BAIAvailablePresetSelectAstryx's
+        // On error, assume presets exist — the BAIAvailablePresetSelect's
         // own paginated query will surface a per-select empty state if it
         // also fails.
         setHasNoPresets(false);
@@ -740,7 +758,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       )
     : undefined;
 
-  // The `BAIAvailablePresetSelectAstryx` paginates independently of this modal's
+  // The `BAIAvailablePresetSelect` paginates independently of this modal's
   // main query (it can scroll past the first page on demand), so the user
   // can select a preset that does not appear in any local list we hold.
   // Resolve the selected preset's full data on demand via the singular
@@ -948,7 +966,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       // Also carry the model folder the user picked in Preset mode (spec (d)).
       //
       // Read the preset id from the form (source of truth for the selection,
-      // since `BAIAvailablePresetSelectAstryx` is wrapped in a named `Form.Item`),
+      // since `BAIAvailablePresetSelect` is wrapped in a named `Form.Item`),
       // then resolve the preset's full data via the singular
       // `deploymentRevisionPreset(id:)` query so this works regardless of
       // which page the select scrolled to.
@@ -1223,6 +1241,38 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setHasAppliedSourcePrefill(true);
   });
 
+  // Preset-mode twin of the source prefill: restores `revisionPresetId` +
+  // model folder. The model-CARD selection is NOT restored (skipped in this
+  // scope): a revision records only the mounted vfolder UUID, not the card
+  // it came from, so a card-born revision prefills as a 'folder' source
+  // pointing at the card's backing folder. A revision without
+  // `revisionPresetId` (custom-made, preset since deleted, or a pre-26.4.4
+  // manager) cannot be represented in Preset mode at all, so flip to Custom
+  // and let `applySourcePrefillOnce` take over — otherwise the "Add new
+  // revision from this" entry silently does nothing when the modal
+  // remembers Preset mode.
+  const applySourcePresetPrefillOnce = useEffectEvent(() => {
+    if (hasAppliedSourcePresetPrefill) return;
+    if (!sourceRevision) return;
+    setHasAppliedSourcePresetPrefill(true);
+    if (!sourceRevision.revisionPresetId) {
+      setMode('custom');
+      return;
+    }
+    setSelectedCardVfolderId(null);
+    presetForm.setFieldsValue({
+      presetModelSource: 'folder',
+      modelCardId: undefined,
+      revisionPresetId: sourceRevision.revisionPresetId,
+      modelFolderId: sourceRevision.modelMountConfig?.vfolderId
+        ? toGlobalId(
+            'VirtualFolderNode',
+            sourceRevision.modelMountConfig.vfolderId,
+          )
+        : undefined,
+    });
+  });
+
   // Pair with `handleLoadCurrent` below — when the user clicks "Load
   // current revision" while in Preset mode, we flip to Custom and queue the
   // apply via `pendingLoadCurrent`. This effect drains the queue once the
@@ -1247,6 +1297,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       applyPendingLoadCurrent();
     } else {
       consumeCustomTransferPrefill();
+      applySourcePresetPrefillOnce();
     }
   }, [effectiveMode]);
 
@@ -2078,6 +2129,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         >
                           <BAIVFolderSelectAstryx
                             ref={presetVFolderSelectRef}
+                            fallbackLabels={revisionFolderFallbackLabels}
                             label={t('deployment.ModelFolder')}
                             isLabelHidden
                             currentProjectId={deploymentProject?.id}
@@ -2182,7 +2234,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                               isLabelHidden
                             />
                           ) : (
-                            <BAIAvailablePresetSelectAstryx
+                            <BAIAvailablePresetSelect
                               label={t('modelStore.Preset')}
                               isLabelHidden
                             />
@@ -2262,6 +2314,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 >
                   <BAIVFolderSelectAstryx
                     ref={customVFolderSelectRef}
+                    fallbackLabels={revisionFolderFallbackLabels}
                     label={t('deployment.ModelFolder')}
                     isLabelHidden
                     currentProjectId={deploymentProject?.id}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1e32bc563fa45d1dd65ed6d030f59856>>
+ * @generated SignedSource<<e33887fd0a9719629ac8fe014f4766c5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,17 +45,13 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
-export type ModelCardAvailablePresetsScope = {
-  modelCardId: string;
-};
-export type BAIAvailablePresetSelectAstryxCardScopedQuery$variables = {
+export type BAIAvailablePresetSelectPaginatedQuery$variables = {
   filter?: DeploymentRevisionPresetFilter | null | undefined;
   limit: number;
   offset: number;
-  scope: ModelCardAvailablePresetsScope;
 };
-export type BAIAvailablePresetSelectAstryxCardScopedQuery$data = {
-  readonly modelCardAvailablePresets: {
+export type BAIAvailablePresetSelectPaginatedQuery$data = {
+  readonly deploymentRevisionPresets: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -71,9 +67,9 @@ export type BAIAvailablePresetSelectAstryxCardScopedQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIAvailablePresetSelectAstryxCardScopedQuery = {
-  response: BAIAvailablePresetSelectAstryxCardScopedQuery$data;
-  variables: BAIAvailablePresetSelectAstryxCardScopedQuery$variables;
+export type BAIAvailablePresetSelectPaginatedQuery = {
+  response: BAIAvailablePresetSelectPaginatedQuery$data;
+  variables: BAIAvailablePresetSelectPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -92,12 +88,7 @@ v2 = {
   "kind": "LocalArgument",
   "name": "offset"
 },
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "scope"
-},
-v4 = [
+v3 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -122,49 +113,44 @@ v4 = [
         "field": "RANK"
       }
     ]
-  },
-  {
-    "kind": "Variable",
-    "name": "scope",
-    "variableName": "scope"
   }
 ],
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "description",
   "storageKey": null
 },
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "rank",
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -176,22 +162,21 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIAvailablePresetSelectAstryxCardScopedQuery",
+    "name": "BAIAvailablePresetSelectPaginatedQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "DeploymentRevisionPresetConnection",
         "kind": "LinkedField",
-        "name": "modelCardAvailablePresets",
+        "name": "deploymentRevisionPresets",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -208,11 +193,11 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
-                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -221,7 +206,7 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/)
+                      (v6/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -243,21 +228,20 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v1/*: any*/),
-      (v0/*: any*/),
-      (v3/*: any*/)
+      (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIAvailablePresetSelectAstryxCardScopedQuery",
+    "name": "BAIAvailablePresetSelectPaginatedQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "DeploymentRevisionPresetConnection",
         "kind": "LinkedField",
-        "name": "modelCardAvailablePresets",
+        "name": "deploymentRevisionPresets",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -274,11 +258,11 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
-                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -287,8 +271,8 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
-                      (v6/*: any*/)
+                      (v6/*: any*/),
+                      (v5/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -304,16 +288,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "716db00877f373c997f00131186890f1",
+    "cacheID": "9da417fb2ac8e507c2add0e8ea5c6008",
     "id": null,
     "metadata": {},
-    "name": "BAIAvailablePresetSelectAstryxCardScopedQuery",
+    "name": "BAIAvailablePresetSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAvailablePresetSelectAstryxCardScopedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n  $scope: ModelCardAvailablePresetsScope!\n) {\n  modelCardAvailablePresets(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAvailablePresetSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentRevisionPresetFilter\n) {\n  deploymentRevisionPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        runtimeVariantId\n        runtimeVariant {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8f5afa7073768413cdfd1500b119e3a1";
+(node as any).hash = "da235ad4d7b554db2eb0632b7385930d";
 
 export default node;

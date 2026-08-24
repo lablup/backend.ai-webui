@@ -2,16 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIAvailablePresetSelectAstryx — ticket-27 Astryx sibling of the antd
- `BAIAvailablePresetSelect` (Relay-paginated, id-valued select pattern B,
- following the recipe used across the Astryx migration).
-
- FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
- `BAIAvailablePresetSelect` is NOT touched by this file. It keeps serving
- every unmigrated call site until a later ticket moves them over. This file
- is the Astryx-native sibling, and its OUTER value contract is deliberately
- the same plain key (`string` / `string[]`) the antd wrapper exposes —
- labelInValue lives strictly between the wrapper and `BAIComplexSelect`.
+ BAIAvailablePresetSelect — Relay-paginated, id-valued select (pattern B,
+ the recipe used across the Astryx migration). Formerly
+ `BAIAvailablePresetSelectAstryx`, the migration-era sibling of the antd
+ component of this name; the antd original is gone, so this file owns the
+ name. The OUTER value contract stays the plain key (`string` / `string[]`)
+ the antd wrapper exposed — labelInValue lives strictly between this
+ wrapper and `BAIComplexSelect`.
 
  PILOT-DECISIONs:
   - P26-3 the antd `optionRender` (name + secondary `description` line via
@@ -32,9 +29,9 @@
   - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
     is dropped: the empty state is the shared "No results" text.
 */
-import { BAIAvailablePresetSelectAstryxCardScopedQuery } from '../../__generated__/BAIAvailablePresetSelectAstryxCardScopedQuery.graphql';
-import { BAIAvailablePresetSelectAstryxPaginatedQuery } from '../../__generated__/BAIAvailablePresetSelectAstryxPaginatedQuery.graphql';
-import { BAIAvailablePresetSelectAstryxValueQuery } from '../../__generated__/BAIAvailablePresetSelectAstryxValueQuery.graphql';
+import { BAIAvailablePresetSelectCardScopedQuery } from '../../__generated__/BAIAvailablePresetSelectCardScopedQuery.graphql';
+import { BAIAvailablePresetSelectPaginatedQuery } from '../../__generated__/BAIAvailablePresetSelectPaginatedQuery.graphql';
+import { BAIAvailablePresetSelectValueQuery } from '../../__generated__/BAIAvailablePresetSelectValueQuery.graphql';
 import { convertToUUID, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
@@ -54,19 +51,19 @@ import {
 } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type AstryxDeploymentRevisionPresetNode = NonNullable<
+export type DeploymentRevisionPresetNode = NonNullable<
   NonNullable<
     NonNullable<
-      BAIAvailablePresetSelectAstryxPaginatedQuery['response']['deploymentRevisionPresets']
+      BAIAvailablePresetSelectPaginatedQuery['response']['deploymentRevisionPresets']
     >['edges'][number]
   >['node']
 >;
 
-export interface BAIAvailablePresetSelectAstryxRef {
+export interface BAIAvailablePresetSelectRef {
   refetch: () => void;
 }
 
-export interface BAIAvailablePresetSelectAstryxProps extends Omit<
+export interface BAIAvailablePresetSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
@@ -82,12 +79,10 @@ export interface BAIAvailablePresetSelectAstryxProps extends Omit<
    * `deploymentRevisionPresets` list. Pass a raw model-card UUID (local id).
    */
   modelCardId?: string;
-  ref?: React.Ref<BAIAvailablePresetSelectAstryxRef>;
+  ref?: React.Ref<BAIAvailablePresetSelectRef>;
 }
 
-const BAIAvailablePresetSelectAstryx: React.FC<
-  BAIAvailablePresetSelectAstryxProps
-> = ({
+const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
   runtimeVariantId,
   modelCardId,
   multiple = false,
@@ -135,9 +130,9 @@ const BAIAvailablePresetSelectAstryx: React.FC<
    * `first` is sized exactly to the selection so all labels arrive together.
    */
   const { deploymentRevisionPresets: selectedPresets } =
-    useLazyLoadQuery<BAIAvailablePresetSelectAstryxValueQuery>(
+    useLazyLoadQuery<BAIAvailablePresetSelectValueQuery>(
       graphql`
-        query BAIAvailablePresetSelectAstryxValueQuery(
+        query BAIAvailablePresetSelectValueQuery(
           $ids: [UUID!]
           $first: Int!
           $skip: Boolean!
@@ -171,7 +166,7 @@ const BAIAvailablePresetSelectAstryx: React.FC<
   // variant + search conditions merge onto one object. `null` when no filter
   // is active so the query field receives the schema default.
   const mergedFilter: NonNullable<
-    BAIAvailablePresetSelectAstryxPaginatedQuery['variables']['filter']
+    BAIAvailablePresetSelectPaginatedQuery['variables']['filter']
   > | null =
     runtimeVariantId || deferredSearchStr
       ? {
@@ -194,11 +189,11 @@ const BAIAvailablePresetSelectAstryx: React.FC<
   const isCardScoped = !!modelCardId;
 
   const projectScopedPresets = useLazyPaginatedQuery<
-    BAIAvailablePresetSelectAstryxPaginatedQuery,
-    AstryxDeploymentRevisionPresetNode
+    BAIAvailablePresetSelectPaginatedQuery,
+    DeploymentRevisionPresetNode
   >(
     graphql`
-      query BAIAvailablePresetSelectAstryxPaginatedQuery(
+      query BAIAvailablePresetSelectPaginatedQuery(
         $offset: Int!
         $limit: Int!
         $filter: DeploymentRevisionPresetFilter
@@ -244,11 +239,11 @@ const BAIAvailablePresetSelectAstryx: React.FC<
   );
 
   const cardScopedPresets = useLazyPaginatedQuery<
-    BAIAvailablePresetSelectAstryxCardScopedQuery,
-    AstryxDeploymentRevisionPresetNode
+    BAIAvailablePresetSelectCardScopedQuery,
+    DeploymentRevisionPresetNode
   >(
     graphql`
-      query BAIAvailablePresetSelectAstryxCardScopedQuery(
+      query BAIAvailablePresetSelectCardScopedQuery(
         $offset: Int!
         $limit: Int!
         $filter: DeploymentRevisionPresetFilter
@@ -380,4 +375,4 @@ const BAIAvailablePresetSelectAstryx: React.FC<
   );
 };
 
-export default BAIAvailablePresetSelectAstryx;
+export default BAIAvailablePresetSelect;

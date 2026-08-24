@@ -14,7 +14,7 @@ import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAvailablePresetSelectAstryx,
+  BAIAvailablePresetSelect,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -74,7 +74,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
   // TODO(needs-backend): `availablePresets` here is the server-filtered list
-  // scoped to this specific model card. `BAIAvailablePresetSelectAstryx` below
+  // scoped to this specific model card. `BAIAvailablePresetSelect` below
   // fetches from the project-wide `deploymentRevisionPresets` because
   // `DeploymentRevisionPresetFilter` has no model-card-scoped filter yet.
   // Once that filter exists, plumb it through the select so the dropdown
@@ -304,7 +304,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAIAvailablePresetSelectAstryx
+            <BAIAvailablePresetSelect
               label={t('modelStore.Preset')}
               isLabelHidden
               value={effectivePresetId}

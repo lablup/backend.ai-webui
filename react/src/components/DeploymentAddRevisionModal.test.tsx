@@ -157,7 +157,6 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         'select-model-folder',
       ),
     BAIAvailablePresetSelect: () => null,
-    BAIAvailablePresetSelectAstryx: () => null,
     BAIRuntimeVariantSelect: () => null,
   };
 });
