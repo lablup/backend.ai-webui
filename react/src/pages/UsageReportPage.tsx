@@ -85,14 +85,21 @@ const UsageReportPage: React.FC = () => {
       return;
     }
     try {
-      // Capture the full document, not the on-screen clip: a scrolled ancestor
-      // makes html-to-image cut the render at the viewport otherwise.
+      // Pin the clone to its own content box: without explicit size + zeroed
+      // margins, html-to-image keeps the on-screen clip and the centering
+      // margin, clipping the render and shifting it sideways.
       const { scrollWidth, scrollHeight } = reportElement;
       const blob = await toBlob(reportElement, {
         pixelRatio: 2,
         width: scrollWidth,
         height: scrollHeight,
-        style: { overflow: 'visible', maxWidth: 'none' },
+        style: {
+          overflow: 'visible',
+          maxWidth: 'none',
+          margin: '0',
+          width: `${scrollWidth}px`,
+          height: `${scrollHeight}px`,
+        },
         backgroundColor: getComputedStyle(document.body).backgroundColor,
       });
       if (!blob) {
