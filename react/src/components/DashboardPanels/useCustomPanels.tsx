@@ -103,6 +103,21 @@ export const useCustomPanels = ({
   };
 
   const updatePanel = (id: string, input: PanelInput) => {
+    // A kind switch changes what a sensible size is, but the persisted layout
+    // always wins over the default (see `reconcileBoardLayout`), so the entry
+    // has to be rewritten here — otherwise a table switched to a count keeps
+    // the table's spans forever. Same reason `removePanel` prunes the list.
+    const current = panels.find((panel) => panel.id === id);
+    if (current && current.panelType !== input.panelType) {
+      const layout =
+        DEFAULT_PANEL_LAYOUTS[input.panelType] ??
+        DEFAULT_PANEL_LAYOUTS.resourceTable;
+      setLocalStorageBoardItems((previous) =>
+        Array.isArray(previous)
+          ? previous.map((item) => (item.id === id ? { id, ...layout } : item))
+          : previous,
+      );
+    }
     setStoredPanels((previous) =>
       sanitizePanels(previous ?? DEFAULT_PANELS).map((panel) =>
         panel.id === id
