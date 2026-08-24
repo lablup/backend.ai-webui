@@ -5,6 +5,7 @@
 import { SessionAccessKeyFragment$key } from '../../__generated__/SessionAccessKeyFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
+import { useTheme } from '@astryxdesign/core';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import { TriangleAlert } from 'lucide-react';
@@ -24,6 +25,7 @@ const SessionAccessKey: React.FC<SessionAccessKeyProps> = ({
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
+  const { tokens } = useTheme();
 
   const session = useFragment(
     graphql`
@@ -54,10 +56,13 @@ const SessionAccessKey: React.FC<SessionAccessKeyProps> = ({
               keep an HTML wrapper (BAIFlex) as the trigger. The global
               `.lucide { width: 1em !important }` rule makes font-size the
               only size lever. */}
-          <BAIFlex align="center" style={{ fontSize: 'var(--font-size-lg)' }}>
+          <BAIFlex
+            align="center"
+            style={{ fontSize: tokens['--font-size-lg'] }}
+          >
             <TriangleAlert
               size="1em"
-              style={{ color: 'var(--color-warning)' }}
+              style={{ color: tokens['--color-warning'] }}
             />
           </BAIFlex>
         </Tooltip>
