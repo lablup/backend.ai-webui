@@ -332,6 +332,14 @@ The session list groups your sessions into type tabs — **All**, **Interactive*
 **Running** / **Finished** switch and a property filter for **Session Name**,
 **Resource Group**, and **Agent**.
 
+The list also offers an **Access Key** column, which shows the keypair access key
+each session was created with. The column is hidden by default; turn it on in the
+**Table Settings** dialog, which opens with the gear button at the bottom right of
+the table. When one of your own sessions was created with a keypair other than
+the one you are currently logged in with, a warning triangle appears next to the
+key with the tooltip "This session was created with a key other than your default
+access key."
+
 <a id="session-resource-grid"></a>
 
 ### Resource grid view
@@ -392,6 +400,12 @@ For detailed information on the session, click the session name in the session l
 The session details panel shows the information of the session, such as the
 session ID, user ID, status, type, environments, mount information, resource allocation, reserved time,
 elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
+
+The panel also shows an **Access Key** item with the keypair access key the session was
+created with. Click the copy button next to the value to copy it. As in the session list,
+a warning triangle with the tooltip "This session was created with a key other than your
+default access key." appears when one of your own sessions was created with a keypair
+other than the one you are currently logged in with.
 
 Click the `Log` button next to the `Hostname` in `Kernels` to view the logs of that kernel directly.
 
