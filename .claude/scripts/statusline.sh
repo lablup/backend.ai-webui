@@ -7,6 +7,9 @@
 #     debounce), so a run must finish well under 300ms or it never renders while the
 #     user is working. That budget is the whole design: exactly one python3 spawn
 #     (this shim calls no coreutils — each is ~9ms on uutils) plus at most two git calls.
+#     A healthy tick lands near 210ms. A repo whose git is pathologically slow is the
+#     one case that overshoots, bounded by GIT_TOTAL_BUDGET and self-healing through
+#     spawn_git_warm; that tick is aborted, which costs a frame, not correctness.
 #   * Portless state is read straight from ~/.portless/{routes.json,proxy.port,proxy.tls};
 #     the `portless` CLI is a workspace devDependency and is never on the statusline's
 #     PATH. Route ownership is /proc/<pid>/cwd, which is also the liveness check.
@@ -41,11 +44,14 @@ T0 = time.monotonic()
 CACHE_TTL = 300.0      # Jira cache freshness
 ATTEMPT_TTL = 60.0     # floor between two refresher spawns for the same key
 JIRA_BASE = "https://lablup.atlassian.net"
-# The foreground budget is 300ms (the refresh debounce). These two are the only
-# blocking calls, so their sum is the script's hard ceiling: keep it near 1s so a
-# pathological repo degrades fast instead of guaranteeing an abort.
+# git is the only thing that blocks, so its budget IS the script's worst case. The two
+# calls share one deadline rather than each getting its own: sequential per-call
+# timeouts sum, and a 0.4+0.6 worst case would overshoot the 300ms refresh debounce by
+# more than 3x on exactly the pathological repo the timeouts exist for.
+GIT_TOTAL_BUDGET = 0.8
 GIT_REVPARSE_TIMEOUT = 0.4
 GIT_STATUS_TIMEOUT = 0.6
+GIT_MIN_TIMEOUT = 0.15
 HOSTNAME_RE = re.compile(r"^[A-Za-z0-9]([A-Za-z0-9._-]{0,252}[A-Za-z0-9])?$")
 
 LINE2 = ""
@@ -135,6 +141,7 @@ def git_facts(workspace, cache_dir=""):
     if not git:
         return None
     base = [git, "-C", workspace]
+    started = time.monotonic()
     top = run(base + ["rev-parse", "--show-toplevel"], GIT_REVPARSE_TIMEOUT)
     if top is None:
         return None
@@ -161,7 +168,8 @@ def git_facts(workspace, cache_dir=""):
         stamp(inflight)
     st, timed_out = run_ex(
         base + ["status", "--porcelain=v2", "--branch", "--untracked-files=normal"],
-        GIT_STATUS_TIMEOUT)
+        max(GIT_MIN_TIMEOUT,
+            min(GIT_STATUS_TIMEOUT, GIT_TOTAL_BUDGET - (time.monotonic() - started))))
     if inflight:
         try:
             os.unlink(inflight)
@@ -250,17 +258,57 @@ def portless_state_dir():
             or os.path.join(os.path.expanduser("~"), ".portless"))
 
 
-def pid_cwd(pid):
+def resolve_cwds(pids):
+    """pid -> cwd, for the whole route table at once.
+
+    On Linux each entry is a readlink, and a dead pid simply raises, so this doubles
+    as the liveness check a stale routes.json needs. Everywhere else it is ONE lsof
+    for the entire set (it takes a comma-separated pid list): one subprocess per route
+    is the bottleneck this rewrite exists to remove, and macOS is where lsof is the
+    only option."""
+    found = {}
+    if not pids:
+        return found
     if os.path.isdir("/proc"):
-        # A dead pid raises here, so the readlink doubles as the liveness check.
-        return os.path.realpath(os.readlink("/proc/%d/cwd" % pid))
-    out = run(["lsof", "-p", str(pid), "-a", "-d", "cwd", "-Fn"], 1.0)  # macOS only
+        for pid in pids:
+            try:
+                found[pid] = os.path.realpath(os.readlink("/proc/%d/cwd" % pid))
+            except Exception:
+                pass
+        return found
+    out = run(["lsof", "-p", ",".join(str(p) for p in pids), "-a", "-d", "cwd", "-Fn"], 1.5)
     if not out:
-        raise OSError("no cwd")
+        return found
+    pid = None
     for ln in out.split("\n"):
-        if ln.startswith("n"):
-            return os.path.realpath(ln[1:])
+        if ln.startswith("p"):
+            try:
+                pid = int(ln[1:])
+            except ValueError:
+                pid = None
+        elif ln.startswith("n") and pid is not None:
+            found.setdefault(pid, os.path.realpath(ln[1:]))
+    return found
     raise OSError("no cwd")
+
+
+def leaf_label(name):
+    """The leading subdomain — `fr-3658` out of `fr-3658.backend-ai-webui.localhost`."""
+    return (name or "").split(".")[0]
+
+
+def delta_label(primary_leaf, leaf):
+    """What distinguishes a second dev server from the representative one.
+
+    Portless derives a route name from the app name or the worktree, so extra servers
+    on the same tree are usually the primary plus a suffix (`fr-3658`, `fr-3658-alt`).
+    Show just the suffix when that holds, and the whole name when it does not — an
+    unrelated name carries no useful delta."""
+    for sep in ("-", "_"):
+        prefix = primary_leaf + sep
+        if leaf.startswith(prefix) and len(leaf) > len(prefix):
+            return leaf[len(prefix):]
+    return leaf
 
 
 def sub_label(rel, hostname):
@@ -299,13 +347,10 @@ def portless_links(claim_root):
             port = v
     except Exception:
         pass
-    scheme = "https"
-    try:
-        with open(os.path.join(state, "proxy.tls")) as f:
-            if f.read().strip() == "0":
-                scheme = "http"
-    except Exception:
-        pass
+    # proxy.tls is an EXISTENCE marker, not a value: portless writes "1" when TLS is on
+    # and unlinks the file when it is off (readTlsMarker/writeTlsMarker, pinned 0.15.5).
+    # Reading its contents would hand `proxy start --no-tls` an https link that is dead.
+    scheme = "https" if os.path.exists(os.path.join(state, "proxy.tls")) else "http"
 
     stats = {"routes": len(routes), "matched": 0}
     if not claim_root or not port:
@@ -313,7 +358,8 @@ def portless_links(claim_root):
     root = claim_root.rstrip("/")
     root_prefix = root + "/"
     worktrees_prefix = root + "/.claude/worktrees/"
-    primary, subs = [], []
+
+    candidates = []
     for r in routes:
         if not isinstance(r, dict):
             continue
@@ -328,19 +374,38 @@ def portless_links(claim_root):
             continue
         if pid <= 0:
             continue  # alias route: no owning process, so there is no cwd to match
-        try:
-            cwd = pid_cwd(pid)
-        except Exception:
+        candidates.append((hostname, pid))
+
+    cwds = resolve_cwds([pid for _, pid in candidates])
+
+    roots, subs = [], []
+    for hostname, pid in candidates:
+        cwd = cwds.get(pid)
+        if not cwd:
             continue
         # The route's own `port` is the upstream app port; only the proxy port routes.
         url = "%s://%s:%s" % (scheme, hostname, port)
         if cwd == root:
-            primary.append(("Portless", url))
+            roots.append((hostname, url))
         elif cwd.startswith(root_prefix) and not cwd.startswith(worktrees_prefix):
             # Sibling worktrees live under .claude/worktrees/ and belong to their own
             # sessions; without that exclusion a root session claims all of them.
             subs.append((sub_label(cwd[len(root_prefix):], hostname), url))
-    matches = primary + subs
+
+    # Sub-project routes already say what they are (Storybook / Docs / Release). Root
+    # routes are all "the dev server", so n of them would render as n identical
+    # "Portless" links: name the representative one, and reduce the rest to the part
+    # of their subdomain that differs from it.
+    roots.sort()
+    matches = []
+    if roots:
+        want = leaf_label(os.path.basename(root))
+        pick = next((i for i, (h, _) in enumerate(roots) if leaf_label(h) == want), 0)
+        primary_host, primary_url = roots.pop(pick)
+        matches.append(("Portless", primary_url))
+        primary_leaf = leaf_label(primary_host)
+        matches.extend(("+" + delta_label(primary_leaf, leaf_label(h)), u) for h, u in roots)
+    matches.extend(subs)
     stats["matched"] = len(matches)
     return matches, stats
 
@@ -436,19 +501,16 @@ def spawn_git_warm(git, top, cache_dir):
     was aborted mid-status. On a stat-dirty index that means git was killed before it
     could write the refreshed index back, so every following tick would re-hash the
     whole tree again, forever (1.6s a tick here, against 60ms once the index is
-    written). Finish the refresh out-of-band instead (setsid: the refresh abort is a
-    process-group SIGTERM), at most once a minute per repo."""
+    written). Finish the refresh out-of-band instead (start_new_session, because the
+    refresh abort is a process-group SIGTERM), at most once a minute per repo."""
     if not git or not top or not cache_dir:
-        return False
-    setsid = which("setsid")
-    if not setsid:
         return False
     attempt = os.path.join(cache_dir, "git-refresh-" + slug(top) + ".attempt")
     if age(attempt) < ATTEMPT_TTL or not stamp(attempt):
         return False
     try:
         subprocess.Popen(
-            [setsid, git, "-C", top, "update-index", "-q", "--refresh"],
+            [git, "-C", top, "update-index", "-q", "--refresh"],
             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             start_new_session=True,
         )
@@ -458,9 +520,8 @@ def spawn_git_warm(git, top, cache_dir):
 
 
 def spawn_refresh(key, cache_path):
-    setsid = which("setsid")
     bash = which("bash")
-    if not setsid or not bash:
+    if not bash:
         return False
     # The attempt stamp is written before the spawn, so a hard failure costs one
     # curl per minute instead of one per tick.
@@ -468,11 +529,13 @@ def spawn_refresh(key, cache_path):
     if age(attempt) < ATTEMPT_TTL or not stamp(attempt):
         return False
     try:
-        # setsid: the refresh abort is a SIGTERM to the whole process group, which
-        # kills `&disown` children but not a new session. All fds to /dev/null so our
-        # exit closes the consumer's stdout pipe immediately.
+        # start_new_session calls setsid(2) in the child: the refresh abort is a SIGTERM
+        # to the whole process group, which kills `&disown` children but not a new
+        # session. Doing it here rather than through a setsid(1) binary keeps the path
+        # alive on macOS, which does not ship one. All fds to /dev/null so our exit
+        # closes the consumer's stdout pipe immediately.
         subprocess.Popen(
-            [setsid, bash, "-c", REFRESH, "_", key, cache_path],
+            [bash, "-c", REFRESH, "_", key, cache_path],
             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             start_new_session=True,
         )
