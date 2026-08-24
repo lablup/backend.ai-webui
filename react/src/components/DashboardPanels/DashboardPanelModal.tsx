@@ -236,7 +236,8 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         </BAIFlex>
         <Form.Item name="filter" label={t('dashboard.panelModal.Condition')}>
           {config.kind === 'sessionNodes' ? (
-            // Same condition language/properties as the sessions page.
+            // The sessions page's condition language (queryfilter minilang),
+            // over every field the manager accepts — not its 3-property picker.
             <BAIPropertyFilter
               filterProperties={config.getStringFilterProperties?.(t) ?? []}
             />
