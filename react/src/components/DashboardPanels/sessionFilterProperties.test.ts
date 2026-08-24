@@ -96,10 +96,14 @@ describe('getSessionFilterProperties', () => {
       'user_id',
     ]);
     uuids.forEach((property) => {
-      // Postgres rejects a partial UUID outright, so the picker warns first.
+      // Postgres rejects a partial UUID outright, so the control warns.
       expect(property.rule?.validate('3f2a')).toBe(false);
       expect(
         property.rule?.validate('3f2a1b7c-0d5e-4f6a-8b9c-0d1e2f3a4b5c'),
+      ).toBe(true);
+      // Postgres accepts uppercase hex; the helper is lowercase-only.
+      expect(
+        property.rule?.validate('3F2A1B7C-0D5E-4F6A-8B9C-0D1E2F3A4B5C'),
       ).toBe(true);
     });
   });

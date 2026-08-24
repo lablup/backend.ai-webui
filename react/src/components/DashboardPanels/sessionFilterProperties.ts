@@ -43,7 +43,11 @@ const SESSION_TYPES = ['interactive', 'batch', 'inference', 'system'] as const;
 const SESSION_RESULTS = ['undefined', 'success', 'failure'] as const;
 const CLUSTER_MODES = ['single-node', 'multi-node'] as const;
 
-/** Postgres rejects a partial UUID outright, so flag it before it is sent. */
+/**
+ * Postgres rejects a partial UUID outright, so surface it in the control's
+ * status. `rule` is advisory by design (see `BAIPropertyFilter`'s header), as
+ * on every other UUID filter in the app. `isValidUUID` is lowercase-only.
+ */
 const uuidProperty = (key: string, propertyLabel: string, t: TFunction) =>
   ({
     key,
@@ -51,7 +55,7 @@ const uuidProperty = (key: string, propertyLabel: string, t: TFunction) =>
     type: 'uuid',
     rule: {
       message: t('general.InvalidUUID'),
-      validate: (value: string) => isValidUUID(value),
+      validate: (value: string) => isValidUUID(value.toLowerCase()),
     },
   }) satisfies FilterProperty;
 
