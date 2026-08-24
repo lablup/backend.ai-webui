@@ -210,7 +210,7 @@ The **Environments** section is present for all runtime variants.
 
 - **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list to images that are compatible with that runtime.
 - **Image Name (Manual)**: A free-text image reference, shown only when your administrator has enabled manual image names on the server. Typing here clears the **Environment / Version** selection, and vice versa — the two are alternative ways of choosing the same image.
-- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely.
+- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely. As you type a variable name, the field suggests common environment variable names such as `HF_TOKEN`, `AWS_ACCESS_KEY_ID`, and `HTTP_PROXY`. Suggestions match anywhere in the name — typing `proxy` offers `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` together — and a name already used in another row is not offered again. When the name field holds a suggested variable, the value field next to it shows a format hint as its placeholder (for example, *"Your Hugging Face access token"* for `HF_TOKEN`).
 
 ##### Entering an image name manually
 

@@ -113,7 +113,7 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
 3. On the **Review** step, check the summary and click `Create` to save. A success notification confirms the preset has been created.
 
 :::tip
-If a required field is missing or invalid, the submit button on the Review step stays disabled until the error is resolved, and the card that contains the offending field is outlined in red. Required fields show inline validation messages as you type.
+If a required field is missing or invalid, the submit button on the Review step stays disabled until the error is resolved, and the card that contains the offending field is outlined in red with an error icon next to its **Edit** link. The step list on the right also marks every step that contains an error, including errors on fields of a step you have already navigated away from. Required fields show inline validation messages as you type.
 :::
 
 <a id="preset-review-step"></a>
