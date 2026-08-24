@@ -34,6 +34,18 @@ If you do not belong to any project, the page shows
 `No accessible projects.` together with
 `Ask your administrator to grant you access to a project.`
 
+:::note
+The project selector is not shown on the administration pages under
+**Admin Settings** (addresses starting with `/admin/`). Those pages work across
+all projects instead of within one, so the top bar hides the selector while you
+are on them. Your selection is left untouched — when you leave an administration
+page, the project you had selected before is still selected. Where an
+administration page does need a project, the page or its dialog asks for one
+explicitly: for example, the folder creation dialog on the administration Data
+page has a **Target Project** field, and the image install dialog has an
+**Install Session Project** field.
+:::
+
 <a id="login-session-timer"></a>
 
 ## Login session timer

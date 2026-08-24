@@ -872,8 +872,6 @@ export class Client {
     }
     if (this.isManagerVersionCompatibleWith('26.1.0')) {
       this._features['model-try-content-button'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.1.0')) {
       this._features['admin-resource-group-select'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.2.0')) {
@@ -904,9 +902,19 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      // RBAC filter support assigned user.
+      this._features['rbac-filter-assigned-user'] = true;
+      // ModelMountConfigInput / ExtraVFolderMountInput gained `subpath` in
+      // 26.4.4 (BA-6242): mount a subfolder inside the model vfolder instead of
+      // its root. Older managers reject the unknown input field, so the key is
+      // omitted from the mutation entirely on them.
+      this._features['model-mount-subpath'] = true;
+    }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole
-    // object. Pinned to the rc7 tag for the same staging-manager reason as above.
+    // object. Pinned to the rc7 tag so the flag also activates against staging
+    // managers built from that tag.
     // TODO(FR-3056): simplify to '26.4.4' once the final release ships.
     if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
       this._features['model-health-check-enable'] = true;
@@ -933,10 +941,6 @@ export class Client {
       // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
       this._features['model-runtime-variant-preset-values'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
-      // RBAC filter support assigned user.
-      this._features['rbac-filter-assigned-user'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('26.7.0')) {
       // Strawberry V2 filter inputs gained the AND/OR/NOT sub-filter
       // combinators (schema: "Added in 26.7.0"), which
@@ -959,6 +963,44 @@ export class Client {
       // BA-6809 / backend PR #12708 — RuntimeVariantPreset.runtimeVariant
       // nested field (DataLoader-resolved name/description). FR-3256.
       this._features['runtime-variant-preset-runtime-variant-field'] = true;
+      // RuntimeVariant gained `readsVfolderConfigFiles` (whether the variant
+      // reads its model config from the mounted vfolder) and
+      // `defaultModelDefinition` in 26.8.0 (FR-3342). Older managers omit both,
+      // so call sites treat `readsVfolderConfigFiles` as authoritative only
+      // when this flag is set and otherwise fall back to the legacy
+      // `name === 'custom'` heuristic.
+      this._features['model-runtime-variant-reads-vfolder-config-files'] = true;
+      // Single-string `command` + nullable `shell` on the model-service config
+      // (FR-3205 / BA-6551). The field pair actually landed in 26.7.0, but the
+      // GraphQL input default `shell: String = "/bin/bash"` (BA-6742,
+      // lablup/backend.ai#12622) did not: it merged after the 26.7.0 tag, so on
+      // a 26.7.0 manager an omitted `shell` is null, which silently disables
+      // shell wrapping (the preset form still omits it when no command is
+      // typed). Worse, a manager built from `main` after BA-6742 still reports
+      // `26.7.0`, so the two cannot be told apart by version. BA-6742 ships
+      // together with the 26.8.0 fields below (both are in `main`), so gating
+      // the whole command/shell path at 26.8.0 removes the ambiguity — 26.7.0
+      // managers keep using the deprecated `startCommand` token list and never
+      // receive `shell`.
+      this._features['model-service-command-string'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
+      // .modelDefinition` moves from `ModelDefinition` to a new
+      // `PresetModelDefinition` type (mirrored down to `PresetModelConfig` /
+      // `PresetModelServiceConfig`), with `name`/`modelPath`/`port` now
+      // nullable — a sparse preset omits them to inherit the runtime variant
+      // baseline's name / the model mount destination / the variant
+      // baseline's port at revision resolution. Older managers keep
+      // returning the old non-null shape, so call sites must not treat an
+      // omitted field as "inherit from variant" unless this flag is set.
+      this._features['preset-model-config-type'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7234 / backend #13538 — DomainV2 `id` became the domain uuid, and
+      // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
+      // managers expect the domain name there instead. FR-3618.
+      this._features['rbac-domain-scope-uuid'] = true;
     }
   }
 
@@ -1707,12 +1749,12 @@ export class Client {
   /**
    * Rename session to another name.
    *
-   * @param {string} sessionId - current session name
-   * @param {string} newId - new session name
+   * @param {string} sessionId - ID (UUID) of the session
+   * @param {string} newName - new session name
    */
-  async rename(sessionId: string, newId: string): Promise<any> {
+  async rename(sessionId: string, newName: string): Promise<any> {
     let params = {
-      name: newId,
+      name: newName,
     };
     let rqst = this.newSignedRequest(
       'POST',

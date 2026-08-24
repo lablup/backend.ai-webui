@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- to-astryx ticket 04 — antd `modal.confirm/error/info/...` drop-in backed by
- Astryx `AlertDialog` / `Dialog`.
+ to-astryx ticket 04 — antd `modal.confirm/error/info/...` drop-in composed on
+ `BAIDialog` (Astryx `Dialog`'s surface, portalled — FR-3578).
 
  antd call-site contract preserved:
 
@@ -20,13 +20,10 @@
  `useImperativeAlertDialog` swallows (its internal `onOpenChange` only closes,
  with no callback), plus per-task ok-button loading state.
 
- Branching (answers/07 §4): `confirm` with plain-text title/content maps to
- `AlertDialog` (role="alertdialog", Escape=cancel, backdrop blocked — matches
- antd confirm's keyboard/maskClosable defaults). Everything else (ReactNode
- content, and the single-button error/info/warning/success variants, since
- AlertDialog hard-renders a cancel button) is composed by hand on the generic
- `Dialog` + `Layout` + `Button` primitives with `purpose="form"` (Escape
- closes, backdrop does not — antd's confirm-family default).
+ Branching (answers/07 §4): `confirm` with plain-text title/content renders the
+ WAI-ARIA alert-dialog shape, which is `BAIAlertDialog`. Everything else gets
+ the `DialogHeader` + `Layout` shape on `BAIDialog`. Both keep antd's
+ confirm-family dismissal: Escape yes, backdrop no.
 
  Promise/close semantics (all antd-matching):
  - `onOk` returning a promise puts the ok button into loading and closes only
@@ -35,9 +32,11 @@
  - `.destroy()` closes without firing onOk/onCancel.
  - `.update()` throws — 0 real usages repo-wide (answers/07 §1.1), kept loud.
 */
-import { AlertDialog } from '@astryxdesign/core/AlertDialog';
+import BAIAlertDialog from '../components/BAIAlertDialog';
+import BAIDialog from '../components/BAIDialog';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { Button } from '@astryxdesign/core/Button';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack } from '@astryxdesign/core/Stack';
 import React, { isValidElement, useSyncExternalStore } from 'react';
@@ -68,24 +67,23 @@ export interface ModalShimFuncProps {
   onOk?: () => unknown;
   onCancel?: () => unknown;
   width?: number | string;
+  /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
+  zIndex?: number;
   /**
    * PILOT-DECISION: the following antd props are accepted for call-site
    * compatibility but have no Astryx destination and are ignored:
    * - `centered` — Astryx dialogs are always centered.
-   * - `zIndex` — native <dialog> renders in the CSS top layer; stacking is
-   *   managed by the platform, not a z-index number.
-   * - `icon` — AlertDialog/Dialog have no icon slot; severity reads from the
-   *   action button variant instead.
+   * - `icon` — the dialog has no icon slot; severity reads from the action
+   *   button variant instead.
    * - `maskClosable`/`keyboard` — dismissal is governed by Dialog `purpose`;
    *   the shim always uses antd's confirm-family defaults (Escape yes,
    *   backdrop no).
-   * - `closable` — the AlertDialog branch never has a header X; the Dialog
+   * - `closable` — the alert-dialog branch never has a header X; the other
    *   branch always has one (DialogHeader). Either way Escape already
    *   cancels (see `maskClosable`/`keyboard` above), so a header-X toggle
    *   cannot enforce anything Escape does not already allow.
    */
   centered?: boolean;
-  zIndex?: number;
   icon?: ReactNode;
   maskClosable?: boolean;
   keyboard?: boolean;
@@ -219,8 +217,8 @@ function isPlainText(node: ReactNode): boolean {
 
 /**
  * Best-effort text extraction for string-typed Astryx slots
- * (`AlertDialog.title/description`, `DialogHeader.title`, `Button.label`).
- * antd accepts ReactNode everywhere; JSX structure is flattened to its text.
+ * (`DialogHeader.title`, `Button.label`). antd accepts ReactNode everywhere;
+ * JSX structure is flattened to its text.
  */
 function toText(node: ReactNode): string {
   if (node == null || typeof node === 'boolean') {
@@ -243,11 +241,19 @@ function toText(node: ReactNode): string {
 
 const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
   'use memo';
+  const { t } = useBAIi18n();
   const { kind, options } = task;
   const isDanger =
     options.okType === 'danger' || options.okButtonProps?.danger === true;
   const okLabel = toText(options.okText) || 'OK';
-  const cancelLabel = toText(options.cancelText) || 'Cancel';
+  const cancelLabel = toText(options.cancelText) || undefined;
+
+  // Escape, the mask, the header X and the cancel button all land here.
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      runCancel(task);
+    }
+  };
 
   if (
     kind === 'confirm' &&
@@ -255,47 +261,37 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
     isPlainText(options.content)
   ) {
     return (
-      <AlertDialog
+      <BAIAlertDialog
         isOpen
-        onOpenChange={(open) => {
-          if (!open) {
-            runCancel(task);
-          }
-        }}
+        onOpenChange={handleOpenChange}
+        width={options.width}
+        zIndex={options.zIndex}
         title={toText(options.title)}
         description={toText(options.content)}
-        actionLabel={okLabel}
         cancelLabel={cancelLabel}
-        // Astryx defaults the action to 'destructive'; antd's confirm default
-        // is a plain primary ok — so the variant is always passed explicitly.
+        isCancelDisabled={options.cancelButtonProps?.disabled}
+        actionLabel={okLabel}
         actionVariant={isDanger ? 'destructive' : 'primary'}
         isActionLoading={task.isLoading}
+        isActionDisabled={options.okButtonProps?.disabled}
         onAction={() => runOk(task)}
-        width={options.width}
       />
     );
   }
 
   return (
-    <Dialog
+    <BAIDialog
       isOpen
-      onOpenChange={(open) => {
-        if (!open) {
-          runCancel(task);
-        }
-      }}
+      onOpenChange={handleOpenChange}
       width={options.width}
+      zIndex={options.zIndex}
       purpose="form"
     >
       <Layout
         header={
           <DialogHeader
             title={toText(options.title)}
-            onOpenChange={(open) => {
-              if (!open) {
-                runCancel(task);
-              }
-            }}
+            onOpenChange={handleOpenChange}
           />
         }
         content={
@@ -308,7 +304,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
             <HStack justify="end" gap={2} align="center">
               {kind === 'confirm' && (
                 <Button
-                  label={cancelLabel}
+                  label={cancelLabel ?? t('general.button.Cancel')}
                   variant="secondary"
                   isDisabled={options.cancelButtonProps?.disabled}
                   onClick={() => runCancel(task)}
@@ -316,6 +312,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
               )}
               <Button
                 label={okLabel}
+                // antd's confirm default is a plain primary ok, not destructive.
                 variant={isDanger ? 'destructive' : 'primary'}
                 isLoading={task.isLoading}
                 isDisabled={options.okButtonProps?.disabled}
@@ -325,14 +322,14 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
           </LayoutFooter>
         }
       />
-    </Dialog>
+    </BAIDialog>
   );
 };
 
 /**
  * Renders every pending imperative modal task. Mounted exactly once by
- * `<BAIAppProvider>`. Multiple concurrent tasks each get their own native
- * `<dialog>`, which the platform stacks in call order.
+ * `<BAIAppProvider>`. Concurrent tasks each get their own portal, and
+ * `BAIDialog`'s level stack keeps them in call order.
  */
 export const AppShimModalHost: React.FC = () => {
   'use memo';

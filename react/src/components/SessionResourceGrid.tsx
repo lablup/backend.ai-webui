@@ -24,9 +24,11 @@ import {
   parseResourceValue,
   parseSlotMap,
   SESSION_CAP,
+  sessionGridLayoutValues,
   sessionGridMemUnitValues,
   sessionGridModeValues,
   sessionGridUnits,
+  type SessionGridViewParams,
   sessionHasResource,
   sessionUtilizationPct,
   SlotMap,
@@ -62,8 +64,6 @@ import { Duration } from 'dayjs/plugin/duration';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-const layoutValues = ['serpentine', 'wordwrap'] as const;
 
 /** Persisted palette overrides kept to the most recent N sessions. */
 const MAX_HUE_OVERRIDES = 200;
@@ -136,6 +136,16 @@ interface SessionResourceGridProps {
   projectId?: string | null;
   fetchKey: string;
   onClickSession?: (sessionId: string) => void;
+  /**
+   * Controlled view settings. Omit (default) and the grid keeps them in URL
+   * query-state and renders its own toolbar — today's behaviour for the session
+   * list pages. Pass them and the host owns the values instead, which is what
+   * lets a dashboard panel persist a saved view without writing URL keys that
+   * every other grid instance on the page would share.
+   */
+  viewParams?: SessionGridViewParams;
+  /** Controlled mode: omit to hide the toolbar (read-only), pass to keep it. */
+  onChangeViewParams?: (next: SessionGridViewParams) => void;
 }
 
 const SessionResourceGrid = ({
@@ -144,6 +154,8 @@ const SessionResourceGrid = ({
   projectId,
   fetchKey,
   onClickSession,
+  viewParams,
+  onChangeViewParams,
 }: SessionResourceGridProps) => {
   'use memo';
   const { t } = useTranslation();
@@ -178,7 +190,10 @@ const SessionResourceGrid = ({
     return subtype ? `${name} (${subtype})` : name;
   };
 
-  const [gridParams, setGridParams] = useQueryStates(
+  // Uncontrolled source of truth. `useQueryStates` only writes to the URL when
+  // its setter is called, so leaving the hook mounted in controlled mode is
+  // inert (and keeps hook order stable).
+  const [urlGridParams, setUrlGridParams] = useQueryStates(
     {
       gridMode: parseAsStringLiteral(sessionGridModeValues).withDefault(
         'resource',
@@ -189,10 +204,25 @@ const SessionResourceGrid = ({
       gridMemUnit: parseAsStringLiteral(sessionGridMemUnitValues).withDefault(
         '1',
       ),
-      gridLayout: parseAsStringLiteral(layoutValues).withDefault('serpentine'),
+      gridLayout: parseAsStringLiteral(sessionGridLayoutValues).withDefault(
+        'serpentine',
+      ),
     },
     { history: 'replace' },
   );
+
+  const isControlled = viewParams !== undefined;
+  const gridParams = viewParams ?? urlGridParams;
+  // Every call site below passes a PARTIAL patch, so the controlled wrapper
+  // must merge — replacing wholesale would reset the other four settings.
+  const setGridParams: (patch: Partial<SessionGridViewParams>) => void =
+    isControlled
+      ? (patch) => onChangeViewParams?.({ ...gridParams, ...patch })
+      : setUrlGridParams;
+  // Toolbar shows when the grid owns its settings (pages) or when the host asked
+  // to keep it editable (the dashboard's panel modal preview). A panel that only
+  // passes `viewParams` renders a settings-free, read-only grid.
+  const showControls = !isControlled || !!onChangeViewParams;
 
   const [hueOverrides, setHueOverrides] = useBAISettingUserState(
     'sessionResourceGridHueOverrides',
@@ -476,118 +506,120 @@ const SessionResourceGrid = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex gap="sm" wrap="wrap" align="center">
-        <SegmentedControl
-          size="sm"
-          label={t('session.resourceGrid.GridMode')}
-          value={gridParams.gridMode}
-          onChange={(value) =>
-            setGridParams({
-              gridMode: value as (typeof sessionGridModeValues)[number],
-            })
-          }
-        >
-          <SegmentedControlItem
-            value="resource"
-            label={t('session.resourceGrid.Resource')}
-          />
-          <SegmentedControlItem
-            value="kernel"
-            label={t('session.resourceGrid.Kernel')}
-          />
-        </SegmentedControl>
-        {gridParams.gridMode === 'resource' ? (
-          <>
-            <SegmentedControl
-              size="sm"
+      {showControls && (
+        <BAIFlex gap="sm" wrap="wrap" align="center">
+          <SegmentedControl
+            size="sm"
+            label={t('session.resourceGrid.GridMode')}
+            value={gridParams.gridMode}
+            onChange={(value) =>
+              setGridParams({
+                gridMode: value as (typeof sessionGridModeValues)[number],
+              })
+            }
+          >
+            <SegmentedControlItem
+              value="resource"
               label={t('session.resourceGrid.Resource')}
-              value={resource}
-              onChange={(value) => setGridParams({ gridResource: value })}
-            >
-              {resourceOptions.map((value) => {
-                const { slot, dimension } = parseResourceValue(value);
-                // Accelerators with a memory live_stat split into two
-                // entries: "<label> (util)" and "<label> (mem)".
-                const label =
-                  dimension === 'mem'
-                    ? t('session.resourceGrid.SlotMemLabel', {
-                        label: slotLabel(slot),
-                      })
-                    : resourceOptions.includes(`${slot}:mem`)
-                      ? t('session.resourceGrid.SlotUtilLabel', {
-                          label: slotLabel(slot),
-                        })
-                      : slotLabel(slot);
-                if (slot === 'cpu' || slot === 'mem') {
-                  return (
-                    <SegmentedControlItem
-                      key={value}
-                      value={value}
-                      label={label}
-                    />
-                  );
-                }
-                return (
-                  <Tooltip key={value} content={slotFullName(slot)}>
-                    <SegmentedControlItem value={value} label={label} />
-                  </Tooltip>
-                );
-              })}
-            </SegmentedControl>
-            {(resource === 'mem' ||
-              parseResourceValue(resource).dimension === 'mem') && (
+            />
+            <SegmentedControlItem
+              value="kernel"
+              label={t('session.resourceGrid.Kernel')}
+            />
+          </SegmentedControl>
+          {gridParams.gridMode === 'resource' ? (
+            <>
               <SegmentedControl
                 size="sm"
-                label={t('session.resourceGrid.MemoryUnit')}
-                value={gridParams.gridMemUnit}
-                onChange={(value) =>
-                  setGridParams({
-                    gridMemUnit:
-                      value as (typeof sessionGridMemUnitValues)[number],
-                  })
-                }
+                label={t('session.resourceGrid.Resource')}
+                value={resource}
+                onChange={(value) => setGridParams({ gridResource: value })}
               >
-                {sessionGridMemUnitValues.map((u) => (
-                  <SegmentedControlItem
-                    key={u}
-                    value={u}
-                    label={t('session.resourceGrid.NGiB', { value: u })}
-                  />
-                ))}
+                {resourceOptions.map((value) => {
+                  const { slot, dimension } = parseResourceValue(value);
+                  // Accelerators with a memory live_stat split into two
+                  // entries: "<label> (util)" and "<label> (mem)".
+                  const label =
+                    dimension === 'mem'
+                      ? t('session.resourceGrid.SlotMemLabel', {
+                          label: slotLabel(slot),
+                        })
+                      : resourceOptions.includes(`${slot}:mem`)
+                        ? t('session.resourceGrid.SlotUtilLabel', {
+                            label: slotLabel(slot),
+                          })
+                        : slotLabel(slot);
+                  if (slot === 'cpu' || slot === 'mem') {
+                    return (
+                      <SegmentedControlItem
+                        key={value}
+                        value={value}
+                        label={label}
+                      />
+                    );
+                  }
+                  return (
+                    <Tooltip key={value} content={slotFullName(slot)}>
+                      <SegmentedControlItem value={value} label={label} />
+                    </Tooltip>
+                  );
+                })}
               </SegmentedControl>
-            )}
-          </>
-        ) : (
-          <Selector
-            label={t('session.resourceGrid.Metric')}
-            isLabelHidden
+              {(resource === 'mem' ||
+                parseResourceValue(resource).dimension === 'mem') && (
+                <SegmentedControl
+                  size="sm"
+                  label={t('session.resourceGrid.MemoryUnit')}
+                  value={gridParams.gridMemUnit}
+                  onChange={(value) =>
+                    setGridParams({
+                      gridMemUnit:
+                        value as (typeof sessionGridMemUnitValues)[number],
+                    })
+                  }
+                >
+                  {sessionGridMemUnitValues.map((u) => (
+                    <SegmentedControlItem
+                      key={u}
+                      value={u}
+                      label={t('session.resourceGrid.NGiB', { value: u })}
+                    />
+                  ))}
+                </SegmentedControl>
+              )}
+            </>
+          ) : (
+            <Selector
+              label={t('session.resourceGrid.Metric')}
+              isLabelHidden
+              size="sm"
+              width={180}
+              options={metricOptions}
+              value={metric}
+              onChange={(value) => setGridParams({ gridMetric: value ?? '' })}
+            />
+          )}
+          <SegmentedControl
             size="sm"
-            width={180}
-            options={metricOptions}
-            value={metric}
-            onChange={(value) => setGridParams({ gridMetric: value ?? '' })}
-          />
-        )}
-        <SegmentedControl
-          size="sm"
-          label={t('session.resourceGrid.Layout')}
-          value={gridParams.gridLayout}
-          onChange={(value) =>
-            setGridParams({
-              gridLayout: value as (typeof layoutValues)[number],
-            })
-          }
-        >
-          <SegmentedControlItem
-            value="serpentine"
-            label={t('session.resourceGrid.Serpentine')}
-          />
-          <SegmentedControlItem
-            value="wordwrap"
-            label={t('session.resourceGrid.WordWrap')}
-          />
-        </SegmentedControl>
-      </BAIFlex>
+            label={t('session.resourceGrid.Layout')}
+            value={gridParams.gridLayout}
+            onChange={(value) =>
+              setGridParams({
+                gridLayout: value as (typeof sessionGridLayoutValues)[number],
+              })
+            }
+          >
+            <SegmentedControlItem
+              value="serpentine"
+              label={t('session.resourceGrid.Serpentine')}
+            />
+            <SegmentedControlItem
+              value="wordwrap"
+              label={t('session.resourceGrid.WordWrap')}
+            />
+          </SegmentedControl>
+        </BAIFlex>
+      )}
       {totalCount > SESSION_CAP && (
         <Banner
           status="info"
@@ -634,7 +666,9 @@ const SessionResourceGrid = ({
           const session = sessionByKey.get(group.key);
           return session ? renderPopoverBody(session) : null;
         }}
-        onClickGroup={(key) => onClickSession?.(key)}
+        // Undefined when there is no handler, so the grid does not paint a
+        // clickable cursor on cells that do nothing (a read-only preview).
+        onClickGroup={onClickSession ? (key) => onClickSession(key) : undefined}
         emptyFallback={
           // When everything was omitted for lacking the selected resource,
           // the omitted-count banner above already explains the empty grid.

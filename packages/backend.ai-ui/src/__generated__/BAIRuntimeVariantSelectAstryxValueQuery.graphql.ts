@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<38893cc540d35d53649bd6257221ace2>>
+ * @generated SignedSource<<f093ad65da3f42c0dfde0c95bf5d19f6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type BAIRuntimeVariantSelectAstryxValueQuery$data = {
   readonly runtimeVariant?: {
     readonly id: string;
     readonly name: string;
+    readonly readsVfolderConfigFiles: boolean;
   } | null | undefined;
 };
 export type BAIRuntimeVariantSelectAstryxValueQuery = {
@@ -70,6 +71,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "name",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "readsVfolderConfigFiles",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -95,16 +103,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a69d6f121f987897e9c2abe0eff59bf7",
+    "cacheID": "b5d8b89f912aded0ac4b7ef8d6f52ab5",
     "id": null,
     "metadata": {},
     "name": "BAIRuntimeVariantSelectAstryxValueQuery",
     "operationKind": "query",
-    "text": "query BAIRuntimeVariantSelectAstryxValueQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    name\n  }\n}\n"
+    "text": "query BAIRuntimeVariantSelectAstryxValueQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  runtimeVariant(id: $id) @skip(if: $skip) {\n    id\n    name\n    readsVfolderConfigFiles @since(version: \"26.8.0\")\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "563575d221cdb97fb76a3013937b4537";
+(node as any).hash = "fd4eee3f426e3f5988ae177fc1d3d8b0";
 
 export default node;

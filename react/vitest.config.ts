@@ -105,6 +105,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    // Must stay above `setupTests.ts`'s 5s `asyncUtilTimeout`, or a `waitFor`
+    // that exhausts its budget is cut off by the runner and reports a bare
+    // timeout instead of the assertion diff that names the cause. FR-3617.
+    testTimeout: 15_000,
     setupFiles: [
       resolve(__dirname, 'src/setupTests.ts'),
     ],

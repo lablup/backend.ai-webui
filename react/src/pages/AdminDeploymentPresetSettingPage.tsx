@@ -6,6 +6,7 @@ import type { AdminDeploymentPresetSettingPageCreateMutation } from '../__genera
 import type { AdminDeploymentPresetSettingPagePresetQuery } from '../__generated__/AdminDeploymentPresetSettingPagePresetQuery.graphql';
 import type { AdminDeploymentPresetSettingPageResourceSlotTypesQuery } from '../__generated__/AdminDeploymentPresetSettingPageResourceSlotTypesQuery.graphql';
 import type { AdminDeploymentPresetSettingPageRuntimeVariantsQuery } from '../__generated__/AdminDeploymentPresetSettingPageRuntimeVariantsQuery.graphql';
+import type { AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery } from '../__generated__/AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery.graphql';
 import type { AdminDeploymentPresetSettingPageUpdateMutation } from '../__generated__/AdminDeploymentPresetSettingPageUpdateMutation.graphql';
 import { App } from '../app-shim';
 import AdminDeploymentPresetSettingPageContent, {
@@ -13,13 +14,24 @@ import AdminDeploymentPresetSettingPageContent, {
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
 import { Form } from '../form-engine';
+import {
+  preStartActionsToInput,
+  resolveCommandShell,
+  resolvesReadsVfolderConfigFiles,
+} from '../helper/modelServiceCommand';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
 import { Heading } from '@astryxdesign/core/Heading';
-import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  convertToUUID,
+  toLocalId,
+  useBAILogger,
+  useMutationWithPromise,
+} from 'backend.ai-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -30,49 +42,102 @@ const buildModelDefinitionInput = (
   // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   supportsHealthCheckEnable: boolean,
+  // The single-string `command` + `shell` fields exist since 26.7.0; the WebUI
+  // gates them at 26.8.0 (see `client.ts`).
+  // older managers only understand the deprecated `startCommand` token list.
+  supportsCommandShell: boolean,
+  // Whether the selected runtime variant reads vfolder config files (custom).
+  // When false, command/port fields are hidden in the UI, so any stale values
+  // in the form store must be excluded from the mutation.
+  readsVfolderConfigFiles: boolean,
+  // BA-7210 / FR-3481 (26.9.0+): when true, an omitted name/modelPath/port
+  // is sent as `null` so the server inherits it from the runtime variant
+  // baseline / model mount destination at revision resolution, instead of
+  // the WebUI coercing a fallback value itself.
+  supportsNullableModelDefinition: boolean,
 ) => {
-  // The model definition is optional: the card's switch (`enabled`) gates it,
-  // so when off we omit it entirely (`modelDefinition: null`).
-  if (!value?.enabled || !value.models?.length) return null;
-  // A model is only emitted when it carries a service, so if no model has one
-  // the definition is effectively empty — omit it (`modelDefinition: null`)
-  // instead of sending `{ models: [] }`, which violates the create path's
-  // "at least one model" requirement.
-  if (!value.models.some((m) => m.service)) return null;
+  if (!value?.models?.length) return null;
+
+  // Service config fields (port, command, health check, pre-start actions)
+  // live in Step 1 and are independent of the model definition switch. The
+  // switch (`enabled`) only gates model name, path, and metadata in Step 2.
+  // When the switch is off but the first model carries service data (port,
+  // command, health check, etc.), we still send the model definition with
+  // just the service fields so the backend receives them.
+  const firstModel = value.models[0];
+  const svc = firstModel?.service;
+  // Command/port are only relevant when the variant reads vfolder config
+  // files (custom). When a non-custom variant is selected, any stale
+  // command/port left in the form store must be excluded.
+  const hasCommandData =
+    readsVfolderConfigFiles && (svc?.port != null || svc?.startCommand);
+  const hasServiceData =
+    hasCommandData ||
+    svc?.enableHealthCheck ||
+    (svc?.preStartActions?.length ?? 0) > 0;
+
+  // Neither the model definition switch nor any service fields are set → null.
+  if (!value.enabled && !hasServiceData) return null;
+
+  // Legacy managers (`PresetModelConfigInput.name`/`modelPath` are
+  // `String!`, min_length=1 server-side, prior to BA-7210) cannot accept a
+  // model entry without a real, non-empty name + modelPath — sending ''
+  // fails backend validation. So the "service-only" submission above (Model
+  // Definition switch off, but Service Configuration has data) is only
+  // possible on managers that support inheriting name/modelPath (26.9.0+);
+  // on older managers, there is no valid payload to send in that state.
+  if (!supportsNullableModelDefinition && !value.enabled) return null;
+
   return {
     models: value.models.flatMap((m) => {
       const service = m.service;
-      // `service` is optional on a model, but the create path's
-      // PresetModelServiceConfigInput is required (the update path's is
-      // nullable), so a model without a service can't be submitted — skip it.
-      // When present, ModelServiceFormValue guarantees port/startCommand; shell
-      // is optional, handled below.
+      // Skip models with no service data at all.
       if (!service) {
         return [];
       }
+      // When the model definition switch is off, only send service fields
+      // (no name/modelPath/metadata — those belong to the gated section).
+      const modelEnabled = !!value.enabled;
+      // BA-7210 (26.9.0+): an omitted name/modelPath/port is sent as `null`
+      // so the server inherits it from the runtime variant baseline / model
+      // mount destination at revision resolution. Older managers require
+      // non-null values, so they keep the previous fallbacks ('' / 8000).
+      const nullableStringField = (value: string | undefined) =>
+        supportsNullableModelDefinition ? value || null : (value ?? '');
+      const portFallback = supportsNullableModelDefinition ? null : 8000;
       return [
         {
-          name: m.name,
-          modelPath: m.modelPath,
+          name: nullableStringField(modelEnabled ? m.name : undefined),
+          modelPath: nullableStringField(
+            modelEnabled ? m.modelPath : undefined,
+          ),
           service: {
-            port: service.port,
-            // `shell` has no UI field (see AdminDeploymentPresetModelConfigItem)
-            // but still round-trips: on edit, an existing value flows back
-            // through `form.getFieldsValue(true)`. Omit empty/whitespace-only
-            // values so create applies the server default `/bin/bash` and a
-            // blank never lands as `''`.
-            shell: service.shell?.trim() || undefined,
-            startCommand: tokenizeShellCommand(service.startCommand),
-            preStartActions: (service.preStartActions ?? []).map((a) => ({
-              action: a.action,
-              args: (() => {
-                try {
-                  return JSON.parse(a.args || '{}');
-                } catch {
-                  return {};
-                }
-              })(),
-            })),
+            port: hasCommandData
+              ? (service.port ?? portFallback)
+              : portFallback,
+            // Start Command (FR-3205): when enabled (26.8.0+ by client policy)
+            // send the raw command string in `command` plus a `shell` derived
+            // from the Execution/Shell controls. On older managers fall back
+            // to the deprecated tokenized `startCommand`. When the variant
+            // does not read config files, omit command/shell entirely.
+            ...(hasCommandData
+              ? supportsCommandShell
+                ? {
+                    command: service.startCommand || null,
+                    shell: service.startCommand
+                      ? resolveCommandShell({
+                          execution: service.execution ?? 'shell',
+                          shell: service.shell,
+                        })
+                      : undefined,
+                  }
+                : {
+                    startCommand: tokenizeShellCommand(
+                      service.startCommand ?? '',
+                    ),
+                  }
+              : {}),
+            preStartActions: preStartActionsToInput(service.preStartActions),
             healthCheck: (() => {
               const hc = service.healthCheck;
               const checked = !!service.enableHealthCheck;
@@ -98,25 +163,26 @@ const buildModelDefinitionInput = (
                 : fields;
             })(),
           },
-          metadata: m.metadata
-            ? {
-                author: m.metadata.author || null,
-                title: m.metadata.title || null,
-                version: m.metadata.version || null,
-                created: null,
-                lastModified: null,
-                description: m.metadata.description || null,
-                task: m.metadata.task || null,
-                category: m.metadata.category || null,
-                architecture: m.metadata.architecture || null,
-                framework: m.metadata.framework?.length
-                  ? m.metadata.framework
-                  : null,
-                label: m.metadata.label?.length ? m.metadata.label : null,
-                license: m.metadata.license || null,
-                minResource: null,
-              }
-            : null,
+          metadata:
+            modelEnabled && m.metadata
+              ? {
+                  author: m.metadata.author || null,
+                  title: m.metadata.title || null,
+                  version: m.metadata.version || null,
+                  created: null,
+                  lastModified: null,
+                  description: m.metadata.description || null,
+                  task: m.metadata.task || null,
+                  category: m.metadata.category || null,
+                  architecture: m.metadata.architecture || null,
+                  framework: m.metadata.framework?.length
+                    ? m.metadata.framework
+                    : null,
+                  label: m.metadata.label?.length ? m.metadata.label : null,
+                  license: m.metadata.license || null,
+                  minResource: null,
+                }
+              : null,
         },
       ];
     }),
@@ -137,6 +203,20 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
+  );
+  // The single-string `command` + `shell` fields exist since 26.7.0; gated at 26.8.0 on the
+  // preset service config (FR-3205); older managers only understand the
+  // deprecated `startCommand` token list.
+  const supportsCommandShell = baiClient.supports(
+    'model-service-command-string',
+  );
+  // BA-7210 / FR-3481: managers this version+ resolve an omitted
+  // name/modelPath/port from the runtime variant baseline / model mount
+  // destination at revision resolution, so the submit payload can send null
+  // instead of coercing a fallback value. Older managers require non-null
+  // name/modelPath/port, so the fallbacks stay in place for them.
+  const supportsNullableModelDefinition = baiClient.supports(
+    'preset-model-config-type',
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -177,6 +257,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
               node {
                 id
                 name
+                readsVfolderConfigFiles @since(version: "26.8.0")
               }
             }
           }
@@ -184,6 +265,55 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       `,
       {},
       { fetchPolicy: 'store-or-network' },
+    );
+
+  // The list above is capped at 100 and unordered, so an existing preset's
+  // runtime variant can fall outside it (e.g. the variant list has grown
+  // since the preset was created). Without this point lookup, selectedVariant
+  // below would resolve to undefined for such a preset, `reads` would default
+  // to false, and saving would silently drop the preset's existing
+  // command/port fields. Point-lookup the currently selected id directly so
+  // it's always resolvable regardless of list position — mirrors
+  // BAIRuntimeVariantSelect.tsx's own selected-value point lookup.
+  const watchedRuntimeVariantId = Form.useWatch('runtimeVariantId', form);
+  const selectedUuid = watchedRuntimeVariantId
+    ? convertToUUID(watchedRuntimeVariantId)
+    : '';
+  const paginatedRuntimeVariantList =
+    runtimeVariants?.edges
+      ?.map((e) => e?.node)
+      ?.filter((n): n is NonNullable<typeof n> => Boolean(n)) ?? [];
+  // The point-lookup below only exists to resolve a selected variant that
+  // fell outside the capped list. Skip it whenever the selection IS already
+  // in the list (every dropdown pick is) — otherwise each runtime change
+  // fires a page-suspending network query and the whole page flashes its
+  // Suspense fallback.
+  const selectedVariantInList =
+    !!watchedRuntimeVariantId &&
+    paginatedRuntimeVariantList.some(
+      (rt) => toLocalId(rt.id) === watchedRuntimeVariantId,
+    );
+  const { runtimeVariant: selectedRuntimeVariantLookup } =
+    useLazyLoadQuery<AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery>(
+      graphql`
+        query AdminDeploymentPresetSettingPageSelectedRuntimeVariantQuery(
+          $id: UUID!
+          $skip: Boolean!
+        ) {
+          runtimeVariant(id: $id) @skip(if: $skip) {
+            id
+            name
+            readsVfolderConfigFiles @since(version: "26.8.0")
+          }
+        }
+      `,
+      { id: selectedUuid, skip: !selectedUuid || selectedVariantInList },
+      {
+        fetchPolicy:
+          selectedUuid && !selectedVariantInList
+            ? 'store-or-network'
+            : 'store-only',
+      },
     );
 
   const { resourceSlotTypes } =
@@ -214,10 +344,17 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       { fetchPolicy: 'store-or-network' },
     );
 
+  // Append the point-looked-up selected variant when it fell outside the
+  // capped/unordered list above, so every consumer of this list (the Runtime
+  // Select's options, and the readsVfolderConfigFiles derivation at submit
+  // time below) resolves it consistently.
   const runtimeVariantList =
-    runtimeVariants?.edges
-      ?.map((e) => e?.node)
-      ?.filter((n): n is NonNullable<typeof n> => Boolean(n)) ?? [];
+    selectedRuntimeVariantLookup &&
+    !paginatedRuntimeVariantList.some(
+      (rt) => rt.id === selectedRuntimeVariantLookup.id,
+    )
+      ? [...paginatedRuntimeVariantList, selectedRuntimeVariantLookup]
+      : paginatedRuntimeVariantList;
 
   const resourceSlotTypeList =
     resourceSlotTypes?.edges
@@ -284,6 +421,13 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
     const presetValues = collectRuntimePresetValuesRef.current();
 
+    // Resolve whether the selected variant reads vfolder config files so
+    // buildModelDefinitionInput can exclude stale command/port data.
+    const selectedVariant = runtimeVariantList.find(
+      (rt) => toLocalId(rt.id) === values.runtimeVariantId,
+    );
+    const reads = resolvesReadsVfolderConfigFiles(selectedVariant);
+
     setIsSubmitting(true);
     try {
       if (mode === 'edit' && presetId) {
@@ -323,6 +467,9 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
               supportsHealthCheckEnable,
+              supportsCommandShell,
+              !!reads,
+              supportsNullableModelDefinition,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
@@ -366,6 +513,9 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
               supportsHealthCheckEnable,
+              supportsCommandShell,
+              !!reads,
+              supportsNullableModelDefinition,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,

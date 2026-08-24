@@ -219,7 +219,9 @@ test.describe(
       );
       await expect(page.getByLabel('Password')).toBeVisible();
       await expect(page.getByLabel('Password')).toHaveValue(TEST_PASSWORD);
-      await expect(page.getByRole('textbox', { name: 'Endpoint' })).toHaveValue(webServerEndpoint);
+      await expect(page.getByRole('textbox', { name: 'Endpoint' })).toHaveValue(
+        webServerEndpoint,
+      );
     });
 
     // ── 3. Force login sends force=true ──────────────────────────────────

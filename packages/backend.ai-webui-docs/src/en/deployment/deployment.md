@@ -54,10 +54,10 @@ The modal contains the following fields:
 - **Tags**: Optional labels for organizing and filtering deployments. Press Enter or comma to add.
 - **Open to Public**: When enabled, the endpoint is reachable without an access token. When disabled, every request must carry a token. See [Access Tokens](#generating-tokens).
 
-:::warning[The resource group is fixed at creation]
-A warning notice sits under the **Resource Group** field from the moment the modal opens: *"The resource group selected at creation cannot be changed."* The resource group belongs to the deployment rather than to a revision, so you cannot move a deployment to a different resource group later — not by editing the deployment and not by adding a new revision. Pick the right one before you create the deployment; if you need a different resource group, create a new deployment.
+:::warning[The resource group and public access are fixed at creation]
+From the moment the modal opens, a warning notice sits under the **Resource Group** field — *"The resource group selected at creation cannot be changed."* — and another under the **Open to Public** field — *"The public access setting selected at creation cannot be changed."*
 
-**Open to Public** is fixed in the same way. In the **Edit Deployment** modal the checkbox is read-only and its tooltip reads *"Cannot be changed after creation."*
+The resource group belongs to the deployment rather than to a revision, so you cannot move a deployment to a different resource group later — not by editing the deployment and not by adding a new revision. **Open to Public** is fixed in the same way: in the **Edit Deployment** modal the checkbox is read-only and the same notice is shown under it. Pick both values before you create the deployment; if you need different ones, create a new deployment.
 :::
 
 Click `Create` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision.
@@ -91,10 +91,11 @@ Configure every revision setting directly.
 
 The form contains the following sections:
 
-- **Model & Runtime**: Select the model folder and runtime variant. For `vLLM` / `SGLang` variants, a Runtime Parameters panel appears; for the `Custom` variant, a Model Definition Mode control appears. See the sections below for details on runtime-specific fields.
+- **Model & Runtime**: Select the model folder, its mount destination, and the runtime variant. For `vLLM` / `SGLang` variants, a Runtime Parameters panel appears; for the `Custom` variant, a Service Configuration section appears. See the sections below for details on runtime-specific fields.
+- **Health Check** and **Pre-Start Actions**: Configure health checking and the actions to run before the inference server starts. Both are available for every runtime variant.
 - **Environments**: Choose the container image (Environment / Version) and add environment variables.
 - **Cluster & Resources**: Allocate CPU, memory, and accelerator resources.
-- **Advanced Settings** *(collapsible)*: Mount additional storage folders alongside the model folder.
+- **Advanced Settings** *(collapsible)*: Set the model definition file path and mount additional storage folders alongside the model folder.
 
 At the bottom of the modal, check **Apply immediately after adding** to activate the new revision immediately upon creation. If unchecked, the revision is saved in an inactive state and you can apply it later from the Revisions tab.
 
@@ -102,36 +103,43 @@ At the bottom of the modal, check **Apply immediately after adding** to activate
 
 The subsections below describe revision-level fields in detail. They apply both when adding a revision manually in **Advanced Mode** and when you want to understand what each field controls.
 
-#### Model definition mode (custom runtime only)
+#### Model folder mount
 
-When you select the **Custom** runtime variant, a **Model Definition Mode** segmented control appears at the top of the form. It lets you choose how the inference server startup is defined:
+Every revision mounts one model storage folder into each replica. The fields directly below the folder selector control where that folder appears inside the container.
 
-##### Enter command mode
+- **Model Folder**: The model storage folder to mount on each replica.
+- **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
+- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Leave it empty to mount the folder root.
 
-Select **Enter Command** to define the startup directly as a CLI command. The following fields are available:
+<a id="service-configuration"></a>
 
-- **Start Command**: The command to launch the inference server. For example, `python -m http.server 8000`.
+#### Service configuration (custom runtime only)
 
-:::tip[Shell operators require an explicit shell invocation]
-The backend executes the start command directly (exec-style), not through a shell. Shell operators such as `;`, `|`, `&&`, and `\` (line continuation) are **not** interpreted unless you invoke a shell explicitly.
+Runtime variants that read their configuration from the model folder — the **Custom** variant, for example — show a **Service Configuration** section below the **Runtime** selector. The section is expanded by default and defines how the inference server process is started.
 
-Instead of:
+- **Execution**: How the command is run.
+   * **Shell**: The command runs through a shell (`bash -c "..."`), so shell operators work. Recommended for most cases.
+   * **Exec**: The command runs directly as arguments, with no shell involved. Use this only when the command has to run without a shell — for example, on an image that has no shell binary.
+- **Shell**: The shell binary used to run the command (for example, `/bin/bash`). Shown only in **Shell** mode, where it is required. The binary must exist in the container image, or the service fails to start.
+- **Command**: The command that launches the inference server, for example `python -m http.server 8000`. In **Shell** mode this is a multi-line box; in **Exec** mode the field is relabeled **Command (argv)** and becomes a single-line input.
+- **Port**: The container port that the inference server listens on (2–65535).
+
+:::tip[Shell operators only work in Shell mode]
+In **Shell** mode the command is handed to the shell, so operators such as `;`, `|`, `&&`, `$VAR`, and redirection are interpreted just as they are in a terminal:
 
 ```bash
 chmod +x /setup.sh; vllm serve /models
 ```
 
-Use:
-
-```bash
-/bin/bash -c "chmod +x /setup.sh; vllm serve /models"
-```
-
-The Review step (step 4 of the wizard) renders the start command and bootstrap script as code blocks for easy review before you confirm.
+In **Exec** mode the same line is split into arguments and executed directly, so those operators are passed through as literal text. Separate arguments with spaces and quote any argument that contains spaces — for example, `--name "my model"`. When you need shell syntax, switch **Execution** back to **Shell** rather than wrapping the command in `/bin/bash -c "..."` yourself.
 :::
 
-- **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
-- **Port**: The container port that the inference server listens on (default: `8000`).
+<a id="health-check-and-pre-start-actions"></a>
+
+#### Health check and pre-start actions
+
+The **Enable Health Check** and **Pre-Start Actions** fields follow the Service Configuration section and are shown for every runtime variant.
+
 - **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
    * **Path**: The HTTP endpoint path called during service health checks (default: `/health`).
    * **Interval**: Seconds between consecutive health checks.
@@ -139,23 +147,13 @@ The Review step (step 4 of the wizard) renders the start command and bootstrap s
    * **Max Wait Time**: Timeout in seconds for each individual health check request.
    * **Expected Status Code**: The HTTP response status code that indicates a healthy service.
    * **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check. Increase this for large models that take longer to load.
+- **Pre-Start Actions**: Actions to execute before the model service starts. Click **Add Pre-Start Action** to add a row, then fill in **Action** (the action name, for example `wait_for_file`) and **Args (JSON)** (its arguments as a JSON object, for example `{}`). Both fields are required on every row, and the arguments must be valid JSON. For the list of supported actions, refer to [Description for Service Action Supported in Backend.AI Model Serving](#prestart-actions).
 
-##### Use config file mode
-
-Select **Use Config File** to load the startup configuration from a `model-definition.yaml` file stored in the model storage folder. The following fields are available:
-
-- **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
-- **Model Definition File Path**: The path to the model definition file within the model storage folder (default: `model-definition.yaml`).
-
-:::note
-Both model definition modes label this field **Mount Destination For Model Folder** and write the same value, so switching between **Enter Command** and **Use Config File** does not change what the field means.
-:::
-
-For instructions on creating a model definition file, refer to the [Creating a Model Definition File](#model-definition-guide) section.
+The path to the model definition file itself lives in the **Advanced Settings** panel at the bottom of the form. For instructions on creating that file, refer to the [Creating a Model Definition File](#model-definition-guide) section.
 
 #### Runtime parameters (vLLM / SGLang)
 
-When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears in place of the Model Definition Mode selector. This section lets you configure the serving framework without editing configuration files manually.
+When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears in place of the Service Configuration section. This section lets you configure the serving framework without editing configuration files manually.
 
 Parameters are organized into tab-separated categories. The available tabs vary by runtime variant.
 
@@ -169,14 +167,7 @@ Administrators can mark individual parameters as required. Required parameters a
 
 **Enable Health Check**
 
-In Advanced Mode, all runtime variants — including `vLLM` and `SGLang` — include an **Enable Health Check** section at the bottom of the Runtime Parameters area. This is off by default for new revisions. When you check **Enable Health Check**, the following fields appear and are required:
-
-- **Path**: The HTTP endpoint path the system will call to verify service health.
-- **Interval**: Seconds between checks.
-- **Max Retries**: Consecutive failures allowed before the replica is marked `UNHEALTHY`.
-- **Max Wait Time**: Per-request timeout in seconds.
-- **Expected Status Code**: HTTP status code that indicates a healthy response.
-- **Startup Grace Period**: Seconds to wait after container startup before health check failures count against the replica.
+The **Enable Health Check** and **Pre-Start Actions** fields sit below the Runtime Parameters section and work exactly as described in [Health check and pre-start actions](#health-check-and-pre-start-actions) — they are shown for `vLLM` and `SGLang` just as they are for the `Custom` variant.
 
 **vLLM Runtime Parameters**
 
@@ -240,8 +231,9 @@ The **Cluster and Resources** section lets you specify the compute resources to 
 
 #### Advanced settings
 
-Expand the **Advanced Settings** collapse panel to mount additional storage folders alongside the model storage folder.
+Expand the **Advanced Settings** collapse panel to point at the model definition file and to mount additional storage folders alongside the model storage folder.
 
+- **Model Definition File Path**: The path to the model definition file within the model storage folder (default: `model-definition.yaml`). Shown only for runtime variants that read their configuration from the model folder, such as `Custom`.
 - **Additional Mounts**: A table of storage folders to mount into the inference server container. Only general-purpose (non-model) folders in `ready` state are listed. Hidden folders (names starting with `.`) and the model storage folder itself are excluded.
 
 <a id="custom-runtime-config-files"></a>
@@ -418,7 +410,7 @@ please refer to the [Explore Folder](#explore-folder) section.
 You can place a `deployment-config.yaml` file in a model folder to pre-configure the resources, environment, and runtime settings used when a deployment is created from that model. When the file is present, its values are used as **defaults**; anything you set at deployment time (in the Add Revision form or the API request) overrides them.
 
 :::note
-This file was previously named `service-definition.toml` (TOML format). The legacy `service-definition.toml` is still read as a fallback, but it is **deprecated** — prefer `deployment-config.yaml` for new model folders.
+A `service-definition.toml` file (TOML format) in the same folder is still read as a fallback, but it is **deprecated** — use `deployment-config.yaml` for your model folders.
 :::
 
 `deployment-config.yaml` is **optional** and does not gate deployment. You can deploy a model whether or not the file is present — a missing or malformed file is simply skipped. Together with the optional `model-definition.yaml` (which describes the model and inference server), it lets administrators ship sensible defaults alongside a model.
@@ -552,7 +544,7 @@ The following fields are displayed:
 - **Revision ID**: The UUID of this revision.
 - **Created At**
 - **Resources**: The resource allocation (CPU, memory, and accelerators) for each replica.
-- **Model Folder**: The model folder mounted into each replica, shown as a link, together with **Mount Destination For Model Folder**.
+- **Model Folder**: The model folder mounted into each replica, shown as a link, together with **Mount Destination For Model Folder**. When the revision mounts a subfolder, a `Subpath: <value>` line is shown as well.
 - **Model Definition File Path**: Path to the model definition file within the model folder.
 - **Additional Mounts**: Extra storage folders mounted into each replica.
 - **Runtime**: The serving runtime (for example, `vLLM`, `SGLang`, or `Custom`).
@@ -617,7 +609,7 @@ The **Audit Log** tab shows a chronological record of all actions taken on this 
 
 ### Replicas
 
-The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab, which replaced the previous enum-based status filter.
+The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab.
 
 ![](../images/replica_status_filter.png)
 
@@ -657,7 +649,7 @@ The rule list provides:
 
 - A property filter bar to filter rules by **Created At** and **Last Triggered** datetime ranges.
 - Server-side pagination.
-- The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set, so you no longer choose **Scale Out** or **Scale In** explicitly.
+- The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
 - Per-row edit and delete icons shown next to the condition summary in each row.
 
 Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:

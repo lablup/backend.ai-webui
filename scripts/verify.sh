@@ -176,6 +176,13 @@ check_astryx_theme_built() {
     -o src/astryx-theme/built/backendai-default-built.css
 }
 
+check_z_index_ladder() {
+  # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
+  # path filter never fires for an index.html-only PR — so it runs here, always.
+  # Why each mirror exists: the gate's own header.
+  node scripts/migration-gates/z-index-ladder-gate.mjs
+}
+
 run_check "Relay" check_relay_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
@@ -183,6 +190,7 @@ run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
+run_check "z-index ladder mirrors" check_z_index_ladder
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row

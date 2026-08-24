@@ -4,9 +4,9 @@
 
  to-astryx ticket 04 — antd-semantics unit tests for the app-shim.
  The toast leg is tested against a fake bridge (registerBridge is the public
- seam); the modal leg is tested at the store/handle level. Full dialog
- interaction (ok/cancel button flows) is covered by the live browser
- verification recorded in the ticket.
+ seam); the modal leg is tested at the store/handle level, plus the two host
+ renders FR-3578 turned into contracts (alertdialog + Escape, zIndex forward).
+ The ok/cancel button flows live in `destructiveConfirmFlow.test.tsx`.
 */
 import {
   getDefaultMessageDurationS,
@@ -14,8 +14,10 @@ import {
   setMessageConfig,
 } from './bridge';
 import { message } from './message';
-import { modal } from './modal';
+import { AppShimModalHost, modal } from './modal';
 import type { ShowToastFn, ToastOptions } from '@astryxdesign/core/Toast';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 interface ShownToast {
@@ -149,5 +151,34 @@ describe('app-shim modal', () => {
     expect(secondSettled).not.toHaveBeenCalled();
     second.destroy();
     await expect(second).resolves.toBe(false);
+  });
+
+  // `purpose="required"` would buy the role by disabling Escape, which antd's
+  // confirm does not do — so the role is passed explicitly alongside `form`.
+  it('gives a plain-text confirm alertdialog semantics AND Escape', async () => {
+    const user = userEvent.setup();
+    const onCancel = vi.fn();
+    const handle = modal.confirm({ title: 'T', content: 'C', onCancel });
+    render(<AppShimModalHost />);
+
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    await expect(handle).resolves.toBe(false);
+  });
+
+  // The escape hatch for a surface the ladder does not cover; values below the
+  // band base are floored instead (see BAIDialog.test.tsx).
+  it('forwards zIndex to the portal root', () => {
+    const handle = modal.confirm({ title: 'T', content: 'C', zIndex: 10001 });
+    render(<AppShimModalHost />);
+
+    expect(
+      screen
+        .getByRole('alertdialog')
+        .closest<HTMLElement>('.bai-dialog')
+        ?.style.getPropertyValue('--bai-dialog-z'),
+    ).toBe('10001');
+    handle.destroy();
   });
 });

@@ -352,7 +352,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         gap="md"
         style={{ height: '100%', ...style }}
       >
-        <BAIFlex align="center" justify="between">
+        {/* Wraps so a narrow container stacks the path above the actions
+            instead of pushing them out of a clipped pane (FR-3590). */}
+        <BAIFlex align="center" justify="between" wrap="wrap" gap="xs">
           <Breadcrumbs
             label={t('comp:FileExplorer.Path')}
             style={{

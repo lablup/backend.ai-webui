@@ -3,14 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type {
-  AgentSessionsQuery,
-  SessionV2Filter,
+  AgentSessionsQuery as AgentSessionsQueryType,
   SessionV2OrderBy,
   SessionV2Status,
 } from '../../__generated__/AgentSessionsQuery.graphql';
 import { convertToOrderBy } from '../../helper';
 import { useWebUINavigate } from '../../hooks';
-import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
@@ -19,19 +17,24 @@ import {
   BAIFlex,
   BAILink,
   BAISessionNodesV2,
-  INITIAL_FETCH_KEY,
   availableSessionV2SorterValues,
   filterOutNullAndUndefined,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
-import { useDeferredValue, useState } from 'react';
+import * as _ from 'lodash-es';
+import { useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
 
 // Same status buckets as ProjectAdminSessionPage — sessions still occupying
 // (or about to occupy) agent resources vs. finished ones kept for history.
-const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
+export const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
   'PENDING',
   'SCHEDULED',
   'PREPARING',
@@ -49,31 +52,62 @@ const FINISHED_STATUSES: ReadonlyArray<SessionV2Status> = [
   'CANCELLED',
 ];
 
+// TODO(FR-3251): `AgentDetailDrawer` still runs on the legacy `AgentNode`
+// query because AgentV2 has no `live_stat` / `gpu_alloc_map` equivalents
+// yet. Once those land and the drawer migrates to `agentsV2`, drop this
+// standalone lookup query and read `AgentV2.sessions` as a fragment spread
+// on the drawer's agent node instead.
+export const AgentSessionsQuery = graphql`
+  query AgentSessionsQuery(
+    $agentFilter: AgentFilter
+    $sessionFilter: SessionV2Filter
+    $orderBy: [SessionV2OrderBy!]
+    $limit: Int
+    $offset: Int
+  ) {
+    agentsV2(filter: $agentFilter, limit: 1) {
+      edges {
+        node {
+          id
+          sessions(
+            filter: $sessionFilter
+            orderBy: $orderBy
+            limit: $limit
+            offset: $offset
+          ) {
+            count
+            edges {
+              node {
+                id
+                ...BAISessionNodesV2Fragment
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 interface AgentSessionsProps {
-  agentId: string;
+  queryRef: PreloadedQuery<AgentSessionsQueryType>;
+  onReload: (
+    variables: AgentSessionsQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
 }
 
-const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
+/**
+ * The drawer owns `useQueryLoader` and loads the query when the sessions tab
+ * is activated; this view reads the *deferred* `queryRef` so previous rows
+ * stay visible while the next result loads. Render inside a `Suspense`
+ * boundary.
+ */
+const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
   'use memo';
   const { t } = useTranslation();
   const webUINavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-
-  const [statusCategory, setStatusCategory] = useState<'running' | 'finished'>(
-    'running',
-  );
-  const [order, setOrder] = useState<
-    (typeof availableSessionV2SorterValues)[number] | null
-  >(null);
-
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionState({
-    current: 1,
-    pageSize: 10,
-  });
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -81,69 +115,28 @@ const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
     'table_column_overrides.AgentSessions',
   );
 
-  const statusFilter: SessionV2Filter['status'] =
-    statusCategory === 'running'
-      ? { in: RUNNING_STATUSES as readonly SessionV2Status[] }
-      : { in: FINISHED_STATUSES as readonly SessionV2Status[] };
+  const statusCategory = _.includes(
+    queryRef.variables.sessionFilter?.status?.in,
+    'TERMINATED',
+  )
+    ? 'finished'
+    : 'running';
 
-  const queryVariables = {
-    agentFilter: { id: { equals: agentId } },
-    sessionFilter: { status: statusFilter },
-    orderBy: convertToOrderBy<Required<SessionV2OrderBy>>(order) ?? [
-      { field: 'CREATED_AT', direction: 'DESC' } as Required<SessionV2OrderBy>,
-    ],
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-  };
+  const orderBy = queryRef.variables.orderBy?.[0];
+  const order = orderBy
+    ? (`${orderBy.direction === 'DESC' ? '-' : ''}${_.camelCase(orderBy.field)}` as (typeof availableSessionV2SorterValues)[number])
+    : null;
 
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
+  const pageSize = queryRef.variables.limit ?? 10;
+  const offset = queryRef.variables.offset ?? 0;
+  const current = pageSize ? Math.floor(offset / pageSize) + 1 : 1;
 
-  // TODO(FR-3251): `AgentDetailDrawer` still runs on the legacy `AgentNode`
-  // query because AgentV2 has no `live_stat` / `gpu_alloc_map` equivalents
-  // yet. Once those land and the drawer migrates to `agentsV2`, drop this
-  // standalone lookup query and read `AgentV2.sessions` as a fragment spread
-  // on the drawer's agent node instead.
-  const data = useLazyLoadQuery<AgentSessionsQuery>(
-    graphql`
-      query AgentSessionsQuery(
-        $agentFilter: AgentFilter
-        $sessionFilter: SessionV2Filter
-        $orderBy: [SessionV2OrderBy!]
-        $limit: Int
-        $offset: Int
-      ) {
-        agentsV2(filter: $agentFilter, limit: 1) {
-          edges {
-            node {
-              id
-              sessions(
-                filter: $sessionFilter
-                orderBy: $orderBy
-                limit: $limit
-                offset: $offset
-              ) {
-                count
-                edges {
-                  node {
-                    id
-                    ...BAISessionNodesV2Fragment
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetching = deferredQueryRef !== queryRef;
+
+  const data = usePreloadedQuery<AgentSessionsQueryType>(
+    AgentSessionsQuery,
+    deferredQueryRef,
   );
 
   const sessionConnection = data.agentsV2?.edges?.[0]?.node?.sessions;
@@ -152,9 +145,6 @@ const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
   );
   const total = sessionConnection?.count ?? 0;
 
-  const isLoading =
-    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
-
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
@@ -162,8 +152,21 @@ const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
           optionType="button"
           value={statusCategory}
           onChange={(e) => {
-            setStatusCategory(e.target.value);
-            setTablePaginationOption({ current: 1 });
+            const next = e.target.value as 'running' | 'finished';
+            onReload(
+              {
+                ...queryRef.variables,
+                sessionFilter: {
+                  status: {
+                    in: (next === 'running'
+                      ? RUNNING_STATUSES
+                      : FINISHED_STATUSES) as readonly SessionV2Status[],
+                  },
+                },
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
           }}
           options={[
             { label: t('session.Running'), value: 'running' },
@@ -173,17 +176,33 @@ const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
         <AutoUpdateFetchKeyButton
           settingId="agent-detail-sessions"
           defaultAutoUpdateDelay={15_000}
-          loading={isLoading}
+          loading={isRefetching}
           value={fetchKey}
-          onChange={(next) => updateFetchKey(next)}
+          onChange={(next) => {
+            updateFetchKey(next);
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+          }}
         />
       </BAIFlex>
       <BAISessionNodesV2
         sessionsFrgmt={sessionNodes}
-        loading={isLoading}
+        loading={isRefetching}
         order={order}
         onChangeOrder={(nextOrder) => {
-          setOrder(nextOrder);
+          onReload(
+            {
+              ...queryRef.variables,
+              orderBy: convertToOrderBy<Required<SessionV2OrderBy>>(
+                nextOrder,
+              ) ?? [
+                {
+                  field: 'CREATED_AT',
+                  direction: 'DESC',
+                } as Required<SessionV2OrderBy>,
+              ],
+            },
+            { fetchPolicy: 'network-only' },
+          );
         }}
         customizeColumns={(cols) =>
           cols.map((col) => {
@@ -210,11 +229,18 @@ const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
           })
         }
         pagination={{
-          current: tablePaginationOption.current,
-          pageSize: tablePaginationOption.pageSize,
+          current,
+          pageSize,
           total,
-          onChange: (current, pageSize) => {
-            setTablePaginationOption({ current, pageSize });
+          onChange: (nextCurrent, nextPageSize) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                limit: nextPageSize,
+                offset: nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
           },
         }}
         tableSettings={{

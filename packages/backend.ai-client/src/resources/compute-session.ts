@@ -223,12 +223,12 @@ export class ComputeSession {
   /**
    * Request container commit for corresponding session in agent node
    *
-   * @param sessionName - name of the session
+   * @param sessionId - ID (UUID) of the session
    */
-  async commitSession(sessionName: string = ''): Promise<any> {
+  async commitSession(sessionId: string): Promise<any> {
     const rqst = this.client.newSignedRequest(
       'POST',
-      `/session/${sessionName}/commit`,
+      `/session/${sessionId}/commit`,
       null,
     );
     return this.client._wrapWithPromise(rqst);
@@ -237,15 +237,15 @@ export class ComputeSession {
   /**
    * Request container commit for corresponding session in agent node
    *
-   * @param sessionName - name of the session
+   * @param sessionId - ID (UUID) of the session
    */
   async convertSessionToImage(
-    sessionName: string,
+    sessionId: string,
     newImageName: string,
   ): Promise<any> {
     const rqst = this.client.newSignedRequest(
       'POST',
-      `/session/${sessionName}/imagify`,
+      `/session/${sessionId}/imagify`,
       { image_name: newImageName },
     );
     return this.client._wrapWithPromise(rqst);
@@ -254,12 +254,12 @@ export class ComputeSession {
   /**
    * Get status of requested container commit on agent node (ongoing / finished / failed)
    *
-   * @param sessionName - name of the session
+   * @param sessionId - ID (UUID) of the session
    */
-  async getCommitSessionStatus(sessionName: string = ''): Promise<any> {
+  async getCommitSessionStatus(sessionId: string): Promise<any> {
     const rqst = this.client.newSignedRequest(
       'GET',
-      `/session/${sessionName}/commit`,
+      `/session/${sessionId}/commit`,
     );
     return this.client._wrapWithPromise(rqst);
   }

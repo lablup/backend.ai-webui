@@ -135,7 +135,12 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         title: t('comp:UserNodes.UserID'),
         exportKey: 'uuid',
         render: (__, record) => (
-          <BAIText copyable ellipsis monospace style={{ maxWidth: 100 }}>
+          <BAIText
+            copyable
+            ellipsis={{ tooltip: true }}
+            monospace
+            style={{ maxWidth: 100 }}
+          >
             {toLocalId(record.id)}
           </BAIText>
         ),
@@ -185,7 +190,12 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         exportKey: 'main_access_key',
         render: (__, record) =>
           record.organization?.mainAccessKey ? (
-            <BAIText copyable ellipsis monospace style={{ maxWidth: 120 }}>
+            <BAIText
+              copyable
+              ellipsis={{ tooltip: true }}
+              monospace
+              style={{ maxWidth: 120 }}
+            >
               {record.organization.mainAccessKey}
             </BAIText>
           ) : (
