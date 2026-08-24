@@ -29,7 +29,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
-  BAIUserSelectAstryx,
+  BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -274,7 +274,7 @@ const RBACManagementPage: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition }) => (
-                    <BAIUserSelectAstryx
+                    <BAIUserSelect
                       valuePropName="id"
                       value={null}
                       label={t('rbac.AssignedUser')}

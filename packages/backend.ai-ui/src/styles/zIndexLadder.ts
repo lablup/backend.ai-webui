@@ -16,8 +16,8 @@
  | `modalBase` | 1100 | `BAIDialog` and `BAIDrawerPortal` (the scrimmed drawer), plus `BAI_Z_INDEX_MODAL_LEVEL_STEP` per level of the stack they share |
  | `loginSideHelp` | 1101 | `LoginFormPanel`'s side help panel — a fixed sibling anchored to the base modal's edge, so it clears that modal's mask but not a modal opened on top of it |
  | `notification` | 11000 | `.bai-notification-stack` |
- | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, `BAITourAstryx` — not stackable against this ladder. A NON-SCRIM lab `Drawer` is not here either: it opens with `show()`, so it stacks at the theme-shim 1000 band above |
- | context-local stacking | off the ladder at any magnitude | `BAIBoard.css`, `BAITableAstryx*`, `BAICompactGroup.css` — local to a subtree |
+ | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, `BAITour` — not stackable against this ladder. A NON-SCRIM lab `Drawer` is not here either: it opens with `show()`, so it stacks at the theme-shim 1000 band above |
+ | context-local stacking | off the ladder at any magnitude | `BAIBoard.css`, `BAITable*`, `BAICompactGroup.css` — local to a subtree |
 */
 import './zIndexLadder.css';
 

@@ -4,9 +4,9 @@
 
  GAP COMPONENT 5/5 (to-astryx ticket 08) — the thin adapter that turns
  `useBAINotification`'s `NotificationState[]` into
- `BAINotificationStackAstryx`'s presentational item list.
+ `BAINotificationStack`'s presentational item list.
 
- It lives in its own file on purpose. `BAINotificationStackAstryx` must not
+ It lives in its own file on purpose. `BAINotificationStack` must not
  import from `hooks/useBAINotification`, because that module pulls in antd
  (`App`, `antd-style`, `antd/lib/notification`) at RUNTIME — a presentational
  component that depends on it could never be part of an antd-free graph
@@ -31,7 +31,7 @@
  today: a pending task shows a clock (info), resolved a green check (success),
  rejected a red cross (error).
 */
-import type { BAINotificationStackItem } from './BAINotificationStackAstryx';
+import type { BAINotificationStackItem } from './BAINotificationStack';
 import type { BannerStatus } from '@astryxdesign/core/Banner';
 import type React from 'react';
 

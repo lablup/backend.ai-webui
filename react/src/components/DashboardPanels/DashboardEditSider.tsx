@@ -8,7 +8,7 @@ import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PersistedPanel, ResourceKey } from './types';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { BAIFlex, BAIPopconfirmAstryx, BAIText } from 'backend.ai-ui';
+import { BAIFlex, BAIPopconfirm, BAIText } from 'backend.ai-ui';
 import { Plus, RotateCcw, SquarePenIcon, Trash2 } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -133,7 +133,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                     icon={<SquarePenIcon size="1em" />}
                     onClick={() => onRequestEdit(panel)}
                   />
-                  <BAIPopconfirmAstryx
+                  <BAIPopconfirm
                     title={t('dialog.ask.DoYouWantToDeleteSomething', {
                       name: label,
                     })}
@@ -147,7 +147,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                       tooltip={t('button.Delete')}
                       icon={<Trash2 size="1em" />}
                     />
-                  </BAIPopconfirmAstryx>
+                  </BAIPopconfirm>
                 </BAIFlex>
               </BAIFlex>
             );
@@ -155,7 +155,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         </BAIFlex>
       )}
 
-      <BAIPopconfirmAstryx
+      <BAIPopconfirm
         title={t('dashboard.editSider.ResetLayout')}
         description={t('dashboard.editSider.ResetLayoutDescription')}
         isDanger
@@ -167,7 +167,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
           icon={<RotateCcw size="1em" />}
           label={t('dashboard.editSider.ResetLayout')}
         />
-      </BAIPopconfirmAstryx>
+      </BAIPopconfirm>
     </BAIFlex>
   );
 };

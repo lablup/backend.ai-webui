@@ -10,7 +10,7 @@
  fail on its own — the two calls are spied on explicitly.
 */
 import BAIDialog from './BAIDialog';
-import BAIDrawerAstryx from './BAIDrawerAstryx';
+import BAIDrawer from './BAIDrawer';
 import BAIDrawerPortal from './BAIDrawerPortal';
 import { BAI_MODAL_OPEN_ATTRIBUTE } from './dialogLevelStack';
 import { Theme, defineTheme } from '@astryxdesign/core/theme';
@@ -111,9 +111,9 @@ describe('BAIDrawerPortal', () => {
 
   it('bypasses the portal entirely for a non-scrim drawer', () => {
     render(
-      <BAIDrawerAstryx open hasScrim={false} title="Notifications">
+      <BAIDrawer open hasScrim={false} title="Notifications">
         <span>notices</span>
-      </BAIDrawerAstryx>,
+      </BAIDrawer>,
     );
 
     expect(getRoot()).toBeNull();

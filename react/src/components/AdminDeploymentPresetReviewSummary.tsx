@@ -7,7 +7,6 @@ import { resolvesReadsVfolderConfigFiles } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { theme } from '../theme-shim';
 import type {
   AdminDeploymentPresetFormValue,
   ModelServiceFormValue,
@@ -30,6 +29,7 @@ import {
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleX } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,12 +42,21 @@ import { useTranslation } from 'react-i18next';
 // and is DROPPED everywhere below — the Astryx default density is the design.
 
 const BASIC_INFO_FIELDS = ['name', 'runtimeVariantId', 'imageId'] as const;
-const RESOURCES_FIELDS = ['cpu', 'mem', 'clusterMode', 'clusterSize'] as const;
+const RESOURCES_FIELDS = [
+  'cpu',
+  'mem',
+  'clusterMode',
+  'clusterSize',
+  'resourceOpts',
+] as const;
 const DEPLOYMENT_FIELDS = ['replicaCount'] as const;
+// `environ` and `resourceOpts` are Form.Lists whose rows carry their own
+// required rules, so they report errors under the list's own name.
 const STEP2_FIELDS = [
   'startupCommand',
   'bootstrapScript',
   'modelDefinition',
+  'environ',
 ] as const;
 
 interface PresetReviewSummaryProps {
@@ -79,7 +88,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   /**
    * FR-3481: mirrors the input form's placement of Service
@@ -248,17 +256,26 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
     </>
   );
 
+  // `status="error"` only tints the border. These cards pass a custom `extra`,
+  // so they never reach BAICard's own error glyph — reuse its class hook.
+  const extraSlot = (stepIndex: number, cardId: string, hasError: boolean) =>
+    hasError ? (
+      <BAIFlex gap="xs" align="center" className="bai-card-extra--error">
+        <CircleX size="1em" aria-label={t('dialog.error.Error')} />
+        {editLink(stepIndex, cardId)}
+      </BAIFlex>
+    ) : (
+      editLink(stepIndex, cardId)
+    );
+
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
       {/* Basic Info */}
       <BAICard
         size="small"
-        className={basicInfoHasError ? 'bai-card-error' : ''}
-        style={
-          basicInfoHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={basicInfoHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.BasicInfo')}
-        extra={editLink(0, 'preset-form-card-basic')}
+        extra={extraSlot(0, 'preset-form-card-basic', basicInfoHasError)}
       >
         {/* Field order below mirrors the Basic Info step's actual input
             order (name → description → runtime → runtime params → service
@@ -313,12 +330,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Resources */}
       <BAICard
         size="small"
-        className={resourcesHasError ? 'bai-card-error' : ''}
-        style={
-          resourcesHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={resourcesHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.Resources')}
-        extra={editLink(0, 'preset-form-card-resources')}
+        extra={extraSlot(0, 'preset-form-card-resources', resourcesHasError)}
       >
         <MetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.ResourceSlots')}>
@@ -369,12 +383,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Deployment */}
       <BAICard
         size="small"
-        className={deploymentHasError ? 'bai-card-error' : ''}
-        style={
-          deploymentHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={deploymentHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.Deployment')}
-        extra={editLink(0, 'preset-form-card-deployment')}
+        extra={extraSlot(0, 'preset-form-card-deployment', deploymentHasError)}
       >
         {/* Multi-column MetadataList defaults its labels to position: top,
             which reads as a different (vertical) layout from every other
@@ -401,10 +412,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Model & Execution */}
       <BAICard
         size="small"
-        className={step2HasError ? 'bai-card-error' : ''}
-        style={step2HasError ? { borderColor: token.colorError } : undefined}
+        status={step2HasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.ModelAndExecution')}
-        extra={editLink(1, 'preset-form-card-model')}
+        extra={extraSlot(1, 'preset-form-card-model', step2HasError)}
       >
         <MetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.StartupCommand')}>

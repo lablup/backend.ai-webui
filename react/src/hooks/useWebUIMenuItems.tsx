@@ -21,7 +21,7 @@ import {
   useWebUIPluginValue,
 } from './useWebUIPluginState';
 import {
-  BAIBadgeCountAstryx,
+  BAIBadgeCount,
   BAIEndpointsIcon,
   BAIModelStoreIcon,
   BAIMyEnvironmentsIcon,
@@ -406,18 +406,18 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // PILOT-DECISION: antd `Badge dot offset color` — a DOT OVERLAY on a child
   // — is MAPPING §3.8's explicit NONE ("no count overlay, no Badge.Ribbon;
   // self-build, build once"). The gap component built for exactly that in
-  // ticket 08 is `BAIBadgeCountAstryx`, used here in its `dot` form. The
+  // ticket 08 is `BAIBadgeCount`, used here in its `dot` form. The
   // arbitrary `color={token.colorError|colorWarning}` becomes the component's
   // closed `variant` enum.
   const diagnosticsIcon = diagnosticsBadgeSeverity ? (
-    <BAIBadgeCountAstryx
+    <BAIBadgeCount
       hasDot
       offset={[-2, 2]}
       variant={diagnosticsBadgeSeverity === 'critical' ? 'error' : 'warning'}
       title={t('webui.menu.Diagnostics')}
     >
       <Activity style={{ color: token.colorInfo }} />
-    </BAIBadgeCountAstryx>
+    </BAIBadgeCount>
   ) : (
     <Activity style={{ color: token.colorInfo }} />
   );

@@ -71,7 +71,7 @@ async function fillLoginForm(page: Page): Promise<void> {
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
 
-  const endpointInput = page.getByLabel('Endpoint');
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -198,7 +198,7 @@ test.describe(
       );
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText('Missing required parameter: username'),
@@ -216,7 +216,7 @@ test.describe(
       );
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText('Missing required parameter: password'),
@@ -234,7 +234,7 @@ test.describe(
       );
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText(
@@ -267,7 +267,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText('Login information mismatch. Check your information'),
@@ -284,7 +284,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText('Login information mismatch. Check your information'),
@@ -302,7 +302,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText(
@@ -321,7 +321,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText('Login information mismatch. Check your information'),
@@ -342,7 +342,7 @@ test.describe(
       );
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByRole('dialog', { name: 'Logged in elsewhere' }),
@@ -398,7 +398,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
         page.getByText('Monitor role users are not allowed to log in.'),

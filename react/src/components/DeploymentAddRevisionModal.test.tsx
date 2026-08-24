@@ -142,10 +142,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
-    // The folder select crossed to Astryx (`…Astryx`, `isDisabled` instead of
-    // `disabled`); stub both names so the mock cannot silently miss the one
-    // the component renders.
-    BAIVFolderSelectAstryx: (props: any) =>
+    BAIVFolderSelect: (props: any) =>
       React.createElement(
         'button',
         {
@@ -157,7 +154,6 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         'select-model-folder',
       ),
     BAIAvailablePresetSelect: () => null,
-    BAIAvailablePresetSelectAstryx: () => null,
     BAIRuntimeVariantSelect: () => null,
   };
 });

@@ -11,7 +11,9 @@ import { test, expect, Page } from '@playwright/test';
  * Expand the endpoint section if not already visible and fill the endpoint.
  */
 async function fillEndpoint(page: Page, endpoint: string): Promise<void> {
-  const endpointInput = page.getByLabel('Endpoint');
+  // Must be the role locator: getByLabel('Endpoint') is ambiguous once the
+  // section is expanded (matches the History/About buttons too).
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -37,7 +39,13 @@ test.describe(
     test('should display the login form', async ({ page }) => {
       await expect(page.getByLabel('Email or Username')).toBeVisible();
       await expect(page.getByLabel('Password')).toBeVisible();
-      await expect(page.getByLabel('Login', { exact: true })).toBeVisible();
+      // Astryx `Button`'s accessible name comes from its visible text content,
+      // not `aria-label`, so `getByRole` is required (`getByLabel` matches
+      // nothing) — see `fillEndpoint` above for the sibling `Endpoint` locator
+      // issue from the same migration.
+      await expect(
+        page.getByRole('button', { name: 'Login', exact: true }),
+      ).toBeVisible();
     });
   },
 );
@@ -71,7 +79,7 @@ test.describe(
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
       await fillEndpoint(page, webServerEndpoint + '/');
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
       await expect(
@@ -85,7 +93,7 @@ test.describe(
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
       await fillEndpoint(page, webServerEndpoint + '///');
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
       await expect(
@@ -111,7 +119,7 @@ test.describe(
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password);
       await fillEndpoint(page, webServerEndpoint + '/');
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(page).toHaveURL(/\/start/, { timeout: 15_000 });
       expect(doubleSlashUrls).toHaveLength(0);
@@ -132,7 +140,7 @@ test.describe(
         .fill(`nonexistent-${new Date().getTime()}@example.com`);
       await page.getByLabel('Password').fill('somepassword');
       await fillEndpoint(page, webServerEndpoint);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for and verify the error notification appears
       await expect(
@@ -146,7 +154,7 @@ test.describe(
       await page.getByLabel('Email or Username').fill(userInfo.admin.email);
       await page.getByLabel('Password').fill(userInfo.admin.password + 'wrong');
       await fillEndpoint(page, webServerEndpoint);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for and verify the error notification appears
       await expect(

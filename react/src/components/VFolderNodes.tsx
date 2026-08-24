@@ -4,7 +4,7 @@
 
  Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
  (`BAITable`, Astryx engine). Everything rendered AROUND and INSIDE the table's
- cells is Astryx: `BAINameActionCellAstryx` (name + row actions),
+ cells is Astryx: `BAINameActionCell` (name + row actions),
  `Badge` + the repo-global status lookup (ticket 13) for the status tag,
  `Text` for text cells, `BAIText copyable` for the copyable id, and
  `BAIDeleteConfirmModal` (BUI) for the typed destructive confirm.

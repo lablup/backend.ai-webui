@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<55f892df2b8f2e429d81ab093d6d5682>>
+ * @generated SignedSource<<ca647247e5ea5d27f732666c80ddf411>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type RoleFormModalResourceGroupQuery$variables = Record<PropertyKey, never>;
 export type RoleFormModalResourceGroupQuery$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIAdminResourceGroupSelect_resourceGroupsFragment">;
 };
 export type RoleFormModalResourceGroupQuery = {
   response: RoleFormModalResourceGroupQuery$data;
@@ -37,7 +37,7 @@ return {
       {
         "args": null,
         "kind": "FragmentSpread",
-        "name": "BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment"
+        "name": "BAIAdminResourceGroupSelect_resourceGroupsFragment"
       }
     ],
     "type": "Query",
@@ -149,23 +149,23 @@ return {
           "filter"
         ],
         "handle": "connection",
-        "key": "BAIAdminResourceGroupSelectAstryx_resourceGroups",
+        "key": "BAIAdminResourceGroupSelect_resourceGroups",
         "kind": "LinkedHandle",
         "name": "resourceGroups"
       }
     ]
   },
   "params": {
-    "cacheID": "b46331ebb270f8953b2a3691d052408d",
+    "cacheID": "7651e21381517ec3783fe48265a90ad0",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalResourceGroupQuery",
     "operationKind": "query",
-    "text": "query RoleFormModalResourceGroupQuery {\n  ...BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment on Query {\n  resourceGroups(first: 10) @since(version: \"26.1.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query RoleFormModalResourceGroupQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  resourceGroups(first: 10) @since(version: \"26.1.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dbbd4032a661779a847862c44147f8ca";
+(node as any).hash = "524e2d7de23d79454b9bba980717fc7b";
 
 export default node;

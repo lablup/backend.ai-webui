@@ -18,6 +18,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
 import { theme, useBAIBreakpoint } from '../theme-shim';
 import {
   STEP_KEYS,
@@ -55,7 +56,7 @@ import { Selector } from '@astryxdesign/core/Selector';
 import { Step, Stepper } from '@astryxdesign/lab';
 import {
   BAISkeleton,
-  BAIAdminImageSelectAstryx,
+  BAIAdminImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
@@ -129,7 +130,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelectAstryx
+// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
@@ -153,7 +154,7 @@ const ImageSelectField: React.FC<{
         />
       }
     >
-      <BAIAdminImageSelectAstryx
+      <BAIAdminImageSelect
         label={t('adminDeploymentPreset.Image')}
         isLabelHidden
         value={value}
@@ -252,6 +253,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const supportsNullableModelDefinition = baiClient.supports(
     'preset-model-config-type',
   );
+  const commonEnvVars = useCommonEnvVarConfigs();
 
   const preset = useFragment(
     graphql`
@@ -765,8 +767,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     }
   };
 
+  // `getFieldError` only reports MOUNTED fields, so a step the user has
+  // navigated away from always read as clean; `errorFieldNames` comes from the
+  // full `validateFields()` sweep and covers every step (FR-3520).
   const stepHasError = (fields: string[]) =>
-    fields.some((f) => form.getFieldError(f as never).length > 0);
+    fields.some(
+      (f) =>
+        form.getFieldError(f as never).length > 0 || errorFieldNames.includes(f),
+    );
 
   const stepErrors = [
     stepHasError([
@@ -778,9 +786,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       'clusterMode',
       'clusterSize',
       'replicaCount',
+      'resourceOpts',
     ]),
-    stepHasError(['startupCommand', 'bootstrapScript']) ||
-      errorFieldNames.includes('modelDefinition'),
+    stepHasError([
+      'startupCommand',
+      'bootstrapScript',
+      'modelDefinition',
+      'environ',
+    ]),
     reviewHasError,
   ];
 
@@ -1177,7 +1190,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               label={t('adminDeploymentPreset.EnvironmentVariables')}
               style={{ marginBottom: 0 }}
             >
-              <EnvVarFormList name="environ" />
+              <EnvVarFormList name="environ" optionalEnvVars={commonEnvVars} />
             </BAIFormItem>
           </BAICard>
 

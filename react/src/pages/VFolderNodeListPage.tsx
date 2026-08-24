@@ -28,7 +28,7 @@ import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIVFolderDeleteButtonAstryx as BAIVFolderDeleteButton,
+  BAIVFolderDeleteButton,
   BAICard,
   BAIPropertyFilter,
   BAISelectionLabel,
@@ -226,7 +226,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
-                ...BAIVFolderDeleteButtonAstryxFragment
+                ...BAIVFolderDeleteButtonFragment
               }
             }
             count

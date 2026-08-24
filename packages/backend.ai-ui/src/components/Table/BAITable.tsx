@@ -40,8 +40,8 @@ import { theme } from '../../theme-shim';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import './BAITable.css';
-import BAITableAstryxSettingModal from './BAITableAstryxSettingModal';
 import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
+import BAITableSettingModal from './BAITableSettingModal';
 import type {
   BAIAnyObject,
   BAIColumnType,
@@ -1366,7 +1366,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
 
       {tableSettings ? (
         <BAIUnmountAfterClose>
-          <BAITableAstryxSettingModal
+          <BAITableSettingModal
             open={isSettingModalOpen}
             columns={_.map(flatColumns, (flat) => ({
               key: flat.key,

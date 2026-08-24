@@ -15,7 +15,7 @@ import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { BAISegmentedControlItemAstryx, BAIFlex } from 'backend.ai-ui';
+import { BAISegmentedControlItem, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
@@ -63,7 +63,7 @@ const ClusterModeSegmented: React.FC<{
       {items.map((item) => (
         // FR-3531: the help affordance is a small view that trails the label,
         // not a leading `icon` — Astryx renders the `icon` slot first.
-        <BAISegmentedControlItemAstryx
+        <BAISegmentedControlItem
           key={item.value}
           value={item.value}
           label={
@@ -118,7 +118,7 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
               {/* MAPPING §3.10: `Radio.Group` whose children are
                   `Radio.Button` -> `SegmentedControl` + `SegmentedControlItem`.
                   The per-option help tooltip stays inside the label (FR-3531),
-                  which `BAISegmentedControlItemAstryx` widens to a ReactNode. */}
+                  which `BAISegmentedControlItem` widens to a ReactNode. */}
               <Form.Item name={'cluster_mode'} required noStyle>
                 <ClusterModeSegmented
                   label={t('session.launcher.ClusterMode')}

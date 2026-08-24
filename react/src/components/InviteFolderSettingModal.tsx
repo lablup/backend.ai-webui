@@ -28,7 +28,7 @@ import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
 import {
-  BAIPopconfirmAstryx as BAIPopconfirm,
+  BAIPopconfirm,
   BAIModal,
   type BAIModalProps,
   BAIQuestionIconWithTooltip,

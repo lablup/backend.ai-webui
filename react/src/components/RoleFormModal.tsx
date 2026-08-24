@@ -21,22 +21,22 @@ import {
 } from './astryxFormControls';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAdminContainerRegistrySelectAstryx,
-  BAIAdminModelServiceSelectAstryx,
-  BAIAdminProjectSelectAstryx,
-  BAIAdminResourceGroupSelectAstryx,
-  BAIAdminSessionSelectAstryx,
+  BAIAdminContainerRegistrySelect,
+  BAIAdminModelServiceSelect,
+  BAIAdminProjectSelect,
+  BAIAdminResourceGroupSelect,
+  BAIAdminSessionSelect,
   BAIButton,
   BAIDomainSelect,
   BAIDomainSelectV2,
   BAIFlex,
-  BAIKeypairSelectAstryx,
+  BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAIStorageHostSelectAstryx,
-  BAIUserSelectAstryx,
-  BAIVFolderSelectAstryx,
+  BAIStorageHostSelect,
+  BAIUserSelect,
+  BAIVFolderSelect,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -112,13 +112,13 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   const queryRef = useLazyLoadQuery<RoleFormModalResourceGroupQuery>(
     graphql`
       query RoleFormModalResourceGroupQuery {
-        ...BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment
+        ...BAIAdminResourceGroupSelect_resourceGroupsFragment
       }
     `,
     {},
     { fetchPolicy: 'store-and-network' },
   );
-  return <BAIAdminResourceGroupSelectAstryx queryRef={queryRef} {...props} />;
+  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
@@ -167,42 +167,42 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminProjectSelectAstryx {...branchProps} />
+        <BAIAdminProjectSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'USER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIUserSelectAstryx valuePropName="id" {...branchProps} />
+        <BAIUserSelect valuePropName="id" {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'VFOLDER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIVFolderSelectAstryx {...branchProps} />
+        <BAIVFolderSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'SESSION') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminSessionSelectAstryx {...branchProps} />
+        <BAIAdminSessionSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'MODEL_DEPLOYMENT') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminModelServiceSelectAstryx {...branchProps} />
+        <BAIAdminModelServiceSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'CONTAINER_REGISTRY') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminContainerRegistrySelectAstryx
+        <BAIAdminContainerRegistrySelect
           valuePropName="row_id"
           {...branchProps}
         />
@@ -212,14 +212,14 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'STORAGE_HOST') {
     return (
       <Suspense fallback={fallback}>
-        <BAIStorageHostSelectAstryx {...branchProps} />
+        <BAIStorageHostSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'KEYPAIR') {
     return (
       <Suspense fallback={fallback}>
-        <BAIKeypairSelectAstryx {...branchProps} />
+        <BAIKeypairSelect {...branchProps} />
       </Suspense>
     );
   }

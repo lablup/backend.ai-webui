@@ -62,12 +62,12 @@ export interface BAIExampleProps {
 ### Examples
 
 ```tsx
-// (1) Astryx base — BAIPopconfirmAstryx wraps Astryx `Popover`; `content` is
+// (1) Astryx base — BAIPopconfirm wraps Astryx `Popover`; `content` is
 //     Omitted because this component OWNS the popover content.
-//     packages/backend.ai-ui/src/components/BAIPopconfirmAstryx.tsx
+//     packages/backend.ai-ui/src/components/BAIPopconfirm.tsx
 import type { PopoverProps } from '@astryxdesign/core/Popover';
 
-export interface BAIPopconfirmAstryxProps extends Omit<
+export interface BAIPopconfirmProps extends Omit<
   PopoverProps,
   'content' | 'label'
 > {
@@ -76,13 +76,13 @@ export interface BAIPopconfirmAstryxProps extends Omit<
   onConfirm?: (e: React.MouseEvent<HTMLButtonElement>) => void | Promise<void>;
 }
 
-// (1) Astryx base — BAIBadgeCountAstryx wraps Astryx `Badge`.
+// (1) Astryx base — BAIBadgeCount wraps Astryx `Badge`.
 //     NOTE: `BadgeProps` here is ASTRYX's, not antd's. It is the only live
 //     `BadgeProps` in the repo.
-//     packages/backend.ai-ui/src/components/BAIBadgeCountAstryx.tsx
+//     packages/backend.ai-ui/src/components/BAIBadgeCount.tsx
 import type { BadgeProps } from '@astryxdesign/core/Badge';
 
-export interface BAIBadgeCountAstryxProps extends Omit<
+export interface BAIBadgeCountProps extends Omit<
   BadgeProps,
   'label' | 'icon'
 > {
