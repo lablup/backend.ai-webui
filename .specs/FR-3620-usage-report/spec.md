@@ -84,14 +84,14 @@ Per audience:
     `useUserUsageStats`). User monthly stays **best-effort permanently** —
     show available data + truncation banner; no backend ask.
 - **Admin global (superadmin-gated)**:
-  - Utilization: `prometheusQueryPresetResult` executing the **manager-seeded
-    default container-utilization presets** (alembic-seeded gauge templates
-    over `backendai_container_utilization`; filter `container_metric_name`,
-    group by `value_type` for current/capacity → percent client-side). The
-    WebUI creates **no presets of its own** (implementation revision,
-    2026-08-24 — the original app-seeding plan polluted the deployment preset
-    UI). Older managers without the preset catalog degrade to a "requires
-    manager support" placeholder.
+  - Utilization: **not servable today** (implementation revision, 2026-08-24;
+    the spec's original preset plan is withdrawn — the `prometheusQueryPreset*`
+    APIs belong to the deployment domain and are not reused here). Prometheus
+    utilization is exposed per user only (`user_utilization_metric`, required
+    `user_id`); sections render a "requires manager support" placeholder until
+    a sibling field with optional scope labels lands (`TODO(needs-backend)`
+    FR-3645 — the manager's metric service is already scope-agnostic, only the
+    GQL layer pins `user_id`).
   - Allocation: `GET /resource/stats/admin/month` bins (running sessions
     included) whenever the trailing-30d window covers the period; otherwise
     `GET /resource/usage/period` per-kernel records (terminated-only on older
