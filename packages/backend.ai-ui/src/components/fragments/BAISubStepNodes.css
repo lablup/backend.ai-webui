@@ -46,16 +46,29 @@
   line-height: var(--text-body-leading);
 }
 
-.bai-substep-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: separate;
-  border-spacing: 0;
+/* The card is the scroller, so its border and radius stay put while the
+   columns slide underneath — the alternative, truncating, hides exactly the
+   values people open this panel to read (step names, error codes, and the
+   scheduler's placement-failure text all outrun any workable column width).
+   `overflow-y` must be stated: a `visible` axis next to a scrolling one
+   computes to `auto` and would add a stray vertical scrollbar. */
+.bai-substep-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
   background: var(--color-background-card);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-element);
-  /* Clips the header tint into the rounded corners. */
-  overflow: hidden;
+}
+
+.bai-substep-table {
+  /* `auto` + `max-content`: the `<col>` widths become the resting layout, and
+     any column whose content needs more takes it, widening the table past the
+     card and turning on the scrollbar. */
+  width: 100%;
+  min-width: max-content;
+  table-layout: auto;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .bai-substep-col-rail {
@@ -83,13 +96,13 @@
   padding: 0 var(--bai-substep-cell-inline);
   text-align: start;
   vertical-align: middle;
-  /* The cell is width-bounded by `table-layout: fixed`, so a `Text maxLines`
-     child ellipsises instead of widening the column. */
-  overflow: hidden;
+  /* Nothing wraps: a cell `height` is only a minimum, so a second line box
+     would push the row past 32px. Content that does not fit widens its column
+     and scrolls instead. */
+  white-space: nowrap;
 }
 
-/* Typography lives on the header's `Text` (which also brings the ellipsis and
-   the truncate tooltip the fixed column widths need); only the band is here. */
+/* Typography lives on the header's `Text`; only the band is here. */
 .bai-substep-table thead th {
   background: var(--color-background-muted);
 }
@@ -117,7 +130,6 @@
 .bai-substep-table td.bai-substep-rail-cell {
   position: relative;
   padding: 0;
-  overflow: visible;
 }
 
 /* The connector runs the full row height, and is trimmed to a half at the two
@@ -199,7 +211,6 @@
 .bai-substep-result {
   display: inline-flex;
   align-items: center;
-  max-width: 100%;
   padding: 0 var(--spacing-1-5);
   border: var(--border-width) solid var(--bai-substep-chip-border);
   border-radius: var(--radius-inner);
@@ -210,7 +221,6 @@
 .bai-substep-code {
   display: inline-flex;
   align-items: center;
-  max-width: 100%;
   padding: 0 var(--spacing-1-5);
   border: var(--border-width) solid var(--color-border-emphasized);
   border-radius: var(--radius-inner);

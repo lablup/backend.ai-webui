@@ -170,136 +170,132 @@ const BAISubStepNodes = ({
 
   return (
     <div className={classNames('bai-substep-panel', className)} {...divProps}>
-      <table className="bai-substep-table">
-        <colgroup>
-          <col className="bai-substep-col-rail" />
-          <col className="bai-substep-col-step" />
-          <col className="bai-substep-col-result" />
-          <col className="bai-substep-col-duration" />
-          <col className="bai-substep-col-time" />
-          <col className="bai-substep-col-code" />
-          <col />
-        </colgroup>
-        <thead>
-          <tr>
-            {/* The rail column is decoration, but the header cell has to exist
-                for the column count to line up. */}
-            <th scope="col" />
-            {(
-              [
-                ['Step', undefined],
-                ['Result', undefined],
-                ['Duration', 'bai-substep-num'],
-                ['Time', undefined],
-                ['ErrorCode', undefined],
-                ['Message', undefined],
-              ] as const
-            ).map(([key, cellClassName]) => (
-              <th scope="col" key={key} className={cellClassName}>
-                {/* `maxLines` for the ellipsis and the hover tooltip: the
-                    columns are fixed-width, and a one-word label like ru
-                    `Длительность` needs 103px in the 74px duration column. */}
-                <Text type="supporting" weight="medium" maxLines={1}>
-                  {t(`comp:BAISubStepNodes.${key}`)}
-                </Text>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {dataSource.map((record, index) => {
-            const result = toSchedulingResult(record.result);
-            const isResultMarker = isLifecycleMarkerEntry(
-              record,
-              index,
-              dataSource.length,
-              parentPhase,
-            );
-            const elapsed = formatElapsed(record.startedAt, record.endedAt);
+      {/* The card scrolls sideways rather than truncating: step names, error
+          codes and scheduler messages are all longer than any column width
+          that keeps six columns on screen. */}
+      <div className="bai-substep-scroll">
+        <table className="bai-substep-table">
+          <colgroup>
+            <col className="bai-substep-col-rail" />
+            <col className="bai-substep-col-step" />
+            <col className="bai-substep-col-result" />
+            <col className="bai-substep-col-duration" />
+            <col className="bai-substep-col-time" />
+            <col className="bai-substep-col-code" />
+            <col />
+          </colgroup>
+          <thead>
+            <tr>
+              {/* The rail column is decoration, but the header cell has to exist
+                  for the column count to line up. */}
+              <th scope="col" />
+              {(
+                [
+                  ['Step', undefined],
+                  ['Result', undefined],
+                  ['Duration', 'bai-substep-num'],
+                  ['Time', undefined],
+                  ['ErrorCode', undefined],
+                  ['Message', undefined],
+                ] as const
+              ).map(([key, cellClassName]) => (
+                <th scope="col" key={key} className={cellClassName}>
+                  <Text type="supporting" weight="medium">
+                    {t(`comp:BAISubStepNodes.${key}`)}
+                  </Text>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {dataSource.map((record, index) => {
+              const result = toSchedulingResult(record.result);
+              const isResultMarker = isLifecycleMarkerEntry(
+                record,
+                index,
+                dataSource.length,
+                parentPhase,
+              );
+              const elapsed = formatElapsed(record.startedAt, record.endedAt);
 
-            return (
-              <tr
-                key={`${record.step}-${index}`}
-                className={classNames(
-                  'bai-substep-row',
-                  isResultMarker && 'bai-substep-row--marker',
-                )}
-                data-variant={
-                  result ? resultSemanticColorMap[result] : 'default'
-                }
-              >
-                {/* No `aria-hidden`: hiding it would leave the row owning
-                    six cells against seven column headers. Empty is right —
-                    the header cell above it is empty too. */}
-                <td className="bai-substep-rail-cell" />
-                <td>
-                  <Text
-                    type="code"
-                    size="sm"
-                    maxLines={1}
-                    color={isResultMarker ? 'secondary' : 'primary'}
-                  >
-                    {record.step}
-                  </Text>
-                </td>
-                <td>
-                  {result ? (
-                    <span className="bai-substep-result">
-                      <Text type="supporting" color="inherit" maxLines={1}>
-                        {result}
-                      </Text>
-                    </span>
-                  ) : null}
-                </td>
-                <td className="bai-substep-num">
-                  {/* The marker is an instant, not work — it has no duration. */}
-                  {!isResultMarker && elapsed ? (
-                    <Text type="code" size="sm" color="secondary">
-                      {elapsed}
-                    </Text>
-                  ) : (
-                    <Text type="supporting" color="disabled">
-                      -
-                    </Text>
+              return (
+                <tr
+                  key={`${record.step}-${index}`}
+                  className={classNames(
+                    'bai-substep-row',
+                    isResultMarker && 'bai-substep-row--marker',
                   )}
-                </td>
-                <td>
-                  {record.startedAt ? (
-                    <Text type="code" size="sm" color="secondary">
-                      {dayjs(record.startedAt).format(TIME_FORMAT)}
+                  data-variant={
+                    result ? resultSemanticColorMap[result] : 'default'
+                  }
+                >
+                  {/* No `aria-hidden`: hiding it would leave the row owning
+                      six cells against seven column headers. Empty is right —
+                      the header cell above it is empty too. */}
+                  <td className="bai-substep-rail-cell" />
+                  <td>
+                    <Text
+                      type="code"
+                      size="sm"
+                      color={isResultMarker ? 'secondary' : 'primary'}
+                    >
+                      {record.step}
                     </Text>
-                  ) : null}
-                </td>
-                <td>
-                  {record.errorCode ? (
-                    <span className="bai-substep-code">
-                      <Text
-                        type="code"
-                        size="sm"
-                        color="secondary"
-                        maxLines={1}
-                      >
-                        {record.errorCode}
+                  </td>
+                  <td>
+                    {result ? (
+                      <span className="bai-substep-result">
+                        <Text type="supporting" color="inherit">
+                          {result}
+                        </Text>
+                      </span>
+                    ) : null}
+                  </td>
+                  <td className="bai-substep-num">
+                    {/* The marker is an instant, not work — it has no duration. */}
+                    {!isResultMarker && elapsed ? (
+                      <Text type="code" size="sm" color="secondary">
+                        {elapsed}
                       </Text>
-                    </span>
-                  ) : (
-                    <Text type="supporting" color="disabled">
-                      -
+                    ) : (
+                      <Text type="supporting" color="disabled">
+                        -
+                      </Text>
+                    )}
+                  </td>
+                  <td>
+                    {record.startedAt ? (
+                      <Text type="code" size="sm" color="secondary">
+                        {dayjs(record.startedAt).format(TIME_FORMAT)}
+                      </Text>
+                    ) : null}
+                  </td>
+                  <td>
+                    {record.errorCode ? (
+                      <span className="bai-substep-code">
+                        <Text type="code" size="sm" color="secondary">
+                          {record.errorCode}
+                        </Text>
+                      </span>
+                    ) : (
+                      <Text type="supporting" color="disabled">
+                        -
+                      </Text>
+                    )}
+                  </td>
+                  <td>
+                    <Text type="supporting">
+                      {isResultMarker
+                        ? t('comp:BAISubStepNodes.ResultMarker')
+                        : toSingleLine(record.message)}
                     </Text>
-                  )}
-                </td>
-                <td>
-                  <Text type="supporting" maxLines={1}>
-                    {isResultMarker
-                      ? t('comp:BAISubStepNodes.ResultMarker')
-                      : toSingleLine(record.message)}
-                  </Text>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
