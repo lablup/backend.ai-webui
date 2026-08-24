@@ -6,10 +6,9 @@
  a vertical timeline inside the parent row's expanded area.
 
  The backend flattens `PhaseRecord` groups on write, so what the API returns is
- a plain time-ordered list; and `_build_history_sub_steps` appends one trailing
- entry whose result mirrors the parent's and whose `started_at == ended_at` —
- a RESULT MARKER rather than an executed step. Both facts are what the timeline
- renders: solid nodes for the steps, an open dashed node for the marker.
+ a plain time-ordered list. Deployment rows carry one extra trailing entry that
+ restates the row itself — see `isLifecycleMarkerEntry` — and it renders as an
+ open dashed node capping the solid ones.
 
  Every font size, weight and colour comes from the theme through Astryx `Text`
  semantic types (`code` / `supporting`) and the `primary` / `secondary` colour
