@@ -767,8 +767,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     }
   };
 
+  // `getFieldError` only reports MOUNTED fields, so a step the user has
+  // navigated away from always read as clean; `errorFieldNames` comes from the
+  // full `validateFields()` sweep and covers every step (FR-3520).
   const stepHasError = (fields: string[]) =>
-    fields.some((f) => form.getFieldError(f as never).length > 0);
+    fields.some(
+      (f) =>
+        form.getFieldError(f as never).length > 0 || errorFieldNames.includes(f),
+    );
 
   const stepErrors = [
     stepHasError([
@@ -780,9 +786,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       'clusterMode',
       'clusterSize',
       'replicaCount',
+      'resourceOpts',
     ]),
-    stepHasError(['startupCommand', 'bootstrapScript']) ||
-      errorFieldNames.includes('modelDefinition'),
+    stepHasError([
+      'startupCommand',
+      'bootstrapScript',
+      'modelDefinition',
+      'environ',
+    ]),
     reviewHasError,
   ];
 
