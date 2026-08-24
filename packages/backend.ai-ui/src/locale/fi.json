@@ -458,12 +458,8 @@
     "SelectStorageProxy": "Valitse tallennusvälityspalvelin"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Päättymisaika",
     "ErrorCode": "Virhekoodi",
-    "Message": "Viesti",
-    "Result": "Tulos",
-    "StartedAt": "Aloitusaika",
-    "Step": "Vaihe"
+    "ResultMarker": "Tulosmerkintä"
   },
   "comp:BAITable": {
     "Apply": "Käytä",

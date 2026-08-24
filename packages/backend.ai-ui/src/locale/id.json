@@ -458,12 +458,8 @@
     "SelectStorageProxy": "Pilih Proksi Penyimpanan"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Berakhir pada",
     "ErrorCode": "Kode Kesalahan",
-    "Message": "Pesan",
-    "Result": "Hasil",
-    "StartedAt": "Dimulai pada",
-    "Step": "Langkah"
+    "ResultMarker": "Penanda Hasil"
   },
   "comp:BAITable": {
     "Apply": "Terapkan",

@@ -458,12 +458,8 @@
     "SelectStorageProxy": "스토리지 프록시를 선택해주세요"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "종료일",
     "ErrorCode": "오류 코드",
-    "Message": "메시지",
-    "Result": "결과",
-    "StartedAt": "시작일",
-    "Step": "세부단계"
+    "ResultMarker": "결과 마커"
   },
   "comp:BAITable": {
     "Apply": "적용",

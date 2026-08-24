@@ -482,12 +482,8 @@
     "SelectStorageProxy": "Select Storage Proxy"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Ended At",
     "ErrorCode": "Error Code",
-    "Message": "Message",
-    "Result": "Result",
-    "StartedAt": "Started At",
-    "Step": "Step"
+    "ResultMarker": "Result Marker"
   },
   "comp:BAITable": {
     "Apply": "Apply",

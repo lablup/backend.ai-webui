@@ -68,11 +68,9 @@ const BAIDeploymentSchedulingHistoryTable = ({
           !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
         expandedRowRender: (record: DeploymentSchedulingHistoryNodeInList) => (
           <BAISubStepNodes
-            resizable
             subStepsFrgmt={
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
-            pagination={false}
           />
         ),
       }}

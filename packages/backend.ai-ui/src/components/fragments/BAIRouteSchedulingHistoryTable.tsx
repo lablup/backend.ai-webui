@@ -68,11 +68,9 @@ const BAIRouteSchedulingHistoryTable = ({
           !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
         expandedRowRender: (record: RouteSchedulingHistoryNodeInList) => (
           <BAISubStepNodes
-            resizable
             subStepsFrgmt={
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
-            pagination={false}
           />
         ),
       }}

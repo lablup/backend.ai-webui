@@ -458,12 +458,8 @@
     "SelectStorageProxy": "Επιλέξτε proxy αποθήκευσης"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Έληξε στις",
     "ErrorCode": "Κωδικός σφάλματος",
-    "Message": "Μήνυμα",
-    "Result": "Αποτέλεσμα",
-    "StartedAt": "Ξεκίνησε στις",
-    "Step": "Βήμα"
+    "ResultMarker": "Δείκτης αποτελέσματος"
   },
   "comp:BAITable": {
     "Apply": "Εφαρμογή",

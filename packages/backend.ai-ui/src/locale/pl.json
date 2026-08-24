@@ -458,12 +458,8 @@
     "SelectStorageProxy": "Wybierz serwer proxy pamięci masowej"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Zakończono o",
     "ErrorCode": "Kod błędu",
-    "Message": "Wiadomość",
-    "Result": "Wynik",
-    "StartedAt": "Rozpoczęto",
-    "Step": "Krok"
+    "ResultMarker": "Znacznik wyniku"
   },
   "comp:BAITable": {
     "Apply": "Zastosuj",

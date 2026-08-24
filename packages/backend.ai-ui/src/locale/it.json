@@ -458,12 +458,8 @@
     "SelectStorageProxy": "Seleziona proxy di archiviazione"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Terminato il",
     "ErrorCode": "Codice di errore",
-    "Message": "Messaggio",
-    "Result": "Risultato",
-    "StartedAt": "Avviato il",
-    "Step": "Passo"
+    "ResultMarker": "Indicatore di risultato"
   },
   "comp:BAITable": {
     "Apply": "Applica",

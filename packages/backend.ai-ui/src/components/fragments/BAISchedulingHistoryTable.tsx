@@ -68,11 +68,9 @@ const BAISchedulingHistoryTable = ({
           !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
         expandedRowRender: (record: SchedulingHistoryNodeInList) => (
           <BAISubStepNodes
-            resizable
             subStepsFrgmt={
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
-            pagination={false}
           />
         ),
       }}

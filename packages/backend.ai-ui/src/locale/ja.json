@@ -458,12 +458,8 @@
     "SelectStorageProxy": "ストレージプロキシを選択"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "終了日時",
     "ErrorCode": "エラーコード",
-    "Message": "メッセージ",
-    "Result": "結果",
-    "StartedAt": "開始日時",
-    "Step": "ステップ"
+    "ResultMarker": "結果マーカー"
   },
   "comp:BAITable": {
     "Apply": "適用",
