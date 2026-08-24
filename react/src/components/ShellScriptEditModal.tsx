@@ -15,7 +15,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIPopconfirmAstryx,
+  BAIPopconfirm,
   BAIModal,
   BAIModalProps,
   BAIFlex,
@@ -216,7 +216,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                   chevron — a one-item menu behind a confirm dialog is pure
                   indirection (simplicity policy, same precedent as
                   SettingItem.tsx's Reset control). */}
-              <BAIPopconfirmAstryx
+              <BAIPopconfirm
                 title={t('dialog.title.LetsDouble-Check')}
                 description={t('dialog.ask.DoYouWantToResetChanges')}
                 isDanger
@@ -230,7 +230,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                   tooltip={t('button.Reset')}
                   variant="destructive"
                 />
-              </BAIPopconfirmAstryx>
+              </BAIPopconfirm>
             </ButtonGroup>
           </BAIFlex>
           <BAIFlex gap={'sm'}>

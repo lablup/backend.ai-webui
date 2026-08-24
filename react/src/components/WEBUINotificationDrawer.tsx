@@ -15,7 +15,7 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { VStack } from '@astryxdesign/core/Stack';
 import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { BAIDrawerAstryx as BAIDrawer, BAIFlex } from 'backend.ai-ui';
+import { BAIDrawer, BAIFlex } from 'backend.ai-ui';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,7 +83,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
       // qa2-c: this used to sit in a hand-rolled first content row, which had
       // to reserve 32px on the inline end so lab `Drawer`'s FLOATING close
       // button (absolutely positioned, top-trailing) did not swallow the More
-      // button's hit box. `BAIDrawerAstryx` turns that floating button off and
+      // button's hit box. `BAIDrawer` turns that floating button off and
       // renders the close affordance inside the header at antd's `start`
       // placement, so the reserve — and the overlap — are gone.
       extra={

@@ -20,7 +20,7 @@ import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIPopconfirmAstryx } from 'backend.ai-ui';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   type BAIColumnType,
   BAIFetchKeyButton,
@@ -641,7 +641,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                     of the WRAPPER and left it with a full pill next to the
                     menu's `0 8px 8px 0`. The render prop hands the trigger
                     wiring to the button itself and emits no wrapper. */}
-                <BAIPopconfirmAstryx
+                <BAIPopconfirm
                   title={t('deployment.ApplyRevision')}
                   description={t('deployment.ApplyConfirm', {
                     revisionNumber: drawerRevision.frgmt.revisionNumber,
@@ -668,7 +668,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                       }
                     />
                   )}
-                </BAIPopconfirmAstryx>
+                </BAIPopconfirm>
                 {/* TODO: "AddNewRevisionFromThis" is the only menu item.
                     Disable the entire button when stopped. When more items
                     are added, disable per-item instead. */}

@@ -21,8 +21,8 @@ import {
   BAIButton,
   BAIFlex,
   BAISelect,
-  BAIVFolderSelectAstryx,
-  BAIVFolderSelectAstryxRef,
+  BAIVFolderSelect,
+  BAIVFolderSelectRef,
   generateRandomString,
   safeDecodeUuid,
   toGlobalId,
@@ -151,9 +151,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
     useStartSession();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
 
-  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
-  // id → name for selected folders, resolved by BAIVFolderSelectAstryx (and seeded
+  // id → name for selected folders, resolved by BAIVFolderSelect (and seeded
   // directly when a folder is created through FolderCreateModalV2). The name
   // is needed to build the download path under `/home/work/<folder>/`.
   const [folderNameMap, setFolderNameMap] = useState<Record<string, string>>(
@@ -328,7 +328,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   },
                 ]}
               >
-                <BAIVFolderSelectAstryx
+                <BAIVFolderSelect
                   ref={vfolderSelectRef}
                   label={t('deployment.ModelFolder')}
                   isLabelHidden
@@ -425,7 +425,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           }
           if (result?.id) {
             // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelectAstryx's value query reads from `vfolder_nodes`
+            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
             // (`VirtualFolderNode`, Graphene). Both encode the same UUID but
             // with different `__typename:` prefixes, so re-encode to the
             // VirtualFolderNode global ID form before selecting it.

@@ -42,7 +42,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
-  BAISegmentedControlItemAstryx,
+  BAISegmentedControlItem,
   BAIFlex,
   useEventNotStable,
   useUpdatableState,
@@ -213,7 +213,7 @@ const ClusterModeSegmented: React.FC<{
       {items.map((item) => (
         // FR-3531: the help affordance is a small view that trails the label,
         // not a leading `icon` — Astryx renders the `icon` slot first.
-        <BAISegmentedControlItemAstryx
+        <BAISegmentedControlItem
           key={item.value}
           value={item.value}
           label={

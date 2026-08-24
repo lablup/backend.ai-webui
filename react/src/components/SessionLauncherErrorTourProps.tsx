@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import BAITourAstryx from './BAITourAstryx';
+import BAITour from './BAITour';
+import useTourTargets from './useTourTargets';
 import { TourStep } from '@astryxdesign/lab';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import useTourTargets from './useTourTargets';
 
 /**
  * PILOT-DECISION: public props narrowed from antd's
@@ -16,14 +16,14 @@ import useTourTargets from './useTourTargets';
  * surface is entirely different, so the blanket antd-prop passthrough
  * (`{...otherProps}`) had nothing left to carry. `onClose` loses antd's mouse
  * event — the consumer ignores it. antd's `scrollIntoViewOptions` (passed as a
- * bare boolean at the call site) is handled per step by `BAITourAstryx`
+ * bare boolean at the call site) is handled per step by `BAITour`
  * (FR-3526), matching the preset tour.
  */
 interface SessionLauncherValidationTourProps {
   open?: boolean;
   onClose?: () => void;
   /** Accepted for source compatibility with the existing call site; the
-   *  scroll behaviour is unconditional, per step, via `BAITourAstryx`. */
+   *  scroll behaviour is unconditional, per step, via `BAITour`. */
   scrollIntoViewOptions?: boolean;
 }
 
@@ -71,7 +71,7 @@ const SessionLauncherValidationTour: React.FC<
   };
 
   return (
-    <BAITourAstryx
+    <BAITour
       isActive
       hasBackdrop
       isStepCountShown
@@ -103,7 +103,7 @@ const SessionLauncherValidationTour: React.FC<
           {t('tourGuide.neoSessionLauncher.FixErrorAndTryAgainText')}
         </TourStep>
       ) : null}
-    </BAITourAstryx>
+    </BAITour>
   );
 };
 

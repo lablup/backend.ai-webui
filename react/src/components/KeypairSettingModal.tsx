@@ -15,7 +15,7 @@ import {
   BAIModal,
   type BAIModalProps,
   BAISelect,
-  BAIUserSelectAstryx,
+  BAIUserSelect,
 } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -152,7 +152,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
         initialValues={keypair ? { ...keypair } : {}}
       >
         {!keypair && (
-          // `BAIUserSelectAstryx` is the direct child of `BAIFormItem` so antd binds
+          // `BAIUserSelect` is the direct child of `BAIFormItem` so antd binds
           // its value/onChange automatically. The fallback mirrors the same
           // `BAIFormItem` to keep the field and its required rule registered
           // while the select fetches. Same shape as `ProjectAdminSettingModal`.
@@ -182,7 +182,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <BAIUserSelectAstryx
+              <BAIUserSelect
                 label={t('general.User')}
                 isLabelHidden
                 placeholder={t('credential.SelectUser')}

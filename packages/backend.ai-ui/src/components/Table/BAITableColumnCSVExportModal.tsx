@@ -7,7 +7,7 @@
  The antd version rendered an antd `Table` (one column, a `Checkbox` per row)
  inside an antd `Modal` wrapped in a `Form` whose only field was the search
  box — three container components for what is a searchable checkbox list. This
- rebuild drops all of that chrome and mirrors `BAITableAstryxSettingModal`:
+ rebuild drops all of that chrome and mirrors `BAITableSettingModal`:
  `Dialog` + `Layout` + a plain scrolling `VStack` of `CheckboxInput` rows.
 
  The EXPORT-KEY GROUPING logic is preserved verbatim, because it is the only

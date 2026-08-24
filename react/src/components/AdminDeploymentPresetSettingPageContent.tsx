@@ -55,7 +55,7 @@ import { Selector } from '@astryxdesign/core/Selector';
 import { Step, Stepper } from '@astryxdesign/lab';
 import {
   BAISkeleton,
-  BAIAdminImageSelectAstryx,
+  BAIAdminImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
@@ -129,7 +129,7 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelectAstryx
+// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
@@ -153,7 +153,7 @@ const ImageSelectField: React.FC<{
         />
       }
     >
-      <BAIAdminImageSelectAstryx
+      <BAIAdminImageSelect
         label={t('adminDeploymentPreset.Image')}
         isLabelHidden
         value={value}

@@ -15,12 +15,12 @@ export { default as BAITable } from './BAITable';
  * rendering here so those tables' column settings look like every other
  * table's (QA-FINDINGS Q-13) without migrating their storage shape.
  */
-export { default as BAITableAstryxSettingModal } from './BAITableAstryxSettingModal';
+export { default as BAITableSettingModal } from './BAITableSettingModal';
 export type {
-  BAITableAstryxSettingColumn,
-  BAITableAstryxSettingResult,
-  BAITableAstryxSettingModalProps,
-} from './BAITableAstryxSettingModal';
+  BAITableSettingColumn,
+  BAITableSettingResult,
+  BAITableSettingModalProps,
+} from './BAITableSettingModal';
 export { default as BAINameActionCell } from './BAINameActionCell';
 export type {
   BAINameActionCellAction,
