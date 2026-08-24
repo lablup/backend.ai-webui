@@ -208,8 +208,10 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
         >
           {open ? (
             <BAIBoardItemErrorBoundary
-              // Keyed so an errored preview retries when the condition changes.
-              key={`${resourceType}:${JSON.stringify(filter ?? null)}`}
+              // Keyed so an errored preview retries when the condition changes
+              // — including the kind, or a table that failed keeps its fallback
+              // after switching to a count that would have rendered.
+              key={`${panelType}:${resourceType}:${JSON.stringify(filter ?? null)}`}
               title={t(config.labelKey)}
               status="error"
             >

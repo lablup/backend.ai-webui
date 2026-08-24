@@ -171,8 +171,10 @@ export const useCustomPanels = ({
       const Panel = panelRegistry[panel.panelType];
       const content: React.ReactNode = (
         <BAIBoardItemErrorBoundary
-          // Keyed by descriptor so a config edit clears a stuck error state.
-          key={JSON.stringify(panel.descriptor)}
+          // Keyed by kind AND descriptor so a config edit clears a stuck error
+          // state. The kind is not part of the descriptor, so without it a
+          // failed table stays in its fallback after a switch to a count.
+          key={`${panel.panelType}:${JSON.stringify(panel.descriptor)}`}
           title={resolvePanelTitle(panel.descriptor, t)}
           status="error"
         >
