@@ -88,6 +88,9 @@ const comboboxStyles = stylex.create({
   width: (px: number) => ({
     width: `${px}px`,
   }),
+  anchor: {
+    width: '100%',
+  },
   dropdown: {
     boxSizing: 'border-box',
     width: '100%',
@@ -132,7 +135,10 @@ interface EnvVarNameInputProps {
   /** Accessible name; visually hidden — `BAIFormItem` renders the visible one. */
   label: string;
   placeholder?: string;
-  /** Unused common env var names, already excluding this row's own value. */
+  /**
+   * Suggested names not used by OTHER rows. This row's own value is kept, so
+   * re-opening an already-picked field still offers its current name back.
+   */
   suggestions: ReadonlyArray<string>;
 }
 
@@ -162,6 +168,11 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
   const inputElRef = useRef<HTMLInputElement | null>(null);
   // Whether a pointer is down between mousedown and click — see `showList`.
   const pointerActiveRef = useRef(false);
+  // Set around `selectMatch`'s refocus so the focus event it fires doesn't
+  // instantly reopen the list that was just dismissed by picking from it
+  // (BaseTypeahead guards the same sequence with its search generation
+  // counter).
+  const suppressFocusOpenRef = useRef(false);
 
   const popover = usePopover({
     hasLightDismiss: true,
@@ -173,10 +184,13 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
     role: 'none',
   });
 
+  // Substring (not prefix) match — the project's other free-text suggestion
+  // source does the same (BAIPowerSearchAdapters `toSearchSource`), and it is
+  // what lets "proxy" surface HTTP_PROXY / HTTPS_PROXY / NO_PROXY together.
   const matchesFor = (query: string) => {
     const q = query.trim().toLowerCase();
     return q
-      ? suggestions.filter((name) => name.toLowerCase().startsWith(q))
+      ? suggestions.filter((name) => name.toLowerCase().includes(q))
       : suggestions;
   };
   const matches = matchesFor(value ?? '');
@@ -210,7 +224,11 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
     onChange?.(name);
     setHighlightedIndex(-1);
     popover.hide();
+    // focus() dispatches its focus event synchronously (when focus moved to
+    // the clicked option), so bracketing it leaves no stale flag behind.
+    suppressFocusOpenRef.current = true;
     inputElRef.current?.focus();
+    suppressFocusOpenRef.current = false;
   };
 
   return (
@@ -220,17 +238,20 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
         // `ref` forwards to — that inner element excludes the visible
         // bordered box's own padding, so the popup came out narrower than
         // and offset from what the user actually sees as "the field".
+        if (!el) return; // React 19 runs the returned cleanup instead
         popover.triggerRef(el);
-        if (!el) return;
         setAnchorWidth(el.getBoundingClientRect().width);
         const ro = new ResizeObserver((entries) => {
           const w = entries[0]?.contentRect.width;
           if (w != null) setAnchorWidth(w);
         });
         ro.observe(el);
-        return () => ro.disconnect();
+        return () => {
+          ro.disconnect();
+          popover.triggerRef(null);
+        };
       }}
-      style={{ width: '100%' }}
+      {...stylex.props(comboboxStyles.anchor)}
     >
       <TextInput
         ref={(el) => {
@@ -263,6 +284,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
             : undefined
         }
         onFocus={() => {
+          if (suppressFocusOpenRef.current) return;
           if (matches.length > 0) showList();
         }}
         onPointerDown={() => {
@@ -377,6 +399,11 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   const { rules: externalRules, ...restFormItemProps } = formItemProps || {};
   const { t } = useTranslation();
   const form = Form.useFormInstance();
+  // Typing into a row does NOT re-render `Form.List`'s render prop (the
+  // store dispatches it as `source: 'internal'`, which `List.shouldUpdate`
+  // ignores), so without this subscription each row's `suggestions` prop
+  // goes stale the moment a sibling row's name is typed rather than picked.
+  Form.useWatch(props.name, form);
 
   const allEnvVars = [
     ..._.filter(

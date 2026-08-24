@@ -66,6 +66,29 @@ describe('EnvVarFormList suggested variables', () => {
     );
 
     expect(screen.getByDisplayValue('HF_TOKEN')).toBeInTheDocument();
+    // Picking dismisses the list; the refocus it performs must not reopen it.
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  // Regression guard: `Form.List`'s render prop ignores `source: 'internal'`
+  // store updates (typing), so without `EnvVarFormList`'s `Form.useWatch`
+  // subscription the sibling rows' `suggestions` props recompute only on
+  // add/remove — a name TYPED into row 0 stayed on offer in row 1.
+  it('drops a typed sibling name from other rows without an add in between', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    const inputs = screen.getAllByLabelText(VARIABLE_LABEL);
+
+    await user.type(inputs[0], 'HF_TOKEN');
+
+    openSuggestions(inputs[1]);
+    await user.type(inputs[1], 'HF');
+
+    const row1ListboxId = inputs[1].getAttribute('aria-controls');
+    expect(document.getElementById(row1ListboxId ?? '')).toBeNull();
   });
 
   it('stops offering a variable that is already used elsewhere in the list', async () => {
