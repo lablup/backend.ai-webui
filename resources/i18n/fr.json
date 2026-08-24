@@ -2868,7 +2868,6 @@
       "AIAccelerator": "Accélérateur d'IA",
       "Accelerator": "Accélérateur",
       "AddEnvironmentVariable": "Ajouter des variables d'environnement",
-      "AddSuggestedEnvironmentVariable": "Ajouter une variable d'environnement suggérée",
       "AddingKernelToSocketQueue": "Ajout du noyau à la file d'attente des sockets...",
       "AdvancedSettings": "Paramètres avancés",
       "AgentNode": "Agent",

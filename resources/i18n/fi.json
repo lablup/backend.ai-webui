@@ -2865,7 +2865,6 @@
       "AIAccelerator": "AI-kiihdyttämö",
       "Accelerator": "Kiihdytin",
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
-      "AddSuggestedEnvironmentVariable": "Lisää ehdotettu ympäristömuuttuja",
       "AddingKernelToSocketQueue": "Ytimen lisääminen socket-jonoon...",
       "AdvancedSettings": "Lisäasetukset",
       "AgentNode": "Agentti",

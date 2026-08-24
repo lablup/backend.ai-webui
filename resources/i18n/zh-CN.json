@@ -2867,7 +2867,6 @@
       "AIAccelerator": "人工智能加速器",
       "Accelerator": "加速器",
       "AddEnvironmentVariable": "添加环境变量",
-      "AddSuggestedEnvironmentVariable": "添加建议的环境变量",
       "AddingKernelToSocketQueue": "将内核添加到套接字队列...",
       "AdvancedSettings": "高级设置",
       "AgentNode": "代理人",

@@ -2866,7 +2866,6 @@
       "AIAccelerator": "AI хурдасгуур",
       "Accelerator": "Хурдасгагч",
       "AddEnvironmentVariable": "Орчны хувьсагчдыг нэмнэ үү",
-      "AddSuggestedEnvironmentVariable": "Санал болгосон орчны хувьсагчийг нэмэх",
       "AddingKernelToSocketQueue": "Цөмийг сокет дараалалд нэмж оруулах ...",
       "AdvancedSettings": "Нарийвчилсан тохиргоо",
       "AgentNode": "Агент",

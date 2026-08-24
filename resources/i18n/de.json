@@ -2867,7 +2867,6 @@
       "AIAccelerator": "KI-Beschleuniger",
       "Accelerator": "Beschleuniger",
       "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen",
-      "AddSuggestedEnvironmentVariable": "Empfohlene Umgebungsvariable hinzufügen",
       "AddingKernelToSocketQueue": "Kernel zur Socket-Warteschlange hinzugefügt...",
       "AdvancedSettings": "Erweiterte Einstellungen",
       "AgentNode": "Agent",

@@ -2866,7 +2866,6 @@
       "AIAccelerator": "ตัวเร่ง AI",
       "Accelerator": "ตัวเร่งความเร็ว",
       "AddEnvironmentVariable": "เพิ่มตัวแปรสภาพแวดล้อม",
-      "AddSuggestedEnvironmentVariable": "เพิ่มตัวแปรสภาพแวดล้อมที่แนะนำ",
       "AddingKernelToSocketQueue": "กำลังเพิ่มเคอร์เนลเข้าคิวซ็อกเก็ต...",
       "AdvancedSettings": "การตั้งค่าขั้นสูง",
       "AgentNode": "ตัวแทน",

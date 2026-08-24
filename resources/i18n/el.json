@@ -2865,7 +2865,6 @@
       "AIAccelerator": "Επιταχυντής AI",
       "Accelerator": "Επιταχυντής",
       "AddEnvironmentVariable": "Προσθήκη μεταβλητών περιβάλλοντος",
-      "AddSuggestedEnvironmentVariable": "Προσθήκη προτεινόμενης μεταβλητής περιβάλλοντος",
       "AddingKernelToSocketQueue": "Προσθήκη πυρήνα στην ουρά υποδοχής ...",
       "AdvancedSettings": "Σύνθετες ρυθμίσεις",
       "AgentNode": "Μέσο",

@@ -2869,7 +2869,6 @@
       "AIAccelerator": "AI 가속기",
       "Accelerator": "가속기",
       "AddEnvironmentVariable": "환경 변수 추가",
-      "AddSuggestedEnvironmentVariable": "추천 환경 변수 추가",
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "AdvancedSettings": "고급 설정",
       "AgentNode": "에이전트",

@@ -2868,7 +2868,6 @@
       "AIAccelerator": "Akselerator AI",
       "Accelerator": "Akselerator",
       "AddEnvironmentVariable": "Menambahkan variabel lingkungan",
-      "AddSuggestedEnvironmentVariable": "Tambahkan variabel lingkungan yang disarankan",
       "AddingKernelToSocketQueue": "Menambahkan kernel ke antrian soket...",
       "AdvancedSettings": "Pengaturan Lanjutan",
       "AgentNode": "Agen",

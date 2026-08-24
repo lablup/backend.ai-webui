@@ -6,7 +6,7 @@
 import '../../__test__/matchMedia.mock.js';
 import { Form } from '../form-engine';
 import EnvVarFormList, { sanitizeSensitiveEnv } from './EnvVarFormList';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -31,8 +31,11 @@ const OPTIONAL_ENV_VARS = [
 ];
 
 const ADD_LABEL = 'session.launcher.AddEnvironmentVariable';
-const SUGGEST_LABEL = 'session.launcher.AddSuggestedEnvironmentVariable';
 const VARIABLE_LABEL = 'session.launcher.EnvironmentVariable';
+const REQUIRED_MESSAGE = 'session.launcher.EnterEnvironmentVariable';
+
+/** Focuses the field the way Tab-navigation would, ahead of typing into it. */
+const openSuggestions = (input: HTMLElement) => fireEvent.focus(input);
 
 const Harness = () => {
   const [form] = Form.useForm();
@@ -43,36 +46,75 @@ const Harness = () => {
   );
 };
 
-// The suggestion menu is what replaced the antd `AutoComplete` dropdown the
-// Astryx migration removed (W2A-3). It has to both pre-fill the name and drop
-// it from the menu once used — otherwise picking twice would build the
-// duplicate the `variable` rule rejects.
+// The suggestion list is what replaced the antd `AutoComplete` dropdown the
+// Astryx migration removed (W2A-3), then the button-triggered menu this
+// branch first shipped: it now lives inline on the `variable` field itself
+// as a type-to-filter combobox, and has to both fill the name and drop it
+// from its own list once used elsewhere — otherwise picking it twice would
+// build the duplicate the `variable` rule rejects.
 describe('EnvVarFormList suggested variables', () => {
-  it('adds a row with the picked variable pre-filled', async () => {
+  it('fills the variable field with the picked suggestion', async () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.click(screen.getByRole('button', { name: SUGGEST_LABEL }));
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    const input = screen.getByLabelText(VARIABLE_LABEL);
+    openSuggestions(input);
+    await user.type(input, 'HF');
     await user.click(
-      await screen.findByRole('menuitem', { name: 'HF_TOKEN', hidden: true }),
+      await screen.findByRole('option', { name: 'HF_TOKEN', hidden: true }),
     );
 
     expect(screen.getByDisplayValue('HF_TOKEN')).toBeInTheDocument();
   });
 
-  it('stops offering a variable that is already in the list', async () => {
+  it('stops offering a variable that is already used elsewhere in the list', async () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.click(screen.getByRole('button', { name: SUGGEST_LABEL }));
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    await user.type(screen.getByLabelText(VARIABLE_LABEL), 'HF_TOKEN');
+
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    const row1Input = screen.getAllByLabelText(VARIABLE_LABEL)[1];
+    openSuggestions(row1Input);
+    await user.type(row1Input, 'HF');
+
+    // HF_TOKEN is the only suggestion, and row 0 already uses it, so row 1's
+    // OWN list stays empty. Scoped by `aria-controls` rather than a global
+    // role query: row 0's own listbox is self-inclusive (its current value
+    // never excludes itself) and stays mounted with an "HF_TOKEN" option, so
+    // a global query would still find THAT one.
+    const row1ListboxId = row1Input.getAttribute('aria-controls');
+    expect(document.getElementById(row1ListboxId ?? '')).toBeNull();
+  });
+
+  // Regression guard: the old button-triggered menu only ever ADDED a new
+  // row, so picking a suggestion never went through the `variable` field's
+  // own `onChange` — form validation for THAT field never ran. The inline
+  // combobox routes both typing and picking through the same composed
+  // `onChange` (Form.Item's store write + the cross-row duplicate
+  // revalidation below it), so a required-field error raised by typing must
+  // clear the same way when the fix is a picked suggestion instead.
+  it('validates immediately after picking a suggestion, not just while typing', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    const input = screen.getByLabelText(VARIABLE_LABEL);
+
+    await user.type(input, 'x');
+    await user.clear(input);
+    expect(await screen.findByText(REQUIRED_MESSAGE)).toBeInTheDocument();
+
+    openSuggestions(input);
+    await user.type(input, 'HF');
     await user.click(
-      await screen.findByRole('menuitem', { name: 'HF_TOKEN', hidden: true }),
+      await screen.findByRole('option', { name: 'HF_TOKEN', hidden: true }),
     );
 
-    // HF_TOKEN was the only suggestion, so the trigger itself goes away.
-    expect(
-      screen.queryByRole('button', { name: SUGGEST_LABEL }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByDisplayValue('HF_TOKEN')).toBeInTheDocument();
+    expect(screen.queryByText(REQUIRED_MESSAGE)).not.toBeInTheDocument();
   });
 });
 
@@ -82,13 +124,16 @@ describe('EnvVarFormList suggested variables', () => {
 // captured on the previous outer render. `EnvVarValueInput`'s `Form.useWatch`
 // is what makes it follow the sibling field.
 describe('EnvVarFormList value placeholder', () => {
-  it('follows a variable chosen from the suggestion menu', async () => {
+  it('follows a variable chosen from the suggestion list', async () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.click(screen.getByRole('button', { name: SUGGEST_LABEL }));
+    await user.click(screen.getByRole('button', { name: ADD_LABEL }));
+    const input = screen.getByLabelText(VARIABLE_LABEL);
+    openSuggestions(input);
+    await user.type(input, 'HF');
     await user.click(
-      await screen.findByRole('menuitem', { name: 'HF_TOKEN', hidden: true }),
+      await screen.findByRole('option', { name: 'HF_TOKEN', hidden: true }),
     );
 
     expect(

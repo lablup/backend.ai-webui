@@ -2865,7 +2865,6 @@
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
       "Accelerator": "Gaz pedalı",
       "AddEnvironmentVariable": "Ortam değişkenleri ekleme",
-      "AddSuggestedEnvironmentVariable": "Önerilen ortam değişkeni ekle",
       "AddingKernelToSocketQueue": "Soket kuyruğuna çekirdek ekleniyor...",
       "AdvancedSettings": "Gelişmiş Ayarlar",
       "AgentNode": "Ajan",

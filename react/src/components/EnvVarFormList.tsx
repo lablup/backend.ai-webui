@@ -9,11 +9,19 @@ import {
   FormListProps,
 } from '../form-engine';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { usePopover } from '@astryxdesign/core/Popover';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import {
+  colorVars,
+  radiusVars,
+  spacingVars,
+  typeScaleVars,
+} from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleMinus, PlusIcon, SparklesIcon } from 'lucide-react';
-import React from 'react';
+import { CircleMinus, PlusIcon } from 'lucide-react';
+import React, { useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface EnvVarConfig {
@@ -65,6 +73,282 @@ const EnvVarValueInput: React.FC<
   );
 };
 
+const comboboxStyles = stylex.create({
+  // `anchor-size(width)` (what BaseTypeahead's own popup xstyle uses) only
+  // ever floors the width in practice — measured live, the list still grows
+  // past the input for a long suggestion. Astryx's own `Popover` component
+  // hits the same ceiling: its `customWidth` xstyle takes a JS-measured
+  // pixel value rather than trusting `anchor-size()` to cap anything. Mirror
+  // that — `width` below is set from the input's measured `ResizeObserver`
+  // width (`EnvVarNameInput`'s `anchorWidth` state), with this as the
+  // before-first-measurement fallback.
+  matchTrigger: {
+    minWidth: 'anchor-size(width)',
+  },
+  width: (px: number) => ({
+    width: `${px}px`,
+  }),
+  dropdown: {
+    boxSizing: 'border-box',
+    width: '100%',
+    // Matches BaseTypeahead's own dropdown cap (Typeahead/BaseTypeahead.tsx).
+    maxHeight: '240px',
+    overflowY: 'auto',
+    padding: spacingVars['--spacing-1'],
+  },
+  item: {
+    boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    minWidth: 0,
+    padding: spacingVars['--spacing-2'],
+    borderRadius: radiusVars['--radius-element'],
+    cursor: 'pointer',
+    fontSize: typeScaleVars['--text-body-size'],
+    color: colorVars['--color-text-primary'],
+    border: 'none',
+    backgroundColor: 'transparent',
+    textAlign: 'start',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  itemHighlighted: {
+    backgroundColor: colorVars['--color-overlay-hover'],
+  },
+});
+
+interface EnvVarNameInputProps {
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /**
+   * Injected by `Form.Item`, composed with the caller's own `onChange` (the
+   * cross-row duplicate-name revalidation below). Called identically for a
+   * keystroke and for picking a suggestion, so both paths validate the same
+   * way.
+   */
+  onChange?: (value: string) => void;
+  /** Accessible name; visually hidden — `BAIFormItem` renders the visible one. */
+  label: string;
+  placeholder?: string;
+  /** Unused common env var names, already excluding this row's own value. */
+  suggestions: ReadonlyArray<string>;
+}
+
+/**
+ * Free-text env var name input with inline suggestions.
+ *
+ * PILOT-DECISION: `Typeahead`/`BaseTypeahead` commit a selected item and
+ * clear their internal query on selection (`handleSelect` -> `setQuery('')`)
+ * — they cannot hold a value the user is still free-typing, which is
+ * mandatory here since env var names are arbitrary. `Selector` is likewise
+ * closed to values outside its option list. Built directly on `usePopover`
+ * (the same primitive `BaseTypeahead` composes) so the form's own controlled
+ * string stays the single source of truth for both typing and picking.
+ */
+const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
+  value,
+  onChange,
+  label,
+  placeholder,
+  suggestions,
+}) => {
+  'use memo';
+  const listboxId = useId();
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [anchorWidth, setAnchorWidth] = useState<number | null>(null);
+  const composingRef = useRef(false);
+  const inputElRef = useRef<HTMLInputElement | null>(null);
+  // Whether a pointer is down between mousedown and click — see `showList`.
+  const pointerActiveRef = useRef(false);
+
+  const popover = usePopover({
+    hasLightDismiss: true,
+    hasCloseButton: false,
+    hasAutoFocus: false,
+    // The input keeps DOM focus and exposes its own combobox semantics, so a
+    // dialog role around the list would misrepresent it (mirrors
+    // BaseTypeahead's own `role: 'none'`).
+    role: 'none',
+  });
+
+  const matchesFor = (query: string) => {
+    const q = query.trim().toLowerCase();
+    return q
+      ? suggestions.filter((name) => name.toLowerCase().startsWith(q))
+      : suggestions;
+  };
+  const matches = matchesFor(value ?? '');
+
+  const getItemId = (index: number) => `${listboxId}-option-${index}`;
+
+  /**
+   * `popover.show()`, deferred past the active click when one is in flight.
+   *
+   * A click that focuses the input fires `onFocus` (which shows the popover)
+   * before the click event finishes bubbling. `usePopover`'s
+   * `hasLightDismiss` then reads that SAME click as "outside" the freshly
+   * shown popover — the input was never registered as its native invoker —
+   * and closes what just opened. BaseTypeahead hits the identical footgun
+   * and fixes it the same way (Typeahead/BaseTypeahead.tsx `showLayer`).
+   */
+  const showList = () => {
+    if (pointerActiveRef.current) {
+      document.addEventListener(
+        'click',
+        () =>
+          requestAnimationFrame(() => popover.show({ skipAutoFocus: true })),
+        { once: true },
+      );
+    } else {
+      popover.show({ skipAutoFocus: true });
+    }
+  };
+
+  const selectMatch = (name: string) => {
+    onChange?.(name);
+    setHighlightedIndex(-1);
+    popover.hide();
+    inputElRef.current?.focus();
+  };
+
+  return (
+    <>
+      <TextInput
+        ref={(el) => {
+          inputElRef.current = el;
+          popover.triggerRef(el);
+          if (!el) return;
+          setAnchorWidth(el.getBoundingClientRect().width);
+          const ro = new ResizeObserver((entries) => {
+            const w = entries[0]?.contentRect.width;
+            if (w != null) setAnchorWidth(w);
+          });
+          ro.observe(el);
+          return () => ro.disconnect();
+        }}
+        type="text"
+        value={value ?? ''}
+        onChange={(next) => {
+          onChange?.(next);
+          setHighlightedIndex(-1);
+          if (matchesFor(next).length > 0) {
+            showList();
+          } else {
+            popover.hide();
+          }
+        }}
+        label={label}
+        isLabelHidden
+        placeholder={placeholder}
+        width="100%"
+        role="combobox"
+        aria-expanded={popover.isOpen}
+        aria-controls={listboxId}
+        aria-autocomplete="list"
+        aria-activedescendant={
+          popover.isOpen &&
+          highlightedIndex >= 0 &&
+          highlightedIndex < matches.length
+            ? getItemId(highlightedIndex)
+            : undefined
+        }
+        onFocus={() => {
+          if (matches.length > 0) showList();
+        }}
+        onPointerDown={() => {
+          pointerActiveRef.current = true;
+          document.addEventListener(
+            'click',
+            () => {
+              pointerActiveRef.current = false;
+            },
+            { once: true },
+          );
+        }}
+        onBlur={(e) => {
+          if (!popover.isOpen) return;
+          const next = e.relatedTarget as Node | null;
+          const popoverEl = document.getElementById(popover.id);
+          if (next && popoverEl?.contains(next)) return;
+          popover.hide();
+        }}
+        onCompositionStart={() => {
+          composingRef.current = true;
+        }}
+        onCompositionEnd={() => {
+          composingRef.current = false;
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!popover.isOpen && matches.length > 0) {
+              showList();
+              setHighlightedIndex(0);
+              return;
+            }
+            setHighlightedIndex((i) => (i + 1 >= matches.length ? 0 : i + 1));
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (popover.isOpen) {
+              setHighlightedIndex((i) => (i <= 0 ? matches.length - 1 : i - 1));
+            }
+          } else if (e.key === 'Enter') {
+            if (composingRef.current) return;
+            if (
+              popover.isOpen &&
+              highlightedIndex >= 0 &&
+              highlightedIndex < matches.length
+            ) {
+              e.preventDefault();
+              selectMatch(matches[highlightedIndex]);
+            }
+          } else if (e.key === 'Escape' && popover.isOpen) {
+            e.preventDefault();
+            popover.hide();
+          }
+        }}
+      />
+      {matches.length > 0 &&
+        popover.render(
+          <div
+            id={listboxId}
+            role="listbox"
+            {...stylex.props(comboboxStyles.dropdown)}
+          >
+            {matches.map((name, index) => (
+              <div
+                key={name}
+                id={getItemId(index)}
+                role="option"
+                aria-selected={index === highlightedIndex}
+                tabIndex={-1}
+                onClick={() => selectMatch(name)}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                {...stylex.props(
+                  comboboxStyles.item,
+                  index === highlightedIndex && comboboxStyles.itemHighlighted,
+                )}
+              >
+                {name}
+              </div>
+            ))}
+          </div>,
+          {
+            placement: 'below',
+            alignment: 'start',
+            offset: spacingVars['--spacing-1'],
+            xstyle:
+              anchorWidth != null
+                ? comboboxStyles.width(anchorWidth)
+                : comboboxStyles.matchTrigger,
+          },
+        )}
+    </>
+  );
+};
+
 interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {
   formItemProps?: FormItemProps;
   requiredEnvVars?: EnvVarConfig[];
@@ -111,34 +395,19 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   };
 
   /**
-   * The still-unused suggested variable names, in `optionalEnvVars` then
-   * `requiredEnvVars` order.
-   *
-   * HISTORY — this fed an antd `AutoComplete` dropdown before the Astryx
-   * migration. MAPPING §3.15 gives free-text `AutoComplete` no Astryx
-   * destination and free text is mandatory here (the whole point of the field
-   * is arbitrary env var names), so W2A-3 dropped the popup and joined these
-   * names into the field's PLACEHOLDER instead. That degrades badly once a
-   * caller passes more than two or three: `useCommonEnvVarConfigs` supplies
-   * eight, which renders as a comma-joined run of ~90 characters truncated
-   * inside a half-width field — discoverable in principle, unreadable in
-   * practice.
-   *
-   * They now drive the `DropdownMenu` next to the add button instead: picking
-   * one appends a row with `variable` pre-filled, so the name never has to be
-   * typed from memory. The text field stays a plain `TextInput`, so arbitrary
-   * names are untouched — which is the constraint that ruled out `Typeahead`
-   * in the first place. `BaseTypeahead` cannot stand in either: its query is
-   * uncontrolled internal state that it clears on select, so it cannot hold a
-   * form-controlled free-text value.
+   * The still-unused suggested variable names for one row, in
+   * `optionalEnvVars` then `requiredEnvVars` order — "unused" excludes every
+   * OTHER row's current value but not this row's own, so re-focusing an
+   * already-picked field still offers it back.
    */
-  const getSuggestedVariableNames = () => {
+  const getSuggestedVariableNames = (excludeRowName: number) => {
     const currentValues = form.getFieldValue(props.name) || [];
     const usedVariables = _.map(
       _.filter(
         currentValues,
-        (item: EnvVarFormListValue) =>
+        (item: EnvVarFormListValue, idx: number) =>
           item != null &&
+          idx !== excludeRowName &&
           typeof item.variable === 'string' &&
           item.variable.trim() !== '',
       ),
@@ -193,141 +462,112 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
         },
       ]}
     >
-      {(fields, { add, remove }, { errors }) => {
-        // Recomputed per render of this list — `fields` changes whenever a row
-        // is added or removed, so the menu drops names as they get used.
-        const suggestedVariableNames = getSuggestedVariableNames();
-        return (
-          <BAIFlex direction="column" gap="xs" align="stretch">
-            {fields.map(({ key, name, ...restField }) => (
-              <BAIFlex key={key} direction="row" align="baseline" gap="xs">
-                <Form.Item
-                  {...restField}
-                  style={{ marginBottom: 0, flex: 1 }}
-                  name={[name, 'variable']}
-                  rules={[
-                    ...(externalRules || []),
-                    {
-                      required: true,
-                      message: t('session.launcher.EnterEnvironmentVariable'),
-                    },
-                    {
-                      pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
-                      message: t(
-                        'session.launcher.EnvironmentVariableNamePatternError',
-                      ),
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_rule, variableName) {
-                        const variableNames = _.map(
-                          getFieldValue(props.name),
-                          (i) => i?.variable,
-                        );
+      {(fields, { add, remove }, { errors }) => (
+        <BAIFlex direction="column" gap="xs" align="stretch">
+          {fields.map(({ key, name, ...restField }) => (
+            <BAIFlex key={key} direction="row" align="baseline" gap="xs">
+              <Form.Item
+                {...restField}
+                style={{ marginBottom: 0, flex: 1 }}
+                name={[name, 'variable']}
+                rules={[
+                  ...(externalRules || []),
+                  {
+                    required: true,
+                    message: t('session.launcher.EnterEnvironmentVariable'),
+                  },
+                  {
+                    pattern: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
+                    message: t(
+                      'session.launcher.EnvironmentVariableNamePatternError',
+                    ),
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_rule, variableName) {
+                      const variableNames = _.map(
+                        getFieldValue(props.name),
+                        (i) => i?.variable,
+                      );
 
-                        if (
-                          !_.isEmpty(variableName) &&
-                          variableNames.length > 0 &&
-                          _.filter(variableNames, (i) => i === variableName)
-                            .length > 1
-                        ) {
-                          return Promise.reject(
-                            t(
-                              'session.launcher.EnvironmentVariableDuplicateName',
-                            ),
-                            // EnvironmentVariableDuplicateName
-                          );
-                        } else {
-                          return Promise.resolve();
-                        }
-                      },
-                    }),
-                  ]}
-                  {...restFormItemProps}
-                >
-                  <AstryxFormTextInput
-                    label={t('session.launcher.EnvironmentVariable')}
-                    placeholder={t('session.launcher.EnvironmentVariable')}
-                    onChange={() => {
-                      const fieldNames = fields.map((_field, fieldIndex) => [
-                        props.name,
-                        fieldIndex,
-                        'variable',
-                      ]);
-                      form.validateFields(fieldNames);
-                    }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  name={[name, 'value']}
-                  style={{ marginBottom: 0, flex: 1 }}
-                  rules={[
-                    {
-                      required: true,
-                      message: t(
-                        'session.launcher.EnvironmentVariableValueRequired',
-                      ),
+                      if (
+                        !_.isEmpty(variableName) &&
+                        variableNames.length > 0 &&
+                        _.filter(variableNames, (i) => i === variableName)
+                          .length > 1
+                      ) {
+                        return Promise.reject(
+                          t(
+                            'session.launcher.EnvironmentVariableDuplicateName',
+                          ),
+                          // EnvironmentVariableDuplicateName
+                        );
+                      } else {
+                        return Promise.resolve();
+                      }
                     },
-                  ]}
-                  validateTrigger={['onChange', 'onBlur']}
-                >
-                  <EnvVarValueInput
-                    form={form}
-                    variableNamePath={[props.name, name, 'variable']}
-                    getPlaceholderForVariable={getPlaceholderForVariable}
-                    label={t('session.launcher.EnvironmentVariableValue')}
-                  />
-                </Form.Item>
-                <CircleMinus size="1em" onClick={() => remove(name)} />
-              </BAIFlex>
-            ))}
-            <Form.Item noStyle>
-              <BAIFlex direction="row" gap="xs" align="stretch">
-                <BAIButton
-                  type="dashed"
-                  // PILOT-DECISION: the antd `InputRef.focus()` that jumped the
-                  // caret into the row just added is DROPPED. Astryx uses a
-                  // `handleRef` convention rather than `ref` + `InputRef`
-                  // (MAPPING §6.2) and `AstryxFormTextInput` exposes no ref
-                  // slot; the same call was already made for the select stack
-                  // (P26-8).
-                  onClick={() => {
-                    add();
+                  }),
+                ]}
+                {...restFormItemProps}
+              >
+                <EnvVarNameInput
+                  label={t('session.launcher.EnvironmentVariable')}
+                  placeholder={t('session.launcher.EnvironmentVariable')}
+                  suggestions={getSuggestedVariableNames(name)}
+                  onChange={() => {
+                    const fieldNames = fields.map((_field, fieldIndex) => [
+                      props.name,
+                      fieldIndex,
+                      'variable',
+                    ]);
+                    form.validateFields(fieldNames);
                   }}
-                  icon={<PlusIcon />}
-                  block
-                >
-                  {t('session.launcher.AddEnvironmentVariable')}
-                </BAIButton>
-                {suggestedVariableNames.length > 0 ? (
-                  <DropdownMenu
-                    button={{
-                      icon: <SparklesIcon size="1em" />,
-                      isIconOnly: true,
-                      label: t(
-                        'session.launcher.AddSuggestedEnvironmentVariable',
-                      ),
-                      variant: 'secondary',
-                    }}
-                    hasChevron={false}
-                    alignment="end"
-                    items={_.map(suggestedVariableNames, (variable) => ({
-                      label: variable,
-                      // Appending with `variable` pre-filled is what replaces
-                      // the old type-to-filter dropdown. The name is already
-                      // known to be unused (`getSuggestedVariableNames`
-                      // excludes the ones in the list), so this cannot create
-                      // the duplicate the `variable` rule guards against.
-                      onClick: () => add({ variable, value: '' }),
-                    }))}
-                  />
-                ) : null}
-              </BAIFlex>
-            </Form.Item>
-            <Form.ErrorList errors={errors} />
-          </BAIFlex>
-        );
-      }}
+                />
+              </Form.Item>
+              <Form.Item
+                {...restField}
+                name={[name, 'value']}
+                style={{ marginBottom: 0, flex: 1 }}
+                rules={[
+                  {
+                    required: true,
+                    message: t(
+                      'session.launcher.EnvironmentVariableValueRequired',
+                    ),
+                  },
+                ]}
+                validateTrigger={['onChange', 'onBlur']}
+              >
+                <EnvVarValueInput
+                  form={form}
+                  variableNamePath={[props.name, name, 'variable']}
+                  getPlaceholderForVariable={getPlaceholderForVariable}
+                  label={t('session.launcher.EnvironmentVariableValue')}
+                />
+              </Form.Item>
+              <CircleMinus size="1em" onClick={() => remove(name)} />
+            </BAIFlex>
+          ))}
+          <Form.Item noStyle>
+            <BAIButton
+              type="dashed"
+              // PILOT-DECISION: the antd `InputRef.focus()` that jumped the
+              // caret into the row just added is DROPPED. Astryx uses a
+              // `handleRef` convention rather than `ref` + `InputRef`
+              // (MAPPING §6.2) and `AstryxFormTextInput` exposes no ref
+              // slot; the same call was already made for the select stack
+              // (P26-8).
+              onClick={() => {
+                add();
+              }}
+              icon={<PlusIcon />}
+              block
+            >
+              {t('session.launcher.AddEnvironmentVariable')}
+            </BAIButton>
+          </Form.Item>
+          <Form.ErrorList errors={errors} />
+        </BAIFlex>
+      )}
     </Form.List>
   );
 };

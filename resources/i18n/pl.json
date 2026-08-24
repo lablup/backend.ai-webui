@@ -2868,7 +2868,6 @@
       "AIAccelerator": "Akcelerator AI",
       "Accelerator": "Akcelerator",
       "AddEnvironmentVariable": "Dodaj zmienne środowiskowe",
-      "AddSuggestedEnvironmentVariable": "Dodaj sugerowaną zmienną środowiskową",
       "AddingKernelToSocketQueue": "Dodawanie jądra do kolejki gniazda...",
       "AdvancedSettings": "Ustawienia zaawansowane",
       "AgentNode": "Agent",
