@@ -214,19 +214,27 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
   };
 
   return (
-    <>
+    <div
+      ref={(el) => {
+        // Anchor + measure the WRAPPER, not the bare `<input>` `TextInput`'s
+        // `ref` forwards to — that inner element excludes the visible
+        // bordered box's own padding, so the popup came out narrower than
+        // and offset from what the user actually sees as "the field".
+        popover.triggerRef(el);
+        if (!el) return;
+        setAnchorWidth(el.getBoundingClientRect().width);
+        const ro = new ResizeObserver((entries) => {
+          const w = entries[0]?.contentRect.width;
+          if (w != null) setAnchorWidth(w);
+        });
+        ro.observe(el);
+        return () => ro.disconnect();
+      }}
+      style={{ width: '100%' }}
+    >
       <TextInput
         ref={(el) => {
           inputElRef.current = el;
-          popover.triggerRef(el);
-          if (!el) return;
-          setAnchorWidth(el.getBoundingClientRect().width);
-          const ro = new ResizeObserver((entries) => {
-            const w = entries[0]?.contentRect.width;
-            if (w != null) setAnchorWidth(w);
-          });
-          ro.observe(el);
-          return () => ro.disconnect();
         }}
         type="text"
         value={value ?? ''}
@@ -345,7 +353,7 @@ const EnvVarNameInput: React.FC<EnvVarNameInputProps> = ({
                 : comboboxStyles.matchTrigger,
           },
         )}
-    </>
+    </div>
   );
 };
 
