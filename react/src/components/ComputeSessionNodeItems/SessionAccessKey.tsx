@@ -48,7 +48,7 @@ const SessionAccessKey: React.FC<SessionAccessKeyProps> = ({
     session.access_key !== currentAccessKey;
 
   return (
-    <BAIFlex gap="xs" align="baseline">
+    <BAIFlex gap="xs" align="center">
       {isMismatchedWithCurrentLogin && (
         <Tooltip content={t('session.LaunchedWithDifferentAccessKey')}>
           {/* Astryx Tooltip passes its first child to showPopover({source}),
