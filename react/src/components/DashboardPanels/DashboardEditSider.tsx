@@ -88,7 +88,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
             const caption = [
               isGridDegraded
                 ? t('dashboard.editSider.GridDisabled')
-                : t(panelTypeLabelKeys[panel.panelType]),
+                : t(panelTypeLabelKeys[panel.panelType] ?? panel.panelType),
               panel.descriptor.title ? dataSourceLabel : undefined,
               isAvailable
                 ? undefined
