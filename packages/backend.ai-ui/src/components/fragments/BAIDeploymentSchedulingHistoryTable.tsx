@@ -8,8 +8,7 @@ import BAIDeploymentSchedulingHistoryNodes, {
   BAIDeploymentSchedulingHistoryNodesProps,
   DeploymentSchedulingHistoryNodeInList,
 } from './BAIDeploymentSchedulingHistoryNodes';
-import BAISubStepNodes from './BAISubStepNodes';
-import * as _ from 'lodash-es';
+import BAISubStepNodes, { countExecutedSubSteps } from './BAISubStepNodes';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIDeploymentSchedulingHistoryTableProps extends Omit<
@@ -40,8 +39,12 @@ const BAIDeploymentSchedulingHistoryTable = ({
       fragment BAIDeploymentSchedulingHistoryTableFragment on DeploymentHistory
       @relay(plural: true) {
         id
+        phase
         result
         subSteps {
+          # Read alongside the spread so the table can tell a row that holds
+          # only the trailing lifecycle marker from one with real sub-steps.
+          step
           ...BAISubStepNodesFragment
         }
         ...BAIDeploymentSchedulingHistoryNodesFragment
@@ -55,6 +58,8 @@ const BAIDeploymentSchedulingHistoryTable = ({
     useSchedulingHistoryExpandable(dataSource, {
       mode: expandMode,
       onModeChange: onExpandModeChange,
+      isExpandable: (record) =>
+        countExecutedSubSteps(record.subSteps ?? [], record.phase) > 0,
     });
 
   return (
@@ -65,12 +70,16 @@ const BAIDeploymentSchedulingHistoryTable = ({
         expandedRowKeys,
         onExpandedRowsChange,
         rowExpandable: (record: DeploymentSchedulingHistoryNodeInList) =>
-          !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
+          countExecutedSubSteps(
+            dataSource.find((h) => h.id === record.id)?.subSteps ?? [],
+            record.phase,
+          ) > 0,
         expandedRowRender: (record: DeploymentSchedulingHistoryNodeInList) => (
           <BAISubStepNodes
             subStepsFrgmt={
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
+            parentPhase={record.phase}
           />
         ),
       }}

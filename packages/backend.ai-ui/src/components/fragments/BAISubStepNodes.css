@@ -42,6 +42,15 @@
   margin: calc(-1 * var(--bai-substep-cell-padding));
   padding-block: 0 var(--spacing-5);
   padding-inline: var(--bai-substep-inset-start) var(--spacing-6);
+
+  /* Nothing in here should inherit the PAGE's text metrics. Bare wrappers and
+     the badge's own root box take their line box from whatever they inherit —
+     16px/24px — so 12px and 14px `Text` still sat in a 24px line, which both
+     stretched the rows and, under `align-items: baseline`, staggered the
+     header items by a pixel each. Anchoring the subtree on the theme's body
+     metrics makes the inherited line box agree with the text in it. */
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-leading);
 }
 
 .bai-substep-list {
@@ -119,14 +128,27 @@
   padding-top: var(--spacing-0-5);
 }
 
+/* `center`, not the design's `baseline`. The row mixes plain text with two
+   boxed items (the result badge, the marker pill) whose own line boxes differ
+   from the step name's; baseline alignment then reads as each item sitting a
+   pixel or two off its neighbour. Centring is what actually looks aligned —
+   and at these sizes the two agree to within a pixel anyway. */
 .bai-substep-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   gap: var(--bai-substep-header-gap);
 }
 
+/* `display: flex`, not `block`, on purpose. A block box lays its inline text
+   out against ITS OWN font as the strut, and these wrappers inherit the page's
+   16px/24px — so a 12px `Text` still produced a 24px line box and the three
+   detail rows sat further apart than the design. A flex container has no
+   strut: the row is exactly as tall as the text in it. Measured before/after
+   in the session scheduling-history modal. */
 .bai-substep-detail {
+  display: flex;
+  min-width: 0;
   margin-top: var(--bai-substep-detail-gap);
 }
 

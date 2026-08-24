@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<78437bb97e2f6f7f9ff2eadc98f408cd>>
+ * @generated SignedSource<<fab0436457253611a585c705dff3f5f6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,8 +13,10 @@ export type SchedulingResult = "EXPIRED" | "FAILURE" | "GIVE_UP" | "NEED_RETRY" 
 import { FragmentRefs } from "relay-runtime";
 export type BAISchedulingHistoryTableFragment$data = ReadonlyArray<{
   readonly id: string;
+  readonly phase: string;
   readonly result: SchedulingResult;
   readonly subSteps: ReadonlyArray<{
+    readonly step: string;
     readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryNodesFragment">;
@@ -44,6 +46,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "phase",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "result",
       "storageKey": null
     },
@@ -55,6 +64,13 @@ const node: ReaderFragment = {
       "name": "subSteps",
       "plural": true,
       "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "step",
+          "storageKey": null
+        },
         {
           "args": null,
           "kind": "FragmentSpread",
@@ -73,6 +89,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "cc812aab73e7155ba3bc061806f997dd";
+(node as any).hash = "e369227c362b363c91d9f366ac98634d";
 
 export default node;
