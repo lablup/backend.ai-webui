@@ -47,17 +47,18 @@ import {
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAISkeleton,
   BAIFlex,
+  BAIIconWithTooltip,
   BAILink,
   BAISessionAgentIds,
   BAISessionClusterMode,
   BAISessionTypeTag,
+  BAISkeleton,
   BAIText,
-  INITIAL_FETCH_KEY,
-  UNSAFELazyUserEmailView,
   filterOutNullAndUndefined,
+  INITIAL_FETCH_KEY,
   toGlobalId,
+  UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   useToggle,
 } from 'backend.ai-ui';
@@ -501,12 +502,15 @@ const SessionDetailContent: React.FC<{
           <MetadataListItem label={t('session.launcher.ResourceAllocation')}>
             <BAIFlex gap={'sm'} wrap="wrap" align="center">
               {hasResourceAllocationDifference && (
-                <Tooltip content={t('session.AllocatedLessThanRequested')}>
-                  <TriangleAlert
-                    size="1em"
-                    style={{ color: 'var(--color-warning)' }}
-                  />
-                </Tooltip>
+                <BAIIconWithTooltip
+                  content={t('session.AllocatedLessThanRequested')}
+                  icon={
+                    <TriangleAlert
+                      size="1em"
+                      style={{ color: 'var(--color-warning)' }}
+                    />
+                  }
+                />
               )}
               <Tooltip content={t('session.ResourceGroup')}>
                 <Badge label={session.scaling_group} />

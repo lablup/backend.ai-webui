@@ -1,10 +1,10 @@
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import {
   BAIRuntimeVariantPresetTableFragment$data,
   BAIRuntimeVariantPresetTableFragment$key,
 } from '../../__generated__/BAIRuntimeVariantPresetTableFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -16,10 +16,8 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 export type RuntimeVariantPresetNodeInList = NonNullable<
@@ -60,7 +58,6 @@ const BAIRuntimeVariantPresetTable = ({
 }: BAIRuntimeVariantPresetTableProps) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
   const baiClient = useConnectedBAIClient();
   const isRequiredSupported = baiClient.supports(
     'runtime-variant-preset-required',
@@ -216,14 +213,9 @@ const BAIRuntimeVariantPresetTable = ({
         title: (
           <BAIFlex gap="xs" align="center">
             {t('comp:BAIRuntimeVariantPresetTable.Rank')}
-            <Tooltip
-              content={t('comp:BAIRuntimeVariantPresetTable.RankTooltip')}
-            >
-              <CircleHelp
-                style={{ color: token.colorTextDescription }}
-                size="1em"
-              />
-            </Tooltip>
+            <BAIQuestionIconWithTooltip
+              title={t('comp:BAIRuntimeVariantPresetTable.RankTooltip')}
+            />
           </BAIFlex>
         ),
         dataIndex: 'rank',

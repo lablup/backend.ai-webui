@@ -1,8 +1,7 @@
+import BAIQuestionIconWithTooltip from './BAIQuestionIconWithTooltip';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { Heading } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { CircleHelp } from 'lucide-react';
 import React from 'react';
 
 export interface BAIBoardItemTitleProps {
@@ -51,14 +50,7 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
         ) : (
           title
         )}
-        {tooltip ? (
-          <Tooltip content={tooltip}>
-            <CircleHelp
-              style={{ color: token.colorTextSecondary }}
-              size="1em"
-            />
-          </Tooltip>
-        ) : null}
+        {tooltip ? <BAIQuestionIconWithTooltip title={tooltip} /> : null}
       </BAIFlex>
 
       <BAIFlex

@@ -1,7 +1,7 @@
+import { BAIIconWithTooltip } from 'backend.ai-ui';
 import type { DomainResourceGroupWarningIconFragment$key } from '../../__generated__/DomainResourceGroupWarningIconFragment.graphql';
 import type { DomainResourceGroupWarningIconQuery } from '../../__generated__/DomainResourceGroupWarningIconQuery.graphql';
 import { theme } from '../../theme-shim';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -50,17 +50,12 @@ const DomainResourceGroupWarningIcon: React.FC<
   }
 
   return (
-    <Tooltip
+    <BAIIconWithTooltip
       content={t('fairShare.DomainNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,
       })}
-    >
-      <TriangleAlert
-        style={{
-          color: token.colorWarning,
-        }}
-      />
-    </Tooltip>
+      icon={<TriangleAlert style={{ color: token.colorWarning }} />}
+    />
   );
 };
 

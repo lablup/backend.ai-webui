@@ -19,44 +19,66 @@ export interface BAIIconWithTooltipProps
   extends Omit<TooltipProps, 'children' | 'anchorRef'> {
   /** The glyph the tooltip is attached to. */
   icon: ReactNode;
+  /**
+   * `false` renders the trigger as a plain `<span>` (hover-only) instead of a
+   * focusable `<button>` — required inside another interactive element (a
+   * link, a select option, a segmented-control label), where nesting a button
+   * is invalid.
+   */
+  focusable?: boolean;
   style?: CSSProperties;
   className?: string;
 }
 
 const BAIIconWithTooltip = ({
   icon,
+  focusable = true,
   style,
   className,
   ...tooltipProps
 }: BAIIconWithTooltipProps) => {
+  const label = nodeToAccessibleLabel(tooltipProps.content) || undefined;
+  const iconNode = (
+    <Text color="placeholder" style={{ display: 'inline-flex' }}>
+      {icon}
+    </Text>
+  );
   return (
     <Tooltip {...tooltipProps}>
-      {/* A real button (reset to inline glyph) keeps the hint focusable, so
-          keyboard users can reach the tooltip. Reset is explicit, not
-          `all: 'unset'`: on Chromium >= 151 `all` makes the anchor-name CSSOM
-          getter return 'unset', which poisons Astryx's addAnchorName list and
-          detaches the tooltip to the viewport top-left (FR-3589). */}
-      <button
-        type="button"
-        aria-label={nodeToAccessibleLabel(tooltipProps.content) || undefined}
-        className={className}
-        style={{
-          appearance: 'none',
-          background: 'none',
-          border: 0,
-          margin: 0,
-          padding: 0,
-          font: 'inherit',
-          color: 'inherit',
-          cursor: 'help',
-          display: 'inline-flex',
-          ...style,
-        }}
-      >
-        <Text color="placeholder" style={{ display: 'inline-flex' }}>
-          {icon}
-        </Text>
-      </button>
+      {focusable ? (
+        /* A real button (reset to inline glyph) keeps the hint focusable, so
+           keyboard users can reach the tooltip. Reset is explicit, not
+           `all: 'unset'`: on Chromium >= 151 `all` makes the anchor-name CSSOM
+           getter return 'unset', which poisons Astryx's addAnchorName list and
+           detaches the tooltip to the viewport top-left (FR-3589). */
+        <button
+          type="button"
+          aria-label={label}
+          className={className}
+          style={{
+            appearance: 'none',
+            background: 'none',
+            border: 0,
+            margin: 0,
+            padding: 0,
+            font: 'inherit',
+            color: 'inherit',
+            cursor: 'help',
+            display: 'inline-flex',
+            ...style,
+          }}
+        >
+          {iconNode}
+        </button>
+      ) : (
+        <span
+          aria-label={label}
+          className={className}
+          style={{ cursor: 'help', display: 'inline-flex', ...style }}
+        >
+          {iconNode}
+        </span>
+      )}
     </Tooltip>
   );
 };

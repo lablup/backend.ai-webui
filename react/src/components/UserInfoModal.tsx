@@ -11,8 +11,12 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Spinner } from '@astryxdesign/core/Spinner';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIIconWithTooltip,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import React from 'react';
@@ -150,9 +154,12 @@ const UserInfoModal: React.FC<Props> = ({
       <MetadataList label={{ position: 'start', width: '50%' }}>
         <MetadataListItem label={t('credential.ProjectAndGroup')}>
           {user && !user.projects ? (
-            <Tooltip content={t('credential.FailedToLoadProjects')}>
-              <TriangleAlert style={{ color: token.colorError }} size="1em" />
-            </Tooltip>
+            <BAIIconWithTooltip
+              content={t('credential.FailedToLoadProjects')}
+              icon={
+                <TriangleAlert style={{ color: token.colorError }} size="1em" />
+              }
+            />
           ) : (
             <BAIFlex gap="xs" wrap="wrap">
               {_.map(user?.projects?.edges, (edge) => {
