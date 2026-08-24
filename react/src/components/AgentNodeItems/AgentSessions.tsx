@@ -157,8 +157,11 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
 
   // The grid reads the legacy `compute_session_list`, whose queryfilter maps
   // `agent_ids` onto an array column — any kernel on this agent matches.
+  // Backslash before quote: the reverse order would re-escape what it just
+  // wrote, and a lone trailing backslash breaks the minilang lexer outright.
+  const quotedAgentId = agentId.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   const gridFilter = mergeFilterValues([
-    `agent_ids == "${agentId.replace(/"/g, '\\"')}"`,
+    `agent_ids == "${quotedAgentId}"`,
     statusCategory === 'running'
       ? 'status != "TERMINATED" & status != "CANCELLED"'
       : 'status == "TERMINATED" | status == "CANCELLED"',
