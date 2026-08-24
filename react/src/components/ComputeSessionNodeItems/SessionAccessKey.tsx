@@ -46,15 +46,25 @@ const SessionAccessKey: React.FC<SessionAccessKeyProps> = ({
     session.access_key !== currentAccessKey;
 
   return (
-    <BAIFlex gap="xxs" align="center">
+    <BAIFlex gap="xs" align="baseline">
+      {isMismatchedWithCurrentLogin && (
+        <Tooltip content={t('session.LaunchedWithDifferentAccessKey')}>
+          {/* Astryx Tooltip passes its first child to showPopover({source}),
+              which requires an HTMLElement — a bare lucide <svg> throws, so
+              keep an HTML wrapper (BAIFlex) as the trigger. The global
+              `.lucide { width: 1em !important }` rule makes font-size the
+              only size lever. */}
+          <BAIFlex align="center" style={{ fontSize: 'var(--font-size-lg)' }}>
+            <TriangleAlert
+              size="1em"
+              style={{ color: 'var(--color-warning)' }}
+            />
+          </BAIFlex>
+        </Tooltip>
+      )}
       <BAIText monospace copyable={copyable} ellipsis={{ tooltip: true }}>
         {session.access_key}
       </BAIText>
-      {isMismatchedWithCurrentLogin && (
-        <Tooltip content={t('session.LaunchedWithDifferentAccessKey')}>
-          <TriangleAlert size="1em" style={{ color: 'var(--color-warning)' }} />
-        </Tooltip>
-      )}
     </BAIFlex>
   );
 };
