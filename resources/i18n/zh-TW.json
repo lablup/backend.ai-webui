@@ -726,7 +726,7 @@
     "Used": "用過的",
     "editSider": {
       "Empty": "尚無自訂面板",
-      "GridDisabled": "格線檢視在實驗性設定中已關閉",
+      "GridDisabled": "網格檢視已關閉（實驗性功能）",
       "RequiresSuperadmin": "僅限超級管理員",
       "ResetLayout": "重置佈局",
       "ResetLayoutDescription": "將面板佈局恢復為預設設定。自訂面板將被保留。",
@@ -736,9 +736,11 @@
       "AddPanel": "新增面板",
       "Condition": "條件",
       "Count": "計數",
+      "DataSource": "資料來源",
+      "DataSourceRequired": "請選擇資料來源",
       "EditPanel": "編輯面板",
       "PanelType": "面板類型",
-      "Resource": "資源",
+      "PanelTypeRequired": "請選擇面板類型",
       "Table": "表格",
       "TitleDescription": "顯示為面板標題——建議用於描述篩選條件。",
       "TitleOptional": "標題（選填）"

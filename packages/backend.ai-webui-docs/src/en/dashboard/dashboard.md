@@ -85,18 +85,20 @@ positions once you turn it back on.
 
 Click the **Edit** button at the top right of the page to open the custom-panel
 sidebar, and **Close** to hide it again. The sidebar lists your custom panels. A
-custom panel shows a resource you select, narrowed by a condition you define.
+custom panel shows a data source you select, narrowed by a condition you define.
 The panel itself shows only a title and its data, so
 give the panel a title that describes its condition.
 
 To add a panel, click the **Add** button in the sidebar. The panel dialog
-contains the following fields:
+contains the following fields. **Panel Type** and **Data source** are
+required — the dialog will not submit until both are chosen.
 
-- **Resource**: The resource the panel lists. Choose **Sessions**, **Users**,
-  or **Data & Storage**.
-- **Panel Type**: How the panel displays the resource. Choose **Table** or
-  **Count**. For the **Sessions** resource, **Grid** is also offered.
-- **Title**: An optional panel title. When omitted, the resource name is used.
+- **Data source**: The data source the panel lists. Choose **Sessions**,
+  **Deployments**, or **Data & Storage**.
+- **Panel Type**: How the panel displays the data source. Choose **Table** or
+  **Count**. For the **Sessions** data source, **Grid** is also offered.
+- **Title**: An optional panel title. When omitted, the data source name is
+  used.
 - **Condition**: A property filter that narrows the rows shown in the panel.
 
 A live preview below the fields shows the rows matching the current condition.
@@ -105,6 +107,11 @@ place the panel on the board.
 
 ![](../images/dashboard_panel_modal.png)
 <!-- TODO: Capture screenshot of the add-panel dialog with the live preview -->
+
+**Deployments** panels list the project's model deployments, using the same
+table as the Deployments page: name, status, replica summary, model, and
+created at. Clicking a deployment's name opens its detail page. The condition
+filter offers name, tags, endpoint URL, and public (open to public).
 
 **Grid** shows the session resource grid: each matching session's allocated
 resources as unit cells, colored by utilization. Clicking a session opens its
@@ -125,16 +132,16 @@ existing Grid panels keep their saved configuration but display as the
 session table until the setting is turned back on.
 :::
 
-To change a panel's resource, panel type, condition, or title later, click the
-pencil (**Edit**) icon next to the panel in the sidebar — or in the panel's
-header on the board — and save your changes. To remove a panel, click the
-trash (**Delete**) icon and confirm in the popup.
+To change a panel's data source, panel type, condition, or title later, click
+the pencil (**Edit**) icon next to the panel in the sidebar — or in the
+panel's header on the board — and save your changes. To remove a panel, click
+the trash (**Delete**) icon and confirm in the popup.
 
 :::note
-**Sessions** panels list the sessions of the current project and are available
-to every user. **Users** and **Data & Storage** panels are available to
-superadmins only. A panel whose resource your role cannot query remains listed
-in the sidebar but is not shown on the board.
+**Sessions** and **Deployments** panels list data for the current project and
+are available to every project member. **Data & Storage** panels are
+available to superadmins only. A panel whose data source your role cannot
+query remains listed in the sidebar but is not shown on the board.
 :::
 
 ## Automatic Refresh

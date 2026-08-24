@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../../theme-shim';
+import { panelTypeLabelKeys } from './panelRegistry';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PersistedPanel, ResourceKey } from './types';
 import { Button } from '@astryxdesign/core/Button';
@@ -74,13 +75,27 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
         <BAIFlex direction="column" align="stretch">
           {panels.map((panel) => {
             const label = resolvePanelTitle(panel.descriptor, t);
-            const resourceLabel = t(
+            const dataSourceLabel = t(
               resourceRegistry[panel.descriptor.resourceType]?.labelKey ??
                 panel.descriptor.resourceType,
             );
             const isAvailable = availableSet.has(panel.descriptor.resourceType);
             const isGridDegraded =
               panel.panelType === 'sessionResourceGrid' && !gridEnabled;
+            // An untitled panel already reads as its data source, so only name
+            // the source again when the user gave it a title of their own. The
+            // degraded-grid hint names the kind itself, so it replaces it.
+            const caption = [
+              isGridDegraded
+                ? t('dashboard.editSider.GridDisabled')
+                : t(panelTypeLabelKeys[panel.panelType] ?? panel.panelType),
+              panel.descriptor.title ? dataSourceLabel : undefined,
+              isAvailable
+                ? undefined
+                : t('dashboard.editSider.RequiresSuperadmin'),
+            ]
+              .filter(Boolean)
+              .join(' · ');
             return (
               <BAIFlex
                 key={panel.id}
@@ -101,13 +116,12 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                   <BAIText ellipsis>{label}</BAIText>
                   <BAIText
                     type="secondary"
+                    // One line, like the title above it: the caption is up to
+                    // three joined segments and wrapping made rows uneven.
+                    ellipsis={{ tooltip: caption }}
                     style={{ fontSize: token.fontSizeSM }}
                   >
-                    {!isAvailable
-                      ? `${resourceLabel} · ${t('dashboard.editSider.RequiresSuperadmin')}`
-                      : isGridDegraded
-                        ? `${resourceLabel} · ${t('dashboard.editSider.GridDisabled')}`
-                        : resourceLabel}
+                    {caption}
                   </BAIText>
                 </BAIFlex>
                 <BAIFlex direction="row" align="center" gap="xxs">

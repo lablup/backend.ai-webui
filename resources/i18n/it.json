@@ -726,7 +726,7 @@
     "Used": "Usato",
     "editSider": {
       "Empty": "Non ci sono ancora pannelli personalizzati",
-      "GridDisabled": "La visualizzazione a griglia è disattivata nelle impostazioni sperimentali",
+      "GridDisabled": "Vista a griglia disattivata (Funzionalità sperimentali)",
       "RequiresSuperadmin": "Solo superamministratori",
       "ResetLayout": "Reimposta layout",
       "ResetLayoutDescription": "Ripristina la disposizione predefinita dei pannelli. I pannelli personalizzati vengono mantenuti.",
@@ -736,9 +736,11 @@
       "AddPanel": "Aggiungi pannello",
       "Condition": "Condizione",
       "Count": "Conteggio",
+      "DataSource": "Origine dati",
+      "DataSourceRequired": "Seleziona un’origine dati",
       "EditPanel": "Modifica pannello",
       "PanelType": "Tipo di pannello",
-      "Resource": "Risorsa",
+      "PanelTypeRequired": "Seleziona un tipo di pannello",
       "Table": "Tabella",
       "TitleDescription": "Mostrato come intestazione del pannello — usalo per descrivere la condizione.",
       "TitleOptional": "Titolo (facoltativo)"

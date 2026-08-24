@@ -726,7 +726,7 @@
     "Used": "Usado",
     "editSider": {
       "Empty": "Ainda não há painéis personalizados",
-      "GridDisabled": "A visualização em grelha está desativada nas definições experimentais",
+      "GridDisabled": "Vista de grelha desativada (Funcionalidades experimentais)",
       "RequiresSuperadmin": "Apenas superadministradores",
       "ResetLayout": "Redefinir layout",
       "ResetLayoutDescription": "Restaura a disposição predefinida dos painéis. Os painéis personalizados são mantidos.",
@@ -736,9 +736,11 @@
       "AddPanel": "Adicionar painel",
       "Condition": "Condição",
       "Count": "Contagem",
+      "DataSource": "Origem de dados",
+      "DataSourceRequired": "Selecione uma origem de dados",
       "EditPanel": "Editar painel",
       "PanelType": "Tipo de painel",
-      "Resource": "Recurso",
+      "PanelTypeRequired": "Selecione um tipo de painel",
       "Table": "Tabela",
       "TitleDescription": "Apresentado como cabeçalho do painel — utilize-o para descrever a condição.",
       "TitleOptional": "Título (opcional)"

@@ -726,7 +726,7 @@
     "Used": "Đã sử dụng",
     "editSider": {
       "Empty": "Chưa có bảng tùy chỉnh nào",
-      "GridDisabled": "Chế độ xem lưới đang tắt trong cài đặt thử nghiệm",
+      "GridDisabled": "Tắt chế độ xem lưới (Tính năng thử nghiệm)",
       "RequiresSuperadmin": "Chỉ dành cho siêu quản trị viên",
       "ResetLayout": "Đặt lại bố cục",
       "ResetLayoutDescription": "Khôi phục cách sắp xếp bảng mặc định. Các bảng tùy chỉnh vẫn được giữ nguyên.",
@@ -736,9 +736,11 @@
       "AddPanel": "Thêm bảng",
       "Condition": "Điều kiện",
       "Count": "Số lượng",
+      "DataSource": "Nguồn dữ liệu",
+      "DataSourceRequired": "Chọn nguồn dữ liệu",
       "EditPanel": "Chỉnh sửa bảng",
       "PanelType": "Loại bảng",
-      "Resource": "Tài nguyên",
+      "PanelTypeRequired": "Chọn loại bảng",
       "Table": "Bảng",
       "TitleDescription": "Hiển thị làm tiêu đề của bảng — hãy dùng nó để mô tả điều kiện.",
       "TitleOptional": "Tiêu đề (tùy chọn)"

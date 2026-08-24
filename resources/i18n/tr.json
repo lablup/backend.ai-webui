@@ -726,7 +726,7 @@
     "Used": "Kullanılmış",
     "editSider": {
       "Empty": "Henüz özel panel yok",
-      "GridDisabled": "Izgara görünümü deneysel ayarlarda kapalı",
+      "GridDisabled": "Izgara görünümü kapalı (Deneysel özellikler)",
       "RequiresSuperadmin": "Yalnızca süper yönetici",
       "ResetLayout": "Düzeni sıfırla",
       "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
@@ -736,9 +736,11 @@
       "AddPanel": "Panel ekle",
       "Condition": "Koşul",
       "Count": "Sayı",
+      "DataSource": "Veri kaynağı",
+      "DataSourceRequired": "Bir veri kaynağı seçin",
       "EditPanel": "Paneli düzenle",
       "PanelType": "Panel türü",
-      "Resource": "Kaynak",
+      "PanelTypeRequired": "Bir panel türü seçin",
       "Table": "Tablo",
       "TitleDescription": "Panel başlığı olarak gösterilir — koşulu açıklamak için kullanın.",
       "TitleOptional": "Başlık (isteğe bağlı)"
