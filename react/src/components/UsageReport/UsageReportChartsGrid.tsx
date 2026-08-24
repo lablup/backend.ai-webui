@@ -4,7 +4,7 @@
  */
 import UsageReportEmptySection from './UsageReportEmptySection';
 import { UsageReportDailyPoint } from './types';
-import { BAICard, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
+import { BAICard, BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -151,11 +151,13 @@ const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
       <BAICard
         className="usage-report-card usage-report-chart"
         size="small"
-        title={t('usageReport.UtilizationPercent')}
-        extra={
-          <BAIQuestionIconWithTooltip
-            title={t('usageReport.TooltipUtilizationChart')}
-          />
+        title={
+          <BAIFlex gap="xxs" align="center">
+            {t('usageReport.UtilizationPercent')}
+            <BAIQuestionIconWithTooltip
+              title={t('usageReport.TooltipUtilizationChart')}
+            />
+          </BAIFlex>
         }
       >
         {hasAny(series, [
@@ -176,8 +178,12 @@ const UsageReportChartsGrid: React.FC<UsageReportChartsGridProps> = ({
           key={key}
           className="usage-report-card usage-report-chart"
           size="small"
-          title={title}
-          extra={<BAIQuestionIconWithTooltip title={tooltip} />}
+          title={
+            <BAIFlex gap="xxs" align="center">
+              {title}
+              <BAIQuestionIconWithTooltip title={tooltip} />
+            </BAIFlex>
+          }
         >
           {hasAny(series, [key]) ? (
             <DailyBarChart
