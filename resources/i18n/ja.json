@@ -2733,6 +2733,7 @@
     "InvalidRedirectURL": "無効なURLのため、アプリを起動できません。",
     "KernelExitCode": "カーネル出口コード",
     "LastTry": "最近試した時間",
+    "LaunchedWithDifferentAccessKey": "このセッションは、現在のログインで使用中のアクセスキーとは異なるキーで作成されました。",
     "MEM": "メモリ",
     "MaxSessionLifetime": "最大セッション寿命時間",
     "MaxSessionLifetimeDesc": "セッション作成後、この時間が過ぎるとセッションを強制終了します。セッションが無限に実行されるのを防ぐことができます。",

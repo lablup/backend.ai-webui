@@ -2733,6 +2733,7 @@
     "InvalidRedirectURL": "Die App kann aufgrund einer ungültigen URL nicht gestartet werden.",
     "KernelExitCode": "Kernel Exit Code",
     "LastTry": "Letzter Versuch",
+    "LaunchedWithDifferentAccessKey": "Diese Sitzung wurde mit einem anderen Zugriffsschlüssel erstellt als dem, der bei Ihrer aktuellen Anmeldung verwendet wird.",
     "MEM": "Speicher",
     "MaxSessionLifetime": "Maximale Lebensdauer der Sitzung",
     "MaxSessionLifetimeDesc": "Erzwingt die Beendigung von Sitzungen nach dieser Zeit ab der Erstellung. Dadurch wird verhindert, dass die Sitzung unendlich lange läuft.",
