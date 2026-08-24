@@ -11,6 +11,7 @@ import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../hooks/useAppTemplate';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
+import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
 import SessionReclamationStatusCell from './ComputeSessionNodeItems/SessionReclamationStatusCell';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
@@ -118,6 +119,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...AppLauncherModalFragment
         ...TerminateSessionModalFragment
         ...EditSessionPriorityModalFragment
+        ...SessionAccessKeyFragment
         kernel_nodes {
           edges {
             node {
@@ -381,6 +383,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         defaultHidden: true,
         sorter: isEnableSorter('created_at'),
         render: (created_at: string) => dayjs(created_at).format('LLL') || '-',
+      },
+      {
+        key: 'access_key',
+        title: t('general.AccessKey'),
+        defaultHidden: true,
+        exportKey: 'access_key',
+        render: (__, session) => <SessionAccessKey sessionFrgmt={session} />,
       },
       // The method of directly fetching project name is currently not possible through GraphQL's query. Until backend work is completed, id will be displayed.
       {

@@ -2741,6 +2741,7 @@
     "InvalidRedirectURL": "L'application ne peut pas être lancée en raison d'une URL invalide.",
     "KernelExitCode": "Code de sortie du noyau",
     "LastTry": "Dernier essai",
+    "LaunchedWithDifferentAccessKey": "Cette session a été créée avec une clé différente de votre clé d'accès par défaut.",
     "MEM": "Mémoire",
     "MaxSessionLifetime": "Durée de vie maximale de la session",
     "MaxSessionLifetimeDesc": "Force l'arrêt des sessions après ce délai de création. Cela empêche la session de fonctionner à l'infini.",

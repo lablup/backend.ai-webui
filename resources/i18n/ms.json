@@ -2739,6 +2739,7 @@
     "InvalidRedirectURL": "Aplikasi tidak dapat dilancarkan kerana URL tidak sah.",
     "KernelExitCode": "Kod Keluar Kernel",
     "LastTry": "Percubaan Terakhir",
+    "LaunchedWithDifferentAccessKey": "Sesi ini dicipta dengan kunci selain kunci akses lalai anda.",
     "MEM": "Ingatan",
     "MaxSessionLifetime": "Sepanjang Hayat Sesi Maks",
     "MaxSessionLifetimeDesc": "Paksa tamatkan sesi selepas masa ini daripada penciptaan. \nIa menghalang sesi daripada berjalan tanpa had.",

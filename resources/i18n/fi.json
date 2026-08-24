@@ -2739,6 +2739,7 @@
     "InvalidRedirectURL": "Sovellusta ei voi käynnistää virheellisen URL-osoitteen vuoksi.",
     "KernelExitCode": "Ytimen poistumiskoodi",
     "LastTry": "Viimeinen yritys",
+    "LaunchedWithDifferentAccessKey": "Tämä istunto luotiin muulla kuin oletuspääsyavaimella.",
     "MEM": "Muisti",
     "MaxSessionLifetime": "Istunnon enimmäiskestoikä",
     "MaxSessionLifetimeDesc": "Pakottaa lopettamaan istunnot tämän ajan kuluttua luomisesta. Se estää istuntoa toimimasta loputtomiin.",

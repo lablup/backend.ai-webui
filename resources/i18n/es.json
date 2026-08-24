@@ -2739,6 +2739,7 @@
     "InvalidRedirectURL": "No se puede iniciar la aplicación debido a una URL no válida.",
     "KernelExitCode": "Código de salida del kernel",
     "LastTry": "Último intento",
+    "LaunchedWithDifferentAccessKey": "Esta sesión se creó con una clave distinta de su clave de acceso predeterminada.",
     "MEM": "Memoria",
     "MaxSessionLifetime": "Duración máxima de la sesión",
     "MaxSessionLifetimeDesc": "Fuerza la finalización de las sesiones después de este tiempo desde su creación. Evita que la sesión se ejecute infinitamente.",

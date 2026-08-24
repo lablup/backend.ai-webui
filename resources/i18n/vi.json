@@ -2741,6 +2741,7 @@
     "InvalidRedirectURL": "Không thể khởi chạy ứng dụng vì URL không hợp lệ.",
     "KernelExitCode": "Mã thoát Kernel",
     "LastTry": "Lần thử cuối cùng",
+    "LaunchedWithDifferentAccessKey": "Phiên này được tạo bằng khóa khác với khóa truy cập mặc định của bạn.",
     "MEM": "Ký ức",
     "MaxSessionLifetime": "Thời gian tồn tại của phiên tối đa",
     "MaxSessionLifetimeDesc": "Buộc chấm dứt các phiên sau thời gian này kể từ khi tạo. \nNó ngăn phiên chạy vô tận.",
