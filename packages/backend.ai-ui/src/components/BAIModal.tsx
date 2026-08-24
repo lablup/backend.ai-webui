@@ -271,6 +271,12 @@ export interface BAIModalProps {
   /* ------------------------------------------------------------ dimensions */
   width?: number | string | BAIModalResponsiveWidth;
   maxHeight?: number | string;
+  /**
+   * `'fullscreen'` fills the viewport and makes `width` / `maxHeight` inert.
+   * It is the only way to reach edge-to-edge: Astryx caps the standard dialog
+   * at `maxWidth: 90vw`, so `width="90%"` and `width="100%"` render alike.
+   */
+  variant?: 'standard' | 'fullscreen';
 
   /* -------------------------------------------------------- window actions */
   /** When non-empty, window controls are rendered in the header. */
@@ -377,6 +383,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   mask,
   width = 520,
   maxHeight,
+  variant,
   windowActions,
   onWindowStateChange,
   minimizedPlacement = 'bottomRight',
@@ -487,7 +494,8 @@ const BAIModal: React.FC<BAIModalProps> = ({
   const showClose = closable !== false && closeIcon !== false;
 
   // ----------------------------------------------------------- window sizing
-  const isFullscreen = effectiveWindowState === 'fullscreen';
+  const isFullscreen =
+    variant === 'fullscreen' || effectiveWindowState === 'fullscreen';
   const isMaximized = effectiveWindowState === 'maximized';
   const isMinimized = effectiveWindowState === 'minimized';
 

@@ -4,178 +4,216 @@
 
  Co-located styles for <BAISubStepNodes> (P17). Imported by the component.
 
- The sub-steps of a scheduling-history row are a flat, time-ordered list, so
- they are drawn as a vertical timeline instead of a nested table: a table
- inside an expanded row has to invent its own column widths, which never line
- up with the parent's and fight it for horizontal space.
+ Design 3a — the sub-steps of a scheduling-history row as a compact inline
+ table, one 32px row per step, with an order connector in a narrow rail column.
 
- Geometry only — every colour and every font size/weight comes from the theme
- (Astryx `Text` semantic types and `--color-*` tokens); nothing here sets one.
+ Deliberately UNLAYERED. Wrapped in `@layer`, `BAITable.css`'s unguarded
+ `.bai-table-astryx-no-header thead` / dim-layer `thead th` rules would outrank
+ the nested header's own tint.
+
+ Geometry only — every colour and every font size comes from the theme.
 */
-.bai-substep-timeline {
-  /* Rail drawing. These are a figure, not spacing rungs, so no theme token
-     carries them; the values are the design's (2a). */
-  --bai-substep-rail-width: 18px;
-  --bai-substep-rail-gap: 14px;
-  --bai-substep-dot-size: 9px;
+.bai-substep-panel {
+  /* 3a's table figure. The column widths, the 26px rail and the 7px/11px rail
+     nodes are a drawing, not spacing rungs, so no theme token carries them. */
+  --bai-substep-rail-col: 26px;
+  --bai-substep-col-step: 200px;
+  --bai-substep-col-result: 116px;
+  --bai-substep-col-duration: 74px;
+  --bai-substep-col-time: 150px;
+  --bai-substep-col-code: 96px;
+  --bai-substep-cell-inline: 10px;
+  --bai-substep-dot-size: 7px;
   --bai-substep-marker-size: 11px;
-  /* The larger marker ring needs 1px less top offset than the solid dot to
-     sit on the same text line. */
-  --bai-substep-marker-offset: 5px;
-  --bai-substep-node-gap: 18px;
-  --bai-substep-header-gap: 10px;
-  --bai-substep-detail-gap: 5px;
-  --bai-substep-chip-inset-block: 1px;
-  /* Wide enough for a full error message line, narrow enough that the eye
-     still tracks the rail. */
-  --bai-substep-list-max-width: 660px;
+  --bai-substep-panel-inset-block: 14px;
 
   /* `BAITable` pads the detail cell uniformly with `paddingSM` through an
-     INLINE style, which no stylesheet rule can override — so cancel it with a
-     matching negative margin and re-apply the design's asymmetric inset:
-     flush to the row above, 20px below, 24px right. The start inset is
-     BAITable's own `EXPAND_COLUMN_WIDTH_FIRST`, which is what left-aligns the
-     timeline with the parent's first data column. */
+     INLINE style, which no stylesheet rule can override — cancel it and
+     re-apply 3a's inset. The start inset is BAITable's own
+     `EXPAND_COLUMN_WIDTH_FIRST`, which lines the card's leading edge up with
+     the parent's first data column. */
   --bai-substep-cell-padding: var(--spacing-3);
   --bai-substep-inset-start: 56px;
 
   margin: calc(-1 * var(--bai-substep-cell-padding));
-  padding-block: 0 var(--spacing-5);
+  padding-block: var(--bai-substep-panel-inset-block);
   padding-inline: var(--bai-substep-inset-start) var(--spacing-6);
 
-  /* Nothing in here should inherit the PAGE's text metrics. Bare wrappers and
-     the badge's own root box take their line box from whatever they inherit —
-     16px/24px — so 12px and 14px `Text` still sat in a 24px line, which both
-     stretched the rows and, under `align-items: baseline`, staggered the
-     header items by a pixel each. Anchoring the subtree on the theme's body
-     metrics makes the inherited line box agree with the text in it. */
+  /* Nothing in here should inherit the PAGE's text metrics: bare cells take
+     their line box from whatever they inherit — 16px/24px — which both
+     stretched the rows and staggered inline items against each other. */
   font-size: var(--text-body-size);
   line-height: var(--text-body-leading);
 }
 
-.bai-substep-list {
-  display: flex;
-  flex-direction: column;
-  max-width: var(--bai-substep-list-max-width);
+.bai-substep-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--color-background-card);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-element);
+  /* Clips the header tint into the rounded corners. */
+  overflow: hidden;
 }
 
-.bai-substep-item {
-  display: grid;
-  grid-template-columns: var(--bai-substep-rail-width) 1fr;
-  gap: var(--bai-substep-rail-gap);
+.bai-substep-col-rail {
+  width: var(--bai-substep-rail-col);
+}
+.bai-substep-col-step {
+  width: var(--bai-substep-col-step);
+}
+.bai-substep-col-result {
+  width: var(--bai-substep-col-result);
+}
+.bai-substep-col-duration {
+  width: var(--bai-substep-col-duration);
+}
+.bai-substep-col-time {
+  width: var(--bai-substep-col-time);
+}
+.bai-substep-col-code {
+  width: var(--bai-substep-col-code);
 }
 
-.bai-substep-rail {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.bai-substep-table th,
+.bai-substep-table td {
+  height: var(--spacing-8);
+  padding: 0 var(--bai-substep-cell-inline);
+  text-align: start;
+  vertical-align: middle;
+  /* The cell is width-bounded by `table-layout: fixed`, so a `Text maxLines`
+     child ellipsises instead of widening the column. */
+  overflow: hidden;
 }
 
-.bai-substep-dot {
-  flex: none;
+.bai-substep-table thead th {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-background-muted);
+}
+
+.bai-substep-table tbody td {
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+/* Both selectors carry the table class: the `th, td` rule above is (0,2,0), so
+   a bare `.bai-substep-num` would lose to it and the column would stay
+   start-aligned (measured). */
+.bai-substep-table th.bai-substep-num,
+.bai-substep-table td.bai-substep-num {
+  text-align: end;
+}
+
+.bai-substep-row--marker > td {
+  background: var(--color-background-muted);
+}
+
+/* ---- rail ---------------------------------------------------------------
+   A hand-rolled table, so the rail cell may overflow its box; an Astryx
+   `TableCell` sets `overflow: hidden` unconditionally and would clip the
+   connector at every row boundary. */
+.bai-substep-table td.bai-substep-rail-cell {
+  position: relative;
+  padding: 0;
+  overflow: visible;
+}
+
+/* The connector runs the full row height, and is trimmed to a half at the two
+   ends so the line starts and stops at a node rather than at the card edge. */
+.bai-substep-rail-cell::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  width: var(--border-width);
+  transform: translateX(-50%);
+  background: var(--color-border-emphasized);
+}
+.bai-substep-table tbody tr:first-child .bai-substep-rail-cell::before {
+  inset-block-start: 50%;
+}
+.bai-substep-table tbody tr:last-child .bai-substep-rail-cell::before {
+  inset-block-end: 50%;
+}
+.bai-substep-table tbody tr:only-child .bai-substep-rail-cell::before {
+  display: none;
+}
+
+.bai-substep-rail-cell::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
   width: var(--bai-substep-dot-size);
   height: var(--bai-substep-dot-size);
-  /* Sits the dot on the first text line rather than on the box top. */
-  margin-top: var(--spacing-1-5);
+  transform: translate(-50%, -50%);
   border-radius: var(--radius-full);
-  background: var(--bai-substep-dot-color);
+  background: var(--bai-substep-node-color);
 }
 
-/* The trailing lifecycle entry is a RESULT MARKER, not an executed step
-   (`_build_history_sub_steps` appends it with started_at == ended_at), so it
-   reads as an open, dashed node instead of a solid one. */
-.bai-substep-dot--marker {
+/* The trailing lifecycle entry is a RESULT MARKER, not executed work. */
+.bai-substep-row--marker .bai-substep-rail-cell::after {
   width: var(--bai-substep-marker-size);
   height: var(--bai-substep-marker-size);
-  margin-top: var(--bai-substep-marker-offset);
-  border: calc(2 * var(--border-width)) dashed var(--bai-substep-dot-color);
+  border: calc(2 * var(--border-width)) dashed var(--bai-substep-node-color);
   background: var(--color-background-card);
 }
 
-.bai-substep-dot[data-variant='success'] {
-  --bai-substep-dot-color: var(--color-success);
+/* ---- semantic colour ----------------------------------------------------
+   One `data-variant` per row drives the rail node and the result chip, so the
+   two can never disagree. The tinted triples are the theme's own hue ramps,
+   which are built to be used together. */
+.bai-substep-row {
+  --bai-substep-node-color: var(--color-border-emphasized);
+  --bai-substep-chip-bg: var(--color-background-muted);
+  --bai-substep-chip-border: var(--color-border-emphasized);
+  --bai-substep-chip-ink: var(--color-text-secondary);
 }
-.bai-substep-dot[data-variant='error'] {
-  --bai-substep-dot-color: var(--color-error);
+.bai-substep-row[data-variant='success'] {
+  --bai-substep-node-color: var(--color-success);
+  --bai-substep-chip-bg: var(--color-background-green);
+  --bai-substep-chip-border: var(--color-border-green);
+  --bai-substep-chip-ink: var(--color-text-green);
 }
-.bai-substep-dot[data-variant='warning'] {
-  --bai-substep-dot-color: var(--color-warning);
+.bai-substep-row[data-variant='error'] {
+  --bai-substep-node-color: var(--color-error);
+  --bai-substep-chip-bg: var(--color-background-red);
+  --bai-substep-chip-border: var(--color-border-red);
+  --bai-substep-chip-ink: var(--color-text-red);
 }
-.bai-substep-dot[data-variant='info'] {
-  --bai-substep-dot-color: var(--color-text-accent);
+.bai-substep-row[data-variant='warning'] {
+  --bai-substep-node-color: var(--color-warning);
+  --bai-substep-chip-bg: var(--color-background-orange);
+  --bai-substep-chip-border: var(--color-border-orange);
+  --bai-substep-chip-ink: var(--color-text-orange);
 }
-.bai-substep-dot[data-variant='default'] {
-  --bai-substep-dot-color: var(--color-border-emphasized);
-}
-
-.bai-substep-connector {
-  flex: 1;
-  width: var(--border-width);
-  background: var(--color-border-emphasized);
-}
-
-.bai-substep-body {
-  /* Lets the message truncate instead of widening the grid column. */
-  min-width: 0;
-  padding-bottom: var(--bai-substep-node-gap);
-}
-
-.bai-substep-item:last-child .bai-substep-body {
-  padding-bottom: 0;
-}
-
-.bai-substep-body--marker {
-  padding-top: var(--spacing-0-5);
-}
-
-/* `center`, not the design's `baseline`. The row mixes plain text with two
-   boxed items (the result badge, the marker pill) whose own line boxes differ
-   from the step name's; baseline alignment then reads as each item sitting a
-   pixel or two off its neighbour. Centring is what actually looks aligned —
-   and at these sizes the two agree to within a pixel anyway. */
-.bai-substep-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--bai-substep-header-gap);
+.bai-substep-row[data-variant='info'] {
+  --bai-substep-node-color: var(--color-text-accent);
+  --bai-substep-chip-bg: var(--color-background-blue);
+  --bai-substep-chip-border: var(--color-border-blue);
+  --bai-substep-chip-ink: var(--color-text-blue);
 }
 
-/* `display: flex`, not `block`, on purpose. A block box lays its inline text
-   out against ITS OWN font as the strut, and these wrappers inherit the page's
-   16px/24px — so a 12px `Text` still produced a 24px line box and the three
-   detail rows sat further apart than the design. A flex container has no
-   strut: the row is exactly as tall as the text in it. Measured before/after
-   in the session scheduling-history modal. */
-.bai-substep-detail {
-  display: flex;
-  min-width: 0;
-  margin-top: var(--bai-substep-detail-gap);
-}
-
-.bai-substep-detail--time {
-  margin-top: var(--spacing-1);
-}
-
-.bai-substep-error-code {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  margin-top: var(--spacing-1-5);
-}
-
-.bai-substep-chip {
+.bai-substep-result {
   display: inline-flex;
   align-items: center;
-  padding: var(--bai-substep-chip-inset-block) var(--spacing-2);
+  max-width: 100%;
+  padding: 0 var(--spacing-1-5);
+  border: var(--border-width) solid var(--bai-substep-chip-border);
+  border-radius: var(--radius-inner);
+  background: var(--bai-substep-chip-bg);
+  color: var(--bai-substep-chip-ink);
+}
+
+.bai-substep-code {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0 var(--spacing-1-5);
   border: var(--border-width) solid var(--color-border-emphasized);
   border-radius: var(--radius-inner);
   background: var(--color-background-card);
-}
-
-.bai-substep-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--bai-substep-chip-inset-block) var(--spacing-2);
-  border-radius: var(--radius-full);
-  background: var(--color-background-muted);
 }

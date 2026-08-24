@@ -458,8 +458,13 @@
     "SelectStorageProxy": "Pilih Proksi Storan"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "Tempoh",
     "ErrorCode": "Kod Ralat",
-    "ResultMarker": "Penanda Keputusan"
+    "Message": "Mesej",
+    "Result": "Hasil",
+    "ResultMarker": "Penanda keputusan bagi percubaan ini",
+    "Step": "Langkah",
+    "Time": "Masa"
   },
   "comp:BAITable": {
     "Apply": "Guna",

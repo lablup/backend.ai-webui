@@ -458,8 +458,13 @@
     "SelectStorageProxy": "Wybierz serwer proxy pamięci masowej"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "Czas trwania",
     "ErrorCode": "Kod błędu",
-    "ResultMarker": "Znacznik wyniku"
+    "Message": "Wiadomość",
+    "Result": "Wynik",
+    "ResultMarker": "Znacznik wyniku tej próby",
+    "Step": "Krok",
+    "Time": "Czas"
   },
   "comp:BAITable": {
     "Apply": "Zastosuj",

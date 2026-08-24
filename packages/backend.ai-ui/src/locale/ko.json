@@ -458,8 +458,13 @@
     "SelectStorageProxy": "스토리지 프록시를 선택해주세요"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "소요 시간",
     "ErrorCode": "오류 코드",
-    "ResultMarker": "결과 마커"
+    "Message": "메시지",
+    "Result": "결과",
+    "ResultMarker": "이 시도의 결과 마커",
+    "Step": "세부단계",
+    "Time": "시간"
   },
   "comp:BAITable": {
     "Apply": "적용",

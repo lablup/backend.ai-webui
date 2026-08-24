@@ -458,8 +458,13 @@
     "SelectStorageProxy": "Επιλέξτε proxy αποθήκευσης"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "Διάρκεια",
     "ErrorCode": "Κωδικός σφάλματος",
-    "ResultMarker": "Δείκτης αποτελέσματος"
+    "Message": "Μήνυμα",
+    "Result": "Αποτέλεσμα",
+    "ResultMarker": "Δείκτης αποτελέσματος αυτής της προσπάθειας",
+    "Step": "Βήμα",
+    "Time": "Ώρα"
   },
   "comp:BAITable": {
     "Apply": "Εφαρμογή",

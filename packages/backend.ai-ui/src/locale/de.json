@@ -458,8 +458,13 @@
     "SelectStorageProxy": "Speicher-Proxy auswählen"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "Dauer",
     "ErrorCode": "Fehlercode",
-    "ResultMarker": "Ergebnismarkierung"
+    "Message": "Nachricht",
+    "Result": "Ergebnis",
+    "ResultMarker": "Ergebnismarkierung dieses Versuchs",
+    "Step": "Schritt",
+    "Time": "Zeit"
   },
   "comp:BAITable": {
     "Apply": "Anwenden",

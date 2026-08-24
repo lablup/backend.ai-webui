@@ -458,8 +458,13 @@
     "SelectStorageProxy": "Chọn proxy lưu trữ"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "Thời lượng",
     "ErrorCode": "Mã lỗi",
-    "ResultMarker": "Dấu kết quả"
+    "Message": "Tin nhắn",
+    "Result": "Kết quả",
+    "ResultMarker": "Dấu kết quả của lần thử này",
+    "Step": "Bước",
+    "Time": "Thời gian"
   },
   "comp:BAITable": {
     "Apply": "Áp dụng",

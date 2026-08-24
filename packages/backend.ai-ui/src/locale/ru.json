@@ -458,8 +458,13 @@
     "SelectStorageProxy": "Выберите прокси хранилища"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "Длительность",
     "ErrorCode": "Код ошибки",
-    "ResultMarker": "Маркер результата"
+    "Message": "Сообщение",
+    "Result": "Результат",
+    "ResultMarker": "Маркер результата этой попытки",
+    "Step": "Шаг",
+    "Time": "Время"
   },
   "comp:BAITable": {
     "Apply": "Применить",

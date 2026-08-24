@@ -458,8 +458,13 @@
     "SelectStorageProxy": "Seleccionar proxy de almacenamiento"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "Duración",
     "ErrorCode": "Código de error",
-    "ResultMarker": "Marcador de resultado"
+    "Message": "Mensaje",
+    "Result": "Resultado",
+    "ResultMarker": "Marcador de resultado de este intento",
+    "Step": "Paso",
+    "Time": "Hora"
   },
   "comp:BAITable": {
     "Apply": "Aplicar",

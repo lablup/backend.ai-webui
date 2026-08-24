@@ -458,8 +458,13 @@
     "SelectStorageProxy": "选择存储代理"
   },
   "comp:BAISubStepNodes": {
+    "Duration": "持续时间",
     "ErrorCode": "错误代码",
-    "ResultMarker": "结果标记"
+    "Message": "消息",
+    "Result": "结果",
+    "ResultMarker": "本次尝试的结果标记",
+    "Step": "步骤",
+    "Time": "时间"
   },
   "comp:BAITable": {
     "Apply": "应用",
