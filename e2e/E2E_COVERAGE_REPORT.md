@@ -12,14 +12,14 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 311 / 456 features covered (68%)**
+**Overall (in-scope routes): 312 / 457 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
 | Authentication           | `/interactive-login`                   |    37    |   35    | 🔶 95%  |
 | Change Password          | `/change-password`                     |    9     |    9    | ✅ 100% |
 | Start Page               | `/start`                               |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                           |    10    |    8    | 🔶 80%  |
+| Dashboard                | `/dashboard`                           |    11    |    9    | 🔶 82%  |
 | Session List             | `/session`                             |    23    |   15    | 🔶 65%  |
 | Session Launcher         | `/session/start`                       |    14    |    3    | 🔶 21%  |
 | Serving                  | `/serving`                             |    7     |    2    | 🔶 29%  |
@@ -51,7 +51,7 @@
 | Deployments              | `/deployments`, `/deployments/:id`     |    17    |   14    | 🔶 82%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    4     |    4    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **476**  | **328** | **69%** |
+| **Total**                |                                        | **477**  | **329** | **69%** |
 
 ---
 
@@ -169,10 +169,11 @@
 | Active agents list (admin)          | ❌     | -                                                                            |
 | Recent sessions list                | ✅     | `Admin can view the recently created sessions list on the Dashboard`         |
 | Auto-refresh (15s)                  | ❌     | -                                                                            |
-| Board edit mode (breadcrumb toggle) | ✅     | `Admin can unlock and lock board editing with the breadcrumb Edit toggle`    |
+| Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                  |
+| Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                          |
 | Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`           |
 
-**Coverage: 🔶 8/10 features**
+**Coverage: 🔶 9/11 features**
 
 ---
 

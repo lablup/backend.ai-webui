@@ -38,12 +38,21 @@ export const reconcileBoardLayout = ({
  * the items it is rendering, so entries for ids that are currently hidden — a
  * custom panel while the feature is opted out, a built-in gated off by role —
  * would be dropped by a plain overwrite, losing their saved geometry. They are
- * carried over instead, after the reported ones, in their previous order.
+ * carried over instead, each spliced back at the index it held in `previous`,
+ * so turning a hidden panel back on restores its position and not just its
+ * size. Appending them would silently move every hidden panel to the end.
  */
 export const mergeHiddenLayoutEntries = (
   reported: ReadonlyArray<BoardLayoutEntry>,
   previous: ReadonlyArray<BoardLayoutEntry>,
 ): Array<BoardLayoutEntry> => {
   const reportedIds = new Set(reported.map((item) => item.id));
-  return [...reported, ...previous.filter((item) => !reportedIds.has(item.id))];
+  const merged = [...reported];
+  // Ascending order matters: each splice is done against a list that already
+  // holds every lower-indexed hidden entry, so the original indices land.
+  previous.forEach((item, index) => {
+    if (reportedIds.has(item.id)) return;
+    merged.splice(Math.min(index, merged.length), 0, item);
+  });
+  return merged;
 };

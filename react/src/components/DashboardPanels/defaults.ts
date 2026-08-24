@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { generateUUID } from '../../helper/uuid';
 import type { BAIBoardItem } from '../BAIBoard';
 import type { PanelInput, PersistedPanel } from './types';
 
@@ -19,9 +20,10 @@ export const DEFAULT_PANEL_LAYOUT: Omit<BAIBoardItem, 'data' | 'id'> = {
 };
 
 export const createPanel = (input: PanelInput): PersistedPanel => ({
-  // randomUUID (not Date.now) — a double-submit in the same millisecond must
-  // still yield distinct ids, or removePanel(id) deletes both.
-  id: `${input.resourceType}-${crypto.randomUUID()}`,
+  // A UUID (not Date.now) — a double-submit in the same millisecond must still
+  // yield distinct ids, or removePanel(id) deletes both. generateUUID, not
+  // crypto.randomUUID: the latter is absent on plain-HTTP origins.
+  id: `${input.resourceType}-${generateUUID()}`,
   panelType: 'resourceTable',
   descriptor: {
     resourceType: input.resourceType,

@@ -93,15 +93,55 @@ describe('mergeHiddenLayoutEntries', () => {
 
     const merged = mergeHiddenLayoutEntries(reported, previous);
 
+    // The hidden entry stays at the index it held (1), rather than being
+    // appended — opting the feature back on must restore its position too.
     expect(merged.map((item) => item.id)).toEqual([
       'myResource',
-      'mySession',
       'custom-1',
+      'mySession',
     ]);
     // The reported geometry wins for reported ids...
     expect(merged[0].rowSpan).toBe(3);
     // ...and the hidden entry keeps the geometry it was stored with.
-    expect(merged[2]).toEqual(entry('custom-1'));
+    expect(merged[1]).toEqual(entry('custom-1'));
+  });
+
+  it('restores a hidden panel to its exact slot when nothing else moved', () => {
+    const previous = [entry('a'), entry('hidden'), entry('b'), entry('c')];
+    const reported = [entry('a'), entry('b'), entry('c')];
+
+    expect(
+      mergeHiddenLayoutEntries(reported, previous).map((item) => item.id),
+    ).toEqual(['a', 'hidden', 'b', 'c']);
+  });
+
+  it('restores several hidden panels to their own slots', () => {
+    const previous = [entry('h1'), entry('a'), entry('h2'), entry('b')];
+    const reported = [entry('a'), entry('b')];
+
+    expect(
+      mergeHiddenLayoutEntries(reported, previous).map((item) => item.id),
+    ).toEqual(['h1', 'a', 'h2', 'b']);
+  });
+
+  it('keeps every unreported entry, in its previous order', () => {
+    const previous = [entry('a'), entry('b'), entry('hidden')];
+    // Nothing but `a` is on the board right now.
+    const reported = [entry('a')];
+
+    expect(
+      mergeHiddenLayoutEntries(reported, previous).map((item) => item.id),
+    ).toEqual(['a', 'b', 'hidden']);
+  });
+
+  it('places a newly added panel without displacing the hidden ones', () => {
+    const previous = [entry('a'), entry('hidden'), entry('b')];
+    // `new` was just added and appended by the board.
+    const reported = [entry('a'), entry('b'), entry('new')];
+
+    expect(
+      mergeHiddenLayoutEntries(reported, previous).map((item) => item.id),
+    ).toEqual(['a', 'hidden', 'b', 'new']);
   });
 
   it('is a plain overwrite when everything was reported', () => {

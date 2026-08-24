@@ -7,7 +7,11 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { BAIBoardItem } from '../BAIBoard';
 import { createPanel, DEFAULT_PANEL_LAYOUT, DEFAULT_PANELS } from './defaults';
 import { panelRegistry } from './panelRegistry';
-import { availableResourceKeys, resolvePanelTitle } from './resourceRegistry';
+import {
+  availableResourceKeys,
+  resolvePanelTitle,
+  resourceRegistry,
+} from './resourceRegistry';
 import type { PanelInput, PersistedPanel, ResourceKey } from './types';
 import { BAIBoardItemErrorBoundary } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
@@ -39,17 +43,27 @@ export interface UseCustomPanelsResult {
   removePanel: (id: string) => void;
 }
 
-/** Drop corrupt/legacy entries instead of crashing the whole dashboard route. */
+/**
+ * Drop corrupt/legacy entries instead of crashing the whole dashboard route.
+ * The kind and resource are checked against the registries that will resolve
+ * them, not merely for presence: an entry naming a retired panel kind is exactly
+ * what a legacy localStorage payload looks like, and it would otherwise reach
+ * `panelRegistry[...]` as undefined and render an empty error box.
+ */
 export const sanitizePanels = (value: unknown): PersistedPanel[] => {
   if (!Array.isArray(value)) return [];
-  return value.filter(
-    (item): item is PersistedPanel =>
-      !!item &&
-      typeof item === 'object' &&
-      typeof (item as PersistedPanel).id === 'string' &&
-      typeof (item as PersistedPanel).panelType === 'string' &&
-      !!(item as PersistedPanel).descriptor?.resourceType,
-  );
+  return value.filter((item): item is PersistedPanel => {
+    if (!item || typeof item !== 'object') return false;
+    const panel = item as PersistedPanel;
+    return (
+      typeof panel.id === 'string' &&
+      panel.panelType in panelRegistry &&
+      !!panel.descriptor &&
+      panel.descriptor.resourceType in resourceRegistry &&
+      (panel.descriptor.title === undefined ||
+        typeof panel.descriptor.title === 'string')
+    );
+  });
 };
 
 /**

@@ -53,16 +53,11 @@ These panels show cluster-wide agent health and resource utilization.
 
 ## Customizing the Dashboard Layout
 
-The dashboard layout is locked by default, so panels stay in place while you
-browse. To rearrange the board, click the **Edit** button at the top right of
-the page. While edit mode is active, you can:
+You can rearrange the board at any time — there is no mode to enter first:
 
 - **Move panels**: Drag a panel by its header to reposition it on the board.
 - **Resize panels**: Drag the bottom-right corner of a panel to adjust its
   size. Each panel has a minimum size to ensure its content remains readable.
-
-When you are done, click the **Close** button at the top right of the page to
-lock the board again.
 
 ![](../images/dashboard_edit_mode.png)
 <!-- TODO: Capture screenshot of the dashboard in edit mode (board + edit sidebar) -->
@@ -88,7 +83,8 @@ panels are hidden — not deleted — and reappear with their saved board
 positions once you turn it back on.
 :::
 
-While edit mode is active, a sidebar on the right side of the board lists your
+Click the **Edit** button at the top right of the page to open the custom-panel
+sidebar, and **Close** to hide it again. The sidebar lists your
 custom panels. A custom panel is a table of a resource you select, narrowed by
 a condition you define. The panel itself shows only a title and a table, so
 give the panel a title that describes its condition.

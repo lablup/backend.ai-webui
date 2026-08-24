@@ -41,6 +41,7 @@ import {
   BAISkeleton,
   BAIBoardItemErrorBoundary,
   BAIFlex,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -489,29 +490,33 @@ const DashboardPage: React.FC = () => {
         />
       ) : null}
       {customPanelsEnabled ? (
-        <DashboardPanelModal
-          // Remount per target so edit pre-fill never leaks between opens.
-          key={panelModalState.panel?.id ?? 'new'}
-          open={panelModalState.open}
-          initialPanel={panelModalState.panel}
-          availableResources={availableResources}
-          onRequestClose={() => setPanelModalState({ open: false })}
-          onSubmit={(input) => {
-            if (panelModalState.panel) {
-              updatePanel(panelModalState.panel.id, input);
-            } else {
-              addPanel(input);
-              // New panels append at the board's end — bring them into view so the
-              // add doesn't look like a no-op.
-              requestAnimationFrame(() => {
-                boardContainerRef.current?.scrollIntoView({
-                  block: 'end',
-                  behavior: 'smooth',
+        // Unmount after the close animation so every open starts from a fresh
+        // instance. A `key` alone is not enough: two consecutive Adds share the
+        // same key, so the modal is never remounted and its preview-driven
+        // state (sort order) leaks from one new panel into the next.
+        <BAIUnmountAfterClose>
+          <DashboardPanelModal
+            open={panelModalState.open}
+            initialPanel={panelModalState.panel}
+            availableResources={availableResources}
+            onRequestClose={() => setPanelModalState({ open: false })}
+            onSubmit={(input) => {
+              if (panelModalState.panel) {
+                updatePanel(panelModalState.panel.id, input);
+              } else {
+                addPanel(input);
+                // New panels append at the board's end — bring them into view so
+                // the add doesn't look like a no-op.
+                requestAnimationFrame(() => {
+                  boardContainerRef.current?.scrollIntoView({
+                    block: 'end',
+                    behavior: 'smooth',
+                  });
                 });
-              });
-            }
-          }}
-        />
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
       ) : null}
     </BAIFlex>
   );

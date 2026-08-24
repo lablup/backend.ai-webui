@@ -5,9 +5,10 @@
 import { atom } from 'jotai';
 
 /**
- * Dashboard edit-mode flag. Transient (not persisted). When false the board is
- * locked (no drag/resize, no per-panel edit affordances); when true the board's
- * items can be repositioned/resized. Toggled by the breadcrumb
+ * Dashboard edit-mode flag. Transient (not persisted). It gates only the
+ * custom-panel affordances — the edit sider and the per-panel edit/remove
+ * controls. Dragging and resizing are never gated: the board stays
+ * rearrangeable in both states. Toggled by the breadcrumb
  * {@link DashboardEditToggleButton}.
  */
 export const dashboardEditModeAtom = atom(false);

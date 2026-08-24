@@ -48,6 +48,32 @@ describe('sanitizePanels', () => {
     expect(sanitizePanels([noDescriptor, emptyDescriptor])).toEqual([]);
   });
 
+  it('drops a panelType the registry cannot render', () => {
+    // What a payload written by an older/newer build looks like: the shape is
+    // right, so a presence-only check would let it through to render as an
+    // empty error box.
+    const retiredKind = { ...validPanel('session-1'), panelType: 'chart' };
+    expect(sanitizePanels([retiredKind, validPanel('session-2')])).toEqual([
+      validPanel('session-2'),
+    ]);
+  });
+
+  it('drops a resourceType the registry cannot resolve', () => {
+    const removedResource = {
+      ...validPanel('user-1'),
+      descriptor: { ...validPanel('user-1').descriptor, resourceType: 'user' },
+    };
+    expect(sanitizePanels([removedResource])).toEqual([]);
+  });
+
+  it('drops a non-string title, which would reach React as a child', () => {
+    const badTitle = {
+      ...validPanel('session-1'),
+      descriptor: { ...validPanel('session-1').descriptor, title: { en: 'x' } },
+    };
+    expect(sanitizePanels([badTitle])).toEqual([]);
+  });
+
   it('drops null and non-object entries while keeping valid siblings', () => {
     expect(
       sanitizePanels([null, 'legacy', 7, validPanel('session-1')]),

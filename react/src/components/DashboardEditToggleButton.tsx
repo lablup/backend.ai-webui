@@ -11,8 +11,10 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * Breadcrumb-bar toggle for the dashboard's edit mode ({@link dashboardEditModeAtom}):
- * locked by default ("Edit" enters, "Close" exits). Teleported into the breadcrumb
- * right slot via `breadcrumbExtraAtom` from `DashboardPage`.
+ * "Edit" opens the custom-panel sider, "Close" hides it again. It does not lock
+ * or unlock the board — panels stay draggable and resizable either way.
+ * Teleported into the breadcrumb right slot via `breadcrumbExtraAtom` from
+ * `DashboardPage`.
  */
 const DashboardEditToggleButton: React.FC = () => {
   'use memo';

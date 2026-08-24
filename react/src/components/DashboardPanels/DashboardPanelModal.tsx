@@ -30,6 +30,8 @@ export interface DashboardPanelModalProps {
   /** Resources the current role may query (drives the resource selector). */
   availableResources: ReadonlyArray<ResourceKey>;
   onSubmit: (input: PanelInput) => void;
+  /** Forwarded so `BAIUnmountAfterClose` can unmount this after the exit. */
+  afterClose?: () => void;
 }
 
 interface PanelFormValues {
@@ -50,6 +52,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   initialPanel,
   availableResources,
   onSubmit,
+  afterClose,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -58,6 +61,13 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   const fallbackResource = availableResources[0];
   const initialResource =
     initialPanel?.descriptor.resourceType ?? fallbackResource;
+  // A saved panel whose resource the current role can no longer query must stay
+  // editable — dropping it from the options would leave the selector showing a
+  // value it cannot name, and the panel repairable only by deleting it.
+  const resourceOptions =
+    initialPanel && !availableResources.includes(initialResource)
+      ? [...availableResources, initialResource]
+      : availableResources;
   // Preview-driven sort order; not a typed field, so it lives beside the form.
   const [order, setOrder] = useState<string | null>(
     initialPanel?.descriptor.order ?? null,
@@ -92,6 +102,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
       okText={initialPanel ? t('button.Save') : t('button.Add')}
       onOk={handleOk}
       onCancel={onRequestClose}
+      afterClose={afterClose}
     >
       <Form
         form={form}
@@ -117,7 +128,7 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
           >
             <AstryxFormSelector
               label={t('dashboard.panelModal.Resource')}
-              options={availableResources.map((key) => ({
+              options={resourceOptions.map((key) => ({
                 value: key,
                 label: t(resourceRegistry[key].labelKey),
               }))}
