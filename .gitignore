@@ -50,6 +50,9 @@ typings/
 # Optional eslint cache
 .eslintcache
 
+# TypeScript incremental build info (verify.sh tsc --incremental)
+*.tsbuildinfo
+
 # Optional REPL history
 .node_repl_history
 
