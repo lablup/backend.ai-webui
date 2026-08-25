@@ -56,12 +56,14 @@ test.describe(
         timeout: 10000,
       });
 
-      // Verify the model gpt-mock-model is available (loaded from mock).
-      // Matches both the model-select trigger and an option label, so scope
-      // to the first match like the assertion above.
-      await expect(page.getByText(MOCK_MODEL_ID).first()).toBeVisible({
-        timeout: 10000,
-      });
+      // Verify the model gpt-mock-model is offered as an option (loaded from
+      // mock) — open the selector and assert the option itself, so an
+      // options-loading regression cannot pass on the trigger's label alone.
+      await page.getByText(MOCK_MODEL_ID).first().click();
+      await expect(
+        page.getByRole('option', { name: MOCK_MODEL_ID, exact: true }),
+      ).toBeVisible({ timeout: 10000 });
+      await page.keyboard.press('Escape');
     });
 
     test('User can send a message and receive a streaming response', async ({

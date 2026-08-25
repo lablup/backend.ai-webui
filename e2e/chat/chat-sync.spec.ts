@@ -147,12 +147,13 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      // In the first pane, click the attachment (LinkOutlined) button
-      // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
+      // In the first pane, click the attachment button. `ChatSender` labels it
+      // t('chatui.Attachments'); the antd icon-derived name 'link' is gone.
+      // astryx-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
       const firstChatCard = page.locator('.astryx-card').nth(1);
       const secondChatCard = page.locator('.astryx-card').nth(2);
       const attachButton = firstChatCard
-        .getByRole('button', { name: 'link' })
+        .getByRole('button', { name: 'Attachments' })
         .first();
 
       // Capture the file chooser before clicking the button

@@ -324,7 +324,7 @@ export class AdminModelCardPage {
     });
     // Click the option matching the folder name
     await dropdown
-      .getByRole('option', { name: new RegExp(this.escapeRegExp(folderName)) })
+      .getByRole('option', { name: folderName, exact: true })
       .click();
     // Wait for dropdown to close
     await expect(dropdown).toBeHidden({ timeout: 10000 });
@@ -376,9 +376,7 @@ export class AdminModelCardPage {
       });
       if (fields.vfolderTitle) {
         await dropdown
-          .getByRole('option', {
-            name: new RegExp(this.escapeRegExp(fields.vfolderTitle)),
-          })
+          .getByRole('option', { name: fields.vfolderTitle, exact: true })
           .click();
       } else {
         await dropdown.getByRole('option').first().click();
