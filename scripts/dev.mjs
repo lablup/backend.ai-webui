@@ -12,6 +12,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
 
@@ -65,27 +66,15 @@ delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it
 
 // Decide the portless app name (`https://<name>.localhost:1355`).
 // Priority:
-//   1. PORTLESS_APP_NAME env var (caller-provided; sanitized here so callers
-//      can pass arbitrary strings — e.g. a Claude Code session name — without
-//      worrying about subdomain validity).
+//   1. PORTLESS_APP_NAME env var (caller-provided; sanitized in the module so
+//      callers can pass arbitrary strings — e.g. a Claude Code session name —
+//      without worrying about subdomain validity).
 //   2. FR-XXXX issue number in the current git branch (e.g. `fr-2701`).
 //   3. `portless run` (auto-derived from branch — long branch-prefixed
 //      hostnames may break Portless's HTTPS cert generation, so prefer 1 or 2).
-function sanitizeAppName(raw) {
-  if (!raw) return null;
-  const slug = raw
-    .toString()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-{2,}/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40);
-  return slug || null;
-}
+// Both named paths run through the same normalization: see portless-app-name.mjs.
 const branch = spawnSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).stdout?.trim() || '';
-const issueMatch = branch.match(/(?:^|[-_/])(fr-?\d+)/i);
-const branchAppName = issueMatch ? issueMatch[1].toLowerCase().replace(/^fr/, 'fr-').replace(/-{2,}/g, '-') : null;
-const appName = sanitizeAppName(process.env.PORTLESS_APP_NAME) ?? branchAppName;
+const appName = resolveAppName({ envName: process.env.PORTLESS_APP_NAME, branch });
 if (appName) {
   // Surface the app name to the React bundle for the dev-only tab title.
   env.VITE_DEV_SERVER_NAME = appName;
