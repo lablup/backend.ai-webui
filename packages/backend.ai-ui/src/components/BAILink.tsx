@@ -24,7 +24,6 @@
 import './BAILink.css';
 import BAIText from './BAIText';
 import { Link as AstryxLink } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
 import React from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 
@@ -58,18 +57,32 @@ const BAILink: React.FC<BAILinkProps> = ({
   children,
   ...linkProps
 }) => {
+  // FR-3686 — the clip AND the tooltip must sit on the element that owns the
+  // text. An ancestor's `text-overflow` cannot shorten an atomic inline box,
+  // and an ancestor's overflow measurement cannot see a child that fits it, so
+  // `BAIText` goes INSIDE the link rather than around it. That keeps both
+  // documented forms working: `ellipsis` shows the text itself, and
+  // `ellipsis={{ tooltip: 'custom' }}` measures the box it is anchored to.
+  const content = ellipsis ? (
+    <BAIText ellipsis={ellipsis === true ? { tooltip: true } : ellipsis}>
+      {children}
+    </BAIText>
+  ) : (
+    children
+  );
+  // The link is what bounds that Text, so it needs the width cap in both
+  // branches. Internal classes go AFTER the spread — `linkProps.className`
+  // would otherwise replace them.
+  const linkClassName = (callerClassName?: string) =>
+    `${LINK_TYPE_CLASS[type]}${ellipsis ? ' bai-link-ellipsis' : ''}${
+      callerClassName ? ` ${callerClassName}` : ''
+    }`;
+
   if (type !== 'disabled' && to) {
+    const { className: routerClassName, ...routerProps } = linkProps;
     return (
-      <Link
-        className={`${LINK_TYPE_CLASS[type]}${ellipsis ? ' bai-link-ellipsis' : ''}`}
-        to={to}
-        {...linkProps}
-      >
-        {/* A router <a> has no Astryx Text of its own, so `ellipsis` has to add
-            one: it owns both the clip and the truncate tooltip, which an
-            ancestor cannot (the <a> fits it exactly, so nothing overflows to
-            measure). FR-3686. */}
-        {ellipsis ? <Text maxLines={1}>{children}</Text> : children}
+      <Link to={to} {...routerProps} className={linkClassName(routerClassName)}>
+        {content}
         {icon}
       </Link>
     );
@@ -93,32 +106,19 @@ const BAILink: React.FC<BAILinkProps> = ({
     ...restProps
   } = linkProps;
 
-  const link = (
+  return (
     <AstryxLink
       {...restProps}
-      className={`${LINK_TYPE_CLASS[type]}${ellipsis ? ' bai-link-ellipsis' : ''}${className ? ` ${className}` : ''}`}
+      className={linkClassName(className)}
       style={style}
       target={target}
       isDisabled={type === 'disabled'}
       onClick={onClick}
-      // The clip has to sit on the element that owns the text: an ancestor's
-      // `text-overflow` cannot shorten an atomic inline-level box (FR-3686).
-      maxLines={ellipsis ? 1 : 0}
     >
-      {children}
+      {content}
       {icon}
     </AstryxLink>
   );
-
-  if (ellipsis) {
-    return (
-      <BAIText ellipsis={ellipsis === true ? { tooltip: true } : ellipsis}>
-        {link}
-      </BAIText>
-    );
-  }
-
-  return link;
 };
 
 export default BAILink;

@@ -111,6 +111,57 @@ describe('BAILink', () => {
       render(<BAILink ellipsis={false}>No ellipsis</BAILink>);
       expect(screen.getByText('No ellipsis')).toBeInTheDocument();
     });
+
+    /*
+     * FR-3686. jsdom does not lay out, so overflow cannot be measured here;
+     * these pin the DOM CONTRACT the fix depends on — the truncating box lives
+     * INSIDE the link (an ancestor can neither shorten an atomic inline box nor
+     * see a child that fits it), and the link carries the width cap that bounds
+     * it. Both are load-bearing and both are invisible to a render-only assert.
+     */
+    it.each([
+      ['onClick (Astryx Link)', undefined],
+      ['to (router link)', '/test'],
+    ])('puts the truncating text inside the link — %s', (_label, to) => {
+      renderWithRouter(
+        <BAILink to={to} ellipsis data-testid="link">
+          Some long name
+        </BAILink>,
+      );
+      const link = screen.getByTestId('link');
+      expect(link).toHaveClass('bai-link-ellipsis');
+      const text = link.querySelector('.astryx-text');
+      expect(text).not.toBeNull();
+      expect(link).toContainElement(text as HTMLElement);
+      expect(screen.getByText('Some long name')).toBeInTheDocument();
+    });
+
+    it('keeps the caller class alongside the internal ones', () => {
+      renderWithRouter(
+        <BAILink to="/test" ellipsis className="caller" data-testid="link">
+          Name
+        </BAILink>,
+      );
+      const link = screen.getByTestId('link');
+      // The spread must not overwrite the internal classes, or the width cap
+      // disappears and truncation silently stops working.
+      expect(link).toHaveClass('caller');
+      expect(link).toHaveClass('bai-link-ellipsis');
+      expect(link).toHaveClass('bai-link-hover');
+    });
+
+    it('keeps the custom-tooltip form addressable on the truncating box', () => {
+      render(
+        <BAILink ellipsis={{ tooltip: 'Full text here' }} data-testid="link">
+          Truncated text
+        </BAILink>,
+      );
+      const link = screen.getByTestId('link');
+      // The custom tooltip is gated on the truncating box's own overflow, so
+      // that box has to be the one inside the link — not an ancestor of it.
+      expect(link).toHaveClass('bai-link-ellipsis');
+      expect(link.querySelector('.astryx-text')).not.toBeNull();
+    });
   });
 
   describe('onClick Handler', () => {

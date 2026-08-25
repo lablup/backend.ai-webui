@@ -56,6 +56,16 @@
   max-width: 100%;
 }
 
+/*
+ Astryx `Link` wraps its children in a `Text` of its own, which becomes a flex
+ item of the link box. A flex item floors at `min-width: auto` — its min-content
+ — so without this the truncating `BAIText` inside it never shrinks below the
+ full string and the link hard-clips again (measured: 75px inside a 56px link).
+*/
+.bai-link-ellipsis > .astryx-text {
+  min-width: 0;
+}
+
 .bai-link-disabled {
   color: var(--color-text-disabled);
   cursor: not-allowed;
