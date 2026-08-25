@@ -119,7 +119,7 @@ To create a new folder from this page:
 
 1. Click the **Create Folder** button at the top right of the page.
 2. Fill in the folder details in the creation modal.
-3. Click **OK** to create the folder.
+3. Click **Create** to create the folder.
 
 ![](../images/project_admin_create_folder_modal.png)
 
@@ -190,7 +190,7 @@ The page provides the following controls:
 - **Running / Terminated** segmented control: Toggle between currently running deployments and deployments that have been terminated.
 - **Property filter**: Filter the list by Name, Tags, Endpoint URL, or Open to Public.
 
-The table displays the deployment's Name, Revision, Status, Replicas, Model, Created At, and Owner columns, along with the deployment's domain, project, and resource group when relevant.
+The table displays the deployment's Name, Revision, Lifecycle, Replicas, Model, Owner, and Created At columns, along with the deployment's domain, project, and resource group when relevant.
 
 The **Revision** column shows the deployment's current revision as a clickable `#N` link. Click it to open a drawer that displays the details of the current revision.
 
