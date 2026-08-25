@@ -67,6 +67,7 @@ import type {
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
+import { SearchIcon } from 'lucide-react';
 import { useEffect, useEffectEvent } from 'react';
 
 // GraphQL Filter Types (matching schema.graphql)
@@ -880,6 +881,7 @@ const BAIGraphQLPropertyFilter = <
     <PowerSearch
       config={config}
       filters={filters}
+      startIcon={SearchIcon}
       label={label ?? t('comp:BAIPropertyFilter.SearchLabel')}
       placeholder={placeholder ?? t('comp:BAIPropertyFilter.PlaceHolder')}
       popoverSaveButtonLabel={applyLabel ?? t('comp:BAIPropertyFilter.Apply')}
