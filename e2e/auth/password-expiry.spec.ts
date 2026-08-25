@@ -51,18 +51,13 @@ const TEST_EMAIL = 'expired-user@example.com';
 const TEST_PASSWORD = 'oldPassword1!';
 
 /**
- * Fill the SESSION login form fields and expand the endpoint section.
+ * Fill the SESSION login form fields, endpoint included.
  * Mirrors the pattern used in e2e/auth/login.spec.ts.
  */
 async function fillLoginForm(page: Page): Promise<void> {
   await page.getByLabel('Email').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
-
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
+  await page.getByRole('textbox', { name: 'Endpoint' }).fill(webServerEndpoint);
 }
 
 /**
@@ -291,13 +286,9 @@ test.describe('real account password change flow', () => {
       });
       await page.getByLabel('Email').fill(USER_EMAIL);
       await page.getByLabel('Password').fill(ORIGINAL_PASSWORD);
-      const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-      if (
-        !(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))
-      ) {
-        await page.getByText('Advanced').click();
-      }
-      await endpointInput.fill(webServerEndpoint);
+      await page
+        .getByRole('textbox', { name: 'Endpoint' })
+        .fill(webServerEndpoint);
 
       // ── Now register the mock: first user-initiated call → expired, rest → real backend ──
       // The mock is registered late (after page.goto and form fill) so that the app's

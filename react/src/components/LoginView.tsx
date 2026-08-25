@@ -163,8 +163,6 @@ const LoginView: React.FC<{
   const [endpoints, setEndpoints] = useState<string[]>(() => {
     return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
   });
-  const [showEndpointInput, setShowEndpointInput] = useState(true);
-  const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
   const [dismissedEnvEndpoints, setDismissedEnvEndpoints] = useState<string[]>(
     () =>
       (globalThis as any).backendaioptions?.get(
@@ -227,18 +225,12 @@ const LoginView: React.FC<{
     // — that would re-introduce the login-screen bounce. Fall back to the
     // config.toml value, then the dev override as a last-resort pre-fill for a
     // fresh login.
+    // A config.toml `apiEndpoint` only PRE-FILLS the field — the input stays
+    // visible and editable, because which server you sign in to decides which
+    // credentials apply (FR-3560).
     setApiEndpoint(
       (prev) => prev || newCfg.api_endpoint || devApiEndpointOverride || '',
     );
-
-    // Handle endpoint visibility
-    if (newCfg.api_endpoint === '' || devApiEndpointOverride) {
-      setShowEndpointInput(true);
-      setIsEndpointDisabled(false);
-    } else {
-      setShowEndpointInput(false);
-      setIsEndpointDisabled(true);
-    }
   }
 
   // Load login plugin when config is ready.
@@ -1166,8 +1158,6 @@ const LoginView: React.FC<{
         expiredCredentials={expiredCredentials}
         showSignupModal={showSignupModal}
         signupPreloadedToken={signupPreloadedToken}
-        showEndpointInput={showEndpointInput}
-        isEndpointDisabled={isEndpointDisabled}
         form={form}
         isRememberUserId={isRememberUserId}
         onChangeRememberUserId={(next) => {
