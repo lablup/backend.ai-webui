@@ -70,6 +70,18 @@ type ComputeSessionNodesData = ExtractResultValue<
 
 type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 
+// Passed as query variables: inlining these in the graphql tag needs `\"`
+// escapes, and a tagged template whose cooked text differs from its raw text
+// makes the React Compiler bail out of the whole component (FR-3510 symptom).
+const NOT_FINISHED_FILTER = 'status != "TERMINATED" & status != "CANCELLED"';
+const COUNT_FILTERS = {
+  all: NOT_FINISHED_FILTER,
+  interactive: `${NOT_FINISHED_FILTER} & type == "interactive"`,
+  inference: `${NOT_FINISHED_FILTER} & type == "inference"`,
+  batch: `${NOT_FINISHED_FILTER} & type == "batch"`,
+  system: `${NOT_FINISHED_FILTER} & type == "system"`,
+};
+
 const AdminComputeSessionListPage = () => {
   'use memo';
 
@@ -142,7 +154,7 @@ const AdminComputeSessionListPage = () => {
   const statusFilter =
     queryParams.statusCategory === 'running' ||
     queryParams.statusCategory === undefined
-      ? 'status != "TERMINATED" & status != "CANCELLED"'
+      ? NOT_FINISHED_FILTER
       : 'status == "TERMINATED" | status == "CANCELLED"';
 
   const isNotRunningCategory = (status?: string | null) => {
@@ -157,6 +169,11 @@ const AdminComputeSessionListPage = () => {
     first: baiPaginationOption.first,
     filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
     order: queryParams.order || '-created_at',
+    filterForAllCount: COUNT_FILTERS.all,
+    filterForInteractiveCount: COUNT_FILTERS.interactive,
+    filterForInferenceCount: COUNT_FILTERS.inference,
+    filterForBatchCount: COUNT_FILTERS.batch,
+    filterForSystemCount: COUNT_FILTERS.system,
   };
 
   // The grid's legacy compute_session_list has no `project_id` queryfilter
@@ -177,65 +194,70 @@ const AdminComputeSessionListPage = () => {
 
   const queryRef = useLazyLoadQuery<AdminComputeSessionListPageQuery>(
     graphql`
-        query AdminComputeSessionListPageQuery(
-          $first: Int = 20
-          $offset: Int = 0
-          $filter: String
-          $order: String
-        ) {
-          computeSessionNodeResult: compute_session_nodes(
-            first: $first
-            offset: $offset
-            filter: $filter
-            order: $order
-          ) @catch(to: RESULT) {
-            edges @required(action: THROW) {
-              node @required(action: THROW) {
-                id @required(action: THROW)
-                name @required(action: THROW)
-                ...SessionNodesFragment
-                ...TerminateSessionModalFragment
-              }
+      query AdminComputeSessionListPageQuery(
+        $first: Int = 20
+        $offset: Int = 0
+        $filter: String
+        $order: String
+        $filterForAllCount: String
+        $filterForInteractiveCount: String
+        $filterForInferenceCount: String
+        $filterForBatchCount: String
+        $filterForSystemCount: String
+      ) {
+        computeSessionNodeResult: compute_session_nodes(
+          first: $first
+          offset: $offset
+          filter: $filter
+          order: $order
+        ) @catch(to: RESULT) {
+          edges @required(action: THROW) {
+            node @required(action: THROW) {
+              id @required(action: THROW)
+              name @required(action: THROW)
+              ...SessionNodesFragment
+              ...TerminateSessionModalFragment
             }
-            count
           }
-          all: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
-          ) {
-            count
-          }
-          interactive: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-          ) {
-            count
-          }
-          inference: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-          ) {
-            count
-          }
-          batch: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-          ) {
-            count
-          }
-          system: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-          ) {
-            count
-          }
+          count
         }
-      `,
+        all: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForAllCount
+        ) {
+          count
+        }
+        interactive: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForInteractiveCount
+        ) {
+          count
+        }
+        inference: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForInferenceCount
+        ) {
+          count
+        }
+        batch: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForBatchCount
+        ) {
+          count
+        }
+        system: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForSystemCount
+        ) {
+          count
+        }
+      }
+    `,
     deferredQueryVariables,
     {
       fetchPolicy:
@@ -281,15 +303,15 @@ const AdminComputeSessionListPage = () => {
             inference: t('session.Inference'),
             system: t('session.System'),
           },
-          (label, key) => ({
-            key,
-            label: (
-              <BAIFlex justify="center" gap={10}>
-                {label}
-                {
-                  // display badge only if count is greater than 0
-                  // @ts-ignore
-                  (sessionCounts[key]?.count || 0) > 0 && (
+          (label, key) => {
+            const count =
+              sessionCounts[key as keyof typeof sessionCounts]?.count ?? 0;
+            return {
+              key,
+              label: (
+                <BAIFlex justify="center" gap={10}>
+                  {label}
+                  {count > 0 && (
                     <Badge
                       // PILOT-DECISION: antd count Badge (brand color when the
                       // tab is active, gray otherwise) -> Astryx Badge pill.
@@ -303,16 +325,13 @@ const AdminComputeSessionListPage = () => {
                           ? PRIMARY_TAG_VARIANT
                           : 'neutral'
                       }
-                      label={
-                        // @ts-ignore
-                        sessionCounts[key].count
-                      }
+                      label={count}
                     />
-                  )
-                }
-              </BAIFlex>
-            ),
-          }),
+                  )}
+                </BAIFlex>
+              ),
+            };
+          },
         )}
       />
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
