@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Επεξεργασία",
     "Free": "Δωρεάν",
-    "Used": "Μεταχειρισμένος"
+    "Used": "Μεταχειρισμένος",
+    "editSider": {
+      "Empty": "Δεν υπάρχουν ακόμη προσαρμοσμένοι πίνακες",
+      "GridDisabled": "Προβολή πλέγματος ανενεργή (Πειραματικές λειτουργίες)",
+      "RequiresSuperadmin": "Μόνο για υπερδιαχειριστές",
+      "ResetLayout": "Επαναφορά διάταξης",
+      "ResetLayoutDescription": "Επαναφέρει την προεπιλεγμένη διάταξη των πινάκων. Οι προσαρμοσμένοι πίνακες διατηρούνται.",
+      "Title": "Προσαρμοσμένοι πίνακες"
+    },
+    "panelModal": {
+      "AddPanel": "Προσθήκη πίνακα",
+      "Condition": "Συνθήκη",
+      "Count": "Πλήθος",
+      "DataSource": "Πηγή δεδομένων",
+      "DataSourceRequired": "Επιλέξτε πηγή δεδομένων",
+      "EditPanel": "Επεξεργασία πίνακα",
+      "PanelType": "Τύπος πίνακα",
+      "PanelTypeRequired": "Επιλέξτε τύπο πίνακα",
+      "Table": "Πίνακας",
+      "TitleDescription": "Εμφανίζεται ως επικεφαλίδα του πίνακα — χρησιμοποιήστε τον για να περιγράψετε τη συνθήκη.",
+      "TitleOptional": "Τίτλος (προαιρετικό)"
+    }
   },
   "data": {
     "Active": "Ενεργός",
@@ -2000,6 +2022,9 @@
     "AdditionalMounts": "Πρόσθετες βάσεις",
     "AdditionalMountsTooltip": "Επιπλέον φάκελοι εκτός μοντέλου που τοποθετούνται σε κάθε αντίγραφο μαζί με τον φάκελο μοντέλου.",
     "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
+    "AwsAccessKeyId": "Το αναγνωριστικό κλειδιού πρόσβασης AWS σας",
+    "AwsDefaultRegion": "π.χ. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Το μυστικό κλειδί πρόσβασης AWS σας",
     "BasePath": "Διαδρομή βάσης",
     "CommandArgvLabel": "Εντολή (argv)",
     "CommandExecHelper": "Εκτελείται απευθείας ως ορίσματα, χωρίς shell — οι τελεστές (; && | $VAR, ανακατεύθυνση κ.λπ.) αντιμετωπίζονται ως απλό κείμενο. Διαχωρίστε τα ορίσματα με κενά· βάλτε σε εισαγωγικά όσα περιέχουν κενά (π.χ. --name \"my model\").",
@@ -2019,6 +2044,9 @@
     "Finished": "Πεπερασμένος",
     "HealthCheck": "URL ελέγχου υγείας",
     "HealthCheckTooltip": "Η διαδρομή URL που χρησιμοποιείται για να ελεγχθεί αν η υπηρεσία εκτελείται (π.χ. /health).",
+    "HfToken": "Το διακριτικό πρόσβασης Hugging Face σας",
+    "HttpProxy": "π.χ. http://proxy.example.com:8080",
+    "HttpsProxy": "π.χ. https://proxy.example.com:8080",
     "Image": "Εικόνα",
     "ImageRequired": "Η εικόνα είναι υποχρεωτική.",
     "InitialDelay": "Περίοδος χάριτος εκκίνησης",
@@ -2037,6 +2065,7 @@
     "ModelMountDestination": "Προσάρτηση προορισμού για φάκελο μοντέλου",
     "ModelMountTooltip": "Η διαδρομή όπου ο φάκελος μοντέλου είναι προσαρτημένος εντός του container.",
     "NimApiKey": "Το κλειδί API του NGC σας",
+    "NoProxy": "π.χ. localhost,127.0.0.1,.internal",
     "OpenFolder": "Μετάβαση στον φάκελο",
     "Port": "Θύρα",
     "PortTooltip": "Ο αριθμός θύρας στον οποίο ακούει η διεργασία εξυπηρέτησης μοντέλου.",
@@ -2077,7 +2106,8 @@
     "VllmModelName": "Όνομα μοντέλου (π.χ., meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Μέγεθος παραλληλισμού pipeline (π.χ., 2, 4)",
     "VllmQuantization": "π.χ., awq, gptq, fp8",
-    "VllmTpSize": "Μέγεθος παράλληλης επεξεργασίας tensor (π.χ. 2, 4, 8)"
+    "VllmTpSize": "Μέγεθος παράλληλης επεξεργασίας tensor (π.χ. 2, 4, 8)",
+    "WandbApiKey": "Το κλειδί API Weights & Biases σας"
   },
   "modelStore": {
     "Architecture": "Αρχιτεκτονική",
@@ -2717,6 +2747,7 @@
     "InvalidRedirectURL": "Η εφαρμογή δεν μπορεί να ξεκινήσει λόγω μη έγκυρης διεύθυνσης URL.",
     "KernelExitCode": "Κώδικας εξόδου πυρήνα",
     "LastTry": "Τελευταία προσπάθεια",
+    "LaunchedWithDifferentAccessKey": "Αυτή η συνεδρία δημιουργήθηκε με κλειδί διαφορετικό από το προεπιλεγμένο κλειδί πρόσβασης.",
     "MEM": "Μνήμη",
     "MaxSessionLifetime": "Μέγιστη διάρκεια ζωής συνόδου",
     "MaxSessionLifetimeDesc": "Αναγκαστικός τερματισμός συνόδων μετά από αυτό το χρονικό διάστημα από τη δημιουργία. Αποτρέπει τη λειτουργία της συνόδου στο άπειρο.",
@@ -3045,7 +3076,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Πλέγμα",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3068,7 +3099,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Πίνακας",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3517,6 +3548,7 @@
     "ClearSSHKeypairInput": "Το γραπτό πληκτρολόγιο SSH θα αφαιρεθεί. Εισαι σιγουρος οτι θελεις να συνεχισεις?",
     "ConfigFilename": "Διαμόρφωση ονόματος αρχείου",
     "CurrentSSHPublicKey": "Τρέχον δημόσιο κλειδί:",
+    "CustomDashboardPanels": "Προσαρμοσμένα πάνελ πίνακα ελέγχου",
     "DarkMode": "Σκοτεινή λειτουργία",
     "DarkTheme": "Σκοτεινή λειτουργία",
     "Default": "Αθέτηση",

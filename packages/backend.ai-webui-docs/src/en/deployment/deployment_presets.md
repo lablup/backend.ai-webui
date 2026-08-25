@@ -28,9 +28,11 @@ Each preset stores the following deployment defaults:
 - **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
 - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
 - **Execution**: Startup command, environment variables, and bootstrap script.
+- **Service Configuration**: Execution mode (Shell or Exec), shell, command, and port — stored for runtimes that read their configuration from the model folder, such as Custom.
 - **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
 - **Health Check**: Optional periodic health check, gated behind an *Enable Health Check* toggle.
-- **Advanced**: Model definition JSON (when needed for a custom runtime).
+- **Pre-Start Actions**: Actions to run before the model service starts.
+- **Model Definition** (optional): The served model's name and path, plus optional metadata.
 
 <a id="managing-deployment-presets"></a>
 
@@ -77,28 +79,36 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
       * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
    - **Image**: The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`). This format helps distinguish images by CPU architecture on mixed-architecture clusters. The same format appears on the Review step.
    - **Runtime Parameters** (appears when a non-Custom runtime such as vLLM or SGLang is selected): Configure the serving framework parameters for this preset. Parameters are organized in tabs — for example, **Model Loading**, **Resource Memory**, **Serving Performance**, **Multimodal**, and **Tool Reasoning** for vLLM. Saved parameter values are applied when a deployment is created from this preset; parameters you leave unchanged will use the runtime's defaults when the deployment runs.
+   - **Service Configuration** (appears when the selected runtime reads its configuration from the model folder, such as Custom): **Execution** (**Shell** or **Exec**), **Shell**, **Command** / **Command (argv)**, and **Port** — the same fields as the Add Revision modal, described in [Service configuration](#service-configuration) on the Deployments page. Leaving **Port** blank makes deployments created from this preset inherit the runtime variant's default port.
+
+      :::note[Where the section appears]
+      **Service Configuration**, **Health Check**, and **Pre-Start Actions** all sit on the **Basic Info** step, below the runtime fields, and are saved independently of the model definition.
+      :::
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
    - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
    - **Execution**: **Startup Command**, environment variables, and bootstrap script. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
 
-      :::note[Startup Command is not the Start Command]
-      The two commands are different, and each field now carries its own description so they are easier to tell apart.
+      :::note[Startup Command is not the Command]
+      The two commands are different, and each field carries its own description so they are easier to tell apart.
 
       | Field | Where it lives | What it does | Example |
       |---|---|---|---|
       | **Startup Command** | Execution section of the preset | *"The command that prepares the environment before the model framework starts (e.g., installing packages such as vllm)."* | `pip install vllm` |
-      | **Start Command** | Model Definition section of the preset | *"The CLI command to start the model serving process."* | `vllm serve /models --tp 2` |
+      | **Command** (**Command (argv)** in Exec mode) | Service Configuration section of the preset | The command that starts the model serving process. | `vllm serve /models --tp 2` |
 
-      Use **Startup Command** for preparation work — installing packages, fetching assets, writing config files. Use **Start Command** for the command that actually launches the serving framework. The placeholder text on each field shows an example of the right kind of command.
+      Use **Startup Command** for preparation work — installing packages, fetching assets, writing config files. Use **Command** for the command that actually launches the serving framework. The placeholder text on each field shows an example of the right kind of command.
       :::
    - **Deployment Defaults**:
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
       * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
    - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
-   - **Advanced** (optional): Model definition JSON for custom runtimes.
+   - **Pre-Start Actions**: Actions to execute before the model service starts. Click **Add Pre-Start Action** to add a row, then fill in **Action** and **Args (JSON)**.
+   - **Model Definition** (optional): A switch in the card header turns the model definition on. When it is on, fill in **Model Name** and **Model Path** — both required — and, optionally, expand the **Metadata** section for the served model's title, author, version, license, description, task, category, architecture, framework, and labels.
 
    ![](../images/deployment_preset_create_modal.png)
+
+   ![](../images/deployment_preset_service_configuration.png)
 
 3. On the **Review** step, check the summary and click `Create` to save. A success notification confirms the preset has been created.
 
@@ -119,6 +129,8 @@ The **Basic Info** card summarizes, in the order the fields appear on step 1:
 - **Runtime**: The runtime variant the preset uses, shown as its display name.
 - **Image**: In `<canonicalName>@<architecture>` format.
 - **Runtime Parameters** (only for a non-Custom runtime with configured values)
+- **Shell**, **Command**, and **Port**: The service configuration values, shown only for a runtime that reads its configuration from the model folder. **Shell** is omitted in Exec mode, because no shell is used then.
+- **Enable Health Check**, followed by the configured health check values when it is enabled.
 
 The remaining cards summarize **Resources** (resource slots, resource options, cluster mode, cluster size), **Deployment** (replica count, revision history limit, Open to Public), and **Model & Execution** (startup command, bootstrap script, environment variables, and the model definition when enabled).
 

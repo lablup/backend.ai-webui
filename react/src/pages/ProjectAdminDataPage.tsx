@@ -20,8 +20,20 @@ import VFolderNodesV2, {
   VFolderNodeInList,
   availableVFolderSorterValues,
 } from '../components/VFolderNodesV2';
+import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ProjectContext, toProjectContext } from '../types/projectContext';
+import { isDeletedCategory } from './VFolderNodeListPage';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIVFolderDeleteButtonV2Astryx as BAIVFolderDeleteButtonV2,
+  BAIVFolderDeleteButtonV2,
   BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
@@ -35,22 +47,16 @@ import {
   useFetchKey,
   useToggle,
 } from 'backend.ai-ui';
-import { convertToOrderBy, handleRowSelectionChange } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { ProjectContext, toProjectContext } from '../types/projectContext';
-import { isDeletedCategory } from './VFolderNodeListPage';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -80,27 +86,23 @@ const STATUS_FILTER_DELETED = {
 const statusCategoryValues = ['active', 'deleted'] as const;
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
 
-function getUsageModeFilter(mode: (typeof modeValues)[number]) {
-  switch (mode) {
-    case 'all':
-      return undefined;
-    case 'general':
-      return {
-        AND: [
-          { name: { iNotStartsWith: '.' } },
-          { usageMode: { equals: 'GENERAL' } },
-        ],
-      } as const;
-    case 'data':
-      return { usageMode: { equals: 'DATA' } } as const;
-    case 'automount':
-      return { name: { iStartsWith: '.' } } as const;
-    case 'model':
-      return { usageMode: { equals: 'MODEL' } } as const;
-    default:
-      return undefined;
-  }
-}
+// Module constants so each mode's filter keeps a stable identity: the compiler
+// cannot skip calls that take fresh mutable arguments, and an unstable object
+// here cascades into a new `queryVariables` identity on every render, which
+// flashes the deferred-value loading states (FR-3594).
+const USAGE_MODE_FILTERS: Partial<
+  Record<(typeof modeValues)[number], VFolderFilter>
+> = {
+  general: {
+    AND: [
+      { name: { iNotStartsWith: '.' } },
+      { usageMode: { equals: 'GENERAL' } },
+    ],
+  },
+  data: { usageMode: { equals: 'DATA' } },
+  automount: { name: { iStartsWith: '.' } },
+  model: { usageMode: { equals: 'MODEL' } },
+};
 
 interface ProjectAdminDataContentProps {
   project: ProjectContext;
@@ -154,13 +156,18 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
 
-  // eslint-disable-next-line react-hooks/refs
-  queryMapRef.current[queryParams.statusCategory] = {
-    queryParams,
-    tablePaginationOption,
-  };
+  // Written in an effect: a render-phase ref write is a react-hooks/refs
+  // violation that made the React Compiler bail out of this component, which
+  // re-created `queryVariables` every render and flashed the deferred-value
+  // loading states on unrelated re-renders (same symptom as FR-3510).
+  useEffect(() => {
+    queryMapRef.current[queryParams.statusCategory] = {
+      queryParams,
+      tablePaginationOption,
+    };
+  }, [queryParams, tablePaginationOption]);
 
-  const usageModeFilter = getUsageModeFilter(queryParams.mode);
+  const usageModeFilter = USAGE_MODE_FILTERS[queryParams.mode];
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
@@ -169,12 +176,15 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       ? STATUS_FILTER_DELETED
       : STATUS_FILTER_ACTIVE;
 
-  const combinedFilter = {
-    AND: filterOutEmpty([
+  // Built from literals and stable references only (no helper call): the
+  // compiler keeps unknown calls with mutable arguments un-memoized, and any
+  // per-render identity here re-fires the deferred-value loading flash.
+  const combinedFilter: VFolderFilter = {
+    AND: [
       statusFilter,
-      usageModeFilter,
-      queryParams.filter ?? undefined,
-    ]),
+      ...(usageModeFilter ? [usageModeFilter] : []),
+      ...(queryParams.filter ? [queryParams.filter] : []),
+    ],
   };
 
   const queryVariables = {
@@ -216,7 +226,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
-                ...BAIVFolderDeleteButtonV2AstryxFragment
+                ...BAIVFolderDeleteButtonV2Fragment
               }
             }
             count

@@ -4,7 +4,7 @@ import { expect, Locator, Page } from '@playwright/test';
  * NotificationHandler class for managing `BAINotificationStack` notices in
  * E2E tests (to-astryx ticket 29 rewire — antd `notification` -> Astryx
  * `Banner`-based stack,
- * `packages/backend.ai-ui/src/components/BAINotificationStackAstryx.tsx`).
+ * `packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
  *
  * Handles notification interactions including:
  * - Waiting for notifications to appear/disappear
@@ -16,7 +16,7 @@ export class NotificationHandler {
   private readonly page: Page;
   // Each notice is `.bai-notification-stack-item`, carrying
   // `data-notification-key` / `data-status` / `data-exiting` / `data-paused`
-  // (BAINotificationStackAstryx.tsx:213-225), inside the single stack root
+  // (BAINotificationStack.tsx:213-225), inside the single stack root
   // `[data-testid="bai-notification-stack"]` (…:312).
   private readonly notificationSelector =
     '[data-testid="bai-notification-stack"] [data-notification-key]';
@@ -112,7 +112,7 @@ export class NotificationHandler {
     const notification = this.getNotificationByIndex(index);
     // `Banner`'s title/description are plain unlabelled `<div>`s, so the
     // headline gets an explicit anchor
-    // (`packages/backend.ai-ui/src/components/BAINotificationStackAstryx.tsx`).
+    // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
     const message = notification.getByTestId('notification-title');
     return await message.textContent().then((text) => text || '');
   }
@@ -150,7 +150,7 @@ export class NotificationHandler {
     type: 'success' | 'error' | 'warning' | 'info',
   ): Locator {
     // `data-status` mirrors antd's per-type modifier class
-    // (BAINotificationStackAstryx.tsx:217, `item.status ?? 'info'`).
+    // (BAINotificationStack.tsx:217, `item.status ?? 'info'`).
     return this.page.locator(
       `${this.notificationSelector}[data-status="${type}"]`,
     );

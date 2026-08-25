@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Muokkaa",
     "Free": "Ilmainen",
-    "Used": "Käytetty"
+    "Used": "Käytetty",
+    "editSider": {
+      "Empty": "Ei vielä mukautettuja paneeleja",
+      "GridDisabled": "Ruudukkonäkymä pois (Kokeelliset ominaisuudet)",
+      "RequiresSuperadmin": "Vain superadmin-käyttäjille",
+      "ResetLayout": "Palauta asettelu",
+      "ResetLayoutDescription": "Palauttaa paneelien oletusjärjestyksen. Mukautetut paneelit säilytetään.",
+      "Title": "Mukautetut paneelit"
+    },
+    "panelModal": {
+      "AddPanel": "Lisää paneeli",
+      "Condition": "Ehto",
+      "Count": "Lukumäärä",
+      "DataSource": "Tietolähde",
+      "DataSourceRequired": "Valitse tietolähde",
+      "EditPanel": "Muokkaa paneelia",
+      "PanelType": "Paneelin tyyppi",
+      "PanelTypeRequired": "Valitse paneelin tyyppi",
+      "Table": "Taulukko",
+      "TitleDescription": "Näytetään paneelin otsikkona – kuvaa sillä ehto.",
+      "TitleOptional": "Otsikko (valinnainen)"
+    }
   },
   "data": {
     "Active": "Aktiivinen",
@@ -2000,6 +2022,9 @@
     "AdditionalMounts": "Lisäkiinnikkeet",
     "AdditionalMountsTooltip": "Ylimääräiset ei-mallikansiokansiot, jotka liitetään jokaiseen replikaan mallikansion rinnalle.",
     "AutoScalingRules": "Automaattiset skaalaussäännöt",
+    "AwsAccessKeyId": "AWS-pääsyavaimesi tunnus",
+    "AwsDefaultRegion": "esim. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Salainen AWS-pääsyavaimesi",
     "BasePath": "Peruspolku",
     "CommandArgvLabel": "Komento (argv)",
     "CommandExecHelper": "Suoritetaan suoraan argumentteina, ilman shelliä — operaattorit (; && | $VAR, uudelleenohjaus jne.) käsitellään kirjaimellisena tekstinä. Erota argumentit välilyönnein; laita välilyöntejä sisältävät argumentit lainausmerkkeihin (esim. --name \"my model\").",
@@ -2019,6 +2044,9 @@
     "Finished": "Valmis",
     "HealthCheck": "Terveystarkastuksen URL",
     "HealthCheckTooltip": "URL-polku, jota käytetään tarkistamaan, onko palvelu käynnissä (esim. /health).",
+    "HfToken": "Hugging Facen pääsytunnuksesi",
+    "HttpProxy": "esim. http://proxy.example.com:8080",
+    "HttpsProxy": "esim. https://proxy.example.com:8080",
     "Image": "Kuva",
     "ImageRequired": "Kuva on pakollinen.",
     "InitialDelay": "Käynnistyksen siirtymäaika",
@@ -2037,6 +2065,7 @@
     "ModelMountDestination": "Kiinnityskohde mallikansioon",
     "ModelMountTooltip": "Polku, johon mallikansio on liitetty kontin sisällä.",
     "NimApiKey": "NGC:n API-avaimesi",
+    "NoProxy": "esim. localhost,127.0.0.1,.internal",
     "OpenFolder": "Siirry kansioon",
     "Port": "Portti",
     "PortTooltip": "Porttinumero, jota mallin palveluprosessi kuuntelee.",
@@ -2077,7 +2106,8 @@
     "VllmModelName": "Mallin nimi (esim. meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Pipeline-rinnakkaiskoko (esim. 2, 4)",
     "VllmQuantization": "esim. awq, gptq, fp8",
-    "VllmTpSize": "Tensorin rinnakkaiskoko (esim. 2, 4, 8)"
+    "VllmTpSize": "Tensorin rinnakkaiskoko (esim. 2, 4, 8)",
+    "WandbApiKey": "Weights & Biases -API-avaimesi"
   },
   "modelStore": {
     "Architecture": "Arkkitehtuuri",
@@ -2717,6 +2747,7 @@
     "InvalidRedirectURL": "Sovellusta ei voi käynnistää virheellisen URL-osoitteen vuoksi.",
     "KernelExitCode": "Ytimen poistumiskoodi",
     "LastTry": "Viimeinen yritys",
+    "LaunchedWithDifferentAccessKey": "Tämä istunto luotiin muulla kuin oletuspääsyavaimella.",
     "MEM": "Muisti",
     "MaxSessionLifetime": "Istunnon enimmäiskestoikä",
     "MaxSessionLifetimeDesc": "Pakottaa lopettamaan istunnot tämän ajan kuluttua luomisesta. Se estää istuntoa toimimasta loputtomiin.",
@@ -3045,7 +3076,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Ruudukko",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3068,7 +3099,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Taulukko",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3517,6 +3548,7 @@
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
     "ConfigFilename": "Konfigurointitiedoston nimi",
     "CurrentSSHPublicKey": "Nykyinen julkinen avain:",
+    "CustomDashboardPanels": "Mukautetut koontinäytön paneelit",
     "DarkMode": "Tumma tila",
     "DarkTheme": "Tumma tila",
     "Default": "Laiminlyönti",

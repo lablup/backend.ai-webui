@@ -48,7 +48,7 @@ import {
 } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type DeploymentRevisionPresetNode = NonNullable<
+export type AstryxDeploymentRevisionPresetNode = NonNullable<
   NonNullable<
     NonNullable<
       BAIAvailablePresetSelectPaginatedQuery['response']['deploymentRevisionPresets']
@@ -187,7 +187,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
 
   const projectScopedPresets = useLazyPaginatedQuery<
     BAIAvailablePresetSelectPaginatedQuery,
-    DeploymentRevisionPresetNode
+    AstryxDeploymentRevisionPresetNode
   >(
     graphql`
       query BAIAvailablePresetSelectPaginatedQuery(
@@ -237,7 +237,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
 
   const cardScopedPresets = useLazyPaginatedQuery<
     BAIAvailablePresetSelectCardScopedQuery,
-    DeploymentRevisionPresetNode
+    AstryxDeploymentRevisionPresetNode
   >(
     graphql`
       query BAIAvailablePresetSelectCardScopedQuery(

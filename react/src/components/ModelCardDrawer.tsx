@@ -10,14 +10,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { BAIDrawerAstryx as BAIDrawer ,
-  BAISkeleton,
-  BAIFlex,
-  BAILink,
-  BAIResourceNumberWithIcon,
-  BAIUnmountAfterClose,
-  toLocalId,
-} from 'backend.ai-ui';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
@@ -27,6 +19,15 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
+import {
+  BAIDrawer,
+  BAISkeleton,
+  BAIFlex,
+  BAILink,
+  BAIResourceNumberWithIcon,
+  BAIUnmountAfterClose,
+  toLocalId,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Landmark, File } from 'lucide-react';

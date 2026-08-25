@@ -10,7 +10,7 @@ import { Overlay } from '@astryxdesign/core/Overlay';
 import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIPopconfirmAstryx,
+  BAIPopconfirm,
   BAIModal,
   BAIModalProps,
   BAIFlex,
@@ -48,14 +48,14 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
       title={t('userSettings.SSHKeypairGeneration')}
       closeIcon={false}
       footer={[
-        <BAIPopconfirmAstryx
+        <BAIPopconfirm
           key="close"
           title={t('button.Confirm')}
           description={t('userSettings.ClearSSHKeypairInput')}
           onConfirm={onRequestClose}
         >
           <Button variant="secondary" label={t('button.Close')} />
-        </BAIPopconfirmAstryx>,
+        </BAIPopconfirm>,
       ]}
       {...baiModalProps}
     >

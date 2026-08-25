@@ -212,28 +212,28 @@ export type {
 } from './BAIResourceUnitGrid';
 export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
 export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
-export { default as BAISegmentedControlItemAstryx } from './BAISegmentedControlItemAstryx';
-export type { BAISegmentedControlItemAstryxProps } from './BAISegmentedControlItemAstryx';
-export { default as BAIPopconfirmAstryx } from './BAIPopconfirmAstryx';
-export type { BAIPopconfirmAstryxProps } from './BAIPopconfirmAstryx';
-export { default as BAIBadgeCountAstryx } from './BAIBadgeCountAstryx';
-export type { BAIBadgeCountAstryxProps } from './BAIBadgeCountAstryx';
-export { default as BAINotificationStackAstryx } from './BAINotificationStackAstryx';
+export { default as BAISegmentedControlItem } from './BAISegmentedControlItem';
+export type { BAISegmentedControlItemProps } from './BAISegmentedControlItem';
+export { default as BAIPopconfirm } from './BAIPopconfirm';
+export type { BAIPopconfirmProps } from './BAIPopconfirm';
+export { default as BAIBadgeCount } from './BAIBadgeCount';
+export type { BAIBadgeCountProps } from './BAIBadgeCount';
+export { default as BAINotificationStack } from './BAINotificationStack';
 export type {
-  BAINotificationStackAstryxProps,
+  BAINotificationStackProps,
   BAINotificationStackItem,
-} from './BAINotificationStackAstryx';
+} from './BAINotificationStack';
 export { toBAINotificationStackItems } from './BAINotificationStackAdapter';
 export type {
   BAINotificationSource,
   ToBAINotificationStackItemsOptions,
 } from './BAINotificationStackAdapter';
-export { default as BAIVFolderDeleteButtonAstryx } from './BAIVFolderDeleteButtonAstryx';
-export type { BAIVFolderDeleteButtonAstryxProps } from './BAIVFolderDeleteButtonAstryx';
-export { default as BAIVFolderDeleteButtonV2Astryx } from './BAIVFolderDeleteButtonV2Astryx';
-export type { BAIVFolderDeleteButtonV2AstryxProps } from './BAIVFolderDeleteButtonV2Astryx';
-export { default as BAIDrawerAstryx } from './BAIDrawerAstryx';
-export type { BAIDrawerAstryxProps } from './BAIDrawerAstryx';
+export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export type { BAIVFolderDeleteButtonProps } from './BAIVFolderDeleteButton';
+export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
+export type { BAIVFolderDeleteButtonV2Props } from './BAIVFolderDeleteButtonV2';
+export { default as BAIDrawer } from './BAIDrawer';
+export type { BAIDrawerProps } from './BAIDrawer';
 export { default as BAIDialog } from './BAIDialog';
 export type { BAIDialogProps } from './BAIDialog';
 export { default as BAIAlertDialog } from './BAIAlertDialog';

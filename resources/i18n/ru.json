@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Редактировать",
     "Free": "Бесплатно",
-    "Used": "Использовал"
+    "Used": "Использовал",
+    "editSider": {
+      "Empty": "Пользовательских панелей пока нет",
+      "GridDisabled": "Вид сетки выключен (Экспериментальные функции)",
+      "RequiresSuperadmin": "Только для суперадминистраторов",
+      "ResetLayout": "Сбросить расположение",
+      "ResetLayoutDescription": "Восстанавливает расположение панелей по умолчанию. Пользовательские панели сохраняются.",
+      "Title": "Пользовательские панели"
+    },
+    "panelModal": {
+      "AddPanel": "Добавить панель",
+      "Condition": "Условие",
+      "Count": "Количество",
+      "DataSource": "Источник данных",
+      "DataSourceRequired": "Выберите источник данных",
+      "EditPanel": "Редактировать панель",
+      "PanelType": "Тип панели",
+      "PanelTypeRequired": "Выберите тип панели",
+      "Table": "Таблица",
+      "TitleDescription": "Отображается как заголовок панели — используйте его для описания условия.",
+      "TitleOptional": "Заголовок (необязательно)"
+    }
   },
   "data": {
     "Active": "Активный",
@@ -2000,6 +2022,9 @@
     "AdditionalMounts": "Дополнительные крепления",
     "AdditionalMountsTooltip": "Дополнительные папки, не являющиеся моделями, монтируемые в каждую реплику вместе с папкой модели.",
     "AutoScalingRules": "Автоматические правила",
+    "AwsAccessKeyId": "Ваш идентификатор ключа доступа AWS",
+    "AwsDefaultRegion": "напр. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Ваш секретный ключ доступа AWS",
     "BasePath": "Базовый путь",
     "CommandArgvLabel": "Команда (argv)",
     "CommandExecHelper": "Выполняется напрямую как аргументы, без оболочки — операторы (; && | $VAR, перенаправление и т. д.) обрабатываются как обычный текст. Разделяйте аргументы пробелами; аргументы, содержащие пробелы, заключайте в кавычки (например, --name \"my model\").",
@@ -2019,6 +2044,9 @@
     "Finished": "Законченный",
     "HealthCheck": "URL проверки работоспособности",
     "HealthCheckTooltip": "URL-путь, используемый для проверки работоспособности сервиса (например, /health).",
+    "HfToken": "Ваш токен доступа Hugging Face",
+    "HttpProxy": "напр. http://proxy.example.com:8080",
+    "HttpsProxy": "напр. https://proxy.example.com:8080",
     "Image": "Изображение",
     "ImageRequired": "Образ обязателен.",
     "InitialDelay": "Льготный период запуска",
@@ -2037,6 +2065,7 @@
     "ModelMountDestination": "Место установки папки модели",
     "ModelMountTooltip": "Путь, по которому папка с моделью монтируется внутри контейнера.",
     "NimApiKey": "Ваш API-ключ NGC",
+    "NoProxy": "напр. localhost,127.0.0.1,.internal",
     "OpenFolder": "Перейти в папку",
     "Port": "Порт",
     "PortTooltip": "Номер порта, который прослушивает процесс обслуживания модели.",
@@ -2077,7 +2106,8 @@
     "VllmModelName": "Имя модели (например: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Размер конвейерного параллелизма (например: 2, 4)",
     "VllmQuantization": "например, awq, gptq, fp8",
-    "VllmTpSize": "Размер тензорного параллелизма (например 2, 4, 8)"
+    "VllmTpSize": "Размер тензорного параллелизма (например 2, 4, 8)",
+    "WandbApiKey": "Ваш ключ API Weights & Biases"
   },
   "modelStore": {
     "Architecture": "Архитектура",
@@ -2717,6 +2747,7 @@
     "InvalidRedirectURL": "Приложение не может быть запущено из-за недействительного URL.",
     "KernelExitCode": "Код выхода ядра",
     "LastTry": "Последняя попытка",
+    "LaunchedWithDifferentAccessKey": "Этот сеанс был создан с ключом, отличным от ключа доступа по умолчанию.",
     "MEM": "Память",
     "MaxSessionLifetime": "Максимальное время жизни сеанса",
     "MaxSessionLifetimeDesc": "Принудительное завершение сеансов по истечении указанного времени с момента создания. Это предотвращает бесконечное выполнение сеанса.",
@@ -3045,7 +3076,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Сетка",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3068,7 +3099,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Таблица",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3517,6 +3548,7 @@
     "ClearSSHKeypairInput": "Записанная пара ключей SSH будет удалена. Вы уверены что хотите продолжить?",
     "ConfigFilename": "Имя файла конфигурации",
     "CurrentSSHPublicKey": "Текущий открытый ключ:",
+    "CustomDashboardPanels": "Пользовательские панели информационной панели",
     "DarkMode": "Темный режим",
     "DarkTheme": "Тёмный режим",
     "Default": "По умолчанию",

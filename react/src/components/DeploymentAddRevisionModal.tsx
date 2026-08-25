@@ -45,6 +45,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
 import { theme } from '../theme-shim';
 import type { ProjectContextOrNull } from '../types/projectContext';
 import {
@@ -95,10 +96,10 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIRuntimeVariantSelectAstryx,
+  BAIRuntimeVariantSelect,
   BAIComplexSelect,
-  BAIVFolderSelectAstryx,
-  BAIVFolderSelectAstryxRef,
+  BAIVFolderSelect,
+  BAIVFolderSelectRef,
   convertToUUID,
   safeDecodeUuid,
   toGlobalId,
@@ -545,6 +546,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
+  const commonEnvVars = useCommonEnvVarConfigs();
   // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput;
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   const supportsHealthCheckEnable = baiClient.supports(
@@ -580,9 +582,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
-  // the Preset and Custom forms each mount their own BAIVFolderSelectAstryx.
-  const presetVFolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
-  const customVFolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
+  // the Preset and Custom forms each mount their own BAIVFolderSelect.
+  const presetVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const customVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
   const [isModelFolderCreateModalOpen, setIsModelFolderCreateModalOpen] =
     useState(false);
 
@@ -661,7 +663,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   >(null);
 
   // Map of runtime variant id → { name, readsVfolderConfigFiles }, populated by
-  // `BAIRuntimeVariantSelectAstryx` as it resolves the currently selected value
+  // `BAIRuntimeVariantSelect` as it resolves the currently selected value
   // (via its `runtimeVariant(id:)` point lookup) and the visible page of the
   // paginated list. Used by the form to branch on whether the variant reads the
   // vfolder config files (see the `readsVfolderConfigFiles` derivation sites)
@@ -1031,7 +1033,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     // The query selects `modelRuntimeConfig.runtimeVariant.name` and
     // `readsVfolderConfigFiles`, so the prefill path knows the variant metadata
-    // without waiting for `BAIRuntimeVariantSelectAstryx` to resolve it.
+    // without waiting for `BAIRuntimeVariantSelect` to resolve it.
     const variantName = rev.modelRuntimeConfig?.runtimeVariant?.name ?? '';
     // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
     // undefined. Fall back to the legacy `name === 'custom'` heuristic — NEVER
@@ -1042,7 +1044,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       variantName === 'custom';
     // Seed `runtimeVariantMap` so submit and any other consumers can resolve
     // `runtimeVariantId → { name, readsVfolderConfigFiles }` immediately,
-    // without waiting for `BAIRuntimeVariantSelectAstryx`'s point lookup to
+    // without waiting for `BAIRuntimeVariantSelect`'s point lookup to
     // finish.
     const variantId = rev.modelRuntimeConfig?.runtimeVariantId;
     if (variantId && variantName) {
@@ -2127,7 +2129,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           noStyle
                           rules={[{ required: true }]}
                         >
-                          <BAIVFolderSelectAstryx
+                          <BAIVFolderSelect
                             ref={presetVFolderSelectRef}
                             fallbackLabels={revisionFolderFallbackLabels}
                             label={t('deployment.ModelFolder')}
@@ -2312,7 +2314,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   noStyle
                   rules={[{ required: true }]}
                 >
-                  <BAIVFolderSelectAstryx
+                  <BAIVFolderSelect
                     ref={customVFolderSelectRef}
                     fallbackLabels={revisionFolderFallbackLabels}
                     label={t('deployment.ModelFolder')}
@@ -2429,7 +2431,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 },
               ]}
             >
-              <BAIRuntimeVariantSelectAstryx
+              <BAIRuntimeVariantSelect
                 label={t('deployment.RuntimeVariant')}
                 isLabelHidden
                 onResolvedVariantsChange={(map) =>
@@ -2520,6 +2522,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           </Suspense>
           <EnvVarFormList
             name="environ"
+            optionalEnvVars={commonEnvVars}
             formItemProps={{
               validateTrigger: ['onChange', 'onBlur'],
             }}
@@ -2656,7 +2659,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           setIsModelFolderCreateModalOpen(false);
           if (result?.id) {
             // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelectAstryx's value query reads from `vfolder_nodes`
+            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
             // (`VirtualFolderNode`, Graphene). Both encode the same UUID
             // but with different `__typename:` prefixes, so the select's
             // option matching (`edge.node.id === value`) would fail if we

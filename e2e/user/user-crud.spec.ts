@@ -385,7 +385,7 @@ test.describe.serial(
       await page
         .getByRole('textbox', { name: 'Endpoint' })
         .fill(webServerEndpoint);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // 3. Verify "Login information mismatch" error notification appears
       await expect(

@@ -60,6 +60,7 @@ export type ContainerRegistry = NonNullable<
 const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
+  'use memo';
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useFetchKey();

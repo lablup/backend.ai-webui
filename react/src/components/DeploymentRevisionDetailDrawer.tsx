@@ -4,7 +4,7 @@
  */
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
-import { BAIDrawerAstryx as BAIDrawer , BAISkeleton } from 'backend.ai-ui';
+import { BAIDrawer, BAISkeleton } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

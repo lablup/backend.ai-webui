@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Sunting",
     "Free": "Bebas",
-    "Used": "Digunakan"
+    "Used": "Digunakan",
+    "editSider": {
+      "Empty": "Belum ada panel kustom",
+      "GridDisabled": "Tampilan kisi nonaktif (Fitur eksperimental)",
+      "RequiresSuperadmin": "Hanya superadmin",
+      "ResetLayout": "Atur ulang tata letak",
+      "ResetLayoutDescription": "Mengembalikan susunan panel ke pengaturan default. Panel kustom tetap dipertahankan.",
+      "Title": "Panel kustom"
+    },
+    "panelModal": {
+      "AddPanel": "Tambah panel",
+      "Condition": "Kondisi",
+      "Count": "Jumlah",
+      "DataSource": "Sumber data",
+      "DataSourceRequired": "Pilih sumber data",
+      "EditPanel": "Sunting panel",
+      "PanelType": "Jenis panel",
+      "PanelTypeRequired": "Pilih jenis panel",
+      "Table": "Tabel",
+      "TitleDescription": "Ditampilkan sebagai judul panel — gunakan untuk menjelaskan kondisinya.",
+      "TitleOptional": "Judul (opsional)"
+    }
   },
   "data": {
     "Active": "Aktif",
@@ -2003,6 +2025,9 @@
     "AdditionalMounts": "Pemasangan Tambahan",
     "AdditionalMountsTooltip": "Folder tambahan non-model yang dipasang di setiap replika bersama folder model.",
     "AutoScalingRules": "Aturan penskalaan otomatis",
+    "AwsAccessKeyId": "ID Kunci Akses AWS Anda",
+    "AwsDefaultRegion": "mis. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Kunci Akses Rahasia AWS Anda",
     "BasePath": "Jalur Dasar",
     "CommandArgvLabel": "Perintah (argv)",
     "CommandExecHelper": "Dijalankan langsung sebagai argumen, tanpa shell — operator (; && | $VAR, pengalihan, dll.) diperlakukan sebagai teks literal. Pisahkan argumen dengan spasi; apit argumen yang mengandung spasi dengan tanda kutip (mis. --name \"my model\").",
@@ -2022,6 +2047,9 @@
     "Finished": "Selesai",
     "HealthCheck": "URL cek kesehatan",
     "HealthCheckTooltip": "Jalur URL yang digunakan untuk memeriksa apakah layanan sedang berjalan (mis. /health).",
+    "HfToken": "Token Akses Hugging Face Anda",
+    "HttpProxy": "mis. http://proxy.example.com:8080",
+    "HttpsProxy": "mis. https://proxy.example.com:8080",
     "Image": "Gambar",
     "ImageRequired": "Image wajib diisi.",
     "InitialDelay": "Periode Toleransi Startup",
@@ -2040,6 +2068,7 @@
     "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
     "ModelMountTooltip": "Jalur tempat folder model di-mount di dalam container.",
     "NimApiKey": "Kunci API NGC Anda",
+    "NoProxy": "mis. localhost,127.0.0.1,.internal",
     "OpenFolder": "Buka folder",
     "Port": "Pelabuhan",
     "PortTooltip": "Nomor port yang didengarkan oleh proses penyajian model.",
@@ -2080,7 +2109,8 @@
     "VllmModelName": "Nama model (misalnya: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Ukuran paralel pipeline (mis. 2, 4)",
     "VllmQuantization": "misalnya, awq, gptq, fp8",
-    "VllmTpSize": "Ukuran tensor paralel (mis. 2, 4, 8)"
+    "VllmTpSize": "Ukuran tensor paralel (mis. 2, 4, 8)",
+    "WandbApiKey": "Kunci API Weights & Biases Anda"
   },
   "modelStore": {
     "Architecture": "Arsitektur",
@@ -2720,6 +2750,7 @@
     "InvalidRedirectURL": "Aplikasi tidak dapat diluncurkan karena URL tidak valid.",
     "KernelExitCode": "Kode keluar kernel",
     "LastTry": "Percobaan Terakhir",
+    "LaunchedWithDifferentAccessKey": "Sesi ini dibuat dengan kunci selain kunci akses default Anda.",
     "MEM": "Memori",
     "MaxSessionLifetime": "Sesi Maksimal Seumur Hidup",
     "MaxSessionLifetimeDesc": "Menghentikan paksa sesi setelah waktu pembuatan ini. Ini mencegah sesi berjalan tanpa batas.",
@@ -3049,7 +3080,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Kisi",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3072,7 +3103,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tabel",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3521,6 +3552,7 @@
     "ClearSSHKeypairInput": "Pasangan Kunci SSH tertulis akan dihapus. Apakah anda yakin ingin melanjutkan?",
     "ConfigFilename": "Nama file konfigurasi",
     "CurrentSSHPublicKey": "Kunci publik saat ini: ",
+    "CustomDashboardPanels": "Panel dasbor kustom",
     "DarkMode": "Mode Gelap",
     "DarkTheme": "Mode Gelap",
     "Default": "Bawaan",

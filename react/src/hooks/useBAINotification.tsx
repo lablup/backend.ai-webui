@@ -10,7 +10,7 @@ import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { useBAISettingUserState } from './useBAISetting';
 import {
   toBAINotificationStackItems,
-  BAINotificationStackAstryx,
+  BAINotificationStack,
 } from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -183,7 +183,7 @@ function _upsertDesktopNotification(
  * "zombie re-open" and the `setHoverKeys` render loop this file used to guard
  * against). `NotificationHost` mounts it once, app-wide.
  *
- * The presentation lives in `BAINotificationStackAstryx`; the mapping in
+ * The presentation lives in `BAINotificationStack`; the mapping in
  * `BAINotificationStackAdapter`. Everything routed, translated or Relay-bound
  * is injected from here, which is why those two stay antd-free.
  */
@@ -232,7 +232,7 @@ export const BAINotificationStackHost: React.FC = () => {
   });
 
   return (
-    <BAINotificationStackAstryx
+    <BAINotificationStack
       // Newest last = newest nearest the corner, as antd's `bottomRight`
       // stack ordered it (the jotai list is newest-first).
       notifications={items.reverse()}

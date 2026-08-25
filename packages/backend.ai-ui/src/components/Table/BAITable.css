@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <BAITable>. Renamed from `BAITableAstryx.css` in
+ Co-located styles for <BAITable>. Renamed from `BAITable.css` in
  FR-3564; the antd engine's own stylesheet is gone.
 
  Two rules survive the engine swap.

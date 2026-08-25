@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Засах",
     "Free": "Үнэгүй",
-    "Used": "Ашиг ашиглагдсан"
+    "Used": "Ашиг ашиглагдсан",
+    "editSider": {
+      "Empty": "Одоогоор тусгайлсан самбар алга байна",
+      "GridDisabled": "Сүлжээ харагдац унтраалттай (Туршилтын боломжууд)",
+      "RequiresSuperadmin": "Зөвхөн супер админ",
+      "ResetLayout": "Байрлалыг дахин тохируулах",
+      "ResetLayoutDescription": "Самбарын байрлалыг анхдагч байдалд нь буцаана. Тусгайлсан самбарууд хадгалагдана.",
+      "Title": "Тусгайлсан самбарууд"
+    },
+    "panelModal": {
+      "AddPanel": "Самбар нэмэх",
+      "Condition": "Нөхцөл",
+      "Count": "Тоо",
+      "DataSource": "Өгөгдлийн эх сурвалж",
+      "DataSourceRequired": "Өгөгдлийн эх сурвалжаа сонгоно уу",
+      "EditPanel": "Самбар засах",
+      "PanelType": "Самбарын төрөл",
+      "PanelTypeRequired": "Самбарын төрлөө сонгоно уу",
+      "Table": "Хүснэгт",
+      "TitleDescription": "Самбарын гарчиг болж харагдана — нөхцөлийг тайлбарлахад ашиглана уу.",
+      "TitleOptional": "Гарчиг (заавал биш)"
+    }
   },
   "data": {
     "Active": "Идэвхтэй",
@@ -2001,6 +2023,9 @@
     "AdditionalMounts": "Нэмэлт бэхэлгээ",
     "AdditionalMountsTooltip": "Загварын хавтастай хамт репликийн тус бүрд холбогдох нэмэлт загварын бус хавтасууд.",
     "AutoScalingRules": "Автомат масштабын дүрэм",
+    "AwsAccessKeyId": "Таны AWS хандалтын түлхүүрийн ID",
+    "AwsDefaultRegion": "жн: us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Таны AWS нууц хандалтын түлхүүр",
     "BasePath": "ВЭДИЙН Хог байхгүй",
     "CommandArgvLabel": "Команд (argv)",
     "CommandExecHelper": "Shell ашиглалгүйгээр аргумент болгон шууд ажилладаг — операторуудыг (; && | $VAR, дахин чиглүүлэлт гэх мэт) энгийн текст хэлбэрээр авч үзнэ. Аргумент бүрийг хоосон зайгаар тусгаарлана; хоосон зай агуулсан аргументыг хашилтад бичнэ үү (жишээ нь --name \"my model\").",
@@ -2020,6 +2045,9 @@
     "Finished": "Дууслаа",
     "HealthCheck": "Эрүүл мэндийн үзлэгийн URL",
     "HealthCheckTooltip": "Үйлчилгээ ажиллаж байгааг шалгахад ашиглах URL зам (жш нь: /health).",
+    "HfToken": "Таны Hugging Face хандалтын токен",
+    "HttpProxy": "жн: http://proxy.example.com:8080",
+    "HttpsProxy": "жн: https://proxy.example.com:8080",
     "Image": "Зураг",
     "ImageRequired": "Дүрс заавал шаардлагатай.",
     "InitialDelay": "Эхлүүлэх тэвчих хугацаа",
@@ -2038,6 +2066,7 @@
     "ModelMountDestination": "Загварын хавтасыг холбох газар",
     "ModelMountTooltip": "Загварын хавтас контейнерийн дотор холбогдох зам.",
     "NimApiKey": "Таны NGC API түлхүүр",
+    "NoProxy": "жн: localhost,127.0.0.1,.internal",
     "OpenFolder": "Хавтас руу очих",
     "Port": "Порт",
     "PortTooltip": "Загвар үйлчлэх процесс сонсох порт дугаар.",
@@ -2078,7 +2107,8 @@
     "VllmModelName": "Загварын нэр (жишээ: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Пайплайны параллель хэмжээ (жишээ нь, 2, 4)",
     "VllmQuantization": "жишээ нь, awq, gptq, fp8",
-    "VllmTpSize": "Тензорын параллель хэмжээ (жишээ: 2, 4, 8)"
+    "VllmTpSize": "Тензорын параллель хэмжээ (жишээ: 2, 4, 8)",
+    "WandbApiKey": "Таны Weights & Biases API түлхүүр"
   },
   "modelStore": {
     "Architecture": "Архитектур",
@@ -2718,6 +2748,7 @@
     "InvalidRedirectURL": "Буруу URL тул програмыг эхлүүлэх боломжгүй.",
     "KernelExitCode": "Цөмийн гарах код",
     "LastTry": "Сүүлийн оролдлого",
+    "LaunchedWithDifferentAccessKey": "Энэ сеанс нь үндсэн хандалтын түлхүүрээс өөр түлхүүрээр үүсгэгдсэн.",
     "MEM": "Санах ой",
     "MaxSessionLifetime": "Хамгийн их сессийн ашиглалтын хугацаа",
     "MaxSessionLifetimeDesc": "Үүсгэсэн цагаас хойш энэ хугацааны дараа сешнүүдийг албадан дуусгах. \nЭнэ нь сессийг хязгааргүй ажиллуулахаас сэргийлдэг.",
@@ -3047,7 +3078,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Сүлжээ",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3070,7 +3101,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Хүснэгт",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3519,6 +3550,7 @@
     "ClearSSHKeypairInput": "Бичсэн SSH товчлуурыг устгах болно. Үргэлжлүүлэхийг хүсч байна уу?",
     "ConfigFilename": "Файлын нэрийг тохируулах",
     "CurrentSSHPublicKey": "Одоогийн нийтийн түлхүүр:",
+    "CustomDashboardPanels": "Захиалгат хяналтын самбарын панель",
     "DarkMode": "Харанхуй горим",
     "DarkTheme": "Харанхуй горим",
     "Default": "Үл хүрэлцэх",

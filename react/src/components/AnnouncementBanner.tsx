@@ -39,8 +39,9 @@ const AnnouncementBanner: React.FC = () => {
   const isSuperAdmin = userRole === 'superadmin';
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
   // Expansion is owned here rather than by Banner's `children` slot: Banner's
-  // own toggle is uncontrolled (`defaultIsExpanded` only) and sits at the far
-  // end of the header, away from the text it reveals.
+  // own toggle sits at the far end of the header, away from the text it
+  // reveals. (0.5.0's `collapsible` config added a controlled mode; the
+  // placement is what still rules the slot out.)
   const [isExpanded, { toggle: toggleExpanded }] = useToggle(false);
   const { data: announcement } = useSuspenseGetAnnouncement();
   const [dismissedMessage, setDismissedMessage] = useSessionStorageState<

@@ -4,7 +4,7 @@
 
  Ticket 16 — converted to Astryx; see `SharedFolderPermissionInfoModal.tsx`
  for the conversion notes (Descriptions→MetadataList with `bordered` dropped,
- Alert→Banner, Popconfirm→BAIPopconfirmAstryx, icon-only button→IconButton
+ Alert→Banner, Popconfirm→BAIPopconfirm, icon-only button→IconButton
  with a real accessible name). The table crossed to the Astryx engine in
  ticket 30-D.
 */
@@ -22,7 +22,7 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
-import { BAIPopconfirmAstryx as BAIPopconfirm } from 'backend.ai-ui';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   filterOutNullAndUndefined,
   BAITable,

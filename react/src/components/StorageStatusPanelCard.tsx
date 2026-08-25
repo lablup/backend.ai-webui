@@ -12,7 +12,7 @@ import BAIPanelItem from './BAIPanelItem';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIBadgeCountAstryx,
+  BAIBadgeCount,
   BAIBoardItemTitle,
   BAIFlex,
   BAIFlexProps,
@@ -198,12 +198,12 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                   placement="above"
                   alignment="end"
                 >
-                  <BAIBadgeCountAstryx
+                  <BAIBadgeCount
                     count={`+${invitationCount}`}
                     // PILOT-DECISION: antd's count Badge was implicitly red;
                     // Astryx Badge defaults to neutral, so the pending-
                     // invitation semantics are restated explicitly (the
-                    // per-site colour decision BAIBadgeCountAstryx documents).
+                    // per-site colour decision BAIBadgeCount documents).
                     variant="error"
                     offset={[-token.sizeXS, -token.sizeXS]}
                     // As in the antd version: lift the overlay above the
@@ -215,7 +215,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                     })}
                   >
                     <Text size="lg">{t('data.InvitedFolders')}</Text>
-                  </BAIBadgeCountAstryx>
+                  </BAIBadgeCount>
                 </Tooltip>
               </a>
             ) : (

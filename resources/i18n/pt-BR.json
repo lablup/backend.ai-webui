@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Editar",
     "Free": "Livre",
-    "Used": "Usado"
+    "Used": "Usado",
+    "editSider": {
+      "Empty": "Ainda não há painéis personalizados",
+      "GridDisabled": "Visualização em grade desativada (Recursos experimentais)",
+      "RequiresSuperadmin": "Apenas superadministradores",
+      "ResetLayout": "Redefinir layout",
+      "ResetLayoutDescription": "Restaura a disposição padrão dos painéis. Os painéis personalizados são mantidos.",
+      "Title": "Painéis personalizados"
+    },
+    "panelModal": {
+      "AddPanel": "Adicionar painel",
+      "Condition": "Condição",
+      "Count": "Contagem",
+      "DataSource": "Fonte de dados",
+      "DataSourceRequired": "Selecione uma fonte de dados",
+      "EditPanel": "Editar painel",
+      "PanelType": "Tipo de painel",
+      "PanelTypeRequired": "Selecione um tipo de painel",
+      "Table": "Tabela",
+      "TitleDescription": "Exibido como cabeçalho do painel — use-o para descrever a condição.",
+      "TitleOptional": "Título (opcional)"
+    }
   },
   "data": {
     "Active": "Ativo",
@@ -2000,6 +2022,9 @@
     "AdditionalMounts": "Montarias Adicionais",
     "AdditionalMountsTooltip": "Pastas adicionais não relacionadas ao modelo montadas em cada réplica junto à pasta do modelo.",
     "AutoScalingRules": "Regras de escala automática",
+    "AwsAccessKeyId": "Seu ID da chave de acesso da AWS",
+    "AwsDefaultRegion": "ex. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Sua chave de acesso secreta da AWS",
     "BasePath": "Trajetória de base",
     "CommandArgvLabel": "Comando (argv)",
     "CommandExecHelper": "É executado diretamente como argumentos, sem shell — os operadores (; && | $VAR, redirecionamento, etc.) são tratados como texto literal. Separe os argumentos por espaços; coloque entre aspas os que contenham espaços (por ex., --name \"my model\").",
@@ -2019,6 +2044,9 @@
     "Finished": "Finalizado",
     "HealthCheck": "URL de verificação de integridade",
     "HealthCheckTooltip": "O caminho URL usado para verificar se o serviço está em execução (ex.: /health).",
+    "HfToken": "Seu token de acesso do Hugging Face",
+    "HttpProxy": "ex. http://proxy.example.com:8080",
+    "HttpsProxy": "ex. https://proxy.example.com:8080",
     "Image": "Imagem",
     "ImageRequired": "A imagem é obrigatória.",
     "InitialDelay": "Período de carência na inicialização",
@@ -2037,6 +2065,7 @@
     "ModelMountDestination": "Montar destino para pasta de modelo",
     "ModelMountTooltip": "O caminho onde a pasta do modelo é montada dentro do container.",
     "NimApiKey": "Sua chave de API do NGC",
+    "NoProxy": "ex. localhost,127.0.0.1,.internal",
     "OpenFolder": "Ir para a pasta",
     "Port": "Porta",
     "PortTooltip": "O número de porta em que o processo de serviço do modelo escuta.",
@@ -2077,7 +2106,8 @@
     "VllmModelName": "Nome do modelo (ex.: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Tamanho do paralelismo de pipeline (por exemplo: 2, 4)",
     "VllmQuantization": "por exemplo: awq, gptq, fp8",
-    "VllmTpSize": "Tamanho do paralelismo tensorial (ex.: 2, 4, 8)"
+    "VllmTpSize": "Tamanho do paralelismo tensorial (ex.: 2, 4, 8)",
+    "WandbApiKey": "Sua chave de API do Weights & Biases"
   },
   "modelStore": {
     "Architecture": "Arquitetura",
@@ -2717,6 +2747,7 @@
     "InvalidRedirectURL": "O aplicativo não pode ser iniciado devido a uma URL inválida.",
     "KernelExitCode": "Código de saída do kernel",
     "LastTry": "Última tentativa",
+    "LaunchedWithDifferentAccessKey": "Esta sessão foi criada com uma chave diferente da sua chave de acesso padrão.",
     "MEM": "Memória",
     "MaxSessionLifetime": "Duração máxima da sessão",
     "MaxSessionLifetimeDesc": "Força o encerramento das sessões após este tempo de criação. Impede que a sessão seja executada infinitamente.",
@@ -3045,7 +3076,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Grade",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3068,7 +3099,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tabela",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3517,6 +3548,7 @@
     "ClearSSHKeypairInput": "O par de chaves SSH gravado será removido. Você tem certeza que quer continuar?",
     "ConfigFilename": "Nome do arquivo de configuração",
     "CurrentSSHPublicKey": "Chave pública atual:",
+    "CustomDashboardPanels": "Painéis personalizados do painel",
     "DarkMode": "Modo escuro",
     "DarkTheme": "Modo escuro",
     "Default": "Padrão",

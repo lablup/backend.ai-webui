@@ -272,7 +272,7 @@ async function createServiceViaUI(
   // scans all three error channels and surfaces whichever it finds.
   // The floating notification stack is now `BAINotificationStack` (ticket 29
   // rewire) — an error notice carries `data-status="error"` on its item root
-  // (`packages/backend.ai-ui/src/components/BAINotificationStackAstryx.tsx`).
+  // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
   // The toast channel (`App.useApp().message`) is unmigrated antd, so
   // `.ant-message-error` stays.
   const errorNotification = page

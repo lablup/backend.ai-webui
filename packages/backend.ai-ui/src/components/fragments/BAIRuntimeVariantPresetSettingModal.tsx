@@ -21,7 +21,7 @@ import {
   AstryxFormTextInput,
 } from '../astryxFormControls';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import BAIRuntimeVariantSelectAstryx from './BAIRuntimeVariantSelectAstryx';
+import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
 import React, { Suspense, useRef } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -274,7 +274,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               },
             ]}
           >
-            <BAIRuntimeVariantSelectAstryx
+            <BAIRuntimeVariantSelect
               label={t(
                 'comp:BAIRuntimeVariantPresetSettingModal.RuntimeVariant',
               )}

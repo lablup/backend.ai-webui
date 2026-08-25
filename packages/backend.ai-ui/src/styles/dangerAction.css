@@ -13,7 +13,7 @@
   color: var(--color-text-disabled);
 }
 
-/* Ticket 16 — BAIListAlertAstryx scrollbar. The BUI original expressed these
+/* Ticket 16 — BAIListAlert scrollbar. The BUI original expressed these
    through `antd-style` `createStyles` with `token.colorTextQuaternary`; Astryx
    has no quaternary text token, and `--color-text-secondary` is the nearest
    declared tier (P19: every name here is in the declared set). */

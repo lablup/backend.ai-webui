@@ -4,8 +4,8 @@
 
  Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
  (`BAITable`, Astryx engine). Cells and satellites are Astryx:
- `BAINameActionCellAstryx`, `Badge` + the ticket-13 status lookup, `Text`,
- `BAIText copyable`, `BAIModalAstryx` (host-quota modal), `BAISkeleton`.
+ `BAINameActionCell`, `Badge` + the ticket-13 status lookup, `Text`,
+ `BAIText copyable`, `BAIModal` (host-quota modal), `BAISkeleton`.
 */
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';

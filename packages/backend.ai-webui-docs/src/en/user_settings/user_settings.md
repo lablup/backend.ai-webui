@@ -342,6 +342,12 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
   available for use in your sessions.
+- **Custom dashboard panels**: Lets you add your own custom panels to the
+  Dashboard page, each showing a data source you choose, narrowed by a
+  condition you define. The panels appear only while this feature is enabled;
+  turning it off later hides them without deleting them, and turning it back
+  on restores them exactly as they were. See
+  [Custom Panels](#custom-panels) for how to add and manage them.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
   **Start From URL** dialog on the Start page, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model

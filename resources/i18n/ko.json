@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "편집",
     "Free": "사용 가능",
-    "Used": "사용 중"
+    "Used": "사용 중",
+    "editSider": {
+      "Empty": "아직 사용자 정의 패널이 없습니다",
+      "GridDisabled": "그리드 보기 꺼짐 (실험적 기능)",
+      "RequiresSuperadmin": "슈퍼 관리자 전용",
+      "ResetLayout": "기본 배치로 초기화",
+      "ResetLayoutDescription": "패널 배치를 기본값으로 되돌립니다. 사용자 정의 패널은 유지됩니다.",
+      "Title": "사용자 정의 패널"
+    },
+    "panelModal": {
+      "AddPanel": "패널 추가",
+      "Condition": "조건",
+      "Count": "카운트",
+      "DataSource": "데이터 소스",
+      "DataSourceRequired": "데이터 소스를 선택하세요",
+      "EditPanel": "패널 수정",
+      "PanelType": "패널 형식",
+      "PanelTypeRequired": "패널 형식을 선택하세요",
+      "Table": "테이블",
+      "TitleDescription": "패널 머리글로 표시됩니다 — 조건을 설명하는 제목을 권장합니다.",
+      "TitleOptional": "제목 (선택)"
+    }
   },
   "data": {
     "Active": "활성",
@@ -2002,6 +2024,9 @@
     "AdditionalMounts": "추가 마운트",
     "AdditionalMountsTooltip": "모델 폴더 외에 각 복제본에 추가로 마운트할 폴더입니다.",
     "AutoScalingRules": "오토스케일링 규칙",
+    "AwsAccessKeyId": "AWS 액세스 키 ID",
+    "AwsDefaultRegion": "예: us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "AWS 비밀 액세스 키",
     "BasePath": "기본 경로",
     "Command": "명령어",
     "CommandArgvLabel": "명령어 (argv)",
@@ -2022,6 +2047,9 @@
     "Finished": "완료됨",
     "HealthCheck": "헬스 체크 URL",
     "HealthCheckTooltip": "서비스가 정상 작동 중인지 확인하는 URL 경로입니다 (예: /health).",
+    "HfToken": "Hugging Face 액세스 토큰",
+    "HttpProxy": "예: http://proxy.example.com:8080",
+    "HttpsProxy": "예: https://proxy.example.com:8080",
     "Image": "이미지",
     "ImageRequired": "이미지는 필수입니다.",
     "InitialDelay": "초기 헬스 체크 유예 시간",
@@ -2040,6 +2068,7 @@
     "ModelMountDestination": "모델 폴더 마운트할 경로",
     "ModelMountTooltip": "컨테이너 내부에 모델 폴더가 마운트되는 경로입니다.",
     "NimApiKey": "NGC API 키",
+    "NoProxy": "예: localhost,127.0.0.1,.internal",
     "OpenFolder": "폴더 열기",
     "Port": "포트",
     "PortTooltip": "모델 서빙 프로세스가 수신하는 포트 번호입니다.",
@@ -2081,7 +2110,8 @@
     "VllmModelName": "모델 이름(예: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "파이프라인 parallel size(예: 2, 4)",
     "VllmQuantization": "예: awq, gptq, fp8",
-    "VllmTpSize": "텐서 병렬 크기(예: 2, 4, 8)"
+    "VllmTpSize": "텐서 병렬 크기(예: 2, 4, 8)",
+    "WandbApiKey": "Weights & Biases API 키"
   },
   "modelStore": {
     "Architecture": "아키텍처",
@@ -2721,6 +2751,7 @@
     "InvalidRedirectURL": "유효하지 않은 URL로 인해 앱을 실행할 수 없습니다.",
     "KernelExitCode": "커널 종료 코드",
     "LastTry": "최근 시도한 시간",
+    "LaunchedWithDifferentAccessKey": "기본 액세스 키가 아닌 다른 키로 생성된 세션입니다.",
     "MEM": "메모리",
     "MaxSessionLifetime": "최대 세션 수명 시간",
     "MaxSessionLifetimeDesc": "세션 생성 후 이 시간이 지나면 세션을 강제 종료합니다. 세션이 무한으로 실행되는 것을 막을 수 있습니다.",
@@ -3522,6 +3553,7 @@
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
     "ConfigFilename": "구성 파일 이름 선택",
     "CurrentSSHPublicKey": "현재 공개 키: ",
+    "CustomDashboardPanels": "사용자 정의 대시보드 패널",
     "DarkMode": "다크 모드",
     "DarkTheme": "다크 모드",
     "Default": "기본",

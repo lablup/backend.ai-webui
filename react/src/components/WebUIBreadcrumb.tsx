@@ -4,8 +4,10 @@
  */
 import { theme } from '../theme-shim';
 import AstryxRouterLink from './AstryxRouterLink';
+import { breadcrumbExtraAtom } from './breadcrumbExtraAtom';
 import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
+import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,16 +30,19 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
       !_.isEmpty(match?.handle?.title)
     );
   });
+  const extra = useAtomValue(breadcrumbExtraAtom);
   return (
     <BAIFlex
-      direction="column"
-      justify="center"
-      align="stretch"
+      direction="row"
+      justify="between"
+      align="center"
+      gap="sm"
       {...props}
       style={_.merge(
         {
           height: 40,
           paddingLeft: token.paddingContentHorizontalLG,
+          paddingRight: token.paddingContentHorizontalLG,
           borderBottom: `1px solid ${token.colorBorder}`,
         } as React.CSSProperties,
         props.style,
@@ -71,6 +76,16 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
           );
         })}
       </Breadcrumbs>
+      {extra ? (
+        <BAIFlex
+          align="center"
+          justify="end"
+          gap="xs"
+          style={{ flexShrink: 0 }}
+        >
+          {extra}
+        </BAIFlex>
+      ) : null}
     </BAIFlex>
   );
 };

@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Chỉnh sửa",
     "Free": "Miễn phí",
-    "Used": "Đã sử dụng"
+    "Used": "Đã sử dụng",
+    "editSider": {
+      "Empty": "Chưa có bảng tùy chỉnh nào",
+      "GridDisabled": "Tắt chế độ xem lưới (Tính năng thử nghiệm)",
+      "RequiresSuperadmin": "Chỉ dành cho siêu quản trị viên",
+      "ResetLayout": "Đặt lại bố cục",
+      "ResetLayoutDescription": "Khôi phục cách sắp xếp bảng mặc định. Các bảng tùy chỉnh vẫn được giữ nguyên.",
+      "Title": "Bảng tùy chỉnh"
+    },
+    "panelModal": {
+      "AddPanel": "Thêm bảng",
+      "Condition": "Điều kiện",
+      "Count": "Số lượng",
+      "DataSource": "Nguồn dữ liệu",
+      "DataSourceRequired": "Chọn nguồn dữ liệu",
+      "EditPanel": "Chỉnh sửa bảng",
+      "PanelType": "Loại bảng",
+      "PanelTypeRequired": "Chọn loại bảng",
+      "Table": "Bảng",
+      "TitleDescription": "Hiển thị làm tiêu đề của bảng — hãy dùng nó để mô tả điều kiện.",
+      "TitleOptional": "Tiêu đề (tùy chọn)"
+    }
   },
   "data": {
     "Active": "Tích cực",
@@ -2002,6 +2024,9 @@
     "AdditionalMounts": "Gắn Kết Bổ Sung",
     "AdditionalMountsTooltip": "Các thư mục phi mô hình bổ sung được gắn kết vào mỗi bản sao cùng với thư mục mô hình.",
     "AutoScalingRules": "Quy tắc mở rộng tự động",
+    "AwsAccessKeyId": "ID khóa truy cập AWS của bạn",
+    "AwsDefaultRegion": "vd: us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Khóa truy cập bí mật AWS của bạn",
     "BasePath": "Đường cơ sở",
     "CommandArgvLabel": "Lệnh (argv)",
     "CommandExecHelper": "Chạy trực tiếp dưới dạng các đối số, không thông qua shell — các toán tử (; && | $VAR, chuyển hướng, v.v.) được xử lý như văn bản thuần túy. Phân tách các đối số bằng dấu cách; đặt trong dấu ngoặc kép những đối số có chứa dấu cách (ví dụ: --name \"my model\").",
@@ -2021,6 +2046,9 @@
     "Finished": "Hoàn thành",
     "HealthCheck": "URL kiểm tra sức khỏe",
     "HealthCheckTooltip": "Đường dẫn URL dùng để kiểm tra xem dịch vụ có đang hoạt động hay không (vd. /health).",
+    "HfToken": "Mã thông báo truy cập Hugging Face của bạn",
+    "HttpProxy": "vd: http://proxy.example.com:8080",
+    "HttpsProxy": "vd: https://proxy.example.com:8080",
     "Image": "Hình ảnh",
     "ImageRequired": "Image là bắt buộc.",
     "InitialDelay": "Thời gian ân hạn khởi động",
@@ -2039,6 +2067,7 @@
     "ModelMountDestination": "Mount đích cho thư mục mẫu",
     "ModelMountTooltip": "Đường dẫn nơi thư mục mô hình được gắn kết bên trong container.",
     "NimApiKey": "Khóa API NGC của bạn",
+    "NoProxy": "vd: localhost,127.0.0.1,.internal",
     "OpenFolder": "Đi tới thư mục",
     "Port": "Cổng",
     "PortTooltip": "Số cổng mà tiến trình phục vụ mô hình lắng nghe.",
@@ -2079,7 +2108,8 @@
     "VllmModelName": "Tên mô hình (ví dụ: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Kích thước song song của pipeline (ví dụ: 2, 4)",
     "VllmQuantization": "ví dụ: awq, gptq, fp8",
-    "VllmTpSize": "Kích thước tensor song song (ví dụ: 2, 4, 8)"
+    "VllmTpSize": "Kích thước tensor song song (ví dụ: 2, 4, 8)",
+    "WandbApiKey": "Khóa API Weights & Biases của bạn"
   },
   "modelStore": {
     "Architecture": "Kiến trúc",
@@ -2719,6 +2749,7 @@
     "InvalidRedirectURL": "Không thể khởi chạy ứng dụng vì URL không hợp lệ.",
     "KernelExitCode": "Mã thoát Kernel",
     "LastTry": "Lần thử cuối cùng",
+    "LaunchedWithDifferentAccessKey": "Phiên này được tạo bằng khóa khác với khóa truy cập mặc định của bạn.",
     "MEM": "Ký ức",
     "MaxSessionLifetime": "Thời gian tồn tại của phiên tối đa",
     "MaxSessionLifetimeDesc": "Buộc chấm dứt các phiên sau thời gian này kể từ khi tạo. \nNó ngăn phiên chạy vô tận.",
@@ -3047,7 +3078,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Lưới",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3070,7 +3101,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Bảng",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3519,6 +3550,7 @@
     "ClearSSHKeypairInput": "Cặp khóa SSH đã viết sẽ bị xóa. Bạn có chắc chắn muốn tiếp tục không?",
     "ConfigFilename": "Định cấu hình tên tệp",
     "CurrentSSHPublicKey": "Khóa công khai hiện tại:",
+    "CustomDashboardPanels": "Bảng điều khiển tùy chỉnh",
     "DarkMode": "Chế độ tối",
     "DarkTheme": "Chế độ tối",
     "Default": "Mặc định",

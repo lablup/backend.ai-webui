@@ -5,7 +5,7 @@
  Ticket 16 — converted to Astryx. antd `Descriptions` becomes `MetadataList`
  (its `bordered` emphasis has no destination — MAPPING §4 — and is DROPPED,
  defaults-first), `Alert` becomes `Banner`, `Popconfirm` becomes the
- `BAIPopconfirmAstryx` gap component (reversible-tier confirm per
+ `BAIPopconfirm` gap component (reversible-tier confirm per
  `.claude/rules/destructive-confirmation.md`), and the icon-only leave button
  becomes an `IconButton` with a real accessible name (P8). The table crossed
  to the Astryx engine in ticket 30-D.
@@ -24,7 +24,7 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
-import { BAIPopconfirmAstryx as BAIPopconfirm } from 'backend.ai-ui';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   filterOutNullAndUndefined,
   BAITable,

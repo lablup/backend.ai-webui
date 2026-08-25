@@ -721,8 +721,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Düzenle",
     "Free": "Özgür",
-    "Used": "Kullanılmış"
+    "Used": "Kullanılmış",
+    "editSider": {
+      "Empty": "Henüz özel panel yok",
+      "GridDisabled": "Izgara görünümü kapalı (Deneysel özellikler)",
+      "RequiresSuperadmin": "Yalnızca süper yönetici",
+      "ResetLayout": "Düzeni sıfırla",
+      "ResetLayoutDescription": "Varsayılan panel düzenini geri yükler. Özel paneller korunur.",
+      "Title": "Özel paneller"
+    },
+    "panelModal": {
+      "AddPanel": "Panel ekle",
+      "Condition": "Koşul",
+      "Count": "Sayı",
+      "DataSource": "Veri kaynağı",
+      "DataSourceRequired": "Bir veri kaynağı seçin",
+      "EditPanel": "Paneli düzenle",
+      "PanelType": "Panel türü",
+      "PanelTypeRequired": "Bir panel türü seçin",
+      "Table": "Tablo",
+      "TitleDescription": "Panel başlığı olarak gösterilir — koşulu açıklamak için kullanın.",
+      "TitleOptional": "Başlık (isteğe bağlı)"
+    }
   },
   "data": {
     "Active": "Aktif",
@@ -2000,6 +2022,9 @@
     "AdditionalMounts": "Ek Montajlar",
     "AdditionalMountsTooltip": "Model klasörünün yanı sıra her kopyaya bağlanan ek model olmayan klasörler.",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
+    "AwsAccessKeyId": "AWS erişim anahtarı kimliğiniz",
+    "AwsDefaultRegion": "örn. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "AWS gizli erişim anahtarınız",
     "BasePath": "Temel Yol",
     "CommandArgvLabel": "Komut (argv)",
     "CommandExecHelper": "Kabuk kullanılmadan doğrudan argüman olarak çalıştırılır — operatörler (; && | $VAR, yönlendirme vb.) düz metin olarak işlenir. Argümanları boşlukla ayırın; boşluk içeren argümanları tırnak içine alın (ör. --name \"my model\").",
@@ -2019,6 +2044,9 @@
     "Finished": "bitmiş",
     "HealthCheck": "Sağlık kontrolü URL'si",
     "HealthCheckTooltip": "Hizmetin çalışıp çalışmadığını kontrol etmek için kullanılan URL yolu (ör. /health).",
+    "HfToken": "Hugging Face erişim jetonunuz",
+    "HttpProxy": "örn. http://proxy.example.com:8080",
+    "HttpsProxy": "örn. https://proxy.example.com:8080",
     "Image": "Resim",
     "ImageRequired": "İmaj zorunludur.",
     "InitialDelay": "Başlangıç Tolerans Süresi",
@@ -2037,6 +2065,7 @@
     "ModelMountDestination": "Model Klasörü İçin Montaj Hedefi",
     "ModelMountTooltip": "Model klasörünün container içinde bağlandığı yol.",
     "NimApiKey": "NGC API anahtarınız",
+    "NoProxy": "örn. localhost,127.0.0.1,.internal",
     "OpenFolder": "Klasöre git",
     "Port": "Liman",
     "PortTooltip": "Model servis sürecinin dinlediği port numarası.",
@@ -2077,7 +2106,8 @@
     "VllmModelName": "Model adı (ör. meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Pipeline paralel boyutu (örn. 2, 4)",
     "VllmQuantization": "örn., awq, gptq, fp8",
-    "VllmTpSize": "Tensör paralel boyutu (örn. 2, 4, 8)"
+    "VllmTpSize": "Tensör paralel boyutu (örn. 2, 4, 8)",
+    "WandbApiKey": "Weights & Biases API anahtarınız"
   },
   "modelStore": {
     "Architecture": "Mimari",
@@ -2717,6 +2747,7 @@
     "InvalidRedirectURL": "Geçersiz bir URL nedeniyle uygulama başlatılamıyor.",
     "KernelExitCode": "Çekirdek çıkış kodu",
     "LastTry": "Son Deneme",
+    "LaunchedWithDifferentAccessKey": "Bu oturum, varsayılan erişim anahtarınızdan farklı bir anahtarla oluşturuldu.",
     "MEM": "Hafıza",
     "MaxSessionLifetime": "Maksimum Oturum Ömrü",
     "MaxSessionLifetimeDesc": "Oluşturulduktan bu süre sonra oturumları sonlandırmaya zorla. Oturumun sonsuza kadar çalışmasını engeller.",
@@ -3045,7 +3076,7 @@
     "resourceGrid": {
       "AtLeastPercent": "__NOT_TRANSLATED__",
       "GridMode": "__NOT_TRANSLATED__",
-      "GridView": "__NOT_TRANSLATED__",
+      "GridView": "Izgara",
       "IOReadWrite": "__NOT_TRANSLATED__",
       "Kernel": "__NOT_TRANSLATED__",
       "Layout": "__NOT_TRANSLATED__",
@@ -3068,7 +3099,7 @@
       "SlotMemLabel": "__NOT_TRANSLATED__",
       "SlotUtilLabel": "__NOT_TRANSLATED__",
       "StartedElapsed": "__NOT_TRANSLATED__",
-      "TableView": "__NOT_TRANSLATED__",
+      "TableView": "Tablo",
       "UnknownImage": "__NOT_TRANSLATED__",
       "Unnamed": "__NOT_TRANSLATED__",
       "ViewMode": "__NOT_TRANSLATED__",
@@ -3517,6 +3548,7 @@
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar:",
+    "CustomDashboardPanels": "Özel kontrol paneli panelleri",
     "DarkMode": "Karanlık Mod",
     "DarkTheme": "Karanlık Mod",
     "Default": "Varsayılan",

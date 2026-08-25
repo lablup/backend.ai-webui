@@ -153,7 +153,7 @@ async function installLegacyPresetFlagOverride(page: Page): Promise<void> {
 
 /**
  * Select an option in a `BAIComplexSelect`-backed field (here: the Image
- * select, `BAIAdminImageSelectAstryx`). The Astryx ComplexSelector's field
+ * select, `BAIAdminImageSelect`). The Astryx ComplexSelector's field
  * trigger is a plain `<button>` whose accessible name is the field label
  * (`aria-haspopup="dialog"`, NOT a combobox); its popup is a `role="dialog"`
  * (aria-labelled with the same field label) hosting a search `TextInput` with

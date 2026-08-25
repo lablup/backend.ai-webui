@@ -708,8 +708,30 @@
     }
   },
   "dashboard": {
+    "Edit": "Edit",
     "Free": "Free",
-    "Used": "Used"
+    "Used": "Used",
+    "editSider": {
+      "Empty": "No custom panels yet",
+      "GridDisabled": "Grid view off (Experimental features)",
+      "RequiresSuperadmin": "Superadmin only",
+      "ResetLayout": "Reset layout",
+      "ResetLayoutDescription": "Restores the default panel arrangement. Custom panels are kept.",
+      "Title": "Custom panels"
+    },
+    "panelModal": {
+      "AddPanel": "Add panel",
+      "Condition": "Condition",
+      "Count": "Count",
+      "DataSource": "Data source",
+      "DataSourceRequired": "Select a data source",
+      "EditPanel": "Edit panel",
+      "PanelType": "Panel type",
+      "PanelTypeRequired": "Select a panel type",
+      "Table": "Table",
+      "TitleDescription": "Shown as the panel header — use it to describe the condition.",
+      "TitleOptional": "Title (optional)"
+    }
   },
   "data": {
     "Active": "Active",
@@ -1987,6 +2009,9 @@
     "AdditionalMounts": "Additional Mounts",
     "AdditionalMountsTooltip": "Extra non-model folders mounted into each replica alongside the model folder.",
     "AutoScalingRules": "Auto Scaling Rules",
+    "AwsAccessKeyId": "Your AWS access key ID",
+    "AwsDefaultRegion": "e.g., us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Your AWS secret access key",
     "BasePath": "Base Path",
     "Command": "Command",
     "CommandArgvLabel": "Command (argv)",
@@ -2007,6 +2032,9 @@
     "Finished": "Finished",
     "HealthCheck": "Health Check URL",
     "HealthCheckTooltip": "The URL path used to check if the service is running (e.g., /health).",
+    "HfToken": "Your Hugging Face access token",
+    "HttpProxy": "e.g., http://proxy.example.com:8080",
+    "HttpsProxy": "e.g., https://proxy.example.com:8080",
     "Image": "Image",
     "ImageRequired": "Image is required.",
     "InitialDelay": "Startup Grace Period",
@@ -2025,6 +2053,7 @@
     "ModelMountDestination": "Mount Destination For Model Folder",
     "ModelMountTooltip": "The path where the model folder is mounted inside the container.",
     "NimApiKey": "Your NGC API key",
+    "NoProxy": "e.g., localhost,127.0.0.1,.internal",
     "OpenFolder": "Open folder",
     "Port": "Port",
     "PortTooltip": "The port number the model serving process listens on.",
@@ -2066,7 +2095,8 @@
     "VllmModelName": "Model name (e.g., meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Pipeline parallel size (e.g., 2, 4)",
     "VllmQuantization": "e.g., awq, gptq, fp8",
-    "VllmTpSize": "Tensor parallel size (e.g., 2, 4, 8)"
+    "VllmTpSize": "Tensor parallel size (e.g., 2, 4, 8)",
+    "WandbApiKey": "Your Weights & Biases API key"
   },
   "modelStore": {
     "Architecture": "Architecture",
@@ -2706,6 +2736,7 @@
     "InvalidRedirectURL": "The app cannot be launched due to an invalid URL.",
     "KernelExitCode": "Kernel Exit Code",
     "LastTry": "Last Try",
+    "LaunchedWithDifferentAccessKey": "This session was created with a key other than your default access key.",
     "MEM": "MEM",
     "MaxSessionLifetime": "Max Session Lifetime",
     "MaxSessionLifetimeDesc": "Force-terminate sessions after this time from creation. It prevents the session from running infinitely.",
@@ -3506,6 +3537,7 @@
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "ConfigFilename": "Config file name",
     "CurrentSSHPublicKey": "Current public key: ",
+    "CustomDashboardPanels": "Custom dashboard panels",
     "DarkMode": "Dark mode",
     "DarkTheme": "Dark Mode",
     "Default": "Default",
