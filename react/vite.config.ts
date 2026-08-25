@@ -930,7 +930,6 @@ export default defineConfig(({ command, mode }) => {
           './src/routes.tsx',
           './src/components/BAIErrorBoundary.tsx',
           './src/components/ErrorBoundaryWithNullFallback.tsx',
-          './src/components/FlexActivityIndicator.tsx',
           './src/components/LocationStateBreadCrumb.tsx',
           './src/components/LoginView.tsx',
           './src/components/MainLayout/MainLayout.tsx',
