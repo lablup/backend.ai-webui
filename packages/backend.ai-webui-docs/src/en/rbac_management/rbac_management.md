@@ -251,7 +251,7 @@ Adding users is a bulk operation — you can select several users in a single pa
 
 ### System roles and assignment restrictions
 
-The system-generated project-admin role (the `project-<project_id>-admin` role, whose **Source** is **System**) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, **Roles automatically created by the system cannot have users directly assigned or unassigned.**, and the assignment table is read-only (the **Add User** and revoke controls are hidden).
+The system-generated project-admin role (the `role_project_<project_id>_admin` role, whose **Source** is **System**) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, **Roles automatically created by the system cannot have users directly assigned or unassigned.**, and the assignment table is read-only (the **Add User** and revoke controls are hidden).
 
 ![](../images/rbac_system_role_assignments_readonly.png)
 
@@ -288,11 +288,11 @@ Revoking a role assignment can be reversed by re-adding the user to the role fro
 
 ## Grant Project Admin authority
 
-Creating a project also creates a dedicated role named `project-<project_id>-admin`, where `<project_id>` is the UUID of that project. A user assigned to this role gains [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
+Creating a project also creates a dedicated role named `role_project_<project_id>_admin`, where `<project_id>` is the first 8 characters of that project's UUID. A user assigned to this role gains [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
 
 ![](../images/rbac_project_admin_role_in_list.png)
 
-Grant and revoke project admin through the **Set Project Admin** one-click flow on the **Project** admin page, described in [Set Project Admin](#set-project-admin) in the Project Admin Features chapter. The `project-<project_id>-admin` role is a system role, so its Role Assignments tab here is **read-only** and provided for inspection — you can still open the role to review who currently holds project admin. The **Set Project Admin** modal also links back to this role's detail drawer through its RBAC shortcut.
+Grant and revoke project admin through the **Set Project Admin** one-click flow on the **Project** admin page, described in [Set Project Admin](#set-project-admin) in the Project Admin Features chapter. The `role_project_<project_id>_admin` role is a system role, so its Role Assignments tab here is **read-only** and provided for inspection — you can still open the role to review who currently holds project admin. The **Set Project Admin** modal also links back to this role's detail drawer through its RBAC shortcut.
 
 ![](../images/rbac_project_admin_role_detail.png)
 
