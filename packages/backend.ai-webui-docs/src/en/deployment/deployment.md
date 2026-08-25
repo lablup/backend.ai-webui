@@ -210,7 +210,7 @@ The **Environments** section is present for all runtime variants.
 
 - **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list to images that are compatible with that runtime.
 - **Image Name (Manual)**: A free-text image reference, shown only when your administrator has enabled manual image names on the server. Typing here clears the **Environment / Version** selection, and vice versa — the two are alternative ways of choosing the same image.
-- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely.
+- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely. As you type a variable name, common environment variable names are suggested.
 
 ##### Entering an image name manually
 
