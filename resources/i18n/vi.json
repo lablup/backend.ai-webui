@@ -539,6 +539,7 @@
     "BulkCreateUserFromCSV": "Tạo hàng loạt người dùng từ CSV",
     "BulkCreateUserFromCSVSubtitle": "Tải lên CSV để tạo nhiều tài khoản người dùng cùng một lúc.",
     "BulkCreateUserPartialFailure": "{{successCount}} người dùng đã được tạo. {{failCount}} người dùng không được tạo.",
+    "BulkCreateUserPartialFailureDescription": "Một số người dùng không được tạo. Vui lòng kiểm tra các mục.",
     "BulkCreateUserSuccess": "Đã tạo thành công {{count}} người dùng.",
     "BulkDeactivateCredentials": "Vô hiệu hóa thông tin xác thực",
     "BulkDeactivateCredentialsDescription": "Bạn sắp vô hiệu hóa {{count}} thông tin xác thực. Người dùng sẽ không thể sử dụng thông tin xác thực này nữa.",

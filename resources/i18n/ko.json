@@ -539,6 +539,7 @@
     "BulkCreateUserFromCSV": "CSV로 사용자 일괄 생성",
     "BulkCreateUserFromCSVSubtitle": "CSV를 업로드하여 여러 사용자 계정을 한 번에 생성합니다.",
     "BulkCreateUserPartialFailure": "{{successCount}}명의 사용자가 생성되었습니다. {{failCount}}명의 사용자 생성에 실패했습니다.",
+    "BulkCreateUserPartialFailureDescription": "일부 사용자 생성에 실패했습니다. 항목을 확인해주세요.",
     "BulkCreateUserSuccess": "{{count}}명의 사용자가 생성되었습니다.",
     "BulkDeactivateCredentials": "자격증명 비활성화",
     "BulkDeactivateCredentialsDescription": "{{count}}개의 자격증명을 비활성화합니다. 해당 사용자는 더 이상 이 자격증명을 사용할 수 없습니다.",

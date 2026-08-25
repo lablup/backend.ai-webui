@@ -526,6 +526,7 @@
     "BulkCreateUserFromCSV": "Bulk Create Users from CSV",
     "BulkCreateUserFromCSVSubtitle": "Upload a CSV to provision multiple user accounts at once.",
     "BulkCreateUserPartialFailure": "{{successCount}} user(s) created. {{failCount}} user(s) failed.",
+    "BulkCreateUserPartialFailureDescription": "Some users could not be created. Please check the items.",
     "BulkCreateUserSuccess": "Successfully created {{count}} user(s).",
     "BulkDeactivateCredentials": "Deactivate credentials",
     "BulkDeactivateCredentialsDescription": "You are about to deactivate {{count}} credential(s). The users will no longer be able to use these credentials.",

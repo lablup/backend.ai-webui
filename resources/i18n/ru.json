@@ -539,6 +539,7 @@
     "BulkCreateUserFromCSV": "Массовое создание пользователей из CSV",
     "BulkCreateUserFromCSVSubtitle": "Загрузите CSV для создания нескольких учётных записей пользователей за один раз.",
     "BulkCreateUserPartialFailure": "Создано {{successCount}} пользователей. Не удалось создать {{failCount}} пользователей.",
+    "BulkCreateUserPartialFailureDescription": "Не удалось создать некоторых пользователей. Проверьте элементы.",
     "BulkCreateUserSuccess": "Успешно создано {{count}} пользователь(ей).",
     "BulkDeactivateCredentials": "Деактивировать учетные данные",
     "BulkDeactivateCredentialsDescription": "Вы собираетесь деактивировать {{count}} учетных данных. Пользователи больше не смогут использовать эти учетные данные.",
