@@ -8,8 +8,7 @@ import BAISchedulingHistoryNodes, {
   BAISchedulingHistoryNodesProps,
   SchedulingHistoryNodeInList,
 } from './BAISchedulingHistoryNodes';
-import BAISubStepNodes from './BAISubStepNodes';
-import * as _ from 'lodash-es';
+import BAISubStepNodes, { countExecutedSubSteps } from './BAISubStepNodes';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAISchedulingHistoryTableProps extends Omit<
@@ -40,8 +39,12 @@ const BAISchedulingHistoryTable = ({
       fragment BAISchedulingHistoryTableFragment on SessionSchedulingHistory
       @relay(plural: true) {
         id
+        phase
         result
         subSteps {
+          # Read alongside the spread so the table can tell a row that holds
+          # only the trailing lifecycle marker from one with real sub-steps.
+          step
           ...BAISubStepNodesFragment
         }
         ...BAISchedulingHistoryNodesFragment
@@ -55,6 +58,8 @@ const BAISchedulingHistoryTable = ({
     useSchedulingHistoryExpandable(dataSource, {
       mode: expandMode,
       onModeChange: onExpandModeChange,
+      isExpandable: (record) =>
+        countExecutedSubSteps(record.subSteps ?? [], record.phase) > 0,
     });
 
   return (
@@ -65,14 +70,16 @@ const BAISchedulingHistoryTable = ({
         expandedRowKeys,
         onExpandedRowsChange,
         rowExpandable: (record: SchedulingHistoryNodeInList) =>
-          !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
+          countExecutedSubSteps(
+            dataSource.find((h) => h.id === record.id)?.subSteps ?? [],
+            record.phase,
+          ) > 0,
         expandedRowRender: (record: SchedulingHistoryNodeInList) => (
           <BAISubStepNodes
-            resizable
             subStepsFrgmt={
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
-            pagination={false}
+            parentPhase={record.phase}
           />
         ),
       }}

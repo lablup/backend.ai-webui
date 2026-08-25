@@ -458,12 +458,13 @@
     "SelectStorageProxy": "選擇儲存代理"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "結束時間",
+    "Duration": "持續時間",
     "ErrorCode": "錯誤代碼",
     "Message": "訊息",
     "Result": "結果",
-    "StartedAt": "開始時間",
-    "Step": "步驟"
+    "ResultMarker": "本次嘗試的結果標記",
+    "Step": "步驟",
+    "Time": "時間"
   },
   "comp:BAITable": {
     "Apply": "套用",

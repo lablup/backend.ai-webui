@@ -458,12 +458,13 @@
     "SelectStorageProxy": "Depolama Proxy'si Seç"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Bitiş Zamanı",
+    "Duration": "Süre",
     "ErrorCode": "Hata Kodu",
     "Message": "Mesaj",
     "Result": "Sonuç",
-    "StartedAt": "Başlama zamanı",
-    "Step": "Adım"
+    "ResultMarker": "Bu denemenin sonuç işareti",
+    "Step": "Adım",
+    "Time": "Zaman"
   },
   "comp:BAITable": {
     "Apply": "Uygula",

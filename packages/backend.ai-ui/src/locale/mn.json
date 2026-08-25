@@ -458,12 +458,13 @@
     "SelectStorageProxy": "Хадгалалтын прокси сонгох"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Дууссан цаг",
+    "Duration": "Үргэлжлэх хугацаа",
     "ErrorCode": "Алдааны код",
     "Message": "Зурвас",
     "Result": "Үр дүн",
-    "StartedAt": "Эхэлсэн цаг",
-    "Step": "Алхам"
+    "ResultMarker": "Энэ оролдлогын үр дүнгийн тэмдэглэгээ",
+    "Step": "Алхам",
+    "Time": "Цаг"
   },
   "comp:BAITable": {
     "Apply": "Хэрэглэх",

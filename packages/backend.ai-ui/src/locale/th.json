@@ -458,12 +458,13 @@
     "SelectStorageProxy": "เลือกพร็อกซีที่เก็บข้อมูล"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "สิ้นสุดเมื่อ",
+    "Duration": "ระยะเวลา",
     "ErrorCode": "รหัสข้อผิดพลาด",
     "Message": "ข้อความ",
     "Result": "ผลลัพธ์",
-    "StartedAt": "เริ่มเมื่อ",
-    "Step": "ขั้นตอน"
+    "ResultMarker": "เครื่องหมายผลลัพธ์ของความพยายามนี้",
+    "Step": "ขั้นตอน",
+    "Time": "เวลา"
   },
   "comp:BAITable": {
     "Apply": "ใช้",
