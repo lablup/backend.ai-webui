@@ -1,5 +1,9 @@
 import BAIComplexSelect, { BAILabeledValue } from './BAIComplexSelect';
 import BAIGraphQLPropertyFilter from './BAIGraphQLPropertyFilter';
+import type {
+  FilterEntity,
+  FilterEntitySource,
+} from './BAIPowerSearchAdapters';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
@@ -24,7 +28,8 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
 - **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
-- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user/domain picker or async select). The control commits a condition via \`onAddCondition(value, label?)\` as soon as a value is selected (so a single-select picker confirms on selection); pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the condition tag shows the label instead. Give the control \`value={null}\` so it stays controlled and clears after each commit. Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits.
+- **Entity values via \`entitySource\`**: Declarative picker for properties whose value is an opaque id (a user UUID chosen by email). Supply \`{ search, bootstrap?, resolve?, cancel? }\` and the editor renders an Astryx Typeahead (or a Tokenizer when the operator is \`in\`/\`notIn\` — **arity follows the operator, not the property**). \`resolve(ids)\` turns ids restored from a URL back into labels, so a shared link shows the email instead of the UUID. Prefer it over \`renderInput\` for id-valued properties; reach for \`renderInput\` only when you need a control the entity mode cannot express.
+- **Custom input via \`renderInput\`**: Replace the default value editor with any controlled control (e.g., a storage-host picker or async select). The control **stages** a value via \`onAddCondition(value, label?)\` and the edit popover's Apply button commits it; pass a human-readable \`label\` when the staged value is opaque (e.g. a UUID) so the condition tag shows the label instead. The render prop receives \`{ onAddCondition, value, isDisabled }\` — \`value\` is what is currently staged (an existing token's value in edit mode). Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits.
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
@@ -91,15 +96,24 @@ FilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
-  // Custom input renderer — replaces the default AutoComplete with a controlled
-  // control (e.g. BAIUserSelect). \`onAddCondition(value, label?)\` commits the
-  // value as a condition immediately (single-select pickers confirm on
-  // selection) and serializes it per the property's \`type\`. Pass a
-  // human-readable \`label\` when the value is opaque (e.g. a UUID) so the
-  // condition tag stays readable. Give the control \`value={null}\` so it
-  // stays controlled and clears after each commit.
+  // Declarative picker for opaque-id values (a user UUID chosen by email).
+  // Arity follows the operator: Typeahead for equals/notEquals, Tokenizer for
+  // in/notIn. Ignored when \`renderInput\` is set.
+  entitySource?: {
+    search: (query: string) => Promise<FilterEntity[]> | FilterEntity[];
+    bootstrap?: () => Promise<FilterEntity[]> | FilterEntity[];
+    resolve?: (ids: readonly string[]) => Promise<FilterEntity[]>;
+    cancel?: () => void;
+  };
+  // Custom input renderer — replaces the default value editor with a controlled
+  // control. \`onAddCondition(value, label?)\` STAGES the value; the edit
+  // popover's Apply button commits it, serialized per the property's \`type\`.
+  // Pass a human-readable \`label\` when the value is opaque (e.g. a UUID) so
+  // the token stays readable.
   renderInput?: (props: {
     onAddCondition: (value: string | undefined, label?: string) => void;
+    value: string | null;
+    isDisabled?: boolean;
   }) => ReactNode;
 }
         `,
@@ -873,7 +887,7 @@ export const WithRenderInput: Story = {
     docs: {
       description: {
         story:
-          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Useful for async selects (e.g., fetching options from an API).',
+          "When `renderInput` is provided, the default value editor is replaced with a custom control. The control **stages** a value via `onAddCondition(value, label?)` and the edit popover's Apply button commits it — nothing lands on the filter until Apply. The render prop also receives `value` (what is currently staged) and `isDisabled`. Useful for controls the declarative `entitySource` mode cannot express; for id-valued properties prefer `entitySource`.",
       },
     },
   },
@@ -969,7 +983,7 @@ export const WithCustomType: Story = {
     docs: {
       description: {
         story:
-          "A property whose input is a controlled antd Select supplied via `renderInput`. Selecting an option calls `onAddCondition(value, label)` — the filter commits the value as a condition serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`, while the condition tag shows the label (email) instead of the opaque UUID.",
+          "A property whose input is a controlled `BAIComplexSelect` supplied via `renderInput`. Selecting an option calls `onAddCondition(value, label)`, which **stages** it; the popover's Apply button commits it, serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`, while the token shows the label (email) instead of the opaque UUID. The same result with less call-site code is what `entitySource` gives you — see *Entity picker via entitySource*.",
       },
     },
   },
@@ -998,5 +1012,100 @@ export const WithCustomType: Story = {
     ],
     combinationMode: 'AND',
     onChange: action('custom input filter changed'),
+  },
+};
+
+// --- Entity picker (entitySource) --------------------------------------------
+
+const sampleUserEntities: Array<FilterEntity> = [
+  {
+    id: 'owner-uuid-0001',
+    label: 'alice@example.com',
+    description: 'Alice Kim',
+  },
+  { id: 'owner-uuid-0002', label: 'bob@example.com', description: 'Bob Lee' },
+  {
+    id: 'owner-uuid-0003',
+    label: 'carol@example.com',
+    description: 'Carol Park',
+  },
+  {
+    id: 'owner-uuid-0004',
+    label: 'dave@example.com',
+    description: 'Dave Choi',
+  },
+  {
+    id: 'owner-uuid-0005',
+    label: 'erin@example.com',
+    description: 'Erin Yoon',
+  },
+];
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Stands in for a Relay-backed source (useBAIUserEntitySource); the latency is
+// what makes the id -> label swap visible in the Canvas.
+const demoUserEntitySource: FilterEntitySource = {
+  search: async (query) => {
+    await sleep(400);
+    const needle = query.trim().toLowerCase();
+    return needle
+      ? sampleUserEntities.filter((entity) =>
+          entity.label.toLowerCase().includes(needle),
+        )
+      : sampleUserEntities;
+  },
+  bootstrap: async () => {
+    await sleep(300);
+    return sampleUserEntities.slice(0, 3);
+  },
+  resolve: async (ids) => {
+    await sleep(1200);
+    return sampleUserEntities.filter((entity) => ids.includes(entity.id));
+  },
+};
+
+export const WithEntitySource: Story = {
+  name: 'Entity picker via entitySource',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`entitySource` is the declarative way to filter on an opaque id: the user searches by email, the filter serializes the UUID (`{ owner: { id: { equals: <uuid> } } }` — the same bytes `renderInput` produced). Arity follows the **operator**: `Owner` is pinned to `equals` and gets a single-select Typeahead, while `Reviewer` offers `in`/`notIn` and gets a multi-select Tokenizer — both from one source, with no call-site branching. Both properties are pre-seeded with raw UUIDs and this demo source resolves them after ~1.2s, so the tokens start as UUIDs and swap to emails — exactly what happens when a shared filter URL is opened in a fresh tab. Without `resolve` the token simply keeps showing the raw id.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'owner.id',
+        propertyLabel: 'Owner',
+        type: 'uuid',
+        fixedOperator: 'equals',
+        entitySource: demoUserEntitySource,
+      },
+      {
+        key: 'reviewer.id',
+        propertyLabel: 'Reviewer',
+        type: 'uuid',
+        operators: ['in', 'notIn'],
+        defaultOperator: 'in',
+        entitySource: demoUserEntitySource,
+      },
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        defaultOperator: 'iContains',
+      },
+    ],
+    combinationMode: 'AND',
+    value: {
+      AND: [
+        { owner: { id: { equals: 'owner-uuid-0003' } } },
+        { reviewer: { id: { in: ['owner-uuid-0001', 'owner-uuid-0002'] } } },
+      ],
+    },
+    onChange: action('entitySource filter changed'),
   },
 };

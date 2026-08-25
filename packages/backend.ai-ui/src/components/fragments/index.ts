@@ -243,3 +243,4 @@ export type {
 } from './BAIAdminImageSelect';
 export { default as BAISubStepNodes } from './BAISubStepNodes';
 export type { BAISubStepNodesProps, SubStepInList } from './BAISubStepNodes';
+export { default as useBAIUserEntitySource } from './useBAIUserEntitySource';
