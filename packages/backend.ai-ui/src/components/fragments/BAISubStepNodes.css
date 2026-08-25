@@ -25,19 +25,6 @@
   --bai-substep-cell-inline: 10px;
   --bai-substep-dot-size: 7px;
   --bai-substep-marker-size: 11px;
-  --bai-substep-panel-inset-block: 14px;
-
-  /* `BAITable` pads the detail cell uniformly with `paddingSM` through an
-     INLINE style, which no stylesheet rule can override — cancel it and
-     re-apply 3a's inset. The start inset is BAITable's own
-     `EXPAND_COLUMN_WIDTH_FIRST`, which lines the card's leading edge up with
-     the parent's first data column. */
-  --bai-substep-cell-padding: var(--spacing-3);
-  --bai-substep-inset-start: 56px;
-
-  margin: calc(-1 * var(--bai-substep-cell-padding));
-  padding-block: var(--bai-substep-panel-inset-block);
-  padding-inline: var(--bai-substep-inset-start) var(--spacing-6);
 
   /* Nothing in here should inherit the PAGE's text metrics: bare cells take
      their line box from whatever they inherit — 16px/24px — which both

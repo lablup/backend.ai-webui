@@ -682,6 +682,15 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   const expandedKeySet = new Set(_.map(expandedKeys, String));
 
   const hasExpandable = !!expandable?.expandedRowRender;
+  const expandColumnWidth =
+    expandable?.columnWidth ??
+    (rowSelection
+      ? EXPAND_COLUMN_WIDTH_AFTER_SELECTION
+      : EXPAND_COLUMN_WIDTH_FIRST);
+  /** Detail rows start where the first data column does: past the selection
+   * and chevron columns. */
+  const detailInsetStart =
+    (rowSelection ? SELECTION_COLUMN_WIDTH : 0) + expandColumnWidth;
 
   const toggleExpanded = (key: string) => {
     const next = expandedKeySet.has(key)
@@ -733,12 +742,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       built.push({
         key: EXPAND_COLUMN_KEY,
         header: expandable?.columnTitle ?? '',
-        width: pixel(
-          expandable?.columnWidth ??
-            (rowSelection
-              ? EXPAND_COLUMN_WIDTH_AFTER_SELECTION
-              : EXPAND_COLUMN_WIDTH_FIRST),
-        ),
+        width: pixel(expandColumnWidth),
         resizable: false,
         renderCell: (item) => {
           if (isDetailRow(item)) return null;
@@ -1135,7 +1139,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
             colSpan={renderedColumnCount}
             style={{
               padding: token.paddingSM,
-              background: token.colorFillQuaternary,
+              paddingInlineStart: detailInsetStart,
             }}
           >
             {expandable?.expandedRowRender?.(record, index)}
