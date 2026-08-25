@@ -6,6 +6,7 @@ import type { resourceRegistryDeploymentQuery } from '../../__generated__/resour
 import type { resourceRegistrySessionQuery } from '../../__generated__/resourceRegistrySessionQuery.graphql';
 import type { resourceRegistryVfolderQuery } from '../../__generated__/resourceRegistryVfolderQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import { getSessionFilterProperties } from './sessionFilterProperties';
 import type {
   PanelDescriptor,
   ResourceConfig,
@@ -115,16 +116,9 @@ const sessionConfig: ResourceConfig<resourceRegistrySessionQuery, SessionNode> =
         }
       }
     `,
-    // Same condition language and properties as the sessions page's filter.
-    getStringFilterProperties: (t) => [
-      { key: 'name', propertyLabel: t('session.SessionName'), type: 'string' },
-      {
-        key: 'scaling_group',
-        propertyLabel: t('session.ResourceGroup'),
-        type: 'string',
-      },
-      { key: 'agent_ids', propertyLabel: t('session.Agent'), type: 'string' },
-    ],
+    // Same condition language as the sessions page's filter, over every field
+    // the manager's queryfilter accepts.
+    getStringFilterProperties: getSessionFilterProperties,
     buildVariables: ({ filter, order, limit, offset, projectId }) => ({
       scopeId: `project:${projectId}`,
       first: limit,

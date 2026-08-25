@@ -63,6 +63,7 @@ import type {
   PowerSearchField,
   PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
+import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
@@ -73,8 +74,13 @@ export type FilterProperty = {
   key: string;
   defaultOperator?: string;
   propertyLabel: string;
-  // TODO: support array, number
-  type: 'string' | 'boolean';
+  /**
+   * Decides quoting and the operator menu. `number` values are emitted bare so
+   * the DSL parses them as numbers; `datetime` and `uuid` stay quoted. `uuid`
+   * offers equality only — a UUID column has no `ilike`.
+   * TODO: support array.
+   */
+  type: 'string' | 'boolean' | 'number' | 'datetime' | 'uuid';
   options?: Array<FilterPropertyOption>;
   strictSelection?: boolean;
   /**
@@ -106,7 +112,25 @@ export interface BAIPropertyFilterProps extends BAIPowerSearchChromeProps {
 const DEFAULT_OPERATOR_OF_TYPES = {
   string: 'ilike',
   boolean: '==',
+  number: '==',
+  datetime: '>=',
+  uuid: '==',
 } as const;
+
+/** Operators offered per type. Enum-like fields use `ENUM_OPERATORS` instead. */
+const OPERATORS_OF_TYPES: Record<FilterProperty['type'], Array<string>> = {
+  string: ['ilike', '=='],
+  boolean: ['==', '!='],
+  number: ['==', '!=', '>', '>=', '<', '<='],
+  datetime: ['>=', '<=', '==', '!='],
+  uuid: ['==', '!='],
+};
+
+const ENUM_OPERATORS = ['==', '!='];
+
+/** `number` and `boolean` values are bare in the DSL; everything else quoted. */
+const shouldQuote = (type: FilterProperty['type']) =>
+  type !== 'number' && type !== 'boolean';
 
 const BOOLEAN_OPTIONS: Array<FilterPropertyOption> = [
   { label: 'True', value: 'true' },
@@ -218,7 +242,9 @@ function parseFilterValueWithQuoting(filter: string) {
 interface FieldSpec {
   key: string;
   label: string;
-  /** `string` properties are double-quoted; `boolean` ones are bare. */
+  /** Picks the value editor. Synthesised fields are always `string`. */
+  type: FilterProperty['type'];
+  /** `number` and `boolean` values are bare; everything else double-quoted. */
   quote: boolean;
   isEnum: boolean;
   options?: Array<FilterPropertyOption>;
@@ -242,12 +268,13 @@ function specForProperty(property: FilterProperty): FieldSpec {
     property.defaultOperator ?? DEFAULT_OPERATOR_OF_TYPES[property.type];
   const operators = _.uniq([
     defaultOperator,
-    ...(isEnum ? ['==', '!='] : ['ilike', '==']),
+    ...(isEnum ? ENUM_OPERATORS : OPERATORS_OF_TYPES[property.type]),
   ]);
   return {
     key: property.key,
     label: property.propertyLabel,
-    quote: property.type === 'string',
+    type: property.type,
+    quote: shouldQuote(property.type),
     isEnum,
     options: property.type === 'boolean' ? BOOLEAN_OPTIONS : property.options,
     strictSelection:
@@ -285,6 +312,7 @@ export function buildFieldSpecs(
       spec = {
         key: property,
         label: property,
+        type: 'string',
         quote: wasQuoted,
         isEnum: false,
         operators: [operator],
@@ -317,6 +345,10 @@ function operatorValueForSpec(
   if (spec.isEnum || (spec.options && spec.strictSelection)) {
     return { type: 'enum', values: toEnumItems(spec.options) };
   }
+  // Typed editors, so a `number`/`datetime` token cannot commit text the
+  // backend's grammar rejects (mirrors `BAIGraphQLPropertyFilter`).
+  if (spec.type === 'datetime') return { type: 'date_absolute' };
+  if (spec.type === 'number') return { type: 'float' };
   const searchSource = toSearchSource(spec.options);
   return searchSource
     ? { type: 'string', searchSource, isArbitraryStringAllowed: true }
@@ -376,24 +408,50 @@ export function parseFilterString(
         ? trimFilterValue(rawValue)
         : rawValue;
       if (display === '') return null;
-      rawValues[rawKey(property, operator, display)] = rawValue;
-      return {
+      const token = {
         field: property,
         operator,
-        value: spec.renderInput
-          ? ({ type: 'custom', value: display } as const)
-          : spec.isEnum
-            ? ({ type: 'enum', value: display } as const)
-            : ({ type: 'string', value: display } as const),
+        value: tokenValueForSpec(spec, display),
       } satisfies PowerSearchFilter;
+      // Keyed by what `serializeFilters` will read back, not by the inbound
+      // text: a `date_absolute` token round-trips through a unix stamp, so
+      // only the normalised form can match an untouched token to its raw.
+      rawValues[rawKey(property, operator, tokenValueToString(token))] =
+        rawValue;
+      return token;
     }),
   );
   return { filters, rawValues };
 }
 
+/** The token value shape the editor chosen by `operatorValueForSpec` expects. */
+function tokenValueForSpec(
+  spec: FieldSpec,
+  display: string,
+): PowerSearchFilter['value'] {
+  if (spec.renderInput) return { type: 'custom', value: display };
+  if (spec.isEnum) return { type: 'enum', value: display };
+  if (spec.type === 'datetime') {
+    const parsed = dayjs(display);
+    return {
+      type: 'date_absolute',
+      unixSeconds: parsed.isValid() ? parsed.unix() : dayjs().unix(),
+    };
+  }
+  if (spec.type === 'number') return { type: 'float', value: Number(display) };
+  return { type: 'string', value: display };
+}
+
 /** Reads the display string out of any of the token value shapes we produce. */
 function tokenValueToString(filter: PowerSearchFilter): string {
-  const value = filter.value as { type: string; value?: unknown };
+  const value = filter.value as {
+    type: string;
+    value?: unknown;
+    unixSeconds?: number;
+  };
+  if (value?.type === 'date_absolute') {
+    return dayjs.unix(value.unixSeconds ?? 0).toISOString();
+  }
   if (_.isArray(value?.value)) return _.toString(_.first(value.value) ?? '');
   if (_.isNil(value?.value)) return '';
   return _.toString(value.value);
