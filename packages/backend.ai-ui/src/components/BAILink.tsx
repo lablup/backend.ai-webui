@@ -87,11 +87,14 @@ const BAILink: React.FC<BAILinkProps> = ({
   const link = (
     <AstryxLink
       {...restProps}
-      className={`${LINK_TYPE_CLASS[type]}${className ? ` ${className}` : ''}`}
+      className={`${LINK_TYPE_CLASS[type]}${ellipsis ? ' bai-link-ellipsis' : ''}${className ? ` ${className}` : ''}`}
       style={style}
       target={target}
       isDisabled={type === 'disabled'}
       onClick={onClick}
+      // The clip has to sit on the element that owns the text: an ancestor's
+      // `text-overflow` cannot shorten an atomic inline-level box (FR-3686).
+      maxLines={ellipsis ? 1 : 0}
     >
       {children}
       {icon}
