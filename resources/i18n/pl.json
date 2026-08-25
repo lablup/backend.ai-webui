@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Definicja modelu musi być poprawnym formatem JSON.",
     "ModelDefinitionPlaceholder": "Wprowadź definicję modelu w formacie JSON.",
     "MultiNode": "Wielowęzłowy",
+    "MultiNodeNotConfiguredWarning": "Jeśli tryb wielowęzłowy nie jest skonfigurowany w klastrze, sesje utworzone z tego ustawienia wstępnego nie uruchomią się.",
     "Name": "Nazwa",
     "NamePlaceholder": "np. vLLM-GPU-Large",
     "NameRequired": "Nazwa jest wymagana",

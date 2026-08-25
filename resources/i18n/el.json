@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Ο ορισμός μοντέλου πρέπει να είναι έγκυρο JSON.",
     "ModelDefinitionPlaceholder": "Εισάγετε ορισμό μοντέλου σε JSON.",
     "MultiNode": "Πολλαπλοί κόμβοι",
+    "MultiNodeNotConfiguredWarning": "Εάν δεν έχουν ρυθμιστεί πολλαπλοί κόμβοι στο σύμπλεγμα, οι συνεδρίες που δημιουργούνται από αυτήν την προεπιλογή δεν θα ξεκινήσουν.",
     "Name": "Όνομα",
     "NamePlaceholder": "π.χ. vLLM-GPU-Large",
     "NameRequired": "Το όνομα είναι υποχρεωτικό.",

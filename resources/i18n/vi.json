@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Định nghĩa mô hình phải là JSON hợp lệ.",
     "ModelDefinitionPlaceholder": "Nhập định nghĩa mô hình dạng JSON.",
     "MultiNode": "Đa nút",
+    "MultiNodeNotConfiguredWarning": "Nếu đa nút chưa được cấu hình trên cụm, các phiên được tạo từ cài đặt sẵn này sẽ không khởi động được.",
     "Name": "Tên",
     "NamePlaceholder": "vd: vLLM-GPU-Large",
     "NameRequired": "Tên là bắt buộc",

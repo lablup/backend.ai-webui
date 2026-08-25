@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "モデル定義は有効なJSONである必要があります。",
     "ModelDefinitionPlaceholder": "JSONモデル定義を入力してください。",
     "MultiNode": "マルチノード",
+    "MultiNodeNotConfiguredWarning": "クラスターにマルチノードが設定されていない場合、このプリセットで作成したセッションの起動に失敗します。",
     "Name": "名前",
     "NamePlaceholder": "例: vLLM-GPU-Large",
     "NameRequired": "名前は必須です。",
