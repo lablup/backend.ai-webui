@@ -10,7 +10,7 @@ test.describe(
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
       await page.getByRole('link', { name: 'Admin Settings' }).click();
-      await page.getByRole('link', { name: 'file-done Environments' }).click();
+      await page.getByRole('link', { name: 'Environments' }).click();
       await expect(page).toHaveURL(/\/environment/);
       await page.waitForLoadState('networkidle');
       // Wait for the table to be visible
@@ -480,7 +480,7 @@ test.describe(
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
       await page.getByRole('link', { name: 'Admin Settings' }).click();
-      await page.getByRole('link', { name: 'file-done Environments' }).click();
+      await page.getByRole('link', { name: 'Environments' }).click();
       await expect(page).toHaveURL(/\/environment/);
       // Wait for the BAIPropertyFilter (PowerSearch) and table to be ready
       await expect(

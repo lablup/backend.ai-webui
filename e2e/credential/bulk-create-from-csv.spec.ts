@@ -11,13 +11,11 @@ async function openBulkCreateCSVModal(page: Page) {
   await expect(page.getByRole('button', { name: 'Create User' })).toBeVisible({
     timeout: 15000,
   });
-  // Click the ellipsis dropdown button — scoped to the Space.Compact that contains
-  // "Create User", to avoid matching the antd Tabs nav "more" button.
-  const createUserBtn = page.getByRole('button', { name: 'Create User' });
-  await createUserBtn
-    .locator('xpath=ancestor::*[contains(@class,"ant-space-compact")]')
-    .getByRole('button', { name: 'ellipsis' })
-    .click();
+  // Click the "More" dropdown trigger — scoped to the Astryx `ButtonGroup`
+  // (role="group", aria-label="Create User") that wraps it alongside the
+  // "Create User" button, to avoid matching unrelated "More" buttons.
+  const createUserGroup = page.getByRole('group', { name: 'Create User' });
+  await createUserGroup.getByRole('button', { name: 'More' }).click();
   await page
     .getByRole('menuitem', { name: 'Bulk Create Users from CSV' })
     .click();
@@ -30,7 +28,12 @@ async function uploadCSV(page: Page, filename: string) {
   const dialog = page.getByRole('dialog', {
     name: 'Bulk Create Users from CSV',
   });
-  const fileInput = dialog.locator('input[name="file"]');
+  // The empty-state picker is Astryx `FileInput` (`mode="dropzone"`); its
+  // internal `<input type="file">` is aria-hidden with no accessible name, so
+  // scope by the component's stable theme class (`astryx-file-input`) rather
+  // than by role. This also avoids the sibling hidden `<input type="file">`
+  // that backs the (post-upload) "Replace File" button.
+  const fileInput = dialog.locator('.astryx-file-input input[type="file"]');
   await fileInput.setInputFiles(path.join(SAMPLES_DIR, filename));
 }
 
@@ -246,8 +249,13 @@ test.describe(
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '12-error-missing-required-columns.csv');
-      // Toast error — Ant Design message renders in .ant-message
-      await expect(page.locator('.ant-message-notice')).toBeVisible({
+      // Toast error — the app-shim's `message.error` renders via Astryx
+      // `Toast` (stable theme class `astryx-toast`, `data-type="error"`).
+      // A plain role('alert') also matches the app's persistent (empty)
+      // ARIA live-region announcer, so scope to the toast itself.
+      await expect(
+        page.locator('.astryx-toast[data-type="error"]'),
+      ).toBeVisible({
         timeout: 5000,
       });
       // Preview stats should NOT appear (no file loaded into state)
@@ -265,9 +273,13 @@ test.describe(
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '15-error-empty-file.csv');
-      await expect(page.locator('.ant-message-notice')).toBeVisible({
-        timeout: 5000,
-      });
+      // The app-shim's `message.warning` maps onto Astryx Toast's `info`
+      // variant (PILOT-DECISION in message.tsx) — `data-type="info"`.
+      await expect(page.locator('.astryx-toast[data-type="info"]')).toBeVisible(
+        {
+          timeout: 5000,
+        },
+      );
       const dialog = page.getByRole('dialog', {
         name: 'Bulk Create Users from CSV',
       });
@@ -335,7 +347,7 @@ test.describe(
         page.getByRole('button', { name: /Create \d+ user/ }),
       ).toBeDisabled();
       // No blocking toast for this load.
-      await expect(page.locator('.ant-message-notice')).not.toBeVisible();
+      await expect(page.locator('.astryx-toast')).not.toBeVisible();
       await closeModal(page);
     });
 

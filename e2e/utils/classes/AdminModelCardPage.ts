@@ -64,9 +64,7 @@ export class AdminModelCardPage {
   }
 
   getColumnSettingsButton(): Locator {
-    return this.page
-      .locator('.ant-table-footer')
-      .getByRole('button', { name: 'setting' });
+    return this.page.getByRole('button', { name: 'Table Settings' });
   }
 
   // ── Filter ───────────────────────────────────────────────────────────────
@@ -168,7 +166,12 @@ export class AdminModelCardPage {
   }
 
   getCreateModalVFolderSelect(): Locator {
-    return this.getCreateModal().getByRole('combobox').first();
+    // The VFolder picker is Astryx `ComplexSelector` (`aria-haspopup="dialog"`),
+    // which renders role="button" (not "combobox") with its accessible name
+    // taken from the field label via `aria-labelledby`.
+    return this.getCreateModal().getByRole('button', {
+      name: 'Model Storage Folder',
+    });
   }
 
   getCreateModalSubmitButton(): Locator {
@@ -192,9 +195,13 @@ export class AdminModelCardPage {
 
   async createNewFolderViaPlus(folderName: string): Promise<void> {
     const modal = this.getCreateModal();
-    // The "+" button is next to the Model Storage Folder select.
-    // It has no accessible name (icon-only button with PlusIcon from lucide-react),
-    // so we locate it by finding the button within the "Model Storage Folder" form item.
+    // The "+" button is next to the Model Storage Folder select. It carries
+    // no explicit label, so `BAIButton` falls back to its generic icon-only
+    // placeholder accessible name (`general.button.Action` -> "Action",
+    // packages/backend.ai-ui/src/components/BAIButton.tsx). Scoping to that
+    // name (rather than a bare `getByRole('button')`) disambiguates it from
+    // the VFolder select's own trigger button, which sits in the same form
+    // item and is named after the field label ("Model Storage Folder").
     // After clicking "+", either:
     //   (a) a Popconfirm appears asking to "Change Project" first, or
     //   (b) the FolderCreateModal opens directly (project is already model-store).
@@ -215,7 +222,7 @@ export class AdminModelCardPage {
     const plusButton = modal
       .locator('[data-bai-form-item]')
       .filter({ hasText: 'Model Storage Folder' })
-      .getByRole('button');
+      .getByRole('button', { name: 'Action', exact: true });
 
     for (let attempt = 0; attempt < 5; attempt++) {
       // Use count() > 0 (DOM presence) rather than isVisible() to detect the folder
@@ -294,24 +301,31 @@ export class AdminModelCardPage {
     const vfolderFormItem = modal
       .locator('[data-bai-form-item]')
       .filter({ hasText: 'Model Storage Folder' });
-
-    // Wait briefly for the refetch to complete before re-opening the dropdown
-    await expect(vfolderFormItem.locator('.ant-select-content')).toBeVisible({
-      timeout: 15000,
+    // The picker is Astryx `ComplexSelector`: its trigger is role="button"
+    // (named after the field label via `aria-labelledby`), and opening it
+    // pops a nested role="dialog" (also named after the field label)
+    // containing a search box and a role="listbox" of role="option" rows.
+    const vfolderTrigger = vfolderFormItem.getByRole('button', {
+      name: 'Model Storage Folder',
     });
 
+    // Wait briefly for the refetch to complete before re-opening the dropdown
+    await expect(vfolderTrigger).toBeVisible({ timeout: 15000 });
+
     // Re-open the dropdown to ensure the correct option is selected by name
-    await vfolderFormItem.locator('.ant-select-content').click();
-    const dropdown = this.page
-      .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-      .first();
+    await vfolderTrigger.click();
+    const dropdown = this.page.getByRole('dialog', {
+      name: 'Model Storage Folder',
+    });
     await expect(dropdown).toBeVisible({ timeout: 10000 });
     // Wait for the refetched options to load (the new folder should appear)
-    await expect(
-      dropdown.locator('.ant-select-item-option').first(),
-    ).toBeVisible({ timeout: 15000 });
+    await expect(dropdown.getByRole('option').first()).toBeVisible({
+      timeout: 15000,
+    });
     // Click the option matching the folder name
-    await dropdown.getByTitle(folderName).click();
+    await dropdown
+      .getByRole('option', { name: new RegExp(this.escapeRegExp(folderName)) })
+      .click();
     // Wait for dropdown to close
     await expect(dropdown).toBeHidden({ timeout: 10000 });
   }
@@ -341,28 +355,33 @@ export class AdminModelCardPage {
       await this.createNewFolderViaPlus(fields.createNewFolderName);
     } else {
       // Select an existing VFolder: use specified title or pick the first available option.
-      // In antd v6 with BAISelect, clicking the .ant-select-content container reliably
-      // opens the dropdown (clicking the raw combobox input does not open it).
+      // The picker is Astryx `ComplexSelector` — its role="button" trigger
+      // (named after the field label) opens a nested role="dialog" holding a
+      // search box and a role="listbox" of role="option" rows.
       const vfolderFormItem = modal
         .locator('[data-bai-form-item]')
         .filter({ hasText: 'Model Storage Folder' });
-      await vfolderFormItem.locator('.ant-select-content').click();
+      const vfolderTrigger = vfolderFormItem.getByRole('button', {
+        name: 'Model Storage Folder',
+      });
+      await vfolderTrigger.click();
       // Wait for the VFolder query to load options (BAIVFolderSelect uses network-only fetch on open)
-      const dropdown = this.page
-        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .first();
+      const dropdown = this.page.getByRole('dialog', {
+        name: 'Model Storage Folder',
+      });
       await expect(dropdown).toBeVisible({ timeout: 10000 });
       // Wait for the first option to be visible, indicating the options have loaded.
-      // BAIVFolderSelect shows a Skeleton while the query is in-flight and renders
-      // actual options (or antd's default "No data") once the response arrives.
-      // Waiting for the first option is the reliable readiness signal.
-      await expect(
-        dropdown.locator('.ant-select-item-option').first(),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(dropdown.getByRole('option').first()).toBeVisible({
+        timeout: 10000,
+      });
       if (fields.vfolderTitle) {
-        await dropdown.getByTitle(fields.vfolderTitle).click();
+        await dropdown
+          .getByRole('option', {
+            name: new RegExp(this.escapeRegExp(fields.vfolderTitle)),
+          })
+          .click();
       } else {
-        await dropdown.locator('.ant-select-item-option').first().click();
+        await dropdown.getByRole('option').first().click();
       }
       // Wait for VFolder dropdown to fully close before interacting with other fields
       await expect(dropdown).toBeHidden();
@@ -435,18 +454,15 @@ export class AdminModelCardPage {
     }
     // Access Level is required — select specified value or default to 'Private' (INTERNAL)
     const accessLevel = fields.accessLevel ?? 'Private';
-    // In antd v6, use the .ant-select-content to open the dropdown reliably.
+    // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
+    // role="listbox"/"option" popup) — unlike the VFolder `ComplexSelector`.
     await modal
       .locator('[data-bai-form-item]')
       .filter({ hasText: 'Access Level' })
-      .locator('.ant-select-content')
+      .getByRole('combobox')
       .click();
-    // Ant Design Select renders the dropdown items as a portal outside the modal.
-    // Use the visible dropdown portal (not the ARIA-virtual options inside the combobox)
-    // to click the correct option.
     await this.page
-      .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-      .getByText(accessLevel, { exact: true })
+      .getByRole('option', { name: accessLevel, exact: true })
       .click();
   }
 

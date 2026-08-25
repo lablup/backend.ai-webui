@@ -13,8 +13,14 @@ import { Page, expect, test } from '@playwright/test';
 
 async function navigateToRegistriesTab(page: Page) {
   await page.getByRole('link', { name: 'Admin Settings' }).click();
-  await page.getByRole('link', { name: 'file-done Environments' }).click();
-  await page.getByRole('tab', { name: /Registries/i }).click();
+  await page.getByRole('link', { name: 'Environments' }).click();
+  // EnvironmentPage's tabs are BAICard's `tabList` (BAITabList / Astryx
+  // `TabList`), which renders a `nav[aria-label="Tabs"]` of plain buttons,
+  // not ARIA `tab` elements.
+  await page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: /Registries/i })
+    .click();
   await expect(page.getByRole('table')).toBeVisible();
 }
 
