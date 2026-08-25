@@ -4,13 +4,15 @@
  */
 import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
 import FairShareList from '../components/FairShareItems/FairShareList';
-import { theme } from '../theme-shim';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAISkeleton, BAICard } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  BAICard,
+  BAIQuestionIconWithTooltip,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp, TriangleAlertIcon } from 'lucide-react';
+import { TriangleAlertIcon } from 'lucide-react';
 import {
   parseAsString,
   parseAsStringLiteral,
@@ -26,7 +28,6 @@ interface SchedulerPageProps {}
 const SchedulerPage: React.FC<SchedulerPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [currentTab] = useQueryState(
     'tab',
     parseAsStringLiteral(['fair-share']).withDefault('fair-share'),
@@ -44,26 +45,10 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
           // required string `label`, once again as the trailing node.
           label: t('fairShare.FairShareSetting'),
           endContent: (
-            // antd `Tooltip title=` -> Astryx `Tooltip content=`. The trigger
-            // has to be an interactive element for the hint to be
-            // keyboard-reachable, so the bare lucide glyph gets the same reset
-            // `<button>` wrapper the question-icon tooltip pattern uses.
-            <Tooltip
-              content={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
-            >
-              <button
-                type="button"
-                aria-label={t('fairShare.SchedulerDescription')}
-                style={{
-                  all: 'unset',
-                  cursor: 'help',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                }}
-              >
-                <CircleHelp style={{ fontSize: token.fontSize }} size="1em" />
-              </button>
-            </Tooltip>
+            <BAIQuestionIconWithTooltip
+              title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
+              style={{ alignItems: 'center' }}
+            />
           ),
         },
       ]}

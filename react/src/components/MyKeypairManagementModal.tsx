@@ -22,7 +22,6 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   BAIDeleteConfirmModal,
@@ -37,6 +36,7 @@ import {
   filterOutNullAndUndefined,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
+  BAIIconWithTooltip,
   useBAILogger,
   useErrorMessageResolver,
   useFetchKey,
@@ -473,25 +473,16 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                       {value}
                     </BAIText>
                     {value === mainAccessKey && (
-                      // Astryx `Tooltip` anchors to an interactive child (see
-                      // `BAIQuestionIconWithTooltip`) — this decorative
-                      // status icon gets the same unstyled-button wrapper.
-                      <Tooltip content={t('credential.MainAccessKey')}>
-                        <button
-                          type="button"
-                          aria-label={t('credential.MainAccessKey')}
-                          style={{
-                            all: 'unset',
-                            cursor: 'default',
-                            display: 'inline-flex',
-                          }}
-                        >
+                      <BAIIconWithTooltip
+                        content={t('credential.MainAccessKey')}
+                        icon={
                           <KeyRoundIcon
                             size="1em"
                             style={{ color: token.colorTextSecondary }}
                           />
-                        </button>
-                      </Tooltip>
+                        }
+                        style={{ cursor: 'default' }}
+                      />
                     )}
                   </BAIFlex>
                 ),
