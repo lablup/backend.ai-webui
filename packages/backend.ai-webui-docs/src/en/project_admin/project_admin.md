@@ -50,7 +50,7 @@ The modal shows two alerts you should read before assigning or revoking:
 - **Info**: Granting project admin automatically adds the project to the user's allowed project list, so the user can then access the project.
 - **Warning**: Revoking project admin does **not** automatically remove the project from the user's allowed project list. To block access to the project, remove it from the list manually.
 
-Next to the modal title, the **View RBAC permissions** icon opens the RBAC Management page with the project's `project-<project_id>-admin` role pre-filtered and its detail drawer open, so you can inspect the underlying role. For more on that role, see [Grant Project Admin authority](#grant-project-admin) in the RBAC Management chapter.
+Next to the modal title, the **View RBAC permissions** icon opens the RBAC Management page with the project's `role_project_<project_id>_admin` role pre-filtered and its detail drawer open, so you can inspect the underlying role. For more on that role, see [Grant Project Admin authority](#grant-project-admin) in the RBAC Management chapter.
 
 When you add several users at once, any that fail are surfaced through an error notification that includes the number of users that could not be assigned; the users that succeeded are still granted.
 
