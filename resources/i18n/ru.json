@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Определение модели должно быть валидным JSON.",
     "ModelDefinitionPlaceholder": "Введите определение модели в формате JSON.",
     "MultiNode": "Многоузловой",
+    "MultiNodeNotConfiguredWarning": "Если в кластере не настроен многоузловой режим, сессии, созданные по этому пресету, не запустятся.",
     "Name": "Имя",
     "NamePlaceholder": "напр. vLLM-GPU-Large",
     "NameRequired": "Имя обязательно",

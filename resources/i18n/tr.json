@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Model tanımı geçerli bir JSON olmalıdır.",
     "ModelDefinitionPlaceholder": "JSON model tanımını girin.",
     "MultiNode": "Çok düğümlü",
+    "MultiNodeNotConfiguredWarning": "Kümede çok düğümlü mod yapılandırılmamışsa bu ön ayarla oluşturulan oturumlar başlatılamaz.",
     "Name": "Ad",
     "NamePlaceholder": "örn. vLLM-GPU-Large",
     "NameRequired": "Ad zorunludur.",

@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "นิยามโมเดลต้องเป็น JSON ที่ถูกต้อง",
     "ModelDefinitionPlaceholder": "ป้อนนิยามโมเดลในรูปแบบ JSON",
     "MultiNode": "หลายโหนด",
+    "MultiNodeNotConfiguredWarning": "หากไม่ได้กำหนดค่าหลายโหนดบนคลัสเตอร์ เซสชันที่สร้างจากพรีเซ็ตนี้จะเริ่มทำงานไม่สำเร็จ",
     "Name": "ชื่อ",
     "NamePlaceholder": "เช่น vLLM-GPU-Large",
     "NameRequired": "ชื่อเป็นสิ่งจำเป็น",

@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "模型定義必須是有效的 JSON。",
     "ModelDefinitionPlaceholder": "輸入 JSON 格式的模型定義。",
     "MultiNode": "多節點",
+    "MultiNodeNotConfiguredWarning": "如果叢集未設定多節點，使用此預設集建立的工作階段將無法啟動。",
     "Name": "名稱",
     "NamePlaceholder": "例如：vLLM-GPU-Large",
     "NameRequired": "名稱為必填項。",

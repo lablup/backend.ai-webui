@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Definisi model harus berupa JSON yang valid.",
     "ModelDefinitionPlaceholder": "Masukkan definisi model dalam format JSON.",
     "MultiNode": "Multi-Node",
+    "MultiNodeNotConfiguredWarning": "Jika multi-node tidak dikonfigurasi pada kluster, sesi yang dibuat dari preset ini akan gagal dijalankan.",
     "Name": "Nama",
     "NamePlaceholder": "mis. vLLM-GPU-Large",
     "NameRequired": "Nama wajib diisi",

@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Mallimäärittelyn tulee olla kelvollista JSON:ia.",
     "ModelDefinitionPlaceholder": "Syötä JSON-mallimäärittely.",
     "MultiNode": "Monisolmuinen",
+    "MultiNodeNotConfiguredWarning": "Jos klusterissa ei ole määritetty monisolmutilaa, tästä esiasetuksesta luodut istunnot eivät käynnisty.",
     "Name": "Nimi",
     "NamePlaceholder": "esim. vLLM-GPU-Large",
     "NameRequired": "Nimi on pakollinen",

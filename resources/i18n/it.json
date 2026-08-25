@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "La definizione del modello deve essere un JSON valido.",
     "ModelDefinitionPlaceholder": "Inserire la definizione del modello in formato JSON.",
     "MultiNode": "Multi-nodo",
+    "MultiNodeNotConfiguredWarning": "Se il multi-nodo non è configurato sul cluster, le sessioni create da questo preset non si avvieranno.",
     "Name": "Nome",
     "NamePlaceholder": "es. vLLM-GPU-Large",
     "NameRequired": "Il nome è obbligatorio",

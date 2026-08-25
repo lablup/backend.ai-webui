@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "모델 정의는 유효한 JSON이어야 합니다.",
     "ModelDefinitionPlaceholder": "JSON 모델 정의를 입력하세요.",
     "MultiNode": "멀티 노드",
+    "MultiNodeNotConfiguredWarning": "멀티 노드 설정이 안 되어 있으면 해당 프리셋으로 만든 추론 세션 생성이 실패합니다.",
     "Name": "이름",
     "NamePlaceholder": "예: vLLM-GPU-Large",
     "NameRequired": "이름은 필수입니다",

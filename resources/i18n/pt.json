@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "A definição do modelo deve ser um JSON válido.",
     "ModelDefinitionPlaceholder": "Introduza a definição do modelo em formato JSON.",
     "MultiNode": "Multi-nó",
+    "MultiNodeNotConfiguredWarning": "Se o multi-nó não estiver configurado no cluster, as sessões criadas a partir desta predefinição não serão iniciadas.",
     "Name": "Nome",
     "NamePlaceholder": "ex. vLLM-GPU-Large",
     "NameRequired": "O nome é obrigatório",

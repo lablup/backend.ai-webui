@@ -29,6 +29,7 @@
     "ModelDefinitionInvalidJson": "Загварын тодорхойлолт нь хүчинтэй JSON байх ёстой.",
     "ModelDefinitionPlaceholder": "JSON загварын тодорхойлолтыг оруулна уу.",
     "MultiNode": "Олон зангилаа",
+    "MultiNodeNotConfiguredWarning": "Хэрэв кластер дээр олон зангилаа тохируулаагүй бол энэ урьдчилсан тохиргоогоор үүсгэсэн сешн эхлэхгүй.",
     "Name": "Нэр",
     "NamePlaceholder": "жн: vLLM-GPU-Large",
     "NameRequired": "Нэр заавал бөглөх ёстой.",
