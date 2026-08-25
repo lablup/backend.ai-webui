@@ -51,7 +51,7 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
-import { ChevronDown, ChevronRight, Trash2, TriangleAlert } from 'lucide-react';
+import { Trash2, TriangleAlert } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -79,8 +79,6 @@ interface LoginFormPanelProps {
   expiredCredentials: { username: string; password: string } | null;
   showSignupModal: boolean;
   signupPreloadedToken?: string;
-  showEndpointInput: boolean;
-  isEndpointDisabled: boolean;
   form: FormInstance;
   isRememberUserId: boolean;
   onChangeRememberUserId: (next: boolean) => void;
@@ -115,8 +113,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   expiredCredentials,
   showSignupModal,
   signupPreloadedToken,
-  showEndpointInput,
-  isEndpointDisabled,
   form,
   isRememberUserId,
   onChangeRememberUserId,
@@ -142,9 +138,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { isDarkMode } = useThemeMode();
   const { themeConfig } = useCustomThemeConfig();
 
-  const [isEndpointExpanded, setIsEndpointExpanded] = useState(
-    () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
-  );
   const [isEndpointHistoryOpen, setIsEndpointHistoryOpen] = useState(false);
   const [showChangePasswordEmailModal, setShowChangePasswordEmailModal] =
     useState(false);
@@ -260,6 +253,97 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           onKeyDown={onKeyDown}
           initialValues={{ api_endpoint: apiEndpoint }}
         >
+          {/* The endpoint is the form's first field: which server you sign in
+              to decides which credentials apply (FR-3560). */}
+          <div
+            // The saved endpoints behave as the field's own autofill: focus
+            // opens the list, focus-out closes it. Picking a row unmounts the
+            // row that holds focus, so focus lands outside and the next click
+            // on the input opens the list again.
+            onFocus={() => setIsEndpointHistoryOpen(true)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                setIsEndpointHistoryOpen(false);
+              }
+            }}
+            style={{ marginBottom: fieldGap }}
+          >
+            <BAIFormItem
+              name="api_endpoint"
+              label={t('login.Endpoint', { postProcess: [] })}
+              tooltip={
+                <VStack gap={1} align="stretch">
+                  <Text weight="semibold">{t('login.EndpointInfo')}</Text>
+                  {/* `login.DescEndpoint` is authored with `<br/>`s. */}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(t('login.DescEndpoint')),
+                    }}
+                  />
+                </VStack>
+              }
+              style={{ marginBottom: 0 }}
+              rules={[
+                {
+                  pattern: /^https?:\/\/(.*)/,
+                  message: t('login.EndpointStartWith'),
+                },
+              ]}
+            >
+              <AstryxFormTextInput
+                size={fieldSize}
+                label={t('login.Endpoint', { postProcess: [] })}
+                disabled={isLoading}
+                onChange={(value) => onSetApiEndpoint(value)}
+              />
+            </BAIFormItem>
+            {isEndpointHistoryOpen && endpointHistory.length > 0 && (
+              <div
+                // In FLOW under the input, not floating over it: the list has
+                // to sit below the field it fills, and an absolutely-positioned
+                // panel here either overflowed the dialog's scroll box or,
+                // opening upward, covered the very label it belongs to. Height
+                // is capped so a long history scrolls inside the list instead
+                // of growing the dialog.
+                style={{
+                  marginTop: 'var(--spacing-1)',
+                  maxHeight: 140,
+                  overflowY: 'auto',
+                  background: 'var(--color-background-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-element)',
+                }}
+              >
+                <List density="compact" hasDividers>
+                  {endpointHistory.map(({ endpoint, isFromEnv }) => (
+                    <ListItem
+                      key={endpoint}
+                      label={isFromEnv ? `${endpoint} (env)` : endpoint}
+                      onClick={() => {
+                        onSelectEndpoint(endpoint);
+                        setIsEndpointHistoryOpen(false);
+                      }}
+                      endContent={
+                        <IconButton
+                          variant="ghost"
+                          size="sm"
+                          icon={<Trash2 size="1em" />}
+                          label={`${t('button.Delete')}: ${endpoint}`}
+                          onClick={(e) => {
+                            // The row is an invisible-button target; deleting
+                            // must not also select it.
+                            e.stopPropagation();
+                            onDeleteEndpoint(endpoint);
+                          }}
+                        />
+                      }
+                    />
+                  ))}
+                </List>
+              </div>
+            )}
+          </div>
+
           {/* SESSION login fields */}
           {connectionMode === 'SESSION' && (
             <>
@@ -433,154 +517,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 })}
               />
             </BAIFormItem>
-          )}
-
-          {/* Collapsible endpoint section */}
-          {showEndpointInput && (
-            <div style={{ marginTop: token.marginXL }}>
-              {/* `isStandalone` is not cosmetic: without it an Astryx `Link`
-                  INHERITS the dialog's 16px base instead of resolving to
-                  `--text-body-size` (14px), the size this row wants. */}
-              <Link
-                isStandalone
-                href="#"
-                className="bai-login-quiet-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsEndpointExpanded((prev) => !prev);
-                }}
-                style={{ userSelect: 'none' }}
-              >
-                {/* Astryx `Link` lays its children out in a block flow, so the
-                    disclosure chevron and the label are kept on one line by an
-                    explicit inline-flex row rather than by the anchor itself. */}
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
-                >
-                  {isEndpointExpanded ? (
-                    <ChevronDown size="1em" />
-                  ) : (
-                    <ChevronRight size="1em" />
-                  )}
-                  {t('login.AdvancedSettings')}
-                </span>
-              </Link>
-              {isEndpointExpanded && (
-                <div
-                  // `BAIFlex` hard-sets `padding: 0` INLINE, so a plain div
-                  // carries the panel surface.
-                  style={{
-                    marginTop: token.marginXS,
-                    background: 'var(--color-background-muted)',
-                    borderRadius: 'var(--radius-element)',
-                    padding: 'var(--spacing-3)',
-                  }}
-                >
-                  {/* The saved endpoints behave as the field's own autofill:
-                      focusing the input offers them, picking one fills it. A
-                      separate trigger made "why did this appear" and "why did
-                      clicking a row change the field" two things to learn. */}
-                  <div
-                    // Focus opens, focus-out closes. Picking a row unmounts the
-                    // row that holds focus, so focus lands outside and the next
-                    // click on the input opens the list again.
-                    onFocus={() => setIsEndpointHistoryOpen(true)}
-                    onBlur={(e) => {
-                      if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                        setIsEndpointHistoryOpen(false);
-                      }
-                    }}
-                  >
-                    <BAIFormItem
-                      name="api_endpoint"
-                      label={t('login.Endpoint', { postProcess: [] })}
-                      tooltip={
-                        <VStack gap={1} align="stretch">
-                          <Text weight="semibold">
-                            {t('login.EndpointInfo')}
-                          </Text>
-                          {/* `login.DescEndpoint` is authored with `<br/>`s. */}
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: DOMPurify.sanitize(
-                                t('login.DescEndpoint'),
-                              ),
-                            }}
-                          />
-                        </VStack>
-                      }
-                      style={{ marginBottom: 0 }}
-                      rules={[
-                        {
-                          pattern: /^https?:\/\/(.*)/,
-                          message: t('login.EndpointStartWith'),
-                        },
-                      ]}
-                    >
-                      <AstryxFormTextInput
-                        size={fieldSize}
-                        label={t('login.Endpoint', { postProcess: [] })}
-                        disabled={isEndpointDisabled || isLoading}
-                        onChange={(value) => onSetApiEndpoint(value)}
-                      />
-                    </BAIFormItem>
-                    {isEndpointHistoryOpen && endpointHistory.length > 0 && (
-                      <div
-                        // Floats over what follows instead of pushing it down,
-                        // the way a browser's own autofill list behaves.
-                        style={{
-                          // In FLOW under the input, not floating over it: the
-                          // list has to sit below the field it fills, and an
-                          // absolutely-positioned panel here either overflowed
-                          // the dialog's scroll box (scrollbar + hidden
-                          // sign-up) or, opening upward, covered the very label
-                          // it belongs to. Height is capped so a long history
-                          // scrolls inside the list instead of growing the
-                          // dialog.
-                          marginTop: 'var(--spacing-1)',
-                          maxHeight: 140,
-                          overflowY: 'auto',
-                          background: 'var(--color-background-surface)',
-                          border: '1px solid var(--color-border)',
-                          borderRadius: 'var(--radius-element)',
-                        }}
-                      >
-                        <List density="compact" hasDividers>
-                          {endpointHistory.map(({ endpoint, isFromEnv }) => (
-                            <ListItem
-                              key={endpoint}
-                              label={isFromEnv ? `${endpoint} (env)` : endpoint}
-                              onClick={() => {
-                                onSelectEndpoint(endpoint);
-                                setIsEndpointHistoryOpen(false);
-                              }}
-                              endContent={
-                                <IconButton
-                                  variant="ghost"
-                                  size="sm"
-                                  icon={<Trash2 size="1em" />}
-                                  label={`${t('button.Delete')}: ${endpoint}`}
-                                  onClick={(e) => {
-                                    // The row is an invisible-button target;
-                                    // deleting must not also select it.
-                                    e.stopPropagation();
-                                    onDeleteEndpoint(endpoint);
-                                  }}
-                                />
-                              }
-                            />
-                          ))}
-                        </List>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
           )}
 
           {/* Sign-up stays at the very bottom, centred. */}

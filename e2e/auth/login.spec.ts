@@ -8,15 +8,12 @@ import {
 import { test, expect, Page } from '@playwright/test';
 
 /**
- * Expand the endpoint section if not already visible and fill the endpoint.
+ * Fill the endpoint field (always visible, first field of the login form).
  */
 async function fillEndpoint(page: Page, endpoint: string): Promise<void> {
-  // Must be the role locator: getByLabel('Endpoint') is ambiguous once the
-  // section is expanded (matches the History/About buttons too).
+  // Must be the role locator: getByLabel('Endpoint') is ambiguous (it also
+  // matches the field's companion controls).
   const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
   await endpointInput.fill(endpoint);
 }
 

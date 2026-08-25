@@ -27,13 +27,11 @@
   font-weight: var(--font-weight-semibold);
 }
 
-/* "Forgot password" and "Advanced" are emphasised labels, not second calls to
-   action, so they drop the accent colour Astryx `Link` carries by default —
-   only Login and Sign up stay branded (FR-3560). */
+/* "Forgot password" is an emphasised label, not a second call to action, so
+   it drops the accent colour Astryx `Link` carries by default — only Login
+   and Sign up stay branded (FR-3560). */
 .bai-login-find-password a,
-.bai-login-find-password a *,
-a.bai-login-quiet-link,
-a.bai-login-quiet-link * {
+.bai-login-find-password a * {
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
@@ -41,9 +39,6 @@ a.bai-login-quiet-link * {
 
 .bai-login-find-password a:hover,
 .bai-login-find-password a:hover *,
-.bai-login-find-password a:focus-visible,
-a.bai-login-quiet-link:hover,
-a.bai-login-quiet-link:hover *,
-a.bai-login-quiet-link:focus-visible {
+.bai-login-find-password a:focus-visible {
   color: var(--color-text-primary);
 }

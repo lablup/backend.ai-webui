@@ -102,11 +102,7 @@ async function fillLoginForm(page: Page): Promise<void> {
   await page.getByLabel('Email').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
 
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
+  await page.getByRole('textbox', { name: 'Endpoint' }).fill(webServerEndpoint);
 }
 
 /**
