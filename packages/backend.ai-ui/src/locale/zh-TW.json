@@ -271,6 +271,10 @@
   "comp:BAINameActionCell": {
     "MoreActions": "更多操作"
   },
+  "comp:BAIPowerSearchEntityEditor": {
+    "Search": "搜尋…",
+    "SelectValue": "選擇值"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "下列專案將會更新。",
     "ProjectResourcePolicy": "專案資源政策",

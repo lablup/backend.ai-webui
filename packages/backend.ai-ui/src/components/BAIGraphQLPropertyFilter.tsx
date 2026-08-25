@@ -43,10 +43,16 @@
 import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
+  decodeEntityIds,
+  encodeEntityIds,
   toEnumItems,
   toSearchSource,
+  useEntityEditors,
+  useEntityLabelCache,
   useRenderInputEditors,
   type BAIPowerSearchChromeProps,
+  type FilterEntity,
+  type FilterEntitySource,
   type FilterPropertyOption,
   type FilterRenderInput,
 } from './BAIPowerSearchAdapters';
@@ -61,7 +67,7 @@ import type {
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
-import { useRef } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 
 // GraphQL Filter Types (matching schema.graphql)
 export type StringFilter = {
@@ -195,7 +201,14 @@ type BaseFilterProperty = {
    * label while the raw value still serializes into the filter unchanged.
    */
   renderInput?: FilterRenderInput;
+  /**
+   * Declarative entity picker for opaque-id values (e.g. a user UUID picked by
+   * email). Ignored when `renderInput` is set.
+   */
+  entitySource?: FilterEntitySource;
 };
+
+export type { FilterEntity, FilterEntitySource };
 
 // fixedOperator and defaultOperator are mutually exclusive
 export type FilterProperty = BaseFilterProperty &
@@ -527,18 +540,23 @@ const operatorLabel = (operator: FilterOperator, t: TFunction): string =>
 
 /**
  * The PowerSearch value editor for one property/operator pair.
- * `custom` (from `renderInput`) always wins — the call site asked for it.
+ * `custom` (from `renderInput`) always wins — the call site asked for it —
+ * then `entitySource`, whose arity comes from the OPERATOR, not the property.
  */
 function operatorValueFor(
   property: FilterProperty,
   operator: FilterOperator,
   custom: OperatorValue | undefined,
+  entityFor?: (isMulti: boolean) => OperatorValue | undefined,
 ): OperatorValue {
   if (custom) return custom;
+  const isList = _.includes(LIST_OPERATORS, operator);
+  const entity = entityFor?.(isList);
+  if (entity) return entity;
   const options = effectiveOptions(property);
   const strict = effectiveStrictSelection(property);
 
-  if (_.includes(LIST_OPERATORS, operator)) {
+  if (isList) {
     return options && strict
       ? { type: 'enum_list', values: toEnumItems(options) }
       : {
@@ -562,13 +580,33 @@ function operatorValueFor(
     : { type: 'string' };
 }
 
+/** A condition's raw value (array, or the `, `-joined string) -> ids. */
+function rawToEntityIds(raw: any, isList: boolean): Array<string> {
+  if (_.isArray(raw)) return _.compact(_.map(raw, _.toString));
+  return isList
+    ? _.compact(_.map(_.split(_.toString(raw), ','), _.trim))
+    : _.compact([_.toString(raw)]);
+}
+
 /** FilterCondition -> the token value shape the editor above expects. */
 export function conditionToTokenValue(
   condition: FilterCondition,
   property: FilterProperty | undefined,
 ): FilterValue {
   const raw = condition.value;
-  if (_.includes(LIST_OPERATORS, condition.operator)) {
+  const isList = _.includes(LIST_OPERATORS, condition.operator);
+  // Both custom editors come first: they own every operator of their property,
+  // list ones included.
+  if (property?.renderInput) {
+    return { type: 'custom', value: _.toString(raw) };
+  }
+  if (property?.entitySource) {
+    return {
+      type: 'custom',
+      value: encodeEntityIds(rawToEntityIds(raw, isList), isList) ?? '',
+    };
+  }
+  if (isList) {
     const values = _.isArray(raw)
       ? _.map(raw, _.toString)
       : _.compact(_.map(_.split(_.toString(raw), ','), _.trim));
@@ -588,9 +626,6 @@ export function conditionToTokenValue(
   if (property?.type === 'number') {
     return { type: 'float', value: Number(raw) };
   }
-  if (property?.renderInput) {
-    return { type: 'custom', value: _.toString(raw) };
-  }
   if (
     property &&
     effectiveOptions(property) &&
@@ -601,11 +636,29 @@ export function conditionToTokenValue(
   return { type: 'string', value: _.toString(raw) };
 }
 
-/** Exact inverse of `conditionToTokenValue`. */
-export function tokenValueToConditionValue(value: FilterValue): any {
+/**
+ * Exact inverse of `conditionToTokenValue`. Pass `operator` for entity
+ * properties: arity decides whether the custom value is a JSON id array.
+ */
+export function tokenValueToConditionValue(
+  value: FilterValue,
+  property?: FilterProperty,
+  operator?: FilterOperator,
+): any {
   switch (value.type) {
     case 'empty':
       return '';
+    case 'custom': {
+      if (!property?.entitySource) return _.toString(value.value ?? '');
+      // Without an operator, fall back to the encoding's own shape: only the
+      // multi arity emits JSON.
+      const isList = operator
+        ? _.includes(LIST_OPERATORS, operator)
+        : _.startsWith(value.value, '[');
+      return isList
+        ? decodeEntityIds(value.value, true)
+        : _.toString(value.value ?? '');
+    }
     case 'date_absolute':
       return dayjs.unix(value.unixSeconds).toISOString();
     case 'integer':
@@ -669,7 +722,11 @@ export function powerSearchFiltersToGraphQLFilter(
       id: generateId(),
       property: filter.field,
       operator: filter.operator,
-      value: tokenValueToConditionValue(filter.value),
+      value: tokenValueToConditionValue(
+        filter.value,
+        property,
+        filter.operator,
+      ),
       propertyLabel: property?.propertyLabel ?? filter.field,
       type: property?.type ?? 'string',
     };
@@ -713,23 +770,51 @@ const BAIGraphQLPropertyFilter = <
     onChange: propOnChange,
   });
 
-  // Maps a committed value to the human-readable label a `renderInput` control
-  // supplied (e.g. user UUID -> email). Conditions are re-derived from `value`
-  // on every render and only carry the raw value, so the label lives here.
-  // A mutable ref, not state — see the sibling note in `BAIPropertyFilter`.
-  const valueLabelMapRef = useRef<Record<string, string>>({});
-
+  // Conditions are re-derived from `value` on every render and only carry the
+  // raw value, so the label a picker supplied (user UUID -> email) lives here.
+  const labels = useEntityLabelCache();
   const renderInputEditors = useRenderInputEditors({
-    recordLabel: (property, committed, label) => {
-      valueLabelMapRef.current[`${property}::${committed}`] = label;
-    },
-    resolveLabel: (property, committed) =>
-      valueLabelMapRef.current[`${property}::${committed}`] ?? committed,
+    recordLabel: labels.record,
+    resolveLabel: labels.resolveLabel,
   });
+  const entityEditors = useEntityEditors({ labels });
 
   const byKey = _.keyBy(filterProperties, 'key');
   const conditions = convertGraphQLFilterToConditions(value, filterProperties);
   const filters = graphQLFilterToPowerSearchFilters(value, filterProperties);
+
+  // Ids restored from the URL carry no label; ask each source once per id.
+  const pendingEntityIds = _.flatMap(conditions, (condition) => {
+    const property = byKey[condition.property];
+    // `renderInput` wins outright: its editor owns the label, so an entity
+    // source declared alongside it must not fire a request either.
+    if (!property?.entitySource || property.renderInput) return [];
+    return _.map(
+      rawToEntityIds(
+        condition.value,
+        _.includes(LIST_OPERATORS, condition.operator),
+      ),
+      (id) => [property.key, id] as const,
+    );
+  });
+  const resolveEntityLabels = useEffectEvent(() => {
+    _.forEach(
+      _.groupBy(pendingEntityIds, ([key]) => key),
+      (pairs, key) =>
+        labels.ensureResolved(
+          key,
+          byKey[key]?.entitySource,
+          _.map(pairs, ([, id]) => id),
+        ),
+    );
+  });
+  const pendingEntityIdsKey = _.join(
+    _.map(pendingEntityIds, (pair) => _.join(pair, '::')),
+    '\u0000',
+  );
+  useEffect(() => {
+    resolveEntityLabels();
+  }, [pendingEntityIdsKey]);
 
   const config: PowerSearchConfig = {
     name: 'bai-graphql-property-filter',
@@ -740,13 +825,20 @@ const BAIGraphQLPropertyFilter = <
         (property) =>
           property.type === 'string' &&
           !effectiveStrictSelection(property) &&
-          !property.renderInput,
+          !property.renderInput &&
+          !property.entitySource,
       )?.key,
     fields: _.map(filterProperties, (property): PowerSearchField => {
       const custom = renderInputEditors.operatorValueFor(
         property.key,
         property.renderInput,
       );
+      const entityFor = (isMulti: boolean) =>
+        entityEditors.operatorValueFor(
+          property.key,
+          property.entitySource,
+          isMulti,
+        );
       return {
         key: property.key,
         label: property.propertyLabel,
@@ -754,7 +846,7 @@ const BAIGraphQLPropertyFilter = <
         operators: _.map(availableOperatorsOf(property), (operator) => ({
           key: operator,
           label: operatorLabel(operator, t),
-          value: operatorValueFor(property, operator, custom),
+          value: operatorValueFor(property, operator, custom, entityFor),
         })),
       };
     }),

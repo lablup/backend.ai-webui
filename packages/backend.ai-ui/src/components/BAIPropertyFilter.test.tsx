@@ -11,6 +11,7 @@
  filter string for every page that mounts this component (the ticket-28
  consumer census) and asserts byte-for-byte stability.
 */
+import type { FilterEntitySource } from './BAIPowerSearchAdapters';
 import BAIPropertyFilter, {
   buildFieldSpecs,
   defaultContentSearchFieldKey,
@@ -20,7 +21,14 @@ import BAIPropertyFilter, {
   serializeFilters,
   type FilterProperty,
 } from './BAIPropertyFilter';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+
+const USER_UUID = '3f1c0e7a-0000-4000-8000-000000000001';
+/** Matches the token text even after PowerSearch truncates it. */
+const TRUNCATED_UUID = /^3f1c0e7a-0000-4000-8000-0000/;
+
+/** An `entitySource` with no `resolve`: tokens keep the raw id. */
+const idOnlyUserSource: FilterEntitySource = { search: async () => [] };
 
 describe('parseFilterValue', () => {
   it('should correctly parse filter with binary operators', () => {
@@ -267,12 +275,12 @@ const PAGE_FIXTURES: Array<{
         defaultOperator: '==',
         // The page supplies a Relay-backed picker here; serialization is
         // unaffected by the editor, so the fixture only needs the shape.
-        renderInput: () => null,
+        entitySource: idOnlyUserSource,
       },
     ],
     filters: [
       'name ilike "%training%"',
-      'name ilike "%job%" & project_id == "3f1c0e7a-0000-4000-8000-000000000001"',
+      `name ilike "%job%" & project_id == "${USER_UUID}"`,
     ],
   },
   {
@@ -409,6 +417,13 @@ describe('round-trip edge cases the antd implementation also had to survive', ()
     );
   });
 
+  it('preserves a value holding both a space and an escaped double quote', () => {
+    // The raw-value map is keyed by `field\u0000operator\u0000value`, so a
+    // value carrying the separator's neighbours must still find its own entry.
+    const value = 'name ilike "%say \\"hi\\" now%"';
+    expect(roundTrip(properties, value)).toBe(value);
+  });
+
   it('drops a condition with an empty value (as the antd tag list did)', () => {
     expect(roundTrip(properties, 'name ilike "%%"')).toBe(undefined);
   });
@@ -516,6 +531,134 @@ describe('number / datetime / uuid properties', () => {
 
   it('still routes bare typed text to the first free-text property', () => {
     expect(defaultContentSearchFieldKey(properties)).toBe('name');
+  });
+});
+
+describe('entitySource properties', () => {
+  const properties = (
+    entitySource: FilterEntitySource,
+  ): Array<FilterProperty> => [
+    { key: 'name', propertyLabel: 'Name', type: 'string' },
+    {
+      key: 'user_id',
+      propertyLabel: 'User',
+      type: 'uuid',
+      defaultOperator: '==',
+      entitySource,
+    },
+  ];
+  const specsFor = (value: string) =>
+    buildFieldSpecs(properties(idOnlyUserSource), value);
+
+  it('parses an `==` value into a single-id custom token', () => {
+    const value = `user_id == "${USER_UUID}"`;
+    expect(parseFilterString(value, specsFor(value)).filters).toEqual([
+      {
+        field: 'user_id',
+        operator: '==',
+        value: { type: 'custom', value: USER_UUID },
+      },
+    ]);
+  });
+
+  it('parses an `in` list literal into a JSON id array', () => {
+    // `in` is reachable only by widening from an inbound link — the declared
+    // operators for a uuid field are `==` / `!=`.
+    const value = 'user_id in ["a", "b"]';
+    expect(parseFilterString(value, specsFor(value)).filters).toEqual([
+      {
+        field: 'user_id',
+        operator: 'in',
+        value: { type: 'custom', value: '["a","b"]' },
+      },
+    ]);
+  });
+
+  it('serializes a single-id token back to the DSL byte-identically', () => {
+    const value = `user_id == "${USER_UUID}"`;
+    expect(roundTrip(properties(idOnlyUserSource), value)).toBe(value);
+    expect(
+      roundTrip(properties(idOnlyUserSource), `name ilike "%job%" & ${value}`),
+    ).toBe(`name ilike "%job%" & ${value}`);
+  });
+
+  it('keeps a renderInput value byte-identical too (escape hatch kept)', () => {
+    const value = `user_id == "${USER_UUID}"`;
+    const withRenderInput: Array<FilterProperty> = [
+      {
+        key: 'user_id',
+        propertyLabel: 'User',
+        type: 'uuid',
+        defaultOperator: '==',
+        renderInput: () => null,
+      },
+    ];
+    expect(roundTrip(withRenderInput, value)).toBe(value);
+  });
+
+  it('excludes an entitySource property from the content-search auto-pick', () => {
+    expect(
+      defaultContentSearchFieldKey([
+        {
+          key: 'owner',
+          propertyLabel: 'Owner',
+          type: 'string',
+          entitySource: idOnlyUserSource,
+        },
+        { key: 'name', propertyLabel: 'Name', type: 'string' },
+      ]),
+    ).toBe('name');
+  });
+});
+
+describe('entity label resolution (DSL)', () => {
+  const renderFilter = (entitySource: FilterEntitySource) =>
+    render(
+      <BAIPropertyFilter
+        filterProperties={[
+          {
+            key: 'user_id',
+            propertyLabel: 'User',
+            type: 'uuid',
+            defaultOperator: '==',
+            entitySource,
+          },
+        ]}
+        value={`user_id == "${USER_UUID}"`}
+        onChange={() => {}}
+      />,
+    );
+
+  it('swaps the raw id for the label the source resolves', async () => {
+    const resolve = vi.fn(async () => [
+      { id: USER_UUID, label: 'alice@lablup.com' },
+    ]);
+    renderFilter({ search: async () => [], resolve });
+    expect(await screen.findByText('alice@lablup.com')).toBeInTheDocument();
+    expect(resolve).toHaveBeenCalledWith([USER_UUID]);
+  });
+
+  it('keeps the raw id, asks once, and swallows a rejecting resolve', async () => {
+    const unhandled: Array<unknown> = [];
+    const trackUnhandled = (reason: unknown) => unhandled.push(reason);
+    process.on('unhandledRejection', trackUnhandled);
+    try {
+      const resolve = vi.fn(() => Promise.reject(new Error('resolve failed')));
+      renderFilter({ search: async () => [], resolve });
+      await waitFor(() => expect(resolve).toHaveBeenCalledTimes(1));
+      // One macrotask: long enough for Node to report an unhandled rejection.
+      await new Promise((done) => setTimeout(done, 0));
+      expect(screen.getByText(TRUNCATED_UUID)).toBeInTheDocument();
+      expect(resolve).toHaveBeenCalledTimes(1);
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', trackUnhandled);
+    }
+  });
+
+  it('falls back to the raw id when the source has no resolve', () => {
+    renderFilter(idOnlyUserSource);
+    expect(screen.getByText(TRUNCATED_UUID)).toBeInTheDocument();
   });
 });
 

@@ -39,6 +39,8 @@ export type {
   FilterOperator,
   FilterProperty as BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilterProps,
+  FilterEntity,
+  FilterEntitySource,
 } from './BAIGraphQLPropertyFilter';
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
 export { default as BAIStatistic } from './BAIStatistic';

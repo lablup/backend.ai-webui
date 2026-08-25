@@ -49,10 +49,15 @@ import { filterOutEmpty } from '../helper';
 import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
+  decodeEntityIds,
+  encodeEntityIds,
   toEnumItems,
   toSearchSource,
+  useEntityEditors,
+  useEntityLabelCache,
   useRenderInputEditors,
   type BAIPowerSearchChromeProps,
+  type FilterEntitySource,
   type FilterPropertyOption,
   type FilterRenderInput,
 } from './BAIPowerSearchAdapters';
@@ -66,7 +71,7 @@ import type {
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
-import React, { useRef } from 'react';
+import React, { useEffect, useEffectEvent } from 'react';
 
 export type { FilterPropertyOption } from './BAIPowerSearchAdapters';
 
@@ -99,6 +104,11 @@ export type FilterProperty = {
    * label while the raw value still serializes unchanged.
    */
   renderInput?: FilterRenderInput;
+  /**
+   * Declarative picker for values that are opaque ids (a user UUID chosen by
+   * email). Ignored when `renderInput` is set.
+   */
+  entitySource?: FilterEntitySource;
 };
 
 export interface BAIPropertyFilterProps extends BAIPowerSearchChromeProps {
@@ -139,6 +149,9 @@ const BOOLEAN_OPTIONS: Array<FilterPropertyOption> = [
 
 /** Operators the wildcard convention applies to. */
 const WILDCARD_OPERATORS = ['ilike', 'like'];
+
+/** Operators whose value is a list; an entity picker becomes multi-select. */
+const LIST_OPERATORS = ['in'];
 
 /**
  * DSL operator -> BUI catalog key. Operators outside this table (`>=`, `in`,
@@ -250,6 +263,7 @@ interface FieldSpec {
   options?: Array<FilterPropertyOption>;
   strictSelection?: boolean;
   renderInput?: FilterRenderInput;
+  entitySource?: FilterEntitySource;
   operators: Array<string>;
   defaultOperator: string;
   rule?: FilterProperty['rule'];
@@ -280,6 +294,7 @@ function specForProperty(property: FilterProperty): FieldSpec {
     strictSelection:
       property.type === 'boolean' ? true : property.strictSelection,
     renderInput: property.renderInput,
+    entitySource: property.entitySource,
     operators,
     defaultOperator,
     rule: property.rule,
@@ -337,11 +352,19 @@ const operatorLabel = (operator: string, t: TFunction): string => {
     : operator;
 };
 
+/**
+ * The value editor for one field/operator pair. `renderInput` wins — the call
+ * site asked for it — then `entitySource`, whose arity comes from the OPERATOR.
+ */
 function operatorValueForSpec(
   spec: FieldSpec,
+  operator: string,
   custom: OperatorValue | undefined,
+  entityFor?: (isMulti: boolean) => OperatorValue | undefined,
 ): OperatorValue {
   if (custom) return custom;
+  const entity = entityFor?.(_.includes(LIST_OPERATORS, operator));
+  if (entity) return entity;
   if (spec.isEnum || (spec.options && spec.strictSelection)) {
     return { type: 'enum', values: toEnumItems(spec.options) };
   }
@@ -367,13 +390,14 @@ export function defaultContentSearchFieldKey(
     (property) =>
       property.type === 'string' &&
       !property.strictSelection &&
-      !property.renderInput,
+      !property.renderInput &&
+      !property.entitySource,
   )?.key;
 }
 
 /** Key under which a token's original raw (wildcards included) value is kept. */
 const rawKey = (field: string, operator: string, value: string) =>
-  `${field} ${operator} ${value}`;
+  `${field}\u0000${operator}\u0000${value}`;
 
 export interface ParsedFilterString {
   filters: Array<PowerSearchFilter>;
@@ -411,7 +435,7 @@ export function parseFilterString(
       const token = {
         field: property,
         operator,
-        value: tokenValueForSpec(spec, display),
+        value: tokenValueForSpec(spec, operator, display),
       } satisfies PowerSearchFilter;
       // Keyed by what `serializeFilters` will read back, not by the inbound
       // text: a `date_absolute` token round-trips through a unix stamp, so
@@ -424,12 +448,33 @@ export function parseFilterString(
   return { filters, rawValues };
 }
 
+/** A token's DSL value -> entity ids; a list operator carries `["a", "b"]`. */
+const displayToEntityIds = (
+  display: string,
+  isList: boolean,
+): Array<string> => {
+  if (!isList) return _.compact([display]);
+  const inner = _.trim(display).replace(/^\[/, '').replace(/\]$/, '');
+  return _.compact(
+    _.map(_.split(inner, ','), (part) => _.trim(part).replace(/^"|"$/g, '')),
+  );
+};
+
 /** The token value shape the editor chosen by `operatorValueForSpec` expects. */
 function tokenValueForSpec(
   spec: FieldSpec,
+  operator: string,
   display: string,
 ): PowerSearchFilter['value'] {
+  // Both custom editors own every operator of their field, list ones included.
   if (spec.renderInput) return { type: 'custom', value: display };
+  if (spec.entitySource) {
+    const isList = _.includes(LIST_OPERATORS, operator);
+    return {
+      type: 'custom',
+      value: encodeEntityIds(displayToEntityIds(display, isList), isList) ?? '',
+    };
+  }
   if (spec.isEnum) return { type: 'enum', value: display };
   if (spec.type === 'datetime') {
     const parsed = dayjs(display);
@@ -528,25 +573,51 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     onChange: propOnChange as ((value: string | undefined) => void) | undefined,
   });
 
-  // Maps a committed value to the human-readable label a `renderInput` control
-  // supplied (e.g. user UUID -> email). Tokens are re-derived from `value` on
-  // every render and only carry the raw value, so the label lives here and is
-  // looked up when the token renders. Deliberately a mutable ref rather than
-  // state: it is written from the editor's commit callback and read from the
-  // token renderer, never during this component's render, and the commit that
-  // records a label is immediately followed by the `onChange` that repaints.
-  const valueLabelMapRef = useRef<Record<string, string>>({});
-
+  // Tokens are re-derived from `value` on every render and only carry the raw
+  // value, so the label a picker supplied (user UUID -> email) lives here.
+  const labels = useEntityLabelCache();
   const renderInputEditors = useRenderInputEditors({
-    recordLabel: (property, committed, label) => {
-      valueLabelMapRef.current[`${property}::${committed}`] = label;
-    },
-    resolveLabel: (property, committed) =>
-      valueLabelMapRef.current[`${property}::${committed}`] ?? committed,
+    recordLabel: labels.record,
+    resolveLabel: labels.resolveLabel,
   });
+  const entityEditors = useEntityEditors({ labels });
 
   const specs = buildFieldSpecs(filterProperties, value);
   const { filters, rawValues } = parseFilterString(value, specs);
+
+  // Ids restored from the URL carry no label; ask each source once per id.
+  const byKey = _.keyBy(specs, 'key');
+  const pendingEntityIds = _.flatMap(filters, (filter) => {
+    const spec = byKey[filter.field];
+    // `renderInput` wins outright: its editor owns the label, so an entity
+    // source declared alongside it must not fire a request either.
+    if (!spec?.entitySource || spec.renderInput) return [];
+    return _.map(
+      decodeEntityIds(
+        tokenValueToString(filter),
+        _.includes(LIST_OPERATORS, filter.operator),
+      ),
+      (id) => [spec.key, id] as const,
+    );
+  });
+  const pendingEntityKey = _.join(
+    _.map(pendingEntityIds, (pair) => _.join(pair, '::')),
+    '\u0000',
+  );
+  const resolveEntityLabels = useEffectEvent(() => {
+    _.forEach(
+      _.groupBy(pendingEntityIds, ([key]) => key),
+      (pairs, key) =>
+        labels.ensureResolved(
+          key,
+          byKey[key]?.entitySource,
+          _.map(pairs, ([, id]) => id),
+        ),
+    );
+  });
+  useEffect(() => {
+    resolveEntityLabels();
+  }, [pendingEntityKey]);
 
   const config: PowerSearchConfig = {
     name: 'bai-property-filter',
@@ -557,7 +628,8 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
         spec.key,
         spec.renderInput,
       );
-      const operatorValue = operatorValueForSpec(spec, custom);
+      const entityFor = (isMulti: boolean) =>
+        entityEditors.operatorValueFor(spec.key, spec.entitySource, isMulti);
       return {
         key: spec.key,
         label: spec.label,
@@ -565,7 +637,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
         operators: _.map(spec.operators, (operator) => ({
           key: operator,
           label: operatorLabel(operator, t),
-          value: operatorValue,
+          value: operatorValueForSpec(spec, operator, custom, entityFor),
         })),
       };
     }),

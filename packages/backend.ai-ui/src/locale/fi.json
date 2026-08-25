@@ -271,6 +271,10 @@
   "comp:BAINameActionCell": {
     "MoreActions": "Lisää toimintoja"
   },
+  "comp:BAIPowerSearchEntityEditor": {
+    "Search": "Hae…",
+    "SelectValue": "Valitse arvo"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",

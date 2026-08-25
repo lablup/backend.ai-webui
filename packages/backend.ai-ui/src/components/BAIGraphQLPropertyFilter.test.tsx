@@ -13,12 +13,29 @@
 */
 import BAIGraphQLPropertyFilter, {
   buildNestedFilter,
+  conditionToTokenValue,
   graphQLFilterToPowerSearchFilters,
   powerSearchFiltersToGraphQLFilter,
+  tokenValueToConditionValue,
+  type FilterEntitySource,
   type FilterProperty,
   type GraphQLFilter,
 } from './BAIGraphQLPropertyFilter';
-import { render, screen } from '@testing-library/react';
+import {
+  BAIPowerSearchEntityEditor,
+  useEntityLabelCache,
+  useRenderInputEditors,
+  type EntityLabelCache,
+} from './BAIPowerSearchAdapters';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+const USER_UUID = '11111111-2222-3333-4444-555555555555';
+/** Matches the token text even after PowerSearch truncates it. */
+const TRUNCATED_UUID = /^11111111-2222-3333-4444-5555/;
+
+/** An `entitySource` with no `resolve`: tokens keep the raw id. */
+const idOnlyUserSource: FilterEntitySource = { search: async () => [] };
 
 describe('buildNestedFilter', () => {
   it('builds a single-level filter', () => {
@@ -167,8 +184,10 @@ const PAGE_FIXTURES: Array<{
         key: 'userId',
         propertyLabel: 'User',
         type: 'uuid',
+        // The page supplies a Relay-backed picker here; serialization is
+        // unaffected by the editor, so the fixture only needs the shape.
+        entitySource: idOnlyUserSource,
         fixedOperator: 'equals',
-        renderInput: () => null,
       },
     ],
     filters: [
@@ -267,6 +286,44 @@ describe('URL filter round-trip (no shared-link regression)', () => {
     expect(roundTrip(filterProperties, filter)).toEqual(filter);
   });
 
+  it('keeps an entitySource id byte-identical (no URL migration)', () => {
+    // The RBAC shape, with the nested key the page actually declares. An
+    // `entitySource` property must serialize exactly what `renderInput` did.
+    const filterProperties: Array<FilterProperty> = [
+      {
+        key: 'assignedUser.userId',
+        propertyLabel: 'User',
+        type: 'uuid',
+        fixedOperator: 'equals',
+        entitySource: idOnlyUserSource,
+      },
+    ];
+    const filter: GraphQLFilter = {
+      assignedUser: { userId: { equals: USER_UUID } },
+    };
+    const result = roundTrip(filterProperties, filter);
+    expect(result).toEqual(filter);
+    expect(JSON.stringify(result)).toBe(JSON.stringify(filter));
+  });
+
+  it('keeps a renderInput value byte-identical too (escape hatch kept)', () => {
+    const filterProperties: Array<FilterProperty> = [
+      {
+        key: 'assignedUser.userId',
+        propertyLabel: 'User',
+        type: 'uuid',
+        fixedOperator: 'equals',
+        renderInput: () => null,
+      },
+    ];
+    const filter: GraphQLFilter = {
+      assignedUser: { userId: { equals: USER_UUID } },
+    };
+    expect(JSON.stringify(roundTrip(filterProperties, filter))).toBe(
+      JSON.stringify(filter),
+    );
+  });
+
   it('re-parses what it emitted (tokens are stable across a second cycle)', () => {
     const { filterProperties } = PAGE_FIXTURES[1];
     const first: GraphQLFilter = {
@@ -352,5 +409,360 @@ describe('BAIGraphQLPropertyFilter render', () => {
       />,
     );
     expect(screen.getByTestId('graphql-property-filter')).toBeInTheDocument();
+  });
+});
+
+/** An entity property; single-valued (`equals`) unless `overrides` says else. */
+const entityProperty = (
+  entitySource: FilterEntitySource,
+  overrides: Partial<FilterProperty> = {},
+): FilterProperty =>
+  ({
+    key: 'assignedUser.userId',
+    propertyLabel: 'User',
+    type: 'uuid',
+    fixedOperator: 'equals',
+    entitySource,
+    ...overrides,
+  }) as FilterProperty;
+
+describe('entitySource token mapping', () => {
+  const property = entityProperty(idOnlyUserSource, {
+    fixedOperator: undefined,
+    operators: ['equals', 'in'],
+  });
+  const condition = (operator: 'equals' | 'in', value: unknown) => ({
+    id: 'c1',
+    property: 'assignedUser.userId',
+    operator,
+    value,
+    propertyLabel: 'User',
+    type: 'uuid' as const,
+  });
+
+  it('maps an `equals` condition to the raw id', () => {
+    expect(
+      conditionToTokenValue(condition('equals', USER_UUID), property),
+    ).toEqual({ type: 'custom', value: USER_UUID });
+  });
+
+  it('maps an `in` condition to a JSON id array', () => {
+    expect(
+      conditionToTokenValue(condition('in', ['a', 'b']), property),
+    ).toEqual({ type: 'custom', value: '["a","b"]' });
+  });
+
+  it('reverses a single-id token back to the raw id', () => {
+    expect(
+      tokenValueToConditionValue(
+        { type: 'custom', value: USER_UUID },
+        property,
+        'equals',
+      ),
+    ).toBe(USER_UUID);
+  });
+
+  it('reverses a JSON-array token back to an id array', () => {
+    expect(
+      tokenValueToConditionValue(
+        { type: 'custom', value: '["a","b"]' },
+        property,
+        'in',
+      ),
+    ).toEqual(['a', 'b']);
+  });
+
+  it('keeps a single id that looks like JSON a string', () => {
+    expect(
+      tokenValueToConditionValue(
+        { type: 'custom', value: '[bracketed-id' },
+        property,
+        'equals',
+      ),
+    ).toBe('[bracketed-id');
+  });
+
+  it.each([
+    { arity: 'single', input: condition('equals', USER_UUID) },
+    { arity: 'multi', input: condition('in', ['a', 'b']) },
+    { arity: 'single', input: condition('equals', '[bracketed-id') },
+  ])('is an exact inverse for the $arity arity', ({ input }) => {
+    expect(
+      tokenValueToConditionValue(
+        conditionToTokenValue(input, property),
+        property,
+        input.operator,
+      ),
+    ).toEqual(input.value);
+  });
+});
+
+describe('renderInput takes precedence over entitySource', () => {
+  const both = {
+    key: 'ownerId',
+    propertyLabel: 'Owner',
+    type: 'string',
+    operators: ['in'],
+    renderInput: () => null,
+    entitySource: idOnlyUserSource,
+  } satisfies FilterProperty;
+  const entityOnly = {
+    ...both,
+    renderInput: undefined,
+  } satisfies FilterProperty;
+  // The reverse parser joins a list value, so this is the shape the pipeline
+  // actually hands `conditionToTokenValue`.
+  const condition = {
+    id: 'c1',
+    property: 'ownerId',
+    operator: 'in' as const,
+    value: 'a, b',
+    propertyLabel: 'Owner',
+    type: 'string' as const,
+  };
+
+  it('emits the renderInput token shape, not the entity JSON array', () => {
+    expect(conditionToTokenValue(condition, both)).toEqual({
+      type: 'custom',
+      value: 'a, b',
+    });
+    expect(conditionToTokenValue(condition, entityOnly)).toEqual({
+      type: 'custom',
+      value: '["a","b"]',
+    });
+  });
+
+  // The two custom editors format their token differently: the entity one maps
+  // each id through the label cache, `renderInput`'s looks the whole staged
+  // value up and misses. So the token text says which editor the config got.
+  const labelledSource: FilterEntitySource = {
+    search: async () => [],
+    resolve: async (ids) =>
+      ids.map((id) => ({ id, label: `${id}@lablup.com` })),
+  };
+  const value: GraphQLFilter = { ownerId: { in: ['a', 'b'] } };
+
+  it('renders resolved labels when only entitySource is declared', async () => {
+    render(
+      <BAIGraphQLPropertyFilter
+        filterProperties={[{ ...entityOnly, entitySource: labelledSource }]}
+        value={value}
+        onChange={() => {}}
+      />,
+    );
+    expect(
+      await screen.findByText('a@lablup.com, b@lablup.com'),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the raw staged value and asks nothing when both are declared', async () => {
+    const resolve = vi.fn(labelledSource.resolve);
+    render(
+      <BAIGraphQLPropertyFilter
+        filterProperties={[
+          { ...both, entitySource: { ...labelledSource, resolve } },
+        ]}
+        value={value}
+        onChange={() => {}}
+      />,
+    );
+    await act(async () => {
+      await new Promise((done) => setTimeout(done, 0));
+    });
+    expect(resolve).not.toHaveBeenCalled();
+    expect(screen.getByText('a, b')).toBeInTheDocument();
+    expect(screen.queryByText(/@lablup\.com/)).not.toBeInTheDocument();
+  });
+});
+
+describe('content-search field auto-pick', () => {
+  it('skips entitySource properties', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <BAIGraphQLPropertyFilter
+        filterProperties={[
+          {
+            key: 'ownerId',
+            propertyLabel: 'Owner',
+            type: 'string',
+            entitySource: idOnlyUserSource,
+          },
+          { key: 'name', propertyLabel: 'Name', type: 'string' },
+        ]}
+        onChange={onChange}
+      />,
+    );
+    await user.type(screen.getByRole('combobox'), 'hello{Enter}');
+    expect(onChange).toHaveBeenCalledWith({ name: { iContains: 'hello' } });
+  });
+});
+
+describe('entity label resolution', () => {
+  const filter: GraphQLFilter = {
+    assignedUser: { userId: { equals: USER_UUID } },
+  };
+
+  it('swaps the raw id for the label the source resolves', async () => {
+    const resolve = vi.fn(async () => [
+      { id: USER_UUID, label: 'alice@lablup.com' },
+    ]);
+    render(
+      <BAIGraphQLPropertyFilter
+        filterProperties={[entityProperty({ search: async () => [], resolve })]}
+        value={filter}
+        onChange={() => {}}
+      />,
+    );
+    expect(await screen.findByText('alice@lablup.com')).toBeInTheDocument();
+    expect(resolve).toHaveBeenCalledWith([USER_UUID]);
+  });
+
+  it('keeps the raw id, asks once, and swallows a rejecting resolve', async () => {
+    const unhandled: Array<unknown> = [];
+    const trackUnhandled = (reason: unknown) => unhandled.push(reason);
+    process.on('unhandledRejection', trackUnhandled);
+    try {
+      const resolve = vi.fn(() => Promise.reject(new Error('resolve failed')));
+      render(
+        <BAIGraphQLPropertyFilter
+          filterProperties={[
+            entityProperty({ search: async () => [], resolve }),
+          ]}
+          value={filter}
+          onChange={() => {}}
+        />,
+      );
+      await waitFor(() => expect(resolve).toHaveBeenCalledTimes(1));
+      // One macrotask: long enough for Node to report an unhandled rejection.
+      await new Promise((done) => setTimeout(done, 0));
+      expect(screen.getByText(TRUNCATED_UUID)).toBeInTheDocument();
+      expect(resolve).toHaveBeenCalledTimes(1);
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', trackUnhandled);
+    }
+  });
+
+  it('keeps two properties sharing one id on their own labels', async () => {
+    const sourceFor = (label: string): FilterEntitySource => ({
+      search: async () => [],
+      resolve: async (ids) => ids.map((id) => ({ id, label })),
+    });
+    render(
+      <BAIGraphQLPropertyFilter
+        filterProperties={[
+          entityProperty(sourceFor('assignee@lablup.com')),
+          entityProperty(sourceFor('creator@lablup.com'), {
+            key: 'createdBy.userId',
+            propertyLabel: 'Creator',
+          }),
+        ]}
+        value={{
+          AND: [filter, { createdBy: { userId: { equals: USER_UUID } } }],
+        }}
+        onChange={() => {}}
+      />,
+    );
+    expect(await screen.findByText('assignee@lablup.com')).toBeInTheDocument();
+    expect(screen.getByText('creator@lablup.com')).toBeInTheDocument();
+  });
+
+  it('falls back to the raw id when the source has no resolve', () => {
+    render(
+      <BAIGraphQLPropertyFilter
+        filterProperties={[entityProperty(idOnlyUserSource)]}
+        value={filter}
+        onChange={() => {}}
+      />,
+    );
+    expect(screen.getByText(TRUNCATED_UUID)).toBeInTheDocument();
+  });
+});
+
+describe('BAIPowerSearchEntityEditor', () => {
+  const labels: EntityLabelCache = {
+    record: () => {},
+    recordMany: () => {},
+    resolveLabel: (_property, id) =>
+      id === USER_UUID ? 'alice@lablup.com' : id,
+    ensureResolved: () => {},
+  };
+
+  const renderEditor = (isDisabled?: boolean) =>
+    render(
+      <BAIPowerSearchEntityEditor
+        propertyKey="assignedUser.userId"
+        source={idOnlyUserSource}
+        labels={labels}
+        isMulti={false}
+        value={USER_UUID}
+        onChange={() => {}}
+        isDisabled={isDisabled}
+      />,
+    );
+
+  it('shows the cached label for the staged id', () => {
+    renderEditor();
+    expect(screen.getByText('alice@lablup.com')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toBeEnabled();
+  });
+
+  it('disables the control when `isDisabled` is set', () => {
+    renderEditor(true);
+    expect(screen.getByRole('combobox')).toBeDisabled();
+  });
+});
+
+describe('useRenderInputEditors', () => {
+  it('hands `value` and `isDisabled` to the render prop', () => {
+    const received: Array<{ value: string | null; isDisabled?: boolean }> = [];
+    const Harness = () => {
+      const editors = useRenderInputEditors({
+        recordLabel: () => {},
+        resolveLabel: (_property, value) => value,
+      });
+      const operatorValue = editors.operatorValueFor('ownerId', (props) => {
+        received.push({ value: props.value, isDisabled: props.isDisabled });
+        return <span data-testid="render-input">{props.value}</span>;
+      });
+      if (!operatorValue) return null;
+      const Editor = operatorValue.Editor;
+      return <Editor value="x" isDisabled onChange={() => {}} placeholder="" />;
+    };
+    render(<Harness />);
+    expect(received.at(-1)).toEqual({ value: 'x', isDisabled: true });
+    expect(screen.getByTestId('render-input')).toHaveTextContent('x');
+  });
+
+  // `getString` is cached on the FIRST call, so it must not freeze the label
+  // cache it was handed on that render.
+  it('reads a label recorded after the operator value was cached', async () => {
+    const Harness = () => {
+      const labels = useEntityLabelCache();
+      const editors = useRenderInputEditors({
+        recordLabel: labels.record,
+        resolveLabel: labels.resolveLabel,
+      });
+      const operatorValue = editors.operatorValueFor('ownerId', () => null);
+      return (
+        <>
+          <button
+            onClick={() =>
+              labels.record('ownerId', USER_UUID, 'alice@lablup.com')
+            }
+          >
+            record
+          </button>
+          <span data-testid="token">
+            {operatorValue?.getString(USER_UUID) ?? ''}
+          </span>
+        </>
+      );
+    };
+    render(<Harness />);
+    expect(screen.getByTestId('token')).toHaveTextContent(USER_UUID);
+    await userEvent.setup().click(screen.getByRole('button'));
+    expect(screen.getByTestId('token')).toHaveTextContent('alice@lablup.com');
   });
 });
