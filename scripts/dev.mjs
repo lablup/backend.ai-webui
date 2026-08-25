@@ -7,8 +7,96 @@
 // VITE_DEV_SERVER_NAME so the React app can show it in the browser tab title
 // (dev only), keeping multiple dev-server tabs distinguishable.
 import { spawn, spawnSync } from 'node:child_process';
+import { createInterface } from 'node:readline/promises';
+import { probeFsevents } from './fsevents-health.mjs';
 
 const env = { ...process.env };
+
+// fseventsd can refuse every new FSEventStream registration (client-table
+// exhaustion by leaked dev processes — see scripts/fsevents-health.mjs). Every
+// watcher this script spawns then starts permanently silent: HMR dead, stale
+// transforms on refresh, tsc/relay watch blind. Probe up front and ASK before
+// falling back to stat-polling — polling costs steady CPU and hides the real
+// problem, so it is never enabled silently. VITE_WATCH_USE_POLLING covers
+// ONLY Vite (react/vite.config.ts), so the probe still runs with it set —
+// the tsc/relay watchers would otherwise stay dead undiagnosed; the prompt
+// then targets just those uncovered subsystems. relay watch is diagnosable but
+// not coverable: relay-compiler --watch requires Watchman, which has no polling
+// mode, so it only gets heal instructions.
+if (process.platform === 'darwin') {
+  const healthy = await probeFsevents();
+  if (!healthy) {
+    // Mirror react/vite.config.ts's own `=== '1'` test — any other value
+    // (`0`, `true`) does NOT make Vite poll, so it must not count as covered.
+    const viteCovered = env.VITE_WATCH_USE_POLLING === '1';
+    console.warn(
+      '\n[dev] macOS FSEvents is BROKEN on this machine: fseventsd refused a new\n' +
+        '[dev] event stream, so file watching (Vite HMR, tsc watch, relay watch)\n' +
+        '[dev] will be silently dead. Usual cause: leaked dev processes exhausting\n' +
+        "[dev] fseventsd's client table. To heal the machine:\n" +
+        "[dev]   1. kill stale watchers:  ps aux | grep -E 'test-server|vite|relay'\n" +
+        '[dev]      (also close days-old editor windows), then re-run pnpm dev\n' +
+        '[dev]   2. reset relay watch:   watchman shutdown-server  (relay watch\n' +
+        '[dev]      runs on Watchman, which is FSEvents-backed too)\n' +
+        '[dev]   3. still broken:        sudo pkill fseventsd   (auto-restarts)\n' +
+        '[dev]   4. last resort:         reboot\n' +
+        '[dev] Health check any time:    node scripts/fsevents-health.mjs\n',
+    );
+    if (process.stdin.isTTY && !env.CI?.trim()) {
+      const rl = createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+      // rl.question() without a signal NEVER settles — not on stdin EOF, not on
+      // rl.close() — so Ctrl+D would strand this await and dev would never start.
+      const ac = new AbortController();
+      rl.once('close', () => ac.abort());
+      let answer = '';
+      try {
+        answer = await rl.question(
+          viteCovered
+            ? '[dev] Vite already stat-polls (VITE_WATCH_USE_POLLING), but the tsc watcher\n' +
+                '[dev] still relies on FSEvents. Extend polling to it for THIS run? [y/N] '
+            : '[dev] Fall back to stat-polling for THIS run (works, but steady CPU cost\n' +
+                '[dev] and the machine stays broken for every other tool)? [y/N] ',
+          { signal: ac.signal },
+        );
+      } catch {
+        // Ctrl+D / stdin closed mid-question — treat as "No".
+      } finally {
+        rl.close();
+      }
+      if (/^y(es)?$/i.test(answer.trim())) {
+        env.VITE_WATCH_USE_POLLING = '1'; // Vite chokidar (react/vite.config.ts)
+        env.CHOKIDAR_USEPOLLING = '1'; // nodemon's chokidar (relay:watch schema files)
+        if (!env.TSC_WATCHFILE?.trim()) {
+          env.TSC_WATCHFILE = 'DynamicPriorityPolling'; // tsc watch children
+        }
+        console.warn(
+          '[dev] polling fallback enabled for this run (Vite HMR + tsc file watching).\n' +
+            '[dev] relay-compiler --watch cannot be covered — it needs Watchman, which has\n' +
+            '[dev] no polling mode. Run `watchman shutdown-server` if relay stays blind.\n',
+        );
+      } else {
+        console.warn(
+          viteCovered
+            ? '[dev] continuing — Vite HMR polls, but tsc/relay change detection stays dead\n' +
+                '[dev] until the machine is healed.\n'
+            : '[dev] continuing WITHOUT polling — expect dead HMR until the machine is healed.\n',
+        );
+      }
+    } else {
+      console.warn(
+        viteCovered
+          ? '[dev] non-interactive session: Vite polls via VITE_WATCH_USE_POLLING, but the\n' +
+              '[dev] tsc watcher stays on FSEvents — set TSC_WATCHFILE=DynamicPriorityPolling\n' +
+              '[dev] to cover it. relay watch runs on Watchman and has no polling mode.\n'
+          : '[dev] non-interactive session: continuing without polling. Set\n' +
+              '[dev] VITE_WATCH_USE_POLLING=1 to opt in explicitly.\n',
+      );
+    }
+  }
+}
 
 // Both TypeScript watch programs under this script — the root `tsc --watch`
 // child below and the one vite-plugin-checker runs inside the Vite process —
