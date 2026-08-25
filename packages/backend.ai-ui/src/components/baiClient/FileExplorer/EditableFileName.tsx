@@ -159,7 +159,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
             <BAILink
               type="hover"
               style={{
-                maxWidth: 180,
+                maxWidth: '100%',
                 color: isPendingRenamingAndRefreshing
                   ? token.colorTextTertiary
                   : undefined,
@@ -171,13 +171,13 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               {displayName}
             </BAILink>
           ) : (
-            <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-              <File size="1em" />
+            <BAIFlex gap="xs" style={{ display: 'inline-flex', minWidth: 0 }}>
+              <File size="1em" style={{ flexShrink: 0 }} />
               <Text
                 maxLines={1}
                 hasTruncateTooltip
                 style={{
-                  maxWidth: 200,
+                  maxWidth: '100%',
                   color: isPendingRenamingAndRefreshing
                     ? token.colorTextTertiary
                     : undefined,
