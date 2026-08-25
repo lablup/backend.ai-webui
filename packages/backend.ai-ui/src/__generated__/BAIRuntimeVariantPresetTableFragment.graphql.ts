@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1206630e72ca1eb6760d5e0f444ebf92>>
+ * @generated SignedSource<<e27634d014bc8cef63c47e4213403530>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,8 +13,10 @@ export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIRuntimeVariantPresetTableFragment$data = ReadonlyArray<{
+  readonly category: string | null | undefined;
   readonly createdAt: string;
   readonly description: string | null | undefined;
+  readonly displayName: string | null | undefined;
   readonly id: string;
   readonly name: string;
   readonly rank: number;
@@ -99,6 +101,20 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "category",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "displayName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "rank",
       "storageKey": null
     },
@@ -168,6 +184,6 @@ return {
 };
 })();
 
-(node as any).hash = "863d9d003726925365a8e55a18254afc";
+(node as any).hash = "f5f9bb696ac9c8d5a172a91814ad6d75";
 
 export default node;
