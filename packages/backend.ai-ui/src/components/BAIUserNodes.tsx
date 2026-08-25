@@ -122,7 +122,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         render: (__, record) => (
           <BAIText
             copyable
-            ellipsis
+            ellipsis={{ tooltip: true }}
             monospace
             style={{
               maxWidth: 100,

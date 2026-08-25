@@ -26,7 +26,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  * forbids. The query already returns up to 150 active users and `Selector`
  * filters that set locally, so the visible behaviour is unchanged for any
  * deployment under that bound. If this component is ever revived against a
- * larger user base, promote it to `BAIUserSelectAstryx` (which already does
+ * larger user base, promote it to `BAIUserSelect` (which already does
  * paginated remote search) rather than re-adding the filter here.
  */
 interface Props {

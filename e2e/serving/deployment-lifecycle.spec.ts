@@ -636,28 +636,26 @@ test.describe(
             dialog.getByRole('radio', { name: 'Preset Mode' }),
           ).toBeChecked();
 
-          // 2. Select the ensured preset from the "Preset" dropdown. The
-          // dropdown groups options by runtime category and renders virtualized
-          // option rows with a computed width of 0 px, so selection happens via
-          // search + keyboard Enter -- the full investigation lives on
-          // selectRevisionModalOption in utils/deployment-fixtures.ts.
+          // 2. Select the ensured preset from the "Preset" select — the
+          // ComplexSelector interaction (trigger button → search → option
+          // click) lives on selectRevisionModalOption in
+          // utils/deployment-fixtures.ts.
           await selectRevisionModalOption(
             page,
-            '#revisionPresetId',
+            'Preset',
             provisioned.presetName,
           );
 
           // 3. Confirm/select the "Model Folder" (verify whether it auto-populates
           // from the preset or must be chosen separately). Manual verification
           // found it does NOT auto-fill -- it must be chosen independently. The
-          // Model Folder combobox only lists Project-owned/user-owned VFolders
+          // Model Folder select only lists Project-owned/user-owned VFolders
           // (not model-store/project-store catalog resources), which is why the
           // provisioned folder is created as the e2e admin account's own owned
-          // VFolder. Same zero-width option rows as the preset dropdown --
-          // keyboard selection via the shared helper.
+          // VFolder. Same ComplexSelector interaction via the shared helper.
           await selectRevisionModalOption(
             page,
-            '#modelFolderId',
+            'Model Folder',
             provisioned.folderName,
           );
 
@@ -787,10 +785,10 @@ test.describe(
           });
 
           // 2. Select the provisioned model folder -- the Advanced form's
-          // folder Select shares the `#modelFolderId` id and search behavior
-          // with Preset Mode (only one form is mounted at a time), so the
-          // shared helper applies unchanged.
-          await selectRevisionModalOption(page, '#modelFolderId', folderName);
+          // folder select shares the "Model Folder" field label and search
+          // behavior with Preset Mode (only one form is mounted at a time),
+          // so the shared helper applies unchanged.
+          await selectRevisionModalOption(page, 'Model Folder', folderName);
 
           // 3. Select the "custom" runtime variant. This Select exposes no
           // accessible option roles and its rows are not clickable (same

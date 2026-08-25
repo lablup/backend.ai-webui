@@ -34,7 +34,7 @@
    collapse context reaches them, and the group headers hide via
    `isHeaderHidden` instead of an emptied label.
 */
-import AstryxRouterLink from './astryx-bui/AstryxRouterLink';
+import AstryxRouterLink from './AstryxRouterLink';
 import { SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
 import React from 'react';
 

@@ -26,9 +26,6 @@ import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 // composite shared with unmigrated consumers; it keeps its antd contract here
 // until the ComplexSelector-based rebuild lands.
 import StorageSelect from './StorageSelect';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAIQuestionIconWithTooltip from './astryx-bui/BAIQuestionIconWithTooltipAstryx';
 import {
   AstryxFormRadioList,
   AstryxFormSwitch,
@@ -41,6 +38,9 @@ import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIModal,
+  type BAIModalProps,
+  BAIQuestionIconWithTooltip,
   toLocalId,
   useBAILogger,
   useErrorMessageResolver,
@@ -60,7 +60,7 @@ const MODAL_WIDTH = 650;
 // Ticket 16: the `createStyles` block is gone. It held two rule sets, and BOTH
 // were the P6 failure mode — `.ant-form-item-*` (dead once `Form.Item` became
 // `BAIFormItem`) and `.ant-modal-body` (dead once `BAIModal` became
-// `BAIModalAstryx`, which renders no such element).
+// Astryx-based, which renders no such element).
 
 interface FolderCreateFormItemsType {
   name: string;
@@ -370,8 +370,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       onOpenChange={(next) => {
         if (!next) onRequestClose();
       }}
-      isLoading={isFetchingAllowedTypes}
+      loading={isFetchingAllowedTypes}
       title={t('data.CreateANewStorageFolder')}
+      maskClosable={false}
       footer={
         <HStack justify="between">
           <Button
@@ -406,7 +407,8 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       }
       width={MODAL_WIDTH}
       {...modalProps}
-      onAfterOpen={() => {
+      afterOpenChange={(nowOpen) => {
+        if (!nowOpen) return;
         // The modal is destroyed on close, which clears the form; keep the
         // tracked in-modal project selection in sync with it.
         setSelectedProject(null);

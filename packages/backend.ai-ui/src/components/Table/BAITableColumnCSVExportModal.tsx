@@ -7,7 +7,7 @@
  The antd version rendered an antd `Table` (one column, a `Checkbox` per row)
  inside an antd `Modal` wrapped in a `Form` whose only field was the search
  box — three container components for what is a searchable checkbox list. This
- rebuild drops all of that chrome and mirrors `BAITableAstryxSettingModal`:
+ rebuild drops all of that chrome and mirrors `BAITableSettingModal`:
  `Dialog` + `Layout` + a plain scrolling `VStack` of `CheckboxInput` rows.
 
  The EXPORT-KEY GROUPING logic is preserved verbatim, because it is the only
@@ -26,14 +26,15 @@
    half-empty one.
  - The Export button uses Astryx `Button.clickAction` (native async + loading)
    in place of `BAIButton`'s `action` prop; the close-on-success is ours, the
-   same way `BAIModalAstryx` does it.
+   same way the pilot modal did it.
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIDialog from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -175,7 +176,7 @@ const BAITableColumnCSVExportModal = <T,>({
   if (!open) return null;
 
   return (
-    <Dialog
+    <BAIDialog
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose?.(false);
@@ -261,7 +262,7 @@ const BAITableColumnCSVExportModal = <T,>({
         }
         style={{ minWidth: 0 }}
       />
-    </Dialog>
+    </BAIDialog>
   );
 };
 

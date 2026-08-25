@@ -55,7 +55,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
@@ -77,7 +77,7 @@ jobs:
 
       # Share build artifacts with downstream desktop jobs
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: web-build
           path: |
@@ -108,11 +108,13 @@ jobs:
         with:
           run_install: false
 
+      # No `cache: 'pnpm'`: release runs are tag-scoped, so the restore never
+      # hits, and the post-save spent 72-189s uploading a ~500 MB macOS store
+      # no ref can ever read.
       - name: Install Node.js
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version-file: '.nvmrc'
-          cache: 'pnpm'
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
@@ -176,7 +178,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
@@ -235,23 +237,16 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
-        with:
-          run_install: false
-
-      - name: Install Node.js
-        uses: actions/setup-node@v6.4.0
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'pnpm'
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
       - id: pw
-        name: Resolve Playwright version
-        run: echo "version=$(pnpm --filter backend.ai-webui-docs exec playwright --version | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
+        name: Resolve Playwright version from pnpm-lock.yaml
+        # Importer-scoped read (yq is preinstalled on ubuntu-latest): the docs
+        # package's own resolved playwright drives the container tag; a second
+        # playwright elsewhere in the graph must not mis-tag it (FR-3225: a
+        # wrong tag silently re-downloads Chromium).
+        run: |
+          v=$(yq '.importers."packages/backend.ai-webui-docs".devDependencies.playwright.version // ""' pnpm-lock.yaml | cut -d'(' -f1)
+          [ -n "$v" ] || { echo "::error::could not resolve playwright version from pnpm-lock.yaml"; exit 1; }
+          echo "version=$v" >> "$GITHUB_OUTPUT"
 
   # ──────────────────────────────────────────────────────────────────────
   # Job 4b: Build per-language User Guide PDFs (target ~5-7 min)
@@ -294,11 +289,12 @@ jobs:
         with:
           run_install: false
 
+      # No `cache: 'pnpm'`: never hits (tag-scoped run inside a container
+      # whose key namespace nothing shares) and the post-save cost ~80s.
       - name: Install Node.js
-        uses: actions/setup-node@v6.4.0
+        uses: actions/setup-node@v7.0.0
         with:
           node-version-file: '.nvmrc'
-          cache: 'pnpm'
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
@@ -356,7 +352,7 @@ jobs:
       # (handy during dry runs and when debugging the release path).
       - name: Upload PDFs as workflow artifact
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: webui-docs-pdfs
           path: packages/backend.ai-webui-docs/dist/*.pdf

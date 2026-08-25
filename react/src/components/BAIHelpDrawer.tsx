@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { BAIDrawer } from 'backend.ai-ui';
 import { ExternalLink } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-// PILOT-DECISION: antd `Drawer` → `BAIDrawerAstryx` (qa2-c), which wraps lab
+// PILOT-DECISION: antd `Drawer` → `BAIDrawer` (qa2-c), which wraps lab
 // `Drawer` and restores antd's header arrangement. `open` stays `open`,
 // `onClose` stays, `size="large"` (antd 736px) → `size={736}`, and the antd
 // `styles.body.padding: 0` override becomes `hasBodyPadding={false}` — the

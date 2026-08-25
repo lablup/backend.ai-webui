@@ -13,17 +13,22 @@
 // so it cannot influence layer precedence in either position, and
 // `backend.ai-ui.css` is still the first LAYERED sheet in the bundle.
 //
-// `.bai-action-accent` is imported from the barrel rather than from a component
-// because both BUI (`BAIText`) and app-side call sites under
-// `react/src/components` use the class; no single component owns it.
+// `.bai-action-accent` and `.bai-name-action-cell-danger` are imported from
+// the barrel rather than from a component because both BUI and app-side call
+// sites under `react/src/components` use the classes; no single component
+// owns them.
 import './styles/actionAccent.css';
 import './styles/backend.ai-ui.css';
+import './styles/dangerAction.css';
 
 export * from './components';
 export * from './helper';
 export * from './hooks';
 export * from './icons';
 export * from './tests';
+// The z-index ladder. Its module imports the matching custom properties, so
+// consuming a name from JS also guarantees the CSS side is loaded.
+export * from './styles/zIndexLadder';
 export * from './theme-shim';
 export * from './app-shim';
 // The self-hosted form engine (tickets 34 + 35). `Form` is exported as a NAMED

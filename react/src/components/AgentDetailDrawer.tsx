@@ -5,15 +5,14 @@
 import { AgentDetailDrawerFragment$key } from '../__generated__/AgentDetailDrawerFragment.graphql';
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
-import { BAISkeleton, toLocalId, useBAILogger } from 'backend.ai-ui';
+import { BAIDrawer, BAISkeleton, toLocalId, useBAILogger } from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useRefetchableFragment } from 'react-relay';
 
 // PILOT-DECISION: props no longer extend antd `DrawerProps` (P1 grep — the
 // only consumer, AgentList, passes `agentNodeFrgmt`/`open`/`onRequestClose`).
-// antd `Drawer` → `BAIDrawerAstryx` (qa2-c), which wraps lab `Drawer` and
+// antd `Drawer` → `BAIDrawer` (qa2-c), which wraps lab `Drawer` and
 // restores antd's header arrangement (`[X] title …… [extra]`, divider, padded
 // scrollable body) so `title`/`extra` are props again instead of a hand-rolled
 // first content row that collided with lab's floating close button.

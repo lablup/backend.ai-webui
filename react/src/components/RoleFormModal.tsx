@@ -6,7 +6,6 @@ import {
   RBACElementType,
   RoleFormModalCreateMutation,
 } from '../__generated__/RoleFormModalCreateMutation.graphql';
-import { RoleFormModalDomainQuery } from '../__generated__/RoleFormModalDomainQuery.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
@@ -22,20 +21,22 @@ import {
 } from './astryxFormControls';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAdminContainerRegistrySelectAstryx,
-  BAIAdminModelServiceSelectAstryx,
-  BAIAdminProjectSelectAstryx,
-  BAIAdminResourceGroupSelectAstryx,
-  BAIAdminSessionSelectAstryx,
+  BAIAdminContainerRegistrySelect,
+  BAIAdminModelServiceSelect,
+  BAIAdminProjectSelect,
+  BAIAdminResourceGroupSelect,
+  BAIAdminSessionSelect,
   BAIButton,
+  BAIDomainSelect,
+  BAIDomainSelectV2,
   BAIFlex,
-  BAIKeypairSelectAstryx,
+  BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAIStorageHostSelectAstryx,
-  BAIUserSelectAstryx,
-  BAIVFolderSelectAstryx,
+  BAIStorageHostSelect,
+  BAIUserSelect,
+  BAIVFolderSelect,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -106,55 +107,18 @@ type ScopeIdBranchProps = Omit<ScopeIdSelectProps, 'scopeType'> & {
   isLabelHidden?: boolean;
 };
 
-const DomainScopeIdSelect: React.FC<ScopeIdBranchProps> = ({
-  onChange,
-  // `AstryxFormSelector` hides its label unconditionally.
-  isLabelHidden: _isLabelHidden,
-  isDisabled,
-  ...props
-}) => {
-  'use memo';
-  const { domains } = useLazyLoadQuery<RoleFormModalDomainQuery>(
-    graphql`
-      query RoleFormModalDomainQuery($is_active: Boolean) {
-        domains(is_active: $is_active) {
-          name
-        }
-      }
-    `,
-    { is_active: true },
-    { fetchPolicy: 'store-and-network' },
-  );
-  // Domains are a small, single-shot, static option list — CONVERSION-BRIEF
-  // §2.E keeps those on `AstryxFormSelector`, not on `BAIComplexSelect`.
-  return (
-    <AstryxFormSelector
-      {...props}
-      hasSearch
-      disabled={isDisabled}
-      onChange={(next) => onChange?.(next ?? undefined)}
-      options={
-        domains?.map((d) => ({
-          value: d?.name ?? '',
-          label: d?.name ?? '',
-        })) ?? []
-      }
-    />
-  );
-};
-
 const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   'use memo';
   const queryRef = useLazyLoadQuery<RoleFormModalResourceGroupQuery>(
     graphql`
       query RoleFormModalResourceGroupQuery {
-        ...BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment
+        ...BAIAdminResourceGroupSelect_resourceGroupsFragment
       }
     `,
     {},
     { fetchPolicy: 'store-and-network' },
   );
-  return <BAIAdminResourceGroupSelectAstryx queryRef={queryRef} {...props} />;
+  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
@@ -163,6 +127,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
   const branchProps: ScopeIdBranchProps = {
@@ -180,51 +145,64 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     />
   );
   if (scopeType === 'DOMAIN') {
+    // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
+    // older managers expect the domain name. FR-3618.
+    const domainSelectProps = {
+      showSearch: true,
+      placeholder: selectProps.placeholder,
+      disabled: selectProps.isDisabled,
+      value: selectProps.value,
+      onChange: selectProps.onChange,
+    };
     return (
       <Suspense fallback={fallback}>
-        <DomainScopeIdSelect {...branchProps} />
+        {baiClient.supports('rbac-domain-scope-uuid') ? (
+          <BAIDomainSelectV2 {...domainSelectProps} />
+        ) : (
+          <BAIDomainSelect {...domainSelectProps} />
+        )}
       </Suspense>
     );
   }
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminProjectSelectAstryx {...branchProps} />
+        <BAIAdminProjectSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'USER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIUserSelectAstryx valuePropName="id" {...branchProps} />
+        <BAIUserSelect valuePropName="id" {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'VFOLDER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIVFolderSelectAstryx {...branchProps} />
+        <BAIVFolderSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'SESSION') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminSessionSelectAstryx {...branchProps} />
+        <BAIAdminSessionSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'MODEL_DEPLOYMENT') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminModelServiceSelectAstryx {...branchProps} />
+        <BAIAdminModelServiceSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'CONTAINER_REGISTRY') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminContainerRegistrySelectAstryx
+        <BAIAdminContainerRegistrySelect
           valuePropName="row_id"
           {...branchProps}
         />
@@ -234,14 +212,14 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'STORAGE_HOST') {
     return (
       <Suspense fallback={fallback}>
-        <BAIStorageHostSelectAstryx {...branchProps} />
+        <BAIStorageHostSelect {...branchProps} />
       </Suspense>
     );
   }
   if (scopeType === 'KEYPAIR') {
     return (
       <Suspense fallback={fallback}>
-        <BAIKeypairSelectAstryx {...branchProps} />
+        <BAIKeypairSelect {...branchProps} />
       </Suspense>
     );
   }

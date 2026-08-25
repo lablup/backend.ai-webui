@@ -18,8 +18,8 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAIVFolderSelectAstryx,
-  BAIVFolderSelectAstryxRef,
+  BAIVFolderSelect,
+  BAIVFolderSelectRef,
   convertToUUID,
   mergeFilterValues,
   toGlobalId,
@@ -79,7 +79,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const formRef =
     useRef<FormInstance<ImportArtifactRevisionToFolderModalInput>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
   const [isOpenCreateModal, { toggle: toggleIsOpenCreateModal }] =
     useToggle(false);
 
@@ -313,7 +313,7 @@ const ImportArtifactRevisionToFolderModal = ({
             >
               <BAIFlex gap="xs" align="center">
                 <Form.Item name="vfolderId" noStyle>
-                  <BAIVFolderSelectAstryx
+                  <BAIVFolderSelect
                     ref={vfolderSelectRef}
                     label={t(
                       'importArtifactRevisionToFolderModal.FolderMountForModelStore',

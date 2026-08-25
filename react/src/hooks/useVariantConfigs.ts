@@ -10,10 +10,38 @@ export interface RuntimeVariantConfig {
   optionalEnvVars?: EnvVarConfig[];
 }
 
+// Env vars that are useful regardless of the selected inference runtime
+// variant (e.g. credentials for pulling gated models, egress proxies).
+export const useCommonEnvVarConfigs = (): EnvVarConfig[] => {
+  'use memo';
+  const { t } = useTranslation();
+
+  return [
+    { variable: 'HF_TOKEN', placeholder: t('modelService.HfToken') },
+    { variable: 'WANDB_API_KEY', placeholder: t('modelService.WandbApiKey') },
+    {
+      variable: 'AWS_ACCESS_KEY_ID',
+      placeholder: t('modelService.AwsAccessKeyId'),
+    },
+    {
+      variable: 'AWS_SECRET_ACCESS_KEY',
+      placeholder: t('modelService.AwsSecretAccessKey'),
+    },
+    {
+      variable: 'AWS_DEFAULT_REGION',
+      placeholder: t('modelService.AwsDefaultRegion'),
+    },
+    { variable: 'HTTP_PROXY', placeholder: t('modelService.HttpProxy') },
+    { variable: 'HTTPS_PROXY', placeholder: t('modelService.HttpsProxy') },
+    { variable: 'NO_PROXY', placeholder: t('modelService.NoProxy') },
+  ];
+};
+
 export const useRuntimeEnvVarConfigs = (): Record<
   string,
   RuntimeVariantConfig
 > => {
+  'use memo';
   const { t } = useTranslation();
 
   return {

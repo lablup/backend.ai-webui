@@ -214,18 +214,21 @@ export class ComputeSession {
         arguments: JSON.stringify(args) || undefined,
       },
     );
-    return this.client._wrapWithPromise(rqst);
+    // App launch traverses webserver → manager RPC → agent → krunner; the
+    // backend-side budget (BA-7258) can exceed the client-wide 30s default,
+    // so give start-service its own longer timeout (FR-3479).
+    return this.client._wrapWithPromise(rqst, false, null, 60_000);
   }
 
   /**
    * Request container commit for corresponding session in agent node
    *
-   * @param sessionName - name of the session
+   * @param sessionId - ID (UUID) of the session
    */
-  async commitSession(sessionName: string = ''): Promise<any> {
+  async commitSession(sessionId: string): Promise<any> {
     const rqst = this.client.newSignedRequest(
       'POST',
-      `/session/${sessionName}/commit`,
+      `/session/${sessionId}/commit`,
       null,
     );
     return this.client._wrapWithPromise(rqst);
@@ -234,15 +237,15 @@ export class ComputeSession {
   /**
    * Request container commit for corresponding session in agent node
    *
-   * @param sessionName - name of the session
+   * @param sessionId - ID (UUID) of the session
    */
   async convertSessionToImage(
-    sessionName: string,
+    sessionId: string,
     newImageName: string,
   ): Promise<any> {
     const rqst = this.client.newSignedRequest(
       'POST',
-      `/session/${sessionName}/imagify`,
+      `/session/${sessionId}/imagify`,
       { image_name: newImageName },
     );
     return this.client._wrapWithPromise(rqst);
@@ -251,12 +254,12 @@ export class ComputeSession {
   /**
    * Get status of requested container commit on agent node (ongoing / finished / failed)
    *
-   * @param sessionName - name of the session
+   * @param sessionId - ID (UUID) of the session
    */
-  async getCommitSessionStatus(sessionName: string = ''): Promise<any> {
+  async getCommitSessionStatus(sessionId: string): Promise<any> {
     const rqst = this.client.newSignedRequest(
       'GET',
-      `/session/${sessionName}/commit`,
+      `/session/${sessionId}/commit`,
     );
     return this.client._wrapWithPromise(rqst);
   }

@@ -29,7 +29,6 @@ import {
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
-import BAISegmentedControlItemAstryx from '../astryx-bui/BAISegmentedControlItemAstryx';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
@@ -43,6 +42,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
+  BAISegmentedControlItem,
   BAIFlex,
   useEventNotStable,
   useUpdatableState,
@@ -213,7 +213,7 @@ const ClusterModeSegmented: React.FC<{
       {items.map((item) => (
         // FR-3531: the help affordance is a small view that trails the label,
         // not a leading `icon` — Astryx renders the `icon` slot first.
-        <BAISegmentedControlItemAstryx
+        <BAISegmentedControlItem
           key={item.value}
           value={item.value}
           label={

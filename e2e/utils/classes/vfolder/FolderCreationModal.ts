@@ -174,7 +174,7 @@ export class FolderCreationModal {
   async dismissOverlappingNotifications(): Promise<void> {
     // `BAINotificationStack` (to-astryx ticket 29 rewire) — each notice is
     // `[data-notification-key]` inside `[data-testid="bai-notification-stack"]`
-    // (`react/src/components/astryx-bui/BAINotificationStackAstryx.tsx`).
+    // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
     const notifications = this.page.locator(
       '[data-testid="bai-notification-stack"] [data-notification-key]',
     );

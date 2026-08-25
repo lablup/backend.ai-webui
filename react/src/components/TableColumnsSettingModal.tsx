@@ -8,7 +8,7 @@
 
  There are two column-settings surfaces in the app. Most tables use the one
  `BAITable` renders for its `tableSettings` prop
- (`BAITableAstryxSettingModal`): a `Dialog` with a title+subtitle header, an
+ (`BAITableSettingModal`): a `Dialog` with a title+subtitle header, an
  unlabelled search field, drag-to-reorder handles, locked required columns and
  Cancel/Apply. The five tables that predate that prop — `RoleNodes` (RBAC
  Management), `CustomizedImageList` (My Environments), `ImageList`,
@@ -41,7 +41,7 @@
  the same class of defect as Q-12, one narrower.
 */
 import {
-  BAITableAstryxSettingModal,
+  BAITableSettingModal,
   columnTitleToPlainText,
   renderColumnTitle,
   type BAIColumnsType,
@@ -81,7 +81,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   });
 
   return (
-    <BAITableAstryxSettingModal
+    <BAITableSettingModal
       open={open}
       columns={settingColumns}
       visibleColumnKeys={_.difference(

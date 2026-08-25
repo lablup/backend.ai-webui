@@ -11,10 +11,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import TermsOfServiceModal from './TermsOfServiceModal';
-import {
-  AstryxFormCheckbox,
-  AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+import { AstryxFormCheckbox, AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack } from '@astryxdesign/core/Stack';

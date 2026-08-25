@@ -317,16 +317,19 @@ describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)
       screen.queryByRole('button', { name: 'modelService.DeployAsService' }),
     ).not.toBeInTheDocument();
 
+    // `react-i18next` is mocked to identity above, so BUI labels render as
+    // raw keys here.
     await user.click(
-      await screen.findByRole('button', { name: 'More actions' }),
+      await screen.findByRole('button', {
+        name: 'comp:BAINameActionCell.MoreActions',
+      }),
     );
 
-    // The reason rides the menu row's own `description` slot: a disabled row
-    // swallows hover, so it has to be visible without one.
-    const deployItem = await screen.findByText('modelService.DeployAsService');
-    expect(
-      await screen.findByText('data.folders.CannotDeployFromAdminMenu'),
-    ).toBeInTheDocument();
+    // The reason is folded into the menu row's label ("title — reason"): a
+    // disabled row swallows hover, so it has to be visible without one.
+    const deployItem = await screen.findByText(
+      'modelService.DeployAsService — data.folders.CannotDeployFromAdminMenu',
+    );
 
     fireEvent.click(deployItem);
     expect(mockDeployModalOpen).not.toHaveBeenCalledWith(

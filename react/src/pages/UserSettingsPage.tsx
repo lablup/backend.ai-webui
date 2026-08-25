@@ -130,6 +130,8 @@ const UserPreferencesPage = () => {
     useBAISettingUserState('preserve_login');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
+  const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
+    useBAISettingUserState('experimental_custom_dashboard_panels');
   const [
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
@@ -470,6 +472,15 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: experimentalAIAgents,
           onChange: setExperimentalAIAgents,
+        },
+        {
+          'data-testid': 'items-experimental-custom-dashboard-panels',
+          type: 'checkbox',
+          title: t('userSettings.CustomDashboardPanels'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalCustomDashboard,
+          onChange: setExperimentalCustomDashboard,
         },
         {
           'data-testid': 'items-experimental-import-from-huggingface',

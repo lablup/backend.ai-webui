@@ -167,7 +167,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
             : record.execution?.imageId;
           if (!label) return '-';
           return (
-            <BAIText copyable style={{ wordBreak: 'break-all' }}>
+            <BAIText copyable ellipsis={{ tooltip: true }}>
               {label}
             </BAIText>
           );

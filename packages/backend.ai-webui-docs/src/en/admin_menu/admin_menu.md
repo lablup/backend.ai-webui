@@ -9,7 +9,6 @@ navTitle: Admin Features
 Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
-<!-- TODO: Re-capture admin_user_page.png to show the Admin Settings sidebar and the Users list. -->
 
 
 
@@ -999,12 +998,30 @@ which the session will be created once sufficient resources become available.
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
 
+The pending session list also shows each session's **Priority**, which orders the pending queue. To
+change it, click the **Settings** (gear) action on a session row, or select one or more pending
+sessions with the checkboxes and click the **Settings** button above the list. Either way, the
+**Session Settings** dialog opens; set **Priority** to a value between 0 and 100 and click **Save**. A
+message confirms that the session priority has been successfully updated. Priority can only be changed
+while a session is in the `PENDING` status.
+
+:::note
+The **Priority** column and the priority editing actions are shown only when the Backend.AI Manager is
+version 26.4.0 or later.
+:::
+
 On the **Sessions** tab, the property filter offers the following conditions:
 
 - **Project**: Choose the project from a searchable dropdown of the projects on this cluster. Because the
   project is picked from the list, you do not have to look up its identifier; the resulting filter tag
   shows the project's name.
 - **Session Name**, **Resource Group**, **Agent**, **Owner Email**: Narrow the list by text match.
+
+When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
+[Experimental features](#experimental-features) section), the **Sessions** tab shows a **View mode**
+control next to the refresh button that switches between **Table** and **Grid**. The grid displays one
+cell per session, colored by that session's live resource utilization. For a description of the grid's
+own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
 
 ## Fair share scheduler
 
@@ -1228,8 +1245,20 @@ The image list displays additional columns for more detailed image information:
 - **Version**: The version tag of the image.
 - **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
 
-You can select multiple uninstalled images and click the **Install Image** button to install them on
-available agent nodes in bulk. The confirmation dialog's own button reads **Install**.
+You can select multiple uninstalled images and click the **Install Image** button to install them in
+bulk. Installing an image enqueues a short-lived session that pulls the image, so the dialog asks
+where that session runs:
+
+- **Install Session Project**: The project the install session runs in. The session is created in this
+  project as your own session, so only projects you belong to are listed.
+- **Target Resource Group**: The resource group the image is pulled into. Only resource groups
+  accessible from the selected project are listed.
+
+Both fields are required, and the dialog's own button — which reads **Install** — stays disabled until
+you have chosen a project and a resource group. Images in your selection that are already installed
+are excluded from the request.
+
+![](../images/image_install_modal.png)
 
 You can change the minimum resource requirements for each image by clicking the
 **Edit** (pencil) action in the `Controls` panel, which opens the
@@ -1406,7 +1435,11 @@ You can narrow the list with the property filter, which supports **ID**, **Endpo
 **Schedulable**.
 
 Click an agent's ID to open the **Agent Info** drawer, which shows the exact resource usage for that
-node.
+node. The drawer has two tabs: **Resources**, which breaks the usage down per resource slot, and
+**Sessions**, which lists the compute sessions assigned to this agent so you can see what is running on
+the node before stopping or restarting it. On the **Sessions** tab, use the **Running** / **Finished**
+selector to switch between sessions that still occupy the node's resources and sessions that have
+already finished, and click a session name to open its detail view on the Admin Session page.
 
 ![](../images/detailed_agent_node_usage_information.png)
 
@@ -1795,7 +1828,7 @@ bar at the top of the page filters the list when you are looking for a specific 
 **Announcement**
 
 - **System announcement**: Click **Edit Announcement** to create or change the announcement banner shown
-  to every user at the top of the page. See the [System announcement](#system-announcement) section below.
+  to every user at the top of every page. See the [System announcement](#system-announcement) section below.
 
 :::note
 We will continue to add other settings needed for management, such as
@@ -1806,7 +1839,7 @@ removing unused images or registering periodic maintenance schedules.
 
 ### System announcement
 
-Superadmins can publish a short message that every user sees as a banner at the top of the page — for
+Superadmins can publish a short message that every user sees as a banner at the top of every page — for
 example, a planned maintenance window. The announcement is written in Markdown and is managed entirely
 from the WebUI, whether or not one has been published before.
 
@@ -1814,7 +1847,8 @@ Open the editor in either of two ways:
 
 - From the Maintenance page, click **Edit Announcement** in the **System announcement** row. This works
   even when no announcement exists yet, so it is the way to publish the first one.
-- From the announcement banner itself on the start page, when one is already published.
+- From the announcement banner itself, when one is already published. Because the banner sits at the top
+  of every page, a superadmin can open the editor from anywhere in the WebUI.
 
 ![](../images/announcement_edit_modal.png)
 

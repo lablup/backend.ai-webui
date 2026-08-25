@@ -51,7 +51,9 @@ const StartFromURLModal: React.FC<StartFromURLModalProps> = ({
   return (
     <BAIModal
       title={t('start.StartFromURL')}
-      width={800}
+      // The four import tabs lay out on one row and do not shrink; at 800 the
+      // strip needed 867px and the modal body became an x-scroller (FR-3598).
+      width={1000}
       footer={null}
       {...modalProps}
     >

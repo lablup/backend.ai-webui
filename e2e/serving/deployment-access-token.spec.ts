@@ -78,12 +78,8 @@ async function addProvisionedRevision(
   const dialog = page.getByRole('dialog', { name: /Add Revision/ });
   await expect(dialog).toBeVisible({ timeout: 20000 });
 
-  await selectRevisionModalOption(
-    page,
-    '#revisionPresetId',
-    fixtures.presetName,
-  );
-  await selectRevisionModalOption(page, '#modelFolderId', fixtures.folderName);
+  await selectRevisionModalOption(page, 'Preset', fixtures.presetName);
+  await selectRevisionModalOption(page, 'Model Folder', fixtures.folderName);
 
   await expect(
     dialog.getByRole('checkbox', { name: 'Apply immediately after adding' }),

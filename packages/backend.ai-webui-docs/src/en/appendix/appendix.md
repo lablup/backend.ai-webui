@@ -80,11 +80,11 @@ create a compute session.
 You can check the operation of the job scheduler in a simple way from the
 user WebUI. When the GPU host can allocate up to 2 fGPUs,
 let's create 3 compute sessions at the same time requesting
-allocation of 1 fGPU, respectively. In the Custom allocation section of the session launch
-dialog, there are GPU and Sessions sliders. If you specify a value greater than
-1 in Sessions and click the LAUNCH button, the number of sessions will be
-requested at the same time. Let's set the GPU and Sessions to 1 and 3,
-respectively. This is the situation that 3 sessions requesting a
+allocation of 1 fGPU, respectively. In the Environments & Resource Allocation
+step of the session launcher, set AI Accelerator to 1. Then, on the Confirm and
+Launch step, open the menu next to the Launch button and select Launch Multiple
+Sessions. Set Number of sessions to 3 and click Start, and the three sessions
+are requested at the same time. This is the situation that 3 sessions requesting a
 total of 3 fGPUs are created when only 2 fGPUs exist.
 
 ![](../images/session_launch_dialog_2_sessions.png)

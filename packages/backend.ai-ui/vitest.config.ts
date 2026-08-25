@@ -51,13 +51,16 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/__generated__/**'],
 
+    // CI-only transform cache — see comment in `react/vitest.config.ts`.
+    experimental: { fsModuleCache: !!process.env.CI },
+
     // Coverage settings — see comment in `react/vitest.config.ts`. The
     // `davelosert/vitest-coverage-report-action` GitHub Action consumes the
     // `json-summary` reporter to post a PR comment with line/branch/function/
     // statement coverage diffs.
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'json-summary', 'html'],
+      reporter: ['text', 'json', 'json-summary'],
       reportsDirectory: 'coverage',
       include: ['src/**/*.{ts,tsx}'],
       exclude: [

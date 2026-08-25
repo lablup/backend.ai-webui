@@ -5,12 +5,17 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { Overlay } from '@astryxdesign/core/Overlay';
 import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
+import {
+  BAIPopconfirm,
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+  BAIText,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -43,14 +48,14 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
       title={t('userSettings.SSHKeypairGeneration')}
       closeIcon={false}
       footer={[
-        <BAIPopconfirmAstryx
+        <BAIPopconfirm
           key="close"
           title={t('button.Confirm')}
           description={t('userSettings.ClearSSHKeypairInput')}
           onConfirm={onRequestClose}
         >
           <Button variant="secondary" label={t('button.Close')} />
-        </BAIPopconfirmAstryx>,
+        </BAIPopconfirm>,
       ]}
       {...baiModalProps}
     >

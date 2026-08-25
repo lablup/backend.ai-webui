@@ -19,6 +19,19 @@
 @import '@astryxdesign/lab/lab.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 
+/* FR-3580: Astryx recolours a Banner's whole subtree to its status hue —
+   `.astryx-banner.info` rebinds `--color-accent` to the info blue, which is
+   right for the banner's own prose but not for a control that is deliberately
+   brand-primary (the session notice's app launcher, drawn in the `content`
+   slot). Bank the nearest theme's accent, where no component-status scope can
+   reach it, and restore it on those controls only. */
+[data-astryx-theme] {
+  --bai-theme-accent: var(--color-accent);
+}
+.bai-accent-pinned {
+  --color-accent: var(--bai-theme-accent);
+}
+
 /* FR-3506: secondary buttons are outlined (theme `variant:secondary`). Inside a
    ButtonGroup the outline moves to the GROUP: per-member borders double at
    seams and leave half-open chips when a disabled member renders ghost. The

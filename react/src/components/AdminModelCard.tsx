@@ -35,7 +35,7 @@ import {
   BAILink,
   BAINameActionCell,
   BAISelectionLabel,
-  BAIStorageHostSelectAstryx,
+  BAIStorageHostSelect,
   BAITable,
   type BAITableSettings,
   BAIText,
@@ -296,7 +296,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       render: (projectId) => (
-        <BAIText copyable ellipsis style={{ maxWidth: 150 }}>
+        <BAIText
+          copyable
+          ellipsis={{ tooltip: true }}
+          style={{ maxWidth: 150 }}
+        >
           {projectId}
         </BAIText>
       ),
@@ -343,7 +347,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
                 renderInput: ({ onAddCondition }) => (
-                  <BAIStorageHostSelectAstryx
+                  <BAIStorageHostSelect
                     // The filter row already prints the property label.
                     label={t('import.StorageHost')}
                     isLabelHidden

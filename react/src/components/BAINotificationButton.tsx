@@ -6,11 +6,11 @@ import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import { useThemeMode } from '../hooks/useThemeMode';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
-import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { MediaTheme } from '@astryxdesign/core/theme';
+import { BAIBadgeCount } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -84,7 +84,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
             variant="ghost"`, which requires the accessible name antd let
             this button ship without (P8). The `Badge dot` overlay is
             MAPPING §3.8's NONE branch, already self-built once as
-            `BAIBadgeCountAstryx`; antd `color="red"` becomes
+            `BAIBadgeCount`; antd `color="red"` becomes
             `variant="error"` (the closed-enum equivalent). */}
         <IconButton
           // `data-astryx-media` IS `MediaTheme`'s whole mechanism, applied at
@@ -93,7 +93,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
           variant="ghost"
           label={t('notification.Notifications')}
           icon={
-            <BAIBadgeCountAstryx
+            <BAIBadgeCount
               hasDot={hasRunningBackgroundTask}
               variant="error"
               title={t('notification.Notifications')}
@@ -102,7 +102,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
                   declares its own `color`, so it intercepts inheritance before
                   the icon sees it. `MediaTheme` remaps the token above. */}
               <Bell size="1em" style={{ color: 'var(--color-icon-primary)' }} />
-            </BAIBadgeCountAstryx>
+            </BAIBadgeCount>
           }
           onClick={() => setIsOpenDrawer((v) => !v)}
           {...props}

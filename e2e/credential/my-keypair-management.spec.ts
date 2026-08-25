@@ -529,7 +529,7 @@ test.describe(
         await expect(nonMainRow).toBeVisible({ timeout: 10000 });
 
         // Click the Set as Main button. `MyKeypairManagementModal.tsx` wraps
-        // it in `BAIPopconfirmAstryx` (built on Astryx `Popover`, ticket 08
+        // it in `BAIPopconfirm` (built on Astryx `Popover`, ticket 08
         // gap component); the trigger is an `IconButton` with
         // `label={t('credential.SetAsMain')}`, so it's addressable by its
         // accessible name directly (no more "first non-dangerous button in
@@ -538,7 +538,7 @@ test.describe(
 
         // Verify Popconfirm appears. `Popover`'s content defaults to
         // `role="dialog"`, `aria-label={title}` — here "Set as Main"
-        // (`BAIPopconfirmAstryx.tsx`).
+        // (`BAIPopconfirm.tsx`).
         const visiblePopconfirm = page.getByRole('dialog', {
           name: 'Set as Main',
         });
@@ -766,7 +766,7 @@ test.describe(
         await expect(targetRow).toBeVisible();
 
         await expect(async () => {
-          // `MyKeypairManagementModal.tsx` wraps this in `BAIPopconfirmAstryx`;
+          // `MyKeypairManagementModal.tsx` wraps this in `BAIPopconfirm`;
           // the trigger is an `IconButton` with `label={t('credential.Restore')}`
           // = "Restore" (not antd's icon-derived "undo" aria-label).
           await targetRow

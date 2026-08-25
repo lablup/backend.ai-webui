@@ -40,8 +40,8 @@ import { theme } from '../../theme-shim';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import './BAITable.css';
-import BAITableAstryxSettingModal from './BAITableAstryxSettingModal';
 import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
+import BAITableSettingModal from './BAITableSettingModal';
 import type {
   BAIAnyObject,
   BAIColumnType,
@@ -115,6 +115,17 @@ const SELECTION_COLUMN_KEY = '__xds_selection';
  * overhangs its own cell (FR-3482 QA finding Q-14).
  */
 const SELECTION_COLUMN_WIDTH = 52;
+/**
+ * Width of the injected expand-chevron column, derived the same way as
+ * SELECTION_COLUMN_WIDTH: first-column inset + the 24px `size="sm"` IconButton
+ * + the 8px trailing cell pad. A flat 40 left the chevron's 24px hover pill
+ * ending exactly on the cell's right border edge, where the cell's
+ * `overflow: hidden` sheared its rounded corner flat (FR-3556).
+ */
+const EXPAND_COLUMN_WIDTH_FIRST = 56;
+/** Behind a selection column the chevron is no longer `:first-child`, so it
+ * gets the ordinary 8px lead-in instead of the 24px inset. */
+const EXPAND_COLUMN_WIDTH_AFTER_SELECTION = 40;
 /** Marker field placed on the synthetic detail rows. */
 const DETAIL_ROW_MARKER = '__bai_detail_for__';
 
@@ -722,7 +733,12 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       built.push({
         key: EXPAND_COLUMN_KEY,
         header: expandable?.columnTitle ?? '',
-        width: pixel(expandable?.columnWidth ?? 40),
+        width: pixel(
+          expandable?.columnWidth ??
+            (rowSelection
+              ? EXPAND_COLUMN_WIDTH_AFTER_SELECTION
+              : EXPAND_COLUMN_WIDTH_FIRST),
+        ),
         resizable: false,
         renderCell: (item) => {
           if (isDetailRow(item)) return null;
@@ -1350,7 +1366,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
 
       {tableSettings ? (
         <BAIUnmountAfterClose>
-          <BAITableAstryxSettingModal
+          <BAITableSettingModal
             open={isSettingModalOpen}
             columns={_.map(flatColumns, (flat) => ({
               key: flat.key,

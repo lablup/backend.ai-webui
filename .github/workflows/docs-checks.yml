@@ -19,11 +19,22 @@ name: docs-checks
 on:
   pull_request:
     paths:
+      # Image/PDF-only docs PRs (most of the trigger surface) carry nothing
+      # these text checks can read. Mixed md+png PRs still run — the
+      # include/exclude match is per-file. terminology.json stays in scope:
+      # this workflow is the only CI gate for the TERMINOLOGY.md sync check.
       - "packages/backend.ai-webui-docs/**"
+      - "!packages/backend.ai-webui-docs/**/*.png"
+      - "!packages/backend.ai-webui-docs/**/*.svg"
+      - "!packages/backend.ai-webui-docs/**/*.pdf"
       - ".github/workflows/docs-checks.yml"
 
 permissions:
   contents: read
+
+concurrency:
+  group: docs-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   docs-checks:
@@ -31,17 +42,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # pnpm must be installed before setup-node so that node's
-      # package-manager cache resolution (`pnpm store path`) works.
-      - uses: pnpm/action-setup@v5
-
-      - uses: actions/setup-node@v6.4.0
+      # The install is load-bearing: check-nav-titles.mjs imports `yaml`.
+      - uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install docs package dependencies
-        run: pnpm install --filter backend.ai-webui-docs --frozen-lockfile
+          install-args: "--filter backend.ai-webui-docs"
 
       - name: Terminology table in sync
         run: pnpm --filter backend.ai-webui-docs run check:terminology-md

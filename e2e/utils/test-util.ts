@@ -140,8 +140,12 @@ export async function login(
     .catch(() => {});
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
-  // Expand the endpoint section if it's not already visible
-  const endpointInput = page.getByLabel('Endpoint');
+  // Astryx Button exposes no aria-label — its accessible name is the visible text.
+  const loginButton = page.getByRole('button', { name: 'Login', exact: true });
+  // Expand the endpoint section if it's not already visible. Must be the role
+  // locator: getByLabel('Endpoint') also matches the 'Endpoint History' /
+  // 'About Endpoint' controls once the section is open.
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -161,17 +165,14 @@ export async function login(
   const maxAttempts = 3;
   const retryDelayMs = 5000;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    await page.getByLabel('Login', { exact: true }).click();
+    await loginButton.click();
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
         timeout: 30000,
       });
       return;
     } catch (error) {
-      const stillOnLoginForm = await page
-        .getByLabel('Login', { exact: true })
-        .isVisible()
-        .catch(() => false);
+      const stillOnLoginForm = await loginButton.isVisible().catch(() => false);
       if (!stillOnLoginForm) {
         // The login was accepted (the form is gone) and the app is just
         // booting slowly — keep waiting instead of re-submitting.
@@ -553,7 +554,18 @@ export async function verifyVFolder(
 ) {
   // Use navigateTo for reliable navigation regardless of current page state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: statusTab }).click();
+  // The Active/Trash tabs render a count Badge in their endContent when any
+  // folder exists, which joins the tab's accessible name ("Active 3") — so a
+  // whole-string name match fails exactly when there is something to clean
+  // up. Match on the label prefix instead (all tab sites below do the same).
+  // The Active/Trash tabs currently render as BUTTONS (not role=tab)
+  // whose accessible name is the label doubled plus the count Badge
+  // ("ActiveActive27") — accept either role, match the label prefix.
+  await page
+    .getByRole('tab', { name: new RegExp(`^${statusTab}`) })
+    .or(page.getByRole('button', { name: new RegExp(`^${statusTab}`) }))
+    .first()
+    .click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   const row = getVFolderRow(page, folderName);
@@ -618,7 +630,11 @@ export async function moveToTrashAndVerify(
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
   await selectPropertyFilter(page, 'Name', folderName);
 
   // Fail fast (with a bounded wait) if the folder is not in Active — for example,
@@ -681,7 +697,11 @@ export async function deleteForeverAndVerifyFromTrash(
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: 'Trash' }).click();
+  await page
+    .getByRole('tab', { name: /^Trash/ })
+    .or(page.getByRole('button', { name: /^Trash/ }))
+    .first()
+    .click();
 
   // Clear any existing filters before searching for the folder to delete
   await clearAllFilters(page);
@@ -929,7 +949,11 @@ export async function leaveSharedFolderAndVerify(
   folderName: string,
 ) {
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
 
@@ -970,7 +994,11 @@ export async function leaveSharedFolderAndVerify(
   // This mirrors how the other *AndVerify helpers force a clean reload before
   // asserting a row's disappearance.
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   await expect(
@@ -981,7 +1009,11 @@ export async function leaveSharedFolderAndVerify(
 
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Trash' }).click();
+  await page
+    .getByRole('tab', { name: /^Trash/ })
+    .or(page.getByRole('button', { name: /^Trash/ }))
+    .first()
+    .click();
 
   // Clear any existing filters before searching
   await clearAllFilters(page);

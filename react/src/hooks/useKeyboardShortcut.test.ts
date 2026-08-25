@@ -1,11 +1,14 @@
 import useKeyboardShortcut from './useKeyboardShortcut';
 import { renderHook } from '@testing-library/react';
+import { BAI_MODAL_OPEN_ATTRIBUTE } from 'backend.ai-ui';
 import type { Mock } from 'vitest';
 
-// Mock BUI's `useEventListener` (the ahooks replacement). `useKeyboardShortcut`
-// imports nothing else from `backend.ai-ui`, so a factory mock is enough and
-// keeps the whole component library out of this hook's test graph.
+// Factory mock keeps the whole component library out of this hook's test graph.
+// It has to restate `BAI_MODAL_OPEN_ATTRIBUTE`, so this suite cannot catch a
+// rename of the real constant — the gate on the DOM contract is
+// `BAIDialog.test.tsx`, which asserts the attribute the component emits.
 vi.mock('backend.ai-ui', () => ({
+  BAI_MODAL_OPEN_ATTRIBUTE: 'data-bai-modal-open',
   useEventListener: vi.fn((event, handler) => {
     // Store handler for testing
     (global as any).__eventListeners = (global as any).__eventListeners || {};
@@ -39,6 +42,18 @@ describe('useKeyboardShortcut', () => {
       handler(event);
     }
     return event;
+  };
+
+  const appendOpenModalRoot = (
+    tagName: string,
+    attributes: Record<string, string>,
+  ) => {
+    const root = document.createElement(tagName);
+    Object.entries(attributes).forEach(([name, value]) =>
+      root.setAttribute(name, value),
+    );
+    document.body.appendChild(root);
+    return root;
   };
 
   describe('Basic functionality', () => {
@@ -111,27 +126,34 @@ describe('useKeyboardShortcut', () => {
   });
 
   describe('Modal detection', () => {
-    // The hook detects an open modal as `dialog[open]`. It used to also accept
-    // `.ant-modal`, and these fixtures built a `<div class="ant-modal">`;
-    // nothing renders that class since antd was removed, and every modal in
-    // the app (`BAIModal`, the app-shim's imperative dialogs) is a native
-    // `<dialog>` opened with `showModal()`. Building the real element is also
-    // a stronger fixture than a class-named div — it can only pass if the
-    // selector matches what the app actually mounts.
-    const appendOpenDialog = () => {
-      const dialog = document.createElement('dialog');
-      dialog.setAttribute('open', '');
-      document.body.appendChild(dialog);
-      return dialog;
-    };
+    // Both roots the selector covers: a portal root (BAIDialog, the
+    // BAIModal launcher, and since FR-3585 the scrimmed drawer), and a native
+    // `<dialog>` that is actually modal (`aria-modal`).
+    it.each([
+      ['a portal modal', 'div', { [BAI_MODAL_OPEN_ATTRIBUTE]: '' }],
+      ['a modal native dialog', 'dialog', { open: '', 'aria-modal': 'true' }],
+    ] as const)(
+      'should not trigger handler when %s is open',
+      (_label, tagName, attributes) => {
+        appendOpenModalRoot(tagName, attributes);
 
-    it('should not trigger handler when modal is open', () => {
-      appendOpenDialog();
+        renderHook(() => useKeyboardShortcut(mockHandler));
+        triggerKeydown({ key: 'a' });
+
+        expect(mockHandler).not.toHaveBeenCalled();
+      },
+    );
+
+    // The non-scrim drawers open with `show()`: page interactive, shortcuts
+    // too — an open notification drawer must not eat its own `]` toggle
+    // (FR-3619).
+    it('should trigger handler when only a non-modal dialog is open', () => {
+      appendOpenModalRoot('dialog', { open: '' });
 
       renderHook(() => useKeyboardShortcut(mockHandler));
       triggerKeydown({ key: 'a' });
 
-      expect(mockHandler).not.toHaveBeenCalled();
+      expect(mockHandler).toHaveBeenCalledTimes(1);
     });
 
     it('should trigger handler when a dialog is present but closed', () => {
@@ -274,9 +296,7 @@ describe('useKeyboardShortcut', () => {
       document.body.appendChild(input);
       input.focus();
 
-      const modal = document.createElement('dialog');
-      modal.setAttribute('open', '');
-      document.body.appendChild(modal);
+      appendOpenModalRoot('div', { [BAI_MODAL_OPEN_ATTRIBUTE]: '' });
 
       renderHook(() => useKeyboardShortcut(mockHandler));
       triggerKeydown({ key: 'a' });

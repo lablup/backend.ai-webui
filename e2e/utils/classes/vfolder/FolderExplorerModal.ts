@@ -139,8 +139,13 @@ export class FolderExplorerModal {
   }
 
   async verifyFileVisible(fileName: string): Promise<void> {
+    // Two cells carry the file name per row (the selection checkbox cell,
+    // named "Select <file>", and the name cell, named "<file> Rename"), so a
+    // bare hasText filter strict-mode-violates. Anchor on the name cell via
+    // an accessible-name prefix match.
+    const escaped = fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     await expect(
-      this.modal.getByRole('cell').filter({ hasText: fileName }),
+      this.modal.getByRole('cell', { name: new RegExp(`^${escaped}`) }),
     ).toBeVisible({
       timeout: 30000,
     });

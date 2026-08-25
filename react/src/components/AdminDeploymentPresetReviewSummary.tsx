@@ -3,10 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { FormInstance } from '../form-engine';
+import { resolvesReadsVfolderConfigFiles } from '../helper/modelServiceCommand';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { theme } from '../theme-shim';
-import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
+import type {
+  AdminDeploymentPresetFormValue,
+  ModelServiceFormValue,
+} from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
@@ -25,6 +29,7 @@ import {
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleX } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,18 +42,34 @@ import { useTranslation } from 'react-i18next';
 // and is DROPPED everywhere below — the Astryx default density is the design.
 
 const BASIC_INFO_FIELDS = ['name', 'runtimeVariantId', 'imageId'] as const;
-const RESOURCES_FIELDS = ['cpu', 'mem', 'clusterMode', 'clusterSize'] as const;
+const RESOURCES_FIELDS = [
+  'cpu',
+  'mem',
+  'clusterMode',
+  'clusterSize',
+  'resourceOpts',
+] as const;
 const DEPLOYMENT_FIELDS = ['replicaCount'] as const;
+// `environ` and `resourceOpts` are Form.Lists whose rows carry their own
+// required rules, so they report errors under the list's own name.
 const STEP2_FIELDS = [
   'startupCommand',
   'bootstrapScript',
   'modelDefinition',
+  'environ',
 ] as const;
 
 interface PresetReviewSummaryProps {
   form: FormInstance<AdminDeploymentPresetFormValue>;
   onGoToStep: (index: number) => void;
-  runtimeVariants: ReadonlyArray<{ id: string; name: string }>;
+  runtimeVariants: ReadonlyArray<{
+    id: string;
+    name: string;
+    // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
+    // undefined; `resolvesReadsVfolderConfigFiles` falls back to the legacy
+    // `name === 'custom'` heuristic.
+    readsVfolderConfigFiles?: boolean | null;
+  }>;
   errorFieldNames: string[];
   /** Touched, non-default runtime-variant preset values (label + value). */
   runtimeParamRows?: ReadonlyArray<{
@@ -67,7 +88,18 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  /**
+   * FR-3481: mirrors the input form's placement of Service
+   * Configuration/Health Check/Pre-Start Actions — under Basic Info when
+   * true (managers that can submit them independently of Model Definition),
+   * nested under Model & Execution's Model Definition fields when false
+   * (legacy managers, where they can only be submitted alongside a real
+   * name/modelPath).
+   */
+  const supportsNullableModelDefinition = baiClient.supports(
+    'preset-model-config-type',
+  );
   // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
   // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
@@ -84,9 +116,18 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   );
   const step2HasError = STEP2_FIELDS.some((f) => errorFieldNames.includes(f));
 
-  const runtimeName =
-    runtimeVariants.find((r) => toLocalId(r.id) === values.runtimeVariantId)
-      ?.name ?? values.runtimeVariantId;
+  const selectedRuntimeVariant = runtimeVariants.find(
+    (r) => toLocalId(r.id) === values.runtimeVariantId,
+  );
+  const runtimeName = selectedRuntimeVariant?.name ?? values.runtimeVariantId;
+  // FR-3481 review-parity fix: the Shell/Command/Port rows must only show
+  // when the selected variant actually reads vfolder config files — the
+  // form store preserves stale values after switching away from a
+  // config-reading variant, but buildModelDefinitionInput() omits them from
+  // the submit payload in that case, so Review must match.
+  const readsVfolderConfigFiles = resolvesReadsVfolderConfigFiles(
+    selectedRuntimeVariant,
+  );
 
   const editLink = (stepIndex: number, cardId: string) => (
     <Button
@@ -104,18 +145,143 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
     />
   );
 
+  // Shared between the two render sites below (Basic Info, on managers that
+  // can submit these independently of Model Definition; nested under Model &
+  // Execution's Model Definition rows otherwise) — see
+  // `supportsNullableModelDefinition`, which decides which site calls this.
+  const renderServiceConfigSummaryFields = (
+    svc: ModelServiceFormValue | undefined,
+    readsVfolderConfigFiles: boolean,
+  ) => (
+    <>
+      {/* Shell/Command/Port are only relevant when the selected variant
+          reads vfolder config files — the form store preserves stale
+          values after switching away from a config-reading variant, but
+          the submit payload omits them in that case (readsVfolderConfigFiles
+          in buildModelDefinitionInput, AdminDeploymentPresetSettingPage.tsx),
+          so Review must match. */}
+      {readsVfolderConfigFiles && (
+        <>
+          {/* Exec mode sends `shell: null` regardless of what's typed
+              in the (now-hidden) Shell input — resolveCommandShell()
+              discards it. The field's stale value otherwise lingers in
+              the form store after switching Execution away from
+              Shell, so gate the display on the mode actually being
+              submitted, not just on the raw value being present. */}
+          {svc?.shell && svc?.execution !== 'exec' && (
+            <MetadataListItem label={t('modelService.Shell')}>
+              <Code>{svc.shell}</Code>
+            </MetadataListItem>
+          )}
+          {svc?.startCommand && (
+            <MetadataListItem label={t('modelService.Command')}>
+              <SourceCodeView language="shell">
+                {svc.startCommand}
+              </SourceCodeView>
+            </MetadataListItem>
+          )}
+          {svc?.port != null && (
+            <MetadataListItem label={t('modelService.Port')}>
+              {svc.port}
+            </MetadataListItem>
+          )}
+        </>
+      )}
+      <MetadataListItem
+        label={t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
+      >
+        {svc?.enableHealthCheck ? t('general.Enabled') : t('general.Disabled')}
+      </MetadataListItem>
+      {svc?.enableHealthCheck && svc?.healthCheck && (
+        <>
+          {svc.healthCheck.path && (
+            <MetadataListItem
+              label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
+            >
+              <Code>{svc.healthCheck.path}</Code>
+            </MetadataListItem>
+          )}
+          {svc.healthCheck.interval != null && (
+            <MetadataListItem
+              label={t('adminDeploymentPreset.modelDef.HealthCheckInterval')}
+            >
+              {svc.healthCheck.interval}
+            </MetadataListItem>
+          )}
+          {svc.healthCheck.maxRetries != null && (
+            <MetadataListItem
+              label={t('adminDeploymentPreset.modelDef.HealthCheckMaxRetries')}
+            >
+              {svc.healthCheck.maxRetries}
+            </MetadataListItem>
+          )}
+          {svc.healthCheck.maxWaitTime != null && (
+            <MetadataListItem
+              label={t('adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime')}
+            >
+              {svc.healthCheck.maxWaitTime}
+            </MetadataListItem>
+          )}
+          {svc.healthCheck.expectedStatusCode != null && (
+            <MetadataListItem
+              label={t(
+                'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+              )}
+            >
+              {svc.healthCheck.expectedStatusCode}
+            </MetadataListItem>
+          )}
+          {svc.healthCheck.initialDelay != null && (
+            <MetadataListItem
+              label={t(
+                'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+              )}
+            >
+              {svc.healthCheck.initialDelay}
+            </MetadataListItem>
+          )}
+        </>
+      )}
+      {(svc?.preStartActions?.length ?? 0) > 0 && (
+        <MetadataListItem label={t('modelService.PreStartActions')}>
+          <BAIFlex direction="column" align="start" gap="xxs">
+            {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
+              <Code key={ai} style={{ display: 'block' }}>
+                {a?.action}: {a?.args || '{}'}
+              </Code>
+            ))}
+          </BAIFlex>
+        </MetadataListItem>
+      )}
+    </>
+  );
+
+  // `status="error"` only tints the border. These cards pass a custom `extra`,
+  // so they never reach BAICard's own error glyph — reuse its class hook.
+  const extraSlot = (stepIndex: number, cardId: string, hasError: boolean) =>
+    hasError ? (
+      <BAIFlex gap="xs" align="center" className="bai-card-extra--error">
+        <CircleX size="1em" aria-label={t('dialog.error.Error')} />
+        {editLink(stepIndex, cardId)}
+      </BAIFlex>
+    ) : (
+      editLink(stepIndex, cardId)
+    );
+
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
       {/* Basic Info */}
       <BAICard
         size="small"
-        className={basicInfoHasError ? 'bai-card-error' : ''}
-        style={
-          basicInfoHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={basicInfoHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.BasicInfo')}
-        extra={editLink(0, 'preset-form-card-basic')}
+        extra={extraSlot(0, 'preset-form-card-basic', basicInfoHasError)}
       >
+        {/* Field order below mirrors the Basic Info step's actual input
+            order (name → description → runtime → runtime params → service
+            configuration → health check → pre-start actions → image), not
+            the order fields were originally added to this summary — see
+            AdminDeploymentPresetSettingPageContent.tsx's Basic Info card. */}
         <MetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.Name')}>
             <Text weight="semibold">{values.name || '-'}</Text>
@@ -128,15 +294,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
           <MetadataListItem label={t('adminDeploymentPreset.Runtime')}>
             {runtimeName || '-'}
           </MetadataListItem>
-          <MetadataListItem label={t('adminDeploymentPreset.Image')}>
-            {imageReference ? (
-              <BAIText code copyable style={{ wordBreak: 'break-all' }}>
-                {imageReference}
-              </BAIText>
-            ) : (
-              '-'
-            )}
-          </MetadataListItem>
           {runtimeParamRows.length > 0 && (
             <MetadataListItem label={t('modelService.RuntimeParamTitle')}>
               <BAIFlex direction="column" align="start" gap="xxs">
@@ -148,18 +305,34 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               </BAIFlex>
             </MetadataListItem>
           )}
+          {/* Service Configuration fields — Basic Info only on managers that
+              can submit them independently of Model Definition
+              (`supportsNullableModelDefinition`). Legacy managers show these
+              nested under Model & Execution's Model Definition fields
+              instead (below), mirroring the input form (FR-3481). */}
+          {supportsNullableModelDefinition &&
+            renderServiceConfigSummaryFields(
+              values.modelDefinition?.models?.[0]?.service,
+              readsVfolderConfigFiles,
+            )}
+          <MetadataListItem label={t('adminDeploymentPreset.Image')}>
+            {imageReference ? (
+              <BAIText code copyable style={{ wordBreak: 'break-all' }}>
+                {imageReference}
+              </BAIText>
+            ) : (
+              '-'
+            )}
+          </MetadataListItem>
         </MetadataList>
       </BAICard>
 
       {/* Resources */}
       <BAICard
         size="small"
-        className={resourcesHasError ? 'bai-card-error' : ''}
-        style={
-          resourcesHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={resourcesHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.Resources')}
-        extra={editLink(0, 'preset-form-card-resources')}
+        extra={extraSlot(0, 'preset-form-card-resources', resourcesHasError)}
       >
         <MetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.ResourceSlots')}>
@@ -210,14 +383,14 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Deployment */}
       <BAICard
         size="small"
-        className={deploymentHasError ? 'bai-card-error' : ''}
-        style={
-          deploymentHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={deploymentHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.Deployment')}
-        extra={editLink(0, 'preset-form-card-deployment')}
+        extra={extraSlot(0, 'preset-form-card-deployment', deploymentHasError)}
       >
-        <MetadataList columns={2}>
+        {/* Multi-column MetadataList defaults its labels to position: top,
+            which reads as a different (vertical) layout from every other
+            card here — pin the inline label placement. */}
+        <MetadataList columns={2} label={{ position: 'start' }}>
           <MetadataListItem label={t('adminDeploymentPreset.Replicas')}>
             {values.replicaCount ?? '-'}
           </MetadataListItem>
@@ -239,10 +412,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Model & Execution */}
       <BAICard
         size="small"
-        className={step2HasError ? 'bai-card-error' : ''}
-        style={step2HasError ? { borderColor: token.colorError } : undefined}
+        status={step2HasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.ModelAndExecution')}
-        extra={editLink(1, 'preset-form-card-model')}
+        extra={extraSlot(1, 'preset-form-card-model', step2HasError)}
       >
         <MetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.StartupCommand')}>
@@ -277,21 +449,24 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               '-'
             )}
           </MetadataListItem>
-        </MetadataList>
-        {values.modelDefinition?.enabled &&
-        values.modelDefinition?.models?.length ? (
-          <BAIFlex
-            direction="column"
-            align="stretch"
-            gap="xs"
-            style={{ marginTop: token.marginSM }}
-          >
-            <Text type="supporting">
-              {t('adminDeploymentPreset.ModelDefinition')}
-            </Text>
-            {values.modelDefinition.models.filter(Boolean).map((m, i) => (
-              <BAICard key={i} size="small" title={m.name}>
-                <MetadataList columns={1}>
+          {/* Model Definition — flat rows like every other field here,
+              rather than a separate card titled by the model name (FR-3481).
+              Legacy managers additionally show Service
+              Configuration/Health Check/Pre-Start Actions here (mirroring
+              the input form's nesting), since those fields can only be
+              submitted alongside a real name/modelPath pre-BA-7210. */}
+          {values.modelDefinition?.enabled &&
+            (() => {
+              const m = values.modelDefinition.models?.[0];
+              if (!m) return null;
+              const svc = m.service;
+              return (
+                <>
+                  <MetadataListItem
+                    label={t('adminDeploymentPreset.modelDef.ModelName')}
+                  >
+                    {m.name || '-'}
+                  </MetadataListItem>
                   <MetadataListItem
                     label={t('adminDeploymentPreset.modelDef.ModelPath')}
                   >
@@ -299,106 +474,11 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.modelPath || '-'}
                     </Code>
                   </MetadataListItem>
-                  {m.service?.port != null && (
-                    <MetadataListItem
-                      label={t('adminDeploymentPreset.modelDef.Port')}
-                    >
-                      {m.service.port}
-                    </MetadataListItem>
-                  )}
-                  {/* `shell` is not surfaced in this form (no-op on the list
-                      `startCommand` path); see AdminDeploymentPresetModelConfigItem. */}
-                  {m.service?.startCommand && (
-                    <MetadataListItem
-                      label={t('adminDeploymentPreset.modelDef.StartCommand')}
-                    >
-                      <SourceCodeView language="shell">
-                        {m.service.startCommand}
-                      </SourceCodeView>
-                    </MetadataListItem>
-                  )}
-                  {(m.service?.preStartActions?.length ?? 0) > 0 && (
-                    <MetadataListItem
-                      label={t(
-                        'adminDeploymentPreset.modelDef.PreStartActions',
-                      )}
-                    >
-                      {m.service?.preStartActions
-                        ?.filter(Boolean)
-                        .map((a, ai) => (
-                          <Code key={ai} style={{ display: 'block' }}>
-                            {a?.action}
-                          </Code>
-                        ))}
-                    </MetadataListItem>
-                  )}
-                  <MetadataListItem
-                    label={t(
-                      'adminDeploymentPreset.modelDef.EnableHealthCheck',
+                  {!supportsNullableModelDefinition &&
+                    renderServiceConfigSummaryFields(
+                      svc,
+                      readsVfolderConfigFiles,
                     )}
-                  >
-                    {m.service?.enableHealthCheck
-                      ? t('general.Enabled')
-                      : t('general.Disabled')}
-                  </MetadataListItem>
-                  {m.service?.enableHealthCheck && (
-                    <>
-                      {m.service.healthCheck?.path && (
-                        <MetadataListItem
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckPath',
-                          )}
-                        >
-                          <Code>{m.service.healthCheck.path}</Code>
-                        </MetadataListItem>
-                      )}
-                      {m.service.healthCheck?.interval != null && (
-                        <MetadataListItem
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                          )}
-                        >
-                          {m.service.healthCheck.interval}
-                        </MetadataListItem>
-                      )}
-                      {m.service.healthCheck?.maxRetries != null && (
-                        <MetadataListItem
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                          )}
-                        >
-                          {m.service.healthCheck.maxRetries}
-                        </MetadataListItem>
-                      )}
-                      {m.service.healthCheck?.maxWaitTime != null && (
-                        <MetadataListItem
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                          )}
-                        >
-                          {m.service.healthCheck.maxWaitTime}
-                        </MetadataListItem>
-                      )}
-                      {m.service.healthCheck?.expectedStatusCode != null && (
-                        <MetadataListItem
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                          )}
-                        >
-                          {m.service.healthCheck.expectedStatusCode}
-                        </MetadataListItem>
-                      )}
-                      {m.service.healthCheck?.initialDelay != null && (
-                        <MetadataListItem
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                          )}
-                        >
-                          {m.service.healthCheck.initialDelay}
-                        </MetadataListItem>
-                      )}
-                    </>
-                  )}
                   {m.metadata?.title && (
                     <MetadataListItem
                       label={t('adminDeploymentPreset.modelDef.Title')}
@@ -418,6 +498,13 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       label={t('adminDeploymentPreset.modelDef.Version')}
                     >
                       {m.metadata.version}
+                    </MetadataListItem>
+                  )}
+                  {m.metadata?.license && (
+                    <MetadataListItem
+                      label={t('adminDeploymentPreset.modelDef.License')}
+                    >
+                      {m.metadata.license}
                     </MetadataListItem>
                   )}
                   {m.metadata?.description && (
@@ -478,18 +565,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       </HStack>
                     </MetadataListItem>
                   )}
-                  {m.metadata?.license && (
-                    <MetadataListItem
-                      label={t('adminDeploymentPreset.modelDef.License')}
-                    >
-                      {m.metadata.license}
-                    </MetadataListItem>
-                  )}
-                </MetadataList>
-              </BAICard>
-            ))}
-          </BAIFlex>
-        ) : null}
+                </>
+              );
+            })()}
+        </MetadataList>
       </BAICard>
     </BAIFlex>
   );

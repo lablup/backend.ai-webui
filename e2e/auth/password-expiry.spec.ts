@@ -3,8 +3,8 @@
 // When a user's password has expired, the backend responds to POST /server/login with:
 //   { authenticated: false, data: { details: "Password expired on ..." } }
 //
-// The app must display the ResetPasswordRequiredInline modal (zIndex 1002) without
-// it being blocked by the login modal's mask or wrapper.
+// The app must display the ResetPasswordRequiredInline modal without it being
+// blocked by the login modal's mask or wrapper.
 //
 // Mock strategy:
 //   - POST /server/login → password-expired response (mocked in beforeEach)
@@ -58,7 +58,7 @@ async function fillLoginForm(page: Page): Promise<void> {
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
 
-  const endpointInput = page.getByLabel('Endpoint');
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -71,7 +71,7 @@ async function fillLoginForm(page: Page): Promise<void> {
  */
 async function triggerPasswordExpiryModal(page: Page): Promise<void> {
   await fillLoginForm(page);
-  await page.getByLabel('Login', { exact: true }).click();
+  await page.getByRole('button', { name: 'Login', exact: true }).click();
   await expect(page.getByText('Please change your password.')).toBeVisible({
     timeout: 10_000,
   });
@@ -291,7 +291,7 @@ test.describe('real account password change flow', () => {
       });
       await page.getByLabel('Email or Username').fill(USER_EMAIL);
       await page.getByLabel('Password').fill(ORIGINAL_PASSWORD);
-      const endpointInput = page.getByLabel('Endpoint');
+      const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
       if (
         !(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))
       ) {
@@ -317,7 +317,7 @@ test.describe('real account password change flow', () => {
         }
       });
 
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // ── Password change modal appears ──
       await expect(page.getByText('Please change your password.')).toBeVisible({

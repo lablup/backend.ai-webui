@@ -94,7 +94,7 @@ Please be cautious as this will delete all entered content.
 
 ## Clear chat history
 
-Clicking the `more` button will reveal the `Clear chat` option.
+Clicking the `more` button will reveal the `Clear Chat` option.
 By selecting this, users will erase all chat history associated with the card,
 although the card session itself will remain active.
 
@@ -104,8 +104,8 @@ although the card session itself will remain active.
 
 ## Synchronize input
 
-The `Sync Input` button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
-Enabling 'Sync input' means that pressing `Enter` or clicking the `Send` button on
+The `Sync chat input` button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
+Enabling 'Sync chat input' means that pressing `Enter` or clicking the `Send` button on
 any card will submit the input from the card users are currently working on.
 This functionality is beneficial for comparing the outputs of various models using identical input data.
 

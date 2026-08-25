@@ -110,6 +110,7 @@ const DeploymentRevisionDetail: React.FC<{
           vfolderId
           mountDestination
           definitionPath
+          subpath @since(version: "26.4.4")
           vfolder {
             id
             name
@@ -138,6 +139,7 @@ const DeploymentRevisionDetail: React.FC<{
             name
             modelPath
             service {
+              command @since(version: "26.7.0")
               startCommand
               shell
               port
@@ -351,6 +353,11 @@ const DeploymentRevisionDetail: React.FC<{
           {mountConfig.mountDestination && (
             <Text color="secondary">{mountConfig.mountDestination}</Text>
           )}
+          {mountConfig.subpath && (
+            <Text color="secondary">
+              {`${t('modelService.Subpath')}: ${mountConfig.subpath}`}
+            </Text>
+          )}
         </BAIFlex>
       ) : mountConfig?.vfolderId ? (
         <Text color="secondary">{mountConfig.vfolderId}</Text>
@@ -494,22 +501,25 @@ const DeploymentRevisionDetail: React.FC<{
             {
               key: `model-start-command-${idx}`,
               label: `${prefix}${t('modelService.StartCommand')}`,
-              children: model.service.startCommand ? (
-                <SourceCodeView language="shell">
-                  {/* Use the same shell-quoting as the Add Revision form's
-                      prefill (see DeploymentAddRevisionModal), so a token
-                      list with whitespace or shell-significant chars
-                      round-trips to a valid shell command instead of being
-                      flattened by a plain `.join(' ')`. */}
-                  {Array.isArray(model.service.startCommand)
-                    ? formatShellCommand(model.service.startCommand)
-                    : typeof model.service.startCommand === 'string'
-                      ? model.service.startCommand
-                      : JSON.stringify(model.service.startCommand)}
-                </SourceCodeView>
-              ) : (
-                renderFallback()
-              ),
+              children:
+                model.service.command || model.service.startCommand ? (
+                  <SourceCodeView language="shell">
+                    {/* Prefer the 26.7.0 single-string `command` — shown
+                        verbatim so quotes and shell syntax are preserved.
+                        Fall back to the deprecated token list, joined with
+                        shell-quoting so it round-trips instead of being
+                        flattened by a plain `.join(' ')`. */}
+                    {model.service.command
+                      ? model.service.command
+                      : Array.isArray(model.service.startCommand)
+                        ? formatShellCommand(model.service.startCommand)
+                        : typeof model.service.startCommand === 'string'
+                          ? model.service.startCommand
+                          : JSON.stringify(model.service.startCommand)}
+                  </SourceCodeView>
+                ) : (
+                  renderFallback()
+                ),
             },
             {
               key: `model-port-${idx}`,

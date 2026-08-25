@@ -6,10 +6,13 @@ import { RestoreVFolderModalV2Fragment$key } from '../__generated__/RestoreVFold
 import { RestoreVFolderModalV2Mutation } from '../__generated__/RestoreVFolderModalV2Mutation.graphql';
 import { message } from '../app-shim';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Text } from '@astryxdesign/core/Text';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  type BAIModalProps,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,9 +86,10 @@ const RestoreVFolderModalV2: React.FC<RestoreVFolderModalV2Props> = ({
         if (!next) onRequestClose?.(false);
       }}
       title={t('data.folders.Restore')}
-      actionLabel={t('data.folders.Restore')}
-      isActionLoading={isRestoring}
-      onAction={() => {
+      maskClosable={false}
+      okText={t('data.folders.Restore')}
+      confirmLoading={isRestoring}
+      onOk={() => {
         const promises = _.map(vfolders, (vfolder) =>
           restoreSingle(vfolder.id).catch((error) => {
             upsertNotification({

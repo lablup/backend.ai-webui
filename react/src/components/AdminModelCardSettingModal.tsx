@@ -18,7 +18,7 @@ import {
   AstryxFormTextArea,
   AstryxFormTagsInput,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
@@ -28,8 +28,8 @@ import {
   BAIFlex,
   BAIModal,
   type BAIModalProps,
-  BAIVFolderSelectAstryx,
-  BAIVFolderSelectAstryxRef,
+  BAIVFolderSelect,
+  BAIVFolderSelectRef,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -78,7 +78,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<FormInputType>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
   const currentDomain = useCurrentDomainValue();
@@ -369,7 +369,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                         },
                       ]}
                     >
-                      <BAIVFolderSelectAstryx
+                      <BAIVFolderSelect
                         ref={vfolderSelectRef}
                         label={t('adminModelCard.ModelStorageFolder')}
                         isLabelHidden

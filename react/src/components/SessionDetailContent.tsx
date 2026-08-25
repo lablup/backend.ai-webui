@@ -20,6 +20,7 @@ import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
 import EditableSessionName from './ComputeSessionNodeItems/EditableSessionName';
+import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
 import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionIdleChecks, {
   IdleChecks,
@@ -263,6 +264,7 @@ const SessionDetailContent: React.FC<{
         ...MountedVFolderLinksFragment
         ...BAISessionAgentIdsFragment
         ...BAISessionClusterModeFragment
+        ...SessionAccessKeyFragment
       }
     `,
     (internalLoadedSession as SessionDetailContentFragment$key) || sessionFrgmt,
@@ -402,6 +404,9 @@ const SessionDetailContent: React.FC<{
               )}
             </MetadataListItem>
           )}
+          <MetadataListItem label={t('general.AccessKey')}>
+            <SessionAccessKey sessionFrgmt={session} copyable />
+          </MetadataListItem>
           <MetadataListItem label={t('session.Status')}>
             <BAIFlex>
               <SessionStatusTag

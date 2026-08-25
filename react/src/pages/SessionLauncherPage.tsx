@@ -34,7 +34,6 @@ import SessionTemplateModal from '../components/SessionTemplateModal';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
-import BAIPopconfirmAstryx from '../components/astryx-bui/BAIPopconfirmAstryx';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -79,6 +78,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { Step, Stepper } from '@astryxdesign/lab';
 import * as stylex from '@stylexjs/stylex';
 import {
+  BAIPopconfirm,
   BAIFlex,
   BAIIntervalView,
   BAIResourceNumberWithIcon,
@@ -1378,9 +1378,9 @@ const SessionLauncherPage = () => {
                 <BAIFlex direction="row" justify="between">
                   <BAIFlex gap={'sm'}>
                     {/* Reversible action -> anchored one-click confirm
-                        (BAIPopconfirmAstryx, gap component 08); the typed
+                        (BAIPopconfirm, gap component 08); the typed
                         confirm modal stays reserved for irreversible flows. */}
-                    <BAIPopconfirmAstryx
+                    <BAIPopconfirm
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
                       onConfirm={() => {
@@ -1407,7 +1407,7 @@ const SessionLauncherPage = () => {
                           enum (P5); the danger signal moves to the confirm
                           popover. */}
                       <Button variant="ghost" label={t('button.Reset')} />
-                    </BAIPopconfirmAstryx>
+                    </BAIPopconfirm>
                     {/* {currentStep === steps.length - 1 && (
                       <Button
                         icon={<SaveOutlined />}

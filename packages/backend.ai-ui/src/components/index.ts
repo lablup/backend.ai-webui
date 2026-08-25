@@ -117,6 +117,10 @@ export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnit
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIAppShell } from './BAIAppShell';
+export type { BAIAppShellProps, BAIAppShellDrawer } from './BAIAppShell';
+export { default as BAIOverlayScrollbar } from './BAIOverlayScrollbar';
+export type { BAIOverlayScrollbarProps } from './BAIOverlayScrollbar';
 export { default as BAIColorPicker, toHexColor } from './BAIColorPicker';
 export type { BAIColorPickerProps } from './BAIColorPicker';
 export { default as BAIListAlert } from './BAIListAlert';
@@ -208,6 +212,34 @@ export type {
 } from './BAIResourceUnitGrid';
 export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
 export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
+export { default as BAISegmentedControlItem } from './BAISegmentedControlItem';
+export type { BAISegmentedControlItemProps } from './BAISegmentedControlItem';
+export { default as BAIPopconfirm } from './BAIPopconfirm';
+export type { BAIPopconfirmProps } from './BAIPopconfirm';
+export { default as BAIBadgeCount } from './BAIBadgeCount';
+export type { BAIBadgeCountProps } from './BAIBadgeCount';
+export { default as BAINotificationStack } from './BAINotificationStack';
+export type {
+  BAINotificationStackProps,
+  BAINotificationStackItem,
+} from './BAINotificationStack';
+export { toBAINotificationStackItems } from './BAINotificationStackAdapter';
+export type {
+  BAINotificationSource,
+  ToBAINotificationStackItemsOptions,
+} from './BAINotificationStackAdapter';
+export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export type { BAIVFolderDeleteButtonProps } from './BAIVFolderDeleteButton';
+export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
+export type { BAIVFolderDeleteButtonV2Props } from './BAIVFolderDeleteButtonV2';
+export { default as BAIDrawer } from './BAIDrawer';
+export type { BAIDrawerProps } from './BAIDrawer';
+export { default as BAIDialog } from './BAIDialog';
+export type { BAIDialogProps } from './BAIDialog';
+export { default as BAIAlertDialog } from './BAIAlertDialog';
+export type { BAIAlertDialogProps } from './BAIAlertDialog';
+// `react/`'s `BAIDrawerPortal` joins this stack — one ladder for both (FR-3585).
+export { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

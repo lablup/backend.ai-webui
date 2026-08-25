@@ -24,8 +24,8 @@ import { Text } from '@astryxdesign/core/Text';
 import {
   BAISkeleton,
   BAIFlex,
-  BAIVFolderSelectAstryx,
-  BAIVFolderSelectAstryxRef,
+  BAIVFolderSelect,
+  BAIVFolderSelectRef,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -44,7 +44,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  * Form item for selecting vfolders with mount path configuration.
  * Expects parent form to have fields: mount_ids (string[]), mount_id_map (Record<string, string>)
  *
- * mount_ids stores global IDs (from BAIVFolderSelectAstryx).
+ * mount_ids stores global IDs (from BAIVFolderSelect).
  * mount_id_map stores {localId: mountPath} — keys are local UUIDs (via toLocalId)
  * to match the submit logic in ServiceLauncherPageContent.
  */
@@ -57,7 +57,7 @@ interface VFolderMountFormItemProps {
 
 /**
  * Tracks folder name by global ID so we can display names in the mount path list.
- * Fed exclusively by `BAIVFolderSelectAstryx.onResolvedNamesChange` (P3C-3):
+ * Fed exclusively by `BAIVFolderSelect.onResolvedNamesChange` (P3C-3):
  * the Astryx sibling's `onChange` carries no option argument, and its
  * value-resolution query already emits the id→name map for newly selected keys
  * as well as pre-existing ones.
@@ -76,7 +76,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
   const currentProject = useCurrentProjectValue();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
-  const vFolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
+  const vFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
   const [folderNameMap, setFolderNameMap] = useState<FolderNameMap>({});
 
   const getDefaultPath = useCallback(
@@ -123,7 +123,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
     <>
       <Form.Item name={'mount_ids'} label={label}>
         <Suspense fallback={<BAISkeleton variant="input" />}>
-          <BAIVFolderSelectAstryx
+          <BAIVFolderSelect
             ref={vFolderSelectRef}
             label={t('session.launcher.FolderToMount')}
             isLabelHidden
