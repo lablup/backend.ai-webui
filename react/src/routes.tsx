@@ -8,7 +8,6 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
-import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
 import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
@@ -38,8 +37,8 @@ import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
-import { toProjectContext } from './types/projectContext';
 import { theme } from './theme-shim';
+import { toProjectContext } from './types/projectContext';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
@@ -412,7 +411,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           useSuspendedBackendaiClient();
           return (
-            <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
               <ChatPage />
             </Suspense>
           );
