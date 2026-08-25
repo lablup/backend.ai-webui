@@ -53,6 +53,8 @@ export interface BAIQuestionIconWithTooltipProps {
   style?: CSSProperties;
   className?: string;
   iconProps?: React.ComponentProps<typeof CircleHelp>;
+  /** See BAIIconWithTooltip — `false` for triggers nested in interactive elements. */
+  focusable?: boolean;
 }
 
 const BAIQuestionIconWithTooltip = ({
@@ -64,6 +66,7 @@ const BAIQuestionIconWithTooltip = ({
   style,
   className,
   iconProps,
+  focusable,
 }: BAIQuestionIconWithTooltipProps) => {
   const { placement: astryxPlacement, alignment } =
     splitAntdPlacement(placement);
@@ -78,6 +81,7 @@ const BAIQuestionIconWithTooltip = ({
       delay={mouseEnterDelay === undefined ? undefined : mouseEnterDelay * 1000}
       style={style}
       className={className}
+      focusable={focusable}
     />
   );
 };

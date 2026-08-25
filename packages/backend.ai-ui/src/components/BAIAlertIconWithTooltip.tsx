@@ -15,7 +15,7 @@
  `colorWarning` / `colorError` resolved to, so the hue is legacy-identical in
  both modes (P19: names checked against the built theme).
 */
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import BAIIconWithTooltip from './BAIIconWithTooltip';
 import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import type { ReactNode } from 'react';
@@ -35,20 +35,23 @@ const BAIAlertIconWithTooltip = ({
   placement,
 }: BAIAlertIconWithTooltipProps) => {
   return (
-    <Tooltip content={title} placement={placement}>
-      <CircleAlertIcon
-        style={{
-          color:
-            type === 'warning'
-              ? 'var(--color-warning)'
-              : type === 'error'
-                ? 'var(--color-error)'
-                : undefined,
-          cursor: 'help',
-        }}
-        {...iconProps}
-      />
-    </Tooltip>
+    <BAIIconWithTooltip
+      content={title}
+      placement={placement}
+      icon={
+        <CircleAlertIcon
+          style={{
+            color:
+              type === 'warning'
+                ? 'var(--color-warning)'
+                : type === 'error'
+                  ? 'var(--color-error)'
+                  : undefined,
+          }}
+          {...iconProps}
+        />
+      }
+    />
   );
 };
 

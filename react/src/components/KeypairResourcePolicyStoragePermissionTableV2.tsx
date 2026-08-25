@@ -17,22 +17,17 @@ import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIAlertIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
   BAITable,
-  type BAITableProps,
   BAITag,
-  BAIUnmountAfterClose,
   BAIText,
+  BAIUnmountAfterClose,
+  type BAITableProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import {
-  CircleCheck,
-  CircleX,
-  CircleAlert,
-  Info,
-  SquarePenIcon,
-} from 'lucide-react';
+import { CircleCheck, CircleX, Info, SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -263,16 +258,11 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
               // a user to scope the view.
               if (!selectedUserId) {
                 return (
-                  <Tooltip
-                    content={t(
-                      'storageHost.permission.SelectUserToSeeKeypairs',
-                    )}
-                  >
-                    <CircleAlert
-                      style={{ color: token.colorWarning }}
-                      size="1em"
-                    />
-                  </Tooltip>
+                  <BAIAlertIconWithTooltip
+                    title={t('storageHost.permission.SelectUserToSeeKeypairs')}
+                    type="warning"
+                    iconProps={{ size: '1em' }}
+                  />
                 );
               }
               const keypairNodes = _.compact(

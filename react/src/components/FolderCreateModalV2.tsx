@@ -36,12 +36,12 @@ import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIIconWithTooltip,
   BAIModal,
-  type BAIModalProps,
   BAIQuestionIconWithTooltip,
   toLocalId,
+  type BAIModalProps,
   useBAILogger,
   useErrorMessageResolver,
   useMutationWithPromise,
@@ -742,7 +742,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                               disabled: shouldDisableProject,
                               endContent:
                                 !isFolderTypeLocked && shouldDisableProject ? (
-                                  <Tooltip
+                                  <BAIIconWithTooltip
                                     content={
                                       usageMode === 'model'
                                         ? t(
@@ -752,9 +752,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                                             'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
                                           )
                                     }
-                                  >
-                                    <TriangleAlertIcon />
-                                  </Tooltip>
+                                    focusable={false}
+                                    icon={<TriangleAlertIcon />}
+                                  />
                                 ) : undefined,
                             },
                           ]
@@ -816,13 +816,13 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                         disabled: shouldDisableRWPermission,
                         endContent:
                           !isFolderTypeLocked && shouldDisableRWPermission ? (
-                            <Tooltip
+                            <BAIIconWithTooltip
                               content={t(
                                 'data.folders.ModelProjectFolderRestrictedToReadOnly',
                               )}
-                            >
-                              <TriangleAlertIcon />
-                            </Tooltip>
+                              focusable={false}
+                              icon={<TriangleAlertIcon />}
+                            />
                           ) : undefined,
                       },
                       {

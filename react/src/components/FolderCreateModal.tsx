@@ -20,13 +20,13 @@ import {
 } from './astryxFormControls';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIQuestionIconWithTooltip,
   BAIButton,
   BAIFlex,
+  BAIIconWithTooltip,
   BAIModal,
   BAIModalProps,
+  BAIQuestionIconWithTooltip,
   ESMClientErrorResponse,
   useBAILogger,
   useErrorMessageResolver,
@@ -486,7 +486,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                             'data-testid': 'project-type',
                             disabled: shouldDisableProject,
                             endContent: shouldDisableProject ? (
-                              <Tooltip
+                              <BAIIconWithTooltip
                                 content={
                                   usageMode === 'model'
                                     ? t(
@@ -496,9 +496,9 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                                         'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
                                       )
                                 }
-                              >
-                                <TriangleAlertIcon />
-                              </Tooltip>
+                                focusable={false}
+                                icon={<TriangleAlertIcon />}
+                              />
                             ) : undefined,
                           },
                         ]
@@ -560,13 +560,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                             'data-testid': 'rw-permission',
                             disabled: shouldDisableRWPermission,
                             endContent: shouldDisableRWPermission ? (
-                              <Tooltip
+                              <BAIIconWithTooltip
                                 content={t(
                                   'data.folders.ModelProjectFolderRestrictedToReadOnly',
                                 )}
-                              >
-                                <TriangleAlertIcon />
-                              </Tooltip>
+                                focusable={false}
+                                icon={<TriangleAlertIcon />}
+                              />
                             ) : undefined,
                           },
                         ]

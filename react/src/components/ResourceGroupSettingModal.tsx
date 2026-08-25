@@ -16,7 +16,6 @@ import {
   useSFTPProxyResourceGroupsQuery,
   useSFTPResourceGroups,
 } from '../hooks/useSFTPResourceGroups';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import {
@@ -28,20 +27,19 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import { Grid } from '@astryxdesign/core/Grid';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAISkeleton,
+  BAICard,
+  BAIDomainSelect,
+  BAIFlex,
   BAIModal,
   BAIModalProps,
-  omitNullAndUndefinedFields,
-  BAICard,
-  BAIFlex,
-  BAIDomainSelect,
+  BAIQuestionIconWithTooltip,
+  BAISkeleton,
   BAIStorageProxySelect,
+  omitNullAndUndefinedFields,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -73,7 +71,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
@@ -519,16 +516,11 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 label={
                   <BAIFlex gap="xxs">
                     {t('resourceGroup.PendingTimeout')}
-                    <Tooltip
-                      content={newLineToBrElement(
+                    <BAIQuestionIconWithTooltip
+                      title={newLineToBrElement(
                         t('resourceGroup.PendingTimeoutDesc'),
                       )}
-                    >
-                      <CircleHelp
-                        style={{ color: token.colorTextSecondary }}
-                        size="1em"
-                      />
-                    </Tooltip>
+                    />
                   </BAIFlex>
                 }
                 name="pendingTimeout"

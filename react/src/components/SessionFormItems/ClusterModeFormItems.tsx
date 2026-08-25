@@ -12,12 +12,14 @@ import RemainingMark from './RemainingMark';
 // FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS are Astryx now.
 import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { BAISegmentedControlItem, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIQuestionIconWithTooltip,
+  BAISegmentedControlItem,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -69,9 +71,10 @@ const ClusterModeSegmented: React.FC<{
           label={
             <span {...stylex.props(clusterModeSegmentedStyles.label)}>
               {item.label}
-              <Tooltip content={item.tooltip}>
-                <CircleHelp size="1em" />
-              </Tooltip>
+              <BAIQuestionIconWithTooltip
+                title={item.tooltip}
+                focusable={false}
+              />
             </span>
           }
         />
