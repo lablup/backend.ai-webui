@@ -8,13 +8,11 @@ import { DeploymentAccessTokensCardListQuery } from '../__generated__/Deployment
 import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSelector } from './astryxFormControls';
 import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
 import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   BAIButton,
@@ -24,6 +22,7 @@ import {
   BAIFlex,
   BAIModal,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
@@ -36,7 +35,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { Trash2, CircleHelp, PlusIcon } from 'lucide-react';
+import { Trash2, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -77,7 +76,6 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -147,12 +145,9 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
         title={
           <BAIFlex gap="xs" align="center">
             {t('deployment.tab.AccessTokens')}
-            <Tooltip content={t('deployment.tab.description.AccessTokens')}>
-              <CircleHelp
-                style={{ color: token.colorTextDescription }}
-                size="1em"
-              />
-            </Tooltip>
+            <BAIQuestionIconWithTooltip
+              title={t('deployment.tab.description.AccessTokens')}
+            />
           </BAIFlex>
         }
         extra={

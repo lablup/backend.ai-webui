@@ -13,10 +13,8 @@ import { App } from '../app-shim';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   BAIButton,
@@ -25,6 +23,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIQuestionIconWithTooltip,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
@@ -33,7 +32,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp, PlusIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -64,7 +63,6 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [currentUser] = useCurrentUserInfo();
 
   const deployment = useFragment(
@@ -99,12 +97,9 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
       title={
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.AutoScaling')}
-          <Tooltip content={t('deployment.tab.description.AutoScaling')}>
-            <CircleHelp
-              style={{ color: token.colorTextDescription }}
-              size="1em"
-            />
-          </Tooltip>
+          <BAIQuestionIconWithTooltip
+            title={t('deployment.tab.description.AutoScaling')}
+          />
         </BAIFlex>
       }
       styles={{ body: { paddingTop: 0 } }}
