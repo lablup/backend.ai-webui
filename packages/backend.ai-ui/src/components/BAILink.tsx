@@ -24,6 +24,7 @@
 import './BAILink.css';
 import BAIText from './BAIText';
 import { Link as AstryxLink } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import React from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 
@@ -59,8 +60,16 @@ const BAILink: React.FC<BAILinkProps> = ({
 }) => {
   if (type !== 'disabled' && to) {
     return (
-      <Link className={LINK_TYPE_CLASS[type]} to={to} {...linkProps}>
-        {children}
+      <Link
+        className={`${LINK_TYPE_CLASS[type]}${ellipsis ? ' bai-link-ellipsis' : ''}`}
+        to={to}
+        {...linkProps}
+      >
+        {/* A router <a> has no Astryx Text of its own, so `ellipsis` has to add
+            one: it owns both the clip and the truncate tooltip, which an
+            ancestor cannot (the <a> fits it exactly, so nothing overflows to
+            measure). FR-3686. */}
+        {ellipsis ? <Text maxLines={1}>{children}</Text> : children}
         {icon}
       </Link>
     );

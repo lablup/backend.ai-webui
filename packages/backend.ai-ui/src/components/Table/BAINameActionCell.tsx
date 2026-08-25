@@ -410,13 +410,10 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           <BAILink
             to={to}
             type="hover"
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              display: 'block',
-              minWidth: 0,
-            }}
+            ellipsis
+            // Block + shrinkable so the Text `ellipsis` injects has a width to
+            // truncate against; the clip and the tooltip live on that Text.
+            style={{ display: 'block', minWidth: 0 }}
           >
             {title}
           </BAILink>
