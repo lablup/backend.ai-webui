@@ -60,7 +60,6 @@ You can rearrange the board at any time — there is no mode to enter first:
   size. Each panel has a minimum size to ensure its content remains readable.
 
 ![](../images/dashboard_edit_mode.png)
-<!-- TODO: Capture screenshot of the dashboard in edit mode (board + edit sidebar) -->
 
 Your customized layout is automatically saved and persists across browser
 sessions. The layout is stored per user, so each user can have their own
@@ -90,12 +89,12 @@ The panel itself shows only a title and its data, so
 give the panel a title that describes its condition.
 
 To add a panel, click the **Add** button in the sidebar. The panel dialog
-contains the following fields. **Panel Type** and **Data source** are
+contains the following fields. **Panel type** and **Data source** are
 required — the dialog will not submit until both are chosen.
 
 - **Data source**: The data source the panel lists. Choose **Sessions**,
   **Deployments**, or **Data & Storage**.
-- **Panel Type**: How the panel displays the data source. Choose **Table** or
+- **Panel type**: How the panel displays the data source. Choose **Table** or
   **Count**. For the **Sessions** data source, **Grid** is also offered.
 - **Title**: An optional panel title. When omitted, the data source name is
   used.
@@ -106,7 +105,6 @@ Sorting a column in the preview sets the panel's sort order. Click **Add** to
 place the panel on the board.
 
 ![](../images/dashboard_panel_modal.png)
-<!-- TODO: Capture screenshot of the add-panel dialog with the live preview -->
 
 **Deployments** panels list the project's model deployments, using the same
 table as the Deployments page: name, status, replica summary, model, and
@@ -125,7 +123,7 @@ controls for these settings, so create a second panel if you want a different
 view.
 
 :::note
-**Grid** is an experimental feature. It is offered in the **Panel Type**
+**Grid** is an experimental feature. It is offered in the **Panel type**
 selector only when **Session resource grid view** is turned on under
 [Experimental features](#experimental-features). If it is turned off later,
 existing Grid panels keep their saved configuration but display as the

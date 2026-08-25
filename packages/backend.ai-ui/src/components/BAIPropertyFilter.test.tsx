@@ -445,6 +445,80 @@ describe('buildFieldSpecs / defaultContentSearchFieldKey', () => {
   });
 });
 
+describe('number / datetime / uuid properties', () => {
+  const properties: Array<FilterProperty> = [
+    { key: 'name', propertyLabel: 'Name', type: 'string' },
+    { key: 'priority', propertyLabel: 'Priority', type: 'number' },
+    { key: 'created_at', propertyLabel: 'Created At', type: 'datetime' },
+    { key: 'user_id', propertyLabel: 'User ID', type: 'uuid' },
+  ];
+
+  it('offers comparison operators, defaulting to == for numbers', () => {
+    const specs = buildFieldSpecs(properties, undefined);
+    const priority = specs.find((spec) => spec.key === 'priority');
+    expect(priority?.defaultOperator).toBe('==');
+    expect(priority?.operators).toEqual(['==', '!=', '>', '>=', '<', '<=']);
+  });
+
+  it('offers range operators, defaulting to >= for datetimes', () => {
+    const specs = buildFieldSpecs(properties, undefined);
+    const createdAt = specs.find((spec) => spec.key === 'created_at');
+    expect(createdAt?.defaultOperator).toBe('>=');
+    expect(createdAt?.operators).toEqual(['>=', '<=', '==', '!=']);
+  });
+
+  it('leaves number values unquoted (the DSL parses them as numbers)', () => {
+    expect(roundTrip(properties, 'priority == 10')).toBe('priority == 10');
+    expect(roundTrip(properties, 'priority >= -1')).toBe('priority >= -1');
+  });
+
+  it('quotes datetime values (the backend parses the string into a date)', () => {
+    expect(roundTrip(properties, 'created_at >= "2026-08-01"')).toBe(
+      'created_at >= "2026-08-01"',
+    );
+    expect(roundTrip(properties, 'created_at == "2026-08-01T00:00:00"')).toBe(
+      'created_at == "2026-08-01T00:00:00"',
+    );
+  });
+
+  it('serializes a freshly committed typed token, not just a round-tripped one', () => {
+    // What the `float` / `date_absolute` editors hand back when the user picks
+    // a value, so the DSL stays legal without a round trip to lean on.
+    const specs = buildFieldSpecs(properties, undefined);
+    expect(
+      serializeFilters(
+        [
+          {
+            field: 'priority',
+            operator: '>=',
+            value: { type: 'float', value: 3 },
+          },
+          {
+            field: 'created_at',
+            operator: '>=',
+            value: { type: 'date_absolute', unixSeconds: 1767225600 },
+          },
+        ],
+        specs,
+      ),
+    ).toBe('priority >= 3 & created_at >= "2026-01-01T00:00:00.000Z"');
+  });
+
+  it('offers equality only for uuid (a UUID column has no ilike)', () => {
+    const specs = buildFieldSpecs(properties, undefined);
+    const userId = specs.find((spec) => spec.key === 'user_id');
+    expect(userId?.defaultOperator).toBe('==');
+    expect(userId?.operators).toEqual(['==', '!=']);
+    expect(roundTrip(properties, 'user_id == "a-uuid"')).toBe(
+      'user_id == "a-uuid"',
+    );
+  });
+
+  it('still routes bare typed text to the first free-text property', () => {
+    expect(defaultContentSearchFieldKey(properties)).toBe('name');
+  });
+});
+
 describe('BAIPropertyFilter render', () => {
   it('renders the PowerSearch input with the supplied placeholder', () => {
     render(

@@ -44,7 +44,9 @@ export const useIsProjectAgnosticPage = (): boolean => {
   'use memo';
   const menuKey = useCurrentMenuKey();
   const { pathname } = useLocation();
-  if ((PROJECT_AGNOSTIC_MENU_KEYS as readonly string[]).includes(menuKey ?? '')) {
+  if (
+    (PROJECT_AGNOSTIC_MENU_KEYS as readonly string[]).includes(menuKey ?? '')
+  ) {
     return true;
   }
   // `useCurrentMenuKey`'s own fallback derives a FEATURE key from the first

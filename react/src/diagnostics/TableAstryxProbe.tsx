@@ -12,8 +12,8 @@
 
    users       BAIUserNodes  — sorting, resize, row selection, column settings,
                                CSV export, pagination bar
-   scheduling  BAISchedulingHistoryTable — controlled `expandable` with a
-                               nested `BAISubStepNodes` table in the detail row
+   scheduling  BAISchedulingHistoryTable — controlled `expandable` with the
+                               `BAISubStepNodes` timeline in the detail row
 */
 import type { TableAstryxProbeSchedulingQuery } from '../__generated__/TableAstryxProbeSchedulingQuery.graphql';
 import type { TableAstryxProbeUsersQuery } from '../__generated__/TableAstryxProbeUsersQuery.graphql';

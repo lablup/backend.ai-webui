@@ -2,16 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIAvailablePresetSelect — ticket-27 Astryx sibling of the antd
- `BAIAvailablePresetSelect` (Relay-paginated, id-valued select pattern B,
- following the recipe used across the Astryx migration).
-
- FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
- `BAIAvailablePresetSelect` is NOT touched by this file. It keeps serving
- every unmigrated call site until a later ticket moves them over. This file
- is the Astryx-native sibling, and its OUTER value contract is deliberately
- the same plain key (`string` / `string[]`) the antd wrapper exposes —
- labelInValue lives strictly between the wrapper and `BAIComplexSelect`.
+ BAIAvailablePresetSelect — Relay-paginated, id-valued select (pattern B,
+ the recipe used across the Astryx migration). The OUTER value contract is
+ the plain key (`string` / `string[]`); labelInValue lives strictly
+ between this wrapper and `BAIComplexSelect`.
 
  PILOT-DECISIONs:
   - P26-3 the antd `optionRender` (name + secondary `description` line via
@@ -32,6 +26,7 @@
   - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
     is dropped: the empty state is the shared "No results" text.
 */
+import { BAIAvailablePresetSelectCardScopedQuery } from '../../__generated__/BAIAvailablePresetSelectCardScopedQuery.graphql';
 import { BAIAvailablePresetSelectPaginatedQuery } from '../../__generated__/BAIAvailablePresetSelectPaginatedQuery.graphql';
 import { BAIAvailablePresetSelectValueQuery } from '../../__generated__/BAIAvailablePresetSelectValueQuery.graphql';
 import { convertToUUID, toLocalId } from '../../helper';
@@ -73,11 +68,20 @@ export interface BAIAvailablePresetSelectProps extends Omit<
   value?: string | Array<string> | null;
   onChange?: (value: string | Array<string> | undefined) => void;
   runtimeVariantId?: string;
+  /**
+   * When set, scope the options to the presets a specific model card is
+   * resource-compatible with, via the top-level `modelCardAvailablePresets`
+   * query (Added in 26.4.2) — the same server-filtered subset a model card
+   * deploys against. When omitted, the options are the project-wide
+   * `deploymentRevisionPresets` list. Pass a raw model-card UUID (local id).
+   */
+  modelCardId?: string;
   ref?: React.Ref<BAIAvailablePresetSelectRef>;
 }
 
 const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
   runtimeVariantId,
+  modelCardId,
   multiple = false,
   isLoading,
   ref,
@@ -172,55 +176,125 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
         }
       : null;
 
-  const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<
-      BAIAvailablePresetSelectPaginatedQuery,
-      AstryxDeploymentRevisionPresetNode
-    >(
-      graphql`
-        query BAIAvailablePresetSelectPaginatedQuery(
-          $offset: Int!
-          $limit: Int!
-          $filter: DeploymentRevisionPresetFilter
+  // The preset list has two mutually-exclusive sources, each its own
+  // self-fetching paginated query: the project-wide `deploymentRevisionPresets`
+  // (default) and, when a model card is selected, its resource-compatible
+  // subset via `modelCardAvailablePresets`. Only the active source runs on the
+  // network; the other stays `store-only` so its query never fires — the same
+  // gating `ModelCardSelect` uses to keep an unscoped `projectId` off the wire
+  // (so no placeholder/sentinel UUID is needed).
+  const isCardScoped = !!modelCardId;
+
+  const projectScopedPresets = useLazyPaginatedQuery<
+    BAIAvailablePresetSelectPaginatedQuery,
+    AstryxDeploymentRevisionPresetNode
+  >(
+    graphql`
+      query BAIAvailablePresetSelectPaginatedQuery(
+        $offset: Int!
+        $limit: Int!
+        $filter: DeploymentRevisionPresetFilter
+      ) {
+        deploymentRevisionPresets(
+          offset: $offset
+          limit: $limit
+          filter: $filter
+          orderBy: [{ field: RANK, direction: "ASC" }]
         ) {
-          deploymentRevisionPresets(
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: [{ field: RANK, direction: "ASC" }]
-          ) {
-            count
-            edges {
-              node {
-                id
+          count
+          edges {
+            node {
+              id
+              name
+              description
+              rank
+              runtimeVariantId
+              runtimeVariant {
                 name
-                description
-                rank
-                runtimeVariantId
-                runtimeVariant {
-                  name
-                }
               }
             }
           }
         }
-      `,
-      { limit: 10 },
-      {
-        filter: mergedFilter,
-      },
-      {
-        // P26-6: the open state comes back out of the Astryx popup.
-        fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-      {
-        getTotal: (r) => r.deploymentRevisionPresets?.count ?? undefined,
-        getItem: (r) =>
-          r.deploymentRevisionPresets?.edges?.map((edge) => edge?.node),
-        getId: (item) => item?.id,
-      },
-    );
+      }
+    `,
+    { limit: 10 },
+    {
+      filter: mergedFilter,
+    },
+    {
+      // P26-6: the open state comes back out of the Astryx popup.
+      fetchPolicy:
+        !isCardScoped && deferredOpen ? 'network-only' : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
+    {
+      getTotal: (r) => r.deploymentRevisionPresets?.count ?? undefined,
+      getItem: (r) =>
+        r.deploymentRevisionPresets?.edges?.map((edge) => edge?.node),
+      getId: (item) => item?.id,
+    },
+  );
+
+  const cardScopedPresets = useLazyPaginatedQuery<
+    BAIAvailablePresetSelectCardScopedQuery,
+    AstryxDeploymentRevisionPresetNode
+  >(
+    graphql`
+      query BAIAvailablePresetSelectCardScopedQuery(
+        $offset: Int!
+        $limit: Int!
+        $filter: DeploymentRevisionPresetFilter
+        $scope: ModelCardAvailablePresetsScope!
+      ) {
+        modelCardAvailablePresets(
+          scope: $scope
+          offset: $offset
+          limit: $limit
+          filter: $filter
+          orderBy: [{ field: RANK, direction: "ASC" }]
+        ) {
+          count
+          edges {
+            node {
+              id
+              name
+              description
+              rank
+              runtimeVariantId
+              runtimeVariant {
+                name
+              }
+            }
+          }
+        }
+      }
+    `,
+    { limit: 10 },
+    {
+      filter: mergedFilter,
+      // `modelCardId ?? ''` is only ever an empty string when this query is
+      // `store-only` (no card selected), so the empty value never reaches the
+      // server for coercion.
+      scope: { modelCardId: modelCardId ? convertToUUID(modelCardId) : '' },
+    },
+    {
+      fetchPolicy: isCardScoped && deferredOpen ? 'network-only' : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
+    {
+      getTotal: (r) => r.modelCardAvailablePresets?.count ?? undefined,
+      getItem: (r) =>
+        r.modelCardAvailablePresets?.edges?.map((edge) => edge?.node),
+      getId: (item) => item?.id,
+    },
+  );
+
+  const { paginationData, loadNext, isLoadingNext } = isCardScoped
+    ? cardScopedPresets
+    : projectScopedPresets;
+  const activePresetConnection = isCardScoped
+    ? cardScopedPresets.result.modelCardAvailablePresets
+    : projectScopedPresets.result.deploymentRevisionPresets;
 
   useImperativeHandle(
     ref,
@@ -283,7 +357,7 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
         isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
-      total={result.deploymentRevisionPresets?.count ?? undefined}
+      total={activePresetConnection?.count ?? undefined}
       options={options}
       value={labeledValue}
       onChange={(next) => {

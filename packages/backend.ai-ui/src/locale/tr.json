@@ -269,7 +269,7 @@
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Diğer işlemler"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",
@@ -371,11 +371,26 @@
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Seçenek Ekle",
+    "Category": "Kategori",
+    "CategoryPlaceholder": "örn. model_loading",
+    "CategoryTooltip": "İlgili parametreleri bir arada düzenlemek için kullanılan UI kategorisi.",
+    "ChoiceLabel": "Etiket",
+    "ChoiceLabelPlaceholder": "örn. FP16",
+    "ChoiceLabelRequired": "Seçenek etiketi zorunludur.",
+    "ChoiceValue": "Değer",
+    "ChoiceValuePlaceholder": "örn. fp16",
+    "ChoiceValueRequired": "Seçenek değeri zorunludur.",
+    "Choices": "Seçenekler",
+    "ChoicesRequired": "En az bir seçenek gereklidir.",
     "CreatePreset": "Ön Ayar Oluştur",
     "DefaultValue": "Varsayılan Değer",
     "DefaultValuePlaceholder": "örn. 1",
     "Description": "Açıklama",
     "DescriptionPlaceholder": "Bu parametrenin neyi kontrol ettiğini ve çıkarım davranışını nasıl etkilediğini açıklayın.",
+    "DisplayName": "Görünen Ad",
+    "DisplayNamePlaceholder": "örn. Tensor Parallel Size",
+    "DisplayNameTooltip": "Dağıtım formunda parametre adı yerine gösterilen okunabilir etiket.",
     "EditPreset": "Ön Ayarı Düzenle",
     "Key": "Anahtar",
     "KeyPlaceholder": "örn. TENSOR_PARALLEL_SIZE",
@@ -383,6 +398,9 @@
     "Name": "Ad",
     "NamePlaceholder": "örn. Tensor Parallel Size",
     "NameRequired": "Ad zorunludur.",
+    "NumberMax": "Maksimum",
+    "NumberMaxMustExceedMin": "Maksimum değer, minimum değerden büyük olmalıdır.",
+    "NumberMin": "Minimum",
     "PresetCreated": "Çalışma zamanı varyantı ön ayarı oluşturuldu.",
     "PresetTarget": "Ön Ayar Hedefi",
     "PresetTargetArgs": "Komut Satırı Argümanı",
@@ -395,6 +413,23 @@
     "RequiredTooltip": "Bu ön ayar parametresinin bir dağıtım revizyonu oluşturulurken sağlanması gerekip gerekmediği.",
     "RuntimeVariant": "Çalışma Zamanı Varyantı",
     "RuntimeVariantRequired": "Çalışma zamanı varyantı zorunludur.",
+    "SliderMax": "Maksimum",
+    "SliderMaxMustExceedMin": "Maksimum değer, minimum değerden büyük olmalıdır.",
+    "SliderMaxRequired": "Maksimum değer zorunludur.",
+    "SliderMin": "Minimum",
+    "SliderMinRequired": "Minimum değer zorunludur.",
+    "SliderStep": "Adım",
+    "SliderStepMustBePositive": "Adım 0'dan büyük olmalıdır.",
+    "SliderStepTooltip": "Kaydırıcı için artış adımı. Varsayılan değer 1'dir.",
+    "TextPlaceholderExample": "örn. Bir değer girin",
+    "TextPlaceholderLabel": "Giriş Yer Tutucusu",
+    "UIType": "UI Türü",
+    "UITypeCheckbox": "Onay Kutusu",
+    "UITypeNumberInput": "Sayı Girişi",
+    "UITypeSelect": "Seçim",
+    "UITypeSlider": "Kaydırıcı",
+    "UITypeTextInput": "Metin Girişi",
+    "UITypeTooltip": "Bu parametrenin dağıtım formunda gösterilmesi için kullanılan kontrol.",
     "ValueType": "Değer Türü",
     "ValueTypeBool": "Boole",
     "ValueTypeFlag": "Bayrak",
@@ -404,9 +439,11 @@
     "ValueTypeStr": "Metin"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Kategori",
     "CreatedAt": "Oluşturulma tarihi",
     "DefaultValue": "Varsayılan Değer",
     "Description": "Açıklama",
+    "DisplayName": "Görünen Ad",
     "Key": "Anahtar",
     "ModifiedAt": "Değiştirilme tarihi",
     "Name": "Ad",
@@ -458,12 +495,13 @@
     "SelectStorageProxy": "Depolama Proxy'si Seç"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Bitiş Zamanı",
+    "Duration": "Süre",
     "ErrorCode": "Hata Kodu",
     "Message": "Mesaj",
     "Result": "Sonuç",
-    "StartedAt": "Başlama zamanı",
-    "Step": "Adım"
+    "ResultMarker": "Bu denemenin sonuç işareti",
+    "Step": "Adım",
+    "Time": "Zaman"
   },
   "comp:BAITable": {
     "Apply": "Uygula",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c45a6a4754d0a9f1bf2a56df452a4454>>
+ * @generated SignedSource<<53427374f0e1f552b2d3a376a4855bda>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -61,6 +61,7 @@ export type AdminRuntimeVariantPresetQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly category: string | null | undefined;
         readonly id: string;
         readonly " $fragmentSpreads": FragmentRefs<"BAIRuntimeVariantPresetSettingModalFragment" | "BAIRuntimeVariantPresetTableFragment">;
       };
@@ -133,7 +134,28 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "category",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "min",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "max",
   "storageKey": null
 };
 return {
@@ -174,6 +196,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -234,6 +257,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -249,17 +273,24 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v7/*: any*/),
+                      (v8/*: any*/),
                       (v6/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
                     "name": "description",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "displayName",
                     "storageKey": null
                   },
                   {
@@ -328,6 +359,111 @@ return {
                     "kind": "ScalarField",
                     "name": "updatedAt",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UIOption",
+                    "kind": "LinkedField",
+                    "name": "uiOption",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "uiType",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "SliderOption",
+                        "kind": "LinkedField",
+                        "name": "slider",
+                        "plural": false,
+                        "selections": [
+                          (v9/*: any*/),
+                          (v10/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "step",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "NumberOption",
+                        "kind": "LinkedField",
+                        "name": "number",
+                        "plural": false,
+                        "selections": [
+                          (v9/*: any*/),
+                          (v10/*: any*/)
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ChoiceOption",
+                        "kind": "LinkedField",
+                        "name": "choices",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ChoiceItem",
+                            "kind": "LinkedField",
+                            "name": "items",
+                            "plural": true,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "value",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "label",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "TextOption",
+                        "kind": "LinkedField",
+                        "name": "text",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "placeholder",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -341,16 +477,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ad337dc7d2db6d546a2fdb2a4585c1d0",
+    "cacheID": "62f3b682505c86fdc9c284a05434fcb7",
     "id": null,
     "metadata": {},
     "name": "AdminRuntimeVariantPresetQuery",
     "operationKind": "query",
-    "text": "query AdminRuntimeVariantPresetQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  runtimeVariantPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIRuntimeVariantPresetTableFragment\n        ...BAIRuntimeVariantPresetSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n}\n\nfragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.8.0\") {\n    name\n    id\n  }\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminRuntimeVariantPresetQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  runtimeVariantPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        category\n        ...BAIRuntimeVariantPresetTableFragment\n        ...BAIRuntimeVariantPresetSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  category\n  displayName\n  uiOption {\n    uiType\n    slider {\n      min\n      max\n      step\n    }\n    number {\n      min\n      max\n    }\n    choices {\n      items {\n        value\n        label\n      }\n    }\n    text {\n      placeholder\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.8.0\") {\n    name\n    id\n  }\n  name\n  description\n  category\n  displayName\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0e8b4a450530419c80e8ab241723b8ec";
+(node as any).hash = "baee1063592b67fdb628170d374c29cc";
 
 export default node;

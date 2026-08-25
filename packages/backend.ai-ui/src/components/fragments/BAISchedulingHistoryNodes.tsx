@@ -160,7 +160,7 @@ const BAISchedulingHistoryNodes = ({
   return (
     // to-astryx ticket 25: migrated to the Astryx engine — this is the
     // expandable-row proving ground (`expandable` arrives from
-    // `BAISchedulingHistoryTable` and renders a nested `BAISubStepNodes`).
+    // `BAISchedulingHistoryTable` and renders the `BAISubStepNodes` timeline).
     <BAITable
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(histories)}

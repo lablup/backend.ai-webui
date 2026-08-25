@@ -17,10 +17,7 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { useVHostInfo } from '../hooks/useVHostInfo';
-import {
-  ProjectContext,
-  ProjectContextOrNull,
-} from '../types/projectContext';
+import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';

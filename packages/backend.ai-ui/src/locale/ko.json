@@ -269,7 +269,7 @@
     "UpdatedAt": "수정 시각"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "추가 작업"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
@@ -371,11 +371,26 @@
     "UpdatedAt": "수정일"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "선택지 추가",
+    "Category": "카테고리",
+    "CategoryPlaceholder": "예: model_loading",
+    "CategoryTooltip": "관련 매개변수를 함께 그룹화하는 데 사용되는 UI 카테고리입니다.",
+    "ChoiceLabel": "라벨",
+    "ChoiceLabelPlaceholder": "예: FP16",
+    "ChoiceLabelRequired": "선택지 라벨은 필수입니다.",
+    "ChoiceValue": "값",
+    "ChoiceValuePlaceholder": "예: fp16",
+    "ChoiceValueRequired": "선택지 값은 필수입니다.",
+    "Choices": "선택지",
+    "ChoicesRequired": "최소 하나 이상의 선택지가 필요합니다.",
     "CreatePreset": "프리셋 생성",
     "DefaultValue": "기본값",
     "DefaultValuePlaceholder": "예: 1",
     "Description": "설명",
     "DescriptionPlaceholder": "이 매개변수가 제어하는 항목과 인퍼런스 동작에 미치는 영향을 설명하세요.",
+    "DisplayName": "표시 이름",
+    "DisplayNamePlaceholder": "예: Tensor Parallel Size",
+    "DisplayNameTooltip": "배포 양식에서 매개변수 이름 대신 표시되는 사람이 읽기 쉬운 라벨입니다.",
     "EditPreset": "프리셋 편집",
     "Key": "키",
     "KeyPlaceholder": "예: TENSOR_PARALLEL_SIZE",
@@ -383,6 +398,9 @@
     "Name": "이름",
     "NamePlaceholder": "예: Tensor Parallel Size",
     "NameRequired": "이름은 필수입니다.",
+    "NumberMax": "최댓값",
+    "NumberMaxMustExceedMin": "최댓값은 최솟값보다 커야 합니다.",
+    "NumberMin": "최솟값",
     "PresetCreated": "런타임 프리셋이 생성되었습니다.",
     "PresetTarget": "프리셋 대상",
     "PresetTargetArgs": "커맨드라인 인자",
@@ -395,6 +413,23 @@
     "RequiredTooltip": "배포 리비전을 생성할 때 이 프리셋 매개변수를 반드시 입력해야 하는지 여부입니다.",
     "RuntimeVariant": "런타임",
     "RuntimeVariantRequired": "런타임은 필수입니다.",
+    "SliderMax": "최댓값",
+    "SliderMaxMustExceedMin": "최댓값은 최솟값보다 커야 합니다.",
+    "SliderMaxRequired": "최댓값은 필수입니다.",
+    "SliderMin": "최솟값",
+    "SliderMinRequired": "최솟값은 필수입니다.",
+    "SliderStep": "단위(Step)",
+    "SliderStepMustBePositive": "단위(Step)는 0보다 커야 합니다.",
+    "SliderStepTooltip": "슬라이더의 증가 단위입니다. 기본값은 1입니다.",
+    "TextPlaceholderExample": "예: 값을 입력하세요",
+    "TextPlaceholderLabel": "입력 플레이스홀더",
+    "UIType": "UI 유형",
+    "UITypeCheckbox": "체크박스",
+    "UITypeNumberInput": "숫자 입력",
+    "UITypeSelect": "셀렉트",
+    "UITypeSlider": "슬라이더",
+    "UITypeTextInput": "텍스트 입력",
+    "UITypeTooltip": "배포 양식에서 이 매개변수를 표시하는 데 사용되는 컨트롤입니다.",
     "ValueType": "값 유형",
     "ValueTypeBool": "bool 자료형(Boolean)",
     "ValueTypeFlag": "플래그",
@@ -404,9 +439,11 @@
     "ValueTypeStr": "문자열"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "카테고리",
     "CreatedAt": "생성일",
     "DefaultValue": "기본값",
     "Description": "설명",
+    "DisplayName": "표시 이름",
     "Key": "키",
     "ModifiedAt": "수정일",
     "Name": "이름",
@@ -458,12 +495,13 @@
     "SelectStorageProxy": "스토리지 프록시를 선택해주세요"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "종료일",
+    "Duration": "소요 시간",
     "ErrorCode": "오류 코드",
     "Message": "메시지",
     "Result": "결과",
-    "StartedAt": "시작일",
-    "Step": "세부단계"
+    "ResultMarker": "이 시도의 결과 마커",
+    "Step": "세부단계",
+    "Time": "시간"
   },
   "comp:BAITable": {
     "Apply": "적용",

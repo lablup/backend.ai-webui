@@ -773,7 +773,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const stepHasError = (fields: string[]) =>
     fields.some(
       (f) =>
-        form.getFieldError(f as never).length > 0 || errorFieldNames.includes(f),
+        form.getFieldError(f as never).length > 0 ||
+        errorFieldNames.includes(f),
     );
 
   const stepErrors = [

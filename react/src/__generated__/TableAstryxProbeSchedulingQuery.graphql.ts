@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0351e6e6c2ddac5036381031842afd55>>
+ * @generated SignedSource<<84b78b92f143b141a748281ea8011c3e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -155,6 +155,13 @@ return {
                     "name": "id",
                     "storageKey": null
                   },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "phase",
+                    "storageKey": null
+                  },
                   (v2/*: any*/),
                   {
                     "alias": null,
@@ -232,14 +239,7 @@ return {
                     "name": "toStatus",
                     "storageKey": null
                   },
-                  (v3/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "phase",
-                    "storageKey": null
-                  }
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -252,12 +252,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c779ffd855043fd7baff8896baf58374",
+    "cacheID": "b46be6604feb98985cd8d831d5487556",
     "id": null,
     "metadata": {},
     "name": "TableAstryxProbeSchedulingQuery",
     "operationKind": "query",
-    "text": "query TableAstryxProbeSchedulingQuery {\n  sessionScopedSchedulingHistories(scope: {sessionId: \"probe-session\"}, limit: 5, offset: 0) {\n    count\n    edges {\n      node {\n        ...BAISchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n}\n\nfragment BAISchedulingHistoryTableFragment on SessionSchedulingHistory {\n  id\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  ...BAISchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query TableAstryxProbeSchedulingQuery {\n  sessionScopedSchedulingHistories(scope: {sessionId: \"probe-session\"}, limit: 5, offset: 0) {\n    count\n    edges {\n      node {\n        ...BAISchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n}\n\nfragment BAISchedulingHistoryTableFragment on SessionSchedulingHistory {\n  id\n  phase\n  result\n  subSteps {\n    step\n    ...BAISubStepNodesFragment\n  }\n  ...BAISchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();

@@ -6,6 +6,7 @@ import type {
   DeploymentAddRevisionModalAddMutation,
   DeploymentAddRevisionModalAddMutation$data,
 } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
+import type { DeploymentAddRevisionModalCardDetailQuery } from '../__generated__/DeploymentAddRevisionModalCardDetailQuery.graphql';
 import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
 import type { DeploymentAddRevisionModalManualImageQuery } from '../__generated__/DeploymentAddRevisionModalManualImageQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
@@ -52,6 +53,7 @@ import {
   type PreStartActionFormValue,
 } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
+import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -59,6 +61,8 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   type ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
+import ModelCardDrawer from './ModelCardDrawer';
+import ModelCardSelect from './ModelCardSelect';
 import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
 import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
 import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
@@ -93,7 +97,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAIRuntimeVariantSelect,
-  BAISelect,
+  BAIComplexSelect,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   convertToUUID,
@@ -111,6 +115,7 @@ import React, {
   useEffectEvent,
   useRef,
   useState,
+  useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -155,9 +160,20 @@ export type FormValues = ImageEnvironmentFormInput &
     runtimeParams?: RuntimeParameterValues;
   };
 
+export type PresetModelSource = 'folder' | 'card';
+
 export type PresetFormValues = {
+  /** Which model source drives this preset revision. */
+  presetModelSource: PresetModelSource;
   revisionPresetId: string;
+  /**
+   * The backing model VFolder. In `folder` mode the user picks it directly;
+   * in `card` mode it is resolved from the selected model card's `vfolderId`,
+   * so the submit path (`modelMountConfig.vfolderId`) is identical for both.
+   */
   modelFolderId: string;
+  /** Selected model card local id — only set in `card` mode. */
+  modelCardId?: string;
 };
 
 // Fragment ref of the revision returned by `addModelRevision`. Derived from
@@ -298,6 +314,68 @@ const PresetDetailLoader: React.FC<{
   );
 };
 
+// Loader for the model-card detail drawer. The `ModelCardSelect` list query
+// only loads a card's summary fields, so prefetch the full
+// `ModelCardDrawerFragment` here and suspend until it lands. By the time
+// `ModelCardDrawer` renders below, its own id-keyed query is a warm-cache hit,
+// so the drawer opens fully populated instead of showing in-place "-"
+// placeholders while its fetch is in flight. The `Suspense` boundary at the
+// call site keeps that suspense local (it never bubbles up to blank the page).
+const ModelCardDetailLoader: React.FC<{
+  modelCardId: string;
+  onClose: () => void;
+}> = ({ modelCardId, onClose }) => {
+  'use memo';
+  useLazyLoadQuery<DeploymentAddRevisionModalCardDetailQuery>(
+    graphql`
+      query DeploymentAddRevisionModalCardDetailQuery($id: UUID!) {
+        modelCardV2(id: $id) {
+          ...ModelCardDrawerFragment
+        }
+      }
+    `,
+    { id: modelCardId },
+  );
+  return <ModelCardDrawer modelCardId={modelCardId} open onClose={onClose} />;
+};
+
+// Card-mode preset selector: the same self-fetching
+// `BAIAvailablePresetSelect` used for the folder source, scoped to the
+// selected model card's resource-compatible presets via `modelCardId`. That
+// routes the list through the top-level `modelCardAvailablePresets` query (the
+// same server-filtered subset `ModelCardDeployModal` deploys against,
+// satisfying the card's minimum resource requirements), so no separate
+// card-scoped select or fragment is needed. Disabled with a hint until a card
+// is picked — the hint rides in the field's `description` slot (Astryx forbids
+// wrapping a disabled control in a Tooltip).
+const ModelCardPresetSelect: React.FC<
+  {
+    modelCardId?: string;
+  } & Omit<React.ComponentProps<typeof BAIAvailablePresetSelect>, 'modelCardId'>
+> = ({ modelCardId, ...selectProps }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const isDisabled = !modelCardId;
+  return (
+    <BAIAvailablePresetSelect
+      modelCardId={modelCardId}
+      isDisabled={isDisabled}
+      description={
+        isDisabled ? t('deployment.SelectModelCardFirst') : undefined
+      }
+      {...selectProps}
+    />
+  );
+};
+
+// Suspense fallback for the self-fetching selects: the same `BAIComplexSelect`
+// they render, so the placeholder keeps their exact height and 100% width
+// (`BAISelect` sits on Astryx `Selector` — taller, and it ignores `flex: 1`).
+const SelectLoadingFallback: React.FC<{ label: string }> = ({ label }) => {
+  'use memo';
+  return <BAIComplexSelect label={label} isLabelHidden isLoading isDisabled />;
+};
+
 const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   onRequestClose,
   deploymentFrgmt,
@@ -345,6 +423,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // is passed in via `sourceRevisionFrgmt`.
   const revisionPrefillFragment = graphql`
     fragment DeploymentAddRevisionModal_revisionSource on ModelRevision {
+      revisionPresetId @since(version: "26.4.4")
       clusterConfig {
         mode
         size
@@ -384,6 +463,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }
       modelMountConfig {
         vfolderId
+        vfolder {
+          id
+          name
+        }
         mountDestination
         definitionPath
         subpath @since(version: "26.4.4")
@@ -433,6 +516,17 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       revisionPrefillFragment,
       sourceRevisionFrgmt ?? null,
     );
+  // Display names for prefilled model folders the selector may not resolve
+  // itself (deleted, or outside its project scope — e.g. a model-store
+  // folder behind a card-born revision). Keyed by the folder's global id.
+  const revisionFolderFallbackLabels: Record<string, string> = _.fromPairs(
+    _.compact(
+      [currentRevision, sourceRevision].map((rev) => {
+        const vfolder = rev?.modelMountConfig?.vfolder;
+        return vfolder?.id && vfolder.name ? [vfolder.id, vfolder.name] : null;
+      }),
+    ),
+  );
   // ADR-0001 (FR-3411, derive-from-resource tier): adding a revision always
   // targets the deployment's own project — never the ambient header
   // selection. The id comes from the deployment metadata (`projectId`); the
@@ -521,6 +615,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // to Custom — the mode choice is always the user's, never forced by the
   // entry point.
   const [hasAppliedSourcePrefill, setHasAppliedSourcePrefill] = useState(false);
+  // One-shot guard for the Preset-form twin of the source prefill. Also set
+  // when the source revision carries no `revisionPresetId` and we flip to
+  // Custom instead, so toggling back to Preset does not re-trigger the flip.
+  const [hasAppliedSourcePresetPrefill, setHasAppliedSourcePresetPrefill] =
+    useState(false);
   // True between "user clicked Load current revision while in Preset mode"
   // and "the Custom form has mounted and we applied the prefill". setMode
   // is async, so we can't `setFieldsValue` on the Custom form synchronously
@@ -544,6 +643,24 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // user clicks the (i) button next to the preset selector. The modal owns
   // its own Relay query keyed by this id.
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
+  // Drives the (i) button's loading spinner while the preset-detail prefetch
+  // query is in flight (see the persistent Suspense boundary below).
+  const [isPresetDetailPending, startPresetDetailTransition] = useTransition();
+  // Model card detail drawer target — opens ModelCardDrawer when the user
+  // clicks the (i) button next to the model-card selector.
+  const [modelCardDetailId, setModelCardDetailId] = useState<string | null>(
+    null,
+  );
+  // Drives the (i) button's loading spinner while the detail-drawer prefetch
+  // query is in flight (see the persistent Suspense boundary below).
+  const [isModelCardDetailPending, startModelCardDetailTransition] =
+    useTransition();
+  // In Preset mode's "model card" source, the selected card resolves to its
+  // backing vfolder. We keep that vfolder id here so the submit path can reuse
+  // the same `modelMountConfig.vfolderId` a model-folder selection would send.
+  const [selectedCardVfolderId, setSelectedCardVfolderId] = useState<
+    string | null
+  >(null);
 
   // Map of runtime variant id → { name, readsVfolderConfigFiles }, populated by
   // `BAIRuntimeVariantSelect` as it resolves the currently selected value
@@ -881,6 +998,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     const carryOver: Partial<PresetFormValues> = {};
     if (customValues.modelFolderId) {
       carryOver.modelFolderId = customValues.modelFolderId;
+      // Custom mode only has a model folder, so force the Preset source back to
+      // 'folder' and drop any leftover card selection. Otherwise a prior
+      // `presetModelSource: 'card'` would persist and the carried folder would
+      // be ignored at submit (which reads `selectedCardVfolderId` for cards).
+      carryOver.presetModelSource = 'folder';
+      carryOver.modelCardId = undefined;
+      setSelectedCardVfolderId(null);
     }
     customForm.resetFields();
     setPresetTransferPrefill(null);
@@ -1119,6 +1243,38 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setHasAppliedSourcePrefill(true);
   });
 
+  // Preset-mode twin of the source prefill: restores `revisionPresetId` +
+  // model folder. The model-CARD selection is NOT restored (skipped in this
+  // scope): a revision records only the mounted vfolder UUID, not the card
+  // it came from, so a card-born revision prefills as a 'folder' source
+  // pointing at the card's backing folder. A revision without
+  // `revisionPresetId` (custom-made, preset since deleted, or a pre-26.4.4
+  // manager) cannot be represented in Preset mode at all, so flip to Custom
+  // and let `applySourcePrefillOnce` take over — otherwise the "Add new
+  // revision from this" entry silently does nothing when the modal
+  // remembers Preset mode.
+  const applySourcePresetPrefillOnce = useEffectEvent(() => {
+    if (hasAppliedSourcePresetPrefill) return;
+    if (!sourceRevision) return;
+    setHasAppliedSourcePresetPrefill(true);
+    if (!sourceRevision.revisionPresetId) {
+      setMode('custom');
+      return;
+    }
+    setSelectedCardVfolderId(null);
+    presetForm.setFieldsValue({
+      presetModelSource: 'folder',
+      modelCardId: undefined,
+      revisionPresetId: sourceRevision.revisionPresetId,
+      modelFolderId: sourceRevision.modelMountConfig?.vfolderId
+        ? toGlobalId(
+            'VirtualFolderNode',
+            sourceRevision.modelMountConfig.vfolderId,
+          )
+        : undefined,
+    });
+  });
+
   // Pair with `handleLoadCurrent` below — when the user clicks "Load
   // current revision" while in Preset mode, we flip to Custom and queue the
   // apply via `pendingLoadCurrent`. This effect drains the queue once the
@@ -1143,6 +1299,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       applyPendingLoadCurrent();
     } else {
       consumeCustomTransferPrefill();
+      applySourcePresetPrefillOnce();
     }
   }, [effectiveMode]);
 
@@ -1554,15 +1711,30 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // Preset mode adds a revision to the current deployment using the
     // selected `revisionPresetId`. Cluster / resource / image / runtime
     // configs are derived server-side from the preset; the client only
-    // forwards the user-picked model folder via `modelMountConfig` and the
-    // `autoActivate` option.
+    // forwards the model mount source via `modelMountConfig` and the
+    // `autoActivate` option. The mount vfolder comes either from the picked
+    // model folder or — in "model card" source — from the card's backing
+    // vfolder (already a raw UUID).
+    // Both branches must resolve to a raw vfolder UUID. Card mode is gated on
+    // a required model-card selection, which also records the card's backing
+    // vfolder, so an empty id here means the selected card carried no vfolder.
+    // Stop instead of sending an empty `vfolderId`, which the mutation would
+    // either reject or turn into a revision with an unusable mount.
+    const mountVfolderId =
+      values.presetModelSource === 'card'
+        ? selectedCardVfolderId
+        : toLocalId(values.modelFolderId);
+    if (!mountVfolderId) {
+      message.error(t('deployment.ModelSourceMissingModelFolder'));
+      return;
+    }
     commitAdd({
       variables: {
         input: {
           deploymentId: toLocalId(deployment?.id ?? '') ?? deployment?.id ?? '',
           revisionPresetId: values.revisionPresetId,
           modelMountConfig: {
-            vfolderId: toLocalId(values.modelFolderId),
+            vfolderId: mountVfolderId,
             mountDestination: '/models',
           },
           options: { autoActivate },
@@ -1818,130 +1990,290 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             style={{ marginTop: token.marginXS }}
             onFinish={handlePresetFinish}
             onFinishFailed={handleFinishFailed}
+            onValuesChange={(changed) => {
+              // When the model source toggles, reset the other source's fields
+              // so a stale selection can't leak into the submit payload.
+              if (
+                Object.prototype.hasOwnProperty.call(
+                  changed,
+                  'presetModelSource',
+                )
+              ) {
+                const next = changed.presetModelSource as PresetModelSource;
+                setSelectedCardVfolderId(null);
+                presetForm.setFieldsValue({
+                  revisionPresetId: undefined,
+                  modelCardId: undefined,
+                  modelFolderId:
+                    next === 'folder' ? defaultModelFolderId : undefined,
+                });
+              }
+            }}
             initialValues={{
+              presetModelSource: 'folder',
               modelFolderId: defaultModelFolderId,
             }}
           >
+            {/* 1) Choose the model source: a model folder or a model card. */}
             <BAIFormItem
-              label={t('modelStore.Preset')}
-              tooltip={t('modelStore.PresetTooltip')}
+              name="presetModelSource"
+              label={t('deployment.ModelSource')}
+              tooltip={t('deployment.ModelSourceTooltip')}
               required
+              rules={[{ required: true }]}
             >
-              <BAIFlex direction="row" gap="xs">
-                <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
-                  <BAIFormItem
-                    name="revisionPresetId"
-                    noStyle
-                    rules={[{ required: true }]}
-                  >
-                    <BAIAvailablePresetSelect
-                      label={t('modelStore.Preset')}
-                      isLabelHidden
-                    />
-                  </BAIFormItem>
-                </Suspense>
-                <BAIFormItem dependencies={['revisionPresetId']} noStyle>
-                  {(form) => {
-                    // BAIFormItem render-prop children receive `unknown`
-                    // (antd typed this as FormInstance); narrow it back.
-                    const { getFieldValue } =
-                      form as FormInstance<PresetFormValues>;
-                    const selectedId = getFieldValue('revisionPresetId');
-                    // PILOT-DECISION: antd `Space.Compact` around a SINGLE
-                    // button carried no grouping — dropped, plain IconButton.
-                    // The external antd Tooltip becomes the Button's built-in
-                    // `tooltip` prop (Astryx forbids wrapping a disabled
-                    // control in Tooltip).
-                    return (
-                      <IconButton
-                        icon={<Info size="1em" />}
-                        label={t('modelService.DeploymentPresetDetail')}
-                        tooltip={t('modelService.DeploymentPresetDetail')}
-                        isDisabled={!selectedId}
-                        onClick={() => {
-                          if (!selectedId) return;
-                          setPresetDetailId(selectedId);
-                        }}
-                      />
-                    );
-                  }}
-                </BAIFormItem>
-              </BAIFlex>
+              <BAIRadioGroup
+                label={t('deployment.ModelSource')}
+                options={[
+                  { label: t('deployment.ModelFolder'), value: 'folder' },
+                  { label: t('deployment.ModelCard'), value: 'card' },
+                ]}
+              />
             </BAIFormItem>
 
-            <BAIFormItem
-              label={t('deployment.ModelFolder')}
-              tooltip={t('deployment.ModelFolderTooltip')}
-              required
-            >
-              <BAIFlex direction="row" gap="xs">
-                <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
+            {/* 2) The source selector — model folder or model card. */}
+            <BAIFormItem dependencies={['presetModelSource']} noStyle>
+              {(form) => {
+                // BAIFormItem render-prop children receive `unknown`
+                // (antd typed this as FormInstance); narrow it back.
+                const { getFieldValue } =
+                  form as FormInstance<PresetFormValues>;
+                const source = getFieldValue(
+                  'presetModelSource',
+                ) as PresetModelSource;
+                return source === 'card' ? (
                   <BAIFormItem
-                    name="modelFolderId"
-                    // BAIFormItem drops `label` on noStyle items (the outer
-                    // layout item renders it); keep antd's default required-
-                    // message interpolation via messageVariables instead.
-                    messageVariables={{ label: t('deployment.ModelFolder') }}
-                    noStyle
-                    rules={[{ required: true }]}
+                    label={t('deployment.ModelCard')}
+                    tooltip={t('deployment.ModelCardTooltip')}
+                    required
                   >
-                    <BAIVFolderSelect
-                      ref={presetVFolderSelectRef}
-                      label={t('deployment.ModelFolder')}
-                      isLabelHidden
-                      currentProjectId={deploymentProject?.id}
-                      isDisabled={!deploymentProject}
-                      excludeDeleted
-                      filter='usage_mode == "model"'
-                    />
+                    <BAIFlex direction="row" gap="xs">
+                      <Suspense
+                        fallback={
+                          <SelectLoadingFallback
+                            label={t('deployment.ModelCard')}
+                          />
+                        }
+                      >
+                        <BAIFormItem
+                          name="modelCardId"
+                          messageVariables={{
+                            label: t('deployment.ModelCard'),
+                          }}
+                          noStyle
+                          rules={[{ required: true }]}
+                        >
+                          <ModelCardSelect
+                            label={t('deployment.ModelCard')}
+                            isLabelHidden
+                            onSelectCard={(card) => {
+                              // A model card resolves to its backing vfolder;
+                              // keep it for submit. Clear the preset since one
+                              // compatible with the previous card may not exist
+                              // for the new one.
+                              setSelectedCardVfolderId(card?.vfolderId ?? null);
+                              presetForm.setFieldsValue({
+                                revisionPresetId: undefined,
+                              });
+                            }}
+                          />
+                        </BAIFormItem>
+                      </Suspense>
+                      <BAIFormItem dependencies={['modelCardId']} noStyle>
+                        {(cardForm) => {
+                          const { getFieldValue: getCardId } =
+                            cardForm as FormInstance<PresetFormValues>;
+                          const selectedCardId = getCardId('modelCardId');
+                          return (
+                            <IconButton
+                              icon={<Info size="1em" />}
+                              label={t('modelStore.ModelCardDetail')}
+                              tooltip={t('modelStore.ModelCardDetail')}
+                              isLoading={isModelCardDetailPending}
+                              isDisabled={!selectedCardId}
+                              onClick={() => {
+                                if (selectedCardId)
+                                  startModelCardDetailTransition(() => {
+                                    setModelCardDetailId(selectedCardId);
+                                  });
+                              }}
+                            />
+                          );
+                        }}
+                      </BAIFormItem>
+                    </BAIFlex>
                   </BAIFormItem>
-                </Suspense>
-                <BAIFormItem dependencies={['modelFolderId']} noStyle>
-                  {(form) => {
-                    // BAIFormItem render-prop children receive `unknown`
-                    // (antd typed this as FormInstance); narrow it back.
-                    const { getFieldValue } =
-                      form as FormInstance<PresetFormValues>;
-                    const modelFolderId = getFieldValue('modelFolderId');
-                    // antd Space.Compact → Astryx ButtonGroup; per-button antd
-                    // Tooltips become the Button's built-in `tooltip` prop.
-                    // The group `label` is aria-only (existing key reused).
-                    return (
-                      <ButtonGroup label={t('deployment.ModelFolder')}>
-                        <IconButton
-                          icon={<FolderOpenIcon />}
-                          label={t('modelService.OpenFolder')}
-                          tooltip={t('modelService.OpenFolder')}
-                          isDisabled={!modelFolderId}
-                          onClick={() => {
-                            if (modelFolderId) {
-                              openFolderExplorer(toLocalId(modelFolderId));
-                            }
+                ) : (
+                  <BAIFormItem
+                    label={t('deployment.ModelFolder')}
+                    tooltip={t('deployment.ModelFolderTooltip')}
+                    required
+                  >
+                    <BAIFlex direction="row" gap="xs">
+                      <Suspense
+                        fallback={
+                          <SelectLoadingFallback
+                            label={t('deployment.ModelFolder')}
+                          />
+                        }
+                      >
+                        <BAIFormItem
+                          name="modelFolderId"
+                          // BAIFormItem drops `label` on noStyle items (the
+                          // outer layout item renders it); keep antd's default
+                          // required-message interpolation via
+                          // messageVariables instead.
+                          messageVariables={{
+                            label: t('deployment.ModelFolder'),
                           }}
-                        />
-                        <IconButton
-                          icon={<PlusIcon />}
-                          label={t('data.CreateANewStorageFolder')}
-                          tooltip={t('data.CreateANewStorageFolder')}
-                          // Same gate as the BAIVFolderSelect above.
-                          isDisabled={!deploymentProject}
-                          onClick={() => setIsModelFolderCreateModalOpen(true)}
-                        />
-                        <IconButton
-                          icon={<RotateCw size="1em" />}
-                          label={t('button.Refresh')}
-                          tooltip={t('button.Refresh')}
-                          onClick={() => {
-                            startTransition(() => {
-                              presetVFolderSelectRef.current?.refetch();
-                            });
-                          }}
-                        />
-                      </ButtonGroup>
-                    );
-                  }}
-                </BAIFormItem>
-              </BAIFlex>
+                          noStyle
+                          rules={[{ required: true }]}
+                        >
+                          <BAIVFolderSelect
+                            ref={presetVFolderSelectRef}
+                            fallbackLabels={revisionFolderFallbackLabels}
+                            label={t('deployment.ModelFolder')}
+                            isLabelHidden
+                            currentProjectId={deploymentProject?.id}
+                            isDisabled={!deploymentProject}
+                            excludeDeleted
+                            filter='usage_mode == "model"'
+                          />
+                        </BAIFormItem>
+                      </Suspense>
+                      <BAIFormItem dependencies={['modelFolderId']} noStyle>
+                        {(folderForm) => {
+                          const { getFieldValue: getModelFolderId } =
+                            folderForm as FormInstance<PresetFormValues>;
+                          const modelFolderId =
+                            getModelFolderId('modelFolderId');
+                          // antd Space.Compact → Astryx ButtonGroup; per-button
+                          // antd Tooltips become the Button's built-in
+                          // `tooltip` prop. The group `label` is aria-only
+                          // (existing key reused).
+                          return (
+                            <ButtonGroup label={t('deployment.ModelFolder')}>
+                              <IconButton
+                                icon={<FolderOpenIcon />}
+                                label={t('modelService.OpenFolder')}
+                                tooltip={t('modelService.OpenFolder')}
+                                isDisabled={!modelFolderId}
+                                onClick={() => {
+                                  if (modelFolderId) {
+                                    openFolderExplorer(
+                                      toLocalId(modelFolderId),
+                                    );
+                                  }
+                                }}
+                              />
+                              <IconButton
+                                icon={<PlusIcon />}
+                                label={t('data.CreateANewStorageFolder')}
+                                tooltip={t('data.CreateANewStorageFolder')}
+                                // Same gate as the BAIVFolderSelect above.
+                                isDisabled={!deploymentProject}
+                                onClick={() =>
+                                  setIsModelFolderCreateModalOpen(true)
+                                }
+                              />
+                              <IconButton
+                                icon={<RotateCw size="1em" />}
+                                label={t('button.Refresh')}
+                                tooltip={t('button.Refresh')}
+                                onClick={() => {
+                                  startTransition(() => {
+                                    presetVFolderSelectRef.current?.refetch();
+                                  });
+                                }}
+                              />
+                            </ButtonGroup>
+                          );
+                        }}
+                      </BAIFormItem>
+                    </BAIFlex>
+                  </BAIFormItem>
+                );
+              }}
+            </BAIFormItem>
+
+            {/* 3) The preset selector for the chosen source. In card mode the
+                options are scoped to the card's compatible presets. */}
+            <BAIFormItem
+              dependencies={['presetModelSource', 'modelCardId']}
+              noStyle
+            >
+              {(form) => {
+                const { getFieldValue } =
+                  form as FormInstance<PresetFormValues>;
+                const source = getFieldValue(
+                  'presetModelSource',
+                ) as PresetModelSource;
+                const modelCardId = getFieldValue('modelCardId');
+                return (
+                  <BAIFormItem
+                    label={t('modelStore.Preset')}
+                    tooltip={t('modelStore.PresetTooltip')}
+                    required
+                  >
+                    <BAIFlex direction="row" gap="xs">
+                      <Suspense
+                        fallback={
+                          <SelectLoadingFallback
+                            label={t('modelStore.Preset')}
+                          />
+                        }
+                      >
+                        <BAIFormItem
+                          name="revisionPresetId"
+                          messageVariables={{ label: t('modelStore.Preset') }}
+                          noStyle
+                          rules={[{ required: true }]}
+                        >
+                          {source === 'card' ? (
+                            <ModelCardPresetSelect
+                              modelCardId={modelCardId}
+                              label={t('modelStore.Preset')}
+                              isLabelHidden
+                            />
+                          ) : (
+                            <BAIAvailablePresetSelect
+                              label={t('modelStore.Preset')}
+                              isLabelHidden
+                            />
+                          )}
+                        </BAIFormItem>
+                      </Suspense>
+                      <BAIFormItem dependencies={['revisionPresetId']} noStyle>
+                        {(presetIdForm) => {
+                          const { getFieldValue: getPresetId } =
+                            presetIdForm as FormInstance<PresetFormValues>;
+                          const selectedId = getPresetId('revisionPresetId');
+                          // PILOT-DECISION: antd `Space.Compact` around a
+                          // SINGLE button carried no grouping — dropped, plain
+                          // IconButton. The external antd Tooltip becomes the
+                          // Button's built-in `tooltip` prop (Astryx forbids
+                          // wrapping a disabled control in Tooltip).
+                          return (
+                            <IconButton
+                              icon={<Info size="1em" />}
+                              label={t('modelService.DeploymentPresetDetail')}
+                              tooltip={t('modelService.DeploymentPresetDetail')}
+                              isLoading={isPresetDetailPending}
+                              isDisabled={!selectedId}
+                              onClick={() => {
+                                if (!selectedId) return;
+                                startPresetDetailTransition(() => {
+                                  setPresetDetailId(selectedId);
+                                });
+                              }}
+                            />
+                          );
+                        }}
+                      </BAIFormItem>
+                    </BAIFlex>
+                  </BAIFormItem>
+                );
+              }}
             </BAIFormItem>
           </Form>
         )
@@ -1968,7 +2300,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             required
           >
             <BAIFlex direction="row" gap="xs">
-              <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
+              <Suspense
+                fallback={
+                  <SelectLoadingFallback label={t('deployment.ModelFolder')} />
+                }
+              >
                 <BAIFormItem
                   name="modelFolderId"
                   // BAIFormItem drops `label` on noStyle items (the outer
@@ -1980,6 +2316,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 >
                   <BAIVFolderSelect
                     ref={customVFolderSelectRef}
+                    fallbackLabels={revisionFolderFallbackLabels}
                     label={t('deployment.ModelFolder')}
                     isLabelHidden
                     currentProjectId={deploymentProject?.id}
@@ -2061,7 +2398,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               </BAIFormItem>
             )}
           </BAIFlex>
-          <Suspense fallback={<BAISelect loading style={{ width: '100%' }} />}>
+          <Suspense
+            fallback={
+              <SelectLoadingFallback label={t('deployment.RuntimeVariant')} />
+            }
+          >
             <BAIFormItem
               name="runtimeVariantId"
               label={t('deployment.RuntimeVariant')}
@@ -2261,14 +2602,37 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           </Collapsible>
         </Form>
       )}
-      {presetDetailId && (
-        <Suspense fallback={null}>
+      {/*
+        Kept mounted (not gated by `presetDetailId`) for the same reason as the
+        model-card boundary below: revealing the preset modal recedes an
+        already-resolved boundary, so the `startPresetDetailTransition` update
+        holds `isPresetDetailPending` true and spins the (i) button while the
+        detail prefetch loads instead of committing the null fallback.
+      */}
+      <Suspense fallback={null}>
+        {presetDetailId && (
           <PresetDetailLoader
             presetId={presetDetailId}
             onCancel={() => setPresetDetailId(null)}
           />
-        </Suspense>
-      )}
+        )}
+      </Suspense>
+      {/*
+        The boundary stays mounted (not gated by `modelCardDetailId`) so opening
+        the drawer recedes an already-resolved boundary. Inside the
+        `startModelCardDetailTransition` update React then holds the prior UI and
+        keeps `isModelCardDetailPending` true while the detail prefetch loads —
+        driving the (i) button's spinner — instead of committing the null
+        fallback immediately.
+      */}
+      <Suspense fallback={null}>
+        {modelCardDetailId && (
+          <ModelCardDetailLoader
+            modelCardId={modelCardDetailId}
+            onClose={() => setModelCardDetailId(null)}
+          />
+        )}
+      </Suspense>
       {/* DB `defaultModelDefinition` baseline loader (FR-3205). Renders nothing;
           resolves the variant's built-in definition and pushes it into
           `dbModelDefinitionDefaults` for the placeholder merge. Keyed by

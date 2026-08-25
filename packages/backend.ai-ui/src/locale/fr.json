@@ -269,7 +269,7 @@
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Plus d'actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Le(s) projet(s) suivant(s) sera(ont) mis à jour.",
@@ -371,11 +371,26 @@
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Ajouter un choix",
+    "Category": "Catégorie",
+    "CategoryPlaceholder": "ex. model_loading",
+    "CategoryTooltip": "Catégorie d'interface utilisée pour regrouper les paramètres associés.",
+    "ChoiceLabel": "Libellé",
+    "ChoiceLabelPlaceholder": "ex. FP16",
+    "ChoiceLabelRequired": "Le libellé du choix est obligatoire.",
+    "ChoiceValue": "Valeur",
+    "ChoiceValuePlaceholder": "ex. fp16",
+    "ChoiceValueRequired": "La valeur du choix est obligatoire.",
+    "Choices": "Choix",
+    "ChoicesRequired": "Au moins un choix est requis.",
     "CreatePreset": "Créer un préréglage",
     "DefaultValue": "Valeur par défaut",
     "DefaultValuePlaceholder": "ex. 1",
     "Description": "Description",
     "DescriptionPlaceholder": "Décrivez ce que ce paramètre contrôle et comment il affecte le comportement d'inférence.",
+    "DisplayName": "Nom d'affichage",
+    "DisplayNamePlaceholder": "ex. Tensor Parallel Size",
+    "DisplayNameTooltip": "Libellé lisible affiché à la place du nom du paramètre dans le formulaire de déploiement.",
     "EditPreset": "Modifier le préréglage",
     "Key": "Clé",
     "KeyPlaceholder": "ex. TENSOR_PARALLEL_SIZE",
@@ -383,6 +398,9 @@
     "Name": "Nom",
     "NamePlaceholder": "ex. Tensor Parallel Size",
     "NameRequired": "Le nom est obligatoire.",
+    "NumberMax": "Maximum",
+    "NumberMaxMustExceedMin": "La valeur maximale doit être supérieure à la valeur minimale.",
+    "NumberMin": "Minimum",
     "PresetCreated": "Le préréglage de variante d'exécution a été créé.",
     "PresetTarget": "Cible du préréglage",
     "PresetTargetArgs": "Argument de ligne de commande",
@@ -395,6 +413,23 @@
     "RequiredTooltip": "Indique si ce paramètre de préréglage doit être fourni lors de la création d'une révision de déploiement.",
     "RuntimeVariant": "Variante d'exécution",
     "RuntimeVariantRequired": "La variante d'exécution est obligatoire.",
+    "SliderMax": "Maximum",
+    "SliderMaxMustExceedMin": "La valeur maximale doit être supérieure à la valeur minimale.",
+    "SliderMaxRequired": "La valeur maximale est obligatoire.",
+    "SliderMin": "Minimum",
+    "SliderMinRequired": "La valeur minimale est obligatoire.",
+    "SliderStep": "Pas",
+    "SliderStepMustBePositive": "Le pas doit être supérieur à 0.",
+    "SliderStepTooltip": "Incrément du curseur. La valeur par défaut est 1.",
+    "TextPlaceholderExample": "ex. Saisissez une valeur",
+    "TextPlaceholderLabel": "Texte d'aide de saisie",
+    "UIType": "Type d'interface",
+    "UITypeCheckbox": "Case à cocher",
+    "UITypeNumberInput": "Saisie numérique",
+    "UITypeSelect": "Sélection",
+    "UITypeSlider": "Curseur",
+    "UITypeTextInput": "Saisie de texte",
+    "UITypeTooltip": "Contrôle utilisé pour représenter ce paramètre dans le formulaire de déploiement.",
     "ValueType": "Type de valeur",
     "ValueTypeBool": "Booléen",
     "ValueTypeFlag": "Indicateur",
@@ -404,9 +439,11 @@
     "ValueTypeStr": "Chaîne"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Catégorie",
     "CreatedAt": "Date de création",
     "DefaultValue": "Valeur par défaut",
     "Description": "Description",
+    "DisplayName": "Nom d'affichage",
     "Key": "Clé",
     "ModifiedAt": "Date de modification",
     "Name": "Nom",
@@ -458,12 +495,13 @@
     "SelectStorageProxy": "Sélectionner un proxy de stockage"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Terminé le",
+    "Duration": "Durée",
     "ErrorCode": "Code d'erreur",
     "Message": "Message",
     "Result": "Résultat",
-    "StartedAt": "Démarré le",
-    "Step": "Étape"
+    "ResultMarker": "Marqueur de résultat de cette tentative",
+    "Step": "Étape",
+    "Time": "Heure"
   },
   "comp:BAITable": {
     "Apply": "Appliquer",

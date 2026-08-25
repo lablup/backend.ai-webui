@@ -269,7 +269,7 @@
     "UpdatedAt": "更新日時"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "その他の操作"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",
@@ -371,11 +371,26 @@
     "UpdatedAt": "更新日時"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "選択肢を追加",
+    "Category": "カテゴリ",
+    "CategoryPlaceholder": "例: model_loading",
+    "CategoryTooltip": "関連するパラメータをまとめるために使用されるUIカテゴリです。",
+    "ChoiceLabel": "ラベル",
+    "ChoiceLabelPlaceholder": "例: FP16",
+    "ChoiceLabelRequired": "選択肢のラベルは必須です。",
+    "ChoiceValue": "値",
+    "ChoiceValuePlaceholder": "例: fp16",
+    "ChoiceValueRequired": "選択肢の値は必須です。",
+    "Choices": "選択肢",
+    "ChoicesRequired": "少なくとも1つの選択肢が必要です。",
     "CreatePreset": "プリセットを作成",
     "DefaultValue": "デフォルト値",
     "DefaultValuePlaceholder": "例: 1",
     "Description": "説明",
     "DescriptionPlaceholder": "このパラメータが制御する内容と、推論の動作にどのように影響するかを説明してください。",
+    "DisplayName": "表示名",
+    "DisplayNamePlaceholder": "例: Tensor Parallel Size",
+    "DisplayNameTooltip": "デプロイメントフォームでパラメータ名の代わりに表示される、読みやすいラベルです。",
     "EditPreset": "プリセットを編集",
     "Key": "キー",
     "KeyPlaceholder": "例: TENSOR_PARALLEL_SIZE",
@@ -383,6 +398,9 @@
     "Name": "名前",
     "NamePlaceholder": "例: Tensor Parallel Size",
     "NameRequired": "名前は必須です。",
+    "NumberMax": "最大値",
+    "NumberMaxMustExceedMin": "最大値は最小値より大きくする必要があります。",
+    "NumberMin": "最小値",
     "PresetCreated": "ランタイムバリアントプリセットが作成されました。",
     "PresetTarget": "プリセット対象",
     "PresetTargetArgs": "コマンドライン引数",
@@ -395,6 +413,23 @@
     "RequiredTooltip": "デプロイメントリビジョンを作成する際に、このプリセットパラメータの指定が必須かどうかを示します。",
     "RuntimeVariant": "ランタイムバリアント",
     "RuntimeVariantRequired": "ランタイムバリアントは必須です。",
+    "SliderMax": "最大値",
+    "SliderMaxMustExceedMin": "最大値は最小値より大きくする必要があります。",
+    "SliderMaxRequired": "最大値は必須です。",
+    "SliderMin": "最小値",
+    "SliderMinRequired": "最小値は必須です。",
+    "SliderStep": "ステップ",
+    "SliderStepMustBePositive": "ステップは0より大きくする必要があります。",
+    "SliderStepTooltip": "スライダーの増分ステップです。デフォルトは1です。",
+    "TextPlaceholderExample": "例: 値を入力してください",
+    "TextPlaceholderLabel": "入力プレースホルダー",
+    "UIType": "UIタイプ",
+    "UITypeCheckbox": "チェックボックス",
+    "UITypeNumberInput": "数値入力",
+    "UITypeSelect": "セレクト",
+    "UITypeSlider": "スライダー",
+    "UITypeTextInput": "テキスト入力",
+    "UITypeTooltip": "デプロイメントフォームでこのパラメータを表示する際に使用されるコントロールです。",
     "ValueType": "値の型",
     "ValueTypeBool": "ブール値",
     "ValueTypeFlag": "フラグ",
@@ -404,9 +439,11 @@
     "ValueTypeStr": "文字列"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "カテゴリ",
     "CreatedAt": "作成日",
     "DefaultValue": "デフォルト値",
     "Description": "説明",
+    "DisplayName": "表示名",
     "Key": "キー",
     "ModifiedAt": "更新日",
     "Name": "名前",
@@ -458,12 +495,13 @@
     "SelectStorageProxy": "ストレージプロキシを選択"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "終了日時",
+    "Duration": "所要時間",
     "ErrorCode": "エラーコード",
     "Message": "メッセージ",
     "Result": "結果",
-    "StartedAt": "開始日時",
-    "Step": "ステップ"
+    "ResultMarker": "この試行の結果マーカー",
+    "Step": "ステップ",
+    "Time": "時刻"
   },
   "comp:BAITable": {
     "Apply": "適用",

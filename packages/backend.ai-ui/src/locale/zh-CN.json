@@ -269,7 +269,7 @@
     "UpdatedAt": "更新时间"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "更多操作"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下项目将被更新。",
@@ -371,11 +371,26 @@
     "UpdatedAt": "更新时间"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "添加选项",
+    "Category": "类别",
+    "CategoryPlaceholder": "例如：model_loading",
+    "CategoryTooltip": "用于将相关参数归类到一起的 UI 类别。",
+    "ChoiceLabel": "标签",
+    "ChoiceLabelPlaceholder": "例如：FP16",
+    "ChoiceLabelRequired": "选项标签为必填项。",
+    "ChoiceValue": "值",
+    "ChoiceValuePlaceholder": "例如：fp16",
+    "ChoiceValueRequired": "选项值为必填项。",
+    "Choices": "选项",
+    "ChoicesRequired": "至少需要一个选项。",
     "CreatePreset": "创建预设",
     "DefaultValue": "默认值",
     "DefaultValuePlaceholder": "例如：1",
     "Description": "描述",
     "DescriptionPlaceholder": "描述此参数的作用及其对推理行为的影响。",
+    "DisplayName": "显示名称",
+    "DisplayNamePlaceholder": "例如：Tensor Parallel Size",
+    "DisplayNameTooltip": "在部署表单中代替参数名称显示的可读标签。",
     "EditPreset": "编辑预设",
     "Key": "键",
     "KeyPlaceholder": "例如：TENSOR_PARALLEL_SIZE",
@@ -383,6 +398,9 @@
     "Name": "名称",
     "NamePlaceholder": "例如：Tensor Parallel Size",
     "NameRequired": "名称为必填项。",
+    "NumberMax": "最大值",
+    "NumberMaxMustExceedMin": "最大值必须大于最小值。",
+    "NumberMin": "最小值",
     "PresetCreated": "运行时变体预设已创建。",
     "PresetTarget": "预设目标",
     "PresetTargetArgs": "命令行参数",
@@ -395,6 +413,23 @@
     "RequiredTooltip": "构建部署修订版本时是否必须提供此预设参数。",
     "RuntimeVariant": "运行时变体",
     "RuntimeVariantRequired": "运行时变体为必填项。",
+    "SliderMax": "最大值",
+    "SliderMaxMustExceedMin": "最大值必须大于最小值。",
+    "SliderMaxRequired": "最大值为必填项。",
+    "SliderMin": "最小值",
+    "SliderMinRequired": "最小值为必填项。",
+    "SliderStep": "步长",
+    "SliderStepMustBePositive": "步长必须大于 0。",
+    "SliderStepTooltip": "滑块的递增步长，默认值为 1。",
+    "TextPlaceholderExample": "例如：请输入值",
+    "TextPlaceholderLabel": "输入占位符",
+    "UIType": "UI 类型",
+    "UITypeCheckbox": "复选框",
+    "UITypeNumberInput": "数字输入框",
+    "UITypeSelect": "下拉选择",
+    "UITypeSlider": "滑块",
+    "UITypeTextInput": "文本输入框",
+    "UITypeTooltip": "用于在部署表单中呈现此参数的控件。",
     "ValueType": "值类型",
     "ValueTypeBool": "布尔值",
     "ValueTypeFlag": "标志",
@@ -404,9 +439,11 @@
     "ValueTypeStr": "字符串"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "类别",
     "CreatedAt": "创建日期",
     "DefaultValue": "默认值",
     "Description": "描述",
+    "DisplayName": "显示名称",
     "Key": "键",
     "ModifiedAt": "修改日期",
     "Name": "名称",
@@ -458,12 +495,13 @@
     "SelectStorageProxy": "选择存储代理"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "结束时间",
+    "Duration": "持续时间",
     "ErrorCode": "错误代码",
     "Message": "消息",
     "Result": "结果",
-    "StartedAt": "开始时间",
-    "Step": "步骤"
+    "ResultMarker": "本次尝试的结果标记",
+    "Step": "步骤",
+    "Time": "时间"
   },
   "comp:BAITable": {
     "Apply": "应用",

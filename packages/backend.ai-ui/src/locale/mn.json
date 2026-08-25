@@ -269,7 +269,7 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Бусад үйлдэл"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
@@ -371,11 +371,26 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Сонголт нэмэх",
+    "Category": "Ангилал",
+    "CategoryPlaceholder": "жн: model_loading",
+    "CategoryTooltip": "Холбоотой параметрүүдийг хамтад нь бүлэглэхэд ашиглагдах UI ангилал.",
+    "ChoiceLabel": "Шошго",
+    "ChoiceLabelPlaceholder": "жн: FP16",
+    "ChoiceLabelRequired": "Сонголтын шошго заавал шаардлагатай.",
+    "ChoiceValue": "Утга",
+    "ChoiceValuePlaceholder": "жн: fp16",
+    "ChoiceValueRequired": "Сонголтын утга заавал шаардлагатай.",
+    "Choices": "Сонголтууд",
+    "ChoicesRequired": "Дор хаяж нэг сонголт шаардлагатай.",
     "CreatePreset": "Урьдчилсан тохиргоо үүсгэх",
     "DefaultValue": "Өгөгдмөл утга",
     "DefaultValuePlaceholder": "жн: 1",
     "Description": "Тайлбар",
     "DescriptionPlaceholder": "Энэ параметр юуг удирдаж, дүгнэлтийн ажиллагаанд хэрхэн нөлөөлдгийг тайлбарлана уу.",
+    "DisplayName": "Харагдах нэр",
+    "DisplayNamePlaceholder": "жн: Tensor Parallel Size",
+    "DisplayNameTooltip": "Байршуулалтын маягтад параметрийн нэрний оронд харагдах, амархан ойлгогдох шошго.",
     "EditPreset": "Урьдчилсан тохиргоо засах",
     "Key": "Түлхүүр",
     "KeyPlaceholder": "жн: TENSOR_PARALLEL_SIZE",
@@ -383,6 +398,9 @@
     "Name": "Нэр",
     "NamePlaceholder": "жн: Tensor Parallel Size",
     "NameRequired": "Нэр заавал бөглөх ёстой.",
+    "NumberMax": "Дээд утга",
+    "NumberMaxMustExceedMin": "Дээд утга нь доод утгаас их байх ёстой.",
+    "NumberMin": "Доод утга",
     "PresetCreated": "Ажиллах орчны урьдчилсан тохиргоо үүсгэгдлээ.",
     "PresetTarget": "Урьдчилсан тохиргооны зорилт",
     "PresetTargetArgs": "Тушаалын мөрийн аргумент",
@@ -395,6 +413,23 @@
     "RequiredTooltip": "Байршуулалтын шинэчлэл (revision) бүтээх үед энэ урьдчилсан тохиргооны параметрийг заавал өгөх ёстой эсэх.",
     "RuntimeVariant": "Ажиллах орчин",
     "RuntimeVariantRequired": "Ажиллах орчин заавал шаардлагатай.",
+    "SliderMax": "Дээд утга",
+    "SliderMaxMustExceedMin": "Дээд утга нь доод утгаас их байх ёстой.",
+    "SliderMaxRequired": "Дээд утга заавал шаардлагатай.",
+    "SliderMin": "Доод утга",
+    "SliderMinRequired": "Доод утга заавал шаардлагатай.",
+    "SliderStep": "Алхам",
+    "SliderStepMustBePositive": "Алхам 0-ээс их байх ёстой.",
+    "SliderStepTooltip": "Гулсагчийн өсөх алхам. Анхны утга нь 1.",
+    "TextPlaceholderExample": "жн: Утга оруулна уу",
+    "TextPlaceholderLabel": "Оролтын түр бичвэр",
+    "UIType": "UI төрөл",
+    "UITypeCheckbox": "Чекбокс",
+    "UITypeNumberInput": "Тооны оролт",
+    "UITypeSelect": "Сонгох",
+    "UITypeSlider": "Гулсагч",
+    "UITypeTextInput": "Текст оролт",
+    "UITypeTooltip": "Энэ параметрийг байршуулалтын маягтад харуулахад ашиглагдах хяналт.",
     "ValueType": "Утгын төрөл",
     "ValueTypeBool": "Логик утга",
     "ValueTypeFlag": "Флаг",
@@ -404,9 +439,11 @@
     "ValueTypeStr": "Тэмдэгт мөр"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Ангилал",
     "CreatedAt": "Үүсгэсэн огноо",
     "DefaultValue": "Өгөгдмөл утга",
     "Description": "Тайлбар",
+    "DisplayName": "Харагдах нэр",
     "Key": "Түлхүүр",
     "ModifiedAt": "Өөрчлөлтийн огноо",
     "Name": "Нэр",
@@ -458,12 +495,13 @@
     "SelectStorageProxy": "Хадгалалтын прокси сонгох"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Дууссан цаг",
+    "Duration": "Үргэлжлэх хугацаа",
     "ErrorCode": "Алдааны код",
     "Message": "Зурвас",
     "Result": "Үр дүн",
-    "StartedAt": "Эхэлсэн цаг",
-    "Step": "Алхам"
+    "ResultMarker": "Энэ оролдлогын үр дүнгийн тэмдэглэгээ",
+    "Step": "Алхам",
+    "Time": "Цаг"
   },
   "comp:BAITable": {
     "Apply": "Хэрэглэх",
