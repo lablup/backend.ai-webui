@@ -421,6 +421,7 @@
     "SliderStep": "Βήμα",
     "SliderStepMustBePositive": "Το βήμα πρέπει να είναι μεγαλύτερο από 0.",
     "SliderStepTooltip": "Βήμα αύξησης για τον ρυθμιστή. Προεπιλογή 1.",
+    "StoredValueTypeMismatch": "Αυτή η προεπιλογή είναι αποθηκευμένη με τύπο διεπαφής {{uiType}}, ο οποίος δεν μπορεί να εμφανίσει τον τύπο τιμής {{valueType}}. Επιλέξτε συμβατό τύπο τιμής πριν την αποθήκευση.",
     "TextPlaceholderExample": "π.χ., Εισαγάγετε μια τιμή",
     "TextPlaceholderLabel": "Placeholder Εισαγωγής",
     "UIType": "Τύπος UI",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Λογική Τιμή",
     "ValueTypeFlag": "Σημαία",
     "ValueTypeFloat": "Δεκαδικός",
+    "ValueTypeIncompatibleWithUIType": "Ο επιλεγμένος τύπος διεπαφής δεν μπορεί να εμφανίσει αυτόν τον τύπο τιμής.",
     "ValueTypeInt": "Ακέραιος",
     "ValueTypeRequired": "Ο τύπος τιμής είναι υποχρεωτικός.",
     "ValueTypeStr": "Συμβολοσειρά"

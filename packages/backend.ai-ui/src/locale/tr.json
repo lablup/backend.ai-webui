@@ -421,6 +421,7 @@
     "SliderStep": "Adım",
     "SliderStepMustBePositive": "Adım 0'dan büyük olmalıdır.",
     "SliderStepTooltip": "Kaydırıcı için artış adımı. Varsayılan değer 1'dir.",
+    "StoredValueTypeMismatch": "Bu ön ayar {{uiType}} arayüz türüyle kaydedilmiş ve bu tür {{valueType}} değer türünü gösteremez. Kaydetmeden önce uyumlu bir değer türü seçin.",
     "TextPlaceholderExample": "örn. Bir değer girin",
     "TextPlaceholderLabel": "Giriş Yer Tutucusu",
     "UIType": "UI Türü",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Boole",
     "ValueTypeFlag": "Bayrak",
     "ValueTypeFloat": "Ondalık Sayı",
+    "ValueTypeIncompatibleWithUIType": "Seçilen arayüz türü bu değer türünü gösteremez.",
     "ValueTypeInt": "Tam Sayı",
     "ValueTypeRequired": "Değer türü zorunludur.",
     "ValueTypeStr": "Metin"

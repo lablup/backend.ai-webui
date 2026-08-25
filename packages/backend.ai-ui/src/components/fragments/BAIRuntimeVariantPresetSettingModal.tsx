@@ -10,9 +10,17 @@ import type {
 } from '../../__generated__/BAIRuntimeVariantPresetSettingModalUpdateMutation.graphql';
 import { App } from '../../app-shim';
 import { Form } from '../../form-engine';
-import { toLocalId } from '../../helper';
+import {
+  isValueTypeCompatibleWithUIType,
+  READ_UI_TYPE_TO_FORM_UI_TYPE,
+  toLocalId,
+  UI_TYPE_TO_ALLOWED_VALUE_TYPES,
+  type RuntimeVariantPresetUIType as UIType,
+  type RuntimeVariantPresetValueType as ValueType,
+} from '../../helper';
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIAlert from '../BAIAlert';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
@@ -30,14 +38,22 @@ import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
-type UIType = 'SLIDER' | 'NUMBER_INPUT' | 'SELECT' | 'CHECKBOX' | 'TEXT_INPUT';
+// Label keys, so the mismatch banner can name the pair in the admin's language
+// without translating the type names a second time.
+const UI_TYPE_LABEL_KEYS: Record<UIType, string> = {
+  SLIDER: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeSlider',
+  NUMBER_INPUT: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeNumberInput',
+  SELECT: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeSelect',
+  CHECKBOX: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeCheckbox',
+  TEXT_INPUT: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeTextInput',
+};
 
-const READ_UI_TYPE_TO_FORM_UI_TYPE: Record<string, UIType> = {
-  slider: 'SLIDER',
-  number_input: 'NUMBER_INPUT',
-  select: 'SELECT',
-  checkbox: 'CHECKBOX',
-  text_input: 'TEXT_INPUT',
+const VALUE_TYPE_LABEL_KEYS: Record<ValueType, string> = {
+  STR: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeStr',
+  INT: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeInt',
+  FLOAT: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFloat',
+  BOOL: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeBool',
+  FLAG: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFlag',
 };
 
 type RuntimeVariantPresetFormValues = {
@@ -45,7 +61,7 @@ type RuntimeVariantPresetFormValues = {
   name: string;
   description?: string;
   presetTarget: 'ENV' | 'ARGS';
-  valueType: 'STR' | 'INT' | 'FLOAT' | 'BOOL' | 'FLAG';
+  valueType: ValueType;
   defaultValue?: string;
   key: string;
   required?: boolean;
@@ -201,6 +217,39 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
       : undefined,
   );
 
+  // A control type this build does not know about cannot be represented in the
+  // form, so the builder would emit `undefined` and we would send an explicit
+  // `uiOption: null` — which the manager reads as "clear it" (the input field
+  // is SENTINEL-defaulted). Omit the key instead and leave the server's value
+  // alone.
+  const hasUnknownUIType =
+    !!preset?.uiOption?.uiType &&
+    !READ_UI_TYPE_TO_FORM_UI_TYPE[preset.uiOption.uiType];
+
+  // Constrains the value type below. `uiType` is seeded from the preset
+  // regardless of `isUIMetadataSupported`, so a manager too old to let the
+  // admin EDIT the control still constrains the value type against the
+  // control it already stores — otherwise this screen could author the
+  // mismatch it is meant to prevent. An unrecognised stored type constrains
+  // nothing: this build cannot know what it renders.
+  const isValueTypeAllowed = (value: ValueType) =>
+    isValueTypeCompatibleWithUIType(uiType, value);
+
+  // The banner reports what is STORED, not what the form currently holds: the
+  // field validator already gives live feedback, and deriving this from form
+  // state would need `Form.useWatch`, which this file avoids on purpose (see
+  // the `uiType` state comment) — and would misfire right after `uiType`
+  // changes clear `valueType`.
+  const storedUIType = preset?.uiOption?.uiType
+    ? READ_UI_TYPE_TO_FORM_UI_TYPE[preset.uiOption.uiType]
+    : undefined;
+  const storedValueType = preset?.targetSpec?.valueType as
+    ValueType | undefined;
+  const hasStoredValueTypeMismatch =
+    !!storedUIType &&
+    !!storedValueType &&
+    !isValueTypeCompatibleWithUIType(storedUIType, storedValueType);
+
   const [commitCreate, isInFlightCreate] =
     useMutation<BAIRuntimeVariantPresetSettingModalCreateMutation>(graphql`
       mutation BAIRuntimeVariantPresetSettingModalCreateMutation(
@@ -329,7 +378,12 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           ? {
               category: normalizeOptionalText(values.category),
               displayName: normalizeOptionalText(values.displayName),
-              uiOption: buildUIOptionInput(values) ?? null,
+              // Only hold back while the form still has no representable
+              // type — once the admin picks a supported one, that selection
+              // must reach the server.
+              ...(hasUnknownUIType && values.uiType === undefined
+                ? {}
+                : { uiOption: buildUIOptionInput(values) ?? null }),
             }
           : {};
         if (preset) {
@@ -395,13 +449,26 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
         layout="vertical"
         onValuesChange={(changedValues) => {
           if ('uiType' in changedValues) {
-            setUiType(changedValues.uiType);
+            const nextUIType: UIType | undefined = changedValues.uiType;
+            setUiType(nextUIType);
+            const nextAllowed = nextUIType
+              ? UI_TYPE_TO_ALLOWED_VALUE_TYPES[nextUIType]
+              : undefined;
+            const currentValueType: ValueType | undefined =
+              form.getFieldValue('valueType');
             // Clear the other UI types' config so switching types doesn't
             // leak stale values into the submitted `uiOption` (previously
             // handled by `preserve={false}` on the Form, which turned out to
             // garbage-collect the `choices` Form.List's per-row content —
             // see the `uiType` state comment above).
             form.setFieldsValue({
+              // Drop a value type the new control cannot render rather than
+              // substituting one, so the admin re-picks deliberately.
+              ...(nextAllowed &&
+              currentValueType &&
+              !nextAllowed.includes(currentValueType)
+                ? { valueType: undefined }
+                : {}),
               sliderMin: undefined,
               sliderMax: undefined,
               sliderStep: undefined,
@@ -450,6 +517,23 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               }
         }
       >
+        {/* Deliberately NOT gated on `isUIMetadataSupported`. Below 26.9.0 the
+            UI type select is hidden but `valueType` stays writable, so that is
+            exactly where the greyed-out value types have no visible cause. The
+            copy names the stored control as a fact about the preset rather
+            than a field to edit, so it reads correctly either way. */}
+        {storedUIType && storedValueType && hasStoredValueTypeMismatch ? (
+          <BAIAlert
+            type="warning"
+            description={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.StoredValueTypeMismatch',
+              {
+                uiType: t(UI_TYPE_LABEL_KEYS[storedUIType]),
+                valueType: t(VALUE_TYPE_LABEL_KEYS[storedValueType]),
+              },
+            )}
+          />
+        ) : null}
         <Suspense
           fallback={
             // Keep the field registered (name + required rule) while the
@@ -602,6 +686,54 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             ]}
           />
         </Form.Item>
+        {/* Above the value type on purpose: the control is the driver field
+            for everything that follows it — the value type here, and the
+            slider / number / choices / placeholder config further down. */}
+        {isUIMetadataSupported ? (
+          <Form.Item
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.UIType')}
+            name="uiType"
+            tooltip={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.UITypeTooltip',
+            )}
+          >
+            <BAISelect
+              allowClear
+              options={[
+                {
+                  label: t(
+                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeSlider',
+                  ),
+                  value: 'SLIDER',
+                },
+                {
+                  label: t(
+                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeNumberInput',
+                  ),
+                  value: 'NUMBER_INPUT',
+                },
+                {
+                  label: t(
+                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeSelect',
+                  ),
+                  value: 'SELECT',
+                },
+                {
+                  label: t(
+                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeCheckbox',
+                  ),
+                  value: 'CHECKBOX',
+                },
+                {
+                  label: t(
+                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeTextInput',
+                  ),
+                  value: 'TEXT_INPUT',
+                },
+              ]}
+            />
+          </Form.Item>
+        ) : null}
         <Form.Item
           label={t('comp:BAIRuntimeVariantPresetSettingModal.ValueType')}
           name="valueType"
@@ -612,6 +744,21 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeRequired',
               ),
             },
+            {
+              // Disabling the options stops a NEW mismatch being picked; this
+              // catches one already stored (authored by an older build, the
+              // CLI, or the API), which arrives selected and would otherwise
+              // be saved straight back.
+              validator: async (_rule, value?: ValueType) => {
+                if (value && !isValueTypeAllowed(value)) {
+                  throw new Error(
+                    t(
+                      'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeIncompatibleWithUIType',
+                    ),
+                  );
+                }
+              },
+            },
           ]}
         >
           <BAISelect
@@ -621,30 +768,35 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                   'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeStr',
                 ),
                 value: 'STR',
+                disabled: !isValueTypeAllowed('STR'),
               },
               {
                 label: t(
                   'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeInt',
                 ),
                 value: 'INT',
+                disabled: !isValueTypeAllowed('INT'),
               },
               {
                 label: t(
                   'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFloat',
                 ),
                 value: 'FLOAT',
+                disabled: !isValueTypeAllowed('FLOAT'),
               },
               {
                 label: t(
                   'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeBool',
                 ),
                 value: 'BOOL',
+                disabled: !isValueTypeAllowed('BOOL'),
               },
               {
                 label: t(
                   'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFlag',
                 ),
                 value: 'FLAG',
+                disabled: !isValueTypeAllowed('FLAG'),
               },
             ]}
           />
@@ -681,49 +833,6 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
         </Form.Item>
         {isUIMetadataSupported ? (
           <>
-            <Form.Item
-              label={t('comp:BAIRuntimeVariantPresetSettingModal.UIType')}
-              name="uiType"
-              tooltip={t(
-                'comp:BAIRuntimeVariantPresetSettingModal.UITypeTooltip',
-              )}
-            >
-              <BAISelect
-                allowClear
-                options={[
-                  {
-                    label: t(
-                      'comp:BAIRuntimeVariantPresetSettingModal.UITypeSlider',
-                    ),
-                    value: 'SLIDER',
-                  },
-                  {
-                    label: t(
-                      'comp:BAIRuntimeVariantPresetSettingModal.UITypeNumberInput',
-                    ),
-                    value: 'NUMBER_INPUT',
-                  },
-                  {
-                    label: t(
-                      'comp:BAIRuntimeVariantPresetSettingModal.UITypeSelect',
-                    ),
-                    value: 'SELECT',
-                  },
-                  {
-                    label: t(
-                      'comp:BAIRuntimeVariantPresetSettingModal.UITypeCheckbox',
-                    ),
-                    value: 'CHECKBOX',
-                  },
-                  {
-                    label: t(
-                      'comp:BAIRuntimeVariantPresetSettingModal.UITypeTextInput',
-                    ),
-                    value: 'TEXT_INPUT',
-                  },
-                ]}
-              />
-            </Form.Item>
             {uiType === 'SLIDER' ? (
               <BAIFlex
                 gap="sm"

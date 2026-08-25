@@ -421,6 +421,7 @@
     "SliderStep": "Incremento",
     "SliderStepMustBePositive": "O incremento deve ser superior a 0.",
     "SliderStepTooltip": "Incremento do cursor. O valor predefinido é 1.",
+    "StoredValueTypeMismatch": "Esta predefinição está guardada com o tipo de interface {{uiType}}, que não consegue apresentar o tipo de valor {{valueType}}. Escolha um tipo de valor compatível antes de guardar.",
     "TextPlaceholderExample": "ex., Introduza um valor",
     "TextPlaceholderLabel": "Texto de Espaço Reservado",
     "UIType": "Tipo de UI",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Booleano",
     "ValueTypeFlag": "Flag",
     "ValueTypeFloat": "Flutuante",
+    "ValueTypeIncompatibleWithUIType": "O tipo de interface selecionado não consegue apresentar este tipo de valor.",
     "ValueTypeInt": "Inteiro",
     "ValueTypeRequired": "O tipo de valor é obrigatório.",
     "ValueTypeStr": "Texto"

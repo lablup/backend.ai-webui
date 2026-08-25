@@ -1,4 +1,3 @@
-import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import {
   BAIRuntimeVariantPresetTableFragment$data,
   BAIRuntimeVariantPresetTableFragment$key,
@@ -7,6 +6,7 @@ import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BooleanTag from '../BooleanTag';
 import {
@@ -64,9 +64,6 @@ const BAIRuntimeVariantPresetTable = ({
   );
   const isRuntimeVariantFieldSupported = baiClient.supports(
     'runtime-variant-preset-runtime-variant-field',
-  );
-  const isUIMetadataSupported = baiClient.supports(
-    'runtime-variant-preset-ui-metadata',
   );
 
   const presets = useFragment<BAIRuntimeVariantPresetTableFragment$key>(
@@ -136,13 +133,15 @@ const BAIRuntimeVariantPresetTable = ({
         title: t('comp:BAIRuntimeVariantPresetTable.RuntimeVariant'),
         render: (__, record) => record.runtimeVariant?.name ?? '-',
       },
-      isUIMetadataSupported && {
+      // Read-only, so no capability gate: `category` / `displayName` ship with
+      // the type since 26.4.2. Only WRITING them needs 26.9.0.
+      {
         key: 'category',
         title: t('comp:BAIRuntimeVariantPresetTable.Category'),
         defaultHidden: true,
         render: (__, record) => record.category ?? '-',
       },
-      isUIMetadataSupported && {
+      {
         key: 'displayName',
         title: t('comp:BAIRuntimeVariantPresetTable.DisplayName'),
         defaultHidden: true,

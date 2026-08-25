@@ -421,6 +421,7 @@
     "SliderStep": "Schritt",
     "SliderStepMustBePositive": "Die Schrittweite muss größer als 0 sein.",
     "SliderStepTooltip": "Schrittweite für den Schieberegler. Standardmäßig 1.",
+    "StoredValueTypeMismatch": "Dieses Preset ist mit dem UI-Typ {{uiType}} gespeichert, der den Werttyp {{valueType}} nicht darstellen kann. Wählen Sie vor dem Speichern einen darstellbaren Werttyp.",
     "TextPlaceholderExample": "z. B. Wert eingeben",
     "TextPlaceholderLabel": "Eingabe-Platzhalter",
     "UIType": "UI-Typ",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Boolesch",
     "ValueTypeFlag": "Flag",
     "ValueTypeFloat": "Gleitkommazahl",
+    "ValueTypeIncompatibleWithUIType": "Der ausgewählte UI-Typ kann diesen Werttyp nicht darstellen.",
     "ValueTypeInt": "Ganzzahl",
     "ValueTypeRequired": "Werttyp ist erforderlich.",
     "ValueTypeStr": "Zeichenfolge"

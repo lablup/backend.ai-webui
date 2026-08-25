@@ -421,6 +421,7 @@
     "SliderStep": "단위(Step)",
     "SliderStepMustBePositive": "단위(Step)는 0보다 커야 합니다.",
     "SliderStepTooltip": "슬라이더의 증가 단위입니다. 기본값은 1입니다.",
+    "StoredValueTypeMismatch": "이 프리셋은 UI 유형 {{uiType}}(으)로 저장되어 있어 값 유형 {{valueType}}을(를) 표시할 수 없습니다. 표시 가능한 값 유형을 선택한 뒤 저장하세요.",
     "TextPlaceholderExample": "예: 값을 입력하세요",
     "TextPlaceholderLabel": "입력 플레이스홀더",
     "UIType": "UI 유형",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "bool 자료형(Boolean)",
     "ValueTypeFlag": "플래그",
     "ValueTypeFloat": "실수",
+    "ValueTypeIncompatibleWithUIType": "선택한 UI 유형은 이 값 유형을 표시할 수 없습니다.",
     "ValueTypeInt": "정수",
     "ValueTypeRequired": "값 유형은 필수입니다.",
     "ValueTypeStr": "문자열"

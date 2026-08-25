@@ -421,6 +421,7 @@
     "SliderStep": "步長",
     "SliderStepMustBePositive": "步長必須大於 0。",
     "SliderStepTooltip": "滑桿的遞增步長，預設值為 1。",
+    "StoredValueTypeMismatch": "此預設儲存的 UI 類型為 {{uiType}}，無法呈現值類型 {{valueType}}。請先選擇可呈現的值類型再儲存。",
     "TextPlaceholderExample": "例如：請輸入值",
     "TextPlaceholderLabel": "輸入佔位文字",
     "UIType": "UI 類型",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "布林值",
     "ValueTypeFlag": "旗標",
     "ValueTypeFloat": "浮點數",
+    "ValueTypeIncompatibleWithUIType": "所選 UI 類型無法呈現此值類型。",
     "ValueTypeInt": "整數",
     "ValueTypeRequired": "值類型為必填項。",
     "ValueTypeStr": "字串"

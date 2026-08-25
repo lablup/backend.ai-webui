@@ -421,6 +421,7 @@
     "SliderStep": "Шаг",
     "SliderStepMustBePositive": "Шаг должен быть больше 0.",
     "SliderStepTooltip": "Шаг приращения для ползунка. По умолчанию 1.",
+    "StoredValueTypeMismatch": "Этот пресет сохранён с типом интерфейса {{uiType}}, который не может отобразить тип значения {{valueType}}. Выберите подходящий тип значения перед сохранением.",
     "TextPlaceholderExample": "например, Введите значение",
     "TextPlaceholderLabel": "Плейсхолдер поля ввода",
     "UIType": "Тип интерфейса",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Логический",
     "ValueTypeFlag": "Флаг",
     "ValueTypeFloat": "Число с плавающей точкой",
+    "ValueTypeIncompatibleWithUIType": "Выбранный тип интерфейса не может отобразить этот тип значения.",
     "ValueTypeInt": "Целое число",
     "ValueTypeRequired": "Тип значения обязателен.",
     "ValueTypeStr": "Строка"

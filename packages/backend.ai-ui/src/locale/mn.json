@@ -421,6 +421,7 @@
     "SliderStep": "Алхам",
     "SliderStepMustBePositive": "Алхам 0-ээс их байх ёстой.",
     "SliderStepTooltip": "Гулсагчийн өсөх алхам. Анхны утга нь 1.",
+    "StoredValueTypeMismatch": "Энэ урьдчилсан тохиргоо нь {{uiType}} UI төрлөөр хадгалагдсан бөгөөд {{valueType}} утгын төрлийг харуулж чадахгүй. Хадгалахын өмнө тохирох утгын төрлийг сонгоно уу.",
     "TextPlaceholderExample": "жн: Утга оруулна уу",
     "TextPlaceholderLabel": "Оролтын түр бичвэр",
     "UIType": "UI төрөл",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Логик утга",
     "ValueTypeFlag": "Флаг",
     "ValueTypeFloat": "Бутархай тоо",
+    "ValueTypeIncompatibleWithUIType": "Сонгосон UI төрөл энэ утгын төрлийг харуулж чадахгүй.",
     "ValueTypeInt": "Бүхэл тоо",
     "ValueTypeRequired": "Утгын төрөл заавал шаардлагатай.",
     "ValueTypeStr": "Тэмдэгт мөр"

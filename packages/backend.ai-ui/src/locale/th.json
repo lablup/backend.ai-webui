@@ -421,6 +421,7 @@
     "SliderStep": "ขั้น",
     "SliderStepMustBePositive": "ขั้นต้องมากกว่า 0",
     "SliderStepTooltip": "ค่าเพิ่มขั้นของแถบเลื่อน ค่าเริ่มต้นคือ 1",
+    "StoredValueTypeMismatch": "พรีเซ็ตนี้ถูกบันทึกด้วยประเภท UI {{uiType}} ซึ่งไม่สามารถแสดงประเภทค่า {{valueType}} ได้ กรุณาเลือกประเภทค่าที่รองรับก่อนบันทึก",
     "TextPlaceholderExample": "เช่น กรอกค่า",
     "TextPlaceholderLabel": "ข้อความตัวอย่างในช่องกรอก",
     "UIType": "ประเภท UI",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "บูลีน",
     "ValueTypeFlag": "แฟล็ก",
     "ValueTypeFloat": "จำนวนทศนิยม",
+    "ValueTypeIncompatibleWithUIType": "ประเภท UI ที่เลือกไม่สามารถแสดงประเภทค่านี้ได้",
     "ValueTypeInt": "จำนวนเต็ม",
     "ValueTypeRequired": "จำเป็นต้องระบุประเภทค่า",
     "ValueTypeStr": "สตริง"

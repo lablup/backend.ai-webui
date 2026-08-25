@@ -421,6 +421,7 @@
     "SliderStep": "Langkah",
     "SliderStepMustBePositive": "Langkah harus lebih besar dari 0.",
     "SliderStepTooltip": "Langkah kenaikan untuk slider. Default-nya 1.",
+    "StoredValueTypeMismatch": "Preset ini disimpan dengan tipe antarmuka {{uiType}}, yang tidak dapat menampilkan tipe nilai {{valueType}}. Pilih tipe nilai yang kompatibel sebelum menyimpan.",
     "TextPlaceholderExample": "mis. Masukkan nilai",
     "TextPlaceholderLabel": "Placeholder Input",
     "UIType": "Tipe UI",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Boolean",
     "ValueTypeFlag": "Penanda",
     "ValueTypeFloat": "Bilangan Desimal",
+    "ValueTypeIncompatibleWithUIType": "Tipe antarmuka yang dipilih tidak dapat menampilkan tipe nilai ini.",
     "ValueTypeInt": "Bilangan Bulat",
     "ValueTypeRequired": "Tipe nilai wajib diisi.",
     "ValueTypeStr": "String"

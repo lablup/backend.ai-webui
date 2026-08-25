@@ -421,6 +421,7 @@
     "SliderStep": "Krok",
     "SliderStepMustBePositive": "Krok musi być większy niż 0.",
     "SliderStepTooltip": "Krok przyrostu dla suwaka. Domyślnie 1.",
+    "StoredValueTypeMismatch": "Ten preset jest zapisany z typem interfejsu {{uiType}}, który nie może wyświetlić typu wartości {{valueType}}. Wybierz zgodny typ wartości przed zapisaniem.",
     "TextPlaceholderExample": "np. Wprowadź wartość",
     "TextPlaceholderLabel": "Tekst zastępczy pola",
     "UIType": "Typ interfejsu",
@@ -434,6 +435,7 @@
     "ValueTypeBool": "Wartość logiczna",
     "ValueTypeFlag": "Flaga",
     "ValueTypeFloat": "Liczba zmiennoprzecinkowa",
+    "ValueTypeIncompatibleWithUIType": "Wybrany typ interfejsu nie może wyświetlić tego typu wartości.",
     "ValueTypeInt": "Liczba całkowita",
     "ValueTypeRequired": "Typ wartości jest wymagany.",
     "ValueTypeStr": "Ciąg znaków"
