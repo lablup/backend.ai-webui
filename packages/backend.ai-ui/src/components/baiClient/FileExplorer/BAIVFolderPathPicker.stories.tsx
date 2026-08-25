@@ -296,7 +296,7 @@ The value is the **sub path inside the vfolder** — \`''\` for the vfolder root
 | \`value\` | \`string\` | - | Selected sub path (\`''\` = vfolder root) |
 | \`defaultValue\` | \`string\` | - | Initial value for uncontrolled usage |
 | \`onChange\` | \`(selectedSubPath?: string) => void\` | - | Fired when a location is confirmed in the modal |
-| \`selectProps\` | \`BAISelectProps\` subset | - | Forwarded to the sub path trigger select |
+| \`label\` | \`string\` | "Select a path" | Accessible name of the trigger (visually hidden; the surrounding Form.Item renders the visible label) |
 
 > The stories run against a mock Relay environment and a mock \`BAIClientContext\` client, so vfolder search, browsing, mkdir, rename and delete all work without a backend. The second folder (\`team-shared-data\`) is read-only — pick it in the Form story to see permission gating disable folder CRUD inside the modal.
         `,

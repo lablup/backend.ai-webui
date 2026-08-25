@@ -6,12 +6,17 @@ import { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirector
 import { toGlobalId } from '../../../helper';
 import { useControllableValue } from '../../../hooks';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import BAISelect, { type BAISelectProps } from '../../BAISelect';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
-import { useState, useTransition } from 'react';
+import { ComplexSelector } from '@astryxdesign/core/ComplexSelector';
+import {
+  useEffectEvent,
+  useLayoutEffect,
+  useState,
+  useTransition,
+} from 'react';
 import { useQueryLoader } from 'react-relay';
 
 export interface BAIVFolderPathPickerProps {
@@ -31,12 +36,36 @@ export interface BAIVFolderPathPickerProps {
   onChange?: (selectedSubPath?: string) => void;
   disabled?: boolean;
   style?: React.CSSProperties;
-  /** Forwarded to the sub path trigger select. */
-  selectProps?: Omit<
-    BAISelectProps,
-    'value' | 'onChange' | 'open' | 'onOpenChange' | 'loading' | 'disabled'
-  >;
+  /**
+   * Accessible name of the trigger; visually hidden (the surrounding
+   * Form.Item renders the visible label). Defaults to the picker's own
+   * "Select a path" copy.
+   */
+  label?: string;
 }
+
+/**
+ * Any popover open (ArrowDown bypasses the trigger's click path) is redirected
+ * to the directory picker modal before paint.
+ */
+const PopoverToModalRedirect: React.FC<{
+  isOpen: boolean;
+  close: () => void;
+  openPicker: () => void;
+}> = ({ isOpen, close, openPicker }) => {
+  'use memo';
+
+  const redirect = useEffectEvent(() => {
+    close();
+    openPicker();
+  });
+  useLayoutEffect(() => {
+    if (isOpen) {
+      redirect();
+    }
+  }, [isOpen]);
+  return null;
+};
 
 /**
  * A sub path picker for a given vfolder: a select-like trigger that opens a
@@ -51,7 +80,7 @@ export interface BAIVFolderPathPickerProps {
 const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
   'use memo';
 
-  const { vfolderUuid, disabled, style, selectProps } = props;
+  const { vfolderUuid, disabled, style, label } = props;
   const { t } = useBAIi18n();
   const [selectedSubPath, setSelectedSubPath] = useControllableValue<
     string | undefined
@@ -81,20 +110,22 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
 
   return (
     <>
-      <BAISelect
-        // Display-only trigger: the dropdown never opens (`open={false}`);
-        // every open gesture (click, Enter, arrow keys) arrives through
-        // onOpenChange and is redirected to the directory picker modal.
-        open={false}
-        onOpenChange={(nextOpen) => {
-          if (nextOpen) {
-            openPicker();
-          }
+      <ComplexSelector<string | undefined>
+        // Display-only trigger. Astryx `Selector` owns its popup with no open
+        // hook (BAISelect keeps `open`/`onOpenChange` inert), so the trigger
+        // is a ComplexSelector: preventDefault() makes composeEventHandlers
+        // skip its own popover-open handler, and the modal opens instead.
+        onClick={(e) => {
+          e.preventDefault();
+          openPicker();
         }}
-        loading={isPickerPending}
+        label={label ?? t('comp:VFolderPathPicker.SelectAPath')}
+        isLabelHidden
+        value={selectedSubPath}
+        isLoading={isPickerPending}
         // Leading '/' distinguishes "vfolder root picked" ('' → '/') from
         // "nothing picked yet" (undefined → placeholder).
-        value={
+        triggerLabel={
           selectedSubPath === undefined ? undefined : `/${selectedSubPath}`
         }
         placeholder={
@@ -102,10 +133,18 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
             ? t('comp:VFolderPathPicker.ClickToSelectPath')
             : t('comp:VFolderPathPicker.SelectFolderFirst')
         }
-        disabled={disabled}
+        isDisabled={disabled}
+        width={style?.width}
         style={style}
-        {...selectProps}
-      />
+      >
+        {(_value, _onChange, close, { isOpen }) => (
+          <PopoverToModalRedirect
+            isOpen={isOpen}
+            close={close}
+            openPicker={openPicker}
+          />
+        )}
+      </ComplexSelector>
       {/* Mounted only while open (BAIUnmountAfterClose) and only after the
           first loadQuery. The modal suspends until its preloaded query
           resolves; because it mounts inside the transition above, React

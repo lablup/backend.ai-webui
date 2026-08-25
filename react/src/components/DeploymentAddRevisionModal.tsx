@@ -2397,6 +2397,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 style={{ flex: 1 }}
               >
                 <BAIVFolderPathPicker
+                  label={t('modelService.Subpath')}
                   vfolderUuid={
                     watchedModelFolderId
                       ? toLocalId(watchedModelFolderId)
