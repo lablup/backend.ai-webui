@@ -77,7 +77,12 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
         })}
       </Breadcrumbs>
       {extra ? (
-        <BAIFlex align="center" justify="end" gap="xs" style={{ flexShrink: 0 }}>
+        <BAIFlex
+          align="center"
+          justify="end"
+          gap="xs"
+          style={{ flexShrink: 0 }}
+        >
           {extra}
         </BAIFlex>
       ) : null}

@@ -18,8 +18,8 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { toProjectContext } from '../types/projectContext';
 import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import {
   BAISkeleton,
   filterOutEmpty,

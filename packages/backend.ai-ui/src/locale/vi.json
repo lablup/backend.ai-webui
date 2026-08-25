@@ -269,7 +269,7 @@
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Thao tác khác"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",

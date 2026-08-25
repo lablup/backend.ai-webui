@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<12b46d578adee9f29caf5e1857818545>>
+ * @generated SignedSource<<53b26acd2ef51beb3b8d2916bc5b4950>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -227,6 +227,19 @@ return {
                 "plural": false,
                 "selections": [
                   (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VirtualFolderNode",
+                    "kind": "LinkedField",
+                    "name": "vfolder",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/),
+                      (v3/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
                   (v5/*: any*/),
                   {
                     "alias": null,
@@ -243,6 +256,13 @@ return {
                     "storageKey": null
                   }
                 ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "revisionPresetId",
                 "storageKey": null
               },
               {
@@ -619,7 +639,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a8b14c2c5e1167bc0f7fe2ca1782e211",
+    "cacheID": "c8f3634577c5c974adaed87e62b7b063",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -739,6 +759,14 @@ return {
         "deployment.currentRevision.modelMountConfig.definitionPath": (v11/*: any*/),
         "deployment.currentRevision.modelMountConfig.mountDestination": (v11/*: any*/),
         "deployment.currentRevision.modelMountConfig.subpath": (v9/*: any*/),
+        "deployment.currentRevision.modelMountConfig.vfolder": {
+          "enumValues": null,
+          "nullable": true,
+          "plural": false,
+          "type": "VirtualFolderNode"
+        },
+        "deployment.currentRevision.modelMountConfig.vfolder.id": (v10/*: any*/),
+        "deployment.currentRevision.modelMountConfig.vfolder.name": (v9/*: any*/),
         "deployment.currentRevision.modelMountConfig.vfolderId": (v10/*: any*/),
         "deployment.currentRevision.modelRuntimeConfig": {
           "enumValues": null,
@@ -811,6 +839,12 @@ return {
           "type": "Decimal"
         },
         "deployment.currentRevision.resourceSlots.slotName": (v11/*: any*/),
+        "deployment.currentRevision.revisionPresetId": {
+          "enumValues": null,
+          "nullable": true,
+          "plural": false,
+          "type": "UUID"
+        },
         "deployment.id": (v10/*: any*/),
         "deployment.metadata": {
           "enumValues": null,
@@ -838,7 +872,7 @@ return {
     },
     "name": "DeploymentAddRevisionModalTestQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalTestQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    ...DeploymentAddRevisionModal_deployment\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 @since(version: \"26.4.3\") {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  currentRevision @since(version: \"26.4.3\") {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath @since(version: \"26.4.4\")\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        shell @since(version: \"26.7.0\")\n        startCommand\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          enable @since(version: \"26.4.4\")\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalTestQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    ...DeploymentAddRevisionModal_deployment\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 @since(version: \"26.4.3\") {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  currentRevision @since(version: \"26.4.3\") {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  revisionPresetId @since(version: \"26.4.4\")\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    vfolder {\n      id\n      name\n    }\n    mountDestination\n    definitionPath\n    subpath @since(version: \"26.4.4\")\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        shell @since(version: \"26.7.0\")\n        startCommand\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          enable @since(version: \"26.4.4\")\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n"
   }
 };
 })();

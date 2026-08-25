@@ -269,7 +269,7 @@
     "UpdatedAt": "更新時間"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "更多操作"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "下列專案將會更新。",

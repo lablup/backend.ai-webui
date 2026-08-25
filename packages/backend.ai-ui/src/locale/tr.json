@@ -269,7 +269,7 @@
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Diğer işlemler"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",

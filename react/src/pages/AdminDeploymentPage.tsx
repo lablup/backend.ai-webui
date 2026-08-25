@@ -40,11 +40,11 @@ import AdminRuntimeVariantPreset, {
   AdminRuntimeVariantPresetQuery,
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import { BAISkeleton } from 'backend.ai-ui';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { BAISkeleton } from 'backend.ai-ui';
 import { BAICard, type BAICardProps, filterOutEmpty } from 'backend.ai-ui';
 import {
   parseAsJson,

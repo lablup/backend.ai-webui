@@ -269,7 +269,7 @@
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Lisää toimintoja"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",

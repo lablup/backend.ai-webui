@@ -277,8 +277,7 @@ export const DisabledActionInOverflowMenu: Story = {
                 title: 'Deploy as service',
                 icon: <Copy size="1em" />,
                 disabled: true,
-                disabledReason:
-                  "Create deployments from a project's Data page",
+                disabledReason: "Create deployments from a project's Data page",
               },
             ]}
           />

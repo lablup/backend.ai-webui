@@ -23,8 +23,8 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { toProjectContext } from '../types/projectContext';
 import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';

@@ -269,7 +269,7 @@
     "UpdatedAt": "วันที่อัปเดต"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "การดำเนินการเพิ่มเติม"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",

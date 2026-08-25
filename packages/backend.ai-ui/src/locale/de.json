@@ -269,7 +269,7 @@
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Weitere Aktionen"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Die folgenden Projekte werden aktualisiert.",
