@@ -266,9 +266,9 @@ const DeploymentAutoScalingCardContent: React.FC<
   return (
     <>
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIFlex align="center" gap="xs">
+        <BAIFlex align="center" justify="between" wrap="wrap" gap="xs">
           <BAIGraphQLPropertyFilter<AutoScalingRuleFilter>
-            style={{ flex: 1 }}
+            style={{ flexShrink: 1 }}
             filterProperties={[
               {
                 key: 'createdAt',
@@ -293,24 +293,26 @@ const DeploymentAutoScalingCardContent: React.FC<
               });
             }}
           />
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={() => {
-              startRefetchTransition(() => updateFetchKey());
-            }}
-          />
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            disabled={isEndpointDestroying || !isOwnedByCurrentUser}
-            onClick={() => {
-              setEditingRuleId(null);
-              setIsOpenEditorModal(true);
-            }}
-          >
-            {t('modelService.AddRules')}
-          </BAIButton>
+          <BAIFlex align="center" gap="xs">
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={() => {
+                startRefetchTransition(() => updateFetchKey());
+              }}
+            />
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+              onClick={() => {
+                setEditingRuleId(null);
+                setIsOpenEditorModal(true);
+              }}
+            >
+              {t('modelService.AddRules')}
+            </BAIButton>
+          </BAIFlex>
         </BAIFlex>
         <AutoScalingRuleListNodes
           autoScalingRulesFrgmt={autoScalingRuleNodes}
