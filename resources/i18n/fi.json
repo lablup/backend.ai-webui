@@ -1926,7 +1926,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Aktiivinen kirjautumissessio on jo olemassa.",
     "ActiveSessionExistsDescription": "Olet jo kirjautunut sisään toisesta selaimesta tai välilehdestä. Kirjaudu ensin ulos toisesta sessiosta tai yritä uudelleen.",
-    "AdvancedSettings": "Lisäasetukset",
     "CancelLogin": "Peruuta kirjautuminen",
     "ChangePassword": "Vaihda salasana",
     "ClickToUseIAM": "Klikkaa käyttääksesi IAM:ää",

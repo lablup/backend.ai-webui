@@ -1927,7 +1927,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Aktywna sesja logowania już istnieje.",
     "ActiveSessionExistsDescription": "Jesteś już zalogowany z innej przeglądarki lub karty. Najpierw wyloguj się z tamtej sesji lub spróbuj ponownie.",
-    "AdvancedSettings": "Zaawansowane",
     "CancelLogin": "Anuluj logowanie",
     "ChangePassword": "Zmień hasło",
     "ClickToUseIAM": "Kliknij, aby użyć uprawnień",

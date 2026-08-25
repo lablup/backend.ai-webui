@@ -1926,7 +1926,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Esiste già una sessione di accesso attiva.",
     "ActiveSessionExistsDescription": "Sei già connesso da un altro browser o scheda. Effettua prima il logout dall'altra sessione oppure riprova.",
-    "AdvancedSettings": "Avanzato",
     "CancelLogin": "Annulla il login",
     "ChangePassword": "Cambia la password",
     "ClickToUseIAM": "Fai clic per utilizzare IAM",

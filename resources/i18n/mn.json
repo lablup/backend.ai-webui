@@ -1927,7 +1927,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Идэвхтэй нэвтрэх сессион аль хэдийн байна.",
     "ActiveSessionExistsDescription": "Та өөр хөтөч эсвэл табаас аль хэдийн нэвтэрсэн байна. Эхлээд нөгөө сессионоос гарах эсвэл дахин оролдоно уу.",
-    "AdvancedSettings": "Нарийвчилсан",
     "CancelLogin": "Нэвтрэхийг цуцлах",
     "ChangePassword": "Нууц үгээ солих",
     "ClickToUseIAM": "IAM ашиглахын тулд товшино уу",

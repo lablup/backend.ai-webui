@@ -1926,7 +1926,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Zaten aktif bir oturum açma oturumu mevcut.",
     "ActiveSessionExistsDescription": "Başka bir tarayıcı veya sekmeden zaten giriş yapmış durumdasınız. Lütfen önce diğer oturumdan çıkış yapın veya tekrar deneyin.",
-    "AdvancedSettings": "Gelişmiş",
     "CancelLogin": "Girişi İptal Et",
     "ChangePassword": "Şifre değiştir",
     "ClickToUseIAM": "IAM'yi Kullanmak İçin Tıklayın",

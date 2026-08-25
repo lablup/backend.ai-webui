@@ -1928,7 +1928,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Đã tồn tại một phiên đăng nhập đang hoạt động.",
     "ActiveSessionExistsDescription": "Bạn đã đăng nhập từ trình duyệt hoặc tab khác. Vui lòng đăng xuất khỏi phiên đó trước, hoặc thử lại.",
-    "AdvancedSettings": "Nâng cao",
     "CancelLogin": "Hủy đăng nhập",
     "ChangePassword": "Đổi mật khẩu",
     "ClickToUseIAM": "Nhấp để sử dụng IAM",

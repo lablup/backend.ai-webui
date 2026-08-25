@@ -1928,7 +1928,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "มีเซสชันการเข้าสู่ระบบที่ใช้งานอยู่แล้ว",
     "ActiveSessionExistsDescription": "คุณได้เข้าสู่ระบบจากเบราว์เซอร์หรือแท็บอื่นอยู่แล้ว กรุณาออกจากระบบจากเซสชันอื่นก่อน หรือลองอีกครั้ง",
-    "AdvancedSettings": "ขั้นสูง",
     "CancelLogin": "ยกเลิกการเข้าสู่ระบบ",
     "ChangePassword": "เปลี่ยน",
     "ClickToUseIAM": "คลิกเพื่อใช้ IAM",

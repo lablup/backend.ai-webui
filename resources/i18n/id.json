@@ -1929,7 +1929,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Sesi login aktif sudah ada.",
     "ActiveSessionExistsDescription": "Anda sudah masuk dari browser atau tab lain. Silakan keluar dari sesi lain terlebih dahulu, atau coba lagi.",
-    "AdvancedSettings": "Lanjutan",
     "CancelLogin": "Batal Login",
     "ChangePassword": "Ganti kata sandi",
     "ClickToUseIAM": "Klik untuk Menggunakan IAM",

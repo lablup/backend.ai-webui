@@ -1926,7 +1926,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Активный сеанс входа уже существует.",
     "ActiveSessionExistsDescription": "Вы уже вошли в систему из другого браузера или вкладки. Пожалуйста, сначала выйдите из другого сеанса или повторите попытку.",
-    "AdvancedSettings": "Дополнительно",
     "CancelLogin": "Отменить Вход",
     "ChangePassword": "Измени пароль",
     "ClickToUseIAM": "Нажмите, чтобы использовать IAM",

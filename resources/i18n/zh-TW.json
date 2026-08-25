@@ -1929,7 +1929,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "已存在一個有效的登入工作階段。",
     "ActiveSessionExistsDescription": "您已從其他瀏覽器或分頁登入。請先從其他工作階段登出，或再試一次。",
-    "AdvancedSettings": "進階設定",
     "CancelLogin": "取消登錄",
     "ChangePassword": "更改密碼",
     "ClickToUseIAM": "單擊以使用 IAM",

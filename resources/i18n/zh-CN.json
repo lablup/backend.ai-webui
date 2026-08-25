@@ -1928,7 +1928,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "已存在活动的登录会话。",
     "ActiveSessionExistsDescription": "您已从其他浏览器或标签页登录。请先从其他会话注销，或重试。",
-    "AdvancedSettings": "高级设置",
     "CancelLogin": "取消登录",
     "ChangePassword": "更改密码",
     "ClickToUseIAM": "单击以使用 IAM",

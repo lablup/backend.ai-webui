@@ -1928,7 +1928,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "すでにアクティブなログインセッションが存在します。",
     "ActiveSessionExistsDescription": "別のブラウザまたはタブからすでにログインしています。先に別のセッションからログアウトするか、再試行してください。",
-    "AdvancedSettings": "詳細設定",
     "CancelLogin": "ログインをキャンセルする",
     "ChangePassword": "パスワードを変更する",
     "ClickToUseIAM": "クリックしてIAMを使用する",

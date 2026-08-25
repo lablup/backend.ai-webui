@@ -1913,7 +1913,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "An active login session already exists.",
     "ActiveSessionExistsDescription": "You are already logged in from another browser or tab. Please log out from the other session first, or try again.",
-    "AdvancedSettings": "Advanced",
     "CancelLogin": "Cancel Login",
     "ChangePassword": "Change",
     "ClickToUseIAM": "Click To Use IAM",

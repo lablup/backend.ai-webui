@@ -1928,7 +1928,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Já existe uma sessão de login ativa.",
     "ActiveSessionExistsDescription": "Já está ligado a partir de outro navegador ou separador. Por favor, termine a sessão na outra sessão primeiro ou tente novamente.",
-    "AdvancedSettings": "Avançado",
     "CancelLogin": "Cancelar Login",
     "ChangePassword": "Alterar a senha",
     "ClickToUseIAM": "Clique para usar IAM",

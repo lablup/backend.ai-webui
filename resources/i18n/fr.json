@@ -1927,7 +1927,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Une session de connexion active existe déjà.",
     "ActiveSessionExistsDescription": "Vous êtes déjà connecté depuis un autre navigateur ou onglet. Veuillez d'abord vous déconnecter de l'autre session ou réessayer.",
-    "AdvancedSettings": "Avancé",
     "CancelLogin": "Annuler Connexion",
     "ChangePassword": "Changer le mot de passe",
     "ClickToUseIAM": "Cliquez pour utiliser IAM",

@@ -1928,7 +1928,6 @@
     "APIMode": "API",
     "ActiveSessionExists": "Es besteht bereits eine aktive Anmeldesitzung.",
     "ActiveSessionExistsDescription": "Sie sind bereits von einem anderen Browser oder Tab angemeldet. Bitte melden Sie sich zuerst aus der anderen Sitzung ab oder versuchen Sie es erneut.",
-    "AdvancedSettings": "Erweitert",
     "CancelLogin": "Anmeldung abbrechen",
     "ChangePassword": "Kennwort ändern",
     "ClickToUseIAM": "Klicken Sie hier, um IAM zu verwenden",
