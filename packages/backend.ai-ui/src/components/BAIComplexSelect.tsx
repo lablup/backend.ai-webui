@@ -40,9 +40,11 @@
     rather than replaced by "top N per query".
   - P26-2 KEYBOARD/ARIA IS A REASONABLE SUBSET, not a re-implementation of
     rc-select. Implemented: ArrowDown opens (ComplexSelector's own trigger
-    handler), Up/Down/Home/End roving highlight, Enter/Space commits,
-    Escape closes (popover), `role="listbox"` + `role="option"` +
-    `aria-selected` + `aria-activedescendant` on the search box, highlight
+    handler), Up/Down/Home/End roving highlight that skips disabled rows,
+    Enter/Space commits, Escape closes (popover), `role="listbox"` +
+    `role="option"` + `aria-selected` + `aria-activedescendant` on whichever
+    element owns the keys — the search box, or the listbox itself when
+    `hasSearch` is false and the popup has nothing else to focus — highlight
     scrolled into view, polite live region on the result count. NOT
     implemented, and not planned: printable-character type-ahead jumping
     (the search box supersedes it), PageUp/PageDown, shift+arrow range
@@ -385,16 +387,28 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
     options.length === 0 || highlightedIndex < 0
       ? -1
       : _.clamp(highlightedIndex, 0, options.length - 1);
+  // A row that went disabled under an async page append must not keep the
+  // highlight — Astryx `Selector` never paints a disabled row as active.
+  const activeIndex =
+    clampedIndex >= 0 && options[clampedIndex]?.disabled ? -1 : clampedIndex;
+
+  /** Nearest selectable row from `from`, walking `step`; -1 when there is none. */
+  const nextEnabledIndex = (from: number, step: 1 | -1) => {
+    for (let i = from; i >= 0 && i < options.length; i += step) {
+      if (!options[i].disabled) return i;
+    }
+    return -1;
+  };
 
   useLayoutEffect(() => {
-    if (clampedIndex < 0) return;
+    if (activeIndex < 0) return;
     // `useId()` values contain `:`, which is not a valid CSS selector without
     // escaping — `getElementById` sidesteps that entirely.
     document
-      .getElementById(optionIdOf(clampedIndex))
+      .getElementById(optionIdOf(activeIndex))
       ?.scrollIntoView({ block: 'nearest' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clampedIndex]);
+  }, [activeIndex]);
 
   /**
    * antd `onPopupScroll` -> `endReached`, re-implemented on a scroll
@@ -442,33 +456,53 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
     [multiple, value],
   );
 
-  const handleSearchKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
+  /**
+   * Shared by the search box and — when `hasSearch` is false, where there is
+   * no input to carry it — the listbox itself. `hasSpaceCommit` is off for the
+   * input, where a space is a space.
+   */
+  const handleNavKeyDown = (
+    e: React.KeyboardEvent<HTMLElement>,
     emit: (next: BAIComplexSelectValue) => void,
     close: () => void,
+    hasSpaceCommit: boolean,
   ) => {
     if (options.length === 0) return;
+    const moveTo = (index: number) => {
+      if (index >= 0) setHighlightedIndex(index);
+    };
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setHighlightedIndex((i) => Math.min(i + 1, options.length - 1));
+        moveTo(nextEnabledIndex(activeIndex < 0 ? 0 : activeIndex + 1, 1));
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setHighlightedIndex((i) => Math.max(i - 1, 0));
+        // No highlight yet keeps the pre-FR-3603 landing spot: the first
+        // selectable row, not the last.
+        moveTo(
+          activeIndex < 0
+            ? nextEnabledIndex(0, 1)
+            : nextEnabledIndex(activeIndex - 1, -1),
+        );
         break;
       case 'Home':
         e.preventDefault();
-        setHighlightedIndex(0);
+        moveTo(nextEnabledIndex(0, 1));
         break;
       case 'End':
         e.preventDefault();
-        setHighlightedIndex(options.length - 1);
+        moveTo(nextEnabledIndex(options.length - 1, -1));
         break;
+      case ' ':
       case 'Enter': {
+        // Space commits the active row exactly like Enter — but inside the
+        // search input a space is a space.
+        if (e.key === ' ' && !hasSpaceCommit) break;
+        const option = options[activeIndex];
+        if (!option || option.disabled) break;
         e.preventDefault();
-        const option = options[clampedIndex];
-        if (option && !option.disabled) commit(option, emit, close);
+        commit(option, emit, close);
         break;
       }
       default:
@@ -545,17 +579,17 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
                 }
                 onValueChange={(next) => {
                   setInternalSearch(next);
-                  // Deliberately 0, not -1: Astryx leaves the highlight alone
+                  // Deliberately not -1: Astryx leaves the highlight alone
                   // while typing, but this panel is the searchable one, and
                   // type-then-Enter is worth keeping. Only affects a panel the
                   // user is already typing into, never its resting look.
-                  setHighlightedIndex(0);
+                  setHighlightedIndex(nextEnabledIndex(0, 1));
                   onSearch?.(next);
                 }}
-                onKeyDown={(e) => handleSearchKeyDown(e, emit, close)}
+                onKeyDown={(e) => handleNavKeyDown(e, emit, close, false)}
                 aria-controls={listboxId}
                 aria-activedescendant={
-                  clampedIndex >= 0 ? optionIdOf(clampedIndex) : undefined
+                  activeIndex >= 0 ? optionIdOf(activeIndex) : undefined
                 }
               />
               {/* Spans the panel: the search row and the listbox each hold
@@ -570,6 +604,20 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
             role="listbox"
             aria-label={label}
             aria-multiselectable={multiple || undefined}
+            // With no search box the popup has no other focusable element, so
+            // `usePopover`'s autofocus lands here and the arrows work; with one,
+            // the input owns the keys and this must stay out of the tab order.
+            tabIndex={hasSearch ? undefined : 0}
+            aria-activedescendant={
+              !hasSearch && activeIndex >= 0
+                ? optionIdOf(activeIndex)
+                : undefined
+            }
+            onKeyDown={
+              hasSearch
+                ? undefined
+                : (e) => handleNavKeyDown(e, emit, close, true)
+            }
             onScroll={handleScroll}
             className="bai-complex-select__listbox"
             style={{ maxHeight: listMaxHeight }}
@@ -596,7 +644,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
                       data-size={size === 'sm' ? 'sm' : undefined}
                       data-selected={isSelected ? 'true' : undefined}
                       data-highlighted={
-                        index === clampedIndex ? 'true' : undefined
+                        index === activeIndex ? 'true' : undefined
                       }
                       data-disabled={option.disabled ? 'true' : undefined}
                       onClick={() => {
@@ -604,7 +652,12 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
                         setHighlightedIndex(index);
                         commit(option, emit, close);
                       }}
-                      onMouseEnter={() => setHighlightedIndex(index)}
+                      // Astryx `Selector`'s hover handler ignores disabled
+                      // items; without this the row wears the hover wash.
+                      onMouseEnter={() => {
+                        if (option.disabled) return;
+                        setHighlightedIndex(index);
+                      }}
                     >
                       <span className="bai-complex-select__option-content">
                         <SelectorOption
