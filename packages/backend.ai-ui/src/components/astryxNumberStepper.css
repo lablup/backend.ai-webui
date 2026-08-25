@@ -1,0 +1,39 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Make the ladder stepper a real `InputGroup` segment (FR-3688).
+
+ `InputGroupText` already carries the weld — border, `-1 * --border-width` start
+ margin, squared inner corners — so only two things are wrong for a control
+ slot: its text padding, and its muted addon fill. Astryx's own in-border
+ stepper buttons sit on the input surface, so this one does too; the muted slab
+ would read as an addon chip rather than part of the field.
+
+ The button rules beat `Button`'s `sizeStyles.sm` (a fixed `--size-element-sm`
+ height) and `styles.iconOnly` (`aspect-ratio: 1 / 1`), which together made each
+ button assert 28px in a 32px row — a 56px column overflowing the group. They
+ win on layer order, not specificity: `@layer components` is declared after
+ `astryx-base` (same mechanism as `BAICompactGroup.css`).
+*/
+
+@layer components {
+  .bai-number-stepper {
+    padding-inline: 0;
+    align-items: stretch;
+    background-color: var(--color-background-surface);
+  }
+
+  .bai-number-stepper > * {
+    width: var(--spacing-4);
+    height: 100%;
+  }
+
+  .bai-number-stepper__button {
+    height: auto;
+    min-height: 0;
+    width: 100%;
+    flex: 1;
+    aspect-ratio: auto;
+  }
+}

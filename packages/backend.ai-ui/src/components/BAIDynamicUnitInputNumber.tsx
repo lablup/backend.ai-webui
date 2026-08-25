@@ -63,10 +63,9 @@ import {
   nextLadderIndex,
   type StepDirection,
 } from './astryxNumberStepper';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { InputGroup, InputGroupText } from '@astryxdesign/core/InputGroup';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { Selector } from '@astryxdesign/core/Selector';
-import { HStack } from '@astryxdesign/core/Stack';
 import * as _ from 'lodash-es';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -272,7 +271,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
       size={size ? ASTRYX_SIZE[size] : undefined}
       style={style}
     >
-      {addonPrefix ? <HStack align="center">{addonPrefix}</HStack> : null}
+      {addonPrefix ? <InputGroupText>{addonPrefix}</InputGroupText> : null}
       <NumberInput
         label={accessibleLabel}
         isLabelHidden
@@ -323,12 +322,16 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           }))}
           onChange={(newUnit) => setValue(`${numValue ?? 0}${newUnit}`)}
           isDisabled={disabled}
-          width={96}
+          // Measured: in a group the trigger resolves to `width: 100%`, so it
+          // claims the whole row and the number field shrinks to its flex basis.
+          // Size the unit to its own content and let the number field take the
+          // rest — antd's `Select` in a `Space.Compact` behaved this way.
+          style={{ flex: '0 0 auto', width: 'auto' }}
         />
       ) : (
-        <HStack align="center">{`${unit.toUpperCase()}iB`}</HStack>
+        <InputGroupText>{`${unit.toUpperCase()}iB`}</InputGroupText>
       )}
-      {addonSuffix ? <HStack align="center">{addonSuffix}</HStack> : null}
+      {addonSuffix ? <InputGroupText>{addonSuffix}</InputGroupText> : null}
     </InputGroup>
   );
 };

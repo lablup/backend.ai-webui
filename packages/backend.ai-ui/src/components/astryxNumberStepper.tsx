@@ -23,7 +23,9 @@
  text-backed spinbutton, astryx#4896, renders no native spinner, so the CSS
  is gone.)
 */
+import './astryxNumberStepper.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { InputGroupText } from '@astryxdesign/core/InputGroup';
 import { VStack } from '@astryxdesign/core/Stack';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import React from 'react';
@@ -40,7 +42,8 @@ export interface AstryxNumberStepperProps {
 
 /**
  * The up/down pair that replaces antd `InputNumber`'s built-in spinner.
- * Render it as a sibling of the `NumberInput` inside the same `InputGroup`.
+ * REQUIRES an `InputGroup` ancestor — `InputGroupText` is what welds the column
+ * to the field, and outside a group it is a stray bordered box.
  */
 export const AstryxNumberStepper: React.FC<AstryxNumberStepperProps> = ({
   onStep,
@@ -48,24 +51,28 @@ export const AstryxNumberStepper: React.FC<AstryxNumberStepperProps> = ({
   increaseLabel,
   decreaseLabel,
 }) => (
-  <VStack gap={0} align="center" justify="center">
-    <IconButton
-      variant="ghost"
-      size="sm"
-      icon={<ChevronUp size="1em" />}
-      label={increaseLabel}
-      isDisabled={isDisabled}
-      onClick={() => onStep('up')}
-    />
-    <IconButton
-      variant="ghost"
-      size="sm"
-      icon={<ChevronDown size="1em" />}
-      label={decreaseLabel}
-      isDisabled={isDisabled}
-      onClick={() => onStep('down')}
-    />
-  </VStack>
+  <InputGroupText className="bai-number-stepper">
+    <VStack gap={0} align="stretch" justify="center">
+      <IconButton
+        variant="ghost"
+        size="sm"
+        className="bai-number-stepper__button"
+        icon={<ChevronUp size="1em" />}
+        label={increaseLabel}
+        isDisabled={isDisabled}
+        onClick={() => onStep('up')}
+      />
+      <IconButton
+        variant="ghost"
+        size="sm"
+        className="bai-number-stepper__button"
+        icon={<ChevronDown size="1em" />}
+        label={decreaseLabel}
+        isDisabled={isDisabled}
+        onClick={() => onStep('down')}
+      />
+    </VStack>
+  </InputGroupText>
 );
 
 /**
