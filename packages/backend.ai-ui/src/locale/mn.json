@@ -712,6 +712,7 @@
     "Optional": "Заавал биш",
     "Project": "Төсөл",
     "Select": "Select",
+    "SelectPlaceholder": "{{label}} сонгоно уу",
     "TotalItems": "Нийт {{total}} зүйлүүд",
     "Unit": "Unit",
     "button": {

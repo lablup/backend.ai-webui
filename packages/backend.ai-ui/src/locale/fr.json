@@ -712,6 +712,7 @@
     "Optional": "Facultatif",
     "Project": "Projet",
     "Select": "Select",
+    "SelectPlaceholder": "Sélectionnez {{label}}",
     "TotalItems": "Éléments totaux {{total}}",
     "Unit": "Unit",
     "button": {

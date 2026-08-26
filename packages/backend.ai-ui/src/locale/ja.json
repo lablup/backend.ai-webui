@@ -712,6 +712,7 @@
     "Optional": "任意",
     "Project": "プロジェクト",
     "Select": "Select",
+    "SelectPlaceholder": "{{label}}を選択してください",
     "TotalItems": "Total {{total}}アイテム",
     "Unit": "Unit",
     "button": {

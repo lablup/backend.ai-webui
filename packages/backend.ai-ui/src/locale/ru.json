@@ -712,6 +712,7 @@
     "Optional": "Необязательно",
     "Project": "Проект",
     "Select": "Select",
+    "SelectPlaceholder": "Выберите {{label}}",
     "TotalItems": "Total {{total}} элементы",
     "Unit": "Unit",
     "button": {

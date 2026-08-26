@@ -712,6 +712,7 @@
     "Optional": "Pilihan",
     "Project": "Projek",
     "Select": "Select",
+    "SelectPlaceholder": "Pilih {{label}}",
     "TotalItems": "Jumlah {{total}} item",
     "Unit": "Unit",
     "button": {

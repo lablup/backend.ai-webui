@@ -712,6 +712,7 @@
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
     "Select": "Select",
+    "SelectPlaceholder": "{{label}} seçin",
     "TotalItems": "Total {{total}} öğeleri",
     "Unit": "Unit",
     "button": {

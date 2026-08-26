@@ -712,6 +712,7 @@
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
     "Select": "Select",
+    "SelectPlaceholder": "Επιλέξτε {{label}}",
     "TotalItems": "Σύνολο {{total}} στοιχεία",
     "Unit": "Unit",
     "button": {

@@ -712,6 +712,7 @@
     "Optional": "선택",
     "Project": "프로젝트",
     "Select": "Select",
+    "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
     "TotalItems": "총 {{total}} 항목",
     "Unit": "Unit",
     "button": {

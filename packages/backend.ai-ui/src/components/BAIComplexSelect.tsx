@@ -545,7 +545,9 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
       value={value}
       onChange={(next) => onChange?.(next)}
       triggerLabel={triggerLabel}
-      placeholder={placeholder}
+      // Astryx resolves its own placeholder with no arguments, so a bare
+      // "Select" is all it can render — name the field instead.
+      placeholder={placeholder ?? t('general.SelectPlaceholder', { label })}
       description={description}
       isDisabled={isDisabled}
       isLoading={isLoading}

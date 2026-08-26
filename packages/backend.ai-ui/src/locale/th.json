@@ -712,6 +712,7 @@
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
     "Select": "Select",
+    "SelectPlaceholder": "เลือก{{label}}",
     "TotalItems": "รวม {{total}} รายการ",
     "Unit": "Unit",
     "button": {

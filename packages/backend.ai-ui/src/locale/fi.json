@@ -712,6 +712,7 @@
     "Optional": "Valinnainen",
     "Project": "Projekti",
     "Select": "Select",
+    "SelectPlaceholder": "Valitse {{label}}",
     "TotalItems": "Yhteensä {{total}} kohteet",
     "Unit": "Unit",
     "button": {

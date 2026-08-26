@@ -712,6 +712,7 @@
     "Optional": "選填",
     "Project": "專案",
     "Select": "Select",
+    "SelectPlaceholder": "請選擇{{label}}",
     "TotalItems": "總計{{total}}項目",
     "Unit": "Unit",
     "button": {

@@ -712,6 +712,7 @@
     "Optional": "Không bắt buộc",
     "Project": "Dự án",
     "Select": "Select",
+    "SelectPlaceholder": "Chọn {{label}}",
     "TotalItems": "Tổng số {{total}} các mục",
     "Unit": "Unit",
     "button": {

@@ -736,6 +736,7 @@
     "Optional": "Optional",
     "Project": "Project",
     "Select": "Select",
+    "SelectPlaceholder": "Select {{label}}",
     "TotalItems": "Total {{total}} items",
     "Unit": "Unit",
     "button": {
