@@ -145,6 +145,7 @@ const BAIArtifactRevisionTable = ({
 
   return (
     <BAITable<ArtifactRevision>
+      scroll={{ x: 'max-content' }}
       rowKey={(record) => record.id}
       resizable
       columns={allColumns}

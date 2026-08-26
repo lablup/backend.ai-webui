@@ -245,6 +245,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
   return (
     <>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'userUuid'}
         {...tableProps}
         dataSource={userFairShares || []}

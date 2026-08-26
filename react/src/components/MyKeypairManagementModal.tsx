@@ -449,6 +449,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             </BAIFlex>
           </BAIFlex>
           <BAITable<KeypairNode>
+            scroll={{ x: 'max-content' }}
             rowKey="id"
             loading={deferredQueryVariables !== queryVariables}
             dataSource={keypairNodes}

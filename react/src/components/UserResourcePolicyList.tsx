@@ -245,6 +245,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         columns={columns}
         dataSource={filterOutNullAndUndefined(user_resource_policies)}

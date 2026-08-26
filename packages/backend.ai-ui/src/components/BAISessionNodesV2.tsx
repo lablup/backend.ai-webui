@@ -383,6 +383,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
   return (
     <BAIFlex direction="column" align="stretch">
       <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         rowKey="id"
         size="small"

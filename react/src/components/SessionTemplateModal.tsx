@@ -115,6 +115,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
             highlight is applied directly through `onRow` instead, which is
             what the hack was emulating. */}
         <BAITable<ParsedSessionHistory>
+          scroll={{ x: 'max-content' }}
           dataSource={parsedSessionHistory}
           pagination={false}
           onRow={(record) => ({
