@@ -14,14 +14,13 @@ import './DeploymentRevisionDetail.css';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAICard,
   BAIFlex,
   BAIId,
+  BAIMetadataList,
   BAIResourceNumberWithIcon,
   BAIText,
   filterOutEmpty,
@@ -602,17 +601,19 @@ const DeploymentRevisionDetail: React.FC<{
   });
 
   return (
-    <MetadataList
-      className="deployment-revision-detail-metadata"
-      columns={screens.md ? 2 : 1}
-      label={{ position: 'start', width: screens.md ? 160 : 120 }}
-    >
-      {[...baseItems, ...modelItems].map((item) => (
-        <MetadataListItem key={item.key} label={item.label}>
-          {item.children}
-        </MetadataListItem>
-      ))}
-    </MetadataList>
+    <BAICard>
+      <BAIMetadataList
+        className="deployment-revision-detail-metadata"
+        columns={screens.md ? 2 : 1}
+        label={{ position: 'start', width: screens.md ? 160 : 120 }}
+      >
+        {[...baseItems, ...modelItems].map((item) => (
+          <MetadataListItem key={item.key} label={item.label}>
+            {item.children}
+          </MetadataListItem>
+        ))}
+      </BAIMetadataList>
+    </BAICard>
   );
 };
 

@@ -23,6 +23,7 @@ import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAICard,
   BAIDoubleTag,
   BAIFlex,
   BAIIntervalView,
@@ -107,63 +108,66 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         <AgentActionButtons agentNodeFrgmt={agent} size="lg" />
       </BAIFlex>
 
-      {/* SUPERSEDED (FR-3496): `bordered` now has a destination — BAIMetadataList.
-          Still dropped: per-item `span`. Column count is `md`-driven (R3). */}
-      <BAIMetadataList bordered columns={md ? 2 : 1}>
-        <MetadataListItem label={t('agent.ResourceGroup')}>
-          {agent?.scaling_group}
-        </MetadataListItem>
-        <MetadataListItem label={t('agent.Region')}>
-          <Text>
-            {regionData.length > 1
-              ? _.join([regionData?.[0], regionData?.[1]], ' / ')
-              : regionData?.[0]}
-          </Text>
-        </MetadataListItem>
-        <MetadataListItem label={t('agent.Schedulable')}>
-          {agent?.schedulable ? (
-            <Check style={{ color: token.colorSuccess }} size="1em" />
-          ) : (
-            <X style={{ color: token.colorTextDisabled }} size="1em" />
-          )}
-        </MetadataListItem>
-        <MetadataListItem label={t('agent.Status')}>
-          <AgentStatusTag agentNodeFrgmt={agent} />
-        </MetadataListItem>
-        <MetadataListItem label={t('agent.ComputePlugins')}>
-          <BAIFlex gap="sm" wrap="wrap">
-            <AgentComputePlugins agentNodeFrgmt={agent} />
-          </BAIFlex>
-        </MetadataListItem>
-        <MetadataListItem label={t('agent.StartsAt')}>
-          <BAIFlex gap="sm">
-            <Text>{dayjs(agent?.first_contact).format('lll')}</Text>
-            {agent?.status === 'ALIVE' && (
-              <BAIIntervalView
-                callback={() => {
-                  return baiClient.utils.elapsedTime(
-                    agent?.first_contact || '',
-                    Date.now(),
-                  );
-                }}
-                delay={1000}
-                render={(intervalValue) => (
-                  <BAIDoubleTag
-                    values={[
-                      { label: t('agent.ElapsedTime') },
-                      { label: intervalValue },
-                    ]}
-                  />
-                )}
-              />
+      {/* Dropped from the antd original: per-item `span`. Column count is
+          `md`-driven (R3). */}
+      <BAICard>
+        <BAIMetadataList columns={md ? 2 : 1}>
+          <MetadataListItem label={t('agent.ResourceGroup')}>
+            {agent?.scaling_group}
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.Region')}>
+            <Text>
+              {regionData.length > 1
+                ? _.join([regionData?.[0], regionData?.[1]], ' / ')
+                : regionData?.[0]}
+            </Text>
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.Schedulable')}>
+            {agent?.schedulable ? (
+              <Check style={{ color: token.colorSuccess }} size="1em" />
+            ) : (
+              <X style={{ color: token.colorTextDisabled }} size="1em" />
             )}
-          </BAIFlex>
-        </MetadataListItem>
-      </BAIMetadataList>
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.Status')}>
+            <AgentStatusTag agentNodeFrgmt={agent} />
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.ComputePlugins')}>
+            <BAIFlex gap="sm" wrap="wrap">
+              <AgentComputePlugins agentNodeFrgmt={agent} />
+            </BAIFlex>
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.StartsAt')}>
+            <BAIFlex gap="sm">
+              <Text>{dayjs(agent?.first_contact).format('lll')}</Text>
+              {agent?.status === 'ALIVE' && (
+                <BAIIntervalView
+                  callback={() => {
+                    return baiClient.utils.elapsedTime(
+                      agent?.first_contact || '',
+                      Date.now(),
+                    );
+                  }}
+                  delay={1000}
+                  render={(intervalValue) => (
+                    <BAIDoubleTag
+                      values={[
+                        { label: t('agent.ElapsedTime') },
+                        { label: intervalValue },
+                      ]}
+                    />
+                  )}
+                />
+              )}
+            </BAIFlex>
+          </MetadataListItem>
+        </BAIMetadataList>
+      </BAICard>
 
       {/* antd Tabs → TabList + Tab (MAPPING §4): navigation only, panel is
           self-rendered below. */}
       <TabList
+        hasDivider
         value={activeTabKey}
         onChange={(key) => {
           setActiveTabKey(key as TabKey);

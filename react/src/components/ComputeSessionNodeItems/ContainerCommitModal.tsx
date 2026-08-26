@@ -13,12 +13,14 @@ import { useSetBAINotification } from '../../hooks/useBAINotification';
 // `onChange`).
 import { AstryxFormTextInput } from '../astryxFormControls';
 import { Divider } from '@astryxdesign/core/Divider';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -120,7 +122,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
         style={{ overflow: 'hidden' }}
       >
         <Text>{t('session.DescCommitSession')}</Text>
-        <MetadataList columns="single">
+        <BAIMetadataList columns="single">
           <MetadataListItem label={t('session.SessionName')}>
             {session?.name}
           </MetadataListItem>
@@ -128,7 +130,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
             {session?.row_id}
           </MetadataListItem>
           {/* FIXME: need to use legacy_session */}
-        </MetadataList>
+        </BAIMetadataList>
         <Divider />
         <Form ref={formRef}>
           <Form.Item

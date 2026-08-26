@@ -6,11 +6,8 @@ import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button } from '@astryxdesign/core/Button';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
-import { BAI_Z_INDEX, BAICard, BAIFlex } from 'backend.ai-ui';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { BAI_Z_INDEX, BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,14 +61,14 @@ const Children = () => {
           {/* antd `Descriptions` -> `MetadataList` (MAPPING §4).
               `bordered` has no destination (project-wide PILOT-DECISION since
               ticket 20); `column={1}` becomes `columns="single"`. */}
-          <MetadataList columns="single">
+          <BAIMetadataList columns="single">
             <MetadataListItem label={t('interactiveLogin.ServiceName')}>
               {name}
             </MetadataListItem>
             <MetadataListItem label="URL">
               {callback ? new URL(callback).origin : '-'}
             </MetadataListItem>
-          </MetadataList>
+          </BAIMetadataList>
           <BAIFlex
             direction="row"
             justify="between"

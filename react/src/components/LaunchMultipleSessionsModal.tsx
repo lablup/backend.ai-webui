@@ -10,13 +10,11 @@ import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemain
 import { theme } from '../theme-shim';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { AstryxFormNumberInput } from './astryxFormControls';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
+  BAIMetadataList,
   BAIModal,
   BAIModalProps,
   convertToBinaryUnit,
@@ -237,7 +235,7 @@ const LaunchMultipleSessionsModal: React.FC<
                 // `column={1}` → `columns="single"`, `styles.label.width` →
                 // `label.width`; `size="small"` and `colon={false}` have no
                 // destination (MetadataList renders no colon anyway).
-                <MetadataList
+                <BAIMetadataList
                   columns="single"
                   label={{ position: 'start', width: 160 }}
                 >
@@ -284,7 +282,7 @@ const LaunchMultipleSessionsModal: React.FC<
                       />
                     </BAIFlex>
                   </MetadataListItem>
-                </MetadataList>
+                </BAIMetadataList>
               );
             }}
           </Form.Item>

@@ -4,11 +4,13 @@
  */
 import { Banner } from '@astryxdesign/core/Banner';
 import { Link } from '@astryxdesign/core/Link';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface VNCConnectionInfoModalProps extends BAIModalProps {
@@ -30,7 +32,7 @@ const VNCConnectionInfoModal: React.FC<VNCConnectionInfoModalProps> = ({
     <BAIModal title={t('session.VNCconnection')} footer={null} {...modalProps}>
       <BAIFlex direction="column" align="stretch" gap="md">
         <Banner status="info" title={t('session.UseYourFavoriteVNCApp')} />
-        <MetadataList
+        <BAIMetadataList
           columns="single"
           title={t('session.ConnectionInformation')}
         >
@@ -39,7 +41,7 @@ const VNCConnectionInfoModal: React.FC<VNCConnectionInfoModalProps> = ({
               {vncDisplayUrl}
             </Link>
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       </BAIFlex>
     </BAIModal>
   );

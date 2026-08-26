@@ -16,16 +16,14 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   filterOutNullAndUndefined,
   BAITable,
+  BAIMetadataList,
   BAIModal,
   type BAIModalProps,
   BAIText,
@@ -109,7 +107,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
               : t('data.folders.ProjectFolderAlertDesc')
           }
         />
-        <MetadataList title={t('data.FolderInfo')} columns={2}>
+        <BAIMetadataList title={t('data.FolderInfo')} columns={2}>
           <MetadataListItem label={t('data.folders.Name')}>
             <BAIText copyable>{vfolder?.metadata?.name ?? ''}</BAIText>
           </MetadataListItem>
@@ -130,7 +128,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
             {vfolder?.ownership?.creatorEmail ||
               vfolder?.ownership?.user?.basicInfo?.email}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
 
         {isUserOwned ? (
           <VStack align="stretch" gap={4}>

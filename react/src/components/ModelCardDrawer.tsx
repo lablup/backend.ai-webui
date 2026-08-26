@@ -13,17 +13,16 @@ import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import {
+  BAICard,
   BAIDrawer,
   BAISkeleton,
   BAIFlex,
   BAILink,
+  BAIMetadataList,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   toLocalId,
@@ -205,107 +204,109 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                 {/* antd `Descriptions bordered column={1} size="small"` ->
                     `MetadataList` (MAPPING.md §4, DIRECT). `bordered`/
                     `size="small"` have no destination — dropped. */}
-                <MetadataList columns="single">
-                  {modelCard.metadata?.author && (
-                    <MetadataListItem label={t('modelStore.Author')}>
-                      {modelCard.metadata.author}
-                    </MetadataListItem>
-                  )}
-                  {modelCard.metadata?.architecture && (
-                    <MetadataListItem label={t('modelStore.Architecture')}>
-                      {modelCard.metadata.architecture}
-                    </MetadataListItem>
-                  )}
-                  <MetadataListItem label={t('modelStore.Framework')}>
-                    <BAIFlex direction="row" gap="xs">
-                      {_.map(
-                        _.filter(
-                          modelCard.metadata?.framework,
-                          (v) => !_.isEmpty(v),
-                        ),
-                        (framework, index) => {
-                          const targetImageKey = framework?.replace(
-                            /\s*\d+\s*$/,
-                            '',
-                          );
-                          const imageInfo = _.find(
-                            imageMetaData?.imageInfo,
-                            (info) => info?.name === targetImageKey,
-                          );
-                          const uniqueKey = `${framework}-${index}`;
-                          return imageInfo?.icon ? (
-                            <BAIFlex gap="xxs" key={uniqueKey}>
-                              <img
-                                style={{ width: '1em', height: '1em' }}
-                                src={'resources/icons/' + imageInfo?.icon}
-                                alt={framework || ''}
-                              />
-                              {framework}
-                            </BAIFlex>
-                          ) : (
-                            <Text key={uniqueKey}>{framework}</Text>
-                          );
-                        },
-                      )}
-                    </BAIFlex>
-                  </MetadataListItem>
-                  {modelCard.metadata?.modelVersion && (
-                    <MetadataListItem label={t('modelStore.Version')}>
-                      {modelCard.metadata.modelVersion}
-                    </MetadataListItem>
-                  )}
-                  {modelCard.createdAt && (
-                    <MetadataListItem label={t('modelStore.Created')}>
-                      {dayjs(modelCard.createdAt).format('lll')}
-                    </MetadataListItem>
-                  )}
-                  <MetadataListItem label={t('modelStore.LastModified')}>
-                    {modelCard.updatedAt
-                      ? dayjs(modelCard.updatedAt).format('lll')
-                      : '-'}
-                  </MetadataListItem>
-                  <MetadataListItem label={t('modelStore.ModelFolder')}>
-                    {modelCard.vfolder?.id ? (
-                      <ErrorBoundaryWithNullFallback>
-                        <Suspense
-                          fallback={
-                            <BAISkeleton variant="input" size="small" />
-                          }
-                        >
-                          <BAILink
-                            type="hover"
-                            to={generateFolderPath(
-                              toLocalId(modelCard.vfolder.id),
-                            )}
-                          >
-                            <BAIFlex gap="xs" align="center">
-                              <VFolderNodeIdenticonV2
-                                vfolderNodeIdenticonFrgmt={modelCard.vfolder}
-                              />
-                              {modelCard.vfolder.metadata?.name}
-                            </BAIFlex>
-                          </BAILink>
-                        </Suspense>
-                      </ErrorBoundaryWithNullFallback>
-                    ) : (
-                      '-'
-                    )}
-                  </MetadataListItem>
-                  {modelCard.minResource &&
-                    modelCard.minResource.length > 0 && (
-                      <MetadataListItem label={t('modelStore.MinResource')}>
-                        <BAIFlex gap="sm" wrap="wrap">
-                          {_.map(modelCard.minResource, (entry) => (
-                            <BAIResourceNumberWithIcon
-                              key={entry.resourceType}
-                              type={entry.resourceType}
-                              value={entry.quantity}
-                            />
-                          ))}
-                        </BAIFlex>
+                <BAICard>
+                  <BAIMetadataList columns="single">
+                    {modelCard.metadata?.author && (
+                      <MetadataListItem label={t('modelStore.Author')}>
+                        {modelCard.metadata.author}
                       </MetadataListItem>
                     )}
-                </MetadataList>
+                    {modelCard.metadata?.architecture && (
+                      <MetadataListItem label={t('modelStore.Architecture')}>
+                        {modelCard.metadata.architecture}
+                      </MetadataListItem>
+                    )}
+                    <MetadataListItem label={t('modelStore.Framework')}>
+                      <BAIFlex direction="row" gap="xs">
+                        {_.map(
+                          _.filter(
+                            modelCard.metadata?.framework,
+                            (v) => !_.isEmpty(v),
+                          ),
+                          (framework, index) => {
+                            const targetImageKey = framework?.replace(
+                              /\s*\d+\s*$/,
+                              '',
+                            );
+                            const imageInfo = _.find(
+                              imageMetaData?.imageInfo,
+                              (info) => info?.name === targetImageKey,
+                            );
+                            const uniqueKey = `${framework}-${index}`;
+                            return imageInfo?.icon ? (
+                              <BAIFlex gap="xxs" key={uniqueKey}>
+                                <img
+                                  style={{ width: '1em', height: '1em' }}
+                                  src={'resources/icons/' + imageInfo?.icon}
+                                  alt={framework || ''}
+                                />
+                                {framework}
+                              </BAIFlex>
+                            ) : (
+                              <Text key={uniqueKey}>{framework}</Text>
+                            );
+                          },
+                        )}
+                      </BAIFlex>
+                    </MetadataListItem>
+                    {modelCard.metadata?.modelVersion && (
+                      <MetadataListItem label={t('modelStore.Version')}>
+                        {modelCard.metadata.modelVersion}
+                      </MetadataListItem>
+                    )}
+                    {modelCard.createdAt && (
+                      <MetadataListItem label={t('modelStore.Created')}>
+                        {dayjs(modelCard.createdAt).format('lll')}
+                      </MetadataListItem>
+                    )}
+                    <MetadataListItem label={t('modelStore.LastModified')}>
+                      {modelCard.updatedAt
+                        ? dayjs(modelCard.updatedAt).format('lll')
+                        : '-'}
+                    </MetadataListItem>
+                    <MetadataListItem label={t('modelStore.ModelFolder')}>
+                      {modelCard.vfolder?.id ? (
+                        <ErrorBoundaryWithNullFallback>
+                          <Suspense
+                            fallback={
+                              <BAISkeleton variant="input" size="small" />
+                            }
+                          >
+                            <BAILink
+                              type="hover"
+                              to={generateFolderPath(
+                                toLocalId(modelCard.vfolder.id),
+                              )}
+                            >
+                              <BAIFlex gap="xs" align="center">
+                                <VFolderNodeIdenticonV2
+                                  vfolderNodeIdenticonFrgmt={modelCard.vfolder}
+                                />
+                                {modelCard.vfolder.metadata?.name}
+                              </BAIFlex>
+                            </BAILink>
+                          </Suspense>
+                        </ErrorBoundaryWithNullFallback>
+                      ) : (
+                        '-'
+                      )}
+                    </MetadataListItem>
+                    {modelCard.minResource &&
+                      modelCard.minResource.length > 0 && (
+                        <MetadataListItem label={t('modelStore.MinResource')}>
+                          <BAIFlex gap="sm" wrap="wrap">
+                            {_.map(modelCard.minResource, (entry) => (
+                              <BAIResourceNumberWithIcon
+                                key={entry.resourceType}
+                                type={entry.resourceType}
+                                value={entry.quantity}
+                              />
+                            ))}
+                          </BAIFlex>
+                        </MetadataListItem>
+                      )}
+                  </BAIMetadataList>
+                </BAICard>
 
                 {modelCard.readme && (
                   <Card padding={4} style={{ width: '100%' }}>

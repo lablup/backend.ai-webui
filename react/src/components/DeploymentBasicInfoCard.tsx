@@ -18,10 +18,7 @@ import DeploymentSettingModal from './DeploymentSettingModal';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIButton,
@@ -32,6 +29,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
+  BAIMetadataList,
   BAIText,
   BAIUnmountAfterClose,
   BooleanTag,
@@ -87,7 +85,7 @@ const DeploymentOverviewContent: React.FC<{
   // is the design, and the container-driven layout handles narrow widths.
   // Rendered with the wide-case `columns={2}`.
   return (
-    <MetadataList columns={2}>
+    <BAIMetadataList columns={2}>
       <MetadataListItem label={t('deployment.Lifecycle')}>
         {deployment?.metadata.status ? (
           <BAIFlex align="center" gap="xs">
@@ -174,7 +172,7 @@ const DeploymentOverviewContent: React.FC<{
           fallback={renderFallback()}
         />
       </MetadataListItem>
-    </MetadataList>
+    </BAIMetadataList>
   );
 };
 
