@@ -5,13 +5,11 @@
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIMetadataList,
   BAIModal,
   type BAIModalProps,
   PRIMARY_TAG_VARIANT,
@@ -93,7 +91,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
       {/* PILOT-DECISION: `<br />` between the two Descriptions blocks →
           VStack gap (MetadataList has no built-in inter-list spacing). */}
       <VStack align="stretch" gap={4}>
-        <MetadataList
+        <BAIMetadataList
           title={t('credential.Information')}
           label={{ position: 'start', width: '40%' }}
         >
@@ -127,8 +125,8 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           <MetadataListItem label={t('credential.LastUsed')}>
             {keypair?.last_used ? dayjs(keypair?.last_used).format('lll') : '-'}
           </MetadataListItem>
-        </MetadataList>
-        <MetadataList
+        </BAIMetadataList>
+        <BAIMetadataList
           title={t('credential.Allocation')}
           label={{ position: 'start', width: '40%' }}
         >
@@ -146,7 +144,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           >
             {keypair?.rate_limit}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       </VStack>
     </BAIModal>
   );

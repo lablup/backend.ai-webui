@@ -38,20 +38,20 @@ import { Card } from '@astryxdesign/core/Card';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
 import { VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
-  BAISegmentedControlItem,
+  BAIDynamicUnitInputNumberWithSlider,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
+  BAIProjectResourceGroupSelect,
+  BAISegmentedControlItem,
+  BAISelect,
   useEventNotStable,
   useUpdatableState,
-  BAIDynamicUnitInputNumberWithSlider,
-  BAIProjectResourceGroupSelect,
-  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp, RotateCw } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -219,9 +219,10 @@ const ClusterModeSegmented: React.FC<{
           label={
             <span {...stylex.props(clusterModeSegmentedStyles.label)}>
               {item.label}
-              <Tooltip content={item.tooltip}>
-                <CircleHelp size="1em" />
-              </Tooltip>
+              <BAIQuestionIconWithTooltip
+                title={item.tooltip}
+                focusable={false}
+              />
             </span>
           }
         />

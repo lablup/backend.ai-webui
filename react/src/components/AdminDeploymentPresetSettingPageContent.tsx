@@ -663,7 +663,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       };
     }
     return {
-      clusterMode: 'MULTI_NODE' as const,
+      // Single-node by default: multi-node needs an overlay network that
+      // all-in-one deployments may not have (FR-3677).
+      clusterMode: 'SINGLE_NODE' as const,
       clusterSize: 1,
       // Model definition is off by default (optional). Seed one empty model so
       // it renders once the switch is turned on.
@@ -1095,10 +1097,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 )}
               </Form.List>
             </BAIFormItem>
+            {/* Top-aligned: bottom alignment would push Cluster Size down by
+                the height of Cluster Mode's validation message. */}
             <BAIFlex
               gap="md"
               wrap="wrap"
-              style={{ alignItems: 'flex-end', marginTop: token.marginMD }}
+              style={{ alignItems: 'flex-start', marginTop: token.marginMD }}
             >
               <BAIFormItem
                 name="clusterMode"
@@ -1109,6 +1113,17 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   {
                     required: true,
                     message: t('adminDeploymentPreset.ClusterModeRequired'),
+                  },
+                  {
+                    warningOnly: true,
+                    validator: async (_rule, value: string) =>
+                      value === 'MULTI_NODE'
+                        ? Promise.reject(
+                            t(
+                              'adminDeploymentPreset.MultiNodeNotConfiguredWarning',
+                            ),
+                          )
+                        : Promise.resolve(),
                   },
                 ]}
               >
@@ -1247,7 +1262,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             }}
             showDivider
           >
-            <BAIFlex gap="md" wrap="wrap" style={{ alignItems: 'flex-end' }}>
+            <BAIFlex gap="md" wrap="wrap" style={{ alignItems: 'flex-start' }}>
               <BAIFormItem
                 name="replicaCount"
                 label={t('adminDeploymentPreset.Replicas')}

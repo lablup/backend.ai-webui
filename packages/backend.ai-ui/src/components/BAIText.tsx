@@ -98,6 +98,14 @@ export interface BAITextProps extends Omit<
   /** CSS-based ellipsis (multi-line via `rows`), with an optional tooltip. */
   ellipsis?: boolean | BAITextEllipsisConfig;
   copyable?: boolean | BAITextCopyConfig;
+  /**
+   * Take the surrounding colour instead of Astryx `Text`'s `primary` default —
+   * for a `BAIText` nested in an element that owns the colour, e.g. a link
+   * (FR-3692). antd's `Typography.Text` had no colour of its own, so this is
+   * the antd behaviour rather than a new one. Ignored when `type`/`disabled`
+   * name a colour explicitly.
+   */
+  inheritColor?: boolean;
 }
 
 const TYPE_TO_COLOR: Record<BAITextType, NonNullable<TextProps['color']>> = {
@@ -187,6 +195,7 @@ const BAIText: React.FC<BAITextProps> = ({
   monospace,
   ellipsis,
   copyable,
+  inheritColor,
   children,
   strong,
   italic,
@@ -244,7 +253,7 @@ const BAIText: React.FC<BAITextProps> = ({
           ? 'disabled'
           : type
             ? TYPE_TO_COLOR[type]
-            : mark
+            : mark || inheritColor
               ? 'inherit'
               : undefined
       }

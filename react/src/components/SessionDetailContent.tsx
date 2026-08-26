@@ -40,24 +40,24 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAISkeleton,
+  BAICard,
   BAIFlex,
+  BAIIconWithTooltip,
   BAILink,
+  BAIMetadataList,
   BAISessionAgentIds,
   BAISessionClusterMode,
   BAISessionTypeTag,
+  BAISkeleton,
   BAIText,
-  INITIAL_FETCH_KEY,
-  UNSAFELazyUserEmailView,
   filterOutNullAndUndefined,
+  INITIAL_FETCH_KEY,
   toGlobalId,
+  UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   useToggle,
 } from 'backend.ai-ui';
@@ -378,264 +378,272 @@ const SessionDetailContent: React.FC<{
           <SessionActionButtons size={'large'} compact sessionFrgmt={session} />
         </BAIFlex>
 
-        {/* antd `Descriptions bordered` -> Astryx MetadataList.
-            PILOT-DECISION (ticket 17): `bordered` and per-item `span` have no
-            MetadataList equivalent (MAPPING.md §4) and are dropped; JSX labels
+        {/* Dropped from the antd original: per-item `span`. JSX labels
             (warning triangle / help icon) split so the label stays a plain
             string and the icon affordance moves into the value cell (P2). */}
-        <MetadataList columns={md ? 2 : 1}>
-          <MetadataListItem label={t('session.SessionId')}>
-            <BAIText code copyable ellipsis={{ tooltip: true }}>
-              {session.row_id ?? ''}
-            </BAIText>
-          </MetadataListItem>
-          {(userRole === 'admin' || userRole === 'superadmin') && (
-            <MetadataListItem label={t('credential.UserID')}>
-              {session.owner?.email ? (
-                session.owner.email
-              ) : session.user_id ? (
+        <BAICard>
+          <BAIMetadataList columns={md ? 2 : 1}>
+            <MetadataListItem label={t('session.SessionId')}>
+              <BAIText code copyable ellipsis={{ tooltip: true }}>
+                {session.row_id ?? ''}
+              </BAIText>
+            </MetadataListItem>
+            {(userRole === 'admin' || userRole === 'superadmin') && (
+              <MetadataListItem label={t('credential.UserID')}>
+                {session.owner?.email ? (
+                  session.owner.email
+                ) : session.user_id ? (
+                  <Suspense
+                    fallback={<BAISkeleton variant="input" size="small" />}
+                  >
+                    <UNSAFELazyUserEmailView uuid={session.user_id} />
+                  </Suspense>
+                ) : (
+                  '-'
+                )}
+              </MetadataListItem>
+            )}
+            <MetadataListItem label={t('general.AccessKey')}>
+              <SessionAccessKey sessionFrgmt={session} copyable />
+            </MetadataListItem>
+            <MetadataListItem label={t('session.Status')}>
+              <BAIFlex>
+                <SessionStatusTag
+                  sessionFrgmt={session}
+                  showInfo={!supportsSessionSchedulingHistory}
+                />
+                {/* QA-FINDINGS Q-37 — both controls in this row were antd
+                    `type="link"` buttons (`Button` / `BAIButton`), i.e. painted
+                    `colorLink` #FF7A00. The conversion to `IconButton
+                    variant="ghost"` dropped the tint to `--color-text-primary`
+                    (measured rgb(20,20,20) light / rgb(255,255,255) dark),
+                    which is what "버튼 색깔이 default 라서 클릭 가능한지 알기
+                    힘듭니다" is describing. `.bai-action-accent` restores it
+                    through `--color-text-accent`, which resolves to exactly
+                    `colorLink` here and to `colorInfo` under the admin theme —
+                    see `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
+                {!supportsSessionSchedulingHistory &&
+                session?.status_data &&
+                session?.status_data !== '{}' ? (
+                  <IconButton
+                    className="bai-action-accent"
+                    variant="ghost"
+                    size="sm"
+                    icon={<Info size="1em" />}
+                    label={t('button.ClickForMoreDetails')}
+                    tooltip={t('button.ClickForMoreDetails')}
+                    onClick={() => {
+                      setOpenStatusDetailModal(true);
+                    }}
+                  />
+                ) : null}
+                {supportsSessionSchedulingHistory && (
+                  <IconButton
+                    className="bai-action-accent"
+                    variant="ghost"
+                    size="sm"
+                    icon={<History size="1em" />}
+                    label={t('session.SessionSchedulingHistory')}
+                    tooltip={t('session.SessionSchedulingHistory')}
+                    onClick={() => toggleOpenSessionSchedulingHistoryModal()}
+                  />
+                )}
+              </BAIFlex>
+            </MetadataListItem>
+            <MetadataListItem label={t('session.SessionType')}>
+              {/* QA-FINDINGS Q-36 — the `<dd>` a `MetadataListItem` renders is
+                  `display: block`, so a tag and an icon button dropped in as
+                  siblings are two inline-flex boxes sitting on the SAME TEXT
+                  BASELINE, not on a shared centre line. Their content boxes have
+                  different heights, so aligning their baselines puts their
+                  centres 4px apart. The Status row above already avoids this by
+                  wrapping its identical tag+IconButton pair in a `BAIFlex`
+                  (default `align: center`), which replaces baseline alignment
+                  with cross-axis centring; this row now does the same. Note this
+                  is NOT a migration regression — antd's
+                  `.ant-descriptions-item-content` was `display: table-cell` and
+                  laid the same pair out on the same baseline, so legacy was 4px
+                  off too. */}
+              <BAIFlex>
+                <BAISessionTypeTag sessionFrgmt={session} />
+                {/* QA-FINDINGS Q-37 — legacy `BAIButton type="link"`, so the
+                    accent here is a straight parity restoration. */}
+                {session.type === 'batch' && session.startup_command && (
+                  <IconButton
+                    className="bai-action-accent"
+                    variant="ghost"
+                    size="sm"
+                    icon={<Info size="1em" />}
+                    label={t('session.ViewStartupCommand')}
+                    tooltip={t('session.ViewStartupCommand')}
+                    onClick={() => toggleOpenCodeHighlighterModal()}
+                  />
+                )}
+              </BAIFlex>
+            </MetadataListItem>
+            <MetadataListItem label={t('session.launcher.Environments')}>
+              {session.kernel_nodes?.edges[0]?.node?.image ? (
+                <ImageNodeSimpleTag
+                  imageFrgmt={
+                    session.kernel_nodes?.edges[0]?.node?.image || null
+                  }
+                />
+              ) : session.row_id ? (
                 <Suspense
                   fallback={<BAISkeleton variant="input" size="small" />}
                 >
-                  <UNSAFELazyUserEmailView uuid={session.user_id} />
+                  <UNSAFELazySessionImageTag sessionId={session.row_id} />
                 </Suspense>
-              ) : (
-                '-'
-              )}
-            </MetadataListItem>
-          )}
-          <MetadataListItem label={t('general.AccessKey')}>
-            <SessionAccessKey sessionFrgmt={session} copyable />
-          </MetadataListItem>
-          <MetadataListItem label={t('session.Status')}>
-            <BAIFlex>
-              <SessionStatusTag
-                sessionFrgmt={session}
-                showInfo={!supportsSessionSchedulingHistory}
-              />
-              {/* QA-FINDINGS Q-37 — both controls in this row were antd
-                  `type="link"` buttons (`Button` / `BAIButton`), i.e. painted
-                  `colorLink` #FF7A00. The conversion to `IconButton
-                  variant="ghost"` dropped the tint to `--color-text-primary`
-                  (measured rgb(20,20,20) light / rgb(255,255,255) dark),
-                  which is what "버튼 색깔이 default 라서 클릭 가능한지 알기
-                  힘듭니다" is describing. `.bai-action-accent` restores it
-                  through `--color-text-accent`, which resolves to exactly
-                  `colorLink` here and to `colorInfo` under the admin theme —
-                  see `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
-              {!supportsSessionSchedulingHistory &&
-              session?.status_data &&
-              session?.status_data !== '{}' ? (
-                <IconButton
-                  className="bai-action-accent"
-                  variant="ghost"
-                  size="sm"
-                  icon={<Info size="1em" />}
-                  label={t('button.ClickForMoreDetails')}
-                  tooltip={t('button.ClickForMoreDetails')}
-                  onClick={() => {
-                    setOpenStatusDetailModal(true);
-                  }}
-                />
               ) : null}
-              {supportsSessionSchedulingHistory && (
-                <IconButton
-                  className="bai-action-accent"
-                  variant="ghost"
-                  size="sm"
-                  icon={<History size="1em" />}
-                  label={t('session.SessionSchedulingHistory')}
-                  tooltip={t('session.SessionSchedulingHistory')}
-                  onClick={() => toggleOpenSessionSchedulingHistoryModal()}
-                />
-              )}
-            </BAIFlex>
-          </MetadataListItem>
-          <MetadataListItem label={t('session.SessionType')}>
-            {/* QA-FINDINGS Q-36 — the `<dd>` a `MetadataListItem` renders is
-                `display: block`, so a tag and an icon button dropped in as
-                siblings are two inline-flex boxes sitting on the SAME TEXT
-                BASELINE, not on a shared centre line. Their content boxes have
-                different heights, so aligning their baselines puts their
-                centres 4px apart. The Status row above already avoids this by
-                wrapping its identical tag+IconButton pair in a `BAIFlex`
-                (default `align: center`), which replaces baseline alignment
-                with cross-axis centring; this row now does the same. Note this
-                is NOT a migration regression — antd's
-                `.ant-descriptions-item-content` was `display: table-cell` and
-                laid the same pair out on the same baseline, so legacy was 4px
-                off too. */}
-            <BAIFlex>
-              <BAISessionTypeTag sessionFrgmt={session} />
-              {/* QA-FINDINGS Q-37 — legacy `BAIButton type="link"`, so the
-                  accent here is a straight parity restoration. */}
-              {session.type === 'batch' && session.startup_command && (
-                <IconButton
-                  className="bai-action-accent"
-                  variant="ghost"
-                  size="sm"
-                  icon={<Info size="1em" />}
-                  label={t('session.ViewStartupCommand')}
-                  tooltip={t('session.ViewStartupCommand')}
-                  onClick={() => toggleOpenCodeHighlighterModal()}
-                />
-              )}
-            </BAIFlex>
-          </MetadataListItem>
-          <MetadataListItem label={t('session.launcher.Environments')}>
-            {session.kernel_nodes?.edges[0]?.node?.image ? (
-              <ImageNodeSimpleTag
-                imageFrgmt={session.kernel_nodes?.edges[0]?.node?.image || null}
-              />
-            ) : session.row_id ? (
-              <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
-                <UNSAFELazySessionImageTag sessionId={session.row_id} />
-              </Suspense>
-            ) : null}
-          </MetadataListItem>
-          <MetadataListItem label={t('session.launcher.MountedFolders')}>
-            <BAIFlex gap="xs" wrap="wrap">
-              <MountedVFolderLinks sessionFrgmt={session} />
-            </BAIFlex>
-          </MetadataListItem>
-          <MetadataListItem label={t('session.launcher.ResourceAllocation')}>
-            <BAIFlex gap={'sm'} wrap="wrap" align="center">
-              {hasResourceAllocationDifference && (
-                <Tooltip content={t('session.AllocatedLessThanRequested')}>
-                  <TriangleAlert
-                    size="1em"
-                    style={{ color: 'var(--color-warning)' }}
+            </MetadataListItem>
+            <MetadataListItem label={t('session.launcher.MountedFolders')}>
+              <BAIFlex gap="xs" wrap="wrap">
+                <MountedVFolderLinks sessionFrgmt={session} />
+              </BAIFlex>
+            </MetadataListItem>
+            <MetadataListItem label={t('session.launcher.ResourceAllocation')}>
+              <BAIFlex gap={'sm'} wrap="wrap" align="center">
+                {hasResourceAllocationDifference && (
+                  <BAIIconWithTooltip
+                    content={t('session.AllocatedLessThanRequested')}
+                    icon={
+                      <TriangleAlert
+                        size="1em"
+                        style={{ color: 'var(--color-warning)' }}
+                      />
+                    }
                   />
+                )}
+                <Tooltip content={t('session.ResourceGroup')}>
+                  <Badge label={session.scaling_group} />
                 </Tooltip>
-              )}
-              <Tooltip content={t('session.ResourceGroup')}>
-                <Badge label={session.scaling_group} />
-              </Tooltip>
-              <ResourceNumbersOfSession
-                resource={
-                  hasOccupiedSlots ? occupiedResource : requestedResource
-                }
-                comparedResource={
-                  hasOccupiedSlots ? requestedResource : undefined
-                }
-                showDividers
-              />
-            </BAIFlex>
-          </MetadataListItem>
-          <MetadataListItem label={t('session.Agent')}>
-            <BAISessionAgentIds sessionFrgmt={session} />
-          </MetadataListItem>
-          <MetadataListItem label={t('session.Reservation')}>
-            <BAIFlex gap={'xs'} wrap={'wrap'}>
-              <SessionReservation sessionFrgmt={session} />
-            </BAIFlex>
-          </MetadataListItem>
-          <MetadataListItem label={t('session.ClusterMode')}>
-            <BAISessionClusterMode sessionFrgmt={session} showSize />
-          </MetadataListItem>
-          {baiClient.supports('idle-checks-gql') &&
-          session.status === 'RUNNING' &&
-          imminentExpirationTime ? (
-            <MetadataListItem label={t('session.ReclamationStatus')}>
-              <BAIFlex gap="xxs" align="start">
-                <Suspense
-                  fallback={<BAISkeleton variant="input" size="small" />}
-                >
-                  <SessionIdleChecks
-                    sessionNodeFrgmt={session}
-                    direction={md ? 'row' : 'column'}
-                  />
-                </Suspense>
-                {/* QA-FINDINGS Q-37 — recorded honestly: this one is NOT a
-                    parity restoration. Legacy rendered a bare
-                    `<QuestionCircleOutlined style={{cursor:'pointer'}}>` in the
-                    Descriptions LABEL, at the label's inherited neutral colour,
-                    so antd never tinted it either. It gets the accent anyway
-                    because it is a real action affordance (opens
-                    `IdleCheckDescriptionModal`) and it now sits in the drawer's
-                    content column alongside the two ⓘ buttons above — leaving
-                    one of three identical `size="sm"` ghost glyphs black while
-                    the others are accent would read as an inconsistency rather
-                    than a distinction. The report "세션 디테일 드로어에서 i 가
-                    클릭 가능한지 인식하기 어렵네요" names this glyph class. */}
-                <IconButton
-                  className="bai-action-accent"
-                  variant="ghost"
-                  size="sm"
-                  icon={<CircleHelp size="1em" />}
-                  label={t('button.ClickForMoreDetails')}
-                  tooltip={t('button.ClickForMoreDetails')}
-                  onClick={() => setOpenIdleCheckDescriptionModal(true)}
+                <ResourceNumbersOfSession
+                  resource={
+                    hasOccupiedSlots ? occupiedResource : requestedResource
+                  }
+                  comparedResource={
+                    hasOccupiedSlots ? requestedResource : undefined
+                  }
+                  showDividers
                 />
               </BAIFlex>
             </MetadataListItem>
-          ) : null}
-          <MetadataListItem label={t('session.ResourceUsage')}>
-            <SessionUsageMonitor
-              sessionFrgmt={session}
-              displayTarget={usageMonitorDisplayTarget}
-            />
-          </MetadataListItem>
-          {(session.dependees?.count ?? 0) > 0 && (
-            <MetadataListItem label={t('session.DependsOn')}>
-              <BAIFlex gap="xs" wrap="wrap">
-                {session.dependees?.edges
-                  ?.map((edge) => edge?.node)
-                  .filter(Boolean)
-                  .map((node) => {
-                    const searchParams = new URLSearchParams(location.search);
-                    if (node?.row_id) {
-                      searchParams.set('sessionDetail', node.row_id);
-                    }
-                    return (
-                      <BAILink
-                        key={node?.row_id}
-                        type="hover"
-                        to={{
-                          pathname: location.pathname,
-                          search: searchParams.toString(),
-                        }}
-                      >
-                        {node?.name}
-                      </BAILink>
-                    );
-                  })}
+            <MetadataListItem label={t('session.Agent')}>
+              <BAISessionAgentIds sessionFrgmt={session} />
+            </MetadataListItem>
+            <MetadataListItem label={t('session.Reservation')}>
+              <BAIFlex gap={'xs'} wrap={'wrap'}>
+                <SessionReservation sessionFrgmt={session} />
               </BAIFlex>
             </MetadataListItem>
-          )}
-          {(session.dependents?.count ?? 0) > 0 && (
-            <MetadataListItem label={t('session.DependedByOthers')}>
-              <BAIFlex gap="xs" wrap="wrap">
-                {session.dependents?.edges
-                  ?.map((edge) => edge?.node)
-                  .filter(Boolean)
-                  .map((node) => {
-                    const searchParams = new URLSearchParams(location.search);
-                    if (node?.row_id) {
-                      searchParams.set('sessionDetail', node.row_id);
-                    }
-                    return (
-                      <BAILink
-                        key={node?.row_id}
-                        type="hover"
-                        to={{
-                          pathname: location.pathname,
-                          search: searchParams.toString(),
-                        }}
-                      >
-                        {node?.name}
-                      </BAILink>
-                    );
-                  })}
-              </BAIFlex>
+            <MetadataListItem label={t('session.ClusterMode')}>
+              <BAISessionClusterMode sessionFrgmt={session} showSize />
             </MetadataListItem>
-          )}
-        </MetadataList>
+            {baiClient.supports('idle-checks-gql') &&
+            session.status === 'RUNNING' &&
+            imminentExpirationTime ? (
+              <MetadataListItem label={t('session.ReclamationStatus')}>
+                <BAIFlex gap="xxs" align="start">
+                  <Suspense
+                    fallback={<BAISkeleton variant="input" size="small" />}
+                  >
+                    <SessionIdleChecks
+                      sessionNodeFrgmt={session}
+                      direction={md ? 'row' : 'column'}
+                    />
+                  </Suspense>
+                  {/* QA-FINDINGS Q-37 — recorded honestly: this one is NOT a
+                      parity restoration. Legacy rendered a bare
+                      `<QuestionCircleOutlined style={{cursor:'pointer'}}>` in the
+                      Descriptions LABEL, at the label's inherited neutral colour,
+                      so antd never tinted it either. It gets the accent anyway
+                      because it is a real action affordance (opens
+                      `IdleCheckDescriptionModal`) and it now sits in the drawer's
+                      content column alongside the two ⓘ buttons above — leaving
+                      one of three identical `size="sm"` ghost glyphs black while
+                      the others are accent would read as an inconsistency rather
+                      than a distinction. The report "세션 디테일 드로어에서 i 가
+                      클릭 가능한지 인식하기 어렵네요" names this glyph class. */}
+                  <IconButton
+                    className="bai-action-accent"
+                    variant="ghost"
+                    size="sm"
+                    icon={<CircleHelp size="1em" />}
+                    label={t('button.ClickForMoreDetails')}
+                    tooltip={t('button.ClickForMoreDetails')}
+                    onClick={() => setOpenIdleCheckDescriptionModal(true)}
+                  />
+                </BAIFlex>
+              </MetadataListItem>
+            ) : null}
+            <MetadataListItem label={t('session.ResourceUsage')}>
+              <SessionUsageMonitor
+                sessionFrgmt={session}
+                displayTarget={usageMonitorDisplayTarget}
+              />
+            </MetadataListItem>
+            {(session.dependees?.count ?? 0) > 0 && (
+              <MetadataListItem label={t('session.DependsOn')}>
+                <BAIFlex gap="xs" wrap="wrap">
+                  {session.dependees?.edges
+                    ?.map((edge) => edge?.node)
+                    .filter(Boolean)
+                    .map((node) => {
+                      const searchParams = new URLSearchParams(location.search);
+                      if (node?.row_id) {
+                        searchParams.set('sessionDetail', node.row_id);
+                      }
+                      return (
+                        <BAILink
+                          key={node?.row_id}
+                          type="hover"
+                          to={{
+                            pathname: location.pathname,
+                            search: searchParams.toString(),
+                          }}
+                        >
+                          {node?.name}
+                        </BAILink>
+                      );
+                    })}
+                </BAIFlex>
+              </MetadataListItem>
+            )}
+            {(session.dependents?.count ?? 0) > 0 && (
+              <MetadataListItem label={t('session.DependedByOthers')}>
+                <BAIFlex gap="xs" wrap="wrap">
+                  {session.dependents?.edges
+                    ?.map((edge) => edge?.node)
+                    .filter(Boolean)
+                    .map((node) => {
+                      const searchParams = new URLSearchParams(location.search);
+                      if (node?.row_id) {
+                        searchParams.set('sessionDetail', node.row_id);
+                      }
+                      return (
+                        <BAILink
+                          key={node?.row_id}
+                          type="hover"
+                          to={{
+                            pathname: location.pathname,
+                            search: searchParams.toString(),
+                          }}
+                        >
+                          {node?.name}
+                        </BAILink>
+                      );
+                    })}
+                </BAIFlex>
+              </MetadataListItem>
+            )}
+          </BAIMetadataList>
+        </BAICard>
       </BAIFlex>
       {/* antd `Tabs` -> Astryx `TabList` + `Tab` (navigation only — the
           panels are rendered below; MAPPING.md §4). */}
       <BAIFlex direction="column" align="stretch" gap="sm">
         <TabList
+          hasDivider
           value={activeTabKey}
           onChange={(key) => {
             if (key === 'auditLog' && session.row_id && !auditLogQueryRef) {

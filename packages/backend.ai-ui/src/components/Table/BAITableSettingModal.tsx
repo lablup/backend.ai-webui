@@ -223,7 +223,6 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
                 placeholder={String(t('comp:BAITable.SearchTableColumn'))}
                 value={search}
                 onChange={(value) => setSearch(value ?? '')}
-                size="sm"
               />
               <div style={{ maxHeight: 360, overflowY: 'auto' }}>
                 {disableReorder || search ? (

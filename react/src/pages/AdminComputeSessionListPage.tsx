@@ -24,7 +24,6 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
@@ -38,11 +37,11 @@ import {
   BAIPropertyFilter,
   BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
+  BAITabCountBadge,
   filterOutEmpty,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
-  PRIMARY_TAG_VARIANT,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -308,27 +307,12 @@ const AdminComputeSessionListPage = () => {
               sessionCounts[key as keyof typeof sessionCounts]?.count ?? 0;
             return {
               key,
-              label: (
-                <BAIFlex justify="center" gap={10}>
-                  {label}
-                  {count > 0 && (
-                    <Badge
-                      // PILOT-DECISION: antd count Badge (brand color when the
-                      // tab is active, gray otherwise) -> Astryx Badge pill.
-                      // Arbitrary token colors are inexpressible (P5); the
-                      // active state maps to PRIMARY_TAG_VARIANT (policy
-                      // class 4) and the inactive state to `neutral`. The
-                      // 10px font-size / paddingXS tweaks are dropped
-                      // (defaults-first).
-                      variant={
-                        queryParams.type === key
-                          ? PRIMARY_TAG_VARIANT
-                          : 'neutral'
-                      }
-                      label={count}
-                    />
-                  )}
-                </BAIFlex>
+              label,
+              endContent: (
+                <BAITabCountBadge
+                  count={count}
+                  selected={queryParams.type === key}
+                />
               ),
             };
           },

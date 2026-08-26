@@ -8,11 +8,13 @@ import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Heading } from '@astryxdesign/core/Heading';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -124,7 +126,7 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
           }
         />
 
-        <MetadataList
+        <BAIMetadataList
           title={t('session.ConnectionInformation')}
           columns="single"
           label={{ position: 'start', width: 60 }}
@@ -136,7 +138,7 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
           <MetadataListItem label={t('session.Port')}>
             {displayPorts}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
         <BAIFlex
           direction="column"
           align="stretch"

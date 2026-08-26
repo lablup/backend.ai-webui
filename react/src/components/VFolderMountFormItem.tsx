@@ -16,14 +16,12 @@ import {
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAISkeleton,
   BAIFlex,
+  BAIMetadataList,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   toLocalId,
@@ -368,7 +366,7 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
     // antd `Descriptions size="small"` -> `MetadataList` (MAPPING §4; `size`
     // has no destination). The colourless `<Tag>`s are Astryx's default
     // `neutral` Badge.
-    <MetadataList columns="single">
+    <BAIMetadataList columns="single">
       <MetadataListItem label={t('data.AutomountFolders')}>
         <BAIFlex gap="xxs" wrap="wrap">
           {autoMountNames.map((name) => (
@@ -376,7 +374,7 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
           ))}
         </BAIFlex>
       </MetadataListItem>
-    </MetadataList>
+    </BAIMetadataList>
   );
 };
 

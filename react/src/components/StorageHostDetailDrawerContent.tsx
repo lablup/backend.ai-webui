@@ -77,6 +77,7 @@ const StorageHostDetailDrawerContent: React.FC<
       {/* antd Tabs → TabList + Tab (MAPPING §4): navigation only, panel is
           self-rendered below. */}
       <TabList
+        hasDivider
         value={activeTabKey}
         onChange={(key) => setActiveTabKey(key as TabKey)}
       >

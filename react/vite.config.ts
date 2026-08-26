@@ -1117,7 +1117,10 @@ export default defineConfig(({ command, mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-          globIgnores: ['**/*.map', '**/asset-manifest.json'],
+          // `index.html` stays OUT of the precache: precache routes are
+          // cache-first and answer `/` via Workbox's `directoryIndex` default,
+          // which served the previous deploy's shell on the first load.
+          globIgnores: ['**/*.map', '**/asset-manifest.json', 'index.html'],
           // vite-plugin-pwa defaults navigateFallback to 'index.html', which
           // makes the SW serve cached HTML for ANY GET navigation that doesn't
           // match a precached asset — including OIDC/SAML callbacks like

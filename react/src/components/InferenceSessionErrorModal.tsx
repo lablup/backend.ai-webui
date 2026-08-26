@@ -4,11 +4,13 @@
  */
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
 import { Button } from '@astryxdesign/core/Button';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
-import { BAIModal, BAIModalProps, BAIText } from 'backend.ai-ui';
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+  BAIText,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -59,7 +61,7 @@ const InferenceSessionErrorModal: React.FC<Props> = ({
           breakpoint-map `column` collapses to `columns="single"` because every
           breakpoint asked for one column anyway; `labelStyle.minWidth` becomes
           the `label.width` budget. */}
-      <MetadataList
+      <BAIMetadataList
         columns="single"
         label={{ position: 'start', width: 100 }}
         style={{ marginTop: 20 }}
@@ -72,7 +74,7 @@ const InferenceSessionErrorModal: React.FC<Props> = ({
         <MetadataListItem label={t('dialog.error.Error')}>
           {iSessionError?.errors[0].repr}
         </MetadataListItem>
-      </MetadataList>
+      </BAIMetadataList>
     </BAIModal>
   );
 };

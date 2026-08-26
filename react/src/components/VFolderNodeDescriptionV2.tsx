@@ -23,11 +23,11 @@ import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles'
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@astryxdesign/core/Badge';
-import { MetadataList } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIMetadataList,
   BAIMetadataListItem,
   filterOutEmpty,
   toLocalId,
@@ -334,13 +334,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   ]);
 
   return (
-    <MetadataList columns="single" {...props}>
+    <BAIMetadataList columns="single" {...props}>
       {items.map((item) => (
         <BAIMetadataListItem key={item.key} label={item.label}>
           {item.children}
         </BAIMetadataListItem>
       ))}
-    </MetadataList>
+    </BAIMetadataList>
   );
 };
 

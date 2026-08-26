@@ -12,36 +12,32 @@ const meta: Meta<typeof BAIMetadataList> = {
     docs: {
       description: {
         component: `
-**BAIMetadataList** wraps Astryx's \`MetadataList\` and restores antd's
-\`Descriptions bordered\` look as an opt-in \`bordered\` prop.
+**BAIMetadataList** wraps Astryx's \`MetadataList\` and adds an opt-in
+\`bordered\` prop: an outer frame plus a 1px rule between every item.
 
-Astryx's \`MetadataList\` is where antd \`Descriptions\` landed in the
-conversion, and it covers the plain variant exactly — but it has no
-counterpart for \`bordered\`, so every converted call site dropped the prop.
-This wrapper gives that look back without making it the default: the plain
-list stays the default, and \`bordered\` is a per-surface choice.
+\`bordered\` preserves the list's own layout — it does not force side labels,
+shade the label column, or reflow the grid. It adds only the frame and the
+inter-item separators, on whatever \`columns\`/\`label\` layout the list already
+has (a multi-column list keeps its stacked labels).
 
-\`bordered\` is purely paint — one class, declarations in
-\`BAIMetadataList.css\`, entirely in design tokens. Without it the component
-is a pass-through and no CSS is reached.
+Independently of \`bordered\`, the wrapper lightens the item label so it reads
+quieter than its value — the base class is always applied, so this is the
+default for every list, \`bordered\` or not. The tone is the lightest mix off
+\`--color-text-secondary\` that still clears WCAG AA in both themes; override
+\`--bai-metadata-list-label-color\` to retune it.
+
+The paint is two classes, declarations in \`BAIMetadataList.css\`, entirely in
+design tokens.
 
 ## Props
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| bordered | \`boolean\` | \`false\` | Frame + label/value cell rules, antd \`Descriptions bordered\` |
-| size | \`'default' \\| 'middle' \\| 'small'\` | \`'default'\` | Bordered cell padding (16/24, 12/24, 8/16px). No effect without \`bordered\`, as in antd |
+| bordered | \`boolean\` | \`false\` | Outer frame + a 1px rule between items; keeps the list's own label layout |
+| size | \`'default' \\| 'middle' \\| 'small'\` | \`'default'\` | Bordered cell padding (16/24, 12/24, 8/16px). No effect without \`bordered\` |
 
 Everything else is \`MetadataList\`'s own surface (\`columns\`, \`label\`,
 \`title\`, \`orientation\`, \`maxNumOfItems\`).
-
-### Bordered implies side labels
-
-antd's bordered layout is a table whose label is always the leading cell, so a
-bordered list defaults to \`label={{ position: 'start' }}\` even at
-multi-column widths, where plain Astryx would stack them. An explicit
-\`label\` still wins; \`position: 'top'\` plus \`bordered\` has no antd
-equivalent and is not styled.
         `,
       },
     },
@@ -82,7 +78,7 @@ export const Plain: Story = {
   render: () => <BAIMetadataList>{POLICY_ITEMS}</BAIMetadataList>,
 };
 
-/** The restored antd `Descriptions bordered` look. */
+/** The bordered look — outer frame + a 1px rule between items. */
 export const Bordered: Story = {
   render: () => <BAIMetadataList bordered>{POLICY_ITEMS}</BAIMetadataList>,
 };

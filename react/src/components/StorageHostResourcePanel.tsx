@@ -5,14 +5,11 @@
 import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
 import { convertToDecimalUnit } from '../helper/index';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { ProgressBar } from '@astryxdesign/core/ProgressBar';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -63,36 +60,38 @@ const StorageHostResourcePanel: React.FC<{
     // (MAPPING §4). `size`/`bordered` drop; per-item `span={2}` on the Usage
     // item also drops (PILOT-DECISION, project-wide) — it now shares the
     // 2-column flow with Backend Type instead of spanning both columns.
-    <MetadataList columns={2}>
-      <MetadataListItem label={t('storageHost.Usage')}>
-        <HStack width={200}>
-          <ProgressBar
-            label={t('storageHost.Usage')}
-            isLabelHidden
-            value={storageUsage?.percent}
-            variant={usageProgressVariant(storageUsage?.percent)}
-          />
-        </HStack>
-        <Text color="secondary">{t('storageHost.Used')}: </Text>
-        {convertToDecimalUnit(storageUsage?.used_bytes, 'auto')?.displayValue}
-        <Text color="secondary">{' / '}</Text>
-        <Text color="secondary">{t('storageHost.Total')}: </Text>
-        {
-          convertToDecimalUnit(storageUsage?.capacity_bytes, 'auto')
-            ?.displayValue
-        }
-      </MetadataListItem>
-      <MetadataListItem label={t('agent.BackendType')}>
-        {resource?.backend}
-      </MetadataListItem>
-      <MetadataListItem label={t('agent.Capabilities')}>
-        <BAIFlex gap="xs" wrap="wrap">
-          {_.map(resource?.capabilities, (cap) => (
-            <Badge key={cap} variant="neutral" label={cap} />
-          ))}
-        </BAIFlex>
-      </MetadataListItem>
-    </MetadataList>
+    <BAICard>
+      <BAIMetadataList columns={2}>
+        <MetadataListItem label={t('storageHost.Usage')}>
+          <HStack width={200}>
+            <ProgressBar
+              label={t('storageHost.Usage')}
+              isLabelHidden
+              value={storageUsage?.percent}
+              variant={usageProgressVariant(storageUsage?.percent)}
+            />
+          </HStack>
+          <Text color="secondary">{t('storageHost.Used')}: </Text>
+          {convertToDecimalUnit(storageUsage?.used_bytes, 'auto')?.displayValue}
+          <Text color="secondary">{' / '}</Text>
+          <Text color="secondary">{t('storageHost.Total')}: </Text>
+          {
+            convertToDecimalUnit(storageUsage?.capacity_bytes, 'auto')
+              ?.displayValue
+          }
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.BackendType')}>
+          {resource?.backend}
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.Capabilities')}>
+          <BAIFlex gap="xs" wrap="wrap">
+            {_.map(resource?.capabilities, (cap) => (
+              <Badge key={cap} variant="neutral" label={cap} />
+            ))}
+          </BAIFlex>
+        </MetadataListItem>
+      </BAIMetadataList>
+    </BAICard>
   );
 };
 

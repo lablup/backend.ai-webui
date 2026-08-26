@@ -9,23 +9,32 @@
 
  `BAIDynamicStepInputNumber` and `BAIDynamicUnitInputNumber` are not "number
  inputs with a step" — their whole substance is a NON-LINEAR step ladder
- (`1, 2, 4, 8, 16, …`, plus a unit carry in the unit variant). Astryx
- `NumberInput` exposes no `onStep` hook (MAPPING §3.17), and every stepping
- affordance it does have — keyboard, wheel, its opt-in trailing buttons — is
- LINEAR by `step`, which would silently replace the ladder. So the ladder gets
- explicit controls: two `IconButton`s drive `onStep('up' | 'down')`, and the
- owning components cancel the built-in ArrowUp/ArrowDown step in `onKeyDown`.
- The ladder arithmetic itself is ported unchanged from each component — this
- module owns only the affordance.
+ (`1, 2, 4, 8, 16, …`, plus a unit carry in the unit variant).
 
- (Until Astryx 0.4.0 the field was a native `<input type="number">` whose
- browser spinner also had to be suppressed in a co-located CSS file; 0.4.0's
- text-backed spinbutton, astryx#4896, renders no native spinner, so the CSS
- is gone.)
+ `NumberInput hasNumberSteppers` cannot express that, and the limit is
+ structural rather than a missing convenience (re-checked against core 0.5.0,
+ FR-3688):
+
+   - `getSteppedValue` snaps to a grid anchored at `min` (`stepBase + n*step`),
+     so no single `step` gives 8 -> 16 going up and 8 -> 4 going down;
+   - the built-in buttons call the internal `stepValue(±1)` directly, so unlike
+     the keyboard path they never reach the consumer's `onKeyDown` and cannot be
+     intercepted;
+   - there is no `onStep` prop, and `onChange` alone cannot be told apart from
+     a typed edit.
+
+ So the ladder keeps explicit controls, and this module matches the built-in
+ stepper's DESIGN instead: the same 16px column, the same chevron glyph rotated
+ for the increment half, the same hairline between the halves, and the same
+ icon/overlay tokens (`NumberInput.tsx` `styles.numberSteppers` /
+ `numberStepperButton` / `decrementButton`). Metrics live in the co-located CSS.
+
+ One deliberate delta: Astryx's buttons re-focus the input after stepping; these
+ only suppress the focus move, because the input they belong to is the caller's.
 */
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { VStack } from '@astryxdesign/core/Stack';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import './astryxNumberStepper.css';
+import { Icon } from '@astryxdesign/core/Icon';
+import { InputGroupText } from '@astryxdesign/core/InputGroup';
 import React from 'react';
 
 export type StepDirection = 'up' | 'down';
@@ -40,7 +49,8 @@ export interface AstryxNumberStepperProps {
 
 /**
  * The up/down pair that replaces antd `InputNumber`'s built-in spinner.
- * Render it as a sibling of the `NumberInput` inside the same `InputGroup`.
+ * REQUIRES an `InputGroup` ancestor — `InputGroupText` is what welds the column
+ * to the field, and outside a group it is a stray bordered box.
  */
 export const AstryxNumberStepper: React.FC<AstryxNumberStepperProps> = ({
   onStep,
@@ -48,24 +58,32 @@ export const AstryxNumberStepper: React.FC<AstryxNumberStepperProps> = ({
   increaseLabel,
   decreaseLabel,
 }) => (
-  <VStack gap={0} align="center" justify="center">
-    <IconButton
-      variant="ghost"
-      size="sm"
-      icon={<ChevronUp size="1em" />}
-      label={increaseLabel}
-      isDisabled={isDisabled}
+  <InputGroupText className="bai-number-stepper">
+    <button
+      type="button"
+      // Not a tab stop, and a click must not pull focus out of the field —
+      // both mirror the built-in stepper.
+      tabIndex={-1}
+      className="bai-number-stepper__button bai-number-stepper__button--increase"
+      aria-label={increaseLabel}
+      disabled={isDisabled}
+      onPointerDown={(event) => event.preventDefault()}
       onClick={() => onStep('up')}
-    />
-    <IconButton
-      variant="ghost"
-      size="sm"
-      icon={<ChevronDown size="1em" />}
-      label={decreaseLabel}
-      isDisabled={isDisabled}
+    >
+      <Icon icon="chevronDown" size="xsm" color="inherit" />
+    </button>
+    <button
+      type="button"
+      tabIndex={-1}
+      className="bai-number-stepper__button bai-number-stepper__button--decrease"
+      aria-label={decreaseLabel}
+      disabled={isDisabled}
+      onPointerDown={(event) => event.preventDefault()}
       onClick={() => onStep('down')}
-    />
-  </VStack>
+    >
+      <Icon icon="chevronDown" size="xsm" color="inherit" />
+    </button>
+  </InputGroupText>
 );
 
 /**

@@ -1,3 +1,4 @@
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import { BAIDeleteArtifactRevisionsModalArtifactFragment$key } from '../../__generated__/BAIDeleteArtifactRevisionsModalArtifactFragment.graphql';
 import {
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$data,
@@ -20,9 +21,7 @@ import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
-import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -184,19 +183,13 @@ const BAIDeleteArtifactRevisionsModal = ({
           selectedArtifactRevision.length ? (
             <BAIAlert
               icon={
-                <Tooltip
-                  content={t(
+                <BAIQuestionIconWithTooltip
+                  title={t(
                     'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
-                >
-                  <CircleHelp
-                    style={{
-                      color: token.colorInfo,
-                      marginRight: token.marginXS,
-                    }}
-                    size="1em"
-                  />
-                </Tooltip>
+                  iconProps={{ style: { color: token.colorInfo } }}
+                  style={{ marginRight: token.marginXS }}
+                />
               }
               showIcon
               title={t('comp:BAIDeleteArtifactModal.ExcludedVersions', {
