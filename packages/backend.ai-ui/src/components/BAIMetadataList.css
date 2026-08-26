@@ -43,15 +43,17 @@
 
 /* Label tone. Astryx paints `dt` at `--color-text-secondary` (alpha .65), which
    reads as heavy as the value next to it; the label is the quieter half of the
-   pair. Mixing that token to 70% lands on alpha .45 — antd's measured
-   `colorTextTertiary` (theme-shim `selfTokens`), which has no CSS-variable
-   counterpart in Astryx's text ramp (it goes secondary .65 -> disabled .25, and
-   `disabled` is the wrong meaning here). Override the variable to retune.
-   Applies with or without `bordered`. */
+   pair. 83% is the lightest mix that still clears WCAG AA for normal text:
+   alpha .539 composites to #757575 on the light card (4.61:1) and #939393 on
+   the dark one (6.00:1). Going further fails light mode — antd's measured
+   `colorTextTertiary` (.45) lands at 3.41:1, which is why that token is not
+   used here despite being the obvious parity value. Override the variable to
+   retune, and re-check both themes if you do. Applies with or without
+   `bordered`. */
 .bai-metadata-list {
   --bai-metadata-list-label-color: color-mix(
     in srgb,
-    var(--color-text-secondary) 70%,
+    var(--color-text-secondary) 83%,
     transparent
   );
 }

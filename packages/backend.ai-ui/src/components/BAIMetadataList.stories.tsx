@@ -18,10 +18,15 @@ const meta: Meta<typeof BAIMetadataList> = {
 \`bordered\` preserves the list's own layout — it does not force side labels,
 shade the label column, or reflow the grid. It adds only the frame and the
 inter-item separators, on whatever \`columns\`/\`label\` layout the list already
-has (a multi-column list keeps its stacked labels). Off, the component is a
-pass-through and no CSS is reached.
+has (a multi-column list keeps its stacked labels).
 
-The paint is one class, declarations in \`BAIMetadataList.css\`, entirely in
+Independently of \`bordered\`, the wrapper lightens the item label so it reads
+quieter than its value — the base class is always applied, so this is the
+default for every list, \`bordered\` or not. The tone is the lightest mix off
+\`--color-text-secondary\` that still clears WCAG AA in both themes; override
+\`--bai-metadata-list-label-color\` to retune it.
+
+The paint is two classes, declarations in \`BAIMetadataList.css\`, entirely in
 design tokens.
 
 ## Props
