@@ -38,24 +38,6 @@ import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
-// Label keys, so the mismatch banner can name the pair in the admin's language
-// without translating the type names a second time.
-const UI_TYPE_LABEL_KEYS: Record<UIType, string> = {
-  SLIDER: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeSlider',
-  NUMBER_INPUT: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeNumberInput',
-  SELECT: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeSelect',
-  CHECKBOX: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeCheckbox',
-  TEXT_INPUT: 'comp:BAIRuntimeVariantPresetSettingModal.UITypeTextInput',
-};
-
-const VALUE_TYPE_LABEL_KEYS: Record<ValueType, string> = {
-  STR: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeStr',
-  INT: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeInt',
-  FLOAT: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFloat',
-  BOOL: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeBool',
-  FLAG: 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFlag',
-};
-
 type RuntimeVariantPresetFormValues = {
   runtimeVariantId: string;
   name: string;
@@ -234,6 +216,56 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
   // nothing: this build cannot know what it renders.
   const isValueTypeAllowed = (value: ValueType) =>
     isValueTypeCompatibleWithUIType(uiType, value);
+
+  // One enumeration of each vocabulary, shared by the select below and the
+  // mismatch banner. A parallel map of translation KEYS would both drift from
+  // these options and hide the keys from the i18n extractor, which only sees
+  // `t()` called on a literal.
+  const uiTypeOptions: Array<{ label: string; value: UIType }> = [
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.UITypeSlider'),
+      value: 'SLIDER',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.UITypeNumberInput'),
+      value: 'NUMBER_INPUT',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.UITypeSelect'),
+      value: 'SELECT',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.UITypeCheckbox'),
+      value: 'CHECKBOX',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.UITypeTextInput'),
+      value: 'TEXT_INPUT',
+    },
+  ];
+
+  const valueTypeOptions: Array<{ label: string; value: ValueType }> = [
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.ValueTypeStr'),
+      value: 'STR',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.ValueTypeInt'),
+      value: 'INT',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFloat'),
+      value: 'FLOAT',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.ValueTypeBool'),
+      value: 'BOOL',
+    },
+    {
+      label: t('comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFlag'),
+      value: 'FLAG',
+    },
+  ];
 
   // The banner reports what is STORED, not what the form currently holds: the
   // field validator already gives live feedback, and deriving this from form
@@ -528,8 +560,13 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             description={t(
               'comp:BAIRuntimeVariantPresetSettingModal.StoredValueTypeMismatch',
               {
-                uiType: t(UI_TYPE_LABEL_KEYS[storedUIType]),
-                valueType: t(VALUE_TYPE_LABEL_KEYS[storedValueType]),
+                uiType:
+                  uiTypeOptions.find(({ value }) => value === storedUIType)
+                    ?.label ?? storedUIType,
+                valueType:
+                  valueTypeOptions.find(
+                    ({ value }) => value === storedValueType,
+                  )?.label ?? storedValueType,
               },
             )}
           />
@@ -697,41 +734,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               'comp:BAIRuntimeVariantPresetSettingModal.UITypeTooltip',
             )}
           >
-            <BAISelect
-              allowClear
-              options={[
-                {
-                  label: t(
-                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeSlider',
-                  ),
-                  value: 'SLIDER',
-                },
-                {
-                  label: t(
-                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeNumberInput',
-                  ),
-                  value: 'NUMBER_INPUT',
-                },
-                {
-                  label: t(
-                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeSelect',
-                  ),
-                  value: 'SELECT',
-                },
-                {
-                  label: t(
-                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeCheckbox',
-                  ),
-                  value: 'CHECKBOX',
-                },
-                {
-                  label: t(
-                    'comp:BAIRuntimeVariantPresetSettingModal.UITypeTextInput',
-                  ),
-                  value: 'TEXT_INPUT',
-                },
-              ]}
-            />
+            <BAISelect allowClear options={uiTypeOptions} />
           </Form.Item>
         ) : null}
         <Form.Item
@@ -762,43 +765,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
           ]}
         >
           <BAISelect
-            options={[
-              {
-                label: t(
-                  'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeStr',
-                ),
-                value: 'STR',
-                disabled: !isValueTypeAllowed('STR'),
-              },
-              {
-                label: t(
-                  'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeInt',
-                ),
-                value: 'INT',
-                disabled: !isValueTypeAllowed('INT'),
-              },
-              {
-                label: t(
-                  'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFloat',
-                ),
-                value: 'FLOAT',
-                disabled: !isValueTypeAllowed('FLOAT'),
-              },
-              {
-                label: t(
-                  'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeBool',
-                ),
-                value: 'BOOL',
-                disabled: !isValueTypeAllowed('BOOL'),
-              },
-              {
-                label: t(
-                  'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeFlag',
-                ),
-                value: 'FLAG',
-                disabled: !isValueTypeAllowed('FLAG'),
-              },
-            ]}
+            options={valueTypeOptions.map((option) => ({
+              ...option,
+              disabled: !isValueTypeAllowed(option.value),
+            }))}
           />
         </Form.Item>
         <Form.Item
