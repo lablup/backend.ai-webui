@@ -69,7 +69,7 @@ export const docs = {
       name: 'className',
       type: 'string',
       description:
-        'Extra class on the wrapping element, appended to the component own `bai-badge` class.',
+        "Extra class on the wrapping element, appended to the component's own `bai-badge` class.",
     },
     {
       name: 'style',

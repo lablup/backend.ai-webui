@@ -15,7 +15,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Modal that applies one project resource policy to several projects at once. It reads the plural fragment `BAIProjectBulkEditModalFragment` on `GroupNode` (`name`, `row_id`), so the caller spreads that fragment on the project nodes in its list query and passes the selected array as `selectedProjectFragments`. The body lists the affected project names in an info alert and offers a single field, backed by BAIProjectResourcePolicySelect inside a Suspense boundary. Confirming validates the form and fires one `modify_group` mutation per selected `row_id`, calling `onOk` only after every mutation has settled. Remaining props go to BAIModal, but `title`, `okText` and `confirmLoading` are applied after the spread and cannot be overridden.',
+      'Modal that applies one project resource policy to several projects at once. It reads the plural fragment `BAIProjectBulkEditModalFragment` on `GroupNode` (`name`, `row_id`), so the caller spreads that fragment on the project nodes in its list query and passes the selected array as `selectedProjectFragments`. The body lists the affected project names in an info alert and offers a single field, backed by BAIProjectResourcePolicySelect inside a Suspense boundary. Confirming validates the form and fires one `modify_group` mutation per selected `row_id`, calling `onOk` only when every mutation has SUCCEEDED — the mutations run through `Promise.all`, and `useMutationWithPromise` rejects on a GraphQL or network error, so one failure skips `onOk` and leaves the modal open. Remaining props go to BAIModal, but `title`, `okText` and `confirmLoading` are applied after the spread and cannot be overridden.',
     bestPractices: [
       {
         guidance: true,
@@ -35,7 +35,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Treat `onOk` as a success signal — it is called once all mutations settle, including when some of them failed.',
+          'Assume `onOk` runs no matter what: a single failed mutation rejects the `Promise.all` and `onOk` never fires, so the projects that did update are left without the refetch it would have triggered.',
       },
       {
         guidance: false,
@@ -56,7 +56,7 @@ export const docs = {
       name: 'onOk',
       type: '(e: React.MouseEvent<HTMLButtonElement>) => void',
       description:
-        'Called after every `modify_group` mutation has settled. Close the modal, clear the selection and refetch here.',
+        'Called only when every `modify_group` mutation resolved. Close the modal, clear the selection and refetch here — and note that a partial failure skips this entirely, even though some projects were already modified.',
     },
     {
       name: 'title',

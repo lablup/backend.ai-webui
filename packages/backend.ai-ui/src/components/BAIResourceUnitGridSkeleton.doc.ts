@@ -53,7 +53,7 @@ export const docs = {
       name: 'className',
       type: 'string',
       description:
-        'Extra classes on the wrapper. Appended to the components own bai-resource-unit-grid-skeleton class rather than replacing it.',
+        "Extra classes on the wrapper. Appended to the component's own bai-resource-unit-grid-skeleton class rather than replacing it.",
     },
   ],
   examples: [
