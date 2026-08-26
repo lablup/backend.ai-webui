@@ -139,8 +139,9 @@ Sequential numbers are zero-padded based on the total number of users. For examp
 
 :::warning
 If some of the generated usernames or email addresses already exist, the operation
-will partially succeed. A warning message will display how many users were
-successfully created and how many failed.
+will partially succeed. A message reports how many users were created and how many
+failed, and a failure list shows each user that could not be created along with the
+reason.
 :::
 
 <a id="bulk-create-users-from-csv"></a>
@@ -199,6 +200,10 @@ live: the errors clear and the button enables, with no need to re-upload the fil
 #### Creating the users
 
 Once you have reviewed the preview and confirmed that all rows are valid, click **Create N user(s)** to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.
+
+When only some of the rows succeed, a message reports `N user(s) created. M user(s) failed.`, and a failure list opens on top of the dialog showing every user that could not be created — the email, the username, and the error returned for each. If some accounts were created, the generated keypair list appears first and the failure list follows once you close it. The accounts that were created are kept, so you only need to correct the rows that were reported.
+
+![](../images/bulk_create_user_partial_failure.png)
 
 :::warning
 If some rows fail, only the successful rows result in new accounts. Failed rows are reported individually. Correct the source CSV and re-upload to create the remaining accounts.
@@ -290,9 +295,9 @@ options:
 - **Delete shared virtual folders as well?**: When checked, virtual folders
   shared by the purged users are also deleted. When unchecked, those folders are
   left in place.
-- **Delete created model services as well?**: When checked, model services
-  created by the purged users are deleted as well. When unchecked, ownership of
-  those services is delegated instead of deleting them.
+- **Delete created deployments as well?**: When checked, deployments created by
+  the purged users are deleted as well. When unchecked, ownership of those
+  deployments is delegated instead of deleting them.
 
 ![](../images/purge_users_modal.png)
 <!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
@@ -886,16 +891,14 @@ Count Per Model Session and Max Customized Image Count.
 
 ![](../images/user_resource_policy_list.png)
 
-The table shows the following columns: **Name** (with the inline **Edit** and **Delete** actions),
-**Max Folder Count**, **Max Concurrent Logins**, **Max Session Count Per Model Session**,
-**Max Quota Scope Size**, **Max Customized Image Count**, and **Created At**. Use the column-settings
-control to hide the columns you do not need; your choice is kept per browser.
+The table shows the following columns: **ID**, **Name** (with the inline **Edit** and
+**Delete** actions), **Max Folder Count**, **Max Quota Scope Size**,
+**Max Customized Image Count**, and **Created At**. Use the column-settings control
+to hide the columns you do not need; your choice is kept per browser.
 
-Filtering, sorting, and paging are all evaluated on the server, so the tab stays responsive on clusters
-with many policies. Add a condition with the property filter above the table to narrow the list by
-**Name**, **Created At**, **Max Folder Count**, **Max Concurrent Logins**,
-**Max Session Count Per Model Session**, or **Max Customized Image Count**; click a column header to
-change the sort order; and use the pager below the table to move through the results.
+Sorting and paging are evaluated on the server, so the tab stays responsive on
+clusters with many policies. Click a column header to change the sort order, and
+use the pager below the table to move through the results.
 
 To create a new user resource policy, click the **Create** button.
 
