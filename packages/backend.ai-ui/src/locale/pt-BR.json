@@ -98,7 +98,7 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Limpar Pesquisar opções",
     "NoResults": "Sem resultados",
-    "Search": "Pesquisar…",
+    "Search": "Pesquisar",
     "SearchOptions": "Pesquisar opções"
   },
   "comp:BAIContainerRegistrySelect": {

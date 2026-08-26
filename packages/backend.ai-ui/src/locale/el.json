@@ -98,7 +98,7 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
-    "Search": "Αναζήτηση…",
+    "Search": "Αναζήτηση",
     "SearchOptions": "Αναζήτηση επιλογών"
   },
   "comp:BAIContainerRegistrySelect": {

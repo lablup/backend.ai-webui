@@ -98,7 +98,7 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
     "NoResults": "Ei tuloksia",
-    "Search": "Hae…",
+    "Search": "Hae",
     "SearchOptions": "Hae vaihtoehdoista"
   },
   "comp:BAIContainerRegistrySelect": {

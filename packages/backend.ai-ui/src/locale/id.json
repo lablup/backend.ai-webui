@@ -98,7 +98,7 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Hapus Cari opsi",
     "NoResults": "Tidak ada hasil",
-    "Search": "Cari…",
+    "Search": "Cari",
     "SearchOptions": "Cari opsi"
   },
   "comp:BAIContainerRegistrySelect": {

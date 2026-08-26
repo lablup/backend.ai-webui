@@ -98,7 +98,7 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜尋選項",
     "NoResults": "無結果",
-    "Search": "搜尋…",
+    "Search": "搜尋",
     "SearchOptions": "搜尋選項"
   },
   "comp:BAIContainerRegistrySelect": {

@@ -98,7 +98,7 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
     "NoResults": "Үр дүн олдсонгүй",
-    "Search": "Хайх…",
+    "Search": "Хайх",
     "SearchOptions": "Сонголтуудаас хайх"
   },
   "comp:BAIContainerRegistrySelect": {

@@ -98,7 +98,7 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
-    "Search": "Ara…",
+    "Search": "Ara",
     "SearchOptions": "Seçenekleri ara"
   },
   "comp:BAIContainerRegistrySelect": {
