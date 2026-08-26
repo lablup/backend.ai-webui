@@ -69,6 +69,30 @@ Portless then proxies `https://<name>.localhost:1355` to `http://localhost:9081`
 
 Each worktree picks up its own branch's FR number, so two worktrees on different issues (`fr-2701` and `fr-2890`) coexist on `fr-2701.localhost:1355` and `fr-2890.localhost:1355` without conflict. Two worktrees on the **same** branch will collide; `dev.mjs` passes `--force` so the second one overrides the first registration. Run only one of them at a time.
 
+## Sharing a dev server with the team (dev-gw)
+
+`*.localhost:1355` only resolves on the box that runs the dev server. To let anyone on the dev VPN open it as a plain link, the **box** joins the team gateway once:
+
+```bash
+dev-gw join <box>   # installed by fw:setup-remote-env
+```
+
+That registers the box with the gateway and writes `~/.config/fw/dev-gw.json`. From then on, every `pnpm run dev` prints the shareable URL alongside the local one:
+
+```
+-- Team share URL: http://fr-2701.jongeun.10-82-0-159.sslip.io (dev VPN, via dev-gw)
+```
+
+The pattern is `http://<app>.<box>.<gateway-domain>`, where `<app>` is the same Portless app name as in the local URL. The gateway rewrites the `Host` header to `<app>.localhost:<PORTLESS_PORT>` before forwarding, so **Portless, Vite, and `dev.mjs` need no configuration for it** — the URL is the only difference.
+
+Notes:
+
+- **HTTP only, dev VPN only.** The gateway deliberately serves plain HTTP (no CA to install on the viewer's machine, and the Backend.AI client signs requests in pure JS, so no secure-context dependency). It is reachable only from the VPN and dev-net ranges.
+- **The share URL is unauthenticated.** Anyone on the dev VPN or in dev-net can open it, and the dev bundle they receive contains every `VITE_*` value from your `.env.development.local` — including `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` if you set them (see the `SECURITY:` note in `.env.development.local.sample`). Don't run a shared dev server with credentials you would not hand to the whole team.
+- **Changing `PORTLESS_PORT` requires re-running `dev-gw join`.** The gateway forwards to the port recorded at join time; when they differ, `dev.mjs` says so and prints no URL.
+- `dev.mjs` also exposes the URL to the React bundle as `VITE_DEV_SHARE_URL`. Set `DEV_GW_CONFIG` to read the config from a different path.
+- When the app name is auto-derived by `portless run` (no `FR-XXXX` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
+
 ## Theme color for visual differentiation
 
 Create `.env.development.local` (copy from `.env.development.local.sample`) and set:

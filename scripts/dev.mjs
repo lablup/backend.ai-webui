@@ -6,7 +6,12 @@
 // Similarly, the resolved Portless app name is exposed via
 // VITE_DEV_SERVER_NAME so the React app can show it in the browser tab title
 // (dev only), keeping multiple dev-server tabs distinguishable.
+// When this box has joined the team dev gateway, the shareable URL is printed
+// at startup and exposed as VITE_DEV_SHARE_URL.
 import { spawn, spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 
 const env = { ...process.env };
 
@@ -85,6 +90,44 @@ if (appName) {
   // Surface the app name to the React bundle for the dev-only tab title.
   env.VITE_DEV_SERVER_NAME = appName;
 }
+
+// Team share URL, present only when this box has run `dev-gw join` once.
+// The gateway rewrites Host to `<app>.localhost:<portless_port>`, so routing
+// works with no Portless/Vite change here — only the URL differs.
+const devGwConfigPath =
+  process.env.DEV_GW_CONFIG?.trim() || join(homedir(), '.config', 'fw', 'dev-gw.json');
+let devGwConfig = null;
+try {
+  devGwConfig = JSON.parse(readFileSync(devGwConfigPath, 'utf8'));
+} catch {
+  // Not joined (ENOENT), unreadable, or malformed — no share URL to print.
+}
+// A parseable file can still be the wrong shape; only a URL template is usable.
+const devGwShareBase =
+  typeof devGwConfig?.share_base === 'string' &&
+  /^https?:\/\/\{app\}\./.test(devGwConfig.share_base)
+    ? devGwConfig.share_base
+    : null;
+// The gateway forwards to the Portless port recorded at join time forever, so a
+// server on a different port would be proxied to nothing.
+const portlessPort = process.env.PORTLESS_PORT?.trim() || '1355';
+const devGwPortMismatch =
+  devGwConfig?.portless_port != null && String(devGwConfig.portless_port) !== portlessPort;
+if (devGwShareBase && devGwPortMismatch) {
+  console.log(
+    `-- Team share URL unavailable: dev-gw was joined with Portless :${devGwConfig.portless_port}, this server uses :${portlessPort} — re-run \`dev-gw join\``,
+  );
+} else if (devGwShareBase && appName) {
+  const shareUrl = devGwShareBase.replace('{app}', appName);
+  env.VITE_DEV_SHARE_URL = shareUrl;
+  console.log(`-- Team share URL: ${shareUrl} (dev VPN, via dev-gw)`);
+} else if (devGwShareBase) {
+  // `portless run` derives the app name itself, so it is unknown until it prints.
+  console.log(
+    `-- Team share URL: ${devGwShareBase.replace('{app}', '<app>')} — <app> is the name Portless prints below (dev VPN, via dev-gw)`,
+  );
+}
+
 const portlessSpec = appName
   ? `portless ${appName} --force ${portFlag}`
   : `portless run --force ${portFlag}`;
