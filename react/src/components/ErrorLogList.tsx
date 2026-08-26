@@ -254,6 +254,13 @@ const ErrorLogList: React.FC<{
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{
+          x: 'max-content',
+          y:
+            _.filter(filteredLogData, (log) => log.isError).length === 0
+              ? undefined
+              : 'calc(100vh - 400px)',
+        }}
         pagination={{
           showSizeChanger: false,
         }}
