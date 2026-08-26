@@ -421,7 +421,7 @@
     "SliderStep": "단위(Step)",
     "SliderStepMustBePositive": "단위(Step)는 0보다 커야 합니다.",
     "SliderStepTooltip": "슬라이더의 증가 단위입니다. 기본값은 1입니다.",
-    "StoredValueTypeMismatch": "이 프리셋은 값 유형 {{valueType}}(으)로 저장되어 있는데 UI 유형 {{uiType}}은(는) 이를 표시할 수 없습니다. 표시 가능한 UI 유형을 선택한 뒤 저장하세요.",
+    "StoredValueTypeMismatch": "이 프리셋은 {{valueType}} 값 유형으로 저장되어 있어 {{uiType}} UI 유형으로는 표시할 수 없습니다. UI 유형 또는 값 유형을 변경해 주세요.",
     "TextPlaceholderExample": "예: 값을 입력하세요",
     "TextPlaceholderLabel": "입력 플레이스홀더",
     "UIType": "UI 유형",

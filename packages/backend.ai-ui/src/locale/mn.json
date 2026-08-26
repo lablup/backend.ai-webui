@@ -421,7 +421,7 @@
     "SliderStep": "Алхам",
     "SliderStepMustBePositive": "Алхам 0-ээс их байх ёстой.",
     "SliderStepTooltip": "Гулсагчийн өсөх алхам. Анхны утга нь 1.",
-    "StoredValueTypeMismatch": "Энэ урьдчилсан тохиргоо нь {{valueType}} утгын төрлөөр хадгалагдсан ч {{uiType}} UI төрөл үүнийг харуулж чадахгүй. Хадгалахын өмнө тохирох UI төрлийг сонгоно уу.",
+    "StoredValueTypeMismatch": "Энэ урьдчилсан тохиргоо нь {{valueType}} утгын төрлөөр хадгалагдсан бөгөөд {{uiType}} UI төрөл үүнийг харуулж чадахгүй. UI төрөл эсвэл утгын төрлийг өөрчилнө үү.",
     "TextPlaceholderExample": "жн: Утга оруулна уу",
     "TextPlaceholderLabel": "Оролтын түр бичвэр",
     "UIType": "UI төрөл",

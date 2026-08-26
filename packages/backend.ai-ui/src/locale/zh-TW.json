@@ -421,7 +421,7 @@
     "SliderStep": "步長",
     "SliderStepMustBePositive": "步長必須大於 0。",
     "SliderStepTooltip": "滑桿的遞增步長，預設值為 1。",
-    "StoredValueTypeMismatch": "此預設儲存的值類型為 {{valueType}}，但 UI 類型 {{uiType}} 無法呈現它。請先選擇可呈現的 UI 類型再儲存。",
+    "StoredValueTypeMismatch": "此預設儲存的值類型為 {{valueType}}，UI 類型 {{uiType}} 無法呈現它。請變更 UI 類型或值類型。",
     "TextPlaceholderExample": "例如：請輸入值",
     "TextPlaceholderLabel": "輸入佔位文字",
     "UIType": "UI 類型",

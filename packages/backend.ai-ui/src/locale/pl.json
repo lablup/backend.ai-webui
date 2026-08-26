@@ -421,7 +421,7 @@
     "SliderStep": "Krok",
     "SliderStepMustBePositive": "Krok musi być większy niż 0.",
     "SliderStepTooltip": "Krok przyrostu dla suwaka. Domyślnie 1.",
-    "StoredValueTypeMismatch": "Ten preset jest zapisany z typem wartości {{valueType}}, którego typ interfejsu {{uiType}} nie może wyświetlić. Wybierz zgodny typ interfejsu przed zapisaniem.",
+    "StoredValueTypeMismatch": "Ten preset jest zapisany z typem wartości {{valueType}}, którego typ interfejsu {{uiType}} nie może wyświetlić. Zmień typ interfejsu lub typ wartości.",
     "TextPlaceholderExample": "np. Wprowadź wartość",
     "TextPlaceholderLabel": "Tekst zastępczy pola",
     "UIType": "Typ interfejsu",

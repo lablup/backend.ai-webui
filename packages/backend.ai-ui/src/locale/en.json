@@ -445,7 +445,7 @@
     "SliderStep": "Step",
     "SliderStepMustBePositive": "Step must be greater than 0.",
     "SliderStepTooltip": "Increment step for the slider. Defaults to 1.",
-    "StoredValueTypeMismatch": "This preset is saved with the value type {{valueType}}, which the UI type {{uiType}} cannot render. Pick a UI type that can render it before saving.",
+    "StoredValueTypeMismatch": "This preset is saved with the value type {{valueType}}, which the UI type {{uiType}} cannot render. Change either the UI type or the value type.",
     "TextPlaceholderExample": "e.g., Enter a value",
     "TextPlaceholderLabel": "Input Placeholder",
     "UIType": "UI Type",

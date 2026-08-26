@@ -421,7 +421,7 @@
     "SliderStep": "ステップ",
     "SliderStepMustBePositive": "ステップは0より大きくする必要があります。",
     "SliderStepTooltip": "スライダーの増分ステップです。デフォルトは1です。",
-    "StoredValueTypeMismatch": "このプリセットは値の型 {{valueType}} で保存されていますが、UI タイプ {{uiType}} ではこれを表示できません。表示可能な UI タイプを選択してから保存してください。",
+    "StoredValueTypeMismatch": "このプリセットは値の型 {{valueType}} で保存されているため、UI タイプ {{uiType}} では表示できません。UI タイプまたは値の型を変更してください。",
     "TextPlaceholderExample": "例: 値を入力してください",
     "TextPlaceholderLabel": "入力プレースホルダー",
     "UIType": "UIタイプ",

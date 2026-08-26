@@ -421,7 +421,7 @@
     "SliderStep": "Pas",
     "SliderStepMustBePositive": "Le pas doit être supérieur à 0.",
     "SliderStepTooltip": "Incrément du curseur. La valeur par défaut est 1.",
-    "StoredValueTypeMismatch": "Ce préréglage est enregistré avec le type de valeur {{valueType}}, que le type d'interface {{uiType}} ne peut pas afficher. Choisissez un type d'interface compatible avant d'enregistrer.",
+    "StoredValueTypeMismatch": "Ce préréglage est enregistré avec le type de valeur {{valueType}}, que le type d'interface {{uiType}} ne peut pas afficher. Modifiez le type d'interface ou le type de valeur.",
     "TextPlaceholderExample": "ex. Saisissez une valeur",
     "TextPlaceholderLabel": "Texte d'aide de saisie",
     "UIType": "Type d'interface",

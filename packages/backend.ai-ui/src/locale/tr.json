@@ -421,7 +421,7 @@
     "SliderStep": "Adım",
     "SliderStepMustBePositive": "Adım 0'dan büyük olmalıdır.",
     "SliderStepTooltip": "Kaydırıcı için artış adımı. Varsayılan değer 1'dir.",
-    "StoredValueTypeMismatch": "Bu ön ayar {{valueType}} değer türüyle kaydedilmiş ancak {{uiType}} arayüz türü bunu gösteremez. Kaydetmeden önce uyumlu bir arayüz türü seçin.",
+    "StoredValueTypeMismatch": "Bu ön ayar {{valueType}} değer türüyle kaydedilmiş ve {{uiType}} arayüz türü bunu gösteremez. Arayüz türünü veya değer türünü değiştirin.",
     "TextPlaceholderExample": "örn. Bir değer girin",
     "TextPlaceholderLabel": "Giriş Yer Tutucusu",
     "UIType": "UI Türü",

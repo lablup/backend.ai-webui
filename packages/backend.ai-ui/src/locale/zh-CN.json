@@ -421,7 +421,7 @@
     "SliderStep": "步长",
     "SliderStepMustBePositive": "步长必须大于 0。",
     "SliderStepTooltip": "滑块的递增步长，默认值为 1。",
-    "StoredValueTypeMismatch": "此预设保存的值类型为 {{valueType}}，但 UI 类型 {{uiType}} 无法呈现它。请先选择可呈现的 UI 类型再保存。",
+    "StoredValueTypeMismatch": "此预设保存的值类型为 {{valueType}}，UI 类型 {{uiType}} 无法呈现它。请更改 UI 类型或值类型。",
     "TextPlaceholderExample": "例如：请输入值",
     "TextPlaceholderLabel": "输入占位符",
     "UIType": "UI 类型",

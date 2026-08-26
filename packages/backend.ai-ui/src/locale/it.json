@@ -421,7 +421,7 @@
     "SliderStep": "Incremento",
     "SliderStepMustBePositive": "L'incremento deve essere maggiore di 0.",
     "SliderStepTooltip": "Incremento del cursore. Il valore predefinito è 1.",
-    "StoredValueTypeMismatch": "Questo preset è salvato con il tipo di valore {{valueType}}, che il tipo di interfaccia {{uiType}} non può rappresentare. Scegli un tipo di interfaccia compatibile prima di salvare.",
+    "StoredValueTypeMismatch": "Questo preset è salvato con il tipo di valore {{valueType}}, che il tipo di interfaccia {{uiType}} non può rappresentare. Modifica il tipo di interfaccia o il tipo di valore.",
     "TextPlaceholderExample": "es. Inserisci un valore",
     "TextPlaceholderLabel": "Segnaposto di Input",
     "UIType": "Tipo di UI",

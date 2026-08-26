@@ -421,7 +421,7 @@
     "SliderStep": "Askel",
     "SliderStepMustBePositive": "Askelen on oltava suurempi kuin 0.",
     "SliderStepTooltip": "Liukusäätimen askelväli. Oletusarvo on 1.",
-    "StoredValueTypeMismatch": "Tämä esiasetus on tallennettu arvotyypillä {{valueType}}, jota käyttöliittymätyyppi {{uiType}} ei voi näyttää. Valitse yhteensopiva käyttöliittymätyyppi ennen tallentamista.",
+    "StoredValueTypeMismatch": "Tämä esiasetus on tallennettu arvotyypillä {{valueType}}, jota käyttöliittymätyyppi {{uiType}} ei voi näyttää. Vaihda käyttöliittymätyyppi tai arvotyyppi.",
     "TextPlaceholderExample": "esim. Anna arvo",
     "TextPlaceholderLabel": "Syötteen paikkamerkki",
     "UIType": "Käyttöliittymätyyppi",

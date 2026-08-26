@@ -421,7 +421,7 @@
     "SliderStep": "Bước nhảy",
     "SliderStepMustBePositive": "Bước nhảy phải lớn hơn 0.",
     "SliderStepTooltip": "Bước tăng của thanh trượt. Giá trị mặc định là 1.",
-    "StoredValueTypeMismatch": "Cài đặt sẵn này được lưu với loại giá trị {{valueType}}, mà loại giao diện {{uiType}} không thể hiển thị. Hãy chọn loại giao diện tương thích trước khi lưu.",
+    "StoredValueTypeMismatch": "Cài đặt sẵn này được lưu với loại giá trị {{valueType}}, mà loại giao diện {{uiType}} không thể hiển thị. Hãy thay đổi loại giao diện hoặc loại giá trị.",
     "TextPlaceholderExample": "vd: Nhập một giá trị",
     "TextPlaceholderLabel": "Văn bản gợi ý ô nhập",
     "UIType": "Loại giao diện",
