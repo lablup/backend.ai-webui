@@ -52,13 +52,11 @@ const ResourceGroupSelect: React.FC<BAIResourceGroupSelectProps> = (props) => {
 
 interface ResourcePresetSettingModalProps extends BAIModalProps {
   resourcePresetFrgmt?: ResourcePresetSettingModalFragment$key | null;
-  existingResourcePresetNames?: Array<string>;
   onRequestClose: (success: boolean) => void;
 }
 
 const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   resourcePresetFrgmt,
-  existingResourcePresetNames,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -238,19 +236,6 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             {
               pattern: /^[a-zA-Z0-9._-]*$/,
               message: t('data.AllowsLettersNumbersAnd-_Dot'),
-            },
-            {
-              validator(_, value) {
-                if (
-                  !resourcePreset &&
-                  existingResourcePresetNames?.includes(value)
-                ) {
-                  return Promise.reject(
-                    new Error(t('resourcePreset.PresetNameAlreadyExists')),
-                  );
-                }
-                return Promise.resolve();
-              },
             },
           ]}
         >

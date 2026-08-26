@@ -241,7 +241,6 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               });
             }
           }}
-          existingResourcePresetNames={_.compact(_.map(presets, 'name'))}
         />
       </Suspense>
     </BAIFlex>
