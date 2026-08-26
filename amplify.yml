@@ -275,6 +275,30 @@ applications:
             # workspace root. It produces the final artifact at
             # `<workspace-root>/build/web/`.
             - cd ..
+            # `version.json` and index.html's `globalThis.buildNumber` are
+            # git-tracked files that ONLY `make versiontag` regenerates —
+            # without this step every deploy ships the numbers frozen at the
+            # last version-bump commit. Order matters: after `pnpm install`
+            # (versiontag rewrites workspace `package.json` versions) and
+            # before `pnpm run build` (whose `copyconfig` copies
+            # `version.json` into `build/web/`). Do NOT swap in `make
+            # bundle`/`make dep_web`: they reach versiontag only behind
+            # `dep_web`'s `[ ! -d build/web ]` guard, which would silently
+            # skip the whole build if that directory ever pre-exists, and
+            # they drag in a wsproxy build plus a throwaway zip.
+            - make versiontag
+            # BUILD_NUMBER is `git rev-list --count HEAD`, which returns 1 on
+            # a depth-1 checkout. Fail loudly rather than ship a bogus number
+            # if Amplify's clone behavior ever changes.
+            - |
+              node -e '
+                const n = Number(require("./version.json").buildNumber);
+                console.log("Tagged build number:", n);
+                if (!Number.isInteger(n) || n < 2) {
+                  console.error("ERROR: bogus buildNumber - the checkout has no history (shallow clone?)");
+                  process.exit(1);
+                }
+              '
             - pnpm run build
       artifacts:
         # `..` resolves out of appRoot (`react/`) to the workspace
