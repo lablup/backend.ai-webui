@@ -151,23 +151,32 @@ const BAIRuntimeVariantPresetTable = ({
           : t('comp:BAIRuntimeVariantPresetTable.RuntimeVariantId'),
         dataIndex: 'runtimeVariantId',
         sorter: isEnableSorter('runtimeVariantId'),
-        onCell: () => ({
-          style: { maxWidth: isRuntimeVariantFieldSupported ? 280 : 120 },
-        }),
+        // The qualified form adds a name and a pair of parens to the ~100px id
+        // and its copy button; the bare id needs neither.
+        width: isRuntimeVariantFieldSupported ? 240 : 160,
+        minWidth: isRuntimeVariantFieldSupported ? 200 : 140,
         render: (runtimeVariantId: string, record) => {
           const name = record.runtimeVariant?.name;
           // Nothing to qualify without a name, so the id stands alone rather
           // than trailing an empty pair of parentheses.
+          // A row, not sibling inlines: both halves carry a `maxWidth`, which
+          // makes them wrap onto separate lines when laid out inline.
           return name ? (
-            <>
-              <BAIText ellipsis={{ tooltip: name }} style={{ maxWidth: 160 }}>
+            <BAIFlex direction="row" align="center" gap="xxs">
+              {/* Shrinks but never grows, so the id stays next to the name
+                  instead of being pushed to the far edge of the cell. */}
+              <BAIText
+                ellipsis={{ tooltip: name }}
+                style={{ flexShrink: 1, minWidth: 0 }}
+              >
                 {name}
               </BAIText>
-              &nbsp;
-              <BAIText type="secondary">
-                (<BAIId uuid={runtimeVariantId} copyable type="secondary" />)
-              </BAIText>
-            </>
+              <BAIFlex direction="row" align="center" style={{ flexShrink: 0 }}>
+                <BAIText type="secondary">(</BAIText>
+                <BAIId uuid={runtimeVariantId} copyable type="secondary" />
+                <BAIText type="secondary">)</BAIText>
+              </BAIFlex>
+            </BAIFlex>
           ) : (
             <BAIId uuid={runtimeVariantId} copyable />
           );
