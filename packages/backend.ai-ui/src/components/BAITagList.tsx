@@ -99,7 +99,15 @@ const BAITagList: React.FC<BAITagListProps> = ({
         />
       </Tooltip>
     ) : (
-      <Popover label={`+${restCount}`} content={restItemsList}>
+      <Popover
+        label={`+${restCount}`}
+        content={restItemsList}
+        // Read-only overflow list: with no focusable content, Popover's
+        // autofocus lands on its own sr-only close button and `:focus-within`
+        // un-clips it into a visible pill (FR-3707).
+        hasCloseButton={false}
+        hasAutoFocus={false}
+      >
         <Link>+{restCount}</Link>
       </Popover>
     );
