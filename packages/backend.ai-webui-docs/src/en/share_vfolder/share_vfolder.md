@@ -48,8 +48,7 @@ both view and modify the folder. Click the `Add` button to send the invitation.
 
 Switch back to User B's account and go to the Data page. When invitations are
 waiting for a response, a **Pending invitations** link appears at the top right
-of the folder list, next to the **Active** and **Trash** tabs, with the number of
-pending invitations in parentheses.
+of the folder list, showing the number of pending invitations.
 
 ![](../images/vfolder_invitation_badge.png)
 
