@@ -46,12 +46,14 @@ both view and modify the folder. Click the `Add` button to send the invitation.
 
 ![](../images/send_vfolder_invitation.png)
 
-Switch back to User B's account. An invitation badge appears next to the Data page entry in the sidebar and next to the folder status summary at the top of the folder list. The badge shows the count of pending invitations.
+Switch back to User B's account and go to the Data page. When invitations are
+waiting for a response, a **Pending invitations** link appears at the top right
+of the folder list, showing the number of pending invitations.
 
 ![](../images/vfolder_invitation_badge.png)
 
-Clicking the badge opens an invitation list modal, where pending folder invitations
-can be accepted or declined.
+Clicking the link opens the **Invited Folders** modal, where pending folder
+invitations can be accepted or declined.
 
 ![](../images/invitation_accept.png)
 
