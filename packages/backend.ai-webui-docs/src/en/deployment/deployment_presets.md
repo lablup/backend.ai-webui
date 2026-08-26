@@ -180,7 +180,7 @@ Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refr
 - **Runtime Variant** and **Runtime Variant ID**: The runtime the parameter belongs to.
 - **Preset Target**: How the value reaches the container — **Environment Variable** or **Command-line Argument**.
 - **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**.
-- **Key**: The environment variable name or command-line argument the value is passed as (copyable).
+- **Key**: The environment variable name or command-line argument the value is passed as.
 - **Required**: Whether the parameter must be supplied when a revision is built from this runtime.
 - **Rank**: Display ordering among presets of the same runtime variant. Lower values are shown first.
 - **Created At**: When the preset was created.

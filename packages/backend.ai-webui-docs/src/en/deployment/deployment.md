@@ -648,7 +648,7 @@ Click the session name in the **Session** column to open the session detail draw
 
 <a id="replicas-tab-history"></a>
 
-Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria. The modal opens full screen and expands sub-steps into the same inline table described in [Scheduling history](#scheduling-history-substeps).
+Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
 
 ![](../images/replica_scheduling_history.png)
 
