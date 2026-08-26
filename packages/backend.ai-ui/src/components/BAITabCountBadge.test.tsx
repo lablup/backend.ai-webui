@@ -52,8 +52,9 @@ describe('BAITabCountBadge', () => {
     });
 
     it('should not pin a coloured Badge variant for the selected state', () => {
-      // The regression: `variant="green"` / `variant="info"` are fixed hues
-      // that cannot follow AstryxAdminTheme. Neutral + the class is the fix.
+      // The regression: `variant="green"` / `variant="info"` are both fixed
+      // hues in this theme, so neither follows AstryxAdminTheme. Neutral plus
+      // the accent class is the fix.
       const { container } = render(<BAITabCountBadge count={3} selected />);
       expect(badgeOf(container)).toHaveAttribute('data-variant', 'neutral');
     });

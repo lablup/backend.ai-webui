@@ -5,7 +5,7 @@
  The count pill next to a tab label. Settles the "accent-vs-fixed-blue" open
  question left at the top of `BAIBadgeCount` (to-astryx ticket 08): the active
  tab's count carries the ACTIVE MENU GROUP's primary, via `--color-accent`
- (see `BAITabCountBadge.css` for why that is a class and not a variant).
+ (see `BAITabCountBadge.css` for why no `Badge.variant` can express that).
 */
 import './BAITabCountBadge.css';
 import { Badge } from '@astryxdesign/core/Badge';
