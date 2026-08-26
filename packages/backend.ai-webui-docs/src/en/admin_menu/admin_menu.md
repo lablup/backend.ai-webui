@@ -139,8 +139,9 @@ Sequential numbers are zero-padded based on the total number of users. For examp
 
 :::warning
 If some of the generated usernames or email addresses already exist, the operation
-will partially succeed. A warning message will display how many users were
-successfully created and how many failed.
+will partially succeed. A message reports how many users were created and how many
+failed, and a failure list shows each user that could not be created along with the
+reason.
 :::
 
 <a id="bulk-create-users-from-csv"></a>
@@ -199,6 +200,10 @@ live: the errors clear and the button enables, with no need to re-upload the fil
 #### Creating the users
 
 Once you have reviewed the preview and confirmed that all rows are valid, click **Create N user(s)** to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.
+
+When only some of the rows succeed, a message reports `N user(s) created. M user(s) failed.`, and a failure list opens on top of the dialog showing every user that could not be created — the email, the username, and the error returned for each. If some accounts were created, the generated keypair list appears first and the failure list follows once you close it. The accounts that were created are kept, so you only need to correct the rows that were reported.
+
+![](../images/bulk_create_user_partial_failure.png)
 
 :::warning
 If some rows fail, only the successful rows result in new accounts. Failed rows are reported individually. Correct the source CSV and re-upload to create the remaining accounts.
