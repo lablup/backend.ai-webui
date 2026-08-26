@@ -156,20 +156,29 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
           onClick={onClick}
         >
           {fileInfo?.type === 'DIRECTORY' ? (
-            <BAILink
-              type="hover"
-              style={{
-                maxWidth: '100%',
-                color: isPendingRenamingAndRefreshing
-                  ? token.colorTextTertiary
-                  : undefined,
-              }}
-              ellipsis
-              title={fileInfo.name}
-            >
-              <Folder style={{ color: token.colorLink }} size="1em" /> &nbsp;
-              {displayName}
-            </BAILink>
+            // The icon sits beside the link rather than inside it: as inline
+            // siblings they break apart onto two lines once the cell narrows.
+            <BAIFlex gap="xs" style={{ display: 'inline-flex', minWidth: 0 }}>
+              <Folder
+                style={{ color: token.colorLink, flexShrink: 0 }}
+                size="1em"
+              />
+              <BAILink
+                type="hover"
+                style={{
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  color: isPendingRenamingAndRefreshing
+                    ? token.colorTextTertiary
+                    : undefined,
+                }}
+                title={fileInfo.name}
+              >
+                {displayName}
+              </BAILink>
+            </BAIFlex>
           ) : (
             <BAIFlex gap="xs" style={{ display: 'inline-flex', minWidth: 0 }}>
               <File size="1em" style={{ flexShrink: 0 }} />
