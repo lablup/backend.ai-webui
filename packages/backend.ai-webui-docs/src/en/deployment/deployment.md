@@ -526,7 +526,7 @@ The Service Info card's header exposes an **Edit** button alongside a **More** m
 
 #### Scheduling history
 
-Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. The modal opens full screen and lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
+Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. It lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
 
 ![](../images/deployment_scheduling_history.png)
 
@@ -540,8 +540,6 @@ An event that recorded sub-steps has an expand arrow on the left of its row. Cli
 - **Time**: When the sub-step started, to the millisecond.
 - **Error Code**: The error code recorded for the sub-step, or `-` when there is none.
 - **Message**: Detail or error text for the sub-step, collapsed to a single line.
-
-The last row of a deployment phase's sub-step table is a tinted result marker that restates the phase's own outcome instead of work that was done; it has no duration and its message reads *"Result marker for this attempt"*. A row whose only sub-step is that marker cannot be expanded, because it would just repeat the row above it.
 
 The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table. See [Replicas](#replicas-tab-history).
 
