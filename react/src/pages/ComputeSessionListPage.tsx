@@ -28,7 +28,6 @@ import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { useBAIBreakpoint } from '../theme-shim';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
@@ -49,10 +48,10 @@ import {
   BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
   BAISessionsIcon,
+  BAITabCountBadge,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
-  PRIMARY_TAG_VARIANT,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -442,33 +441,13 @@ const ComputeSessionListPage = () => {
             },
             (label, key) => ({
               key,
-              label: (
-                <BAIFlex justify="center" gap={10}>
-                  {label}
-                  {
-                    // display badge only if count is greater than 0
-                    // @ts-ignore
-                    (sessionCounts[key]?.count || 0) > 0 && (
-                      <Badge
-                        // PILOT-DECISION: antd count Badge (brand color when
-                        // active, gray otherwise) -> Astryx Badge pill.
-                        // Arbitrary token colors are inexpressible (P5);
-                        // active maps to PRIMARY_TAG_VARIANT (policy class 4),
-                        // inactive to `neutral`. Font/padding tweaks dropped
-                        // (defaults-first).
-                        variant={
-                          queryParams.type === key
-                            ? PRIMARY_TAG_VARIANT
-                            : 'neutral'
-                        }
-                        label={
-                          // @ts-ignore
-                          sessionCounts[key].count
-                        }
-                      />
-                    )
-                  }
-                </BAIFlex>
+              label,
+              endContent: (
+                <BAITabCountBadge
+                  // @ts-ignore
+                  count={sessionCounts[key]?.count}
+                  selected={queryParams.type === key}
+                />
               ),
             }),
           )}

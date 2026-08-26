@@ -21,7 +21,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
@@ -32,6 +31,7 @@ import {
   BAICard,
   BAIPropertyFilter,
   BAISelectionLabel,
+  BAITabCountBadge,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
@@ -329,22 +329,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               // slot, so the original's BAIFlex-wrapped JSX label is split in
               // two. This also restores a correct `aria-label` on the tab.
               label,
-              endContent:
-                // display badge only if count is greater than 0
-                // @ts-ignore
-                (folderCounts[key]?.count || 0) > 0 ? (
-                  // PILOT-DECISION: antd's Badge took an arbitrary `color`
-                  // (brand accent when selected, disabled grey otherwise)
-                  // plus explicit padding/fontSize. Astryx's Badge exposes
-                  // only a closed `variant` set.
-                  <Badge
-                    // @ts-ignore
-                    label={folderCounts[key].count}
-                    variant={
-                      queryParams.statusCategory === key ? 'info' : 'neutral'
-                    }
-                  />
-                ) : undefined,
+              endContent: (
+                <BAITabCountBadge
+                  // @ts-ignore
+                  count={folderCounts[key]?.count}
+                  selected={queryParams.statusCategory === key}
+                />
+              ),
             }),
           )}
         />

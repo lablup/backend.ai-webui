@@ -12,6 +12,8 @@ export { default as BAICard } from './BAICard';
 export type { BAICardProps, BAICardTabItem } from './BAICard';
 export { default as BAITabList } from './BAITabList';
 export type { BAITabListProps } from './BAITabList';
+export { default as BAITabCountBadge } from './BAITabCountBadge';
+export type { BAITabCountBadgeProps } from './BAITabCountBadge';
 export { default as BAICompactGroup } from './BAICompactGroup';
 export type { BAICompactGroupProps } from './BAICompactGroup';
 export { default as BAIMetadataList } from './BAIMetadataList';
