@@ -147,3 +147,49 @@ describe.each(referenceDocs.map((file) => [stemOf(file), file]))(
     });
   },
 );
+
+/** Component-ish names re-exported from one of the components barrels. */
+const barrelExports = (file: string): string[] => {
+  const source = readFileSync(file, 'utf-8');
+  const names: string[] = [];
+  for (const match of source.matchAll(/export\s*\{([^}]*)\}\s*from/g)) {
+    for (const part of match[1].split(',')) {
+      const entry = part.trim();
+      if (!entry || entry.startsWith('type ')) continue;
+      const name = /^(?:default as\s+)?([A-Za-z_]\w*)/.exec(entry)?.[1];
+      // Components are PascalCase. `use*` hooks and SCREAMING_CASE constants
+      // are neither components nor candidates for a component catalog.
+      if (name && /^[A-Z]/.test(name) && name !== name.toUpperCase()) {
+        names.push(name);
+      }
+    }
+  }
+  return names;
+};
+
+describe('catalog coverage', () => {
+  it('documents every component the barrel exports', async () => {
+    // Partial coverage is worse than none: the catalog looks authoritative, so
+    // a gap reads as "no BAI* component exists for this" rather than "not
+    // documented yet", and that is the answer that pushes new code onto the
+    // primitive instead of the wrapper. A component that should not appear in
+    // human-facing listings still gets a doc — one with `hidden: true`.
+    const exported = new Set([
+      ...barrelExports(resolve(componentsRoot, 'index.ts')),
+      ...barrelExports(resolve(componentsRoot, 'Table/index.ts')),
+    ]);
+
+    const documented = new Set<string>();
+    for (const file of componentDocs) {
+      const { docs } = await import(/* @vite-ignore */ file);
+      documented.add(docs.name);
+      for (const entry of docs.components ?? []) documented.add(entry.name);
+    }
+
+    const missing = [...exported].filter((name) => !documented.has(name));
+    expect(
+      missing,
+      `these components have no Astryx doc: ${missing.join(', ')}`,
+    ).toEqual([]);
+  });
+});
