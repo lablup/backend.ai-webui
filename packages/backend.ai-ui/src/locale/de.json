@@ -96,8 +96,9 @@
     "ErrorOccurred": "Ein Fehler ist aufgetreten"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Optionen durchsuchen löschen",
     "NoResults": "Keine Ergebnisse",
-    "Search": "Suche"
+    "SearchOptions": "Optionen durchsuchen"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Container-Registry auswählen"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
     "Project": "Projekt",
+    "Search": "Suchen",
     "Select": "Select",
+    "SelectPlaceholder": "{{label}} auswählen",
     "TotalItems": "Total {{total}} Elemente",
     "Unit": "Unit",
     "button": {

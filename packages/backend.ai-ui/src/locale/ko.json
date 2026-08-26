@@ -96,8 +96,9 @@
     "ErrorOccurred": "문제가 발생했습니다."
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "옵션 검색 지우기",
     "NoResults": "결과 없음",
-    "Search": "검색"
+    "SearchOptions": "옵션 검색"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
+    "Search": "검색",
     "Select": "Select",
+    "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
     "TotalItems": "총 {{total}} 항목",
     "Unit": "Unit",
     "button": {

@@ -102,8 +102,9 @@
     "SelectColor": "Select color"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Clear Search options",
     "NoResults": "No results",
-    "Search": "Search"
+    "SearchOptions": "Search options"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Select Container Registry"
@@ -733,7 +734,9 @@
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "Project": "Project",
+    "Search": "Search",
     "Select": "Select",
+    "SelectPlaceholder": "Select {{label}}",
     "TotalItems": "Total {{total}} items",
     "Unit": "Unit",
     "button": {

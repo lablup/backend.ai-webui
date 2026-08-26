@@ -96,8 +96,9 @@
     "ErrorOccurred": "Tapahtui virhe"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
     "NoResults": "Ei tuloksia",
-    "Search": "Etsi"
+    "SearchOptions": "Hae vaihtoehdoista"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Valitse konttirekisteri"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",
+    "Search": "Hae",
     "Select": "Select",
+    "SelectPlaceholder": "Valitse {{label}}",
     "TotalItems": "Yhteensä {{total}} kohteet",
     "Unit": "Unit",
     "button": {

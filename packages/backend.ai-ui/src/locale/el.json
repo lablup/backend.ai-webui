@@ -96,8 +96,9 @@
     "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
-    "Search": "Αναζήτηση"
+    "SearchOptions": "Αναζήτηση επιλογών"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
+    "Search": "Αναζήτηση",
     "Select": "Select",
+    "SelectPlaceholder": "Επιλέξτε {{label}}",
     "TotalItems": "Σύνολο {{total}} στοιχεία",
     "Unit": "Unit",
     "button": {

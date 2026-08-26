@@ -96,8 +96,9 @@
     "ErrorOccurred": "เกิดข้อผิดพลาด"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "ล้าง ค้นหาตัวเลือก",
     "NoResults": "ไม่พบผลลัพธ์",
-    "Search": "ค้นหา"
+    "SearchOptions": "ค้นหาตัวเลือก"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
+    "Search": "ค้นหา",
     "Select": "Select",
+    "SelectPlaceholder": "เลือก{{label}}",
     "TotalItems": "รวม {{total}} รายการ",
     "Unit": "Unit",
     "button": {

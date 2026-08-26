@@ -96,8 +96,9 @@
     "ErrorOccurred": "Ralat berlaku"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Kosongkan Cari pilihan",
     "NoResults": "Tiada keputusan",
-    "Search": "Cari"
+    "SearchOptions": "Cari pilihan"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",
+    "Search": "Cari",
     "Select": "Select",
+    "SelectPlaceholder": "Pilih {{label}}",
     "TotalItems": "Jumlah {{total}} item",
     "Unit": "Unit",
     "button": {

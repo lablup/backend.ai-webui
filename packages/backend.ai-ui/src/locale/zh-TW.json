@@ -96,8 +96,9 @@
     "ErrorOccurred": "發生錯誤"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "清除 搜尋選項",
     "NoResults": "無結果",
-    "Search": "搜索"
+    "SearchOptions": "搜尋選項"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}}選擇",
     "Optional": "選填",
     "Project": "專案",
+    "Search": "搜尋",
     "Select": "Select",
+    "SelectPlaceholder": "請選擇{{label}}",
     "TotalItems": "總計{{total}}項目",
     "Unit": "Unit",
     "button": {

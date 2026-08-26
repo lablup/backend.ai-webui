@@ -96,8 +96,9 @@
     "ErrorOccurred": "Bir hata oluştu"
   },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
-    "Search": "Arama"
+    "SearchOptions": "Seçenekleri ara"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
@@ -709,7 +710,9 @@
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
+    "Search": "Ara",
     "Select": "Select",
+    "SelectPlaceholder": "{{label}} seçin",
     "TotalItems": "Total {{total}} öğeleri",
     "Unit": "Unit",
     "button": {
