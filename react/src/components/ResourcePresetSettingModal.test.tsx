@@ -39,17 +39,6 @@ vi.mock('react-i18next', async () => {
   };
 });
 
-vi.mock('../hooks', async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import('../hooks')>();
-  return {
-    ...originalModule,
-    useSuspendedBackendaiClient: () => ({
-      supports: (feature: string) =>
-        feature === 'resource-presets-per-resource-group',
-    }),
-  };
-});
-
 vi.mock('../hooks/backendai', async (importOriginal) => {
   const originalModule =
     await importOriginal<typeof import('../hooks/backendai')>();

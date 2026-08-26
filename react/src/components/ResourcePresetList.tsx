@@ -10,12 +10,10 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { App } from '../app-shim';
 import { localeCompare } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,
   BAIFlex,
@@ -39,6 +37,7 @@ type ResourcePreset = NonNullable<
 interface ResourcePresetListProps {}
 
 const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
+  'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
@@ -47,19 +46,19 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const [editingResourcePreset, setEditingResourcePreset] =
     useState<ResourcePresetSettingModalFragment$key | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [deletingPresetName, setDeletingPresetName] = useState<string | null>(
+  const [deletingPreset, setDeletingPreset] = useState<ResourcePreset | null>(
     null,
   );
-  const baiClient = useSuspendedBackendaiClient();
 
   const { resource_presets } = useLazyLoadQuery<ResourcePresetListQuery>(
     graphql`
       query ResourcePresetListQuery {
         resource_presets {
+          id
           name
           resource_slots
           shared_memory
-          scaling_group_name @since(version: "25.4.0")
+          scaling_group_name
           ...ResourcePresetSettingModalFragment
         }
       }
@@ -76,15 +75,15 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
 
   const [commitDelete, isDeleteInFlight] =
     useMutation<ResourcePresetListDeleteMutation>(graphql`
-      mutation ResourcePresetListDeleteMutation($name: String!) {
-        delete_resource_preset(name: $name) {
+      mutation ResourcePresetListDeleteMutation($id: UUID!) {
+        delete_resource_preset(id: $id) {
           ok
           msg
         }
       }
     `);
 
-  const columns: BAIColumnsType<ResourcePreset> = filterOutEmpty([
+  const columns: BAIColumnsType<ResourcePreset> = [
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
@@ -110,7 +109,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
-                setDeletingPresetName(record?.name ?? null);
+                setDeletingPreset(record ?? null);
               },
             },
           ]}
@@ -146,14 +145,14 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         );
       },
     },
-    baiClient?.supports('resource-presets-per-resource-group') && {
+    {
       title: t('general.ResourceGroup'),
       dataIndex: 'scaling_group_name',
       sorter: (a, b) =>
         localeCompare(a?.scaling_group_name, b?.scaling_group_name),
       render: (text) => text ?? '-',
     },
-  ]);
+  ];
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -186,28 +185,34 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        rowKey={'name'}
+        rowKey="id"
         dataSource={filterOutNullAndUndefined(resource_presets)}
         columns={columns}
       />
       <BAIDeleteConfirmModal
-        open={!!deletingPresetName}
+        open={!!deletingPreset}
         title={t('resourcePreset.DeleteResourcePreset')}
         target={t('resourcePreset.ResourcePreset')}
         items={
-          deletingPresetName
-            ? [{ key: deletingPresetName, label: deletingPresetName }]
+          deletingPreset
+            ? [
+                {
+                  key: deletingPreset.id ?? '',
+                  label: deletingPreset.name,
+                },
+              ]
             : []
         }
-        confirmText={deletingPresetName ?? ''}
+        confirmText={deletingPreset?.name ?? ''}
         requireConfirmInput
-        inputProps={{ placeholder: deletingPresetName ?? '' }}
+        inputProps={{ placeholder: deletingPreset?.name ?? '' }}
         okButtonProps={{ loading: isDeleteInFlight }}
         onOk={() => {
+          if (!deletingPreset?.id) {
+            return;
+          }
           commitDelete({
-            variables: {
-              name: deletingPresetName ?? '',
-            },
+            variables: { id: deletingPreset.id },
             onCompleted: (res, errors) => {
               if (!res?.delete_resource_preset?.ok) {
                 message.error(res?.delete_resource_preset?.msg);
@@ -220,15 +225,15 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
                   updateResourcePresetsFetchKey();
                 });
               }
-              setDeletingPresetName(null);
+              setDeletingPreset(null);
             },
             onError: (error) => {
               message.error(error?.message);
-              setDeletingPresetName(null);
+              setDeletingPreset(null);
             },
           });
         }}
-        onCancel={() => setDeletingPresetName(null)}
+        onCancel={() => setDeletingPreset(null)}
       />
       <Suspense fallback={null}>
         <ResourcePresetSettingModal

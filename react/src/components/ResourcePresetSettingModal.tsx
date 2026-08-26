@@ -9,13 +9,11 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import {
   ModifyResourcePresetInput,
-  ResourcePresetSettingModalModifyByIdMutation,
-} from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
-import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
+  ResourcePresetSettingModalModifyMutation,
+} from '../__generated__/ResourcePresetSettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -71,7 +69,6 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
-  const baiClient = useSuspendedBackendaiClient();
 
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -79,11 +76,11 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   const resourcePreset = useFragment(
     graphql`
       fragment ResourcePresetSettingModalFragment on ResourcePreset {
-        id @since(version: "25.4.0")
+        id
         name
         resource_slots
         shared_memory
-        scaling_group_name @since(version: "25.4.0")
+        scaling_group_name
       }
     `,
     resourcePresetFrgmt,
@@ -102,34 +99,18 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
       }
     `);
 
-  const [
-    commitModifyResourcePresetByName,
-    isInFlightCommitModifyResourcePresetByName,
-  ] = useMutation<ResourcePresetSettingModalModifyByNameMutation>(graphql`
-    mutation ResourcePresetSettingModalModifyByNameMutation(
-      $name: String!
-      $props: ModifyResourcePresetInput!
-    ) {
-      modify_resource_preset(name: $name, props: $props) {
-        ok
-        msg
+  const [commitModifyResourcePreset, isInFlightCommitModifyResourcePreset] =
+    useMutation<ResourcePresetSettingModalModifyMutation>(graphql`
+      mutation ResourcePresetSettingModalModifyMutation(
+        $id: UUID!
+        $props: ModifyResourcePresetInput!
+      ) {
+        modify_resource_preset(id: $id, props: $props) {
+          ok
+          msg
+        }
       }
-    }
-  `);
-  const [
-    commitModifyResourcePresetById,
-    isInFlightCommitModifyResourcePresetById,
-  ] = useMutation<ResourcePresetSettingModalModifyByIdMutation>(graphql`
-    mutation ResourcePresetSettingModalModifyByIdMutation(
-      $id: UUID!
-      $props: ModifyResourcePresetInput!
-    ) {
-      modify_resource_preset(id: $id, props: $props) {
-        ok
-        msg
-      }
-    }
-  `);
+    `);
 
   const handleOk = () => {
     return formRef.current
@@ -153,10 +134,8 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             ? convertToBinaryUnit(values?.shared_memory, '', 0)?.numberFixed
             : null,
         };
-        if (baiClient?.supports('resource-presets-per-resource-group')) {
-          props.scaling_group_name = values?.scaling_group_name || null;
-        }
-        if (_.isEmpty(resourcePreset)) {
+        props.scaling_group_name = values?.scaling_group_name || null;
+        if (!resourcePreset?.id) {
           commitCreateResourcePreset({
             variables: {
               name: values?.name,
@@ -182,58 +161,30 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             },
           });
         } else {
-          if (resourcePreset.id) {
-            commitModifyResourcePresetById({
-              variables: {
-                id: resourcePreset.id,
-                props: props as ModifyResourcePresetInput,
-              },
-              onCompleted: (res, errors) => {
-                if (!res?.modify_resource_preset?.ok) {
-                  message.error(res?.modify_resource_preset?.msg);
-                  onRequestClose(false);
-                } else if (errors && errors?.length > 0) {
-                  const errorMsgList = _.map(errors, (err) => err?.message);
-                  _.forEach(errorMsgList, (err) => {
-                    message.error(err);
-                  });
-                  onRequestClose(false);
-                } else {
-                  message.success(t('resourcePreset.Updated'));
-                  onRequestClose(true);
-                }
-              },
-              onError(err) {
-                message.error(err?.message);
-              },
-            });
-          } else {
-            // TODO: if support for "name" is discontinued after version 25.4.0, this block should be removed
-            commitModifyResourcePresetByName({
-              variables: {
-                name: values?.name,
-                props: props as ModifyResourcePresetInput,
-              },
-              onCompleted: (res, errors) => {
-                if (!res?.modify_resource_preset?.ok) {
-                  message.error(res?.modify_resource_preset?.msg);
-                  onRequestClose(false);
-                } else if (errors && errors?.length > 0) {
-                  const errorMsgList = _.map(errors, (err) => err?.message);
-                  _.forEach(errorMsgList, (err) => {
-                    message.error(err);
-                  });
-                  onRequestClose(false);
-                } else {
-                  message.success(t('resourcePreset.Updated'));
-                  onRequestClose(true);
-                }
-              },
-              onError(err) {
-                message.error(err?.message);
-              },
-            });
-          }
+          commitModifyResourcePreset({
+            variables: {
+              id: resourcePreset.id,
+              props: props as ModifyResourcePresetInput,
+            },
+            onCompleted: (res, errors) => {
+              if (!res?.modify_resource_preset?.ok) {
+                message.error(res?.modify_resource_preset?.msg);
+                onRequestClose(false);
+              } else if (errors && errors?.length > 0) {
+                const errorMsgList = _.map(errors, (err) => err?.message);
+                _.forEach(errorMsgList, (err) => {
+                  message.error(err);
+                });
+                onRequestClose(false);
+              } else {
+                message.success(t('resourcePreset.Updated'));
+                onRequestClose(true);
+              }
+            },
+            onError(err) {
+              message.error(err?.message);
+            },
+          });
         }
       })
       .catch(() => {});
@@ -252,8 +203,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
       destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateResourcePreset ||
-        isInFlightCommitModifyResourcePresetByName ||
-        isInFlightCommitModifyResourcePresetById
+        isInFlightCommitModifyResourcePreset
       }
       okText={resourcePreset ? t('button.Save') : t('button.Create')}
     >
@@ -330,16 +280,14 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
             </BAIFormItem>
           )}
         >
-          {baiClient?.supports('resource-presets-per-resource-group') && (
-            // Optional by design: a preset with no resource group is the
-            // manager's "global" preset, so the field stays clearable.
-            <BAIFormItem
-              label={t('general.ResourceGroup')}
-              name="scaling_group_name"
-            >
-              <ResourceGroupSelect allowClear popupMatchSelectWidth={false} />
-            </BAIFormItem>
-          )}
+          {/* Optional by design: a preset with no resource group is the
+              manager's "global" preset, so the field stays clearable. */}
+          <BAIFormItem
+            label={t('general.ResourceGroup')}
+            name="scaling_group_name"
+          >
+            <ResourceGroupSelect allowClear popupMatchSelectWidth={false} />
+          </BAIFormItem>
         </ErrorBoundary>
         <BAIFormItem
           label={t('resourcePreset.ResourcePreset')}
