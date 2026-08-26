@@ -213,6 +213,17 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
     () => preset?.targetSpec?.valueType as ValueType | undefined,
   );
 
+  // Distinguishes "the admin never went near the pairing" from "the admin
+  // deliberately cleared the control". Both leave `values.uiType` undefined,
+  // and only the first one may keep an unrepresentable server value.
+  const [hasTouchedPairing, setHasTouchedPairing] = useState(false);
+
+  const storedUIType = preset?.uiOption?.uiType
+    ? READ_UI_TYPE_TO_FORM_UI_TYPE[preset.uiOption.uiType]
+    : undefined;
+  const storedValueType = preset?.targetSpec?.valueType as
+    ValueType | undefined;
+
   // The value type constrains the CONTROL, not the other way round: the preset
   // describes a runtime parameter that already exists, so its type is a given
   // and the UI type is the provisional half of the pair.
@@ -220,6 +231,16 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
   // nothing to constrain against, so every control stays offered.
   const isUITypeAllowed = (value: UIType) =>
     !valueType || isValueTypeCompatibleWithUIType(value, valueType);
+
+  // Below 26.9.0 the UI type is not rendered, so the stored control is fixed
+  // and the value type is the only half the admin can move — which makes IT
+  // the half that has to answer to the other. Without this the form would let
+  // an admin who cannot even see the control author the mismatch this screen
+  // exists to prevent.
+  const isValueTypeConstrained = !isUIMetadataSupported && !!storedUIType;
+  const isValueTypeAllowed = (value: ValueType) =>
+    !isValueTypeConstrained ||
+    isValueTypeCompatibleWithUIType(storedUIType, value);
 
   // One enumeration of each vocabulary, shared by the select below and the
   // mismatch banner. A parallel map of translation KEYS would both drift from
@@ -276,11 +297,6 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
   // state would need `Form.useWatch`, which this file avoids on purpose (see
   // the `uiType` state comment) — and would misfire right after `uiType`
   // changes clear `valueType`.
-  const storedUIType = preset?.uiOption?.uiType
-    ? READ_UI_TYPE_TO_FORM_UI_TYPE[preset.uiOption.uiType]
-    : undefined;
-  const storedValueType = preset?.targetSpec?.valueType as
-    ValueType | undefined;
   const hasStoredValueTypeMismatch =
     !!storedUIType &&
     !!storedValueType &&
@@ -417,7 +433,11 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               // Only hold back while the form still has no representable
               // type — once the admin picks a supported one, that selection
               // must reach the server.
-              ...(hasUnknownUIType && values.uiType === undefined
+              // Held back only while the admin has not touched either half of
+              // the pairing. Once they have, an undefined `uiType` is a
+              // deliberate clear and must reach the server as `null`, even
+              // though that discards a control this build could not render.
+              ...(hasUnknownUIType && !hasTouchedPairing
                 ? {}
                 : { uiOption: buildUIOptionInput(values) ?? null }),
             }
@@ -500,10 +520,12 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             textPlaceholder: undefined,
           };
           if ('uiType' in changedValues) {
+            setHasTouchedPairing(true);
             setUiType(changedValues.uiType);
             form.setFieldsValue(clearedUIOptionConfig);
           }
           if ('valueType' in changedValues) {
+            setHasTouchedPairing(true);
             setValueType(changedValues.valueType);
             // Unconditional, not just when the pair became incompatible: the
             // control was chosen FOR the old value type, so once that changes
@@ -741,9 +763,28 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeRequired',
               ),
             },
+            {
+              // Only bites in the capability-disabled path — see
+              // `isValueTypeConstrained`. With the UI type on screen this
+              // always passes and the control carries the validation instead.
+              validator: async (_rule, value?: ValueType) => {
+                if (value && !isValueTypeAllowed(value)) {
+                  throw new Error(
+                    t(
+                      'comp:BAIRuntimeVariantPresetSettingModal.UITypeIncompatibleWithValueType',
+                    ),
+                  );
+                }
+              },
+            },
           ]}
         >
-          <BAISelect options={valueTypeOptions} />
+          <BAISelect
+            options={valueTypeOptions.map((option) => ({
+              ...option,
+              disabled: !isValueTypeAllowed(option.value),
+            }))}
+          />
         </Form.Item>
         {isUIMetadataSupported ? (
           <>

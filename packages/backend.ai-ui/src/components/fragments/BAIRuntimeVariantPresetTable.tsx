@@ -157,8 +157,11 @@ const BAIRuntimeVariantPresetTable = ({
         render: (__, record) => record.displayName ?? '-',
       },
       {
-        // One column either way, so the id keeps its sorter: the nested field
-        // only decides whether the id can be qualified by a name.
+        // One column either way — the id and the name it carries are one
+        // reference. The nested field only decides whether the id can be
+        // qualified by that name. Not sortable in either mode: the manager's
+        // `RuntimeVariantPresetOrderField` exposes NAME / RANK / CREATED_AT
+        // only, which is what `availablePresetSorterKeys` mirrors.
         key: 'runtimeVariantId',
         title: isRuntimeVariantFieldSupported
           ? t('comp:BAIRuntimeVariantPresetTable.RuntimeVariantWithID')
