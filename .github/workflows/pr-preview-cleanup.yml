@@ -137,9 +137,16 @@ jobs:
           exit 1
 
   compact:
+    # Sequenced after `cleanup`, never beside it. On a manual dispatch with
+    # compact=true the cleanup condition is also true, and two jobs cloning the
+    # same tip and pushing would race — the compaction would rewrite history
+    # that the cleanup had just changed. `always()` keeps this running on the
+    # weekly cron, where `cleanup` is skipped rather than run.
+    needs: [cleanup]
     if: >-
-      github.event.schedule == '17 9 * * 1' ||
-      github.event.inputs.compact == 'true'
+      always() &&
+      (needs.cleanup.result == 'success' || needs.cleanup.result == 'skipped') &&
+      (github.event.schedule == '17 9 * * 1' || github.event.inputs.compact == 'true')
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -12,6 +12,20 @@
 # the static artifacts the build already produced and copies them into gh-pages.
 # Do not add a checkout of the PR head or a build step to this file.
 #
+# SAFETY, the part that is easy to get wrong: **which PR this run is about is
+# never read from an artifact.** The build workflow runs from the PR's own head,
+# so on a fork PR its file — and therefore anything it writes — is written by the
+# contributor. If this job took the PR number from there, a fork could name
+# someone else's open PR and have this write-enabled job overwrite that PR's
+# preview or post the report on it. So both jobs resolve the number themselves
+# from `workflow_run.head_sha`, which GitHub sets, and derive the preview URL
+# from that. The only artifact fields used are measurements the report renders.
+#
+# Residual risk, inherent to any Pages-hosted preview: the Storybook bundle is
+# PR-controlled content, so a fork PR can publish arbitrary static files under
+# ITS OWN `/pr/<n>/` path on the org's github.io origin. Previews are for
+# reviewers, not a trusted origin — do not host anything privileged there.
+#
 # NOTE: `workflow_run` workflows only fire from the version on the default
 # branch, so this does nothing until it is merged to `main`.
 
@@ -38,6 +52,7 @@ jobs:
     permissions:
       contents: write
       actions: read
+      pull-requests: read
     steps:
       # On workflow_run, checkout defaults to the default branch — i.e. the
       # reviewed copy of these scripts, never the PR's version of them.
@@ -46,36 +61,40 @@ jobs:
         with:
           sparse-checkout: .github/scripts/pr-preview
 
-      - name: Download analysis artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: pr-preview-analysis
-          path: pr-analysis
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      - name: Parse PR metadata
+      - name: Resolve the PR from the trusted event payload
         id: parse
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          if [ ! -f pr-analysis/pr-meta.json ]; then
-            echo "No pr-meta.json — the build produced nothing to publish."
+          set -euo pipefail
+          # `head_sha` is set by GitHub, not by the PR. Ask the API which pull
+          # request that commit belongs to; for a fork PR the commit is reachable
+          # in this repository via refs/pull/<n>/head, so this resolves there too.
+          echo "$HEAD_SHA" | grep -qE '^[0-9a-f]{40}$' || { echo "::error::Malformed head_sha"; exit 1; }
+
+          PRS="$(gh api "repos/${{ github.repository }}/commits/${HEAD_SHA}/pulls" \
+                  --jq '[.[] | select(.state=="open") | .number] | unique')"
+          COUNT="$(echo "$PRS" | jq 'length')"
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "::warning::No open PR resolves from ${HEAD_SHA} — nothing to publish."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$COUNT" -gt 1 ]; then
+            # Two open PRs sharing a head commit: we cannot tell which preview
+            # this build was for, and guessing would write to the wrong one.
+            echo "::warning::${HEAD_SHA} resolves to multiple open PRs ($PRS) — refusing to guess."
             echo "deploy=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          PR_NUMBER="$(jq -r '.prNumber // ""' pr-analysis/pr-meta.json)"
-          SHORT_HASH="$(jq -r '.shortHash // ""' pr-analysis/pr-meta.json)"
-
-          # These name a gh-pages path and an artifact. They come from a file the
-          # PR's own workflow wrote, so validate their shape before they reach a
-          # shell or a filesystem path.
-          echo "$PR_NUMBER" | grep -qE '^[0-9]+$' || { echo "::error::Bad PR number"; exit 1; }
-          echo "$SHORT_HASH" | grep -qE '^[0-9a-f]{7,40}$' || { echo "::error::Bad commit hash"; exit 1; }
-
-          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
-          echo "short_hash=$SHORT_HASH" >> "$GITHUB_OUTPUT"
+          PR_NUMBER="$(echo "$PRS" | jq -r '.[0]')"
+          echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "short_hash=${HEAD_SHA:0:7}" >> "$GITHUB_OUTPUT"
           echo "deploy=true" >> "$GITHUB_OUTPUT"
+          echo "Resolved ${HEAD_SHA:0:7} to PR #${PR_NUMBER}."
 
       - name: Download Storybook artifact
         if: steps.parse.outputs.deploy == 'true'
@@ -192,23 +211,45 @@ jobs:
             const fs = require('node:fs');
             const { execFileSync } = require('node:child_process');
 
-            if (!fs.existsSync('pr-analysis/analysis.json') ||
-                !fs.existsSync('pr-analysis/pr-meta.json')) {
+            if (!fs.existsSync('pr-analysis/analysis.json')) {
               core.info('No analysis artifact — nothing to report.');
               return;
             }
 
-            const meta = JSON.parse(fs.readFileSync('pr-analysis/pr-meta.json', 'utf8'));
-            const prNumber = Number.parseInt(meta.prNumber, 10);
-            if (!Number.isInteger(prNumber) || prNumber <= 0) {
-              core.warning('No usable PR number in the metadata — cannot comment.');
+            const { owner, repo } = context.repo;
+            const headSha = context.payload.workflow_run.head_sha;
+
+            // Same rule as the deploy job: the PR this run belongs to is
+            // resolved from the event's head SHA, never read out of an artifact
+            // the PR's own workflow wrote. Otherwise a fork could make this
+            // write-enabled job post its report on somebody else's PR.
+            const resolved = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner, repo, commit_sha: headSha,
+            });
+            const open = [...new Set(
+              resolved.data.filter((pr) => pr.state === 'open').map((pr) => pr.number),
+            )];
+            if (open.length !== 1) {
+              core.warning(
+                `${headSha} resolves to ${open.length} open PRs — not commenting.`,
+              );
               return;
             }
+            const prNumber = open[0];
+
+            // Everything the report needs that is not a measurement is derived
+            // here, from trusted values.
+            fs.writeFileSync('pr-meta.json', JSON.stringify({
+              prNumber: String(prNumber),
+              shortHash: headSha.slice(0, 7),
+              storybookUrl: `https://${owner}.github.io/${repo}/pr/${prNumber}/storybook/`,
+              runUrl: `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.payload.workflow_run.id}`,
+            }));
 
             const args = [
               '.github/scripts/pr-preview/generate-pr-comment.mjs',
               '--analysis', 'pr-analysis/analysis.json',
-              '--meta', 'pr-analysis/pr-meta.json',
+              '--meta', 'pr-meta.json',
             ];
             if (fs.existsSync('pr-analysis/bundle-head.json')) {
               args.push('--bundle-head', 'pr-analysis/bundle-head.json');
@@ -219,7 +260,6 @@ jobs:
 
             const body = execFileSync('node', args, { encoding: 'utf8' });
 
-            const { owner, repo } = context.repo;
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner, repo, issue_number: prNumber, per_page: 100,
             });

@@ -34,8 +34,13 @@ cd "$WORK"
 git config user.name "github-actions[bot]"
 git config user.email "github-actions[bot]@users.noreply.github.com"
 
+# The tip we cloned. Everything below is asserted against exactly this commit,
+# and the push is leased to it, so a deploy or cleanup that lands while we work
+# makes the push fail instead of being erased by it.
+CLONED_TIP="$(git rev-parse HEAD)"
+
 COMMITS="$(git rev-list --count HEAD)"
-echo "${BRANCH} has ${COMMITS} commit(s)."
+echo "${BRANCH} has ${COMMITS} commit(s) at ${CLONED_TIP}."
 if [ "$COMMITS" -lt "$MIN_COMMITS" ]; then
   echo "Fewer than ${MIN_COMMITS} — leaving history alone."
   exit 0
@@ -47,12 +52,20 @@ git checkout --orphan compacted
 git add -A
 git commit -m "Compact ${BRANCH} history ($(date -u +%Y-%m-%d), was ${COMMITS} commits)"
 
-# The tree must be identical to what we cloned; a mismatch means the orphan
-# commit lost content and must not be pushed.
-if [ "$(git rev-parse compacted^{tree})" != "$(git rev-parse "origin/${BRANCH}^{tree}")" ]; then
-  echo "::error::Compacted tree differs from ${BRANCH} — refusing to force-push."
+# The tree must be identical to the commit we cloned; a mismatch means the
+# orphan commit lost content and must not be pushed.
+if [ "$(git rev-parse compacted^{tree})" != "$(git rev-parse "${CLONED_TIP}^{tree}")" ]; then
+  echo "::error::Compacted tree differs from ${CLONED_TIP} — refusing to force-push."
   exit 1
 fi
 
-git push --force origin "compacted:${BRANCH}"
+# --force-with-lease pinned to the cloned tip, NOT a bare --force. The deploy and
+# cleanup jobs run in different concurrency groups, so one of them can land a new
+# preview between our clone and this push; a bare force would delete it, and the
+# tree check above would not notice because it only ever saw the stale tip.
+# Failing here is correct — the next weekly run compacts the newer history.
+if ! git push --force-with-lease="${BRANCH}:${CLONED_TIP}" origin "compacted:${BRANCH}"; then
+  echo "::warning::${BRANCH} moved since the clone (a deploy or cleanup landed) — skipping compaction this run."
+  exit 0
+fi
 echo "Compacted ${COMMITS} commits into 1 (pack size before rewrite: ${BEFORE})."
