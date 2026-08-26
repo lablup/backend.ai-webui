@@ -92,7 +92,7 @@ if (appName) {
 }
 
 // Team share URL, present only when this box has run `dev-gw join` once.
-// The gateway rewrites Host to `<app>.localhost:<portless_port>`, so routing
+// The gateway rewrites Host to `<app>.localhost:<target_port>`, so routing
 // works with no Portless/Vite change here — only the URL differs.
 const devGwConfigPath =
   process.env.DEV_GW_CONFIG?.trim() || join(homedir(), '.config', 'fw', 'dev-gw.json');
@@ -108,14 +108,16 @@ const devGwShareBase =
   /^https?:\/\/\{app\}\./.test(devGwConfig.share_base)
     ? devGwConfig.share_base
     : null;
-// The gateway forwards to the Portless port recorded at join time forever, so a
-// server on a different port would be proxied to nothing.
+// The gateway forwards to the port recorded at join time forever, so a server
+// on a different port would be proxied to nothing. `portless_port` is the
+// pre-rename spelling, still on boxes that have not re-joined.
 const portlessPort = process.env.PORTLESS_PORT?.trim() || '1355';
+const devGwTargetPort = devGwConfig?.target_port ?? devGwConfig?.portless_port;
 const devGwPortMismatch =
-  devGwConfig?.portless_port != null && String(devGwConfig.portless_port) !== portlessPort;
+  devGwTargetPort != null && String(devGwTargetPort) !== portlessPort;
 if (devGwShareBase && devGwPortMismatch) {
   console.log(
-    `-- Team share URL unavailable: dev-gw was joined with Portless :${devGwConfig.portless_port}, this server uses :${portlessPort} — re-run \`dev-gw join\``,
+    `-- Team share URL unavailable: the gateway was joined with Portless :${devGwTargetPort}, this server uses :${portlessPort} — re-run \`dev-gw join\``,
   );
 } else if (devGwShareBase && appName) {
   const shareUrl = devGwShareBase.replace('{app}', appName);
