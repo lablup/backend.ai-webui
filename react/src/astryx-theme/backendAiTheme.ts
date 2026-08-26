@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 19;
+export const THEME_NAME_REV = 20;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -516,11 +516,30 @@ const STATUS_TEXT_COLORS = {
 // theme points at `--color-background-blue` — dark-only alpha (`#9eb7ff3D` =
 // 24%), so page content read through the notification cards. `#393f50` is that
 // fill composited over the dark page: same colour, opaque (FR-3554).
+const BANNER_INFO_SURFACE = 'light-dark(#c4ddfb, #393f50)';
+
 const BANNER_OPAQUE_INFO_SURFACE = {
   banner: {
     'status:info': {
-      '--color-accent-muted': 'light-dark(#c4ddfb, #393f50)',
+      '--color-accent-muted': BANNER_INFO_SURFACE,
     },
+  },
+};
+
+// Banner renders its content area as a SIBLING of the coloured header, on
+// `--color-background-card`, so a detail body reads as a detached white block
+// (FR-3700). Set the TOKEN, never `backgroundColor`: StyleX's priority4 layer
+// outranks `@layer astryx-theme` and a plain declaration silently no-ops.
+const BANNER_CONTENT_STATUS_SURFACE = {
+  'banner-content': {
+    'status:info': { '--color-background-card': BANNER_INFO_SURFACE },
+    'status:success': {
+      '--color-background-card': 'var(--color-success-muted)',
+    },
+    'status:warning': {
+      '--color-background-card': 'var(--color-warning-muted)',
+    },
+    'status:error': { '--color-background-card': 'var(--color-error-muted)' },
   },
 };
 
@@ -968,6 +987,7 @@ export const computeThemeName = (
       ANTD_DROPDOWN_DENSITY,
       COMPLEX_SELECTOR_HEIGHT_PARITY,
       FIELD_PAGE_OVERLAYS,
+      BANNER_CONTENT_STATUS_SURFACE,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -1084,6 +1104,7 @@ export function buildBackendAiTheme(
       ...SIDE_NAV_DENSITY,
       ...STATUS_TEXT_COLORS,
       ...BANNER_OPAQUE_INFO_SURFACE,
+      ...BANNER_CONTENT_STATUS_SURFACE,
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
       ...COMPLEX_SELECTOR_HEIGHT_PARITY,

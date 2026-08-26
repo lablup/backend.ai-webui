@@ -251,6 +251,11 @@ const BAINotificationStackItemView: React.FC<{
         onDismiss={() => onClose?.(key)}
         // POLISH-3 item 1 (supersedes ticket 29 PILOT-DECISION 3).
         endContent={hasActions ? actions : undefined}
+        // Astryx ships only a bare icon-only chevron here, so nothing signals
+        // that an error's detail exists. Open it up front instead (FR-3700).
+        collapsible={
+          (item.status ?? 'info') === 'error' ? { defaultIsOpen: true } : true
+        }
         description={
           hasOwnContent ? undefined : item.description || hasProgress ? (
             <VStack gap={2} align="stretch">

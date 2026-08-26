@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r19-default-brand-h15soup theme — built by `pnpm exec astryx theme build`
+ * bai-r20-default-brand-h1t5xmly theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR19DefaultBrandH15soupTheme } from './bai-r19-default-brand-h15soup';
- *   import './bai-r19-default-brand-h15soup.css';
+ *   import { baiR20DefaultBrandH1t5xmlyTheme } from './bai-r20-default-brand-h1t5xmly';
+ *   import './bai-r20-default-brand-h1t5xmly.css';
  */
-export const baiR19DefaultBrandH15soupTheme = {
-  name: 'bai-r19-default-brand-h15soup',
+export const baiR20DefaultBrandH1t5xmlyTheme = {
+  name: 'bai-r20-default-brand-h1t5xmly',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -469,6 +469,20 @@ export const baiR19DefaultBrandH15soupTheme = {
     "side-nav-section": {
       "base": {
         "paddingBlockStart": "16px"
+      }
+    },
+    "banner-content": {
+      "status:info": {
+        "--color-background-card": "light-dark(#c4ddfb, #393f50)"
+      },
+      "status:success": {
+        "--color-background-card": "var(--color-success-muted)"
+      },
+      "status:warning": {
+        "--color-background-card": "var(--color-warning-muted)"
+      },
+      "status:error": {
+        "--color-background-card": "var(--color-error-muted)"
       }
     },
     "dialog": {

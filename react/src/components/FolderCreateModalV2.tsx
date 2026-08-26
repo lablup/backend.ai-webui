@@ -333,6 +333,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           : undefined;
       upsertNotification({
         key: `folder-create-failure-${folderName}-${Date.now()}`,
+        // Without this the stack falls back to 'info' and a failure paints as
+        // a blue notice (FR-3700).
+        type: 'error',
         icon: 'folder',
         message: `${t('general.Folder')}: ${folderName}`,
         description: t('data.folders.FolderCreationFailed'),
