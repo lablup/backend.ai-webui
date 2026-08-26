@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
-    "Search": "Ara",
     "SearchOptions": "Seçenekleri ara"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
+    "Search": "Ara",
     "Select": "Select",
     "SelectPlaceholder": "{{label}} seçin",
     "TotalItems": "Total {{total}} öğeleri",

@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Xóa Tìm trong các tùy chọn",
     "NoResults": "Không có kết quả",
-    "Search": "Tìm kiếm",
     "SearchOptions": "Tìm trong các tùy chọn"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",
+    "Search": "Tìm kiếm",
     "Select": "Select",
     "SelectPlaceholder": "Chọn {{label}}",
     "TotalItems": "Tổng số {{total}} các mục",

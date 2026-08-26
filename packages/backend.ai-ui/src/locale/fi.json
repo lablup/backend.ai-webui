@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
     "NoResults": "Ei tuloksia",
-    "Search": "Hae",
     "SearchOptions": "Hae vaihtoehdoista"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",
+    "Search": "Hae",
     "Select": "Select",
     "SelectPlaceholder": "Valitse {{label}}",
     "TotalItems": "Yhteensä {{total}} kohteet",

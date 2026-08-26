@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "オプションを検索 をクリア",
     "NoResults": "結果がありません",
-    "Search": "検索",
     "SearchOptions": "オプションを検索"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
+    "Search": "検索",
     "Select": "Select",
     "SelectPlaceholder": "{{label}}を選択してください",
     "TotalItems": "Total {{total}}アイテム",

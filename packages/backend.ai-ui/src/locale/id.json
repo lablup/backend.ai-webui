@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Hapus Cari opsi",
     "NoResults": "Tidak ada hasil",
-    "Search": "Cari",
     "SearchOptions": "Cari opsi"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",
+    "Search": "Cari",
     "Select": "Select",
     "SelectPlaceholder": "Pilih {{label}}",
     "TotalItems": "Total {{total}} item",

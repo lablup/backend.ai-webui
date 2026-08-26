@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Effacer Rechercher parmi les options",
     "NoResults": "Aucun résultat",
-    "Search": "Rechercher",
     "SearchOptions": "Rechercher parmi les options"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} sélectionné",
     "Optional": "Facultatif",
     "Project": "Projet",
+    "Search": "Rechercher",
     "Select": "Select",
     "SelectPlaceholder": "Sélectionnez {{label}}",
     "TotalItems": "Éléments totaux {{total}}",

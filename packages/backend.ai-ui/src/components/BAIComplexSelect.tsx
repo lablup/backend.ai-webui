@@ -576,9 +576,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
                 label={t('comp:BAIComplexSelect.SearchOptions')}
                 clearLabel={t('comp:BAIComplexSelect.ClearSearch')}
                 value={search}
-                placeholder={
-                  searchPlaceholder ?? t('comp:BAIComplexSelect.Search')
-                }
+                placeholder={searchPlaceholder ?? t('general.Search')}
                 onValueChange={(next) => {
                   setInternalSearch(next);
                   // Deliberately not -1: Astryx leaves the highlight alone

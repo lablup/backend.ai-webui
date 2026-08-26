@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Очистить Поиск по вариантам",
     "NoResults": "Нет результатов",
-    "Search": "Поиск",
     "SearchOptions": "Поиск по вариантам"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",
+    "Search": "Поиск",
     "Select": "Select",
     "SelectPlaceholder": "Выберите {{label}}",
     "TotalItems": "Total {{total}} элементы",

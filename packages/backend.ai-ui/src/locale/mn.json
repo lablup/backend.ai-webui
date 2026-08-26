@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
     "NoResults": "Үр дүн олдсонгүй",
-    "Search": "Хайх",
     "SearchOptions": "Сонголтуудаас хайх"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
+    "Search": "Хайх",
     "Select": "Select",
     "SelectPlaceholder": "{{label}} сонгоно уу",
     "TotalItems": "Нийт {{total}} зүйлүүд",

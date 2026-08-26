@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
-    "Search": "Αναζήτηση",
     "SearchOptions": "Αναζήτηση επιλογών"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
+    "Search": "Αναζήτηση",
     "Select": "Select",
     "SelectPlaceholder": "Επιλέξτε {{label}}",
     "TotalItems": "Σύνολο {{total}} στοιχεία",

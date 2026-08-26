@@ -98,7 +98,6 @@
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜索选项",
     "NoResults": "无结果",
-    "Search": "搜索",
     "SearchOptions": "搜索选项"
   },
   "comp:BAIContainerRegistrySelect": {
@@ -711,6 +710,7 @@
     "NSelected": "{{count}}选择",
     "Optional": "可选",
     "Project": "项目",
+    "Search": "搜索",
     "Select": "Select",
     "SelectPlaceholder": "请选择{{label}}",
     "TotalItems": "总计{{total}}项目",
