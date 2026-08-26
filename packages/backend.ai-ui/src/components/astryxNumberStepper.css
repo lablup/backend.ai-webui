@@ -2,38 +2,88 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Make the ladder stepper a real `InputGroup` segment (FR-3688).
+ The ladder stepper, drawn as Astryx draws its own (FR-3688).
 
- `InputGroupText` already carries the weld — border, `-1 * --border-width` start
- margin, squared inner corners — so only two things are wrong for a control
- slot: its text padding, and its muted addon fill. Astryx's own in-border
- stepper buttons sit on the input surface, so this one does too; the muted slab
- would read as an addon chip rather than part of the field.
+ `NumberInput hasNumberSteppers` cannot carry a non-linear ladder — the reasons
+ are in `astryxNumberStepper.tsx` — so the affordance stays ours and only the
+ LOOK is borrowed. Every rule below mirrors one in `NumberInput.tsx`, reading
+ the same tokens, so the two steppers stay indistinguishable:
 
- The button rules beat `Button`'s `sizeStyles.sm` (a fixed `--size-element-sm`
- height) and `styles.iconOnly` (`aspect-ratio: 1 / 1`), which together made each
- button assert 28px in a 32px row — a 56px column overflowing the group. They
- win on layer order, not specificity: `@layer components` is declared after
- `astryx-base` (same mechanism as `BAICompactGroup.css`).
+   .bai-number-stepper          <- styles.numberSteppers
+   .bai-number-stepper__button  <- styles.numberStepperButton
+   …--decrease                  <- styles.decrementButton
+   …--increase > svg            <- styles.incrementIcon
+
+ The one intentional difference is the outer border. Astryx's column lives
+ INSIDE the input's box and needs only a `border-inline-start` hairline; ours is
+ a welded `InputGroup` segment, so `InputGroupText`'s full border supplies the
+ same hairline on the leading edge and collapses with its neighbours on the
+ others. Same painted result, different owner.
 */
 
 @layer components {
+  /* The addon slot becomes the stepper column: no text padding, no muted addon
+     fill, and the field's own surface underneath. */
   .bai-number-stepper {
-    padding-inline: 0;
+    flex-direction: column;
     align-items: stretch;
+    padding-inline: 0;
+    width: var(--spacing-4);
+    overflow: hidden;
     background-color: var(--color-background-surface);
   }
 
-  .bai-number-stepper > * {
-    width: var(--spacing-4);
-    height: 100%;
+  .bai-number-stepper__button {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+    color: var(--color-icon-secondary);
+    background-color: var(--color-background-surface);
   }
 
-  .bai-number-stepper__button {
-    height: auto;
-    min-height: 0;
-    width: 100%;
-    flex: 1;
-    aspect-ratio: auto;
+  /* Astryx paints its hover/pressed wash as a gradient layer rather than a
+     background-color, so the surface underneath keeps showing through. */
+  @media (hover: hover) {
+    .bai-number-stepper__button:not(:disabled):hover {
+      background-image: linear-gradient(
+        var(--color-overlay-hover),
+        var(--color-overlay-hover)
+      );
+    }
+  }
+
+  .bai-number-stepper__button:not(:disabled):active {
+    background-image: linear-gradient(
+      var(--color-overlay-pressed),
+      var(--color-overlay-pressed)
+    );
+  }
+
+  .bai-number-stepper__button:disabled {
+    color: var(--color-icon-disabled);
+    cursor: default;
+    background-image: none;
+  }
+
+  /* The hairline between the two halves. */
+  .bai-number-stepper__button--decrease {
+    border-block-start: var(--border-width) solid var(--color-border-emphasized);
+  }
+
+  /* Astryx renders ONE chevron and rotates the increment half, so both halves
+     are the same glyph at the same optical weight. It rotates the `Icon` ROOT
+     (`styles.incrementIcon` via `xstyle`), and a registry icon resolves to
+     `<span><svg/></span>` — so the target is the button's only child, not the
+     svg, which is a grandchild. */
+  .bai-number-stepper__button--increase > * {
+    transform: rotate(180deg);
   }
 }

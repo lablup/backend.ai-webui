@@ -36,24 +36,50 @@ describe('AstryxNumberStepper', () => {
     expect(slot).toHaveClass('astryx-input-group-text');
   });
 
-  it('keeps the stack a DIRECT child of the slot', () => {
+  it('keeps both buttons DIRECT children of the slot', () => {
     const { container } = renderInGroup();
     const slot = container.querySelector('.bai-number-stepper') as HTMLElement;
-    expect(slot.children).toHaveLength(1);
-    expect(slot.children[0]).toHaveClass('astryx-stack');
-    expect(slot.children[0]).toHaveAttribute('data-gap', '0');
+    // `.bai-number-stepper` is the flex column itself — no wrapper in between,
+    // or `flex: 1` on the buttons has nothing to divide.
+    expect(slot.children).toHaveLength(2);
+    Array.from(slot.children).forEach((el) =>
+      expect(el).toHaveClass('bai-number-stepper__button'),
+    );
   });
 
-  it('marks both buttons so the size override reaches them', () => {
+  it('keeps the halves off the tab order, as the built-in stepper does', () => {
     const { container } = renderInGroup();
-    const buttons = container.querySelectorAll('.bai-number-stepper__button');
-    expect(buttons).toHaveLength(2);
+    container.querySelectorAll('.bai-number-stepper__button').forEach((el) => {
+      expect(el).toHaveAttribute('tabindex', '-1');
+      expect(el).toHaveAttribute('type', 'button');
+    });
+  });
+
+  it('marks each half so the mirrored Astryx rules reach it', () => {
+    renderInGroup();
+    // The modifier classes carry the hairline between the halves and the
+    // rotation that makes the increment chevron point up.
     expect(screen.getByLabelText('Increase')).toHaveClass(
-      'bai-number-stepper__button',
+      'bai-number-stepper__button--increase',
     );
     expect(screen.getByLabelText('Decrease')).toHaveClass(
-      'bai-number-stepper__button',
+      'bai-number-stepper__button--decrease',
     );
+  });
+
+  it('disables both halves together', () => {
+    render(
+      <InputGroup label="Amount" isLabelHidden>
+        <AstryxNumberStepper
+          onStep={() => {}}
+          isDisabled
+          increaseLabel="Increase"
+          decreaseLabel="Decrease"
+        />
+      </InputGroup>,
+    );
+    expect(screen.getByLabelText('Increase')).toBeDisabled();
+    expect(screen.getByLabelText('Decrease')).toBeDisabled();
   });
 
   it('still drives the ladder from the buttons', async () => {
