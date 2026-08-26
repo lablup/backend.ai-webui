@@ -99,6 +99,10 @@ required — the dialog will not submit until both are chosen.
 - **Title**: An optional panel title. When omitted, the data source name is
   used.
 - **Condition**: A property filter that narrows the rows shown in the panel.
+  For the **Sessions** data source, you can filter on every session property the
+  server supports — including **Status**, **Session Type**, **Session Name**,
+  **Resource Group**, and the **Created At**, **Started At**, and
+  **Terminated At** timestamps.
 
 A live preview below the fields shows the rows matching the current condition.
 Sorting a column in the preview sets the panel's sort order. Click **Add** to
