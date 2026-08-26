@@ -272,6 +272,10 @@
   "comp:BAINameActionCell": {
     "MoreActions": "Tindakan lain"
   },
+  "comp:BAIPowerSearchEntityEditor": {
+    "Search": "Cari…",
+    "SelectValue": "Pilih nilai"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Projek berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",

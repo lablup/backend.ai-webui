@@ -272,6 +272,10 @@
   "comp:BAINameActionCell": {
     "MoreActions": "Weitere Aktionen"
   },
+  "comp:BAIPowerSearchEntityEditor": {
+    "Search": "Suchen…",
+    "SelectValue": "Wert auswählen"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Die folgenden Projekte werden aktualisiert.",
     "ProjectResourcePolicy": "Projektressourcenrichtlinie",

@@ -272,6 +272,10 @@
   "comp:BAINameActionCell": {
     "MoreActions": "추가 작업"
   },
+  "comp:BAIPowerSearchEntityEditor": {
+    "Search": "검색…",
+    "SelectValue": "값 선택"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",

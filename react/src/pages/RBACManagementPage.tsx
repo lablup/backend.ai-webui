@@ -29,11 +29,11 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
-  BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
+  useBAIUserEntitySource,
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -55,6 +55,7 @@ const RBACManagementPage: React.FC = () => {
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const userEntitySource = useBAIUserEntitySource();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -273,26 +274,7 @@ const RBACManagementPage: React.FC = () => {
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
                   fixedOperator: 'equals',
-                  renderInput: ({ onAddCondition }) => (
-                    <BAIUserSelect
-                      valuePropName="id"
-                      value={null}
-                      label={t('rbac.AssignedUser')}
-                      isLabelHidden
-                      onChange={(value, option) =>
-                        // The picker emits the user UUID; forward the option
-                        // label (email) so the condition tag stays readable
-                        // (P3C-1 keeps the 2nd argument on this sibling).
-                        onAddCondition(
-                          value as string | undefined,
-                          Array.isArray(option)
-                            ? option[0]?.label
-                            : option?.label,
-                        )
-                      }
-                      width={200}
-                    />
-                  ),
+                  entitySource: userEntitySource,
                 },
                 baiClient?.supports('role-mapped-scope-filter') && {
                   key: 'mappedScope.scopeType',

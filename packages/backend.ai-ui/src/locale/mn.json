@@ -272,6 +272,10 @@
   "comp:BAINameActionCell": {
     "MoreActions": "Бусад үйлдэл"
   },
+  "comp:BAIPowerSearchEntityEditor": {
+    "Search": "Хайх…",
+    "SelectValue": "Утга сонгох"
+  },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",

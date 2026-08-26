@@ -1,4 +1,8 @@
 import BAIComplexSelect, { BAILabeledValue } from './BAIComplexSelect';
+import type {
+  FilterEntity,
+  FilterEntitySource,
+} from './BAIPowerSearchAdapters';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -19,7 +23,8 @@ const meta: Meta<typeof BAIPropertyFilter> = {
 - **Autocomplete support**: Predefined options and suggestions for property values
 - **Validation rules**: Custom validation for property values
 - **Query language**: Based on Backend.AI's query filter minilang specification
-- **Custom input via \`renderInput\`**: Replace the built-in value editor with any controlled control (e.g., a user or storage-host picker). The control stages a value via \`onAddCondition(value, label?)\` and the edit popover's Apply button commits it; pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the token shows the label instead. Same contract as \`BAIGraphQLPropertyFilter\`, so controls are interchangeable.
+- **Entity values via \`entitySource\`**: Declarative picker for properties whose value is an opaque id (a user UUID chosen by email). Supply \`{ search, bootstrap?, resolve?, cancel? }\` and the editor renders an Astryx Typeahead (a Tokenizer when the operator is a list one — **arity follows the operator, not the property**). \`resolve(ids)\` turns ids restored from a saved query string back into labels. Prefer it over \`renderInput\` for id-valued properties. Same field as on \`BAIGraphQLPropertyFilter\`.
+- **Custom input via \`renderInput\`**: Replace the built-in value editor with any controlled control (e.g., a user or storage-host picker). The control stages a value via \`onAddCondition(value, label?)\` and the edit popover's Apply button commits it; pass a human-readable \`label\` when the staged value is opaque (e.g. a UUID) so the token shows the label instead. The render prop receives \`{ onAddCondition, value, isDisabled }\`. Same contract as \`BAIGraphQLPropertyFilter\`, so controls are interchangeable.
 
 > **to-astryx ticket 28** — the engine is now Astryx \`PowerSearch\`. The prop contract is unchanged, but the antd chrome it documented (property \`Select\` + \`AutoComplete\` + closable \`Tag\`s + the bespoke reset button) is replaced by PowerSearch's typeahead, tokens and built-in clear. \`rule.validate\` is advisory now: a violating token is reported through the control's error status instead of being refused. **to-astryx ticket 32** refreshed these stories: the \`renderInput\` demo below now uses \`BAIComplexSelect\` (Astryx-native) instead of antd \`Select\`, matching what a migrated call site actually renders.
 
@@ -289,7 +294,7 @@ export const WithRenderInput: Story = {
     docs: {
       description: {
         story:
-          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Pass the option label as the second argument so the condition tag shows a human-readable label (e.g. an email) instead of the opaque committed value (e.g. a UUID). Same contract as the one `BAIGraphQLPropertyFilter` adopts in FR-3011 (#8082), so controls become interchangeable once both land.',
+          "When `renderInput` is provided, the default value editor is replaced with a custom control. The control **stages** a value via `onAddCondition(value, label?)` and the edit popover's Apply button commits it — nothing lands on the filter until Apply. Pass the option label as the second argument so the token shows a human-readable label (e.g. an email) instead of the opaque staged value (e.g. a UUID). The render prop also receives `value` (what is currently staged) and `isDisabled`. Same contract as `BAIGraphQLPropertyFilter`, so controls are interchangeable; for id-valued properties prefer `entitySource`.",
       },
     },
   },
@@ -322,6 +327,80 @@ export const WithRenderInput: Story = {
         ),
       },
     ],
+    onChange: () => console.log('Filter changed'),
+  },
+};
+
+const sampleUserEntities: Array<FilterEntity> = [
+  {
+    id: 'owner-uuid-0001',
+    label: 'alice@example.com',
+    description: 'Alice Kim',
+  },
+  { id: 'owner-uuid-0002', label: 'bob@example.com', description: 'Bob Lee' },
+  {
+    id: 'owner-uuid-0003',
+    label: 'carol@example.com',
+    description: 'Carol Park',
+  },
+  {
+    id: 'owner-uuid-0004',
+    label: 'dave@example.com',
+    description: 'Dave Choi',
+  },
+];
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Stands in for a Relay-backed source (useBAIUserEntitySource); the latency is
+// what makes the id -> label swap visible in the Canvas.
+const demoUserEntitySource: FilterEntitySource = {
+  search: async (query) => {
+    await sleep(400);
+    const needle = query.trim().toLowerCase();
+    return needle
+      ? sampleUserEntities.filter((entity) =>
+          entity.label.toLowerCase().includes(needle),
+        )
+      : sampleUserEntities;
+  },
+  bootstrap: async () => {
+    await sleep(300);
+    return sampleUserEntities.slice(0, 3);
+  },
+  resolve: async (ids) => {
+    await sleep(1200);
+    return sampleUserEntities.filter((entity) => ids.includes(entity.id));
+  },
+};
+
+export const WithEntitySource: Story = {
+  name: 'Entity picker via entitySource',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`entitySource` is the declarative way to filter on an opaque id: the user searches by email while the query string keeps the UUID (`owner == "owner-uuid-0003"` — the same bytes `renderInput` produced). Arity follows the operator, so a single-value operator like `==` gets a single-select Typeahead. The story is pre-seeded with a raw UUID and this demo source resolves it after ~1.2s, so the token starts as the UUID and swaps to the email — what happens when a saved query is reopened. Without `resolve` the token simply keeps showing the raw id.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        defaultOperator: 'ilike',
+      },
+      {
+        key: 'owner',
+        propertyLabel: 'Owner',
+        type: 'string',
+        defaultOperator: '==',
+        entitySource: demoUserEntitySource,
+      },
+    ],
+    value: 'owner == "owner-uuid-0003"',
     onChange: () => console.log('Filter changed'),
   },
 };
