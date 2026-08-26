@@ -35,6 +35,10 @@ export type SessionV2InList = NonNullable<
   BAISessionNodesV2Fragment$data[number]
 >;
 
+// Canonical home for the status union: hosts filter session lists by it and
+// must not each pin it to an unrelated query artifact.
+export type { SessionV2Status };
+
 const availableSessionV2SorterKeys = [
   'name',
   'status',

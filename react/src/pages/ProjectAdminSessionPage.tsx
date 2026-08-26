@@ -17,6 +17,10 @@ import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import {
+  sessionStatusCategoryValues,
+  useSessionV2StatusBuckets,
+} from '../hooks/useSessionV2StatusBuckets';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAISkeleton,
@@ -37,26 +41,6 @@ import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-const statusCategoryValues = ['running', 'finished'] as const;
-
-const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
-  'PENDING',
-  'SCHEDULED',
-  'PREPARING',
-  'PREPARED',
-  'CREATING',
-  'RUNNING',
-  'DEPRIORITIZING',
-  'PREEMPTED',
-  'RESCHEDULING',
-  'TERMINATING',
-];
-
-const FINISHED_STATUSES: ReadonlyArray<SessionV2Status> = [
-  'TERMINATED',
-  'CANCELLED',
-];
 
 // The query-level session node. It carries the masked fragment refs for both
 // the table (`BAISessionNodesV2Fragment`) and the terminate modal
@@ -95,8 +79,9 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      statusCategory:
-        parseAsStringLiteral(statusCategoryValues).withDefault('running'),
+      statusCategory: parseAsStringLiteral(
+        sessionStatusCategoryValues,
+      ).withDefault('running'),
       order: parseAsStringLiteral(availableSessionV2SorterValues),
       filter: parseAsJson<SessionV2Filter>((value) => value as SessionV2Filter),
     },
@@ -106,15 +91,15 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const statusBuckets = useSessionV2StatusBuckets();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ProjectAdminSessionPage',
   );
 
-  const statusFilter =
-    queryParams.statusCategory === 'running'
-      ? { in: RUNNING_STATUSES as readonly SessionV2Status[] }
-      : { in: FINISHED_STATUSES as readonly SessionV2Status[] };
+  const statusFilter = {
+    in: statusBuckets[queryParams.statusCategory] as readonly SessionV2Status[],
+  };
 
   const queryVariables = {
     projectId,
