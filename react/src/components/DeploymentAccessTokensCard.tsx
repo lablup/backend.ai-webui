@@ -240,12 +240,10 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
         >
           <BAIFlex direction="column" align="stretch" gap="sm">
             <Text>{t('deployment.accessToken.Created')}</Text>
+            {/* `ellipsis` stays a bare boolean on purpose — a truncate tooltip
+                would put the secret behind a hover. Copy is the way. FR-3698. */}
             {createdToken ? (
-              <BAIText
-                copyable={{ text: createdToken.token }}
-                ellipsis={{ tooltip: true }}
-                code
-              >
+              <BAIText copyable={{ text: createdToken.token }} ellipsis code>
                 {createdToken.token}
               </BAIText>
             ) : null}
@@ -365,12 +363,14 @@ const DeploymentAccessTokensTable: React.FC<
             dataIndex: 'token',
             render: (_text, row) => {
               if (!row) return '-';
+              // `ellipsis` stays a bare boolean on purpose — a truncate tooltip
+              // would put the secret behind a hover. Copy is the way. FR-3698.
               return (
                 <BAINameActionCell
                   title={
                     <BAIText
                       copyable={{ text: row.token }}
-                      ellipsis={{ tooltip: true }}
+                      ellipsis
                       style={{ maxWidth: 200 }}
                     >
                       {row.token}
