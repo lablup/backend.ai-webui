@@ -8,11 +8,15 @@ async function cleanupPolicy(page: Page, policyName: string) {
   const row = page.getByRole('row').filter({ hasText: policyName });
   const isVisible = await row.isVisible({ timeout: 2000 }).catch(() => false);
   if (isVisible) {
-    // Hover over the name cell to reveal BAINameActionCell actions
-    await row.getByRole('cell').first().hover();
-    await row.getByRole('button', { name: 'delete' }).click();
-    // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
-    const confirmInput = page.locator('#confirmText');
+    // The row's action column is narrow enough that BAINameActionCell
+    // collapses every action into the "More actions" overflow menu instead
+    // of showing a directly-clickable "delete" icon button.
+    await row.getByRole('button', { name: 'More actions' }).click();
+    await page.getByRole('menuitem', { name: 'Delete' }).click();
+    // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to
+    // enable Delete. The input carries `name="confirmText"` (not `id`), so
+    // scope to the dialog's single textbox instead of an `#confirmText` id.
+    const confirmInput = page.getByRole('dialog').getByRole('textbox');
     await expect(confirmInput).toBeVisible();
     await confirmInput.fill(policyName);
     // Scope to the confirm dialog: FR-3331 exposes each row's delete action
@@ -51,7 +55,11 @@ async function selectPolicyTab(
 async function createKeypairPolicy(page: Page, name: string) {
   // Keypair is the default tab.
   await cleanupPolicy(page, name);
-  await page.getByRole('button', { name: 'Create' }).click();
+  // Anchored regex: a substring match on 'Create' also matches the
+  // "Sort by created_at" column-header button (accessible name contains
+  // "creat" from "created_at"). Anchoring at the start excludes it while
+  // still matching both "Create" and "Create Policy" button labels.
+  await page.getByRole('button', { name: /^Create/i }).click();
   const modal = page.getByRole('dialog', {
     name: 'Create Keypair Resource Policy',
   });
@@ -67,7 +75,8 @@ async function createKeypairPolicy(page: Page, name: string) {
 async function createUserPolicy(page: Page, name: string) {
   await selectPolicyTab(page, 'User');
   await cleanupPolicy(page, name);
-  await page.getByRole('button', { name: 'Create' }).click();
+  // See createKeypairPolicy: anchored to exclude "Sort by created_at".
+  await page.getByRole('button', { name: /^Create/i }).click();
   const modal = page.getByRole('dialog', {
     name: 'Create User Resource Policy',
   });
@@ -90,7 +99,8 @@ async function createUserPolicy(page: Page, name: string) {
 async function createProjectPolicy(page: Page, name: string) {
   await selectPolicyTab(page, 'Project');
   await cleanupPolicy(page, name);
-  await page.getByRole('button', { name: 'Create' }).click();
+  // See createKeypairPolicy: anchored to exclude "Sort by created_at".
+  await page.getByRole('button', { name: /^Create/i }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);

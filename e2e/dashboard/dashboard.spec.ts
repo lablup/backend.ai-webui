@@ -187,7 +187,7 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Click the refresh (BAIFetchKeyButton) in the widget's header area
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
+        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget data remains visible after refresh
@@ -233,7 +233,7 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
+        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget still renders CPU/Memory after refresh
@@ -388,7 +388,7 @@ test.describe(
           await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
           // 2. Click the refresh button in the widget header
-          const refreshButton = widget.getByRole('button', { name: 'reload' });
+          const refreshButton = widget.getByRole('button', { name: 'Refresh' });
           await refreshButton.click();
 
           // 3. Verify the widget still renders after refresh (no error state)
@@ -429,11 +429,11 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
+        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget still renders after refresh
-        await expect(widget.locator('.ant-table')).toBeVisible();
+        await expect(widget.getByRole('table')).toBeVisible();
       });
     });
 
