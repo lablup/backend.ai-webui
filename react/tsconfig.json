@@ -29,6 +29,7 @@
   },
   "include": [
     "src",
+    "astryx.config.ts",
     "../packages/backend.ai-ui/src",
     "../packages/backend.ai-client/src"
   ],
