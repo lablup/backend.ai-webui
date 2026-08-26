@@ -89,6 +89,18 @@ async function openCreateModalWithRequiredFields(
   throw lastError;
 }
 
+async function selectValueType(
+  page: Page,
+  modal: ReturnType<Page['getByRole']>,
+  label: string,
+): Promise<void> {
+  await modal.getByRole('combobox', { name: /^Value Type/ }).click();
+  await page
+    .locator('.ant-select-dropdown')
+    .getByText(label, { exact: true })
+    .click();
+}
+
 async function deletePreset(page: Page, presetName: string): Promise<void> {
   await page.goto(PRESET_TAB_URL);
   await page.waitForLoadState('domcontentloaded');
@@ -220,6 +232,10 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
       await page
         .locator('.ant-select-dropdown')
@@ -280,6 +296,10 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
       await page
         .locator('.ant-select-dropdown')
@@ -314,6 +334,10 @@ test.describe(
         presetName,
         `E2E_KEY_${Date.now()}`,
       );
+
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
 
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
       await page

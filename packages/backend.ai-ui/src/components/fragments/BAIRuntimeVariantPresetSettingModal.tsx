@@ -37,6 +37,11 @@ import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
+// Shared by `initialValues` and the mirrored `valueType` state below. Held in
+// one place because the two drifting apart is exactly what let create mode
+// offer every control while the form already held `STR`.
+const DEFAULT_VALUE_TYPE: ValueType = 'STR';
+
 type RuntimeVariantPresetFormValues = {
   runtimeVariantId: string;
   name: string;
@@ -210,7 +215,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
   // Mirrors `uiType` above, and for the same reason — the form store is not a
   // safe read on the first render.
   const [valueType, setValueType] = useState<ValueType | undefined>(
-    () => preset?.targetSpec?.valueType as ValueType | undefined,
+    () =>
+      (preset?.targetSpec?.valueType as ValueType | undefined) ??
+      DEFAULT_VALUE_TYPE,
   );
 
   // Distinguishes "the admin never went near the pairing" from "the admin
@@ -571,7 +578,7 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               }
             : {
                 presetTarget: 'ENV',
-                valueType: 'STR',
+                valueType: DEFAULT_VALUE_TYPE,
                 required: false,
               }
         }
