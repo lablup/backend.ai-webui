@@ -983,6 +983,10 @@ export class Client {
       // managers keep using the deprecated `startCommand` token list and never
       // receive `shell`.
       this._features['model-service-command-string'] = true;
+      // `PREEMPTED` / `RESCHEDULING` join the `SessionV2Status` enum (BA-6749,
+      // lablup/backend.ai#13126, FR-3673). Enum coercion rejects the whole
+      // query on an older manager, so status filters must omit them.
+      this._features['session-preemption-statuses'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset

@@ -5,12 +5,7 @@
 import { useSuspendedBackendaiClient } from '.';
 import type { SessionV2Status } from 'backend.ai-ui';
 
-/**
- * Manager 26.8.0 added `PREEMPTED` / `RESCHEDULING` to `SessionV2Status`
- * (backend.ai#13126). An older manager rejects the *whole* query on enum
- * coercion, so sending them blanks the page instead of degrading (FR-3673).
- */
-const PREEMPTION_STATUSES_MIN_MANAGER_VERSION = '26.8.0';
+/** Gated behind the client's `session-preemption-statuses` feature flag. */
 const PREEMPTION_STATUSES: ReadonlyArray<SessionV2Status> = [
   'PREEMPTED',
   'RESCHEDULING',
@@ -50,8 +45,8 @@ export const useSessionV2StatusBuckets = (): Record<
 > => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
-  const supportsPreemptionStatuses = baiClient.isManagerVersionCompatibleWith(
-    PREEMPTION_STATUSES_MIN_MANAGER_VERSION,
+  const supportsPreemptionStatuses = baiClient.supports(
+    'session-preemption-statuses',
   );
 
   return {
