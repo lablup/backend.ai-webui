@@ -1,0 +1,196 @@
+id: baidocs-webui
+title: |
+  Backend.AI WebUI
+  User Guide
+description: Multilingual user manual by Lablup Inc.
+type: document
+# FR-2765: ko first so the language switcher surfaces 한국어 at the top
+# of the dropdown. The build pipeline iterates this list to enumerate
+# per-language pages, but iteration order is output-only — no consumer
+# of the build relies on it. Remaining order (en, ja, th) preserved
+# for downstream stability.
+languages:
+  - ko
+  - en
+  - ja
+  - th
+# F3 — Information architecture
+# ----------------------------------------------------------------------------
+# `navigation` per language uses the F3 grouped form:
+#
+#   - category: <localized category label>
+#     items:
+#       - { title: <chapter title>, path: <markdown path> }
+#
+# The legacy flat form (a list of `{title, path}` directly under each
+# language) is still accepted by `loadBookConfig`. Pages within a group
+# render in the listed order; group ordering is preserved when flattened
+# for the PDF pipeline. The 5 categories below were chosen to balance
+# bucket sizes (4-9 chapters each) and follow a typical reader's journey:
+# learn the product (Getting Started) → use it (Workloads → Storage & Data) →
+# administer it (Administration) → look up reference material (Reference).
+#
+# Reordering note: The flat order produced by flattening these groups
+# differs slightly from the legacy book.config.yaml ordering — chapters
+# now group with their thematic siblings (e.g. Cluster Session moves
+# next to other Workloads chapters; SFTP-to-container moves into Storage &
+# Data). The PDF pipeline reads the flattened list, so the PDF chapter
+# order will match the new grouped sequence.
+# ----------------------------------------------------------------------------
+navigation:
+  en:
+    - category: Getting Started
+      items:
+        - path: quickstart.md
+        - path: disclaimer.md
+        - path: overview/overview.md
+        - path: installation/installation.md
+        - path: login/login.md
+        - path: header/header.md
+        - path: start/start.md
+        - path: dashboard/dashboard.md
+    - category: Workloads
+      items:
+        - path: session_page/session_page.md
+        - path: sessions_all/sessions_all.md
+        - path: cluster_session/cluster_session.md
+        - path: deployment/deployment.md
+        - path: chat/chat.md
+        - path: my_environments/my_environments.md
+    - category: Storage & Data
+      items:
+        - path: vfolder/vfolder.md
+        - path: mount_vfolder/mount_vfolder.md
+        - path: share_vfolder/share_vfolder.md
+        - path: sftp_to_container/sftp_to_container.md
+    - category: Administration
+      items:
+        - path: user_settings/user_settings.md
+        - path: project_admin/project_admin.md
+        - path: rbac_management/rbac_management.md
+        - path: agent_summary/agent_summary.md
+        - path: statistics/statistics.md
+        - path: admin_menu/admin_menu.md
+    - category: Reference
+      items:
+        - path: trouble_shooting/trouble_shooting.md
+        - path: appendix/appendix.md
+        - path: license_agreement/license_agreement.md
+        - path: references/references.md
+  ja:
+    - category: はじめに
+      items:
+        - path: quickstart.md
+        - path: disclaimer.md
+        - path: overview/overview.md
+        - path: installation/installation.md
+        - path: login/login.md
+        - path: header/header.md
+        - path: start/start.md
+        - path: dashboard/dashboard.md
+    - category: ワークロード
+      items:
+        - path: session_page/session_page.md
+        - path: sessions_all/sessions_all.md
+        - path: cluster_session/cluster_session.md
+        - path: deployment/deployment.md
+        - path: chat/chat.md
+        - path: my_environments/my_environments.md
+    - category: ストレージとデータ
+      items:
+        - path: vfolder/vfolder.md
+        - path: mount_vfolder/mount_vfolder.md
+        - path: share_vfolder/share_vfolder.md
+        - path: sftp_to_container/sftp_to_container.md
+    - category: 管理
+      items:
+        - path: user_settings/user_settings.md
+        - path: project_admin/project_admin.md
+        - path: rbac_management/rbac_management.md
+        - path: agent_summary/agent_summary.md
+        - path: statistics/statistics.md
+        - path: admin_menu/admin_menu.md
+    - category: リファレンス
+      items:
+        - path: trouble_shooting/trouble_shooting.md
+        - path: appendix/appendix.md
+        - path: license_agreement/license_agreement.md
+        - path: references/references.md
+  ko:
+    - category: 시작하기
+      items:
+        - path: quickstart.md
+        - path: disclaimer.md
+        - path: overview/overview.md
+        - path: installation/installation.md
+        - path: login/login.md
+        - path: header/header.md
+        - path: start/start.md
+        - path: dashboard/dashboard.md
+    - category: 워크로드
+      items:
+        - path: session_page/session_page.md
+        - path: sessions_all/sessions_all.md
+        - path: cluster_session/cluster_session.md
+        - path: deployment/deployment.md
+        - path: chat/chat.md
+        - path: my_environments/my_environments.md
+    - category: 스토리지 및 데이터
+      items:
+        - path: vfolder/vfolder.md
+        - path: mount_vfolder/mount_vfolder.md
+        - path: share_vfolder/share_vfolder.md
+        - path: sftp_to_container/sftp_to_container.md
+    - category: 관리
+      items:
+        - path: user_settings/user_settings.md
+        - path: project_admin/project_admin.md
+        - path: rbac_management/rbac_management.md
+        - path: agent_summary/agent_summary.md
+        - path: statistics/statistics.md
+        - path: admin_menu/admin_menu.md
+    - category: 참고 자료
+      items:
+        - path: trouble_shooting/trouble_shooting.md
+        - path: appendix/appendix.md
+        - path: license_agreement/license_agreement.md
+        - path: references/references.md
+  th:
+    - category: เริ่มต้นใช้งาน
+      items:
+        - path: quickstart.md
+        - path: disclaimer.md
+        - path: overview/overview.md
+        - path: installation/installation.md
+        - path: login/login.md
+        - path: header/header.md
+        - path: start/start.md
+        - path: dashboard/dashboard.md
+    - category: เวิร์กโหลด
+      items:
+        - path: session_page/session_page.md
+        - path: sessions_all/sessions_all.md
+        - path: cluster_session/cluster_session.md
+        - path: deployment/deployment.md
+        - path: chat/chat.md
+        - path: my_environments/my_environments.md
+    - category: พื้นที่จัดเก็บและข้อมูล
+      items:
+        - path: vfolder/vfolder.md
+        - path: mount_vfolder/mount_vfolder.md
+        - path: share_vfolder/share_vfolder.md
+        - path: sftp_to_container/sftp_to_container.md
+    - category: การดูแลระบบ
+      items:
+        - path: user_settings/user_settings.md
+        - path: project_admin/project_admin.md
+        - path: rbac_management/rbac_management.md
+        - path: agent_summary/agent_summary.md
+        - path: statistics/statistics.md
+        - path: admin_menu/admin_menu.md
+    - category: เอกสารอ้างอิง
+      items:
+        - path: trouble_shooting/trouble_shooting.md
+        - path: appendix/appendix.md
+        - path: license_agreement/license_agreement.md
+        - path: references/references.md
