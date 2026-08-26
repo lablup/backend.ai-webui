@@ -9,12 +9,11 @@ import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import {
+  BAICard,
+  BAIMetadataList,
   BAISkeleton,
   badgeVariantForStatus,
   badgeVariantForTagColor,
@@ -73,54 +72,56 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
           dropped — the project-wide decision established in tickets 15/18.
           The two `span={2}` full-width rows keep their content; they simply
           flow in the 2-column grid like every other row. */}
-      <MetadataList columns={2} label={{ position: 'start', width: 160 }}>
-        <MetadataListItem label={t('rbac.Source')}>
-          {/* Tag -> Badge through the repo-global lookup (ticket 13); no
-              per-file colour map. */}
-          <Badge
-            variant={badgeVariantForStatus('role', role.source ?? undefined)}
-            label={
-              role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')
-            }
-          />
-        </MetadataListItem>
-        <MetadataListItem label={t('rbac.Status')}>
-          <Badge
-            variant={badgeVariantForStatus('role', role.status ?? undefined)}
-            label={
-              role.status === 'ACTIVE' ? t('rbac.Active') : t('rbac.Inactive')
-            }
-          />
-        </MetadataListItem>
-        <MetadataListItem label={t('general.CreatedAt')}>
-          {role.createdAt
-            ? dayjs(role.createdAt).format('YYYY-MM-DD HH:mm:ss')
-            : '-'}
-        </MetadataListItem>
-        <MetadataListItem label={t('general.UpdatedAt')}>
-          {role.updatedAt
-            ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
-            : '-'}
-        </MetadataListItem>
-        {supportsAutoAssign ? (
-          <MetadataListItem label={t('rbac.AutoAssign')}>
+      <BAICard>
+        <BAIMetadataList columns={2} label={{ position: 'start', width: 160 }}>
+          <MetadataListItem label={t('rbac.Source')}>
+            {/* Tag -> Badge through the repo-global lookup (ticket 13); no
+                per-file colour map. */}
             <Badge
-              variant={badgeVariantForTagColor(
-                role.autoAssign ? 'green' : 'default',
-              )}
+              variant={badgeVariantForStatus('role', role.source ?? undefined)}
               label={
-                role.autoAssign ? t('general.Active') : t('general.Inactive')
+                role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')
               }
             />
           </MetadataListItem>
-        ) : null}
-        <MetadataListItem label={t('rbac.RoleDescription')}>
-          {role.description || '-'}
-        </MetadataListItem>
-      </MetadataList>
+          <MetadataListItem label={t('rbac.Status')}>
+            <Badge
+              variant={badgeVariantForStatus('role', role.status ?? undefined)}
+              label={
+                role.status === 'ACTIVE' ? t('rbac.Active') : t('rbac.Inactive')
+              }
+            />
+          </MetadataListItem>
+          <MetadataListItem label={t('general.CreatedAt')}>
+            {role.createdAt
+              ? dayjs(role.createdAt).format('YYYY-MM-DD HH:mm:ss')
+              : '-'}
+          </MetadataListItem>
+          <MetadataListItem label={t('general.UpdatedAt')}>
+            {role.updatedAt
+              ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
+              : '-'}
+          </MetadataListItem>
+          {supportsAutoAssign ? (
+            <MetadataListItem label={t('rbac.AutoAssign')}>
+              <Badge
+                variant={badgeVariantForTagColor(
+                  role.autoAssign ? 'green' : 'default',
+                )}
+                label={
+                  role.autoAssign ? t('general.Active') : t('general.Inactive')
+                }
+              />
+            </MetadataListItem>
+          ) : null}
+          <MetadataListItem label={t('rbac.RoleDescription')}>
+            {role.description || '-'}
+          </MetadataListItem>
+        </BAIMetadataList>
+      </BAICard>
       {/* antd `Tabs` -> `TabList` + `Tab` (MAPPING §4): navigation only, the
           panel is rendered by this component below the bar. */}
-      <TabList value={activeTab} onChange={setActiveTab}>
+      <TabList hasDivider value={activeTab} onChange={setActiveTab}>
         {supportsDetailedPermissions ? (
           <Tab value="detailedPermissions" label={t('rbac.Permissions')} />
         ) : (

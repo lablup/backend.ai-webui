@@ -6,14 +6,12 @@ import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragmen
 import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Spinner } from '@astryxdesign/core/Spinner';
 import {
   BAIFlex,
   BAIIconWithTooltip,
+  BAIMetadataList,
   BAIModal,
   BAIModalProps,
 } from 'backend.ai-ui';
@@ -93,7 +91,7 @@ const UserInfoModal: React.FC<Props> = ({
       onCancel={onRequestClose}
       {...baiModalProps}
     >
-      <MetadataList
+      <BAIMetadataList
         title={t('credential.Information')}
         label={{ position: 'start', width: '50%' }}
       >
@@ -136,8 +134,8 @@ const UserInfoModal: React.FC<Props> = ({
             )}
           </MetadataListItem>
         )}
-      </MetadataList>
-      <MetadataList
+      </BAIMetadataList>
+      <BAIMetadataList
         title={t('credential.Association')}
         label={{ position: 'start', width: '50%' }}
       >
@@ -150,8 +148,8 @@ const UserInfoModal: React.FC<Props> = ({
         <MetadataListItem label={t('credential.ResourcePolicy')}>
           {user?.organization.resourcePolicy}
         </MetadataListItem>
-      </MetadataList>
-      <MetadataList label={{ position: 'start', width: '50%' }}>
+      </BAIMetadataList>
+      <BAIMetadataList label={{ position: 'start', width: '50%' }}>
         <MetadataListItem label={t('credential.ProjectAndGroup')}>
           {user && !user.projects ? (
             <BAIIconWithTooltip
@@ -174,7 +172,7 @@ const UserInfoModal: React.FC<Props> = ({
             </BAIFlex>
           )}
         </MetadataListItem>
-      </MetadataList>
+      </BAIMetadataList>
     </BAIModal>
   );
 };

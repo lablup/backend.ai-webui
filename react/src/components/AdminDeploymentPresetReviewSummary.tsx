@@ -15,15 +15,13 @@ import SourceCodeView from './SourceCodeView';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Code } from '@astryxdesign/core/Code';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAICard,
   BAIFlex,
+  BAIMetadataList,
   badgeVariantForTagColor,
   BAIText,
   toLocalId,
@@ -282,7 +280,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             configuration → health check → pre-start actions → image), not
             the order fields were originally added to this summary — see
             AdminDeploymentPresetSettingPageContent.tsx's Basic Info card. */}
-        <MetadataList columns={1}>
+        <BAIMetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.Name')}>
             <Text weight="semibold">{values.name || '-'}</Text>
           </MetadataListItem>
@@ -324,7 +322,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               '-'
             )}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       </BAICard>
 
       {/* Resources */}
@@ -334,7 +332,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.Resources')}
         extra={extraSlot(0, 'preset-form-card-resources', resourcesHasError)}
       >
-        <MetadataList columns={1}>
+        <BAIMetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.ResourceSlots')}>
             <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
               <ResourceNumbersOfSession
@@ -377,7 +375,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
           <MetadataListItem label={t('adminDeploymentPreset.ClusterSize')}>
             {values.clusterSize != null ? values.clusterSize : '-'}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       </BAICard>
 
       {/* Deployment */}
@@ -390,7 +388,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         {/* Multi-column MetadataList defaults its labels to position: top,
             which reads as a different (vertical) layout from every other
             card here — pin the inline label placement. */}
-        <MetadataList columns={2} label={{ position: 'start' }}>
+        <BAIMetadataList columns={2} label={{ position: 'start' }}>
           <MetadataListItem label={t('adminDeploymentPreset.Replicas')}>
             {values.replicaCount ?? '-'}
           </MetadataListItem>
@@ -406,7 +404,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                 ? t('button.Yes')
                 : t('button.No')}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       </BAICard>
 
       {/* Model & Execution */}
@@ -416,7 +414,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.ModelAndExecution')}
         extra={extraSlot(1, 'preset-form-card-model', step2HasError)}
       >
-        <MetadataList columns={1}>
+        <BAIMetadataList columns={1}>
           <MetadataListItem label={t('adminDeploymentPreset.StartupCommand')}>
             {values.startupCommand ? (
               <SourceCodeView language="shell">
@@ -568,7 +566,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                 </>
               );
             })()}
-        </MetadataList>
+        </BAIMetadataList>
       </BAICard>
     </BAIFlex>
   );

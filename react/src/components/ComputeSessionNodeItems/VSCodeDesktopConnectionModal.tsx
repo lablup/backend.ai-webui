@@ -7,14 +7,12 @@ import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAISkeleton,
   BAIFlex,
+  BAIMetadataList,
   BAIModal,
   BAIModalProps,
   BAIText,
@@ -82,7 +80,7 @@ const VSCodeDesktopConnectionModal: React.FC<
         <BAIFlex direction="column" gap="xs" align="stretch">
           <Text weight="semibold">{t('session.ConnectionInformation')}</Text>
           {status === 'success' ? (
-            <MetadataList
+            <BAIMetadataList
               columns="single"
               label={{ position: 'start', width: 210 }}
             >
@@ -91,7 +89,7 @@ const VSCodeDesktopConnectionModal: React.FC<
                   {password ?? ''}
                 </BAIText>
               </MetadataListItem>
-            </MetadataList>
+            </BAIMetadataList>
           ) : status === 'pending' ? (
             <BAISkeleton variant="input" />
           ) : (

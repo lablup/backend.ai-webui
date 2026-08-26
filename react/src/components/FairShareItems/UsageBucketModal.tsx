@@ -9,14 +9,12 @@ import UsageBucketChartContent from './UsageBucketChartContent';
 import type { ISODateString } from '@astryxdesign/core/Calendar';
 import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
 import type { DateRange } from '@astryxdesign/core/DateRangeInput';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
   BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIMetadataList,
   BAIModal,
   BAIModalProps,
   BAITagList,
@@ -229,7 +227,7 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
         {/* antd `Descriptions items` → `MetadataList` children (MAPPING §4).
             `size="small"` has no destination and is dropped; `column={1}` is
             `columns="single"`. */}
-        <MetadataList columns="single">
+        <BAIMetadataList columns="single">
           {selectedResourceGroupName ? (
             <MetadataListItem label={t('fairShare.ResourceGroup')}>
               {selectedResourceGroupName}
@@ -275,7 +273,7 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
               />
             </MetadataListItem>
           ) : null}
-        </MetadataList>
+        </BAIMetadataList>
 
         <Suspense fallback={<BAISkeleton variant="paragraph" rows={8} />}>
           <UsageBucketChartContent

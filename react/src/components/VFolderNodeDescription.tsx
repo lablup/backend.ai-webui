@@ -14,10 +14,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -26,6 +23,7 @@ import {
   BAIUserUnionIcon,
   toLocalId,
   BAIFlex,
+  BAIMetadataList,
   useErrorMessageResolver,
   badgeVariantForStatus,
   BAIText,
@@ -273,13 +271,13 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   // `styles.content` word-break override goes with them: MetadataList wraps
   // long values itself.
   return (
-    <MetadataList columns="single">
+    <BAIMetadataList columns="single">
       {items.map((item) => (
         <MetadataListItem key={item.key} label={item.label as string}>
           {item.children}
         </MetadataListItem>
       ))}
-    </MetadataList>
+    </BAIMetadataList>
   );
 };
 

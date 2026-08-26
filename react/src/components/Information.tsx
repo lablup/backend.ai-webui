@@ -6,16 +6,12 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DescriptionLabel from './DescriptionLabel';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Card } from '@astryxdesign/core/Card';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Icon } from '@astryxdesign/core/Icon';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Overlay } from '@astryxdesign/core/Overlay';
 import { Spinner } from '@astryxdesign/core/Spinner';
-import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
+import { BAICard, BAIDoubleTag, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
 import { Check, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,8 +53,8 @@ const Information: React.FC<InformationProps> = () => {
           column flow is adopted everywhere in this area instead (same
           decision as tickets 16/18: "drop the column map"). */}
       <Grid columns={{ minWidth: 360, max: 2 }} gap={4}>
-        <Card>
-          <MetadataList title={t('information.Core')}>
+        <BAICard>
+          <BAIMetadataList title={t('information.Core')}>
             <MetadataListItem label={t('information.ManagerVersion')}>
               <BAIFlex direction="column" gap="xxs" align="start">
                 Backend.AI {baiClient.managerVersion}
@@ -73,10 +69,10 @@ const Information: React.FC<InformationProps> = () => {
             <MetadataListItem label={t('information.APIVersion')}>
               {baiClient.apiVersion}
             </MetadataListItem>
-          </MetadataList>
-        </Card>
-        <Card>
-          <MetadataList title={t('information.Security')}>
+          </BAIMetadataList>
+        </BAICard>
+        <BAICard>
+          <BAIMetadataList title={t('information.Security')}>
             <MetadataListItem
               label={t('information.DefaultAdministratorAccountChanged')}
               icon={
@@ -116,12 +112,12 @@ const Information: React.FC<InformationProps> = () => {
                 />
               )}
             </MetadataListItem>
-          </MetadataList>
-        </Card>
+          </BAIMetadataList>
+        </BAICard>
       </Grid>
 
-      <Card>
-        <MetadataList title={t('information.Component')}>
+      <BAICard>
+        <BAIMetadataList title={t('information.Component')}>
           <MetadataListItem
             label={t('information.DockerVersion')}
             icon={
@@ -159,15 +155,15 @@ const Information: React.FC<InformationProps> = () => {
           >
             <Badge label={t('information.Compatible')} variant="neutral" />
           </MetadataListItem>
-        </MetadataList>
-      </Card>
-      <Card>
+        </BAIMetadataList>
+      </BAICard>
+      <BAICard>
         <Overlay
           isOpen={isLoadingLicenseInfo}
           scrim="light"
           content={<Spinner label={t('general.Loading')} />}
         >
-          <MetadataList title={t('information.License')}>
+          <BAIMetadataList title={t('information.License')}>
             <MetadataListItem
               label={t('information.IsLicenseValid')}
               icon={
@@ -230,9 +226,9 @@ const Information: React.FC<InformationProps> = () => {
             >
               <Badge label={licenseInfo.expiration} variant="neutral" />
             </MetadataListItem>
-          </MetadataList>
+          </BAIMetadataList>
         </Overlay>
-      </Card>
+      </BAICard>
     </BAIFlex>
   );
 };

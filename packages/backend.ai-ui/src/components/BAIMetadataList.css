@@ -2,76 +2,66 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIMetadataList` bordered variant (to-astryx approved-2).
+ `BAIMetadataList` paint: a lightened item label (always), plus the `bordered`
+ variant — outer frame + a 1px rule between items, on the list's own layout
+ (no forced side labels, no label-column fill).
 
- ## Why this is CSS and not a theme variant
+ ## Why CSS, not a theme variant
 
- Same three routes as `BAITabList.css`, same answer (`astryx docs styling`,
- `astryx docs theme`):
-
-  1. `xstyle` — StyleX. Not available: this repo has no StyleX compiler
-     (CLAUDE.md: "No StyleX/Tailwind compiler here — don't use xstyle").
-     `MetadataList` does expose `xstyle`, but it lands on the ROOT `<div>`
-     only; every declaration below targets the inner `<dl>` / `<dt>` / `<dd>`,
-     which the component owns and exposes no slot for.
-  2. `defineTheme({ components })` — the systematic route, and the right one
-     for a NEW DEFAULT. It cannot express this, for the same two reasons as
-     the card tab strip: (a) a custom variant key (`'variant:bordered'`) only
-     renders if the component REFLECTS that prop, and `MetadataList` reflects
-     `columns` and `orientation` only (`themeProps('metadata-list', {columns,
-     orientation})` — see the theming table in
-     `astryx component MetadataList`); (b) `metadata-list-item.base` is flat
-     per-component, so it would repaint every metadata list in the app, and
-     the brief is explicitly the opposite — bordered is opt-in, the plain list
-     stays the default.
-  3. `className` + design tokens over the stable `.astryx-*` class surface —
-     "the preferred selector surface for new CSS" (`astryx docs styling`).
-     That is what this file uses. Every rule here is unlayered, so it wins
-     over Astryx's own atomic rules (all of `astryx.css` lives in
-     `@layer astryx-base`) without a specificity fight or `!important`.
-
- `astryx swizzle MetadataList` was rejected on the qa2-a precedent: it forks
- the component source (and with it the show-more/collapse machinery and the
- label-position context) into the repo to change nothing but paint.
-
- ## Metrics — measured from antd (`antd/es/descriptions/style`, default tokens)
-
-   frame          1px solid colorSplit              -> `--border-width` / `--color-border`
-   frame radius   borderRadiusLG        = 8px       -> `--radius-element` (8px, exact)
-   row rule       1px solid colorSplit              -> ditto
-   column rule    1px solid colorSplit (the label's
-                  `border-inline-end`)              -> ditto
-   cell padding   padding / paddingLG   = 16px 24px -> `--spacing-4` `--spacing-6`
-     size=middle  paddingSM / paddingLG = 12px 24px -> `--spacing-3` `--spacing-6`
-     size=small   paddingXS / padding   =  8px 16px -> `--spacing-2` `--spacing-4`
-   label bg       labelBg = colorFillAlter          -> `--color-background-muted`
-   label color    colorTextSecondary                -> `--color-text-secondary`
-                  (already Astryx's `dt` colour — nothing to restate)
-
- Every metric is exact; nothing was rounded to reach a token.
+ `defineTheme({ components })` can't express it: a custom variant key only
+ renders if the component reflects that prop, and `MetadataList` reflects
+ `columns`/`orientation` only; `metadata-list-item.base` is flat per-component,
+ so it would repaint every list, but bordered is opt-in. So this uses
+ `className` + tokens over the stable `.astryx-*` surface (the preferred
+ surface for new CSS). The rules are unlayered, so they win over Astryx's
+ `@layer astryx-base` atomics without `!important`.
 
  ## How the rules are drawn
 
- antd painted a real `<table>`, so it could hang the row rule off
- `-row { border-bottom }` and null it on `:last-child`. Astryx's `<dl>` is a
- GRID, and its "last row" is not addressable: with `columns={2}` a row holds
- four cells, so no `:last-of-type` / `:nth-last-of-type()` formula removes the
- final row's rule without hard-coding the column count into the selector.
+ The `<dl>` is a GRID, and its last row is not addressable (with `columns={2}`
+ a row holds several cells, so no `:nth-last-of-type()` formula drops the final
+ row's rule without hard-coding the column count). So the frame and rules are
+ painted as the GRID GAP: the `<dl>` takes `--color-border` as its background
+ plus a 1px gap and 1px padding, and every direct grid child covers it with an
+ opaque fill. What shows through is exactly a 1px lattice plus a 1px frame, for
+ any column count and any number of rows. Two consequences, both accepted:
 
- So the rules are painted as the GRID GAP instead: the `<dl>` takes
- `--color-border` as its background plus a 1px gap and 1px padding, and the
- cells cover it with opaque fills. What shows through is exactly a 1px lattice
- plus a 1px frame — for any column count and any number of rows, with no
- last-row special case. Two consequences, both accepted:
+  - Cells need an OPAQUE fill (`--bai-metadata-list-cell-bg`, default
+    `--color-background-card`); override it when the list sits on a surface
+    that is not card-coloured.
+  - The frame is padding, not a `border`: `--color-border` is an alpha token,
+    so a border over the background would composite the colour twice and read
+    heavier than the interior rules.
 
-  - Cells need an OPAQUE fill where antd's content cells were transparent.
-    It is `--bai-metadata-list-cell-bg`, defaulting to
-    `--color-background-card`; override that variable when the list sits on a
-    surface that is not card-coloured.
-  - The frame is padding rather than a `border`. `--color-border` is an alpha
-    token, so a border stacked over the background would composite the colour
-    twice and read heavier than the interior rules.
+ The direct grid child differs by layout — the item wrapper `<div>` for stacked
+ labels (multi-column default), the `<dt>`/`<dd>` pair for side labels — so the
+ cell rule targets `> dl > *` rather than a specific tag.
+
+ Cell padding: `--spacing-4`/`--spacing-6` (16/24px), stepped down by `size`
+ to 12/24 (`middle`) and 8/16 (`small`).
 */
+
+/* Label tone. Astryx paints `dt` at `--color-text-secondary` (alpha .65), which
+   reads as heavy as the value next to it; the label is the quieter half of the
+   pair. Mixing that token to 70% lands on alpha .45 — antd's measured
+   `colorTextTertiary` (theme-shim `selfTokens`), which has no CSS-variable
+   counterpart in Astryx's text ramp (it goes secondary .65 -> disabled .25, and
+   `disabled` is the wrong meaning here). Override the variable to retune.
+   Applies with or without `bordered`. */
+.bai-metadata-list {
+  --bai-metadata-list-label-color: color-mix(
+    in srgb,
+    var(--color-text-secondary) 70%,
+    transparent
+  );
+}
+
+/* `dt` is a direct grid child for side labels and sits inside the item wrapper
+   for stacked ones, so both depths are matched. */
+.bai-metadata-list > dl > dt,
+.bai-metadata-list > dl > * > dt {
+  color: var(--bai-metadata-list-label-color);
+}
 
 .bai-metadata-list--bordered {
   --bai-metadata-list-cell-bg: var(--color-background-card);
@@ -105,23 +95,13 @@
   overflow: hidden;
 }
 
-.bai-metadata-list--bordered > dl > dt,
-.bai-metadata-list--bordered > dl > dd {
+/* Every direct grid child is a cell — the item wrapper for stacked labels, the
+   dt/dd pair for side labels — so target `> *`, not a specific tag. */
+.bai-metadata-list--bordered > dl > * {
   padding: var(--bai-metadata-list-cell-padding-block)
     var(--bai-metadata-list-cell-padding-inline);
   background-color: var(--bai-metadata-list-cell-bg);
   /* Astryx pins a 24px floor on the bare cells to keep rows even; a padded
      cell sets its own height and the floor only fights it. */
   min-height: 0;
-}
-
-/* The label fill (`--color-background-muted`, an alpha token, as antd's
-   `colorFillAlter` was) has to sit ON TOP of the opaque cell fill so it reads
-   the same over the frame as it would over the page. `background-image` paints
-   above `background-color`, which is exactly that stack. */
-.bai-metadata-list--bordered > dl > dt {
-  background-image: linear-gradient(
-    var(--color-background-muted),
-    var(--color-background-muted)
-  );
 }

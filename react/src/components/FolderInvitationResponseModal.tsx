@@ -19,12 +19,10 @@ import VFolderPermissionCell from './VFolderPermissionCell';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { List, ListItem } from '@astryxdesign/core/List';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack } from '@astryxdesign/core/Stack';
 import {
+  BAIMetadataList,
   BAIModal,
   type BAIModalProps,
   useErrorMessageResolver,
@@ -66,14 +64,14 @@ const FolderInvitationResponseModal: React.FC<
       label={item.vfolder_name ?? ''}
       startContent={<FolderIcon size="1em" />}
       description={
-        <MetadataList columns="single">
+        <BAIMetadataList columns="single">
           <MetadataListItem label={t('data.From')}>
             {item.inviter_user_email || item.inviter || '-'}
           </MetadataListItem>
           <MetadataListItem label={t('data.Permission')}>
             <VFolderPermissionCell permission={item.perm} />
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       }
       endContent={
         <HStack gap={2}>

@@ -20,10 +20,7 @@ import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -31,6 +28,7 @@ import {
   BAIUserUnionIcon,
   BAIFlex,
   BAILink,
+  BAIMetadataList,
   BAITable,
   useEventNotStable,
   useUpdatableState,
@@ -701,7 +699,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               `size` has no destination and is dropped). Each auto-mounted
               folder name was a colourless `<Tag>`, i.e. Astryx's default
               `neutral` Badge. */}
-          <MetadataList columns="single">
+          <BAIMetadataList columns="single">
             <MetadataListItem label={t('data.AutomountFolders')}>
               <BAIFlex gap="xxs" wrap="wrap">
                 {_.map(autoMountedFolderNames, (name) => {
@@ -709,7 +707,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 })}
               </BAIFlex>
             </MetadataListItem>
-          </MetadataList>
+          </BAIMetadataList>
         </>
       ) : null}
       <FolderCreateModalV2
