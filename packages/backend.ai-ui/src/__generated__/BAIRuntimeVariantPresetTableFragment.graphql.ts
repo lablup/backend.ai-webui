@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e27634d014bc8cef63c47e4213403530>>
+ * @generated SignedSource<<dc6fdc72d4f30986c4fa89e204bf8c49>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -31,6 +31,9 @@ export type BAIRuntimeVariantPresetTableFragment$data = ReadonlyArray<{
     readonly presetTarget: PresetTarget;
     readonly valueType: PresetValueType;
   };
+  readonly uiOption: {
+    readonly uiType: string;
+  } | null | undefined;
   readonly updatedAt: string | null | undefined;
   readonly " $fragmentType": "BAIRuntimeVariantPresetTableFragment";
 } | null | undefined>;
@@ -167,6 +170,24 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "UIOption",
+      "kind": "LinkedField",
+      "name": "uiOption",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "uiType",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
       "name": "createdAt",
       "storageKey": null
@@ -184,6 +205,6 @@ return {
 };
 })();
 
-(node as any).hash = "f5f9bb696ac9c8d5a172a91814ad6d75";
+(node as any).hash = "fc05bd03d297952139d05fd622d40768";
 
 export default node;

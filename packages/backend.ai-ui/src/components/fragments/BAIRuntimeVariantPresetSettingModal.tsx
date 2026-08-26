@@ -14,7 +14,6 @@ import {
   isValueTypeCompatibleWithUIType,
   READ_UI_TYPE_TO_FORM_UI_TYPE,
   toLocalId,
-  UI_TYPE_TO_ALLOWED_VALUE_TYPES,
   type RuntimeVariantPresetUIType as UIType,
   type RuntimeVariantPresetValueType as ValueType,
 } from '../../helper';
@@ -208,14 +207,19 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
     !!preset?.uiOption?.uiType &&
     !READ_UI_TYPE_TO_FORM_UI_TYPE[preset.uiOption.uiType];
 
-  // Constrains the value type below. `uiType` is seeded from the preset
-  // regardless of `isUIMetadataSupported`, so a manager too old to let the
-  // admin EDIT the control still constrains the value type against the
-  // control it already stores — otherwise this screen could author the
-  // mismatch it is meant to prevent. An unrecognised stored type constrains
-  // nothing: this build cannot know what it renders.
-  const isValueTypeAllowed = (value: ValueType) =>
-    isValueTypeCompatibleWithUIType(uiType, value);
+  // Mirrors `uiType` above, and for the same reason — the form store is not a
+  // safe read on the first render.
+  const [valueType, setValueType] = useState<ValueType | undefined>(
+    () => preset?.targetSpec?.valueType as ValueType | undefined,
+  );
+
+  // The value type constrains the CONTROL, not the other way round: the preset
+  // describes a runtime parameter that already exists, so its type is a given
+  // and the UI type is the provisional half of the pair.
+  // No value type yet (a fresh form before the required field is set) means
+  // nothing to constrain against, so every control stays offered.
+  const isUITypeAllowed = (value: UIType) =>
+    !valueType || isValueTypeCompatibleWithUIType(value, valueType);
 
   // One enumeration of each vocabulary, shared by the select below and the
   // mismatch banner. A parallel map of translation KEYS would both drift from
@@ -480,34 +484,35 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
         form={form}
         layout="vertical"
         onValuesChange={(changedValues) => {
+          // Clears every UI type's config. Switching the control must not leak
+          // stale values into the submitted `uiOption` (previously handled by
+          // `preserve={false}` on the Form, which turned out to
+          // garbage-collect the `choices` Form.List's per-row content — see
+          // the `uiType` state comment above), and dropping the control
+          // entirely leaves the same residue behind.
+          const clearedUIOptionConfig = {
+            sliderMin: undefined,
+            sliderMax: undefined,
+            sliderStep: undefined,
+            numberMin: undefined,
+            numberMax: undefined,
+            choices: undefined,
+            textPlaceholder: undefined,
+          };
           if ('uiType' in changedValues) {
-            const nextUIType: UIType | undefined = changedValues.uiType;
-            setUiType(nextUIType);
-            const nextAllowed = nextUIType
-              ? UI_TYPE_TO_ALLOWED_VALUE_TYPES[nextUIType]
-              : undefined;
-            const currentValueType: ValueType | undefined =
-              form.getFieldValue('valueType');
-            // Clear the other UI types' config so switching types doesn't
-            // leak stale values into the submitted `uiOption` (previously
-            // handled by `preserve={false}` on the Form, which turned out to
-            // garbage-collect the `choices` Form.List's per-row content —
-            // see the `uiType` state comment above).
+            setUiType(changedValues.uiType);
+            form.setFieldsValue(clearedUIOptionConfig);
+          }
+          if ('valueType' in changedValues) {
+            setValueType(changedValues.valueType);
+            // Unconditional, not just when the pair became incompatible: the
+            // control was chosen FOR the old value type, so once that changes
+            // the choice is stale even where it still happens to fit. Dropping
+            // it makes the admin re-pick against the type they now have.
+            setUiType(undefined);
             form.setFieldsValue({
-              // Drop a value type the new control cannot render rather than
-              // substituting one, so the admin re-picks deliberately.
-              ...(nextAllowed &&
-              currentValueType &&
-              !nextAllowed.includes(currentValueType)
-                ? { valueType: undefined }
-                : {}),
-              sliderMin: undefined,
-              sliderMax: undefined,
-              sliderStep: undefined,
-              numberMin: undefined,
-              numberMax: undefined,
-              choices: undefined,
-              textPlaceholder: undefined,
+              uiType: undefined,
+              ...clearedUIOptionConfig,
             });
           }
         }}
@@ -723,20 +728,9 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             ]}
           />
         </Form.Item>
-        {/* Above the value type on purpose: the control is the driver field
-            for everything that follows it — the value type here, and the
-            slider / number / choices / placeholder config further down. */}
-        {isUIMetadataSupported ? (
-          <Form.Item
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.UIType')}
-            name="uiType"
-            tooltip={t(
-              'comp:BAIRuntimeVariantPresetSettingModal.UITypeTooltip',
-            )}
-          >
-            <BAISelect allowClear options={uiTypeOptions} />
-          </Form.Item>
-        ) : null}
+        {/* The preset describes a runtime parameter that already exists, so
+            its value type is a fact about that parameter — declared freely
+            here, and it is the UI type below that has to accommodate it. */}
         <Form.Item
           label={t('comp:BAIRuntimeVariantPresetSettingModal.ValueType')}
           name="valueType"
@@ -747,62 +741,44 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeRequired',
               ),
             },
-            {
-              // Disabling the options stops a NEW mismatch being picked; this
-              // catches one already stored (authored by an older build, the
-              // CLI, or the API), which arrives selected and would otherwise
-              // be saved straight back.
-              validator: async (_rule, value?: ValueType) => {
-                if (value && !isValueTypeAllowed(value)) {
-                  throw new Error(
-                    t(
-                      'comp:BAIRuntimeVariantPresetSettingModal.ValueTypeIncompatibleWithUIType',
-                    ),
-                  );
-                }
-              },
-            },
           ]}
         >
-          <BAISelect
-            options={valueTypeOptions.map((option) => ({
-              ...option,
-              disabled: !isValueTypeAllowed(option.value),
-            }))}
-          />
-        </Form.Item>
-        <Form.Item
-          label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
-          name="key"
-          rules={[
-            {
-              required: true,
-              message: t(
-                'comp:BAIRuntimeVariantPresetSettingModal.KeyRequired',
-              ),
-            },
-          ]}
-        >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
-            placeholder={t(
-              'comp:BAIRuntimeVariantPresetSettingModal.KeyPlaceholder',
-            )}
-          />
-        </Form.Item>
-        <Form.Item
-          label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
-          name="defaultValue"
-        >
-          <AstryxFormTextInput
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
-            placeholder={t(
-              'comp:BAIRuntimeVariantPresetSettingModal.DefaultValuePlaceholder',
-            )}
-          />
+          <BAISelect options={valueTypeOptions} />
         </Form.Item>
         {isUIMetadataSupported ? (
           <>
+            <Form.Item
+              label={t('comp:BAIRuntimeVariantPresetSettingModal.UIType')}
+              name="uiType"
+              tooltip={t(
+                'comp:BAIRuntimeVariantPresetSettingModal.UITypeTooltip',
+              )}
+              rules={[
+                {
+                  // Disabling the options stops a NEW mismatch being picked;
+                  // this catches one already stored (authored by an older
+                  // build, the CLI, or the API), which arrives selected and
+                  // would otherwise be saved straight back.
+                  validator: async (_rule, value?: UIType) => {
+                    if (value && !isUITypeAllowed(value)) {
+                      throw new Error(
+                        t(
+                          'comp:BAIRuntimeVariantPresetSettingModal.UITypeIncompatibleWithValueType',
+                        ),
+                      );
+                    }
+                  },
+                },
+              ]}
+            >
+              <BAISelect
+                allowClear
+                options={uiTypeOptions.map((option) => ({
+                  ...option,
+                  disabled: !isUITypeAllowed(option.value),
+                }))}
+              />
+            </Form.Item>
             {uiType === 'SLIDER' ? (
               <BAIFlex
                 gap="sm"
@@ -1093,6 +1069,36 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
             ) : null}
           </>
         ) : null}
+        <Form.Item
+          label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
+          name="key"
+          rules={[
+            {
+              required: true,
+              message: t(
+                'comp:BAIRuntimeVariantPresetSettingModal.KeyRequired',
+              ),
+            },
+          ]}
+        >
+          <AstryxFormTextInput
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.Key')}
+            placeholder={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.KeyPlaceholder',
+            )}
+          />
+        </Form.Item>
+        <Form.Item
+          label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
+          name="defaultValue"
+        >
+          <AstryxFormTextInput
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.DefaultValue')}
+            placeholder={t(
+              'comp:BAIRuntimeVariantPresetSettingModal.DefaultValuePlaceholder',
+            )}
+          />
+        </Form.Item>
         {isRequiredSupported ? (
           <Form.Item
             label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}

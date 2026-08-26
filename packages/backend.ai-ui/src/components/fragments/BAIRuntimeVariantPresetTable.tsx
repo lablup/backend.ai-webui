@@ -87,6 +87,9 @@ const BAIRuntimeVariantPresetTable = ({
           key
         }
         required @since(version: "26.4.4")
+        uiOption {
+          uiType
+        }
         createdAt
         updatedAt
       }
@@ -105,6 +108,17 @@ const BAIRuntimeVariantPresetTable = ({
     FLOAT: t('comp:BAIRuntimeVariantPresetTable.ValueTypeFloat'),
     BOOL: t('comp:BAIRuntimeVariantPresetTable.ValueTypeBool'),
     FLAG: t('comp:BAIRuntimeVariantPresetTable.ValueTypeFlag'),
+  };
+
+  // Keyed by the READ spelling (lowercase), which is what `uiOption.uiType`
+  // carries — it is an open `String!`, so a newer manager can serve a control
+  // this build has no label for.
+  const uiTypeLabels: Record<string, string> = {
+    slider: t('comp:BAIRuntimeVariantPresetTable.UITypeSlider'),
+    number_input: t('comp:BAIRuntimeVariantPresetTable.UITypeNumberInput'),
+    select: t('comp:BAIRuntimeVariantPresetTable.UITypeSelect'),
+    checkbox: t('comp:BAIRuntimeVariantPresetTable.UITypeCheckbox'),
+    text_input: t('comp:BAIRuntimeVariantPresetTable.UITypeTextInput'),
   };
 
   const baseColumns = _.map(
@@ -202,13 +216,20 @@ const BAIRuntimeVariantPresetTable = ({
               record.targetSpec.valueType)
             : '-',
       },
+      // Directly after the value type: the two describe one decision, and the
+      // pairing is only legible when they sit side by side.
       {
-        key: 'defaultValue',
-        title: t('comp:BAIRuntimeVariantPresetTable.DefaultValue'),
-        sorter: isEnableSorter('defaultValue'),
-        defaultHidden: true,
-        render: (__, record) => record.targetSpec?.defaultValue ?? '-',
+        key: 'uiType',
+        title: t('comp:BAIRuntimeVariantPresetTable.UIType'),
+        render: (__, record) => {
+          const stored = record.uiOption?.uiType;
+          // An unrecognised control shows verbatim rather than as '-', so a
+          // type this build predates is still visible to the admin.
+          return stored ? (uiTypeLabels[stored] ?? stored) : '-';
+        },
       },
+      // Key before its default value, matching the setting modal: the key
+      // names the parameter, the default is a property of it.
       {
         key: 'key',
         title: t('comp:BAIRuntimeVariantPresetTable.Key'),
@@ -221,6 +242,12 @@ const BAIRuntimeVariantPresetTable = ({
           ) : (
             '-'
           ),
+      },
+      {
+        key: 'defaultValue',
+        title: t('comp:BAIRuntimeVariantPresetTable.DefaultValue'),
+        sorter: isEnableSorter('defaultValue'),
+        render: (__, record) => record.targetSpec?.defaultValue ?? '-',
       },
       isRequiredSupported && {
         key: 'required',
