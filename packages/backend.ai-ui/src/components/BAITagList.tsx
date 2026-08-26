@@ -104,9 +104,11 @@ const BAITagList: React.FC<BAITagListProps> = ({
         content={restItemsList}
         // Read-only overflow list: with no focusable content, Popover's
         // autofocus lands on its own sr-only close button and `:focus-within`
-        // un-clips it into a visible pill (FR-3707).
+        // un-clips it into a visible pill (FR-3707). `role="none"` keeps the
+        // ARIA honest — focus never enters, so `aria-modal` would lie.
         hasCloseButton={false}
         hasAutoFocus={false}
+        role="none"
       >
         <Link>+{restCount}</Link>
       </Popover>

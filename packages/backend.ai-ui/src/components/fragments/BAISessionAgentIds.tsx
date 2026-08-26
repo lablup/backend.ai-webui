@@ -64,9 +64,6 @@ const BAISessionAgentIds: React.FC<BAISessionAgentIdsProps> = ({
           &nbsp;
           <Popover
             label={heading}
-            // Same sr-only-close-button leak as FR-3707: here it only surfaces
-            // once focus leaves the Copy-all button, so keep autofocus.
-            hasCloseButton={false}
             content={
               <div style={{ maxHeight: 240, overflow: 'auto', minWidth: 260 }}>
                 <BAIFlex justify="between" align="center">
