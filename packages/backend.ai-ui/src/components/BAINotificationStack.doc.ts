@@ -81,8 +81,8 @@ export const docs = {
     {
       label: 'The single host mount',
       code: `<BAINotificationStack
-  // newest last = newest nearest the corner
-  notifications={items.reverse()}
+  // newest last = newest nearest the corner; copy before reversing
+  notifications={[...items].reverse()}
   onClose={closeNotification}
 />`,
     },

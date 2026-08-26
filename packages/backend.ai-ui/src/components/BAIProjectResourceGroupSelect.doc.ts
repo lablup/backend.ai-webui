@@ -15,7 +15,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The picker for the resource group (scaling group) a session, deployment or folder operation should run in. It renders BAISelect and owns the option list itself: `useProjectResourceGroups(projectName)` fetches the groups the given project is allowed to use, and each one becomes a `{ value, label }` option whose row is rendered through BAITextHighlighter so the in-popup search term is highlighted. It also keeps the selection honest — a value that is not in the loaded list is reset to undefined, and every change is committed inside a transition, with the control disabled and an optimistic value shown while that transition is pending. It suspends while the groups load, so wrap it in a Suspense boundary. Everything not listed below is forwarded to BAISelect.',
+      'The picker for the resource group (scaling group) a session, deployment or folder operation should run in. It renders BAISelect and owns the option list itself: `useProjectResourceGroups(projectName)` fetches the groups the given project is allowed to use, and each one becomes a `{ value, label }` option whose row is rendered through BAITextHighlighter so the in-popup search term is highlighted. It also keeps the selection honest — once a NON-EMPTY list has loaded, a value absent from it is reset to undefined; an empty list is read as "not fetched yet" and leaves a pre-filled value alone, so a project with no allowed groups keeps showing one. Every change is committed inside a transition, with the control disabled and an optimistic value shown while that transition is pending. It suspends while the groups load, so wrap it in a Suspense boundary. Everything not listed below is forwarded to BAISelect.',
     bestPractices: [
       {
         guidance: true,
@@ -45,7 +45,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Assume a pre-filled value survives: once the list arrives, a value absent from it is cleared to undefined.',
+          'Assume a pre-filled value is always validated: it is cleared only once a non-empty group list has arrived, so it survives both loading and an empty allowed-group list.',
       },
     ],
   },

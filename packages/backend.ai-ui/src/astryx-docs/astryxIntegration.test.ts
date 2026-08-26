@@ -1,7 +1,7 @@
 import integration from '../../astryx.integration';
 import { parseDoc, parseReference } from '@astryxdesign/cli/authoring';
 import fg from 'fast-glob';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -148,8 +148,30 @@ describe.each(referenceDocs.map((file) => [stemOf(file), file]))(
   },
 );
 
-/** Component-ish names re-exported from one of the components barrels. */
-const barrelExports = (file: string): string[] => {
+const isFile = (path: string) => existsSync(path) && statSync(path).isFile();
+
+/** Resolve a barrel's relative specifier to the file it actually names. */
+const resolveModule = (spec: string, fromDir: string): string | null => {
+  const base = resolve(fromDir, spec);
+  return (
+    [base, `${base}.ts`, `${base}.tsx`, resolve(base, 'index.ts')].find(
+      isFile,
+    ) ?? null
+  );
+};
+
+/**
+ * Every component-ish name the components barrel makes public, following
+ * `export * from './fragments'` and friends. Stopping at the top-level file
+ * would miss the whole fragments/provider layer and let the coverage
+ * assertion pass over a catalog with a hole in it.
+ */
+const publicComponentNames = (
+  file: string,
+  seen = new Set<string>(),
+): string[] => {
+  if (seen.has(file) || !existsSync(file)) return [];
+  seen.add(file);
   const source = readFileSync(file, 'utf-8');
   const names: string[] = [];
   for (const match of source.matchAll(/export\s*\{([^}]*)\}\s*from/g)) {
@@ -158,11 +180,24 @@ const barrelExports = (file: string): string[] => {
       if (!entry || entry.startsWith('type ')) continue;
       const name = /^(?:default as\s+)?([A-Za-z_]\w*)/.exec(entry)?.[1];
       // Components are PascalCase. `use*` hooks and SCREAMING_CASE constants
-      // are neither components nor candidates for a component catalog.
-      if (name && /^[A-Z]/.test(name) && name !== name.toUpperCase()) {
+      // are neither components nor candidates for a component catalog, and
+      // neither are React contexts or the GraphQL operation nodes a component
+      // exports beside itself.
+      if (
+        name &&
+        /^[A-Z]/.test(name) &&
+        name !== name.toUpperCase() &&
+        !/(Context|Query|Mutation|Subscription|Fragment)$/.test(name)
+      ) {
         names.push(name);
       }
     }
+  }
+  for (const match of source.matchAll(
+    /export\s*\*\s*from\s*['"]([^'"]+)['"]/g,
+  )) {
+    const target = resolveModule(match[1], dirname(file));
+    if (target) names.push(...publicComponentNames(target, seen));
   }
   return names;
 };
@@ -174,10 +209,9 @@ describe('catalog coverage', () => {
     // documented yet", and that is the answer that pushes new code onto the
     // primitive instead of the wrapper. A component that should not appear in
     // human-facing listings still gets a doc — one with `hidden: true`.
-    const exported = new Set([
-      ...barrelExports(resolve(componentsRoot, 'index.ts')),
-      ...barrelExports(resolve(componentsRoot, 'Table/index.ts')),
-    ]);
+    const exported = new Set(
+      publicComponentNames(resolve(componentsRoot, 'index.ts')),
+    );
 
     const documented = new Set<string>();
     for (const file of componentDocs) {

@@ -70,7 +70,7 @@ export const docs = {
       name: 'triggerKey',
       type: 'string',
       description:
-        'Recomputes the value immediately whenever this string changes, in addition to the regular ticks.',
+        'Recomputes the value immediately when this string changes to a TRUTHY value, in addition to the regular ticks. Changing it to an empty string records the new key but skips the recomputation, so it is not a way to force a refresh.',
     },
   ],
   examples: [
