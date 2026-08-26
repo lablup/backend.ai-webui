@@ -10,6 +10,7 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { App } from '../app-shim';
 import { localeCompare } from '../helper';
+import { reasonMessage } from '../helper/mutationError';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -46,9 +47,10 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const [editingResourcePreset, setEditingResourcePreset] =
     useState<ResourcePresetSettingModalFragment$key | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [deletingPreset, setDeletingPreset] = useState<ResourcePreset | null>(
-    null,
-  );
+  const [deletingPreset, setDeletingPreset] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const { resource_presets } = useLazyLoadQuery<ResourcePresetListQuery>(
     graphql`
@@ -72,6 +74,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       fetchKey: resourcePresetsFetchKey,
     },
   );
+  const presets = filterOutNullAndUndefined(resource_presets);
 
   const [commitDelete, isDeleteInFlight] =
     useMutation<ResourcePresetListDeleteMutation>(graphql`
@@ -109,7 +112,9 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
-                setDeletingPreset(record ?? null);
+                if (record?.id && record.name) {
+                  setDeletingPreset({ id: record.id, name: record.name });
+                }
               },
             },
           ]}
@@ -154,6 +159,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     },
   ];
 
+  const deletingPresetName = deletingPreset?.name ?? '';
+
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" gap={'xs'} justify="end" wrap="wrap">
@@ -184,31 +191,22 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
-        rowKey="id"
-        dataSource={filterOutNullAndUndefined(resource_presets)}
-        columns={columns}
-      />
+      <BAITable rowKey="id" dataSource={presets} columns={columns} />
       <BAIDeleteConfirmModal
         open={!!deletingPreset}
         title={t('resourcePreset.DeleteResourcePreset')}
         target={t('resourcePreset.ResourcePreset')}
         items={
           deletingPreset
-            ? [
-                {
-                  key: deletingPreset.id ?? '',
-                  label: deletingPreset.name,
-                },
-              ]
+            ? [{ key: deletingPreset.id, label: deletingPreset.name }]
             : []
         }
-        confirmText={deletingPreset?.name ?? ''}
+        confirmText={deletingPresetName}
         requireConfirmInput
-        inputProps={{ placeholder: deletingPreset?.name ?? '' }}
+        inputProps={{ placeholder: deletingPresetName }}
         okButtonProps={{ loading: isDeleteInFlight }}
         onOk={() => {
-          if (!deletingPreset?.id) {
+          if (!deletingPreset) {
             return;
           }
           commitDelete({
@@ -216,9 +214,8 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
             onCompleted: (res, errors) => {
               if (!res?.delete_resource_preset?.ok) {
                 message.error(res?.delete_resource_preset?.msg);
-              } else if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (err) => err?.message);
-                _.forEach(errorMsgList, (err) => message.error(err));
+              } else if (errors && errors.length > 0) {
+                message.error(reasonMessage(errors));
               } else {
                 message.success(t('resourcePreset.Deleted'));
                 startRefetchTransition(() => {
@@ -248,9 +245,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
               });
             }
           }}
-          existingResourcePresetNames={
-            _.map(resource_presets, (preset) => preset?.name) as Array<string>
-          }
+          existingResourcePresetNames={_.compact(_.map(presets, 'name'))}
         />
       </Suspense>
     </BAIFlex>

@@ -2,18 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  CreateResourcePresetInput,
-  ResourcePresetSettingModalCreateMutation,
-} from '../__generated__/ResourcePresetSettingModalCreateMutation.graphql';
+import { ResourcePresetSettingModalCreateMutation } from '../__generated__/ResourcePresetSettingModalCreateMutation.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
-import {
-  ModifyResourcePresetInput,
-  ResourcePresetSettingModalModifyMutation,
-} from '../__generated__/ResourcePresetSettingModalModifyMutation.graphql';
+import { ResourcePresetSettingModalModifyMutation } from '../__generated__/ResourcePresetSettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
+import { reasonMessage } from '../helper/mutationError';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -33,6 +28,7 @@ import React, { Fragment, Suspense, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
+import { type PayloadError } from 'relay-runtime';
 
 /**
  * Resource groups a preset may be bound to, listed at ADMIN scope — no project
@@ -66,6 +62,7 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   onRequestClose,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
@@ -112,6 +109,26 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
       }
     `);
 
+  const handleMutationResult = (
+    result: { ok?: boolean | null; msg?: string | null } | null | undefined,
+    errors: PayloadError[] | null,
+    successMessage: string,
+  ) => {
+    if (!result?.ok) {
+      message.error(result?.msg);
+      onRequestClose(false);
+    } else if (errors && errors.length > 0) {
+      message.error(reasonMessage(errors));
+      onRequestClose(false);
+    } else {
+      message.success(successMessage);
+      onRequestClose(true);
+    }
+  };
+  const handleMutationError = (err: Error) => {
+    message.error(err?.message);
+  };
+
   const handleOk = () => {
     return formRef.current
       ?.validateFields()
@@ -128,62 +145,34 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
 
         resourceSlots = _.pickBy(resourceSlots, _.negate(_.isNil));
 
-        const props: CreateResourcePresetInput | ModifyResourcePresetInput = {
+        const props = {
           resource_slots: JSON.stringify(resourceSlots || {}),
           shared_memory: values?.shared_memory
             ? convertToBinaryUnit(values?.shared_memory, '', 0)?.numberFixed
             : null,
+          scaling_group_name: values?.scaling_group_name || null,
         };
-        props.scaling_group_name = values?.scaling_group_name || null;
-        if (!resourcePreset?.id) {
-          commitCreateResourcePreset({
-            variables: {
-              name: values?.name,
-              props: props as CreateResourcePresetInput,
-            },
-            onCompleted: (res, errors) => {
-              if (!res?.create_resource_preset?.ok) {
-                message.error(res?.create_resource_preset?.msg);
-                onRequestClose(false);
-              } else if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (err) => err.message);
-                _.forEach(errorMsgList, (err) => {
-                  message.error(err);
-                });
-                onRequestClose(false);
-              } else {
-                message.success(t('resourcePreset.Created'));
-                onRequestClose(true);
-              }
-            },
-            onError(err) {
-              message.error(err?.message);
-            },
+        if (resourcePreset?.id) {
+          commitModifyResourcePreset({
+            variables: { id: resourcePreset.id, props },
+            onCompleted: (res, errors) =>
+              handleMutationResult(
+                res?.modify_resource_preset,
+                errors,
+                t('resourcePreset.Updated'),
+              ),
+            onError: handleMutationError,
           });
         } else {
-          commitModifyResourcePreset({
-            variables: {
-              id: resourcePreset.id,
-              props: props as ModifyResourcePresetInput,
-            },
-            onCompleted: (res, errors) => {
-              if (!res?.modify_resource_preset?.ok) {
-                message.error(res?.modify_resource_preset?.msg);
-                onRequestClose(false);
-              } else if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (err) => err?.message);
-                _.forEach(errorMsgList, (err) => {
-                  message.error(err);
-                });
-                onRequestClose(false);
-              } else {
-                message.success(t('resourcePreset.Updated'));
-                onRequestClose(true);
-              }
-            },
-            onError(err) {
-              message.error(err?.message);
-            },
+          commitCreateResourcePreset({
+            variables: { name: values?.name, props },
+            onCompleted: (res, errors) =>
+              handleMutationResult(
+                res?.create_resource_preset,
+                errors,
+                t('resourcePreset.Created'),
+              ),
+            onError: handleMutationError,
           });
         }
       })
