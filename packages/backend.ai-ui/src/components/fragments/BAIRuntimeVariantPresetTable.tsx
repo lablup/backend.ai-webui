@@ -128,35 +128,6 @@ const BAIRuntimeVariantPresetTable = ({
         defaultHidden: true,
         render: (desc: string | null) => desc || '-',
       },
-      isRuntimeVariantFieldSupported && {
-        key: 'runtimeVariant',
-        title: t('comp:BAIRuntimeVariantPresetTable.RuntimeVariant'),
-        onCell: () => ({ style: { maxWidth: 280 } }),
-        render: (__, record) => {
-          const name = record.runtimeVariant?.name;
-          // Nothing to qualify without a name, so the id stands alone rather
-          // than trailing an empty pair of parentheses.
-          return name ? (
-            <>
-              <BAIText ellipsis={{ tooltip: name }} style={{ maxWidth: 160 }}>
-                {name}
-              </BAIText>
-              &nbsp;
-              <BAIText type="secondary">
-                (
-                <BAIId
-                  uuid={record.runtimeVariantId}
-                  copyable
-                  type="secondary"
-                />
-                )
-              </BAIText>
-            </>
-          ) : (
-            <BAIId uuid={record.runtimeVariantId} copyable />
-          );
-        },
-      },
       // Read-only, so no capability gate: `category` / `displayName` ship with
       // the type since 26.4.2. Only WRITING them needs 26.9.0.
       {
@@ -172,16 +143,35 @@ const BAIRuntimeVariantPresetTable = ({
         render: (__, record) => record.displayName ?? '-',
       },
       {
+        // One column either way, so the id keeps its sorter: the nested field
+        // only decides whether the id can be qualified by a name.
         key: 'runtimeVariantId',
-        title: t('comp:BAIRuntimeVariantPresetTable.RuntimeVariantId'),
+        title: isRuntimeVariantFieldSupported
+          ? t('comp:BAIRuntimeVariantPresetTable.RuntimeVariantWithID')
+          : t('comp:BAIRuntimeVariantPresetTable.RuntimeVariantId'),
         dataIndex: 'runtimeVariantId',
         sorter: isEnableSorter('runtimeVariantId'),
-        // The Runtime Variant column already carries this id next to the name
-        // once the nested field is available. Hidden rather than dropped, so
-        // sorting by id stays reachable from the column picker.
-        defaultHidden: isRuntimeVariantFieldSupported,
-        onCell: () => ({ style: { maxWidth: 120 } }),
-        render: (runtimeVariantId: string) => <BAIId uuid={runtimeVariantId} />,
+        onCell: () => ({
+          style: { maxWidth: isRuntimeVariantFieldSupported ? 280 : 120 },
+        }),
+        render: (runtimeVariantId: string, record) => {
+          const name = record.runtimeVariant?.name;
+          // Nothing to qualify without a name, so the id stands alone rather
+          // than trailing an empty pair of parentheses.
+          return name ? (
+            <>
+              <BAIText ellipsis={{ tooltip: name }} style={{ maxWidth: 160 }}>
+                {name}
+              </BAIText>
+              &nbsp;
+              <BAIText type="secondary">
+                (<BAIId uuid={runtimeVariantId} copyable type="secondary" />)
+              </BAIText>
+            </>
+          ) : (
+            <BAIId uuid={runtimeVariantId} copyable />
+          );
+        },
       },
       {
         key: 'presetTarget',
