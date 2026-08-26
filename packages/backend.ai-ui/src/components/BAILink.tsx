@@ -63,8 +63,15 @@ const BAILink: React.FC<BAILinkProps> = ({
   // `BAIText` goes INSIDE the link rather than around it. That keeps both
   // documented forms working: `ellipsis` shows the text itself, and
   // `ellipsis={{ tooltip: 'custom' }}` measures the box it is anchored to.
+  // `inheritColor` because Astryx `Text` always paints a colour on its own
+  // element (`color ?? 'primary'`), and the link's colour only ever reached the
+  // text by inheritance — so without it this wrapper repaints the link body
+  // text (FR-3692).
   const content = ellipsis ? (
-    <BAIText ellipsis={ellipsis === true ? { tooltip: true } : ellipsis}>
+    <BAIText
+      inheritColor
+      ellipsis={ellipsis === true ? { tooltip: true } : ellipsis}
+    >
       {children}
     </BAIText>
   ) : (
@@ -109,6 +116,11 @@ const BAILink: React.FC<BAILinkProps> = ({
   return (
     <AstryxLink
       {...restProps}
+      // Astryx `Link` defaults `color="accent"` and puts it on an internal
+      // `Text`, which sits between this root and its children — so the root's
+      // own colour (`.bai-link-*`, or a caller's inline `style.color`) never
+      // reached the text. `inherit` makes the root the single source (FR-3692).
+      color="inherit"
       className={linkClassName(className)}
       style={style}
       target={target}
