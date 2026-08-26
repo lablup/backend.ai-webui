@@ -183,6 +183,54 @@ describe('BAILink', () => {
       // The innermost one owns the text, so it is the one that must inherit.
       expect(texts[texts.length - 1]).toHaveAttribute('data-color', 'inherit');
     });
+
+    /*
+     * FR-3692. Astryx `Link` inserts a `Text color="accent"` of its own between
+     * the root and its children, so one inheriting box is not enough — EVERY
+     * `Text` in the chain has to defer, or the root's colour stops at the first
+     * one that names its own. This is the `EditableFileName` case: a caller
+     * tints the link root and expects the text to follow.
+     */
+    it.each([
+      ['ellipsized', true],
+      ['plain', false],
+    ])(
+      'defers the whole Text chain to the link root — %s',
+      (_label, ellipsis) => {
+        render(
+          <BAILink
+            ellipsis={ellipsis}
+            style={{ color: 'rgb(0, 128, 0)' }}
+            data-testid="link"
+          >
+            Renaming…
+          </BAILink>,
+        );
+        const texts = screen
+          .getByTestId('link')
+          .querySelectorAll('.astryx-text');
+        expect(texts.length).toBeGreaterThan(0);
+        texts.forEach((text) =>
+          expect(text).toHaveAttribute('data-color', 'inherit'),
+        );
+      },
+    );
+
+    // Consequence of the same change: a disabled link's text now follows
+    // `.bai-link-disabled` on the root instead of Astryx `Link`'s `accent`
+    // default, which it was rendering (at 50% opacity) before.
+    it('defers to the root for a disabled link too', () => {
+      render(
+        <BAILink type="disabled" data-testid="link">
+          Disabled
+        </BAILink>,
+      );
+      const texts = screen.getByTestId('link').querySelectorAll('.astryx-text');
+      expect(texts.length).toBeGreaterThan(0);
+      texts.forEach((text) =>
+        expect(text).toHaveAttribute('data-color', 'inherit'),
+      );
+    });
   });
 
   describe('onClick Handler', () => {

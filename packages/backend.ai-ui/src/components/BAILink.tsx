@@ -116,6 +116,11 @@ const BAILink: React.FC<BAILinkProps> = ({
   return (
     <AstryxLink
       {...restProps}
+      // Astryx `Link` defaults `color="accent"` and puts it on an internal
+      // `Text`, which sits between this root and its children — so the root's
+      // own colour (`.bai-link-*`, or a caller's inline `style.color`) never
+      // reached the text. `inherit` makes the root the single source (FR-3692).
+      color="inherit"
       className={linkClassName(className)}
       style={style}
       target={target}
