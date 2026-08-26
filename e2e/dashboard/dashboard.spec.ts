@@ -416,7 +416,7 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Verify the sessions table container is displayed
-        await expect(widget.locator('.ant-table')).toBeVisible();
+        await expect(widget.getByRole('table')).toBeVisible();
       });
 
       test('Admin can manually refresh the Recently Created Sessions widget', async ({

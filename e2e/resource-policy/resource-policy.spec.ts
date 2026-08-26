@@ -117,11 +117,14 @@ async function createProjectPolicy(page: Page, name: string) {
 async function deletePolicyAndVerify(page: Page, name: string) {
   const policyRow = page.getByRole('row').filter({ hasText: name });
   await expect(policyRow).toBeVisible();
-  await policyRow.getByRole('cell').first().hover();
-  await policyRow.getByRole('button', { name: 'delete' }).click();
+  // Same overflow-menu collapse as cleanupPolicy: BAINameActionCell hides the
+  // delete icon behind "More actions" at this column width.
+  await policyRow.getByRole('button', { name: 'More actions' }).click();
+  await page.getByRole('menuitem', { name: 'Delete' }).click();
 
-  // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
-  const confirmInput = page.locator('#confirmText');
+  // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to
+  // enable Delete. The input carries `name="confirmText"`, not an `id`.
+  const confirmInput = page.getByRole('dialog').getByRole('textbox');
   await expect(confirmInput).toBeVisible();
   await confirmInput.fill(name);
 

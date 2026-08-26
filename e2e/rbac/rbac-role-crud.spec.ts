@@ -1,7 +1,6 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 2.1 – 2.7 (Role CRUD lifecycle)
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import { getNotificationMessageBox } from '../utils/test-util-antd';
 import test, { expect, Page } from '@playwright/test';
 
 const TEST_RUN_ID = Date.now().toString(36);
@@ -183,11 +182,14 @@ test.describe.serial(
       // 12. Verify the modal closes
       await expect(modal).toBeHidden({ timeout: 10000 });
 
-      // 13. Verify a success notification "Role created successfully." appears
-      await expect(getNotificationMessageBox(page)).toHaveText(
-        /Role created successfully/i,
-        { timeout: 10000 },
-      );
+      // 13. Verify a success notification "Role created successfully." appears.
+      // RoleFormModal reports through the app-shim's `message.success`, which
+      // is backed by an Astryx toast (role="status"), not BAINotificationStack.
+      await expect(
+        page
+          .getByRole('status')
+          .filter({ hasText: /Role created successfully/i }),
+      ).toBeVisible({ timeout: 10000 });
 
       // 14. Creation is validated via the success notification.
       // Avoid asserting table row visibility here because the RBAC role list is paginated
