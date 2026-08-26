@@ -85,7 +85,7 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
       **Service Configuration**, **Health Check**, and **Pre-Start Actions** all sit on the **Basic Info** step, below the runtime fields, and are saved independently of the model definition.
       :::
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
-   - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
+   - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size. New presets default to **Single Node**. Selecting **Multi Node** shows the warning *"If multi-node is not configured on the cluster, sessions created from this preset will fail to start."* — the warning does not block saving, so choose Multi Node only when your cluster is set up for it.
    - **Execution**: **Startup Command**, environment variables, and bootstrap script. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
 
       :::note[Startup Command is not the Command]
@@ -113,7 +113,7 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
 3. On the **Review** step, check the summary and click `Create` to save. A success notification confirms the preset has been created.
 
 :::tip
-If a required field is missing or invalid, the submit button on the Review step stays disabled until the error is resolved, and the card that contains the offending field is outlined in red. Required fields show inline validation messages as you type.
+If a required field is missing or invalid, the submit button on the Review step stays disabled until the error is resolved. The Review card that contains the offending field is outlined in red with an error icon next to its **Edit** link, and the step it belongs to is marked as failed in the step list on the right — so you can see which step to go back to even for a field on a step you have not visited. Required fields show inline validation messages as you type.
 :::
 
 <a id="preset-review-step"></a>
@@ -164,6 +164,67 @@ Editing a preset only changes the defaults for **future** deployments. Existing 
 
 :::danger
 Deleting a deployment preset is **irreversible**. The preset itself is removed, but deployments that were already created from it continue to run unaffected. Future deployments can no longer reference this preset.
+:::
+
+<a id="runtime-variant-presets"></a>
+
+## Runtime variant presets
+
+The **Runtime Variant Presets** tab on the Admin Deployments page (`/admin/deployments`) defines the individual parameters that a runtime variant exposes. Each entry describes one parameter — the key it is passed to the container as, its value type, its default, and how it is rendered — and together they make up the **Runtime Parameters** tabs that users fill in when they add a deployment revision (see [Runtime parameters](#runtime-parameters) on the Deployments page).
+
+![](../images/runtime_variant_preset_list.png)
+
+Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refresh button, and the **Create Preset** button. The following columns are shown by default:
+
+- **Name**: The parameter preset's name. This column also carries the per-row edit and delete buttons.
+- **Runtime Variant** and **Runtime Variant ID**: The runtime the parameter belongs to.
+- **Preset Target**: How the value reaches the container — **Environment Variable** or **Command-line Argument**.
+- **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**.
+- **Key**: The environment variable name or command-line argument the value is passed as (copyable).
+- **Required**: Whether the parameter must be supplied when a revision is built from this runtime.
+- **Rank**: Display ordering among presets of the same runtime variant. Lower values are shown first.
+- **Created At**: When the preset was created.
+
+**Description**, **Category**, **Display Name**, **Default Value**, and **Modified At** are hidden by default and can be shown with the column visibility gear button (⚙) at the right of the table header.
+
+:::note
+The **Runtime Variant**, **Display Name**, and **Category** columns — and the UI metadata fields described below — are only available on servers that support runtime variant preset UI metadata. On an older server they do not appear at all.
+:::
+
+### Create or edit a runtime variant preset
+
+Click **Create Preset** above the table to open the **Create Preset** modal, or the edit button on a row to open **Edit Preset** with the current values pre-filled. The runtime variant of an existing preset cannot be changed.
+
+<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. The capture environment ran manager 26.8.0rc1, which does not serve the runtime-variant-preset UI metadata fields. -->
+
+The modal contains the following fields, in the order they appear:
+
+- **Runtime Variant**: The runtime this parameter belongs to. Required.
+- **Name**: A readable name for the parameter, for example `Tensor Parallel Size`. Required.
+- **Description**: What the parameter controls and how it affects inference behavior. Shown as the field's tooltip in the deployment form.
+- **Category**: The UI category used to organize related parameters together. Categories become the tabs of the **Runtime Parameters** section, so parameters sharing a category are shown on the same tab. The field is free text; categories already in use are listed in its placeholder as a hint.
+- **Display Name**: The human-readable label shown in place of the parameter name in the deployment form.
+- **Preset Target**: **Environment Variable** or **Command-line Argument**. Required.
+- **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**. Required.
+- **Key**: The environment variable name or command-line argument the value is passed as, for example `TENSOR_PARALLEL_SIZE`. Required.
+- **Default Value**: The value the runtime uses when the user leaves the parameter unchanged. It is shown as the field's placeholder in the deployment form rather than pre-filled, so a required parameter still asks for an explicit value.
+- **UI Type**: The control used to render this parameter in the deployment form. Leave it empty to render the parameter as a plain text input. Choosing a type reveals its own settings:
+   * **Text Input**: **Input Placeholder** — the hint text shown while the field is empty.
+   * **Number Input**: **Minimum** and **Maximum**. A value outside the range is reported as a validation error on the deployment form.
+   * **Checkbox**: No additional settings.
+   * **Select**: **Choices** — one **Value** / **Label** row per option. Click **Add Choice** to add a row and the trash button to remove one; at least one choice is required.
+   * **Slider**: **Minimum** and **Maximum** (both required, and the maximum must be greater than the minimum) and **Step**, the increment the slider moves by (defaults to `1`).
+- **Required**: Whether users must supply this parameter when they build a revision. Required parameters show a red asterisk (★) in the deployment form.
+- **Rank** *(edit only)*: Display ordering among presets of the same runtime variant. Lower values are shown first.
+
+Click `Create` (or `Save` when editing) to store the preset. A notification confirms that the runtime variant preset has been created or updated, and the list refreshes.
+
+### Delete a runtime variant preset
+
+Click the delete button on the preset row. A typed-confirmation dialog appears asking you to type the preset's name; the **Delete** button stays disabled until the typed value matches exactly.
+
+:::danger
+Deleting a runtime variant preset is **irreversible**. The parameter disappears from the **Runtime Parameters** section of every deployment form that uses this runtime variant.
 :::
 
 ## Using a preset when deploying a model

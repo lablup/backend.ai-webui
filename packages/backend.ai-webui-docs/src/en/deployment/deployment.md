@@ -80,8 +80,12 @@ When the deployment already has a current revision, a **Load current revision** 
 
 Quickly add a revision using a pre-defined deployment preset.
 
-- **Preset**: A deployment preset compatible with the deployment's resource group. Click the ⓘ button next to the selector to view the preset details.
-- **Model Folder**: The storage folder to mount on each replica.
+- **Model Source**: Where this revision's model comes from — **Model Folder** or **Model Card**. The selector below changes to match your choice, and switching the source clears the model and preset selections you already made.
+- **Model Folder** *(Model Folder source)*: The storage folder to mount on each replica.
+- **Model Card** *(Model Card source)*: The model card to deploy. Its backing model folder is mounted on each replica, and only presets compatible with that card are offered. Click the ⓘ button next to the selector to open the **Model Card Detail** drawer for the selected card.
+- **Preset**: A deployment preset compatible with the deployment's resource group. Click the ⓘ button next to the selector to view the preset details. With the **Model Card** source, the selector stays disabled with the hint *"Please select a model card first."* until you pick a card.
+
+If the model card you selected has no model folder to mount, the revision is not created and an error message appears: *"The selected model source has no model folder to mount. Choose a different model card or model folder."* Pick a different model card, or switch the source back to **Model Folder**.
 
 If no presets are available for the deployment's resource group, an informational message is shown. Switch to Advanced Mode to configure the revision manually.
 
@@ -151,6 +155,8 @@ The **Enable Health Check** and **Pre-Start Actions** fields follow the Service 
 
 The path to the model definition file itself lives in the **Advanced Settings** panel at the bottom of the form. For instructions on creating that file, refer to the [Creating a Model Definition File](#model-definition-guide) section.
 
+<a id="runtime-parameters"></a>
+
 #### Runtime parameters (vLLM / SGLang)
 
 When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears in place of the Service Configuration section. This section lets you configure the serving framework without editing configuration files manually.
@@ -210,7 +216,7 @@ The **Environments** section is present for all runtime variants.
 
 - **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list to images that are compatible with that runtime.
 - **Image Name (Manual)**: A free-text image reference, shown only when your administrator has enabled manual image names on the server. Typing here clears the **Environment / Version** selection, and vice versa — the two are alternative ways of choosing the same image.
-- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely. As you type a variable name, common environment variable names are suggested.
+- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely. As you type a variable name, the field suggests common environment variable names — `HF_TOKEN`, `WANDB_API_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` — alongside the ones the selected runtime variant defines. A name already used by another row is left out of the list. Once a known name is set, the value field shows a matching hint, for example *"Your Hugging Face access token"* for `HF_TOKEN`.
 
 ##### Entering an image name manually
 
@@ -520,9 +526,22 @@ The Service Info card's header exposes an **Edit** button alongside a **More** m
 
 #### Scheduling history
 
-Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. The modal lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
+Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. The modal opens full screen and lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
 
 ![](../images/deployment_scheduling_history.png)
+
+<a id="scheduling-history-substeps"></a>
+
+An event that recorded sub-steps has an expand arrow on the left of its row. Click it to reveal a compact inline table of that phase's sub-steps, one row per step, with the following columns:
+
+- **Step**: The name of the sub-step.
+- **Result**: The outcome of the sub-step, shown as a color-coded marker.
+- **Duration**: How long the sub-step took, for example `120 ms` or `1.35 s`.
+- **Time**: When the sub-step started, to the millisecond.
+- **Error Code**: The error code recorded for the sub-step, or `-` when there is none.
+- **Message**: Detail or error text for the sub-step, collapsed to a single line.
+
+The last row of a deployment phase's sub-step table is a tinted result marker that restates the phase's own outcome instead of work that was done; it has no duration and its message reads *"Result marker for this attempt"*. A row whose only sub-step is that marker cannot be expanded, because it would just repeat the row above it.
 
 The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table. See [Replicas](#replicas-tab-history).
 
@@ -631,7 +650,7 @@ Click the session name in the **Session** column to open the session detail draw
 
 <a id="replicas-tab-history"></a>
 
-Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
+Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria. The modal opens full screen and expands sub-steps into the same inline table described in [Scheduling history](#scheduling-history-substeps).
 
 ![](../images/replica_scheduling_history.png)
 
