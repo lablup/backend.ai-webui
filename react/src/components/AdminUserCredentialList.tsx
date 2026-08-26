@@ -364,6 +364,10 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
       <BAITable<Keypair>
         rowKey={'id'}
         loading={isPending}
+        // Without this the table never overflows (width-less columns fall to
+        // proportional(1)), so the pinned User ID column is unobservable.
+        // Restores what the antd file carried before the Astryx migration.
+        scroll={{ x: 'max-content' }}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
         rowSelection={{
           type: 'checkbox',
@@ -380,14 +384,6 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           },
         }}
         columns={filterOutEmpty([
-          {
-            key: 'accessKey',
-            title: t('credential.AccessKey'),
-            sorter: true,
-            render: (_value, record) => {
-              return <BAIText monospace>{record.access_key}</BAIText>;
-            },
-          },
           {
             key: 'userID',
             title: t('credential.UserID'),
@@ -543,6 +539,14 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                   actions={actions}
                 />
               );
+            },
+          },
+          {
+            key: 'accessKey',
+            title: t('credential.AccessKey'),
+            sorter: true,
+            render: (_value, record) => {
+              return <BAIText monospace>{record.access_key}</BAIText>;
             },
           },
           {
