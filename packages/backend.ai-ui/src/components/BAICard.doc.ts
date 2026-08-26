@@ -205,7 +205,7 @@ export const docs = {
     { key: 'logs', label: t('session.Logs') },
   ]}
 >
-  <Suspense fallback={<BAISkeleton active />}>
+  <Suspense fallback={<BAISkeleton />}>
     <TabContent tab={activeTab} />
   </Suspense>
 </BAICard>`,

@@ -76,12 +76,13 @@ export const docs = {
           name: 'onChange',
           type: '(value: any, option?: any) => void',
           description:
-            'Fired with the new selection and the matching option data. Also fired once on mount when autoSelectOption resolves a value.',
+            'Fired with the new selection. The second argument carries the matching option only in single mode — multiple and tags mode pass an array of original values and undefined. autoSelectOption also emits through it, from a layout effect keyed on the resolved value, so it fires again whenever that value changes rather than once on mount.',
         },
         {
           name: 'onSelect',
           type: '(value: any, option?: any) => void',
-          description: 'Fired when an option is picked, alongside onChange.',
+          description:
+            'Fired alongside onChange when an option is picked, in single mode only. Multiple and tags mode never call it, so a multi-select consumer must use onChange.',
         },
         {
           name: 'placeholder',
@@ -180,7 +181,7 @@ export const docs = {
           name: 'autoSelectOption',
           type: 'boolean | ((options: Array<OptionType> | undefined) => ValueType)',
           description:
-            'Selects an option when nothing is chosen — the first one, or the value the function returns — and reports it through onChange.',
+            'Selects an option when nothing is chosen — the first one, or the value the function returns — and reports it through onChange so the enclosing form actually receives it. The emission is a layout effect keyed on the resolved value, so it repeats whenever that value changes, not only on mount.',
         },
         {
           name: 'header',

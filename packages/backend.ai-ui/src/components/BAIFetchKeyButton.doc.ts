@@ -119,7 +119,7 @@ export const docs = {
       name: 'hidden',
       type: 'boolean',
       description:
-        'Renders nothing. Auto-refresh stops with it, since the whole component unmounts its timers.',
+        'Renders nothing. It does not stop refreshing: the early return sits below the interval hooks, so auto-refresh keeps calling onChange while hidden. Unmount the component, or clear autoUpdateDelay, to actually stop the requests.',
     },
     {
       name: 'size',

@@ -159,7 +159,7 @@ export const docs = {
         },
         {
           type: 'prose',
-          text: 'Doc files sit inside src/ on purpose: `tsc --noEmit` type-checks them against ComponentDoc, so a prop list that drifts from the component fails the same harness as the rest of the code. They are excluded from the published dist.',
+          text: 'Doc files sit inside src/ on purpose, so `tsc --noEmit` type-checks them. Be clear about what that buys: `satisfies ComponentDoc` validates the SHAPE of the doc — an unknown field, a category outside the union, a missing usage.description — and nothing more. Prop names and types are strings to the compiler, so it cannot see a doc that has drifted from its component. The name-level drift guard is a separate one, in astryxIntegration.test.ts: it fails when a doc names a prop the component source never mentions. A prop whose TYPE or DEFAULT went stale is caught by neither, and stays a review concern. They are excluded from the published dist.',
         },
         {
           type: 'prose',
