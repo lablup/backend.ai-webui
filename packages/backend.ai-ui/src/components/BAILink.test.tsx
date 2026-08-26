@@ -162,6 +162,27 @@ describe('BAILink', () => {
       expect(link).toHaveClass('bai-link-ellipsis');
       expect(link.querySelector('.astryx-text')).not.toBeNull();
     });
+
+    /*
+     * FR-3692. Astryx `Text` resolves `color ?? 'primary'` and paints it on its
+     * OWN element, so the truncating box FR-3686 moved inside the link would
+     * repaint the link body text unless it is told to inherit. jsdom computes
+     * no StyleX CSS, so this asserts the reflected `data-color` Astryx emits
+     * from the same resolved value.
+     */
+    it.each([
+      ['onClick (Astryx Link)', undefined],
+      ['to (router link)', '/test'],
+    ])('lets the link keep its own colour — %s', (_label, to) => {
+      renderWithRouter(
+        <BAILink to={to} ellipsis data-testid="link">
+          Some long name
+        </BAILink>,
+      );
+      const texts = screen.getByTestId('link').querySelectorAll('.astryx-text');
+      // The innermost one owns the text, so it is the one that must inherit.
+      expect(texts[texts.length - 1]).toHaveAttribute('data-color', 'inherit');
+    });
   });
 
   describe('onClick Handler', () => {

@@ -55,3 +55,36 @@ describe('BAIText copyable', () => {
     expect(writeText).toHaveBeenCalledWith('bare');
   });
 });
+
+// FR-3692 — Astryx `Text` defaults to `primary` and paints it on its OWN
+// element, so a `BAIText` nested in a coloured owner (a link) needs an opt-out.
+describe('BAIText inheritColor', () => {
+  const colorOf = (node: HTMLElement) =>
+    node.closest('.astryx-text')?.getAttribute('data-color');
+
+  it('defaults to Astryx primary', () => {
+    render(<BAIText>plain</BAIText>);
+    expect(colorOf(screen.getByText('plain'))).toBe('primary');
+  });
+
+  it('inherits the surrounding colour when asked', () => {
+    render(<BAIText inheritColor>linked</BAIText>);
+    expect(colorOf(screen.getByText('linked'))).toBe('inherit');
+  });
+
+  it('does not override an explicit type', () => {
+    render(
+      <BAIText inheritColor type="danger">
+        danger
+      </BAIText>,
+    );
+    expect(colorOf(screen.getByText('danger'))).toBe('danger');
+  });
+
+  it('does not leak onto the DOM element as an attribute', () => {
+    render(<BAIText inheritColor>attr</BAIText>);
+    expect(
+      screen.getByText('attr').closest('.astryx-text'),
+    ).not.toHaveAttribute('inheritcolor');
+  });
+});
