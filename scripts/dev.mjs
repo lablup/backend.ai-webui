@@ -102,7 +102,12 @@ try {
 } catch {
   // Not joined (ENOENT), unreadable, or malformed — no share URL to print.
 }
-const devGwShareBase = devGwConfig?.share_base ?? null;
+// A parseable file can still be the wrong shape; only a URL template is usable.
+const devGwShareBase =
+  typeof devGwConfig?.share_base === 'string' &&
+  /^https?:\/\/\{app\}\./.test(devGwConfig.share_base)
+    ? devGwConfig.share_base
+    : null;
 // The gateway forwards to the Portless port recorded at join time forever, so a
 // server on a different port would be proxied to nothing.
 const portlessPort = process.env.PORTLESS_PORT?.trim() || '1355';
