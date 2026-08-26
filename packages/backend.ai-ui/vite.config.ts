@@ -75,7 +75,15 @@ export default defineConfig(({ mode }) => {
       }),
       dts({
         include: ['src/**/*', 'vite-env.d.ts'],
-        exclude: ['**/*.{stories,test}.{ts,tsx}', 'src/locale/*.json'],
+        // `**/*.doc.ts` and `src/astryx-docs/**` are the Astryx CLI integration's
+        // contributions — read by the CLI from source, never imported by the
+        // library, so they have no business in the published types.
+        exclude: [
+          '**/*.{stories,test}.{ts,tsx}',
+          'src/locale/*.json',
+          '**/*.doc.ts',
+          'src/astryx-docs/**',
+        ],
         rollupTypes: false,
         insertTypesEntry: true,
         compilerOptions: {

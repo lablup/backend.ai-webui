@@ -176,6 +176,18 @@ check_astryx_theme_built() {
     -o src/astryx-theme/built/backendai-default-built.css
 }
 
+check_astryx_integration() {
+  # `backend.ai-ui` is registered as an Astryx CLI integration
+  # (react/astryx.config.ts → packages/backend.ai-ui/astryx.integration.ts), so
+  # `astryx component` / `search` / `docs` answer with the BAI* wrappers too.
+  # Discovery is deliberately fault-tolerant: a doc file that fails the
+  # authoring schema is skipped with a warning on stderr instead of crashing
+  # the CLI, which means a broken `{Name}.doc.ts` silently drops that component
+  # out of the catalog. This command re-validates every contribution and exits
+  # non-zero on an error-severity issue (warnings are allowed).
+  pnpm --prefix ./react exec astryx validate-integration backend.ai-ui
+}
+
 check_z_index_ladder() {
   # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
   # path filter never fires for an index.html-only PR — so it runs here, always.
@@ -190,6 +202,7 @@ run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
+run_check "Astryx integration (backend.ai-ui)" check_astryx_integration
 run_check "z-index ladder mirrors" check_z_index_ladder
 run_check "Terminology" check_terminology_drift
 
