@@ -233,12 +233,13 @@ const CustomizedImageList: React.FC = () => {
       key: 'control',
       render: (_text, row) => (
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
-          {/* PILOT-DECISION: antd `type="text" danger` (red-tinted ghost) ->
-              Astryx ghost IconButton; IconButton's closed variant enum has no
-              ghost-destructive, and a solid `destructive` per row is louder
-              than the original — the red tint is dropped (P5/P11). */}
+          {/* antd `type="text" danger` -> ghost IconButton + the shared
+              `.bai-name-action-cell-danger` tint: Astryx IconButton has no
+              `color` prop (P5) and `destructive` is a solid fill, too loud for
+              a row action. */}
           <IconButton
             variant="ghost"
+            className="bai-name-action-cell-danger"
             icon={<Trash2 size="1em" />}
             label={t('button.Delete')}
             tooltip={t('button.Delete')}
