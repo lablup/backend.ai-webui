@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Μέγεθος συμπλέγματος",
+    "Concurrency": "Ταυτόχρονες συνεδρίες",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "DefaultForUnspecified": "Προεπιλογή για απροσδιόριστο",
+    "DefaultForUnspecifiedTooltipDesc1": "Ορίζει την προεπιλεγμένη πολιτική όταν δεν ζητείται συγκεκριμένη CPU ή μνήμη.",
+    "DefaultForUnspecifiedTooltipDesc2": "Το «Unlimited» επιτρέπει τη χρήση της χωρητικότητας του κόμβου του πράκτορα, ενώ ο «περιορισμένος» αρνείται τους πόρους εκτός εάν ορίσει ρητά. \nΣτις περισσότερες περιπτώσεις, συνιστάται η «απεριόριστη».",
+    "IdleTimeout": "Χρονικό όριο αδράνειας",
+    "MaxConcurrentSFTPSessions": "Max ταυτόχρονες συνεδρίες SFTP",
+    "MaxPendingSessionCount": "Μέγιστο μέτρο εκκρεμούσης",
+    "MaxPendingSessionResourceSlots": "Max εκκρεμείς υποδοχές πόρων συνεδρίας",
+    "MaxSessionLifetime": "Μέγιστη διάρκεια ζωής συνόδου",
+    "Name": "Ονομα",
+    "StorageNodes": "Κόμβοι αποθήκευσης",
+    "TotalResourceSlots": "Πολιτική πόρων"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Επιλέξτε ζεύγος κλειδιών"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Τα ακόλουθα έργα θα ενημερωθούν.",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",
     "UpdateMultipleProjects": "Ενημέρωση πολλαπλών έργων"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "MaxNetworkCount": "Μέγιστος αριθμός δικτύου",
+    "MaxQuotaScopeSize": "Μέγιστο μέγεθος φακέλου",
+    "MaxVFolderCount": "Μέγιστος αριθμός φακέλων",
+    "Name": "Ονομα"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Επιλέξτε έργο"

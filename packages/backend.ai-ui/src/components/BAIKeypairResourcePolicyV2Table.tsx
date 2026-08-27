@@ -223,7 +223,7 @@ const BAIKeypairResourcePolicyV2Table = ({
         dataIndex: 'maxPendingSessionCount',
         key: 'maxPendingSessionCount',
         sorter: isEnableSorter('maxPendingSessionCount'),
-        render: (text) => (text ? text : '∞'),
+        render: (text) => (text == null ? '∞' : text),
       },
       {
         title: t(

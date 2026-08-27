@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Solicitud solicitada con éxito para las versiones {{count}}.",
     "Version": "Versión"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Tamaño del grupo",
+    "Concurrency": "Sesiones simultáneas",
+    "CreatedAt": "Creado en",
+    "DefaultForUnspecified": "Predeterminado para no especificado",
+    "DefaultForUnspecifiedTooltipDesc1": "Establece la política predeterminada cuando no se solicita una CPU o memoria específica.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' permite el uso a la capacidad del nodo del agente, mientras que 'limitado' niega los recursos a menos que estén explícitamente. \nEn la mayoría de los casos, se recomienda 'ilimitado'.",
+    "IdleTimeout": "Tiempo de inactividad",
+    "MaxConcurrentSFTPSessions": "Sesiones SFTP concurrentes máximas",
+    "MaxPendingSessionCount": "Recuento de sesión pendiente máximo",
+    "MaxPendingSessionResourceSlots": "MAX PENDO PENDAS DE RECURSOS DE RECURSOS DE SESIÓN",
+    "MaxSessionLifetime": "Duración máxima de la sesión",
+    "Name": "Nombre",
+    "StorageNodes": "Nodos de almacenamiento",
+    "TotalResourceSlots": "Política de recursos"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Seleccionar par de claves"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Se actualizará(n) el(los) siguiente(s) proyecto(s).",
     "ProjectResourcePolicy": "Política de recursos del proyecto",
     "UpdateMultipleProjects": "Actualizar varios proyectos"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Creado en",
+    "MaxNetworkCount": "Recuento máximo de red",
+    "MaxQuotaScopeSize": "Tamaño máximo de carpeta",
+    "MaxVFolderCount": "Número máximo de carpetas",
+    "Name": "Nombre"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Seleccionar proyecto"

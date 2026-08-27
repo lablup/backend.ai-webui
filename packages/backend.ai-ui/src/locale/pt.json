@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Pull solicitado com sucesso para {{count}} versões.",
     "Version": "Versão"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Tamanho do Cluster",
+    "Concurrency": "Sessões simultâneas",
+    "CreatedAt": "Criado em",
+    "DefaultForUnspecified": "Padrão para não especificado",
+    "DefaultForUnspecifiedTooltipDesc1": "Define a política padrão quando nenhuma CPU ou memória específica é solicitada.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' permite o uso até a capacidade do nó do agente, enquanto 'limitado' nega recursos, a menos que seja explicitamente definido. \nNa maioria dos casos, recomenda -se 'ilimitado'.",
+    "IdleTimeout": "Tempo limite ocioso",
+    "MaxConcurrentSFTPSessions": "Sessões SFTP simultâneas máximas",
+    "MaxPendingSessionCount": "Contagem máxima de sessão pendente",
+    "MaxPendingSessionResourceSlots": "Slots de recurso de sessão pendente máximo",
+    "MaxSessionLifetime": "Duração máxima da sessão",
+    "Name": "Nome",
+    "StorageNodes": "Nós de Armazenamento",
+    "TotalResourceSlots": "Política de Recursos"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Selecionar par de chaves"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
     "UpdateMultipleProjects": "Atualizar vários projetos"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Criado em",
+    "MaxNetworkCount": "Contagem máxima de rede",
+    "MaxQuotaScopeSize": "Tamanho máximo da pasta",
+    "MaxVFolderCount": "Contagem máxima de pastas",
+    "Name": "Nome"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Selecionar projeto"

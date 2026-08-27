@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "成功請求{{count}}版本的拉動。",
     "Version": "版本"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "簇的大小",
+    "Concurrency": "並發會話數",
+    "CreatedAt": "創建於",
+    "DefaultForUnspecified": "未指定的默認值",
+    "DefaultForUnspecifiedTooltipDesc1": "當不請求特定的CPU或內存時，設置默認策略。",
+    "DefaultForUnspecifiedTooltipDesc2": "“無限”允許使用代理節點的容量，而“有限”拒絕資源，除非明確設置。在大多數情況下，建議“無限”。",
+    "IdleTimeout": "空閒超時",
+    "MaxConcurrentSFTPSessions": "最大並發SFTP會話",
+    "MaxPendingSessionCount": "最大待定會話計數",
+    "MaxPendingSessionResourceSlots": "最大待處理會話資源插槽",
+    "MaxSessionLifetime": "最大会话寿命",
+    "Name": "名稱",
+    "StorageNodes": "存儲節點",
+    "TotalResourceSlots": "資源政策"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "選擇金鑰對"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "下列專案將會更新。",
     "ProjectResourcePolicy": "專案資源政策",
     "UpdateMultipleProjects": "更新多個專案"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "創建於",
+    "MaxNetworkCount": "最大網路數",
+    "MaxQuotaScopeSize": "文件夹最大尺寸",
+    "MaxVFolderCount": "最大資料夾數",
+    "Name": "名稱"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "選擇專案"

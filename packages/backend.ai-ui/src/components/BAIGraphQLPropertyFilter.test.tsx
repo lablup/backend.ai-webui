@@ -205,6 +205,63 @@ const PAGE_FIXTURES: Array<{
     ],
   },
   {
+    page: 'KeypairResourcePolicyV2',
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        fixedOperator: 'contains',
+      },
+      {
+        key: 'createdAt',
+        propertyLabel: 'Created at',
+        type: 'datetime',
+        defaultOperator: 'after',
+      },
+      {
+        key: 'maxConcurrentSessions',
+        propertyLabel: 'Concurrent sessions',
+        type: 'number',
+      },
+    ],
+    filters: [
+      { name: { contains: 'default' } },
+      { createdAt: { after: '2026-01-02T03:04:05.000Z' } },
+      { maxConcurrentSessions: { greaterThanOrEqual: 5 } },
+      {
+        AND: [
+          { name: { contains: 'gpu' } },
+          { maxConcurrentSessions: { lessThan: 10 } },
+        ],
+      },
+    ],
+  },
+  {
+    page: 'ProjectResourcePolicyV2',
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        fixedOperator: 'contains',
+      },
+      { key: 'maxVfolderCount', propertyLabel: 'Max folders', type: 'number' },
+      { key: 'maxNetworkCount', propertyLabel: 'Max networks', type: 'number' },
+    ],
+    filters: [
+      { name: { contains: 'default' } },
+      { maxVfolderCount: { greaterThanOrEqual: 10 } },
+      { maxNetworkCount: { greaterThanOrEqual: 1 } },
+      {
+        AND: [
+          { name: { contains: 'gpu' } },
+          { maxVfolderCount: { lessThan: 100 } },
+        ],
+      },
+    ],
+  },
+  {
     page: 'ReservoirPage / ModelStoreListPageV2',
     filterProperties: [
       {

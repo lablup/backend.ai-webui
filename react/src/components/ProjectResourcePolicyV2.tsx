@@ -173,14 +173,6 @@ const ProjectResourcePolicyV2 = ({
               defaultOperator: 'greaterThanOrEqual',
             },
             {
-              // The node field is a BinarySizeInfo, but the filter input is a
-              // plain IntFilter — the typed value is a raw byte count.
-              key: 'maxQuotaScopeSize',
-              propertyLabel: t('storageHost.MaxFolderSize'),
-              type: 'number',
-              defaultOperator: 'greaterThanOrEqual',
-            },
-            {
               key: 'maxNetworkCount',
               propertyLabel: t('resourcePolicy.MaxNetworkCount'),
               type: 'number',

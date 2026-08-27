@@ -37,7 +37,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Render an unlimited value as 0, null or 2147483647 in a custom column renderer — the built-in columns already normalize those sentinels to the infinity sign, and a second spelling of "unlimited" reads as a different setting.',
+          'Render an unlimited value in a custom column renderer — the built-in columns already normalize each field\'s own sentinel (0 for the non-null Int! fields, null for maxPendingSessionCount, which allows 0 as a real value) to the infinity sign, and a second spelling of "unlimited" reads as a different setting.',
       },
       {
         guidance: false,

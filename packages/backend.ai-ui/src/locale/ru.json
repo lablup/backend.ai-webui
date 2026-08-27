@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
     "Version": "Версия"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Размер кластера",
+    "Concurrency": "Одновременные сессии",
+    "CreatedAt": "Создан в",
+    "DefaultForUnspecified": "По умолчанию для неопределенного",
+    "DefaultForUnspecifiedTooltipDesc1": "Устанавливает политику по умолчанию, когда не запрашивается конкретный процессор или память.",
+    "DefaultForUnspecifiedTooltipDesc2": "«Неограниченное» позволяет использовать емкость узла агента, в то время как «ограниченное» отрицает ресурсы, если только явно не установлен. \nВ большинстве случаев рекомендуется «Unlimited».",
+    "IdleTimeout": "Тайм-аут простоя",
+    "MaxConcurrentSFTPSessions": "Максимальные параллельные сеансы SFTP",
+    "MaxPendingSessionCount": "Максимальный счет в ожидании сессии",
+    "MaxPendingSessionResourceSlots": "Максимальный ожидающий сессионные слоты ресурсов",
+    "MaxSessionLifetime": "Максимальное время жизни сеанса",
+    "Name": "Имя",
+    "StorageNodes": "Узлы хранения",
+    "TotalResourceSlots": "Политика ресурсов"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Выберите пару ключей"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Будут обновлены следующие проекты.",
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "UpdateMultipleProjects": "Обновить несколько проектов"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Создан в",
+    "MaxNetworkCount": "Максимальное количество сетей",
+    "MaxQuotaScopeSize": "Максимальный размер папки",
+    "MaxVFolderCount": "Максимальное количество папок",
+    "Name": "Имя"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Выберите проект"

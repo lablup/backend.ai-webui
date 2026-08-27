@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Erfolgreich angeforderte Pull für {{count}} -Versionen.",
     "Version": "Version"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Clustergröße",
+    "Concurrency": "Gleichzeitige Sitzungen",
+    "CreatedAt": "Hergestellt in",
+    "DefaultForUnspecified": "Standard für nicht spezifizierte",
+    "DefaultForUnspecifiedTooltipDesc1": "Legt die Standardrichtlinie fest, wenn keine bestimmte CPU oder kein bestimmter Speicher angefordert wird.",
+    "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED' erlaubt die Nutzung bis zur Kapazität des Agent-Knotens, während 'LIMITED' Ressourcen verweigert, sofern sie nicht explizit festgelegt sind. In den meisten Fällen wird 'UNLIMITED' empfohlen.",
+    "IdleTimeout": "Leerlauf-Timeout",
+    "MaxConcurrentSFTPSessions": "Max gleichzeitige SFTP -Sitzungen",
+    "MaxPendingSessionCount": "Maximal ausstehende Sitzungsanzahl",
+    "MaxPendingSessionResourceSlots": "Maxe ausstehende Sitzungsressourcenschlitze",
+    "MaxSessionLifetime": "Maximale Lebensdauer der Sitzung",
+    "Name": "Name",
+    "StorageNodes": "Speicherknoten",
+    "TotalResourceSlots": "Ressourcenrichtlinie"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Schlüsselpaar auswählen"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Die folgenden Projekte werden aktualisiert.",
     "ProjectResourcePolicy": "Projektressourcenrichtlinie",
     "UpdateMultipleProjects": "Mehrere Projekte aktualisieren"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Hergestellt in",
+    "MaxNetworkCount": "Maximale Netzwerkanzahl",
+    "MaxQuotaScopeSize": "Maximale Größe des Ordners",
+    "MaxVFolderCount": "Maximale Ordneranzahl",
+    "Name": "Name"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Projekt auswählen"

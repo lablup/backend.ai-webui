@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Pull demandé avec succès pour les versions {{count}}.",
     "Version": "Version"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Taille de cluster",
+    "Concurrency": "Sessions simultanées",
+    "CreatedAt": "Créé à",
+    "DefaultForUnspecified": "Par défaut pour non spécifié",
+    "DefaultForUnspecifiedTooltipDesc1": "Définit la stratégie par défaut lorsqu'aucun processeur ou mémoire spécifique n'est demandé.",
+    "DefaultForUnspecifiedTooltipDesc2": "`` Unlimited '' permet l'utilisation de la capacité du nœud d'agent, tandis que «Limited» nie les ressources à moins d'être définies explicitement. \nDans la plupart des cas, «illimité» est recommandé.",
+    "IdleTimeout": "Délai d'inactivité",
+    "MaxConcurrentSFTPSessions": "Sessions SFTP max simultanées",
+    "MaxPendingSessionCount": "Compte de session en attente maximum",
+    "MaxPendingSessionResourceSlots": "Emplacements de ressources de session en attente maximale",
+    "MaxSessionLifetime": "Durée de vie maximale de la session",
+    "Name": "Nom",
+    "StorageNodes": "Nœuds de stockage",
+    "TotalResourceSlots": "Politique de ressources"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Sélectionner une paire de clés"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Le(s) projet(s) suivant(s) sera(ont) mis à jour.",
     "ProjectResourcePolicy": "Politique de ressources du projet",
     "UpdateMultipleProjects": "Mettre à jour plusieurs projets"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Créé à",
+    "MaxNetworkCount": "Nombre maximum de réseaux",
+    "MaxQuotaScopeSize": "Taille maximale du dossier",
+    "MaxVFolderCount": "Nombre maximum de dossiers",
+    "Name": "Nom"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Sélectionner un projet"

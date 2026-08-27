@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Pomyślnie żądane Pull dla wersji {{count}}.",
     "Version": "Wersja"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Wielkość klastra",
+    "Concurrency": "Równoczesne sesje",
+    "CreatedAt": "Utworzono o godz",
+    "DefaultForUnspecified": "Domyślnie dla nieokreślonego",
+    "DefaultForUnspecifiedTooltipDesc1": "Ustawia domyślne zasady, gdy nie wymaga się konkretnego procesora ani pamięci.",
+    "DefaultForUnspecifiedTooltipDesc2": "„Unlimited” pozwala na wykorzystanie pojemności węzła agenta, podczas gdy „ograniczony” zaprzecza zasobom, chyba że wyraźnie ustalono. \nW większości przypadków zaleca się „nieograniczone”.",
+    "IdleTimeout": "Limit czasu bezczynności",
+    "MaxConcurrentSFTPSessions": "Max równoległe sesje SFTP",
+    "MaxPendingSessionCount": "Max oczekujący na liczbę sesji",
+    "MaxPendingSessionResourceSlots": "Max oczekujący szczeliny zasobów sesji",
+    "MaxSessionLifetime": "Maksymalny czas trwania sesji",
+    "Name": "Nazwa",
+    "StorageNodes": "Węzły magazynowania",
+    "TotalResourceSlots": "Polityka zasobów"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Wybierz parę kluczy"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Poniższe projekty zostaną zaktualizowane.",
     "ProjectResourcePolicy": "Polityka zasobów projektu",
     "UpdateMultipleProjects": "Aktualizuj wiele projektów"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Utworzono o godz",
+    "MaxNetworkCount": "Maksymalna liczba sieci",
+    "MaxQuotaScopeSize": "Maksymalny rozmiar folderu",
+    "MaxVFolderCount": "Maksymalna liczba folderów",
+    "Name": "Nazwa"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Wybierz projekt"

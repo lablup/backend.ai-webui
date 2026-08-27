@@ -222,6 +222,22 @@
     "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Kích thước cụm",
+    "Concurrency": "Phiên đồng thời",
+    "CreatedAt": "Được tạo tại",
+    "DefaultForUnspecified": "Mặc định cho không xác định",
+    "DefaultForUnspecifiedTooltipDesc1": "Đặt chính sách mặc định khi không yêu cầu CPU hoặc bộ nhớ cụ thể.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' cho phép sử dụng theo công suất của nút đại lý, trong khi 'giới hạn' từ chối tài nguyên trừ khi được thiết lập rõ ràng. \nTrong hầu hết các trường hợp, 'không giới hạn' được khuyến nghị.",
+    "IdleTimeout": "Hết thời gian chờ",
+    "MaxConcurrentSFTPSessions": "Phiên SFTP đồng thời tối đa",
+    "MaxPendingSessionCount": "Số lượng phiên đang chờ xử lý tối đa",
+    "MaxPendingSessionResourceSlots": "Các khe cắm tài nguyên phiên đang chờ xử lý tối đa",
+    "MaxSessionLifetime": "Thời gian tồn tại của phiên tối đa",
+    "Name": "Tên",
+    "StorageNodes": "Nút lưu trữ",
+    "TotalResourceSlots": "Chính sách tài nguyên"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Chọn cặp khóa"
   },
@@ -282,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Được tạo tại",
+    "MaxNetworkCount": "Số lượng mạng tối đa",
+    "MaxQuotaScopeSize": "Kích thước thư mục tối đa",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "Name": "Tên"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Chọn dự án"
