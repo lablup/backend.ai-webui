@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Renders a list of short values with a bounded footprint: the first `maxInline` entries show inline and the remainder collapse into a `+N` affordance that reveals only the overflowed values. `variant="chip"` draws the inline entries as Astryx `Badge` chips and opens the overflow in a `Popover` behind a keyboard-reachable `Link`; `variant="text"` draws them as nowrap plain text and puts the `+N` in a compact `Badge` inside a `Tooltip`. Use the chip variant in modals and detail panels and the text variant in dense table cells. With no items it renders `emptyText` and nothing else.',
+      'Renders a list of short values with a bounded footprint: the first `maxInline` entries show inline and the remainder collapse into a `+N` affordance that reveals only the overflowed values. The overflow opens on hover in both variants — it is a read-only peek, so it appears on hover and leaves with the pointer. `variant="chip"` draws the inline entries as Astryx `Badge` chips and the `+N` as a keyboard-reachable `Link`; `variant="text"` draws them as nowrap plain text and puts the `+N` in a compact `Badge`. Use the chip variant in modals and detail panels and the text variant in dense table cells. With no items it renders `emptyText` and nothing else.',
     bestPractices: [
       {
         guidance: true,
@@ -77,7 +77,7 @@ export const docs = {
       name: 'trigger',
       type: "'click' | 'hover'",
       description:
-        'How the overflow list opens. Defaults to `click` (a Popover) for the chip variant and `hover` (a Tooltip) for the text variant.',
+        'How the overflow list opens. Defaults to `hover` (a HoverCard, so the list sits on a card surface) in both variants; pass `click` for a Popover that latches open.',
     },
   ],
   examples: [
