@@ -146,13 +146,12 @@ const DeploymentAutoScalingCardContent: React.FC<
     'table_column_overrides.AutoScalingRuleList',
   );
 
-  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC)
+  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC) | null
+  // (unsorted). Nullable on purpose — a `withDefault` parser cannot represent
+  // the unsorted step of the header cycle, so the default lives below instead.
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      order: parseAsStringLiteral([
-        'createdAt',
-        '-createdAt',
-      ] as const).withDefault('-createdAt'),
+      order: parseAsStringLiteral(['createdAt', '-createdAt'] as const),
       filter: parseAsJson<AutoScalingRuleFilter>(
         (value) => value as AutoScalingRuleFilter,
       ),
@@ -169,6 +168,10 @@ const DeploymentAutoScalingCardContent: React.FC<
     setTablePaginationOption,
   } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
 
+  // Newest-first seeds the list while the param is absent — on first load, and
+  // again once the header cycles back to unsorted.
+  const effectiveOrder = orderString || '-createdAt';
+
   const queryVariables = {
     deploymentId,
     offset: baiPaginationOption.offset,
@@ -176,7 +179,7 @@ const DeploymentAutoScalingCardContent: React.FC<
     orderBy: [
       {
         field: 'CREATED_AT' as const,
-        direction: (orderString.startsWith('-') ? 'DESC' : 'ASC') as
+        direction: (effectiveOrder.startsWith('-') ? 'DESC' : 'ASC') as
           'ASC' | 'DESC',
       },
     ],
