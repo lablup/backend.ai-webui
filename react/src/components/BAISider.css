@@ -104,46 +104,58 @@
 }
 
 /*
- * The branded logo band. antd's Sider let the logo row paint edge-to-edge
- * because the row WAS the sider's first child; Astryx `SideNav` puts `header`
- * inside a padded sticky area (spacing-2 = 8px all round), so the band bleeds
- * back out with a negative margin to keep the full-width brand bar.
+ * The branded logo band. Astryx `SideNav` puts `header` inside a sticky area
+ * padded `--spacing-2` on all four sides, so the band bleeds back out with a
+ * negative margin to keep the full-width brand bar. The bleed must cover ALL
+ * FOUR sides: an uncancelled `padding-bottom` leaves a rail-coloured strip
+ * under the accent band (measured: header 68px tall against a 60px band).
  *
- * POLISH-3 item 4 — the EXPANDED logo is LEFT-aligned, as legacy had it.
+ * The expanded logo is LEFT-aligned (as legacy had it), the collapsed mark
+ * centred — keyed off `.bai-sider--collapsed`, NOT `:has(.logo-collapsed)`.
+ * The collapsed mark is always in the DOM (`BAISider` toggles its wrapper's
+ * `display`), so a `:has()` matches in both states and centres every rail.
  *
- * Legacy `BAISider` wrote the polarity as a prop on the band's flex box:
- * `align={collapsed ? 'center' : 'start'}` with `padding: '0 30px'`, so the
- * 159px wide-logo sat at x=30 in the 240px rail and was centred only in the
- * collapsed rail. The conversion expressed that as
- * `:has(.logo-collapsed:not([hidden]))` — which is true in BOTH states: the
- * collapsed mark is always in the DOM (`BAISider` toggles the visibility of
- * its WRAPPER with `display: none`, and `display: none` is not the `hidden`
- * attribute), so the `:has()` matched permanently and every rail centred its
- * logo. Measured before: `img.logo-wide` at x=40.5 (i.e. centred in the
- * 24/24-padded 192px content box) instead of hugging the start edge.
- *
- * The state is already on the DOM as `.bai-sider--collapsed` (BAISider adds
- * it because `SideNav` reflects no collapsed state itself — see the collapsed
- * rules further down), so the centring is keyed off that instead. Default =
- * start, which is also `align-items`' initial `normal` for a column box, so
- * only the collapsed override has to be stated.
- *
- * `padding-inline` moves 24px -> 32px (`--spacing-6` -> `--spacing-8`):
- * legacy's inset was 30px, and 32px is both the nearest step on the spacing
- * scale and exactly where every nav row's icon starts (8px scroll-column pad
- * + 24px `side-nav-item` padding), so the brand mark and the menu column now
- * share one optical left edge.
+ * `padding-inline: var(--spacing-8)` (32px) is exactly where every nav row's
+ * icon starts (8px scroll-column pad + 24px `side-nav-item` padding), so the
+ * brand mark and the menu column share one optical left edge.
  */
 .bai-sider .logo-and-text-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin: calc(var(--spacing-2) * -1);
-  margin-bottom: 0;
   padding-inline: var(--spacing-8);
   height: 60px;
   background-color: var(--color-accent);
   transition: all 0.2s ease-in-out;
+}
+
+/*
+ * The sticky-bottom band, same cause as the logo band above: Astryx pads it
+ * `--spacing-1` top / `--spacing-2` bottom and puts a `--spacing-2` gap before
+ * the footer-icons row — which this app always renders EMPTY (`hasButton:
+ * false`, no `footerIcons`), so gap + padding stacked 16px of nothing under
+ * the version line. `WebUISiderFooter` owns the footer's own bottom inset.
+ * `:has()` targets the band by its content because Astryx puts no class on it.
+ */
+.bai-sider > div:has(> .terms-of-use) {
+  padding-block: 0;
+  gap: 0;
+}
+
+/*
+ * The first menu row sits 24px below the brand band (Astryx's own inset is
+ * `--spacing-1`, 4px). `side-nav-item` carries `margin-block: 2px`
+ * (`SIDE_NAV_DENSITY`) which lands on top of this padding, so the column's own
+ * inset is 24 minus that margin — the 2px is mirrored from the theme, where it
+ * is likewise a raw length.
+ *
+ * `:nth-child(2)` is the scroll column in BOTH rail states: the sticky top
+ * band is always first, and it is the sticky BOTTOM band the collapsed rail
+ * drops (`WebUISider` passes no `footer` when collapsed).
+ */
+.bai-sider > div:nth-child(2) {
+  padding-block-start: calc(var(--spacing-6) - 2px);
 }
 
 /*
@@ -487,8 +499,15 @@
   font-size: var(--font-size-base);
 }
 
+/*
+ * Hover moves the border and the chevron to the accent, and nothing else.
+ * `background-image` is load-bearing: Astryx paints every button's hover state
+ * as a `linear-gradient(--color-overlay-hover, …)` IMAGE layer over the fill,
+ * so pinning `background-color` alone still let an 8% wash through.
+ */
 .bai-sider-shell button.bai-sider-toggle:hover {
   border-color: var(--color-accent);
   background-color: var(--color-background-surface);
+  background-image: none;
   color: var(--color-accent);
 }

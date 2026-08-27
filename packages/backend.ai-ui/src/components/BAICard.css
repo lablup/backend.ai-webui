@@ -110,13 +110,17 @@
 
 /*
  Title-less tabbed card: pull the strip up to the card's top edge and reserve
- the header band above it, so the rule lands where antd's 56px `ant-card-head`
- bottom border did (20px + 32px tab + 4px rail gap + 1px = 57px) instead of
- floating a full card padding below the top edge.
+ the header band above it, instead of floating a full card padding below the
+ top edge.
+
+ The band is `--spacing-3` + 32px tab + 4px rail gap + 1px = 49px. It was
+ `--spacing-5` (57px, antd's 56px `ant-card-head`) until the tab strip read as
+ sitting too far off the card's top border; the 8px is a deliberate departure
+ from antd parity, not drift.
 */
 .bai-card__tabs--top {
   margin-block-start: calc(-1 * var(--bai-card-inset));
-  padding-block-start: var(--spacing-5);
+  padding-block-start: var(--spacing-3);
 }
 
 /*

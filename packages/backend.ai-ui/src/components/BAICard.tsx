@@ -285,7 +285,7 @@ const BAICard: React.FC<BAICardProps> = ({
           <HStack
             className="bai-card__head"
             justify={title ? 'between' : 'end'}
-            align="center"
+            align="start"
             wrap="wrap"
             gap={2}
           >
