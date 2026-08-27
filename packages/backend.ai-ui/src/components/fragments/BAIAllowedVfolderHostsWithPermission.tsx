@@ -144,26 +144,6 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
               isAllowed: _.includes(
                 _.get(allowedVfolderHosts, storageHost || ''),
                 permission,
-              ) ? (
-                <BAIFlex justify="center">
-                  <CircleCheck
-                    style={{
-                      color: token.green5,
-                      fontSize: token.fontSizeLG,
-                    }}
-                    size="1em"
-                  />
-                </BAIFlex>
-              ) : (
-                <BAIFlex justify="center">
-                  <Ban
-                    style={{
-                      color: token.red5,
-                      fontSize: token.fontSizeLG,
-                    }}
-                    size="1em"
-                  />
-                </BAIFlex>
               ),
             }),
           )}
@@ -177,6 +157,27 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
               title: t('comp:AllowedVfolderHostsWithPermission.Allowed'),
               dataIndex: 'isAllowed',
               key: 'isAllowed',
+              render: (isAllowed: boolean) => (
+                <BAIFlex justify="center">
+                  {isAllowed ? (
+                    <CircleCheck
+                      style={{
+                        color: token.green5,
+                        fontSize: token.fontSizeLG,
+                      }}
+                      size="1em"
+                    />
+                  ) : (
+                    <Ban
+                      style={{
+                        color: token.red5,
+                        fontSize: token.fontSizeLG,
+                      }}
+                      size="1em"
+                    />
+                  )}
+                </BAIFlex>
+              ),
             },
           ]}
         />
