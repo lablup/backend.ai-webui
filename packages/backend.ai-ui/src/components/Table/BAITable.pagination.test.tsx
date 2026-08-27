@@ -116,48 +116,36 @@ describe('BAITable invalid page number (FR-3703)', () => {
     expect(onChange).toHaveBeenCalledWith(1, 10);
   });
 
-  it('hides a first page the server returned for a page below 1', () => {
+  it.each([
     // `?current=0` maps to offset 0, so the server answers with page 1; the
     // caller still holds an invalid page, so the rows stay hidden.
-    const onChange = vi.fn();
-    renderTable({
-      dataSource: makeRows(10),
-      pagination: { current: 0, pageSize: 10, total: 177, onChange },
-    });
+    ['server-sliced', { dataSource: makeRows(10), total: 177 }],
+    ['client-side', { dataSource: makeRows(25), total: undefined }],
+  ])(
+    'hides a %s list while the page is below 1',
+    (_label, { dataSource, total }) => {
+      renderTable({
+        dataSource,
+        pagination: { current: 0, pageSize: 10, total },
+      });
 
-    expect(screen.getByText('Invalid page number')).toBeInTheDocument();
-    expect(screen.queryByText('row-1')).not.toBeInTheDocument();
-  });
+      expect(screen.getByText('Invalid page number')).toBeInTheDocument();
+      expect(screen.queryByText('row-1')).not.toBeInTheDocument();
+    },
+  );
 
-  it('hides a client-side list too while the page is out of range', () => {
-    renderTable({
-      dataSource: makeRows(25),
-      pagination: { current: 0, pageSize: 10 },
-    });
-
-    expect(screen.getByText('Invalid page number')).toBeInTheDocument();
-    expect(screen.queryByText('row-1')).not.toBeInTheDocument();
-  });
-
-  it('wins over a caller-provided empty state', () => {
+  it.each([
+    ['a string', 'Custom empty'],
+    ['false', false],
+  ])('wins over a caller-provided empty state of %s', (_label, emptyState) => {
     renderTable({
       dataSource: [],
-      emptyState: 'Custom empty',
+      emptyState,
       pagination: OUT_OF_RANGE,
     });
 
     expect(screen.getByText('Invalid page number')).toBeInTheDocument();
     expect(screen.queryByText('Custom empty')).not.toBeInTheDocument();
-  });
-
-  it('wins even over an opted-out empty state', () => {
-    renderTable({
-      dataSource: [],
-      emptyState: false,
-      pagination: OUT_OF_RANGE,
-    });
-
-    expect(screen.getByText('Invalid page number')).toBeInTheDocument();
   });
 
   it('treats an empty result set as no data, not an invalid page', () => {

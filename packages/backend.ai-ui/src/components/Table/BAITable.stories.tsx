@@ -222,11 +222,14 @@ export const Default: Story = {
   },
 };
 
-const clientPagedData = Array.from({ length: 42 }, (_unused, index) => ({
-  ...sampleData[index % sampleData.length],
-  key: `p${index + 1}`,
-  name: `Person ${index + 1}`,
-}));
+const makePeople = (count: number, keyPrefix: string) =>
+  Array.from({ length: count }, (_unused, index) => ({
+    ...sampleData[index % sampleData.length],
+    key: `${keyPrefix}${index + 1}`,
+    name: `Person ${index + 1}`,
+  }));
+
+const clientPagedData = makePeople(42, 'p');
 
 export const ClientSidePagination: Story = {
   name: 'Client-side Pagination',
@@ -247,24 +250,7 @@ export const ClientSidePagination: Story = {
   },
 };
 
-const SERVER_TOTAL = 177;
-const serverPage = (page: number, pageSize: number) =>
-  Array.from(
-    {
-      length: Math.max(
-        0,
-        Math.min(pageSize, SERVER_TOTAL - (page - 1) * pageSize),
-      ),
-    },
-    (_unused, index) => {
-      const n = (page - 1) * pageSize + index + 1;
-      return {
-        ...sampleData[index % sampleData.length],
-        key: `s${n}`,
-        name: `Person ${n}`,
-      };
-    },
-  );
+const serverPagedData = makePeople(177, 's');
 
 export const InvalidPage: Story = {
   name: 'Invalid Page Number',
@@ -282,12 +268,15 @@ export const InvalidPage: Story = {
     return (
       <BAITable
         columns={sampleColumns}
-        dataSource={serverPage(page, pageSize)}
+        dataSource={serverPagedData.slice(
+          (page - 1) * pageSize,
+          page * pageSize,
+        )}
         pagination={{
           current: page,
           pageSize,
-          total: SERVER_TOTAL,
-          onChange: (nextPage) => setPage(nextPage),
+          total: serverPagedData.length,
+          onChange: setPage,
         }}
       />
     );

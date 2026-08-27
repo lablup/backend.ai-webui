@@ -130,6 +130,8 @@ const EXPAND_COLUMN_WIDTH_AFTER_SELECTION = 40;
 /** Marker field placed on the synthetic detail rows. */
 const DETAIL_ROW_MARKER = '__bai_detail_for__';
 
+const EMPTY_STATE_ICON = <Icon icon={Inbox} size="lg" color="secondary" />;
+
 const isDetailRow = (item: unknown): item is Record<string, unknown> =>
   !!item &&
   typeof item === 'object' &&
@@ -648,37 +650,36 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     ? (pagination.total ?? sortedRows.length)
     : sortedRows.length;
 
-  // The pager and range text show a page that exists; the rows below decide
-  // separately whether the caller's page is valid.
-  const activePage = _.clamp(
-    currentPage,
-    1,
-    Math.max(1, Math.ceil(total / currentPageSize)),
-  );
-
-  // The UNclamped page is what the caller's state / URL still holds. `total: 0`
-  // is "no data", not an invalid page (FR-3703).
+  const lastPage = Math.max(1, Math.ceil(total / currentPageSize));
+  // Filtering can shrink the list under the page the user is on; clamp for
+  // display instead of setting state during render, as antd's `usePagination`
+  // does.
+  const activePage = _.clamp(currentPage, 1, lastPage);
+  // `total: 0` is "no data", not an invalid page (FR-3703).
   const isPageOutOfRange =
     pagination !== false &&
     total > 0 &&
-    (currentPage < 1 || currentPage > Math.ceil(total / currentPageSize));
+    (currentPage < 1 || currentPage > lastPage);
+
+  const goToPage = (page: number, pageSize = currentPageSize) => {
+    setCurrentPage(page);
+    if (pagination) pagination.onChange?.(page, pageSize);
+  };
 
   // A `total` larger than the rows we were handed is the caller declaring them
   // already sliced server-side, so honour that and never re-slice — otherwise
   // a page past the first indexes past the end and renders nothing.
   const isServerSliced = total > sortedRows.length;
-  // Out of range, whatever was handed over is not the page the caller holds:
-  // hide it behind the recovery state on both bounds (FR-3703).
-  const rows = isPageOutOfRange
-    ? []
-    : pagination !== false &&
-        !isServerSliced &&
-        sortedRows.length > currentPageSize
+  const pagedRows =
+    pagination !== false &&
+    !isServerSliced &&
+    sortedRows.length > currentPageSize
       ? sortedRows.slice(
           (activePage - 1) * currentPageSize,
           activePage * currentPageSize,
         )
       : sortedRows;
+  const rows = isPageOutOfRange ? [] : pagedRows;
 
   /* ---- expandable -------------------------------------------------------- */
 
@@ -1240,16 +1241,13 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     // caller-provided empty node, `false` included.
     <EmptyState
       isCompact
-      icon={<Icon icon={Inbox} size="lg" color="secondary" />}
+      icon={EMPTY_STATE_ICON}
       title={String(t('comp:BAITable.InvalidPageNumber'))}
       actions={
         <Button
           variant="primary"
           label={String(t('comp:BAITable.GoToFirstPage'))}
-          onClick={() => {
-            setCurrentPage(1);
-            pagination?.onChange?.(1, currentPageSize);
-          }}
+          onClick={() => goToPage(1)}
         />
       }
     />
@@ -1258,7 +1256,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   ) : resolvedEmptyState == null || typeof resolvedEmptyState === 'string' ? (
     <EmptyState
       isCompact
-      icon={<Icon icon={Inbox} size="lg" color="secondary" />}
+      icon={EMPTY_STATE_ICON}
       title={resolvedEmptyState ?? String(t('comp:BAITable.NoDataToDisplay'))}
     />
   ) : (
@@ -1361,14 +1359,10 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 }
                 size={pagination?.size ?? 'sm'}
                 label={String(t('comp:BAITable.Pagination'))}
-                onChange={(page) => {
-                  setCurrentPage(page);
-                  pagination?.onChange?.(page, currentPageSize);
-                }}
+                onChange={goToPage}
                 onPageSizeChange={(pageSize) => {
-                  setCurrentPage(1);
                   setCurrentPageSize(pageSize);
-                  pagination?.onChange?.(1, pageSize);
+                  goToPage(1, pageSize);
                 }}
               />
             </>
