@@ -16,16 +16,11 @@ import type { ISODateString } from '@astryxdesign/core/Calendar';
 import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
 import type { DateRange } from '@astryxdesign/core/DateRangeInput';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
-import {
-  BAISkeleton,
-  useUpdatableState,
-  BAIFlex,
-  filterOutEmpty,
-} from 'backend.ai-ui';
+import { useUpdatableState, BAIFlex, filterOutEmpty } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { parseAsString, useQueryState } from 'nuqs';
-import { Suspense, useEffect, useMemo, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -138,20 +133,18 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
         columnSpan: windowWidth > 2160 ? 3 : 2,
         data: {
           content: (
-            <Suspense fallback={<BAISkeleton />}>
-              <SessionMetricGraph
-                key={metric}
-                queryProps={{
-                  startDate: dayjs(startDate).unix().toString(),
-                  endDate: dayjs(endDate).unix().toString(),
-                  metricName: metric,
-                  userId: userInfo[0]?.uuid ?? '',
-                  dayDiff: dayDiff,
-                }}
-                fetchKey={usageFetchKey}
-                tooltip={tooltip[metric] || undefined}
-              />
-            </Suspense>
+            <SessionMetricGraph
+              key={metric}
+              queryProps={{
+                startDate: dayjs(startDate).unix().toString(),
+                endDate: dayjs(endDate).unix().toString(),
+                metricName: metric,
+                userId: userInfo[0]?.uuid ?? '',
+                dayDiff: dayDiff,
+              }}
+              fetchKey={usageFetchKey}
+              tooltip={tooltip[metric] || undefined}
+            />
           ),
         },
       }),
@@ -295,20 +288,18 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
                       data: {
                         ...originalItem.data,
                         content: (
-                          <Suspense fallback={<BAISkeleton />}>
-                            <SessionMetricGraph
-                              key={`${item.id}-${Date.now()}`}
-                              queryProps={{
-                                startDate: dayjs(startDate).unix().toString(),
-                                endDate: dayjs(endDate).unix().toString(),
-                                metricName: item.id,
-                                userId: userInfo[0]?.uuid ?? '',
-                                dayDiff: dayDiff,
-                              }}
-                              fetchKey={usageFetchKey}
-                              tooltip={tooltip[item.id] || undefined}
-                            />
-                          </Suspense>
+                          <SessionMetricGraph
+                            key={`${item.id}-${Date.now()}`}
+                            queryProps={{
+                              startDate: dayjs(startDate).unix().toString(),
+                              endDate: dayjs(endDate).unix().toString(),
+                              metricName: item.id,
+                              userId: userInfo[0]?.uuid ?? '',
+                              dayDiff: dayDiff,
+                            }}
+                            fetchKey={usageFetchKey}
+                            tooltip={tooltip[item.id] || undefined}
+                          />
                         ),
                       },
                     };
