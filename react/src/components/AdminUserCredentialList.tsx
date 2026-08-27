@@ -364,6 +364,10 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
       <BAITable<Keypair>
         rowKey={'id'}
         loading={isPending}
+        // Width-less columns otherwise fall to proportional(1) and its 120px
+        // floor, capping this table at ~892px — wide enough to hide the pin at
+        // desktop widths. Restores what the antd file carried pre-migration.
+        scroll={{ x: 'max-content' }}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
         rowSelection={{
           type: 'checkbox',
@@ -380,14 +384,6 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           },
         }}
         columns={filterOutEmpty([
-          {
-            key: 'accessKey',
-            title: t('credential.AccessKey'),
-            sorter: true,
-            render: (_value, record) => {
-              return <BAIText monospace>{record.access_key}</BAIText>;
-            },
-          },
           {
             key: 'userID',
             title: t('credential.UserID'),
@@ -543,6 +539,14 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                   actions={actions}
                 />
               );
+            },
+          },
+          {
+            key: 'accessKey',
+            title: t('credential.AccessKey'),
+            sorter: true,
+            render: (_value, record) => {
+              return <BAIText monospace>{record.access_key}</BAIText>;
             },
           },
           {
