@@ -93,7 +93,8 @@ export const docs = {
     {
       name: 'keyboard',
       type: 'boolean',
-      description: 'Wraps the text in a keyboard-key (kbd) box.',
+      description:
+        'Renders the text as an Astryx Kbd shortcut; the children are the keys spec (for example "mod+c").',
     },
     {
       name: 'disabled',

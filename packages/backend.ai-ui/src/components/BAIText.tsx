@@ -23,6 +23,7 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIText.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Kbd } from '@astryxdesign/core/Kbd';
 import { Link } from '@astryxdesign/core/Link';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import classNames from 'classnames';
@@ -87,6 +88,7 @@ export interface BAITextProps extends Omit<
   delete?: boolean;
   mark?: boolean;
   code?: boolean;
+  /** Renders the children's text as an Astryx `Kbd` shortcut (`+`-separated). */
   keyboard?: boolean;
   disabled?: boolean;
   monospace?: boolean;
@@ -326,23 +328,23 @@ const BAIText: React.FC<BAITextProps> = ({
   );
 
   // antd wrapped the children in the matching element; the box treatment
-  // rides on it, and under `ellipsis` it is also the clamp box.
-  const ContentTag = code ? 'code' : keyboard ? 'kbd' : mark ? 'mark' : 'span';
+  // rides on it, and under `ellipsis` it is also the clamp box. `keyboard`
+  // is Astryx `Kbd`, which takes the children's text as its `keys` spec.
+  const ContentTag = code ? 'code' : mark ? 'mark' : 'span';
   const boxClassName = code
     ? 'bai-text-code'
-    : keyboard
-      ? 'bai-text-keyboard'
-      : mark
-        ? 'bai-text-mark'
-        : undefined;
+    : mark
+      ? 'bai-text-mark'
+      : undefined;
+  const content = keyboard ? <Kbd keys={nodeToText(children)} /> : children;
 
   if (!ellipsis && !copyable) {
     return (
       <span {...restProps} className={rootClassName} style={style}>
         {boxClassName ? (
-          <ContentTag className={boxClassName}>{children}</ContentTag>
+          <ContentTag className={boxClassName}>{content}</ContentTag>
         ) : (
-          children
+          content
         )}
       </span>
     );
@@ -373,7 +375,7 @@ const BAIText: React.FC<BAITextProps> = ({
             : undefined
         }
       >
-        {children}
+        {content}
       </ContentTag>
       {tooltipContent !== undefined && isOverflowing && !isExpanded ? (
         <Tooltip anchorRef={contentRef} content={tooltipContent} />

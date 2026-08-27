@@ -112,9 +112,21 @@ describe('BAIText structure', () => {
     }
   });
 
+  it('renders keyboard children as an Astryx Kbd shortcut', () => {
+    render(
+      <BAIText data-testid="t" keyboard>
+        shift+F5
+      </BAIText>,
+    );
+    const kbd = screen.getByTestId('t').querySelector('.astryx-kbd');
+    expect(kbd).not.toBeNull();
+    // Known keys become glyphs (shift -> ⇧); unknown ones render verbatim.
+    expect(kbd?.textContent).toMatch(/F5/);
+    expect(kbd?.textContent).not.toMatch(/shift/i);
+  });
+
   it.each([
     ['code', 'CODE', 'bai-text-code'],
-    ['keyboard', 'KBD', 'bai-text-keyboard'],
     ['mark', 'MARK', 'bai-text-mark'],
   ] as const)('wraps the children in a <%s> box', (prop, tag, className) => {
     render(

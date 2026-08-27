@@ -151,7 +151,8 @@ For all other props, see \`BAIText.tsx\` — the antd-shaped types (\`BAITextEll
     },
     keyboard: {
       control: { type: 'boolean' },
-      description: 'Keyboard key styling (a <kbd> box)',
+      description:
+        'Render the children as an Astryx Kbd shortcut (`+`-separated keys)',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -531,12 +532,12 @@ export const Keyboard: Story = {
         <Kbd keys="]" />
       </div>
       <div>
-        <BAIText type="secondary">Inline, as text: </BAIText>
-        <BAIText keyboard>Ctrl</BAIText>+<BAIText keyboard>C</BAIText>
+        <BAIText type="secondary">Through the prop: </BAIText>
+        <BAIText keyboard>mod+c</BAIText>
       </div>
       <div>
         <BAIText keyboard copyable>
-          Shift+Enter
+          shift+enter
         </BAIText>
       </div>
     </BAIFlex>
@@ -545,7 +546,7 @@ export const Keyboard: Story = {
     docs: {
       description: {
         story:
-          'Shortcut badges are Astryx `Kbd`; it takes a `keys` spec rather than children, and a key it does not know (`]`) is rendered verbatim. `BAIText keyboard` is the antd `Typography.Text keyboard` box for a key drawn inline as text. For `Kbd` on a DARK tooltip bubble wrap the content in `MediaTheme mode="dark"` (never the whole `Tooltip`): `useTooltip` hardcodes its bubble colours without flipping token context, and the host app pins its tooltip dark in BOTH modes via `ANTD_HOVER_PARITY`.',
+          'Shortcut badges are Astryx `Kbd`; it takes a `keys` spec rather than children, and a key it does not know (`]`) is rendered verbatim. `BAIText keyboard` (the antd `Typography.Text keyboard` prop) hands its text to `Kbd` as that spec, so the two forms render the same badges. For `Kbd` on a DARK tooltip bubble wrap the content in `MediaTheme mode="dark"` (never the whole `Tooltip`): `useTooltip` hardcodes its bubble colours without flipping token context, and the host app pins its tooltip dark in BOTH modes via `ANTD_HOVER_PARITY`.',
       },
     },
   },
