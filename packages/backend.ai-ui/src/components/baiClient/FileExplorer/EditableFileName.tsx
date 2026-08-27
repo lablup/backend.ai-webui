@@ -158,7 +158,12 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
           {fileInfo?.type === 'DIRECTORY' ? (
             // The icon sits beside the link rather than inside it: as inline
             // siblings they break apart onto two lines once the cell narrows.
-            <BAIFlex gap="xs" style={{ display: 'inline-flex', minWidth: 0 }}>
+            // `flex` overrides BAIFlex's base `flexShrink: 0`, without which
+            // this box stays at max-content and the name clips with no ellipsis.
+            <BAIFlex
+              gap="xs"
+              style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
+            >
               <Folder
                 style={{ color: token.colorLink, flexShrink: 0 }}
                 size="1em"
@@ -180,7 +185,10 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               </BAILink>
             </BAIFlex>
           ) : (
-            <BAIFlex gap="xs" style={{ display: 'inline-flex', minWidth: 0 }}>
+            <BAIFlex
+              gap="xs"
+              style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
+            >
               <File size="1em" style={{ flexShrink: 0 }} />
               <Text
                 maxLines={1}

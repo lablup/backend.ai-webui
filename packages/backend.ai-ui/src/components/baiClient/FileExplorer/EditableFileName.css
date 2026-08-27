@@ -33,3 +33,11 @@
 .bai-editable-file-name-form [data-bai-form-item] {
   margin-bottom: 0px !important;
 }
+
+/* The rename field replaces the name INSIDE the shared name/action cell, so it
+   has to yield width the same way the name does — otherwise it sizes to the
+   input's intrinsic width and paints over the row actions. */
+.bai-editable-file-name-form {
+  flex: 1;
+  min-width: 0;
+}
