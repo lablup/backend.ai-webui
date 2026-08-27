@@ -2,37 +2,147 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <BAIText> (to-astryx phase 3, ticket A). Imported by the
- component itself (P17), so the rules travel with it and cannot rot in an app
- stylesheet.
+ Co-located styles for <BAIText> (FR-3726). The component renders its own
+ span — the antd `Typography.Text` structure on Astryx tokens — so every rule
+ it needs lives here. Every value is a declared Astryx token (checked against
+ `react/src/astryx-theme/built/backendai-default-built.css`); no literal
+ fallbacks, so a wrong name fails visibly.
 
- JUSTIFICATION for per-component CSS (the policy asks for one). Two of antd
- `Typography.Text`'s decorations have NO Astryx counterpart and no theme knob:
-
-   `mark` (4 sites)      no Astryx equivalent at all (MAPPING §3.4: "NONE —
-                         self-build").
-   `code` box padding    Astryx `Code` styles the glyph run; the surrounding
-                         chip padding antd drew is added back so the 16 `code`
-                         sites keep their footprint.
-
- `keyboard` used to be a third: its box was rebuilt here because Astryx `Kbd`
- takes a `keys: string` spec rather than children. FR-3509 retired the prop —
- the one production call site passed a single literal key, which `Kbd` renders
- verbatim — so shortcut badges are `Kbd` at the call site now.
-
- The copy-control row is layout, not decoration: the text must still measure
- its own ellipsis box, so the control is a sibling in an inline flex row.
-
- Every value is an Astryx token (P19 — names checked against the built theme's
- declared variables, `react/src/astryx-theme/built/backendai-default-built.css`).
- No `var(--x, literal)` fallbacks: a wrong name must fail visibly, not silently
- resolve to a literal.
-
- UNLAYERED on purpose, matching BAIAlert.css / BAILink.css: these rules
+ UNLAYERED on purpose, matching BAILink.css / BAIAlert.css: these rules
  decorate our own elements and must outrank Astryx's `@layer astryx-base`.
 */
 
-/* Text + copy control (and/or the expand link) on one baseline. */
+/* ---- root: antd `.ant-typography` --------------------------------------- */
+
+.bai-text {
+  color: var(--color-text-primary);
+  line-height: var(--text-body-leading);
+  overflow-wrap: break-word;
+}
+
+.bai-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.bai-text-success {
+  color: var(--color-success);
+}
+
+.bai-text-warning {
+  color: var(--color-warning);
+}
+
+.bai-text-danger {
+  color: var(--color-error);
+}
+
+/* `inherit` is for a BAIText nested in an element that owns the colour — a
+   link (FR-3692). `disabled` wins over `type`, `type` wins over `inherit`. */
+.bai-text-inherit {
+  color: inherit;
+}
+
+.bai-text-disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  user-select: none;
+}
+
+/* ---- decorations ---------------------------------------------------------- */
+
+.bai-text-strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+.bai-text-italic {
+  font-style: italic;
+}
+
+.bai-text-underline {
+  text-decoration: underline;
+}
+
+.bai-text-delete {
+  text-decoration: line-through;
+}
+
+.bai-text-underline.bai-text-delete {
+  text-decoration: underline line-through;
+}
+
+.bai-text-monospace {
+  font-family: var(--font-family-code);
+}
+
+/* Astryx `Text` size steps, kept for the call sites that passed `size`. */
+.bai-text-size-4xs {
+  font-size: var(--font-size-4xs);
+}
+.bai-text-size-3xs {
+  font-size: var(--font-size-3xs);
+}
+.bai-text-size-2xs {
+  font-size: var(--font-size-2xs);
+}
+.bai-text-size-xsm {
+  font-size: var(--font-size-xs);
+}
+.bai-text-size-sm {
+  font-size: var(--font-size-sm);
+}
+.bai-text-size-base {
+  font-size: var(--font-size-base);
+}
+.bai-text-size-lg {
+  font-size: var(--font-size-lg);
+}
+.bai-text-size-xl {
+  font-size: var(--font-size-xl);
+}
+.bai-text-size-2xl {
+  font-size: var(--font-size-2xl);
+}
+.bai-text-size-3xl {
+  font-size: var(--font-size-3xl);
+}
+.bai-text-size-4xl {
+  font-size: var(--font-size-4xl);
+}
+
+/* ---- boxes: antd `code` / `kbd` / `mark` ---------------------------------- */
+
+.bai-text-code {
+  margin: 0 0.2em;
+  padding: 0.2em 0.4em 0.1em;
+  font-family: var(--font-family-code);
+  font-size: 85%;
+  background-color: var(--color-background-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-inner);
+}
+
+.bai-text-keyboard {
+  margin: 0 0.2em;
+  padding: 0.15em 0.4em 0.1em;
+  font-family: var(--font-family-code);
+  font-size: 90%;
+  background-color: var(--color-background-muted);
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-inner);
+}
+
+.bai-text-mark {
+  padding: 0;
+  background-color: var(--color-warning-muted);
+  color: inherit;
+}
+
+/* ---- the row: ellipsis and/or copy control -------------------------------- */
+
+/* Text, expand link and copy control on one baseline. `min-width: 0` so the
+   row itself can shrink as a flex item; `max-width` so it never outgrows an
+   inline parent such as a link or a table cell. */
 .bai-text-row {
   display: inline-flex;
   align-items: center;
@@ -41,47 +151,45 @@
   min-width: 0;
 }
 
-/* The copy glyph rides with the text; it must not stretch the row. */
+/* The text box measures its own overflow, so it is the ONLY flexible item.
+   `overflow: hidden` + `text-overflow` here (not only under `ellipsis`) is
+   FR-3608: inside a `white-space: nowrap` table cell a copyable value must
+   clip to its box instead of painting over the copy control. Decorations sit
+   on the root, so the box mirrors them (a block child does not inherit
+   `text-decoration` on its own). */
+.bai-text-row > .bai-text-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  text-decoration: inherit;
+}
+
+/* rows: 1 */
+.bai-text-content-clip {
+  display: block;
+  white-space: nowrap;
+}
+
+/* rows: N — `-webkit-line-clamp` is set inline (the value is dynamic). */
+.bai-text-content-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* `expandable` opened: show everything, wrapping. */
+.bai-text-content-expanded {
+  display: block;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.bai-text-row > .bai-text-expand,
 .bai-text-row > .bai-text-copy {
   flex-shrink: 0;
-}
-
-/* Flex min-width defaults to `auto`, so a long unbreakable value would drag
-   the copy control out of a fixed cell instead of wrapping. `overflow-wrap`
-   only fires where wrapping is allowed: Astryx's own `astryx-table-cell` is
-   `white-space: nowrap`, which inherits in, so inside a table the text keeps
-   its single line and must clip to its own box instead of painting over the
-   copy control (FR-3608). */
-.bai-text-row > .astryx-text,
-.bai-text-row > .bai-text-code {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* `code` nests the text INSIDE the chip, and the chip is a flex box, where
-   `text-overflow` has no effect — so the value was hard-cut with no ellipsis.
-   The chip still clips (its background must not spill); the ellipsis belongs
-   on the text itself, which needs `min-width: 0` to shrink as a flex item. */
-.bai-text-row > .bai-text-code > .astryx-text {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* antd `Typography.Text mark` — the highlighter. */
-.bai-text-mark {
-  padding: 0 0.2em;
-  background-color: var(--color-warning-muted);
-  color: inherit;
-  border-radius: var(--radius-none);
-}
-
-/* antd's inline `code` chip footprint around Astryx `Code`'s glyph styling. */
-.bai-text-code {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  max-width: 100%;
 }
