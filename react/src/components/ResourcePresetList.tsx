@@ -207,22 +207,19 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           }
           commitDelete({
             variables: { id: deletingPresetId },
-            onCompleted: (res, errors) => {
-              if (!res?.delete_resource_preset?.ok) {
-                message.error(res?.delete_resource_preset?.msg);
-              } else if (errors && errors.length > 0) {
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
                 message.error(reasonMessage(errors));
               } else {
                 message.success(t('resourcePreset.Deleted'));
                 startRefetchTransition(() => {
                   updateResourcePresetsFetchKey();
                 });
+                setDeletingPresetId(null);
               }
-              setDeletingPresetId(null);
             },
             onError: (error) => {
               message.error(error?.message);
-              setDeletingPresetId(null);
             },
           });
         }}

@@ -132,13 +132,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         if (resourcePreset?.id) {
           commitModifyResourcePreset({
             variables: { id: resourcePreset.id, props },
-            onCompleted: (res, errors) => {
-              if (!res?.modify_resource_preset?.ok) {
-                message.error(res?.modify_resource_preset?.msg);
-                onRequestClose(false);
-              } else if (errors && errors.length > 0) {
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
                 message.error(reasonMessage(errors));
-                onRequestClose(false);
               } else {
                 message.success(t('resourcePreset.Updated'));
                 onRequestClose(true);
@@ -151,13 +147,9 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
         } else {
           commitCreateResourcePreset({
             variables: { name: values?.name, props },
-            onCompleted: (res, errors) => {
-              if (!res?.create_resource_preset?.ok) {
-                message.error(res?.create_resource_preset?.msg);
-                onRequestClose(false);
-              } else if (errors && errors.length > 0) {
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
                 message.error(reasonMessage(errors));
-                onRequestClose(false);
               } else {
                 message.success(t('resourcePreset.Created'));
                 onRequestClose(true);
