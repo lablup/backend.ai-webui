@@ -1318,16 +1318,17 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 リソースプリセットダイアログには以下の項目が含まれます：
 
 - **プリセット名**: プリセットの一意の名前です（英数字、ピリオド、ハイフン、アンダースコアのみ使用可能）。
-- **リソースグループ**: （条件付き）プリセットを特定のリソースグループに関連付けます。
+- **リソースグループ**: プリセットを特定のリソースグループに関連付けます。このフィールドは任意です。空のままにするか値をクリアすると、リソースグループに関係なく適用されるグローバルプリセットになります。
 - **リソースプリセット**: 利用可能な各リソースタイプ（CPU、メモリ、GPUなど）を入力する動的フィールドのまとまりです。メモリフィールドは動的な単位入力（MiB、GiB、TiB、PiB）をサポートしています。
 - **共有メモリ**: プリセットに割り当てられた共有メモリの量です。この値は**メモリ**の値より少なくなければなりません。
 
 ![](../images/modify_resource_preset_dialog.png)
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
-「リソースプリセット」タブの右上にある **プリセットの作成** ボタンをクリックしてリソースプリセットを作成することもできます。既に存在する名前と同じリソースプリセットは作成できません。名前は各リソースプリセットを区別するキー値です。
+「リソースプリセット」タブの右上にある **プリセットの作成** ボタンをクリックしてリソースプリセットを作成することもできます。リソースプリセット名は引き続き一意である必要があります。既に存在する名前を入力すると、**作成** をクリックした際にサーバーがリクエストを拒否し、エラーメッセージが表示されます。
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO: Re-capture create_resource_preset_dialog.png — needs update. -->
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 

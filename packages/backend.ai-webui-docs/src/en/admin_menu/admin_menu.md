@@ -1399,19 +1399,20 @@ would not be shown.
 The resource preset dialog includes:
 
 - **Preset Name**: A unique name for the preset (only alphanumeric characters, periods, hyphens, and underscores allowed).
-- **Resource Group**: (Conditional) Associate the preset with a specific resource group.
+- **Resource Group**: Associate the preset with a specific resource group. This field is optional — leave it empty (or clear it) to keep the preset global, so it applies regardless of the resource group.
 - **Resource Preset**: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (`MiB`, `GiB`, `TiB`, `PiB`).
 - **Shared Memory**: The amount of shared memory allocated for the preset. This value must be less than the **Memory** value.
 
 ![](../images/modify_resource_preset_dialog.png)
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
 You can also create a resource preset by clicking the **Create Preset** button in the
-right top of the Resource Presets tab. You cannot create the same resource
-preset name that already exists, since it is the key value for distinguishing
-each resource preset.
+right top of the Resource Presets tab. Resource preset names must still be
+unique. If you enter a name that already exists, the server rejects the request
+when you click **Create** and an error message is displayed.
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO: Re-capture create_resource_preset_dialog.png — needs update. -->
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 
