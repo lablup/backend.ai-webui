@@ -261,8 +261,17 @@ test.describe(
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Verify a resource group selector (dropdown or select) is visible within the widget
-        await expect(widget.locator('.ant-select').first()).toBeVisible();
+        // 2. Verify a resource group selector is visible within the widget.
+        // `SharedResourceGroupSelectForCurrentProject` renders `BAISelect` with
+        // `showSearch`, so Astryx `Selector` renders the trigger as a plain
+        // `<button>` (`role: hasSearch ? undefined : 'combobox'`) whose
+        // accessible name falls back to `t('general.Select')` — the call site
+        // passes no `label`/`placeholder` (`BAISelect.tsx`:
+        // `label: accessibleLabel || t('general.Select')`). `exact` is required:
+        // the widget's info-tooltip button's aria-label contains "selected".
+        await expect(
+          widget.getByRole('button', { name: 'Select', exact: true }),
+        ).toBeVisible();
 
         // 3. Verify the resource content area has finished loading for the current resource group.
         // The widget may show CPU/RAM statistics when the admin user has resource quota allocated
@@ -514,10 +523,12 @@ test.describe(
         const modal = page.getByRole('dialog').filter({ hasText: 'Add panel' });
         await expect(modal).toBeVisible();
 
-        // 3. Pick the "Sessions" resource (project-scoped, available to every
-        //    role). The "Resource" combobox is the AstryxFormSelector; the other
-        //    combobox in the dialog is the condition property filter.
-        await modal.getByRole('combobox', { name: 'Resource' }).click();
+        // 3. Pick the "Sessions" data source (project-scoped, available to every
+        //    role). The AstryxFormSelector for the `resourceType` field is
+        //    labelled `t('dashboard.panelModal.DataSource')` = "Data source"
+        //    (`DashboardPanelModal.tsx`); the other combobox in the dialog is
+        //    the condition property filter ("Search filters").
+        await modal.getByRole('combobox', { name: 'Data source' }).click();
         await page
           .getByRole('option', { name: 'Sessions', exact: true })
           .click();

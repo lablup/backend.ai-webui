@@ -1,18 +1,37 @@
 // spec: Resource Policy page tests
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import test, { expect, type Page } from '@playwright/test';
+import test, { expect, type Locator, type Page } from '@playwright/test';
 
 const TEST_RUN_ID = Date.now().toString(36);
+
+// BAINameActionCell measures the name column and moves whatever does not fit
+// into a "More actions" DropdownMenu, so the SAME action is a directly
+// clickable icon button on one tab and an overflow menu item on another: the
+// Keypair list declares three actions (Info / Edit / Delete) and overflows all
+// of them, while the User and Project lists declare two and render them
+// inline. Resolve both shapes instead of assuming one.
+async function clickRowAction(
+  page: Page,
+  row: Locator,
+  action: 'Edit' | 'Delete',
+) {
+  const iconButton = row.getByRole('button', { name: action, exact: true });
+  const isInline = await iconButton
+    .isVisible({ timeout: 2000 })
+    .catch(() => false);
+  if (isInline) {
+    await iconButton.click();
+    return;
+  }
+  await row.getByRole('button', { name: 'More actions' }).click();
+  await page.getByRole('menuitem', { name: action, exact: true }).click();
+}
 
 async function cleanupPolicy(page: Page, policyName: string) {
   const row = page.getByRole('row').filter({ hasText: policyName });
   const isVisible = await row.isVisible({ timeout: 2000 }).catch(() => false);
   if (isVisible) {
-    // The row's action column is narrow enough that BAINameActionCell
-    // collapses every action into the "More actions" overflow menu instead
-    // of showing a directly-clickable "delete" icon button.
-    await row.getByRole('button', { name: 'More actions' }).click();
-    await page.getByRole('menuitem', { name: 'Delete' }).click();
+    await clickRowAction(page, row, 'Delete');
     // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to
     // enable Delete. The input carries `name="confirmText"` (not `id`), so
     // scope to the dialog's single textbox instead of an `#confirmText` id.
@@ -38,14 +57,59 @@ function policyName(kind: string, label: string) {
   return `e2e-${kind}-policy-${TEST_RUN_ID}-${label}`;
 }
 
+// The page's tab strip is `BAICard`'s `tabList`, which renders through
+// `BAITabList` -> Astryx `TabList`. Left without an explicit `role="tablist"`
+// (ResourcePolicyPage does not set one), `TabList` speaks the NAVIGATION
+// pattern: a `<nav aria-label="Tabs">` whose tabs are plain `<button>`s and
+// whose active tab is marked `aria-current="true"` — there is no `role="tab"`
+// and no `aria-selected`. See `Tab.tsx`'s `isTabRole` branch in
+// `@astryxdesign/core`.
+function policyTab(page: Page, tabName: 'Keypair' | 'User' | 'Project') {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: `${tabName} Resource Policy`, exact: true });
+}
+
+async function expectPolicyTabActive(
+  page: Page,
+  tabName: 'Keypair' | 'User' | 'Project',
+) {
+  const tab = policyTab(page, tabName);
+  // `navigateTo` resolves on `load`, but the SPA still has to boot, read the
+  // session and render the card — regularly longer than the 5 s expect
+  // timeout. The sibling assertions get this for free from the click's
+  // 30 s actionTimeout; this one has no click in front of it.
+  await expect(tab).toBeVisible({ timeout: 30000 });
+  await expect(tab).toHaveAttribute('aria-current', 'true');
+}
+
 async function selectPolicyTab(
   page: Page,
   tabName: 'Keypair' | 'User' | 'Project',
 ) {
-  await page.getByRole('tab', { name: tabName }).click();
+  await policyTab(page, tabName).click();
+  await expectPolicyTabActive(page, tabName);
+}
+
+// A BAITable column header, matched on its visible label. `getByRole(
+// 'columnheader', { name })` does NOT work for sortable columns: the header's
+// content is a sort button whose `aria-label` ("Sort by max_vfolder_count")
+// overrides the label text in the accessible-name computation, so the
+// user-visible label never appears in the header's accessible name.
+async function expectColumnHeader(page: Page, label: string) {
   await expect(
-    page.getByRole('tab', { name: tabName, selected: true }),
+    page.getByRole('columnheader').filter({ hasText: label }),
   ).toBeVisible();
+}
+
+// The default policy row, located without `.ant-*` classes (antd is gone).
+// A plain `getByRole('row').filter({ hasText: 'default' })` also matches the
+// HEADER row, whose accessible name contains the `default_for_unspecified`
+// column's "Sort by default_for_unspecified" button label. Anchoring the row's
+// accessible name at "default " excludes it: the header row's name starts with
+// "Sort by name".
+function defaultPolicyRow(page: Page) {
+  return page.getByRole('row', { name: /^default\s/ });
 }
 
 // Creation helpers — extracted so each test can provision its own resource.
@@ -117,10 +181,7 @@ async function createProjectPolicy(page: Page, name: string) {
 async function deletePolicyAndVerify(page: Page, name: string) {
   const policyRow = page.getByRole('row').filter({ hasText: name });
   await expect(policyRow).toBeVisible();
-  // Same overflow-menu collapse as cleanupPolicy: BAINameActionCell hides the
-  // delete icon behind "More actions" at this column width.
-  await policyRow.getByRole('button', { name: 'More actions' }).click();
-  await page.getByRole('menuitem', { name: 'Delete' }).click();
+  await clickRowAction(page, policyRow, 'Delete');
 
   // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to
   // enable Delete. The input carries `name="confirmText"`, not an `id`.
@@ -165,30 +226,18 @@ test.describe(
       await navigateTo(page, 'resource-policy');
 
       // Verify Keypair tab is selected by default
-      await expect(
-        page.getByRole('tab', { name: 'Keypair', selected: true }),
-      ).toBeVisible();
+      await expectPolicyTabActive(page, 'Keypair');
 
-      // Verify table columns
-      await expect(
-        page.getByRole('columnheader', { name: 'Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Concurrent Sessions' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Cluster Size' }),
-      ).toBeVisible();
+      // Verify table columns. A sortable BAITable header's accessible NAME is
+      // the sort button's aria-label ("Sort by max_containers_per_session"),
+      // which replaces the visible label in the name computation — so match the
+      // header's TEXT, which is the label the user actually reads.
+      await expectColumnHeader(page, 'Name');
+      await expectColumnHeader(page, 'Concurrent Sessions');
+      await expectColumnHeader(page, 'Cluster Size');
 
       // Verify default policy row exists
-      // Scope to tbody rows: a column header tooltip also contains the text
-      // "Default" (e.g. "Default For Unspecified"), which a plain
-      // getByRole('row') filter would match too via case-insensitive substring
-      // matching, causing a strict-mode violation.
-      const defaultRow = page
-        .locator('.ant-table-tbody .ant-table-row')
-        .filter({ hasText: 'default' });
-      await expect(defaultRow).toBeVisible();
+      await expect(defaultPolicyRow(page)).toBeVisible();
     });
 
     test('Admin can create a Keypair policy', async ({ page, request }) => {
@@ -210,15 +259,13 @@ test.describe(
       // Provision this test's own policy so it doesn't depend on the create test.
       await createKeypairPolicy(page, name);
 
-      // Find the test policy row, hover to reveal actions, and click the
-      // edit action by its accessible name (the action title is exposed as
-      // the button's `aria-label` by BAINameActionCell — FR-3331).
+      // Find the test policy row and open its edit action. On the Keypair tab
+      // BAINameActionCell collapses all three actions into the "More actions"
+      // menu, so there is no directly-clickable "Edit" icon button —
+      // clickRowAction resolves either shape.
       const policyRow = page.getByRole('row').filter({ hasText: name });
       await expect(policyRow).toBeVisible();
-      await policyRow.getByRole('cell').first().hover();
-      await policyRow
-        .getByRole('button', { name: 'Edit', exact: true })
-        .click();
+      await clickRowAction(page, policyRow, 'Edit');
 
       // Verify Update dialog appears
       const modal = page.getByRole('dialog');
@@ -263,28 +310,14 @@ test.describe(
       await navigateTo(page, 'resource-policy');
 
       // Switch to User tab
-      await page.getByRole('tab', { name: 'User' }).click();
-      await expect(
-        page.getByRole('tab', { name: 'User', selected: true }),
-      ).toBeVisible();
+      await selectPolicyTab(page, 'User');
 
-      // Verify table columns
-      await expect(
-        page.getByRole('columnheader', { name: 'Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Max Folder Count' }),
-      ).toBeVisible();
+      // Verify table columns (see the Keypair test for why this matches text).
+      await expectColumnHeader(page, 'Name');
+      await expectColumnHeader(page, 'Max Folder Count');
 
       // Verify default policy row exists
-      // Scope to tbody rows: a column header tooltip also contains the text
-      // "Default" (e.g. "Default For Unspecified"), which a plain
-      // getByRole('row') filter would match too via case-insensitive substring
-      // matching, causing a strict-mode violation.
-      const defaultRow = page
-        .locator('.ant-table-tbody .ant-table-row')
-        .filter({ hasText: 'default' });
-      await expect(defaultRow).toBeVisible();
+      await expect(defaultPolicyRow(page)).toBeVisible();
     });
 
     test('Admin can create a User policy', async ({ page, request }) => {
@@ -316,28 +349,14 @@ test.describe(
       await navigateTo(page, 'resource-policy');
 
       // Switch to Project tab
-      await page.getByRole('tab', { name: 'Project' }).click();
-      await expect(
-        page.getByRole('tab', { name: 'Project', selected: true }),
-      ).toBeVisible();
+      await selectPolicyTab(page, 'Project');
 
-      // Verify table columns
-      await expect(
-        page.getByRole('columnheader', { name: 'Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Max Folder Count' }),
-      ).toBeVisible();
+      // Verify table columns (see the Keypair test for why this matches text).
+      await expectColumnHeader(page, 'Name');
+      await expectColumnHeader(page, 'Max Folder Count');
 
       // Verify default policy row
-      // Scope to tbody rows: a column header tooltip also contains the text
-      // "Default" (e.g. "Default For Unspecified"), which a plain
-      // getByRole('row') filter would match too via case-insensitive substring
-      // matching, causing a strict-mode violation.
-      const defaultRow = page
-        .locator('.ant-table-tbody .ant-table-row')
-        .filter({ hasText: 'default' });
-      await expect(defaultRow).toBeVisible();
+      await expect(defaultPolicyRow(page)).toBeVisible();
     });
 
     test('Admin can create a Project policy', async ({ page, request }) => {

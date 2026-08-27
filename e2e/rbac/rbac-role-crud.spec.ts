@@ -485,7 +485,15 @@ test.describe(
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
 
-      // 3. Locate system roles by their "Source" cell value being exactly
+      // 3. Wait for the table's first data row. The header row renders before
+      // the query resolves, so only a data row proves the list loaded — and
+      // the 3s system-row probe below is conditional, so an unloaded table
+      // silently sends the test to a pagination bar that does not exist yet.
+      await expect(page.getByRole('row').nth(1)).toBeVisible({
+        timeout: 30000,
+      });
+
+      // 4. Locate system roles by their "Source" cell value being exactly
       // "System", excluding "monitor" (known bug). Real rows/cells come from
       // `BAITable`'s semantic `<table>`, so role-based locators reach them —
       // the header row has `columnheader`s, not `cell`s, so it never matches.
@@ -514,7 +522,7 @@ test.describe(
       }
       await expect(systemRoleRow).toBeVisible({ timeout: 10000 });
 
-      // 4. Click the role name to open the detail drawer. BAINameActionCell
+      // 5. Click the role name to open the detail drawer. BAINameActionCell
       // renders the title as a button when `onTitleClick` is set, and it is
       // the first control in the row's first cell (actions come after it).
       const titleElement = systemRoleRow
@@ -526,14 +534,14 @@ test.describe(
       const systemRoleName = (await titleElement.textContent())?.trim() ?? null;
       await titleElement.click();
 
-      // 5. Verify the drawer title "RBAC Role Info" appears. `RoleDetailDrawer`
+      // 6. Verify the drawer title "RBAC Role Info" appears. `RoleDetailDrawer`
       // renders `BAIDrawer` (Astryx lab `Drawer`), an Astryx dialog whose
       // accessible name is its fixed `label` — the role name is the visible
       // heading text, not the dialog's name.
       const drawer = page.getByRole('dialog', { name: 'RBAC Role Info' });
       await expect(drawer).toBeVisible();
 
-      // 6. Verify the drawer heading matches the role name we clicked.
+      // 7. Verify the drawer heading matches the role name we clicked.
       // `BAIDrawer`'s title renders through Astryx `Heading level={5}`.
       if (systemRoleName) {
         await expect(
@@ -545,7 +553,7 @@ test.describe(
         });
       }
 
-      // 7. Verify the Edit button is NOT present for system roles.
+      // 8. Verify the Edit button is NOT present for system roles.
       // `RoleDetailDrawer` only renders the Edit Role `IconButton` (aria-label
       // "Edit Role") when `role.source === 'CUSTOM'`.
       await expect(
