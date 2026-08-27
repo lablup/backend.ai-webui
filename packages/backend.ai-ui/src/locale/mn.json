@@ -179,6 +179,8 @@
     "operator": {
       "After": "дараа",
       "Before": "өмнө",
+      "Contains": "агуулсан",
+      "EndsWith": "төгсдөг",
       "Equals": "тэнцүү",
       "GreaterThan": "их",
       "GreaterThanOrEqual": "их эсвэл тэнцүү",
@@ -193,8 +195,12 @@
       "In": "дотор",
       "LessThan": "бага",
       "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotContains": "агуулаагүй",
+      "NotEndsWith": "төгсдөггүй",
       "NotEquals": "тэнцүү биш",
-      "NotIn": "дотор биш"
+      "NotIn": "дотор биш",
+      "NotStartsWith": "эхэлдэггүй",
+      "StartsWith": "эхэлдэг"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

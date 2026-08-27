@@ -179,6 +179,8 @@
     "operator": {
       "After": "μετά",
       "Before": "πριν",
+      "Contains": "περιέχει",
+      "EndsWith": "τελειώνει με",
       "Equals": "ίσο με",
       "GreaterThan": "μεγαλύτερο από",
       "GreaterThanOrEqual": "μεγαλύτερο ή ίσο",
@@ -193,8 +195,12 @@
       "In": "σε",
       "LessThan": "μικρότερο από",
       "LessThanOrEqual": "μικρότερο ή ίσο",
+      "NotContains": "δεν περιέχει",
+      "NotEndsWith": "δεν τελειώνει με",
       "NotEquals": "όχι ίσο με",
-      "NotIn": "όχι σε"
+      "NotIn": "όχι σε",
+      "NotStartsWith": "δεν αρχίζει με",
+      "StartsWith": "αρχίζει με"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

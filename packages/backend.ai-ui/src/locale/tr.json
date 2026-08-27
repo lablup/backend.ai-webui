@@ -179,6 +179,8 @@
     "operator": {
       "After": "sonra",
       "Before": "önce",
+      "Contains": "içerir",
+      "EndsWith": "ile biter",
       "Equals": "eşit",
       "GreaterThan": "daha büyük",
       "GreaterThanOrEqual": "büyük veya eşit",
@@ -193,8 +195,12 @@
       "In": "içinde",
       "LessThan": "daha küçük",
       "LessThanOrEqual": "küçük veya eşit",
+      "NotContains": "içermez",
+      "NotEndsWith": "ile bitmez",
       "NotEquals": "eşit değil",
-      "NotIn": "içinde değil"
+      "NotIn": "içinde değil",
+      "NotStartsWith": "ile başlamaz",
+      "StartsWith": "ile başlar"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

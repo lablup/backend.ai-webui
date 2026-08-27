@@ -228,6 +228,22 @@
     "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Cluster Size",
+    "Concurrency": "Concurrent Sessions",
+    "CreatedAt": "Created At",
+    "DefaultForUnspecified": "Default For Unspecified",
+    "DefaultForUnspecifiedTooltipDesc1": "Sets the default policy when no specific CPU or memory is requested.",
+    "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED' allows usage up to the agent node’s capacity, while 'LIMITED' denies resources unless explicitly set. In most cases, 'UNLIMITED' is recommended.",
+    "IdleTimeout": "Idle Timeout",
+    "MaxConcurrentSFTPSessions": "Max Concurrent SFTP Sessions",
+    "MaxPendingSessionCount": "Max Pending Session Count",
+    "MaxPendingSessionResourceSlots": "Max Pending Session Resource Slots",
+    "MaxSessionLifetime": "Max Session Lifetime",
+    "Name": "Name",
+    "StorageNodes": "Storage Nodes",
+    "TotalResourceSlots": "Resource Policy"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Select Keypair"
   },
@@ -288,6 +304,13 @@
     "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
     "UpdateMultipleProjects": "Update Multiple Projects"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Created At",
+    "MaxNetworkCount": "Max Network Count",
+    "MaxQuotaScopeSize": "Max Folder Size",
+    "MaxVFolderCount": "Max Folder Count",
+    "Name": "Name"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Select Project"

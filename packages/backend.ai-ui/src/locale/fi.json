@@ -179,6 +179,8 @@
     "operator": {
       "After": "jälkeen",
       "Before": "ennen",
+      "Contains": "sisältää",
+      "EndsWith": "päättyy",
       "Equals": "yhtä suuri",
       "GreaterThan": "suurempi kuin",
       "GreaterThanOrEqual": "suurempi tai yhtä suuri",
@@ -193,8 +195,12 @@
       "In": "sisällä",
       "LessThan": "pienempi kuin",
       "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotContains": "ei sisällä",
+      "NotEndsWith": "ei pääty",
       "NotEquals": "ei yhtä suuri",
-      "NotIn": "ei sisällä"
+      "NotIn": "ei sisällä",
+      "NotStartsWith": "ei ala",
+      "StartsWith": "alkaa"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

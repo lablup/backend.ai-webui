@@ -179,6 +179,8 @@
     "operator": {
       "After": "после",
       "Before": "до",
+      "Contains": "содержит",
+      "EndsWith": "заканчивается на",
       "Equals": "равно",
       "GreaterThan": "больше",
       "GreaterThanOrEqual": "больше или равно",
@@ -193,8 +195,12 @@
       "In": "в",
       "LessThan": "меньше",
       "LessThanOrEqual": "меньше или равно",
+      "NotContains": "не содержит",
+      "NotEndsWith": "не заканчивается на",
       "NotEquals": "не равно",
-      "NotIn": "не в"
+      "NotIn": "не в",
+      "NotStartsWith": "не начинается с",
+      "StartsWith": "начинается с"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

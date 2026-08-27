@@ -179,6 +179,8 @@
     "operator": {
       "After": "이후",
       "Before": "이전",
+      "Contains": "포함",
+      "EndsWith": "끝남",
       "Equals": "같음",
       "GreaterThan": "초과",
       "GreaterThanOrEqual": "이상",
@@ -193,8 +195,12 @@
       "In": "포함됨",
       "LessThan": "미만",
       "LessThanOrEqual": "이하",
+      "NotContains": "포함하지 않음",
+      "NotEndsWith": "끝나지 않음",
       "NotEquals": "같지 않음",
-      "NotIn": "포함되지 않음"
+      "NotIn": "포함되지 않음",
+      "NotStartsWith": "시작하지 않음",
+      "StartsWith": "시작"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "크기",
     "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 보냈습니다.",
     "Version": "버전"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "클러스터 크기",
+    "Concurrency": "동시실행 세션 수",
+    "CreatedAt": "생성 날짜",
+    "DefaultForUnspecified": "기본값",
+    "DefaultForUnspecifiedTooltipDesc1": "특정 CPU 또는 메모리가 요청되지 않은 경우 기본 정책을 설정합니다.",
+    "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED'을 사용하면 에이전트 노드의 용량까지 사용을 허용하는 반면, 'LIMITED'는 명시적으로 설정되지 않는 한 리소스를 거부합니다. \n대부분의 경우 'UNLIMITED'을 권장합니다.",
+    "IdleTimeout": "유휴 대기 시간",
+    "MaxConcurrentSFTPSessions": "최대 동시 SFTP 세션",
+    "MaxPendingSessionCount": "최대 대기 세션",
+    "MaxPendingSessionResourceSlots": "최대 대기 세션 리소스 슬롯",
+    "MaxSessionLifetime": "최대 세션 수명 시간",
+    "Name": "이름",
+    "StorageNodes": "저장소 노드",
+    "TotalResourceSlots": "자원 정책"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "키페어를 선택해주세요"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
     "ProjectResourcePolicy": "프로젝트 리소스 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "생성 날짜",
+    "MaxNetworkCount": "최대 네트워크 수",
+    "MaxQuotaScopeSize": "최대 폴더 크기",
+    "MaxVFolderCount": "최대 폴더 수",
+    "Name": "이름"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "프로젝트를 선택해주세요"

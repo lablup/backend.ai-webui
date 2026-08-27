@@ -179,6 +179,8 @@
     "operator": {
       "After": "後",
       "Before": "前",
+      "Contains": "含む",
+      "EndsWith": "で終わる",
       "Equals": "等しい",
       "GreaterThan": "より大きい",
       "GreaterThanOrEqual": "以上",
@@ -193,8 +195,12 @@
       "In": "含まれる",
       "LessThan": "より小さい",
       "LessThanOrEqual": "以下",
+      "NotContains": "含まない",
+      "NotEndsWith": "で終わらない",
       "NotEquals": "等しくない",
-      "NotIn": "含まれない"
+      "NotIn": "含まれない",
+      "NotStartsWith": "で始まらない",
+      "StartsWith": "で始まる"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

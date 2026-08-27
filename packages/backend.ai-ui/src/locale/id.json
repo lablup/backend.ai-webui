@@ -179,6 +179,8 @@
     "operator": {
       "After": "setelah",
       "Before": "sebelum",
+      "Contains": "mengandung",
+      "EndsWith": "diakhiri dengan",
       "Equals": "sama dengan",
       "GreaterThan": "lebih besar dari",
       "GreaterThanOrEqual": "lebih besar atau sama",
@@ -193,8 +195,12 @@
       "In": "dalam",
       "LessThan": "kurang dari",
       "LessThanOrEqual": "kurang dari atau sama",
+      "NotContains": "tidak berisi",
+      "NotEndsWith": "tidak diakhiri dengan",
       "NotEquals": "tidak sama dengan",
-      "NotIn": "tidak dalam"
+      "NotIn": "tidak dalam",
+      "NotStartsWith": "tidak dimulai dengan",
+      "StartsWith": "dimulai dengan"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

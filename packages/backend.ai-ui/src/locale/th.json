@@ -179,6 +179,8 @@
     "operator": {
       "After": "หลัง",
       "Before": "ก่อน",
+      "Contains": "ประกอบด้วย",
+      "EndsWith": "ลงท้ายด้วย",
       "Equals": "เท่ากับ",
       "GreaterThan": "มากกว่า",
       "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
@@ -193,8 +195,12 @@
       "In": "ใน",
       "LessThan": "น้อยกว่า",
       "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotContains": "ไม่มี",
+      "NotEndsWith": "ไม่ลงท้ายด้วย",
       "NotEquals": "ไม่เท่ากับ",
-      "NotIn": "ไม่ใน"
+      "NotIn": "ไม่ใน",
+      "NotStartsWith": "ไม่เริ่มต้นด้วย",
+      "StartsWith": "เริ่มต้นด้วย"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

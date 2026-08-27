@@ -179,6 +179,8 @@
     "operator": {
       "After": "depois",
       "Before": "antes",
+      "Contains": "contém",
+      "EndsWith": "termina com",
       "Equals": "igual a",
       "GreaterThan": "maior que",
       "GreaterThanOrEqual": "maior ou igual",
@@ -193,8 +195,12 @@
       "In": "em",
       "LessThan": "menor que",
       "LessThanOrEqual": "menor ou igual",
+      "NotContains": "não contém",
+      "NotEndsWith": "não termina com",
       "NotEquals": "diferente de",
-      "NotIn": "não em"
+      "NotIn": "não em",
+      "NotStartsWith": "não começa com",
+      "StartsWith": "começa com"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

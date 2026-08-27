@@ -179,6 +179,8 @@
     "operator": {
       "After": "dopo",
       "Before": "prima",
+      "Contains": "Contiene",
+      "EndsWith": "termina con",
       "Equals": "uguale a",
       "GreaterThan": "maggiore di",
       "GreaterThanOrEqual": "maggiore o uguale",
@@ -193,8 +195,12 @@
       "In": "in",
       "LessThan": "minore di",
       "LessThanOrEqual": "minore o uguale",
+      "NotContains": "non contiene",
+      "NotEndsWith": "non termina con",
       "NotEquals": "diverso da",
-      "NotIn": "non in"
+      "NotIn": "non in",
+      "NotStartsWith": "non inizia con",
+      "StartsWith": "inizia con"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

@@ -179,6 +179,8 @@
     "operator": {
       "After": "之後",
       "Before": "之前",
+      "Contains": "包含",
+      "EndsWith": "以...結尾",
       "Equals": "等於",
       "GreaterThan": "大於",
       "GreaterThanOrEqual": "大於或等於",
@@ -193,8 +195,12 @@
       "In": "在...中",
       "LessThan": "小於",
       "LessThanOrEqual": "小於或等於",
+      "NotContains": "不包含",
+      "NotEndsWith": "不以...結尾",
       "NotEquals": "不等於",
-      "NotIn": "不在...中"
+      "NotIn": "不在...中",
+      "NotStartsWith": "不以...開頭",
+      "StartsWith": "以...開頭"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {

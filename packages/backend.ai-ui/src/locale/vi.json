@@ -179,6 +179,8 @@
     "operator": {
       "After": "sau",
       "Before": "trước",
+      "Contains": "chứa",
+      "EndsWith": "kết thúc bằng",
       "Equals": "bằng",
       "GreaterThan": "lớn hơn",
       "GreaterThanOrEqual": "lớn hơn hoặc bằng",
@@ -193,8 +195,12 @@
       "In": "trong",
       "LessThan": "nhỏ hơn",
       "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotContains": "không chứa",
+      "NotEndsWith": "không kết thúc bằng",
       "NotEquals": "không bằng",
-      "NotIn": "không trong"
+      "NotIn": "không trong",
+      "NotStartsWith": "không bắt đầu bằng",
+      "StartsWith": "bắt đầu bằng"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
