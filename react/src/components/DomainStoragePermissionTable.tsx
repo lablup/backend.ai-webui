@@ -155,6 +155,7 @@ const DomainStoragePermissionTable: React.FC<
   return (
     <>
       <BAITable
+        scroll={{ x: 'max-content' }}
         size="small"
         {...tableProps}
         locale={{ emptyText: t('storageHost.permission.NoDomainSelected') }}

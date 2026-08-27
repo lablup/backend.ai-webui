@@ -291,6 +291,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       size="small"
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}

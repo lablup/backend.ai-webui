@@ -1,4 +1,3 @@
-import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import {
   BAIRuntimeVariantPresetTableFragment$data,
   BAIRuntimeVariantPresetTableFragment$key,
@@ -7,6 +6,7 @@ import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BooleanTag from '../BooleanTag';
 import {
@@ -250,6 +250,7 @@ const BAIRuntimeVariantPresetTable = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}
       columns={allColumns}

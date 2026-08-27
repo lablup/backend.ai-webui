@@ -187,7 +187,12 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITable rowKey="id" dataSource={presets} columns={columns} />
+      <BAITable
+        scroll={{ x: 'max-content' }}
+        rowKey="id"
+        dataSource={presets}
+        columns={columns}
+      />
       <BAIDeleteConfirmModal
         open={!!deletingPresetId}
         title={t('resourcePreset.DeleteResourcePreset')}

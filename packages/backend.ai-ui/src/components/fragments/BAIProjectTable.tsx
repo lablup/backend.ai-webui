@@ -201,6 +201,7 @@ const BAIProjectTable = ({
 
   return (
     <BAITable<ProjectInList>
+      scroll={{ x: 'max-content' }}
       {...tableProps}
       rowKey={(record) => record.id}
       dataSource={projects}

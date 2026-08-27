@@ -294,6 +294,7 @@ const ResourceGroupFairShareTable: React.FC<
   return (
     <>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'id'}
         {...tableProps}
         dataSource={resourceGroups || []}

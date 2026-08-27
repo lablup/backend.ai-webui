@@ -726,6 +726,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         />
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         dataSource={revisions}
         columns={columns}

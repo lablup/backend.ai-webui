@@ -237,6 +237,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   return (
     <>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'id'}
         {...tableProps}
         dataSource={projectFairShares || []}

@@ -461,6 +461,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
           </BAIFlex>
         </BAIFlex>
         <BAITable<(typeof scopeRows)[number]>
+          scroll={{ x: 'max-content' }}
           rowKey="scopeId"
           dataSource={scopeRows}
           columns={columns}

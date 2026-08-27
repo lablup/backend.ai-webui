@@ -627,6 +627,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   return (
     <>
       <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         rowKey={(record) => record.id}
         size="small"

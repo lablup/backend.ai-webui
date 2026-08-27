@@ -351,6 +351,7 @@ const DeploymentAccessTokensTable: React.FC<
   return (
     <>
       <BAITable<AccessTokenNode>
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         loading={isPendingRefetch || isDeletingToken}
         dataSource={accessTokens}
