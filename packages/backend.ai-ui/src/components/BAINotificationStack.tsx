@@ -302,7 +302,14 @@ const BAINotificationStackItemView: React.FC<{
           ) : undefined
         }
       >
-        {item.children}
+        {/* A bare string would inherit Banner's own base size (measured 16px)
+            and tower over the description above it, so it gets the same
+            treatment `description` does. */}
+        {typeof item.children === 'string' ? (
+          <Text type="supporting">{item.children}</Text>
+        ) : (
+          item.children
+        )}
       </Banner>
     </div>
   );

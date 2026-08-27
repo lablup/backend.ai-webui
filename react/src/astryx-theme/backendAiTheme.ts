@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 20;
+export const THEME_NAME_REV = 21;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -516,13 +516,22 @@ const STATUS_TEXT_COLORS = {
 // theme points at `--color-background-blue` — dark-only alpha (`#9eb7ff3D` =
 // 24%), so page content read through the notification cards. `#393f50` is that
 // fill composited over the dark page: same colour, opaque (FR-3554).
+// Astryx fills every `.astryx-banner.<status>` from `--color-{status}-muted`,
+// and those tokens are ALPHA (`#FF4D4F33` light, `#be3d3f3F` dark), so page
+// content reads through a floating notification. These are the same fills
+// composited over `--color-background-card` — identical colour, opaque
+// (FR-3554 did this for info; FR-3700 finishes the other three).
 const BANNER_INFO_SURFACE = 'light-dark(#c4ddfb, #393f50)';
+const BANNER_ERROR_SURFACE = 'light-dark(#FFDBDC, #3E1E1F)';
+const BANNER_SUCCESS_SURFACE = 'light-dark(#CCF2EB, #11322C)';
+const BANNER_WARNING_SURFACE = 'light-dark(#FEEFD0, #443414)';
 
 const BANNER_OPAQUE_INFO_SURFACE = {
   banner: {
-    'status:info': {
-      '--color-accent-muted': BANNER_INFO_SURFACE,
-    },
+    'status:info': { '--color-accent-muted': BANNER_INFO_SURFACE },
+    'status:error': { '--color-error-muted': BANNER_ERROR_SURFACE },
+    'status:success': { '--color-success-muted': BANNER_SUCCESS_SURFACE },
+    'status:warning': { '--color-warning-muted': BANNER_WARNING_SURFACE },
   },
 };
 
@@ -530,16 +539,18 @@ const BANNER_OPAQUE_INFO_SURFACE = {
 // `--color-background-card`, so a detail body reads as a detached white block
 // (FR-3700). Set the TOKEN, never `backgroundColor`: StyleX's priority4 layer
 // outranks `@layer astryx-theme` and a plain declaration silently no-ops.
+// The content area is a SIBLING of the coloured header, not a child, so it
+// takes the same fill by literal rather than by inheriting the token. It also
+// draws its own left/right/bottom border in `--color-border`, which with a
+// tinted fill reads as a box around the expanded half only — hence the
+// transparent border.
 const BANNER_CONTENT_STATUS_SURFACE = {
   'banner-content': {
+    base: { '--color-border': 'transparent' },
     'status:info': { '--color-background-card': BANNER_INFO_SURFACE },
-    'status:success': {
-      '--color-background-card': 'var(--color-success-muted)',
-    },
-    'status:warning': {
-      '--color-background-card': 'var(--color-warning-muted)',
-    },
-    'status:error': { '--color-background-card': 'var(--color-error-muted)' },
+    'status:error': { '--color-background-card': BANNER_ERROR_SURFACE },
+    'status:success': { '--color-background-card': BANNER_SUCCESS_SURFACE },
+    'status:warning': { '--color-background-card': BANNER_WARNING_SURFACE },
   },
 };
 
