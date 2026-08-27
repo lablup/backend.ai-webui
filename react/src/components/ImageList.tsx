@@ -598,6 +598,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
           </BAIFlex>
         </BAIFlex>
         <BAITable
+          scroll={{ x: 'max-content' }}
           resizable
           rowKey="id"
           pagination={{

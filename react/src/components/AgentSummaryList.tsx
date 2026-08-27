@@ -428,6 +428,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         bordered
         rowKey={'id'}
         dataSource={filterOutNullAndUndefined(agent_summary_list?.items)}

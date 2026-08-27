@@ -774,6 +774,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
 
   return (
     <BAITable<AgentNodeInList>
+      scroll={{ x: 'max-content' }}
       {...tableProps}
       rowKey={(record) => record.id}
       dataSource={agents}

@@ -1427,6 +1427,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 state is already carried by the validity icon column plus the
                 per-cell error background that `onCell` paints. */}
             <BAITable<ValidatedRow>
+              scroll={{ x: 'max-content' }}
               size="small"
               rowKey="key"
               dataSource={displayRows}
