@@ -4,11 +4,18 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
+import type { ResourcePresetSettingModalTestQuery } from '../__generated__/ResourcePresetSettingModalTestQuery.graphql';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { RelayEnvironmentProvider } from 'react-relay';
+import { Suspense } from 'react';
+import {
+  graphql,
+  RelayEnvironmentProvider,
+  useLazyLoadQuery,
+} from 'react-relay';
+import type { OperationDescriptor } from 'relay-runtime';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
@@ -161,5 +168,94 @@ describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR
       expect(create?.variables.name).toBe('global-preset');
       expect(create?.variables.props.scaling_group_name).toBeNull();
     });
+  });
+});
+
+const EXISTING_PRESET = {
+  id: 'a3a7e6a4-1fd4-4c5d-9a6f-0a3f4b8e2c11',
+  name: 'existing-preset',
+  resource_slots: JSON.stringify({ cpu: '2', mem: '2147483648' }),
+  shared_memory: null,
+  scaling_group_name: null,
+};
+
+// Hands the modal a real fragment ref, the way `ResourcePresetList` does.
+const EditModalHost = () => {
+  const data = useLazyLoadQuery<ResourcePresetSettingModalTestQuery>(
+    graphql`
+      query ResourcePresetSettingModalTestQuery {
+        resource_presets {
+          ...ResourcePresetSettingModalFragment
+        }
+      }
+    `,
+    {},
+  );
+  return (
+    <ResourcePresetSettingModal
+      open
+      resourcePresetFrgmt={data.resource_presets?.[0]}
+      onRequestClose={vi.fn()}
+    />
+  );
+};
+
+const renderEditModal = () => {
+  const environment: RelayMockEnvironment = createMockEnvironment();
+  const seenOperations: Array<{
+    name: string;
+    variables: Record<string, any>;
+  }> = [];
+  // A queued resolver is dropped after it answers once, and this render
+  // issues two operations (the query, then the mutation) — so re-queue a
+  // fresh wrapper before answering each one.
+  const resolve = (operation: OperationDescriptor) => {
+    seenOperations.push({
+      name: operation.request.node.params.name,
+      variables: operation.request.variables,
+    });
+    environment.mock.queueOperationResolver((next) => resolve(next));
+    return MockPayloadGenerator.generate(operation, {
+      ResourcePreset: () => EXISTING_PRESET,
+    });
+  };
+  environment.mock.queueOperationResolver(resolve);
+  render(
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback={null}>
+        <EditModalHost />
+      </Suspense>
+    </RelayEnvironmentProvider>,
+  );
+  return { seenOperations };
+};
+
+describe('ResourcePresetSettingModal edit contract (FR-3718)', () => {
+  it('saves an existing preset through the id-keyed modify mutation only', async () => {
+    const user = userEvent.setup();
+    const { seenOperations } = renderEditModal();
+
+    // Editing: the name is shown but locked, and the button reads Save.
+    expect(
+      await screen.findByLabelText('resourcePreset.PresetName'),
+    ).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: /button.Save/ }));
+
+    await waitFor(() => {
+      const modify = seenOperations.find(
+        (operation) =>
+          operation.name === 'ResourcePresetSettingModalModifyMutation',
+      );
+      expect(modify).toBeDefined();
+      expect(modify?.variables.id).toBe(EXISTING_PRESET.id);
+      expect(modify?.variables).not.toHaveProperty('name');
+      expect(modify?.variables.props).not.toHaveProperty('name');
+    });
+    expect(
+      seenOperations.some(
+        (operation) =>
+          operation.name === 'ResourcePresetSettingModalCreateMutation',
+      ),
+    ).toBe(false);
   });
 });
