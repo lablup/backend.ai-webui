@@ -414,6 +414,7 @@ const CustomizedImageList: React.FC = () => {
           />
         </BAIFlex>
         <BAITable
+          scroll={{ x: 'max-content' }}
           resizable
           loading={isPendingSearchTransition}
           columns={

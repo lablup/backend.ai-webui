@@ -134,6 +134,7 @@ const BAILoginSessionTable = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       size="small"

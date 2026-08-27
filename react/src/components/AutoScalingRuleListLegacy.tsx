@@ -149,6 +149,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
         styles={{ body: { paddingTop: 0 } }}
       >
         <BAITable
+          scroll={{ x: 'max-content' }}
           rowKey={'id'}
           columns={[
             {

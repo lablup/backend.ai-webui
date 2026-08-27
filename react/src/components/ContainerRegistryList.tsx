@@ -481,6 +481,7 @@ const ContainerRegistryList: React.FC<{
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={(record) => record.id}
         pagination={{
           pageSize: tablePaginationOption.pageSize,

@@ -246,6 +246,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey={'domainName'}
       {...tableProps}
       dataSource={domain || []}

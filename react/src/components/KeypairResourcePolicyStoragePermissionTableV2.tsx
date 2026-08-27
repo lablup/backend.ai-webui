@@ -206,6 +206,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
   return (
     <>
       <BAITable
+        scroll={{ x: 'max-content' }}
         size="small"
         {...tableProps}
         rowKey="id"

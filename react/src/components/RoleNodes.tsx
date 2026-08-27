@@ -244,6 +244,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
   return (
     <>
       <BAITable<RoleNodeInList>
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         dataSource={roles as RoleNodeInList[]}
         columns={displayedColumns}

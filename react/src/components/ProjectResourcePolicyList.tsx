@@ -244,6 +244,7 @@ const ProjectResourcePolicyList: React.FC<
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         columns={columns}
         dataSource={filterOutNullAndUndefined(project_resource_policies)}

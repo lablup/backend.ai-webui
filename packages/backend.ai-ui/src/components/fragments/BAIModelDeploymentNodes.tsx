@@ -433,6 +433,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
 
   return (
     <BAITable<ModelDeploymentNodeInList>
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       size="small"
