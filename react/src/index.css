@@ -95,8 +95,17 @@
   vertical-align: -0.125em !important;
 }
 
-:lang(ko) *,
-:lang(ja) *,
-:lang(zh) * {
+/* `keep-all` is a Korean-specific prescription: it stops a break landing
+   between Hangul syllables, leaving the space as the only break point.
+   Japanese and Chinese have no inter-word spaces, so the same rule left them
+   with NO break opportunity at all and the text overflowed its container
+   instead of wrapping (FR-3695). */
+:lang(ko) * {
   word-break: keep-all;
+}
+
+/* `strict` keeps CJ-class characters (ー, small kana) off the start of a line;
+   UAX #14 leaves them breakable under the `auto`/`normal` default. */
+:lang(ja) * {
+  line-break: strict;
 }

@@ -391,10 +391,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
                         {!required && (
                           <BAIText
                             type="secondary"
-                            style={{
-                              marginLeft: token.marginXXS,
-                              wordBreak: 'keep-all',
-                            }}
+                            style={{ marginLeft: token.marginXXS }}
                           >
                             ({t('general.Optional')})
                           </BAIText>
