@@ -230,7 +230,7 @@ const renderEditModal = () => {
   return { seenOperations };
 };
 
-describe('ResourcePresetSettingModal edit contract (FR-3718)', () => {
+describe('ResourcePresetSettingModal edit contract', () => {
   it('saves an existing preset through the id-keyed modify mutation only', async () => {
     const user = userEvent.setup();
     const { seenOperations } = renderEditModal();
