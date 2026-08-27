@@ -189,12 +189,17 @@ const SFTPServerButtonWithProject: React.FC<
     reuseIfExists: true,
   });
 
+  // Empty in the ordinary healthy state, and Astryx `Tooltip` has no
+  // empty-content guard — an enabled one then opens a contentless dark pill
+  // over the whole button group (FR-3672).
+  const tooltipTitle = getTooltipTitle();
+
   return (
     // P18 caveat, unchanged from the antd original: the tooltip explains why
     // the control is disabled, and a disabled control swallows hover events.
     // It stays on the GROUP (never disabled itself), which is what made it
     // reachable under antd too. `Space.Compact` -> `ButtonGroup` (MAPPING §4).
-    <Tooltip content={getTooltipTitle()}>
+    <Tooltip content={tooltipTitle} isEnabled={!!tooltipTitle}>
       <ButtonGroup label={t('data.explorer.RunSSH/SFTPserver')}>
         <BAIButton
           disabled={
