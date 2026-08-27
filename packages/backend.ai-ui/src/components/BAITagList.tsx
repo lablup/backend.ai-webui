@@ -7,7 +7,8 @@
    antd `Tag`             -> Astryx `Badge`   (MAPPING §3.5, not closable)
    antd `Typography.Text` -> Astryx `Text`
    antd `Typography.Link` -> Astryx `Link`
-   antd `Tooltip`         -> Astryx `Tooltip` (`title` -> `content`)
+   antd `Tooltip`         -> Astryx `HoverCard` (a list of values needs a card
+                             surface; `.astryx-tooltip` is dark in both schemes)
    antd `Popover`         -> Astryx `Popover` (`trigger="click"` is its only
                              trigger; hover overlays are `Tooltip`/`HoverCard`)
 
@@ -27,10 +28,10 @@
 */
 import BAIFlex from './BAIFlex';
 import { Badge } from '@astryxdesign/core/Badge';
+import { HoverCard } from '@astryxdesign/core/HoverCard';
 import { Link } from '@astryxdesign/core/Link';
 import { Popover } from '@astryxdesign/core/Popover';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
 
@@ -107,7 +108,11 @@ const BAITagList: React.FC<BAITagListProps> = ({
 
   const overflowControl =
     effectiveTrigger === 'hover' ? (
-      <Tooltip content={restItemsList}>{overflowAffordance}</Tooltip>
+      // `HoverCard`, not `Tooltip`: this project's theme pins `.astryx-tooltip`
+      // to antd's `colorBgSpotlight`, i.e. DARK in both schemes, which is right
+      // for a short label and wrong for a list of values. HoverCard is the same
+      // hover/focus trigger on a `--color-background-surface` card.
+      <HoverCard content={restItemsList}>{overflowAffordance}</HoverCard>
     ) : (
       <Popover
         label={`+${restCount}`}

@@ -48,4 +48,15 @@ describe('BAITagList overflow trigger', () => {
     render(<BAITagList items={ITEMS} trigger="click" />);
     expect(overflow().closest('button')).toBeInTheDocument();
   });
+
+  // The overflow list is a list of VALUES, so it belongs on a card surface.
+  // This project pins `.astryx-tooltip` to antd's `colorBgSpotlight` — dark in
+  // BOTH schemes — so a Tooltip here reads as a black box in light mode
+  // (FR-3707). HoverCard mounts its layer lazily; Tooltip and Popover both
+  // render one up front, which is what makes the swap observable in jsdom.
+  it('does not put the overflow list in a Tooltip', () => {
+    render(<BAITagList items={ITEMS} />);
+    expect(document.querySelector('[role="tooltip"]')).toBeNull();
+    expect(document.querySelectorAll('[popover]')).toHaveLength(0);
+  });
 });
