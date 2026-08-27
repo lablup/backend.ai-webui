@@ -5,11 +5,13 @@
 import { DeploymentAutoScalingCardDeleteMutation } from '../__generated__/DeploymentAutoScalingCardDeleteMutation.graphql';
 import {
   AutoScalingRuleFilter,
+  AutoScalingRuleOrderBy,
   DeploymentAutoScalingCardListQuery,
 } from '../__generated__/DeploymentAutoScalingCardListQuery.graphql';
 import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/DeploymentAutoScalingCardPresetsQuery.graphql';
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
 import { App } from '../app-shim';
+import { convertToOrderBy } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -147,11 +149,9 @@ const DeploymentAutoScalingCardContent: React.FC<
 
   // Card-local state, not URL state: this card is one section among several on
   // the detail page, so its sort/filter/page are not page-level navigation.
-  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC) | null
-  // (unsorted).
   const [orderString, setOrderString] = useState<
     'createdAt' | '-createdAt' | null
-  >(null);
+  >('-createdAt');
   const [graphQLFilter, setGraphQLFilter] = useState<
     AutoScalingRuleFilter | undefined
   >(undefined);
@@ -162,21 +162,11 @@ const DeploymentAutoScalingCardContent: React.FC<
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
-  // Newest-first seeds the list while the sort is unset — on first load, and
-  // again once the header cycles back to unsorted.
-  const effectiveOrder = orderString || '-createdAt';
-
   const queryVariables = {
     deploymentId,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
-    orderBy: [
-      {
-        field: 'CREATED_AT' as const,
-        direction: (effectiveOrder.startsWith('-') ? 'DESC' : 'ASC') as
-          'ASC' | 'DESC',
-      },
-    ],
+    orderBy: convertToOrderBy<AutoScalingRuleOrderBy>(orderString),
     filter: graphQLFilter ?? null,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
