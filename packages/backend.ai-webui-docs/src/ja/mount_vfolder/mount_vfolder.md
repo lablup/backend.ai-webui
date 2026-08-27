@@ -64,9 +64,11 @@ Backend.AIは、計算セッションが削除される際にフォルダー内�
 
 次に、コンピュートセッションを削除してストレージページに移動します。
 `user2-vfolder` フォルダを見つけ、ファイルエクスプローラーを開いて `test_file` が存在することを確認します。
-「アクション」タブの「ダウンロード」ボタンをクリックしてファイルをローカルマシンにダウンロードし、ファイルを開いて内容が \"file inside user2-vfolder\" であることを確認します。
+「名前」列のファイルの行に表示される「ダウンロード」ボタンをクリックしてファイルをローカルマシンにダウンロードし、ファイルを開いて内容が \"file inside user2-vfolder\" であることを確認します。
 
 ![](../images/download_file_from_folder.png)
+<!-- TODO(screenshot): Re-capture download_file_from_folder.png — /data -> open a folder's file explorer, showing the row actions (Download, Edit File, Delete) inline in the Name column. -->
+
 
 コンピュートセッションを作成するときにマウントされたフォルダでファイル管理を行うと、ユーザーがコンピュートセッションを終了した後でもデータが保持されることがあります。
 

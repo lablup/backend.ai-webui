@@ -71,10 +71,12 @@ Backend.AI มีตัวเลือกในการเก็บไฟล์
 
 ตอนนี้ให้ลบเซสชันการคำนวณและไปที่หน้า Storage
 หาโฟลเดอร์ `user2-vfolder` เปิดตัวสำรวจไฟล์ และตรวจสอบว่า `test_file` มีอยู่
-คลิกปุ่ม 'ดาวน์โหลด' ในแท็บ 'การกระทำ' เพื่อดาวน์โหลดไฟล์ไปยังเครื่องในเครื่อง และเปิดไฟล์
+คลิกปุ่ม 'ดาวน์โหลด' ที่แถวของไฟล์ ซึ่งแสดงอยู่ในคอลัมน์ 'ชื่อ' เพื่อดาวน์โหลดไฟล์ไปยังเครื่องในเครื่อง และเปิดไฟล์
 เพื่อยืนยันว่าเนื้อหาเป็น "file inside user2-vfolder"
 
 ![](../images/download_file_from_folder.png)
+<!-- TODO(screenshot): Re-capture download_file_from_folder.png — /data -> open a folder's file explorer, showing the row actions (Download, Edit File, Delete) inline in the Name column. -->
+
 
 เมื่อคุณจัดการไฟล์บนโฟลเดอร์ที่เมาท์ไว้ในขณะสร้างเซสชันการคำนวณ
 ข้อมูลจะสามารถคงอยู่ได้แม้หลังจากที่ผู้ใช้สิ้นสุดเซสชันการคำนวณ

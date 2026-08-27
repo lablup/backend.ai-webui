@@ -70,10 +70,12 @@ Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존
 
 이제 연산 세션을 삭제하고 스토리지 페이지로 이동합니다.
 `user2-vfolder` 폴더를 찾아 파일 탐색기를 열고 `test_file`이 존재하는지 확인합니다.
-`작업` 탭에서 `다운로드` 버튼을 클릭하여 파일을 로컬 컴퓨터에 다운로드한 후 열어서
+`이름` 열의 파일 행에 표시되는 `다운로드` 버튼을 클릭하여 파일을 로컬 컴퓨터에 다운로드한 후 열어서
 내용이 "file inside user2-vfolder"인지 확인합니다.
 
 ![](../images/download_file_from_folder.png)
+<!-- TODO(screenshot): Re-capture download_file_from_folder.png — /data -> open a folder's file explorer, showing the row actions (Download, Edit File, Delete) inline in the Name column. -->
+
 
 연산 세션을 생성할 때 폴더를 마운트한 후, 마운트된 폴더에서 파일 작업을 수행하면 연산 세션이 종료된 이후에도 데이터를 보존할 수 있습니다.
 
