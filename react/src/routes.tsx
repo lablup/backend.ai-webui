@@ -8,7 +8,6 @@ import {
   RoutingEventHandler,
 } from './components/DefaultProviders';
 import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
-import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
 import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
@@ -412,7 +411,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           useSuspendedBackendaiClient();
           return (
-            <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
               <ChatPage />
             </Suspense>
           );
