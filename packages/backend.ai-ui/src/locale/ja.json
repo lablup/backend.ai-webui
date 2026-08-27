@@ -412,6 +412,7 @@
     "RankTooltip": "同じランタイムバリアントのプリセット間の表示順序です。値が小さいほど先に表示されます。",
     "Required": "必須",
     "RequiredTooltip": "デプロイメントリビジョンを作成する際に、このプリセットパラメータの指定が必須かどうかを示します。",
+    "Requirement": "必須の有無",
     "RuntimeVariant": "ランタイムバリアント",
     "RuntimeVariantRequired": "ランタイムバリアントは必須です。",
     "SliderMax": "最大値",

@@ -412,6 +412,7 @@
     "RankTooltip": "Esiasetusten näyttöjärjestys saman suoritusaikamuunnoksen sisällä. Pienemmät arvot näytetään ensin.",
     "Required": "Pakollinen",
     "RequiredTooltip": "Onko tämä esiasetuksen parametri annettava käyttöönottorevision luomisen yhteydessä.",
+    "Requirement": "Pakollisuus",
     "RuntimeVariant": "Suoritusaikamuunnos",
     "RuntimeVariantRequired": "Suoritusaikamuunnos on pakollinen.",
     "SliderMax": "Enimmäisarvo",

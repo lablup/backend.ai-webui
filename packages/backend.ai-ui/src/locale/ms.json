@@ -412,6 +412,7 @@
     "RankTooltip": "Susunan paparan antara pratetap bagi varian masa jalan yang sama. Nilai yang lebih rendah dipaparkan dahulu.",
     "Required": "Diperlukan",
     "RequiredTooltip": "Sama ada parameter pratetap ini mesti disediakan semasa membina semakan penggunaan.",
+    "Requirement": "Kewajipan",
     "RuntimeVariant": "Varian Masa Jalan",
     "RuntimeVariantRequired": "Varian masa jalan diperlukan.",
     "SliderMax": "Maksimum",

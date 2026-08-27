@@ -25,8 +25,8 @@ import BAIFlex from '../BAIFlex';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import {
+  AstryxFormCheckbox,
   AstryxFormNumberInput,
-  AstryxFormSwitch,
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../astryxFormControls';
@@ -1149,14 +1149,17 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
         </Form.Item>
         {isRequiredSupported ? (
           <Form.Item
-            label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
+            label={t('comp:BAIRuntimeVariantPresetSettingModal.Requirement')}
             name="required"
             valuePropName="checked"
+            // Display-only: a checkbox always carries a value, so the
+            // "(optional)" mark on the label would be noise. No rule is added.
+            required
             tooltip={t(
               'comp:BAIRuntimeVariantPresetSettingModal.RequiredTooltip',
             )}
           >
-            <AstryxFormSwitch
+            <AstryxFormCheckbox
               label={t('comp:BAIRuntimeVariantPresetSettingModal.Required')}
             />
           </Form.Item>
