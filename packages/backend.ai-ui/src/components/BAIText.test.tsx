@@ -289,7 +289,11 @@ describe('BAIText ellipsis', () => {
       setOverflow(true);
       render(<BAIText ellipsis={{ tooltip: true }}>the full value</BAIText>);
       hover(box('the full value'));
-      expect(screen.getByRole('tooltip')).toHaveTextContent('the full value');
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveTextContent('the full value');
+      // The bubble is a sibling of the anchor, so it inherits a table cell's
+      // `white-space: nowrap`; the wrapper is what lets the value wrap.
+      expect(tooltip.querySelector('.bai-text-tooltip')).not.toBeNull();
     });
 
     it('shows a custom node, or a `{ title }`, instead of the children', () => {

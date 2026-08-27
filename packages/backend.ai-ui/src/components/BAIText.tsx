@@ -382,7 +382,12 @@ const BAIText: React.FC<BAITextProps> = ({
         {content}
       </ContentTag>
       {tooltipContent !== undefined && isOverflowing && !isExpanded ? (
-        <Tooltip anchorRef={contentRef} content={tooltipContent} />
+        <Tooltip
+          anchorRef={contentRef}
+          // The bubble is a DOM sibling, so it inherits a table cell's
+          // `white-space: nowrap`; the wrapper lets the full text wrap.
+          content={<span className="bai-text-tooltip">{tooltipContent}</span>}
+        />
       ) : null}
       {expandable && (isOverflowing || isExpanded) ? (
         <Link className="bai-text-expand" onClick={handleExpand}>

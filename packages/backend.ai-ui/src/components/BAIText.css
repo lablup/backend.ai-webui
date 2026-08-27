@@ -182,3 +182,13 @@
 .bai-text-row > .bai-text-copy {
   flex-shrink: 0;
 }
+
+/* The ellipsis tooltip's body: wrap the full value regardless of the
+   `white-space` / `text-overflow` the anchor's ancestors set. */
+.bai-text-tooltip {
+  display: inline-block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-overflow: clip;
+}
