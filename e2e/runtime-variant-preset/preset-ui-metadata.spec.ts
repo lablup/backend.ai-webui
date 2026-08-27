@@ -61,14 +61,9 @@ async function openCreateModalWithRequiredFields(
       });
       await expect(runtimeVariantSelect).toBeVisible({ timeout: 30000 });
       await runtimeVariantSelect.click();
-      await page.waitForSelector(
-        '.ant-select-dropdown .ant-select-item-option',
-        { state: 'visible', timeout: 15000 },
-      );
-      await page
-        .locator('.ant-select-dropdown .ant-select-item-option')
-        .first()
-        .click();
+      const variantOption = page.getByRole('option').first();
+      await expect(variantOption).toBeVisible({ timeout: 15000 });
+      await variantOption.click();
 
       await modal
         .getByRole('textbox', { name: 'Name', exact: true })
@@ -87,6 +82,15 @@ async function openCreateModalWithRequiredFields(
     }
   }
   throw lastError;
+}
+
+async function selectValueType(
+  page: Page,
+  modal: ReturnType<Page['getByRole']>,
+  label: string,
+): Promise<void> {
+  await modal.getByRole('combobox', { name: /^Value Type/ }).click();
+  await page.getByRole('option', { name: label, exact: true }).click();
 }
 
 async function deletePreset(page: Page, presetName: string): Promise<void> {
@@ -162,10 +166,7 @@ test.describe(
         .fill('E2E Display Name');
 
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Select', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Select', exact: true }).click();
 
       await modal.getByRole('button', { name: /Add Choice/i }).click();
       await modal.getByRole('button', { name: /Add Choice/i }).click();
@@ -220,11 +221,12 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Slider', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
       await modal.getByRole('spinbutton', { name: 'Maximum' }).fill('8');
@@ -280,11 +282,12 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Slider', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('button', { name: 'Create' }).click();
 
@@ -315,11 +318,12 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Slider', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
       await modal.getByRole('spinbutton', { name: 'Maximum' }).fill('8');
@@ -384,10 +388,7 @@ test.describe(
         .getByRole('textbox', { name: /^Display Name/ })
         .fill('E2E Display Name');
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Select', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Select', exact: true }).click();
       // Two choice rows, not one — a bug that only mishandles the second
       // (or later) `Form.List` row wouldn't be caught by asserting `.first()`
       // alone below.
