@@ -205,6 +205,11 @@ test.describe(
         .first()
         .getByRole('cell')
         .first()
+        // The drawer handler sits on `BAINameActionCell`'s title, which
+        // `BAILink` renders as a `<button>` (Astryx `Link`, no `href`) — not on
+        // the cell, whose centre can fall outside that fit-content button.
+        .getByRole('button')
+        .first()
         .click();
 
       // 5. Verify a drawer with title "RBAC Role Info" slides open from the right
@@ -246,6 +251,11 @@ test.describe(
         .filter({ hasNotText: /monitor/i })
         .first()
         .getByRole('cell')
+        .first()
+        // The drawer handler sits on `BAINameActionCell`'s title, which
+        // `BAILink` renders as a `<button>` (Astryx `Link`, no `href`) — not on
+        // the cell, whose centre can fall outside that fit-content button.
+        .getByRole('button')
         .first()
         .click();
 
@@ -321,6 +331,11 @@ test.describe(
         .filter({ hasNotText: /monitor/i })
         .first()
         .getByRole('cell')
+        .first()
+        // The drawer handler sits on `BAINameActionCell`'s title, which
+        // `BAILink` renders as a `<button>` (Astryx `Link`, no `href`) — not on
+        // the cell, whose centre can fall outside that fit-content button.
+        .getByRole('button')
         .first()
         .click();
 
