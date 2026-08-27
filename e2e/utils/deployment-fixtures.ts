@@ -663,8 +663,9 @@ export async function cleanupDeploymentFixtures(
  * plain `<button>` whose accessible name is the field label
  * (`aria-haspopup="dialog"`, NOT a combobox), and its popup is a
  * `role="dialog"` (aria-labelled with the same field label) hosting a search
- * `TextInput` with `role="combobox"` named "Search" plus a `role="listbox"`
- * of plain, clickable `role="option"` rows.
+ * `TextInput` with `role="combobox"` named "Search options"
+ * (`comp:BAIComplexSelect.SearchOptions`, FR-3603 / #8914) plus a
+ * `role="listbox"` of plain, clickable `role="option"` rows.
  *
  * Both selects search SERVER-side (the search text drives a refetch), so
  * after typing, the row for `optionName` only exists once the search
@@ -685,7 +686,7 @@ export async function selectRevisionModalOption(
   const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
   await expect(popup).toBeVisible({ timeout: 10000 });
   await popup
-    .getByRole('combobox', { name: 'Search', exact: true })
+    .getByRole('combobox', { name: 'Search options', exact: true })
     .fill(optionName);
   const option = popup.getByRole('option', { name: optionName }).first();
   await expect(option).toBeVisible({ timeout: 15000 });

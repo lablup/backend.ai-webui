@@ -13,18 +13,17 @@ const TEST_RUN_ID = Date.now().toString(36);
 const ROLE_NAME = `e2e-detail-role-${TEST_RUN_ID}`;
 const ROLE_DESCRIPTION = `E2E detail test role created at ${new Date().toISOString()}`;
 
+// BAIPropertyFilter (Astryx PowerSearch): the RBAC page has multiple filter
+// fields (Role Name, Source), so typing opens a Field/Operator/Value edit
+// popover rather than auto-committing (contrast with a single-field page's
+// content-search shortcut) -- see `environment.spec.ts`'s
+// `applyImageFilter` for the canonical pattern this mirrors.
 async function searchForRole(page: Page, roleName: string) {
-  // Use the property filter to search for the role by name
-  const filterContainer = page.locator('.ant-space-compact').first();
-  const propertySelect = filterContainer.locator('.ant-select').first();
-  await propertySelect.click();
-  await page.getByRole('option', { name: 'Role Name' }).click();
-  const searchInput = filterContainer
-    .locator('.ant-select')
-    .last()
-    .locator('input');
-  await searchInput.fill(roleName);
-  await page.getByRole('button', { name: 'search' }).click();
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.click();
+  await page.getByRole('option', { name: 'Role Name', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Value' }).fill(roleName);
+  await page.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(
     page.getByRole('row').filter({ hasText: roleName }).first(),
   ).toBeVisible({ timeout: 10000 });
@@ -32,74 +31,56 @@ async function searchForRole(page: Page, roleName: string) {
 
 async function createTestRole(page: Page) {
   await page.getByRole('button', { name: 'Create Role' }).click();
-  const modal = page.locator('.ant-modal').filter({ hasText: 'Create Role' });
+  const modal = page.getByRole('dialog', { name: 'Create Role' });
   await expect(modal).toBeVisible();
   await modal.getByLabel('Role Name').fill(ROLE_NAME);
   await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
-  // Fill in the required "Scope Type / Target" field.
-  // AntD Form.List generates input IDs: scopes_0_scopeType and scopes_0_scopeId.
-  const scopeTypeContainer = modal
-    .locator('input#scopes_0_scopeType')
-    .locator('xpath=ancestor::div[contains(@class,"ant-select")][1]');
-  await scopeTypeContainer.click();
-  await page
-    .locator(
-      '.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option',
-    )
-    .filter({ hasText: 'Domain' })
-    .first()
-    .click();
+  // Fill in the required "Scope Type / Target" field. Both are Astryx
+  // Selector triggers. "Target" starts out disabled (rendered as a
+  // `combobox`, `aria-busy="true"`, while it fetches the domain list after
+  // "Scope Type" is picked) and re-renders as an enabled `button` once
+  // ready -- so target it by role `button`, whose `.click()` naturally
+  // waits out that role/attribute transition.
+  await modal.getByRole('button', { name: 'Scope Type', exact: true }).click();
+  await page.getByRole('option', { name: 'Domain', exact: true }).click();
 
-  // Wait for Scope Type dropdown to fully close before interacting with Target
-  await expect(
-    page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)'),
-  ).toHaveCount(0, { timeout: 5000 });
-
-  // Wait for Target (scopeId) container to become enabled
-  const scopeIdContainer = modal
-    .locator('input#scopes_0_scopeId')
-    .locator('xpath=ancestor::div[contains(@class,"ant-select")][1]');
-  await expect(scopeIdContainer).not.toHaveClass(/ant-select-disabled/, {
-    timeout: 5000,
-  });
-  // Click the combobox to open the dropdown; retry if it doesn't open because the
-  // component may still be mounting after Domain was selected.
-  const domainDropdownOptions = page.locator(
-    '.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option',
-  );
-  await expect(async () => {
-    await scopeIdContainer.click();
-    await expect(domainDropdownOptions.first()).toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: 15000 });
-  await domainDropdownOptions.first().click();
-
-  // Wait for Target dropdown to fully close before submitting
-  await expect(
-    page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)'),
-  ).toHaveCount(0, { timeout: 5000 });
+  await modal
+    .getByRole('button', { name: 'Target', exact: true })
+    .click({ timeout: 15000 });
+  const targetOptions = page.getByRole('option');
+  await expect(targetOptions.first()).toBeVisible({ timeout: 10000 });
+  await targetOptions.first().click();
 
   await modal.getByRole('button', { name: 'OK' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
   // Verify success notification instead of row visibility (pagination may hide the new row)
   await expect(
-    page
-      .locator('.ant-message-notice-wrapper')
-      .filter({ hasText: /Role created successfully/i }),
+    page.getByRole('alert').filter({ hasText: /Role created successfully/i }),
   ).toBeVisible({ timeout: 10000 });
 }
 
+// Same PowerSearch interaction as `searchForRole`, without asserting the
+// row appears — cleanup callers branch on `isVisible` themselves since the
+// role may not exist yet (first run) or may already be gone.
+async function applyRoleNameFilter(page: Page, roleName: string) {
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.click();
+  await page.getByRole('option', { name: 'Role Name', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Value' }).fill(roleName);
+  await page.getByRole('button', { name: 'Apply', exact: true }).click();
+}
+
 async function clearRoleSearch(page: Page) {
-  // Remove any active filter chip — scope to the filter-chip area so we
-  // don't accidentally click tag close icons in the table itself.
-  const filterChip = page
-    .locator('.ant-space-compact')
-    .first()
-    .locator('.ant-tag-close-icon')
-    .first();
-  if (await filterChip.isVisible({ timeout: 1000 }).catch(() => false)) {
-    await filterChip.click();
-    await expect(filterChip).toBeHidden({ timeout: 5000 });
+  // PowerSearch ships its own "Clear all" button, gated on there being at
+  // least one committed filter token.
+  const clearAllButton = page.getByRole('button', {
+    name: 'Clear all',
+    exact: true,
+  });
+  if (await clearAllButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+    await clearAllButton.click();
+    await expect(clearAllButton).toBeHidden({ timeout: 5000 });
   }
 }
 
@@ -122,16 +103,7 @@ async function cleanupTestRole(page: Page) {
   await statusFilterOption(page, 'Active').click();
   await clearRoleSearch(page);
   // Use name filter to find the role even if it's on a later page
-  const filterContainer = page.locator('.ant-space-compact').first();
-  const propertySelect = filterContainer.locator('.ant-select').first();
-  await propertySelect.click();
-  await page.getByRole('option', { name: 'Role Name' }).click();
-  const activeSearchInput = filterContainer
-    .locator('.ant-select')
-    .last()
-    .locator('input');
-  await activeSearchInput.fill(ROLE_NAME);
-  await page.getByRole('button', { name: 'search' }).click();
+  await applyRoleNameFilter(page, ROLE_NAME);
 
   const activeRow = page
     .getByRole('row')
@@ -162,18 +134,10 @@ async function cleanupTestRole(page: Page) {
     }).toPass({ timeout: 20000 });
   }
 
-  // Check Inactive tab
+  // Check Inactive tab. The Role Name filter set above persists across the
+  // Active/Inactive status switch (it's carried in the URL's `filter` query
+  // param), so there's no need to reapply it here.
   await statusFilterOption(page, 'Inactive').click();
-  await clearRoleSearch(page);
-  const inactivePropertySelect = filterContainer.locator('.ant-select').first();
-  await inactivePropertySelect.click();
-  await page.getByRole('option', { name: 'Role Name' }).click();
-  const inactiveSearchInput = filterContainer
-    .locator('.ant-select')
-    .last()
-    .locator('input');
-  await inactiveSearchInput.fill(ROLE_NAME);
-  await page.getByRole('button', { name: 'search' }).click();
 
   // Purge every inactive row matching the role name. A parallel describe block
   // in this file may share the same ROLE_NAME and create additional roles while
@@ -228,18 +192,18 @@ test.describe(
       await expect(
         page.getByRole('tab', { name: 'RBAC Management' }),
       ).toBeVisible({ timeout: 10000 });
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      const roleRows = page
+        .getByRole('row')
+        .filter({ hasNot: page.getByRole('columnheader') });
+      await expect(roleRows.first()).toBeVisible({
         timeout: 10000,
       });
 
       // 4. Click any role name in the first column of the table (excluding "monitor" role — known bug)
-      await page
-        .locator('.ant-table-row')
+      await roleRows
         .filter({ hasNotText: /monitor/i })
         .first()
         .getByRole('cell')
-        .first()
-        .locator('.ant-typography')
         .first()
         .click();
 
@@ -272,22 +236,27 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Wait for the table to load and click any role name (excluding "monitor" role — known bug)
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      const roleRows = page
+        .getByRole('row')
+        .filter({ hasNot: page.getByRole('columnheader') });
+      await expect(roleRows.first()).toBeVisible({
         timeout: 10000,
       });
-      await page
-        .locator('.ant-table-row')
+      await roleRows
         .filter({ hasNotText: /monitor/i })
         .first()
         .getByRole('cell')
         .first()
-        .locator('.ant-typography')
-        .first()
         .click();
 
-      const drawer = page.locator('.ant-drawer');
-      const drawerPanel = page.locator('.ant-drawer-content-wrapper');
-      await expect(drawerPanel).toBeVisible({ timeout: 10000 });
+      // `RoleDetailDrawer` renders as an Astryx `Dialog` (`role="dialog"`,
+      // accessible name "RBAC Role Info") rather than an antd Drawer.
+      const drawer = page.getByRole('dialog', { name: 'RBAC Role Info' });
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+      // `BAITabs`/`BAITabList` renders tab items as plain `<button>`s inside
+      // a `navigation "Tabs"` landmark, not `role="tab"` (see
+      // `start-page.spec.ts`). The active tab carries `aria-current="true"`.
+      const tabs = drawer.getByRole('navigation', { name: 'Tabs' });
 
       // 4. Verify two tabs are visible: "Permissions" and "Role Assignments".
       // Managers below 26.8.0 (the nightly manager under test) don't support
@@ -299,33 +268,33 @@ test.describe(
       // click instead of assuming it's the default, so this passes on both
       // legacy and merged-view managers.
       await expect(
-        drawer.getByRole('tab', { name: 'Permissions' }),
+        tabs.getByRole('button', { name: 'Permissions' }),
       ).toBeVisible();
       await expect(
-        drawer.getByRole('tab', { name: 'Role Assignments' }),
+        tabs.getByRole('button', { name: 'Role Assignments' }),
       ).toBeVisible();
 
       // 5. Click the "Permissions" tab and verify it becomes active
-      await drawer.getByRole('tab', { name: 'Permissions' }).click();
+      await tabs.getByRole('button', { name: 'Permissions' }).click();
       await expect(
-        drawer.getByRole('tab', { name: 'Permissions' }),
-      ).toHaveAttribute('aria-selected', 'true');
+        tabs.getByRole('button', { name: 'Permissions' }),
+      ).toHaveAttribute('aria-current', 'true');
 
-      // 6. Verify the active tab content area is visible. Confirmed live
-      // (via DOM inspection) that this antd/rc-tabs version marks the active
-      // pane with `.ant-tabs-content-active` on the `role="tabpanel"`
-      // element itself -- there is no `.ant-tabs-tabpane-active` class here.
-      await expect(drawer.locator('.ant-tabs-content-active')).toBeVisible({
+      // 6. Verify the active tab's content area is visible -- the
+      // Permissions panel's own "Add Permission" button.
+      await expect(
+        drawer.getByRole('button', { name: 'Add Permission' }),
+      ).toBeVisible({
         timeout: 10000,
       });
 
       // 7. Click the "Role Assignments" tab
-      await drawer.getByRole('tab', { name: 'Role Assignments' }).click();
+      await tabs.getByRole('button', { name: 'Role Assignments' }).click();
 
       // 8. Verify the Role Assignments tab becomes active
       await expect(
-        drawer.getByRole('tab', { name: 'Role Assignments' }),
-      ).toHaveAttribute('aria-selected', 'true');
+        tabs.getByRole('button', { name: 'Role Assignments' }),
+      ).toHaveAttribute('aria-current', 'true');
 
       // Close the drawer
       await drawer.getByRole('button', { name: 'close' }).click();
@@ -342,33 +311,34 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Open the detail drawer by clicking a role name (excluding "monitor" role — known bug)
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      const roleRows = page
+        .getByRole('row')
+        .filter({ hasNot: page.getByRole('columnheader') });
+      await expect(roleRows.first()).toBeVisible({
         timeout: 10000,
       });
-      await page
-        .locator('.ant-table-row')
+      await roleRows
         .filter({ hasNotText: /monitor/i })
         .first()
         .getByRole('cell')
         .first()
-        .locator('.ant-typography')
-        .first()
         .click();
 
-      const drawer = page.locator('.ant-drawer');
-      const drawerPanel = page.locator('.ant-drawer-content-wrapper');
+      // `RoleDetailDrawer` renders as an Astryx `Dialog` (`role="dialog"`,
+      // accessible name "RBAC Role Info") rather than an antd Drawer.
+      const drawer = page.getByRole('dialog', { name: 'RBAC Role Info' });
 
       // 4. Verify the drawer is visible
-      await expect(drawerPanel).toBeVisible({ timeout: 10000 });
+      await expect(drawer).toBeVisible({ timeout: 10000 });
 
       // 5. Click the close (X) button on the drawer
       await drawer.getByRole('button', { name: 'close' }).click();
 
       // 6. Verify the drawer closes (is hidden)
-      await expect(drawerPanel).toBeHidden({ timeout: 5000 });
+      await expect(drawer).toBeHidden({ timeout: 5000 });
 
       // 7. Verify the underlying role list is still visible
-      await expect(page.locator('.ant-table-row').first()).toBeVisible();
+      await expect(roleRows.first()).toBeVisible();
     });
   },
 );

@@ -157,8 +157,9 @@ async function installLegacyPresetFlagOverride(page: Page): Promise<void> {
  * trigger is a plain `<button>` whose accessible name is the field label
  * (`aria-haspopup="dialog"`, NOT a combobox); its popup is a `role="dialog"`
  * (aria-labelled with the same field label) hosting a search `TextInput` with
- * `role="combobox"` named "Search" and a `role="listbox"` of plain, clickable
- * `role="option"` rows — so the option is clicked directly.
+ * `role="combobox"` named "Search options" (`comp:BAIComplexSelect.SearchOptions`,
+ * FR-3603 / #8914) and a `role="listbox"` of plain, clickable `role="option"`
+ * rows — so the option is clicked directly.
  */
 async function selectComplexSelectOption(
   page: Page,
@@ -170,7 +171,7 @@ async function selectComplexSelectOption(
   await expect(popup).toBeVisible({ timeout: 10000 });
   // Narrow the (server-side) search to the wanted option, then click it.
   await popup
-    .getByRole('combobox', { name: 'Search', exact: true })
+    .getByRole('combobox', { name: 'Search options', exact: true })
     .fill(optionLabel);
   const option = popup.getByRole('option', { name: optionLabel, exact: true });
   await expect(option).toBeVisible({ timeout: 15000 });
