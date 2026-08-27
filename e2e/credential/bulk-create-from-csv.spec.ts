@@ -4,6 +4,13 @@ import test, { expect, Page } from '@playwright/test';
 import path from 'path';
 
 const SAMPLES_DIR = path.resolve(__dirname, '../../test-fixtures/csv-samples');
+/** `credential.UploadCSVFile` — the dropzone `FileInput`'s field label. */
+const UPLOAD_FIELD_LABEL = 'Click or drag a CSV file to this area to upload';
+
+/** Astryx `ToastViewport`'s `role="region"` — the visible toasts live here. */
+function toastViewport(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
 
 async function openBulkCreateCSVModal(page: Page) {
   await navigateTo(page, 'credential?tab=users');
@@ -28,12 +35,14 @@ async function uploadCSV(page: Page, filename: string) {
   const dialog = page.getByRole('dialog', {
     name: 'Bulk Create Users from CSV',
   });
-  // The empty-state picker is Astryx `FileInput` (`mode="dropzone"`); its
-  // internal `<input type="file">` is aria-hidden with no accessible name, so
-  // scope by the component's stable theme class (`astryx-file-input`) rather
-  // than by role. This also avoids the sibling hidden `<input type="file">`
-  // that backs the (post-upload) "Replace File" button.
-  const fileInput = dialog.locator('.astryx-file-input input[type="file"]');
+  // The empty-state picker is Astryx `FileInput` (`mode="dropzone"`), whose
+  // `<label>` points at its native `<input type="file">` (FieldLabel renders
+  // `htmlFor={inputID}`). The label also names FileInput's visually-hidden
+  // trigger button, so narrow to the input — that also excludes the sibling
+  // hidden `<input type="file">` backing the "Replace File" button.
+  const fileInput = dialog
+    .getByLabel(UPLOAD_FIELD_LABEL)
+    .and(dialog.locator('input[type="file"]'));
   await fileInput.setInputFiles(path.join(SAMPLES_DIR, filename));
 }
 
@@ -239,7 +248,7 @@ test.describe(
 
       // Toggle "Only show errors"
       await dialog.getByRole('switch').click();
-      const rows = dialog.locator('table tbody tr:not(.ant-table-measure-row)');
+      const rows = dialog.locator('table tbody tr');
       await expect.poll(() => rows.count(), { timeout: 5000 }).toBe(errorCount);
       await closeModal(page);
     });
@@ -249,12 +258,13 @@ test.describe(
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '12-error-missing-required-columns.csv');
-      // Toast error — the app-shim's `message.error` renders via Astryx
-      // `Toast` (stable theme class `astryx-toast`, `data-type="error"`).
-      // A plain role('alert') also matches the app's persistent (empty)
-      // ARIA live-region announcer, so scope to the toast itself.
+      // `message.error` renders an Astryx `Toast` with `role="alert"`. Scope to
+      // the toast viewport: a bare role('alert') also matches ToastViewport's
+      // visually-hidden `announce()` live region, which mirrors the same text.
       await expect(
-        page.locator('.astryx-toast[data-type="error"]'),
+        toastViewport(page)
+          .getByRole('alert')
+          .filter({ hasText: 'The CSV file is missing required columns' }),
       ).toBeVisible({
         timeout: 5000,
       });
@@ -273,13 +283,15 @@ test.describe(
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '15-error-empty-file.csv');
-      // The app-shim's `message.warning` maps onto Astryx Toast's `info`
-      // variant (PILOT-DECISION in message.tsx) — `data-type="info"`.
-      await expect(page.locator('.astryx-toast[data-type="info"]')).toBeVisible(
-        {
-          timeout: 5000,
-        },
-      );
+      // `message.warning` maps onto Astryx Toast's `info` variant
+      // (PILOT-DECISION in message.tsx), which carries `role="status"`.
+      await expect(
+        toastViewport(page)
+          .getByRole('status')
+          .filter({ hasText: 'The CSV file contains no user rows.' }),
+      ).toBeVisible({
+        timeout: 5000,
+      });
       const dialog = page.getByRole('dialog', {
         name: 'Bulk Create Users from CSV',
       });
@@ -346,8 +358,10 @@ test.describe(
       await expect(
         page.getByRole('button', { name: /Create \d+ user/ }),
       ).toBeDisabled();
-      // No blocking toast for this load.
-      await expect(page.locator('.astryx-toast')).not.toBeVisible();
+      // No blocking toast for this load — the viewport holds no toast of
+      // either severity (`role="alert"` for error, `role="status"` otherwise).
+      await expect(toastViewport(page).getByRole('alert')).toHaveCount(0);
+      await expect(toastViewport(page).getByRole('status')).toHaveCount(0);
       await closeModal(page);
     });
 

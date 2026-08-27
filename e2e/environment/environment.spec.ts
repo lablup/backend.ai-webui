@@ -1,19 +1,75 @@
 // spec: Image list and environment management E2E tests
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import {
-  findColumnIndex,
-  getFormItemControlByLabel,
-} from '../utils/test-util-antd';
 import { expect, test, Page, Locator } from '@playwright/test';
 
-// Astryx `Table` renders native <table><tbody><tr role="row">; a plain
-// getByRole('row') also matches the header row, so exclude it (same pattern
-// as rbac-role-list.spec.ts / registry.spec.ts).
-function imageDataRows(page: Page) {
-  return page
-    .getByRole('table')
-    .getByRole('row')
-    .filter({ hasNot: page.getByRole('columnheader') });
+/**
+ * The image list is a `BAITable`, i.e. a real `<table>` with a `<thead>` /
+ * `<tbody>` pair (`packages/backend.ai-ui/src/components/Table/BAITable.tsx`
+ * renders Astryx `Table`). `getByRole('table')` is the whole grid and
+ * `tbody tr` its data rows — there is no antd measure row to exclude.
+ */
+function imageListTableOf(page: Page) {
+  return page.getByRole('table');
+}
+
+function imageListRowsOf(page: Page) {
+  return imageListTableOf(page).locator('tbody tr');
+}
+
+/**
+ * Wait until the image list has actually rendered rows. The window is
+ * deliberately much wider than Playwright's 5s expect default: the initial
+ * `image_nodes` query runs against a shared cluster and the whole page is
+ * behind a Suspense boundary, so under concurrent load neither the `<table>`
+ * nor its first row is up within 5s.
+ */
+async function waitForImageListReady(page: Page) {
+  await expect(imageListTableOf(page)).toBeVisible({ timeout: 60000 });
+  await expect(imageListRowsOf(page).first()).toBeVisible({ timeout: 60000 });
+}
+
+/**
+ * `BAITable` has no spinner: while `loading` is true it dims its own wrapper
+ * and marks it `aria-busy` (`BAITable.tsx`, the `bai-table-astryx-dim-layer`
+ * div — a class this repo owns, not a framework-internal one).
+ */
+async function waitForImageListSettled(page: Page) {
+  await expect(
+    page.locator('.bai-table-astryx-dim-layer[aria-busy="true"]'),
+  ).toHaveCount(0, { timeout: 15000 });
+}
+
+/**
+ * `BAITable`'s pagination bar: an Astryx `Pagination` in a
+ * `navigation` landmark named "Pagination"
+ * (`label={String(t('comp:BAITable.Pagination'))}`, `BAITable.tsx`), whose
+ * page buttons are named "Go to page N" and whose current page carries
+ * `aria-current="page"` (`@astryxdesign/core/src/Pagination/Pagination.tsx`).
+ */
+function imageListPaginationOf(page: Page) {
+  return page.getByRole('navigation', { name: 'Pagination' });
+}
+
+/**
+ * Set a `BAIDynamicUnitInputNumber`'s "<number><unit>" pair. The unit goes
+ * first on purpose: the numeric field's `min` is expressed in whatever unit is
+ * currently selected, and `handleBlur` clamps an under-min entry UP rather
+ * than rejecting it (`packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumber.tsx`),
+ * so typing "1" while the field is still in MiB silently becomes 1024.
+ */
+async function setMemorySize(
+  page: Page,
+  numberInput: Locator,
+  unitSelector: Locator,
+  size: { value: string; unit: string },
+) {
+  await unitSelector.click();
+  await page.getByRole('option', { name: size.unit, exact: true }).click();
+  await expect(unitSelector).toHaveText(size.unit);
+  await numberInput.fill(size.value);
+  await numberInput.blur();
+  await expect(numberInput).toHaveValue(size.value);
+  await expect(unitSelector).toHaveText(size.unit);
 }
 
 test.describe(
@@ -25,70 +81,81 @@ test.describe(
       await page.getByRole('link', { name: 'Admin Settings' }).click();
       await page.getByRole('link', { name: 'Environments' }).click();
       await expect(page).toHaveURL(/\/environment/);
-      // Wait for the table to be visible
-      await expect(page.getByRole('table')).toBeVisible({ timeout: 10000 });
+      await waitForImageListReady(page);
     });
     test('Rendering Image List', async ({ page }) => {
-      await expect(page.getByRole('table')).toBeVisible();
+      await expect(imageListTableOf(page)).toBeVisible();
     });
 
-    // skip this test because there is no way to uninstall the image in WebUI
+    // skip this test because there is no way to uninstall the image in WebUI.
+    // NOTE: the body below was de-antd'ed against the component source
+    // (`ImageList.tsx` / `ImageInstallModal.tsx`) but has never been executed —
+    // the test has been permanently skipped since it was written, so treat the
+    // locators as unverified.
     test.skip('user can install image', async ({ page, request }) => {
       await loginAsAdmin(page, request);
       await navigateTo(page, 'environment');
-      const imageListTable = page.getByRole('table');
-      await expect(imageListTable).toBeVisible();
-      // Sort installation status
-      await page
-        .locator('.ant-table-cell.ant-table-column-sort')
-        .first()
-        .click();
+      await waitForImageListReady(page);
 
-      // Find uninstalled item and select
-      const uninstalledImage = page
-        .locator('.ant-table-cell.ant-table-column-sort')
-        .filter({
-          hasNot: page.locator('.ant-tag-gold'),
-        })
-        .nth(1);
+      // Find an uninstalled image and select it. `ImageList.tsx`'s `installed`
+      // column renders an "Installed" / "Installing" Badge only when the image
+      // is present on an agent, so an uninstalled image is a row carrying
+      // neither label.
+      const uninstalledImage = imageListRowsOf(page)
+        .filter({ hasNotText: 'Installed' })
+        .filter({ hasNotText: 'Installing' })
+        .first();
       // If all images are installed, skip the test
       const count = await uninstalledImage.count();
       if (count === 0) {
         test.skip();
       }
-      await uninstalledImage.click();
+      await uninstalledImage.getByRole('checkbox').check();
 
-      // Install image
+      // Install image. The list header button is `label={t('environment.InstallImage')}`
+      // = "Install Image"; the modal's confirm button is plain "Install".
+      await page.getByRole('button', { name: 'Install Image' }).click();
       await page
-        .getByRole('button', { name: 'vertical-align-bottom Install' })
+        .getByRole('dialog')
+        .getByRole('button', { name: 'Install', exact: true })
         .click();
-      await page.getByRole('button', { name: 'Install', exact: true }).click();
       await expect(
         page.getByText('It takes time so have a cup of coffee!'),
       ).toBeVisible();
 
       // Verify installing status
-      const rows = await imageListTable.locator('.ant-table-row');
-      const statusColumnIndex = await findColumnIndex(imageListTable, 'Status');
-
-      const installingItem = await rows
-        .locator('.ant-table-cell')
-        .nth(statusColumnIndex)
-        .first();
-      await expect(installingItem.getByText('installing')).toBeVisible();
+      await expect(
+        imageListRowsOf(page).filter({ hasText: 'Installing' }).first(),
+      ).toBeVisible();
     });
 
     test('user can modify image resource limit', async ({ page }) => {
       const CPU_CORE = '5';
       const MEMORY_SIZE = '1';
 
-      // Click resource limit button. FR-3331 gives the action a stable
-      // accessible name via aria-label, so a column-index button lookup is
-      // no longer needed.
-      const firstRow = imageDataRows(page).first();
-      await firstRow
-        .getByRole('button', { name: 'Edit Minimum Image Resource Limit' })
-        .click();
+      // Click resource limit button. `ImageList.tsx`'s Control column renders
+      // two `IconButton`s whose lucide glyphs are aria-hidden but whose
+      // `label` props are the modal titles they open, so both are reachable
+      // by accessible name with no column-index arithmetic.
+      const firstRow = imageListRowsOf(page).first();
+      // Saving the modal bumps the list's fetchKey, so the row this clicks is
+      // re-rendered underneath it; settle the table first, then retry the
+      // open until the dialog is actually on screen (a click that lands on a
+      // row mid-refetch is simply dropped).
+      const openResourceLimitModal = async () => {
+        await waitForImageListSettled(page);
+        await expect(async () => {
+          await firstRow
+            .getByRole('button', { name: 'Edit Minimum Image Resource Limit' })
+            .click();
+          await expect(
+            page.getByRole('dialog', {
+              name: /Edit Minimum Image Resource Limit/i,
+            }),
+          ).toBeVisible({ timeout: 5000 });
+        }).toPass({ timeout: 30000 });
+      };
+      await openResourceLimitModal();
       // get resource limit from control modal
       const resourceLimitControlModal = page.getByRole('dialog', {
         // FR-3339 renamed the modal from "Modify ..." to "Edit ..." as part of
@@ -98,85 +165,98 @@ test.describe(
 
       await expect(resourceLimitControlModal).toBeVisible();
 
-      // ManageImageResourceLimitModal.tsx renders each field via
-      // `BAIFormItem`; `BAIDynamicUnitInputNumber` ("mem") is now a plain
-      // Astryx numeric spinbutton plus a separate unit Selector, not a
-      // combined antd InputNumber+addon.
-      const cpuFormItemInput = getFormItemControlByLabel(page, 'CPU').getByRole(
-        'spinbutton',
+      // `ManageImageResourceLimitModal.tsx` renders each slot as a
+      // `BAIFormItem` (`[data-bai-form-item]`). The value controls are Astryx
+      // now: `AstryxFormNumberInput` / `BAIDynamicUnitInputNumber` both end in
+      // an Astryx `NumberInput`, which is `role="spinbutton"`
+      // (`@astryxdesign/core/src/NumberInput/NumberInput.tsx`), and the memory
+      // unit is an Astryx `Selector` labelled "Unit"
+      // (`BAIDynamicUnitInputNumber.tsx`).
+      const cpuFormItem = resourceLimitControlModal.locator(
+        '[data-bai-form-item]:has-text("CPU")',
       );
+      const cpuFormItemInput = cpuFormItem.getByRole('spinbutton');
       const cpuValue = await cpuFormItemInput.inputValue();
 
-      const memoryFormItem = getFormItemControlByLabel(page, 'Memory');
+      const memoryFormItem = resourceLimitControlModal.locator(
+        '[data-bai-form-item]:has-text("Memory")',
+      );
       const memoryFormItemInput = memoryFormItem.getByRole('spinbutton');
       const memoryValue = await memoryFormItemInput.inputValue();
-      const memorySize = (
-        await memoryFormItem.getByRole('combobox').innerText()
-      ).trim();
+      const memoryUnitSelector = memoryFormItem.getByRole('combobox', {
+        name: 'Unit',
+      });
+      const memorySize = (await memoryUnitSelector.textContent())?.trim() ?? '';
       // modify resource limit
       await cpuFormItemInput.fill(CPU_CORE);
       await expect(cpuFormItemInput).toHaveValue(CPU_CORE);
-      await memoryFormItemInput.fill(MEMORY_SIZE);
-      await expect(memoryFormItemInput).toHaveValue(MEMORY_SIZE);
+      // `BAIDynamicUnitInputNumber` splits "<number><unit>" across a numeric
+      // field and a unit Selector; the antd-era `fill('1g')` relied on the
+      // text-backed antd InputNumber re-parsing the unit letter, which the
+      // Astryx numeric field does not do. Set the two halves separately —
+      // UNIT FIRST, because the field's `min` is expressed in the CURRENT unit
+      // (the modal's `min='1g'` becomes 1024 while the field is in MiB) and
+      // `handleBlur` clamps an under-min entry up instead of keeping it.
+      await setMemorySize(page, memoryFormItemInput, memoryUnitSelector, {
+        value: MEMORY_SIZE,
+        unit: 'GiB',
+      });
       // click the modal's submit button (renamed "OK" -> "Save" by FR-3339)
       await resourceLimitControlModal
         .getByRole('button', { name: 'Save' })
         .click();
-      const reinstallationText = await page
-        .getByText('Image reinstallation required')
-        .count();
-      if (reinstallationText > 0) {
-        await page.getByRole('button', { name: 'OK' }).nth(1).click();
-      }
+      await expect(resourceLimitControlModal).toBeHidden();
+
       // verify resource limit is modified
-      await firstRow
-        .getByRole('button', { name: 'Edit Minimum Image Resource Limit' })
-        .click();
+      await openResourceLimitModal();
       const modifiedResourceLimitControlModal = page.getByRole('dialog', {
         // FR-3339 renamed the modal from "Modify ..." to "Edit ..." as part of
         // unifying edit terminology across the app.
         name: /Edit Minimum Image Resource Limit/i,
       });
       await expect(modifiedResourceLimitControlModal).toBeVisible();
-      const modifiedCpuFormItemInput = getFormItemControlByLabel(
-        page,
-        'CPU',
-      ).getByRole('spinbutton');
-      const modifiedMemoryFormItem = getFormItemControlByLabel(page, 'Memory');
+      const modifiedCpuFormItem = modifiedResourceLimitControlModal.locator(
+        '[data-bai-form-item]:has-text("CPU")',
+      );
+      const modifiedMemoryFormItem = modifiedResourceLimitControlModal.locator(
+        '[data-bai-form-item]:has-text("Memory")',
+      );
+      const modifiedCpuFormItemInput =
+        modifiedCpuFormItem.getByRole('spinbutton');
       const modifiedMemoryFormItemInput =
         modifiedMemoryFormItem.getByRole('spinbutton');
+      const modifiedMemoryUnitSelector = modifiedMemoryFormItem.getByRole(
+        'combobox',
+        { name: 'Unit' },
+      );
       await expect(modifiedCpuFormItemInput).toHaveValue(CPU_CORE);
       await expect(modifiedMemoryFormItemInput).toHaveValue(MEMORY_SIZE);
-      await expect(modifiedMemoryFormItem.getByRole('combobox')).toHaveText(
-        'GiB',
-      );
+      await expect(modifiedMemoryUnitSelector).toHaveText('GiB');
 
       // reset resource limit
       await modifiedCpuFormItemInput.fill(cpuValue);
       await expect(modifiedCpuFormItemInput).toHaveValue(cpuValue);
-      await modifiedMemoryFormItemInput.fill(memoryValue);
-      await expect(modifiedMemoryFormItemInput).toHaveValue(memoryValue);
-      // Reopen the unit Selector and pick the original unit back.
-      await modifiedMemoryFormItem.getByRole('combobox').click();
-      await page.getByRole('option', { name: memorySize, exact: true }).click();
+      await setMemorySize(
+        page,
+        modifiedMemoryFormItemInput,
+        modifiedMemoryUnitSelector,
+        { value: memoryValue, unit: memorySize },
+      );
       // click the modal's submit button (renamed "OK" -> "Save" by FR-3339)
       await modifiedResourceLimitControlModal
         .getByRole('button', { name: 'Save' })
         .click();
-      const reinstallationTextAfterReset = await page
-        .getByText('Image reinstallation required')
-        .count();
-      if (reinstallationTextAfterReset > 0) {
-        await page.getByRole('button', { name: 'OK' }).nth(1).click();
-      }
+      await expect(modifiedResourceLimitControlModal).toBeHidden();
     });
 
     test('user can manage apps', async ({ page }) => {
-      // Click manage apps button. BAINameActionCell exposes the action's
-      // title as the button's aria-label — "Manage Apps" — the antd
-      // `appstore` icon name no longer applies.
-      const firstRow = imageDataRows(page).first();
-      await firstRow.getByRole('button', { name: 'Manage Apps' }).click();
+      // Click manage apps button. `ImageList.tsx`'s Control column IconButton
+      // carries `label={t('environment.ManageApps')}` = "Manage Apps" — the
+      // antd `appstore` icon name it used to expose is gone with antd.
+      const firstRow = imageListRowsOf(page).first();
+      const openManageAppsModal = () =>
+        firstRow.getByRole('button', { name: 'Manage Apps' }).click();
+      await openManageAppsModal();
 
       // Add app
       const modal = page.getByRole('dialog', { name: /Manage Apps/i });
@@ -201,15 +281,16 @@ test.describe(
         protocol: 'tcp',
         port: '6006',
       };
-      // The new row's inputs no longer carry a predictable `#apps_N_app`
-      // id (React-generated ids now); scope by placeholder within the
-      // freshly-appended form-item instead.
-      const newRow = modal
+      // The three fields of the newly added row. `ManageAppsModal.tsx` gives
+      // each `AstryxFormTextInput` a label/placeholder pair ("App Name",
+      // "Protocol", "Port"); scope through the row's own form item so the
+      // names stay unambiguous across rows.
+      const addedAppRow = modal
         .locator('[data-bai-form-item]')
         .nth(numberOfAppsBeforeAdd);
-      await newRow.getByPlaceholder('App Name').fill(addInfo.app);
-      await newRow.getByPlaceholder('Protocol').fill(addInfo.protocol);
-      await newRow.getByPlaceholder('Port').fill(addInfo.port);
+      await addedAppRow.getByPlaceholder('App Name').fill(addInfo.app);
+      await addedAppRow.getByPlaceholder('Protocol').fill(addInfo.protocol);
+      await addedAppRow.getByPlaceholder('Port').fill(addInfo.port);
 
       // Click OK Button
       await modal.getByRole('button', { name: 'OK' }).click();
@@ -227,9 +308,11 @@ test.describe(
       // updating in place. Poll the full reopen+read+close cycle — not just
       // an assertion on an already-open modal — until the refetch lands.
       const openManageAppsModalAndCountApps = async () => {
-        await firstRow.getByRole('button', { name: 'Manage Apps' }).click();
+        await openManageAppsModal();
         const dialog = page.getByRole('dialog', { name: /Manage Apps/i });
         await expect(dialog).toBeVisible();
+        // One `[data-bai-form-item]` per app row (the 3 nested per-field
+        // items are `noStyle` and render no DOM of their own).
         const count = await dialog.locator('[data-bai-form-item]').count();
         await dialog.getByRole('button', { name: 'Cancel' }).click();
         await expect(dialog).toBeHidden();
@@ -244,17 +327,12 @@ test.describe(
 
       // Reopen once more now that the refetched data is confirmed fresh, to
       // assert on the added row's field values and perform cleanup.
-      await firstRow.getByRole('button', { name: 'Manage Apps' }).click();
+      await openManageAppsModal();
       const modalAfterAdd = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modalAfterAdd).toBeVisible();
       // Retry the count assertion: the freshly-reopened modal renders its
       // app form-items asynchronously, so a one-shot `.count()` can read the
       // old total before the added row mounts (flaky off by one).
-      //
-      // The selector stays `[data-bai-form-item]`: main's `.ant-form-item`
-      // class does not exist on this branch — antd is gone and is not a
-      // dependency of this workspace at all — so that locator would match
-      // nothing and the assertion would fail on an empty set.
       await expect(modalAfterAdd.locator('[data-bai-form-item]')).toHaveCount(
         numberOfAppsBeforeAdd + 1,
       );
@@ -269,10 +347,13 @@ test.describe(
       );
       await expect(lastRow.getByPlaceholder('Port')).toHaveValue(addInfo.port);
 
-      // Reset apps
+      // Reset apps — scope the removal to the added row's own form item
+      // instead of indexing a flat button list (`ManageAppsModal.tsx` renders
+      // one ghost IconButton `label={t('button.Delete')}` per app row).
       await modalAfterAdd
-        .getByRole('button', { name: 'delete' })
+        .locator('[data-bai-form-item]')
         .nth(numberOfApps - 1)
+        .getByRole('button', { name: 'Delete' })
         .click();
       await modalAfterAdd.getByRole('button', { name: 'OK' }).click();
       if (reinstallationText > 0) {
@@ -297,23 +378,78 @@ test.describe(
 // ---------------------------------------------------------------------------
 
 /**
- * A committed filter token's accessible label — and so its "Remove {label}"
- * button name (`@astryxdesign/core`'s `Token` component: `aria-label={t(
- * '@astryx.token.remove', {label})}`) — is only `"<Field>: <operator>"`.
- * `PowerSearchToken.tsx`'s `tokenLabel` deliberately excludes the value (it
- * renders separately as the token's visible value content), so the `value`
- * param here is accepted for call-site readability but not part of the
- * returned string. `defaultOperator` per field comes from `ImageList.tsx`'s
- * `filterProperties` (`==` for strict-selection fields, the BUI default
- * `ilike` -> "contains" for free-text ones); the operator word itself is
- * `comp:BAIPropertyFilter.operator.*` (packages/backend.ai-ui/src/locale/en.json).
+ * A committed filter renders as an Astryx `Token` whose LABEL is
+ * `"<Field>: <operator>"` and whose VALUE is a separate `endContent` node
+ * (`PowerSearch.tsx` — `<Token label={tokenLabel} endContent={valueContent}>`).
+ * `@astryx.token.remove` interpolates only the label, so the remove button is
+ * `aria-label="Remove <Field>: <operator>"` — the value is NOT part of it.
+ *
+ * `defaultOperator` per field comes from `ImageList.tsx`'s `filterProperties`
+ * (`==` for the strict-selection fields, the BUI default `ilike` for free-text
+ * ones); the operator word is `comp:BAIPropertyFilter.operator.*`
+ * (packages/backend.ai-ui/src/locale/en.json — `==` -> "is", `ilike` ->
+ * "contains").
  */
 function imageFilterTokenLabel(
   propertyLabel: string,
   operatorWord: 'contains' | 'is',
-  _value: string,
 ): string {
   return `${propertyLabel}: ${operatorWord}`;
+}
+
+/** The tokenizer that holds every committed filter token. */
+function imageFilterTokenizerOf(page: Page) {
+  return page.getByRole('group', { name: 'Search filters' });
+}
+
+/**
+ * The token's value, rendered as the `Token`'s `endContent` beside the label.
+ * Asserted separately from the remove button because the two carry different
+ * halves of `"<Field>: <operator> <value>"`.
+ */
+function imageFilterTokenValue(page: Page, value: string) {
+  return imageFilterTokenizerOf(page).getByText(value, { exact: true });
+}
+
+/**
+ * PowerSearch's built-in "Clear all" (`t('@astryx.tokenizer.clearAll')`,
+ * `Tokenizer.tsx`). Scoped to the tokenizer and matched exactly, because the
+ * project selector beside it exposes "Clear All projects", which a loose
+ * (substring, case-insensitive) name match also hits.
+ */
+function imageFilterClearAllButtonOf(page: Page) {
+  return imageFilterTokenizerOf(page).getByRole('button', {
+    name: 'Clear all',
+    exact: true,
+  });
+}
+
+/**
+ * Open PowerSearch's typeahead and pick `propertyLabel`, which opens the edit
+ * popover for that field.
+ *
+ * Two hazards, both handled by retrying open-and-pick as one unit:
+ *  - committing a token leaves the suggestion list OPEN, so an unconditional
+ *    click on the bar would TOGGLE it shut (hence the `aria-expanded` guard);
+ *  - under load the bar can be in the DOM before PowerSearch has wired it up,
+ *    so the first click opens nothing.
+ */
+async function pickImageFilterField(page: Page, propertyLabel: string) {
+  // Scroll the search bar to the centre of the viewport so it is not obscured
+  // by the sticky header, and click with force:true because that header can
+  // still intercept pointer events afterwards.
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.evaluate((el) =>
+    el.scrollIntoView({ block: 'center', inline: 'nearest' }),
+  );
+  await expect(async () => {
+    if ((await searchBar.getAttribute('aria-expanded')) !== 'true') {
+      await searchBar.click({ force: true });
+    }
+    await page
+      .getByRole('option', { name: propertyLabel, exact: true })
+      .click({ timeout: 5000 });
+  }).toPass({ timeout: 60000 });
 }
 
 /**
@@ -338,26 +474,7 @@ async function applyImageFilter(
   // `label={t('comp:BAIPropertyFilter.SearchLabel')}` = "Search filters"
   // (packages/backend.ai-ui/src/locale/en.json) names the combobox
   // (`role="combobox"`, `BaseTypeahead.tsx`).
-  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
-  await searchBar.evaluate((el) =>
-    el.scrollIntoView({ block: 'center', inline: 'nearest' }),
-  );
-  const propertyOption = page.getByRole('option', {
-    name: propertyLabel,
-    exact: true,
-  });
-  // Use force:true because the sticky header (data-testid="label-selector-project")
-  // can intercept pointer events even after scrolling into view. When this
-  // is not the first filter applied in the test, the search bar can be left
-  // re-focused-but-collapsed after the previous commit, so a single click
-  // may toggle it shut instead of open; retry the click-and-check as a unit.
-  await expect(async () => {
-    if (!(await propertyOption.isVisible().catch(() => false))) {
-      await searchBar.click({ force: true });
-    }
-    await expect(propertyOption).toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: 15000 });
-  await propertyOption.click();
+  await pickImageFilterField(page, propertyLabel);
 
   // The value editor's accessible name is "Value"
   // (`t('@astryx.powersearch.valueEditor.value')`) regardless of which
@@ -374,20 +491,16 @@ async function applyImageFilter(
   }
 
   // Wait for table to reflect updated results
-  await page
-    .locator('.ant-spin-spinning')
-    .waitFor({ state: 'detached', timeout: 10000 })
-    .catch(() => {});
+  await waitForImageListSettled(page);
 }
 
 /**
- * Remove a committed filter token by its accessible label
- * (`"<Field>: <operator>"`, see `imageFilterTokenLabel`). Each
- * token's own remove control carries `aria-label="Remove {label}"`
- * (`t('@astryx.token.remove', {label})`, `Token.tsx` /
- * locales/en.json) — used directly as both the "is this filter still
- * present" probe and the click target, since the button and the token it
- * belongs to appear/disappear together.
+ * Remove a committed filter token by its label (`"<Field>: <operator>"`, see
+ * `imageFilterTokenLabel`). Each token's own remove control carries
+ * `aria-label="Remove {label}"` (`t('@astryx.token.remove', {label})`,
+ * `Token.tsx` / locales/en.json) — used directly as both the "is this filter
+ * still present" probe and the click target, since the button and the token
+ * it belongs to appear/disappear together.
  */
 async function removeFilterTag(page: Page, tokenLabel: string) {
   const removeButton = page.getByRole('button', {
@@ -406,11 +519,8 @@ async function removeFilterTag(page: Page, tokenLabel: string) {
     await expect(removeButton).not.toBeVisible({ timeout: 2000 });
   }).toPass({ timeout: 20000 });
 
-  // Wait for any loading spinner to disappear after filter removal
-  await page
-    .locator('.ant-spin-spinning')
-    .waitFor({ state: 'detached', timeout: 10000 })
-    .catch(() => {});
+  // Wait for the refetch triggered by the removal to settle
+  await waitForImageListSettled(page);
 }
 
 /**
@@ -418,8 +528,8 @@ async function removeFilterTag(page: Page, tokenLabel: string) {
  * (`t('@astryx.tokenizer.clearAll')`, `Tokenizer.tsx` / locales/en.json —
  * replaces the antd-era bespoke reset-all button, ticket 28 PILOT-DECISION
  * #6) and wait for it to disappear (it renders only while at least one
- * filter is active) and the loading spinner to detach, retrying the click if
- * it is swallowed by a concurrent re-render (see `removeFilterTag`).
+ * filter is active) and the table to settle, retrying the click if it is
+ * swallowed by a concurrent re-render (see `removeFilterTag`).
  */
 async function resetAllFilters(page: Page, resetAllButton: Locator) {
   await expect(async () => {
@@ -427,10 +537,7 @@ async function resetAllFilters(page: Page, resetAllButton: Locator) {
     await expect(resetAllButton).not.toBeVisible({ timeout: 2000 });
   }).toPass({ timeout: 20000 });
 
-  await page
-    .locator('.ant-spin-spinning')
-    .waitFor({ state: 'detached', timeout: 10000 })
-    .catch(() => {});
+  await waitForImageListSettled(page);
 }
 
 // ---------------------------------------------------------------------------
@@ -446,11 +553,11 @@ test.describe(
       await page.getByRole('link', { name: 'Admin Settings' }).click();
       await page.getByRole('link', { name: 'Environments' }).click();
       await expect(page).toHaveURL(/\/environment/);
-      // Wait for the BAIPropertyFilter (PowerSearch) and table to be ready
+      // Wait for the BAIPropertyFilter (PowerSearch) and the table to be ready.
       await expect(
         page.getByRole('combobox', { name: 'Search filters' }),
-      ).toBeVisible();
-      await expect(page.getByRole('table')).toBeVisible();
+      ).toBeVisible({ timeout: 60000 });
+      await waitForImageListReady(page);
     });
 
     // Scenario 2.1 — BAIPropertyFilter UI rendered
@@ -473,14 +580,16 @@ test.describe(
       await applyImageFilter(page, 'Name', 'python');
 
       // 2. Verify the committed token "Name: contains python" appears
-      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
+      const nameLabel = imageFilterTokenLabel('Name', 'contains');
       const nameTag = page.getByRole('button', {
         name: `Remove ${nameLabel}`,
       });
       await expect(nameTag).toBeVisible();
+      // The value lives in the token's `endContent`, beside the label.
+      await expect(imageFilterTokenValue(page, 'python')).toBeVisible();
 
       // 3. Verify the table is still visible (filtered results shown)
-      await expect(page.getByRole('table')).toBeVisible();
+      await expect(imageListTableOf(page)).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, nameLabel);
@@ -496,14 +605,15 @@ test.describe(
 
       // 2. Verify the committed token "Architecture: is x86_64" appears
       // (`defaultOperator: '=='` in ImageList.tsx's filterProperties -> "is")
-      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
+      const archLabel = imageFilterTokenLabel('Architecture', 'is');
       const archTag = page.getByRole('button', {
         name: `Remove ${archLabel}`,
       });
       await expect(archTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'x86_64')).toBeVisible();
 
       // 3. Verify the table has at least one row with images
-      await expect(imageDataRows(page).first()).toBeVisible();
+      await expect(imageListRowsOf(page).first()).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, archLabel);
@@ -518,14 +628,15 @@ test.describe(
       await applyImageFilter(page, 'Status', 'ALIVE');
 
       // 2. Verify the committed token "Status: is ALIVE" appears
-      const statusLabel = imageFilterTokenLabel('Status', 'is', 'ALIVE');
+      const statusLabel = imageFilterTokenLabel('Status', 'is');
       const statusTag = page.getByRole('button', {
         name: `Remove ${statusLabel}`,
       });
       await expect(statusTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'ALIVE')).toBeVisible();
 
       // 3. Verify the table is not empty (all installed images should be ALIVE)
-      await expect(imageDataRows(page).first()).toBeVisible();
+      await expect(imageListRowsOf(page).first()).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, statusLabel);
@@ -540,14 +651,15 @@ test.describe(
       await applyImageFilter(page, 'Type', 'COMPUTE');
 
       // 2. Verify the committed token "Type: is COMPUTE" appears
-      const typeLabel = imageFilterTokenLabel('Type', 'is', 'COMPUTE');
+      const typeLabel = imageFilterTokenLabel('Type', 'is');
       const typeTag = page.getByRole('button', {
         name: `Remove ${typeLabel}`,
       });
       await expect(typeTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'COMPUTE')).toBeVisible();
 
       // 3. Verify the table has at least one row
-      await expect(imageDataRows(page).first()).toBeVisible();
+      await expect(imageListRowsOf(page).first()).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, typeLabel);
@@ -562,14 +674,15 @@ test.describe(
       await applyImageFilter(page, 'Registry', 'cr');
 
       // 2. Verify the committed token "Registry: contains cr" appears
-      const registryLabel = imageFilterTokenLabel('Registry', 'contains', 'cr');
+      const registryLabel = imageFilterTokenLabel('Registry', 'contains');
       const registryTag = page.getByRole('button', {
         name: `Remove ${registryLabel}`,
       });
       await expect(registryTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'cr')).toBeVisible();
 
       // 3. Verify the table content is visible (rows exist for the registry)
-      await expect(page.getByRole('table')).toBeVisible();
+      await expect(imageListTableOf(page)).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, registryLabel);
@@ -581,20 +694,22 @@ test.describe(
       page,
     }) => {
       // 1. Apply Name filter with value "python"
-      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
+      const nameLabel = imageFilterTokenLabel('Name', 'contains');
       await applyImageFilter(page, 'Name', 'python');
       const nameTag = page.getByRole('button', {
         name: `Remove ${nameLabel}`,
       });
       await expect(nameTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'python')).toBeVisible();
 
       // 2. Apply Architecture filter with strict selection "x86_64"
-      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
+      const archLabel = imageFilterTokenLabel('Architecture', 'is');
       await applyImageFilter(page, 'Architecture', 'x86_64');
       const archTag = page.getByRole('button', {
         name: `Remove ${archLabel}`,
       });
       await expect(archTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'x86_64')).toBeVisible();
 
       // 3. Verify both tokens are visible
       await expect(nameTag).toBeVisible();
@@ -604,10 +719,7 @@ test.describe(
       // `hasClear` shows it whenever at least one filter is active (ticket 28
       // PILOT-DECISION #6 — antd's bespoke reset-all button, which only
       // appeared with 2+ filters, is gone).
-      const resetAllButton = page.getByRole('button', {
-        name: 'Clear all',
-        exact: true,
-      });
+      const resetAllButton = imageFilterClearAllButtonOf(page);
       await expect(resetAllButton).toBeVisible();
 
       // 5. Cleanup: click "Clear all" to remove all filters at once
@@ -621,26 +733,25 @@ test.describe(
       page,
     }) => {
       // 1. Apply Name filter with value "python"
-      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
+      const nameLabel = imageFilterTokenLabel('Name', 'contains');
       await applyImageFilter(page, 'Name', 'python');
       const nameTag = page.getByRole('button', {
         name: `Remove ${nameLabel}`,
       });
       await expect(nameTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'python')).toBeVisible();
 
       // 2. Apply Architecture filter with strict selection "x86_64"
-      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
+      const archLabel = imageFilterTokenLabel('Architecture', 'is');
       await applyImageFilter(page, 'Architecture', 'x86_64');
       const archTag = page.getByRole('button', {
         name: `Remove ${archLabel}`,
       });
       await expect(archTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'x86_64')).toBeVisible();
 
       // 3. Verify the "Clear all" button appears with 2 active filters
-      const resetAllButton = page.getByRole('button', {
-        name: 'Clear all',
-        exact: true,
-      });
+      const resetAllButton = imageFilterClearAllButtonOf(page);
       await expect(resetAllButton).toBeVisible();
 
       // 4. Remove only the Architecture token
@@ -671,26 +782,25 @@ test.describe(
       page,
     }) => {
       // 1. Apply Name filter with value "python"
-      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
+      const nameLabel = imageFilterTokenLabel('Name', 'contains');
       await applyImageFilter(page, 'Name', 'python');
       const nameTag = page.getByRole('button', {
         name: `Remove ${nameLabel}`,
       });
       await expect(nameTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'python')).toBeVisible();
 
       // 2. Apply Architecture filter with strict selection "x86_64"
-      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
+      const archLabel = imageFilterTokenLabel('Architecture', 'is');
       await applyImageFilter(page, 'Architecture', 'x86_64');
       const archTag = page.getByRole('button', {
         name: `Remove ${archLabel}`,
       });
       await expect(archTag).toBeVisible();
+      await expect(imageFilterTokenValue(page, 'x86_64')).toBeVisible();
 
       // 3. Verify both filter tokens and the "Clear all" button are visible
-      const resetAllButton = page.getByRole('button', {
-        name: 'Clear all',
-        exact: true,
-      });
+      const resetAllButton = imageFilterClearAllButtonOf(page);
       await expect(resetAllButton).toBeVisible();
 
       // 4. Click "Clear all" to clear all filters at once
@@ -702,7 +812,7 @@ test.describe(
       await expect(resetAllButton).not.toBeVisible({ timeout: 10000 });
 
       // 6. Verify the table shows results (returns to unfiltered state)
-      await expect(imageDataRows(page).first()).toBeVisible();
+      await expect(imageListRowsOf(page).first()).toBeVisible();
     });
 
     // Scenario 2.10 — Pagination resets to page 1 when filter applied
@@ -710,8 +820,13 @@ test.describe(
       'Admin sees pagination reset to page 1 when a filter is applied on page 2',
       { tag: ['@requires-seeded-data'] },
       async ({ page }) => {
-        // 1. Check total row count to determine if there are enough images for page 2
-        const paginationTotal = page.getByText(/of\s+\d+\s+items/);
+        // 1. Check total row count to determine if there are enough images for page 2.
+        // `BAITable`'s bottom bar renders `BAIPaginationInfoText`, i.e.
+        // `comp:PaginationInfoText.Total` = "{{start}} - {{end}} of {{total}} items".
+        const paginationTotal = page.getByText(
+          /^\d+\s*-\s*\d+\s+of\s+\d+\s+items$/,
+        );
+        // Ensure pagination total text is present and readable; fail if it is not.
         await expect(paginationTotal).toBeVisible();
         const totalText = await paginationTotal.textContent();
         if (!totalText) {
@@ -734,28 +849,31 @@ test.describe(
           `Pagination scenario requires more than 20 images in the image list (found ${total}; default page size 20, @requires-seeded-data)`,
         );
 
-        const pagination = page.getByRole('navigation', { name: 'Pagination' });
+        const visiblePagination = imageListPaginationOf(page);
+        // Astryx's `Pagination` marks the current page button with
+        // `aria-current="page"`; there is no active-item class any more.
+        const activePage = visiblePagination.locator('[aria-current="page"]');
 
         // 2. Navigate to page 2 by clicking the page 2 button in pagination
-        await pagination.getByRole('button', { name: 'Go to page 2' }).click();
+        await visiblePagination
+          .getByRole('button', { name: 'Go to page 2' })
+          .click();
+        await waitForImageListSettled(page);
 
         // 3. Verify we are on page 2
-        await expect(
-          pagination.getByRole('button', { name: 'Go to page 2' }),
-        ).toHaveAttribute('aria-current', 'page');
+        await expect(activePage).toHaveText('2');
 
         // 4. Apply a Name filter with value "python"
-        const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
+        const nameLabel = imageFilterTokenLabel('Name', 'contains');
         await applyImageFilter(page, 'Name', 'python');
         const nameTag = page.getByRole('button', {
           name: `Remove ${nameLabel}`,
         });
         await expect(nameTag).toBeVisible();
+        await expect(imageFilterTokenValue(page, 'python')).toBeVisible();
 
         // 5. Verify pagination has reset to page 1
-        await expect(
-          pagination.getByRole('button', { name: 'Go to page 1' }),
-        ).toHaveAttribute('aria-current', 'page');
+        await expect(activePage).toHaveText('1');
 
         // 6. Cleanup: remove the filter token
         await removeFilterTag(page, nameLabel);
@@ -777,14 +895,7 @@ test.describe(
       page,
     }) => {
       // 1. Select "Architecture" as the filter field — opens the edit popover.
-      const searchBar = page.getByRole('combobox', { name: 'Search filters' });
-      await searchBar.evaluate((el) =>
-        el.scrollIntoView({ block: 'center', inline: 'nearest' }),
-      );
-      await searchBar.click({ force: true });
-      await page
-        .getByRole('option', { name: 'Architecture', exact: true })
-        .click();
+      await pickImageFilterField(page, 'Architecture');
 
       // 2. The value editor is a closed Selector, not a free-text input.
       await expect(
@@ -793,19 +904,28 @@ test.describe(
       const valueSelector = page.getByRole('combobox', { name: 'Value' });
       await expect(valueSelector).toBeVisible();
 
-      // 3. The Selector has no typing surface to fill — opening it exposes
-      // only the fixed, registered options, so an unregistered architecture
-      // never appears as a selectable option.
+      // 3. The Selector's trigger is a `<button role="combobox">`, not a text
+      // field, so there is nothing to type INTO. Opening it offers exactly the
+      // registered architectures (`ImageList.tsx` filterProperties: x86_64 /
+      // aarch64), and type-to-select cannot synthesise a new option — so an
+      // unregistered value stays unselectable and Apply stays disabled.
       await valueSelector.click();
+      const valueOptions = page.getByRole('listbox').getByRole('option');
+      await expect(valueOptions).toHaveText(['x86_64', 'aarch64']);
+      await page.keyboard.type('arm64-unregistered-e2e-probe');
       await expect(
         page.getByRole('option', { name: 'arm64-unregistered-e2e-probe' }),
       ).toHaveCount(0);
-      // Close the still-open options listbox — its popup overlaps the
-      // popover's Cancel button and would otherwise intercept the click.
-      await page.keyboard.press('Escape');
+      await expect(valueOptions).toHaveText(['x86_64', 'aarch64']);
+      await expect(
+        page.getByRole('button', { name: 'Apply', exact: true }),
+      ).toBeDisabled();
 
       // 4. Close the popover without committing (Cancel — no value was ever
-      // selectable, so there is nothing to Apply).
+      // selectable, so there is nothing to Apply). The Selector's option list
+      // overlays the popover footer, so collapse it first.
+      await valueSelector.press('Escape');
+      await expect(valueOptions).toHaveCount(0);
       await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 
       // 5. Verify no filter token was created and the table remains
@@ -813,7 +933,7 @@ test.describe(
       await expect(page.getByRole('button', { name: /^Remove / })).toHaveCount(
         0,
       );
-      await expect(imageDataRows(page).first()).toBeVisible();
+      await expect(imageListRowsOf(page).first()).toBeVisible();
     });
 
     // Scenario 2.12 — Empty results when filtering non-existent name
@@ -821,11 +941,7 @@ test.describe(
       page,
     }) => {
       // 1. Apply a Name filter with a value that matches no images
-      const noResultsLabel = imageFilterTokenLabel(
-        'Name',
-        'contains',
-        'zzz-nonexistent-image-000',
-      );
+      const noResultsLabel = imageFilterTokenLabel('Name', 'contains');
       await applyImageFilter(page, 'Name', 'zzz-nonexistent-image-000');
 
       // 2. Verify the committed filter token is visible
@@ -833,11 +949,22 @@ test.describe(
         name: `Remove ${noResultsLabel}`,
       });
       await expect(noResultsTag).toBeVisible();
-
-      // 3. Verify the table shows an empty state
       await expect(
-        page.getByRole('heading', { name: 'No data to display' }),
+        imageFilterTokenValue(page, 'zzz-nonexistent-image-000'),
       ).toBeVisible();
+
+      // 3. Verify the table shows its empty state. `BAITable` owns the node
+      // (an Astryx `EmptyState` titled `comp:BAITable.NoDataToDisplay` =
+      // "No data to display") instead of Astryx's own `@astryx.table.noData`.
+      // It renders as a single full-width `<tr><td colSpan>` inside the tbody
+      // (`@astryxdesign/core/src/Table/BaseTable.tsx`), so it replaces — not
+      // accompanies — the data rows.
+      await expect(
+        imageListTableOf(page).getByRole('heading', {
+          name: 'No data to display',
+        }),
+      ).toBeVisible();
+      await expect(imageListRowsOf(page)).toHaveCount(1);
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, noResultsLabel);

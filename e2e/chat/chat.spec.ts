@@ -635,13 +635,14 @@ test.describe(
       await chatInput.fill('Trigger an error');
       await chatInput.press('Enter');
 
-      // Verify an error alert banner is visible within the chat card
-      await expect(
-        page
-          .locator('.ant-alert-error')
-          .or(page.locator('[role="alert"]'))
-          .first(),
-      ).toBeVisible({ timeout: 15000 });
+      // ChatCard renders the completion failure as an Astryx `Banner
+      // status="error"` (ChatCard.tsx), and Banner stamps `role="alert"` on
+      // error/warning. The old CSS `[role="alert"]` fallback resolved to a
+      // hidden, empty live region first; the role locator only matches the
+      // banner that is actually in the accessibility tree.
+      const errorAlert = page.getByRole('alert');
+      await expect(errorAlert).toBeVisible({ timeout: 15000 });
+      await expect(errorAlert).toContainText(/error/i);
     });
 
     test.fixme('User sees an error alert when the endpoint URL is invalid', async ({
@@ -932,45 +933,31 @@ test.describe(
         },
       );
 
-      // In the second pane, open the endpoint selector dropdown.
-      // `.astryx-card` nth(0)=page card, nth(1)=first chat card,
-      // nth(2)=second chat card (Astryx `Card` renders `astryx-card`; antd's
-      // `.ant-card` is gone).
-      // Click the endpoint text (not the combobox input) to open the dropdown
-      const secondCardEndpointText = page
-        .locator('.astryx-card')
-        .nth(2)
-        .getByText('mock-endpoint')
-        .first();
+      // One deployment selector per pane, in pane order. `DeploymentSelect`
+      // renders a `BAIComplexSelect` with `label={t('chatui.Deployment')}` +
+      // `isLabelHidden`, so its trigger button's accessible name is
+      // "Deployment" and its text content is the selected deployment name —
+      // no `.astryx-card` index and no `[title]` attribute needed.
+      const deploymentTriggers = page.getByRole('button', {
+        name: 'Deployment',
+        exact: true,
+      });
+      await expect(deploymentTriggers).toHaveCount(2, { timeout: 10000 });
 
-      await secondCardEndpointText.click();
+      // In the second pane, open the endpoint selector dropdown
+      await deploymentTriggers.nth(1).click();
 
-      // Select the second mock endpoint
-      await page
-        .getByRole('option', { name: 'mock-endpoint-b' })
-        .or(
-          page
-            .locator('.ant-select-item-option')
-            .filter({ hasText: 'mock-endpoint-b' }),
-        )
-        .first()
-        .click();
+      // Select the second mock endpoint (BAIComplexSelect popup rows are
+      // `role="option"` — see P26-2 in BAIComplexSelect.tsx)
+      await page.getByRole('option', { name: 'mock-endpoint-b' }).click();
 
       // The second pane's endpoint selector shows the second endpoint
-      // Use [title] to target the visible select display value (avoids hidden aria-live elements)
-      await expect(
-        page
-          .locator('.astryx-card')
-          .nth(2)
-          .locator('[title="mock-endpoint-b"]'),
-      ).toBeVisible({
+      await expect(deploymentTriggers.nth(1)).toHaveText('mock-endpoint-b', {
         timeout: 10000,
       });
 
       // The first pane's endpoint selector still shows the original endpoint
-      await expect(
-        page.locator('.astryx-card').nth(1).locator('[title="mock-endpoint"]'),
-      ).toBeVisible({
+      await expect(deploymentTriggers.nth(0)).toHaveText('mock-endpoint', {
         timeout: 5000,
       });
     });
@@ -1001,34 +988,37 @@ test.describe('Chat Parameters', { tag: ['@chat', '@functional'] }, () => {
       timeout: 10000,
     });
 
-    // Click the "Parameters" (ControlOutlined) button in the chat card header
-    const parametersButton = page.getByRole('button', { name: 'control' });
-    await parametersButton.first().click();
+    // The parameters trigger is a `SlidersHorizontal` IconButton labelled
+    // t('chatui.chat.parameter.Title') = "Parameters" (ChatHeader.tsx); the
+    // antd icon-derived name 'control' is gone.
+    const parametersButton = page.getByRole('button', { name: 'Parameters' });
+    await parametersButton.click();
 
-    // Verify a popover with parameter sliders appears (rendered as tooltip role)
-    const popover = page.getByRole('tooltip', { name: /parameters/i });
-    await expect(popover.first()).toBeVisible({ timeout: 10000 });
+    // Astryx `Popover` stamps role="dialog" on its content wrapper
+    // (usePopover.tsx, default role). ChatHeader passes no `label`, so the
+    // dialog is unnamed and has to be identified by its content.
+    const popover = page.getByRole('dialog').filter({ hasText: 'Parameters' });
+    await expect(popover).toBeVisible({ timeout: 10000 });
 
-    // Verify the "Use Parameters" switch is present (it's a switch with no accessible name)
-    const useParamsToggle = popover.first().getByRole('switch');
-    await expect(useParamsToggle.first()).toBeVisible({ timeout: 10000 });
+    // The "use parameters" toggle is an Astryx `Switch` (role="switch")
+    // labelled "Parameters" with `isLabelHidden` (ChatParametersSliders.tsx)
+    const useParamsToggle = popover.getByRole('switch', { name: 'Parameters' });
+    await expect(useParamsToggle).toBeVisible({ timeout: 10000 });
 
     // Enable the "Use Parameters" option by clicking the switch
-    await useParamsToggle.first().click();
+    await useParamsToggle.click();
 
-    // Verify "Temperature" slider is present (translation key resolves to "Temperature")
-    const temperatureLabel = popover.first().getByText(/temperature/i);
-    await expect(temperatureLabel.first()).toBeVisible({ timeout: 10000 });
+    // Verify the "Temperature" slider is present
+    // (chatui.chat.parameter.label.Temperature = "Temperature")
+    await expect(popover.getByText('Temperature')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Close the popover by clicking somewhere outside of it (e.g., the chat message area)
     await page.getByLabel('Type your message here...').click();
 
-    // Verify the popover closed — check that its inner content is hidden
-    // (ant-popover-container stays in DOM; check the inner content div instead)
-    await expect(
-      page
-        .locator('.ant-popover:not(.ant-popover-hidden)')
-        .filter({ hasText: /parameters/i }),
-    ).not.toBeVisible({ timeout: 5000 });
+    // Verify the popover closed — the native popover leaves the subtree in the
+    // DOM, so assert it left the accessibility tree instead.
+    await expect(popover).toHaveCount(0, { timeout: 5000 });
   });
 });
