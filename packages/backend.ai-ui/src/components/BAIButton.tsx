@@ -8,7 +8,7 @@
  declare `interface XProps extends BAIButtonProps` and spread the bag straight
  through (`SFTPServerButton[V2]`, `FileBrowserButton[V2]`,
  `SwitchToProjectButton`, `ImportArtifactRevisionToFolderButton`,
- `BAIArtifactRevision{Delete,Download}Button`, `FileItemControls`). Per the
+ `BAIArtifactRevision{Delete,Download}Button`). Per the
  frontier rule the public prop surface stays antd `Button`-SHAPED so none of
  them change; only the internals move to Astryx, and `ButtonProps` is replaced
  by a locally-declared interface so this module — the #5 taint hub at 576

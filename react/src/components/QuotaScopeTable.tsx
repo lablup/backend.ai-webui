@@ -11,6 +11,7 @@ import { EmptyState } from '@astryxdesign/core/EmptyState';
 import {
   BAINameActionCell,
   BAITable,
+  BAIText,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import { X, SquarePenIcon } from 'lucide-react';
@@ -123,7 +124,11 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
             key: 'quota_scope_id',
             render: (value: string, record) => (
               <BAINameActionCell
-                title={<code>{value}</code>}
+                title={
+                  <BAIText ellipsis={{ tooltip: true }} style={{ minWidth: 0 }}>
+                    <code>{value}</code>
+                  </BAIText>
+                }
                 showActions="always"
                 actions={[
                   {
