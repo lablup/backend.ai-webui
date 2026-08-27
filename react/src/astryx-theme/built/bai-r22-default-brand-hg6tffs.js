@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r21-default-brand-hg6tffs theme — built by `pnpm exec astryx theme build`
+ * bai-r22-default-brand-hg6tffs theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR21DefaultBrandHg6tffsTheme } from './bai-r21-default-brand-hg6tffs';
- *   import './bai-r21-default-brand-hg6tffs.css';
+ *   import { baiR22DefaultBrandHg6tffsTheme } from './bai-r22-default-brand-hg6tffs';
+ *   import './bai-r22-default-brand-hg6tffs.css';
  */
-export const baiR21DefaultBrandHg6tffsTheme = {
-  name: 'bai-r21-default-brand-hg6tffs',
+export const baiR22DefaultBrandHg6tffsTheme = {
+  name: 'bai-r22-default-brand-hg6tffs',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -535,7 +535,10 @@ export const baiR21DefaultBrandHg6tffsTheme = {
         "backgroundColor": "light-dark(rgba(0,0,0,0.85), #424242)",
         "color": "#FFFFFF",
         "textAlign": "start",
-        "whiteSpace": "normal"
+        "whiteSpace": "normal",
+        "--color-neutral": "rgba(255,255,255,0.16)",
+        "--color-border-emphasized": "rgba(255,255,255,0.35)",
+        "--color-text-secondary": "rgba(255,255,255,0.85)"
       }
     },
     "tab": {
