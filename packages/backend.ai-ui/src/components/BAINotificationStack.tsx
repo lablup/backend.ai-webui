@@ -143,6 +143,19 @@ const BAINotificationStackItemView: React.FC<{
   // `isPaused` also covers focus, so a keyboard user tabbing into the action
   // buttons gets the same reprieve a mouse user does.
   const [isPaused, setIsPaused] = useState(false);
+
+  // Error detail is opened for the reader (FR-3700). Derived, not
+  // `defaultIsOpen`: a background task is updated IN PLACE under the same key
+  // (`pending` -> `rejected`), so the item never remounts and an initial-only
+  // default would leave the newly-arrived error detail collapsed. `null` means
+  // the reader has not touched the disclosure, so it follows the status; once
+  // they do, their choice wins.
+  const isError = (item.status ?? 'info') === 'error';
+  const [detailOpenByUser, setDetailOpenByUser] = useState<boolean | null>(
+    null,
+  );
+  const isDetailOpen = detailOpenByUser ?? isError;
+
   // `0` is antd's "stay open" value, not "close immediately".
   const autoCloseMs =
     typeof duration === 'number' && duration > 0 ? duration * 1000 : null;
@@ -251,6 +264,13 @@ const BAINotificationStackItemView: React.FC<{
         onDismiss={() => onClose?.(key)}
         // POLISH-3 item 1 (supersedes ticket 29 PILOT-DECISION 3).
         endContent={hasActions ? actions : undefined}
+        // Astryx ships only a bare icon-only chevron here, so nothing signals
+        // that an error's detail exists. Open it up front instead (FR-3700);
+        // `onOpenChange` keeps the user's collapse.
+        collapsible={{
+          isOpen: isDetailOpen,
+          onOpenChange: setDetailOpenByUser,
+        }}
         description={
           hasOwnContent ? undefined : item.description || hasProgress ? (
             <VStack gap={2} align="stretch">
