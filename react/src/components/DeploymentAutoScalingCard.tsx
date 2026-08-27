@@ -5,13 +5,15 @@
 import { DeploymentAutoScalingCardDeleteMutation } from '../__generated__/DeploymentAutoScalingCardDeleteMutation.graphql';
 import {
   AutoScalingRuleFilter,
+  AutoScalingRuleOrderBy,
   DeploymentAutoScalingCardListQuery,
 } from '../__generated__/DeploymentAutoScalingCardListQuery.graphql';
 import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/DeploymentAutoScalingCardPresetsQuery.graphql';
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
 import { App } from '../app-shim';
+import { convertToOrderBy } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
@@ -33,7 +35,6 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
   useDeferredValue,
@@ -146,40 +147,26 @@ const DeploymentAutoScalingCardContent: React.FC<
     'table_column_overrides.AutoScalingRuleList',
   );
 
-  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC)
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      order: parseAsStringLiteral([
-        'createdAt',
-        '-createdAt',
-      ] as const).withDefault('-createdAt'),
-      filter: parseAsJson<AutoScalingRuleFilter>(
-        (value) => value as AutoScalingRuleFilter,
-      ),
-    },
-    { history: 'replace' },
-  );
-
-  const orderString = queryParams.order;
-  const graphQLFilter = queryParams.filter ?? undefined;
+  // Card-local state, not URL state: this card is one section among several on
+  // the detail page, so its sort/filter/page are not page-level navigation.
+  const [orderString, setOrderString] = useState<
+    'createdAt' | '-createdAt' | null
+  >('-createdAt');
+  const [graphQLFilter, setGraphQLFilter] = useState<
+    AutoScalingRuleFilter | undefined
+  >(undefined);
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
   const queryVariables = {
     deploymentId,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
-    orderBy: [
-      {
-        field: 'CREATED_AT' as const,
-        direction: (orderString.startsWith('-') ? 'DESC' : 'ASC') as
-          'ASC' | 'DESC',
-      },
-    ],
+    orderBy: convertToOrderBy<AutoScalingRuleOrderBy>(orderString),
     filter: graphQLFilter ?? null,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -301,7 +288,7 @@ const DeploymentAutoScalingCardContent: React.FC<
             value={graphQLFilter}
             onChange={(filter) => {
               startRefetchTransition(() => {
-                setQueryParams({ filter: filter ?? null });
+                setGraphQLFilter(filter ?? undefined);
                 setTablePaginationOption({ current: 1 });
               });
             }}
@@ -338,9 +325,9 @@ const DeploymentAutoScalingCardContent: React.FC<
           }}
           onChangeOrder={(order) => {
             startRefetchTransition(() => {
-              setQueryParams({
-                order: order ? (order as 'createdAt' | '-createdAt') : null,
-              });
+              setOrderString(
+                order ? (order as 'createdAt' | '-createdAt') : null,
+              );
             });
           }}
           pagination={{
