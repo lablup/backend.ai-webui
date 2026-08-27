@@ -247,6 +247,27 @@ export const ClientSidePagination: Story = {
   },
 };
 
+export const InvalidPage: Story = {
+  name: 'Invalid Page Number',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A server-sliced page past the last one: the caller fetched page 20 of a 177-row result set and got nothing back. Instead of "No data to display", the body offers a way back to the first page (FR-3703).',
+      },
+    },
+  },
+  args: {
+    columns: sampleColumns,
+    dataSource: [],
+    pagination: {
+      current: 20,
+      pageSize: 10,
+      total: 177,
+    },
+  },
+};
+
 export const HorizontalScroll: Story = {
   name: 'Horizontal Scroll (scroll.x)',
   parameters: {

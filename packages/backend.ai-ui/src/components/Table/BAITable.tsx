@@ -55,6 +55,7 @@ import {
   isColumnVisible,
   renderColumnTitle,
 } from './tableTypes';
+import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Icon } from '@astryxdesign/core/Icon';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -656,6 +657,13 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     Math.max(1, Math.ceil(total / currentPageSize)),
   );
 
+  // The UNclamped page is what the caller's state / URL still holds. `total: 0`
+  // is "no data", not an invalid page (FR-3703).
+  const isPageOutOfRange =
+    pagination !== false &&
+    total > 0 &&
+    (currentPage < 1 || currentPage > Math.ceil(total / currentPageSize));
+
   // A `total` larger than the rows we were handed is the caller declaring them
   // already sliced server-side, so honour that and never re-slice — otherwise
   // a page past the first indexes past the end and renders nothing.
@@ -1225,18 +1233,35 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   // Korean UI. Owning the node moves the copy onto BUI's catalog and restores
   // the icon. `false` opts out; a ReactNode override passes through unwrapped.
   const resolvedEmptyState = emptyState ?? locale?.emptyText;
-  const emptyStateNode =
-    resolvedEmptyState === false ? (
-      false
-    ) : resolvedEmptyState == null || typeof resolvedEmptyState === 'string' ? (
-      <EmptyState
-        isCompact
-        icon={<Icon icon={Inbox} size="lg" color="secondary" />}
-        title={resolvedEmptyState ?? String(t('comp:BAITable.NoDataToDisplay'))}
-      />
-    ) : (
-      resolvedEmptyState
-    );
+  const emptyStateNode = isPageOutOfRange ? (
+    // Product decision (FR-3703): the recovery affordance outranks any
+    // caller-provided empty node, `false` included.
+    <EmptyState
+      isCompact
+      icon={<Icon icon={Inbox} size="lg" color="secondary" />}
+      title={String(t('comp:BAITable.InvalidPageNumber'))}
+      actions={
+        <Button
+          variant="primary"
+          label={String(t('comp:BAITable.GoToFirstPage'))}
+          onClick={() => {
+            setCurrentPage(1);
+            pagination?.onChange?.(1, currentPageSize);
+          }}
+        />
+      }
+    />
+  ) : resolvedEmptyState === false ? (
+    false
+  ) : resolvedEmptyState == null || typeof resolvedEmptyState === 'string' ? (
+    <EmptyState
+      isCompact
+      icon={<Icon icon={Inbox} size="lg" color="secondary" />}
+      title={resolvedEmptyState ?? String(t('comp:BAITable.NoDataToDisplay'))}
+    />
+  ) : (
+    resolvedEmptyState
+  );
 
   return (
     <div className={className} style={style}>
