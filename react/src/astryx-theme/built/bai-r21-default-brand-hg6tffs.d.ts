@@ -6,6 +6,6 @@
  * Core: @astryxdesign/core@0.5.0
  */
 
-/// <reference path="./bai-r20-default-brand-h1t5xmly.variants.d.ts" />
+/// <reference path="./bai-r21-default-brand-hg6tffs.variants.d.ts" />
 import type { DefinedTheme } from '@astryxdesign/core/theme';
-export declare const baiR20DefaultBrandH1t5xmlyTheme: DefinedTheme;
+export declare const baiR21DefaultBrandHg6tffsTheme: DefinedTheme;

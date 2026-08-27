@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 20;
+export const THEME_NAME_REV = 21;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -520,9 +520,7 @@ const BANNER_INFO_SURFACE = 'light-dark(#c4ddfb, #393f50)';
 
 const BANNER_OPAQUE_INFO_SURFACE = {
   banner: {
-    'status:info': {
-      '--color-accent-muted': BANNER_INFO_SURFACE,
-    },
+    'status:info': { '--color-accent-muted': BANNER_INFO_SURFACE },
   },
 };
 
@@ -530,16 +528,15 @@ const BANNER_OPAQUE_INFO_SURFACE = {
 // `--color-background-card`, so a detail body reads as a detached white block
 // (FR-3700). Set the TOKEN, never `backgroundColor`: StyleX's priority4 layer
 // outranks `@layer astryx-theme` and a plain declaration silently no-ops.
+// The content area is a SIBLING of the coloured header, not a child, so it
+// takes the same fill by literal rather than by inheriting the token. It also
+// draws its own left/right/bottom border in `--color-border`, which with a
+// tinted fill reads as a box around the expanded half only — hence the
+// transparent border.
 const BANNER_CONTENT_STATUS_SURFACE = {
   'banner-content': {
+    base: { '--color-border': 'transparent' },
     'status:info': { '--color-background-card': BANNER_INFO_SURFACE },
-    'status:success': {
-      '--color-background-card': 'var(--color-success-muted)',
-    },
-    'status:warning': {
-      '--color-background-card': 'var(--color-warning-muted)',
-    },
-    'status:error': { '--color-background-card': 'var(--color-error-muted)' },
   },
 };
 
@@ -924,6 +921,40 @@ const toMutedTuple = (tuple: [string, string]): [string, string] | undefined =>
     ? [`${tuple[0]}33`, `${tuple[1]}3F`]
     : undefined;
 
+/**
+ * The opaque twin of `toMutedTuple`. A floating notification must not show the
+ * page through it, so the banner takes the SAME fill composited over the card
+ * surface — derived from the resolved seed, so an operator `theme.json`
+ * rebrand still reaches it (FR-3700).
+ */
+const CARD_SURFACE: [string, string] = ['#FFFFFF', '#141414'];
+
+const compositeOver = (hex: string, alpha: number, bg: string): string => {
+  const channel = (v: string, i: number) =>
+    parseInt(v.slice(1 + i * 2, 3 + i * 2), 16);
+  return (
+    '#' +
+    [0, 1, 2]
+      .map((i) =>
+        Math.round(alpha * channel(hex, i) + (1 - alpha) * channel(bg, i))
+          .toString(16)
+          .padStart(2, '0')
+          .toUpperCase(),
+      )
+      .join('')
+  );
+};
+
+const toOpaqueMutedTuple = (
+  tuple: [string, string],
+): [string, string] | undefined =>
+  /^#[0-9a-fA-F]{6}$/.test(tuple[0]) && /^#[0-9a-fA-F]{6}$/.test(tuple[1])
+    ? [
+        compositeOver(tuple[0], 0x33 / 255, CARD_SURFACE[0]),
+        compositeOver(tuple[1], 0x3f / 255, CARD_SURFACE[1]),
+      ]
+    : undefined;
+
 /** djb2 — tiny, stable, DOM-attribute-safe (base36). */
 const hashSeeds = (input: string): string => {
   let h = 5381;
@@ -1027,6 +1058,27 @@ export function buildBackendAiTheme(
   const errorMuted = toMutedTuple(error);
   const successMuted = toMutedTuple(success);
   const warningMuted = toMutedTuple(warning);
+  // Seed-derived opaque fills for the floating banner surfaces (FR-3700).
+  const bannerFill = (
+    token: string,
+    tuple: [string, string] | undefined,
+  ): Record<string, string> =>
+    tuple ? { [token]: `light-dark(${tuple[0]}, ${tuple[1]})` } : {};
+  const errorFill = toOpaqueMutedTuple(error);
+  const successFill = toOpaqueMutedTuple(success);
+  const warningFill = toOpaqueMutedTuple(warning);
+  const bannerStatusSurfaces = {
+    banner: {
+      'status:error': bannerFill('--color-error-muted', errorFill),
+      'status:success': bannerFill('--color-success-muted', successFill),
+      'status:warning': bannerFill('--color-warning-muted', warningFill),
+    },
+    'banner-content': {
+      'status:error': bannerFill('--color-background-card', errorFill),
+      'status:success': bannerFill('--color-background-card', successFill),
+      'status:warning': bannerFill('--color-background-card', warningFill),
+    },
+  };
 
   const theme = defineTheme({
     name,
@@ -1103,8 +1155,14 @@ export function buildBackendAiTheme(
     components: {
       ...SIDE_NAV_DENSITY,
       ...STATUS_TEXT_COLORS,
-      ...BANNER_OPAQUE_INFO_SURFACE,
-      ...BANNER_CONTENT_STATUS_SURFACE,
+      banner: {
+        ...BANNER_OPAQUE_INFO_SURFACE.banner,
+        ...bannerStatusSurfaces.banner,
+      },
+      'banner-content': {
+        ...BANNER_CONTENT_STATUS_SURFACE['banner-content'],
+        ...bannerStatusSurfaces['banner-content'],
+      },
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
       ...COMPLEX_SELECTOR_HEIGHT_PARITY,
