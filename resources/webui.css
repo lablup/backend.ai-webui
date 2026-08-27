@@ -39,9 +39,12 @@ body {
   overflow: hidden;
   background-color: light-dark(#f7f7f6, #191919);
   transition: opacity 0.3s ease-out;
+  /* System fonts only, deliberately not "Ubuntu"/"Roboto": those are
+     app-wide webfonts (index.html), and swapping into them mid-splash
+     reflows the corner metadata's stacked lines as their metrics differ
+     from whatever painted first. The splash is too short-lived for a
+     webfont fetch to ever resolve before it's dismissed anyway. */
   font-family:
-    "Ubuntu",
-    "Roboto",
     "Noto Sans KR",
     -apple-system,
     BlinkMacSystemFont,
@@ -58,7 +61,7 @@ body {
 }
 
 body.dark-theme .splash {
-  /* Backdrop comes from `--color-background-body` above (mode-reactive via
+  /* Backdrop is the literal `light-dark()` above (mode-reactive via
      `color-scheme`); only the weave palette differs per mode. */
   /* Diagonal Weave tokens — dark */
   --splash-fg: #dcdcdc;
