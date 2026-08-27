@@ -2602,7 +2602,6 @@
     "NoPresetName": "자원 프리셋의 이름을 입력하세요.",
     "NoResourcePresetToDisplay": "자원 프리셋 정보가 없습니다.",
     "PresetName": "자원 프리셋 이름",
-    "PresetNameAlreadyExists": "동일한 이름의 자원 프리셋이 이미 존재합니다.",
     "RAM": "메모리 (GB)",
     "ResourcePreset": "자원 프리셋",
     "ResourcePresets": "자원 프리셋",

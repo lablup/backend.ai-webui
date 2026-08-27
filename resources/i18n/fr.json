@@ -2600,7 +2600,6 @@
     "NoPresetName": "Saisissez le nom du préréglage",
     "NoResourcePresetToDisplay": "Pas de préréglages de ressources à afficher",
     "PresetName": "Nom du préréglage",
-    "PresetNameAlreadyExists": "Un préréglage de ressources portant le même nom existe déjà.",
     "RAM": "RAM (Go)",
     "ResourcePreset": "Préréglage de ressource",
     "ResourcePresets": "Préréglages de ressources",
