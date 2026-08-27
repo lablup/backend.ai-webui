@@ -308,6 +308,17 @@ describe('BAIText ellipsis', () => {
       expect(screen.getByRole('tooltip')).toHaveTextContent('titled');
     });
 
+    it('falls back to the children for an antd TooltipProps object without title', () => {
+      setOverflow(true);
+      render(
+        <BAIText ellipsis={{ tooltip: { placement: 'topLeft' } }}>
+          the full value
+        </BAIText>,
+      );
+      hover(box('the full value'));
+      expect(screen.getByRole('tooltip')).toHaveTextContent('the full value');
+    });
+
     it('stays silent when the text fits, or when tooltip is off', () => {
       setOverflow(false);
       const { unmount } = render(

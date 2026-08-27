@@ -51,9 +51,13 @@ export type BAITextSize =
   | '3xl'
   | '4xl';
 
-/** antd `TooltipProps`, of which only `title` has a destination. */
+/**
+ * antd `TooltipProps`, of which only `title` has a destination; the other
+ * keys are accepted and ignored, and a missing `title` means the children.
+ */
 export interface BAITextTooltipConfig {
   title?: ReactNode;
+  [antdTooltipProp: string]: unknown;
 }
 
 /** antd `EllipsisConfig`. */
@@ -137,13 +141,13 @@ const resolveTooltipContent = (
     return undefined;
   }
   if (tooltip === true) return children;
+  // antd `TooltipProps` form: `title` defaults to the children.
   if (
     typeof tooltip === 'object' &&
     !React.isValidElement(tooltip) &&
-    !Array.isArray(tooltip) &&
-    'title' in tooltip
+    !Array.isArray(tooltip)
   ) {
-    return tooltip.title;
+    return (tooltip as BAITextTooltipConfig).title ?? children;
   }
   return tooltip as ReactNode;
 };
