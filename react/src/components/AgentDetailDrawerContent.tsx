@@ -209,6 +209,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
           <Suspense fallback={<BAISkeleton />}>
             {sessionsQueryRef && (
               <AgentSessions
+                agentId={agent?.row_id ?? ''}
                 queryRef={sessionsQueryRef}
                 onReload={loadSessionsQuery}
               />

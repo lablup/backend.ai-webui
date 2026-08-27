@@ -1,3 +1,4 @@
+import BAIDrawerAstryx from './BAIDrawerAstryx';
 import BAIFlex from './BAIFlex';
 import BAIResourceUnitGrid, {
   type BAIUnitGridGroup,
@@ -166,6 +167,30 @@ export const DashedPlateVariant: Story = {
       },
     },
   },
+};
+
+// The popover is `position: fixed`; a drawer panel carries a transform, which
+// makes it the containing block for fixed descendants. Hover a plate here —
+// before FR-3652 the popover landed outside the panel and was clipped away.
+export const InsideDrawer: Story = {
+  render: () => (
+    <BAIDrawerAstryx
+      open
+      title="Agent detail"
+      size={800}
+      side="end"
+      onClose={() => {}}
+    >
+      <BAIResourceUnitGrid
+        groups={DEMO_GROUPS}
+        legendItems={LEGEND}
+        aria-label="Resource grid inside a drawer"
+        renderGroupPopover={(g) => (
+          <Text size="sm">{`popover: ${g.label}`}</Text>
+        )}
+      />
+    </BAIDrawerAstryx>
+  ),
 };
 
 export const EmptyFallback: Story = {
