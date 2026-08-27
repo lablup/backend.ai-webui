@@ -174,6 +174,22 @@ export type {
   BAIUserResourcePolicyV2TableProps,
   UserResourcePolicyV2InList,
 } from './BAIUserResourcePolicyV2Table';
+export {
+  default as BAIKeypairResourcePolicyV2Table,
+  availableKeypairResourcePolicySorterValues,
+} from './BAIKeypairResourcePolicyV2Table';
+export type {
+  BAIKeypairResourcePolicyV2TableProps,
+  KeypairResourcePolicyV2InList,
+} from './BAIKeypairResourcePolicyV2Table';
+export {
+  default as BAIProjectResourcePolicyV2Table,
+  availableProjectResourcePolicySorterValues,
+} from './BAIProjectResourcePolicyV2Table';
+export type {
+  BAIProjectResourcePolicyV2TableProps,
+  ProjectResourcePolicyV2InList,
+} from './BAIProjectResourcePolicyV2Table';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
