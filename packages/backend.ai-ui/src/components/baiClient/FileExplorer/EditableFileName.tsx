@@ -156,28 +156,45 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
           onClick={onClick}
         >
           {fileInfo?.type === 'DIRECTORY' ? (
-            <BAILink
-              type="hover"
-              style={{
-                maxWidth: 180,
-                color: isPendingRenamingAndRefreshing
-                  ? token.colorTextTertiary
-                  : undefined,
-              }}
-              ellipsis
-              title={fileInfo.name}
+            // The icon sits beside the link rather than inside it: as inline
+            // siblings they break apart onto two lines once the cell narrows.
+            // `flex` overrides BAIFlex's base `flexShrink: 0`, without which
+            // this box stays at max-content and the name clips with no ellipsis.
+            <BAIFlex
+              gap="xs"
+              style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
             >
-              <Folder style={{ color: token.colorLink }} size="1em" /> &nbsp;
-              {displayName}
-            </BAILink>
+              <Folder
+                style={{ color: token.colorLink, flexShrink: 0 }}
+                size="1em"
+              />
+              <BAILink
+                type="hover"
+                style={{
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  color: isPendingRenamingAndRefreshing
+                    ? token.colorTextTertiary
+                    : undefined,
+                }}
+                title={fileInfo.name}
+              >
+                {displayName}
+              </BAILink>
+            </BAIFlex>
           ) : (
-            <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-              <File size="1em" />
+            <BAIFlex
+              gap="xs"
+              style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
+            >
+              <File size="1em" style={{ flexShrink: 0 }} />
               <Text
                 maxLines={1}
                 hasTruncateTooltip
                 style={{
-                  maxWidth: 200,
+                  maxWidth: '100%',
                   color: isPendingRenamingAndRefreshing
                     ? token.colorTextTertiary
                     : undefined,

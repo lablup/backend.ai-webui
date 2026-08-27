@@ -38,6 +38,9 @@ export interface BAINameActionCellAction {
   type?: 'default' | 'danger';
   /** Whether the action is disabled */
   disabled?: boolean;
+  /** Loading spinner for progress this cell does not own (e.g. a background
+   * delete tracked by the parent). Use `action` when the click itself awaits. */
+  loading?: boolean;
   /** Tooltip text when disabled */
   disabledReason?: string;
   /** Custom style override for the action button */
@@ -429,6 +432,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         </BAIText>
       );
     }
+    // Only plain text gets the default truncation treatment. A node title
+    // brings its own — wrapping it would nest a second `BAIText` around it, or
+    // swallow an interactive one (the file explorer's inline-rename field).
+    if (typeof title !== 'string' && typeof title !== 'number') {
+      return title;
+    }
     return (
       <BAIText
         ellipsis={{ tooltip: true }}
@@ -519,6 +528,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 aria-label={action.title}
                 title={action.disabled ? action.disabledReason : action.title}
                 disabled={action.disabled}
+                loading={action.loading}
                 className={buttonClassName}
                 style={action.style}
                 onClick={action.onClick}
