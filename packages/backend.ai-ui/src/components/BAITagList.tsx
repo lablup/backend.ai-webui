@@ -97,9 +97,13 @@ const BAITagList: React.FC<BAITagListProps> = ({
   // on the hover branch.
   const overflowAffordance =
     variant === 'text' ? (
+      // `Badge` is a bare <span>, and HoverCard's `focusTrigger="auto"` only
+      // attaches to a naturally focusable element — without this the `+N` is
+      // unreachable by keyboard.
       <Badge
         variant="neutral"
         label={`+${restCount}`}
+        tabIndex={0}
         style={{ cursor: 'help' }}
       />
     ) : (
@@ -112,7 +116,12 @@ const BAITagList: React.FC<BAITagListProps> = ({
       // to antd's `colorBgSpotlight`, i.e. DARK in both schemes, which is right
       // for a short label and wrong for a list of values. HoverCard is the same
       // hover/focus trigger on a `--color-background-surface` card.
-      <HoverCard content={restItemsList}>{overflowAffordance}</HoverCard>
+      // `touchTrigger="tap"`: the default leaves a tap on a button to that
+      // button, and the chip trigger IS a button with no action of its own, so
+      // touch users could not open the list at all.
+      <HoverCard content={restItemsList} touchTrigger="tap">
+        {overflowAffordance}
+      </HoverCard>
     ) : (
       <Popover
         label={`+${restCount}`}

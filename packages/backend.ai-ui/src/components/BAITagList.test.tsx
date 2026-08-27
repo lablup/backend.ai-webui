@@ -49,6 +49,19 @@ describe('BAITagList overflow trigger', () => {
     expect(overflow().closest('button')).toBeInTheDocument();
   });
 
+  // HoverCard's `focusTrigger="auto"` only attaches to a naturally focusable
+  // element, so a trigger that is not one never opens for a keyboard user.
+  // `chip` gets that from `Link` (a <button>); `text` renders a bare <span>
+  // and needs the explicit tabindex.
+  it.each([
+    ['chip', undefined],
+    ['text', 'text'],
+  ] as const)('keeps the %s hover trigger focusable', (_name, variant) => {
+    render(<BAITagList items={ITEMS} variant={variant} />);
+    const el = overflow().closest('button') ?? overflow();
+    expect(el.tagName === 'BUTTON' || el.tabIndex >= 0).toBe(true);
+  });
+
   // The overflow list is a list of VALUES, so it belongs on a card surface.
   // This project pins `.astryx-tooltip` to antd's `colorBgSpotlight` — dark in
   // BOTH schemes — so a Tooltip here reads as a black box in light mode

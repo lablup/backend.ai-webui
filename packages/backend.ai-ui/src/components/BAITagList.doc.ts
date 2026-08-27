@@ -77,7 +77,7 @@ export const docs = {
       name: 'trigger',
       type: "'click' | 'hover'",
       description:
-        'How the overflow list opens. Defaults to `hover` (a Tooltip) in both variants; pass `click` for a Popover that latches open.',
+        'How the overflow list opens. Defaults to `hover` (a HoverCard, so the list sits on a card surface) in both variants; pass `click` for a Popover that latches open.',
     },
   ],
   examples: [
