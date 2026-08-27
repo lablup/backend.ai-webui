@@ -14,15 +14,16 @@
  The public prop surface (`items`, `maxInline`, `emptyText`, `variant`,
  `trigger`) is unchanged.
 
- PILOT-DECISION — **a click-triggered overflow always uses a `Link` trigger,
- in both variants.** Astryx `Popover` requires its trigger subtree to contain a
- `<button>` or `[role="button"]` — it wires the click/keydown handlers and the
- `aria-haspopup`/`aria-expanded`/`aria-controls` triple onto that element. A
- `Badge` is not one, so the `text` variant's click branch (which wrapped a
- chip) now renders the same `+N` affordance the `chip` variant already used.
- The default for `text` is `hover`, which keeps its `Badge`-in-a-`Tooltip`
- shape, so no default rendering changes. What is GAINED is that the click
- affordance is now keyboard-reachable — the antd chip was not.
+ The `+N` overflow opens on HOVER in both variants (FR-3707): it is a read-only
+ peek at the items that did not fit, so it should behave like a tooltip —
+ appear on hover, leave when the pointer does. `trigger="click"` is still
+ available for a caller that wants a latched popover.
+
+ A click-triggered overflow always uses a `Link` trigger: Astryx `Popover`
+ wires its handlers onto a `<button>` / `[role="button"]` in the trigger
+ subtree, and `Badge` is not one. `Link` without `href` renders a `<button>`,
+ which is also what keeps the affordance keyboard-reachable on both branches —
+ the antd chip was not.
 */
 import BAIFlex from './BAIFlex';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -42,7 +43,7 @@ export interface BAITagListProps {
   /**
    * Visual style of the list.
    * - `'chip'` (default): the first `maxInline` items render as `Badge`
-   *   chips and the `+N` overflow opens a `Popover`. Suited for interactive
+   *   chips and the `+N` overflow is a `Link`. Suited for interactive
    *   contexts (modals).
    * - `'text'`: the first `maxInline` items render as inline plain (nowrap)
    *   text and the `+N` overflow is a compact `Badge`. Suited for dense table
@@ -53,8 +54,8 @@ export interface BAITagListProps {
    */
   variant?: 'chip' | 'text';
   /**
-   * How the overflow popup is triggered. Defaults to `'click'` for the `chip`
-   * variant and `'hover'` for the `text` variant.
+   * How the overflow popup is triggered. Defaults to `'hover'` in both
+   * variants; pass `'click'` for a popover that latches open.
    */
   trigger?: 'click' | 'hover';
 }
@@ -71,7 +72,7 @@ const BAITagList: React.FC<BAITagListProps> = ({
   const inlineItems = _.slice(items, 0, maxInline);
   const restItems = _.slice(items, maxInline);
   const restCount = restItems.length;
-  const effectiveTrigger = trigger ?? (variant === 'text' ? 'hover' : 'click');
+  const effectiveTrigger = trigger ?? 'hover';
 
   if (items.length === 0) {
     return <>{emptyText}</>;
@@ -89,15 +90,24 @@ const BAITagList: React.FC<BAITagListProps> = ({
     </BAIFlex>
   );
 
+  // Astryx `Popover` wires its handlers onto a `<button>` in the trigger
+  // subtree, and `Link` without `href` renders exactly that — so the click
+  // branch keeps the `Link` whatever the variant, while `text` keeps its chip
+  // on the hover branch.
+  const overflowAffordance =
+    variant === 'text' ? (
+      <Badge
+        variant="neutral"
+        label={`+${restCount}`}
+        style={{ cursor: 'help' }}
+      />
+    ) : (
+      <Link>+{restCount}</Link>
+    );
+
   const overflowControl =
     effectiveTrigger === 'hover' ? (
-      <Tooltip content={restItemsList}>
-        <Badge
-          variant="neutral"
-          label={`+${restCount}`}
-          style={{ cursor: 'help' }}
-        />
-      </Tooltip>
+      <Tooltip content={restItemsList}>{overflowAffordance}</Tooltip>
     ) : (
       <Popover
         label={`+${restCount}`}
