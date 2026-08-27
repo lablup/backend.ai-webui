@@ -132,11 +132,21 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
   };
 
   const hasEndpointUrl = !!deployment.networkAccess?.endpointUrl;
-  const isMutationDisabled = isDeploymentDestroying || !isOwnedByCurrentUser;
-  // The create button is also blocked while the manager has not yet
-  // issued a network endpoint — a token would have nothing to authenticate
-  // against. Surface the reason via a Tooltip on the disabled button.
-  const isCreateDisabled = isMutationDisabled || !hasEndpointUrl;
+  // The reason IS the disabled flag: `undefined` enables, a string disables and
+  // says why, so "disabled with no reason" — the FR-3679 defect — cannot be
+  // expressed. Ordered most- to least-specific.
+  const mutationDisabledReason = isDeploymentDestroying
+    ? t('deployment.accessToken.DeploymentStopped')
+    : !isOwnedByCurrentUser
+      ? t('deployment.accessToken.OnlyOwnerCanManage')
+      : undefined;
+  // Creating is additionally blocked until the manager issues a network
+  // endpoint — a token would have nothing to authenticate against.
+  const createDisabledReason =
+    mutationDisabledReason ??
+    (!hasEndpointUrl
+      ? t('deployment.accessToken.EndpointNotIssuedYet')
+      : undefined);
 
   return (
     <>
@@ -157,15 +167,11 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
               value=""
               onChange={handleRefetch}
             />
-            {/* PILOT-DECISION (P18): the antd Tooltip that explained WHY the
-                disabled Create button is disabled ("endpoint not issued yet")
-                is dropped — Astryx forbids wrapping a disabled control in
-                Tooltip (disabled controls emit no hover events), and BAIButton
-                (frontier) has no `disabledMessage` slot to carry the reason. */}
             <BAIButton
               type="primary"
               icon={<PlusIcon />}
-              disabled={isCreateDisabled}
+              disabled={!!createDisabledReason}
+              title={createDisabledReason}
               onClick={() => setIsCreateModalOpen(true)}
             >
               {t('deployment.accessToken.Create')}
@@ -179,7 +185,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
             deploymentId={deploymentId}
             fetchKey={deferredFetchKey}
             isPendingRefetch={isPendingRefetch}
-            isDeleteDisabled={isMutationDisabled}
+            deleteDisabledReason={mutationDisabledReason}
             onAfterDelete={handleRefetch}
           />
         </Suspense>
@@ -274,7 +280,8 @@ interface DeploymentAccessTokensTableProps {
   deploymentId: string;
   fetchKey: string;
   isPendingRefetch: boolean;
-  isDeleteDisabled: boolean;
+  /** Undefined enables deleting; a string disables it and says why. */
+  deleteDisabledReason?: string;
   onAfterDelete: () => void;
 }
 
@@ -284,7 +291,7 @@ const DeploymentAccessTokensTable: React.FC<
   deploymentId,
   fetchKey,
   isPendingRefetch,
-  isDeleteDisabled,
+  deleteDisabledReason,
   onAfterDelete,
 }) => {
   'use memo';
@@ -384,7 +391,7 @@ const DeploymentAccessTokensTable: React.FC<
                       title: t('deployment.accessToken.Delete'),
                       icon: <Trash2 size="1em" />,
                       type: 'danger',
-                      disabled: isDeleteDisabled,
+                      disabledReason: deleteDisabledReason,
                       onClick: () =>
                         setDeletingToken({
                           id: row.id,

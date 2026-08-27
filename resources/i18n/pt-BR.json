@@ -1246,9 +1246,11 @@
       "Delete": "Excluir token de acesso",
       "DeleteConfirm": "Tem certeza de que deseja excluir este token de acesso? Esta ação não pode ser desfeita.",
       "Deleted": "O token de acesso foi excluído.",
+      "DeploymentStopped": "A implantação foi parada.",
       "EndpointNotIssuedYet": "O endpoint de rede ainda não foi emitido.",
       "Expiration": "Expiração",
       "NoExpiration": "Sem expiração",
+      "OnlyOwnerCanManage": "Apenas o proprietário da implantação pode gerenciar tokens de acesso.",
       "Token": "Token"
     },
     "filter": {

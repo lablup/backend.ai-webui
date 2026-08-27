@@ -1246,9 +1246,11 @@
       "Delete": "Xóa mã thông báo truy cập",
       "DeleteConfirm": "Bạn có chắc chắn muốn xóa mã thông báo truy cập này không? Hành động này không thể hoàn tác.",
       "Deleted": "Mã thông báo truy cập đã được xóa.",
+      "DeploymentStopped": "Triển khai đã dừng.",
       "EndpointNotIssuedYet": "Endpoint mạng chưa được phát hành.",
       "Expiration": "Hạn hết hạn",
       "NoExpiration": "Không hết hạn",
+      "OnlyOwnerCanManage": "Chỉ chủ sở hữu triển khai mới có thể quản lý mã thông báo truy cập.",
       "Token": "Mã thông báo"
     },
     "filter": {
