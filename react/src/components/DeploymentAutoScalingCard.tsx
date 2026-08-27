@@ -11,7 +11,7 @@ import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/Deployme
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
 import { App } from '../app-shim';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
@@ -33,7 +33,6 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
   useDeferredValue,
@@ -146,29 +145,24 @@ const DeploymentAutoScalingCardContent: React.FC<
     'table_column_overrides.AutoScalingRuleList',
   );
 
+  // Card-local state, not URL state: this card is one section among several on
+  // the detail page, so its sort/filter/page are not page-level navigation.
   // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC) | null
-  // (unsorted). Nullable on purpose — a `withDefault` parser cannot represent
-  // the unsorted step of the header cycle, so the default lives below instead.
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      order: parseAsStringLiteral(['createdAt', '-createdAt'] as const),
-      filter: parseAsJson<AutoScalingRuleFilter>(
-        (value) => value as AutoScalingRuleFilter,
-      ),
-    },
-    { history: 'replace' },
-  );
-
-  const orderString = queryParams.order;
-  const graphQLFilter = queryParams.filter ?? undefined;
+  // (unsorted).
+  const [orderString, setOrderString] = useState<
+    'createdAt' | '-createdAt' | null
+  >(null);
+  const [graphQLFilter, setGraphQLFilter] = useState<
+    AutoScalingRuleFilter | undefined
+  >(undefined);
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
-  // Newest-first seeds the list while the param is absent — on first load, and
+  // Newest-first seeds the list while the sort is unset — on first load, and
   // again once the header cycles back to unsorted.
   const effectiveOrder = orderString || '-createdAt';
 
@@ -304,7 +298,7 @@ const DeploymentAutoScalingCardContent: React.FC<
             value={graphQLFilter}
             onChange={(filter) => {
               startRefetchTransition(() => {
-                setQueryParams({ filter: filter ?? null });
+                setGraphQLFilter(filter ?? undefined);
                 setTablePaginationOption({ current: 1 });
               });
             }}
@@ -341,9 +335,9 @@ const DeploymentAutoScalingCardContent: React.FC<
           }}
           onChangeOrder={(order) => {
             startRefetchTransition(() => {
-              setQueryParams({
-                order: order ? (order as 'createdAt' | '-createdAt') : null,
-              });
+              setOrderString(
+                order ? (order as 'createdAt' | '-createdAt') : null,
+              );
             });
           }}
           pagination={{
