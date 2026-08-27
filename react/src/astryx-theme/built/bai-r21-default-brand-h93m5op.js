@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r20-default-brand-h1t5xmly theme — built by `pnpm exec astryx theme build`
+ * bai-r21-default-brand-h93m5op theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR20DefaultBrandH1t5xmlyTheme } from './bai-r20-default-brand-h1t5xmly';
- *   import './bai-r20-default-brand-h1t5xmly.css';
+ *   import { baiR21DefaultBrandH93m5opTheme } from './bai-r21-default-brand-h93m5op';
+ *   import './bai-r21-default-brand-h93m5op.css';
  */
-export const baiR20DefaultBrandH1t5xmlyTheme = {
-  name: 'bai-r20-default-brand-h1t5xmly',
+export const baiR21DefaultBrandH93m5opTheme = {
+  name: 'bai-r21-default-brand-h93m5op',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -406,17 +406,20 @@ export const baiR20DefaultBrandH1t5xmlyTheme = {
       "status:success": {
         "--color-text-primary": "var(--color-text-green)",
         "--color-text-secondary": "var(--color-text-green)",
-        "--color-success": "var(--color-text-green)"
+        "--color-success": "var(--color-text-green)",
+        "--color-success-muted": "light-dark(#CCF2EB, #11322C)"
       },
       "status:warning": {
         "--color-text-primary": "var(--color-text-yellow)",
         "--color-text-secondary": "var(--color-text-yellow)",
-        "--color-warning": "var(--color-text-yellow)"
+        "--color-warning": "var(--color-text-yellow)",
+        "--color-warning-muted": "light-dark(#FEEFD0, #443414)"
       },
       "status:error": {
         "--color-text-primary": "var(--color-text-red)",
         "--color-text-secondary": "var(--color-text-red)",
-        "--color-error": "var(--color-text-red)"
+        "--color-error": "var(--color-text-red)",
+        "--color-error-muted": "light-dark(#FFDBDC, #3E1E1F)"
       }
     },
     "switch": {
@@ -472,17 +475,20 @@ export const baiR20DefaultBrandH1t5xmlyTheme = {
       }
     },
     "banner-content": {
+      "base": {
+        "--color-border": "transparent"
+      },
       "status:info": {
         "--color-background-card": "light-dark(#c4ddfb, #393f50)"
       },
+      "status:error": {
+        "--color-background-card": "light-dark(#FFDBDC, #3E1E1F)"
+      },
       "status:success": {
-        "--color-background-card": "var(--color-success-muted)"
+        "--color-background-card": "light-dark(#CCF2EB, #11322C)"
       },
       "status:warning": {
-        "--color-background-card": "var(--color-warning-muted)"
-      },
-      "status:error": {
-        "--color-background-card": "var(--color-error-muted)"
+        "--color-background-card": "light-dark(#FEEFD0, #443414)"
       }
     },
     "dialog": {

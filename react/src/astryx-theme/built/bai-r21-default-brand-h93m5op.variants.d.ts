@@ -34,8 +34,8 @@ declare module '@astryxdesign/core/Badge' {
 declare module '@astryxdesign/core/Banner' {
   interface BannerStatusMap {
     'info': true;
+    'error': true;
     'success': true;
     'warning': true;
-    'error': true;
   }
 }
