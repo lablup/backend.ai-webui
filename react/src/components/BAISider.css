@@ -145,17 +145,16 @@
 
 /*
  * The first menu row sits 24px below the brand band (Astryx's own inset is
- * `--spacing-1`, 4px). `side-nav-item` carries `margin-block: 2px`
- * (`SIDE_NAV_DENSITY`) which lands on top of this padding, so the column's own
- * inset is 24 minus that margin — the 2px is mirrored from the theme, where it
- * is likewise a raw length.
+ * `--spacing-1`, 4px). `side-nav-item` carries `margin-block: --spacing-0-5`
+ * (2px, `SIDE_NAV_DENSITY`) which lands on top of this padding, so the
+ * column's own inset is 24 minus that margin.
  *
  * `:nth-child(2)` is the scroll column in BOTH rail states: the sticky top
  * band is always first, and it is the sticky BOTTOM band the collapsed rail
  * drops (`WebUISider` passes no `footer` when collapsed).
  */
 .bai-sider > div:nth-child(2) {
-  padding-block-start: calc(var(--spacing-6) - 2px);
+  padding-block-start: calc(var(--spacing-6) - var(--spacing-0-5));
 }
 
 /*
