@@ -10,7 +10,7 @@ import {
 } from './runtimeVariantPresetUI';
 import { describe, expect, it } from 'vitest';
 
-const ALL: ReadonlyArray<RuntimeVariantPresetValueType> = [
+const ALL_VALUE_TYPES: ReadonlyArray<RuntimeVariantPresetValueType> = [
   'STR',
   'INT',
   'FLOAT',
@@ -18,39 +18,95 @@ const ALL: ReadonlyArray<RuntimeVariantPresetValueType> = [
   'FLAG',
 ];
 
-const accepted = (uiType: RuntimeVariantPresetUIType | undefined) =>
-  ALL.filter((valueType) => isValueTypeCompatibleWithUIType(uiType, valueType));
+const ALL_UI_TYPES: ReadonlyArray<RuntimeVariantPresetUIType> = [
+  'SLIDER',
+  'NUMBER_INPUT',
+  'SELECT',
+  'CHECKBOX',
+  'TEXT_INPUT',
+];
 
-describe('isValueTypeCompatibleWithUIType', () => {
+/** Value types the given control can render. */
+const valueTypesFor = (uiType: RuntimeVariantPresetUIType | undefined) =>
+  ALL_VALUE_TYPES.filter((valueType) =>
+    isValueTypeCompatibleWithUIType(uiType, valueType),
+  );
+
+/** Controls that can render the given value type — the transpose. */
+const controlsFor = (valueType: RuntimeVariantPresetValueType) =>
+  ALL_UI_TYPES.filter((uiType) =>
+    isValueTypeCompatibleWithUIType(uiType, valueType),
+  );
+
+describe('isValueTypeCompatibleWithUIType — by control', () => {
   it('limits the number controls to numeric value types', () => {
-    // A number control over a STR reaches the deployment form as
-    // `Number('auto')` -> NaN and draws an empty box over a value that is set.
-    expect(accepted('NUMBER_INPUT')).toEqual(['INT', 'FLOAT']);
-    expect(accepted('SLIDER')).toEqual(['INT', 'FLOAT']);
+    // `Number('auto')` is NaN, so a STR would draw an empty box over a value
+    // that is set; a boolean would silently become 1 / 0.
+    expect(valueTypesFor('NUMBER_INPUT')).toEqual(['INT', 'FLOAT']);
+    expect(valueTypesFor('SLIDER')).toEqual(['INT', 'FLOAT']);
   });
 
   it('limits the checkbox to boolean value types', () => {
-    // The worst pairing of the set: a checkbox reads a non-empty string as
-    // truthy and renders CHECKED, which reads as a deliberate setting rather
-    // than as breakage.
-    expect(accepted('CHECKBOX')).toEqual(['BOOL', 'FLAG']);
+    // Any non-empty string is truthy, so a STR renders CHECKED — which reads
+    // as a deliberate setting rather than as breakage.
+    expect(valueTypesFor('CHECKBOX')).toEqual(['BOOL', 'FLAG']);
   });
 
-  it('leaves the string-carrying controls unconstrained', () => {
-    // Choices and free text travel as strings and are parsed per value type,
-    // so every pairing is representable.
-    expect(accepted('SELECT')).toEqual(ALL);
-    expect(accepted('TEXT_INPUT')).toEqual(ALL);
+  it('limits the select to strings', () => {
+    // Its options carry `choices.items[].value`, a string. A hydrated number
+    // or boolean never matches one, so nothing shows as selected.
+    expect(valueTypesFor('SELECT')).toEqual(['STR']);
+  });
+
+  it('lets the text input carry anything that stringifies unambiguously', () => {
+    // Numbers round-trip through `String(value)`. A boolean would render
+    // "true" and invite the operator to type "yes" instead.
+    expect(valueTypesFor('TEXT_INPUT')).toEqual(['STR', 'INT', 'FLOAT']);
   });
 
   it('constrains nothing when the control is absent or unrecognised', () => {
     // `undefined` covers both "no control set" and a control served by a
     // manager newer than this build. Neither licenses rejecting a value type
     // on behalf of a control we cannot render anyway.
-    expect(accepted(undefined)).toEqual(ALL);
-    expect(accepted(READ_UI_TYPE_TO_FORM_UI_TYPE['gauge'])).toEqual(ALL);
+    expect(valueTypesFor(undefined)).toEqual(ALL_VALUE_TYPES);
+    expect(valueTypesFor(READ_UI_TYPE_TO_FORM_UI_TYPE['gauge'])).toEqual(
+      ALL_VALUE_TYPES,
+    );
+  });
+});
+
+describe('isValueTypeCompatibleWithUIType — by value type', () => {
+  it('offers strings the two string-carrying controls', () => {
+    expect(controlsFor('STR')).toEqual(['SELECT', 'TEXT_INPUT']);
   });
 
+  it('offers numbers the numeric controls plus free text', () => {
+    expect(controlsFor('INT')).toEqual([
+      'SLIDER',
+      'NUMBER_INPUT',
+      'TEXT_INPUT',
+    ]);
+    expect(controlsFor('FLOAT')).toEqual([
+      'SLIDER',
+      'NUMBER_INPUT',
+      'TEXT_INPUT',
+    ]);
+  });
+
+  it('offers booleans the checkbox alone', () => {
+    // Two possible values, one control that represents exactly two values.
+    expect(controlsFor('BOOL')).toEqual(['CHECKBOX']);
+    expect(controlsFor('FLAG')).toEqual(['CHECKBOX']);
+  });
+
+  it('leaves no value type without a control', () => {
+    for (const valueType of ALL_VALUE_TYPES) {
+      expect(controlsFor(valueType).length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('READ_UI_TYPE_TO_FORM_UI_TYPE', () => {
   it('maps every control the read side can serve', () => {
     // The read side is an open `String!`; these five lowercase spellings are
     // the ones this build claims to understand.

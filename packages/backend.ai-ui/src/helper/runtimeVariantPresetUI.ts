@@ -11,14 +11,6 @@ export type RuntimeVariantPresetUIType =
 export type RuntimeVariantPresetValueType =
   'STR' | 'INT' | 'FLOAT' | 'BOOL' | 'FLAG';
 
-const ALL_VALUE_TYPES: ReadonlyArray<RuntimeVariantPresetValueType> = [
-  'STR',
-  'INT',
-  'FLOAT',
-  'BOOL',
-  'FLAG',
-];
-
 // `Partial<>` because the read side types `UIOption.uiType` as an open
 // `String!`, so a newer manager can serve a control type this build predates.
 export const READ_UI_TYPE_TO_FORM_UI_TYPE: Partial<
@@ -32,10 +24,25 @@ export const READ_UI_TYPE_TO_FORM_UI_TYPE: Partial<
 };
 
 // `PresetValueType` and `RuntimeVariantPresetUIType` are independent enums, so
-// the schema happily stores a pairing no control can render: a `number_input`
-// over a `STR` reaches the deployment form as `Number('auto')` -> NaN and
-// draws an empty box over a value that is actually set, and a `checkbox` reads
-// that same string as truthy and renders CHECKED (FR-3689).
+// the schema happily stores a pairing no control can render. What a control
+// can honestly show follows from the type `toNativeValue` hydrates into the
+// deployment form — number for INT/FLOAT, boolean for BOOL/FLAG, string for
+// STR — and from what that control does when handed something else:
+//
+//   SLIDER / NUMBER_INPUT  `Number('auto')` is NaN, so a STR draws an empty
+//                          box over a value that is set; a boolean silently
+//                          becomes 1 / 0.
+//   CHECKBOX               any non-empty string is truthy, so a STR renders
+//                          CHECKED — the worst case, since it reads as a
+//                          deliberate setting rather than as breakage.
+//   SELECT                 its options carry `choices.items[].value`, which is
+//                          a string. A hydrated number or boolean never
+//                          matches one, so nothing shows selected. STR only.
+//   TEXT_INPUT             stringifies on the way in and on the way out, so
+//                          numbers round-trip; a boolean would render "true"
+//                          and invite the operator to type "yes" instead.
+//
+// FR-3689.
 export const UI_TYPE_TO_ALLOWED_VALUE_TYPES: Record<
   RuntimeVariantPresetUIType,
   ReadonlyArray<RuntimeVariantPresetValueType>
@@ -43,9 +50,8 @@ export const UI_TYPE_TO_ALLOWED_VALUE_TYPES: Record<
   SLIDER: ['INT', 'FLOAT'],
   NUMBER_INPUT: ['INT', 'FLOAT'],
   CHECKBOX: ['BOOL', 'FLAG'],
-  // Choices and free text are strings on the wire, parsed per value type.
-  SELECT: ALL_VALUE_TYPES,
-  TEXT_INPUT: ALL_VALUE_TYPES,
+  SELECT: ['STR'],
+  TEXT_INPUT: ['STR', 'INT', 'FLOAT'],
 };
 
 /**
