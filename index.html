@@ -31,20 +31,24 @@
        is no color flash before the stylesheet applies. The full splash (Diagonal
        Weave) styling lives in resources/webui.css.
 
-       The page backdrop is TOKEN-DRIVEN and mode-reactive, in that order:
+       The page backdrop is a LITERAL `light-dark()`, not the
+       `--color-background-body` token, and mode-reactive via `color-scheme`:
          1. `html[data-theme]` -> `color-scheme` is duplicated from Astryx's
             reset.css here so the mapping exists BEFORE any external stylesheet
             loads. The boot script below writes the attribute from the stored
             themeMode; once React mounts, Astryx's root `<Theme>` owns the very
             same attribute (`useRootThemeSync`) and rewrites it on every mode
             flip. One attribute, one owner at a time, always reactive.
-         2. `--color-background-body` is the Astryx page-surface token
-            (`light-dark(#F7F7F6, #191919)` in the brand theme — the measured
-            LEGACY antd page backdrop; see ANTD_NEUTRAL_SURFACES in
-            `react/src/astryx-theme/backendAiTheme.ts`). It resolves
-            against `color-scheme`, so a mode flip repaints with NO JavaScript.
-            The literal `light-dark()` fallback covers the window before the
-            theme CSS is parsed.
+         2. `#F7F7F6`/`#191919` is the measured LEGACY antd page backdrop (see
+            ANTD_NEUTRAL_SURFACES in `react/src/astryx-theme/backendAiTheme.ts`),
+            pinned identically to `--color-background-body`'s own value — but
+            declared as a literal here rather than `var(--color-background-body)`.
+            `@astryxdesign/core/astryx.css` sets that token on bare `:root`
+            (Astryx's own cool-toned default, `#F1F4F7`/`#111112`), unscoped and
+            active the instant the bundle's CSS loads — BEFORE the brand theme's
+            `@scope`d override registers on `data-astryx-theme`. Reading the
+            token here would visibly flash to Astryx's default for that window;
+            the literal never resolves to it in the first place.
        Do NOT reintroduce an inline `document.body.style.backgroundColor`
        assignment here: an inline style outranks every rule above and froze the
        backdrop at its boot-time value, so toggling the theme mid-session left
@@ -57,11 +61,11 @@
     :root { --bai-z-splash: 900; }
     html[data-theme="light"] { color-scheme: light; }
     html[data-theme="dark"] { color-scheme: dark; }
-    body { margin: 0; background-color: var(--color-background-body, light-dark(#F7F7F6, #191919)); }
+    body { margin: 0; background-color: light-dark(#F7F7F6, #191919); }
     #splash {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       z-index: var(--bai-z-splash); display: flex; align-items: center; justify-content: center;
-      background-color: var(--color-background-body, light-dark(#F7F7F6, #191919));
+      background-color: light-dark(#F7F7F6, #191919);
       transition: opacity 0.3s ease-out;
     }
     .splash-hidden { opacity: 0; pointer-events: none; }

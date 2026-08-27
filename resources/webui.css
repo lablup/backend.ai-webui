@@ -9,9 +9,9 @@ body {
   --lumo-font-family: var(--token-fontFamily);
   --lumo-primary-text-color: var(--token-colorPrimary, #27824f);
   --lumo-primary-color-50pct: var(--token-colorPrimary, #27824f);
-  /* The page backdrop is owned by the token-driven rule in index.html's
-     critical <style> (`--color-background-body`, which follows `color-scheme`).
-     Declaring it here too — and especially the old mode-blind
+  /* The page backdrop is owned by the literal `light-dark()` rule in
+     index.html's critical <style> (follows `color-scheme`, no token). Declaring
+     it here too — and especially the old mode-blind
      `body.dark-theme { background-color: #191919 }` pair — gave the backdrop a
      second, non-reactive owner. */
 }
@@ -20,7 +20,13 @@ body {
    A minimal backdrop (body + #splash background) is inlined in index.html so
    the page paints its background immediately. The full splash styling lives
    here; webui.css is a render-blocking <head> stylesheet, so these rules are in
-   effect on first paint (no flash of unstyled splash). */
+   effect on first paint (no flash of unstyled splash).
+
+   background-color is a LITERAL, not `var(--color-background-body)`: that
+   token sits unscoped on `:root` in `@astryxdesign/core/astryx.css` (its own
+   cool-toned default) until the brand theme's `@scope`d override registers on
+   `data-astryx-theme`, so reading it here flashed to Astryx's default for that
+   window. See the matching note in index.html's critical <style>. */
 .splash {
   position: fixed;
   top: 0;
@@ -31,7 +37,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background-color: var(--color-background-body, light-dark(#f7f7f6, #191919));
+  background-color: light-dark(#f7f7f6, #191919);
   transition: opacity 0.3s ease-out;
   font-family:
     "Ubuntu",
