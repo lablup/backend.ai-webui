@@ -104,6 +104,7 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
         {/* No `scroll` prop: Astryx's scroll wrapper owns overflow here, and
             these columns take their floors from `minWidth`. */}
         <BAITable<KeypairType>
+          scroll={{ x: 'max-content' }}
           size="small"
           resizable
           pagination={false}

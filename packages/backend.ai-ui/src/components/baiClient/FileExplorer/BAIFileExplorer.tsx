@@ -426,6 +426,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         </BAIFlex>
 
         <BAITable
+          scroll={{ x: 'max-content' }}
           rowKey="name"
           dataSource={files?.items}
           columns={tableColumns}
