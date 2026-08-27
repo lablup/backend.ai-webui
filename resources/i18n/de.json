@@ -2610,7 +2610,6 @@
     "NoPresetName": "Voreinstellungsnamen eingeben",
     "NoResourcePresetToDisplay": "Keine Ressourcenvoreinstellungen anzeigen",
     "PresetName": "Voreinstellungsname",
-    "PresetNameAlreadyExists": "Eine Ressourcenvoreinstellung mit demselben Namen ist bereits vorhanden.",
     "RAM": "Arbeitsspeicher (GB)",
     "ResourcePreset": "Ressourcenvoreinstellung",
     "ResourcePresets": "Ressourcenvoreinstellungen",

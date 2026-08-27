@@ -2608,7 +2608,6 @@
     "NoPresetName": "Tulo esiasetuksen nimi",
     "NoResourcePresetToDisplay": "Ei resurssien esiasetuksia näytettäväksi",
     "PresetName": "Esiasetuksen nimi",
-    "PresetNameAlreadyExists": "Resurssin esiasetus samalla nimellä on jo olemassa.",
     "RAM": "RAM-MUISTI (GB)",
     "ResourcePreset": "Resurssien esiasetus",
     "ResourcePresets": "Resurssien esiasetukset",

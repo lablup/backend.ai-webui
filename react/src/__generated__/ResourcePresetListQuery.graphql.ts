@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ab59d6b59df37d995753f96f1de83d1c>>
+ * @generated SignedSource<<d4cf06629cf708c43f899bb8d0fda5cf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type ResourcePresetListQuery$variables = Record<PropertyKey, never>;
 export type ResourcePresetListQuery$data = {
   readonly resource_presets: ReadonlyArray<{
+    readonly id: string | null | undefined;
     readonly name: string | null | undefined;
     readonly resource_slots: string | null | undefined;
     readonly scaling_group_name: string | null | undefined;
@@ -30,24 +31,31 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resource_slots",
+  "name": "name",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "shared_memory",
+  "name": "resource_slots",
   "storageKey": null
 },
 v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "shared_memory",
+  "storageKey": null
+},
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -73,6 +81,7 @@ return {
           (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -103,29 +112,23 @@ return {
           (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
+          (v4/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "5077b740e419c95cf7f162d8ad950d6d",
+    "cacheID": "9864749c822cc7ac9ac501332e72cfe8",
     "id": null,
     "metadata": {},
     "name": "ResourcePresetListQuery",
     "operationKind": "query",
-    "text": "query ResourcePresetListQuery {\n  resource_presets {\n    name\n    resource_slots\n    shared_memory\n    scaling_group_name @since(version: \"25.4.0\")\n    ...ResourcePresetSettingModalFragment\n  }\n}\n\nfragment ResourcePresetSettingModalFragment on ResourcePreset {\n  id @since(version: \"25.4.0\")\n  name\n  resource_slots\n  shared_memory\n  scaling_group_name @since(version: \"25.4.0\")\n}\n"
+    "text": "query ResourcePresetListQuery {\n  resource_presets {\n    id\n    name\n    resource_slots\n    shared_memory\n    scaling_group_name\n    ...ResourcePresetSettingModalFragment\n  }\n}\n\nfragment ResourcePresetSettingModalFragment on ResourcePreset {\n  id\n  name\n  resource_slots\n  shared_memory\n  scaling_group_name\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0284e5247dbfb40e6290f58570ba5fd7";
+(node as any).hash = "df1a9815a24af0d892c62b23662ca8d0";
 
 export default node;

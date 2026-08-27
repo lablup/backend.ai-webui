@@ -2597,7 +2597,6 @@
     "NoPresetName": "Input preset name",
     "NoResourcePresetToDisplay": "No Resource Presets to display",
     "PresetName": "Preset Name",
-    "PresetNameAlreadyExists": "A resource preset with the same name already exists.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Resource Preset",
     "ResourcePresets": "Resource Presets",

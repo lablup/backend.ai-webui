@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e6e3114bad043dbf38cfce8b3bd93545>>
+ * @generated SignedSource<<8ba382e8720205d5b690b7bbe1f56a80>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,19 +15,19 @@ export type ModifyResourcePresetInput = {
   scaling_group_name?: string | null | undefined;
   shared_memory?: string | null | undefined;
 };
-export type ResourcePresetSettingModalModifyByNameMutation$variables = {
-  name: string;
+export type ResourcePresetSettingModalModifyMutation$variables = {
+  id: string;
   props: ModifyResourcePresetInput;
 };
-export type ResourcePresetSettingModalModifyByNameMutation$data = {
+export type ResourcePresetSettingModalModifyMutation$data = {
   readonly modify_resource_preset: {
     readonly msg: string | null | undefined;
     readonly ok: boolean | null | undefined;
   } | null | undefined;
 };
-export type ResourcePresetSettingModalModifyByNameMutation = {
-  response: ResourcePresetSettingModalModifyByNameMutation$data;
-  variables: ResourcePresetSettingModalModifyByNameMutation$variables;
+export type ResourcePresetSettingModalModifyMutation = {
+  response: ResourcePresetSettingModalModifyMutation$data;
+  variables: ResourcePresetSettingModalModifyMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -35,7 +35,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name"
+    "name": "id"
   },
   {
     "defaultValue": null,
@@ -49,8 +49,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "id",
+        "variableName": "id"
       },
       {
         "kind": "Variable",
@@ -86,7 +86,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ResourcePresetSettingModalModifyByNameMutation",
+    "name": "ResourcePresetSettingModalModifyMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -95,20 +95,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ResourcePresetSettingModalModifyByNameMutation",
+    "name": "ResourcePresetSettingModalModifyMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6ce07dbffc5597af1943b0840e1b3810",
+    "cacheID": "9c4a2ac9b1340b3e38cb8f8c3556cd68",
     "id": null,
     "metadata": {},
-    "name": "ResourcePresetSettingModalModifyByNameMutation",
+    "name": "ResourcePresetSettingModalModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation ResourcePresetSettingModalModifyByNameMutation(\n  $name: String!\n  $props: ModifyResourcePresetInput!\n) {\n  modify_resource_preset(name: $name, props: $props) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ResourcePresetSettingModalModifyMutation(\n  $id: UUID!\n  $props: ModifyResourcePresetInput!\n) {\n  modify_resource_preset(id: $id, props: $props) {\n    ok\n    msg\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a3d038466cde4ef350d21929ee0513b1";
+(node as any).hash = "3ce874f63fb773223209660604f18b81";
 
 export default node;

@@ -2608,7 +2608,6 @@
     "NoPresetName": "Имя предустановки ввода",
     "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов",
     "PresetName": "Название предустановки",
-    "PresetNameAlreadyExists": "Предустановка ресурса с таким именем уже существует.",
     "RAM": "RAM (ГБ)",
     "ResourcePreset": "Предустановка ресурса",
     "ResourcePresets": "Предустановки ресурсов",

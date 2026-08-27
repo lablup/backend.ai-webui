@@ -2608,7 +2608,6 @@
     "NoPresetName": "Nombre de la preselección de entrada",
     "NoResourcePresetToDisplay": "No hay preselecciones de recursos para mostrar",
     "PresetName": "Nombre predefinido",
-    "PresetNameAlreadyExists": "Ya existe un recurso preestablecido con el mismo nombre.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Recurso preestablecido",
     "ResourcePresets": "Recursos preestablecidos",
