@@ -648,9 +648,8 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     ? (pagination.total ?? sortedRows.length)
     : sortedRows.length;
 
-  // Filtering can shrink the list under the page the user is on; clamp for
-  // display instead of setting state during render, as antd's `usePagination`
-  // does.
+  // The pager and range text show a page that exists; the rows below decide
+  // separately whether the caller's page is valid.
   const activePage = _.clamp(
     currentPage,
     1,
@@ -668,10 +667,13 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   // already sliced server-side, so honour that and never re-slice — otherwise
   // a page past the first indexes past the end and renders nothing.
   const isServerSliced = total > sortedRows.length;
-  const rows =
-    pagination !== false &&
-    !isServerSliced &&
-    sortedRows.length > currentPageSize
+  // Out of range, whatever was handed over is not the page the caller holds:
+  // hide it behind the recovery state on both bounds (FR-3703).
+  const rows = isPageOutOfRange
+    ? []
+    : pagination !== false &&
+        !isServerSliced &&
+        sortedRows.length > currentPageSize
       ? sortedRows.slice(
           (activePage - 1) * currentPageSize,
           activePage * currentPageSize,

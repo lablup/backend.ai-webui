@@ -2,8 +2,10 @@
  Client-side slicing, plus the server-sliced case it must not re-slice.
  Mechanism + affected call sites: FR-3563.
 
- Also the out-of-range page empty state (FR-3703): a page past the last one
- shows a recovery affordance instead of "No data to display".
+ Also the out-of-range page state (FR-3703): a page outside [1, last] hides
+ whatever rows were handed over — on both bounds, server- or client-sliced —
+ behind a recovery affordance instead of "No data to display" or a silently
+ clamped page.
 */
 import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
@@ -81,17 +83,17 @@ describe('BAITable pagination (FR-3563)', () => {
     expect(screen.getByText('row-25')).toBeInTheDocument();
   });
 
-  it('clamps a page that a shrinking list left stranded', () => {
-    // Still longer than a page after the filter, so this reaches the slice
-    // instead of short-circuiting on `length <= pageSize` (which made it vacuous).
+  it('shows the recovery state, not a clamped page, when a shrinking list strands the page', () => {
+    // 25 rows on page 5 of 10: the page no longer exists, so the rows are
+    // hidden behind the invalid-page state instead of silently showing page 3.
     renderTable({
       dataSource: makeRows(25),
       pagination: { current: 5, pageSize: 10 },
     });
 
-    expect(screen.queryByText('row-20')).not.toBeInTheDocument();
-    expect(screen.getByText('row-21')).toBeInTheDocument();
-    expect(screen.getByText('row-25')).toBeInTheDocument();
+    expect(screen.getByText('Invalid page number')).toBeInTheDocument();
+    expect(screen.queryByText('row-21')).not.toBeInTheDocument();
+    expect(screen.queryByText('row-1')).not.toBeInTheDocument();
   });
 });
 
@@ -112,6 +114,29 @@ describe('BAITable invalid page number (FR-3703)', () => {
       screen.getByRole('button', { name: 'Go to first page' }),
     );
     expect(onChange).toHaveBeenCalledWith(1, 10);
+  });
+
+  it('hides a first page the server returned for a page below 1', () => {
+    // `?current=0` maps to offset 0, so the server answers with page 1; the
+    // caller still holds an invalid page, so the rows stay hidden.
+    const onChange = vi.fn();
+    renderTable({
+      dataSource: makeRows(10),
+      pagination: { current: 0, pageSize: 10, total: 177, onChange },
+    });
+
+    expect(screen.getByText('Invalid page number')).toBeInTheDocument();
+    expect(screen.queryByText('row-1')).not.toBeInTheDocument();
+  });
+
+  it('hides a client-side list too while the page is out of range', () => {
+    renderTable({
+      dataSource: makeRows(25),
+      pagination: { current: 0, pageSize: 10 },
+    });
+
+    expect(screen.getByText('Invalid page number')).toBeInTheDocument();
+    expect(screen.queryByText('row-1')).not.toBeInTheDocument();
   });
 
   it('wins over a caller-provided empty state', () => {
