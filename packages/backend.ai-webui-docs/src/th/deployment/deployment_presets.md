@@ -171,7 +171,7 @@
 แท็บ **พรีเซตตัวแปรรันไทม์** บนหน้า **การปรับใช้ของผู้ดูแลระบบ** (`/admin/deployments`) ใช้กำหนดพารามิเตอร์แต่ละตัวที่ตัวแปรรันไทม์เปิดให้ใช้งาน แต่ละรายการอธิบายพารามิเตอร์หนึ่งตัว ทั้งคีย์ที่จะส่งให้คอนเทนเนอร์ ประเภทค่า ค่าเริ่มต้น และวิธีแสดงผลบนหน้าจอ เมื่อรวมกันแล้วรายการเหล่านี้จะประกอบขึ้นเป็นแท็บ **พารามิเตอร์ Runtime** ที่ผู้ใช้กรอกเมื่อเพิ่ม Revision ของการปรับใช้ (ดู [พารามิเตอร์ Runtime](#runtime-parameters) ในหน้าการปรับใช้)
 
 ![](../images/runtime_variant_preset_list.png)
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab; recapture showing the Runtime Variant (ID), UI Type, and Default Value columns. The capture environment was unavailable on this run. -->
+<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
 เหนือตารางมีตัวกรองคุณสมบัติ (**ชื่อ**, **รหัสตัวแปรรันไทม์**) ปุ่มรีเฟรช และปุ่ม **สร้างพรีเซต** คอลัมน์ที่แสดงตามค่าเริ่มต้นมีดังนี้
 
@@ -188,15 +188,11 @@
 
 คอลัมน์ **คำอธิบาย**, **หมวดหมู่**, **ชื่อที่แสดง** และ **วันที่แก้ไข** จะถูกซ่อนไว้ตามค่าเริ่มต้น และสามารถเปิดแสดงได้ด้วยปุ่มตั้งค่าการแสดงคอลัมน์ (⚙) ที่ด้านขวาของหัวตาราง
 
-:::note
-คอลัมน์ **หมวดหมู่** และ **ชื่อที่แสดง** จะปรากฏในรายการเสมอไม่ว่าเซิร์ฟเวอร์จะเป็นรุ่นใด แต่การ *บันทึก* สองฟิลด์นี้ รวมถึงฟิลด์ **ประเภท UI** ที่อธิบายไว้ด้านล่าง ยังคงต้องใช้เซิร์ฟเวอร์ที่รองรับ UI metadata ของพรีเซตตัวแปรรันไทม์ บนเซิร์ฟเวอร์รุ่นเก่าฟิลด์เหล่านี้จะไม่ปรากฏในหน้าต่างสร้างและแก้ไข ส่วนชื่อของตัวแปรรันไทม์ก็จะแสดงข้าง ID เฉพาะบนเซิร์ฟเวอร์ที่ให้ฟิลด์ของตัวแปรรันไทม์เท่านั้น
-:::
-
 ### การสร้างและแก้ไขพรีเซตตัวแปรรันไทม์
 
 คลิกปุ่ม **สร้างพรีเซต** เหนือตารางเพื่อเปิดหน้าต่าง **สร้างพรีเซต** หรือคลิกปุ่มแก้ไขบนแถวเพื่อเปิดหน้าต่าง **แก้ไขพรีเซต** ที่กรอกค่าปัจจุบันไว้แล้ว ทั้งนี้ไม่สามารถเปลี่ยนตัวแปรรันไทม์ของพรีเซตที่มีอยู่แล้วได้
 
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. The capture environment ran manager 26.8.0rc1, which does not serve the runtime-variant-preset UI metadata fields. -->
+<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
 
 หน้าต่างนี้มีฟิลด์ต่อไปนี้ ตามลำดับที่ปรากฏ
 

@@ -172,7 +172,7 @@
 **관리자 배포** 페이지(`/admin/deployments`)의 **런타임 프리셋** 탭에서는 런타임이 제공하는 개별 파라미터를 정의합니다. 각 항목은 파라미터 하나를 설명하며, 컨테이너에 전달될 키, 값 유형, 기본값, 그리고 화면에 표시되는 방식을 담습니다. 이렇게 정의한 항목들이 모여, 사용자가 배포 리비전을 추가할 때 입력하는 **런타임 파라미터** 탭을 구성합니다(배포 페이지의 [런타임 파라미터](#runtime-parameters) 참고).
 
 ![](../images/runtime_variant_preset_list.png)
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab; recapture showing the Runtime Variant (ID), UI Type, and Default Value columns. The capture environment was unavailable on this run. -->
+<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
 표 위에는 속성 필터(**이름**, **런타임 ID**)와 새로 고침 버튼, **프리셋 생성** 버튼이 있습니다. 기본으로 표시되는 컬럼은 다음과 같습니다.
 
@@ -189,15 +189,11 @@
 
 **설명**, **카테고리**, **표시 이름**, **수정일** 컬럼은 기본적으로 숨겨져 있으며, 표 헤더 오른쪽의 컬럼 표시 설정 버튼(⚙)으로 표시할 수 있습니다.
 
-:::note
-**카테고리** 와 **표시 이름** 컬럼은 서버 버전과 관계없이 목록에 표시됩니다. 다만 이 두 필드를 *저장* 하는 기능과 아래에서 설명하는 **UI 유형** 필드는 런타임 프리셋 UI 메타데이터를 지원하는 서버에서만 사용할 수 있으며, 이전 버전의 서버에서는 생성 및 편집 모달에 나타나지 않습니다. 런타임 이름 역시 런타임 필드를 제공하는 서버에서만 ID 옆에 함께 표시됩니다.
-:::
-
 ### 런타임 프리셋 생성 및 편집
 
 표 위의 **프리셋 생성** 버튼을 클릭하면 **프리셋 생성** 모달이 열리고, 행의 편집 버튼을 클릭하면 현재 값이 채워진 **프리셋 편집** 모달이 열립니다. 이미 생성된 프리셋의 런타임은 변경할 수 없습니다.
 
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. The capture environment ran manager 26.8.0rc1, which does not serve the runtime-variant-preset UI metadata fields. -->
+<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
 
 모달에는 다음 필드가 나타나는 순서대로 표시됩니다.
 

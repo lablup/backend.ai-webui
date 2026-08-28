@@ -170,7 +170,7 @@
 **管理者デプロイ** ページ（`/admin/deployments`）の **ランタイムバリアントプリセット** タブでは、ランタイムバリアントが提供する個々のパラメータを定義します。各エントリは 1 つのパラメータを表し、コンテナに渡されるキー、値の型、デフォルト値、そして画面上での表示方法を持ちます。これらのエントリが集まって、ユーザーがデプロイメントの Revision を追加する際に入力する **ランタイムパラメータ** のタブを構成します（デプロイメントページの [ランタイムパラメータ](#runtime-parameters) を参照）。
 
 ![](../images/runtime_variant_preset_list.png)
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab; recapture showing the Runtime Variant (ID), UI Type, and Default Value columns. The capture environment was unavailable on this run. -->
+<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
 表の上部には、プロパティフィルター（**名前**、**ランタイムバリアント ID**）、更新ボタン、**プリセットを作成** ボタンがあります。既定で表示される列は次のとおりです。
 
@@ -187,15 +187,11 @@
 
 **説明**、**カテゴリ**、**表示名**、**更新日** の列は既定で非表示になっており、表ヘッダー右側の列表示設定ボタン（⚙）で表示できます。
 
-:::note
-**カテゴリ** と **表示名** の列は、サーバーのバージョンに関係なく一覧に表示されます。ただし、この 2 つのフィールドを *保存* する機能と、以下で説明する **UIタイプ** のフィールドは、ランタイムバリアントプリセットの UI メタデータに対応したサーバーでのみ利用でき、古いサーバーでは作成・編集モーダルに表示されません。ランタイムバリアントの名前も、ランタイムバリアントのフィールドを返すサーバーでのみ ID の横に表示されます。
-:::
-
 ### ランタイムバリアントプリセットの作成と編集
 
 表の上部にある **プリセットを作成** ボタンをクリックすると **プリセットを作成** モーダルが開き、行の編集ボタンをクリックすると現在の値が入力された **プリセットを編集** モーダルが開きます。既存プリセットのランタイムバリアントは変更できません。
 
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. The capture environment ran manager 26.8.0rc1, which does not serve the runtime-variant-preset UI metadata fields. -->
+<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
 
 モーダルには、表示される順に次のフィールドがあります。
 

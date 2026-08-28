@@ -173,7 +173,7 @@ Deleting a deployment preset is **irreversible**. The preset itself is removed, 
 The **Runtime Variant Presets** tab on the Admin Deployments page (`/admin/deployments`) defines the individual parameters that a runtime variant exposes. Each entry describes one parameter — the key it is passed to the container as, its value type, its default, and how it is rendered — and together they make up the **Runtime Parameters** tabs that users fill in when they add a deployment revision (see [Runtime parameters](#runtime-parameters) on the Deployments page).
 
 ![](../images/runtime_variant_preset_list.png)
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab; recapture showing the Runtime Variant (ID), UI Type, and Default Value columns. The capture environment was unavailable on this run. -->
+<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
 Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refresh button, and the **Create Preset** button. The following columns are shown by default:
 
@@ -190,15 +190,11 @@ Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refr
 
 **Description**, **Category**, **Display Name**, and **Modified At** are hidden by default and can be shown with the column visibility gear button (⚙) at the right of the table header.
 
-:::note
-The **Category** and **Display Name** columns are listed regardless of the server version. *Writing* those two fields — and the **UI Type** field described below — still requires a server that supports runtime variant preset UI metadata; on an older server they do not appear in the create and edit modal. The runtime variant's name is likewise only shown next to its ID on a server that serves the runtime variant field.
-:::
-
 ### Create or edit a runtime variant preset
 
 Click **Create Preset** above the table to open the **Create Preset** modal, or the edit button on a row to open **Edit Preset** with the current values pre-filled. The runtime variant of an existing preset cannot be changed.
 
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. The capture environment ran manager 26.8.0rc1, which does not serve the runtime-variant-preset UI metadata fields. -->
+<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
 
 The modal contains the following fields, in the order they appear:
 
