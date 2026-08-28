@@ -37,6 +37,7 @@
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIButton from '../BAIButton';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import './BAITable.css';
@@ -128,6 +129,8 @@ const EXPAND_COLUMN_WIDTH_FIRST = 56;
 const EXPAND_COLUMN_WIDTH_AFTER_SELECTION = 40;
 /** Marker field placed on the synthetic detail rows. */
 const DETAIL_ROW_MARKER = '__bai_detail_for__';
+
+const EMPTY_STATE_ICON = <Icon icon={Inbox} size="lg" color="secondary" />;
 
 const isDetailRow = (item: unknown): item is Record<string, unknown> =>
   !!item &&
@@ -647,20 +650,22 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     ? (pagination.total ?? sortedRows.length)
     : sortedRows.length;
 
+  const lastPage = Math.max(1, Math.ceil(total / currentPageSize));
   // Filtering can shrink the list under the page the user is on; clamp for
   // display instead of setting state during render, as antd's `usePagination`
   // does.
-  const activePage = _.clamp(
-    currentPage,
-    1,
-    Math.max(1, Math.ceil(total / currentPageSize)),
-  );
+  const activePage = _.clamp(currentPage, 1, lastPage);
+  // `total: 0` is "no data", not an invalid page (FR-3703).
+  const isPageOutOfRange =
+    pagination !== false &&
+    total > 0 &&
+    (currentPage < 1 || currentPage > lastPage);
 
   // A `total` larger than the rows we were handed is the caller declaring them
   // already sliced server-side, so honour that and never re-slice — otherwise
   // a page past the first indexes past the end and renders nothing.
   const isServerSliced = total > sortedRows.length;
-  const rows =
+  const pagedRows =
     pagination !== false &&
     !isServerSliced &&
     sortedRows.length > currentPageSize
@@ -669,6 +674,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
           activePage * currentPageSize,
         )
       : sortedRows;
+  const rows = isPageOutOfRange ? [] : pagedRows;
 
   /* ---- expandable -------------------------------------------------------- */
 
@@ -1225,18 +1231,36 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   // Korean UI. Owning the node moves the copy onto BUI's catalog and restores
   // the icon. `false` opts out; a ReactNode override passes through unwrapped.
   const resolvedEmptyState = emptyState ?? locale?.emptyText;
-  const emptyStateNode =
-    resolvedEmptyState === false ? (
-      false
-    ) : resolvedEmptyState == null || typeof resolvedEmptyState === 'string' ? (
-      <EmptyState
-        isCompact
-        icon={<Icon icon={Inbox} size="lg" color="secondary" />}
-        title={resolvedEmptyState ?? String(t('comp:BAITable.NoDataToDisplay'))}
-      />
-    ) : (
-      resolvedEmptyState
-    );
+  const emptyStateNode = isPageOutOfRange ? (
+    // Product decision (FR-3703): the recovery affordance outranks any
+    // caller-provided empty node, `false` included.
+    <EmptyState
+      isCompact
+      icon={EMPTY_STATE_ICON}
+      title={String(t('comp:BAITable.InvalidPageNumber'))}
+      actions={
+        <BAIButton
+          type="primary"
+          onClick={() => {
+            setCurrentPage(1);
+            pagination?.onChange?.(1, currentPageSize);
+          }}
+        >
+          {t('comp:BAITable.GoToFirstPage')}
+        </BAIButton>
+      }
+    />
+  ) : resolvedEmptyState === false ? (
+    false
+  ) : resolvedEmptyState == null || typeof resolvedEmptyState === 'string' ? (
+    <EmptyState
+      isCompact
+      icon={EMPTY_STATE_ICON}
+      title={resolvedEmptyState ?? String(t('comp:BAITable.NoDataToDisplay'))}
+    />
+  ) : (
+    resolvedEmptyState
+  );
 
   return (
     <div className={className} style={style}>
