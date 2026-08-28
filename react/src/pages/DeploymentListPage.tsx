@@ -55,15 +55,22 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type DeploymentStatusCategory = 'running' | 'finished';
 
-const DeploymentListPageContent: React.FC = () => {
+interface DeploymentListPageContentProps {
+  /** Owned by the page so the trigger can live in the card's `extra` slot. */
+  isCreating: boolean;
+  onCloseCreate: () => void;
+}
+
+const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
+  isCreating,
+  onCloseCreate,
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const [isCreating, { setLeft: closeCreate, setRight: openCreate }] =
-    useToggle(false);
 
   const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
     null,
@@ -258,11 +265,6 @@ const DeploymentListPageContent: React.FC = () => {
               onChange={updateFetchKey}
               loading={isPending}
             />
-            <Button
-              variant="primary"
-              label={t('deployment.CreateDeployment')}
-              onClick={openCreate}
-            />
           </BAIFlex>
         </BAIFlex>
         <BAIModelDeploymentNodes
@@ -417,7 +419,7 @@ const DeploymentListPageContent: React.FC = () => {
             deploymentFrgmt={editingDeployment ?? null}
             project={pageProject}
             onRequestClose={(success) => {
-              closeCreate();
+              onCloseCreate();
               setEditingDeploymentId(null);
               if (success) updateFetchKey();
             }}
@@ -484,15 +486,29 @@ const DeploymentListPageContent: React.FC = () => {
 const DeploymentListPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
+  // The create trigger is CARD-SCOPED, so it lives in `extra` like every other
+  // list page's primary action (`use-bai-card.md` §5); only the modal's open
+  // flag has to be owned here, above the Suspense boundary.
+  const [isCreating, { setLeft: closeCreate, setRight: openCreate }] =
+    useToggle(false);
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAICard
         variant="borderless"
         title={t('webui.menu.Deployments')}
-        styles={{ body: { paddingTop: 0 } }}
+        extra={
+          <Button
+            variant="primary"
+            label={t('deployment.CreateDeployment')}
+            onClick={openCreate}
+          />
+        }
       >
         <Suspense fallback={<BAISkeleton />}>
-          <DeploymentListPageContent />
+          <DeploymentListPageContent
+            isCreating={isCreating}
+            onCloseCreate={closeCreate}
+          />
         </Suspense>
       </BAICard>
     </BAIFlex>
