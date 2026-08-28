@@ -37,6 +37,7 @@
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIButton from '../BAIButton';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import './BAITable.css';
@@ -55,7 +56,6 @@ import {
   isColumnVisible,
   renderColumnTitle,
 } from './tableTypes';
-import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Icon } from '@astryxdesign/core/Icon';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -1239,14 +1239,15 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       icon={EMPTY_STATE_ICON}
       title={String(t('comp:BAITable.InvalidPageNumber'))}
       actions={
-        <Button
-          variant="primary"
-          label={String(t('comp:BAITable.GoToFirstPage'))}
+        <BAIButton
+          type="primary"
           onClick={() => {
             setCurrentPage(1);
             pagination?.onChange?.(1, currentPageSize);
           }}
-        />
+        >
+          {t('comp:BAITable.GoToFirstPage')}
+        </BAIButton>
       }
     />
   ) : resolvedEmptyState === false ? (
