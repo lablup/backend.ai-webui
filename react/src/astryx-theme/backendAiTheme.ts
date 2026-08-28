@@ -116,9 +116,11 @@ export const THEME_NAME_REV = 21;
  * legacy `MainLayout` painted its `Layout` `transparent`, so what the user
  * actually saw was `<body>`, which `resources/webui.css` set to `#F7F7F6`
  * (light) and `#191919` (`body.dark-theme`). Those are the values pinned
- * here — they are what the legacy build rendered, and they also keep the boot
- * curtain (`index.html`, which reads `--color-background-body`) identical to
- * legacy.
+ * here — they are what the legacy build rendered. The boot curtain
+ * (`index.html`) declares the same pair as a LITERAL rather than reading this
+ * token: core's `astryx.css` sets it on bare `:root` before the brand theme's
+ * scoped override registers, so pre-boot it would resolve to Astryx's stock
+ * value. Keep the two in sync by hand (FR-3732).
  *
  * Cross-check that this is the right mapping: `resources/theme.json` sets
  * `Layout.lightSiderBg: #FFF` / `siderBg: #141414`, and the sider is painted

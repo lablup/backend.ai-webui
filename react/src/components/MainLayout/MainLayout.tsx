@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AstryxAdminTheme, AstryxReverseTheme } from '../../astryx-theme';
-import { useWebUINavigate } from '../../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -39,6 +39,7 @@ import {
   BAIFlex,
   BAIOverlayScrollbar,
   BAIResourceSlotsProvider,
+  BAISkeleton,
 } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -140,8 +141,10 @@ function MainLayout() {
         <DismissSplashOnMount />
         <BAIAppShell
           data-testid={pageTestId}
-          // `wash` paints `--color-background-body` behind nav and content —
-          // the same token the `body`/splash backdrop already uses.
+          // `wash` paints `--color-background-body` behind nav and content.
+          // The `body`/splash backdrop is the same VALUE but declared as a
+          // literal (index.html) — the token is unusable before the brand
+          // theme registers; see the note in index.html's critical <style>.
           variant="wash"
           contentPadding={0}
           pathname={location.pathname}
@@ -270,7 +273,10 @@ function MainLayout() {
                     <ForceTOTPChecker />
                   </ErrorBoundaryWithNullFallback>
                 </Suspense>
-                <Suspense>
+                {/* Owns the breadcrumb AND the Outlet, so it is on screen for
+                    the whole lazy-route fetch. With no fallback that window
+                    rendered nothing — the shell with an empty body. */}
+                <Suspense fallback={<BAISkeleton rows={4} />}>
                   <ErrorBoundaryWithNullFallback>
                     <RouteAccessBreadcrumbGate>
                       {isHiddenBreadcrumb ? (
@@ -440,10 +446,14 @@ export const CSSTokenVariables = () => {
 
 /**
  * Dismisses the HTML splash overlay when mounted.
- * Placed inside the outer Suspense boundary so it only fires after
- * the layout (sider, header) has actually rendered.
+ * Suspends on the client itself rather than relying on a sibling to hold the
+ * boundary: below the `md` breakpoint the sider renders into AppShell's drawer
+ * (its own `Suspense`), so nothing else in this boundary suspends and the
+ * splash was torn down before login had even finished.
  */
 const DismissSplashOnMount = () => {
+  'use memo';
+  useSuspendedBackendaiClient();
   useEffect(() => {
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;
