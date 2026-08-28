@@ -97,6 +97,13 @@ minimumReleaseAgeExclude:
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
   - "@astryxdesign/lab@0.3.0-canary.12db2a1"
+  # FR-3750 WebMCP prototype: @mcp-b 5.0.1 published 2026-08-23. Throwaway.
+  - "@mcp-b/global@5.0.1"
+  - "@mcp-b/transports@5.0.1"
+  - "@mcp-b/webmcp-local-relay@5.0.1"
+  - "@mcp-b/webmcp-polyfill@5.0.1"
+  - "@mcp-b/webmcp-ts-sdk@5.0.1"
+  - "@mcp-b/webmcp-types@5.0.1"
 minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 

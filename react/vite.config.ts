@@ -259,7 +259,8 @@ function buildDevCspHeaders(): Record<string, string> {
     `media-src 'self' data: blob: http: https:`,
     `worker-src 'self' blob:`,
     `connect-src 'self' ws: wss: http: https:`,
-    `frame-src 'self' http: https:`,
+    // FR-3750 prototype: the WebMCP local-relay widget is a blob: iframe.
+    `frame-src 'self' blob: http: https:`,
     // Hardened — these never load legitimately in dev.
     `object-src 'none'`,
     `base-uri 'self'`,

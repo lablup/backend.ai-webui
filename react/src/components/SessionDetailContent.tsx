@@ -63,7 +63,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { History, Info, CircleHelp, TriangleAlert } from 'lucide-react';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -142,6 +142,13 @@ const SessionDetailContent: React.FC<{
     openSessionSchedulingHistoryModal,
     { toggle: toggleOpenSessionSchedulingHistoryModal },
   ] = useToggle(false);
+  useEffect(() => {
+    // FR-3750 prototype: WebMCP `open_scheduling_history` tool hook.
+    const onOpen = () => toggleOpenSessionSchedulingHistoryModal();
+    window.addEventListener('webmcp:open-scheduling-history', onOpen);
+    return () =>
+      window.removeEventListener('webmcp:open-scheduling-history', onOpen);
+  }, [toggleOpenSessionSchedulingHistoryModal]);
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 

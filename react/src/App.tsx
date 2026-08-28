@@ -20,6 +20,13 @@ export interface WebUIRouteObject extends IndexRouteObject {
 
 const router = createBrowserRouter(routes);
 
+if (import.meta.env.DEV) {
+  // FR-3750 prototype: WebMCP tools for the dev server only.
+  import('./devtools/webmcpAdapter').then(({ installWebMCPAdapter }) =>
+    installWebMCPAdapter(router),
+  );
+}
+
 const App: React.FC = () => {
   return (
     <NuqsAdapter
