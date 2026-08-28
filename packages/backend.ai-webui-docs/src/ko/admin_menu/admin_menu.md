@@ -1179,16 +1179,17 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 자원 프리셋 대화 상자에는 다음 항목이 포함됩니다:
 
 - **자원 프리셋 이름**: 프리셋의 고유 이름입니다 (영숫자, 마침표, 하이픈, 밑줄만 허용됩니다).
-- **자원 그룹**: (조건부) 프리셋을 특정 자원 그룹에 연결합니다.
+- **자원 그룹**: 프리셋을 특정 자원 그룹에 연결합니다. 이 필드는 선택 사항이며, 비워 두거나 값을 지우면 자원 그룹과 관계없이 적용되는 전역 프리셋이 됩니다.
 - **자원 프리셋**: 사용 가능한 각 자원 유형(CPU, 메모리, GPU 등)에 대한 동적 필드 묶음입니다. 메모리 필드는 동적 단위 입력(MiB, GiB, TiB, PiB)을 지원합니다.
 - **공유 메모리**: 프리셋에 할당된 공유 메모리 양입니다. 이 값은 **메모리** 값보다 작아야 합니다.
 
 ![](../images/modify_resource_preset_dialog.png)
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
-또한 자원 프리셋 탭 오른쪽 상단의 **프리셋 생성** 버튼을 클릭하여 자원 프리셋을 생성할 수 있습니다. 이미 존재하는 것과 동일한 자원 프리셋 이름으로는 생성할 수 없습니다. 이름은 각 자원 프리셋을 구분하는 키 값이기 때문입니다.
+또한 자원 프리셋 탭 오른쪽 상단의 **프리셋 생성** 버튼을 클릭하여 자원 프리셋을 생성할 수 있습니다. 자원 프리셋 이름은 여전히 고유해야 합니다. 이미 존재하는 이름을 입력하면 **생성**을 클릭할 때 서버에서 요청을 거부하고 오류 메시지가 표시됩니다.
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO: Re-capture create_resource_preset_dialog.png — needs update. -->
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 

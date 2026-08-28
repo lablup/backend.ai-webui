@@ -1275,16 +1275,17 @@ Resource preset ที่กำหนดไว้ล่วงหน้าจะ�
 ไดอะล็อกค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรประกอบด้วย:
 
 - **ชื่อค่าที่กำหนดไว้ล่วงหน้า**: ชื่อเฉพาะสำหรับค่าที่กำหนดไว้ล่วงหน้า (อนุญาตเฉพาะตัวอักษรและตัวเลข, จุด, ขีดกลาง และขีดล่าง)
-- **กลุ่มทรัพยากร**: (แบบมีเงื่อนไข) เชื่อมโยง preset กับกลุ่มทรัพยากรเฉพาะ
+- **กลุ่มทรัพยากร**: เชื่อมโยง preset กับกลุ่มทรัพยากรเฉพาะ ฟิลด์นี้ไม่บังคับ หากปล่อยว่างไว้หรือล้างค่า preset จะเป็น preset ส่วนกลางที่ใช้ได้โดยไม่ขึ้นกับกลุ่มทรัพยากร
 - **ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร**: ฟิลด์แบบไดนามิกสำหรับทรัพยากรแต่ละประเภทที่มี (CPU, หน่วยความจำ, GPU เป็นต้น) ฟิลด์หน่วยความจำรองรับการป้อนหน่วยแบบไดนามิก (MiB, GiB, TiB, PiB)
 - **หน่วยความจำที่ใช้ร่วมกัน**: ปริมาณหน่วยความจำที่ใช้ร่วมกันที่จัดสรรให้กับค่าที่กำหนดไว้ล่วงหน้า ค่านี้ต้องน้อยกว่าค่า**หน่วยความจำ**
 
 ![](../images/modify_resource_preset_dialog.png)
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
-คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม **สร้างพรีเซต** ที่มุมบนขวาของแท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร คุณไม่สามารถสร้าง resource preset ที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากเป็นค่าคีย์สำหรับแยกแยะแต่ละ resource preset
+คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม **สร้างค่าที่กำหนดไว้ล่วงหน้า** ที่มุมบนขวาของแท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร ชื่อของ resource preset ยังคงต้องไม่ซ้ำกัน หากคุณป้อนชื่อที่มีอยู่แล้ว เซิร์ฟเวอร์จะปฏิเสธคำขอเมื่อคุณคลิก **สร้าง** และจะแสดงข้อความแสดงข้อผิดพลาด
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO: Re-capture create_resource_preset_dialog.png — needs update. -->
+<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 
