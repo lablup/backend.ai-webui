@@ -179,6 +179,8 @@
     "operator": {
       "After": "dopo",
       "Before": "prima",
+      "Contains": "Contiene",
+      "EndsWith": "termina con",
       "Equals": "uguale a",
       "GreaterThan": "maggiore di",
       "GreaterThanOrEqual": "maggiore o uguale",
@@ -193,8 +195,12 @@
       "In": "in",
       "LessThan": "minore di",
       "LessThanOrEqual": "minore o uguale",
+      "NotContains": "non contiene",
+      "NotEndsWith": "non termina con",
       "NotEquals": "diverso da",
-      "NotIn": "non in"
+      "NotIn": "non in",
+      "NotStartsWith": "non inizia con",
+      "StartsWith": "inizia con"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "Misurare",
     "SuccessFullyPulled": "Pullo correttamente richiesto per le versioni {{count}}.",
     "Version": "Versione"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Dimensione del cluster",
+    "Concurrency": "Sessioni simultanee",
+    "CreatedAt": "Creato a",
+    "DefaultForUnspecified": "Predefinito per non specificato",
+    "DefaultForUnspecifiedTooltipDesc1": "Imposta il criterio predefinito quando non è richiesta alcuna CPU o memoria specifica.",
+    "DefaultForUnspecifiedTooltipDesc2": "\"Unlimited\" consente l'utilizzo fino alla capacità del nodo dell'agente, mentre \"limitato\" nega le risorse se non esplicitamente fissate. \nNella maggior parte dei casi, si consiglia \"illimitato\".",
+    "IdleTimeout": "Timeout di inattività",
+    "MaxConcurrentSFTPSessions": "Sessioni SFTP con contenitori massimi",
+    "MaxPendingSessionCount": "Conteggio delle sessioni massimo in sospeso",
+    "MaxPendingSessionResourceSlots": "Slot di risorse sessioni massime in sospeso",
+    "MaxSessionLifetime": "Durata massima della sessione",
+    "Name": "Nome",
+    "StorageNodes": "Nodi di archiviazione",
+    "TotalResourceSlots": "Politica delle risorse"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Seleziona coppia di chiavi"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Il/I seguente/i progetto/i verrà/verranno aggiornato/i.",
     "ProjectResourcePolicy": "Politica delle risorse del progetto",
     "UpdateMultipleProjects": "Aggiorna più progetti"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Creato a",
+    "MaxNetworkCount": "Conteggio massimo della rete",
+    "MaxQuotaScopeSize": "Dimensione massima della cartella",
+    "MaxVFolderCount": "Conteggio massimo cartelle",
+    "Name": "Nome"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Seleziona progetto"

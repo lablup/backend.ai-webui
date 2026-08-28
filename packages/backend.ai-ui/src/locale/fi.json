@@ -179,6 +179,8 @@
     "operator": {
       "After": "jälkeen",
       "Before": "ennen",
+      "Contains": "sisältää",
+      "EndsWith": "päättyy",
       "Equals": "yhtä suuri",
       "GreaterThan": "suurempi kuin",
       "GreaterThanOrEqual": "suurempi tai yhtä suuri",
@@ -193,8 +195,12 @@
       "In": "sisällä",
       "LessThan": "pienempi kuin",
       "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotContains": "ei sisällä",
+      "NotEndsWith": "ei pääty",
       "NotEquals": "ei yhtä suuri",
-      "NotIn": "ei sisällä"
+      "NotIn": "ei sisällä",
+      "NotStartsWith": "ei ala",
+      "StartsWith": "alkaa"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "Koko",
     "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
     "Version": "Versio"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Klusterin koko",
+    "Concurrency": "Samanaikaiset istunnot",
+    "CreatedAt": "Luotu klo",
+    "DefaultForUnspecified": "Määrittelemättömän oletus",
+    "DefaultForUnspecifiedTooltipDesc1": "Asettaa oletuskäytäntö, kun tiettyä suorittimen tai muistia ei pyydetä.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Rajoittamaton' sallii käytön Agent -solmun kapasiteettiin saakka, kun taas 'rajoitettu' kieltää resursseja, ellei nimenomaisesti ole asetettu. \nUseimmissa tapauksissa suositellaan 'rajoittamatonta'.",
+    "IdleTimeout": "Idle Timeout",
+    "MaxConcurrentSFTPSessions": "Max samanaikaiset SFTP -istunnot",
+    "MaxPendingSessionCount": "Maxin vireillä oleva istuntomäärä",
+    "MaxPendingSessionResourceSlots": "Max odottavat istunnon resurssipaikat",
+    "MaxSessionLifetime": "Istunnon enimmäiskestoikä",
+    "Name": "Nimi",
+    "StorageNodes": "Varastointisolmut",
+    "TotalResourceSlots": "Resurssipolitiikka"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Valitse avainpari"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
     "UpdateMultipleProjects": "Päivitä useita projekteja"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Luotu klo",
+    "MaxNetworkCount": "Verkkojen enimmäismäärä",
+    "MaxQuotaScopeSize": "Kansioiden enimmäiskoko",
+    "MaxVFolderCount": "Kansioiden enimmäismäärä",
+    "Name": "Nimi"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Valitse projekti"

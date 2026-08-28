@@ -179,6 +179,8 @@
     "operator": {
       "After": "後",
       "Before": "前",
+      "Contains": "含む",
+      "EndsWith": "で終わる",
       "Equals": "等しい",
       "GreaterThan": "より大きい",
       "GreaterThanOrEqual": "以上",
@@ -193,8 +195,12 @@
       "In": "含まれる",
       "LessThan": "より小さい",
       "LessThanOrEqual": "以下",
+      "NotContains": "含まない",
+      "NotEndsWith": "で終わらない",
       "NotEquals": "等しくない",
-      "NotIn": "含まれない"
+      "NotIn": "含まれない",
+      "NotStartsWith": "で始まらない",
+      "StartsWith": "で始まる"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "サイズ",
     "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
     "Version": "バージョン"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "クラスターサイズ",
+    "Concurrency": "同時実行セッション数",
+    "CreatedAt": "作成日",
+    "DefaultForUnspecified": "不特定のデフォルト",
+    "DefaultForUnspecifiedTooltipDesc1": "特定のCPUまたはメモリが要求されていない場合、デフォルトのポリシーを設定します。",
+    "DefaultForUnspecifiedTooltipDesc2": "「Unlimited」により、エージェントノードの容量までの使用が可能になり、「Limited」は明示的に設定しない限りリソースを拒否します。\nほとんどの場合、「無制限」が推奨されます。",
+    "IdleTimeout": "アイドルタイムアウト",
+    "MaxConcurrentSFTPSessions": "Max Concurrent SFTPセッション",
+    "MaxPendingSessionCount": "最大保留中のセッションカウント",
+    "MaxPendingSessionResourceSlots": "最大保留中のセッションリソーススロット",
+    "MaxSessionLifetime": "最大セッション寿命時間",
+    "Name": "名前",
+    "StorageNodes": "ストレージノード",
+    "TotalResourceSlots": "リソースポリシー"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "キーペアを選択"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
     "UpdateMultipleProjects": "プロジェクトを一括更新"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "作成日",
+    "MaxNetworkCount": "最大ネットワーク数",
+    "MaxQuotaScopeSize": "最大フォルダサイズ",
+    "MaxVFolderCount": "最大フォルダ数",
+    "Name": "名前"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "プロジェクトを選択"
