@@ -25,7 +25,14 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
+import {
+  BAISkeleton,
+  filterOutEmpty,
+  BAICard,
+  availableKeypairResourcePolicySorterValues,
+  availableProjectResourcePolicySorterValues,
+  availableUserResourcePolicySorterValues,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
   parseAsJson,
@@ -56,6 +63,14 @@ type TabVariables =
   | UserResourcePolicyV2QueryType['variables']
   | ProjectResourcePolicyV2QueryType['variables'];
 
+// Which `order` strings each tab's query accepts; anything else falls back
+// to the default so a hand-edited URL cannot fail GraphQL variable validation.
+const sorterValuesOf: Record<TabKey, readonly string[]> = {
+  keypair: availableKeypairResourcePolicySorterValues,
+  user: availableUserResourcePolicySorterValues,
+  project: availableProjectResourcePolicySorterValues,
+};
+
 type TabSnapshot = {
   queryParams: {
     filter: string | null;
@@ -72,13 +87,19 @@ const defaultSnapshot: TabSnapshot = {
   tablePaginationOption: { current: 1, pageSize: DEFAULT_PAGE_SIZE },
 };
 
-const variablesOf = <V extends TabVariables>(snapshot: TabSnapshot) => {
+const variablesOf = <V extends TabVariables>(
+  tab: TabKey,
+  snapshot: TabSnapshot,
+) => {
   const { queryParams: params, tablePaginationOption: pagination } = snapshot;
+  const order = _.includes(sorterValuesOf[tab], params.order)
+    ? params.order
+    : orderParser.defaultValue;
   return {
     filter: params.filter
       ? (filterParser.parse(params.filter) as V['filter'])
       : null,
-    orderBy: convertToOrderBy<NonNullable<V['orderBy']>[number]>(params.order),
+    orderBy: convertToOrderBy<NonNullable<V['orderBy']>[number]>(order),
     limit: pagination.pageSize,
     offset: (pagination.current - 1) * pagination.pageSize,
   };
@@ -157,17 +178,23 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     const options = { fetchPolicy: 'store-and-network' } as const;
     if (tab === 'keypair') {
       loadKeypairResourcePolicyQuery(
-        variablesOf<KeypairResourcePolicyV2QueryType['variables']>(snapshot),
+        variablesOf<KeypairResourcePolicyV2QueryType['variables']>(
+          tab,
+          snapshot,
+        ),
         options,
       );
     } else if (tab === 'user') {
       loadUserResourcePolicyQuery(
-        variablesOf<UserResourcePolicyV2QueryType['variables']>(snapshot),
+        variablesOf<UserResourcePolicyV2QueryType['variables']>(tab, snapshot),
         options,
       );
     } else {
       loadProjectResourcePolicyQuery(
-        variablesOf<ProjectResourcePolicyV2QueryType['variables']>(snapshot),
+        variablesOf<ProjectResourcePolicyV2QueryType['variables']>(
+          tab,
+          snapshot,
+        ),
         options,
       );
     }
