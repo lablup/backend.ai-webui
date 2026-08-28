@@ -6,6 +6,7 @@ import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFr
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
+import { HStack } from '@astryxdesign/core';
 import { Grid } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
@@ -13,6 +14,7 @@ import {
   BAICard,
   BAIFlex,
   BAIMetadataList,
+  BAIMetadataListItem,
   BAIText,
   convertToBinaryUnit,
   convertToDecimalUnit,
@@ -70,7 +72,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
             {/* antd Row gutter={[16,16]} + Col xs={24} sm={12} (uniform 2-up
                 from 576px) → Grid columns={{minWidth:280, max:2}} gap={4}
                 (RESPONSIVE-POLICY R1, container-driven). */}
-            <Grid columns={{ minWidth: 280, max: 2 }} gap={4}>
+            <Grid columns={{ minWidth: 280, max: 2 }} gap={2}>
               {_.map(
                 parsedAvailableSlots,
                 (_value: string | number, key: ResourceSlotName) => {
@@ -82,32 +84,22 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                       parsedAvailableSlots.cpu ?? '0',
                     );
                     return (
-                      <BAIFlex
+                      <SimpleProgressWithLabel
                         key={key}
-                        direction="column"
-                        align="stretch"
-                        gap={3}
-                      >
-                        <SimpleProgressWithLabel
-                          key="cpu"
-                          size="default"
-                          title={
-                            <BAIFlex gap="xxs">
-                              <ResourceTypeIcon key={key} type={key} />
-                              {
-                                mergedResourceSlots?.['cpu']
-                                  ?.human_readable_name
-                              }
-                            </BAIFlex>
-                          }
-                          percent={_.toFinite(
-                            (_.toNumber(parsedOccupiedSlots.cpu ?? 0) /
-                              _.toNumber(parsedAvailableSlots.cpu ?? 1)) *
-                              100,
-                          ).toString()}
-                          description={`${cpuOccupiedSlot} / ${cpuAvailableSlot} ${mergedResourceSlots?.['cpu']?.display_unit}`}
-                        />
-                      </BAIFlex>
+                        size="default"
+                        title={
+                          <BAIFlex gap="xxs">
+                            <ResourceTypeIcon key={key} type={key} />
+                            {mergedResourceSlots?.['cpu']?.human_readable_name}
+                          </BAIFlex>
+                        }
+                        percent={_.toFinite(
+                          (_.toNumber(parsedOccupiedSlots.cpu ?? 0) /
+                            _.toNumber(parsedAvailableSlots.cpu ?? 1)) *
+                            100,
+                        ).toString()}
+                        description={`${cpuOccupiedSlot} / ${cpuAvailableSlot} ${mergedResourceSlots?.['cpu']?.display_unit}`}
+                      />
                     );
                   } else if (key === 'mem') {
                     const memOccupiedSlot = convertToBinaryUnit(
@@ -122,38 +114,28 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                     );
 
                     return (
-                      <BAIFlex
+                      <SimpleProgressWithLabel
                         key={key}
-                        direction="column"
-                        align="stretch"
-                        gap={3}
-                      >
-                        <SimpleProgressWithLabel
-                          key={'mem'}
-                          size="default"
-                          title={
-                            <BAIFlex gap="xxs">
-                              <ResourceTypeIcon key={key} type={key} />
-                              {
-                                mergedResourceSlots?.['mem']
-                                  ?.human_readable_name
-                              }
-                            </BAIFlex>
-                          }
-                          percent={_.toFinite(
-                            ((memOccupiedSlot?.number ?? 0) /
-                              (memAvailableSlot?.number ?? 1)) *
-                              100,
-                          ).toString()}
-                          description={`${toFixedFloorWithoutTrailingZeros(
-                            memOccupiedSlot?.numberFixed || 0,
-                            2,
-                          )}${memOccupiedSlot?.displayUnit} / ${toFixedFloorWithoutTrailingZeros(
-                            memAvailableSlot?.numberFixed || 0,
-                            2,
-                          )}${memAvailableSlot?.displayUnit}`}
-                        />
-                      </BAIFlex>
+                        size="default"
+                        title={
+                          <BAIFlex gap="xxs">
+                            <ResourceTypeIcon key={key} type={key} />
+                            {mergedResourceSlots?.['mem']?.human_readable_name}
+                          </BAIFlex>
+                        }
+                        percent={_.toFinite(
+                          ((memOccupiedSlot?.number ?? 0) /
+                            (memAvailableSlot?.number ?? 1)) *
+                            100,
+                        ).toString()}
+                        description={`${toFixedFloorWithoutTrailingZeros(
+                          memOccupiedSlot?.numberFixed || 0,
+                          2,
+                        )}${memOccupiedSlot?.displayUnit} / ${toFixedFloorWithoutTrailingZeros(
+                          memAvailableSlot?.numberFixed || 0,
+                          2,
+                        )}${memAvailableSlot?.displayUnit}`}
+                      />
                     );
                   } else if (parsedAvailableSlots[key]) {
                     const roundLength =
@@ -222,25 +204,28 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
               renders BEFORE it — flipped position accepted; the control's
               purpose (open the detail modal) is unchanged. Tooltip on the
               never-disabled trigger becomes IconButton's own `tooltip`. */}
-          <MetadataListItem
-            label={t('agent.Utilization')}
-            icon={
-              <IconButton
-                icon={<Info size="1em" />}
-                label={t('agent.DetailedInformation')}
-                tooltip={t('agent.DetailedInformation')}
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setOpenInfoModal(true);
-                }}
-              />
+          <BAIMetadataListItem
+            label={
+              <HStack>
+                {t('agent.Utilization')}
+                <IconButton
+                  icon={<Info size="1em" />}
+                  label={t('agent.DetailedInformation')}
+                  tooltip={t('agent.DetailedInformation')}
+                  variant="ghost"
+                  size="sm"
+                  style={{ color: 'inherit' }}
+                  onClick={() => {
+                    setOpenInfoModal(true);
+                  }}
+                />
+              </HStack>
             }
           >
             {_.isEmpty(parsedLiveStat?.node) ? (
               <BAIText type="secondary">-</BAIText>
             ) : (
-              <Grid columns={{ minWidth: 280, max: 2 }} gap={4}>
+              <Grid columns={{ minWidth: 280, max: 2 }} gap={2}>
                 <SimpleProgressWithLabel
                   key={'cpu_util'}
                   size="default"
@@ -410,7 +395,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                 })}
               </Grid>
             )}
-          </MetadataListItem>
+          </BAIMetadataListItem>
         </BAIMetadataList>
       </BAICard>
       <AgentDetailModal

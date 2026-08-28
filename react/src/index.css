@@ -88,8 +88,13 @@
   ) !important;
 }
 
-/* fix: match the icon size between Lucide and Ant.d icons */
+/* A lucide glyph is text-sized and sits on the text baseline. `display` is
+   load-bearing: Astryx's reset blockifies every `svg` (reset.css "Media"), and
+   a block box ignores `vertical-align` — without this the icon is inert-aligned
+   and a bare-icon line box measures 14px against a text line's 22px.
+   Inert where the icon is a flex/grid item, which is nearly every call site. */
 .lucide {
+  display: inline-block !important;
   width: 1em !important;
   height: 1em !important;
   vertical-align: -0.125em !important;
