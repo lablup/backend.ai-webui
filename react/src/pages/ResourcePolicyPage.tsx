@@ -18,12 +18,27 @@ import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import UserResourcePolicyV2, {
   UserResourcePolicyV2Query,
 } from '../components/UserResourcePolicyV2';
-import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import {
+  useBrowserPopstateEffect,
+  useKeyedSnapshot,
+  useSuspendedBackendaiClient,
+} from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
-import { parseAsStringLiteral } from 'nuqs';
+import * as _ from 'lodash-es';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import React, { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryLoader } from 'react-relay';
+import {
+  useQueryLoader,
+  type UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
 
 interface ResourcePolicyPageProps {}
 const tabParser = parseAsStringLiteral([
@@ -31,103 +46,180 @@ const tabParser = parseAsStringLiteral([
   'user',
   'project',
 ]).withDefault('keypair');
+const orderParser = parseAsString.withDefault('-createdAt');
+const filterParser = parseAsJson((value) => value);
+const DEFAULT_PAGE_SIZE = 10;
+
+type TabKey = typeof tabParser.defaultValue;
+type TabVariables =
+  | KeypairResourcePolicyV2QueryType['variables']
+  | UserResourcePolicyV2QueryType['variables']
+  | ProjectResourcePolicyV2QueryType['variables'];
+
+type TabSnapshot = {
+  queryParams: {
+    filter: string | null;
+    order: string;
+  };
+  tablePaginationOption: { current: number; pageSize: number };
+};
+
+const defaultSnapshot: TabSnapshot = {
+  queryParams: {
+    filter: null,
+    order: orderParser.defaultValue,
+  },
+  tablePaginationOption: { current: 1, pageSize: DEFAULT_PAGE_SIZE },
+};
+
+const variablesOf = <V extends TabVariables>(snapshot: TabSnapshot) => {
+  const { queryParams: params, tablePaginationOption: pagination } = snapshot;
+  return {
+    filter: params.filter
+      ? (filterParser.parse(params.filter) as V['filter'])
+      : null,
+    orderBy: convertToOrderBy<NonNullable<V['orderBy']>[number]>(params.order),
+    limit: pagination.pageSize,
+    offset: (pagination.current - 1) * pagination.pageSize,
+  };
+};
+
+// Inverse of `variablesOf`, for mirroring child-driven reloads to the URL.
+const snapshotOfVariables = (variables: TabVariables): TabSnapshot => {
+  const pageSize = variables.limit ?? DEFAULT_PAGE_SIZE;
+  return {
+    queryParams: {
+      filter: _.isEmpty(variables.filter)
+        ? null
+        : JSON.stringify(variables.filter),
+      order:
+        convertFirstOrderByToString(variables.orderBy) ??
+        orderParser.defaultValue,
+    },
+    tablePaginationOption: {
+      current: Math.floor((variables.offset ?? 0) / pageSize) + 1,
+      pageSize,
+    },
+  };
+};
 
 const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
   const baiClient = useSuspendedBackendaiClient();
   const supportsSubFilter = baiClient.supports('sub-filter');
   const supportsBinarySizeExpr = baiClient.supports('binary-size-expr');
+  const supportsV2: Record<TabKey, boolean> = {
+    keypair: supportsSubFilter,
+    user: supportsSubFilter && supportsBinarySizeExpr,
+    project: supportsSubFilter && supportsBinarySizeExpr,
+  };
 
-  const [userResourcePolicyQueryRef, loadUserResourcePolicyQuery] =
-    useQueryLoader<UserResourcePolicyV2QueryType>(UserResourcePolicyV2Query);
-
-  const ensureUserResourcePolicyLoaded = useEffectEvent(() => {
-    if (
-      supportsSubFilter &&
-      supportsBinarySizeExpr &&
-      currentTab === 'user' &&
-      !userResourcePolicyQueryRef
-    ) {
-      loadUserResourcePolicyQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-  });
-  useEffect(
-    function loadUserResourcePolicyOnTabActivation() {
-      ensureUserResourcePolicyLoaded();
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      tab: tabParser,
+      filter: parseAsString,
+      order: orderParser,
     },
-    [currentTab],
+    { history: 'replace' },
   );
+  const { tablePaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionStateOnSearchParam(
+      defaultSnapshot.tablePaginationOption,
+    );
 
   const [keypairResourcePolicyQueryRef, loadKeypairResourcePolicyQuery] =
     useQueryLoader<KeypairResourcePolicyV2QueryType>(
       KeypairResourcePolicyV2Query,
     );
-
-  const ensureKeypairResourcePolicyLoaded = useEffectEvent(() => {
-    if (
-      supportsSubFilter &&
-      currentTab === 'keypair' &&
-      !keypairResourcePolicyQueryRef
-    ) {
-      loadKeypairResourcePolicyQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-  });
-  useEffect(
-    function loadKeypairResourcePolicyOnTabActivation() {
-      ensureKeypairResourcePolicyLoaded();
-    },
-    [currentTab],
-  );
-
+  const [userResourcePolicyQueryRef, loadUserResourcePolicyQuery] =
+    useQueryLoader<UserResourcePolicyV2QueryType>(UserResourcePolicyV2Query);
   const [projectResourcePolicyQueryRef, loadProjectResourcePolicyQuery] =
     useQueryLoader<ProjectResourcePolicyV2QueryType>(
       ProjectResourcePolicyV2Query,
     );
 
-  const ensureProjectResourcePolicyLoaded = useEffectEvent(() => {
-    if (
-      supportsSubFilter &&
-      supportsBinarySizeExpr &&
-      currentTab === 'project' &&
-      !projectResourcePolicyQueryRef
-    ) {
+  // What the URL currently describes — both the snapshot `useKeyedSnapshot`
+  // stores for the active tab and what a browser navigation reloads from.
+  const currentSnapshot: TabSnapshot = {
+    queryParams: { filter: queryParams.filter, order: queryParams.order },
+    tablePaginationOption,
+  };
+
+  const [currentTab, setCurrentTab, peekTabSnapshot] = useKeyedSnapshot<
+    TabKey,
+    TabSnapshot
+  >(queryParams.tab, currentSnapshot);
+
+  const loadTabQuery = (tab: TabKey, snapshot: TabSnapshot) => {
+    // The legacy lists fetch on their own; only the V2 tables are preloaded.
+    if (!supportsV2[tab]) return;
+    const options = { fetchPolicy: 'store-and-network' } as const;
+    if (tab === 'keypair') {
+      loadKeypairResourcePolicyQuery(
+        variablesOf<KeypairResourcePolicyV2QueryType['variables']>(snapshot),
+        options,
+      );
+    } else if (tab === 'user') {
+      loadUserResourcePolicyQuery(
+        variablesOf<UserResourcePolicyV2QueryType['variables']>(snapshot),
+        options,
+      );
+    } else {
       loadProjectResourcePolicyQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
+        variablesOf<ProjectResourcePolicyV2QueryType['variables']>(snapshot),
+        options,
       );
     }
-  });
-  useEffect(
-    function loadProjectResourcePolicyOnTabActivation() {
-      ensureProjectResourcePolicyLoaded();
-    },
-    [currentTab],
-  );
+  };
+
+  const mirrorSnapshot = (
+    tab: TabKey,
+    snapshot: TabSnapshot,
+    history: 'push' | 'replace',
+  ) => {
+    setQueryParams({ tab, ...snapshot.queryParams }, { history });
+    setTablePaginationOption(snapshot.tablePaginationOption);
+  };
+
+  // Child-driven reloads: load, then mirror the new variables to the URL.
+  const reloadHandlerOf =
+    <V extends TabVariables>(
+      tab: TabKey,
+      load: (variables: V, options?: UseQueryLoaderLoadQueryOptions) => void,
+    ) =>
+    (variables: V, options?: UseQueryLoaderLoadQueryOptions) => {
+      load(variables, { fetchPolicy: 'store-and-network', ...options });
+      mirrorSnapshot(tab, snapshotOfVariables(variables), 'replace');
+    };
+
+  // Queries the tab the URL currently describes. Every tab change afterwards
+  // restores its snapshot and queries inside onTabChange.
+  const loadTabFromQueryParams = () => {
+    loadTabQuery(queryParams.tab, currentSnapshot);
+  };
+
+  // First visit: mount, direct URL entry, reload.
+  const loadTabOnMount = useEffectEvent(loadTabFromQueryParams);
+  useEffect(() => {
+    loadTabOnMount();
+  }, []);
+
+  // Back/forward: the hook holds the callback until `queryParams` and
+  // `tablePaginationOption` describe the URL the user navigated to.
+  useBrowserPopstateEffect(loadTabFromQueryParams);
 
   return (
     <BAICard
       activeTabKey={currentTab}
-      onTabChange={onTabChange}
+      onTabChange={(key) => {
+        const tab = tabParser.parse(key) ?? tabParser.defaultValue;
+        if (tab === currentTab) return;
+        const snapshot = peekTabSnapshot(tab) ?? defaultSnapshot;
+        setCurrentTab(tab);
+        loadTabQuery(tab, snapshot);
+        mirrorSnapshot(tab, snapshot, 'push');
+      }}
       tabList={filterOutEmpty([
         {
           key: 'keypair',
@@ -146,11 +238,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'keypair' && (
           <BAIErrorBoundary>
-            {supportsSubFilter ? (
+            {supportsV2.keypair ? (
               keypairResourcePolicyQueryRef ? (
                 <KeypairResourcePolicyV2
                   queryRef={keypairResourcePolicyQueryRef}
-                  onReload={loadKeypairResourcePolicyQuery}
+                  onReload={reloadHandlerOf(
+                    'keypair',
+                    loadKeypairResourcePolicyQuery,
+                  )}
                 />
               ) : (
                 <BAISkeleton />
@@ -162,11 +257,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         )}
         {currentTab === 'user' && (
           <BAIErrorBoundary>
-            {supportsSubFilter && supportsBinarySizeExpr ? (
+            {supportsV2.user ? (
               userResourcePolicyQueryRef ? (
                 <UserResourcePolicyV2
                   queryRef={userResourcePolicyQueryRef}
-                  onReload={loadUserResourcePolicyQuery}
+                  onReload={reloadHandlerOf(
+                    'user',
+                    loadUserResourcePolicyQuery,
+                  )}
                 />
               ) : (
                 <BAISkeleton />
@@ -178,11 +276,14 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         )}
         {currentTab === 'project' && (
           <BAIErrorBoundary>
-            {supportsSubFilter && supportsBinarySizeExpr ? (
+            {supportsV2.project ? (
               projectResourcePolicyQueryRef ? (
                 <ProjectResourcePolicyV2
                   queryRef={projectResourcePolicyQueryRef}
-                  onReload={loadProjectResourcePolicyQuery}
+                  onReload={reloadHandlerOf(
+                    'project',
+                    loadProjectResourcePolicyQuery,
+                  )}
                 />
               ) : (
                 <BAISkeleton />
