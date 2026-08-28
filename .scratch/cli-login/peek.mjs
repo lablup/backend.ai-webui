@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test';
+const [url, out] = process.argv.slice(2);
+const browser = await chromium.launch();
+const page = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();
+page.on('console', (m) => console.log(`[console.${m.type()}] ${m.text().slice(0, 300)}`));
+page.on('pageerror', (e) => console.log(`[pageerror] ${e.message.slice(0, 300)}`));
+await page.goto(url);
+await page.waitForTimeout(8000);
+await page.screenshot({ path: out });
+console.log('URL', page.url());
+console.log((await page.locator('body').innerText()).slice(0, 1500));
+await browser.close();

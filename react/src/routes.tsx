@@ -87,6 +87,8 @@ const DeploymentDetailPage = React.lazy(
 const AdminDeploymentPage = React.lazy(
   () => import('./pages/AdminDeploymentPage'),
 );
+// FR-3755 prototype route (throwaway).
+const CliLoginPage = React.lazy(() => import('./pages/CliLoginPage'));
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
@@ -1508,6 +1510,26 @@ export const routes: RouteObject[] = [
             <LogoutEventHandler />
             <Suspense fallback={<BAISkeleton rows={4} />}>
               <InteractiveLoginPage />
+            </Suspense>
+          </STokenGuard>
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
+    // FR-3755 prototype: browser-delegated CLI login (mirrors /interactive-login).
+    path: '/cli-login',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <STokenGuard>
+            <Suspense>
+              <LoginView waitForMainLayout={false} />
+            </Suspense>
+            <LogoutEventHandler />
+            <Suspense fallback={<BAISkeleton rows={4} />}>
+              <CliLoginPage />
             </Suspense>
           </STokenGuard>
         </DefaultProvidersForReactRoot>
