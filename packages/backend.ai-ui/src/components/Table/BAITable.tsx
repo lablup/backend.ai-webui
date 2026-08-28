@@ -661,11 +661,6 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     total > 0 &&
     (currentPage < 1 || currentPage > lastPage);
 
-  const goToPage = (page: number, pageSize = currentPageSize) => {
-    setCurrentPage(page);
-    if (pagination) pagination.onChange?.(page, pageSize);
-  };
-
   // A `total` larger than the rows we were handed is the caller declaring them
   // already sliced server-side, so honour that and never re-slice — otherwise
   // a page past the first indexes past the end and renders nothing.
@@ -1247,7 +1242,10 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
         <Button
           variant="primary"
           label={String(t('comp:BAITable.GoToFirstPage'))}
-          onClick={() => goToPage(1)}
+          onClick={() => {
+            setCurrentPage(1);
+            pagination?.onChange?.(1, currentPageSize);
+          }}
         />
       }
     />
@@ -1359,10 +1357,14 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 }
                 size={pagination?.size ?? 'sm'}
                 label={String(t('comp:BAITable.Pagination'))}
-                onChange={goToPage}
+                onChange={(page) => {
+                  setCurrentPage(page);
+                  pagination?.onChange?.(page, currentPageSize);
+                }}
                 onPageSizeChange={(pageSize) => {
+                  setCurrentPage(1);
                   setCurrentPageSize(pageSize);
-                  goToPage(1, pageSize);
+                  pagination?.onChange?.(1, pageSize);
                 }}
               />
             </>
