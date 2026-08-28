@@ -39,12 +39,9 @@ body {
   overflow: hidden;
   background-color: light-dark(#f7f7f6, #191919);
   transition: opacity 0.3s ease-out;
-  /* System fonts only, deliberately not "Ubuntu"/"Roboto": those are
-     app-wide webfonts (index.html), and swapping into them mid-splash
-     reflows the corner metadata's stacked lines as their metrics differ
-     from whatever painted first. The splash is too short-lived for a
-     webfont fetch to ever resolve before it's dismissed anyway. */
   font-family:
+    "Ubuntu",
+    "Roboto",
     "Noto Sans KR",
     -apple-system,
     BlinkMacSystemFont,
@@ -231,14 +228,16 @@ body.dark-theme .splash {
   align-items: flex-start;
   gap: 2px;
 }
-/* Both meta lines pin an explicit numeric `line-height`, so each line box is a
-   function of `font-size` alone. Without it the box height comes from the
-   rendered font's own ascent/descent, and `.splash-meta-main` mixes two
-   families (its own + the monospace `.splash-ver`), so whichever font actually
-   resolves decides the gap between the two lines. */
+/* Both meta lines pin `line-height` AND a fixed `height`, so the block geometry
+   is a function of `font-size` alone. `line-height` by itself is not enough:
+   each line mixes two families (its own + the monospace `.splash-ver` /
+   `.splash-meta-sub`), and baseline negotiation between two fonts of equal
+   line-height still yields a taller line box — measured 17.5px -> 18.5px the
+   moment Ubuntu resolves, which walked the whole bottom-anchored block 1px. */
 .splash-meta-main {
   font-size: 12.5px;
   line-height: 1.4;
+  height: 1.4em;
   color: var(--splash-fg);
   opacity: 0.72;
 }
@@ -254,9 +253,9 @@ body.dark-theme .splash {
      markup and filled by the inline boot script. Until that runs it generates
      no line box at all (measured height 0), and `.splash-meta` is anchored by
      `bottom`, so the line above it sat 16.5px lower on every paint that landed
-     before the script and jumped up when it filled. Reserving one line here
-     makes the block's height identical empty and filled. */
-  min-height: 1.4em;
+     before the script and jumped up when it filled. A fixed height makes the
+     block identical empty and filled. */
+  height: 1.4em;
   opacity: 0.6;
   letter-spacing: 0.01em;
   font-family:

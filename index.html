@@ -18,6 +18,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="manifest/backend-ai.iconset/icon_32x32@1x.png">
   <link rel="icon" type="image/png" sizes="16x16" href="manifest/backend-ai.iconset/icon_16x16@1x.png">
   <link rel="manifest" href="manifest.json">
+  <!-- The splash paints before anything else and renders in Ubuntu. Without
+       this the face is only discovered once layout reaches the splash text, so
+       it resolves AFTER first paint and the corner metadata visibly re-renders.
+       `crossorigin` is required even same-origin — font fetches are CORS-mode,
+       and omitting it makes the browser download the file a second time. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="resources/fonts/ubuntu/ubuntu-v14-latin-regular.woff2">
   <link rel="stylesheet" href="resources/fonts/roboto/roboto.css">
   <link rel="stylesheet" href="resources/fonts/ubuntu/ubuntu.css">
   <link rel="stylesheet" href="resources/webui.css">
