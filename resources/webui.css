@@ -231,8 +231,14 @@ body.dark-theme .splash {
   align-items: flex-start;
   gap: 2px;
 }
+/* Both meta lines pin an explicit numeric `line-height`, so each line box is a
+   function of `font-size` alone. Without it the box height comes from the
+   rendered font's own ascent/descent, and `.splash-meta-main` mixes two
+   families (its own + the monospace `.splash-ver`), so whichever font actually
+   resolves decides the gap between the two lines. */
 .splash-meta-main {
   font-size: 12.5px;
+  line-height: 1.4;
   color: var(--splash-fg);
   opacity: 0.72;
 }
@@ -243,6 +249,14 @@ body.dark-theme .splash {
 }
 .splash-meta-sub {
   font-size: 11px;
+  line-height: 1.4;
+  /* This div holds ONLY #mode-detail + #build-detail, which are empty in the
+     markup and filled by the inline boot script. Until that runs it generates
+     no line box at all (measured height 0), and `.splash-meta` is anchored by
+     `bottom`, so the line above it sat 16.5px lower on every paint that landed
+     before the script and jumped up when it filled. Reserving one line here
+     makes the block's height identical empty and filled. */
+  min-height: 1.4em;
   opacity: 0.6;
   letter-spacing: 0.01em;
   font-family:

@@ -232,18 +232,29 @@
       //   UI is ready (logged-in). Fades out and removes the whole splash so it
       //   can't cover the app (it sits at --bai-z-splash, above page content).
       //
-      // A MutationObserver + timers serve as fallbacks for routes that call
-      // neither (e.g. /verify-email, /change-password).
+      // A ResizeObserver + timers serve as fallbacks for routes that call
+      // neither (e.g. /verify-email, /change-password). Every fallback is
+      // gated on the app having actually rendered content — see appHasContent.
       (function () {
         var splash = document.getElementById('splash');
         if (!splash) return;
         var state = 'loading'; // 'loading' | 'backdrop' | 'removed'
+        var reactRoot = document.getElementById('react-root');
         var observer = null;
         var fallbackTimer = null;
 
         function clearFallbacks() {
           if (observer) { observer.disconnect(); observer = null; }
           if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+        }
+
+        // "Is the app actually on screen?" — NOT "has React committed?".
+        // Astryx's root <Theme> wrapper is `display: contents`, so it adds no
+        // box: #react-root has height only once real content renders. The old
+        // childList observer fired on that wrapper, i.e. before anything was
+        // visible, which is what turned the curtain into a blank screen.
+        function appHasContent() {
+          return !!reactRoot && reactRoot.getBoundingClientRect().height > 0;
         }
 
         // Full removal (authenticated UI ready, or fallback).
@@ -275,20 +286,28 @@
         window.__dismissSplash = dismiss;
         window.__enterLoginBackdrop = enterLoginBackdrop;
 
-        // Fallback: MutationObserver for routes that don't explicitly signal.
-        var reactRoot = document.getElementById('react-root');
-        if (reactRoot) {
-          observer = new MutationObserver(function () {
-            if (reactRoot.childNodes.length > 0) {
-              observer.disconnect();
-              observer = null;
+        // Fallback for routes that signal neither (/verify-email,
+        // /change-password): dismiss once the app occupies space. A
+        // ResizeObserver IS the predicate, so no polling and no forced layout.
+        // The 3s delay is the margin that lets LoginView's
+        // __enterLoginBackdrop() win this race on the logged-out path.
+        if (reactRoot && typeof ResizeObserver === 'function') {
+          observer = new ResizeObserver(function () {
+            if (state === 'loading' && appHasContent()) {
+              clearFallbacks();
               fallbackTimer = setTimeout(dismiss, 3000);
             }
           });
-          observer.observe(reactRoot, { childList: true });
+          observer.observe(reactRoot);
         }
-        // Ultimate safety fallback — but never tear down an active login backdrop.
-        setTimeout(function () { if (state !== 'backdrop') dismiss(); }, 10000);
+        // Ultimate safety net — never tear the curtain down over NOTHING. If
+        // React has rendered no content by now the boot is broken or merely
+        // slow, and "Loading components…" is a better screen than the blank
+        // page this used to reveal; the observer above still dismisses if
+        // content lands later.
+        setTimeout(function () {
+          if (state !== 'backdrop' && appHasContent()) dismiss();
+        }, 10000);
       })();
     </script>
 </body>
