@@ -412,6 +412,7 @@
     "RankTooltip": "Kolejność wyświetlania wśród ustawień wstępnych tego samego wariantu środowiska uruchomieniowego. Niższe wartości pojawiają się pierwsze.",
     "Required": "Wymagany",
     "RequiredTooltip": "Określa, czy ten parametr ustawienia wstępnego musi zostać podany podczas tworzenia rewizji wdrożenia.",
+    "Requirement": "Wymagalność",
     "RuntimeVariant": "Wariant środowiska uruchomieniowego",
     "RuntimeVariantRequired": "Wariant środowiska uruchomieniowego jest wymagany.",
     "SliderMax": "Maksimum",

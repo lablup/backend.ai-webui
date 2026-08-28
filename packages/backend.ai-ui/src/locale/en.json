@@ -436,6 +436,7 @@
     "RankTooltip": "Display ordering among presets of the same runtime variant. Lower values are shown first.",
     "Required": "Required",
     "RequiredTooltip": "Whether this preset parameter must be supplied when building a deployment revision.",
+    "Requirement": "Requirement",
     "RuntimeVariant": "Runtime Variant",
     "RuntimeVariantRequired": "Runtime variant is required.",
     "SliderMax": "Maximum",

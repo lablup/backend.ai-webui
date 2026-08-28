@@ -412,6 +412,7 @@
     "RankTooltip": "同一執行環境變體的預設間的顯示順序，值越小排越前。",
     "Required": "必填",
     "RequiredTooltip": "建立部署修訂版本時是否必須提供此預設參數。",
+    "Requirement": "是否必填",
     "RuntimeVariant": "執行環境變體",
     "RuntimeVariantRequired": "執行環境變體為必填項。",
     "SliderMax": "最大值",

@@ -412,6 +412,7 @@
     "RankTooltip": "Ordem de apresentação entre predefinições da mesma variante de runtime. Valores menores aparecem primeiro.",
     "Required": "Obrigatório",
     "RequiredTooltip": "Se este parâmetro de predefinição deve ser obrigatoriamente fornecido ao criar uma revisão de implementação.",
+    "Requirement": "Obrigatoriedade",
     "RuntimeVariant": "Variante de Runtime",
     "RuntimeVariantRequired": "A variante de runtime é obrigatória.",
     "SliderMax": "Máximo",

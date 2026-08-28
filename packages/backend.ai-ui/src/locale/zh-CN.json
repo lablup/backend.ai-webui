@@ -412,6 +412,7 @@
     "RankTooltip": "同一运行时变体下预设间的显示顺序，值越小排序越靠前。",
     "Required": "必填",
     "RequiredTooltip": "构建部署修订版本时是否必须提供此预设参数。",
+    "Requirement": "是否必填",
     "RuntimeVariant": "运行时变体",
     "RuntimeVariantRequired": "运行时变体为必填项。",
     "SliderMax": "最大值",

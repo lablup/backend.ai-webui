@@ -412,6 +412,7 @@
     "RankTooltip": "Aynı çalışma zamanı varyantının ön ayarları arasında görüntüleme sırası. Düşük değerler önce görünür.",
     "Required": "Zorunlu",
     "RequiredTooltip": "Bu ön ayar parametresinin bir dağıtım revizyonu oluşturulurken sağlanması gerekip gerekmediği.",
+    "Requirement": "Zorunluluk",
     "RuntimeVariant": "Çalışma Zamanı Varyantı",
     "RuntimeVariantRequired": "Çalışma zamanı varyantı zorunludur.",
     "SliderMax": "Maksimum",
