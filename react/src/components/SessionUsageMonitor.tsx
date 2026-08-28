@@ -211,11 +211,7 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
   // span via GridSpan 'full'.
   return size === 'default' ? (
     <Grid columns={{ minWidth: 280, max: 2 }} gap={4}>
-      {_.map(utilItems, (item, index) => (
-        <BAIFlex key={index} direction="column" align="stretch">
-          {item}
-        </BAIFlex>
-      ))}
+      {utilItems}
       <GridSpan columns="full">
         <BAIFlex justify="end">
           <Text>
