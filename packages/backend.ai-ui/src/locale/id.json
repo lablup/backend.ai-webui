@@ -412,6 +412,7 @@
     "RankTooltip": "Urutan tampilan di antara preset dari varian runtime yang sama. Nilai yang lebih rendah ditampilkan terlebih dahulu.",
     "Required": "Wajib",
     "RequiredTooltip": "Menentukan apakah parameter preset ini harus disediakan saat membuat revisi deployment.",
+    "Requirement": "Kewajiban",
     "RuntimeVariant": "Varian Runtime",
     "RuntimeVariantRequired": "Varian runtime wajib diisi.",
     "SliderMax": "Maksimum",

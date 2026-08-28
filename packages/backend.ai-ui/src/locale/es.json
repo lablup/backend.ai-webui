@@ -412,6 +412,7 @@
     "RankTooltip": "Orden de visualización entre presets del mismo runtime. Los valores más bajos aparecen primero.",
     "Required": "Obligatorio",
     "RequiredTooltip": "Indica si este parámetro del preset debe proporcionarse al crear una revisión de implementación.",
+    "Requirement": "Obligatoriedad",
     "RuntimeVariant": "Runtime",
     "RuntimeVariantRequired": "El runtime es obligatorio.",
     "SliderMax": "Máximo",

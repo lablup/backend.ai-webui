@@ -412,6 +412,7 @@
     "RankTooltip": "같은 런타임의 프리셋 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
     "Required": "필수",
     "RequiredTooltip": "배포 리비전을 생성할 때 이 프리셋 매개변수를 반드시 입력해야 하는지 여부입니다.",
+    "Requirement": "필수 여부",
     "RuntimeVariant": "런타임",
     "RuntimeVariantRequired": "런타임은 필수입니다.",
     "SliderMax": "최댓값",

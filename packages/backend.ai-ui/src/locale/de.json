@@ -412,6 +412,7 @@
     "RankTooltip": "Anzeigereihenfolge unter Voreinstellungen derselben Laufzeitvariante. Niedrigere Werte werden zuerst angezeigt.",
     "Required": "Erforderlich",
     "RequiredTooltip": "Gibt an, ob dieser Voreinstellungsparameter beim Erstellen einer Deployment-Revision angegeben werden muss.",
+    "Requirement": "Pflichtangabe",
     "RuntimeVariant": "Laufzeitvariante",
     "RuntimeVariantRequired": "Laufzeitvariante ist erforderlich.",
     "SliderMax": "Maximum",

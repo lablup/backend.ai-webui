@@ -412,6 +412,7 @@
     "RankTooltip": "Ordre d'affichage parmi les préréglages de la même variante d'exécution. Les valeurs les plus basses s'affichent en premier.",
     "Required": "Obligatoire",
     "RequiredTooltip": "Indique si ce paramètre de préréglage doit être fourni lors de la création d'une révision de déploiement.",
+    "Requirement": "Caractère obligatoire",
     "RuntimeVariant": "Variante d'exécution",
     "RuntimeVariantRequired": "La variante d'exécution est obligatoire.",
     "SliderMax": "Maximum",
