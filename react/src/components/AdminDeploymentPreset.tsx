@@ -12,7 +12,7 @@ import { App } from '../app-shim';
 import AdminDeploymentPresetTable, {
   type DeploymentPresetNodeInList,
 } from '../components/AdminDeploymentPresetTable';
-import { convertToOrderBy } from '../helper';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { theme } from '../theme-shim';
@@ -91,6 +91,7 @@ const AdminDeploymentPreset = ({
     useState<DeploymentPresetNodeInList | null>(null);
 
   const filter = queryRef.variables.filter ?? undefined;
+  const order = convertFirstOrderByToString(queryRef.variables.orderBy);
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;
   const current = pageSize ? Math.floor(offset / pageSize) + 1 : 1;
@@ -186,6 +187,7 @@ const AdminDeploymentPreset = ({
             _.map(deploymentRevisionPresets?.edges, 'node'),
           )}
           loading={isRefetching}
+          order={order}
           onEdit={handleEditPreset}
           onDelete={handleDeletePreset}
           tableSettings={tableSettings}
