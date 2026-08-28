@@ -70,8 +70,10 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
         <BAIMetadataList columns="single">
           <MetadataListItem label={t('agent.ResourceAllocation')}>
             {/* antd Row gutter={[16,16]} + Col xs={24} sm={12} (uniform 2-up
-                from 576px) → Grid columns={{minWidth:280, max:2}} gap={4}
-                (RESPONSIVE-POLICY R1, container-driven). */}
+                from 576px) → Grid columns={{minWidth:280, max:2}}
+                (RESPONSIVE-POLICY R1, container-driven). The gutter is 2, not
+                the mapped 4: a cell is now a whole progress block, so the gap
+                separates blocks rather than a label from its own bar. */}
             <Grid columns={{ minWidth: 280, max: 2 }} gap={2}>
               {_.map(
                 parsedAvailableSlots,
@@ -197,13 +199,9 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
               </Grid>
             </MetadataListItem>
           )}
-          {/* PILOT-DECISION: the antd Tooltip+icon-Button explaining
-              "Utilization" lived AFTER the label text (composed inside the
-              Descriptions.Item's ReactNode label). MetadataListItem's `label`
-              is a plain string and its only label-adjacent slot (`icon`)
-              renders BEFORE it — flipped position accepted; the control's
-              purpose (open the detail modal) is unchanged. Tooltip on the
-              never-disabled trigger becomes IconButton's own `tooltip`. */}
+          {/* The antd Tooltip+icon-Button keeps its position AFTER the label
+              text: BAIMetadataListItem widens Astryx's string-typed `label` to
+              a node, so the pair composes the same way it did under antd. */}
           <BAIMetadataListItem
             label={
               <HStack>
