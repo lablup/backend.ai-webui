@@ -1,7 +1,55 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 1.1 – 1.4, 6.1, 6.4, 6.5 (Role list view, filtering, sorting, refresh)
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, Page } from '@playwright/test';
+
+// `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+// `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
+// `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+// which this app never does (see registry.spec.ts's identical pattern).
+function rbacManagementTab(page: Page) {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: 'RBAC Management' });
+}
+
+// A BAITable column header's accessible NAME is overridden by its sort
+// button's aria-label ("Sort by name") for sortable columns; match the
+// header's visible TEXT instead (see resource-policy.spec.ts /
+// registry.spec.ts for the identical pattern).
+function roleColumnHeader(page: Page, label: string) {
+  return page.getByRole('columnheader').filter({ hasText: label });
+}
+
+// Astryx `Table` renders native <table><tbody><tr role="row">; a plain
+// getByRole('row') also matches the header row, so exclude it.
+function roleDataRows(page: Page) {
+  return page
+    .getByRole('row')
+    .filter({ hasNot: page.getByRole('columnheader') });
+}
+
+/**
+ * Apply a filter using BAIPropertyFilter (Astryx PowerSearch), same
+ * interaction model as environment.spec.ts / registry.spec.ts: open the
+ * typeahead, pick the field, then fill/pick the Value in the edit popover.
+ * Free-text fields (Role Name) commit on "Apply"; strict-selection fields
+ * (Source) auto-commit when an option is picked.
+ */
+async function applyRoleFilter(page: Page, fieldLabel: string, value: string) {
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.click();
+  await page.getByRole('option', { name: fieldLabel, exact: true }).click();
+
+  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
+  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await valueTextbox.fill(value);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  } else {
+    await page.getByRole('combobox', { name: 'Value' }).click();
+    await page.getByRole('option', { name: value, exact: true }).click();
+  }
+}
 
 test.describe(
   'RBAC Role List View',
@@ -18,9 +66,10 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Verify the page heading "RBAC Management" is visible
-      await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
-      ).toBeVisible({ timeout: 10000 });
+      // The role table (909 roles in the shared nightly env) can take a
+      // while to render on a busy shared backend; give it more headroom
+      // than the default page-chrome wait.
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
 
       // 4. Verify the "Create Role" button is visible and enabled
       await expect(
@@ -43,27 +92,14 @@ test.describe(
       ).toBeVisible();
 
       // 6. Verify the role table is rendered with expected column headers
-      await expect(
-        page.getByRole('columnheader', { name: 'Role Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Description' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Source' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Updated At' }),
-      ).toBeVisible();
+      await expect(roleColumnHeader(page, 'Role Name')).toBeVisible();
+      await expect(roleColumnHeader(page, 'Description')).toBeVisible();
+      await expect(roleColumnHeader(page, 'Source')).toBeVisible();
+      await expect(roleColumnHeader(page, 'Created At')).toBeVisible();
+      await expect(roleColumnHeader(page, 'Updated At')).toBeVisible();
 
       // 7. Verify the table contains at least one row (system roles like "superadmin" should exist)
-      const rows = page
-        .getByRole('row')
-        .filter({ hasNot: page.getByRole('columnheader') });
-      await expect(rows.first()).toBeVisible({ timeout: 10000 });
+      await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
     });
 
     test('Superadmin can switch to Inactive roles filter and back to Active', async ({
@@ -77,12 +113,11 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Verify "Active" filter is selected by default (table contains active roles)
-      await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
-      ).toBeVisible({ timeout: 10000 });
-      const activeRows = page
-        .getByRole('row')
-        .filter({ hasNot: page.getByRole('columnheader') });
+      // The role table (909 roles in the shared nightly env) can take a
+      // while to render on a busy shared backend; give it more headroom
+      // than the default page-chrome wait.
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
+      const activeRows = roleDataRows(page);
       await expect(activeRows.first()).toBeVisible({ timeout: 10000 });
 
       // 4. Click the "Inactive" filter button.
@@ -94,7 +129,7 @@ test.describe(
 
       // 5. Verify the table updates (shows deleted roles or empty state message)
       // Either the table shows rows or an empty state — we only check that there's no error
-      await expect(page.locator('.ant-table')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 10000 });
 
       // 6. Click the "Active" filter button
       await statusFilter.getByText('Active', { exact: true }).click();
@@ -114,41 +149,39 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Wait for the page and table to load
-      await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
-      ).toBeVisible({ timeout: 10000 });
-      await expect(page.locator('.ant-table')).toBeVisible();
+      // The role table (909 roles in the shared nightly env) can take a
+      // while to render on a busy shared backend; give it more headroom
+      // than the default page-chrome wait.
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(page.getByRole('table')).toBeVisible();
 
-      // 4. Click the property selector dropdown (first .ant-select in the compact filter area)
-      const filterContainer = page.locator('.ant-space-compact').first();
-      const propertySelect = filterContainer.locator('.ant-select').first();
-      await propertySelect.click();
+      // 4-7. Apply a Role Name filter with a known partial name
+      await applyRoleFilter(page, 'Role Name', 'super');
 
-      // 5. Select "Role Name" from the dropdown options
-      await page.getByRole('option', { name: 'Role Name' }).click();
+      // 8. Verify the table shows ONLY roles whose name matches the search.
+      // Asserting "some row contains super" would also pass on an unfiltered
+      // list, so require every returned row to match.
+      await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
+      await expect(async () => {
+        const rows = await roleDataRows(page).all();
+        expect(rows.length).toBeGreaterThan(0);
+        for (const row of rows) {
+          // Role Name is the first column (RoleNodes.tsx column order).
+          const name = await row.getByRole('cell').first().innerText();
+          expect(name.toLowerCase()).toContain('super');
+        }
+      }).toPass({ timeout: 10000 });
 
-      // 6. Type a known partial role name (e.g., "super") into the search input
-      const searchInput = filterContainer
-        .locator('.ant-select')
-        .last()
-        .locator('input');
-      await searchInput.fill('super');
-
-      // 7. Click the search button (or press Enter)
-      await page.getByRole('button', { name: 'search' }).click();
-
-      // 8. Verify the table only shows roles with names matching the search
-      await expect(
-        page.getByRole('row').filter({ hasText: /super/i }).first(),
-      ).toBeVisible({ timeout: 10000 });
-
-      // 9. Remove the filter chip by clicking its close icon
-      const filterChip = page.locator('.ant-tag-close-icon').first();
+      // 9. Remove the filter chip
+      const filterChip = page.getByRole('button', {
+        name: 'Remove Role Name: contains',
+        exact: true,
+      });
       await expect(filterChip).toBeVisible({ timeout: 5000 });
       await filterChip.click();
 
       // 10. Verify the full role list is restored
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      await expect(roleDataRows(page).first()).toBeVisible({
         timeout: 10000,
       });
     });
@@ -164,55 +197,37 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Wait for the page and table to load
-      await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
-      ).toBeVisible({ timeout: 10000 });
+      // The role table (909 roles in the shared nightly env) can take a
+      // while to render on a busy shared backend; give it more headroom
+      // than the default page-chrome wait.
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
 
-      // 4. Click the property selector in the filter component
-      const filterContainer = page.locator('.ant-space-compact').first();
-      const propertySelect = filterContainer.locator('.ant-select').first();
-      await propertySelect.click();
+      // 4-6. Select "Source" and choose "System" — Source is a
+      // strict-selection field, so picking the option auto-commits (no
+      // separate Apply click, see PowerSearchToken.tsx PILOT-DECISION #1
+      // in environment.spec.ts).
+      await applyRoleFilter(page, 'Source', 'System');
 
-      // 5. Select "Source" from the dropdown options
-      await page.getByRole('option', { name: 'Source' }).click();
+      // 7. Verify the table shows only roles with "System" in the Source
+      // column. The Source column renders plain text (no antd `.ant-tag`).
+      // "at least one System cell exists" would also hold on an unfiltered
+      // list, so require the Source cell of every returned row to be System.
+      await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
+      await expect(async () => {
+        const rows = await roleDataRows(page).all();
+        expect(rows.length).toBeGreaterThan(0);
+        for (const row of rows) {
+          // Source is the 5th column (RoleNodes.tsx column order).
+          const source = await row.getByRole('cell').nth(4).innerText();
+          expect(source.trim()).toBe('System');
+        }
+      }).toPass({ timeout: 10000 });
 
-      // Wait for the property dropdown to fully close before interacting with value input
-      await expect(
-        page.locator('.ant-select-dropdown').filter({ hasText: 'Source' }),
-      ).toBeHidden({ timeout: 5000 });
-
-      // 6. Click the value input (AutoComplete for enum type) and choose "System"
-      // For enum-type properties with strictSelection, the value input is an AutoComplete (not .ant-select)
-      const valueInput = filterContainer
-        .locator('input[role="combobox"]')
-        .last();
-      await valueInput.click();
-      await page
-        .locator('.ant-select-item-option')
-        .filter({ hasText: 'System' })
-        .click();
-
-      // 7. Click the search button
-      await page.getByRole('button', { name: 'search' }).click();
-
-      // 8. Verify the table shows only roles with "System" source tags.
-      // Wait for the filtered query to complete by asserting at least one row
-      // has a "System" source tag before counting.
-      await expect(
-        page
-          .locator('.ant-table-row')
-          .first()
-          .locator('.ant-tag')
-          .filter({ hasText: 'System' }),
-      ).toBeVisible({ timeout: 10000 });
-      const systemTagsVisible = await page
-        .locator('.ant-table-row .ant-tag')
-        .filter({ hasText: 'System' })
-        .count();
-      expect(systemTagsVisible).toBeGreaterThan(0);
-
-      // 9. Remove the filter chip
-      const filterChip = page.locator('.ant-tag-close-icon').first();
+      // 8. Remove the filter chip
+      const filterChip = page.getByRole('button', {
+        name: 'Remove Source: equals',
+        exact: true,
+      });
       await filterChip.click();
       await expect(filterChip).toBeHidden({ timeout: 5000 });
     });
@@ -228,30 +243,24 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Wait for the page to load
-      await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
-      ).toBeVisible({ timeout: 10000 });
+      // The role table (909 roles in the shared nightly env) can take a
+      // while to render on a busy shared backend; give it more headroom
+      // than the default page-chrome wait.
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
 
-      // 4. Apply a Name filter with a value that will not match any role
-      const filterContainer = page.locator('.ant-space-compact').first();
-      const propertySelect = filterContainer.locator('.ant-select').first();
-      await propertySelect.click();
-      await page.getByRole('option', { name: 'Role Name' }).click();
-
-      const searchInput = filterContainer
-        .locator('.ant-select')
-        .last()
-        .locator('input');
-      await searchInput.fill('zzz-nonexistent-role-xyz');
-      await page.getByRole('button', { name: 'search' }).click();
+      // 4. Apply a Role Name filter with a value that will not match any role
+      await applyRoleFilter(page, 'Role Name', 'zzz-nonexistent-role-xyz');
 
       // 5. Verify the table shows an empty state message
-      await expect(page.locator('.ant-empty-description')).toBeVisible({
-        timeout: 10000,
-      });
+      await expect(
+        page.getByRole('heading', { name: 'No data to display' }),
+      ).toBeVisible({ timeout: 10000 });
 
       // 6. Remove the filter
-      const filterChip = page.locator('.ant-tag-close-icon').first();
+      const filterChip = page.getByRole('button', {
+        name: 'Remove Role Name: contains',
+        exact: true,
+      });
       await filterChip.click();
     });
 
@@ -266,26 +275,32 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Wait for the table to load with at least some rows
-      await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
-      ).toBeVisible({ timeout: 10000 });
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      // The role table (909 roles in the shared nightly env) can take a
+      // while to render on a busy shared backend; give it more headroom
+      // than the default page-chrome wait.
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(roleDataRows(page).first()).toBeVisible({
         timeout: 10000,
       });
 
       // 4. Click the "Role Name" column header to sort ascending
-      await page.getByRole('columnheader', { name: 'Role Name' }).click();
+      const nameHeader = roleColumnHeader(page, 'Role Name');
+      await nameHeader.click();
 
-      // 5. Verify a sort indicator appears on the column header (class changes)
-      await expect(
-        page.getByRole('columnheader', { name: 'Role Name' }),
-      ).toBeVisible();
+      // 5. Verify the sort actually engaged — "header is still visible" would
+      // pass even if clicking did nothing.
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'ascending', {
+        timeout: 10000,
+      });
 
       // 6. Click the "Role Name" column header again to sort descending
-      await page.getByRole('columnheader', { name: 'Role Name' }).click();
+      await nameHeader.click();
 
-      // 7. Verify the table rows are still visible (they may have reordered)
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      // 7. Verify the sort direction flipped and rows are still rendered
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'descending', {
+        timeout: 10000,
+      });
+      await expect(roleDataRows(page).first()).toBeVisible({
         timeout: 5000,
       });
     });
@@ -301,26 +316,23 @@ test.describe(
       await navigateTo(page, 'rbac');
 
       // 3. Wait for the page to fully load
-      await expect(
-        page.getByRole('tab', { name: 'RBAC Management' }),
-      ).toBeVisible({ timeout: 10000 });
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      // The role table (909 roles in the shared nightly env) can take a
+      // while to render on a busy shared backend; give it more headroom
+      // than the default page-chrome wait.
+      await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(roleDataRows(page).first()).toBeVisible({
         timeout: 10000,
       });
 
-      // 4. Locate the Refresh button by its stable `title="Refresh"` attribute
-      // (set by BAIFetchKeyButton). Unlike the reload icon — whose class and
-      // `aria-label` both disappear when BAIFetchKeyButton swaps in its loading
-      // spinner during an in-flight refresh — the `title` attribute stays put,
-      // so the locator keeps matching across the whole refresh cycle.
-      const refreshButton = page.locator('button[title="Refresh"]');
+      // 4. Locate the Refresh button by its accessible name.
+      const refreshButton = page.getByRole('button', { name: 'Refresh' });
       await expect(refreshButton).toBeVisible({ timeout: 10000 });
 
       // 5. Click the Refresh button
       await refreshButton.click();
 
       // 6. Verify the table reloads and still shows role rows
-      await expect(page.locator('.ant-table-row').first()).toBeVisible({
+      await expect(roleDataRows(page).first()).toBeVisible({
         timeout: 10000,
       });
     });

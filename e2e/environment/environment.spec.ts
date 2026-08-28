@@ -1,7 +1,20 @@
 // spec: Image list and environment management E2E tests
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import { findColumnIndex } from '../utils/test-util-antd';
+import {
+  findColumnIndex,
+  getFormItemControlByLabel,
+} from '../utils/test-util-antd';
 import { expect, test, Page, Locator } from '@playwright/test';
+
+// Astryx `Table` renders native <table><tbody><tr role="row">; a plain
+// getByRole('row') also matches the header row, so exclude it (same pattern
+// as rbac-role-list.spec.ts / registry.spec.ts).
+function imageDataRows(page: Page) {
+  return page
+    .getByRole('table')
+    .getByRole('row')
+    .filter({ hasNot: page.getByRole('columnheader') });
+}
 
 test.describe(
   'environment ',
@@ -12,22 +25,18 @@ test.describe(
       await page.getByRole('link', { name: 'Admin Settings' }).click();
       await page.getByRole('link', { name: 'Environments' }).click();
       await expect(page).toHaveURL(/\/environment/);
-      await page.waitForLoadState('networkidle');
       // Wait for the table to be visible
-      await page
-        .locator('.ant-table-content')
-        .waitFor({ state: 'visible', timeout: 10000 });
+      await expect(page.getByRole('table')).toBeVisible({ timeout: 10000 });
     });
     test('Rendering Image List', async ({ page }) => {
-      const table = page.locator('.ant-table-content');
-      await expect(table).toBeVisible();
+      await expect(page.getByRole('table')).toBeVisible();
     });
 
     // skip this test because there is no way to uninstall the image in WebUI
     test.skip('user can install image', async ({ page, request }) => {
       await loginAsAdmin(page, request);
       await navigateTo(page, 'environment');
-      const imageListTable = page.locator('.ant-table-content');
+      const imageListTable = page.getByRole('table');
       await expect(imageListTable).toBeVisible();
       // Sort installation status
       await page
@@ -72,26 +81,13 @@ test.describe(
     test('user can modify image resource limit', async ({ page }) => {
       const CPU_CORE = '5';
       const MEMORY_SIZE = '1';
-      const imageListTable = page.locator('.ant-table-content');
-      await expect(imageListTable).toBeVisible();
 
-      // Click resource limit button
-      const rows = imageListTable.locator('.ant-table-row');
-      const firstRow = rows.first();
-      const controlColumnIndex = await findColumnIndex(
-        imageListTable,
-        'Control',
-      );
-      // FR-3331 replaced the resource-limit action's settings-cog icon with a
-      // lucide SquarePenIcon (aria-hidden, no accessible name), so it can no
-      // longer be located via getByRole('button', { name: 'setting' }). It is
-      // the first of the two Control-column buttons (the second is "Manage
-      // Apps", whose antd `appstore` icon still carries its accessible name).
+      // Click resource limit button. FR-3331 gives the action a stable
+      // accessible name via aria-label, so a column-index button lookup is
+      // no longer needed.
+      const firstRow = imageDataRows(page).first();
       await firstRow
-        .locator('.ant-table-cell')
-        .nth(controlColumnIndex)
-        .locator('button')
-        .first()
+        .getByRole('button', { name: 'Edit Minimum Image Resource Limit' })
         .click();
       // get resource limit from control modal
       const resourceLimitControlModal = page.getByRole('dialog', {
@@ -103,31 +99,24 @@ test.describe(
       await expect(resourceLimitControlModal).toBeVisible();
 
       // ManageImageResourceLimitModal.tsx renders each field via
-      // `BAIFormItem` (`[data-bai-form-item]`) — the value control itself
-      // (`BAIDynamicUnitInputNumber` for "mem", still wrapping antd
-      // `InputNumber`/`Select`/`Typography.Text`) is unmigrated, so
-      // `.ant-input-number` / `.ant-select` / `.ant-typography` below stay.
-      const cpuFormItem = resourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("CPU")',
+      // `BAIFormItem`; `BAIDynamicUnitInputNumber` ("mem") is now a plain
+      // Astryx numeric spinbutton plus a separate unit Selector, not a
+      // combined antd InputNumber+addon.
+      const cpuFormItemInput = getFormItemControlByLabel(page, 'CPU').getByRole(
+        'spinbutton',
       );
-      const cpuFormItemInput = cpuFormItem.locator('input');
-      const cpuValue = await cpuFormItemInput.getAttribute('value');
+      const cpuValue = await cpuFormItemInput.inputValue();
 
-      const memoryFormItem = resourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("Memory")',
-      );
-      const memoryFormItemInput = memoryFormItem.locator(
-        '.ant-input-number input',
-      );
-      const memoryValue = await memoryFormItemInput.getAttribute('value');
-      // In Ant Design 6, the unit selector structure changed - use .ant-select .ant-typography
-      const memorySize = await memoryFormItem
-        .locator('.ant-select .ant-typography')
-        .textContent();
+      const memoryFormItem = getFormItemControlByLabel(page, 'Memory');
+      const memoryFormItemInput = memoryFormItem.getByRole('spinbutton');
+      const memoryValue = await memoryFormItemInput.inputValue();
+      const memorySize = (
+        await memoryFormItem.getByRole('combobox').innerText()
+      ).trim();
       // modify resource limit
       await cpuFormItemInput.fill(CPU_CORE);
       await expect(cpuFormItemInput).toHaveValue(CPU_CORE);
-      await memoryFormItemInput.fill(MEMORY_SIZE + 'g');
+      await memoryFormItemInput.fill(MEMORY_SIZE);
       await expect(memoryFormItemInput).toHaveValue(MEMORY_SIZE);
       // click the modal's submit button (renamed "OK" -> "Save" by FR-3339)
       await resourceLimitControlModal
@@ -141,52 +130,35 @@ test.describe(
       }
       // verify resource limit is modified
       await firstRow
-        .locator('.ant-table-cell')
-        .nth(controlColumnIndex)
-        .locator('button')
-        .first()
+        .getByRole('button', { name: 'Edit Minimum Image Resource Limit' })
         .click();
-      // In Ant Design 6, use role-based selector for dialog
       const modifiedResourceLimitControlModal = page.getByRole('dialog', {
         // FR-3339 renamed the modal from "Modify ..." to "Edit ..." as part of
         // unifying edit terminology across the app.
         name: /Edit Minimum Image Resource Limit/i,
       });
       await expect(modifiedResourceLimitControlModal).toBeVisible();
-      const modifiedCpuFormItemInput =
-        modifiedResourceLimitControlModal.locator(
-          '[data-bai-form-item]:has-text("CPU") input',
-        );
+      const modifiedCpuFormItemInput = getFormItemControlByLabel(
+        page,
+        'CPU',
+      ).getByRole('spinbutton');
+      const modifiedMemoryFormItem = getFormItemControlByLabel(page, 'Memory');
       const modifiedMemoryFormItemInput =
-        modifiedResourceLimitControlModal.locator(
-          '[data-bai-form-item]:has-text("Memory") .ant-input-number input',
-        );
+        modifiedMemoryFormItem.getByRole('spinbutton');
       await expect(modifiedCpuFormItemInput).toHaveValue(CPU_CORE);
       await expect(modifiedMemoryFormItemInput).toHaveValue(MEMORY_SIZE);
-      // The unit selector (`BAIDynamicUnitInputNumber`) still wraps antd
-      // `Select`/`Typography.Text` — only the outer `BAIFormItem` wrapper
-      // migrated.
-      await expect(
-        modifiedResourceLimitControlModal
-          .locator('[data-bai-form-item]:has-text("Memory")')
-          .locator('.ant-select .ant-typography'),
-      ).toHaveText('GiB');
+      await expect(modifiedMemoryFormItem.getByRole('combobox')).toHaveText(
+        'GiB',
+      );
 
       // reset resource limit
-      modifiedCpuFormItemInput.fill(cpuValue as string);
-      await expect(modifiedCpuFormItemInput).toHaveValue(cpuValue as string);
-      modifiedMemoryFormItemInput.fill(memoryValue as string);
-      await expect(modifiedMemoryFormItemInput).toHaveValue(
-        memoryValue as string,
-      );
-      // In Ant Design 6, click on the select component wrapper
-      const memorySizeAddon = modifiedResourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("Memory") .ant-select',
-      );
-      await memorySizeAddon.click();
-      await page
-        .locator(`.ant-select-item-option-content:has-text("${memorySize}")`)
-        .click();
+      await modifiedCpuFormItemInput.fill(cpuValue);
+      await expect(modifiedCpuFormItemInput).toHaveValue(cpuValue);
+      await modifiedMemoryFormItemInput.fill(memoryValue);
+      await expect(modifiedMemoryFormItemInput).toHaveValue(memoryValue);
+      // Reopen the unit Selector and pick the original unit back.
+      await modifiedMemoryFormItem.getByRole('combobox').click();
+      await page.getByRole('option', { name: memorySize, exact: true }).click();
       // click the modal's submit button (renamed "OK" -> "Save" by FR-3339)
       await modifiedResourceLimitControlModal
         .getByRole('button', { name: 'Save' })
@@ -200,24 +172,13 @@ test.describe(
     });
 
     test('user can manage apps', async ({ page }) => {
-      const imageListTable = page.locator('.ant-table-content');
-      await expect(imageListTable).toBeVisible();
-      // Click manage apps button
-
-      const rows = imageListTable.locator('.ant-table-row');
-      const firstRow = rows.first();
-      const controlColumnIndex = await findColumnIndex(
-        imageListTable,
-        'Control',
-      );
-      await firstRow
-        .locator('.ant-table-cell')
-        .nth(controlColumnIndex)
-        .getByRole('button', { name: 'appstore' })
-        .click();
+      // Click manage apps button. BAINameActionCell exposes the action's
+      // title as the button's aria-label — "Manage Apps" — the antd
+      // `appstore` icon name no longer applies.
+      const firstRow = imageDataRows(page).first();
+      await firstRow.getByRole('button', { name: 'Manage Apps' }).click();
 
       // Add app
-      // In Ant Design 6, use role-based selector for dialog
       const modal = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modal).toBeVisible();
       // Gate on the always-rendered Add button rather than the first app
@@ -240,15 +201,15 @@ test.describe(
         protocol: 'tcp',
         port: '6006',
       };
-      await modal
-        .locator(`#apps_${numberOfAppsBeforeAdd}_app`)
-        .fill(addInfo.app);
-      await modal
-        .locator(`#apps_${numberOfAppsBeforeAdd}_protocol`)
-        .fill(addInfo.protocol);
-      await modal
-        .locator(`#apps_${numberOfAppsBeforeAdd}_port`)
-        .fill(addInfo.port);
+      // The new row's inputs no longer carry a predictable `#apps_N_app`
+      // id (React-generated ids now); scope by placeholder within the
+      // freshly-appended form-item instead.
+      const newRow = modal
+        .locator('[data-bai-form-item]')
+        .nth(numberOfAppsBeforeAdd);
+      await newRow.getByPlaceholder('App Name').fill(addInfo.app);
+      await newRow.getByPlaceholder('Protocol').fill(addInfo.protocol);
+      await newRow.getByPlaceholder('Port').fill(addInfo.port);
 
       // Click OK Button
       await modal.getByRole('button', { name: 'OK' }).click();
@@ -266,17 +227,9 @@ test.describe(
       // updating in place. Poll the full reopen+read+close cycle — not just
       // an assertion on an already-open modal — until the refetch lands.
       const openManageAppsModalAndCountApps = async () => {
-        await firstRow
-          .locator('.ant-table-cell')
-          .nth(controlColumnIndex)
-          .getByRole('button', { name: 'appstore' })
-          .click();
+        await firstRow.getByRole('button', { name: 'Manage Apps' }).click();
         const dialog = page.getByRole('dialog', { name: /Manage Apps/i });
         await expect(dialog).toBeVisible();
-        // `[data-bai-form-item]`, not main's `.ant-form-item`: this helper
-        // arrives with the main merge, and that class does not exist on this
-        // branch (antd is gone — it is not a dependency of this workspace at all), so the
-        // locator would match nothing and this poll would compare a constant 0.
         const count = await dialog.locator('[data-bai-form-item]').count();
         await dialog.getByRole('button', { name: 'Cancel' }).click();
         await expect(dialog).toBeHidden();
@@ -291,12 +244,7 @@ test.describe(
 
       // Reopen once more now that the refetched data is confirmed fresh, to
       // assert on the added row's field values and perform cleanup.
-      await firstRow
-        .locator('.ant-table-cell')
-        .nth(controlColumnIndex)
-        .getByRole('button', { name: 'appstore' })
-        .click();
-      // In Ant Design 6, use role-based selector for dialog
+      await firstRow.getByRole('button', { name: 'Manage Apps' }).click();
       const modalAfterAdd = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modalAfterAdd).toBeVisible();
       // Retry the count assertion: the freshly-reopened modal renders its
@@ -349,19 +297,23 @@ test.describe(
 // ---------------------------------------------------------------------------
 
 /**
- * Committed-filter token labels follow `"<Field>: <operator> <value>"`
- * (`PowerSearch.tsx` `tokenizerValue` -> `displayLabel`). `defaultOperator`
- * per field comes straight from `ImageList.tsx`'s `filterProperties` (`==`
- * for the strict-selection fields, the BUI default `ilike` -> "contains" for
- * free-text ones); the operator word itself is
+ * A committed filter token's accessible label — and so its "Remove {label}"
+ * button name (`@astryxdesign/core`'s `Token` component: `aria-label={t(
+ * '@astryx.token.remove', {label})}`) — is only `"<Field>: <operator>"`.
+ * `PowerSearchToken.tsx`'s `tokenLabel` deliberately excludes the value (it
+ * renders separately as the token's visible value content), so the `value`
+ * param here is accepted for call-site readability but not part of the
+ * returned string. `defaultOperator` per field comes from `ImageList.tsx`'s
+ * `filterProperties` (`==` for strict-selection fields, the BUI default
+ * `ilike` -> "contains" for free-text ones); the operator word itself is
  * `comp:BAIPropertyFilter.operator.*` (packages/backend.ai-ui/src/locale/en.json).
  */
 function imageFilterTokenLabel(
   propertyLabel: string,
   operatorWord: 'contains' | 'is',
-  value: string,
+  _value: string,
 ): string {
-  return `${propertyLabel}: ${operatorWord} ${value}`;
+  return `${propertyLabel}: ${operatorWord}`;
 }
 
 /**
@@ -390,10 +342,22 @@ async function applyImageFilter(
   await searchBar.evaluate((el) =>
     el.scrollIntoView({ block: 'center', inline: 'nearest' }),
   );
+  const propertyOption = page.getByRole('option', {
+    name: propertyLabel,
+    exact: true,
+  });
   // Use force:true because the sticky header (data-testid="label-selector-project")
-  // can intercept pointer events even after scrolling into view.
-  await searchBar.click({ force: true });
-  await page.getByRole('option', { name: propertyLabel, exact: true }).click();
+  // can intercept pointer events even after scrolling into view. When this
+  // is not the first filter applied in the test, the search bar can be left
+  // re-focused-but-collapsed after the previous commit, so a single click
+  // may toggle it shut instead of open; retry the click-and-check as a unit.
+  await expect(async () => {
+    if (!(await propertyOption.isVisible().catch(() => false))) {
+      await searchBar.click({ force: true });
+    }
+    await expect(propertyOption).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 15000 });
+  await propertyOption.click();
 
   // The value editor's accessible name is "Value"
   // (`t('@astryx.powersearch.valueEditor.value')`) regardless of which
@@ -417,8 +381,8 @@ async function applyImageFilter(
 }
 
 /**
- * Remove a committed filter token by its full display label
- * (`"<Field>: <operator> <value>"`, see `imageFilterTokenLabel`). Each
+ * Remove a committed filter token by its accessible label
+ * (`"<Field>: <operator>"`, see `imageFilterTokenLabel`). Each
  * token's own remove control carries `aria-label="Remove {label}"`
  * (`t('@astryx.token.remove', {label})`, `Token.tsx` /
  * locales/en.json) — used directly as both the "is this filter still
@@ -516,7 +480,7 @@ test.describe(
       await expect(nameTag).toBeVisible();
 
       // 3. Verify the table is still visible (filtered results shown)
-      await expect(page.locator('.ant-table-content')).toBeVisible();
+      await expect(page.getByRole('table')).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, nameLabel);
@@ -539,9 +503,7 @@ test.describe(
       await expect(archTag).toBeVisible();
 
       // 3. Verify the table has at least one row with images
-      await expect(
-        page.locator('.ant-table-content .ant-table-row').first(),
-      ).toBeVisible();
+      await expect(imageDataRows(page).first()).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, archLabel);
@@ -563,9 +525,7 @@ test.describe(
       await expect(statusTag).toBeVisible();
 
       // 3. Verify the table is not empty (all installed images should be ALIVE)
-      await expect(
-        page.locator('.ant-table-content .ant-table-row').first(),
-      ).toBeVisible();
+      await expect(imageDataRows(page).first()).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, statusLabel);
@@ -587,9 +547,7 @@ test.describe(
       await expect(typeTag).toBeVisible();
 
       // 3. Verify the table has at least one row
-      await expect(
-        page.locator('.ant-table-content .ant-table-row').first(),
-      ).toBeVisible();
+      await expect(imageDataRows(page).first()).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, typeLabel);
@@ -611,7 +569,7 @@ test.describe(
       await expect(registryTag).toBeVisible();
 
       // 3. Verify the table content is visible (rows exist for the registry)
-      await expect(page.locator('.ant-table-content')).toBeVisible();
+      await expect(page.getByRole('table')).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, registryLabel);
@@ -646,7 +604,10 @@ test.describe(
       // `hasClear` shows it whenever at least one filter is active (ticket 28
       // PILOT-DECISION #6 — antd's bespoke reset-all button, which only
       // appeared with 2+ filters, is gone).
-      const resetAllButton = page.getByRole('button', { name: 'Clear all' });
+      const resetAllButton = page.getByRole('button', {
+        name: 'Clear all',
+        exact: true,
+      });
       await expect(resetAllButton).toBeVisible();
 
       // 5. Cleanup: click "Clear all" to remove all filters at once
@@ -676,7 +637,10 @@ test.describe(
       await expect(archTag).toBeVisible();
 
       // 3. Verify the "Clear all" button appears with 2 active filters
-      const resetAllButton = page.getByRole('button', { name: 'Clear all' });
+      const resetAllButton = page.getByRole('button', {
+        name: 'Clear all',
+        exact: true,
+      });
       await expect(resetAllButton).toBeVisible();
 
       // 4. Remove only the Architecture token
@@ -723,7 +687,10 @@ test.describe(
       await expect(archTag).toBeVisible();
 
       // 3. Verify both filter tokens and the "Clear all" button are visible
-      const resetAllButton = page.getByRole('button', { name: 'Clear all' });
+      const resetAllButton = page.getByRole('button', {
+        name: 'Clear all',
+        exact: true,
+      });
       await expect(resetAllButton).toBeVisible();
 
       // 4. Click "Clear all" to clear all filters at once
@@ -735,9 +702,7 @@ test.describe(
       await expect(resetAllButton).not.toBeVisible({ timeout: 10000 });
 
       // 6. Verify the table shows results (returns to unfiltered state)
-      await expect(
-        page.locator('.ant-table-content .ant-table-row').first(),
-      ).toBeVisible();
+      await expect(imageDataRows(page).first()).toBeVisible();
     });
 
     // Scenario 2.10 — Pagination resets to page 1 when filter applied
@@ -746,12 +711,7 @@ test.describe(
       { tag: ['@requires-seeded-data'] },
       async ({ page }) => {
         // 1. Check total row count to determine if there are enough images for page 2
-        // Use the visible standalone pagination (ant-pagination-end); the built-in
-        // ant-table-pagination is hidden on this page.
-        const paginationTotal = page
-          .locator('.ant-pagination-end')
-          .locator('.ant-pagination-total-text');
-        // Ensure pagination total text is present and readable; fail if it is not.
+        const paginationTotal = page.getByText(/of\s+\d+\s+items/);
         await expect(paginationTotal).toBeVisible();
         const totalText = await paginationTotal.textContent();
         if (!totalText) {
@@ -774,25 +734,15 @@ test.describe(
           `Pagination scenario requires more than 20 images in the image list (found ${total}; default page size 20, @requires-seeded-data)`,
         );
 
-        // Use the standalone visible pagination (ant-pagination-end) which is the
-        // actual pagination rendered for the image list. The ant-table-pagination
-        // built into the table is hidden (display:none) on this page.
-        const visiblePagination = page.locator('.ant-pagination-end');
+        const pagination = page.getByRole('navigation', { name: 'Pagination' });
 
         // 2. Navigate to page 2 by clicking the page 2 button in pagination
-        await visiblePagination
-          .locator('.ant-pagination-item')
-          .filter({ hasText: '2' })
-          .click();
-        await page
-          .locator('.ant-spin-spinning')
-          .waitFor({ state: 'detached', timeout: 10000 })
-          .catch(() => {});
+        await pagination.getByRole('button', { name: 'Go to page 2' }).click();
 
         // 3. Verify we are on page 2
         await expect(
-          visiblePagination.locator('.ant-pagination-item-active'),
-        ).toHaveText('2');
+          pagination.getByRole('button', { name: 'Go to page 2' }),
+        ).toHaveAttribute('aria-current', 'page');
 
         // 4. Apply a Name filter with value "python"
         const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
@@ -804,8 +754,8 @@ test.describe(
 
         // 5. Verify pagination has reset to page 1
         await expect(
-          visiblePagination.locator('.ant-pagination-item-active'),
-        ).toHaveText('1');
+          pagination.getByRole('button', { name: 'Go to page 1' }),
+        ).toHaveAttribute('aria-current', 'page');
 
         // 6. Cleanup: remove the filter token
         await removeFilterTag(page, nameLabel);
@@ -843,14 +793,16 @@ test.describe(
       const valueSelector = page.getByRole('combobox', { name: 'Value' });
       await expect(valueSelector).toBeVisible();
 
-      // 3. Typing an architecture that is not among the currently-registered
-      // options (a real but unregistered-in-this-cluster value) surfaces no
-      // matching option to select.
+      // 3. The Selector has no typing surface to fill — opening it exposes
+      // only the fixed, registered options, so an unregistered architecture
+      // never appears as a selectable option.
       await valueSelector.click();
-      await valueSelector.fill('arm64-unregistered-e2e-probe');
       await expect(
         page.getByRole('option', { name: 'arm64-unregistered-e2e-probe' }),
       ).toHaveCount(0);
+      // Close the still-open options listbox — its popup overlaps the
+      // popover's Cancel button and would otherwise intercept the click.
+      await page.keyboard.press('Escape');
 
       // 4. Close the popover without committing (Cancel — no value was ever
       // selectable, so there is nothing to Apply).
@@ -861,9 +813,7 @@ test.describe(
       await expect(page.getByRole('button', { name: /^Remove / })).toHaveCount(
         0,
       );
-      await expect(
-        page.locator('.ant-table-content .ant-table-row').first(),
-      ).toBeVisible();
+      await expect(imageDataRows(page).first()).toBeVisible();
     });
 
     // Scenario 2.12 — Empty results when filtering non-existent name
@@ -884,8 +834,10 @@ test.describe(
       });
       await expect(noResultsTag).toBeVisible();
 
-      // 3. Verify the table shows an empty state (Ant Design no-data placeholder)
-      await expect(page.locator('.ant-table-placeholder')).toBeVisible();
+      // 3. Verify the table shows an empty state
+      await expect(
+        page.getByRole('heading', { name: 'No data to display' }),
+      ).toBeVisible();
 
       // 4. Cleanup: remove the filter token
       await removeFilterTag(page, noResultsLabel);
