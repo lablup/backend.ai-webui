@@ -173,29 +173,28 @@ Deleting a deployment preset is **irreversible**. The preset itself is removed, 
 The **Runtime Variant Presets** tab on the Admin Deployments page (`/admin/deployments`) defines the individual parameters that a runtime variant exposes. Each entry describes one parameter — the key it is passed to the container as, its value type, its default, and how it is rendered — and together they make up the **Runtime Parameters** tabs that users fill in when they add a deployment revision (see [Runtime parameters](#runtime-parameters) on the Deployments page).
 
 ![](../images/runtime_variant_preset_list.png)
+<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
 Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refresh button, and the **Create Preset** button. The following columns are shown by default:
 
 - **Name**: The parameter preset's name. This column also carries the per-row edit and delete buttons.
-- **Runtime Variant** and **Runtime Variant ID**: The runtime the parameter belongs to.
+- **Runtime Variant (ID)**: The runtime the parameter belongs to, shown as the runtime's name followed by its ID in parentheses. The ID has a copy button next to it. On a server that does not serve the runtime variant name, the column is titled **Runtime Variant ID** and shows the ID on its own.
 - **Preset Target**: How the value reaches the container — **Environment Variable** or **Command-line Argument**.
 - **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**.
+- **UI Type**: The control this parameter is rendered with in the deployment form — **Text Input**, **Number Input**, **Checkbox**, **Select**, or **Slider**. A control that this version of the WebUI does not recognize is shown as its stored value, and `-` means no control is configured. In the deployment form, a parameter whose configured control cannot render its value type falls back to a plain text input.
 - **Key**: The environment variable name or command-line argument the value is passed as.
+- **Default Value**: The value the runtime uses when the user leaves the parameter unchanged.
 - **Required**: Whether the parameter must be supplied when a revision is built from this runtime.
 - **Rank**: Display ordering among presets of the same runtime variant. Lower values are shown first.
 - **Created At**: When the preset was created.
 
-**Description**, **Category**, **Display Name**, **Default Value**, and **Modified At** are hidden by default and can be shown with the column visibility gear button (⚙) at the right of the table header.
-
-:::note
-The **Runtime Variant**, **Display Name**, and **Category** columns — and the UI metadata fields described below — are only available on servers that support runtime variant preset UI metadata. On an older server they do not appear at all.
-:::
+**Description**, **Category**, **Display Name**, and **Modified At** are hidden by default and can be shown with the column visibility gear button (⚙) at the right of the table header.
 
 ### Create or edit a runtime variant preset
 
 Click **Create Preset** above the table to open the **Create Preset** modal, or the edit button on a row to open **Edit Preset** with the current values pre-filled. The runtime variant of an existing preset cannot be changed.
 
-<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. The capture environment ran manager 26.8.0rc1, which does not serve the runtime-variant-preset UI metadata fields. -->
+<!-- TODO(screenshot): /admin/deployments -> Runtime Variant Presets tab -> Create Preset modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
 
 The modal contains the following fields, in the order they appear:
 
@@ -205,17 +204,23 @@ The modal contains the following fields, in the order they appear:
 - **Category**: The UI category used to organize related parameters together. Categories become the tabs of the **Runtime Parameters** section, so parameters sharing a category are shown on the same tab. The field is free text; categories already in use are listed in its placeholder as a hint.
 - **Display Name**: The human-readable label shown in place of the parameter name in the deployment form.
 - **Preset Target**: **Environment Variable** or **Command-line Argument**. Required.
-- **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**. Required.
+- **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**. Required. Choose the value type before the **UI Type** below: changing it clears the selected control, because a control picked for the previous type may no longer be able to render the new one.
+- **UI Type**: The control used to render this parameter in the deployment form. Leave it empty to render the parameter as a plain text input. Only the controls that can render the selected **Value Type** can be chosen; the others are disabled. Choosing a type reveals its own settings:
+   * **Text Input** (String, Integer, Float): **Input Placeholder** — the hint text shown while the field is empty.
+   * **Number Input** (Integer, Float): **Minimum** and **Maximum**. A value outside the range is reported as a validation error on the deployment form.
+   * **Checkbox** (Boolean, Flag): No additional settings.
+   * **Select** (String): **Choices** — one **Value** / **Label** row per option. Click **Add Choice** to add a row and the trash button to remove one; at least one choice is required.
+   * **Slider** (Integer, Float): **Minimum** and **Maximum** (both required, and the maximum must be greater than the minimum) and **Step**, the increment the slider moves by (defaults to `1`).
 - **Key**: The environment variable name or command-line argument the value is passed as, for example `TENSOR_PARALLEL_SIZE`. Required.
 - **Default Value**: The value the runtime uses when the user leaves the parameter unchanged. It is shown as the field's placeholder in the deployment form rather than pre-filled, so a required parameter still asks for an explicit value.
-- **UI Type**: The control used to render this parameter in the deployment form. Leave it empty to render the parameter as a plain text input. Choosing a type reveals its own settings:
-   * **Text Input**: **Input Placeholder** — the hint text shown while the field is empty.
-   * **Number Input**: **Minimum** and **Maximum**. A value outside the range is reported as a validation error on the deployment form.
-   * **Checkbox**: No additional settings.
-   * **Select**: **Choices** — one **Value** / **Label** row per option. Click **Add Choice** to add a row and the trash button to remove one; at least one choice is required.
-   * **Slider**: **Minimum** and **Maximum** (both required, and the maximum must be greater than the minimum) and **Step**, the increment the slider moves by (defaults to `1`).
 - **Required**: Whether users must supply this parameter when they build a revision. Required parameters show a red asterisk (★) in the deployment form.
 - **Rank** *(edit only)*: Display ordering among presets of the same runtime variant. Lower values are shown first.
+
+:::note
+A preset that was stored with a control and a value type that do not fit each other — for example one created through the API — opens with a warning that the saved value type cannot be rendered by the saved UI type, and the offending field is marked with **The selected UI type cannot render this value type.** Change either half to resolve it before saving.
+
+On a server that does not offer the **UI Type** field, the pairing is enforced from the other side: the control already stored on the preset restricts which **Value Type** entries you can choose.
+:::
 
 Click `Create` (or `Save` when editing) to store the preset. A notification confirms that the runtime variant preset has been created or updated, and the list refreshes.
 
