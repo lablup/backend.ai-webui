@@ -217,6 +217,49 @@ describe('BAIText ellipsis', () => {
     expect(box.parentElement).toBe(screen.getByTestId('t'));
   });
 
+  it('re-measures when the children change without a resize', () => {
+    // A fixed-width cell whose value changes does not resize, so the
+    // ResizeObserver never fires; the hook must re-check on new children.
+    setOverflow(false);
+    const { rerender } = render(
+      <BAIText ellipsis={{ expandable: true }}>short</BAIText>,
+    );
+    expect(screen.queryByText('Expand')).toBeNull();
+
+    setOverflow(true);
+    rerender(
+      <BAIText ellipsis={{ expandable: true }}>a much longer value</BAIText>,
+    );
+    expect(screen.getByText('Expand')).toBeInTheDocument();
+
+    setOverflow(false);
+    rerender(<BAIText ellipsis={{ expandable: true }}>short</BAIText>);
+    expect(screen.queryByText('Expand')).toBeNull();
+  });
+
+  it('re-measures when the ResizeObserver fires', () => {
+    const original = global.ResizeObserver;
+    let notify: (() => void) | undefined;
+    global.ResizeObserver = class {
+      constructor(cb: ResizeObserverCallback) {
+        notify = () => cb([], this as unknown as ResizeObserver);
+      }
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver;
+    try {
+      setOverflow(false);
+      render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
+      expect(screen.queryByText('Expand')).toBeNull();
+      setOverflow(true);
+      act(() => notify?.());
+      expect(screen.getByText('Expand')).toBeInTheDocument();
+    } finally {
+      global.ResizeObserver = original;
+    }
+  });
+
   it('shows the Expand link only when the text overflows', () => {
     setOverflow(false);
     const { unmount } = render(
@@ -449,6 +492,17 @@ describe('BAIText copyable', () => {
     expect(onCopy).toHaveBeenCalledTimes(1);
     expect(button).toHaveAttribute('aria-label', 'Got it');
     expect(screen.getByTestId('copied')).toBeInTheDocument();
+  });
+
+  it('stays in the resting state when the clipboard rejects', async () => {
+    writeText.mockImplementationOnce(() => Promise.reject(new Error('denied')));
+    const onCopy = vi.fn();
+    render(<BAIText copyable={{ onCopy }}>abc</BAIText>);
+    const button = screen.getByRole('button');
+    await click(button);
+    expect(onCopy).not.toHaveBeenCalled();
+    expect(button.getAttribute('aria-disabled')).not.toBe('true');
+    expect(button).toHaveAttribute('aria-label', 'Copy');
   });
 
   it('renders no copy control for copyable={false}', () => {

@@ -163,6 +163,7 @@ const useOverflow = (
   rows: number,
   children: ReactNode,
 ) => {
+  'use memo';
   const [isOverflowing, setIsOverflowing] = useState(false);
 
   useLayoutEffect(() => {
@@ -185,7 +186,8 @@ const useOverflow = (
         );
         range.detach();
       } catch {
-        // jsdom
+        // No Range layout (jsdom): the clamped scrollHeight is all there is.
+        contentHeight = element.scrollHeight;
       }
       setIsOverflowing(contentHeight > element.clientHeight + 1);
     };
@@ -261,7 +263,10 @@ const CopyControl: React.FC<{
             () => setCopied(false),
             COPIED_RESET_MS,
           );
-        })();
+        })().catch(() => {
+          // A denied clipboard or a rejected `text()`: nothing was copied,
+          // so the control stays in its resting state.
+        });
       }}
     />
   );
