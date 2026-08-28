@@ -95,13 +95,17 @@ const variablesOf = <V extends TabVariables>(
   const order = _.includes(sorterValuesOf[tab], params.order)
     ? params.order
     : orderParser.defaultValue;
+  // The URL parsers accept any integer; keep a hand-edited link from
+  // requesting a negative limit / offset.
+  const pageSize = Math.max(1, pagination.pageSize);
+  const current = Math.max(1, pagination.current);
   return {
     filter: params.filter
       ? (filterParser.parse(params.filter) as V['filter'])
       : null,
     orderBy: convertToOrderBy<NonNullable<V['orderBy']>[number]>(order),
-    limit: pagination.pageSize,
-    offset: (pagination.current - 1) * pagination.pageSize,
+    limit: pageSize,
+    offset: (current - 1) * pageSize,
   };
 };
 
