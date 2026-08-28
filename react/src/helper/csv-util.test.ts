@@ -3,7 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // csv-util.test.ts
-import { downloadCSV, JSONToCSVBody, parseCSV, UTF8_BOM } from './csv-util';
+import {
+  downloadCSV,
+  escapeCsvValue,
+  JSONToCSVBody,
+  parseCSV,
+  UTF8_BOM,
+} from './csv-util';
 
 describe('JSONToCSVBody', () => {
   it('should convert JSON data to CSV format without formatting rules', () => {
@@ -73,6 +79,66 @@ describe('JSONToCSVBody', () => {
     const expected = '"name","age"\n"John ""Doe""",30\n"Jane, the Great",25';
 
     expect(result).toBe(expected);
+  });
+
+  it('should neutralize a data cell that a spreadsheet would run as a formula', () => {
+    const data = [{ email: 'user@example.com', name: '=1+2' }];
+
+    const result = JSONToCSVBody(data);
+
+    expect(result).toBe('"email","name"\n"user@example.com","\'=1+2"');
+  });
+
+  it('should leave the "-" placeholder and negative numbers alone', () => {
+    const data = [{ idle_timeout: '-', max_sessions: '-30' }];
+
+    const result = JSONToCSVBody(data);
+
+    expect(result).toBe('"idle_timeout","max_sessions"\n"-","-30"');
+  });
+});
+
+describe('escapeCsvValue', () => {
+  it.each([
+    ['=1+2', '"\'=1+2"'],
+    ['+1+2', '"\'+1+2"'],
+    ['-1+2', '"\'-1+2"'],
+    ['@SUM(1)', '"\'@SUM(1)"'],
+    ['\t=1+2', '"\'\t=1+2"'],
+    ['\r=1+2', '"\'\r=1+2"'],
+  ])('should neutralize the formula trigger in %j', (input, expected) => {
+    expect(escapeCsvValue(input)).toBe(expected);
+  });
+
+  it.each([
+    ['-', '"-"'],
+    ['-30', '"-30"'],
+    ['+30', '"+30"'],
+    ['-1.5', '"-1.5"'],
+    ['user@example.com', '"user@example.com"'],
+    ['John', '"John"'],
+    ['', '""'],
+  ])('should leave %j unchanged', (input, expected) => {
+    expect(escapeCsvValue(input)).toBe(expected);
+  });
+
+  it('should keep neutralizing a value that also needs quote escaping', () => {
+    expect(escapeCsvValue('="quoted"')).toBe('"\'=""quoted"""');
+  });
+
+  it('should not touch numbers and booleans, which cannot carry a formula', () => {
+    expect(escapeCsvValue(-30)).toBe('-30');
+    expect(escapeCsvValue(0)).toBe('0');
+    expect(escapeCsvValue(false)).toBe('false');
+  });
+
+  it('should render null and undefined as an empty cell', () => {
+    expect(escapeCsvValue(null)).toBe('');
+    expect(escapeCsvValue(undefined)).toBe('');
+  });
+
+  it('should serialize objects without neutralizing the JSON', () => {
+    expect(escapeCsvValue({ cpu: 1 })).toBe('"{""cpu"":1}"');
   });
 });
 

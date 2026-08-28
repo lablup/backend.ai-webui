@@ -8,7 +8,7 @@ import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection
 import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFallback';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
-import { downloadCSV } from '../helper/csv-util';
+import { downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import { Collapsible, CollapsibleGroup } from '@astryxdesign/core/Collapsible';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -108,11 +108,6 @@ const DiagnosticsPage = () => {
       return;
     }
 
-    const escCsv = (val: string) =>
-      val.includes(',') || val.includes('"') || val.includes('\n')
-        ? `"${val.replace(/"/g, '""')}"`
-        : val;
-
     const header = [
       'ID',
       'Severity',
@@ -133,7 +128,7 @@ const DiagnosticsPage = () => {
     ]);
 
     const csvContent = [header, ...rows]
-      .map((row) => row.map(escCsv).join(','))
+      .map((row) => row.map((cell) => escapeCsvValue(cell)).join(','))
       .join('\n');
 
     const today = new Date().toISOString().slice(0, 10);

@@ -4,13 +4,45 @@
  */
 import * as _ from 'lodash-es';
 
+// Excel keeps Lotus compatibility, so `+`, `-` and `@` open a formula just as
+// `=` does, and a leading tab or CR hides one of them behind whitespace that
+// the importer strips before parsing the cell.
+const CSV_FORMULA_TRIGGERS = ['=', '+', '-', '@', '\t', '\r'];
+
+const PLAIN_NUMBER_PATTERN = /^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/;
+
+/**
+ * Prefixes a cell a spreadsheet would evaluate as a formula with a single
+ * quote, so it is shown as the text the export meant to carry.
+ *
+ * Quoting the field does not help: Excel and LibreOffice evaluate a formula
+ * inside a quoted CSV field too. A signed number is a value rather than an
+ * expression, and `-` alone is the "no value" placeholder the resource policy
+ * exports emit, so both are left as they are.
+ *
+ * @param value - The already-stringified cell value.
+ * @returns The value, prefixed with `'` when it would otherwise execute.
+ */
+const neutralizeCsvFormula = (value: string) => {
+  if (!value || !CSV_FORMULA_TRIGGERS.includes(value[0])) {
+    return value;
+  }
+  if (value === '-' || PLAIN_NUMBER_PATTERN.test(value)) {
+    return value;
+  }
+  return `'${value}`;
+};
+
 /**
  * Escapes a value for CSV formatting.
+ *
+ * Every CSV cell this app writes should go through this helper rather than a
+ * local escaper, so formula neutralization stays in one place.
  *
  * @param value - The value to escape.
  * @returns The escaped value.
  */
-function escapeCsvValue(value: any) {
+export function escapeCsvValue(value: any) {
   if (value === null || value === undefined) {
     return '';
   }
@@ -22,7 +54,7 @@ function escapeCsvValue(value: any) {
   value = _.isString(value) ? value : JSON.stringify(value);
 
   // Replace double quotes within the value with two double quotes
-  return `"${value.replace(/"/g, '""')}"`;
+  return `"${neutralizeCsvFormula(value).replace(/"/g, '""')}"`;
 }
 
 /**
