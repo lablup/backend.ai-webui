@@ -141,8 +141,10 @@ function MainLayout() {
         <DismissSplashOnMount />
         <BAIAppShell
           data-testid={pageTestId}
-          // `wash` paints `--color-background-body` behind nav and content —
-          // the same token the `body`/splash backdrop already uses.
+          // `wash` paints `--color-background-body` behind nav and content.
+          // The `body`/splash backdrop is the same VALUE but declared as a
+          // literal (index.html) — the token is unusable before the brand
+          // theme registers; see the note in index.html's critical <style>.
           variant="wash"
           contentPadding={0}
           pathname={location.pathname}
@@ -450,6 +452,7 @@ export const CSSTokenVariables = () => {
  * splash was torn down before login had even finished.
  */
 const DismissSplashOnMount = () => {
+  'use memo';
   useSuspendedBackendaiClient();
   useEffect(() => {
     (globalThis as any).__dismissSplash?.();
