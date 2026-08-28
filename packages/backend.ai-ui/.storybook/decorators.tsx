@@ -3,13 +3,12 @@ import BAIText from '../src/components/BAIText';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
 import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
 import { i18n } from '../src/locale';
-import { ThemeShimProvider, theme } from '../src/theme-shim';
-import { astryxBrandTheme } from './astryxBrandTheme';
-import { themeConfigs, type ThemeStyle } from './themeConfig';
+import { ThemeShimProvider } from '../src/theme-shim';
+import { themeStyleConfigs, type ThemeStyle } from './themeConfig';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
 import type { Decorator } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -56,20 +55,6 @@ interface StorybookProviderProps {
   children: React.ReactNode;
 }
 
-const ThemedContainer: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const { token } = theme.useToken();
-
-  useEffect(() => {
-    document.body.style.backgroundColor = token.colorBgLayout;
-    document.body.style.color = token.colorText;
-    document.body.style.fontFamily = token.fontFamily;
-  }, [token.colorBgLayout, token.colorText, token.fontFamily]);
-
-  return <>{children}</>;
-};
-
 const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
   locale,
   themeStyle,
@@ -77,61 +62,19 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
   children,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const currentThemeConfig = themeConfigs[themeStyle];
+  const { astryxTheme, seeds } = themeStyleConfigs[themeStyle];
   const isWebUIStyle = themeStyle === 'webui';
-  const seedToken =
-    (isDarkMode ? currentThemeConfig.dark : currentThemeConfig.light).token ??
-    {};
+  const mode = isDarkMode ? 'dark' : 'light';
 
   return (
-    // Astryx brand theme (ticket 32, mirrors the app's always-on
-    // `AstryxBrandTheme` — see DefaultProviders.tsx). Mounted unconditionally
-    // (not gated by the antd-only "Theme Style" toolbar below) so
-    // Astryx-native components (BAITable, BAIComplexSelect,
-    // PowerSearch, …) render the real Backend.AI palette instead of Astryx's
-    // theme-neutral default, in both light and dark.
-    <AstryxThemeProvider
-      theme={astryxBrandTheme}
-      mode={isDarkMode ? 'dark' : 'light'}
-    >
-      {/* Astryx theme shim (ticket 10): BUI's legacy antd-consuming
-          components read tokens from ThemeShimProvider, so mirror the
-          story's mode/seeds here — without it they'd fall back to
-          light-mode default seeds. */}
-      <ThemeShimProvider
-        mode={isDarkMode ? 'dark' : 'light'}
-        seeds={{
-          colorPrimary: seedToken.colorPrimary,
-          colorLink: seedToken.colorLink ?? seedToken.colorPrimary,
-          colorInfo: seedToken.colorInfo,
-          colorSuccess: seedToken.colorSuccess,
-          colorError: seedToken.colorError,
-          colorWarning: seedToken.colorWarning,
-          fontFamily: seedToken.fontFamily,
-        }}
-      >
-        {/* BAIConfigProvider (ticket 30): the real production wrapper. It
-            used to be antd's ConfigProvider + Astryx's
-            InternationalizationProvider; the final switch removed the antd
-            leg, so it now carries only the locale — which still drives BUI's
-            i18next, dayjs and Astryx's resolver from one `lang`, keeping
-            Astryx chrome strings and plurals on the story's locale instead of
-            the 'en' context default (P13).
-
-            The `theme` / `modal` / `drawer` / `tag` props that used to be
-            passed through here are gone with that leg: each configured an
-            antd component. The mode and seeds the toolbar picks reach the
-            tree through `AstryxThemeProvider` + `ThemeShimProvider` above,
-            which is where they already were. */}
+    // Same provider pair as the app's `DefaultProviders`: the Astryx
+    // `<Theme>` for Astryx-native components, the shim for the legacy
+    // token-consuming BUI surfaces. Both follow the "Theme Style" toolbar.
+    <AstryxThemeProvider theme={astryxTheme} mode={mode}>
+      <ThemeShimProvider mode={mode} seeds={seeds[mode]}>
         <BAIConfigProvider locale={{ lang: locale }}>
-          {/* The `form.requiredMark` inversion — no asterisk on required
-              fields, "(Optional)" appended to the rest — moved off
-              `ConfigProvider form={{…}}` onto the self-hosted engine's own
-              provider (tickets 34 + 35), mirroring what
-              `react/src/components/DefaultProviders.tsx` does in the app.
-              Still gated on the WebUI theme style, since it is Backend.AI
-              product behaviour rather than an engine default. */}
+          {/* Backend.AI product behaviour (`DefaultProviders.tsx`), not an
+              engine default — so only under the WebUI style. */}
           <FormConfigProvider
             {...(isWebUIStyle && {
               requiredMark: (label, { required }) => (
@@ -141,7 +84,7 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
                     <BAIText
                       type="secondary"
                       style={{
-                        marginLeft: token.marginXXS,
+                        marginLeft: 'var(--spacing-1)',
                         wordBreak: 'keep-all',
                       }}
                     >
@@ -152,12 +95,7 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
               ),
             })}
           >
-            {/* App.useApp shim (ticket 11): stories exercising imperative
-                message/modal flows read the shim's toast/dialog host from here
-                (replaces the per-story antd <App> wrappers). */}
-            <BAIAppProvider>
-              <ThemedContainer>{children}</ThemedContainer>
-            </BAIAppProvider>
+            <BAIAppProvider>{children}</BAIAppProvider>
           </FormConfigProvider>
         </BAIConfigProvider>
       </ThemeShimProvider>

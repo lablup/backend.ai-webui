@@ -1,44 +1,60 @@
-import webuiThemeJson from './theme.json';
+import webuiThemeJson from '../../../resources/theme.json';
+import type { BrandSeeds } from '../src/theme-shim';
+import { astryxBrandTheme } from './astryxBrandTheme';
+import { type DefinedTheme, resolveThemeToken } from '@astryxdesign/core/theme';
+import { neutralTheme } from '@astryxdesign/theme-neutral/built';
 
-export type ThemeMode = 'light' | 'dark';
+type ThemeMode = 'light' | 'dark';
 export type ThemeStyle = 'default' | 'webui';
 
-/**
- * The seed bag the "Theme Style" toolbar feeds `ThemeShimProvider`.
- *
- * Was `import type { ThemeConfig } from 'antd'`, the shape antd's
- * `ConfigProvider theme` prop took. `.storybook/theme.json` is a copy of the
- * app's `resources/theme.json`, which is still authored in antd token names
- * (that vocabulary is what the theme-shim reads — see
- * `src/theme-shim/tokenType.ts`), so the SHAPE is unchanged; only the type's
- * provenance is. Declared here rather than imported from the shim because
- * only the two keys below are ever read.
- */
-export interface ThemeConfig {
-  token?: Record<string, string | number>;
-  components?: Record<string, Record<string, string | number>>;
-}
+/** Astryx token → shim seed, for themes that ship no theme.json. */
+const SEED_TOKENS: Record<
+  keyof Omit<BrandSeeds, 'colorInfo' | 'components'>,
+  string
+> = {
+  colorPrimary: '--color-accent',
+  colorLink: '--color-accent',
+  colorError: '--color-error',
+  colorSuccess: '--color-success',
+  colorWarning: '--color-warning',
+  fontFamily: '--font-family-body',
+};
 
-// Theme seed configs, in antd token vocabulary (see above).
-export const themeConfigs: Record<
+const seedsFromTheme = (
+  theme: DefinedTheme,
+  mode: ThemeMode,
+): Partial<BrandSeeds> =>
+  Object.fromEntries(
+    Object.entries(SEED_TOKENS).map(([seed, token]) => [
+      seed,
+      resolveThemeToken(theme, token, { mode }),
+    ]),
+  );
+
+const webuiSeeds = (mode: ThemeMode): Partial<BrandSeeds> => ({
+  ...webuiThemeJson[mode].token,
+  fontFamily: webuiThemeJson.fontFamily,
+  components: webuiThemeJson[mode].components,
+});
+
+export const themeStyleConfigs: Record<
   ThemeStyle,
-  { light: ThemeConfig; dark: ThemeConfig }
+  {
+    /** The Astryx `<Theme>` mounted around every story. */
+    astryxTheme: DefinedTheme;
+    /** Per-mode seeds for `ThemeShimProvider` (antd token vocabulary). */
+    seeds: Record<ThemeMode, Partial<BrandSeeds>>;
+  }
 > = {
   default: {
-    light: {},
-    dark: {
-      token: {
-        colorBgContainer: '#1f2229',
-        colorBgElevated: '#262931',
-        colorBgLayout: '#181b1f',
-        colorBgSpotlight: '#2c2f36',
-        colorBorder: '#3d424d',
-        colorBorderSecondary: '#2c2f36',
-      },
+    astryxTheme: neutralTheme,
+    seeds: {
+      light: seedsFromTheme(neutralTheme, 'light'),
+      dark: seedsFromTheme(neutralTheme, 'dark'),
     },
   },
   webui: {
-    light: webuiThemeJson.light,
-    dark: webuiThemeJson.dark,
+    astryxTheme: astryxBrandTheme,
+    seeds: { light: webuiSeeds('light'), dark: webuiSeeds('dark') },
   },
 };

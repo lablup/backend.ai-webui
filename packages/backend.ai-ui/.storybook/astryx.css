@@ -27,3 +27,12 @@
    `--color-text-primary` in the preview and at `--color-text-accent`
    everywhere else. Deliberately unlayered — see the file's own header. */
 @import '../src/styles/actionAccent.css';
+
+/* The story canvas follows whichever Astryx <Theme> the decorator mounts. */
+@layer base {
+  body {
+    background-color: var(--color-background-body);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-body);
+  }
+}

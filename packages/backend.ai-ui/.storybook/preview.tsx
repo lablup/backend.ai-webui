@@ -39,7 +39,7 @@ const preview: Preview = {
       toolbar: {
         icon: 'paintbrush',
         items: [
-          { value: 'default', title: 'Default (Ant Design)' },
+          { value: 'default', title: 'Default (Astryx)' },
           { value: 'webui', title: 'WebUI (Backend.AI)' },
         ],
         dynamicTitle: true,
@@ -48,7 +48,7 @@ const preview: Preview = {
   },
   initialGlobals: {
     locale: 'en',
-    themeStyle: 'default',
+    themeStyle: 'webui',
   },
 };
 
