@@ -85,10 +85,8 @@ The folder explorer uses a two-panel layout:
 On wide (xl) screens a draggable divider separates the two panels so you can resize them to suit your workflow. On narrow screens the panels stack vertically.
 
 ![](../images/folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder, folder explorer left panel. The row actions (Download, Delete, Rename, More actions) now sit inside the Name column; the capture environment was unavailable on this run. -->
 
 ![](../images/split_panel_folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder on a wide (xl) screen, split-panel folder explorer with the row actions inside the Name column; the capture environment was unavailable on this run. -->
 
 ### File operations
 
@@ -127,7 +125,6 @@ in the directory.
 You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then open the **More actions** (⋮) menu on the text file's row in the **Name** column and select **Edit File**.
 
 ![](../images/folder_explorer_edit_button.png)
-<!-- TODO(screenshot): /data -> open a storage folder, open the More actions (⋮) menu on a text file's row in the Name column so the Edit File item is visible; the capture environment was unavailable on this run. -->
 
 The text file editor opens in a modal with a code editor interface. The editor automatically detects the file type based on the file extension and applies appropriate syntax highlighting (e.g., Python, JavaScript, Markdown). The modal title displays the file name and size.
 

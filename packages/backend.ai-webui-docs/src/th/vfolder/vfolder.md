@@ -73,10 +73,8 @@ Backend.AI มีพื้นที่จัดเก็บเฉพาะเพ
 บนหน้าจอขนาดกว้าง (xl) ตัวแบ่งที่ลากได้จะแยกสองแผงออกจากกัน เพื่อให้คุณสามารถปรับขนาดได้ตามความต้องการ บนหน้าจอขนาดแคบ แผงจะเรียงซ้อนกันในแนวตั้ง
 
 ![](../images/folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder, folder explorer left panel. The row actions (Download, Delete, Rename, More actions) now sit inside the Name column; the capture environment was unavailable on this run. -->
 
 ![](../images/split_panel_folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder on a wide (xl) screen, split-panel folder explorer with the row actions inside the Name column; the capture environment was unavailable on this run. -->
 
 ### การดำเนินการไฟล์
 
@@ -111,7 +109,6 @@ storage host นั้น คุณจะสามารถอัปโหลด
 คุณสามารถแก้ไขไฟล์ข้อความได้โดยตรงในโฟลเดอร์เอ็กซ์พลอเรอร์ คลิกที่ชื่อโฟลเดอร์เพื่อเปิดไฟล์เอ็กซ์พลอเรอร์ จากนั้นเปิดเมนู **การดำเนินการเพิ่มเติม** (⋮) ในแถวของไฟล์ข้อความนั้นในคอลัมน์ **ชื่อ** แล้วเลือก **แก้ไขไฟล์**
 
 ![](../images/folder_explorer_edit_button.png)
-<!-- TODO(screenshot): /data -> open a storage folder, open the More actions (⋮) menu on a text file's row in the Name column so the Edit File item is visible; the capture environment was unavailable on this run. -->
 
 โปรแกรมแก้ไขไฟล์ข้อความจะเปิดขึ้นในโมดัลพร้อมอินเทอร์เฟซตัวแก้ไขโค้ด ตัวแก้ไขจะตรวจจับประเภทไฟล์โดยอัตโนมัติตามนามสกุลไฟล์และใช้การเน้นไวยากรณ์ที่เหมาะสม (เช่น Python, JavaScript, Markdown) หัวเรื่องโมดัลจะแสดงชื่อไฟล์และขนาด
 

@@ -74,10 +74,8 @@ Backend.AIは、ユーザーのファイルを安全に保管するための専�
 幅の広い（xl）画面では、2つのパネルの間にドラッグ可能な区切り線が表示され、ワークフローに合わせてサイズを調整できます。幅の狭い画面では、パネルが縦に積み重なって表示されます。
 
 ![](../images/folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder, folder explorer left panel. The row actions (Download, Delete, Rename, More actions) now sit inside the Name column; the capture environment was unavailable on this run. -->
 
 ![](../images/split_panel_folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder on a wide (xl) screen, split-panel folder explorer with the row actions inside the Name column; the capture environment was unavailable on this run. -->
 
 ### ファイル操作
 
@@ -112,7 +110,6 @@ Backend.AIは、ユーザーのファイルを安全に保管するための専�
 フォルダーエクスプローラーでテキストファイルを直接編集できます。フォルダー名をクリックしてファイルエクスプローラーを開き、**名前**列にあるテキストファイルの行で**その他の操作**（⋮）メニューを開き、**ファイルを編集**を選択します。
 
 ![](../images/folder_explorer_edit_button.png)
-<!-- TODO(screenshot): /data -> open a storage folder, open the More actions (⋮) menu on a text file's row in the Name column so the Edit File item is visible; the capture environment was unavailable on this run. -->
 
 テキストファイルエディタがコードエディタインターフェースとともにモーダルで開きます。エディタはファイル拡張子に基づいてファイルタイプを自動検出し、適切な構文ハイライトを適用します(例: Python、JavaScript、Markdown)。モーダルのタイトルにはファイル名とサイズが表示されます。
 

@@ -74,10 +74,8 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 넓은 화면(xl 이상)에서는 드래그 가능한 구분선으로 두 패널을 분리해 워크플로우에 맞게 크기를 조절합니다. 좁은 화면에서는 패널이 세로로 쌓입니다.
 
 ![](../images/folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder, folder explorer left panel. The row actions (Download, Delete, Rename, More actions) now sit inside the Name column; the capture environment was unavailable on this run. -->
 
 ![](../images/split_panel_folder_explorer.png)
-<!-- TODO(screenshot): /data -> open a storage folder on a wide (xl) screen, split-panel folder explorer with the row actions inside the Name column; the capture environment was unavailable on this run. -->
 
 ### 파일 작업
 
@@ -111,7 +109,6 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 폴더 탐색기에서 텍스트 파일을 직접 편집합니다. 폴더 이름을 클릭하여 파일 탐색기를 연 다음, **이름** 열에서 해당 텍스트 파일 행의 **추가 작업**(⋮) 메뉴를 열고 **파일 편집**을 선택합니다.
 
 ![](../images/folder_explorer_edit_button.png)
-<!-- TODO(screenshot): /data -> open a storage folder, open the More actions (⋮) menu on a text file's row in the Name column so the Edit File item is visible; the capture environment was unavailable on this run. -->
 
 텍스트 파일 편집기가 코드 편집기 인터페이스와 함께 모달로 열립니다. 편집기는 파일 확장자를 기반으로 파일 유형을 자동으로 감지하고 적절한 구문 강조를 적용합니다(예: Python, JavaScript, Markdown). 모달 제목에는 파일 이름과 크기가 표시됩니다.
 
