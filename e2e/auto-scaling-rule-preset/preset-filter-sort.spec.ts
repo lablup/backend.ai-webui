@@ -282,11 +282,7 @@ test.describe(
       await expect(page.getByRole('table')).toBeVisible({ timeout: 60000 });
 
       // Click the Name column header to sort ascending
-      // Use exact: true to avoid matching "Metric Name" column header
-      const nameHeader = page.getByRole('columnheader', {
-        name: 'Name',
-        exact: true,
-      });
+      const nameHeader = presetColumnHeader(page, 'Name');
       await nameHeader.click();
 
       // Verify sort indicator: aria-sort="ascending" on the Name column header
@@ -308,11 +304,7 @@ test.describe(
       await expect(page.getByRole('table')).toBeVisible({ timeout: 60000 });
 
       // Click Name header once (ascending), then again (descending)
-      // Use exact: true to avoid matching "Metric Name" column header
-      const nameHeader = page.getByRole('columnheader', {
-        name: 'Name',
-        exact: true,
-      });
+      const nameHeader = presetColumnHeader(page, 'Name');
       await nameHeader.click();
       await expect(nameHeader).toHaveAttribute('aria-sort', 'ascending', {
         timeout: 10000,

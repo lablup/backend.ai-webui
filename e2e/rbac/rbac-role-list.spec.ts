@@ -158,10 +158,19 @@ test.describe(
       // 4-7. Apply a Role Name filter with a known partial name
       await applyRoleFilter(page, 'Role Name', 'super');
 
-      // 8. Verify the table only shows roles with names matching the search
-      await expect(
-        page.getByRole('row').filter({ hasText: /super/i }).first(),
-      ).toBeVisible({ timeout: 10000 });
+      // 8. Verify the table shows ONLY roles whose name matches the search.
+      // Asserting "some row contains super" would also pass on an unfiltered
+      // list, so require every returned row to match.
+      await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
+      await expect(async () => {
+        const rows = await roleDataRows(page).all();
+        expect(rows.length).toBeGreaterThan(0);
+        for (const row of rows) {
+          // Role Name is the first column (RoleNodes.tsx column order).
+          const name = await row.getByRole('cell').first().innerText();
+          expect(name.toLowerCase()).toContain('super');
+        }
+      }).toPass({ timeout: 10000 });
 
       // 9. Remove the filter chip
       const filterChip = page.getByRole('button', {
@@ -201,13 +210,18 @@ test.describe(
 
       // 7. Verify the table shows only roles with "System" in the Source
       // column. The Source column renders plain text (no antd `.ant-tag`).
-      await expect(
-        roleDataRows(page).first().getByRole('cell', { name: 'System' }),
-      ).toBeVisible({ timeout: 10000 });
-      const systemCellsVisible = await page
-        .getByRole('cell', { name: 'System', exact: true })
-        .count();
-      expect(systemCellsVisible).toBeGreaterThan(0);
+      // "at least one System cell exists" would also hold on an unfiltered
+      // list, so require the Source cell of every returned row to be System.
+      await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
+      await expect(async () => {
+        const rows = await roleDataRows(page).all();
+        expect(rows.length).toBeGreaterThan(0);
+        for (const row of rows) {
+          // Source is the 5th column (RoleNodes.tsx column order).
+          const source = await row.getByRole('cell').nth(4).innerText();
+          expect(source.trim()).toBe('System');
+        }
+      }).toPass({ timeout: 10000 });
 
       // 8. Remove the filter chip
       const filterChip = page.getByRole('button', {
@@ -273,13 +287,19 @@ test.describe(
       const nameHeader = roleColumnHeader(page, 'Role Name');
       await nameHeader.click();
 
-      // 5. Verify a sort indicator appears on the column header (class changes)
-      await expect(nameHeader).toBeVisible();
+      // 5. Verify the sort actually engaged — "header is still visible" would
+      // pass even if clicking did nothing.
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'ascending', {
+        timeout: 10000,
+      });
 
       // 6. Click the "Role Name" column header again to sort descending
       await nameHeader.click();
 
-      // 7. Verify the table rows are still visible (they may have reordered)
+      // 7. Verify the sort direction flipped and rows are still rendered
+      await expect(nameHeader).toHaveAttribute('aria-sort', 'descending', {
+        timeout: 10000,
+      });
       await expect(roleDataRows(page).first()).toBeVisible({
         timeout: 5000,
       });
