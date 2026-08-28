@@ -1,7 +1,11 @@
 import { BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromGroupFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
-import { SemanticColor } from '../../helper';
+import {
+  SemanticColor,
+  v2AllowedVfolderHostsToRecord,
+  type V2AllowedVfolderHostEntry,
+} from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
@@ -17,10 +21,21 @@ export type BAIAllowedVfolderHostsWithPermissionProps =
   | {
       allowedHostPermissionFrgmtFromKeyPair: BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key;
       allowedHostPermissionFrgmtFromGroup?: never;
+      allowedVfolderHostEntries?: never;
     }
   | {
       allowedHostPermissionFrgmtFromKeyPair?: never;
       allowedHostPermissionFrgmtFromGroup: BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key;
+      allowedVfolderHostEntries?: never;
+    }
+  | {
+      allowedHostPermissionFrgmtFromKeyPair?: never;
+      allowedHostPermissionFrgmtFromGroup?: never;
+      /**
+       * The Strawberry V2 `[VFolderHostPermissionEntry!]` shape, for callers
+       * on a V2 node that has no JSONString field to spread a fragment from.
+       */
+      allowedVfolderHostEntries: ReadonlyArray<V2AllowedVfolderHostEntry>;
     };
 
 const BAIAllowedVfolderHostsWithPermission: React.FC<
@@ -28,6 +43,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
 > = ({
   allowedHostPermissionFrgmtFromKeyPair,
   allowedHostPermissionFrgmtFromGroup,
+  allowedVfolderHostEntries,
 }) => {
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
@@ -53,11 +69,14 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
       allowedHostPermissionFrgmtFromGroup,
     );
 
-  const allowedVfolderHosts = JSON.parse(
-    keypairResourcePolicy?.allowed_vfolder_hosts ||
-      groupNode?.allowed_vfolder_hosts ||
-      '{}',
-  );
+  const allowedVfolderHosts: Record<string, string[]> =
+    allowedVfolderHostEntries
+      ? v2AllowedVfolderHostsToRecord(allowedVfolderHostEntries)
+      : JSON.parse(
+          keypairResourcePolicy?.allowed_vfolder_hosts ||
+            groupNode?.allowed_vfolder_hosts ||
+            '{}',
+        );
 
   const { vfolder_host_permissions } =
     useLazyLoadQuery<BAIAllowedVfolderHostsWithPermissionQuery>(

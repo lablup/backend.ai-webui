@@ -179,6 +179,8 @@
     "operator": {
       "After": "setelah",
       "Before": "sebelum",
+      "Contains": "mengandung",
+      "EndsWith": "diakhiri dengan",
       "Equals": "sama dengan",
       "GreaterThan": "lebih besar dari",
       "GreaterThanOrEqual": "lebih besar atau sama",
@@ -193,8 +195,12 @@
       "In": "dalam",
       "LessThan": "kurang dari",
       "LessThanOrEqual": "kurang dari atau sama",
+      "NotContains": "tidak berisi",
+      "NotEndsWith": "tidak diakhiri dengan",
       "NotEquals": "tidak sama dengan",
-      "NotIn": "tidak dalam"
+      "NotIn": "tidak dalam",
+      "NotStartsWith": "tidak dimulai dengan",
+      "StartsWith": "dimulai dengan"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "Ukuran",
     "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
     "Version": "Versi"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Ukuran Klaster",
+    "Concurrency": "Sesi Serentak",
+    "CreatedAt": "Dibuat di",
+    "DefaultForUnspecified": "Default untuk tidak ditentukan",
+    "DefaultForUnspecifiedTooltipDesc1": "Menetapkan kebijakan default ketika tidak ada CPU atau memori tertentu yang diminta.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' memungkinkan penggunaan hingga kapasitas agen node, sementara 'Limited' menolak sumber daya kecuali diatur secara eksplisit. \nDalam kebanyakan kasus, 'tidak terbatas' direkomendasikan.",
+    "IdleTimeout": "Batas Waktu Diam",
+    "MaxConcurrentSFTPSessions": "Sesi SFTP Max Concurrent",
+    "MaxPendingSessionCount": "Hitungan sesi Max Tertunda",
+    "MaxPendingSessionResourceSlots": "Slot sumber daya sesi maks yang tertunda",
+    "MaxSessionLifetime": "Sesi Maksimal Seumur Hidup",
+    "Name": "Nama",
+    "StorageNodes": "Node Penyimpanan",
+    "TotalResourceSlots": "Kebijakan Sumber Daya"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Pilih Keypair"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Dibuat di",
+    "MaxNetworkCount": "Jumlah Jaringan Maks",
+    "MaxQuotaScopeSize": "Ukuran Folder Maks",
+    "MaxVFolderCount": "Jumlah Folder Maks",
+    "Name": "Nama"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Pilih Proyek"

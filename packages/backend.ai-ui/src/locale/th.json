@@ -179,6 +179,8 @@
     "operator": {
       "After": "หลัง",
       "Before": "ก่อน",
+      "Contains": "ประกอบด้วย",
+      "EndsWith": "ลงท้ายด้วย",
       "Equals": "เท่ากับ",
       "GreaterThan": "มากกว่า",
       "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
@@ -193,8 +195,12 @@
       "In": "ใน",
       "LessThan": "น้อยกว่า",
       "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotContains": "ไม่มี",
+      "NotEndsWith": "ไม่ลงท้ายด้วย",
       "NotEquals": "ไม่เท่ากับ",
-      "NotIn": "ไม่ใน"
+      "NotIn": "ไม่ใน",
+      "NotStartsWith": "ไม่เริ่มต้นด้วย",
+      "StartsWith": "เริ่มต้นด้วย"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "ขนาด",
     "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
     "Version": "รุ่น"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "ขนาดคลัสเตอร์",
+    "Concurrency": "เซสชันที่ทำงานพร้อมกัน",
+    "CreatedAt": "สร้างเมื่อ",
+    "DefaultForUnspecified": "ค่าเริ่มต้นสำหรับการไม่ระบุ",
+    "DefaultForUnspecifiedTooltipDesc1": "ตั้งค่านโยบายเริ่มต้นเมื่อไม่มีการร้องขอ CPU หรือหน่วยความจำเฉพาะ",
+    "DefaultForUnspecifiedTooltipDesc2": "'ไม่ จำกัด ' ช่วยให้การใช้งานตามความจุของเอเจนต์โหนดในขณะที่ 'จำกัด ' ปฏิเสธทรัพยากรเว้นแต่จะตั้งค่าไว้อย่างชัดเจน \nในกรณีส่วนใหญ่แนะนำให้ 'ไม่ จำกัด '",
+    "IdleTimeout": "หมดเวลาเมื่อไม่มีการใช้งาน",
+    "MaxConcurrentSFTPSessions": "เซสชัน SFTP ที่เกิดขึ้นพร้อมกันสูงสุด",
+    "MaxPendingSessionCount": "จำนวนเซสชันที่ค้างอยู่สูงสุด",
+    "MaxPendingSessionResourceSlots": "ช่องทรัพยากรเซสชันที่รออยู่สูงสุด",
+    "MaxSessionLifetime": "อายุการใช้งานสูงสุดของเซสชัน",
+    "Name": "ชื่อ",
+    "StorageNodes": "โหนดจัดเก็บ",
+    "TotalResourceSlots": "นโยบายทรัพยากร"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "เลือกคู่คีย์"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
     "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "สร้างเมื่อ",
+    "MaxNetworkCount": "จำนวนเครือข่ายสูงสุด",
+    "MaxQuotaScopeSize": "ขนาดโฟลเดอร์สูงสุด",
+    "MaxVFolderCount": "จำนวนโฟลเดอร์สูงสุด",
+    "Name": "ชื่อ"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "เลือกโปรเจกต์"

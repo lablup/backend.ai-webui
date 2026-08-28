@@ -179,6 +179,8 @@
     "operator": {
       "After": "selepas",
       "Before": "sebelum",
+      "Contains": "mengandungi",
+      "EndsWith": "berakhir dengan",
       "Equals": "sama dengan",
       "GreaterThan": "lebih besar daripada",
       "GreaterThanOrEqual": "lebih besar atau sama",
@@ -193,8 +195,12 @@
       "In": "dalam",
       "LessThan": "kurang daripada",
       "LessThanOrEqual": "kurang atau sama",
+      "NotContains": "tidak mengandungi",
+      "NotEndsWith": "tidak berakhir dengan",
       "NotEquals": "tidak sama dengan",
-      "NotIn": "tidak dalam"
+      "NotIn": "tidak dalam",
+      "NotStartsWith": "tidak bermula dengan",
+      "StartsWith": "bermula dengan"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "Saiz",
     "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
     "Version": "Versi"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Saiz Kluster",
+    "Concurrency": "Sesi Serentak",
+    "CreatedAt": "Dicipta Pada",
+    "DefaultForUnspecified": "Lalai untuk tidak ditentukan",
+    "DefaultForUnspecifiedTooltipDesc1": "Menetapkan dasar lalai apabila tiada CPU atau memori tertentu diminta.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' membolehkan penggunaan sehingga kapasiti node ejen, sementara 'Limited' menafikan sumber kecuali secara jelas ditetapkan. \nDalam kebanyakan kes, 'tidak terhad' disyorkan.",
+    "IdleTimeout": "Tamat Masa Terbiar",
+    "MaxConcurrentSFTPSessions": "Sesi SFTP bersamaan Max",
+    "MaxPendingSessionCount": "Kiraan sesi maksimum yang belum selesai",
+    "MaxPendingSessionResourceSlots": "Slot sumber sesi maksimum yang belum selesai",
+    "MaxSessionLifetime": "Sepanjang Hayat Sesi Maks",
+    "Name": "Nama",
+    "StorageNodes": "Nod Penyimpanan",
+    "TotalResourceSlots": "Dasar Sumber"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Pilih Pasangan Kunci"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Projek berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",
     "UpdateMultipleProjects": "Kemas kini Beberapa Projek"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Dicipta Pada",
+    "MaxNetworkCount": "Kiraan Rangkaian Maks",
+    "MaxQuotaScopeSize": "Saiz Folder Maks",
+    "MaxVFolderCount": "Kiraan Folder Maks",
+    "Name": "Nama"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Pilih Projek"

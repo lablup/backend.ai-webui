@@ -57,6 +57,12 @@ export const docs = {
       description:
         'Fragment reference on GroupNode, read for the same allowed_vfolder_hosts field. Give this or allowedHostPermissionFrgmtFromKeyPair, never both.',
     },
+    {
+      name: 'allowedVfolderHostEntries',
+      type: 'ReadonlyArray<{ host: string; permissions: ReadonlyArray<string> }>',
+      description:
+        'The Strawberry V2 allowedVfolderHosts list, passed as plain data instead of a fragment reference. Permission values may be V2 enum names (MOUNT_IN_SESSION) — they are normalized to the canonical kebab keys internally. Mutually exclusive with the two fragment props.',
+    },
   ],
   examples: [
     {

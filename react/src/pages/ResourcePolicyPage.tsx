@@ -2,10 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { KeypairResourcePolicyV2Query as KeypairResourcePolicyV2QueryType } from '../__generated__/KeypairResourcePolicyV2Query.graphql';
+import type { ProjectResourcePolicyV2Query as ProjectResourcePolicyV2QueryType } from '../__generated__/ProjectResourcePolicyV2Query.graphql';
 import type { UserResourcePolicyV2Query as UserResourcePolicyV2QueryType } from '../__generated__/UserResourcePolicyV2Query.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import KeypairResourcePolicyList from '../components/KeypairResourcePolicyList';
+import KeypairResourcePolicyV2, {
+  KeypairResourcePolicyV2Query,
+} from '../components/KeypairResourcePolicyV2';
 import ProjectResourcePolicyList from '../components/ProjectResourcePolicyList';
+import ProjectResourcePolicyV2, {
+  ProjectResourcePolicyV2Query,
+} from '../components/ProjectResourcePolicyV2';
 import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import UserResourcePolicyV2, {
   UserResourcePolicyV2Query,
@@ -59,6 +67,63 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     [currentTab],
   );
 
+  const [keypairResourcePolicyQueryRef, loadKeypairResourcePolicyQuery] =
+    useQueryLoader<KeypairResourcePolicyV2QueryType>(
+      KeypairResourcePolicyV2Query,
+    );
+
+  const ensureKeypairResourcePolicyLoaded = useEffectEvent(() => {
+    if (
+      supportsSubFilter &&
+      currentTab === 'keypair' &&
+      !keypairResourcePolicyQueryRef
+    ) {
+      loadKeypairResourcePolicyQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+  });
+  useEffect(
+    function loadKeypairResourcePolicyOnTabActivation() {
+      ensureKeypairResourcePolicyLoaded();
+    },
+    [currentTab],
+  );
+
+  const [projectResourcePolicyQueryRef, loadProjectResourcePolicyQuery] =
+    useQueryLoader<ProjectResourcePolicyV2QueryType>(
+      ProjectResourcePolicyV2Query,
+    );
+
+  const ensureProjectResourcePolicyLoaded = useEffectEvent(() => {
+    if (
+      supportsSubFilter &&
+      supportsBinarySizeExpr &&
+      currentTab === 'project' &&
+      !projectResourcePolicyQueryRef
+    ) {
+      loadProjectResourcePolicyQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+  });
+  useEffect(
+    function loadProjectResourcePolicyOnTabActivation() {
+      ensureProjectResourcePolicyLoaded();
+    },
+    [currentTab],
+  );
+
   return (
     <BAICard
       activeTabKey={currentTab}
@@ -81,7 +146,18 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       <Suspense fallback={<BAISkeleton />}>
         {currentTab === 'keypair' && (
           <BAIErrorBoundary>
-            <KeypairResourcePolicyList />
+            {supportsSubFilter ? (
+              keypairResourcePolicyQueryRef ? (
+                <KeypairResourcePolicyV2
+                  queryRef={keypairResourcePolicyQueryRef}
+                  onReload={loadKeypairResourcePolicyQuery}
+                />
+              ) : (
+                <BAISkeleton />
+              )
+            ) : (
+              <KeypairResourcePolicyList />
+            )}
           </BAIErrorBoundary>
         )}
         {currentTab === 'user' && (
@@ -102,7 +178,18 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
         )}
         {currentTab === 'project' && (
           <BAIErrorBoundary>
-            <ProjectResourcePolicyList />
+            {supportsSubFilter && supportsBinarySizeExpr ? (
+              projectResourcePolicyQueryRef ? (
+                <ProjectResourcePolicyV2
+                  queryRef={projectResourcePolicyQueryRef}
+                  onReload={loadProjectResourcePolicyQuery}
+                />
+              ) : (
+                <BAISkeleton />
+              )
+            ) : (
+              <ProjectResourcePolicyList />
+            )}
           </BAIErrorBoundary>
         )}
       </Suspense>

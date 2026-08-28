@@ -179,6 +179,8 @@
     "operator": {
       "After": "дараа",
       "Before": "өмнө",
+      "Contains": "агуулсан",
+      "EndsWith": "төгсдөг",
       "Equals": "тэнцүү",
       "GreaterThan": "их",
       "GreaterThanOrEqual": "их эсвэл тэнцүү",
@@ -193,8 +195,12 @@
       "In": "дотор",
       "LessThan": "бага",
       "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotContains": "агуулаагүй",
+      "NotEndsWith": "төгсдөггүй",
       "NotEquals": "тэнцүү биш",
-      "NotIn": "дотор биш"
+      "NotIn": "дотор биш",
+      "NotStartsWith": "эхэлдэггүй",
+      "StartsWith": "эхэлдэг"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -215,6 +221,22 @@
     "Size": "Хэмжээ",
     "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
     "Version": "Таамаглал"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Кластерийн хэмжээ",
+    "Concurrency": "Зэрэгцээ сессүүд",
+    "CreatedAt": "Үүсгэсэн",
+    "DefaultForUnspecified": "Тодорхойлогдоогүй тохиолдолд анхдагч",
+    "DefaultForUnspecifiedTooltipDesc1": "Тодорхой CPU эсвэл санах ой байхгүй үед үндсэн бодлогыг тохируулна.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Хязгааргүй' нь агент зангилааны хүчин чадлыг ашиглах боломжийг олгодог бөгөөд 'Хязгаарлагдмал' нөөцийг ашиглахгүй бол нөөцийг үгүйсгэхгүй. \nИхэнх тохиолдолд 'Хязгааргүй' зөвлөж байна.",
+    "IdleTimeout": "Сул зогсолтын хугацаа",
+    "MaxConcurrentSFTPSessions": "Макс тохиролцсон SFTP хуралдаанууд",
+    "MaxPendingSessionCount": "Макс хүлээгдэж буй хуралдааны тоо",
+    "MaxPendingSessionResourceSlots": "Макс хүлээгдэж буй сешний нөөцийн слотууд",
+    "MaxSessionLifetime": "Хамгийн их сессийн ашиглалтын хугацаа",
+    "Name": "Нэр",
+    "StorageNodes": "Хадгалах цэгүүд",
+    "TotalResourceSlots": "Нөөцийн бодлого"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Түлхүүрийн хос сонгох"
@@ -276,6 +298,13 @@
     "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Үүсгэсэн",
+    "MaxNetworkCount": "Хамгийн их сүлжээний тоо",
+    "MaxQuotaScopeSize": "Хавтасны хамгийн их хэмжээ",
+    "MaxVFolderCount": "Хамгийн их хавтасны тоо",
+    "Name": "Нэр"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Төсөл сонгох"
