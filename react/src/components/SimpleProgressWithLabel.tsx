@@ -36,7 +36,9 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
 
   if (size === 'default') {
     return (
-      <>
+      // One box, not a fragment: as siblings the label row and the bar become
+      // two separate cells wherever this is dropped into a Grid.
+      <BAIFlex direction="column" align="stretch" gap={3}>
         <BAIFlex justify="between">
           <Text>{title}</Text>
           {/* antd `type="secondary" fontSize={fontSizeSM}` is exactly Astryx's
@@ -62,7 +64,7 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
             height: token.sizeXS,
           }}
         />
-      </>
+      </BAIFlex>
     );
   }
 
