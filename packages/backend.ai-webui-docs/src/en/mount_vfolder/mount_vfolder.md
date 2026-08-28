@@ -78,8 +78,6 @@ to download the file to the local machine and open it
 to confirm that the contents are \"file inside user2-vfolder\".
 
 ![](../images/download_file_from_folder.png)
-<!-- TODO(screenshot): Re-capture download_file_from_folder.png — /data -> open a folder's file explorer, showing the row actions (Download, Edit File, Delete) inline in the Name column. -->
-
 
 Performing file management on a mounted folder when you create a compute session,
 data can be preserved even after users ends the compute session.
