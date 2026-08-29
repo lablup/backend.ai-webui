@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=./schema.json
+type: UserNode
+docs: admin_menu#browse-and-manage-users
+meaning: One user account, as the admin Users page lists and edits it.
+fields:
+  email:
+    meaning: The address the user signs in with; it is the account's identity and cannot be changed.
+    docs: admin_menu#browse-and-manage-users
+  username:
+    label: User Name
+    meaning: The display name shown next to the account across the WebUI.
+    docs: admin_menu#browse-and-manage-users
+  status:
+    label: Status
+    meaning: Whether the account may sign in, and whether it still exists at all.
+    docs: admin_menu#inactivate-user-account
+    values:
+      active:
+        label: Active
+        meaning: The account can sign in and use the WebUI normally.
+        variant: success
+      inactive:
+        label: Inactive
+        meaning: The account is disabled and cannot sign in, but its data is kept.
+        variant: warning
+      before-verification:
+        label: Before Verification
+        meaning: The account was created by sign-up and is waiting for its email to be verified.
+        variant: info
+      deleted:
+        label: Deleted
+        meaning: The account was purged; only an administrator sees it, and it cannot sign in.
+        variant: error
+  role:
+    label: Role
+    meaning: How far the account's built-in authority reaches, which decides the menus it sees.
+    concept: rbac-role
+    docs: admin_menu#browse-and-manage-users
+    values:
+      user:
+        label: User
+        meaning: An ordinary account, limited to its own sessions, folders and settings.
+        concept: role-user
+        variant: neutral
+      admin:
+        label: Admin
+        meaning: A domain administrator, who manages the users and resources of its own domain.
+        concept: role-domain-admin
+        variant: blue
+      superadmin:
+        label: Superadmin
+        meaning: An administrator of the whole installation, including agents, images and every domain.
+        concept: role-superadmin
+        variant: red
+      monitor:
+        label: Monitor
+        meaning: A read-only account meant for monitoring integrations rather than for a person.
+        variant: purple
+  is_active:
+    label: Active
+    meaning: The boolean shorthand for the status; false is what the Inactivate action sets.
+    docs: admin_menu#inactivate-user-account
+  domain_name:
+    label: Domain
+    meaning: The domain the account belongs to, which bounds every resource it can reach.
+    concept: domain
+    docs: admin_menu#browse-and-manage-users
+  resource_policy:
+    label: Resource Policy
+    meaning: The user resource policy capping what this account may allocate at once.
+    concept: resource-policy
+    docs: admin_menu#manage-resource-policies
+  totp_activated:
+    label: Two-Factor Authentication
+    meaning: Whether the account is required to enter a one-time code at sign-in.
+    docs: admin_menu#browse-and-manage-users
+  need_password_change:
+    label: Require Password Change
+    meaning: Whether the account must set a new password the next time it signs in.
+    docs: admin_menu#browse-and-manage-users

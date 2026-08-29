@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=./schema.json
+# The pre-node Agent type. Same vocabulary as AgentNode; the Agent Summary page
+# and the legacy admin agent list still read it.
+type: Agent
+concept: agent
+docs: admin_menu#manage-agent-nodes
+meaning: One agent, read through the pre-node API that the Agent Summary page still uses.
+fields:
+  status:
+    meaning: Whether the manager can still reach the agent, and therefore whether it can take new sessions.
+    docs: admin_menu#manage-agent-nodes
+    values:
+      ALIVE:
+        label: Alive
+        meaning: The agent is reporting in and can be scheduled onto.
+        variant: success
+      LOST:
+        label: Lost
+        meaning: The agent stopped reporting in; its sessions are unreachable until it comes back.
+        variant: error
+      RESTARTING:
+        label: Restarting
+        meaning: The agent is coming back up and is not schedulable yet.
+        variant: warning
+      TERMINATED:
+        label: Terminated
+        meaning: The agent was shut down and left the cluster.
+        variant: neutral
+  schedulable:
+    meaning: Whether an administrator allows the scheduler to place new sessions on this agent.
+    docs: admin_menu#manage-agent-nodes
+  scaling_group:
+    meaning: The resource group this agent contributes its resources to.
+    concept: resource-group
+    docs: admin_menu#resource-group
+  live_stat:
+    label: Utilization
+    meaning: The agent's most recent utilization sample, which the Agent Summary panels chart.
+    docs: agent_summary#columns
+  compute_plugins:
+    label: Accelerators
+    meaning: The accelerator plugins the agent loaded, which is what makes fractional GPU slots available.
+    concept: fractional-gpu
+    docs: agent_summary#columns
