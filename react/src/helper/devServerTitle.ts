@@ -14,15 +14,26 @@
  * preserved. Mirrors the `VITE_THEME_HEADER_COLOR` dev-only env pattern in
  * `customThemeConfig.ts`.
  *
- * Prefixes the *existing* `document.title` (rather than hard-coding the base)
- * so it never drifts from `index.html`, and is idempotent — re-invoking it
- * (e.g. on HMR) does not double-prefix.
+ * Returns the title unchanged outside dev, and is idempotent — re-prefixing an
+ * already-prefixed title is a no-op.
+ */
+export const withDevServerTitlePrefix = (title: string): string => {
+  if (!import.meta.env.DEV || !import.meta.env.VITE_DEV_SERVER_NAME) {
+    return title;
+  }
+  const prefix = `[${import.meta.env.VITE_DEV_SERVER_NAME}] `;
+  return title.startsWith(prefix) ? title : `${prefix}${title}`;
+};
+
+/**
+ * Applies the dev prefix to the *existing* `document.title` (rather than
+ * hard-coding the base) so it never drifts from `index.html`. Route-driven
+ * titles go through `withDevServerTitlePrefix` in `RouteDocumentTitle`
+ * instead, which keeps the prefix across navigations.
  */
 export const applyDevServerTitle = () => {
-  if (import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_NAME) {
-    const prefix = `[${import.meta.env.VITE_DEV_SERVER_NAME}] `;
-    if (!document.title.startsWith(prefix)) {
-      document.title = `${prefix}${document.title}`;
-    }
+  const next = withDevServerTitlePrefix(document.title);
+  if (next !== document.title) {
+    document.title = next;
   }
 };

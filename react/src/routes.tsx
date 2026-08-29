@@ -14,6 +14,7 @@ import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
 import MainLayout from './components/MainLayout/MainLayout';
 import ProjectScopeLayout from './components/MainLayout/ProjectScopeLayout';
 import RouteAccessGuard from './components/RouteAccessGuard';
+import RouteDocumentTitle from './components/RouteDocumentTitle';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
@@ -1634,6 +1635,11 @@ export const routes: RouteObject[] = [
             <Suspense>
               <LoginView />
             </Suspense>
+            {/* Mounted here (not in MainLayout) so the login screen gets a
+                title too — MainLayout's body only renders once connected. */}
+            <ErrorBoundaryWithNullFallback>
+              <RouteDocumentTitle />
+            </ErrorBoundaryWithNullFallback>
             {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
             <MainLayout />
             <ErrorBoundaryWithNullFallback>
