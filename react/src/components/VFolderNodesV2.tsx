@@ -15,6 +15,7 @@ import {
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
 import { App } from '../app-shim';
+import { resourceLocation } from '../helper/resourcePath';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
@@ -610,9 +611,8 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                 e.preventDefault();
                 navigate({
                   pathname: buildProjectPath('session', { scope: 'project' }),
-                  search: new URLSearchParams({
-                    sessionDetail: sessionId,
-                  }).toString(),
+                  search: resourceLocation({ type: 'session', id: sessionId })
+                    .search,
                 });
               }}
             >

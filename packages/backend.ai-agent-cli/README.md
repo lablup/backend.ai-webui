@@ -598,10 +598,11 @@ CLI takes no dependency on the host app, so the rules cannot be imported.
 `react/src/helper/resourcePath.fixture.json`, and `webui-path.test.ts` asserts
 every case in it.
 
-**The two fixture files must be kept identical.** When the host's rules change,
-its test regenerates its fixture; copy the new file over this one and fix
-`webui-path.ts` until the parity test passes again — never edit the fixture to
-match the CLI.
+**The two fixture files must be kept identical**, and
+`webui-path.parity.test.ts` fails when they are not. When the host's rules
+change, its test regenerates its fixture; copy the new file over this one and
+fix `webui-path.ts` until the parity test passes again — never edit the fixture
+to match the CLI.
 
 ## Explain
 

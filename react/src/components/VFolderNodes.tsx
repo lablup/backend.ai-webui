@@ -15,6 +15,7 @@ import {
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
 import { App } from '../app-shim';
+import { resourceLocation } from '../helper/resourcePath';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -489,9 +490,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                                             'session',
                                             { scope: 'project' },
                                           ),
-                                          search: new URLSearchParams({
-                                            sessionDetail: sessionId,
-                                          }).toString(),
+                                          search: resourceLocation({
+                                            type: 'session',
+                                            id: sessionId,
+                                          }).search,
                                         });
                                       }}
                                     >

@@ -8,6 +8,7 @@ import type {
   SessionV2Status,
 } from '../../__generated__/AgentSessionsQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import { resourceLocation } from '../../helper/resourcePath';
 import { useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
@@ -213,13 +214,15 @@ const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
                 <BAILink
                   type="hover"
                   onClick={() => {
-                    webUINavigate(
-                      `${buildProjectPath('session', { scope: 'admin' })}?${new URLSearchParams(
-                        {
-                          sessionDetail: toLocalId(session.id),
-                        },
-                      ).toString()}`,
-                    );
+                    webUINavigate({
+                      pathname: buildProjectPath('session', {
+                        scope: 'admin',
+                      }),
+                      search: resourceLocation({
+                        type: 'session',
+                        id: toLocalId(session.id),
+                      }).search,
+                    });
                   }}
                 >
                   {session.metadata?.name ?? '-'}
