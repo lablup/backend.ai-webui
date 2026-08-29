@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIComputeSessionNodeNotificationItemFragment$key } from '../__generated__/BAIComputeSessionNodeNotificationItemFragment.graphql';
+import { resourceLocation } from '../helper/resourcePath';
 import { useWebUINavigate } from '../hooks';
 import {
   NotificationState,
@@ -95,9 +96,17 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
                 }}
                 title={node.name || ''}
                 onClick={() => {
-                  navigate(
-                    `${buildProjectPath('session', { scope: 'project' })}${node.id ? `?${new URLSearchParams({ sessionDetail: toLocalId(node.id) }).toString()}` : ''}`,
-                  );
+                  navigate({
+                    pathname: buildProjectPath('session', {
+                      scope: 'project',
+                    }),
+                    search: node.id
+                      ? resourceLocation({
+                          type: 'session',
+                          id: toLocalId(node.id),
+                        }).search
+                      : '',
+                  });
                   closeNotification(notification.key);
                 }}
               >

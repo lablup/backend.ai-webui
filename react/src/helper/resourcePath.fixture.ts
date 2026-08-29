@@ -1,0 +1,236 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
+ * Cross-implementation parity fixture for `resourcePath` (FR-3759).
+ *
+ * Plain JSON-serialisable data on purpose: `resourcePath.test.ts` asserts the
+ * helper against it AND regenerates `resourcePath.fixture.json`, which the CLI
+ * reads to prove its own `webui_path` produces byte-identical routes.
+ *
+ * Every `ResourceRef` member and every view is covered — a new type/view without
+ * a case here fails the exhaustiveness assertion in the test.
+ */
+import type { ResourceRef } from './resourcePath';
+
+export interface ResourcePathCase {
+  /** What the case pins down, for readable test output and CLI diffs. */
+  name: string;
+  ref: ResourceRef;
+  expected: string;
+}
+
+export const RESOURCE_PATH_CASES: ReadonlyArray<ResourcePathCase> = [
+  // --- session: one addressable surface (the detail drawer) for all views ---
+  {
+    name: 'session without a view defaults to detail',
+    ref: { type: 'session', id: 'sess-1' },
+    expected: '/session?sessionDetail=sess-1',
+  },
+  {
+    name: 'session detail',
+    ref: { type: 'session', id: 'sess-1', view: 'detail' },
+    expected: '/session?sessionDetail=sess-1',
+  },
+  {
+    name: 'session scheduling history opens the same drawer (no URL state yet)',
+    ref: { type: 'session', id: 'sess-1', view: 'scheduling_history' },
+    expected: '/session?sessionDetail=sess-1',
+  },
+  {
+    name: 'session container log opens the same drawer (no URL state yet)',
+    ref: { type: 'session', id: 'sess-1', view: 'container_log' },
+    expected: '/session?sessionDetail=sess-1',
+  },
+  {
+    name: 'session id is percent-encoded in the query',
+    ref: { type: 'session', id: 'a b/c' },
+    expected: '/session?sessionDetail=a+b%2Fc',
+  },
+
+  // --- vfolder ---
+  {
+    name: 'vfolder without a path',
+    ref: { type: 'vfolder', id: 'vf-1' },
+    expected: '/data?folder=vf-1',
+  },
+  {
+    name: 'vfolder with an inner path',
+    ref: { type: 'vfolder', id: 'vf-1', path: 'models/llama' },
+    expected: '/data?folder=vf-1&path=models%2Fllama',
+  },
+  {
+    name: 'vfolder with an empty path still emits the param',
+    ref: { type: 'vfolder', id: 'vf-1', path: '' },
+    expected: '/data?folder=vf-1&path=',
+  },
+
+  // --- deployment: views are the detail page's section hashes ---
+  {
+    name: 'deployment without a view defaults to detail',
+    ref: { type: 'deployment', id: 'dep-1' },
+    expected: '/deployments/dep-1',
+  },
+  {
+    name: 'deployment detail',
+    ref: { type: 'deployment', id: 'dep-1', view: 'detail' },
+    expected: '/deployments/dep-1',
+  },
+  {
+    name: 'deployment revisions',
+    ref: { type: 'deployment', id: 'dep-1', view: 'revisions' },
+    expected: '/deployments/dep-1#revisions',
+  },
+  {
+    name: 'deployment access tokens',
+    ref: { type: 'deployment', id: 'dep-1', view: 'access_tokens' },
+    expected: '/deployments/dep-1#access-tokens',
+  },
+  {
+    name: 'deployment id is percent-encoded in the path segment',
+    ref: { type: 'deployment', id: 'dep/1' },
+    expected: '/deployments/dep%2F1',
+  },
+
+  // --- single-view detail types ---
+  {
+    name: 'model card',
+    ref: { type: 'model_card', id: 'mc-1' },
+    expected: '/model-store?modelCard=mc-1',
+  },
+  {
+    name: 'role',
+    ref: { type: 'role', id: 'role-1' },
+    expected: '/admin/rbac?roleDetail=role-1',
+  },
+  {
+    name: 'artifact',
+    ref: { type: 'artifact', id: 'art-1' },
+    expected: '/admin/reservoir/art-1',
+  },
+
+  // --- list: bare page ---
+  {
+    name: 'list sessions',
+    ref: { type: 'list', resource: 'session' },
+    expected: '/session',
+  },
+  {
+    name: 'list deployments',
+    ref: { type: 'list', resource: 'deployment' },
+    expected: '/deployments',
+  },
+  {
+    name: 'list vfolders',
+    ref: { type: 'list', resource: 'vfolder' },
+    expected: '/data',
+  },
+  {
+    name: 'list model cards',
+    ref: { type: 'list', resource: 'model_card' },
+    expected: '/model-store',
+  },
+  {
+    name: 'list roles',
+    ref: { type: 'list', resource: 'role' },
+    expected: '/admin/rbac',
+  },
+  {
+    name: 'list artifacts',
+    ref: { type: 'list', resource: 'artifact' },
+    expected: '/admin/reservoir',
+  },
+  {
+    name: 'list agents pins the shared page tab',
+    ref: { type: 'list', resource: 'agent' },
+    expected: '/admin/agent?tab=agents',
+  },
+  {
+    name: 'list users pins the shared page tab',
+    ref: { type: 'list', resource: 'user' },
+    expected: '/admin/users?tab=users',
+  },
+  {
+    name: 'list keypairs pins the shared page tab',
+    ref: { type: 'list', resource: 'keypair' },
+    expected: '/admin/users?tab=credentials',
+  },
+
+  // --- list: filter encoding (free text on some pages, JSON on others) ---
+  {
+    name: 'session list with a free-text filter',
+    ref: { type: 'list', resource: 'session', filter: 'name ilike "%train%"' },
+    expected: '/session?filter=name+ilike+%22%25train%25%22',
+  },
+  {
+    name: 'deployment list with a JSON filter',
+    ref: {
+      type: 'list',
+      resource: 'deployment',
+      filter: '{"status":{"in":["RUNNING"]}}',
+    },
+    expected:
+      '/deployments?filter=%7B%22status%22%3A%7B%22in%22%3A%5B%22RUNNING%22%5D%7D%7D',
+  },
+  {
+    name: 'model card list with a filter and no status param',
+    ref: { type: 'list', resource: 'model_card', filter: '{"name":"llama"}' },
+    expected: '/model-store?filter=%7B%22name%22%3A%22llama%22%7D',
+  },
+
+  // --- list: statusCategory maps to each page's own status param name ---
+  {
+    name: 'session list status uses statusCategory',
+    ref: { type: 'list', resource: 'session', statusCategory: 'finished' },
+    expected: '/session?statusCategory=finished',
+  },
+  {
+    name: 'deployment list status uses statusCategory',
+    ref: { type: 'list', resource: 'deployment', statusCategory: 'finished' },
+    expected: '/deployments?statusCategory=finished',
+  },
+  {
+    name: 'vfolder list status uses statusCategory',
+    ref: { type: 'list', resource: 'vfolder', statusCategory: 'deleted' },
+    expected: '/data?statusCategory=deleted',
+  },
+  {
+    name: 'role list status uses status',
+    ref: { type: 'list', resource: 'role', statusCategory: 'DELETED' },
+    expected: '/admin/rbac?status=DELETED',
+  },
+  {
+    name: 'artifact list status uses mode',
+    ref: { type: 'list', resource: 'artifact', statusCategory: 'DELETED' },
+    expected: '/admin/reservoir?mode=DELETED',
+  },
+  {
+    name: 'agent list status uses status',
+    ref: { type: 'list', resource: 'agent', statusCategory: 'TERMINATED' },
+    expected: '/admin/agent?tab=agents&status=TERMINATED',
+  },
+  {
+    name: 'user list status uses status',
+    ref: { type: 'list', resource: 'user', statusCategory: 'INACTIVE' },
+    expected: '/admin/users?tab=users&status=INACTIVE',
+  },
+  {
+    name: 'keypair list status uses activeType',
+    ref: { type: 'list', resource: 'keypair', statusCategory: 'inactive' },
+    expected: '/admin/users?tab=credentials&activeType=inactive',
+  },
+
+  // --- list: fixed params, filter, then status, in that order ---
+  {
+    name: 'list combines tab, filter and status in a stable order',
+    ref: {
+      type: 'list',
+      resource: 'user',
+      filter: '{"username":"bob"}',
+      statusCategory: 'INACTIVE',
+    },
+    expected:
+      '/admin/users?tab=users&filter=%7B%22username%22%3A%22bob%22%7D&status=INACTIVE',
+  },
+];
