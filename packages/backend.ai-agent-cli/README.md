@@ -28,14 +28,92 @@ checkout it fails with exit code 1 and an error naming what was not found.
 ## Commands
 
 ```bash
-bai-agent version     # CLI version, detected checkout root, repo version
-bai-agent manifest    # every command with its description and flags
-bai-agent doctor      # environment + checkout diagnostics
-bai-agent --help      # generated from the same command registry as `manifest`
+bai-agent version              # CLI version, detected checkout root, repo version
+bai-agent manifest             # every command with its description and flags
+bai-agent doctor               # environment + checkout diagnostics
+bai-agent search "<query>"     # ranked manual sections + terminology entries
+bai-agent docs search "<q>"    # alias of `search --domain docs`
+bai-agent docs show <id>       # print one manual section (`--full` for the page)
+bai-agent --help               # generated from the same registry as `manifest`
 ```
 
 Commands are registered in one table (`src/registry.ts`), so `--help` and
 `manifest` never drift from what the CLI can actually do.
+
+## Search
+
+The index is **English only** and is built by parsing the manual markdown live
+on every query — no build step, no cached index on disk. The result unit is the
+deepest heading (h2–h4); the h1 is the page container. Every hit carries
+`{ id, domain, score, reason, title, path?, url, command }`, so the follow-up is
+already written out:
+
+```
+id:      docs:admin_menu#admin_menu-manage-resource-preset
+domain:  docs
+score:   80
+title:   Manage resource preset
+url:     https://webui.docs.backend.ai/next/en/admin_menu.html#admin_menu-manage-resource-preset
+reason:  heading-phrase
+command: bai-agent docs show docs:admin_menu#admin_menu-manage-resource-preset
+```
+
+Ids are stable: `docs:<slug>#<english-anchor>` and `term:<concept-id>`.
+`docs show` also tolerates a bare `<slug>#<anchor>`, and a bare `<slug>` prints
+the whole page. An unknown id exits 5 (`not_found`) with up to five close ids.
+
+### Domains
+
+`--domain docs | terminology | all` (default `all`). `docs` reads
+`packages/backend.ai-webui-docs/src/en/**`, `terminology` reads
+`packages/backend.ai-webui-docs/terminology.json`. The list is extensible — a
+`schema` domain joins it in a later ticket.
+
+### Query normalisation
+
+Exact, case-insensitive matches of the query against terminology terms (any
+language) and i18n label values are printed once as a header line and expand the
+query with the canonical English term. There is no morphological handling.
+
+```
+normalised: "환경 변수" -> Environment Variables (i18n ko adminDeploymentPreset.EnvironmentVariables)
+```
+
+Non-English i18n stores are consulted only for a query carrying non-ASCII
+characters — the same work for every `--lang`, so recall never depends on the
+display language.
+
+### Ranking
+
+| Score | Reason           | Fires when                                                                                    |
+| ----- | ---------------- | --------------------------------------------------------------------------------------------- |
+| 100   | `exact-title`    | the heading / term equals the query                                                           |
+| 85    | `alias`          | another spelling of the term equals the query                                                 |
+| 80    | `heading-phrase` | the query is a substring of the heading                                                       |
+| 40–75 | `heading-tokens` | every query token is in the heading; scaled by how much of the heading the query accounts for |
+| 10–60 | `body-tokens`    | the prose matches; a body-only hit is capped at 60                                            |
+
+Ties break on body coverage, then title length, then heading depth, then id, so
+the order is stable. Each domain keeps up to two reserved slots for hits scoring
+≥ 40, so docs volume can never bury a strong terminology hit.
+
+### Languages and deployed-docs links
+
+`--lang <code>` (default `en`) changes the titles shown and the link, never
+recall: hits are found in English and mapped to the target language by heading
+index, which the four manuals share. A missing translation falls back to
+English. The anchor is computed on the **target** language's own heading, so
+Korean anchors are Korean:
+
+```
+https://webui.docs.backend.ai/next/ko/vfolder.html#vfolder-스토리지-폴더-생성
+```
+
+The `{version}` segment is the checkout's `major.minor`; a prerelease maps to
+`next` and an unreadable version to `latest`. `--docs-version <v>` overrides it.
+The slugify used for anchors is the docs toolkit's
+(`packages/backend.ai-docs-toolkit/src/markdown-processor.ts`) — the anchors
+must match the deployed pages byte for byte.
 
 ## Output contract
 

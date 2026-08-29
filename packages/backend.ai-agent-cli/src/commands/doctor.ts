@@ -2,11 +2,21 @@ import { defineCommand } from '../command.js';
 import { EXIT } from '../errors.js';
 import { CLI_NAME, MIN_NODE_MAJOR } from '../meta.js';
 import { record, renderBlocks, section } from '../output.js';
+import type { RepoContext } from '../repo-context.js';
 import {
   REPO_PACKAGE_NAME,
   REQUIRED_SOURCES,
   tryResolveRepoContext,
 } from '../repo-context.js';
+import type { DocsPage } from '../search/docs-corpus.js';
+import {
+  docsLanguages,
+  docsSrcDir,
+  INDEX_LANG,
+  loadDocsPage,
+  loadDocsPages,
+} from '../search/docs-corpus.js';
+import { loadTerminology } from '../search/terminology.js';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -88,8 +98,105 @@ const checkoutGroup: CheckGroup = {
   },
 };
 
+const docsGroup: CheckGroup = {
+  name: 'docs',
+  run: ({ cwd }) => {
+    const resolved = tryResolveRepoContext(cwd);
+    if (!resolved.ok) {
+      return [
+        {
+          group: 'docs',
+          check: 'manual sources',
+          status: 'fail',
+          detail: 'not checked: no checkout detected',
+          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+        },
+      ];
+    }
+    const { context } = resolved;
+    const languages = docsLanguages(context);
+    const englishPages = languages.includes(INDEX_LANG)
+      ? loadDocsPages(context, INDEX_LANG)
+      : [];
+    const cache = new Map<string, DocsPage | null>();
+    // Hits map to a language by heading index, so parity is the load-bearing
+    // property: report the pages where it does not hold.
+    const drifted: string[] = [];
+    for (const lang of languages.filter((name) => name !== INDEX_LANG)) {
+      for (const page of englishPages) {
+        const translated = loadDocsPage(
+          context,
+          lang,
+          page.relativePath,
+          cache,
+        );
+        if (
+          !translated ||
+          translated.parsed.headings.length !== page.parsed.headings.length
+        ) {
+          drifted.push(`${lang}/${page.relativePath}`);
+        }
+      }
+    }
+
+    const terminology = terminologyStatus(context);
+
+    return [
+      {
+        group: 'docs',
+        check: 'manual sources',
+        status: englishPages.length > 0 ? 'ok' : 'fail',
+        detail: `${englishPages.length} ${INDEX_LANG} page(s) under ${docsSrcDir(context)}`,
+        hint: englishPages.length > 0 ? undefined : 'git status',
+      },
+      {
+        group: 'docs',
+        check: 'languages',
+        status: languages.length > 1 ? 'ok' : 'warn',
+        detail: languages.join(', ') || 'none',
+      },
+      {
+        group: 'docs',
+        check: 'heading parity',
+        status: drifted.length === 0 ? 'ok' : 'warn',
+        detail:
+          drifted.length === 0
+            ? `every translated page mirrors the ${INDEX_LANG} heading structure`
+            : `${drifted.length} page(s) drifted: ${drifted.slice(0, 3).join(', ')}`,
+        hint: drifted.length === 0 ? undefined : `${CLI_NAME} docs show --help`,
+      },
+      {
+        group: 'docs',
+        check: 'terminology',
+        status: terminology.status,
+        detail: terminology.detail,
+        hint: 'bai-agent search "vfolder" --domain terminology',
+      },
+    ];
+  },
+};
+
+function terminologyStatus(context: RepoContext): {
+  status: CheckStatus;
+  detail: string;
+} {
+  try {
+    const terms = loadTerminology(context);
+    return { status: 'ok', detail: `${terms.length} concept(s) loaded` };
+  } catch (error) {
+    return {
+      status: 'fail',
+      detail: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
 /** Later tickets append groups here (auth, schema alignment, mappings, webmcp). */
-export const CHECK_GROUPS: CheckGroup[] = [runtimeGroup, checkoutGroup];
+export const CHECK_GROUPS: CheckGroup[] = [
+  runtimeGroup,
+  checkoutGroup,
+  docsGroup,
+];
 
 export interface DoctorData {
   checks: DoctorCheck[];

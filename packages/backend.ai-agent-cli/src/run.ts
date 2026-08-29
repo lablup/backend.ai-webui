@@ -64,7 +64,9 @@ export async function runCli({
     if (resolved.maxArgs !== undefined && args.length > resolved.maxArgs) {
       throw new CliError(
         'usage',
-        `${resolved.name} takes no positional arguments, got: ${args.join(' ')}`,
+        resolved.maxArgs === 0
+          ? `${resolved.name} takes no positional arguments, got: ${args.join(' ')}`
+          : `${resolved.name} takes at most ${resolved.maxArgs} positional argument(s), got: ${args.join(' ')}`,
         { hint: `bai-agent ${resolved.name} --help` },
       );
     }
