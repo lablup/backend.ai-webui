@@ -99,6 +99,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Astryx UI fixes**: `astryx-fix` skill (assignee gate before starting, measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
 - **Astryx UI bug reporting**: `astryx-bug-report` skill (capture-only intake for visual / behavioral defects and `discussion` items — "is this intended?" / "propose X instead" — filed under epic FR-3491 as Bugs and Tasks respectively, duplicate + relates scan). Use it when the ask is "record this", `astryx-fix` when it is "fix this".
+- **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and the `open` hand-off to the logged-in browser tab). Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
 
 Component-authoring patterns (Relay tables, selects, modals, forms, layout) have no
 dedicated skills: read `react.instructions.md` for the project deltas, then copy the
@@ -165,3 +166,49 @@ MORE CLI:
 The ASTRYX block above is `astryx init --features agents` output (run from `react/`, where the StyleX compiler is detected) in **StyleX mode**, plus the project-specific MIGRATION RELAXATION line. Canonical generated copy: `react/AGENTS.md`. Re-run the init from `react/` on every `@astryxdesign/core` bump and re-sync this block (keeping the relaxation line).
 
 The block's `pnpm exec astryx <cmd>` assumes you are **inside `react/`**. `@astryxdesign/cli` is a devDependency of that workspace only, so the root `node_modules/.bin` has no `astryx` binary — and `pnpm exec` resolves binaries, not package scripts, so it fails at the root with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL`. **From the repository root, run `pnpm run astryx <cmd>` instead** (root `package.json` proxies it to the same CLI). Both forms take identical arguments.
+
+<!-- BAI-AGENT:start -->
+bai-agent v26.9.0-alpha.0 · 13 commands
+Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.
+CLI: run every command as `pnpm run bai-agent <cmd>` from the repository root (shown below as `bai-agent ...`).
+The proxy runs the bundle, so build it first: `pnpm --filter backend.ai-agent-cli build`. From anywhere else in the checkout: `node packages/backend.ai-agent-cli/dist/cli.js <cmd>`.
+Preflight, hand-off rules and a ready-to-run query cookbook: the `bai-agent` skill (`.claude/skills/bai-agent/SKILL.md`).
+
+WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:
+1. `bai-agent doctor` — checkout, stored session and WebMCP tab in one pass. Exit 3 means log in (see RULES).
+2. `bai-agent search "<english UI term>"` — START HERE: one ranked list over manual + schema + terminology. Every hit carries the `command:` that opens it.
+3. `bai-agent docs show <id>` · `schema show <Type>.<field>` · `explain <Type>.<field>=<VALUE>` — the hit in full. `schema show` is what the SDL declares; `explain` is what it means to a user.
+4. `bai-agent query '<document>'` — ask the manager. Validated against this checkout's SDL before any network call.
+5. `bai-agent open <resource> <id>` — hand the answer to the browser tab that is already logged in. No URL to paste, no second login.
+
+OUTPUT: `--json` prints one envelope on stdout — {"apiVersion":"bai-agent/v1","type":…,"data":…}; a failure prints {"apiVersion","error","code","suggestions?","hint?"} on stderr and nothing on stdout. Text is the same data as aligned `key: value` records. `hint` is always a command to run, never prose — run it.
+EXIT: 0 ok · 1 error (schema_mismatch, version_mismatch) · 2 usage · 3 auth_required · 4 mutation_refused · 5 not_found (also no_webui_tab, ambiguous_tab).
+
+RULES:
+- Search in the ENGLISH terms the UI shows ("Resource Group", not "scaling_group"). The index is English-only; a non-English query is normalised through the i18n stores, never translated.
+- Never mix GraphQL pagination modes: `first`+`after` XOR `last`+`before` XOR `limit`+`offset`. The `*V2` connections reject a mix at runtime, and page-number paging is `limit`+`offset`. See `.claude/rules/graphql-pagination.md`.
+- `schema_mismatch` is YOUR document, not the manager: the checkout's SDL rejected it locally, before any request. Fix it with `schema show <Type>`; never retry it unchanged.
+- A mutation runs only with `--allow-mutation` AND a field on the allow-list (`packages/backend.ai-agent-cli/src/mutation-allowlist.ts`). Either miss exits 4 `mutation_refused` before the network. Do not route around it — extend the list in a reviewed PR, or use the WebUI.
+- Destructive actions (delete, purge, terminate, revoke) are never run from here. `bai-agent open` the page and let the human press the button.
+- Exit 3 `auth_required` → `bai-agent login --endpoint <url>`; take the endpoint and the account from the `webui-connection-info` skill. The CLI never handles a password: `login` borrows the browser's session, and `--paste` covers a browser that cannot reach this machine.
+- Exit 5 `no_webui_tab` → give the user the `hint` URL instead of retrying. `ambiguous_tab` → re-run with `--tab <id>` from the suggestions.
+- Cite what the CLI returned: `search`, `docs show` and `explain` carry a deployed-docs `url`. `explain` prints `MISSING` for a piece nothing curates — report that, never fill it in from memory.
+- Re-run `bai-agent init --features agents` after any CLI change and re-sync this block.
+
+COMMANDS:
+  version   Print the CLI version and the detected checkout.
+  manifest  Print the CLI capability manifest (commands and their flags).
+  init      Print the CLAUDE.md agent block, generated from the command registry.
+  doctor    Diagnose the CLI environment and the detected checkout.
+  search    Rank manual sections, schema entries and terminology for a query.
+  docs      Search the user manual, or print one of its sections.
+  schema    Search the GraphQL schema, print one type / field / enum value, or sync the SDL from a backend release.
+  login     Hand this machine a WebUI session, through the browser or by pasting one.
+  logout    Delete the stored session file. The manager is not contacted.
+  whoami    Show the account the stored session belongs to.
+  query     Run a raw GraphQL document against the manager, pre-validated against the checkout SDL.
+  explain   Explain what a schema type, field or value means to a WebUI user, tagged by where each piece came from.
+  open      Open a resource in the WebUI tab this machine already has, through the WebMCP local relay.
+<!-- BAI-AGENT:end -->
+
+The BAI-AGENT block above is `bai-agent init --features agents` output, generated from the CLI's own command registry (`packages/backend.ai-agent-cli/src/registry.ts`) — **do not hand-edit it**. Re-run `pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init --features agents --write` after any change to the CLI; `src/init/block.test.ts` fails when the committed block and the generator disagree. The prose outside the markers survives a re-write.

@@ -86,6 +86,7 @@ describe('success envelope', () => {
     ).toEqual([
       'version',
       'manifest',
+      'init',
       'doctor',
       'search',
       'docs',

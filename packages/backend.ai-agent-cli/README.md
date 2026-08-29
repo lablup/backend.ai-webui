@@ -35,6 +35,7 @@ checkout it fails with exit code 1 and an error naming what was not found.
 ```bash
 bai-agent version              # CLI version, detected checkout root, repo version
 bai-agent manifest             # every command with its description and flags
+bai-agent init                 # the CLAUDE.md agent block (see The agent block below)
 bai-agent doctor               # environment + checkout + auth diagnostics
 bai-agent search "<query>"     # one ranked list over docs + schema + terminology
 bai-agent docs search "<q>"    # alias of `search --domain docs`
@@ -694,6 +695,41 @@ it gates. It `warn`s on a partly-curated enum and on UI-rendered enum fields
 that nothing curates. The same check runs in `scripts/verify.sh`
 ("Agent mappings"), in `.github/workflows/agent-mappings.yml` on the paths that
 can orphan a reference, and in `src/mappings/mappings.test.ts`.
+
+## The agent block
+
+The CLI is only useful to an agent that knows it exists. `init` prints the
+`BAI-AGENT` block for the checkout's `CLAUDE.md` — the header line, the
+discover-don't-guess workflow, the output contract, the rules, and a one-line
+table of every command — **generated from `src/registry.ts`**, so it can never
+advertise a command the CLI does not have.
+
+```bash
+bai-agent init --features agents          # print it
+bai-agent init --features agents --write  # replace it in CLAUDE.md, idempotently
+```
+
+`--features agents` is the only feature and is what a bare `init` prints (with a
+note on stderr). `--write` replaces everything between
+`<!-- BAI-AGENT:start -->` and `<!-- BAI-AGENT:end -->`; prose outside the
+markers survives, and a second run is a no-op (`outcome: unchanged`). With no
+markers in the file it inserts after the ASTRYX block and its notes.
+
+In this checkout `CLAUDE.md` is a symlink to `AGENTS.md`, so `--write` edits the
+file behind it and git reports `AGENTS.md` as the changed path.
+
+`src/init/block.test.ts` asserts the committed block equals the generator's
+output, so a CLI change that is not re-synced fails the suite:
+
+```bash
+pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init --features agents --write
+```
+
+The repo-local `bai-agent` skill (`.claude/skills/bai-agent/`) carries what the
+block deliberately does not: the preflight and login procedure, when to answer
+versus hand off to the browser, the neighbouring skills' boundaries, and
+`references/query-cookbook.md` — ready-to-run documents that
+`src/init/skill.test.ts` re-validates against the SDL.
 
 ## Output contract
 

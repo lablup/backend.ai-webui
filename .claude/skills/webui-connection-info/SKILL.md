@@ -5,6 +5,8 @@ description: >
   Trigger on: "which server", "connection info", "login credentials", "dev server URL",
   "API endpoint", "where to connect", "how to login", "test server",
   or when needing to interact with the running WebUI (screenshots, live checks, E2E).
+  This skill only says where to connect: for the data behind the UI — field meanings,
+  GraphQL queries, live rows — use the `bai-agent` skill.
 ---
 
 # WebUI Connection Info
