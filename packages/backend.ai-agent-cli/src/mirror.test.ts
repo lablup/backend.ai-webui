@@ -10,6 +10,7 @@ const cwd = import.meta.dirname;
 const SAMPLE_ARGS: Record<string, string[]> = {
   search: ['storage folder'],
   docs: ['search', 'storage folder'],
+  schema: ['show', 'ComputeSessionNode.status'],
 };
 
 function leaves(value: unknown): string[] {

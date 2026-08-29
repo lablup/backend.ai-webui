@@ -2,6 +2,7 @@ import type { AnyCommand } from './command.js';
 import { docsCommand } from './commands/docs.js';
 import { doctorCommand } from './commands/doctor.js';
 import { manifestCommand } from './commands/manifest.js';
+import { schemaCommand } from './commands/schema.js';
 import { searchCommand } from './commands/search.js';
 import { versionCommand } from './commands/version.js';
 
@@ -12,6 +13,7 @@ export const COMMANDS: AnyCommand[] = [
   doctorCommand,
   searchCommand,
   docsCommand,
+  schemaCommand,
 ];
 
 export function findCommand(name: string): AnyCommand | undefined {
