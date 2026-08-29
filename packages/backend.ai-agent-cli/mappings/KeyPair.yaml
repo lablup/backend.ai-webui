@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=./schema.json
+type: KeyPair
+concept: keypair
+docs: admin_menu#manage-users-keypairs
+meaning: One credential — the access key and secret key a user or a client authenticates the API with.
+fields:
+  access_key:
+    label: Access Key
+    meaning: The public half of the credential, which identifies who a request is made as.
+    docs: admin_menu#manage-users-keypairs
+  secret_key:
+    label: Secret Key
+    meaning: The private half of the credential, shown once and used to sign API requests.
+    docs: admin_menu#create-a-credential
+  is_active:
+    label: Status
+    meaning: Whether the credential is accepted; deactivating it blocks the key without deleting it.
+    docs: admin_menu#activate-or-deactivate-several-credentials-at-once
+    values:
+      'true':
+        label: Active
+        meaning: The credential is accepted and can be used to call the API.
+        variant: success
+      'false':
+        label: Inactive
+        meaning: The credential is rejected until an administrator activates it again.
+        variant: neutral
+  is_admin:
+    label: Admin
+    meaning: Whether requests made with this credential carry administrator authority.
+    concept: rbac-role
+    docs: admin_menu#manage-users-keypairs
+  resource_policy:
+    label: Resource Policy
+    meaning: The keypair resource policy capping what sessions made with this credential may allocate.
+    concept: resource-policy
+    docs: admin_menu#manage-resource-policies
+  rate_limit:
+    label: Rate Limit
+    meaning: How many API requests this credential may make in the policy's window before it is throttled.
+    concept: rate-limit
+    docs: admin_menu#manage-resource-policies
+  concurrency_used:
+    label: Concurrent Sessions
+    meaning: How many sessions this credential is running right now, against its concurrency limit.
+    docs: admin_menu#manage-resource-policies
+  num_queries:
+    label: Number of Queries
+    meaning: How many API requests have ever been made with this credential.
+    docs: admin_menu#manage-users-keypairs
+  ssh_public_key:
+    label: SSH Public Key
+    meaning: The public key the user's sessions accept SSH and SFTP connections with.
+    docs: sftp_to_container#for-linux-mac

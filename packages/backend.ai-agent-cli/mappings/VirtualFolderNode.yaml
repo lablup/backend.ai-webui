@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=./schema.json
+type: VirtualFolderNode
+concept: storage-folder
+docs: vfolder#create-storage-folder
+meaning: One storage folder — the persistent space users keep data in and mount into sessions.
+fields:
+  name:
+    meaning: The folder's name, unique per owner, and what the Data page lists it under.
+    docs: vfolder#create-storage-folder
+  host:
+    meaning: The storage host the folder physically lives on.
+    docs: vfolder#create-storage-folder
+  status:
+    meaning: What the folder is currently doing, which decides whether it can be opened, cloned or deleted.
+    docs: vfolder#delete-folder
+    values:
+      ready:
+        label: READY
+        meaning: The folder is idle and can be mounted, browsed and shared.
+        variant: warning
+      performing:
+        label: PERFORMING
+        meaning: A file operation is running on the folder right now.
+        variant: warning
+      cloning:
+        label: CLONING
+        meaning: The folder is being copied into a new folder.
+        variant: warning
+      mounted:
+        label: MOUNTED
+        meaning: The folder is mounted into at least one running session.
+        variant: warning
+      error:
+        label: ERROR
+        meaning: The last operation on the folder failed and it needs an administrator's attention.
+        variant: error
+      delete-pending:
+        label: DELETE-PENDING
+        meaning: The folder is in the trash bin and can still be restored.
+        variant: neutral
+      delete-ongoing:
+        label: DELETE-ONGOING
+        meaning: The folder's data is being erased from the storage host.
+        variant: neutral
+      delete-complete:
+        label: DELETE-COMPLETE
+        meaning: The folder is gone for good and cannot be restored.
+        variant: neutral
+      delete-error:
+        label: DELETE-ERROR
+        meaning: Deleting the folder failed and its data may still be on the storage host.
+        variant: error
+  ownership_type:
+    meaning: Whether the folder belongs to one user or to a whole project.
+    docs: vfolder#create-storage-folder
+    values:
+      user:
+        label: User
+        meaning: A folder owned by a single user, who decides whom to invite to it.
+        concept: folder-type-user
+      group:
+        label: Project
+        meaning: A folder owned by a project, reachable by that project's members.
+        concept: folder-type-project
+  usage_mode:
+    meaning: What the folder is meant to hold, which decides where the UI offers it.
+    docs: vfolder#models
+    values:
+      general:
+        label: General
+        meaning: An ordinary data folder, offered everywhere a folder can be mounted.
+        variant: neutral
+      model:
+        label: Model
+        meaning: A folder holding a served model, offered when a deployment is created.
+        concept: model-serving
+        variant: purple
+      data:
+        label: Data
+        meaning: A pipeline folder managed by Backend.AI FastTrack, which the WebUI does not let users delete.
+        variant: cyan
+  permission:
+    label: Mount Permission
+    meaning: What the folder's owner granted on it, which limits what a session mounting it may do.
+    docs: vfolder#file-operations
+    values:
+      ro:
+        label: Read-Only
+        meaning: Files can be read but not changed.
+        variant: green
+      rw:
+        label: Read-Write
+        meaning: Files can be read and written, but not deleted.
+        variant: blue
+      wd:
+        label: Read-Write-Delete
+        meaning: Files can be read, written and deleted.
+        variant: red
+  cloneable:
+    meaning: Whether users are allowed to make their own copy of this folder.
+    docs: vfolder#create-storage-folder
+  cur_size:
+    label: Folder usage
+    meaning: How much space the folder's files take on the storage host right now.
+    docs: vfolder#explore-folder
+  max_size:
+    meaning: The size quota the folder may not grow past.
+    docs: vfolder#create-storage-folder
+  quota_scope_id:
+    meaning: The quota scope the folder is accounted against, which is either its owner or its project.
+    docs: vfolder#create-storage-folder

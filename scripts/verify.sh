@@ -188,6 +188,16 @@ check_astryx_integration() {
   pnpm --prefix ./react exec astryx validate-integration backend.ai-ui
 }
 
+check_agent_mappings() {
+  # `mappings/<Type>.yaml` curates what a schema field means to a user, and
+  # every reference it makes (type, field, enum value, terminology concept,
+  # manual heading) can be orphaned by a change somewhere else in the repo.
+  # `doctor --mappings` re-resolves all of them and exits 1 on a dangling one.
+  # The build is the CLI's own tsup run; it writes only dist/.
+  pnpm --filter backend.ai-agent-cli run build > /dev/null || return 1
+  node packages/backend.ai-agent-cli/dist/cli.js doctor --mappings
+}
+
 check_z_index_ladder() {
   # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
   # path filter never fires for an index.html-only PR — so it runs here, always.
@@ -204,6 +214,7 @@ run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
 run_check "Astryx integration (backend.ai-ui)" check_astryx_integration
 run_check "z-index ladder mirrors" check_z_index_ladder
+run_check "Agent mappings" check_agent_mappings
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row
