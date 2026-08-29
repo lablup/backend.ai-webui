@@ -6,6 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 const cwd = import.meta.dirname;
 
+/** Commands that need positional arguments to produce data at all. */
+const SAMPLE_ARGS: Record<string, string[]> = {
+  search: ['storage folder'],
+  docs: ['search', 'storage folder'],
+};
+
 function leaves(value: unknown): string[] {
   if (value === null || value === undefined) return [];
   if (Array.isArray(value)) return value.flatMap(leaves);
@@ -18,7 +24,7 @@ async function dataFor(command: AnyCommand): Promise<unknown> {
   return command.run({
     cwd,
     commands: COMMANDS,
-    args: [],
+    args: SAMPLE_ARGS[command.name] ?? [],
     flags: {},
     json: false,
     render: { verbosity: 'detail' },
