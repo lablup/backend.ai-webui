@@ -170,3 +170,116 @@ export async function fetchWhoAmI(
     status: user.status ?? undefined,
   };
 }
+
+/* -------------------------------------------------------------------------- */
+/* Manager version                                                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * What the WebUI client calls for the manager version: in SESSION mode
+ * `getServerVersion()` issues `newPublicRequest('GET', '/')`, which the client
+ * rewrites to `<endpoint>/func/` and reads `{ version, manager }` from
+ * (`packages/backend.ai-client/src/client.ts`, `get_manager_version`).
+ */
+export const VERSION_PATHS = ['/func/', '/server/version'] as const;
+
+/** Reachability probe only; the SDL is never rebuilt from introspection. */
+export const INTROSPECTION_PROBE = '{ __schema { queryType { name } } }';
+
+export interface ManagerVersion {
+  /** e.g. `26.4.10`. */
+  manager: string;
+  /** The API version the manager advertises, e.g. `v8.20240915`. */
+  apiVersion?: string;
+  /** The path the answer came from. */
+  source: string;
+}
+
+const VERSION_CACHE = new Map<string, ManagerVersion>();
+
+export function clearManagerVersionCache(): void {
+  VERSION_CACHE.clear();
+}
+
+function readVersionPayload(
+  body: unknown,
+  source: string,
+): ManagerVersion | undefined {
+  if (!body || typeof body !== 'object') return undefined;
+  const payload = body as { manager?: unknown; version?: unknown };
+  if (typeof payload.manager !== 'string' || payload.manager.length === 0) {
+    return undefined;
+  }
+  return {
+    manager: payload.manager,
+    ...(typeof payload.version === 'string'
+      ? { apiVersion: payload.version }
+      : {}),
+    source,
+  };
+}
+
+/**
+ * The manager version behind `session.endpoint`, cached per process so a run
+ * asks once however many commands consult it.
+ */
+export async function fetchManagerVersion(
+  session: ManagerSession,
+  options: ManagerRequestOptions = {},
+): Promise<ManagerVersion> {
+  const cached = VERSION_CACHE.get(session.endpoint);
+  if (cached) return cached;
+
+  const doFetch = options.fetchImpl ?? fetch;
+  let lastError: unknown;
+  for (const path of VERSION_PATHS) {
+    const url = `${session.endpoint}${path}`;
+    try {
+      const response = await doFetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': `Backend.AI ${CLI_NAME}/${cliVersion()}`,
+          'X-BackendAI-Version': MANAGER_API_VERSION,
+          'X-BackendAI-Date': new Date().toISOString(),
+          'X-BackendAI-SessionID': session.sessionId,
+        },
+      });
+      if (!response.ok) continue;
+      const version = readVersionPayload(await response.json(), path);
+      if (version) {
+        VERSION_CACHE.set(session.endpoint, version);
+        return version;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw new CliError(
+    'internal',
+    `Cannot read the manager version from ${session.endpoint} (tried ${VERSION_PATHS.join(', ')}).`,
+    { hint: `${CLI_NAME} doctor`, cause: lastError },
+  );
+}
+
+/**
+ * One opportunistic introspection call, used only to confirm the GraphQL
+ * endpoint answers. A manager with introspection disabled returns `undefined`
+ * and nothing is reported — the schema always comes from the committed SDL.
+ */
+export async function probeIntrospection(
+  session: ManagerSession,
+  options: ManagerRequestOptions = {},
+): Promise<boolean | undefined> {
+  try {
+    const data = await gqlRequest<{ __schema?: { queryType?: unknown } }>(
+      session,
+      { query: INTROSPECTION_PROBE },
+      options,
+    );
+    return Boolean(data?.__schema?.queryType);
+  } catch {
+    return undefined;
+  }
+}
