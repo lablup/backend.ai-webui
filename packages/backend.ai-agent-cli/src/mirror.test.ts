@@ -21,6 +21,7 @@ const SAMPLE_ARGS: Record<string, string[]> = {
   search: ['storage folder'],
   docs: ['search', 'storage folder'],
   schema: ['show', 'ComputeSessionNode.status'],
+  explain: ['ComputeSessionNode.status=RUNNING'],
 };
 
 /**

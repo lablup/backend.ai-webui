@@ -1,6 +1,9 @@
+import type { RunContext } from '../command.js';
 import { defineCommand } from '../command.js';
 import { CliError, EXIT } from '../errors.js';
 import { fetchWhoAmI } from '../manager.js';
+import { MAPPINGS_DIR_NAME } from '../mappings/load.js';
+import { resolveMappings } from '../mappings/resolve.js';
 import { CLI_NAME, MIN_NODE_MAJOR } from '../meta.js';
 import { record, renderBlocks, section } from '../output.js';
 import type { RepoContext } from '../repo-context.js';
@@ -351,14 +354,109 @@ const authGroup: CheckGroup = {
   },
 };
 
-/** Later tickets append groups here (mappings). */
+/** The curated `mappings/<Type>.yaml` files and every reference they make. */
+export const MAPPINGS_GROUP = 'mappings';
+
+const mappingsGroup: CheckGroup = {
+  name: MAPPINGS_GROUP,
+  run: ({ cwd }) => {
+    const resolved = tryResolveRepoContext(cwd);
+    if (!resolved.ok) {
+      return [
+        {
+          group: MAPPINGS_GROUP,
+          check: 'mapping files',
+          status: 'fail',
+          detail: 'not checked: no checkout detected',
+          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+        },
+      ];
+    }
+    let report: ReturnType<typeof resolveMappings>;
+    try {
+      report = resolveMappings(resolved.context);
+    } catch (error) {
+      return [
+        {
+          group: MAPPINGS_GROUP,
+          check: 'mapping files',
+          status: 'fail',
+          detail: error instanceof Error ? error.message : String(error),
+          hint: 'pnpm --filter backend.ai-agent-cli build',
+        },
+      ];
+    }
+    const { counts, issues, set } = report;
+    const failures = issues.filter((issue) => issue.level === 'fail');
+    const warnings = issues.filter((issue) => issue.level === 'warn');
+    const line = (issue: (typeof issues)[number]): string =>
+      `${issue.file} ${issue.ref}: ${issue.message}`;
+
+    return [
+      {
+        group: MAPPINGS_GROUP,
+        check: 'mapping files',
+        status: set.files.length > 0 ? 'ok' : 'warn',
+        detail: `${counts.files} file(s) in ${set.dir}, ${counts.types} type(s), ${counts.fields} field(s), ${counts.values} value(s)`,
+        hint: set.files.length > 0 ? undefined : `ls ${MAPPINGS_DIR_NAME}`,
+      },
+      {
+        group: MAPPINGS_GROUP,
+        check: 'schema.json validation',
+        status: set.issues.length === 0 ? 'ok' : 'fail',
+        detail:
+          set.issues.length === 0
+            ? `every mapping validates against ${MAPPINGS_DIR_NAME}/schema.json`
+            : set.issues
+                .map((issue) => `${issue.file}: ${issue.message}`)
+                .join(' | '),
+        hint:
+          set.issues.length === 0
+            ? undefined
+            : `${MAPPINGS_DIR_NAME}/schema.json`,
+      },
+      {
+        group: MAPPINGS_GROUP,
+        check: 'references resolve',
+        status: failures.length === 0 ? 'ok' : 'fail',
+        detail:
+          failures.length === 0
+            ? `${counts.concepts} concept(s) and ${counts.docs} docs link(s) resolve`
+            : `${failures.length} dangling reference(s): ${failures.map(line).join(' | ')}`,
+        hint:
+          failures.length === 0
+            ? undefined
+            : `${CLI_NAME} doctor --${MAPPINGS_GROUP}`,
+      },
+      {
+        group: MAPPINGS_GROUP,
+        check: 'value coverage',
+        status: warnings.length === 0 ? 'ok' : 'warn',
+        detail:
+          warnings.length === 0
+            ? 'every curated enum is complete and every UI-rendered enum is curated'
+            : warnings.map(line).join(' | '),
+      },
+    ];
+  },
+};
+
+/** Later tickets append groups here. */
 export const CHECK_GROUPS: CheckGroup[] = [
   runtimeGroup,
   checkoutGroup,
   docsGroup,
   schemaGroup,
   authGroup,
+  mappingsGroup,
 ];
+
+/** `--mappings` narrows the run to that one group; the default runs them all. */
+export function selectGroups(context: RunContext): CheckGroup[] {
+  return context.flags[MAPPINGS_GROUP] === true
+    ? CHECK_GROUPS.filter((group) => group.name === MAPPINGS_GROUP)
+    : CHECK_GROUPS;
+}
 
 export interface DoctorData {
   checks: DoctorCheck[];
@@ -368,12 +466,20 @@ export interface DoctorData {
 export const doctorCommand = defineCommand<DoctorData>({
   name: 'doctor',
   summary: 'Diagnose the CLI environment and the detected checkout.',
-  usage: `${CLI_NAME} doctor [--json]`,
-  flags: [],
+  usage: `${CLI_NAME} doctor [--${MAPPINGS_GROUP}] [--json]`,
+  flags: [
+    {
+      flag: `--${MAPPINGS_GROUP}`,
+      description:
+        'Run only the mappings group: validate every mappings/<Type>.yaml and resolve its references.',
+      type: 'boolean',
+    },
+  ],
   maxArgs: 0,
-  run: async ({ cwd }) => {
+  run: async (context) => {
+    const { cwd } = context;
     const checks = (
-      await Promise.all(CHECK_GROUPS.map((group) => group.run({ cwd })))
+      await Promise.all(selectGroups(context).map((group) => group.run({ cwd })))
     ).flat();
     return {
       checks,
