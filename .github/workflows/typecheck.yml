@@ -16,6 +16,7 @@ on:
       - "react/**"
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
+      - "packages/backend.ai-agent-cli/**"
       - "packages/backend.ai-docs-toolkit/**"
       - "src/**"
       - "tsconfig.json"
@@ -33,6 +34,7 @@ on:
       - "react/**"
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
+      - "packages/backend.ai-agent-cli/**"
       - "packages/backend.ai-docs-toolkit/**"
       - "src/**"
       - "tsconfig.json"
@@ -74,25 +76,30 @@ jobs:
       #                `paths`, so this lane catches a BUI change breaking the
       #                app. Excludes BUI's tests/stories (the backend.ai-ui
       #                lane covers those).
-      #   backend.ai-ui / backend.ai-client / backend.ai-docs-toolkit — each
-      #                package's own tsconfig.
+      #   backend.ai-ui / backend.ai-client / backend.ai-agent-cli /
+      #   backend.ai-docs-toolkit — each package's own tsconfig.
       #   client-*   — the backend.ai-client package checks that used to live
       #                in backend-ai-client-ci.yml.
+      #   agent-cli-* — the same lint/test/build trio for the bai-agent CLI.
       # All tsc lanes are --noEmit and the client build writes only dist/, so
       # nothing here can dirty the __generated__ scope the drift check reads.
       - name: Typecheck and package checks (parallel)
         run: |
           set +e
-          names=(root react backend.ai-ui backend.ai-client backend.ai-docs-toolkit client-lint client-test client-build)
+          names=(root react backend.ai-ui backend.ai-client backend.ai-agent-cli backend.ai-docs-toolkit client-lint client-test client-build agent-cli-lint agent-cli-test agent-cli-build)
           cmds=(
             "pnpm exec tsc --noEmit -p tsconfig.json"
             "pnpm --prefix ./react exec tsc --noEmit"
             "pnpm --filter backend.ai-ui exec tsc --noEmit"
             "pnpm --filter backend.ai-client exec tsc --noEmit"
+            "pnpm --filter backend.ai-agent-cli exec tsc --noEmit"
             "pnpm --filter backend.ai-docs-toolkit exec tsc --noEmit"
             "pnpm --filter backend.ai-client run lint"
             "pnpm --filter backend.ai-client run test"
             "pnpm --filter backend.ai-client run build"
+            "pnpm --filter backend.ai-agent-cli run lint"
+            "pnpm --filter backend.ai-agent-cli run test"
+            "pnpm --filter backend.ai-agent-cli run build"
           )
           pids=()
           for i in "${!names[@]}"; do
