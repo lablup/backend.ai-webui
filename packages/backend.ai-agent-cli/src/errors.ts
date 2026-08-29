@@ -7,6 +7,7 @@ export const ERROR_CODES = [
   'mutation_refused',
   'schema_mismatch',
   'not_found',
+  'version_mismatch',
   'repo_not_found',
   'repo_incomplete',
   'internal',
@@ -33,6 +34,7 @@ const EXIT_BY_CODE: Record<ErrorCode, ExitCode> = {
   // the CLI parsed the command fine, the checkout's schema disagrees.
   schema_mismatch: EXIT.error,
   not_found: EXIT.notFound,
+  version_mismatch: EXIT.error,
   repo_not_found: EXIT.error,
   repo_incomplete: EXIT.error,
   internal: EXIT.error,

@@ -1,7 +1,7 @@
 import type { RunContext } from '../command.js';
 import { defineCommand } from '../command.js';
 import { CliError, EXIT } from '../errors.js';
-import { fetchWhoAmI } from '../manager.js';
+import { fetchManagerVersion, fetchWhoAmI } from '../manager.js';
 import { MAPPINGS_DIR_NAME } from '../mappings/load.js';
 import { resolveMappings } from '../mappings/resolve.js';
 import { CLI_NAME, MIN_NODE_MAJOR } from '../meta.js';
@@ -14,6 +14,13 @@ import {
   sourceStatus,
   tryResolveRepoContext,
 } from '../repo-context.js';
+import {
+  readCommittedSchema,
+  readSchemaMeta,
+  SCHEMA_META_FILE,
+  SCHEMA_META_STALE_DAYS,
+  schemaMetaPath,
+} from '../schema-meta.js';
 import type { DocsPage } from '../search/docs-corpus.js';
 import {
   docsLanguages,
@@ -23,6 +30,7 @@ import {
   loadDocsPages,
 } from '../search/docs-corpus.js';
 import { HOST_COMPONENT_DIR } from '../search/i18n-index.js';
+import { loadSchema } from '../search/schema-sdl.js';
 import { schemaContext } from '../search/schema-search.js';
 import { loadTerminology } from '../search/terminology.js';
 import {
@@ -33,6 +41,7 @@ import {
   sessionPath,
   SESSION_FILE_MODE,
 } from '../session.js';
+import { alignmentSession, checkVersionAlignment } from '../version-align.js';
 import { join } from 'node:path';
 
 export type CheckStatus = 'ok' | 'warn' | 'fail';
@@ -452,6 +461,128 @@ const mappingsGroup: CheckGroup = {
   },
 };
 
+/**
+ * Is the committed SDL the one the manager actually serves? Everything here is
+ * a warning at worst: a checkout with no `schema.meta.json` and no session is
+ * the normal state, not a broken one.
+ */
+const alignmentGroup: CheckGroup = {
+  name: 'alignment',
+  run: async ({ cwd }) => {
+    const resolved = tryResolveRepoContext(cwd);
+    if (!resolved.ok) {
+      return [
+        {
+          group: 'alignment',
+          check: 'schema alignment',
+          status: 'warn',
+          detail: 'not checked: no checkout detected',
+          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+        },
+      ];
+    }
+    const { context } = resolved;
+    const checks: DoctorCheck[] = [];
+
+    const sdl = readCommittedSchema(context);
+    checks.push({
+      group: 'alignment',
+      check: 'sdl present',
+      status: sdl ? 'ok' : 'fail',
+      detail: sdl
+        ? `${context.schemaPath} (${sdl.bytes} bytes, sha256 ${sdl.sha256.slice(0, 12)}…)`
+        : `${context.schemaPath} not readable`,
+      hint: sdl ? undefined : `${CLI_NAME} schema sync`,
+    });
+
+    const meta = readSchemaMeta(context);
+    const stale =
+      meta !== null &&
+      meta.ageDays !== null &&
+      meta.ageDays > SCHEMA_META_STALE_DAYS;
+    const shaMatches = meta !== null && meta.sha256 === sdl?.sha256;
+    checks.push({
+      group: 'alignment',
+      check: SCHEMA_META_FILE,
+      status: meta !== null && !stale && shaMatches ? 'ok' : 'warn',
+      detail:
+        meta === null
+          ? `not recorded: ${schemaMetaPath(context)} is missing, so the SDL's backend tag is unknown`
+          : `tag ${meta.tag}, fetched ${meta.fetchedAt || 'at an unknown time'}${
+              meta.ageDays === null ? '' : ` (${meta.ageDays} day(s) ago)`
+            }${stale ? `, older than ${SCHEMA_META_STALE_DAYS} days` : ''}${
+              shaMatches ? '' : ', sha256 does NOT match the SDL on disk'
+            }`,
+      hint:
+        meta !== null && !stale && shaMatches
+          ? undefined
+          : `${CLI_NAME} schema sync`,
+    });
+
+    const session = alignmentSession({ cwd });
+    if (!session) {
+      checks.push({
+        group: 'alignment',
+        check: 'manager version',
+        status: 'warn',
+        detail: 'not checked: no session stored',
+        hint: `${CLI_NAME} login --endpoint <manager url>`,
+      });
+      checks.push({
+        group: 'alignment',
+        check: 'verdict',
+        status: 'warn',
+        detail: meta
+          ? `SDL recorded at ${meta.tag}; log in to compare it with a manager`
+          : 'unknown: no recorded tag and no manager to compare against',
+        hint: `${CLI_NAME} schema sync --dry-run`,
+      });
+      return checks;
+    }
+
+    let version;
+    try {
+      version = await fetchManagerVersion(session);
+    } catch (error) {
+      checks.push({
+        group: 'alignment',
+        check: 'manager version',
+        status: 'warn',
+        detail: error instanceof Error ? error.message : String(error),
+        hint: `${CLI_NAME} login --endpoint ${session.endpoint}`,
+      });
+      checks.push({
+        group: 'alignment',
+        check: 'verdict',
+        status: 'warn',
+        detail: 'unknown: the manager version could not be read',
+        hint: `${CLI_NAME} schema sync --dry-run`,
+      });
+      return checks;
+    }
+
+    checks.push({
+      group: 'alignment',
+      check: 'manager version',
+      status: 'ok',
+      detail: `${version.manager} at ${session.endpoint} (via ${version.source})`,
+    });
+
+    const alignment = checkVersionAlignment(
+      { schema: loadSchema(context) },
+      version.manager,
+    );
+    checks.push({
+      group: 'alignment',
+      check: 'verdict',
+      status: alignment.aligned ? 'ok' : 'warn',
+      detail: `${alignment.summary} (${alignment.checked} marked entries compared)`,
+      hint: alignment.hint,
+    });
+    return checks;
+  },
+};
+
 /** Later tickets append groups here. */
 export const CHECK_GROUPS: CheckGroup[] = [
   runtimeGroup,
@@ -460,6 +591,7 @@ export const CHECK_GROUPS: CheckGroup[] = [
   schemaGroup,
   authGroup,
   mappingsGroup,
+  alignmentGroup,
 ];
 
 /** `--mappings` narrows the run to that one group; the default runs them all. */
