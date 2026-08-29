@@ -93,6 +93,7 @@ describe('success envelope', () => {
       'login',
       'logout',
       'whoami',
+      'query',
     ]);
   });
 

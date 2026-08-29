@@ -4,6 +4,7 @@ import { doctorCommand } from './commands/doctor.js';
 import { loginCommand } from './commands/login.js';
 import { logoutCommand } from './commands/logout.js';
 import { manifestCommand } from './commands/manifest.js';
+import { queryCommand } from './commands/query.js';
 import { schemaCommand } from './commands/schema.js';
 import { searchCommand } from './commands/search.js';
 import { versionCommand } from './commands/version.js';
@@ -20,6 +21,7 @@ export const COMMANDS: AnyCommand[] = [
   loginCommand,
   logoutCommand,
   whoamiCommand,
+  queryCommand,
 ];
 
 export function findCommand(name: string): AnyCommand | undefined {

@@ -59,6 +59,41 @@ const SAMPLE_DATA: Record<string, unknown> = {
     sessionId: 'abcd…wxyz',
     sessionFile: '/tmp/sessions/manager.example.com.json',
   },
+  query: {
+    endpoint: 'https://manager.example.com',
+    operation: 'query',
+    operationName: 'Sessions',
+    rootFields: ['compute_session_nodes'],
+    variables: { limit: 2 },
+    maxBytes: 65536,
+    bytes: 412,
+    truncated: ['compute_session_nodes.edges[1].node.status_info'],
+    links: [
+      {
+        path: 'compute_session_nodes.edges[0].node',
+        resource: 'session',
+        id: 'row-1',
+        webui_path: '/session?sessionDetail=row-1',
+        webui_url: 'https://fr-1.localhost:1355/session?sessionDetail=row-1',
+      },
+    ],
+    result: {
+      compute_session_nodes: {
+        edges: [
+          {
+            node: {
+              id: 'Q29tcHV0ZVNlc3Npb246MQ==',
+              row_id: 'row-1',
+              name: 'alpha',
+              webui_path: '/session?sessionDetail=row-1',
+              webui_url:
+                'https://fr-1.localhost:1355/session?sessionDetail=row-1',
+            },
+          },
+        ],
+      },
+    },
+  },
 };
 
 function leaves(value: unknown): string[] {
