@@ -8,18 +8,30 @@ import {
   loadDocsSections,
   localizeHeading,
 } from './docs-corpus.js';
+import type { UiLabel } from './i18n-index.js';
 import { pageBody, sliceSection } from './markdown.js';
 import type { Normalisation } from './normalize.js';
 import { expandQuery, normaliseQuery } from './normalize.js';
 import type { Candidate, Ranked, Reason } from './rank.js';
-import { scoreCandidate, selectWithReservedSlots } from './rank.js';
+import {
+  compareRanked,
+  scoreCandidate,
+  scoreSchemaCandidate,
+  selectWithReservedSlots,
+} from './rank.js';
+import {
+  collapseKey,
+  schemaContext,
+  schemaHitLabel,
+  schemaLocation,
+} from './schema-search.js';
 import type { TermEntry } from './terminology.js';
 import { loadTerminology, terminologyPath } from './terminology.js';
 import { docsSectionUrl, docsVersionFor } from './urls.js';
 import { relative, sep } from 'node:path';
 
-/** Domains implemented so far. `schema` joins the list in a later ticket. */
-export const DOMAINS = ['docs', 'terminology'] as const;
+/** Every domain one query is ranked across. */
+export const DOMAINS = ['docs', 'schema', 'terminology'] as const;
 
 export type Domain = (typeof DOMAINS)[number];
 
@@ -38,6 +50,8 @@ export interface SearchHit {
   title: string;
   path?: string;
   url: string;
+  /** The i18n label the WebUI renders a schema field under, when it has one. */
+  uiLabel?: UiLabel;
   command: string;
 }
 
@@ -119,6 +133,9 @@ function glossaryUrl(
   return docsSectionUrl(version, lang, GLOSSARY_PAGE, localized.anchor);
 }
 
+/** A type is a coarser unit than its members, so it wins an equal score. */
+const SCHEMA_DEPTH = { type: 1, field: 2, 'enum-value': 3 } as const;
+
 export function docsSectionId(slug: string, anchor: string): string {
   return `docs:${slug}#${anchor}`;
 }
@@ -129,7 +146,15 @@ export function runSearch(
 ): SearchData {
   const version = resolveDocsVersion(context, options.docsVersion);
   const terms = loadTerminology(context);
-  const normalised = normaliseQuery(context, terms, options.query);
+  const owners = options.domains.includes('schema')
+    ? schemaContext(context).i18n.byKey
+    : undefined;
+  const normalised = normaliseQuery(
+    context,
+    terms,
+    options.query,
+    (key) => owners?.get(key)?.[0],
+  );
   const variants = expandQuery(options.query, normalised);
   const pages = loadDocsPages(context, INDEX_LANG);
   const cache = new Map<string, DocsPage | null>();
@@ -199,6 +224,60 @@ export function runSearch(
         },
       });
     }
+  }
+
+  if (options.domains.includes('schema')) {
+    const { i18n, entries } = schemaContext(context);
+    const groups = new Map<string, ScoredHit[]>();
+    for (const entry of entries) {
+      const evidence = scoreSchemaCandidate(entry.candidate, variants);
+      if (!evidence) continue;
+      const id = `schema:${entry.id}`;
+      const label = schemaHitLabel(context, i18n, entry, options.lang);
+      const scored: ScoredHit = {
+        id,
+        domain: 'schema',
+        score: evidence.score,
+        reason: evidence.reason,
+        linked: entry.linked,
+        // Only a description match may break a tie on description coverage.
+        bodyCoverage:
+          evidence.reason === 'desc-tokens' ? evidence.bodyCoverage : 0,
+        titleLength: entry.id.length,
+        depth: SCHEMA_DEPTH[entry.entryKind],
+        hit: {
+          id,
+          domain: 'schema',
+          score: evidence.score,
+          reason: evidence.reason,
+          title: entry.id,
+          ...schemaLocation(context, entry.line),
+          ...(label ? { uiLabel: label } : {}),
+          command: `bai-agent schema show ${entry.id}`,
+        },
+      };
+      const key = collapseKey(entry);
+      groups.set(key, [...(groups.get(key) ?? []), scored]);
+    }
+    const collapsed = [...groups.values()].map((group) => {
+      const best = Math.max(...group.map((one) => one.score));
+      return group.filter((one) => one.score === best).sort(compareRanked)[0];
+    });
+    // An enum value that only matched through its enum's name repeats what the
+    // enum hit already says.
+    const typeScores = new Map(
+      collapsed
+        .filter((one) => !one.id.includes('.'))
+        .map((one) => [one.id.slice('schema:'.length), one.score]),
+    );
+    ranked.push(
+      ...collapsed.filter(
+        (one) =>
+          one.depth !== SCHEMA_DEPTH['enum-value'] ||
+          (typeScores.get(one.id.slice('schema:'.length).split('.')[0]) ?? -1) <
+            one.score,
+      ),
+    );
   }
 
   const selected = selectWithReservedSlots(

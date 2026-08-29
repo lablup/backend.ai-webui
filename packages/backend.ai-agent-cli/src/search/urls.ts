@@ -39,3 +39,12 @@ export function docsSectionUrl(
   const page = docsPageUrl(version, lang, slug);
   return anchor ? `${page}#${anchor}` : page;
 }
+
+/** The repository the schema is read out of; schema hits link into it. */
+export const REPO_BLOB_BASE =
+  'https://github.com/lablup/backend.ai-webui/blob/main';
+
+/** A schema entry has no published page, so it links to its SDL line. */
+export function schemaSourceUrl(repoPath: string, line: number): string {
+  return `${REPO_BLOB_BASE}/${repoPath}#L${line}`;
+}

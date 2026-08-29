@@ -54,6 +54,7 @@
   "devDependencies": {
     "@eslint/js": "catalog:",
     "eslint-config-bai": "workspace:*",
+    "graphql": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "catalog:",

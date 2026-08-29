@@ -16,6 +16,8 @@ import {
   loadDocsPage,
   loadDocsPages,
 } from '../search/docs-corpus.js';
+import { HOST_COMPONENT_DIR } from '../search/i18n-index.js';
+import { schemaContext } from '../search/schema-search.js';
 import { loadTerminology } from '../search/terminology.js';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -191,11 +193,80 @@ function terminologyStatus(context: RepoContext): {
   }
 }
 
-/** Later tickets append groups here (auth, schema alignment, mappings). */
+const percent = (part: number, whole: number): string =>
+  whole === 0 ? '0%' : `${Math.round((part / whole) * 100)}%`;
+
+const schemaGroup: CheckGroup = {
+  name: 'schema',
+  run: ({ cwd }) => {
+    const resolved = tryResolveRepoContext(cwd);
+    if (!resolved.ok) {
+      return [
+        {
+          group: 'schema',
+          check: 'sdl parses',
+          status: 'fail',
+          detail: 'not checked: no checkout detected',
+          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+        },
+      ];
+    }
+    let loaded: ReturnType<typeof schemaContext>;
+    try {
+      loaded = schemaContext(resolved.context);
+    } catch (error) {
+      return [
+        {
+          group: 'schema',
+          check: 'sdl parses',
+          status: 'fail',
+          detail: error instanceof Error ? error.message : String(error),
+          hint: 'pnpm run relay',
+        },
+      ];
+    }
+    const { stats } = loaded.schema;
+    return [
+      {
+        group: 'schema',
+        check: 'sdl parses',
+        status: 'ok',
+        detail: `${loaded.schema.path} parsed`,
+      },
+      {
+        group: 'schema',
+        check: 'type and field counts',
+        status: stats.types > 0 && stats.fields > 0 ? 'ok' : 'fail',
+        detail: `${stats.types} type(s), ${stats.fields} field(s), ${stats.enumValues} enum value(s)`,
+      },
+      {
+        group: 'schema',
+        check: 'marker coverage',
+        // Markers are written by hand upstream; thin coverage is a warning,
+        // not a broken checkout.
+        status: stats.typesWithMarker > 0 ? 'ok' : 'warn',
+        detail: `types ${percent(stats.typesWithMarker, stats.types)} (${stats.typesWithMarker}/${stats.types}), fields ${percent(stats.fieldsWithMarker, stats.fields)} (${stats.fieldsWithMarker}/${stats.fields}, ${stats.fieldsWithOwnMarker} own)`,
+      },
+      {
+        group: 'schema',
+        check: 'i18n reverse index',
+        status: loaded.i18n.stats.labelledFields > 0 ? 'ok' : 'warn',
+        detail: `${loaded.i18n.stats.labelledFields} field(s) labelled from ${loaded.i18n.stats.filesWithFragments}/${loaded.i18n.stats.filesScanned} ${HOST_COMPONENT_DIR} file(s)`,
+        hint:
+          loaded.i18n.stats.labelledFields > 0
+            ? undefined
+            : `ls ${HOST_COMPONENT_DIR}`,
+      },
+    ];
+  },
+};
+
+/** Later tickets append groups here (auth, mappings). */
 export const CHECK_GROUPS: CheckGroup[] = [
   runtimeGroup,
   checkoutGroup,
   docsGroup,
+  schemaGroup,
 ];
 
 export interface DoctorData {

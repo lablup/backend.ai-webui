@@ -10,6 +10,8 @@ export interface Normalisation {
   canonical: string;
   /** Concept id, or `<lang> <i18n key>`. */
   ref: string;
+  /** `Type.field` the i18n key labels, when the reverse index knows one. */
+  owner?: string;
 }
 
 /** How many canonical terms one query may pull in. Exact matches only. */
@@ -68,11 +70,16 @@ export function normaliseQuery(
   context: RepoContext,
   terms: TermEntry[],
   rawQuery: string,
+  ownerOf?: (i18nKey: string) => string | undefined,
 ): Normalisation[] {
   const query = fold(rawQuery);
   if (!query) return [];
   const found: Normalisation[] = [];
   const seen = new Set<string>();
+  const owner = (key: string): { owner?: string } => {
+    const field = ownerOf?.(key);
+    return field ? { owner: field } : {};
+  };
   // One line per canonical term: several i18n keys carrying the same label are
   // one normalisation, not three.
   const push = (entry: Normalisation): void => {
@@ -89,11 +96,16 @@ export function normaliseQuery(
   }
 
   const english = matchI18nStore(context.i18nDir, I18N_INDEX_LANG, query);
-  for (const match of english) {
+  // Several keys carry the same label; announce the one the reverse index can
+  // attribute to a schema field, so the header says what the label names.
+  for (const match of [...english].sort(
+    (a, b) => Number(!!ownerOf?.(b.key)) - Number(!!ownerOf?.(a.key)),
+  )) {
     push({
       source: 'i18n',
       canonical: match.value,
       ref: `${I18N_INDEX_LANG} ${match.key}`,
+      ...owner(match.key),
     });
   }
 
@@ -109,7 +121,12 @@ export function normaliseQuery(
       for (const match of matchI18nStore(context.i18nDir, lang, query)) {
         const canonical = englishByKey.get(match.key);
         if (!canonical) continue;
-        push({ source: 'i18n', canonical, ref: `${lang} ${match.key}` });
+        push({
+          source: 'i18n',
+          canonical,
+          ref: `${lang} ${match.key}`,
+          ...owner(match.key),
+        });
       }
     }
   }
