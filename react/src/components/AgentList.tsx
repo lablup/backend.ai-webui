@@ -13,6 +13,7 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
+import WebMCPAgentTools from './WebMCPAgentTools';
 import { Badge } from '@astryxdesign/core/Badge';
 import {
   AgentNodeInList,
@@ -123,6 +124,7 @@ const AgentList: React.FC<AgentListProps> = ({
           edges {
             node {
               id
+              ...WebMCPAgentToolsFragment
               ...BAIAgentTableFragment
               ...AgentDetailModalFragment
               ...AgentDetailDrawerFragment
@@ -334,6 +336,18 @@ const AgentList: React.FC<AgentListProps> = ({
           onColumnOverridesChange: setColumnOverrides,
         }}
         {...tableProps}
+      />
+      <WebMCPAgentTools
+        agentsFrgmt={filterOutEmpty(
+          agent_nodes?.edges.map((e) => e?.node) ?? [],
+        )}
+        count={agent_nodes?.count ?? 0}
+        page={tablePaginationOption.current}
+        pageSize={tablePaginationOption.pageSize}
+        sort={queryVariables.order ?? null}
+        filter={queryParams.filter}
+        status={queryParams.status}
+        currentAgentId={currentAgentInfo?.id ?? null}
       />
       <BAIUnmountAfterClose>
         <AgentDetailDrawer

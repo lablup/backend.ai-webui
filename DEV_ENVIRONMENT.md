@@ -186,6 +186,32 @@ Notes:
   `bai_` + snake_case; unregistration happens automatically on unmount, which is
   what makes page-scoped tools appear and disappear with the route.
 
+### Page-scoped tools on the admin pages
+
+Four admin screens register the same read-only trio for their resource
+(FR-3767), built from `helper/webmcpAdminPageTools.ts` and registered by the
+component that already holds the data:
+
+| Page | Noun | Tools |
+|---|---|---|
+| `/admin/session` | `session` | `bai_list_visible_session`, `bai_get_current_session`, `bai_get_session_filter` |
+| `/admin/agent` (tab `agents`) | `agent` | `bai_list_visible_agent`, `bai_get_current_agent`, `bai_get_agent_filter` |
+| `/admin/users` (tab `users`) | `user` | `bai_list_visible_user`, `bai_get_current_user`, `bai_get_user_filter` |
+| `/admin/users` (tab `credentials`) | `keypair` | `bai_list_visible_keypair`, `bai_get_current_keypair`, `bai_get_keypair_filter` |
+| `/admin/rbac` | `role` | `bai_list_visible_role`, `bai_get_current_role`, `bai_get_role_filter` |
+
+`bai_list_visible_*` answers `{ rows, count, page, pageSize, sort }` for the
+rows the table is rendering; `bai_get_*_filter` answers the page's URL params
+(`{ filter?, status?, tab?, current?, pageSize? }`), which feed straight back
+into `bai_open_resource {"type":"list", …}`. `bai_get_current_*` answers
+`{ current, webui_path }` — `webui_path` is `null` for `agent`, `user` and
+`keypair`, which have no detail deep link yet.
+
+Only the mounted tab's tools are advertised, and all four pages sit under
+`/admin/*`, whose route handles declare `access: 'admin'` / `'superadmin'` and
+are enforced by `RouteAccessGuard` — a non-admin never mounts the components, so
+these tools never appear for them.
+
 ### CLI -> tab handoff (`bai-agent open`)
 
 `bai-agent open` (FR-3771) drives the tab above from the shell — the CLI computes

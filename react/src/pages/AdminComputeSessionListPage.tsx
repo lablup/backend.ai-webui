@@ -16,6 +16,7 @@ import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
 import SessionResourceGrid from '../components/SessionResourceGrid';
+import WebMCPAdminSessionTools from '../components/WebMCPAdminSessionTools';
 import { handleRowSelectionChange } from '../helper';
 import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
@@ -214,6 +215,7 @@ const AdminComputeSessionListPage = () => {
             node @required(action: THROW) {
               id @required(action: THROW)
               name @required(action: THROW)
+              ...WebMCPAdminSessionToolsFragment
               ...SessionNodesFragment
               ...TerminateSessionModalFragment
             }
@@ -274,6 +276,18 @@ const AdminComputeSessionListPage = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
+      <WebMCPAdminSessionTools
+        sessionsFrgmt={filterOutNullAndUndefined(
+          compute_session_nodes?.edges.map((e) => e?.node),
+        )}
+        count={compute_session_nodes?.count ?? 0}
+        page={tablePaginationOption.current}
+        pageSize={tablePaginationOption.pageSize}
+        sort={queryVariables.order ?? null}
+        filter={queryParams.filter || null}
+        statusCategory={queryParams.statusCategory}
+        type={queryParams.type}
+      />
       <BAITabs
         activeKey={queryParams.type}
         onChange={(key) => {

@@ -18,6 +18,7 @@ import RoleNodes, {
   type RoleNodeInList,
   availableRoleSorterValues,
 } from '../components/RoleNodes';
+import WebMCPRoleTools from '../components/WebMCPRoleTools';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -31,6 +32,7 @@ import {
   BAINameActionCell,
   BAIUserSelect,
   filterOutEmpty,
+  filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
@@ -108,6 +110,7 @@ const RBACManagementPage: React.FC = () => {
           edges {
             node {
               id
+              ...WebMCPRoleToolsFragment
               ...RoleNodesFragment
               ...RoleDetailDrawerFragment
             }
@@ -338,6 +341,16 @@ const RBACManagementPage: React.FC = () => {
             </BAIButton>
           </BAIFlex>
         </BAIFlex>
+        <WebMCPRoleTools
+          rolesFrgmt={filterOutNullAndUndefined(roleNodes)}
+          count={queryRef.adminRoles?.count ?? 0}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          sort={queryParams.order ?? null}
+          filter={queryParams.filter}
+          status={queryParams.status}
+          currentRoleId={selectedRoleId}
+        />
         <RoleNodes
           rolesFrgmt={roleNodes}
           loading={deferredQueryVariables !== queryVariables}

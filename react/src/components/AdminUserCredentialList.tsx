@@ -14,6 +14,7 @@ import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
+import { WebMCPAdminKeypairTools } from './WebMCPAdminUserTools';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -361,6 +362,16 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
+      <WebMCPAdminKeypairTools
+        keypairs={filterOutNullAndUndefined(keypair_list?.items)}
+        count={keypair_list?.total_count ?? 0}
+        page={current}
+        pageSize={pageSize}
+        sort={variables.order ?? null}
+        filter={variables.filter ?? null}
+        activeType={activeType}
+        currentKeypairId={(keypairInfoModalFrgmt as Keypair | null)?.id ?? null}
+      />
       <BAITable<Keypair>
         rowKey={'id'}
         loading={isPending}
