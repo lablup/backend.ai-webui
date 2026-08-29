@@ -9,8 +9,10 @@ so a block that stops matching the SDL fails CI rather than failing at a user.
 from another mode — see `.claude/rules/graphql-pagination.md`.
 
 **Links**: `query` annotates every node whose type has a resource page with
-`webui_path` / `webui_url`, and lists them under `data.links`. When exactly one
-is produced, `data.hint` is the `bai-agent open …` that opens it.
+`webui_path` / `webui_url` (inline on the node, and again under `data.links`).
+Hand the `webui_url` — or `webui_path` if no WebUI origin is known — to the
+user so they can open it themselves; never describe a click path you could
+report directly.
 
 ## Sessions
 
@@ -64,8 +66,9 @@ query Session($id: GlobalIDField!) {
 }
 ```
 
-`--var id=<the id from entry 1>` — the Relay global id, not `row_id`.
-Follow up with `bai-agent open session <row_id>`.
+`--var id=<the id from entry 1>` — the Relay global id, not `row_id`. Follow up
+by giving the user `webui_path` `/session?sessionDetail=<row_id>` (or the
+row's `webui_url`).
 
 ## Storage
 
@@ -147,8 +150,8 @@ query Agents($first: Int!) {
 }
 ```
 
-`--var first=20`. Agents have no detail page yet, so no `webui_path` —
-`bai-agent open list agent` opens the list.
+`--var first=20`. Agents have no detail page yet, so no `webui_path` — point
+the user at the list page instead: `/admin/agent?tab=agents`.
 
 ### 6. Resource groups (scaling groups)
 
@@ -270,8 +273,9 @@ bai-agent query --allow-mutation --json \
 ```
 
 `createVfolderV2` is one of the three names on
-`packages/backend.ai-agent-cli/src/mutation-allowlist.ts`. `data.hint` carries
-the `bai-agent open vfolder <id>` that opens what you just made.
+`packages/backend.ai-agent-cli/src/mutation-allowlist.ts`. The result's
+`data.links` entry carries the `webui_url` (or `webui_path`
+`/data?folder=<id>`) for what you just made.
 
 ### 11. Delete a VFolder — refused on purpose
 
@@ -284,14 +288,22 @@ mutation DeleteFolder($vfolderId: UUID!) {
 ```
 
 This document is valid GraphQL and valid against the SDL, and it still never
-runs: `deleteVfolderV2` is not on the allow-list, so the gate refuses it
-**before any network call**, with or without `--allow-mutation`:
+runs: the gate refuses it **before any network call**, whether or not you pass
+`--allow-mutation`. Only the message differs. Without the flag:
+
+```
+error: Mutation "deleteVfolderV2" needs --allow-mutation.
+code:  mutation_refused
+hint:  /data
+```
+
+With `--allow-mutation`, because `deleteVfolderV2` is not on the allow-list:
 
 ```
 error: Mutation "deleteVfolderV2" is not on the allow-list.
 code:  mutation_refused
-hint:  bai-agent open list vfolder
+hint:  /data
 ```
 
-Exit 4. Run the `hint` and let the person delete it from the Data page — do not
-look for another route to the same effect.
+Exit 4 either way. Give the person the `hint` page and let them delete it from
+the Data page — do not look for another route to the same effect.

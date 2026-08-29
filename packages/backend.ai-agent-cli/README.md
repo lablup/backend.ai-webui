@@ -410,7 +410,7 @@ than a missing one, because a labelled field is ranked higher.
 ## Auth
 
 `bai-agent` never asks for a password. It borrows a session the WebUI already
-holds, through a browser hand-off:
+holds, confirmed once in the browser:
 
 ```bash
 bai-agent login --endpoint http://manager.example.com:8090
@@ -727,8 +727,8 @@ pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init --features a
 
 The repo-local `bai-agent` skill (`.claude/skills/bai-agent/`) carries what the
 block deliberately does not: the preflight and login procedure, when to answer
-versus hand off to the browser, the neighbouring skills' boundaries, and
-`references/query-cookbook.md` — ready-to-run documents that
+directly versus point the user at the WebUI, the neighbouring skills'
+boundaries, and `references/query-cookbook.md` — ready-to-run documents that
 `src/init/skill.test.ts` re-validates against the SDL.
 
 ## Output contract

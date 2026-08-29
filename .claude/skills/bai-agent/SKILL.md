@@ -7,7 +7,8 @@ description: >
   status PENDING mean", "what is a resource group", "what does this field mean"),
   "find it in the manual", "search the docs", "query the manager", "run a GraphQL query",
   "how many sessions are running", "show me my sessions / folders / agents / users",
-  "open this session in the browser", "open that folder in the WebUI", or "bai-agent".
+  "give me the WebUI link for this session", "where do I see that folder in the WebUI",
+  or "bai-agent".
   Use `backend-ai-guide` instead for platform architecture with no live data, and
   `docs-lead` for writing the manual rather than reading it.
 ---
@@ -15,18 +16,20 @@ description: >
 # bai-agent
 
 `bai-agent` answers Backend.AI questions from the checkout you are already in,
-and hands the answer to the browser tab the user is already logged into. The
-workflow contract is the generated `BAI-AGENT` block in `CLAUDE.md` — read it
-there, it is not repeated here. This file is the parts the CLI cannot tell you:
-when to log in, when to answer versus hand off, and which neighbour owns what.
+and points the user at the WebUI page for what it found. The workflow contract
+is the generated `BAI-AGENT` block in `CLAUDE.md` — read it there, it is not
+repeated here. This file is the parts the CLI cannot tell you: when to log in,
+when to answer versus link, and which neighbour owns what.
 
 ## Preflight
 
 1. `pnpm --filter backend.ai-agent-cli build` — once per session; the
    `pnpm run bai-agent` proxy runs the bundle, not the source.
-2. `pnpm run bai-agent doctor --json` — checkout, session and WebMCP tab in one
-   pass. Exit 0 and you are ready.
-3. `pnpm run bai-agent whoami` — exit 3 (`auth_required`) means log in:
+2. `pnpm run bai-agent doctor --json` — checkout and session in one pass. It
+   only ever exits 0 or 1, and a missing session is a `warn`, so exit 0 means
+   the environment is ok — not that you are logged in.
+3. `pnpm run bai-agent whoami` — the auth check; exit 3 (`auth_required`) means
+   log in:
    - Get the endpoint and the account from the **`webui-connection-info`** skill.
      Never ask the user for a password, and never put one in a command.
    - Browser on this machine: `bai-agent login --endpoint <url>`, then confirm on
@@ -38,14 +41,14 @@ when to log in, when to answer versus hand off, and which neighbour owns what.
 4. **`search`, `docs show`, `schema show` and `explain` need no session at all.**
    A "what does X mean" question never requires logging in — go straight to it.
 
-## Answer, or hand off
+## Answer, or link
 
 | The user wants | Do this |
 | --- | --- |
 | to understand a term, field or status value | `explain` (meaning) or `docs show` (the manual). Answer in the words the UI uses, and cite the deployed-docs `url` the CLI returned. |
 | a count, a list, a value | `query` — start from `references/query-cookbook.md`, adapt, never invent a shape. Summarise the rows; do not paste the raw envelope. |
-| to see it, or act on it | `bai-agent open <resource> <id>` — the tab is already logged in. Never describe a click path you could have performed. |
-| something destructive | `open` the page and stop. A `mutation_refused` (exit 4) is the answer, not an obstacle to route around. |
+| to see it, or act on it | Give the `webui_url` (or `webui_path`) `query` already annotated onto the row, under `data.links`, so the user can open it themselves. Never describe a click path you could report directly. |
+| something destructive | Give them the `hint` page from the refusal and stop. A `mutation_refused` (exit 4) is the answer, not an obstacle to route around. |
 
 `explain` prints `MISSING` for a piece nothing curates. Say it is not documented
 and offer the SDL entry — never fill the gap from memory. If the answer would be
@@ -72,16 +75,9 @@ guess at runtime.
 - **`--allow-mutation` is not a bypass.** The field must also be on
   `packages/backend.ai-agent-cli/src/mutation-allowlist.ts`. Widening that list
   is a reviewed PR, never an in-session decision.
-- **`no_webui_tab` (exit 5) means no tab is connected** — give the user the
-  `hint` URL and let them open it. `ambiguous_tab` means several: re-run with
-  `--tab <id>` from the suggestions. Never guess which tab.
-- **The relay handshake starves on HTTPS.** Chrome's Local Network Access check
-  can outlast the widget's probe on a `https://*.localhost:1355` page, so the
-  tab never finds the relay. Use the plain `http://127.0.0.1:<port>` URL Vite
-  prints. See `DEV_ENVIRONMENT.md`.
 - **Session detail views share one URL.** `/session?sessionDetail=<id>` is a
-  drawer, the only addressable surface — there is no per-tab session link to
-  offer.
+  drawer, the only addressable surface — there is no per-row session link to
+  offer beyond that.
 
 ## Cookbook
 

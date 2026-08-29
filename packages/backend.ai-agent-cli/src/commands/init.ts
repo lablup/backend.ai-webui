@@ -1,19 +1,20 @@
 import { defineCommand } from '../command.js';
 import { CliError } from '../errors.js';
 import {
+  AGENTS_MD,
   applyBlock,
   BLOCK_END,
   BLOCK_START,
   CLAUDE_MD,
   FEATURE_AGENTS,
   renderAgentBlock,
+  resolveBlockTarget,
 } from '../init/block.js';
 import type { BlockAnchor } from '../init/block.js';
-import { CLI_NAME, cliVersion } from '../meta.js';
+import { CLI_NAME } from '../meta.js';
 import { record, renderBlocks, text } from '../output.js';
 import { resolveRepoContext } from '../repo-context.js';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 
 export interface InitWriteResult {
   path: string;
@@ -23,7 +24,8 @@ export interface InitWriteResult {
 
 export interface InitData {
   feature: string;
-  cli: { name: string; version: string };
+  // No CLI version here: the block no longer pins one (it would make the
+  // committed block churn on every release), and `version` / `manifest` own it.
   commandCount: number;
   markers: { start: string; end: string };
   /** The block itself, markers included. */
@@ -69,20 +71,19 @@ export const initCommand = defineCommand<InitData>({
     const block = renderAgentBlock(commands);
     const data: InitData = {
       feature: FEATURE_AGENTS,
-      cli: { name: CLI_NAME, version: cliVersion() },
       commandCount: commands.length,
       markers: { start: BLOCK_START, end: BLOCK_END },
       block,
     };
     if (flags.write !== true) return data;
 
-    const path = join(resolveRepoContext(cwd).repoRoot, CLAUDE_MD);
+    const { path } = resolveBlockTarget(resolveRepoContext(cwd).repoRoot);
     let source: string;
     try {
       source = readFileSync(path, 'utf8');
     } catch (error) {
       throw new CliError('repo_incomplete', `Cannot read ${path}.`, {
-        hint: `${CLI_NAME} init > ${CLAUDE_MD}`,
+        hint: `check that ${CLAUDE_MD}/${AGENTS_MD} exists in the checkout root`,
         cause: error,
       });
     }

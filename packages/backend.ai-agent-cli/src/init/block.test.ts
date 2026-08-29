@@ -3,14 +3,23 @@ import { COMMANDS } from '../registry.js';
 import { resolveRepoContext } from '../repo-context.js';
 import { runCli } from '../run.js';
 import {
+  AGENTS_MD,
   applyBlock,
   BLOCK_END,
   BLOCK_START,
   CLAUDE_MD,
   findBlockRegion,
   renderAgentBlock,
+  resolveBlockTarget,
 } from './block.js';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -105,7 +114,7 @@ describe('init', () => {
 describe(`the committed ${CLAUDE_MD} block`, () => {
   it('equals `init --features agents` output', () => {
     const repo = resolveRepoContext(repoCwd);
-    const source = readFileSync(join(repo.repoRoot, CLAUDE_MD), 'utf8');
+    const source = readFileSync(resolveBlockTarget(repo.repoRoot).path, 'utf8');
     const region = findBlockRegion(source);
     expect(
       region,
@@ -172,5 +181,92 @@ describe('init --write', () => {
     const twice = applyBlock(once.content, block);
     expect(twice.content).toBe(once.content);
     expect(twice.changed).toBe(false);
+  });
+});
+
+describe('findBlockRegion', () => {
+  it('ignores a marker quoted inside prose', () => {
+    const source = [
+      '# Doc',
+      '',
+      'The generated region sits between `' + BLOCK_START + '` and',
+      '`' + BLOCK_END + '`; do not hand-edit it.',
+      '',
+      BLOCK_START,
+      'real',
+      BLOCK_END,
+      '',
+    ].join('\n');
+    const region = findBlockRegion(source);
+    expect(region?.text).toBe(`${BLOCK_START}\nreal\n${BLOCK_END}`);
+  });
+
+  it('finds nothing when both markers are only quoted inline', () => {
+    expect(
+      findBlockRegion(`prose \`${BLOCK_START}\` and \`${BLOCK_END}\` prose`),
+    ).toBeUndefined();
+  });
+});
+
+describe('insertOffset', () => {
+  const astryxEnd = '<!-- ASTRYX:END -->';
+
+  it('does not treat a `#` inside a fenced block as the next heading', () => {
+    const source = [
+      '# Project',
+      astryxEnd,
+      'Prose about the block above.',
+      '',
+      '```bash',
+      '# comment, not a heading',
+      'pnpm run bai-agent doctor',
+      '```',
+      '',
+      '## Real heading',
+      '',
+      'tail',
+      '',
+    ].join('\n');
+    const { content, anchor } = applyBlock(source, 'BLOCK');
+    expect(anchor).toBe('after-astryx');
+    expect(content.indexOf('BLOCK')).toBeGreaterThan(
+      content.indexOf('# comment, not a heading'),
+    );
+    expect(content.indexOf('BLOCK')).toBeLessThan(
+      content.indexOf('## Real heading'),
+    );
+  });
+});
+
+describe('resolveBlockTarget', () => {
+  it('writes through a CLAUDE.md symlink to AGENTS.md', () => {
+    const root = fakeCheckout('# Project\n');
+    rmSync(join(root, CLAUDE_MD));
+    writeFileSync(join(root, AGENTS_MD), '# Project\n');
+    symlinkSync(AGENTS_MD, join(root, CLAUDE_MD));
+    expect(resolveBlockTarget(root).path).toBe(join(root, AGENTS_MD));
+  });
+
+  it('refuses a dangling CLAUDE.md symlink', () => {
+    const root = fakeCheckout('# Project\n');
+    rmSync(join(root, CLAUDE_MD));
+    symlinkSync('nowhere.md', join(root, CLAUDE_MD));
+    expect(() => resolveBlockTarget(root)).toThrow(/dangling symlink/);
+  });
+
+  it('refuses a placeholder CLAUDE.md sitting next to a real AGENTS.md', () => {
+    const root = fakeCheckout('See AGENTS.md.\n');
+    writeFileSync(join(root, AGENTS_MD), `# Project\n\n${'prose '.repeat(200)}\n`);
+    expect(() => resolveBlockTarget(root)).toThrow(/placeholder/);
+  });
+
+  it('falls back to AGENTS.md when there is no CLAUDE.md', () => {
+    const root = fakeCheckout('# Project\n');
+    rmSync(join(root, CLAUDE_MD));
+    writeFileSync(join(root, AGENTS_MD), '# Project\n');
+    expect(resolveBlockTarget(root)).toEqual({
+      path: join(root, AGENTS_MD),
+      via: AGENTS_MD,
+    });
   });
 });
