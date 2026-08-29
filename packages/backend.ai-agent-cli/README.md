@@ -36,6 +36,7 @@ bai-agent docs search "<q>"    # alias of `search --domain docs`
 bai-agent docs show <id>       # print one manual section (`--full` for the page)
 bai-agent schema search "<q>"  # alias of `search --domain schema`
 bai-agent schema show <name>   # print one type, field or enum value
+bai-agent schema sync          # refresh the SDL from a backend.ai release
 bai-agent login                # hand this machine a WebUI session (see Auth below)
 bai-agent whoami               # who the stored session belongs to
 bai-agent logout               # delete the stored session file
@@ -234,6 +235,126 @@ rule:      Use exactly one pagination mode; mixing arguments from two modes is r
 modes:     forward cursor (first + after) | backward cursor (last + before) | offset (limit + offset)
 reference: .claude/rules/graphql-pagination.md
 ```
+
+### `schema sync`
+
+The committed SDL is a snapshot of a backend release. `schema sync` refreshes it
+from the `supergraph.graphql` asset of a `lablup/backend.ai` GitHub release —
+the same federation-composed shape (`@join__*` directives) `data/schema.graphql`
+already has — and records where it came from:
+
+```bash
+bai-agent schema sync --dry-run              # latest release, write nothing
+bai-agent schema sync --tag 26.4.10          # a named release
+```
+
+```
+bai-agent schema sync
+would update data/schema.graphql to 26.4.10
+
+tag:           26.4.10
+tagSource:     latest
+outcome:       dry-run
+schemaChanged: true
+remoteSha256:  36282b9d854f3b9a0e69a218c7bb0f95fbc819665766d0b4f324446ad0633198
+localSha256:   f729eacb619295163dc34257d898945297eeae22b7eaad44dbaca3ecb82c400f
+remoteBytes:   644301
+localBytes:    692483
+byteDelta:     -48182
+```
+
+`--dry-run` prints that and writes nothing. A real run writes the asset to
+`data/schema.graphql` and `data/schema.meta.json` next to it:
+
+```json
+{
+  "tag": "26.4.10",
+  "sha256": "36282b9d…",
+  "fetchedAt": "2026-08-29T04:00:00.000Z",
+  "source": "https://github.com/lablup/backend.ai/releases/download/26.4.10/supergraph.graphql"
+}
+```
+
+`outcome` says what happened: `updated`, `unchanged` (same tag and same
+sha256 — a no-op), `meta-recorded` (the bytes already matched, but not under
+this tag) or `dry-run`. **Nothing else in the CLI ever runs it**: no command
+syncs implicitly, and no command other than `login` / `whoami` / `doctor` and
+the version gate below touches the network at all.
+
+Two GitHub API calls per run (the release lookup, then the asset), so an
+unauthenticated run stays inside the anonymous rate limit. `GITHUB_TOKEN` is
+used when set — on `api.github.com` only, never on the asset CDN. A rate-limit
+answer hints `GITHUB_TOKEN=<token> bai-agent schema sync`.
+
+`bai-agent version` prints the recorded `schemaTag`, and `doctor`'s **schema
+alignment** group reports the SDL, the meta file (its tag, its age, and whether
+its `sha256` still matches the file on disk), the manager version when a session
+exists, and a verdict.
+
+### Version alignment
+
+The SDL is a snapshot; the manager you are talking to is not necessarily at the
+same version. `whoami`, `schema show` — and `query` / `explain` once they land —
+compare the manager against the `Added in` / `Deprecated since` markers and warn
+once, on **stderr**:
+
+```
+warning: schema is not aligned with manager 26.8.0rc1: 97 not in the manager yet
+(AppConfigAllowList.rank 26.8.0, …, and 94 more); 19 deprecated by the manager
+(BulkCreateUsersV2Payload 26.4.4, …); hint: bai-agent schema sync --tag 26.8.0rc1
+```
+
+`--strict` refuses instead: exit **1**, code `version_mismatch`, same hint. The
+verdict is also part of the data, so `--json` carries it.
+
+The manager version is read from `GET <endpoint>/func/`, which answers
+`{ version, manager }` — the same call the WebUI client makes
+(`packages/backend.ai-client/src/client.ts`, `get_manager_version` →
+`getServerVersion` → `newPublicRequest('GET', '/')`, rewritten to `/func/` in
+SESSION mode). `/server/version` is the fallback. The answer is cached per
+process, so a run asks once. Introspection is attempted **opportunistically**
+(`{ __schema { queryType { name } } }`, once) purely to confirm the GraphQL
+endpoint answers; a manager with introspection disabled reports nothing and the
+schema still comes from the committed SDL. Without a stored session none of this
+happens and no request is made.
+
+Field-level markers are compared through `markerSource`: a member with no marker
+of its own inherits its type's. A **named** selection uses that effective marker;
+a whole-schema comparison counts only markers a member owns, because its type
+already stands for the members that inherit from it.
+
+#### For `query` (FR-3768) and `explain` (FR-3769)
+
+The gate is one exported call. The pure comparison:
+
+```ts
+import { checkVersionAlignment } from 'backend.ai-agent-cli';
+
+const alignment: VersionAlignment = checkVersionAlignment(
+  schemaCtx,          // { schema: SchemaIndex } — schemaContext(repo) satisfies it
+  managerVersion,     // e.g. '26.8.0rc1'
+  selectedFields?,    // ['ComputeSessionNode.status', …]; omit for the whole schema
+);
+```
+
+and the wrapper that finds the session, reads the manager version, warns or
+throws:
+
+```ts
+const { alignment, manager } = await applyVersionAlignmentGate({
+  cwd: context.cwd,
+  schemaCtx,
+  selectedFields: [...],       // the ids the command actually touched
+  strict: context.flags.strict === true,
+  notify: context.notify,      // stderr, so --json stdout stays one envelope
+});
+```
+
+It returns `{}` — silently, with no request — when nothing is stored or the
+manager is unreachable. Put `alignment` on the command's data object and render
+it with `renderAlignment(alignment)` so text and JSON stay one surface. All four
+(`checkVersionAlignment`, `applyVersionAlignmentGate`, `renderAlignment` and the
+`STRICT_FLAG` spec) live in `src/version-align.ts`.
 
 ## The i18n reverse index
 
@@ -605,7 +726,7 @@ verbosity levels), `-h, --help`, `--version`.
 | Code | Meaning                                                  |
 | ---- | -------------------------------------------------------- |
 | 0    | success                                                  |
-| 1    | error (including "not inside a checkout", `schema_mismatch`) |
+| 1    | error (`version_mismatch`, `schema_mismatch`, "not inside a checkout", …) |
 | 2    | usage — unknown command, unknown flag, bad flag value    |
 | 3    | `auth_required` — no session, or the manager rejected it |
 | 4    | `mutation_refused`                                       |
