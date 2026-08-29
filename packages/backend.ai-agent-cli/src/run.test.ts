@@ -83,7 +83,7 @@ describe('success envelope', () => {
     expect(parsed.type).toBe('manifest');
     expect(
       parsed.data.commands.map((entry: { name: string }) => entry.name),
-    ).toEqual(['version', 'manifest', 'doctor']);
+    ).toEqual(['version', 'manifest', 'doctor', 'search', 'docs']);
   });
 
   it('wraps doctor data and reports every check as ok inside a checkout', async () => {
