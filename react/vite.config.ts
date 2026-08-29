@@ -1,4 +1,8 @@
 import { devReviewOverlayPlugin } from './vite-plugins/reviewOverlay';
+import {
+  devWebMCPPlugin,
+  withWebMCPCspHeaders,
+} from './vite-plugins/webmcp';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
@@ -647,7 +651,9 @@ export default defineConfig(({ command, mode }) => {
   // Resolve the dev CSP headers AFTER loadEnv() + Object.assign above, so a
   // `VITE_DEV_CSP` set in a `.env*` file is honoured (not only a shell var).
   // On by default (relaxed `enforce`); `{}` only when explicitly opted out.
-  const devCspHeaders = buildDevCspHeaders();
+  // `withWebMCPCspHeaders` adds `frame-src blob:` for the local-relay widget
+  // iframe — only under `VITE_WEBMCP=on`, otherwise it is the identity.
+  const devCspHeaders = withWebMCPCspHeaders(buildDevCspHeaders());
 
   // Only resolve the pnpm store when actually serving — `vite build` does not
   // use `server.fs.allow`, so the subprocess is wasted there. See the
@@ -975,6 +981,10 @@ export default defineConfig(({ command, mode }) => {
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
       // transforms (see reviewOverlay.ts).
       devReviewOverlayPlugin(),
+      // FR-3764: dev-only WebMCP relay assets + bootstrap injection. Same
+      // registration constraint as the overlay above — must follow
+      // projectRootStaticPlugin. Inert unless VITE_WEBMCP=on.
+      devWebMCPPlugin(),
 
       // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),
       // wired DIRECTLY via `@stylexjs/unplugin` (sole peer: `unplugin` — no

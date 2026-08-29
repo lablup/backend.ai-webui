@@ -112,7 +112,12 @@ export default defineConfig({
     setupFiles: [
       resolve(__dirname, 'src/setupTests.ts'),
     ],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // `vite-plugins/` holds the dev-server plugins; their tests run here too
+    // (nothing else in the repo would otherwise execute them).
+    include: [
+      'src/**/*.{test,spec}.{ts,tsx}',
+      'vite-plugins/**/*.{test,spec}.ts',
+    ],
     exclude: ['**/node_modules/**', '**/build/**', '**/__generated__/**'],
 
     // CI-only: the transform cache (node_modules/.experimental-vitest-cache)

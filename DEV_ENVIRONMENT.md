@@ -123,6 +123,69 @@ node packages/backend.ai-agent-cli/dist/cli.js login --endpoint <manager url>
 
 The CLI derives the WebUI origin from this checkout's branch the same way `scripts/dev.mjs` does (`fr-XXXX.localhost:1355`, honouring `PORTLESS_PORT`); pass `--webui <origin>` to override it. The browser POSTs the session to a loopback listener the CLI opened, so both must run on the same machine — over a tunnel or a shared dev-gw URL, use `bai-agent login --paste` instead. `packages/backend.ai-agent-cli/README.md` has the full flow.
 
+## WebMCP: driving the dev tab from Claude Code (`VITE_WEBMCP=on`)
+
+With WebMCP on, an MCP client (Claude Code, Cursor, …) can list and call the
+tools the running WebUI tab registers — `bai_whoami`, `bai_open_resource`, plus
+any page-scoped tool a component adds via `useWebMCPTool`. It reuses the tab's
+own login, so no API key or extra auth is involved.
+
+**Dev-only and off by default.** Without the flag the Vite plugin serves no
+relay asset, injects no script and does not touch the dev CSP, and the hook
+never reads `document.modelContext`. `apply: 'serve'` keeps it out of
+production builds entirely.
+
+```bash
+VITE_WEBMCP=on pnpm run dev
+```
+
+Then register the relay with your MCP client once — the package's own
+`.mcp.json` shape:
+
+```bash
+claude mcp add webmcp-local-relay -- npx -y @mcp-b/webmcp-local-relay
+```
+
+```json
+{
+  "mcpServers": {
+    "webmcp-local-relay": {
+      "command": "npx",
+      "args": ["-y", "@mcp-b/webmcp-local-relay"]
+    }
+  }
+}
+```
+
+The relay listens on `ws://127.0.0.1:9333`; a hidden `blob:` iframe in the dev
+page connects to it and forwards the tab's tools. A second relay instance
+detects the busy port and proxies through the first, so several MCP clients can
+share one browser tab. Restrict which pages may register tools with
+`--widget-origin https://fr-XXXX.localhost:1355` (the default accepts any
+origin).
+
+Without an MCP client, the same round trip is scriptable:
+
+```bash
+node scripts/webmcp-client.mjs list
+node scripts/webmcp-client.mjs call bai_whoami
+node scripts/webmcp-client.mjs call bai_open_resource '{"type":"session","id":"<uuid>"}'
+```
+
+Notes:
+
+- **Chrome's Local Network Access check can starve the relay handshake.** The
+  widget gives each `ws://127.0.0.1` probe 1200 ms; on an HTTPS page under a
+  loaded machine the permission check alone can take several seconds, and the
+  tab then never finds the relay (a scan of ports 9333–9348 fails). Grant the
+  local-network permission for the origin, or open the dev server's plain
+  `http://127.0.0.1:<port>` URL that Vite prints — over HTTP the handshake is
+  ~10 ms.
+- Adding a tool is a one-liner in a component — see
+  `react/src/hooks/useWebMCPTool.ts` and `WebMCPGlobalTools.tsx`. Names are
+  `bai_` + snake_case; unregistration happens automatically on unmount, which is
+  what makes page-scoped tools appear and disappear with the route.
+
 ## Storybook
 
 ```bash
@@ -142,11 +205,13 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 
 ## Commands reference
 
-| Command                                                      | Description                                                         |
-| ------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `pnpm run dev`                                               | TypeScript watch + Relay watch + CRA dev server, all under Portless |
-| `PORT=9081 pnpm run dev`                                     | Same, but pin CRA to port 9081                                      |
-| `pnpm run wsproxy`                                           | WebSocket proxy on fixed port 5050 (not wrapped by Portless)        |
-| `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
-| `pnpm exec portless list`                                    | Show active Portless routes                                         |
-| `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
+| Command                                                      | Description                                                          |
+| ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `pnpm run dev`                                               | TypeScript watch + Relay watch + CRA dev server, all under Portless   |
+| `PORT=9081 pnpm run dev`                                     | Same, but pin CRA to port 9081                                        |
+| `VITE_WEBMCP=on pnpm run dev`                                | Same, plus the WebMCP local-relay wiring (see above)                  |
+| `node scripts/webmcp-client.mjs list \| call <tool> [json]`  | List / call the dev tab's WebMCP tools without an MCP client          |
+| `pnpm run wsproxy`                                           | WebSocket proxy on fixed port 5050 (not wrapped by Portless)          |
+| `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                              |
+| `pnpm exec portless list`                                    | Show active Portless routes                                           |
+| `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                                 |

@@ -18,6 +18,7 @@ import RouteDocumentTitle from './components/RouteDocumentTitle';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
+import WebMCPGlobalTools from './components/WebMCPGlobalTools';
 import WebUINavigate from './components/WebUINavigate';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
@@ -1662,6 +1663,13 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RouteDocumentTitle />
             </ErrorBoundaryWithNullFallback>
+            {/* FR-3764. Suspends until the client connects, so its tools
+                answer with a real identity or not at all. */}
+            <Suspense>
+              <ErrorBoundaryWithNullFallback>
+                <WebMCPGlobalTools />
+              </ErrorBoundaryWithNullFallback>
+            </Suspense>
             {/*FYI, MainLayout has ErrorBoundaryWithNullFallback for <Outlet/> */}
             <MainLayout />
             <ErrorBoundaryWithNullFallback>
