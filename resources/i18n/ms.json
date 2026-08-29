@@ -513,6 +513,30 @@
       "Title": "Berbual dengan model yang telah anda gunakan"
     }
   },
+  "cliLogin": {
+    "Account": "Akaun",
+    "Attestation": "Saya sendiri yang memulakan log masuk ini daripada terminal pada komputer ini.",
+    "Cancelled": "Anda membatalkan penyerahan.",
+    "Confirm": "Serahkan sesi",
+    "ConsentDescription": "CLI akan bertindak sebagai anda — akaun yang sama, kebenaran yang sama, endpoint yang sama — sehingga anda menjalankan bai-agent logout atau sesi tamat tempoh. Luluskan hanya log masuk yang anda mulakan sendiri.",
+    "ConsentTitle": "Sesi pelayar ini akan dikongsi dengan CLI pada komputer ini",
+    "DoneDescription": "Anda boleh menutup tab ini dan kembali ke terminal.",
+    "DoneTitle": "CLI telah log masuk",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "Penyerahan tidak selesai",
+    "HandOffRejected": "CLI setempat menolak penyerahan (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Tiada CLI sedang mendengar pada komputer ini. Ia mungkin berjalan pada mesin lain, atau pelayar menyekat permintaan ke localhost.",
+    "MatchCodeDescription": "Terminal yang memulakan log masuk ini memaparkan kod yang sama. Jika tidak sepadan, batalkan.",
+    "NoListenerPort": "Halaman ini dibuka tanpa port pendengar CLI.",
+    "PasteFallbackDescription": "Jalankan ini dalam terminal tempat CLI berada, kemudian tampal ID sesi apabila diminta.",
+    "PasteFallbackTitle": "Tampal ID sesi ke dalam CLI",
+    "PasteFallbackWarning": "ID sesi sekuat kata laluan anda. Sesiapa yang memilikinya boleh bertindak sebagai anda sehingga sesi tamat tempoh. Jangan tampal ke dalam sembang, isu atau log.",
+    "Retry": "Cuba lagi",
+    "RevealSessionId": "Tunjukkan ID sesi",
+    "SessionIdMasked": "Tersembunyi — {{masked}}",
+    "Title": "Log masuk Backend.AI CLI",
+    "VerificationCode": "Kod pengesahan"
+  },
   "credential": {
     "2FAEnabled": "2FA Diaktifkan",
     "AccessKey": "Kunci akses",

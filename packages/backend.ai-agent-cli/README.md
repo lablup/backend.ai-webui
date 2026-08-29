@@ -30,12 +30,15 @@ checkout it fails with exit code 1 and an error naming what was not found.
 ```bash
 bai-agent version              # CLI version, detected checkout root, repo version
 bai-agent manifest             # every command with its description and flags
-bai-agent doctor               # environment + checkout diagnostics
+bai-agent doctor               # environment + checkout + auth diagnostics
 bai-agent search "<query>"     # one ranked list over docs + schema + terminology
 bai-agent docs search "<q>"    # alias of `search --domain docs`
 bai-agent docs show <id>       # print one manual section (`--full` for the page)
 bai-agent schema search "<q>"  # alias of `search --domain schema`
 bai-agent schema show <name>   # print one type, field or enum value
+bai-agent login                # hand this machine a WebUI session (see Auth below)
+bai-agent whoami               # who the stored session belongs to
+bai-agent logout               # delete the stored session file
 bai-agent --help               # generated from the same registry as `manifest`
 ```
 
@@ -266,6 +269,82 @@ It currently attributes **68 `Type.field` entries** across 63 i18n keys, from
 156 of the 580 scanned files. That is deliberately thin: a wrong label is worse
 than a missing one, because a labelled field is ranked higher.
 
+## Auth
+
+`bai-agent` never asks for a password. It borrows a session the WebUI already
+holds, through a browser hand-off:
+
+```bash
+bai-agent login --endpoint http://manager.example.com:8090
+```
+
+1. The CLI opens a listener on a random loopback port and prints a URL plus a
+   short verification code:
+   `https://fr-3763.localhost:1355/cli-login?port=<p>&state=<nonce>`.
+2. The browser opens `/cli-login`. The page shows the account, the endpoint and
+   the same verification code, and asks you to attest that you started the
+   login yourself.
+3. On confirm it POSTs `{ sessionId, endpoint, state }` to
+   `http://127.0.0.1:<p>/callback`. The listener rejects a payload whose
+   `state` or `endpoint` does not match what it started with.
+4. The CLI stores the session and immediately runs `whoami` to prove it works.
+
+`--webui <origin>` names the WebUI serving `/cli-login`; it defaults to this
+checkout's Portless dev origin (`https://fr-XXXX.localhost:1355`, see
+`DEV_ENVIRONMENT.md`). `--timeout <seconds>` bounds the wait (default 300).
+`--no-browser` prints the URL instead of trying to open one. Progress lines go
+to **stderr**, so `--json` stdout stays a single envelope.
+
+When the browser cannot reach the listener — a remote WebUI, a locked-down
+browser — the page reveals the session id for manual transfer:
+
+```bash
+bai-agent login --paste --endpoint http://manager.example.com:8090
+```
+
+It prompts for the session id without echoing it. `--session-id <id>` supplies
+it non-interactively.
+
+`/cli-login` is **off by default**. Turn it on in the WebUI's `config.toml`:
+
+```toml
+[general]
+enableCliLogin = true
+```
+
+With the flag off the route renders the app's 404, exactly as an unknown URL
+would.
+
+### Where the session lives
+
+```
+$BAI_AGENT_CONFIG_DIR                      # test/CI override, else:
+${XDG_CONFIG_HOME:-~/.config}/backend.ai-agent/sessions/<host>.json
+```
+
+Directory `0700`, file `0600`, one file per endpoint host (`host:port`
+sanitised). It holds `{ endpoint, webui, sessionId, savedAt }`. The session id
+is **masked** (`abcd…wxyz`) in every text and JSON output; only the paste
+prompt handles it in the clear, and it does not echo.
+
+`bai-agent logout` deletes that file and nothing else — the WebUI session
+itself stays alive until you sign out of the browser or it expires.
+
+### When the session dies
+
+The manager answers a dead session with HTTP 200 whose GraphQL `errors[]` wrap
+its own 401 (`error_code: user_auth_unauthorized`), so status alone is not a
+usable signal. `manager.ts` treats both a real 401 and that wrapped shape as an
+auth failure. `whoami` then deletes the stored session, exits **3**
+(`auth_required`) and hints `bai-agent login --endpoint <endpoint>`. It never
+re-authenticates on its own.
+
+### Endpoint resolution
+
+`--endpoint` wins; otherwise the single stored session; otherwise
+`[general] apiEndpoint` from the detected checkout's `config.toml`. Two or more
+stored sessions is an error, not a guess.
+
 ## Output contract
 
 Text is the default and mirrors the JSON surface: both are rendered from the
@@ -298,14 +377,14 @@ verbosity levels), `-h, --help`, `--version`.
 
 ## Exit codes
 
-| Code | Meaning                                               |
-| ---- | ----------------------------------------------------- |
-| 0    | success                                               |
-| 1    | error (including "not inside a checkout")             |
-| 2    | usage — unknown command, unknown flag, bad flag value |
-| 3    | `auth_required`                                       |
-| 4    | `mutation_refused`                                    |
-| 5    | `not_found`                                           |
+| Code | Meaning                                                  |
+| ---- | -------------------------------------------------------- |
+| 0    | success                                                  |
+| 1    | error (including "not inside a checkout")                |
+| 2    | usage — unknown command, unknown flag, bad flag value    |
+| 3    | `auth_required` — no session, or the manager rejected it |
+| 4    | `mutation_refused`                                       |
+| 5    | `not_found`                                              |
 
 Errors are raised as a typed `CliError` carrying `code`, `exitCode`, `hint` and
 `suggestions`; a single top-level handler in `src/run.ts` renders it in text or

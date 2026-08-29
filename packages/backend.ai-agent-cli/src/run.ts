@@ -77,6 +77,7 @@ export async function runCli({
       flags: parsed.flags,
       json: parsed.json,
       render: { verbosity: parsed.verbosity },
+      notify: (message) => writeLine(io.stderr, message),
     });
 
     if (parsed.json) {

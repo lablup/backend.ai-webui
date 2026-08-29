@@ -513,6 +513,30 @@
       "Title": "Chatten Sie mit Ihren bereitgestellten Modellen"
     }
   },
+  "cliLogin": {
+    "Account": "Konto",
+    "Attestation": "Ich habe diese Anmeldung selbst in einem Terminal auf diesem Computer gestartet.",
+    "Cancelled": "Sie haben die Übergabe abgebrochen.",
+    "Confirm": "Sitzung übergeben",
+    "ConsentDescription": "Die CLI handelt in Ihrem Namen — gleiches Konto, gleiche Berechtigungen, gleicher Endpunkt — bis Sie bai-agent logout ausführen oder die Sitzung abläuft. Bestätigen Sie nur eine Anmeldung, die Sie selbst gestartet haben.",
+    "ConsentTitle": "Diese Browsersitzung wird mit einer CLI auf diesem Computer geteilt",
+    "DoneDescription": "Sie können diesen Tab schließen und zum Terminal zurückkehren.",
+    "DoneTitle": "Die CLI ist angemeldet",
+    "Endpoint": "Endpunkt",
+    "FailedTitle": "Die Übergabe wurde nicht abgeschlossen",
+    "HandOffRejected": "Die lokale CLI hat die Übergabe abgelehnt (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Auf diesem Computer wartet keine CLI. Sie läuft möglicherweise auf einem anderen Rechner, oder der Browser hat die Anfrage an localhost blockiert.",
+    "MatchCodeDescription": "Das Terminal, das diese Anmeldung gestartet hat, zeigt denselben Code. Wenn er nicht übereinstimmt, brechen Sie ab.",
+    "NoListenerPort": "Diese Seite wurde ohne CLI-Listener-Port geöffnet.",
+    "PasteFallbackDescription": "Führen Sie dies in dem Terminal aus, in dem die CLI läuft, und fügen Sie dann die Sitzungs-ID ein, wenn Sie danach gefragt werden.",
+    "PasteFallbackTitle": "Sitzungs-ID stattdessen in die CLI einfügen",
+    "PasteFallbackWarning": "Die Sitzungs-ID ist so mächtig wie Ihr Passwort. Wer sie besitzt, kann bis zum Ablauf der Sitzung in Ihrem Namen handeln. Fügen Sie sie nicht in einen Chat, ein Issue oder ein Log ein.",
+    "Retry": "Erneut versuchen",
+    "RevealSessionId": "Sitzungs-ID anzeigen",
+    "SessionIdMasked": "Verborgen — {{masked}}",
+    "Title": "Backend.AI CLI anmelden",
+    "VerificationCode": "Bestätigungscode"
+  },
   "credential": {
     "2FAEnabled": "2FA aktiviert",
     "AccessKey": "Zugriffsschlüssel",

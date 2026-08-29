@@ -513,6 +513,30 @@
       "Title": "Converse com os seus modelos implementados"
     }
   },
+  "cliLogin": {
+    "Account": "Conta",
+    "Attestation": "Fui eu que iniciei este início de sessão a partir de um terminal neste computador.",
+    "Cancelled": "Cancelou a transferência.",
+    "Confirm": "Transferir a sessão",
+    "ConsentDescription": "A CLI agirá como si — mesma conta, mesmas permissões, mesmo endpoint — até executar bai-agent logout ou a sessão expirar. Aprove apenas um início de sessão que tenha iniciado.",
+    "ConsentTitle": "Esta sessão do navegador será partilhada com uma CLI neste computador",
+    "DoneDescription": "Pode fechar este separador e voltar ao terminal.",
+    "DoneTitle": "A CLI iniciou sessão",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "A transferência não foi concluída",
+    "HandOffRejected": "A CLI local rejeitou a transferência (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Nenhuma CLI está à escuta neste computador. Pode estar a ser executada noutra máquina, ou o navegador bloqueou o pedido para localhost.",
+    "MatchCodeDescription": "O terminal que iniciou este acesso mostra o mesmo código. Se não corresponder, cancele.",
+    "NoListenerPort": "Esta página foi aberta sem uma porta de escuta da CLI.",
+    "PasteFallbackDescription": "Execute isto no terminal onde a CLI se encontra e cole o ID de sessão quando for pedido.",
+    "PasteFallbackTitle": "Colar o ID de sessão na CLI",
+    "PasteFallbackWarning": "O ID de sessão é tão poderoso como a sua palavra-passe. Quem o tiver pode agir como si até a sessão expirar. Não o cole num chat, num issue ou num registo.",
+    "Retry": "Tentar novamente",
+    "RevealSessionId": "Mostrar o ID de sessão",
+    "SessionIdMasked": "Oculto — {{masked}}",
+    "Title": "Iniciar sessão na CLI do Backend.AI",
+    "VerificationCode": "Código de verificação"
+  },
   "credential": {
     "2FAEnabled": "2FA Enabled",
     "AccessKey": "Chave de acesso",

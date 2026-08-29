@@ -513,6 +513,30 @@
       "Title": "Czatuj z wdrożonymi modelami"
     }
   },
+  "cliLogin": {
+    "Account": "Konto",
+    "Attestation": "To logowanie rozpocząłem samodzielnie w terminalu na tym komputerze.",
+    "Cancelled": "Anulowano przekazanie.",
+    "Confirm": "Przekaż sesję",
+    "ConsentDescription": "CLI będzie działać w Twoim imieniu — to samo konto, te same uprawnienia, ten sam endpoint — dopóki nie uruchomisz bai-agent logout lub sesja nie wygaśnie. Zatwierdzaj tylko logowanie, które sam rozpocząłeś.",
+    "ConsentTitle": "Ta sesja przeglądarki zostanie udostępniona CLI na tym komputerze",
+    "DoneDescription": "Możesz zamknąć tę kartę i wrócić do terminala.",
+    "DoneTitle": "CLI jest zalogowane",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "Przekazanie nie zostało ukończone",
+    "HandOffRejected": "Lokalne CLI odrzuciło przekazanie (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Na tym komputerze nie nasłuchuje żadne CLI. Może działać na innej maszynie albo przeglądarka zablokowała żądanie do localhost.",
+    "MatchCodeDescription": "Terminal, w którym rozpoczęto to logowanie, pokazuje ten sam kod. Jeśli się nie zgadza, anuluj.",
+    "NoListenerPort": "Ta strona została otwarta bez portu nasłuchu CLI.",
+    "PasteFallbackDescription": "Uruchom to w terminalu, w którym działa CLI, a następnie wklej identyfikator sesji, gdy pojawi się prośba.",
+    "PasteFallbackTitle": "Wklej identyfikator sesji do CLI",
+    "PasteFallbackWarning": "Identyfikator sesji jest równie potężny jak Twoje hasło. Każdy, kto go ma, może działać w Twoim imieniu do wygaśnięcia sesji. Nie wklejaj go na czacie, w zgłoszeniu ani w logu.",
+    "Retry": "Spróbuj ponownie",
+    "RevealSessionId": "Pokaż identyfikator sesji",
+    "SessionIdMasked": "Ukryty — {{masked}}",
+    "Title": "Zaloguj Backend.AI CLI",
+    "VerificationCode": "Kod weryfikacyjny"
+  },
   "credential": {
     "2FAEnabled": "2FA włączone",
     "AccessKey": "Klucz dostępu",

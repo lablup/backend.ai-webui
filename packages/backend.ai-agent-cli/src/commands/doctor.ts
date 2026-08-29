@@ -1,5 +1,6 @@
 import { defineCommand } from '../command.js';
-import { EXIT } from '../errors.js';
+import { CliError, EXIT } from '../errors.js';
+import { fetchWhoAmI } from '../manager.js';
 import { CLI_NAME, MIN_NODE_MAJOR } from '../meta.js';
 import { record, renderBlocks, section } from '../output.js';
 import type { RepoContext } from '../repo-context.js';
@@ -19,6 +20,14 @@ import {
 import { HOST_COMPONENT_DIR } from '../search/i18n-index.js';
 import { schemaContext } from '../search/schema-search.js';
 import { loadTerminology } from '../search/terminology.js';
+import {
+  loadSession,
+  maskSessionId,
+  resolveEndpoint,
+  sessionFileMode,
+  sessionPath,
+  SESSION_FILE_MODE,
+} from '../session.js';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -34,7 +43,7 @@ export interface DoctorCheck {
 
 export interface CheckGroup {
   name: string;
-  run(context: { cwd: string }): DoctorCheck[];
+  run(context: { cwd: string }): DoctorCheck[] | Promise<DoctorCheck[]>;
 }
 
 const runtimeGroup: CheckGroup = {
@@ -261,12 +270,94 @@ const schemaGroup: CheckGroup = {
   },
 };
 
-/** Later tickets append groups here (auth, mappings). */
+/**
+ * Auth is checked live: a session file that exists but no longer authenticates
+ * is exactly the state `whoami` would fail on, so `doctor` must reach out too.
+ */
+const authGroup: CheckGroup = {
+  name: 'auth',
+  run: async ({ cwd }) => {
+    let endpoint: string;
+    try {
+      endpoint = resolveEndpoint({ cwd }).endpoint;
+    } catch (error) {
+      return [
+        {
+          group: 'auth',
+          check: 'endpoint',
+          status: 'warn',
+          detail:
+            error instanceof CliError ? error.message : 'no endpoint resolved',
+          hint: `${CLI_NAME} login --endpoint <manager url>`,
+        },
+      ];
+    }
+
+    const stored = loadSession(endpoint);
+    if (!stored) {
+      return [
+        {
+          group: 'auth',
+          check: 'session file',
+          status: 'warn',
+          detail: `no session stored for ${endpoint} (${sessionPath(endpoint)})`,
+          hint: `${CLI_NAME} login --endpoint ${endpoint}`,
+        },
+        {
+          group: 'auth',
+          check: 'whoami',
+          status: 'warn',
+          detail: 'not checked: no session stored',
+          hint: `${CLI_NAME} login --endpoint ${endpoint}`,
+        },
+      ];
+    }
+
+    const mode = sessionFileMode(stored.path);
+    const modeOk = mode === SESSION_FILE_MODE;
+    const checks: DoctorCheck[] = [
+      {
+        group: 'auth',
+        check: 'session file',
+        status: modeOk ? 'ok' : 'fail',
+        detail: `${stored.path} mode ${mode === null ? '?' : mode.toString(8).padStart(4, '0')} (expected 0600), session ${maskSessionId(stored.sessionId)}`,
+        hint: modeOk ? undefined : `chmod 600 ${stored.path}`,
+      },
+    ];
+
+    try {
+      const user = await fetchWhoAmI({
+        endpoint,
+        sessionId: stored.sessionId,
+      });
+      checks.push({
+        group: 'auth',
+        check: 'whoami',
+        status: 'ok',
+        detail: `${user.email} (${user.role}) at ${endpoint}`,
+      });
+    } catch (error) {
+      const isAuth =
+        error instanceof CliError && error.code === 'auth_required';
+      checks.push({
+        group: 'auth',
+        check: 'whoami',
+        status: isAuth ? 'fail' : 'warn',
+        detail: error instanceof Error ? error.message : String(error),
+        hint: `${CLI_NAME} login --endpoint ${endpoint}`,
+      });
+    }
+    return checks;
+  },
+};
+
+/** Later tickets append groups here (mappings). */
 export const CHECK_GROUPS: CheckGroup[] = [
   runtimeGroup,
   checkoutGroup,
   docsGroup,
   schemaGroup,
+  authGroup,
 ];
 
 export interface DoctorData {
@@ -280,8 +371,10 @@ export const doctorCommand = defineCommand<DoctorData>({
   usage: `${CLI_NAME} doctor [--json]`,
   flags: [],
   maxArgs: 0,
-  run: ({ cwd }) => {
-    const checks = CHECK_GROUPS.flatMap((group) => group.run({ cwd }));
+  run: async ({ cwd }) => {
+    const checks = (
+      await Promise.all(CHECK_GROUPS.map((group) => group.run({ cwd })))
+    ).flat();
     return {
       checks,
       summary: {
