@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<57ca6b883b0e41987ba279ca20a9adab>>
+ * @generated SignedSource<<d261457e405ec67d6ee2affea612b5fd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -68,6 +68,12 @@ export type ModelStoreListPageV2Query$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
+        readonly metadata: {
+          readonly author: string | null | undefined;
+          readonly task: string | null | undefined;
+          readonly title: string | null | undefined;
+        };
+        readonly name: string;
         readonly " $fragmentSpreads": FragmentRefs<"ModelStoreListPageV2_ModelCardV2Fragment">;
       };
     }>;
@@ -144,6 +150,45 @@ v7 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ModelCardV2Metadata",
+  "kind": "LinkedField",
+  "name": "metadata",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "title",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "task",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "author",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -184,6 +229,8 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -240,45 +287,8 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ModelCardV2Metadata",
-                    "kind": "LinkedField",
-                    "name": "metadata",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "title",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "task",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "author",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
+                  (v8/*: any*/),
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -328,16 +338,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dbde5904adf578002ddc9f413150947d",
+    "cacheID": "82ec9d96fdc88d3e0ef4f9bd4ae6decf",
     "id": null,
     "metadata": {},
     "name": "ModelStoreListPageV2Query",
     "operationKind": "query",
-    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n"
+    "text": "query ModelStoreListPageV2Query(\n  $scope: ProjectModelCardV2Scope!\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int!\n  $offset: Int!\n) {\n  projectModelCardsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        metadata {\n          title\n          task\n          author\n        }\n        ...ModelStoreListPageV2_ModelCardV2Fragment\n      }\n    }\n  }\n}\n\nfragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {\n  name\n  metadata {\n    title\n    task\n    author\n  }\n  updatedAt\n  createdAt\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "deba47dc7280cb92b05271fb176f72c7";
+(node as any).hash = "2c92a929f8aa27ca39b2c1c899aaac36";
 
 export default node;

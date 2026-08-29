@@ -25,6 +25,7 @@ import {
 } from '../hooks/useWebUIMenuItems';
 import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
+import { useDeploymentDetailWebMCPTools } from './webmcp/deploymentListTools';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
@@ -177,6 +178,8 @@ const DeploymentDetailPage: React.FC = () => {
             }
             currentRevision @since(version: "26.4.3") {
               id
+              # Reported by the WebMCP bai_get_current_deployment tool.
+              revisionNumber
             }
             deployingRevision @since(version: "26.4.3") {
               id
@@ -204,6 +207,13 @@ const DeploymentDetailPage: React.FC = () => {
           fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
       },
     );
+
+  // FR-3766: `bai_get_current_deployment` — on the detail page "current" is
+  // the deployment being viewed. Registered before the early returns below so
+  // the hook order stays stable.
+  useDeploymentDetailWebMCPTools(
+    deploymentResult.ok ? deploymentResult.value : null,
+  );
 
   if (!deploymentResult.ok) {
     // The manager returns a partial-success GraphQL response for RBAC

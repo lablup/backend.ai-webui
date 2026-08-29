@@ -22,6 +22,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { toProjectContext } from '../types/projectContext';
+import { useDeploymentListWebMCPTools } from './webmcp/deploymentListTools';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
@@ -194,6 +195,21 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
 
   const isPending =
     deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
+
+  // FR-3766: the three read-only WebMCP tools for this page. "Current" here is
+  // the deployment open in the settings modal; `/deployments/:id` registers its
+  // own `bai_get_current_deployment` (see `webmcp/deploymentListTools`).
+  useDeploymentListWebMCPTools({
+    deployments: deploymentNodes,
+    columnOverrides,
+    pagination: {
+      current: tablePaginationOption.current,
+      pageSize: tablePaginationOption.pageSize,
+      total,
+    },
+    queryParams,
+    openedDeploymentGlobalId: editingDeploymentId,
+  });
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<DeploymentListPageDeleteMutation>(graphql`

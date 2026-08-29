@@ -19,6 +19,7 @@ import SessionNodes, {
 } from '../components/SessionNodes';
 import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
+import { SESSION_DETAIL_PARAM } from '../helper/resourcePath';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
@@ -28,6 +29,7 @@ import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { useBAIBreakpoint } from '../theme-shim';
+import { useSessionListWebMCPTools } from './webmcp/sessionListTools';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
@@ -256,6 +258,13 @@ const ComputeSessionListPage = () => {
             node @required(action: THROW) {
               id @required(action: THROW)
               name @required(action: THROW)
+              # Scalars the WebMCP page tools report. Already fetched by
+              # SessionNodesFragment, so selecting them here costs nothing.
+              row_id
+              status
+              type
+              created_at
+              scaling_group
               ...SessionNodesFragment
               ...TerminateSessionModalFragment
             }
@@ -318,6 +327,26 @@ const ComputeSessionListPage = () => {
   const compute_session_nodes = computeSessionNodeResult.ok
     ? computeSessionNodeResult.value
     : null;
+  const sessionNodes = filterOutNullAndUndefined(
+    compute_session_nodes?.edges.map((e) => e?.node),
+  );
+
+  // FR-3766: the three read-only WebMCP tools for this page. Registered from
+  // here because this is where the rendered rows, the URL filter state and the
+  // open detail drawer all already are.
+  useSessionListWebMCPTools({
+    sessions: sessionNodes,
+    columnOverrides,
+    pagination: {
+      current: tablePaginationOption.current,
+      pageSize: tablePaginationOption.pageSize,
+      total: compute_session_nodes?.count,
+    },
+    queryParams,
+    openedSessionId: new URLSearchParams(location.search).get(
+      SESSION_DETAIL_PARAM,
+    ),
+  });
   // Responsive policy R3 (ticket 14): the render tree branches on `lg`
   // (the action card is unmounted below lg), so the JS hook stays; the antd
   // Row/Col track layout becomes an Astryx 24-column Grid whose spans are
@@ -627,17 +656,13 @@ const ComputeSessionListPage = () => {
                   // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
                   handleRowSelectionChange(
                     selectedRowKeys,
-                    filterOutNullAndUndefined(
-                      compute_session_nodes?.edges.map((e) => e?.node),
-                    ),
+                    sessionNodes,
                     setSelectedSessionList,
                   );
                 },
                 selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
               }}
-              sessionsFrgmt={filterOutNullAndUndefined(
-                compute_session_nodes?.edges.map((e) => e?.node),
-              )}
+              sessionsFrgmt={sessionNodes}
               pagination={{
                 pageSize: tablePaginationOption.pageSize,
                 current: tablePaginationOption.current,

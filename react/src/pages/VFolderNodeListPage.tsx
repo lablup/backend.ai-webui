@@ -15,12 +15,14 @@ import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
+import { VFOLDER_PARAM, VFOLDER_PATH_PARAM } from '../helper/resourcePath';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
+import { useVFolderListWebMCPTools } from './webmcp/vfolderListTools';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
@@ -106,6 +108,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     'invitation',
     parseAsString.withOptions({ history: 'replace' }),
   );
+  // Read-only mirrors of `FolderExplorerOpener`'s params — what the WebMCP
+  // `bai_get_current_vfolder` tool reports as "open in the explorer".
+  const [openedFolderId] = useQueryState(VFOLDER_PARAM, parseAsString);
+  const [openedFolderPath] = useQueryState(VFOLDER_PATH_PARAM, parseAsString);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -230,6 +236,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 id @required(action: THROW)
                 status
                 permissions
+                # Scalars the WebMCP page tools report. Already fetched by
+                # VFolderNodesFragment, so selecting them here costs nothing.
+                name
+                host
+                usage_mode
+                ownership_type
+                created_at
                 ...VFolderNodesFragment
                 ...DeleteVFolderModalFragment
                 ...EditableVFolderNameFragment
@@ -271,6 +284,25 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
       },
     );
+
+  const vfolderNodes = filterOutNullAndUndefined(
+    _.map(vfolder_nodes?.edges, 'node'),
+  );
+
+  // FR-3766: the three read-only WebMCP tools for this page. "Current" is the
+  // folder the explorer modal has open (`?folder=…&path=…`).
+  useVFolderListWebMCPTools({
+    vfolders: vfolderNodes,
+    columnOverrides,
+    pagination: {
+      current: tablePaginationOption.current,
+      pageSize: tablePaginationOption.pageSize,
+      total: vfolder_nodes?.count,
+    },
+    queryParams,
+    openedFolderId,
+    openedFolderPath,
+  });
 
   return (
     <VStack align="stretch" gap={5} {...props}>
@@ -517,9 +549,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             loading={deferredQueryVariables !== queryVariables}
             disableProjectFolderActions
             project={toProjectContext(currentProject)}
-            vfoldersFrgmt={filterOutNullAndUndefined(
-              _.map(vfolder_nodes?.edges, 'node'),
-            )}
+            vfoldersFrgmt={vfolderNodes}
             rowSelection={{
               type: 'checkbox',
               preserveSelectedRowKeys: true,
@@ -533,9 +563,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               onChange: (selectedRowKeys) => {
                 handleRowSelectionChange(
                   selectedRowKeys,
-                  filterOutNullAndUndefined(
-                    _.map(vfolder_nodes?.edges, 'node'),
-                  ),
+                  vfolderNodes,
                   setSelectedFolderList,
                 );
               },

@@ -14,6 +14,7 @@ import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import { theme } from '../theme-shim';
+import { useModelStoreListWebMCPTools } from './webmcp/modelStoreListTools';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Card } from '@astryxdesign/core/Card';
@@ -27,10 +28,12 @@ import {
   BAIGraphQLPropertyFilter,
   BAISelect,
   BAIStorageHostSelect,
+  filterOutNullAndUndefined,
   safeDecodeUuid,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import { ArrowUpDown } from 'lucide-react';
 import {
   parseAsJson,
@@ -195,6 +198,17 @@ const ModelCardV2Grid: React.FC<{
   offset: number;
   onTotalChange: (total: number) => void;
   onCardClick?: (id: string) => void;
+  /**
+   * URL state the WebMCP page tools report (FR-3766). They register here, not
+   * in the page, because this is the component that holds the rendered cards.
+   */
+  webmcpState: {
+    page: number;
+    pageSize: number;
+    filter?: ModelCardV2Filter | null;
+    sort: string;
+    openedModelCardId?: string | null;
+  };
 }> = ({
   projectId,
   filter,
@@ -206,6 +220,7 @@ const ModelCardV2Grid: React.FC<{
   offset,
   onTotalChange,
   onCardClick,
+  webmcpState,
 }) => {
   'use memo';
 
@@ -231,6 +246,15 @@ const ModelCardV2Grid: React.FC<{
           edges {
             node {
               id
+              # Scalars the WebMCP page tools report. Already fetched by
+              # ModelStoreListPageV2_ModelCardV2Fragment, so selecting them
+              # here costs nothing.
+              name
+              metadata {
+                title
+                task
+                author
+              }
               ...ModelStoreListPageV2_ModelCardV2Fragment
             }
           }
@@ -260,6 +284,20 @@ const ModelCardV2Grid: React.FC<{
   React.useEffect(() => {
     onTotalChanged();
   }, [total]);
+
+  useModelStoreListWebMCPTools({
+    modelCards: filterOutNullAndUndefined(_.map(items, 'node')),
+    pagination: {
+      current: webmcpState.page,
+      pageSize: webmcpState.pageSize,
+      total,
+    },
+    queryParams: {
+      filter: webmcpState.filter,
+      sort: webmcpState.sort,
+    },
+    openedModelCardId: webmcpState.openedModelCardId,
+  });
 
   if (items.length === 0) {
     return <EmptyState title={t('modelStore.NoModelsFound')} />;
@@ -468,6 +506,13 @@ const ModelStoreListPageV2: React.FC = () => {
           onTotalChange={setTotal}
           onCardClick={(id) => {
             setQueryParams({ modelCard: id });
+          }}
+          webmcpState={{
+            page: tablePaginationOption.current,
+            pageSize: tablePaginationOption.pageSize,
+            filter,
+            sort: queryParams.sort,
+            openedModelCardId: selectedModelCardId,
           }}
         />
       </div>
