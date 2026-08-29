@@ -117,7 +117,9 @@ export function requireQuery(query: string | undefined): string {
 const normalisationLine = (data: SearchData): string[] =>
   data.normalised.map(
     (entry) =>
-      `"${data.query}" -> ${entry.canonical} (${entry.source} ${entry.ref})`,
+      `"${data.query}" -> ${entry.canonical} (${entry.source} ${entry.ref}${
+        entry.owner ? ` -> ${entry.owner}` : ''
+      })`,
   );
 
 export function renderSearch(
@@ -126,7 +128,10 @@ export function renderSearch(
 ): string {
   if (verbosity === 'dense') {
     const lines = data.hits.map(
-      (hit) => `${hit.id}\t${hit.score}\t${hit.reason}\t${hit.title}`,
+      (hit) =>
+        `${hit.id}\t${hit.score}\t${hit.reason}\t${hit.title}${
+          hit.uiLabel ? `\t${hit.uiLabel.label}` : ''
+        }`,
     );
     return [`${data.total}/${data.matched} hits`, ...lines].join('\n');
   }
@@ -164,6 +169,12 @@ export function renderSearch(
         ['score', hit.score],
         ['title', hit.title],
         ['url', hit.url],
+        [
+          'UI label',
+          hit.uiLabel
+            ? `${hit.uiLabel.label} (${hit.uiLabel.key}, ${hit.uiLabel.lang})`
+            : undefined,
+        ],
         ['reason', hit.reason],
         ...(verbosity === 'detail'
           ? ([['path', hit.path]] as Array<[string, string | undefined]>)
@@ -177,7 +188,7 @@ export function renderSearch(
 
 export const searchCommand = defineCommand<SearchData>({
   name: 'search',
-  summary: 'Rank manual sections and terminology entries for a query.',
+  summary: 'Rank manual sections, schema entries and terminology for a query.',
   usage: `${CLI_NAME} search <query> [--domain <name>] [--limit <n>] [--lang <code>] [--json]`,
   flags: SEARCH_FLAGS,
   maxArgs: 1,
