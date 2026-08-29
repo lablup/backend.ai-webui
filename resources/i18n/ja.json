@@ -513,6 +513,30 @@
       "Title": "デプロイしたモデルとチャットする"
     }
   },
+  "cliLogin": {
+    "Account": "アカウント",
+    "Attestation": "このログインは、このコンピューターのターミナルから自分で開始しました。",
+    "Cancelled": "セッションの引き渡しをキャンセルしました。",
+    "Confirm": "セッションを引き渡す",
+    "ConsentDescription": "CLI は同じアカウント・同じ権限・同じエンドポイントであなたの代わりに動作します。bai-agent logout を実行するか、セッションが期限切れになるまで有効です。自分で開始したログインのみ承認してください。",
+    "ConsentTitle": "このブラウザーのセッションを、このコンピューターの CLI と共有します",
+    "DoneDescription": "このタブを閉じて、ターミナルに戻ってください。",
+    "DoneTitle": "CLI がサインインしました",
+    "Endpoint": "エンドポイント",
+    "FailedTitle": "セッションの引き渡しを完了できませんでした",
+    "HandOffRejected": "ローカルの CLI が引き渡しを拒否しました (HTTP {{status}} {{reason}})。",
+    "HandOffUnreachable": "このコンピューターで待ち受けている CLI が見つかりません。CLI が別のマシンで動作しているか、ブラウザーが localhost への要求をブロックした可能性があります。",
+    "MatchCodeDescription": "このログインを開始したターミナルにも同じコードが表示されます。一致しない場合はキャンセルしてください。",
+    "NoListenerPort": "CLI のリスナーポートなしでこのページが開かれました。",
+    "PasteFallbackDescription": "CLI が動作しているターミナルで次を実行し、求められたらセッション ID を貼り付けてください。",
+    "PasteFallbackTitle": "代わりにセッション ID を CLI に貼り付ける",
+    "PasteFallbackWarning": "セッション ID はパスワードと同じ強さを持ちます。これを持つ人は、セッションが期限切れになるまであなたの代わりに操作できます。チャットやイシュー、ログに貼り付けないでください。",
+    "Retry": "再試行",
+    "RevealSessionId": "セッション ID を表示",
+    "SessionIdMasked": "非表示 — {{masked}}",
+    "Title": "Backend.AI CLI にサインイン",
+    "VerificationCode": "確認コード"
+  },
   "credential": {
     "2FAEnabled": "2要素認証が有効",
     "AccessKey": "アクセスキー",

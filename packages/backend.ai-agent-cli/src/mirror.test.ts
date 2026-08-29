@@ -2,15 +2,63 @@ import type { AnyCommand } from './command.js';
 import { successEnvelope } from './output.js';
 import type { Verbosity } from './output.js';
 import { COMMANDS } from './registry.js';
-import { describe, expect, it } from 'vitest';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 const cwd = import.meta.dirname;
+
+// An empty store keeps `doctor`'s auth group offline and deterministic.
+beforeAll(() => {
+  process.env.BAI_AGENT_CONFIG_DIR = mkdtempSync(
+    join(tmpdir(), 'bai-agent-mirror-'),
+  );
+});
 
 /** Commands that need positional arguments to produce data at all. */
 const SAMPLE_ARGS: Record<string, string[]> = {
   search: ['storage folder'],
   docs: ['search', 'storage folder'],
   schema: ['show', 'ComputeSessionNode.status'],
+};
+
+/**
+ * Commands that need a live manager session (or a browser) cannot be `run()`
+ * here. The contract under test is that `render(data)` shows every JSON leaf,
+ * so a representative data object stands in for the call.
+ */
+const SAMPLE_DATA: Record<string, unknown> = {
+  login: {
+    mode: 'paste',
+    endpoint: 'https://manager.example.com',
+    webui: 'https://fr-1.localhost:1355',
+    sessionFile: '/tmp/sessions/manager.example.com.json',
+    sessionId: 'abcd…wxyz',
+    user: {
+      email: 'user@example.com',
+      role: 'admin',
+      domainName: 'default',
+      fullName: 'Example User',
+      status: 'active',
+    },
+  },
+  logout: {
+    endpoint: 'https://manager.example.com',
+    removed: true,
+    sessionFile: '/tmp/sessions/manager.example.com.json',
+    sessionId: 'abcd…wxyz',
+  },
+  whoami: {
+    email: 'user@example.com',
+    role: 'admin',
+    domainName: 'default',
+    fullName: 'Example User',
+    status: 'active',
+    endpoint: 'https://manager.example.com',
+    sessionId: 'abcd…wxyz',
+    sessionFile: '/tmp/sessions/manager.example.com.json',
+  },
 };
 
 function leaves(value: unknown): string[] {
@@ -22,6 +70,8 @@ function leaves(value: unknown): string[] {
 }
 
 async function dataFor(command: AnyCommand): Promise<unknown> {
+  const sample = SAMPLE_DATA[command.name];
+  if (sample) return sample;
   return command.run({
     cwd,
     commands: COMMANDS,
@@ -29,6 +79,7 @@ async function dataFor(command: AnyCommand): Promise<unknown> {
     flags: {},
     json: false,
     render: { verbosity: 'detail' },
+    notify: () => {},
   });
 }
 

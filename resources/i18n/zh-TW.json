@@ -513,6 +513,30 @@
       "Title": "與您已部署的模型對話"
     }
   },
+  "cliLogin": {
+    "Account": "帳戶",
+    "Attestation": "這次登入是我在這台電腦的終端機上自行發起的。",
+    "Cancelled": "您已取消移交。",
+    "Confirm": "移交工作階段",
+    "ConsentDescription": "CLI 將以您的身分操作——相同帳戶、相同權限、相同端點——直到您執行 bai-agent logout 或工作階段過期。請只核准您自己發起的登入。",
+    "ConsentTitle": "此瀏覽器工作階段將與這台電腦上的 CLI 共用",
+    "DoneDescription": "您可以關閉此分頁並回到終端機。",
+    "DoneTitle": "CLI 已登入",
+    "Endpoint": "端點",
+    "FailedTitle": "移交未完成",
+    "HandOffRejected": "本機 CLI 拒絕了移交 (HTTP {{status}} {{reason}})。",
+    "HandOffUnreachable": "這台電腦上沒有正在接聽的 CLI。它可能在另一台機器上執行，或瀏覽器封鎖了對 localhost 的請求。",
+    "MatchCodeDescription": "發起這次登入的終端機會顯示相同的代碼。若不相符，請取消。",
+    "NoListenerPort": "開啟此頁面時未提供 CLI 接聽連接埠。",
+    "PasteFallbackDescription": "在執行 CLI 的終端機中執行此指令，然後在提示時貼上工作階段 ID。",
+    "PasteFallbackTitle": "改為將工作階段 ID 貼到 CLI",
+    "PasteFallbackWarning": "工作階段 ID 的權限等同於您的密碼。持有者在工作階段過期前都能以您的身分操作。請勿貼到聊天、議題或紀錄中。",
+    "Retry": "重試",
+    "RevealSessionId": "顯示工作階段 ID",
+    "SessionIdMasked": "已隱藏 — {{masked}}",
+    "Title": "登入 Backend.AI CLI",
+    "VerificationCode": "驗證碼"
+  },
   "credential": {
     "2FAEnabled": "已啟用雙因素驗證",
     "AccessKey": "存取密鑰",

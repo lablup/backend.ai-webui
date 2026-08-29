@@ -513,6 +513,30 @@
       "Title": "Discutez avec vos modèles déployés"
     }
   },
+  "cliLogin": {
+    "Account": "Compte",
+    "Attestation": "J'ai lancé cette connexion depuis un terminal sur cet ordinateur.",
+    "Cancelled": "Vous avez annulé le transfert.",
+    "Confirm": "Transférer la session",
+    "ConsentDescription": "La CLI agira en votre nom — même compte, mêmes permissions, même endpoint — jusqu'à ce que vous exécutiez bai-agent logout ou que la session expire. N'approuvez qu'une connexion que vous avez vous-même lancée.",
+    "ConsentTitle": "Cette session de navigateur sera partagée avec une CLI de cet ordinateur",
+    "DoneDescription": "Vous pouvez fermer cet onglet et revenir au terminal.",
+    "DoneTitle": "La CLI est connectée",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "Le transfert n'a pas abouti",
+    "HandOffRejected": "La CLI locale a refusé le transfert (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Aucune CLI n'écoute sur cet ordinateur. Elle s'exécute peut-être sur une autre machine, ou le navigateur a bloqué la requête vers localhost.",
+    "MatchCodeDescription": "Le terminal qui a lancé cette connexion affiche le même code. S'il ne correspond pas, annulez.",
+    "NoListenerPort": "Cette page a été ouverte sans port d'écoute de la CLI.",
+    "PasteFallbackDescription": "Exécutez ceci dans le terminal où se trouve la CLI, puis collez l'identifiant de session lorsqu'il vous est demandé.",
+    "PasteFallbackTitle": "Coller l'identifiant de session dans la CLI",
+    "PasteFallbackWarning": "L'identifiant de session est aussi puissant que votre mot de passe. Quiconque le détient peut agir en votre nom jusqu'à l'expiration de la session. Ne le collez pas dans une conversation, un ticket ou un journal.",
+    "Retry": "Réessayer",
+    "RevealSessionId": "Afficher l'identifiant de session",
+    "SessionIdMasked": "Masqué — {{masked}}",
+    "Title": "Connecter la CLI Backend.AI",
+    "VerificationCode": "Code de vérification"
+  },
   "credential": {
     "2FAEnabled": "2FA activée",
     "AccessKey": "Clé d'accès",

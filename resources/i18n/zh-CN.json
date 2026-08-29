@@ -513,6 +513,30 @@
       "Title": "与您已部署的模型对话"
     }
   },
+  "cliLogin": {
+    "Account": "账户",
+    "Attestation": "这次登录是我在本机终端上自己发起的。",
+    "Cancelled": "您已取消移交。",
+    "Confirm": "移交会话",
+    "ConsentDescription": "CLI 将以您的身份操作——相同账户、相同权限、相同端点——直到您运行 bai-agent logout 或会话过期。请只批准您自己发起的登录。",
+    "ConsentTitle": "此浏览器会话将与本机上的 CLI 共享",
+    "DoneDescription": "您可以关闭此标签页并返回终端。",
+    "DoneTitle": "CLI 已登录",
+    "Endpoint": "端点",
+    "FailedTitle": "移交未完成",
+    "HandOffRejected": "本地 CLI 拒绝了移交 (HTTP {{status}} {{reason}})。",
+    "HandOffUnreachable": "本机没有正在监听的 CLI。它可能运行在另一台机器上，或者浏览器阻止了对 localhost 的请求。",
+    "MatchCodeDescription": "发起此次登录的终端会显示相同的代码。若不一致，请取消。",
+    "NoListenerPort": "打开此页面时没有提供 CLI 监听端口。",
+    "PasteFallbackDescription": "在运行 CLI 的终端中执行此命令，然后在提示时粘贴会话 ID。",
+    "PasteFallbackTitle": "改为将会话 ID 粘贴到 CLI",
+    "PasteFallbackWarning": "会话 ID 的权限与您的密码相同。持有它的人在会话过期前都可以以您的身份操作。请勿将其粘贴到聊天、工单或日志中。",
+    "Retry": "重试",
+    "RevealSessionId": "显示会话 ID",
+    "SessionIdMasked": "已隐藏 — {{masked}}",
+    "Title": "登录 Backend.AI CLI",
+    "VerificationCode": "验证码"
+  },
   "credential": {
     "2FAEnabled": "已启用双因素认证",
     "AccessKey": "访问密钥",

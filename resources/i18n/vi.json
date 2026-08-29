@@ -513,6 +513,30 @@
       "Title": "Trò chuyện với các mô hình đã triển khai của bạn"
     }
   },
+  "cliLogin": {
+    "Account": "Tài khoản",
+    "Attestation": "Chính tôi đã bắt đầu lần đăng nhập này từ một terminal trên máy tính này.",
+    "Cancelled": "Bạn đã hủy việc bàn giao.",
+    "Confirm": "Bàn giao phiên",
+    "ConsentDescription": "CLI sẽ hành động thay bạn — cùng tài khoản, cùng quyền, cùng endpoint — cho đến khi bạn chạy bai-agent logout hoặc phiên hết hạn. Chỉ phê duyệt lần đăng nhập do chính bạn bắt đầu.",
+    "ConsentTitle": "Phiên trình duyệt này sẽ được chia sẻ với một CLI trên máy tính này",
+    "DoneDescription": "Bạn có thể đóng tab này và quay lại terminal.",
+    "DoneTitle": "CLI đã đăng nhập",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "Việc bàn giao chưa hoàn tất",
+    "HandOffRejected": "CLI cục bộ đã từ chối việc bàn giao (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Không có CLI nào đang lắng nghe trên máy tính này. CLI có thể đang chạy trên máy khác, hoặc trình duyệt đã chặn yêu cầu tới localhost.",
+    "MatchCodeDescription": "Terminal đã bắt đầu lần đăng nhập này hiển thị cùng một mã. Nếu không khớp, hãy hủy.",
+    "NoListenerPort": "Trang này được mở mà không có cổng lắng nghe của CLI.",
+    "PasteFallbackDescription": "Chạy lệnh này trong terminal nơi CLI đang chạy, rồi dán ID phiên khi được hỏi.",
+    "PasteFallbackTitle": "Dán ID phiên vào CLI",
+    "PasteFallbackWarning": "ID phiên mạnh ngang mật khẩu của bạn. Bất kỳ ai giữ nó đều có thể hành động thay bạn cho đến khi phiên hết hạn. Đừng dán nó vào cuộc trò chuyện, issue hay nhật ký.",
+    "Retry": "Thử lại",
+    "RevealSessionId": "Hiện ID phiên",
+    "SessionIdMasked": "Đã ẩn — {{masked}}",
+    "Title": "Đăng nhập Backend.AI CLI",
+    "VerificationCode": "Mã xác minh"
+  },
   "credential": {
     "2FAEnabled": "Đã bật 2FA",
     "AccessKey": "Khóa truy cập",

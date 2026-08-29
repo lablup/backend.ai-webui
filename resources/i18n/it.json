@@ -513,6 +513,30 @@
       "Title": "Chatta con i tuoi modelli distribuiti"
     }
   },
+  "cliLogin": {
+    "Account": "Account",
+    "Attestation": "Ho avviato io questo accesso da un terminale su questo computer.",
+    "Cancelled": "Hai annullato il passaggio.",
+    "Confirm": "Passa la sessione",
+    "ConsentDescription": "La CLI agirà come te — stesso account, stessi permessi, stesso endpoint — finché non esegui bai-agent logout o la sessione scade. Approva solo un accesso che hai avviato tu.",
+    "ConsentTitle": "Questa sessione del browser sarà condivisa con una CLI su questo computer",
+    "DoneDescription": "Puoi chiudere questa scheda e tornare al terminale.",
+    "DoneTitle": "La CLI ha effettuato l'accesso",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "Il passaggio non è stato completato",
+    "HandOffRejected": "La CLI locale ha rifiutato il passaggio (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Nessuna CLI è in ascolto su questo computer. Potrebbe essere in esecuzione su un'altra macchina oppure il browser ha bloccato la richiesta a localhost.",
+    "MatchCodeDescription": "Il terminale che ha avviato questo accesso mostra lo stesso codice. Se non corrisponde, annulla.",
+    "NoListenerPort": "Questa pagina è stata aperta senza una porta di ascolto della CLI.",
+    "PasteFallbackDescription": "Esegui questo comando nel terminale in cui si trova la CLI, poi incolla l'ID di sessione quando richiesto.",
+    "PasteFallbackTitle": "Incolla l'ID di sessione nella CLI",
+    "PasteFallbackWarning": "L'ID di sessione è potente quanto la tua password. Chi lo possiede può agire come te finché la sessione non scade. Non incollarlo in una chat, in un issue o in un log.",
+    "Retry": "Riprova",
+    "RevealSessionId": "Mostra l'ID di sessione",
+    "SessionIdMasked": "Nascosto — {{masked}}",
+    "Title": "Accedi con la CLI di Backend.AI",
+    "VerificationCode": "Codice di verifica"
+  },
   "credential": {
     "2FAEnabled": "2FA abilitata",
     "AccessKey": "Chiave di accesso",
