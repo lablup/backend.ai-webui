@@ -49,14 +49,26 @@ const renderConsent = (search: string) =>
   );
 
 let fetchMock: ReturnType<typeof vi.fn>;
+/** What the loopback listener answers. Reassign to make the hand-off fail. */
+let respondToCallback: () => Promise<Response>;
+
+// `fetch` is shared: i18next's HTTP backend (reached through `MainLayout` ->
+// `useBAISetting` -> `DefaultProviders`) loads `/resources/i18n/en.json` at an
+// unpredictable moment, so the hand-off is matched by URL, never by "was used".
+const CALLBACK_URL = /^http:\/\/127\.0\.0\.1:\d+\/callback$/;
+const callbackCalls = () =>
+  fetchMock.mock.calls.filter(([input]) => CALLBACK_URL.test(String(input)));
 
 beforeEach(() => {
   mocks.enableCliLogin = true;
-  fetchMock = vi.fn(
-    async () =>
-      new Response(JSON.stringify({ ok: true, message: 'signed in' }), {
-        status: 200,
-      }),
+  respondToCallback = async () =>
+    new Response(JSON.stringify({ ok: true, message: 'signed in' }), {
+      status: 200,
+    });
+  fetchMock = vi.fn(async (input: RequestInfo | URL) =>
+    CALLBACK_URL.test(String(input))
+      ? respondToCallback()
+      : new Response('{}', { status: 200 }),
   );
   vi.stubGlobal('fetch', fetchMock);
 });
@@ -64,6 +76,10 @@ beforeEach(() => {
 afterEach(() => {
   vi.unstubAllGlobals();
 });
+
+// The verification code lands from an async `crypto.subtle` digest; awaiting it
+// keeps that state update out of the interaction the test measures.
+const settleVerificationCode = () => screen.findByText(/^[0-9A-F]{6}$/);
 
 describe('CliLoginGate', () => {
   it('behaves like an unknown route when enableCliLogin is off', () => {
@@ -97,13 +113,14 @@ describe('CliLoginConsent', () => {
 
     const confirm = screen.getByRole('button', { name: 'cliLogin.Confirm' });
     expect(confirm).toBeDisabled();
+    await settleVerificationCode();
 
     await userEvent.click(
       screen.getByRole('checkbox', { name: 'cliLogin.Attestation' }),
     );
 
-    expect(confirm).toBeEnabled();
-    expect(fetchMock).not.toHaveBeenCalled();
+    await waitFor(() => expect(confirm).toBeEnabled());
+    expect(callbackCalls()).toEqual([]);
   });
 
   it('posts the session to the port and state named in the URL', async () => {
@@ -116,8 +133,8 @@ describe('CliLoginConsent', () => {
       screen.getByRole('button', { name: 'cliLogin.Confirm' }),
     );
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    await waitFor(() => expect(callbackCalls()).toHaveLength(1));
+    const [url, init] = callbackCalls()[0] as [string, RequestInit];
     expect(url).toBe('http://127.0.0.1:1234/callback');
     expect(init.method).toBe('POST');
     expect(JSON.parse(String(init.body))).toEqual({
@@ -130,7 +147,7 @@ describe('CliLoginConsent', () => {
   });
 
   it('offers the paste fallback when no listener answers', async () => {
-    fetchMock.mockRejectedValueOnce(new Error('Failed to fetch'));
+    respondToCallback = () => Promise.reject(new Error('Failed to fetch'));
     renderConsent('?port=1234&state=abc');
 
     await userEvent.click(
