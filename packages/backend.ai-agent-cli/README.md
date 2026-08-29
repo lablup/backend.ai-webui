@@ -569,6 +569,102 @@ that nothing curates. The same check runs in `scripts/verify.sh`
 ("Agent mappings"), in `.github/workflows/agent-mappings.yml` on the paths that
 can orphan a reference, and in `src/mappings/mappings.test.ts`.
 
+## Explain
+
+`schema show` says what the SDL declares. `explain` says what it **means to a
+user** — and, for every piece of the answer, where that meaning came from:
+
+```bash
+bai-agent explain ComputeSessionNode                  # a type
+bai-agent explain ComputeSessionNode.status           # a field
+bai-agent explain ComputeSessionNode.status=RUNNING   # one of its values
+```
+
+```
+label
+
+derived:  auto
+label:    Status
+key:      session.Status
+lang:     en
+
+meaning
+
+derived:  curated
+text:     The containers are up and accepting work; apps and the terminal can be opened.
+via:      ComputeSessionNode.status=RUNNING
+```
+
+Five pieces, each tagged `derived: auto | heuristic | curated | MISSING`:
+
+| Piece     | `auto`                              | `heuristic`                                          | `curated`                        |
+| --------- | ----------------------------------- | ---------------------------------------------------- | -------------------------------- |
+| `schema`  | the SDL entry, always               | —                                                    | —                                |
+| `label`   | the [i18n reverse index](#the-i18n-reverse-index) | a same-named i18n key (`agent.Schedulable`)          | the mapping's `label`            |
+| `concept` | —                                   | a terminology term spelled like the name             | the mapping's `concept`          |
+| `meaning` | —                                   | —                                                    | the mapping's `meaning`          |
+| `docs`    | —                                   | the top docs hit for the label, at score ≥ 80        | the mapping's `docs`             |
+
+Nothing is invented: a piece with no source prints `MISSING`, which is the
+nudge to curate it. `--lang <code>` re-reads the label from that language's
+i18n store and maps the docs link to that language's anchor, exactly as
+`search` does — it never changes what resolves.
+
+`=VALUE` refines the answer: the `meaning`, `concept` and `docs` pieces prefer
+the value's own curated entry over the field's, and a `value` block carries the
+value's UI label, its Astryx badge variant, and — when the field's type is an
+enum — that enum value's SDL description.
+
+### Mappings
+
+The curated tier lives in `mappings/<Type>.yaml`, one file per type, validated
+against `mappings/schema.json` (JSON Schema draft-07) by `ajv`:
+
+```yaml
+type: ComputeSessionNode
+concept: compute-session          # a concept id in terminology.json
+docs: sessions_all#session-detail-panel
+fields:
+  status:
+    meaning: Lifecycle state of the session as the manager scheduled and ran it.
+    docs: sessions_all#session-detail-panel
+    values:
+      RUNNING:
+        label: Running
+        meaning: The containers are up and accepting work.
+        variant: success
+```
+
+`docs` is `<page-slug>#<english-heading-anchor>`; the resolver checks that the
+heading exists and builds the deployed URL through the same builder `search`
+uses. `variant` is the Astryx `Badge` variant the WebUI paints the value with
+(`packages/backend.ai-ui/src/helper/astryxTagVariant.ts`), which is also where
+the value vocabularies were read off.
+
+Only types worth a human's sentence are curated — the ones whose values the UI
+renders as badges and whose meaning the SDL does not carry. Everything else
+answers from `auto`/`heuristic` and prints `MISSING` for the rest; a new schema
+field is never a hard failure.
+
+### Staleness
+
+Every reference a mapping makes points outside itself, so anything else in the
+repo can orphan it. `bai-agent doctor --mappings` re-resolves all of them:
+
+```
+status: ok
+check:  references resolve
+detail: 61 concept(s) and 129 docs link(s) resolve
+```
+
+It `fail`s on a type or field that left the SDL, a value that is not in the
+field's enum, a concept id that is not in `terminology.json`, and a
+`slug#heading` with no matching heading in the English manual — and exits 1, so
+it gates. It `warn`s on a partly-curated enum and on UI-rendered enum fields
+that nothing curates. The same check runs in `scripts/verify.sh`
+("Agent mappings"), in `.github/workflows/agent-mappings.yml` on the paths that
+can orphan a reference, and in `src/mappings/mappings.test.ts`.
+
 ## Output contract
 
 Text is the default and mirrors the JSON surface: both are rendered from the
