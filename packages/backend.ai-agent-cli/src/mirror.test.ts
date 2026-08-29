@@ -69,6 +69,7 @@ const SAMPLE_DATA: Record<string, unknown> = {
     maxBytes: 65536,
     bytes: 412,
     truncated: ['compute_session_nodes.edges[1].node.status_info'],
+    hint: 'bai-agent open session row-1',
     links: [
       {
         path: 'compute_session_nodes.edges[0].node',
@@ -94,6 +95,18 @@ const SAMPLE_DATA: Record<string, unknown> = {
         ],
       },
     },
+  },
+  open: {
+    type: 'vfolder',
+    target: 'vf-1',
+    webui_path: '/data?folder=vf-1',
+    webui_url: 'https://fr-1.localhost:1355/data?folder=vf-1',
+    tab: 'tab-abcd',
+    tabTitle: 'Backend.AI · Data · default @ manager.example.com',
+    tabReason: 'only',
+    tool: 'bai_open_resource',
+    path: '/project/default/data?folder=vf-1',
+    title: 'Backend.AI · Data · default @ manager.example.com',
   },
 };
 

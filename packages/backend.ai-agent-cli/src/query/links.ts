@@ -97,10 +97,40 @@ export function resourceForRootField(
 const refFor = (resource: LinkedResource, id: string): ResourceRef =>
   ({ type: resource, id }) as ResourceRef;
 
+/** A `Type:local-id` payload, once the base64 has been peeled off. */
+const GLOBAL_ID_BODY = /^[A-Za-z][A-Za-z0-9_]*:.+$/;
+
+/**
+ * A Relay global id decoded to the local id the WebUI's URL params take —
+ * `atob(id).split(':')[1]`, the same conversion the host does with
+ * `toLocalId` before it opens a folder or a session. Anything that is not
+ * base64 of `Type:id` is returned untouched, so a raw UUID passes through.
+ *
+ * This matters for the Strawberry types (`VFolder`, …), which expose only the
+ * global `id`; the Graphene ones carry `row_id` and never reach here.
+ */
+export function toLocalId(value: string): string {
+  let decoded: string;
+  try {
+    decoded = Buffer.from(value, 'base64').toString('utf8');
+  } catch {
+    return value;
+  }
+  if (!GLOBAL_ID_BODY.test(decoded)) return value;
+  // Base64 decoding is lenient; re-encoding is what proves the input was one.
+  const strip = (text: string): string => text.replace(/=+$/, '');
+  if (strip(Buffer.from(decoded, 'utf8').toString('base64')) !== strip(value)) {
+    return value;
+  }
+  return decoded.slice(decoded.indexOf(':') + 1);
+}
+
 const idOf = (node: Record<string, unknown>): string | undefined => {
   for (const field of ID_FIELDS) {
     const value = node[field];
-    if (typeof value === 'string' && value.length > 0) return value;
+    if (typeof value === 'string' && value.length > 0) {
+      return field === 'id' ? toLocalId(value) : value;
+    }
   }
   return undefined;
 };

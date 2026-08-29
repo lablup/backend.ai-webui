@@ -42,6 +42,7 @@ bai-agent whoami               # who the stored session belongs to
 bai-agent logout               # delete the stored session file
 bai-agent query '<document>'   # raw GraphQL, SDL-validated (see Query below)
 bai-agent explain <target>     # what a type, field or value means to a user
+bai-agent open <type> <id>     # open it in the WebUI tab (see Handoff below)
 bai-agent --help               # generated from the same registry as `manifest`
 ```
 
@@ -577,10 +578,14 @@ level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
 | `Artifact`, `ArtifactNode`                    | artifact     | `/admin/reservoir/<id>`       |
 
 The id is the first of `row_id`, `endpoint_id`, `id` that carries a non-empty
-string. **Known limitation:** Strawberry types (`VFolder`, `SessionV2`, …)
-expose no `row_id`, so their annotation falls back to the base64 Relay global
-id, which the pages do not accept. Graphene `*Node` types, which do carry
-`row_id`, produce links that open.
+string. A value taken from `id` is decoded first: Strawberry types (`VFolder`,
+`SessionV2`, …) expose no `row_id`, and their `id` is a base64 Relay global id
+(`VFolder:<uuid>`) that the pages do not accept — `toLocalId` peels it back to
+the local id, exactly as the WebUI does at every call site. A raw UUID, or
+anything that is not base64 of `Type:id`, passes through untouched.
+
+When exactly one link is produced, `data.hint` carries the handoff that opens
+it: `bai-agent open <resource> <id>` (see **Handoff** below).
 
 ### Path rules are duplicated, not imported
 
@@ -593,7 +598,12 @@ every case in it.
 **The two fixture files must be kept identical.** When the host's rules change,
 its test regenerates its fixture; copy the new file over this one and fix
 `webui-path.ts` until the parity test passes again — never edit the fixture to
-match the CLI. FR-3771 adds the automated cross-check.
+match the CLI.
+
+`webui-parity.test.ts` enforces that automatically: it reads both files out of
+the checkout found by `resolveRepoContext` and asserts they are **byte-identical**,
+then replays every case through `webuiPath()`. `doctor`'s `webmcp` group runs
+the same check, so a drifted fixture is a `fail` there too.
 
 ## Explain
 
@@ -691,6 +701,67 @@ that nothing curates. The same check runs in `scripts/verify.sh`
 ("Agent mappings"), in `.github/workflows/agent-mappings.yml` on the paths that
 can orphan a reference, and in `src/mappings/mappings.test.ts`.
 
+## Handoff
+
+`open` is the last hop: the CLI already knows the deep link for anything it
+returns, and this command drives the browser tab that is **already logged in**
+to it. No URL to paste, no second login.
+
+```bash
+bai-agent open session <id>                      # session detail drawer
+bai-agent open vfolder <id> [--path <inside>]    # folder explorer
+bai-agent open deployment <id> [--view revisions]
+bai-agent open model_card <id> | role <id> | artifact <id>
+bai-agent open list <resource> [--filter <f>] [--status-category <s>]
+```
+
+The reference is validated against the same `ResourceRef` rules the tab
+enforces, so a bad `--view` or a status filter on a page that has none fails
+here rather than round-tripping to the browser.
+
+### How it reaches the tab
+
+The dev server started with `VITE_WEBMCP=on` registers the tab's `bai_*` tools
+with `@mcp-b/webmcp-local-relay` (FR-3764). `open` spawns that relay as an MCP
+server over stdio and talks newline-delimited JSON-RPC to it —
+`src/webmcp/relay-client.ts`, no runtime dependency, the same framing
+`scripts/webmcp-client.mjs` uses. The relay binary is the checkout's own copy
+(`react/node_modules/@mcp-b/webmcp-local-relay`), falling back to
+`npx -y @mcp-b/webmcp-local-relay`; `$BAI_AGENT_RELAY_CMD` overrides both.
+
+Then:
+
+1. `webmcp_list_sources` — the connected tabs. A freshly spawned relay takes
+   over the WebSocket port, so an already-open tab needs a moment to reconnect:
+   `--wait <seconds>` (default 10) bounds that.
+2. Pick one (below).
+3. `tools/call` on that tab's `bai_open_resource`, and print `path`, `title`
+   and `tab` from what the tab answers.
+
+**Routing to a specific tab is by tool name, not by argument.** The relay's
+`tools/call` carries no source id; instead it disambiguates the aggregated name
+with a short tab-id suffix when two tabs publish the same tool
+(`bai_open_resource_ed93`). `open` resolves the name through `webmcp_list_tools`,
+which reports the `sources` behind each one.
+
+### Which tab
+
+| Situation | Result |
+| --- | --- |
+| no tab connected | exit 5, `no_webui_tab`, `hint` = the full `webui_url` |
+| one tab | that one |
+| several, one on this session's endpoint | that one |
+| several, still ambiguous | exit 5, `ambiguous_tab`, one `--tab <id>  <title>` suggestion per tab |
+| `--tab <id>` given | that one (`sourceId`, `tabId`, or a unique prefix of either) |
+
+The endpoint tie-break reads the tab's own document title: `RouteDocumentTitle`
+formats it as `Backend.AI · <page> · <project> @ <host>` (FR-3760), so the
+segment after ` @ ` is the manager the tab is logged in to. A tab that is not
+logged in has no host segment and never wins the tie-break.
+
+`open` never contacts the manager — it only reads the stored session for the
+WebUI origin and that host comparison.
+
 ## Output contract
 
 Text is the default and mirrors the JSON surface: both are rendered from the
@@ -730,7 +801,7 @@ verbosity levels), `-h, --help`, `--version`.
 | 2    | usage — unknown command, unknown flag, bad flag value    |
 | 3    | `auth_required` — no session, or the manager rejected it |
 | 4    | `mutation_refused`                                       |
-| 5    | `not_found`                                              |
+| 5    | `not_found`, `no_webui_tab`, `ambiguous_tab`             |
 
 Errors are raised as a typed `CliError` carrying `code`, `exitCode`, `hint` and
 `suggestions`; a single top-level handler in `src/run.ts` renders it in text or

@@ -186,6 +186,48 @@ Notes:
   `bai_` + snake_case; unregistration happens automatically on unmount, which is
   what makes page-scoped tools appear and disappear with the route.
 
+### CLI -> tab handoff (`bai-agent open`)
+
+`bai-agent open` (FR-3771) drives the tab above from the shell — the CLI computes
+the deep link and the tab, already logged in, navigates to it. The whole demo,
+from a cold checkout:
+
+```bash
+# 1. dev server WITH WebMCP. Use the plain http URL Vite prints, not the https
+#    Portless one: Chrome's Local Network Access check starves the relay
+#    handshake on an HTTPS page (see the note above).
+VITE_WEBMCP=on pnpm run dev
+portless-doctor
+
+# 2. open http://127.0.0.1:<port>/ and log in. Leave the tab open.
+
+# 3. hand the CLI a session for the same manager
+pnpm --filter backend.ai-agent-cli build
+node packages/backend.ai-agent-cli/dist/cli.js login --paste \
+  --endpoint http://10.82.0.130:8090 --webui http://127.0.0.1:<port>
+
+# 4. open something that already exists
+node packages/backend.ai-agent-cli/dist/cli.js open session <session uuid>
+
+# 5. create something, then open it. The mutation is allow-listed
+#    (there is no session-creation mutation — sessions are created over REST),
+#    and `--json` carries a `hint` with the exact follow-up command.
+node packages/backend.ai-agent-cli/dist/cli.js query --allow-mutation \
+  'mutation { createVfolderV2(input: {name: "demo"}) { vfolder { id metadata { name } } } }' --json
+node packages/backend.ai-agent-cli/dist/cli.js open vfolder <the id from the hint>
+
+# 6. the failure modes: close every WebUI tab -> exit 5 `no_webui_tab`, with the
+#    full URL as the hint; open two -> exit 5 `ambiguous_tab` with one
+#    `--tab <id>  <title>` line per tab; then pick one with --tab.
+node packages/backend.ai-agent-cli/dist/cli.js open vfolder <id> --tab <tab id>
+
+# 7. what the relay sees, and whether the two deep-link fixtures still agree
+node packages/backend.ai-agent-cli/dist/cli.js doctor --json | jq '.data.checks[] | select(.group == "webmcp")'
+```
+
+A tab that has just connected can take a moment to appear in the relay's source
+list; `open` polls for it and `--wait <seconds>` (default 10) bounds that.
+
 ## Storybook
 
 ```bash
@@ -211,6 +253,7 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 | `PORT=9081 pnpm run dev`                                     | Same, but pin CRA to port 9081                                        |
 | `VITE_WEBMCP=on pnpm run dev`                                | Same, plus the WebMCP local-relay wiring (see above)                  |
 | `node scripts/webmcp-client.mjs list \| call <tool> [json]`  | List / call the dev tab's WebMCP tools without an MCP client          |
+| `bai-agent open <type> <id>`                                 | Open a resource in the logged-in dev tab (see the handoff demo above) |
 | `pnpm run wsproxy`                                           | WebSocket proxy on fixed port 5050 (not wrapped by Portless)          |
 | `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                              |
 | `pnpm exec portless list`                                    | Show active Portless routes                                           |

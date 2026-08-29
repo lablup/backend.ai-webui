@@ -7,6 +7,8 @@ export const ERROR_CODES = [
   'mutation_refused',
   'schema_mismatch',
   'not_found',
+  'no_webui_tab',
+  'ambiguous_tab',
   'version_mismatch',
   'repo_not_found',
   'repo_incomplete',
@@ -34,6 +36,10 @@ const EXIT_BY_CODE: Record<ErrorCode, ExitCode> = {
   // the CLI parsed the command fine, the checkout's schema disagrees.
   schema_mismatch: EXIT.error,
   not_found: EXIT.notFound,
+  // Both handoff failures are "the tab you asked for is not there": nothing
+  // ran, and the fix is to open one (or name one), not to retry.
+  no_webui_tab: EXIT.notFound,
+  ambiguous_tab: EXIT.notFound,
   version_mismatch: EXIT.error,
   repo_not_found: EXIT.error,
   repo_incomplete: EXIT.error,

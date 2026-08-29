@@ -12,6 +12,7 @@ import { resolveRepoContext } from '../repo-context.js';
 import { loadSchema } from '../search/schema-sdl.js';
 import { loadSession, resolveEndpoint } from '../session.js';
 import { listPath } from '../webui-path.js';
+import { openHint, openListHint } from '../webmcp/hints.js';
 import type { QueryLink } from '../query/links.js';
 import { annotateResult, survivingLinks } from '../query/links.js';
 import {
@@ -35,6 +36,8 @@ export interface QueryData {
   /** JSON paths cut to fit `maxBytes`, deepest-first. */
   truncated: string[];
   links: QueryLink[];
+  /** Present when exactly one link was produced: the handoff that opens it. */
+  hint?: string;
   result: unknown;
 }
 
@@ -117,7 +120,9 @@ function refuseMutation(field: string, allowFlagGiven: boolean): CliError {
       `allow-listed mutations: ${ALLOWED_MUTATION_NAMES.join(', ')}`,
       ...(page ? [`do it in the WebUI at ${page}`] : []),
     ],
-    hint: page ?? `${CLI_NAME} query --help`,
+    // Same handoff the successful path hints at, so "go do it in the UI" is
+    // one command rather than a path to paste somewhere.
+    hint: resource ? openListHint(resource) : `${CLI_NAME} query --help`,
   });
 }
 
@@ -233,6 +238,9 @@ export const queryCommand = defineCommand<QueryData>({
       bytes: jsonBytes(cut.value),
       truncated: cut.truncated,
       links,
+      ...(links.length === 1
+        ? { hint: openHint(links[0].resource, links[0].id) }
+        : {}),
       result: cut.value,
     };
   },
@@ -267,6 +275,7 @@ export const queryCommand = defineCommand<QueryData>({
         ),
       );
     }
+    if (data.hint) blocks.push(record([['hint', data.hint]]));
     blocks.push(section('Result'), text(JSON.stringify(data.result, null, 2)));
     return renderBlocks(blocks);
   },

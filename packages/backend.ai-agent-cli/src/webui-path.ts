@@ -205,6 +205,12 @@ export const resourcePath = (ref: ResourceRef): string => {
   return `${pathname}${search ? `?${search}` : ''}${hash}`;
 };
 
+/**
+ * The canonical name for `resourcePath` on this side of the mirror: the CLI
+ * computes a **WebUI** path, and the parity test reads better spelled that way.
+ */
+export const webuiPath = resourcePath;
+
 /** The bare list page for a resource — the "go do it in the UI" destination. */
 export const listPath = (resource: ListResource): string =>
   resourcePath({ type: 'list', resource } as ResourceRef);

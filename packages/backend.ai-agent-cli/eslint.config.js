@@ -4,7 +4,9 @@ export default [
   ...base,
 
   {
-    ignores: ['dist/**'],
+    // The test double is plain JS outside the TS project service, and it is a
+    // fixture rather than shipped code.
+    ignores: ['dist/**', 'src/webmcp/fake-relay.mjs'],
   },
 
   {

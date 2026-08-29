@@ -95,6 +95,7 @@ describe('success envelope', () => {
       'whoami',
       'query',
       'explain',
+      'open',
     ]);
   });
 

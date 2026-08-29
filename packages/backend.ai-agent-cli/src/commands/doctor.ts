@@ -40,6 +40,11 @@ import {
   SESSION_FILE_MODE,
 } from '../session.js';
 import { alignmentSession, checkVersionAlignment } from '../version-align.js';
+import { checkFixtureParity, HOST_FIXTURE_PATH } from '../webui-parity.js';
+import {
+  RelayClient,
+  resolveRelayCommand,
+} from '../webmcp/relay-client.js';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -572,7 +577,101 @@ const alignmentGroup: CheckGroup = {
   },
 };
 
-/** Later tickets append groups here (webmcp). */
+
+/**
+ * The CLI -> browser handoff (FR-3771): can the relay be spawned, is a WebUI
+ * tab connected, and do the two deep-link fixtures still agree. Everything is
+ * a warning except a fixture that drifted, which is a real defect.
+ */
+export const WEBMCP_GROUP = 'webmcp';
+
+/** Long enough for a relay handshake, short enough not to stall `doctor`. */
+const RELAY_PROBE_TIMEOUT_MS = 6_000;
+
+/** Grace period for an open tab to reconnect, short enough not to stall. */
+const RELAY_SOURCE_WAIT_MS = 2_000;
+
+const webmcpGroup: CheckGroup = {
+  name: WEBMCP_GROUP,
+  run: async ({ cwd }) => {
+    const checks: DoctorCheck[] = [];
+    const resolved = tryResolveRepoContext(cwd);
+
+    if (!resolved.ok) {
+      checks.push({
+        group: WEBMCP_GROUP,
+        check: 'fixture parity',
+        status: 'warn',
+        detail: 'not checked: no checkout detected',
+        hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+      });
+    } else {
+      const parity = checkFixtureParity(resolved.context);
+      checks.push({
+        group: WEBMCP_GROUP,
+        check: 'fixture parity',
+        status:
+          parity.unreadable || !parity.identical || parity.mismatch
+            ? 'fail'
+            : 'ok',
+        detail:
+          parity.unreadable ??
+          (!parity.identical
+            ? `${HOST_FIXTURE_PATH} and the CLI copy differ; one implementation drifted`
+            : (parity.mismatch ??
+              `${parity.cases} case(s) reproduce, byte-identical to ${HOST_FIXTURE_PATH}`)),
+        hint:
+          parity.identical && !parity.mismatch && !parity.unreadable
+            ? undefined
+            : `diff ${HOST_FIXTURE_PATH} packages/backend.ai-agent-cli/src/webui-path.fixture.json`,
+      });
+    }
+
+    const relay = resolveRelayCommand(cwd);
+    const client = new RelayClient({ ...relay, timeoutMs: RELAY_PROBE_TIMEOUT_MS });
+    try {
+      await client.start();
+      const names = await client.listToolNames();
+      checks.push({
+        group: WEBMCP_GROUP,
+        check: 'relay',
+        status: 'ok',
+        detail: `@mcp-b/webmcp-local-relay ${relay.version ?? client.serverInfo.version ?? '(version unknown)'} from ${relay.source}, ${names.length} tool(s) exposed`,
+      });
+      // A freshly spawned relay takes the WebSocket port, so an already-open
+      // tab needs a moment to reconnect before it is visible.
+      const sources = await client.waitForSources(RELAY_SOURCE_WAIT_MS);
+      checks.push({
+        group: WEBMCP_GROUP,
+        check: 'connected tabs',
+        status: sources.length > 0 ? 'ok' : 'warn',
+        detail:
+          sources.length === 0
+            ? 'none: no WebUI tab is registered with the relay'
+            : sources
+                .map(
+                  (source) =>
+                    `${source.tabId} ${source.title || source.url || source.origin || '(untitled)'}`,
+                )
+                .join(' | '),
+        hint:
+          sources.length > 0 ? undefined : 'VITE_WEBMCP=on pnpm run dev',
+      });
+    } catch (error) {
+      checks.push({
+        group: WEBMCP_GROUP,
+        check: 'relay',
+        status: 'warn',
+        detail: error instanceof Error ? error.message : String(error),
+        hint: 'pnpm --filter backend-ai-webui-react install',
+      });
+    } finally {
+      await client.close();
+    }
+    return checks;
+  },
+};
+
 export const CHECK_GROUPS: CheckGroup[] = [
   runtimeGroup,
   checkoutGroup,
@@ -581,6 +680,7 @@ export const CHECK_GROUPS: CheckGroup[] = [
   authGroup,
   mappingsGroup,
   alignmentGroup,
+  webmcpGroup,
 ];
 
 /** `--mappings` narrows the run to that one group; the default runs them all. */

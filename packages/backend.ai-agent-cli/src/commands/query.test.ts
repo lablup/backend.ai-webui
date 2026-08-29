@@ -130,7 +130,10 @@ describe('the mutation allow-list', () => {
     const envelope = jsonErr();
     expect(envelope.code).toBe('mutation_refused');
     expect(envelope.error).toContain('--allow-mutation');
-    expect(envelope.hint).toBe('/data');
+    // FR-3771: the hint is the handoff command, and the page path stays in
+    // the suggestions.
+    expect(envelope.hint).toBe('bai-agent open list vfolder');
+    expect(envelope.suggestions).toContain('do it in the WebUI at /data');
   });
 
   it('refuses a non-allow-listed mutation even with the flag, hinting its page', async () => {
@@ -145,7 +148,7 @@ describe('the mutation allow-list', () => {
     expect(fetchMock).not.toHaveBeenCalled();
     const envelope = jsonErr();
     expect(envelope.error).toContain('not on the allow-list');
-    expect(envelope.hint).toBe('/admin/users?tab=users');
+    expect(envelope.hint).toBe('bai-agent open list user');
     expect(envelope.suggestions?.[0]).toContain(ALLOWED_MUTATION_NAMES[0]);
   });
 
