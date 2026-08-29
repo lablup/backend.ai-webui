@@ -5,6 +5,7 @@ export const ERROR_CODES = [
   'usage',
   'auth_required',
   'mutation_refused',
+  'schema_mismatch',
   'not_found',
   'repo_not_found',
   'repo_incomplete',
@@ -28,6 +29,9 @@ const EXIT_BY_CODE: Record<ErrorCode, ExitCode> = {
   usage: EXIT.usage,
   auth_required: EXIT.authRequired,
   mutation_refused: EXIT.mutationRefused,
+  // A document the local SDL rejects is a plain error (1), not a usage error:
+  // the CLI parsed the command fine, the checkout's schema disagrees.
+  schema_mismatch: EXIT.error,
   not_found: EXIT.notFound,
   repo_not_found: EXIT.error,
   repo_incomplete: EXIT.error,

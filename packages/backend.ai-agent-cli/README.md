@@ -39,6 +39,7 @@ bai-agent schema show <name>   # print one type, field or enum value
 bai-agent login                # hand this machine a WebUI session (see Auth below)
 bai-agent whoami               # who the stored session belongs to
 bai-agent logout               # delete the stored session file
+bai-agent query '<document>'   # raw GraphQL, SDL-validated (see Query below)
 bai-agent --help               # generated from the same registry as `manifest`
 ```
 
@@ -345,6 +346,132 @@ re-authenticates on its own.
 `[general] apiEndpoint` from the detected checkout's `config.toml`. Two or more
 stored sessions is an error, not a guess.
 
+## Query
+
+`bai-agent query` sends a raw GraphQL document to the manager, but never
+blindly: it is validated against **this checkout's** SDL first, so a document
+written from a stale mental model fails locally instead of burning a round trip.
+
+```bash
+bai-agent query 'query { compute_session_nodes(first: 3) { edges { node { id row_id name status } } } }'
+bai-agent query --file ./sessions.graphql --var first=10
+cat sessions.graphql | bai-agent query --var first=10 --json
+```
+
+The document comes from the positional argument, `--file <path>`, or stdin — in
+that order, and passing both an argument and `--file` is a usage error.
+`--var k=v` is repeatable; each value is JSON when it parses (`--var first=10`,
+`--var ids=["a","b"]`) and a plain string otherwise.
+
+### Pre-validation
+
+`data/schema.graphql` is built with `buildASTSchema(..., { assumeValidSDL: true })`
+— it is a composed federation supergraph, so its `@join__*` / `@link` plumbing
+would fail a strict SDL check, and the directives are declared in the document
+itself so nothing has to be stripped. `data/client-directives.graphql` is
+concatenated in, so a document carrying `@since` / `@skipOnClient` (which the
+WebUI client strips before sending) still validates.
+
+A document the schema rejects exits **1** with code `schema_mismatch`, every
+validator message under `suggestions`, and a hint naming the nearest type:
+
+```
+error: The document does not match the checkout's schema (1 problem(s)).
+code:  schema_mismatch
+- Cannot query field "nope_field" on type "ComputeSessionNode".
+hint:  bai-agent schema show ComputeSessionNode
+```
+
+When no type can be pulled from the messages the hint is `bai-agent schema sync`
+(a later ticket; the SDL is refreshed with `pnpm run relay` today).
+
+Pagination arguments are **not** special-cased here — the one-mode rule
+(`first`/`after` XOR `last`/`before` XOR `limit`/`offset`, see
+`.claude/rules/graphql-pagination.md`) is enforced by the manager at runtime,
+and mixing modes on a `*V2` connection fails there, not in validation.
+
+### Mutations
+
+Executing **any** mutation needs `--allow-mutation`, and the field must be on
+the static allow-list in `src/mutation-allowlist.ts`. Either miss exits **4**
+with code `mutation_refused` **before any network call**, hinting the WebUI page
+where a human can do it instead:
+
+```
+error: Mutation "createVfolderV2" needs --allow-mutation.
+code:  mutation_refused
+hint:  /data
+```
+
+The seed list is deliberately tiny, and destructive fields (`delete*`, `purge*`,
+`terminate*`, `revoke*`) are never on it:
+
+| Mutation                 | Page    |
+| ------------------------ | ------- |
+| `createVfolderV2`        | `/data` |
+| `createVFolderInProject` | `/data` |
+| `create_resource_preset` | `/session` |
+
+**There is no compute-session creation mutation in the schema** — Backend.AI
+creates sessions over REST (`POST /session`), not GraphQL — so the "create a
+session" seed this list was specified with does not exist and VFolder creation
+plus one safe admin creation stand in its place.
+
+### Result budget
+
+The result is cut to `--max-bytes` (default 65536) **deepest-first**: innermost
+arrays and strings are halved before the shape around them is, so the envelope
+keeps its structure. Every cut path is listed in `data.truncated`.
+
+`id` / `row_id` / `endpoint_id` and the `webui_path` / `webui_url` derived from
+them are never cut: half an id is a wrong id, and a halved link opens nothing.
+Because those are protected, a result made almost entirely of ids can land
+slightly over budget — `data.bytes` always reports the real size.
+
+Links are attached **before** the cut, so they count against the budget rather
+than blowing past it, and a row that does not survive drops out of
+`data.links` too.
+
+### WebUI links
+
+Every node whose root field returns a type with a resource page is annotated in
+place with `webui_path` (and `webui_url` when an origin is known), and the same
+set is listed in `data.links`. The origin is `--webui`, else the stored
+session's `webui` field; with neither, only `webui_path` is emitted.
+
+The type table (`src/query/links.ts`) is small and hand-maintained on purpose —
+an unrecognised type produces no link rather than a guessed one. One container
+level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
+(`items`), or a single-field Strawberry `*Payload`.
+
+| Return type                                   | Resource     | Page                          |
+| --------------------------------------------- | ------------ | ----------------------------- |
+| `ComputeSessionNode`, `ComputeSession`, `SessionV2` | session      | `/session?sessionDetail=<id>` |
+| `VirtualFolderNode`, `VirtualFolder`, `VFolder` | vfolder      | `/data?folder=<id>`           |
+| `Endpoint`, `EndpointNode`                    | deployment   | `/deployments/<id>`           |
+| `ModelCard`, `ModelCardV2`                    | model_card   | `/model-store?modelCard=<id>` |
+| `Role`, `RoleNode`                            | role         | `/admin/rbac?roleDetail=<id>` |
+| `Artifact`, `ArtifactNode`                    | artifact     | `/admin/reservoir/<id>`       |
+
+The id is the first of `row_id`, `endpoint_id`, `id` that carries a non-empty
+string. **Known limitation:** Strawberry types (`VFolder`, `SessionV2`, …)
+expose no `row_id`, so their annotation falls back to the base64 Relay global
+id, which the pages do not accept. Graphene `*Node` types, which do carry
+`row_id`, produce links that open.
+
+### Path rules are duplicated, not imported
+
+`src/webui-path.ts` restates `react/src/helper/resourcePath.ts` (FR-3759) — the
+CLI takes no dependency on the host app, so the rules cannot be imported.
+`src/webui-path.fixture.json` is a **byte-for-byte copy** of
+`react/src/helper/resourcePath.fixture.json`, and `webui-path.test.ts` asserts
+every case in it.
+
+**The two fixture files must be kept identical.** When the host's rules change,
+its test regenerates its fixture; copy the new file over this one and fix
+`webui-path.ts` until the parity test passes again — never edit the fixture to
+match the CLI. FR-3771 adds the automated cross-check.
+
 ## Output contract
 
 Text is the default and mirrors the JSON surface: both are rendered from the
@@ -380,7 +507,7 @@ verbosity levels), `-h, --help`, `--version`.
 | Code | Meaning                                                  |
 | ---- | -------------------------------------------------------- |
 | 0    | success                                                  |
-| 1    | error (including "not inside a checkout")                |
+| 1    | error (including "not inside a checkout", `schema_mismatch`) |
 | 2    | usage — unknown command, unknown flag, bad flag value    |
 | 3    | `auth_required` — no session, or the manager rejected it |
 | 4    | `mutation_refused`                                       |
