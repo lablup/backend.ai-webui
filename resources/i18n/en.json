@@ -500,6 +500,30 @@
       "Title": "Chat with your deployed models"
     }
   },
+  "cliLogin": {
+    "Account": "Account",
+    "Attestation": "I started this login from a terminal on this computer.",
+    "Cancelled": "You cancelled the hand-off.",
+    "Confirm": "Hand off the session",
+    "ConsentDescription": "The CLI will act as you — same account, same permissions, same endpoint — until you run bai-agent logout or the session expires. Approve only a login you started yourself.",
+    "ConsentTitle": "This browser session will be shared with a CLI on this computer",
+    "DoneDescription": "You can close this tab and go back to the terminal.",
+    "DoneTitle": "The CLI is signed in",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "The hand-off did not complete",
+    "HandOffRejected": "The local CLI rejected the hand-off (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "No CLI is listening on this computer. It may be running on another machine, or the browser blocked the request to localhost.",
+    "MatchCodeDescription": "The terminal that started this login shows the same code. If it does not match, cancel.",
+    "NoListenerPort": "This page was opened without a CLI listener port.",
+    "PasteFallbackDescription": "Run this in the terminal where the CLI lives, then paste the session ID when it asks.",
+    "PasteFallbackTitle": "Paste the session ID into the CLI instead",
+    "PasteFallbackWarning": "The session ID is as powerful as your password. Anyone who holds it can act as you until the session expires. Do not paste it into a chat, an issue, or a log.",
+    "Retry": "Try again",
+    "RevealSessionId": "Show session ID",
+    "SessionIdMasked": "Hidden — {{masked}}",
+    "Title": "Sign in the Backend.AI CLI",
+    "VerificationCode": "Verification code"
+  },
   "credential": {
     "2FAEnabled": "2FA Enabled",
     "AccessKey": "Access Key",
