@@ -392,7 +392,10 @@
       border: 1px solid #ddd; border-radius: 8px; padding: 10px;
       box-shadow: 0 4px 18px rgba(0,0,0,.2); display: none;
     }
-    .compose .pathlabel { font-size: 11px; color: #888; margin-bottom: 4px; word-break: break-all; }
+    .compose .pathlabel {
+      font-size: 11px; color: #888; margin-bottom: 4px; word-break: break-all;
+      white-space: pre-line; max-height: 96px; overflow-y: auto;
+    }
     .compose textarea {
       width: 100%; height: 64px; font-size: 13px; padding: 6px;
       border: 1px solid #ddd; border-radius: 6px; resize: vertical;
@@ -911,26 +914,22 @@
   }
 
   /**
-   * React component identity via react-grab's global API — the app already
+   * React component stack via react-grab's global API — the app already
    * loads it in dev (react/src/index.tsx), so no import is needed here.
+   * Used VERBATIM (driver decision): the surrounding stack is the context,
+   * not just the nearest component's name.
    */
-  async function reactInfo(target) {
+  async function reactStack(target) {
     const api = window.__REACT_GRAB__;
-    if (!api) return null;
+    if (!api) return [];
     try {
-      const name = api.getDisplayName(target);
-      const src = await api.getSource(target).catch(() => null);
-      if (!name && !src) return null;
-      const file =
-        src && src.filePath
-          ? src.filePath.replace(/^.*\/(react\/|packages\/)/, '$1')
-          : null;
-      const loc = file
-        ? `${file}${src.lineNumber ? `:${src.lineNumber}` : ''}`
-        : null;
-      return { name: (src && src.componentName) || name || null, loc };
+      const ctx = await api.getStackContext(target);
+      return String(ctx || '')
+        .split('\n')
+        .map((l) => l.trimEnd())
+        .filter((l) => l.trim());
     } catch {
-      return null;
+      return [];
     }
   }
 
@@ -943,14 +942,11 @@
     const q = anchor.q ? `?${anchor.q}` : '';
     const url = `${location.origin}${anchor.p}${q}#bai=v3.${id}.${anchorB64}`;
     const label = pathLabel(target, anchor);
-    const info = await reactInfo(target);
-    const reactLine =
-      info && (info.name || info.loc)
-        ? [`> ⚛️ in ${info.name || '?'}${info.loc ? ` (at ${info.loc})` : ''}`]
-        : [];
+    const stack = await reactStack(target);
     const block = [
       `> 📍 **${label}** · \`${id}\``,
-      ...reactLine,
+      // react-grab's stack, verbatim — first line gets the ⚛️ marker.
+      ...stack.map((l, i) => (i === 0 ? `> ⚛️ ${l.trim()}` : `> ${l}`)),
       ...text.split('\n').map((l) => `> ${l}`),
       `> [Open on dev server](${url})`,
       `<!-- bai-review v3 id=${id} pr=${prNum} at=${at} -->`,
@@ -1023,9 +1019,9 @@
       : '';
     if (pickTarget) {
       const t = pickTarget;
-      reactInfo(t).then((info) => {
-        if (pickTarget !== t || !info || (!info.name && !info.loc)) return;
-        composeLabel.textContent += `  ·  ⚛️ ${info.name || '?'}${info.loc ? ` (${info.loc})` : ''}`;
+      reactStack(t).then((stack) => {
+        if (pickTarget !== t || !stack.length) return;
+        composeLabel.textContent += `\n⚛️ ${stack.map((l) => l.trim()).join('\n')}`;
       });
     }
     compose.style.display = 'block';
