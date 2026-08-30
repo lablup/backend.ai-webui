@@ -11,7 +11,9 @@ locator. Node ≥ 22, ESM, built with tsup.
 ## Repo mode
 
 `bai-agent` reads the checkout live — it copies nothing and takes no workspace
-dependency on the packages it reads. Every command resolves its context by
+dependency on the packages it reads. Every command that reads repository data
+(`doctor`, `search`, `docs`, `schema`, … — not `manifest`, `version` or
+`--help`) resolves its context by
 walking up from the current working directory until it finds a `package.json`
 named `backend.ai-webui`, then verifies the three data sources exist:
 
