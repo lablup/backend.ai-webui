@@ -17,11 +17,6 @@ on:
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
       - "packages/backend.ai-agent-cli/**"
-      # The agent-cli tests read the generated CLAUDE.md block and the
-      # bai-agent skill, so a change to either has to run this lane.
-      - "AGENTS.md"
-      - "CLAUDE.md"
-      - ".claude/skills/bai-agent/**"
       - "packages/backend.ai-docs-toolkit/**"
       - "src/**"
       - "tsconfig.json"
@@ -40,11 +35,6 @@ on:
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
       - "packages/backend.ai-agent-cli/**"
-      # The agent-cli tests read the generated CLAUDE.md block and the
-      # bai-agent skill, so a change to either has to run this lane.
-      - "AGENTS.md"
-      - "CLAUDE.md"
-      - ".claude/skills/bai-agent/**"
       - "packages/backend.ai-docs-toolkit/**"
       - "src/**"
       - "tsconfig.json"
@@ -89,14 +79,15 @@ jobs:
       #   backend.ai-ui / backend.ai-client / backend.ai-agent-cli /
       #   backend.ai-docs-toolkit — each package's own tsconfig.
       #   client-*   — the backend.ai-client package checks that used to live
-      #                in backend-ai-client-ci.yml.
-      #   agent-cli-* — the same lint/test/build trio for the bai-agent CLI.
+      #                in backend-ai-client-ci.yml. The agent-cli's matching
+      #                lint/build/test trio lives in vitest-agent-cli.yml,
+      #                whose filter also covers the checkout data it reads.
       # All tsc lanes are --noEmit and the client build writes only dist/, so
       # nothing here can dirty the __generated__ scope the drift check reads.
       - name: Typecheck and package checks (parallel)
         run: |
           set +e
-          names=(root react backend.ai-ui backend.ai-client backend.ai-agent-cli backend.ai-docs-toolkit client-lint client-test client-build agent-cli-lint agent-cli-test agent-cli-build)
+          names=(root react backend.ai-ui backend.ai-client backend.ai-agent-cli backend.ai-docs-toolkit client-lint client-test client-build)
           cmds=(
             "pnpm exec tsc --noEmit -p tsconfig.json"
             "pnpm --prefix ./react exec tsc --noEmit"
@@ -107,9 +98,6 @@ jobs:
             "pnpm --filter backend.ai-client run lint"
             "pnpm --filter backend.ai-client run test"
             "pnpm --filter backend.ai-client run build"
-            "pnpm --filter backend.ai-agent-cli run lint"
-            "pnpm --filter backend.ai-agent-cli run test"
-            "pnpm --filter backend.ai-agent-cli run build"
           )
           pids=()
           for i in "${!names[@]}"; do

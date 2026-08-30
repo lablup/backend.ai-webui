@@ -1,0 +1,66 @@
+# See vitest-react.yml's header for the one-workflow-per-suite rationale.
+# The filter is wide because the CLI keeps no snapshot of the checkout data it
+# searches — the live SDL, i18n stores, manual, skill, CLAUDE.md block, react/src.
+name: Vitest (agent-cli)
+
+on:
+  pull_request:
+    paths:
+      - packages/backend.ai-agent-cli/**
+      - packages/eslint-config-bai/**
+      - data/schema.graphql
+      - data/client-directives.graphql
+      - data/schema.meta.json
+      - resources/i18n/**
+      - packages/backend.ai-webui-docs/**
+      # The label index scans .tsx here; the fixture is generated host-side and
+      # copied into the package, and the parity test fails when the copy drifts.
+      - react/src/**/*.tsx
+      - react/src/helper/resourcePath.fixture.json
+      - CLAUDE.md
+      - AGENTS.md
+      - .claude/skills/bai-agent/**
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/workflows/vitest-agent-cli.yml
+  push:
+    branches: [main]
+    paths:
+      - packages/backend.ai-agent-cli/**
+      - packages/eslint-config-bai/**
+      - data/schema.graphql
+      - data/client-directives.graphql
+      - data/schema.meta.json
+      - resources/i18n/**
+      - packages/backend.ai-webui-docs/**
+      - react/src/**/*.tsx
+      - react/src/helper/resourcePath.fixture.json
+      - CLAUDE.md
+      - AGENTS.md
+      - .claude/skills/bai-agent/**
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/workflows/vitest-agent-cli.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  # Keyed by PR number, not branch name — see vitest-react.yml for why.
+  group: vitest-agent-cli-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  agent-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      - name: Run ESLint on backend.ai-agent-cli
+        run: pnpm --filter backend.ai-agent-cli run lint
+      # tsup bundling is its own gate: a module cycle can pass vitest and still
+      # break the bundle (it did once, see FR-3761).
+      - name: Build backend.ai-agent-cli
+        run: pnpm --filter backend.ai-agent-cli run build
+      - name: Run Vitest
+        run: pnpm --filter backend.ai-agent-cli run test

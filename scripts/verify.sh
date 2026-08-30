@@ -209,6 +209,9 @@ run_check "Relay" check_relay_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
+# The react lane reaches backend.ai-{ui,client} through tsconfig `paths`,
+# but nothing pulls in the agent CLI, so it gets its own lane.
+run_check "TypeScript (agent-cli)" pnpm --filter backend.ai-agent-cli exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
