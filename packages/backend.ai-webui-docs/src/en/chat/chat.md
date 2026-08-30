@@ -23,7 +23,7 @@ You can dismiss this banner by clicking the close button, and it will not reappe
 ## Selecting models
 
 Users can select the deployment and model from the top left corner of each chat card on the Chat page.
-Clicking the **Deployment** field (indicated by a deployment icon prefix; the field reads **Select Endpoint** while it is empty) opens a dropdown showing available deployments under a "Deployment" header.
+Clicking the **Deployment** field opens a dropdown listing the available deployments, along with the total number of deployments.
 Once a deployment is selected, the model dropdown header updates to show "{deployment name}'s Models", listing the models associated with that deployment.
 
 ![](../images/chat_deployment_select.png)
