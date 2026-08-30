@@ -534,7 +534,7 @@
     "Retry": "再試行",
     "RevealSessionId": "セッション ID を表示",
     "SessionIdMasked": "非表示 — {{masked}}",
-    "Title": "Backend.AI CLI にサインイン",
+    "Title": "Backend.AI WebUI Agent CLI にサインイン",
     "VerificationCode": "確認コード"
   },
   "credential": {

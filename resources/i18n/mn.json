@@ -534,7 +534,7 @@
     "Retry": "Дахин оролдох",
     "RevealSessionId": "Сешн ID-г харуулах",
     "SessionIdMasked": "Нуусан — {{masked}}",
-    "Title": "Backend.AI CLI-д нэвтрэх",
+    "Title": "Backend.AI WebUI Agent CLI-д нэвтрэх",
     "VerificationCode": "Баталгаажуулах код"
   },
   "credential": {

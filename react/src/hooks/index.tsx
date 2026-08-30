@@ -779,7 +779,6 @@ type BackendAIConfig = {
   enableExtendLoginSession: boolean;
   showNonInstalledImages: boolean;
   enableInteractiveLoginAccountSwitch: boolean;
-  enableCliLogin: boolean;
   isDirectorySizeVisible: boolean;
   enableReservoir: boolean;
   debug: boolean;

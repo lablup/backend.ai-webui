@@ -534,7 +534,7 @@
     "Retry": "Coba lagi",
     "RevealSessionId": "Tampilkan ID sesi",
     "SessionIdMasked": "Tersembunyi — {{masked}}",
-    "Title": "Masuk ke Backend.AI CLI",
+    "Title": "Masuk ke Backend.AI WebUI Agent CLI",
     "VerificationCode": "Kode verifikasi"
   },
   "credential": {

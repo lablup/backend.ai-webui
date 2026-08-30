@@ -534,7 +534,7 @@
     "Retry": "Yritä uudelleen",
     "RevealSessionId": "Näytä istunnon tunnus",
     "SessionIdMasked": "Piilotettu — {{masked}}",
-    "Title": "Kirjaa Backend.AI CLI sisään",
+    "Title": "Kirjaa Backend.AI WebUI Agent CLI sisään",
     "VerificationCode": "Vahvistuskoodi"
   },
   "credential": {

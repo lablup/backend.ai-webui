@@ -534,7 +534,7 @@
     "Retry": "Réessayer",
     "RevealSessionId": "Afficher l'identifiant de session",
     "SessionIdMasked": "Masqué — {{masked}}",
-    "Title": "Connecter la CLI Backend.AI",
+    "Title": "Connecter la Backend.AI WebUI Agent CLI",
     "VerificationCode": "Code de vérification"
   },
   "credential": {

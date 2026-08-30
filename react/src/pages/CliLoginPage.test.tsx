@@ -8,7 +8,7 @@
  * stays disabled until the attestation box is ticked — and that the hand-off
  * goes to the port and state named in the URL, not to anything remembered.
  */
-import { CliLoginConsent, CliLoginGate } from './CliLoginPage';
+import { CliLoginConsent } from './CliLoginPage';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -17,21 +17,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const SESSION_ID = 'abcdefghijklmnopqrstuvwxyz012345';
 const ENDPOINT = 'http://manager.example.com:8090';
 
-const mocks = vi.hoisted(() => ({ enableCliLogin: true }));
-
 vi.mock('../hooks', () => ({
   useSuspendedBackendaiClient: () => ({
     _loginSessionId: SESSION_ID,
-    _config: { endpoint: ENDPOINT, enableCliLogin: mocks.enableCliLogin },
+    _config: { endpoint: ENDPOINT },
   }),
 }));
 
 vi.mock('../hooks/backendai', () => ({
   useCurrentUserInfo: () => [{ email: 'admin@lablup.com' }],
-}));
-
-vi.mock('../components/WebUINavigate', () => ({
-  default: ({ to }: { to: string }) => <div data-testid="navigate">{to}</div>,
 }));
 
 // BUI's locale module needs the real `initReactI18next`; only `t` is stubbed,
@@ -60,7 +54,6 @@ const callbackCalls = () =>
   fetchMock.mock.calls.filter(([input]) => CALLBACK_URL.test(String(input)));
 
 beforeEach(() => {
-  mocks.enableCliLogin = true;
   respondToCallback = async () =>
     new Response(JSON.stringify({ ok: true, message: 'signed in' }), {
       status: 200,
@@ -80,32 +73,6 @@ afterEach(() => {
 // The verification code lands from an async `crypto.subtle` digest; awaiting it
 // keeps that state update out of the interaction the test measures.
 const settleVerificationCode = () => screen.findByText(/^[0-9A-F]{6}$/);
-
-describe('CliLoginGate', () => {
-  it('behaves like an unknown route when enableCliLogin is off', () => {
-    mocks.enableCliLogin = false;
-
-    render(
-      <MemoryRouter initialEntries={['/cli-login?port=1234&state=abc']}>
-        <CliLoginGate />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByTestId('navigate')).toHaveTextContent('/error');
-    expect(screen.queryByText('cliLogin.Attestation')).not.toBeInTheDocument();
-  });
-
-  it('renders the consent page when the flag is on', () => {
-    render(
-      <MemoryRouter initialEntries={['/cli-login?port=1234&state=abc']}>
-        <CliLoginGate />
-      </MemoryRouter>,
-    );
-
-    expect(screen.queryByTestId('navigate')).not.toBeInTheDocument();
-    expect(screen.getByText('cliLogin.ConsentTitle')).toBeInTheDocument();
-  });
-});
 
 describe('CliLoginConsent', () => {
   it('keeps Confirm disabled until the attestation box is ticked', async () => {

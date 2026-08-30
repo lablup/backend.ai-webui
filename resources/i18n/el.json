@@ -534,7 +534,7 @@
     "Retry": "Δοκιμάστε ξανά",
     "RevealSessionId": "Εμφάνιση αναγνωριστικού συνεδρίας",
     "SessionIdMasked": "Κρυμμένο — {{masked}}",
-    "Title": "Σύνδεση του Backend.AI CLI",
+    "Title": "Σύνδεση του Backend.AI WebUI Agent CLI",
     "VerificationCode": "Κωδικός επαλήθευσης"
   },
   "credential": {

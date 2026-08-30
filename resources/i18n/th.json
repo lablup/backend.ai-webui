@@ -534,7 +534,7 @@
     "Retry": "ลองอีกครั้ง",
     "RevealSessionId": "แสดงรหัสเซสชัน",
     "SessionIdMasked": "ซ่อนอยู่ — {{masked}}",
-    "Title": "เข้าสู่ระบบ Backend.AI CLI",
+    "Title": "เข้าสู่ระบบ Backend.AI WebUI Agent CLI",
     "VerificationCode": "รหัสยืนยัน"
   },
   "credential": {

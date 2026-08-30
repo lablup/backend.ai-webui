@@ -312,16 +312,6 @@ bai-agent login --paste --endpoint http://manager.example.com:8090
 It prompts for the session id without echoing it. `--session-id <id>` supplies
 it non-interactively.
 
-`/cli-login` is **off by default**. Turn it on in the WebUI's `config.toml`:
-
-```toml
-[general]
-enableCliLogin = true
-```
-
-With the flag off the route renders the app's 404, exactly as an unknown URL
-would.
-
 ### Where the session lives
 
 ```

@@ -105,16 +105,9 @@ Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.en
 
 ## CLI login (`/cli-login`)
 
-`bai-agent login` (`packages/backend.ai-agent-cli`) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is **off by default** — turn it on in the `config.toml` you copied from `config.toml.sample`:
+`bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.
 
-```toml
-[general]
-enableCliLogin = true
-```
-
-Restart is not needed for a fresh tab (`config.toml` is fetched at boot), but the flag only reaches the page after login, so sign in again if the tab was already open. With the flag off, `/cli-login` renders the app's 404 exactly as an unknown URL would.
-
-Then, from anywhere inside this checkout:
+From anywhere inside this checkout:
 
 ```bash
 pnpm --filter backend.ai-agent-cli build

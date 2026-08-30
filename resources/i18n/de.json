@@ -534,7 +534,7 @@
     "Retry": "Erneut versuchen",
     "RevealSessionId": "Sitzungs-ID anzeigen",
     "SessionIdMasked": "Verborgen — {{masked}}",
-    "Title": "Backend.AI CLI anmelden",
+    "Title": "Backend.AI WebUI Agent CLI anmelden",
     "VerificationCode": "Bestätigungscode"
   },
   "credential": {

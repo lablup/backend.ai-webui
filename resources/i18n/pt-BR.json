@@ -534,7 +534,7 @@
     "Retry": "Tentar novamente",
     "RevealSessionId": "Mostrar o ID da sessão",
     "SessionIdMasked": "Oculto — {{masked}}",
-    "Title": "Entrar na CLI do Backend.AI",
+    "Title": "Entrar na Backend.AI WebUI Agent CLI",
     "VerificationCode": "Código de verificação"
   },
   "credential": {

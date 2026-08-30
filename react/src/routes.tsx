@@ -1516,8 +1516,7 @@ export const routes: RouteObject[] = [
     ),
   },
   {
-    // Browser-delegated CLI login (FR-3763). Not linked from any menu; the
-    // page itself 404s unless `[general] enableCliLogin` is on.
+    // Browser-delegated Agent CLI login (FR-3763). Not linked from any menu.
     path: '/cli-login',
     errorElement: <ErrorView />,
     element: (

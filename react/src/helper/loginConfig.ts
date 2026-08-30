@@ -90,7 +90,6 @@ export interface LoginConfigState {
   enableExtendLoginSession: boolean;
   enableInteractiveLoginAccountSwitch: boolean;
   enableModelFolders: boolean;
-  enableCliLogin: boolean;
   enableReservoir: boolean;
   showNonInstalledImages: boolean;
   proxy_url: string;
@@ -160,7 +159,6 @@ export function getDefaultLoginConfig(): LoginConfigState {
     enableExtendLoginSession: false,
     enableInteractiveLoginAccountSwitch: true,
     enableModelFolders: true,
-    enableCliLogin: false,
     enableReservoir: false,
     showNonInstalledImages: false,
     proxy_url: 'http://127.0.0.1:5050/',
@@ -456,12 +454,6 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     value: g?.enableModelFolders,
   }) as boolean;
 
-  state.enableCliLogin = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.enableCliLogin,
-  }) as boolean;
-
   state.enableReservoir = getConfigValueByExists(g, {
     valueType: 'boolean',
     defaultValue: false,
@@ -682,7 +674,6 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.enableInteractiveLoginAccountSwitch =
     cfg.enableInteractiveLoginAccountSwitch;
   client._config.enableModelFolders = cfg.enableModelFolders;
-  client._config.enableCliLogin = cfg.enableCliLogin;
   client._config.pluginPages = cfg.pluginPages;
   client._config.blockList = cfg.blockList;
   client._config.inactiveList = cfg.inactiveList;

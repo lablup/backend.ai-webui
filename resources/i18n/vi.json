@@ -534,7 +534,7 @@
     "Retry": "Thử lại",
     "RevealSessionId": "Hiện ID phiên",
     "SessionIdMasked": "Đã ẩn — {{masked}}",
-    "Title": "Đăng nhập Backend.AI CLI",
+    "Title": "Đăng nhập Backend.AI WebUI Agent CLI",
     "VerificationCode": "Mã xác minh"
   },
   "credential": {

@@ -534,7 +534,7 @@
     "Retry": "重试",
     "RevealSessionId": "显示会话 ID",
     "SessionIdMasked": "已隐藏 — {{masked}}",
-    "Title": "登录 Backend.AI CLI",
+    "Title": "登录 Backend.AI WebUI Agent CLI",
     "VerificationCode": "验证码"
   },
   "credential": {

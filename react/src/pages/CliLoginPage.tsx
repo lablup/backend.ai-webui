@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
-import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button } from '@astryxdesign/core/Button';
@@ -51,23 +50,9 @@ const CliLoginPage = () => {
     <>
       <CSSTokenVariables />
       <Suspense>
-        <CliLoginGate />
+        <CliLoginConsent />
       </Suspense>
     </>
-  );
-};
-
-/**
- * `/cli-login` ships disabled: without `[general] enableCliLogin` the route is
- * indistinguishable from a URL that does not exist.
- */
-export const CliLoginGate = () => {
-  'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  return baiClient?._config?.enableCliLogin ? (
-    <CliLoginConsent />
-  ) : (
-    <WebUINavigate to={'/error'} replace />
   );
 };
 

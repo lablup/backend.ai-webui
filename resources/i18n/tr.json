@@ -534,7 +534,7 @@
     "Retry": "Yeniden dene",
     "RevealSessionId": "Oturum kimliğini göster",
     "SessionIdMasked": "Gizli — {{masked}}",
-    "Title": "Backend.AI CLI'de oturum açın",
+    "Title": "Backend.AI WebUI Agent CLI'de oturum açın",
     "VerificationCode": "Doğrulama kodu"
   },
   "credential": {

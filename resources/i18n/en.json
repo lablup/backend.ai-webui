@@ -506,7 +506,7 @@
     "Cancelled": "You cancelled the hand-off.",
     "Confirm": "Hand off the session",
     "ConsentDescription": "The CLI will act as you — same account, same permissions, same endpoint — until you run bai-agent logout or the session expires. Approve only a login you started yourself.",
-    "ConsentTitle": "This browser session will be shared with a CLI on this computer",
+    "ConsentTitle": "This browser session will be shared with the Backend.AI WebUI Agent CLI on this computer",
     "DoneDescription": "You can close this tab and go back to the terminal.",
     "DoneTitle": "The CLI is signed in",
     "Endpoint": "Endpoint",
@@ -521,7 +521,7 @@
     "Retry": "Try again",
     "RevealSessionId": "Show session ID",
     "SessionIdMasked": "Hidden — {{masked}}",
-    "Title": "Sign in the Backend.AI CLI",
+    "Title": "Sign in the Backend.AI WebUI Agent CLI",
     "VerificationCode": "Verification code"
   },
   "credential": {

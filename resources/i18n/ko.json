@@ -519,7 +519,7 @@
     "Cancelled": "세션 전달을 취소했습니다.",
     "Confirm": "세션 전달",
     "ConsentDescription": "CLI는 동일한 계정, 동일한 권한, 동일한 엔드포인트로 사용자를 대신해 동작합니다. bai-agent logout 명령을 실행하거나 세션이 만료될 때까지 유지됩니다. 직접 시작한 로그인만 승인하세요.",
-    "ConsentTitle": "이 브라우저 세션이 이 컴퓨터의 CLI와 공유됩니다",
+    "ConsentTitle": "이 브라우저 세션이 이 컴퓨터의 Backend.AI WebUI Agent CLI와 공유됩니다",
     "DoneDescription": "이 탭을 닫고 터미널로 돌아가세요.",
     "DoneTitle": "CLI 로그인이 완료되었습니다",
     "Endpoint": "엔드포인트",
@@ -534,7 +534,7 @@
     "Retry": "다시 시도",
     "RevealSessionId": "세션 ID 표시",
     "SessionIdMasked": "숨김 — {{masked}}",
-    "Title": "Backend.AI CLI 로그인",
+    "Title": "Backend.AI WebUI Agent CLI 로그인",
     "VerificationCode": "확인 코드"
   },
   "credential": {
