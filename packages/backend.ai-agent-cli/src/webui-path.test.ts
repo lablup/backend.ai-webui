@@ -11,15 +11,14 @@ interface ParityCase {
 }
 
 /**
- * Byte-for-byte copy of `react/src/helper/resourcePath.fixture.json`. If this
- * file and the host's diverge, one of the two implementations drifted — fix the
- * implementation, never the fixture.
+ * Expected paths per resource ref, checked by hand against the WebUI routes.
+ * Update the fixture only when the app's URL scheme changes.
  */
 const CASES: ParityCase[] = JSON.parse(
   readFileSync(join(import.meta.dirname, 'webui-path.fixture.json'), 'utf8'),
 ) as ParityCase[];
 
-describe('webui-path parity with the WebUI resourcePath helper', () => {
+describe('webui-path against the WebUI URL scheme', () => {
   it('reads a non-empty fixture', () => {
     expect(CASES.length).toBeGreaterThan(30);
   });

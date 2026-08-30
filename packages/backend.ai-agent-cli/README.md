@@ -459,18 +459,14 @@ expose no `row_id`, so their annotation falls back to the base64 Relay global
 id, which the pages do not accept. Graphene `*Node` types, which do carry
 `row_id`, produce links that open.
 
-### Path rules are duplicated, not imported
+### Path rules are restated, not imported
 
-`src/webui-path.ts` restates `react/src/helper/resourcePath.ts` (FR-3759) — the
-CLI takes no dependency on the host app, so the rules cannot be imported.
-`src/webui-path.fixture.json` is a **byte-for-byte copy** of
-`react/src/helper/resourcePath.fixture.json`, and `webui-path.test.ts` asserts
-every case in it.
-
-**The two fixture files must be kept identical.** When the host's rules change,
-its test regenerates its fixture; copy the new file over this one and fix
-`webui-path.ts` until the parity test passes again — never edit the fixture to
-match the CLI.
+`src/webui-path.ts` mirrors the WebUI's routes and URL params (`routes.tsx`,
+`pathBuilder.ts`, `legacyRedirects.tsx`); the CLI takes no dependency on the
+host app, so nothing is imported. `src/webui-path.fixture.json` pins the
+expected path per resource ref and `webui-path.test.ts` asserts every case.
+When the app renames a route or a query param, update the rule and the fixture
+together.
 
 ## Output contract
 

@@ -1,11 +1,9 @@
 /**
- * Deep-link rules, duplicated from the WebUI's `react/src/helper/resourcePath.ts`
- * (FR-3759).
- *
- * The CLI ships without a dependency on the host app, so the rules cannot be
- * imported — they are restated here and pinned by `webui-path.fixture.json`,
- * a byte-for-byte copy of the host's `resourcePath.fixture.json`. Change one
- * side and the parity test fails.
+ * Deep-link rules mirroring the WebUI's routes and URL params (`routes.tsx`,
+ * `pathBuilder.ts`, `legacyRedirects.tsx`). The CLI takes no dependency on the
+ * host app, so the rules are restated here and pinned by
+ * `webui-path.fixture.json`; a route or param rename in the app must be
+ * followed by a fixture and rule update here.
  */
 
 /** Session detail views. All three resolve to the same drawer URL today. */
