@@ -17,7 +17,7 @@ export interface ParsedMarkdown {
 }
 
 const FENCE = /^\s{0,3}(```|~~~)/;
-const HEADING = /^(#{1,6})\s+(.*\S)\s*$/;
+const HEADING = /^(#{1,6})[ \t]+(.*)$/;
 
 /** Frontmatter is stripped like the toolkit does, before any other pass. */
 function frontmatterEnd(lines: string[]): number {
@@ -47,7 +47,7 @@ export function parseMarkdown(
     if (inFence) continue;
     const match = HEADING.exec(line);
     if (!match) continue;
-    const text = headingPlainText(match[2]);
+    const text = headingPlainText(match[2].trim());
     if (!text) continue;
     headings.push({
       level: match[1].length,
