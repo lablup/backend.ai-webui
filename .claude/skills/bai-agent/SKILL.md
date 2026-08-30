@@ -33,8 +33,7 @@ when to answer versus link, and which neighbour owns what.
    - Get the endpoint and the account from the **`webui-connection-info`** skill.
      Never ask the user for a password, and never put one in a command.
    - Browser on this machine: `bai-agent login --endpoint <url>`, then confirm on
-     the `/cli-login` page it opens. That route needs `enableCliLogin = true` in
-     `config.toml` (`DEV_ENVIRONMENT.md`); without it the page 404s.
+     the `/cli-login` page it opens (`DEV_ENVIRONMENT.md`).
    - Browser anywhere else, or a tunnelled/HTTPS tab: `bai-agent login --paste
      --endpoint <url>` and paste the session id the page reveals.
    - `bai-agent logout` when you are done with a borrowed session.
