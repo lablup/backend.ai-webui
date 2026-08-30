@@ -168,6 +168,14 @@
     "expected": "/model-store"
   },
   {
+    "name": "list environment (images / resource presets / registries)",
+    "ref": {
+      "type": "list",
+      "resource": "environment"
+    },
+    "expected": "/admin/environment"
+  },
+  {
     "name": "list roles",
     "ref": {
       "type": "list",

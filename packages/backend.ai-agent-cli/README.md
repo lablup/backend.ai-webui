@@ -410,7 +410,7 @@ The seed list is deliberately tiny, and destructive fields (`delete*`, `purge*`,
 | ------------------------ | ------- |
 | `createVfolderV2`        | `/data` |
 | `createVFolderInProject` | `/data` |
-| `create_resource_preset` | `/session` |
+| `create_resource_preset` | `/admin/environment` |
 
 **There is no compute-session creation mutation in the schema** — Backend.AI
 creates sessions over REST (`POST /session`), not GraphQL — so the "create a
@@ -419,14 +419,17 @@ plus one safe admin creation stand in its place.
 
 ### Result budget
 
-The result is cut to `--max-bytes` (default 65536) **deepest-first**: innermost
-arrays and strings are halved before the shape around them is, so the envelope
-keeps its structure. Every cut path is listed in `data.truncated`.
+`--max-bytes` (default 65536) is a **target, not a hard bound**. The result is
+trimmed towards it **deepest-first**: innermost arrays and strings are halved
+before the shape around them is, so the envelope keeps its structure. Every cut
+path is listed in `data.truncated`.
 
-`id` / `row_id` / `endpoint_id` and the `webui_path` / `webui_url` derived from
-them are never cut: half an id is a wrong id, and a halved link opens nothing.
-Because those are protected, a result made almost entirely of ids can land
-slightly over budget — `data.bytes` always reports the real size.
+The trim is best-effort. `id` / `row_id` / `endpoint_id` and the `webui_path` /
+`webui_url` derived from them are **never removed** (half an id is a wrong id,
+and a halved link opens nothing), numeric and boolean leaves are left alone,
+and the pass loop stops after 32 rounds. A result made mostly of protected
+leaves can therefore stay over budget — `data.bytes` always reports the real
+size, so check it rather than assuming the budget was met.
 
 Links are attached **before** the cut, so they count against the budget rather
 than blowing past it, and a row that does not survive drops out of

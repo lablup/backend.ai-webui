@@ -36,8 +36,9 @@ export const MUTATION_ALLOWLIST: readonly AllowedMutation[] = [
   },
   {
     name: 'create_resource_preset',
-    resource: 'session',
-    reason: 'adds a resource preset row; reversible from the admin UI',
+    resource: 'environment',
+    reason:
+      'adds a resource preset row; reversible from the Environment page',
   },
 ];
 
@@ -66,6 +67,7 @@ const RESOURCE_KEYWORDS: ReadonlyArray<[RegExp, ListResource]> = [
   [/model_?card/i, 'model_card'],
   [/(vfolder|virtualfolder|folder)/i, 'vfolder'],
   [/(endpoint|deployment|modeldeployment|route|replica)/i, 'deployment'],
+  [/(resource_?preset|image|registry)/i, 'environment'],
   [/(session|kernel)/i, 'session'],
   [/keypair/i, 'keypair'],
   [/(role|permission)/i, 'role'],

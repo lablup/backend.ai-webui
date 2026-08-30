@@ -125,6 +125,21 @@ describe('SDL pre-validation', () => {
     expect(envelope.hint).toBe('bai-agent schema show Query.compute_session_list');
   });
 
+  it('rejects a document with more than one operation, with no fetch', async () => {
+    await expect(
+      run([
+        'query',
+        'query A { user { email } } query B { user { username } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.usage);
+    expect(fetchMock).not.toHaveBeenCalled();
+    const envelope = jsonErr();
+    expect(envelope.code).toBe('usage');
+    expect(envelope.error).toContain('2 operations (A, B)');
+    expect(envelope.hint).toContain('query');
+  });
+
   it('rejects a syntactically broken document', async () => {
     await expect(run(['query', 'query { user {', '--json'])).resolves.toBe(
       EXIT.error,
@@ -163,6 +178,18 @@ describe('the mutation allow-list', () => {
     expect(envelope.error).toContain('not on the allow-list');
     expect(envelope.hint).toBe('/admin/users?tab=users');
     expect(envelope.suggestions?.[0]).toContain(ALLOWED_MUTATION_NAMES[0]);
+  });
+
+  it('points a refused preset mutation at the Environment page', async () => {
+    await expect(
+      run([
+        'query',
+        'mutation { create_resource_preset(name: "p", props: {resource_slots: "{}"}) { ok } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.mutationRefused);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(jsonErr().hint).toBe('/admin/environment');
   });
 
   it('never allow-lists a destructive field', () => {

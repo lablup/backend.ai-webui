@@ -143,6 +143,18 @@ export function parseDocument(source: string): ParsedDocument {
       { hint: `${CLI_NAME} schema show Query` },
     );
   }
+  // No operationName is sent, so the manager cannot pick between several.
+  if (operations.length > 1) {
+    const names = operations.map((one) => one.name ?? '(anonymous)');
+    throw new CliError(
+      'usage',
+      `The document declares ${operations.length} operations (${names.join(', ')}); ${CLI_NAME} query runs exactly one.`,
+      {
+        hint: `${CLI_NAME} query 'query { user { email } }'`,
+        suggestions: ['split the document and run one operation per call'],
+      },
+    );
+  }
   return { document, operations };
 }
 

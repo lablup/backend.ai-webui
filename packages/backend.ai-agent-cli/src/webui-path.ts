@@ -25,7 +25,7 @@ export const LIST_RESOURCES_WITH_STATUS = [
 ] as const;
 
 /** List resources whose page has no status param at all. */
-export const LIST_RESOURCES_WITHOUT_STATUS = ['model_card'] as const;
+export const LIST_RESOURCES_WITHOUT_STATUS = ['model_card', 'environment'] as const;
 
 export type ListResourceWithStatus =
   (typeof LIST_RESOURCES_WITH_STATUS)[number];
@@ -91,6 +91,8 @@ export const LIST_PAGES: Readonly<Record<ListResource, ListPageSpec>> = {
     statusParam: 'statusCategory',
   },
   model_card: { pathname: '/model-store', filterParam: 'filter' },
+  // Images / resource presets / registries share one admin page, tabbed.
+  environment: { pathname: '/admin/environment', filterParam: 'filter' },
   role: {
     pathname: '/admin/rbac',
     filterParam: 'filter',
