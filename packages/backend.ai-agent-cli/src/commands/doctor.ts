@@ -5,9 +5,9 @@ import { record, renderBlocks, section } from '../output.js';
 import {
   REPO_PACKAGE_NAME,
   REQUIRED_SOURCES,
-  tryResolveRepoContext,
+  findRepoRoot,
+  sourceStatus,
 } from '../repo-context.js';
-import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 export type CheckStatus = 'ok' | 'warn' | 'fail';
@@ -44,15 +44,15 @@ const runtimeGroup: CheckGroup = {
 const checkoutGroup: CheckGroup = {
   name: 'checkout',
   run: ({ cwd }) => {
-    const resolved = tryResolveRepoContext(cwd);
-    if (!resolved.ok) {
+    const found = findRepoRoot(cwd);
+    if (!found) {
       return [
         {
           group: 'checkout',
           check: 'checkout detection',
           status: 'fail',
-          detail: resolved.error.message,
-          hint: resolved.error.hint,
+          detail: `Not inside a ${REPO_PACKAGE_NAME} checkout: no ancestor of ${cwd} has a package.json named "${REPO_PACKAGE_NAME}".`,
+          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
         },
         ...REQUIRED_SOURCES.map((source): DoctorCheck => ({
           group: 'checkout',
@@ -63,25 +63,28 @@ const checkoutGroup: CheckGroup = {
         })),
       ];
     }
-    const { context } = resolved;
     return [
       {
         group: 'checkout',
         check: 'checkout detection',
         status: 'ok',
-        detail: `${context.repoRoot} (version ${context.repoVersion})`,
+        detail: `${found.root} (version ${found.version})`,
       },
       ...REQUIRED_SOURCES.map((source): DoctorCheck => {
-        const absolute = join(context.repoRoot, source.path);
-        const present = existsSync(absolute);
+        const absolute = join(found.root, source.path);
+        const status = sourceStatus(found.root, source);
+        const detail =
+          status === 'ok'
+            ? `${source.kind} found at ${absolute}`
+            : status === 'missing'
+              ? `${source.kind} missing at ${absolute}`
+              : `${absolute} exists but is not a ${source.kind}`;
         return {
           group: 'checkout',
           check: source.path,
-          status: present ? 'ok' : 'fail',
-          detail: present
-            ? `${source.kind} found at ${absolute}`
-            : `${source.kind} missing at ${absolute}`,
-          hint: present ? undefined : 'git status',
+          status: status === 'ok' ? 'ok' : 'fail',
+          detail,
+          hint: status === 'ok' ? undefined : 'git status',
         };
       }),
     ];

@@ -1,5 +1,5 @@
 import { CliError } from './errors.js';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, parse } from 'node:path';
 
 /** The `name` of the WebUI checkout's root package.json. */
@@ -11,6 +11,21 @@ export const REQUIRED_SOURCES = [
   { key: 'i18nDir', path: 'resources/i18n', kind: 'directory' },
   { key: 'docsDir', path: 'packages/backend.ai-webui-docs', kind: 'directory' },
 ] as const;
+
+export type RequiredSource = (typeof REQUIRED_SOURCES)[number];
+
+export type SourceStatus = 'ok' | 'missing' | 'wrong_kind';
+
+/** Checks that `source` exists under `root` *and* is the declared kind. */
+export function sourceStatus(
+  root: string,
+  source: RequiredSource,
+): SourceStatus {
+  const stat = statSync(join(root, source.path), { throwIfNoEntry: false });
+  if (!stat) return 'missing';
+  const matches = source.kind === 'file' ? stat.isFile() : stat.isDirectory();
+  return matches ? 'ok' : 'wrong_kind';
+}
 
 export interface RepoContext {
   repoRoot: string;
@@ -35,7 +50,9 @@ function readRootPackage(
   }
 }
 
-function findRepoRoot(cwd: string): { root: string; version: string } | null {
+export function findRepoRoot(
+  cwd: string,
+): { root: string; version: string } | null {
   let dir = cwd;
   const { root: fsRoot } = parse(dir);
   for (;;) {
@@ -71,7 +88,7 @@ export function resolveRepoContext(cwd: string): RepoContext {
   }
 
   const missing = REQUIRED_SOURCES.filter(
-    (source) => !existsSync(join(found.root, source.path)),
+    (source) => sourceStatus(found.root, source) !== 'ok',
   );
   if (missing.length > 0) {
     throw new CliError(

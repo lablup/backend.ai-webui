@@ -1,7 +1,7 @@
 import { CliError, ERROR_CODES, EXIT, exitCodeForError } from './errors.js';
 import { API_VERSION, errorEnvelope } from './output.js';
 import { runCli } from './run.js';
-import { mkdtempSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -127,6 +127,35 @@ describe('failures', () => {
     expect(parsed.code).toBe('usage');
     expect(parsed.error).toContain('Unknown command: nope');
     expect(parsed.suggestions).toContain('doctor');
+  });
+
+  it('exits 2 on an unknown command even with --help', async () => {
+    const { exitCode, stdout, stderr } = await invoke(['nope', '--help']);
+    expect(exitCode).toBe(EXIT.usage);
+    expect(stdout).toBe('');
+    expect(stderr).toContain('Unknown command: nope');
+  });
+
+  it('reports each data source individually when the checkout is incomplete', async () => {
+    const root = outsideCwd();
+    writeFileSync(
+      join(root, 'package.json'),
+      JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-test' }),
+    );
+    mkdirSync(join(root, 'resources/i18n'), { recursive: true });
+    const { exitCode, stdout } = await invoke(['doctor', '--json'], root);
+    expect(exitCode).toBe(EXIT.error);
+    const checks = JSON.parse(stdout).data.checks as Array<{
+      check: string;
+      status: string;
+    }>;
+    const byCheck = Object.fromEntries(
+      checks.map((check) => [check.check, check.status]),
+    );
+    expect(byCheck['checkout detection']).toBe('ok');
+    expect(byCheck['resources/i18n']).toBe('ok');
+    expect(byCheck['data/schema.graphql']).toBe('fail');
+    expect(byCheck['packages/backend.ai-webui-docs']).toBe('fail');
   });
 
   it('exits 2 on an unknown flag', async () => {

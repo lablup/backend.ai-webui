@@ -62,4 +62,30 @@ describe('resolveRepoContext', () => {
       expect(cliError.message).not.toContain('resources/i18n');
     }
   });
+
+  it('treats a source of the wrong kind as missing', () => {
+    const root = tempDir();
+    writeFileSync(
+      join(root, 'package.json'),
+      JSON.stringify({ name: REPO_PACKAGE_NAME, version: '0.0.0-test' }),
+    );
+    // schema as a directory, i18n as a file: both exist, neither is the declared kind.
+    mkdirSync(join(root, 'data/schema.graphql'), { recursive: true });
+    mkdirSync(join(root, 'resources'), { recursive: true });
+    writeFileSync(join(root, 'resources/i18n'), '');
+    mkdirSync(join(root, 'packages/backend.ai-webui-docs'), {
+      recursive: true,
+    });
+
+    try {
+      resolveRepoContext(root);
+      expect.unreachable('should have thrown');
+    } catch (error) {
+      const cliError = error as CliError;
+      expect(cliError.code).toBe('repo_incomplete');
+      expect(cliError.message).toContain('data/schema.graphql');
+      expect(cliError.message).toContain('resources/i18n');
+      expect(cliError.message).not.toContain('packages/backend.ai-webui-docs');
+    }
+  });
 });

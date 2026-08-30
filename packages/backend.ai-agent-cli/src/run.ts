@@ -38,6 +38,14 @@ export async function runCli({
     const parsed = parseArgv(argv, command?.flags ?? []);
     json = parsed.json;
 
+    // An unknown command is a usage error even with --help attached.
+    if (requestedName !== undefined && !command) {
+      throw new CliError('usage', `Unknown command: ${requestedName}`, {
+        suggestions: COMMANDS.map((entry) => entry.name),
+        hint: 'bai-agent manifest',
+      });
+    }
+
     if (parsed.help) {
       writeLine(io.stdout, renderHelp(command));
       return EXIT.ok;
@@ -50,14 +58,8 @@ export async function runCli({
         : undefined);
 
     if (!resolved) {
-      if (requestedName === undefined) {
-        writeLine(io.stdout, renderHelp());
-        return EXIT.ok;
-      }
-      throw new CliError('usage', `Unknown command: ${requestedName}`, {
-        suggestions: COMMANDS.map((entry) => entry.name),
-        hint: 'bai-agent manifest',
-      });
+      writeLine(io.stdout, renderHelp());
+      return EXIT.ok;
     }
 
     const args = command ? parsed.args : [];
