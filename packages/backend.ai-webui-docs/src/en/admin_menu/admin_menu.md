@@ -790,7 +790,16 @@ applied rather than what it limits:
 - **Resource Policy**: The resource slots the policy grants.
 - **Concurrent Sessions**, **Cluster Size**, **Idle Timeout**, **Max Session Lifetime**, **Storage Nodes**,
   **Max Pending Session Count**, **Max Concurrent SFTP Sessions**: The individual limits described below.
+- **Max Pending Session Resource Slots**: The resource slots the policy allows for sessions waiting in the
+  `PENDING` status, shown per resource type (`∞` when unlimited). This column is read-only in the WebUI —
+  the resource policy dialog does not expose the field.
 - **Created At**: The timestamp when the policy was created.
+
+You can search and narrow the list with the property filter above the table, which supports **Name**,
+**Created At**, **Max Session Lifetime**, **Concurrent Sessions**, **Cluster Size**, **Idle Timeout**,
+**Max Concurrent SFTP Sessions**, and **Max Pending Session Count**. Sorting and paging are evaluated on
+the server, so the tab stays responsive on clusters with many policies. Click a column header to change
+the sort order, and use the pager below the table to move through the results.
 
 To change a resource policy, click the **Edit** (pencil) action in the Name column of the policy. In the
 **Edit Keypair Resource Policy** dialog, every option is editable except for the policy name, which serves
@@ -846,9 +855,10 @@ In the keypair resource policy list, check that the Resources value of the defau
 policy has been updated.
 
 ![](../images/keypair_resource_policy_update_check.png)
+<!-- TODO: Re-capture keypair_resource_policy_update_check.png — needs update. -->
 
-You can create a new resource policy by clicking the **Create Policy** button. Each setting
-value is the same as described above.
+You can create a new resource policy by clicking the **Create** button at the top right of the table.
+Each setting value is the same as described above.
 
 To create a resource policy and associate it with a keypair, go to the
 Credentials tab of the Users page, click the **Edit** (pencil) action located in the
@@ -861,8 +871,8 @@ are currently bound to each policy, so you can confirm the user's existing
 assignments before choosing a policy.
 
 You can also delete each of resource keypairs by clicking trash can icon
-in the Name column. When you click the icon, the confirmation popup appears.
-Click the `Delete` button to erase.
+in the Name column. When you click the icon, a confirmation dialog appears. Type the
+policy name in the confirmation field, then click the `Delete` button to erase.
 
 ![](../images/resource_policy_delete_dialog.png)
 <!-- TODO: Re-capture resource_policy_delete_dialog.png — needs update. -->
@@ -948,7 +958,16 @@ resource policy.
 ![](../images/project_resource_policy_list.png)
 <!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
-To create a new project resource policy, click the **Create Policy** button at the top right of the table.
+The project resource policy table lists the following columns: **Name** (with the inline **Edit** and
+**Delete** actions), **Max Folder Count**, **Max Folder Size**, **Max Network Count**, **ID**, and
+**Created At**.
+
+You can search and narrow the list with the property filter above the table, which supports **Name**,
+**Created At**, **Max Folder Count**, and **Max Network Count**. Sorting and paging are evaluated on the
+server, so the tab stays responsive on clusters with many policies. Click a column header to change the
+sort order, and use the pager below the table to move through the results.
+
+To create a new project resource policy, click the **Create** button at the top right of the table.
 
 ![](../images/create_project_resource_policy.png)
 
@@ -976,16 +995,6 @@ so use it with caution.
 
 You can select and display only the columns you want by clicking the `Setting (Gear)` button at the
 bottom right of the table.
-
-To save the current resource policy list as a CSV file, use the **Export CSV** action in the **bottom-right slot of the table**. This applies to the Keypair, User, and Project resource policy tabs alike.
-
-![](../images/resource_policy_list_csv.png)
-
-![](../images/keypair_export.png)
-
-:::tip
-Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.
-:::
 
 <a id="unified-view-for-pending-sessions"></a>
 
@@ -1945,6 +1954,10 @@ The toolbar at the top of the page provides the following controls:
 - **Show only failed items**: A toggle that hides every passing check so that only the sections containing warnings or errors remain visible.
 - `Re-run Diagnostics`: Re-evaluates every check and refreshes the results.
 - `Export CSV`: Available from the actions dropdown menu, this exports all diagnostic results to a CSV file named `diagnostics-YYYY-MM-DD.csv`.
+
+:::tip
+Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.
+:::
 
 The diagnostics are organized into the following collapsible sections, each showing the result of its individual checks with a pass, warning, or critical severity:
 
