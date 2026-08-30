@@ -44,8 +44,14 @@ export function sessionsDir(env: Env = process.env): string {
   return join(configDir(env), 'sessions');
 }
 
+export function stripTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === '/') end -= 1;
+  return value.slice(0, end);
+}
+
 export function normalizeEndpoint(endpoint: string): string {
-  const trimmed = endpoint.trim().replace(/\/+$/, '');
+  const trimmed = stripTrailingSlashes(endpoint.trim());
   try {
     new URL(trimmed);
   } catch {

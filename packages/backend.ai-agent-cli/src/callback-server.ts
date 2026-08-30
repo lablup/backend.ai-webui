@@ -185,10 +185,9 @@ export async function startCallbackServer(
       reply(response, completion.ok ? 200 : 500, cors, completion);
       settle({ payload, completion });
     } catch (error) {
-      reply(response, 500, cors, {
-        ok: false,
-        message: error instanceof Error ? error.message : String(error),
-      });
+      // The reason goes to the terminal via `fail`; the browser only learns
+      // that the hand-off did not complete.
+      reply(response, 500, cors, { ok: false, error: 'hand_off_failed' });
       fail(error);
     }
   };
