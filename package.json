@@ -69,6 +69,7 @@
     "@typescript-eslint/parser": "^7.18.0",
     "@vitest/coverage-v8": "^4.1.4",
     "@yao-pkg/pkg": "^6.14.1",
+    "backend.ai-client": "workspace:*",
     "buffer": "^6.0.3",
     "cli-color": "^2.0.4",
     "concurrently": "^8.2.2",
