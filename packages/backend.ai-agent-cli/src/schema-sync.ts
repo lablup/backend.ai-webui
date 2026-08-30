@@ -24,7 +24,7 @@ import { relative } from 'node:path';
  * What happened to the committed SDL.
  *
  * - `dry-run` — nothing was written.
- * - `unchanged` — same tag, same sha256; a no-op.
+ * - `unchanged` — same tag, same sha256 (on disk and in the meta); a no-op.
  * - `updated` — the SDL bytes changed.
  * - `meta-recorded` — the bytes already matched, but not under this tag.
  */
@@ -133,7 +133,21 @@ export async function syncSchema(
 
   if (options.dryRun) return base;
 
-  if (!schemaChanged && meta?.tag === release.tag) {
+  // Refuse before any write: a plain SDL would silently replace the supergraph.
+  if (!base.remoteIsFederated) {
+    throw new CliError(
+      'schema_mismatch',
+      `${SUPERGRAPH_ASSET} for ${release.tag} is not a federation supergraph (no ${FEDERATION_MARKER}); nothing was written.`,
+      { hint: `${CLI_NAME} schema sync --dry-run --tag ${release.tag}` },
+    );
+  }
+
+  // A meta with the right tag but a stale or corrupt sha256 is re-recorded.
+  if (
+    !schemaChanged &&
+    meta?.tag === release.tag &&
+    meta.sha256 === remoteSha256
+  ) {
     return { ...base, outcome: 'unchanged' };
   }
 

@@ -138,6 +138,42 @@ describe('schema sync', () => {
     expect(readFileSync(schemaMetaPath(repo), 'utf8')).toBe(before);
   });
 
+  it('re-records a meta whose sha256 is stale even when the tag matches', async () => {
+    const repo = makeRepo();
+    await syncSchema(repo, { fetchImpl: fakeGitHub().impl });
+    const metaPath = schemaMetaPath(repo);
+    const recorded = JSON.parse(readFileSync(metaPath, 'utf8'));
+    writeFileSync(
+      metaPath,
+      JSON.stringify({ ...recorded, sha256: 'deadbeef' }, null, 2),
+    );
+
+    const again = await syncSchema(repo, { fetchImpl: fakeGitHub().impl });
+    expect(again.outcome).toBe('meta-recorded');
+    expect(again.schemaChanged).toBe(false);
+    expect(readSchemaMeta(repo)?.sha256).toBe(again.remoteSha256);
+    // The SDL itself was untouched.
+    expect(readFileSync(repo.schemaPath, 'utf8')).toBe(REMOTE_SDL);
+  });
+
+  it('refuses a non-federated asset before writing anything', async () => {
+    const repo = makeRepo();
+    const plain = 'type Query { ping: String, pong: String }\n';
+    await expect(
+      syncSchema(repo, { fetchImpl: fakeGitHub({ body: plain }).impl }),
+    ).rejects.toMatchObject({ code: 'schema_mismatch' });
+    expect(readFileSync(repo.schemaPath, 'utf8')).toBe(OLD_SDL);
+    expect(existsSync(schemaMetaPath(repo))).toBe(false);
+
+    // A dry run still reports the failed shape check instead of throwing.
+    const dry = await syncSchema(repo, {
+      fetchImpl: fakeGitHub({ body: plain }).impl,
+      dryRun: true,
+    });
+    expect(dry.outcome).toBe('dry-run');
+    expect(dry.remoteIsFederated).toBe(false);
+  });
+
   it('records the tag when the bytes already match but the tag does not', async () => {
     const repo = makeRepo(REMOTE_SDL);
     const data = await syncSchema(repo, { fetchImpl: fakeGitHub().impl });
@@ -247,6 +283,49 @@ describe('schema sync', () => {
     });
     expect(seen[0][1]).toBe('Bearer ghp_test');
     expect(seen[1][1]).toBeNull();
+  });
+});
+
+describe('doctor schema.meta.json', () => {
+  beforeEach(() => {
+    process.env.BAI_AGENT_CONFIG_DIR = mkdtempSync(
+      join(tmpdir(), 'bai-agent-sync-doctor-'),
+    );
+  });
+
+  async function metaCheck(repo: RepoContext) {
+    let stdout = '';
+    await runCli({
+      argv: ['doctor', '--json'],
+      cwd: repo.repoRoot,
+      io: {
+        stdout: (chunk) => {
+          stdout += chunk;
+        },
+        stderr: () => {},
+      },
+    });
+    const { data } = JSON.parse(stdout);
+    return data.checks.find(
+      (check: { check: string }) => check.check === 'data/schema.meta.json',
+    );
+  }
+
+  it('tells an invalid meta file from a missing one', async () => {
+    const repo = makeRepo();
+    expect((await metaCheck(repo)).detail).toContain('is missing');
+
+    writeFileSync(schemaMetaPath(repo), '{ not json');
+    const invalid = await metaCheck(repo);
+    expect(invalid.status).toBe('warn');
+    expect(invalid.detail).toContain('exists but is not valid JSON');
+    expect(invalid.detail).not.toContain('is missing');
+    expect(invalid.hint).toBe('bai-agent schema sync');
+
+    writeFileSync(schemaMetaPath(repo), JSON.stringify({ tag: '26.4.10' }));
+    expect((await metaCheck(repo)).detail).toContain(
+      'missing required key(s): sha256',
+    );
   });
 });
 

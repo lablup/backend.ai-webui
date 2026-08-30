@@ -16,10 +16,9 @@ import {
 } from '../repo-context.js';
 import {
   readCommittedSchema,
-  readSchemaMeta,
+  readSchemaMetaResult,
   SCHEMA_META_FILE,
   SCHEMA_META_STALE_DAYS,
-  schemaMetaPath,
 } from '../schema-meta.js';
 import type { DocsPage } from '../search/docs-corpus.js';
 import {
@@ -495,7 +494,8 @@ const alignmentGroup: CheckGroup = {
       hint: sdl ? undefined : `${CLI_NAME} schema sync`,
     });
 
-    const meta = readSchemaMeta(context);
+    const metaResult = readSchemaMetaResult(context);
+    const meta = metaResult.kind === 'ok' ? metaResult.meta : null;
     const stale =
       meta !== null &&
       meta.ageDays !== null &&
@@ -506,10 +506,12 @@ const alignmentGroup: CheckGroup = {
       check: SCHEMA_META_FILE,
       status: meta !== null && !stale && shaMatches ? 'ok' : 'warn',
       detail:
-        meta === null
-          ? `not recorded: ${schemaMetaPath(context)} is missing, so the SDL's backend tag is unknown`
-          : `tag ${meta.tag}, fetched ${meta.fetchedAt || 'at an unknown time'}${
-              meta.ageDays === null ? '' : ` (${meta.ageDays} day(s) ago)`
+        metaResult.kind === 'missing'
+          ? `not recorded: ${metaResult.path} is missing, so the SDL's backend tag is unknown`
+          : metaResult.kind === 'invalid'
+            ? `not readable: ${metaResult.path} exists but is ${metaResult.reason}, so the SDL's backend tag is unknown`
+            : `tag ${metaResult.meta.tag}, fetched ${metaResult.meta.fetchedAt || 'at an unknown time'}${
+              metaResult.meta.ageDays === null ? '' : ` (${metaResult.meta.ageDays} day(s) ago)`
             }${stale ? `, older than ${SCHEMA_META_STALE_DAYS} days` : ''}${
               shaMatches ? '' : ', sha256 does NOT match the SDL on disk'
             }`,

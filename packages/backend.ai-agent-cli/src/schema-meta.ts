@@ -43,28 +43,64 @@ function ageInDays(fetchedAt: string, now: Date): number | null {
   return Math.max(0, Math.floor((now.getTime() - parsed) / 86_400_000));
 }
 
+export type SchemaMetaReadResult =
+  | { kind: 'ok'; meta: SchemaMetaFile }
+  | { kind: 'missing'; path: string }
+  | { kind: 'invalid'; path: string; reason: string };
+
+/** Tells a missing file from one that exists but cannot be trusted. */
+export function readSchemaMetaResult(
+  context: RepoContext,
+  now: Date = new Date(),
+): SchemaMetaReadResult {
+  const path = schemaMetaPath(context);
+  if (!existsSync(path)) return { kind: 'missing', path };
+  let parsed: Partial<SchemaMeta> | null | undefined;
+  try {
+    parsed = JSON.parse(readFileSync(path, 'utf8')) as
+      | Partial<SchemaMeta>
+      | null
+      | undefined;
+  } catch (error) {
+    return {
+      kind: 'invalid',
+      path,
+      reason: `not valid JSON (${error instanceof Error ? error.message : String(error)})`,
+    };
+  }
+  if (typeof parsed !== 'object' || parsed === null) {
+    return { kind: 'invalid', path, reason: 'not a JSON object' };
+  }
+  const missing = (['tag', 'sha256'] as const).filter(
+    (key) => typeof parsed[key] !== 'string' || parsed[key] === '',
+  );
+  if (missing.length > 0) {
+    return {
+      kind: 'invalid',
+      path,
+      reason: `missing required key(s): ${missing.join(', ')}`,
+    };
+  }
+  return {
+    kind: 'ok',
+    meta: {
+      tag: parsed.tag as string,
+      sha256: parsed.sha256 as string,
+      fetchedAt: parsed.fetchedAt ?? '',
+      source: parsed.source ?? '',
+      path,
+      ageDays: ageInDays(parsed.fetchedAt ?? '', now),
+    },
+  };
+}
+
 /** `null` when the file is absent or does not carry the two required keys. */
 export function readSchemaMeta(
   context: RepoContext,
   now: Date = new Date(),
 ): SchemaMetaFile | null {
-  const path = schemaMetaPath(context);
-  if (!existsSync(path)) return null;
-  try {
-    const parsed = JSON.parse(readFileSync(path, 'utf8')) as
-      Partial<SchemaMeta> | undefined;
-    if (!parsed?.tag || !parsed.sha256) return null;
-    return {
-      tag: parsed.tag,
-      sha256: parsed.sha256,
-      fetchedAt: parsed.fetchedAt ?? '',
-      source: parsed.source ?? '',
-      path,
-      ageDays: ageInDays(parsed.fetchedAt ?? '', now),
-    };
-  } catch {
-    return null;
-  }
+  const result = readSchemaMetaResult(context, now);
+  return result.kind === 'ok' ? result.meta : null;
 }
 
 export function writeSchemaMeta(
