@@ -19,6 +19,7 @@ Backend.AI では、**デプロイ（Deployments）** 機能を通じて AI モ�
 デプロイページには、現在のプロジェクト内のすべてのデプロイの一覧が表示されます。サイドバーメニューの **デプロイ** をクリックしてアクセスできます。
 
 ![](../images/serving_list_page.png)
+<!-- TODO(screenshot): /deployment (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Active/Destroyed filter and the property filter bar in the body. Not captured 2026-08-30: the capture webserver was unreachable. -->
 
 ページ上部で、ライフサイクルステージ別にデプロイをフィルタリングできます：
 
@@ -27,7 +28,7 @@ Backend.AI では、**デプロイ（Deployments）** 機能を通じて AI モ�
 
 また、プロパティフィルターバーを使用して、**デプロイ名**、**サービスエンドポイントURL**、または **オーナー**（管理者およびスーパー管理者に提供）でデプロイを検索できます。
 
-`デプロイを作成` ボタンをクリックして**デプロイ作成**モーダルを開きます。
+**デプロイ** カードヘッダーの右上にある `デプロイを作成` ボタンをクリックして**デプロイ作成**モーダルを開きます。
 
 <a id="create-deployment"></a>
 
@@ -42,7 +43,7 @@ Backend.AI では、**デプロイ（Deployments）** 機能を通じて AI モ�
 
 ### デプロイメント作成モーダル
 
-デプロイページで `デプロイを作成` ボタンをクリックすると、**デプロイメント作成** モーダルが開きます。このモーダルではデプロイメント単位のメタデータのみを入力し、この段階で Revision は作成されません。
+デプロイページで、**デプロイ** カードヘッダーの右上にある `デプロイを作成` ボタンをクリックすると、**デプロイメント作成** モーダルが開きます。このモーダルではデプロイメント単位のメタデータのみを入力し、この段階で Revision は作成されません。
 
 ![](../images/model_serving_create_modal.png)
 

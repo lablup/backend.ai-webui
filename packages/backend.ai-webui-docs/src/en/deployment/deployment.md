@@ -19,6 +19,7 @@ A deployment extends a regular compute session with automated maintenance, repli
 The Deployments page displays a list of all deployments in the current project. You can access it by clicking **Deployments** in the sidebar menu.
 
 ![](../images/serving_list_page.png)
+<!-- TODO(screenshot): /deployment (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Active/Destroyed filter and the property filter bar in the body. Not captured 2026-08-30: the capture webserver was unreachable. -->
 
 At the top of the page, you can filter deployments by lifecycle stage:
 
@@ -27,7 +28,7 @@ At the top of the page, you can filter deployments by lifecycle stage:
 
 You can also use the property filter bar to search deployments by **Deployment Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
 
-Click the `New Deployment` button to open the **Create Deployment** modal.
+Click the `Create Deployment` button at the top right of the **Deployments** card header to open the **Create Deployment** modal.
 
 <a id="create-deployment"></a>
 
@@ -42,7 +43,7 @@ Each deployment can hold many revisions. Only one revision is *current* (serving
 
 ### Create deployment modal
 
-Click the `New Deployment` button on the Deployments page to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
+On the Deployments page, click the `Create Deployment` button at the top right of the **Deployments** card header to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
 
 ![](../images/model_serving_create_modal.png)
 
