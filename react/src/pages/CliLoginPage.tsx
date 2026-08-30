@@ -41,11 +41,10 @@ export const maskSessionId = (sessionId: string): string =>
     : '…';
 
 type Phase =
-  | { kind: 'consent' }
-  | { kind: 'done'; message?: string }
-  | { kind: 'failed'; reason: string };
+  { kind: 'consent' } | { kind: 'done' } | { kind: 'failed'; reason: string };
 
 const CliLoginPage = () => {
+  'use memo';
   return (
     <>
       <CSSTokenVariables />
@@ -127,7 +126,7 @@ export const CliLoginConsent = () => {
         });
         return;
       }
-      setPhase({ kind: 'done', message: body.message });
+      setPhase({ kind: 'done' });
     } catch {
       setPhase({ kind: 'failed', reason: t('cliLogin.HandOffUnreachable') });
     }
@@ -187,7 +186,7 @@ export const CliLoginConsent = () => {
                   size="lg"
                   variant="primary"
                   label={t('cliLogin.Confirm')}
-                  isDisabled={!agreed}
+                  isDisabled={!agreed || !code}
                   clickAction={confirm}
                 />
               </BAIFlex>
@@ -198,7 +197,7 @@ export const CliLoginConsent = () => {
             <BAIAlert
               type="success"
               title={t('cliLogin.DoneTitle')}
-              description={phase.message ?? t('cliLogin.DoneDescription')}
+              description={t('cliLogin.DoneDescription')}
             />
           ) : null}
 

@@ -10,7 +10,6 @@ import { CLI_NAME } from '../meta.js';
 import { record, renderBlocks, section } from '../output.js';
 import { tryResolveRepoContext } from '../repo-context.js';
 import {
-  deleteSession,
   loadSession,
   maskSessionId,
   normalizeEndpoint,
@@ -100,9 +99,10 @@ function openBrowser(url: string): boolean {
 
 function ask(question: string, mask: boolean): Promise<string> {
   return new Promise((resolve) => {
+    // Prompt on stderr so `--json` keeps stdout as a single envelope.
     const rl = createInterface({
       input: process.stdin,
-      output: process.stdout,
+      output: process.stderr,
     });
     if (mask) {
       // Suppress the echo so a pasted session id never lands in scrollback.
@@ -118,7 +118,7 @@ function ask(question: string, mask: boolean): Promise<string> {
     }
     rl.question(question, (answer) => {
       rl.close();
-      if (mask) process.stdout.write('\n');
+      if (mask) process.stderr.write('\n');
       resolve(answer.trim());
     });
   });
@@ -130,6 +130,8 @@ async function finish(
   sessionId: string,
   mode: LoginData['mode'],
 ): Promise<LoginData> {
+  // Verify before saving so a rejected candidate leaves any stored session alone.
+  const user = await fetchWhoAmI({ endpoint, sessionId });
   const session: StoredSession = {
     endpoint,
     webui,
@@ -137,21 +139,14 @@ async function finish(
     savedAt: new Date().toISOString(),
   };
   const sessionFile = saveSession(session);
-  try {
-    const user = await fetchWhoAmI({ endpoint, sessionId });
-    return {
-      mode,
-      endpoint,
-      webui: webui || undefined,
-      sessionFile,
-      sessionId: maskSessionId(sessionId),
-      user,
-    };
-  } catch (error) {
-    // A session that does not verify is worse than none: drop it again.
-    deleteSession(endpoint);
-    throw error;
-  }
+  return {
+    mode,
+    endpoint,
+    webui: webui || undefined,
+    sessionFile,
+    sessionId: maskSessionId(sessionId),
+    user,
+  };
 }
 
 async function runPaste(

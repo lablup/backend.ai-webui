@@ -14,7 +14,7 @@ import {
   sessionPath,
   sessionsDir,
 } from './session.js';
-import { mkdtempSync, statSync } from 'node:fs';
+import { chmodSync, mkdtempSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -79,6 +79,15 @@ describe('store round trip', () => {
 
     expect(sessionFileMode(path)).toBe(0o600);
     expect(loadSession(ENDPOINT, env)?.sessionId).toBe('second');
+  });
+
+  it('tightens a pre-existing sessions directory to 0700', () => {
+    saveSession(sample(), env);
+    chmodSync(sessionsDir(env), 0o755);
+
+    saveSession({ ...sample(), sessionId: 'second' }, env);
+
+    expect(statSync(sessionsDir(env)).mode & 0o777).toBe(0o700);
   });
 
   it('deletes only the named session and is idempotent', () => {

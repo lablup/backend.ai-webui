@@ -80,6 +80,7 @@ describe('CliLoginConsent', () => {
 
     const confirm = screen.getByRole('button', { name: 'cliLogin.Confirm' });
     expect(confirm).toBeDisabled();
+    // Confirm also waits for the verification code, so settle it first.
     await settleVerificationCode();
 
     await userEvent.click(
@@ -92,6 +93,7 @@ describe('CliLoginConsent', () => {
 
   it('posts the session to the port and state named in the URL', async () => {
     renderConsent('?port=1234&state=abc');
+    await settleVerificationCode();
 
     await userEvent.click(
       screen.getByRole('checkbox', { name: 'cliLogin.Attestation' }),
@@ -116,6 +118,7 @@ describe('CliLoginConsent', () => {
   it('offers the paste fallback when no listener answers', async () => {
     respondToCallback = () => Promise.reject(new Error('Failed to fetch'));
     renderConsent('?port=1234&state=abc');
+    await settleVerificationCode();
 
     await userEvent.click(
       screen.getByRole('checkbox', { name: 'cliLogin.Attestation' }),

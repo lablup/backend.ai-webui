@@ -167,4 +167,20 @@ describe('login --paste', () => {
     ).resolves.toBe(EXIT.authRequired);
     expect(loadSession('http://fresh.example.com')).toBeNull();
   });
+
+  it('keeps the previously stored session when the new one is rejected', async () => {
+    stubFetch(200, DEAD_SESSION_BODY);
+
+    await expect(
+      run([
+        'login',
+        '--paste',
+        '--endpoint',
+        ENDPOINT,
+        '--session-id',
+        'rejected-candidate-session-id-000',
+      ]),
+    ).resolves.toBe(EXIT.authRequired);
+    expect(loadSession(ENDPOINT)?.sessionId).toBe(SESSION_ID);
+  });
 });

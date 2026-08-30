@@ -83,7 +83,10 @@ export function saveSession(
   env: Env = process.env,
 ): string {
   const path = sessionPath(session.endpoint, env);
-  mkdirSync(sessionsDir(env), { recursive: true, mode: SESSION_DIR_MODE });
+  const dir = sessionsDir(env);
+  mkdirSync(dir, { recursive: true, mode: SESSION_DIR_MODE });
+  // mkdirSync's `mode` only applies on create; chmod tightens an existing dir.
+  chmodSync(dir, SESSION_DIR_MODE);
   writeFileSync(path, `${JSON.stringify(session, null, 2)}\n`, {
     mode: SESSION_FILE_MODE,
   });
