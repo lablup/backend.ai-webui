@@ -13,10 +13,7 @@ on:
       - data/schema.meta.json
       - resources/i18n/**
       - packages/backend.ai-webui-docs/**
-      # The label index scans .tsx here; the fixture is generated host-side and
-      # copied into the package, and the parity test fails when the copy drifts.
       - react/src/**/*.tsx
-      - react/src/helper/resourcePath.fixture.json
       - CLAUDE.md
       - AGENTS.md
       - .claude/skills/bai-agent/**
@@ -34,7 +31,6 @@ on:
       - resources/i18n/**
       - packages/backend.ai-webui-docs/**
       - react/src/**/*.tsx
-      - react/src/helper/resourcePath.fixture.json
       - CLAUDE.md
       - AGENTS.md
       - .claude/skills/bai-agent/**
