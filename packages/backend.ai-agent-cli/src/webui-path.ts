@@ -208,5 +208,8 @@ export const listPath = (resource: ListResource): string =>
   resourcePath({ type: 'list', resource } as ResourceRef);
 
 /** `webuiUrl('https://ui.example.com/', '/session?x=1')` -> absolute URL. */
-export const webuiUrl = (webuiOrigin: string, path: string): string =>
-  `${webuiOrigin.replace(/\/+$/, '')}${path}`;
+export const webuiUrl = (webuiOrigin: string, path: string): string => {
+  let end = webuiOrigin.length;
+  while (end > 0 && webuiOrigin[end - 1] === '/') end -= 1;
+  return `${webuiOrigin.slice(0, end)}${path}`;
+};
