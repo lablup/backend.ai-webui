@@ -19,6 +19,10 @@ fields:
         label: Scheduled
         meaning: The scheduler picked an agent for the session and allocation is starting.
         variant: info
+      RESERVED:
+        label: Reserved
+        meaning: The scheduler reserved the resources for the session on an agent, ahead of allocation.
+        variant: info
       PREPARING:
         label: Preparing
         meaning: The agent is setting the session's containers up before they can start.
@@ -39,6 +43,18 @@ fields:
         label: Running
         meaning: The containers are up and accepting work; apps and the terminal can be opened.
         variant: success
+      RUNNING_DEGRADED:
+        label: Running (Degraded)
+        meaning: The session is running but one or more of its kernels has failed, so it works at reduced capacity.
+        variant: warning
+      PREEMPTED:
+        label: Preempted
+        meaning: A higher-priority session took the session's resources; it waits to be rescheduled.
+        variant: warning
+      RESCHEDULING:
+        label: Rescheduling
+        meaning: The scheduler is looking for a new agent for the session after it lost its previous one.
+        variant: info
       RESTARTING:
         label: Restarting
         meaning: The session's containers are being recreated, usually after a restart request.
@@ -93,22 +109,22 @@ fields:
     meaning: What the session was created for, which decides how it is started and how long it lives.
     docs: sessions_all#session-type
     values:
-      INTERACTIVE:
+      interactive:
         label: Interactive
         meaning: A session the user works in directly through apps such as Jupyter, VSCode or the terminal.
         concept: session-type-interactive
         variant: blue
-      BATCH:
+      batch:
         label: Batch
         meaning: A session that runs a startup command to completion and then terminates itself.
         concept: session-type-batch
         variant: cyan
-      INFERENCE:
+      inference:
         label: Inference
         meaning: A session serving a model behind a deployment, created and scaled by the model service.
         concept: session-type-inference
         variant: purple
-      SYSTEM:
+      system:
         label: System
         meaning: A session Backend.AI runs for itself, such as an SFTP or FileBrowser helper.
         variant: neutral

@@ -61,7 +61,7 @@ describe('explain =VALUE', () => {
   });
 
   it('explains a curated value on a String field with no enum', () => {
-    const data = run('ComputeSessionNode.type=BATCH');
+    const data = run('ComputeSessionNode.type=batch');
     expect(data.schema.type).toBe('String');
     expect(data.schema.enumType).toBeUndefined();
     expect(data.value?.derived).toBe('curated');
@@ -121,6 +121,14 @@ describe('explain heuristics', () => {
     const data = run('KernelNode.status');
     expect(data.docs.derived).toBe('heuristic');
     expect(data.docs.score).toBeGreaterThanOrEqual(80);
+  });
+
+  it('reports the English page as the docs language when no translation exists', () => {
+    const data = run('KernelNode.status', 'de');
+    expect(data.lang).toBe('de');
+    expect(data.docs.derived).toBe('heuristic');
+    expect(data.docs.lang).toBe('en');
+    expect(data.docs.url).toContain('/en/');
   });
 });
 

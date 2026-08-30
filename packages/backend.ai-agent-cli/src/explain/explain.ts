@@ -443,7 +443,7 @@ export function docsHeuristic(
     derived: 'heuristic',
     ref: hit.id.replace(/^docs:/, ''),
     title: hit.title,
-    lang: lang === INDEX_LANG ? INDEX_LANG : lang,
+    lang: hit.lang ?? INDEX_LANG,
     ...(hit.path ? { path: hit.path } : {}),
     url: hit.url,
     score: hit.score,

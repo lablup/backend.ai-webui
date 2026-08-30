@@ -134,8 +134,8 @@ export function resolveMappings(
       checkDocs(file, ref, field.docs);
 
       const enumType = enumTypeFor(schema, declared.namedType);
-      if (enumType) curatedEnums.add(`${mapping.type}.${fieldName}`);
       const curated = valueEntries(field.values);
+      if (enumType && curated.length > 0) curatedEnums.add(ref);
       for (const [name, value] of curated) {
         counts.values += 1;
         const valueRef = `${ref}=${name}`;

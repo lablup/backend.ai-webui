@@ -77,6 +77,26 @@ describe('schema.json validation', () => {
     );
   });
 
+  it('rejects a second file mapping the same type', () => {
+    const dir = fixtureDir({
+      'Role.yaml': 'type: Role\n',
+      'Role.yml': 'type: Role\n',
+    });
+    const set = loadMappings(dir);
+    expect(set.files.map((entry) => entry.file)).toEqual(['mappings/Role.yaml']);
+    expect(set.byType.get('Role')?.file).toBe('mappings/Role.yaml');
+    expect(set.issues).toHaveLength(1);
+    expect(set.issues[0].file).toBe('mappings/Role.yml');
+    expect(set.issues[0].message).toContain(
+      'type "Role" is already mapped by mappings/Role.yaml',
+    );
+    expect(
+      resolveMappings(context, dir).issues.filter(
+        (issue) => issue.level === 'fail',
+      ),
+    ).toHaveLength(1);
+  });
+
   it('rejects a malformed YAML document', () => {
     const dir = fixtureDir({ 'ComputeSessionNode.yaml': 'type: [unclosed\n' });
     expect(loadMappings(dir).issues[0].message).toContain('YAML parse error');
@@ -163,5 +183,33 @@ describe('reference resolution', () => {
       (issue) => issue.level === 'warn' && issue.ref === 'Role.status',
     );
     expect(warnings[0].message).toContain('missing INACTIVE, DELETED');
+  });
+
+  it('still reports an enum field as unmapped when its mapping curates no values', () => {
+    const unmapped = (dir: string): string | undefined =>
+      resolveMappings(context, dir).issues.find(
+        (issue) => issue.ref === 'unmapped value vocabularies',
+      )?.message;
+    const withoutValues = fixtureDir({
+      'Role.yaml': [
+        'type: Role',
+        'fields:',
+        '  source:',
+        '    meaning: Where the role came from.',
+      ].join('\n'),
+    });
+    expect(unmapped(withoutValues)).toContain('Role.source');
+    clearMappingCache();
+    const withValues = fixtureDir({
+      'Role.yaml': [
+        'type: Role',
+        'fields:',
+        '  source:',
+        '    values:',
+        '      SYSTEM:',
+        '        meaning: Backend.AI ships the role.',
+      ].join('\n'),
+    });
+    expect(unmapped(withValues) ?? '').not.toContain('Role.source');
   });
 });

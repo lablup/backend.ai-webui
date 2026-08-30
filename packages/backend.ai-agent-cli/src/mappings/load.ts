@@ -130,6 +130,7 @@ export function loadMappings(dir = defaultMappingsDir()): MappingSet {
   const validate = validatorFor(dir);
   const files: MappingFile[] = [];
   const issues: MappingLoadIssue[] = [];
+  const byType = new Map<string, MappingFile>();
   const names = existsSync(dir)
     ? readdirSync(dir)
         .filter((name) => name.endsWith('.yaml') || name.endsWith('.yml'))
@@ -164,15 +165,21 @@ export function loadMappings(dir = defaultMappingsDir()): MappingSet {
       });
       continue;
     }
-    files.push({ file, path, mapping });
+    const duplicate = byType.get(mapping.type);
+    if (duplicate) {
+      issues.push({
+        file,
+        path,
+        message: `type "${mapping.type}" is already mapped by ${duplicate.file}`,
+      });
+      continue;
+    }
+    const entry: MappingFile = { file, path, mapping };
+    files.push(entry);
+    byType.set(mapping.type, entry);
   }
 
-  const set: MappingSet = {
-    dir,
-    files,
-    byType: new Map(files.map((entry) => [entry.mapping.type, entry])),
-    issues,
-  };
+  const set: MappingSet = { dir, files, byType, issues };
   CACHE.set(dir, set);
   return set;
 }

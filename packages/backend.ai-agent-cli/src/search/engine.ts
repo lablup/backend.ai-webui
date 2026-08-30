@@ -53,6 +53,8 @@ export interface SearchHit {
   score: number;
   reason: Reason;
   title: string;
+  /** The language the docs section resolved in; English when parity failed. */
+  lang?: string;
   path?: string;
   url: string;
   /** The i18n label the WebUI renders a schema field under, when it has one. */
@@ -194,6 +196,7 @@ export function runSearch(
           score: evidence.score,
           reason: evidence.reason,
           title: localized.title,
+          lang: localized.lang,
           path: localized.repoPath,
           url: docsSectionUrl(
             version,
