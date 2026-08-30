@@ -7,6 +7,9 @@ on:
       - scripts/**
       - src/**
       - vitest.config.ts
+      # The help-anchor table is read by scripts/check-help-anchors.test.ts,
+      # the only test that resolves its entries against the manual (FR-3773).
+      - react/src/helper/helpAnchors.json
       - .github/workflows/vitest-root.yml
 
 permissions:
