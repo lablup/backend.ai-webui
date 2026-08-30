@@ -910,6 +910,30 @@
     return parts.join(' › ');
   }
 
+  /**
+   * React component identity via react-grab's global API — the app already
+   * loads it in dev (react/src/index.tsx), so no import is needed here.
+   */
+  async function reactInfo(target) {
+    const api = window.__REACT_GRAB__;
+    if (!api) return null;
+    try {
+      const name = api.getDisplayName(target);
+      const src = await api.getSource(target).catch(() => null);
+      if (!name && !src) return null;
+      const file =
+        src && src.filePath
+          ? src.filePath.replace(/^.*\/(react\/|packages\/)/, '$1')
+          : null;
+      const loc = file
+        ? `${file}${src.lineNumber ? `:${src.lineNumber}` : ''}`
+        : null;
+      return { name: (src && src.componentName) || name || null, loc };
+    } catch {
+      return null;
+    }
+  }
+
   async function buildBlock(target, text) {
     const anchor = captureAnchorSignals(target);
     const anchorB64 = await encodeAnchorV3(anchor);
@@ -919,8 +943,14 @@
     const q = anchor.q ? `?${anchor.q}` : '';
     const url = `${location.origin}${anchor.p}${q}#bai=v3.${id}.${anchorB64}`;
     const label = pathLabel(target, anchor);
+    const info = await reactInfo(target);
+    const reactLine =
+      info && (info.name || info.loc)
+        ? [`> ⚛️ in ${info.name || '?'}${info.loc ? ` (at ${info.loc})` : ''}`]
+        : [];
     const block = [
       `> 📍 **${label}** · \`${id}\``,
+      ...reactLine,
       ...text.split('\n').map((l) => `> ${l}`),
       `> [Open on dev server](${url})`,
       `<!-- bai-review v3 id=${id} pr=${prNum} at=${at} -->`,
@@ -991,6 +1021,13 @@
     composeLabel.textContent = pickTarget
       ? pathLabel(pickTarget, captureAnchorSignals(pickTarget))
       : '';
+    if (pickTarget) {
+      const t = pickTarget;
+      reactInfo(t).then((info) => {
+        if (pickTarget !== t || !info || (!info.name && !info.loc)) return;
+        composeLabel.textContent += `  ·  ⚛️ ${info.name || '?'}${info.loc ? ` (${info.loc})` : ''}`;
+      });
+    }
     compose.style.display = 'block';
     const w = 300;
     compose.style.left = `${Math.min(x, window.innerWidth - w - 12)}px`;
