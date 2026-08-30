@@ -201,6 +201,16 @@ describe('findBlockRegion', () => {
     expect(region?.text).toBe(`${BLOCK_START}\nreal\n${BLOCK_END}`);
   });
 
+  it('finds the block in a CRLF document', () => {
+    const source = `# Doc\r\n\r\n${BLOCK_START}\r\nreal\r\n${BLOCK_END}\r\n`;
+    const region = findBlockRegion(source);
+    expect(region?.text).toBe(`${BLOCK_START}\r\nreal\r\n${BLOCK_END}`);
+    const { anchor, content } = applyBlock(source, 'BLOCK');
+    expect(anchor).toBe('markers');
+    expect(content.match(/BLOCK/g)).toHaveLength(1);
+    expect(content).not.toContain(BLOCK_START);
+  });
+
   it('finds nothing when both markers are only quoted inline', () => {
     expect(
       findBlockRegion(`prose \`${BLOCK_START}\` and \`${BLOCK_END}\` prose`),
@@ -238,7 +248,66 @@ describe('insertOffset', () => {
   });
 });
 
+describe('insertOffset', () => {
+  const astryxEnd = '<!-- ASTRYX:END -->';
+
+  it('keeps a ``` sample inside a ```` fence from closing it', () => {
+    const source = [
+      '# Project',
+      astryxEnd,
+      'Prose.',
+      '',
+      '````markdown',
+      '```bash',
+      '# not a heading',
+      '```',
+      '# still not a heading',
+      '````',
+      '',
+      '## Real heading',
+      '',
+    ].join('\n');
+    const { content, anchor } = applyBlock(source, 'BLOCK');
+    expect(anchor).toBe('after-astryx');
+    expect(content.indexOf('BLOCK')).toBeGreaterThan(
+      content.indexOf('# still not a heading'),
+    );
+    expect(content.indexOf('BLOCK')).toBeLessThan(
+      content.indexOf('## Real heading'),
+    );
+  });
+
+  it('closes a fence only with the same character', () => {
+    const source = [
+      '# Project',
+      astryxEnd,
+      '~~~',
+      '```',
+      '# not a heading',
+      '~~~',
+      '## Real heading',
+      '',
+    ].join('\n');
+    const { content } = applyBlock(source, 'BLOCK');
+    expect(content.indexOf('BLOCK')).toBeGreaterThan(
+      content.indexOf('# not a heading'),
+    );
+    expect(content.indexOf('BLOCK')).toBeLessThan(
+      content.indexOf('## Real heading'),
+    );
+  });
+});
+
 describe('resolveBlockTarget', () => {
+  it('refuses a CLAUDE.md symlink that leaves the checkout', () => {
+    const root = fakeCheckout('# Project\n');
+    const outside = mkdtempSync(join(tmpdir(), 'bai-agent-outside-'));
+    writeFileSync(join(outside, 'victim.md'), '# Elsewhere\n');
+    rmSync(join(root, CLAUDE_MD));
+    symlinkSync(join(outside, 'victim.md'), join(root, CLAUDE_MD));
+    expect(() => resolveBlockTarget(root)).toThrow(/outside the checkout/);
+  });
+
   it('writes through a CLAUDE.md symlink to AGENTS.md', () => {
     const root = fakeCheckout('# Project\n');
     rmSync(join(root, CLAUDE_MD));
@@ -256,7 +325,10 @@ describe('resolveBlockTarget', () => {
 
   it('refuses a placeholder CLAUDE.md sitting next to a real AGENTS.md', () => {
     const root = fakeCheckout('See AGENTS.md.\n');
-    writeFileSync(join(root, AGENTS_MD), `# Project\n\n${'prose '.repeat(200)}\n`);
+    writeFileSync(
+      join(root, AGENTS_MD),
+      `# Project\n\n${'prose '.repeat(200)}\n`,
+    );
     expect(() => resolveBlockTarget(root)).toThrow(/placeholder/);
   });
 

@@ -4,7 +4,7 @@ import { CLI_NAME } from '../meta.js';
 import { API_VERSION } from '../output.js';
 import type { Stats } from 'node:fs';
 import { existsSync, lstatSync, realpathSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, isAbsolute } from 'node:path';
 
 /**
  * Markers `init --write` replaces between. Everything between them is
@@ -23,7 +23,7 @@ const ASTRYX_END = '<!-- ASTRYX:END -->';
 
 /** ATX headings only, and only outside a fenced block. */
 const HEADING = /^#{1,6} /;
-const FENCE = /^\s{0,3}(?:```|~~~)/;
+const FENCE = /^ {0,3}(`{3,}|~{3,})/;
 
 const BUILD = 'pnpm --filter backend.ai-agent-cli build';
 const DIST = 'node packages/backend.ai-agent-cli/dist/cli.js';
@@ -61,7 +61,7 @@ export function renderAgentBlock(commands: AnyCommand[]): string {
     '- Never mix GraphQL pagination modes: `first`+`after` XOR `last`+`before` XOR `limit`+`offset`. The `*V2` connections reject a mix at runtime, and page-number paging is `limit`+`offset`. See `.claude/rules/graphql-pagination.md`.',
     "- `schema_mismatch` is YOUR document, not the manager: the checkout's SDL rejected it locally, before any request. Fix it with `schema show <Type>`; never retry it unchanged.",
     '- A mutation runs only with `--allow-mutation` AND a field on the allow-list (`packages/backend.ai-agent-cli/src/mutation-allowlist.ts`). Either miss exits 4 `mutation_refused` before the network. Do not route around it — extend the list in a reviewed PR, or use the WebUI.',
-    '- Destructive actions (delete, purge, terminate, revoke) are never run from here. Give the human the WebUI page from the refusal\'s `hint` and let them press the button.',
+    "- Destructive actions (delete, purge, terminate, revoke) are never run from here. Give the human the WebUI page from the refusal's `hint` and let them press the button.",
     `- Exit 3 \`auth_required\` → \`${CLI_NAME} login --endpoint <url>\`; take the endpoint and the account from the \`webui-connection-info\` skill. The CLI never handles a password: \`login\` borrows the browser's session, and \`--paste\` covers a browser that cannot reach this machine.`,
     '- Cite what the CLI returned: `search`, `docs show` and `explain` carry a deployed-docs `url`. `explain` prints `MISSING` for a piece nothing curates — report that, never fill it in from memory.',
     `- Re-run \`${CLI_NAME} init --features ${FEATURE_AGENTS}\` after any CLI change and re-sync this block.`,
@@ -92,7 +92,8 @@ function findMarker(
   marker: string,
   from = 0,
 ): { start: number; end: number } | undefined {
-  const pattern = new RegExp(`^${escapeRegExp(marker)}[ \t]*$`, 'gm');
+  // `\r?` so a CRLF checkout still finds its own block instead of a duplicate.
+  const pattern = new RegExp(`^${escapeRegExp(marker)}[ \t]*\r?$`, 'gm');
   pattern.lastIndex = from;
   const match = pattern.exec(source);
   return match
@@ -130,12 +131,22 @@ function insertOffset(source: string): { offset: number; anchor: BlockAnchor } {
   const marker = lines.findIndex((line) => line.trim() === ASTRYX_END);
   if (marker < 0) return { offset: source.length, anchor: 'append' };
   let index = marker + 1;
-  let fenced = false;
+  // The open fence; only a fence of the same character and at least the same
+  // length closes it (CommonMark), so a ``` sample inside ```` stays inside.
+  let fence: string | undefined;
   for (; index < lines.length; index += 1) {
     const line = lines[index];
-    // A `#` inside a fence is shell/markdown sample text, not a heading.
-    if (FENCE.test(line)) fenced = !fenced;
-    else if (!fenced && HEADING.test(line)) break;
+    const opener = FENCE.exec(line)?.[1];
+    if (fence === undefined) {
+      if (opener) fence = opener;
+      else if (HEADING.test(line)) break;
+    } else if (
+      opener &&
+      opener[0] === fence[0] &&
+      opener.length >= fence.length
+    ) {
+      fence = undefined;
+    }
   }
   if (index >= lines.length) return { offset: source.length, anchor: 'append' };
   const offset = lines.slice(0, index).join('\n').length + 1;
@@ -167,6 +178,12 @@ export interface BlockTarget {
   via: string;
 }
 
+/** `init --write` never follows a link out of the checkout it was asked to edit. */
+const isInside = (root: string, target: string): boolean => {
+  const rel = relative(root, target);
+  return rel !== '' && !rel.startsWith('..') && !isAbsolute(rel);
+};
+
 /**
  * Which file `init --write` edits. A CLAUDE.md that is a symlink to AGENTS.md
  * (this checkout's layout) is written through to its real path: writing the
@@ -190,11 +207,18 @@ export function resolveBlockTarget(repoRoot: string): BlockTarget {
       continue;
     }
     if (link.isSymbolicLink()) {
+      let target: string;
       try {
-        return { path: realpathSync(candidate), via: name };
+        target = realpathSync(candidate);
       } catch {
         return refuse(`${name} is a dangling symlink in ${repoRoot}.`);
       }
+      if (!isInside(realpathSync(repoRoot), target)) {
+        return refuse(
+          `${name} in ${repoRoot} is a symlink to ${target}, outside the checkout.`,
+        );
+      }
+      return { path: target, via: name };
     }
     if (!link.isFile()) continue;
     // A handful of bytes next to a real AGENTS.md is a pointer someone wrote by

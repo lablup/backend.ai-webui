@@ -266,16 +266,21 @@ mutation CreateFolder($input: CreateVFolderV2Input!) {
 }
 ```
 
+Save the document above as `cookbook-10.graphql` first, then run it through the
+root proxy from the repository root:
+
 ```bash
-bai-agent query --allow-mutation --json \
+pnpm run bai-agent query --allow-mutation --json \
   --var 'input={"name":"demo","usageMode":"general","permission":"rw","cloneable":false}' \
   "$(cat cookbook-10.graphql)"
 ```
 
 `createVfolderV2` is one of the three names on
 `packages/backend.ai-agent-cli/src/mutation-allowlist.ts`. The result's
-`data.links` entry carries the `webui_url` (or `webui_path`
-`/data?folder=<id>`) for what you just made.
+`data.links` entry is annotated with a `webui_path` / `webui_url` built from
+`vfolder.id`, which is a base64 Relay global id — the Data page wants the raw
+UUID, so that link does **not** open the folder until the id is decoded. Known
+limitation; see "Known limitation" in `packages/backend.ai-agent-cli/README.md`.
 
 ### 11. Delete a VFolder — refused on purpose
 
