@@ -19,7 +19,6 @@ import {
   loadDocsPages,
 } from '../search/docs-corpus.js';
 import { loadTerminology } from '../search/terminology.js';
-import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 export type CheckStatus = 'ok' | 'warn' | 'fail';
