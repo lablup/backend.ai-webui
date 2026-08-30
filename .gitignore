@@ -100,9 +100,6 @@ dist
 # deploy makefile
 deploy
 
-# build output
-src/lib/backend.ai-client-node.js
-
 # -E files
 **/*.html-E
 **/*.js-E

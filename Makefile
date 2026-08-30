@@ -52,13 +52,6 @@ compile: versiontag
 		cp config.toml.sample config.toml; \
 	fi
 	@pnpm run build
-clean_client_node_ts:
-	@printf "$(CYAN)Cleaning backend.ai-client-node.js...$(NC)\n"
-	@rm -f ./src/lib/backend.ai-client-node.js
-compile_client_node_ts: clean_client_node_ts
-	@printf "$(GREEN)Compiling backend.ai-client-node.ts...$(NC)\n"
-	@./node_modules/typescript/bin/tsc src/lib/backend.ai-client-node.ts --outDir src/lib --target es2018 --module commonjs --allowJs true --moduleResolution node --resolveJsonModule true --esModuleInterop false --experimentalDecorators true --allowSyntheticDefaultImports true --skipLibCheck true --lib es6,dom,es2016,es2017,es2020 --strict false --strictNullChecks false --strictFunctionTypes false --strictBindCallApply false --strictPropertyInitialization false --noImplicitThis false --alwaysStrict false --noUnusedLocals false --noImplicitReturns false --noFallthroughCasesInSwitch false
-	@printf "$(YELLOW)backend.ai-client-node.js compiled$(NC)\n"
 compile_client_pkg:
 	@printf "$(GREEN)Building backend.ai-client package...$(NC)\n"
 	@pnpm --filter backend.ai-client build

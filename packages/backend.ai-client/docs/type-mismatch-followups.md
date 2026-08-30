@@ -195,7 +195,8 @@ body instanceof FormData
 practically dead. Still, removing it would change behavior in any
 environment that imports this package from Node directly.
 
-**Suggested follow-up:** Confirm no Node consumer is left (Electron
-main process and `src/lib/backend.ai-client-node.ts` are the candidates).
-If safe, drop the `getBoundary` branch and tighten `body` to
+**Suggested follow-up:** A Node consumer does exist — the Electron local
+proxy (`src/wsproxy/`) imports this package from Node through the CJS
+entry (`dist/index.cjs`), so the `getBoundary` branch must stay
+Node-compatible and `body` cannot be tightened to
 `Record<string, unknown> | FormData | Uint8Array | string | null`.
