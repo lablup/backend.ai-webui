@@ -121,18 +121,22 @@ function buildEntries(
   return entries;
 }
 
-const CACHE = new Map<string, SchemaEntry[]>();
+/**
+ * Keyed by the parsed index itself: `loadSchema` hands out a new object when
+ * the SDL's mtime changes, so the entries follow it without a second stat.
+ */
+let CACHE = new WeakMap<SchemaIndex, SchemaEntry[]>();
 
-/** The searchable schema, built once per process alongside the parsed SDL. */
+/** The searchable schema, built once per parsed SDL. */
 export function schemaEntries(
   context: RepoContext,
   schema: SchemaIndex,
   i18n: I18nReverseIndex,
 ): SchemaEntry[] {
-  const cached = CACHE.get(schema.path);
+  const cached = CACHE.get(schema);
   if (cached) return cached;
   const entries = buildEntries(schema, i18n);
-  CACHE.set(schema.path, entries);
+  CACHE.set(schema, entries);
   return entries;
 }
 
@@ -147,7 +151,7 @@ export function collapseKey(entry: SchemaEntry): string {
 }
 
 export function clearSchemaEntryCache(): void {
-  CACHE.clear();
+  CACHE = new WeakMap();
 }
 
 export function schemaContext(context: RepoContext): {
