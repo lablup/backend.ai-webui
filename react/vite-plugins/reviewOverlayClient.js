@@ -518,7 +518,6 @@
 
   function renderPins(pins) {
     const seen = new Set();
-    let num = 0;
     for (const d of pins) {
       const st = pinState.get(d.id) || {};
       st.data = d;
@@ -541,6 +540,18 @@
         pinState.delete(id);
       }
     }
+    // Stable numbering: createdAt rank, assigned per payload — never
+    // re-counted per render pass, so page pins, panel order, and numbers
+    // stay in sync and don't shift when an anchor is located late.
+    [...pinState.values()]
+      .sort((a, b) =>
+        String(a.data.createdAt || '9999').localeCompare(
+          String(b.data.createdAt || '9999'),
+        ),
+      )
+      .forEach((st, i) => {
+        st.num = i + 1;
+      });
     refreshPinLayer();
     renderPanel();
     const onPage = [...pinState.values()].filter(
@@ -552,7 +563,6 @@
   }
 
   function refreshPinLayer() {
-    let num = 0;
     for (const st of pinState.values()) {
       const show = onCurrentPage(st.anchor) && typeof st.anchor.s === 'string';
       if (!show) {
@@ -562,7 +572,6 @@
         }
         continue;
       }
-      num++;
       if (!st.pinEl) {
         st.pinEl = el('div', 'pin');
         st.pinEl.appendChild(el('span'));
@@ -571,7 +580,7 @@
         st.pinEl.addEventListener('click', () => revealItem(id));
         pinLayer.appendChild(st.pinEl);
       }
-      st.pinEl.querySelector('span').textContent = String(num);
+      st.pinEl.querySelector('span').textContent = String(st.num || '·');
       st.pinEl.className = `pin ${pinClass(st.data)}`;
       positionPin(st);
       if (st.data.id === highlightId) st.pinEl.classList.add('pulse');
@@ -610,8 +619,18 @@
     item.dataset.pinId = d.id;
     const meta = el('div', 'meta');
     const author = el('span', 'author');
-    author.textContent = d.author || '(unknown)';
+    author.textContent = `#${st.num || '·'} ${d.author || '(unknown)'}`;
     meta.append(author, el('span', '', age(d.createdAt)));
+    if (!onCurrentPage(st.anchor)) {
+      meta.appendChild(el('span', 'badge outdated', '다른 페이지'));
+    } else if (
+      st.anchor &&
+      typeof st.anchor.s === 'string' &&
+      !st.located &&
+      !d.resolved
+    ) {
+      meta.appendChild(el('span', 'badge hint', '⚠️ 위치 못 찾음'));
+    }
     if (d.github && d.github.url) {
       const a = el('a', 'badge src', '🐙 GitHub');
       a.href = d.github.url;
@@ -662,8 +681,8 @@
 
   function renderPanel() {
     itemsBox.textContent = '';
-    const states = [...pinState.values()].sort((a, b) =>
-      String(a.data.createdAt || '').localeCompare(String(b.data.createdAt || '')),
+    const states = [...pinState.values()].sort(
+      (a, b) => (a.num || 1e9) - (b.num || 1e9),
     );
     if (!states.length) {
       itemsBox.appendChild(
@@ -671,26 +690,10 @@
       );
       return;
     }
-    const here = [];
-    const orphans = [];
-    const elsewhere = [];
-    for (const st of states) {
-      if (!onCurrentPage(st.anchor)) elsewhere.push(st);
-      else if (typeof st.anchor.s === 'string' && !st.located && !st.data.resolved)
-        orphans.push(st);
-      else here.push(st);
-    }
-    for (const st of here) itemsBox.appendChild(buildItem(st));
-    if (orphans.length) {
-      itemsBox.appendChild(
-        el('div', 'section', '⚠️ 위치를 찾지 못한 코멘트 — UI가 바뀌었을 수 있어요'),
-      );
-      for (const st of orphans) itemsBox.appendChild(buildItem(st));
-    }
-    if (elsewhere.length) {
-      itemsBox.appendChild(el('div', 'section other', '다른 페이지의 핀'));
-      for (const st of elsewhere) itemsBox.appendChild(buildItem(st));
-    }
+    // One flat list in fixed number order — items never move between
+    // sections; a late anchor location updates the ⚠️ badge in place
+    // instead of reordering the list.
+    for (const st of states) itemsBox.appendChild(buildItem(st));
   }
 
   function revealItem(id) {
