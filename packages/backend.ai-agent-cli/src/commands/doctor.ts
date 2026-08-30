@@ -135,10 +135,7 @@ const docsGroup: CheckGroup = {
           page.relativePath,
           cache,
         );
-        if (
-          !translated ||
-          translated.parsed.headings.length !== page.parsed.headings.length
-        ) {
+        if (!translated || !headingLevelsMatch(translated, page)) {
           drifted.push(`${lang}/${page.relativePath}`);
         }
       }
@@ -180,6 +177,16 @@ const docsGroup: CheckGroup = {
     ];
   },
 };
+
+/** Parity is the level sequence, not the count: h2/h3 swaps drift too. */
+export function headingLevelsMatch(a: DocsPage, b: DocsPage): boolean {
+  const left = a.parsed.headings;
+  const right = b.parsed.headings;
+  return (
+    left.length === right.length &&
+    left.every((heading, index) => heading.level === right[index].level)
+  );
+}
 
 function terminologyStatus(context: RepoContext): {
   status: CheckStatus;

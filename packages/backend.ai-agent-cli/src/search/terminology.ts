@@ -20,19 +20,63 @@ export interface TerminologyAvoid {
   conceptId: string | null;
 }
 
+/** A UI action verb; `avoid` is inline rather than in the top-level list. */
+export interface TerminologyVerb {
+  id: string;
+  intent: string;
+  context?: string;
+  preferred: Record<string, string>;
+  avoid?: string[];
+  reversible?: string;
+  description?: string;
+}
+
 export interface TerminologyFile {
   concepts: TerminologyConcept[];
   avoid: TerminologyAvoid[];
+  verbs?: TerminologyVerb[];
 }
+
+export const VERB_CATEGORY = 'Verbs';
 
 export interface TermEntry {
   id: string;
+  kind: 'concept' | 'verb';
   concept: TerminologyConcept;
-  /** Canonical English term (or the first language that has one). */
+  /** Canonical scoring title: the first English spelling. */
   title: string;
   /** Every spelling that resolves to this concept: all languages + avoid[]. */
   aliases: string[];
   description: string;
+}
+
+/** Commas separate co-equal spellings of one term ("agent, agent node"). */
+function spellingsOf(value: string): string[] {
+  return value
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function toEntry(
+  kind: TermEntry['kind'],
+  concept: TerminologyConcept,
+  avoid: string[],
+): TermEntry {
+  const languages = Object.values(concept.preferred);
+  const spellings = languages.flatMap(spellingsOf);
+  const aliases = [...new Set([...spellings, ...avoid])].filter(Boolean);
+  const canonical = concept.preferred.en ?? languages[0] ?? concept.id;
+  return {
+    id: concept.id,
+    kind,
+    concept,
+    title: spellingsOf(canonical)[0] ?? concept.id,
+    aliases,
+    description: [concept.context, concept.description]
+      .filter(Boolean)
+      .join(' — '),
+  };
 }
 
 export function terminologyPath(context: RepoContext): string {
@@ -64,23 +108,22 @@ export function loadTerminology(context: RepoContext): TermEntry[] {
     avoidByConcept.set(entry.conceptId, bucket);
   }
 
-  return (parsed.concepts ?? []).map((concept) => {
-    const languages = Object.values(concept.preferred);
-    // Commas separate co-equal spellings of one term ("agent, agent node").
-    const spellings = languages.flatMap((value) =>
-      value.split(',').map((part) => part.trim()),
-    );
-    const aliases = [
-      ...new Set([...spellings, ...(avoidByConcept.get(concept.id) ?? [])]),
-    ].filter(Boolean);
-    return {
-      id: concept.id,
-      concept,
-      title: concept.preferred.en ?? languages[0] ?? concept.id,
-      aliases,
-      description: [concept.context, concept.description]
-        .filter(Boolean)
-        .join(' — '),
-    };
-  });
+  const concepts = (parsed.concepts ?? []).map((concept) =>
+    toEntry('concept', concept, avoidByConcept.get(concept.id) ?? []),
+  );
+  const verbs = (parsed.verbs ?? []).map((verb) =>
+    toEntry(
+      'verb',
+      {
+        id: verb.id,
+        category: VERB_CATEGORY,
+        status: 'approved',
+        preferred: verb.preferred,
+        context: verb.context,
+        description: verb.description,
+      },
+      [...(verb.avoid ?? []), ...(avoidByConcept.get(verb.id) ?? [])],
+    ),
+  );
+  return [...concepts, ...verbs];
 }

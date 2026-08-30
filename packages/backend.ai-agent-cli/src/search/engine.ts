@@ -1,5 +1,6 @@
 import { CliError } from '../errors.js';
 import type { RepoContext } from '../repo-context.js';
+import { latestDocsVersion } from './docs-config.js';
 import type { DocsPage, DocsSection } from './docs-corpus.js';
 import {
   INDEX_LANG,
@@ -15,7 +16,11 @@ import type { Candidate, Ranked, Reason } from './rank.js';
 import { scoreCandidate, selectWithReservedSlots } from './rank.js';
 import type { TermEntry } from './terminology.js';
 import { loadTerminology, terminologyPath } from './terminology.js';
-import { docsSectionUrl, docsVersionFor } from './urls.js';
+import {
+  DOCS_VERSION_FALLBACK,
+  docsSectionUrl,
+  docsVersionFor,
+} from './urls.js';
 import { relative, sep } from 'node:path';
 
 /** Domains implemented so far. `schema` joins the list in a later ticket. */
@@ -72,15 +77,23 @@ export function resolveDocsVersion(
   context: RepoContext,
   override?: string,
 ): string {
-  return override?.trim() || docsVersionFor(context.repoVersion);
+  if (override?.trim()) return override.trim();
+  let fallback: string = DOCS_VERSION_FALLBACK;
+  try {
+    fallback = latestDocsVersion(context) ?? DOCS_VERSION_FALLBACK;
+  } catch {
+    // No docs config: keep the literal channel rather than fail the search.
+  }
+  return docsVersionFor(context.repoVersion, fallback);
 }
 
 function docsCandidate(section: DocsSection): Candidate {
   return {
     title: section.heading.text,
-    fields: [],
-    fieldReason: 'alias',
-    // The page title rides along so a section inherits its chapter's subject.
+    // An exact page-title query hits every section of that page at field
+    // strength; the title also rides along in the body for token recall.
+    fields: [section.page.title],
+    fieldReason: 'page-title',
     body: `${section.page.title} ${section.haystack}`,
   };
 }

@@ -115,7 +115,9 @@ https://webui.docs.backend.ai/next/ko/vfolder.html#vfolder-스토리지-폴더-�
 ```
 
 The `{version}` segment is the checkout's `major.minor`; a prerelease maps to
-`next` and an unreadable version to `latest`. `--docs-version <v>` overrides it.
+`next` and an unreadable version to the label marked `latest: true` in
+`packages/backend.ai-webui-docs/docs-toolkit.config.yaml` (the site publishes
+only redirect stubs under `latest/`). `--docs-version <v>` overrides it.
 The slugify used for anchors is the docs toolkit's
 (`packages/backend.ai-docs-toolkit/src/markdown-processor.ts`) — the anchors
 must match the deployed pages byte for byte.

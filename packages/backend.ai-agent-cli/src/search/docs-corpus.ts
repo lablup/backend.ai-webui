@@ -1,8 +1,9 @@
 import type { RepoContext } from '../repo-context.js';
+import { loadBookConfig } from './docs-config.js';
 import type { MarkdownHeading, ParsedMarkdown } from './markdown.js';
 import { parseMarkdown, searchableText, sliceSection } from './markdown.js';
 import { slugFromPath } from './slug.js';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
 /** The language the index is built from. Recall never depends on `--lang`. */
@@ -36,30 +37,35 @@ export function docsSrcDir(context: RepoContext): string {
   return join(context.docsDir, 'src');
 }
 
-/** Language directories under `src/`, in `book.config.yaml` display order. */
+/** Languages `book.config.yaml` publishes that have a `src/<lang>` tree. */
 export function docsLanguages(context: RepoContext): string[] {
   const root = docsSrcDir(context);
   if (!existsSync(root)) return [];
-  return readdirSync(root, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
+  return loadBookConfig(context)
+    .languages.filter((lang) => existsSync(join(root, lang)))
     .sort();
 }
 
-function markdownFiles(root: string): string[] {
-  const found: string[] = [];
-  const walk = (dir: string): void => {
-    for (const entry of readdirSync(dir, { withFileTypes: true })) {
-      const absolute = join(dir, entry.name);
-      if (entry.isDirectory()) {
-        if (entry.name !== 'images') walk(absolute);
-      } else if (entry.name.endsWith('.md')) {
-        found.push(absolute);
-      }
-    }
-  };
-  walk(root);
-  return found.sort();
+/**
+ * The markdown files the site publishes for `lang`: the `navigation` entries
+ * of `book.config.yaml`, in sidebar order. A file under `src/<lang>` that the
+ * navigation does not list has no page on the deployed site.
+ */
+export function publishedMarkdownFiles(
+  context: RepoContext,
+  lang: string,
+): string[] {
+  const root = join(docsSrcDir(context), lang);
+  const paths = loadBookConfig(context).navigation[lang] ?? [];
+  const seen = new Set<string>();
+  return paths
+    .filter((path) => {
+      if (seen.has(path)) return false;
+      seen.add(path);
+      return true;
+    })
+    .map((path) => join(root, path))
+    .filter((absolute) => existsSync(absolute));
 }
 
 function readPage(
@@ -82,9 +88,10 @@ function readPage(
 
 /** Parsed live per query — there is no build step and no cached index. */
 export function loadDocsPages(context: RepoContext, lang: string): DocsPage[] {
-  const root = join(docsSrcDir(context), lang);
-  if (!existsSync(root)) return [];
-  return markdownFiles(root).map((file) => readPage(context, lang, file));
+  if (!existsSync(join(docsSrcDir(context), lang))) return [];
+  return publishedMarkdownFiles(context, lang).map((file) =>
+    readPage(context, lang, file),
+  );
 }
 
 export function loadDocsSections(pages: DocsPage[]): DocsSection[] {

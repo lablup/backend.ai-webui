@@ -1,8 +1,10 @@
 import { EXIT } from './errors.js';
 import { resolveRepoContext } from './repo-context.js';
 import { runCli } from './run.js';
+import { loadDocsPages } from './search/docs-corpus.js';
 import { DOMAINS, runSearch } from './search/engine.js';
 import type { SearchData } from './search/engine.js';
+import { SCORE } from './search/rank.js';
 import { describe, expect, it } from 'vitest';
 
 /**
@@ -30,10 +32,12 @@ interface Expectation {
 const EXPECTATIONS: Expectation[] = [
   {
     // No `resource preset` concept exists in terminology.json, so the manual's
-    // own section wins; the i18n label supplies the normalisation header.
+    // own section wins; the i18n label supplies the normalisation header. The
+    // `verb-delete` verb names the preset in its context, so it rides along.
     query: 'resource preset',
     top: 'docs:admin_menu#admin_menu-manage-resource-preset',
     reason: 'heading-phrase',
+    contains: ['term:verb-delete'],
     normalisedTo: ['Resource Preset'],
   },
   {
@@ -96,10 +100,20 @@ const EXPECTATIONS: Expectation[] = [
     normalisedTo: ['keypair', 'Keypair'],
   },
   {
+    // `preferred.en` is "agent, agent node": the first spelling is the title.
     query: 'agent',
     top: 'term:agent',
     reason: 'exact-title',
     contains: ['docs:admin_menu#admin_menu-manage-agent-nodes'],
+    normalisedTo: ['agent'],
+  },
+  {
+    // The second spelling is an alias; normalisation expands it to the
+    // canonical title, which is what the exact-title match then reads.
+    query: 'agent node',
+    top: 'term:agent',
+    reason: 'exact-title',
+    normalisedTo: ['agent'],
   },
 ];
 
@@ -139,6 +153,47 @@ describe.each(EXPECTATIONS.map((one) => [one.query, one] as const))(
     }
   },
 );
+
+describe('terminology verbs', () => {
+  it('returns the verb record for a query naming it', () => {
+    const data = search('delete');
+    const verb = data.hits.find((hit) => hit.id === 'term:verb-delete');
+    expect(verb).toBeDefined();
+    expect(verb!.reason).toBe('exact-title');
+    expect(verb!.score).toBe(SCORE.exactTitle);
+    expect(verb!.title).toBe('Delete');
+    expect(data.hits.map((hit) => hit.id)).toContain(
+      'docs:vfolder#vfolder-delete-folder',
+    );
+  });
+
+  it('resolves a verb through its avoid[] spellings', () => {
+    const data = search('wipe', 3);
+    expect(data.normalised.map((one) => one.ref)).toContain('verb-delete');
+    expect(data.hits.map((hit) => hit.id)).toContain('term:verb-delete');
+  });
+});
+
+describe('page title as a field', () => {
+  it('scores an exact page-title query at field strength on every section', () => {
+    const vfolder = loadDocsPages(context, 'en').find(
+      (page) => page.slug === 'vfolder',
+    );
+    expect(vfolder).toBeDefined();
+    const data = runSearch(context, {
+      query: vfolder!.title,
+      lang: 'en',
+      domains: ['docs'],
+      limit: 5,
+    });
+    expect(data.hits.length).toBeGreaterThan(0);
+    for (const hit of data.hits) {
+      expect(hit.id.startsWith('docs:vfolder#')).toBe(true);
+      expect(hit.reason).toBe('page-title');
+      expect(hit.score).toBe(SCORE.exactField);
+    }
+  });
+});
 
 describe('search surface', () => {
   it('defaults to 10 hits over every implemented domain', () => {

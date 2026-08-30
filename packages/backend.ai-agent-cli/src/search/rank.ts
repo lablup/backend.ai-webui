@@ -25,6 +25,7 @@ export const SCORE = {
 export const REASONS = [
   'exact-title',
   'alias',
+  'page-title',
   'heading-phrase',
   'heading-tokens',
   'body-tokens',
