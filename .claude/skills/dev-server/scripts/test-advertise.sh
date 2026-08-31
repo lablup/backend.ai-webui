@@ -109,6 +109,52 @@ check 'a layer without a PR is skipped' \
 check 'a branch outside the stack serves nothing' '[]' \
   "$(served_from_stack "$STACK" feat/elsewhere)"
 
+# ── the running PR ────────────────────────────────────────────────────────────
+check 'the running PR is the top of the served set' '9330' \
+  "$(running_pr '[{"pr":9328},{"pr":9329},{"pr":9330}]')"
+check 'one served PR is the running one' '9330' "$(running_pr '[{"pr":9330}]')"
+# An unstacked branch with no open PR still has to print its line and write its
+# record, so this must be an empty string and not a fatal subscript error.
+check 'an empty served set has no running PR' '' "$(running_pr '[]')"
+
+# ── --teams-thread overrides ──────────────────────────────────────────────────
+# Every real Teams thread URL carries `groupId=`/`tenantId=`, so "has an =" can
+# never be what tells a `<pr>=<url>` selector from a bare URL.
+TEAMS='https://teams.microsoft.com/l/message/19%3Aabc%40thread.skype/178?groupId=74ae&tenantId=13c6'
+check 'a bare URL full of = still applies to the running PR' "$TEAMS" \
+  "$(teams_override 9330 9330 "$TEAMS")"
+check 'a bare URL does not apply to a lower PR' '' "$(teams_override 9328 9330 "$TEAMS")"
+check '<pr>=<url> targets that PR' "$TEAMS" "$(teams_override 9328 9330 "9328=$TEAMS")"
+check '<pr>=<url> leaves other PRs alone' '' "$(teams_override 9329 9330 "9328=$TEAMS")"
+check 'the last override for a PR wins' 'b' "$(teams_override 9330 9330 9330=a 9330=b)"
+check 'no override at all is empty' '' "$(teams_override 9330 9330)"
+
+# ── the PR cache dev.mjs writes (the name must be predicted from the same one) ─
+check 'pr cache path matches dev.mjs spelling' \
+  "$HOME/.cache/backend.ai-webui/pr-feat-FR-3810-dev-server-advertise.json" \
+  "$(pr_cache_path feat/FR-3810-dev-server-advertise)"
+
+# ── missing tools ─────────────────────────────────────────────────────────────
+check 'missing_tools names only what is absent' 'definitely-not-a-real-binary' \
+  "$(missing_tools jq definitely-not-a-real-binary)"
+check 'missing_tools is empty when everything is there' '' "$(missing_tools jq bash)"
+
+# ── say() must not pollute stdout: boot-env's stdout is eval-ed ────────────────
+check 'say writes nothing to stdout' '' "$(say 'a refusal' 2>/dev/null)"
+check 'say writes to stderr' '-- dev-server advertise: a refusal' \
+  "$(say 'a refusal' 2>&1 1>/dev/null)"
+
+# ── the marker never becomes part of a jq program ─────────────────────────────
+# The box name comes from a config file; a `"` in it used to rewrite the filter.
+BAD_BOX='x") | .[0] | ("'
+BAI_MARKER=$(marker "$BAD_BOX")
+export BAI_MARKER
+check 'a quote in the box name cannot rewrite the comment-search filter' '77' \
+  "$(jq -r 'map(select(.body | contains(env.BAI_MARKER))) | .[0].id // empty' <<<"$(jq -n --arg m "$BAI_MARKER" '[{id: 77, body: ("head\n" + $m)}]')")"
+check 'and a comment without the marker is not matched' '' \
+  "$(jq -r 'map(select(.body | contains(env.BAI_MARKER))) | .[0].id // empty' <<<'[{"id":77,"body":"unrelated"}]')"
+unset BAI_MARKER
+
 # ── Jira key from a PR body ───────────────────────────────────────────────────
 check 'jira_key from Resolves line' 'FR-3810' \
   "$(jira_key 'Resolves #9329 (FR-3810)
