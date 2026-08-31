@@ -154,6 +154,24 @@ describe('readApiEndpointFromToml', () => {
   });
 });
 
+/** A checkout root carrying a config.toml — what a developer machine has. */
+function fakeCheckoutWithToml(apiEndpoint: string): string {
+  const root = mkdtempSync(join(tmpdir(), 'bai-agent-toml-'));
+  writeFileSync(
+    join(root, 'package.json'),
+    JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-test' }),
+  );
+  mkdirSync(join(root, 'data'), { recursive: true });
+  writeFileSync(join(root, 'data/schema.graphql'), '');
+  mkdirSync(join(root, 'resources/i18n'), { recursive: true });
+  mkdirSync(join(root, 'packages/backend.ai-webui-docs'), { recursive: true });
+  writeFileSync(
+    join(root, 'config.toml'),
+    `[general]\napiEndpoint = "${apiEndpoint}"\n`,
+  );
+  return root;
+}
+
 describe('resolveEndpoint', () => {
   it('prefers the flag', () => {
     saveSession(sample(), env);
@@ -180,40 +198,29 @@ describe('resolveEndpoint', () => {
     expect(() => resolveEndpoint({ cwd: '', env })).toThrow(/--endpoint/);
   });
 
-  it('prefers the recorded config.json endpoint over a stored session', () => {
-    saveSession(sample(), env);
-    updateConfig({ endpoint: 'https://config.example.com/' }, env);
-    expect(resolveEndpoint({ cwd: '', env })).toEqual({
-      endpoint: 'https://config.example.com',
-      source: 'config',
-    });
-  });
-
-  it("prefers the checkout's config.toml over everything but the flag", () => {
-    const root = mkdtempSync(join(tmpdir(), 'bai-agent-toml-'));
-    writeFileSync(
-      join(root, 'package.json'),
-      JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-test' }),
-    );
-    mkdirSync(join(root, 'data'), { recursive: true });
-    writeFileSync(join(root, 'data/schema.graphql'), '');
-    mkdirSync(join(root, 'resources/i18n'), { recursive: true });
-    mkdirSync(join(root, 'packages/backend.ai-webui-docs'), {
-      recursive: true,
-    });
-    writeFileSync(
-      join(root, 'config.toml'),
-      '[general]\napiEndpoint = "https://toml.example.com"\n',
-    );
-    saveSession(sample(), env);
+  it('uses the stored session before the checkout config.toml and config.json', () => {
+    const root = fakeCheckoutWithToml('https://toml.example.com');
     updateConfig({ endpoint: 'https://config.example.com' }, env);
     expect(resolveEndpoint({ cwd: root, env })).toEqual({
       endpoint: 'https://toml.example.com',
       source: 'config.toml',
     });
+    saveSession(sample(), env);
+    expect(resolveEndpoint({ cwd: root, env })).toEqual({
+      endpoint: ENDPOINT,
+      source: 'session',
+    });
     expect(
       resolveEndpoint({ flag: 'http://flag:1', cwd: root, env }).source,
     ).toBe('flag');
+  });
+
+  it('falls back to the recorded config.json endpoint outside a checkout', () => {
+    updateConfig({ endpoint: 'https://config.example.com/' }, env);
+    expect(resolveEndpoint({ cwd: '', env })).toEqual({
+      endpoint: 'https://config.example.com',
+      source: 'config',
+    });
   });
 
   it('fails with a login hint when nothing resolves', () => {

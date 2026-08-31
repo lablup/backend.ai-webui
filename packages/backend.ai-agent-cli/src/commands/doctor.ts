@@ -593,10 +593,13 @@ const alignmentGroup: CheckGroup = {
     // `/func/` is public, so the endpoint alone is enough to compare even
     // before anyone has logged in — the same endpoint `resolveEndpoint`
     // gives every other command, never a second precedence.
+    // A session-less probe only for an endpoint `init` recorded on purpose:
+    // a checkout's config.toml alone must not make `doctor` touch the network.
     let recorded: string | undefined;
     if (!session) {
       try {
-        recorded = resolveEndpoint({ cwd }).endpoint;
+        const resolved = resolveEndpoint({ cwd });
+        recorded = resolved.source === 'config' ? resolved.endpoint : undefined;
       } catch {
         recorded = undefined;
       }

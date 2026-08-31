@@ -188,10 +188,10 @@ export interface ResolvedEndpoint {
 }
 
 /**
- * `--endpoint` wins; otherwise the checkout's own `config.toml` (a per-place
- * setting beats machine-wide state); otherwise the endpoint `config.json`
- * recorded (`init`); otherwise the single stored session. Ambiguity is an
- * error, never a guess.
+ * `--endpoint` wins; otherwise the single stored session — the one you can
+ * actually query; otherwise the checkout's own `config.toml`; otherwise the
+ * endpoint `config.json` recorded (`init`). Ambiguity is an error, never a
+ * guess.
  */
 export function resolveEndpoint(options: {
   flag?: string;
@@ -201,21 +201,6 @@ export function resolveEndpoint(options: {
   const env = options.env ?? process.env;
   if (options.flag) {
     return { endpoint: normalizeEndpoint(options.flag), source: 'flag' };
-  }
-
-  const fromCheckout = options.cwd
-    ? checkoutApiEndpoint(options.cwd)
-    : undefined;
-  if (fromCheckout) {
-    return {
-      endpoint: normalizeEndpoint(fromCheckout),
-      source: 'config.toml',
-    };
-  }
-
-  const fromConfig = readConfig(env).endpoint;
-  if (fromConfig) {
-    return { endpoint: normalizeEndpoint(fromConfig), source: 'config' };
   }
 
   const stored = listSessions(env);
@@ -236,9 +221,24 @@ export function resolveEndpoint(options: {
     );
   }
 
+  const fromCheckout = options.cwd
+    ? checkoutApiEndpoint(options.cwd)
+    : undefined;
+  if (fromCheckout) {
+    return {
+      endpoint: normalizeEndpoint(fromCheckout),
+      source: 'config.toml',
+    };
+  }
+
+  const fromConfig = readConfig(env).endpoint;
+  if (fromConfig) {
+    return { endpoint: normalizeEndpoint(fromConfig), source: 'config' };
+  }
+
   throw new CliError(
     'usage',
-    'No endpoint: none given with --endpoint, no apiEndpoint in the checkout config.toml, none in config.json, and none stored.',
+    'No endpoint: none given with --endpoint, none stored, no apiEndpoint in the checkout config.toml, and none in config.json.',
     { hint: `${CLI_NAME} login --endpoint https://manager.example.com` },
   );
 }

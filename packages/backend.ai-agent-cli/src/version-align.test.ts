@@ -1,5 +1,7 @@
+import { updateConfig } from './config.js';
 import { EXIT } from './errors.js';
 import { clearManagerVersionCache } from './manager.js';
+import { resolveRepoContext } from './repo-context.js';
 import { runCli } from './run.js';
 import type { SchemaIndex } from './search/schema-sdl.js';
 import { saveSession } from './session.js';
@@ -8,12 +10,33 @@ import {
   checkVersionAlignment,
 } from './version-align.js';
 import { compareVersions } from './version-order.js';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const repoCwd = import.meta.dirname;
+
+/**
+ * The real checkout's data behind a root that also carries a config.toml —
+ * what a developer machine looks like, and what CI never has.
+ */
+function checkoutWithToml(apiEndpoint: string): string {
+  const real = resolveRepoContext(repoCwd).repoRoot;
+  const root = mkdtempSync(join(tmpdir(), 'bai-agent-toml-checkout-'));
+  writeFileSync(
+    join(root, 'package.json'),
+    JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-toml' }),
+  );
+  for (const dir of ['data', 'resources', 'packages', 'react']) {
+    symlinkSync(join(real, dir), join(root, dir), 'dir');
+  }
+  writeFileSync(
+    join(root, 'config.toml'),
+    `[general]\napiEndpoint = "${apiEndpoint}"\n`,
+  );
+  return root;
+}
 const ENDPOINT = 'http://manager.test.invalid:8090';
 const SESSION_ID = 'abcdefghijklmnopqrstuvwxyz012345';
 
@@ -362,6 +385,29 @@ describe('schema show against a mocked manager', () => {
     await invoke(['search', 'storage folder', '--json']);
 
     expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('keeps doctor offline when only a checkout config.toml names an endpoint', async () => {
+    const spy = vi.fn(async () => new Response('{}', { status: 200 }));
+    vi.stubGlobal('fetch', spy);
+    const root = checkoutWithToml('http://toml.test.invalid:8090');
+
+    const { stdout } = await invoke(['doctor', '--json'], root);
+    expect(spy).not.toHaveBeenCalled();
+    const { data } = JSON.parse(stdout);
+    const probe = data.checks.find(
+      (check: { group: string; check: string }) =>
+        check.group === 'alignment' && check.check === 'manager version',
+    );
+    expect(probe.status).toBe('warn');
+    expect(probe.detail).toContain('no endpoint recorded');
+
+    // An endpoint `init` recorded is a deliberate choice: then doctor probes.
+    updateConfig({ endpoint: 'http://recorded.test.invalid:8090' });
+    await invoke(['doctor', '--json'], root);
+    expect(spy).not.toHaveBeenCalled(); // config.toml still outranks config.json
+    await invoke(['doctor', '--json']);
+    expect(spy).toHaveBeenCalled(); // outside a config.toml checkout it does
   });
 });
 
