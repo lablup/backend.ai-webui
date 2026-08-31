@@ -18,9 +18,10 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import { Selector } from '@astryxdesign/core/Selector';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -489,16 +490,34 @@ const ContainerRegistryEditorModal: React.FC<
             !(form as FormInstance<RegistryFormInput>).getFieldValue(
               'is_global',
             ) && (
-              <BAIFormItem
-                name="allowed_group_ids"
-                label={t('registry.AllowedProjects')}
+              // Suspense must sit INSIDE the form: if the project select
+              // suspends above it, the hide/show cycle unregisters every
+              // preserve={false} field and resets it to initial (FR-3705).
+              <Suspense
+                fallback={
+                  <BAIFormItem label={t('registry.AllowedProjects')}>
+                    {/* Suspense placeholder only — an inert, loading Selector. */}
+                    <Selector
+                      label={t('registry.AllowedProjects')}
+                      isLabelHidden
+                      isLoading
+                      options={[]}
+                      width="100%"
+                    />
+                  </BAIFormItem>
+                }
               >
-                <ProjectSelectForAdminPage
-                  domain={baiClient._config.domainName}
-                  mode="multiple"
-                  allowClear
-                />
-              </BAIFormItem>
+                <BAIFormItem
+                  name="allowed_group_ids"
+                  label={t('registry.AllowedProjects')}
+                >
+                  <ProjectSelectForAdminPage
+                    domain={baiClient._config.domainName}
+                    mode="multiple"
+                    allowClear
+                  />
+                </BAIFormItem>
+              </Suspense>
             )
           }
         </BAIFormItem>
