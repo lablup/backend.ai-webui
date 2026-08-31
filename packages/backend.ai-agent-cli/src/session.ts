@@ -1,5 +1,7 @@
+import { readConfig } from './config.js';
 import { CliError } from './errors.js';
 import { CLI_NAME } from './meta.js';
+import { configDir } from './paths.js';
 import { tryResolveRepoContext } from './repo-context.js';
 import {
   chmodSync,
@@ -11,7 +13,6 @@ import {
   statSync,
   writeFileSync,
 } from 'node:fs';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 /** What `login` writes and `whoami` / `logout` read. */
@@ -32,13 +33,7 @@ export const SESSION_FILE_MODE = 0o600;
 
 type Env = Record<string, string | undefined>;
 
-/** `$BAI_AGENT_CONFIG_DIR` wins, then `$XDG_CONFIG_HOME`, then `~/.config`. */
-export function configDir(env: Env = process.env): string {
-  const override = env.BAI_AGENT_CONFIG_DIR?.trim();
-  if (override) return override;
-  const xdg = env.XDG_CONFIG_HOME?.trim();
-  return join(xdg || join(homedir(), '.config'), 'backend.ai-agent');
-}
+export { configDir };
 
 export function sessionsDir(env: Env = process.env): string {
   return join(configDir(env), 'sessions');
@@ -185,7 +180,7 @@ export function checkoutApiEndpoint(cwd: string): string | undefined {
   }
 }
 
-export type EndpointSource = 'flag' | 'session' | 'config.toml';
+export type EndpointSource = 'flag' | 'session' | 'config' | 'config.toml';
 
 export interface ResolvedEndpoint {
   endpoint: string;
@@ -194,7 +189,8 @@ export interface ResolvedEndpoint {
 
 /**
  * `--endpoint` wins; otherwise the single stored session, otherwise the
- * checkout's `config.toml`. Ambiguity is an error, never a guess.
+ * endpoint `config.json` recorded, otherwise the checkout's `config.toml`.
+ * Ambiguity is an error, never a guess.
  */
 export function resolveEndpoint(options: {
   flag?: string;
@@ -224,6 +220,11 @@ export function resolveEndpoint(options: {
     );
   }
 
+  const fromConfig = readConfig(env).endpoint;
+  if (fromConfig) {
+    return { endpoint: normalizeEndpoint(fromConfig), source: 'config' };
+  }
+
   const fromCheckout = options.cwd
     ? checkoutApiEndpoint(options.cwd)
     : undefined;
@@ -236,7 +237,7 @@ export function resolveEndpoint(options: {
 
   throw new CliError(
     'usage',
-    'No endpoint: none given with --endpoint, none stored, and no apiEndpoint in the checkout config.toml.',
+    'No endpoint: none given with --endpoint, none stored, none in config.json, and no apiEndpoint in the checkout config.toml.',
     { hint: `${CLI_NAME} login --endpoint https://manager.example.com` },
   );
 }

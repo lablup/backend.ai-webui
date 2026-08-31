@@ -1,6 +1,13 @@
 import { CliError } from './errors.js';
+import { CLI_NAME } from './meta.js';
+import { syncedCheckoutDir } from './paths.js';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, parse } from 'node:path';
+
+type Env = Record<string, string | undefined>;
+
+/** Points a run at a checkout that is neither `cwd`'s nor the synced one. */
+export const CHECKOUT_ENV = 'BAI_AGENT_CHECKOUT';
 
 /** The `name` of the WebUI checkout's root package.json. */
 export const REPO_PACKAGE_NAME = 'backend.ai-webui';
@@ -27,9 +34,16 @@ export function sourceStatus(
   return matches ? 'ok' : 'wrong_kind';
 }
 
+/**
+ * How the checkout was found: walking up from `cwd`, from `$BAI_AGENT_CHECKOUT`,
+ * or the data checkout `sync` maintains.
+ */
+export type ContextSource = 'cwd' | 'env' | 'synced';
+
 export interface RepoContext {
   repoRoot: string;
   repoVersion: string;
+  source: ContextSource;
   schemaPath: string;
   i18nDir: string;
   docsDir: string;
@@ -67,22 +81,68 @@ export function findRepoRoot(
   }
 }
 
+export interface LocatedRepo {
+  root: string;
+  version: string;
+  source: ContextSource;
+}
+
+/** `dir` itself is a checkout root (no walking up). */
+function checkoutAt(dir: string): { root: string; version: string } | null {
+  const pkg = readRootPackage(dir);
+  return pkg?.name === REPO_PACKAGE_NAME
+    ? { root: dir, version: pkg.version ?? 'unknown' }
+    : null;
+}
+
 /**
- * Locate the WebUI checkout containing `cwd`. Throws a `CliError` naming what
- * was not found, so every command shares one repo-mode failure message.
+ * The checkout a run reads: `cwd`'s own first, then `$BAI_AGENT_CHECKOUT`,
+ * then the synced data checkout. An env value that is not a checkout is an
+ * error rather than a silent fall-through — it was set on purpose.
  */
-export function resolveRepoContext(cwd: string): RepoContext {
-  const found = findRepoRoot(cwd);
+export function locateRepo(
+  cwd: string,
+  env: Env = process.env,
+): LocatedRepo | null {
+  const fromCwd = findRepoRoot(cwd);
+  if (fromCwd) return { ...fromCwd, source: 'cwd' };
+
+  const override = env[CHECKOUT_ENV]?.trim();
+  if (override) {
+    const found = checkoutAt(override);
+    if (!found) {
+      throw new CliError(
+        'repo_not_found',
+        `${CHECKOUT_ENV}=${override} is not a ${REPO_PACKAGE_NAME} checkout: no package.json named "${REPO_PACKAGE_NAME}" there.`,
+        { hint: `unset ${CHECKOUT_ENV}, or point it at a checkout root` },
+      );
+    }
+    return { ...found, source: 'env' };
+  }
+
+  const synced = checkoutAt(syncedCheckoutDir(env));
+  return synced ? { ...synced, source: 'synced' } : null;
+}
+
+/**
+ * Locate the WebUI checkout for `cwd` (see `locateRepo`). Throws a `CliError`
+ * naming what was not found, so every command shares one failure message.
+ */
+export function resolveRepoContext(
+  cwd: string,
+  env: Env = process.env,
+): RepoContext {
+  const found = locateRepo(cwd, env);
   if (!found) {
     throw new CliError(
       'repo_not_found',
-      `Not inside a ${REPO_PACKAGE_NAME} checkout: no ancestor of ${cwd} has a package.json named "${REPO_PACKAGE_NAME}".`,
+      `No ${REPO_PACKAGE_NAME} checkout: no ancestor of ${cwd} has a package.json named "${REPO_PACKAGE_NAME}", and nothing is synced at ${syncedCheckoutDir(env)}.`,
       {
         suggestions: [
           `a package.json with "name": "${REPO_PACKAGE_NAME}"`,
           ...REQUIRED_SOURCES.map((source) => source.path),
         ],
-        hint: 'cd <backend.ai-webui checkout> && bai-agent doctor',
+        hint: `${CLI_NAME} sync`,
       },
     );
   }
@@ -100,7 +160,10 @@ export function resolveRepoContext(cwd: string): RepoContext {
         suggestions: missing.map(
           (source) => `${source.path} (${source.kind}) not found`,
         ),
-        hint: 'bai-agent doctor',
+        hint:
+          found.source === 'synced'
+            ? `${CLI_NAME} sync --force`
+            : `${CLI_NAME} doctor`,
       },
     );
   }
@@ -108,6 +171,7 @@ export function resolveRepoContext(cwd: string): RepoContext {
   return {
     repoRoot: found.root,
     repoVersion: found.version,
+    source: found.source,
     schemaPath: join(found.root, 'data/schema.graphql'),
     i18nDir: join(found.root, 'resources/i18n'),
     docsDir: join(found.root, 'packages/backend.ai-webui-docs'),
@@ -116,9 +180,10 @@ export function resolveRepoContext(cwd: string): RepoContext {
 
 export function tryResolveRepoContext(
   cwd: string,
+  env: Env = process.env,
 ): { ok: true; context: RepoContext } | { ok: false; error: CliError } {
   try {
-    return { ok: true, context: resolveRepoContext(cwd) };
+    return { ok: true, context: resolveRepoContext(cwd, env) };
   } catch (error) {
     if (error instanceof CliError) return { ok: false, error };
     throw error;

@@ -89,6 +89,9 @@ export function i18nStore(
 
 function tsxFiles(root: string): string[] {
   const found: string[] = [];
+  // A synced data checkout may carry no react/src at all; that is an empty
+  // index (doctor warns), not a crash.
+  if (!existsSync(root)) return found;
   const walk = (dir: string): void => {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       if (entry.isDirectory()) {

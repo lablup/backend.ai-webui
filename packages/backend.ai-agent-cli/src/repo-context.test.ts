@@ -1,11 +1,32 @@
 import { CliError } from './errors.js';
-import { REPO_PACKAGE_NAME, resolveRepoContext } from './repo-context.js';
+import { syncedCheckoutDir } from './paths.js';
+import {
+  CHECKOUT_ENV,
+  REPO_PACKAGE_NAME,
+  locateRepo,
+  resolveRepoContext,
+} from './repo-context.js';
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const tempDir = (): string => mkdtempSync(join(tmpdir(), 'bai-agent-'));
+
+/** An env with nothing synced and no override, whatever this machine holds. */
+const bareEnv = () => ({ BAI_AGENT_DATA_DIR: tempDir() });
+
+function fakeCheckout(root = tempDir(), version = '0.0.0-test'): string {
+  writeFileSync(
+    join(root, 'package.json'),
+    JSON.stringify({ name: REPO_PACKAGE_NAME, version }),
+  );
+  mkdirSync(join(root, 'data'), { recursive: true });
+  writeFileSync(join(root, 'data/schema.graphql'), '');
+  mkdirSync(join(root, 'resources/i18n'), { recursive: true });
+  mkdirSync(join(root, 'packages/backend.ai-webui-docs'), { recursive: true });
+  return root;
+}
 
 describe('resolveRepoContext', () => {
   it('finds the checkout by walking up from a nested directory', () => {
@@ -19,11 +40,12 @@ describe('resolveRepoContext', () => {
       join(context.repoRoot, 'packages/backend.ai-webui-docs'),
     );
     expect(context.repoVersion).not.toBe('unknown');
+    expect(context.source).toBe('cwd');
   });
 
   it('throws repo_not_found outside a checkout, naming what it looked for', () => {
     try {
-      resolveRepoContext(tempDir());
+      resolveRepoContext(tempDir(), bareEnv());
       expect.unreachable('should have thrown');
     } catch (error) {
       expect(error).toBeInstanceOf(CliError);
@@ -38,8 +60,44 @@ describe('resolveRepoContext', () => {
           'packages/backend.ai-webui-docs',
         ]),
       );
-      expect(cliError.hint).toContain('bai-agent doctor');
+      expect(cliError.hint).toBe('bai-agent sync');
     }
+  });
+
+  it('falls back to $BAI_AGENT_CHECKOUT, then to the synced checkout', () => {
+    const env = bareEnv();
+    const outside = tempDir();
+    expect(locateRepo(outside, env)).toBeNull();
+
+    const synced = fakeCheckout(
+      (mkdirSync(syncedCheckoutDir(env), { recursive: true }),
+      syncedCheckoutDir(env)),
+      '0.0.0-synced',
+    );
+    expect(locateRepo(outside, env)).toEqual({
+      root: synced,
+      version: '0.0.0-synced',
+      source: 'synced',
+    });
+    expect(resolveRepoContext(outside, env).source).toBe('synced');
+
+    const override = fakeCheckout(tempDir(), '0.0.0-env');
+    const withEnv = { ...env, [CHECKOUT_ENV]: override };
+    expect(locateRepo(outside, withEnv)).toEqual({
+      root: override,
+      version: '0.0.0-env',
+      source: 'env',
+    });
+
+    // cwd's own checkout still wins over both.
+    const own = fakeCheckout(tempDir(), '0.0.0-cwd');
+    expect(locateRepo(join(own, 'data'), withEnv)?.source).toBe('cwd');
+  });
+
+  it('refuses a $BAI_AGENT_CHECKOUT that is not a checkout', () => {
+    const env = { ...bareEnv(), [CHECKOUT_ENV]: tempDir() };
+    expect(() => locateRepo(tempDir(), env)).toThrow(CliError);
+    expect(() => locateRepo(tempDir(), env)).toThrow(CHECKOUT_ENV);
   });
 
   it('throws repo_incomplete when data sources are missing', () => {

@@ -1,3 +1,4 @@
+import { updateConfig } from './config.js';
 import { CliError } from './errors.js';
 import {
   configDir,
@@ -171,6 +172,17 @@ describe('resolveEndpoint', () => {
     saveSession(sample('http://other.example.com'), env);
 
     expect(() => resolveEndpoint({ cwd: '', env })).toThrow(/--endpoint/);
+  });
+
+  it('uses the endpoint config.json recorded before the checkout config.toml', () => {
+    updateConfig({ endpoint: 'https://config.example.com/' }, env);
+    expect(resolveEndpoint({ cwd: '', env })).toEqual({
+      endpoint: 'https://config.example.com',
+      source: 'config',
+    });
+    // A stored session still wins over the recorded endpoint.
+    saveSession(sample(), env);
+    expect(resolveEndpoint({ cwd: '', env }).source).toBe('session');
   });
 
   it('fails with a login hint when nothing resolves', () => {

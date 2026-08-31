@@ -9,6 +9,7 @@ import { manifestCommand } from './commands/manifest.js';
 import { queryCommand } from './commands/query.js';
 import { schemaCommand } from './commands/schema.js';
 import { searchCommand } from './commands/search.js';
+import { syncCommand } from './commands/sync.js';
 import { versionCommand } from './commands/version.js';
 import { whoamiCommand } from './commands/whoami.js';
 
@@ -18,6 +19,7 @@ export const COMMANDS: AnyCommand[] = [
   manifestCommand,
   initCommand,
   doctorCommand,
+  syncCommand,
   searchCommand,
   docsCommand,
   schemaCommand,

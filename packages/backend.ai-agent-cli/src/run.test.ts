@@ -4,10 +4,17 @@ import { runCli } from './run.js';
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 const repoCwd = import.meta.dirname;
 const outsideCwd = (): string => mkdtempSync(join(tmpdir(), 'bai-agent-out-'));
+
+// "Outside a checkout" must also mean "nothing synced on this machine".
+beforeAll(() => {
+  process.env.BAI_AGENT_DATA_DIR = mkdtempSync(
+    join(tmpdir(), 'bai-agent-nodata-'),
+  );
+});
 
 async function invoke(argv: string[], cwd = repoCwd) {
   let stdout = '';
@@ -88,6 +95,7 @@ describe('success envelope', () => {
       'manifest',
       'init',
       'doctor',
+      'sync',
       'search',
       'docs',
       'schema',
@@ -120,7 +128,7 @@ describe('failures', () => {
     expect(parsed.apiVersion).toBe(API_VERSION);
     expect(parsed.code).toBe('repo_not_found');
     expect(parsed.suggestions).toContain('data/schema.graphql');
-    expect(parsed.hint).toContain('bai-agent doctor');
+    expect(parsed.hint).toBe('bai-agent sync');
   });
 
   it('reports checkout failures through doctor without throwing', async () => {

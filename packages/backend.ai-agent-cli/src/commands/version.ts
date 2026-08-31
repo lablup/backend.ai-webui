@@ -2,6 +2,7 @@ import { defineCommand } from '../command.js';
 import { CLI_NAME, cliVersion } from '../meta.js';
 import type { Block } from '../output.js';
 import { record, renderBlocks, section } from '../output.js';
+import type { ContextSource } from '../repo-context.js';
 import { resolveRepoContext } from '../repo-context.js';
 import { readSchemaMeta } from '../schema-meta.js';
 
@@ -19,6 +20,8 @@ export interface VersionData {
   repo: {
     root: string;
     version: string;
+    /** How the checkout was found: `cwd`, `env` or `synced`. */
+    source: ContextSource;
     schemaPath: string;
     i18nDir: string;
     docsDir: string;
@@ -41,6 +44,7 @@ export const versionCommand = defineCommand<VersionData>({
       repo: {
         root: context.repoRoot,
         version: context.repoVersion,
+        source: context.source,
         schemaPath: context.schemaPath,
         i18nDir: context.i18nDir,
         docsDir: context.docsDir,
@@ -66,6 +70,7 @@ export const versionCommand = defineCommand<VersionData>({
           ['cli', `${data.cli.name} ${data.cli.version}`],
           ['repoRoot', data.repo.root],
           ['repoVersion', data.repo.version],
+          ['repoSource', data.repo.source],
           ['schemaTag', data.schemaMeta?.tag],
         ]),
       ]);
@@ -78,6 +83,7 @@ export const versionCommand = defineCommand<VersionData>({
         ['node', data.cli.node],
         ['repoRoot', data.repo.root],
         ['repoVersion', data.repo.version],
+        ['repoSource', data.repo.source],
         ['schemaTag', data.schemaMeta?.tag],
       ]),
     ];
