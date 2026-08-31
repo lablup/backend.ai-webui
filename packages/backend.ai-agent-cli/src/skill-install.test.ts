@@ -13,7 +13,10 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 describe('skill install', () => {
-  it('finds the skill source from the checkout when nothing is shipped yet', () => {
+  it("resolves the package's own skill/ directory", () => {
+    expect(shippedSkillDir()).toMatch(
+      /[\\/]backend\.ai-agent-cli[\\/]skill$/,
+    );
     expect(existsSync(join(shippedSkillDir(), 'SKILL.md'))).toBe(true);
   });
 
@@ -63,14 +66,6 @@ describe('skill install', () => {
     expect(pruned.removed).toEqual(['references/obsolete.md']);
     expect(existsSync(join(targetDir, 'references', 'obsolete.md'))).toBe(
       false,
-    );
-  });
-
-  it('prefers the checkout source over a build copy nearer to the module', () => {
-    // From src/ the package-level skill/ is the nearer candidate; the repo's
-    // .claude/skills/bai-agent must still win.
-    expect(shippedSkillDir()).toMatch(
-      /[\\/]\.claude[\\/]skills[\\/]bai-agent$/,
     );
   });
 });

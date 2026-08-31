@@ -1,7 +1,7 @@
 {
   "name": "backend.ai-agent-cli",
   "version": "0.1.0",
-  "description": "bai-agent \u2014 agent-facing CLI over a Backend.AI WebUI checkout",
+  "description": "bai-agent — agent-facing CLI over a Backend.AI WebUI checkout",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lablup/backend.ai-webui.git",
@@ -45,8 +45,8 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "node scripts/copy-skill.mjs && tsup --watch",
-    "build": "node scripts/copy-skill.mjs && tsup",
+    "dev": "tsup --watch",
+    "build": "tsup",
     "test": "vitest run",
     "vitest": "vitest run",
     "vitest:watch": "vitest",

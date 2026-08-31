@@ -16,7 +16,6 @@ on:
       - react/src/**/*.tsx
       - CLAUDE.md
       - AGENTS.md
-      - .claude/skills/bai-agent/**
       - pnpm-lock.yaml
       - pnpm-workspace.yaml
       - .github/workflows/vitest-agent-cli.yml
@@ -33,7 +32,6 @@ on:
       - react/src/**/*.tsx
       - CLAUDE.md
       - AGENTS.md
-      - .claude/skills/bai-agent/**
       - pnpm-lock.yaml
       - pnpm-workspace.yaml
       - .github/workflows/vitest-agent-cli.yml

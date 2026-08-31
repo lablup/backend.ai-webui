@@ -79,7 +79,7 @@ export function renderAgentBlock(
           'Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.',
           `CLI: run every command as \`${PROXY} <cmd>\` from the repository root (shown below as \`${CLI_NAME} ...\`).`,
           `The proxy runs the bundle, so build it first: \`${BUILD}\`. Without the proxy, still from the repository root: \`${DIST} <cmd>\`.`,
-          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill (\`.claude/skills/${CLI_NAME}/SKILL.md\`).`,
+          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill, shipped with the CLI (\`packages/backend.ai-agent-cli/skill/SKILL.md\`) and installed per user by \`${PROXY} init --skill --no-login\`.`,
         ]),
     '',
     "WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:",

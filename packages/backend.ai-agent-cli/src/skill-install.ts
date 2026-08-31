@@ -18,35 +18,23 @@ import { fileURLToPath } from 'node:url';
 type Env = Record<string, string | undefined>;
 
 export const SKILL_NAME = CLI_NAME;
-/** The copy of `.claude/skills/bai-agent` the package ships (see scripts/copy-skill.mjs). */
+/** The skill's home: `packages/backend.ai-agent-cli/skill`, shipped as-is in the tarball. */
 export const SHIPPED_SKILL_DIR = 'skill';
 /** The standalone agent block, written next to the cookbook on install. */
 export const AGENT_BLOCK_FILE = 'references/agent-block.md';
 
 /**
- * The skill source: the package's shipped copy, or — when running from a
- * checkout's `src/` or `dist/` before a build copied it — the repo's own
- * `.claude/skills/bai-agent`. Walks up from this module like the mappings do.
+ * The package's own `skill/` directory. Walking up from this module works
+ * from `src/` and from the bundled `dist/` alike, as the mappings loader does.
  */
 export function shippedSkillDir(): string {
-  const start = dirname(fileURLToPath(import.meta.url));
-  const ancestors: string[] = [];
-  for (let dir = start, depth = 0; depth < 6; depth += 1) {
-    ancestors.push(dir);
+  let dir = dirname(fileURLToPath(import.meta.url));
+  for (let depth = 0; depth < 6; depth += 1) {
+    const candidate = join(dir, SHIPPED_SKILL_DIR);
+    if (existsSync(join(candidate, 'SKILL.md'))) return candidate;
     const parent = dirname(dir);
     if (parent === dir) break;
     dir = parent;
-  }
-  // The checkout's source wins over a `skill/` build copy at ANY level: from
-  // src/ or dist/ the package's stale copy is reached before the repo root.
-  for (const name of [
-    join('.claude', 'skills', SKILL_NAME),
-    SHIPPED_SKILL_DIR,
-  ]) {
-    for (const dir of ancestors) {
-      const candidate = join(dir, name);
-      if (existsSync(join(candidate, 'SKILL.md'))) return candidate;
-    }
   }
   throw new CliError(
     'internal',

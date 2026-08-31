@@ -871,10 +871,11 @@ output, so a CLI change that is not re-synced fails the suite:
 pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init --features agents --write
 ```
 
-The repo-local `bai-agent` skill (`.claude/skills/bai-agent/`) — copied into
-the package as `skill/` at build time (`scripts/copy-skill.mjs`), so the npm
-tarball ships it and `init` can install it — carries what the block
-deliberately does not: the preflight and login procedure, when to answer
+The `bai-agent` skill lives in this package (`skill/`), ships in the npm
+tarball as-is, and is installed per user by `init` — it is deliberately not
+a repository-level `.claude/skills` entry, so a checkout gets it the same way
+any other machine does (`pnpm run bai-agent init --skill --no-login`). It
+carries what the block deliberately does not: the preflight and login procedure, when to answer
 directly versus point the user at the WebUI, the neighbouring skills'
 boundaries, and `references/query-cookbook.md` — ready-to-run documents that
 `src/init/skill.test.ts` re-validates against the SDL.

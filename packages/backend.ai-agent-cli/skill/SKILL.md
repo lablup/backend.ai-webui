@@ -106,8 +106,9 @@ destructive one. A test re-validates them, so a stale one fails CI, not a user.
 
 Re-run `pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init
 --features agents --write` after any change to the CLI, and re-sync the
-`BAI-AGENT` block in `CLAUDE.md`. The npm package ships this directory as its
-`skill/` (copied at build), so an installed copy updates on the next
-`bai-agent init`. Rules are linked from here, never copied: if you find
+`BAI-AGENT` block in `CLAUDE.md`. This directory ships in the npm package
+as-is, so an installed copy updates on the next `bai-agent init`; it is not
+a repository-level skill — install it with `bai-agent init --skill`. Rules
+are linked from here, never copied: if you find
 yourself restating what `manifest --json`, the block or `--help` already
 says, delete it instead.
