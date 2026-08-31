@@ -223,11 +223,13 @@ It must cover **every** backend service the app talks to, which is more than jus
 - **App-proxy / per-RG wsproxy** — `config.toml [wsproxy] proxyURL` plus manager-issued
   dynamic `wsproxy_addr` hosts (`react/src/hooks/useBackendAIAppLauncher.tsx:251`).
 
-**ws(s) variants are mandatory** — `RelayEnvironment.ts:119` graphql-sse subscriptions,
-`helper/index.tsx:900` `fetchEventSource`, and
-`packages/backend.ai-client/src/resources/maintenance.ts:23` `EventSource`
-use the ws(s) scheme, and `matchesCspSource` compares protocol exactly (an `https://` source
-does NOT cover `wss://`).
+**ws(s) variants are mandatory for the WebSocket consumers** — the app-proxy /
+wsproxy streams above (`useBackendAIAppLauncher.tsx:251`) connect over `wss://`, and
+`matchesCspSource` compares protocol exactly (an `https://` source does NOT cover
+`wss://`). The SSE-style consumers — `RelayEnvironment.ts:119` graphql-sse
+subscriptions, `helper/index.tsx:900` `fetchEventSource`, and
+`packages/backend.ai-client/src/resources/maintenance.ts:23` `EventSource` — connect
+over plain `http(s)`, so the `https://` sources already cover them.
 
 Because storage-proxy ports and per-RG wsproxy hosts are runtime-issued, enumerating each is
 impractical — use the **deployment-scoped wildcard** from Rule 4: `scheme://HOST:*` for a
