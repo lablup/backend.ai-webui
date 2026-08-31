@@ -632,6 +632,92 @@ Rules:
 - Clearly mark admin-only features: "For superadmins..." or "Logging in with an admin account will reveal..."
 - Use separate screenshots for admin views when they differ significantly
 
+### What NOT to Document
+
+These exclusion rules are distilled from human review of the automated
+documentation PRs (2026-08, #8601–#9293) and the Teams docs-autoupdate
+thread. Several PRs were closed without merge (#8993, #9032) or had their
+prose changes fully reverted (#9117) because they only *narrated the UI*.
+The manual tells users **what they can do and how to do it** — it does not
+describe how the interface is rendered.
+
+Apply this litmus test to every sentence before adding it:
+
+> **If this sentence disappeared, would a user fail to accomplish a task?**
+> If not, leave it out.
+
+#### 1. No widget-rendering or layout details
+
+How a control is *drawn* — full-screen vs. inline modal, centered layout,
+dividers, whether a section "expands", where a button sits on the screen —
+is not documentation content. Name the control and say what it does.
+
+```markdown
+<!-- ❌ Removed in review (#9118) -->
+이 모달도 전체 화면으로 열리며, 세부단계는 [스케줄링 기록](#scheduling-history-substeps)에서
+설명한 것과 동일한 인라인 표로 확장됩니다.
+
+<!-- ❌ Positional detail removed in review (#9292) -->
+**배포** 카드 헤더 오른쪽 위의 **배포 생성** 버튼을 클릭합니다.
+
+<!-- ✅ The control's name is enough -->
+**배포 생성** 버튼을 클릭합니다.
+```
+
+#### 2. No micro-affordance notes
+
+Small interaction affordances — "(copyable)", hover tooltips, focus
+behavior, whether a value can be selected — do not need to be written down.
+
+```markdown
+<!-- ❌ "(복사 가능)" removed in review (#9118) -->
+- **키**: 값이 전달되는 환경 변수 이름 또는 커맨드라인 인자입니다(복사 가능).
+
+<!-- ✅ -->
+- **키**: 값이 전달되는 환경 변수 이름 또는 커맨드라인 인자입니다.
+```
+
+#### 3. No exhaustive column / filter enumerations, no implementation or performance claims
+
+Do not list every table column or every filterable field, and never
+describe implementation details ("sorting and paging are handled
+server-side") or performance ("the tab stays fast with many policies").
+Generic table mechanics — click a header to sort, use the pagination
+controls — need no explanation anywhere in the manual. (#9293, #9117)
+
+Mention a specific column or filter only when a task depends on it
+(e.g., a newly added column that changes what the user can do).
+
+#### 4. Self-evident controls get a name, not a paragraph
+
+A search box, an obvious filter, a standard list — naming them in passing
+is enough. If a change only adds self-evident UI, the right amount of new
+documentation is often **none** (#8993 and #9032 were closed for this).
+
+#### 5. No rare edge-case or fallback narration
+
+Uncommon fallback behaviors and one-off confirmation nuances add length
+without helping the typical reader (#8601). If an edge case genuinely
+matters (data loss, security), it belongs in a `:::warning` — otherwise
+omit it.
+
+#### 6. Localization follow-through
+
+- In translated pages, use the **translated** menu/page names from
+  `resources/i18n/{lang}.json`, not the English ones (#9118).
+- Avoid machine-translation tone; when a sentence is not strictly
+  necessary, deleting it reads better than polishing it (#8623).
+- Every addition, edit, or removal applies to **all four locales in the
+  same change** — a reviewer should never have to ask "apply this to the
+  other languages too" (#9118, #9120, #9158, #9292).
+
+#### 7. Screenshot content
+
+- Use realistic sample data — a deployment list showing a single `test`
+  entry was rejected in review (#9158).
+- Redact personal identity rows (name / email / role) in captures that
+  show real accounts (#9026), per `SCREENSHOT-GUIDELINES.md`.
+
 ### Completeness Checklist
 
 For each documented feature, ensure:
@@ -642,6 +728,10 @@ For each documented feature, ensure:
 - [ ] Notes for limitations, prerequisites, or special conditions
 - [ ] Cross-references to related sections
 - [ ] Admin-specific aspects documented separately
+
+Completeness means covering the **workflow**, not narrating every widget —
+"all form fields are described" means each field's purpose is stated, not
+its rendering or affordances. See [What NOT to Document](#what-not-to-document).
 
 ## File Organization
 
@@ -698,6 +788,9 @@ Quick reference of all supported syntax:
 | Hard-coded UI labels without checking i18n | Verify against `resources/i18n/{lang}.json` |
 | Using "Note:" or "Warning:" prefixes | Use admonitions or indented blocks |
 | Inconsistent terminology | Follow `TERMINOLOGY.md` |
+| Narrating widget rendering ("opens full-screen", "expands inline") | Name the control and its purpose — see [What NOT to Document](#what-not-to-document) |
+| Enumerating every table column / filter field | Mention only what a task depends on — see [What NOT to Document](#what-not-to-document) |
+| Editing one locale and leaving the other three behind | Apply every change to en/ko/ja/th in the same commit |
 | Using 3-space indented notes for new content | Prefer admonitions (`:::note`, `:::warning`, etc.) |
 | Using `<>` in cross-reference URLs `[Text <anchor>](#...)` | Use `[Text](#anchor-id)` — angle brackets break `marked` link parsing |
 | Missing blank line after `<summary>` | Always leave blank line for markdown processing |
