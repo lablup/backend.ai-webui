@@ -165,7 +165,7 @@ export {
   default as BAISessionNodesV2,
   availableSessionV2SorterValues,
 } from './BAISessionNodesV2';
-export type { SessionV2InList } from './BAISessionNodesV2';
+export type { SessionV2InList, SessionV2Status } from './BAISessionNodesV2';
 export {
   default as BAIUserResourcePolicyV2Table,
   availableUserResourcePolicySorterValues,
