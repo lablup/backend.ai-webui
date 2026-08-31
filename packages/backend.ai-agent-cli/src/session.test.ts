@@ -15,7 +15,13 @@ import {
   sessionPath,
   sessionsDir,
 } from './session.js';
-import { chmodSync, mkdtempSync, statSync } from 'node:fs';
+import {
+  chmodSync,
+  mkdirSync,
+  mkdtempSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -174,15 +180,40 @@ describe('resolveEndpoint', () => {
     expect(() => resolveEndpoint({ cwd: '', env })).toThrow(/--endpoint/);
   });
 
-  it('uses the endpoint config.json recorded before the checkout config.toml', () => {
+  it('prefers the recorded config.json endpoint over a stored session', () => {
+    saveSession(sample(), env);
     updateConfig({ endpoint: 'https://config.example.com/' }, env);
     expect(resolveEndpoint({ cwd: '', env })).toEqual({
       endpoint: 'https://config.example.com',
       source: 'config',
     });
-    // A stored session still wins over the recorded endpoint.
+  });
+
+  it("prefers the checkout's config.toml over everything but the flag", () => {
+    const root = mkdtempSync(join(tmpdir(), 'bai-agent-toml-'));
+    writeFileSync(
+      join(root, 'package.json'),
+      JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-test' }),
+    );
+    mkdirSync(join(root, 'data'), { recursive: true });
+    writeFileSync(join(root, 'data/schema.graphql'), '');
+    mkdirSync(join(root, 'resources/i18n'), { recursive: true });
+    mkdirSync(join(root, 'packages/backend.ai-webui-docs'), {
+      recursive: true,
+    });
+    writeFileSync(
+      join(root, 'config.toml'),
+      '[general]\napiEndpoint = "https://toml.example.com"\n',
+    );
     saveSession(sample(), env);
-    expect(resolveEndpoint({ cwd: '', env }).source).toBe('session');
+    updateConfig({ endpoint: 'https://config.example.com' }, env);
+    expect(resolveEndpoint({ cwd: root, env })).toEqual({
+      endpoint: 'https://toml.example.com',
+      source: 'config.toml',
+    });
+    expect(
+      resolveEndpoint({ flag: 'http://flag:1', cwd: root, env }).source,
+    ).toBe('flag');
   });
 
   it('fails with a login hint when nothing resolves', () => {

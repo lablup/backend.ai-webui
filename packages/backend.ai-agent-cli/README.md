@@ -561,10 +561,10 @@ re-authenticates on its own.
 
 ### Endpoint resolution
 
-`--endpoint` wins; otherwise the single stored session; otherwise the
-`endpoint` recorded in [`config.json`](#configjson); otherwise
-`[general] apiEndpoint` from the detected checkout's `config.toml`. Two or more
-stored sessions is an error, not a guess.
+`--endpoint` wins; otherwise `[general] apiEndpoint` from the checkout's own
+`config.toml` (a per-place setting beats machine-wide state); otherwise the
+`endpoint` recorded in [`config.json`](#configjson); otherwise the single
+stored session. Two or more stored sessions is an error, not a guess.
 
 ## Query
 

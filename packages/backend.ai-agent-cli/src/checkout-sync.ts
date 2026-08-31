@@ -135,9 +135,11 @@ export function syncCheckout(options: SyncOptions = {}): SyncData {
       git(['fetch', '--quiet', '--depth', '1', 'origin', ref], dir);
     }
     git(['sparse-checkout', 'set', '--no-cone', '--', ...SPARSE_PATTERNS], dir);
-    // `reset --hard` also discards a locally `schema sync`ed SDL — the ref's
-    // own snapshot is the contract; re-run `schema sync` afterwards if needed.
+    // The ref's own snapshot is the contract: `reset --hard` discards a
+    // locally `schema sync`ed SDL and `clean` its untracked schema.meta.json,
+    // so the two cannot disagree. Re-run `schema sync` afterwards if needed.
     git(['reset', '--quiet', '--hard', fresh ? 'HEAD' : 'FETCH_HEAD'], dir);
+    git(['clean', '--quiet', '-fd'], dir);
     git(['sparse-checkout', 'reapply'], dir);
   } catch (error) {
     throw new CliError(

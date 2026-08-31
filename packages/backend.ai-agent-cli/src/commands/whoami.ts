@@ -35,7 +35,7 @@ export interface WhoamiData extends WhoAmI {
 export const ENDPOINT_FLAG = {
   flag: '--endpoint <url>',
   description:
-    'Manager URL. Defaults to the only stored session, then the checkout config.toml apiEndpoint.',
+    'Manager URL. Defaults to the checkout config.toml apiEndpoint, then the endpoint init recorded, then the only stored session.',
   type: 'string',
 } as const;
 
