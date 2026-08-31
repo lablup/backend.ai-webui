@@ -8,6 +8,42 @@ This package is the skeleton every later command plugs into: one file per
 command under `src/commands/`, a shared output layer, and a shared repo-context
 locator. Node ≥ 22, ESM, built with tsup.
 
+## Install
+
+Inside a `backend.ai-webui` checkout the CLI runs from the workspace:
+
+```bash
+pnpm --filter backend.ai-agent-cli build   # once; the proxy runs the bundle
+pnpm run bai-agent <cmd>                   # from the repository root
+```
+
+Anywhere else, from npm:
+
+```bash
+npm install -g backend.ai-agent-cli        # or: npx backend.ai-agent-cli <cmd>
+bai-agent --help
+```
+
+The package bundles its dependencies and ships `mappings/` next to `dist/`, so
+the install has no runtime dependency beyond Node ≥ 22.
+
+### Versioning and releases
+
+The CLI is versioned on its own — `0.x` in this `package.json` — not on the
+WebUI release train, and `Makefile versiontag` leaves it alone. One workflow,
+`.github/workflows/publish-backend.ai-agent-cli.yml`, with two triggers:
+
+| Event                                       | Publishes                                       |
+| ------------------------------------------- | ----------------------------------------------- |
+| push to `main` touching this package        | `<version>-canary-<sha>-<date>` under `canary`  |
+| tag `agent-cli-v<version>`                  | `<version>` under `latest` (`-rc.N` → `rc`)     |
+
+The tag must equal the version in `package.json`, and a version already on npm
+is skipped rather than failing the run. To release: bump the version in a PR,
+merge, then `git tag agent-cli-v0.1.0 && git push origin agent-cli-v0.1.0`.
+The WebUI's `v*` tags deliberately do not publish the CLI — they would republish
+the same version on every WebUI release.
+
 ## Repo mode
 
 `bai-agent` reads the checkout live — it copies nothing and takes no workspace
