@@ -1,0 +1,239 @@
+{
+  "entries": [
+    { "path": "", "docPage": "dashboard.html" },
+    { "path": "start", "docPage": "start.html" },
+    { "path": "dashboard", "docPage": "dashboard.html" },
+    { "path": "summary", "docPage": "dashboard.html" },
+    { "path": "session", "docPage": "sessions_all.html" },
+    { "path": "job", "docPage": "sessions_all.html" },
+    { "path": "deployments", "docPage": "deployment.html" },
+    { "path": "serving", "docPage": "deployment.html" },
+    { "path": "service", "docPage": "deployment.html" },
+    {
+      "path": "model-store",
+      "docPage": "deployment.html",
+      "anchor": "deployment-model-store"
+    },
+    { "path": "import", "docPage": "start.html" },
+    { "path": "github", "docPage": "start.html" },
+    { "path": "chat", "docPage": "chat.html" },
+    { "path": "data", "docPage": "vfolder.html" },
+    { "path": "my-environment", "docPage": "my_environments.html" },
+    { "path": "agent-summary", "docPage": "agent_summary.html" },
+    { "path": "statistics", "docPage": "statistics.html" },
+    { "path": "usersettings", "docPage": "user_settings.html" },
+    { "path": "admin-dashboard", "docPage": "dashboard.html" },
+    {
+      "path": "admin-session",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-sessions"
+    },
+    {
+      "path": "admin-deployments",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-deployments"
+    },
+    {
+      "path": "admin-serving",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-deployments"
+    },
+    {
+      "path": "admin-data",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-data"
+    },
+    {
+      "path": "credential",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-users"
+    },
+    {
+      "path": "environment",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-images"
+    },
+    {
+      "path": "scheduler",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-fair-share-scheduler"
+    },
+    {
+      "path": "agent",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-agent-nodes"
+    },
+    {
+      "path": "resource-policy",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-resource-policies"
+    },
+    {
+      "path": "storage-settings",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-storages"
+    },
+    {
+      "path": "settings",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-system-settings"
+    },
+    {
+      "path": "maintenance",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-server-management"
+    },
+    {
+      "path": "diagnostics",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-diagnostics"
+    },
+    {
+      "path": "branding",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-branding"
+    },
+    {
+      "path": "information",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-detailed-information"
+    },
+    { "path": "rbac", "docPage": "rbac_management.html" },
+    { "path": "project", "docPage": "project_admin.html" },
+    {
+      "path": "project-admin-users",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-users"
+    },
+    {
+      "path": "project-data",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-data"
+    },
+    {
+      "path": "project-admin-session",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-sessions"
+    },
+    {
+      "path": "project-admin-deployments",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-deployments"
+    },
+
+    {
+      "path": "agent",
+      "tab": "agents",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-agent-nodes"
+    },
+    {
+      "path": "agent",
+      "tab": "storages",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-storages"
+    },
+    {
+      "path": "agent",
+      "tab": "resourceGroup",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-resource-group"
+    },
+    {
+      "path": "environment",
+      "tab": "image",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-images"
+    },
+    {
+      "path": "environment",
+      "tab": "preset",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-resource-preset"
+    },
+    {
+      "path": "environment",
+      "tab": "registry",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-docker-registry"
+    },
+    {
+      "path": "usersettings",
+      "tab": "general",
+      "docPage": "user_settings.html",
+      "anchor": "user_settings-general-tab"
+    },
+    {
+      "path": "usersettings",
+      "tab": "logs",
+      "docPage": "user_settings.html",
+      "anchor": "user_settings-logs-tab"
+    },
+    {
+      "path": "resource-policy",
+      "tab": "keypair",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-keypair-resource-policy"
+    },
+    {
+      "path": "resource-policy",
+      "tab": "user",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-user-resource-policy"
+    },
+    {
+      "path": "resource-policy",
+      "tab": "project",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-project-resource-policy"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "deployments",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-deployments"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "model-store-management",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-admin-model-store-management"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "prometheus-preset",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-prometheus-query-presets"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "deployment-presets",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-deployment-presets"
+    },
+    {
+      "path": "credential",
+      "tab": "users",
+      "docPage": "project_admin.html",
+      "anchor": "project_admin-users"
+    },
+    {
+      "path": "credential",
+      "tab": "credentials",
+      "docPage": "admin_menu.html",
+      "anchor": "admin_menu-manage-users-keypairs"
+    },
+    {
+      "path": "statistics",
+      "tab": "allocation-history",
+      "docPage": "statistics.html",
+      "anchor": "statistics-allocation-history"
+    },
+    {
+      "path": "statistics",
+      "tab": "user-session-history",
+      "docPage": "statistics.html",
+      "anchor": "statistics-user-session-history"
+    }
+  ]
+}
