@@ -2,6 +2,7 @@ import type { AnyCommand } from './command.js';
 import { docsCommand } from './commands/docs.js';
 import { doctorCommand } from './commands/doctor.js';
 import { explainCommand } from './commands/explain.js';
+import { initCommand } from './commands/init.js';
 import { loginCommand } from './commands/login.js';
 import { logoutCommand } from './commands/logout.js';
 import { manifestCommand } from './commands/manifest.js';
@@ -15,6 +16,7 @@ import { whoamiCommand } from './commands/whoami.js';
 export const COMMANDS: AnyCommand[] = [
   versionCommand,
   manifestCommand,
+  initCommand,
   doctorCommand,
   searchCommand,
   docsCommand,

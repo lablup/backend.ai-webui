@@ -1,5 +1,6 @@
 import { GLOBAL_FLAGS } from './args.js';
 import type { AnyCommand, FlagSpec } from './command.js';
+import { exitLine } from './errors.js';
 import { CLI_DESCRIPTION, CLI_NAME } from './meta.js';
 import { API_VERSION } from './output.js';
 import { COMMANDS } from './registry.js';
@@ -14,13 +15,15 @@ const pad = (entries: Array<[string, string]>): string => {
 const flagRows = (flags: FlagSpec[]): Array<[string, string]> =>
   flags.map((flag) => [flag.flag, flag.description]);
 
+// Derived from ERROR_CODES / EXIT_BY_CODE, like the CLAUDE.md block, so there
+// is one table and it cannot drift.
 const OUTPUT_FORMAT = [
   'Output format',
   `Text mirrors --json (the machine-readable surface). Success envelope: { apiVersion: "${API_VERSION}", type, data }.`,
   'Error envelope: { apiVersion, error, code, suggestions?, hint? } on stderr.',
   'Records are aligned "key: value" lines; records are separated by a blank line.',
   '',
-  'Exit codes: 0 success · 1 error · 2 usage · 3 auth_required · 4 mutation_refused · 5 not_found',
+  `Exit codes: ${exitLine()}`,
 ].join('\n');
 
 export function renderHelp(command?: AnyCommand): string {

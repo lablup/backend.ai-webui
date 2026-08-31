@@ -26,7 +26,7 @@ export const EXIT = {
 
 export type ExitCode = (typeof EXIT)[keyof typeof EXIT];
 
-const EXIT_BY_CODE: Record<ErrorCode, ExitCode> = {
+export const EXIT_BY_CODE: Record<ErrorCode, ExitCode> = {
   usage: EXIT.usage,
   auth_required: EXIT.authRequired,
   mutation_refused: EXIT.mutationRefused,
@@ -42,6 +42,48 @@ const EXIT_BY_CODE: Record<ErrorCode, ExitCode> = {
 
 export function exitCodeForError(code: ErrorCode): ExitCode {
   return EXIT_BY_CODE[code] ?? EXIT.error;
+}
+
+/** What each exit number is called when no single error code names it. */
+const EXIT_LABELS: Record<ExitCode, string> = {
+  [EXIT.ok]: 'ok',
+  [EXIT.error]: 'error',
+  [EXIT.usage]: 'usage',
+  [EXIT.authRequired]: 'auth_required',
+  [EXIT.mutationRefused]: 'mutation_refused',
+  [EXIT.notFound]: 'not_found',
+};
+
+export interface ExitSummary {
+  exit: ExitCode;
+  label: string;
+  /** Every error code that exits with this number, in `ERROR_CODES` order. */
+  codes: ErrorCode[];
+}
+
+export function exitSummaries(): ExitSummary[] {
+  return [...new Set(Object.values(EXIT))]
+    .sort((left, right) => left - right)
+    .map((exit) => ({
+      exit,
+      label: EXIT_LABELS[exit],
+      codes: ERROR_CODES.filter((code) => EXIT_BY_CODE[code] === exit),
+    }));
+}
+
+/**
+ * The one-line exit table. Derived from `ERROR_CODES` / `EXIT_BY_CODE` so the
+ * CLAUDE.md block and `--help` cannot drift from the codes they describe.
+ */
+export function exitLine(): string {
+  return exitSummaries()
+    .map(({ exit, label, codes }) => {
+      const extra = codes.filter((code) => code !== label);
+      if (extra.length === 0) return `${exit} ${label}`;
+      const also = codes.length === extra.length ? '' : 'also ';
+      return `${exit} ${label} (${also}${extra.join(', ')})`;
+    })
+    .join(' · ');
 }
 
 export interface CliErrorOptions {
