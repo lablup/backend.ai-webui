@@ -35,6 +35,7 @@ const SAMPLE_DATA: Record<string, unknown> = {
     dir: '/home/user/.local/share/backend.ai-agent/checkout',
     repo: 'https://github.com/lablup/backend.ai-webui.git',
     ref: 'v26.8.1',
+    refSource: 'recorded',
     commit: 'abc123def456',
     previousCommit: '0123456789ab',
     outcome: 'updated',

@@ -66,6 +66,7 @@ describe('syncCheckout', () => {
 
     expect(data.outcome).toBe('cloned');
     expect(data.ref).toBe(DEFAULT_SYNC_REF);
+    expect(data.refSource).toBe('default');
     expect(data.commit).toBe('abc123');
     expect(data.previousCommit).toBeUndefined();
     expect(data.dir).toBe(dir);
@@ -137,6 +138,21 @@ describe('syncCheckout', () => {
     expect(updated.previousCommit).toBe('abc123');
     expect(updated.commit).toBe('def456');
     expect(readConfig(env).sync?.ref).toBe('v26.8.1');
+
+    // A bare re-sync keeps the recorded ref instead of drifting to main.
+    const bare = fakeGit({ heads: ['def456', 'def456'] });
+    const kept = syncCheckout({ env, git: bare.git });
+    expect(kept.ref).toBe('v26.8.1');
+    expect(kept.refSource).toBe('recorded');
+    expect(bare.calls).toContainEqual([
+      'fetch',
+      '--quiet',
+      '--depth',
+      '1',
+      'origin',
+      'v26.8.1',
+      `@${dir}`,
+    ]);
   });
 
   it('--force discards the checkout and clones again', () => {

@@ -148,22 +148,31 @@ const checkoutGroup: CheckGroup = {
       }),
     ];
     if (found.source === 'synced') {
-      const sync = readConfig().sync;
-      const ageDays = sync
-        ? Math.floor(
-            (Date.now() - new Date(sync.syncedAt).getTime()) / 86_400_000,
-          )
+      // config.json is only cast on read; a hand-edited or foreign record
+      // must degrade to a warning, never crash the run.
+      const raw = readConfig().sync;
+      const sync =
+        raw && typeof raw.ref === 'string' && typeof raw.commit === 'string'
+          ? raw
+          : undefined;
+      const syncedAtMs = sync ? Date.parse(sync.syncedAt ?? '') : NaN;
+      const ageDays = Number.isFinite(syncedAtMs)
+        ? Math.floor((Date.now() - syncedAtMs) / 86_400_000)
         : null;
-      const stale = ageDays !== null && ageDays > SYNC_STALE_DAYS;
+      const stale = ageDays === null || ageDays > SYNC_STALE_DAYS;
       checks.push({
         group: 'checkout',
         check: 'synced data',
         status: sync && !stale ? 'ok' : 'warn',
         detail: sync
-          ? `${sync.ref} at ${sync.commit.slice(0, 9)}, synced ${sync.syncedAt}${
-              ageDays === null ? '' : ` (${ageDays} day(s) ago)`
-            }${stale ? `, older than ${SYNC_STALE_DAYS} days` : ''}`
-          : 'no sync record in config.json; the checkout may be hand-made',
+          ? `${sync.ref} at ${sync.commit.slice(0, 9)}, synced ${
+              ageDays === null
+                ? 'at an unknown time'
+                : `${sync.syncedAt} (${ageDays} day(s) ago)`
+            }${ageDays !== null && stale ? `, older than ${SYNC_STALE_DAYS} days` : ''}`
+          : raw
+            ? 'sync record in config.json is not readable (no ref/commit)'
+            : 'no sync record in config.json; the checkout may be hand-made',
         hint: sync && !stale ? undefined : `${CLI_NAME} sync`,
       });
     }

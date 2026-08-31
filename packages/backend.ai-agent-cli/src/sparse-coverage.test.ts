@@ -58,7 +58,9 @@ describe('SPARSE_PATTERNS', () => {
       '!/packages/backend.ai-webui-docs/**/images/',
     );
     expect(
-      SPARSE_PATTERNS.some((p) => p === '/react/src/' || p === '/react/'),
+      (SPARSE_PATTERNS as readonly string[]).some(
+        (p) => p === '/react/src/' || p === '/react/',
+      ),
     ).toBe(false);
   });
 });

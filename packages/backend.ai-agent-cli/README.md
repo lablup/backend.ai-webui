@@ -92,7 +92,7 @@ Outside a checkout — an `npm install -g` on another machine — `sync` fetches
 just the data:
 
 ```bash
-bai-agent sync                  # main
+bai-agent sync                  # the ref last synced (main the first time)
 bai-agent sync --ref v26.8.1    # a WebUI release tag, or any branch
 bai-agent sync --force          # throw the checkout away and clone again
 ```

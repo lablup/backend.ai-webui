@@ -13,9 +13,8 @@ export const syncCommand = defineCommand<SyncData>({
   flags: [
     {
       flag: '--ref <branch|tag>',
-      description: `Branch or tag of lablup/backend.ai-webui to take the data from (default: ${DEFAULT_SYNC_REF}).`,
+      description: `Branch or tag of lablup/backend.ai-webui to take the data from (default: the ref last synced, else ${DEFAULT_SYNC_REF}).`,
       type: 'string',
-      default: DEFAULT_SYNC_REF,
     },
     {
       flag: '--force',
@@ -45,6 +44,7 @@ export const syncCommand = defineCommand<SyncData>({
       record([
         ['dir', data.dir],
         ['ref', data.ref],
+        ['refSource', data.refSource],
         ['commit', data.commit],
         ['previousCommit', data.previousCommit],
         ['outcome', data.outcome],

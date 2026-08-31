@@ -1,4 +1,4 @@
-import { updateConfig } from './config.js';
+import { readConfig, updateConfig } from './config.js';
 import type { SyncRecord } from './config.js';
 import { CliError } from './errors.js';
 import { CLI_NAME } from './meta.js';
@@ -46,6 +46,8 @@ export interface SyncData {
   dir: string;
   repo: string;
   ref: string;
+  /** `flag`, the `config.json` record from the last sync, or the default. */
+  refSource: 'flag' | 'recorded' | 'default';
   commit: string;
   previousCommit?: string;
   outcome: CheckoutSyncOutcome;
@@ -102,7 +104,15 @@ function headOf(git: GitRunner, dir: string): string | undefined {
 export function syncCheckout(options: SyncOptions = {}): SyncData {
   const env = options.env ?? process.env;
   const git = options.git ?? defaultGit;
-  const ref = options.ref?.trim() || DEFAULT_SYNC_REF;
+  // A bare `sync` refreshes what `init` pinned; only a machine with no
+  // record at all starts from main.
+  const recorded = readConfig(env).sync?.ref;
+  const ref = options.ref?.trim() || recorded || DEFAULT_SYNC_REF;
+  const refSource: SyncData['refSource'] = options.ref?.trim()
+    ? 'flag'
+    : recorded
+      ? 'recorded'
+      : 'default';
   const dir = syncedCheckoutDir(env);
   const notify = options.notify ?? (() => {});
 
@@ -184,6 +194,7 @@ export function syncCheckout(options: SyncOptions = {}): SyncData {
     dir,
     repo: DATA_REPO_URL,
     ref,
+    refSource,
     commit,
     previousCommit,
     outcome: fresh
