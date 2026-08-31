@@ -988,7 +988,51 @@
     openCompose(evt.clientX, evt.clientY);
   }
 
+  // Prefer react-grab's own selection UI — its hover overlay shows the
+  // component label (driver request). Our plugin intercepts the select only
+  // while OUR pick mode is on (returning false cancels react-grab's default
+  // copy; hook results are AND-ed in core). Fallback: the built-in picker.
+  let grabPluginReady = false;
+  let grabPicking = false;
+
+  function ensureGrabPlugin() {
+    const api = window.__REACT_GRAB__;
+    if (!api) return null;
+    if (!grabPluginReady) {
+      try {
+        api.registerPlugin({
+          name: 'bai-review-pick',
+          hooks: {
+            onElementSelect: (element) => {
+              if (!grabPicking) return undefined; // plain ⌘C grab — untouched
+              grabPicking = false;
+              setTimeout(() => api.deactivate(), 0);
+              pickTarget = element;
+              const r = element.getBoundingClientRect();
+              openCompose(r.left + Math.min(r.width, 160), r.bottom + 6);
+              return false;
+            },
+            onDeactivate: () => {
+              grabPicking = false;
+            },
+          },
+        });
+        grabPluginReady = true;
+      } catch {
+        return null;
+      }
+    }
+    return api;
+  }
+
   function startPicking() {
+    const api = ensureGrabPlugin();
+    if (api) {
+      grabPicking = true;
+      api.activate();
+      showToast('요소를 클릭하세요 — 호버하면 컴포넌트 라벨이 보여요 (Esc 취소)');
+      return;
+    }
     if (picking) return;
     picking = true;
     document.documentElement.style.cursor = 'crosshair';
@@ -997,6 +1041,11 @@
     showToast('코멘트할 요소를 클릭하세요 (Esc 취소)');
   }
   function stopPicking() {
+    if (grabPicking) {
+      grabPicking = false;
+      const api = window.__REACT_GRAB__;
+      if (api) api.deactivate();
+    }
     picking = false;
     document.documentElement.style.cursor = '';
     document.removeEventListener('mousemove', onMove, true);
