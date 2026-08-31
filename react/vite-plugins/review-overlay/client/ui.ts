@@ -382,7 +382,9 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   composeText.addEventListener('keydown', (evt) => {
     if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
       evt.preventDefault();
-      if (!copyButton.disabled) runCopy();
+      // Not gated on `copyButton.disabled`: `runCopy` says why it cannot build
+      // yet, which is more use than a keystroke that does nothing.
+      runCopy();
     }
   });
 
