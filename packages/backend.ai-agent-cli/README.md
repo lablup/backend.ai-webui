@@ -44,6 +44,17 @@ merge, then `git tag agent-cli-v0.1.0 && git push origin agent-cli-v0.1.0`.
 The WebUI's `v*` tags deliberately do not publish the CLI — they would republish
 the same version on every WebUI release.
 
+**First publish is a one-time bootstrap.** The workflow authenticates with npm
+trusted publishing (OIDC, `id-token: write`, no token secret), which is
+configured on the package's settings page on npmjs.com — a page that does not
+exist until the package has been published once. Until then both triggers fail
+with `ENEEDAUTH`. Before the first tag: publish `0.1.0` by hand from a checkout
+with a granular npm token (`pnpm --filter backend.ai-agent-cli publish --access
+public`), then add this repository's `publish-backend.ai-agent-cli.yml` as a
+trusted publisher on the package page. The `backend.ai-docs-toolkit` workflow
+went red on every push to `main` until its package was bootstrapped the same
+way.
+
 ## Repo mode
 
 `bai-agent` reads the checkout live — it copies nothing and takes no workspace
