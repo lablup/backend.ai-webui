@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<23f5e264c561b350e4cba7bec17994ff>>
+ * @generated SignedSource<<c717a5eb31f722e09dd3476053bb9f03>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type UpdateDeploymentRevisionPresetInput = {
   environ?: ReadonlyArray<EnvironEntryInput> | null | undefined;
   id: string;
   imageId?: string | null | undefined;
-  modelDefinition?: ModelDefinitionInput | null | undefined;
+  modelDefinition?: PresetModelDefinitionInput | null | undefined;
   name?: string | null | undefined;
   openToPublic?: boolean | null | undefined;
   presetValues?: ReadonlyArray<RuntimeVariantPresetValueEntryInput> | null | undefined;
@@ -50,20 +50,20 @@ export type BlueGreenConfigInput = {
   autoPromote?: boolean;
   promoteDelaySeconds?: number;
 };
-export type ModelDefinitionInput = {
-  models?: ReadonlyArray<ModelConfigInput> | null | undefined;
+export type PresetModelDefinitionInput = {
+  models: ReadonlyArray<PresetModelConfigInput>;
 };
-export type ModelConfigInput = {
-  metadata?: ModelMetadataInput | null | undefined;
+export type PresetModelConfigInput = {
+  metadata?: PresetModelMetadataInput | null | undefined;
   modelPath?: string | null | undefined;
   name?: string | null | undefined;
-  service?: ModelServiceConfigInput | null | undefined;
+  service: PresetModelServiceConfigInput;
 };
-export type ModelServiceConfigInput = {
+export type PresetModelServiceConfigInput = {
   command?: string | null | undefined;
-  healthCheck?: ModelHealthCheckInput | null | undefined;
+  healthCheck?: PresetModelHealthCheckInput | null | undefined;
   port?: number | null | undefined;
-  preStartActions?: ReadonlyArray<PreStartActionInput> | null | undefined;
+  preStartActions: ReadonlyArray<PreStartActionInput>;
   shell?: string | null | undefined;
   startCommand?: ReadonlyArray<string> | null | undefined;
 };
@@ -71,16 +71,16 @@ export type PreStartActionInput = {
   action: string;
   args: any;
 };
-export type ModelHealthCheckInput = {
+export type PresetModelHealthCheckInput = {
   enable?: boolean;
-  expectedStatusCode?: number | null | undefined;
-  initialDelay?: number | null | undefined;
-  interval?: number | null | undefined;
-  maxRetries?: number | null | undefined;
-  maxWaitTime?: number | null | undefined;
-  path?: string | null | undefined;
+  expectedStatusCode?: number;
+  initialDelay?: number;
+  interval?: number;
+  maxRetries?: number;
+  maxWaitTime?: number;
+  path?: string;
 };
-export type ModelMetadataInput = {
+export type PresetModelMetadataInput = {
   architecture?: string | null | undefined;
   author?: string | null | undefined;
   category?: string | null | undefined;
@@ -505,7 +505,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ModelDefinition",
+                "concreteType": "PresetModelDefinition",
                 "kind": "LinkedField",
                 "name": "modelDefinition",
                 "plural": false,
@@ -513,7 +513,7 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "ModelConfig",
+                    "concreteType": "PresetModelConfig",
                     "kind": "LinkedField",
                     "name": "models",
                     "plural": true,
@@ -529,7 +529,7 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "ModelServiceConfig",
+                        "concreteType": "PresetModelServiceConfig",
                         "kind": "LinkedField",
                         "name": "service",
                         "plural": false,
@@ -557,6 +557,13 @@ return {
                                 "storageKey": null
                               }
                             ],
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "command",
                             "storageKey": null
                           },
                           {
@@ -748,12 +755,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "360823cb5a9035c3203a88c82f77b0a1",
+    "cacheID": "7e80f2540f5ea6ef48db1d821cafa664",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image @since(version: \"26.4.4\") {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image @since(version: \"26.4.4\") {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();
