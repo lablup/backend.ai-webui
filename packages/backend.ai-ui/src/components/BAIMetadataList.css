@@ -65,6 +65,12 @@
   color: var(--bai-metadata-list-label-color);
 }
 
+/* A side-label dt stretches to its grid row and Astryx centers it, so it
+   drifts off a multi-line value's first line — pin it to the top (FR-3667). */
+.bai-metadata-list > dl > dt {
+  align-items: flex-start;
+}
+
 .bai-metadata-list--bordered {
   --bai-metadata-list-cell-bg: var(--color-background-card);
   --bai-metadata-list-cell-padding-block: var(--spacing-4);
