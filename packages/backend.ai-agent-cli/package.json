@@ -1,6 +1,6 @@
 {
   "name": "backend.ai-agent-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "bai-agent — agent-facing CLI over a Backend.AI WebUI checkout",
   "repository": {
     "type": "git",

@@ -276,7 +276,7 @@ export const loginCommand = defineCommand<LoginData>({
     {
       flag: '--endpoint <url>',
       description:
-        'Manager URL. Defaults to the checkout config.toml apiEndpoint, then the endpoint init recorded, then the only stored session.',
+        'Manager URL. Defaults to the only stored session, then the checkout config.toml apiEndpoint, then the endpoint init recorded.',
       type: 'string',
     },
     {
