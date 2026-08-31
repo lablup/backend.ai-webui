@@ -24,10 +24,11 @@ const box = await page
 const cx = box.x + box.width / 2;
 const cy = box.y + box.height / 2;
 
+// Activate react-grab directly — the same path its ⌘⌃C hotkey takes; the
+// boot-registered plugin's onActivate must arm review-pick by itself.
 await page.evaluate(() => {
-  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
-  sr.querySelector('.toggle').click();
-  sr.querySelector('[data-act="pick"]').click();
+  document.querySelector('[data-bai-review-overlay]');
+  window.__REACT_GRAB__.activate();
 });
 await page.waitForTimeout(500);
 const active = await page.evaluate(() => window.__REACT_GRAB__.isActive());

@@ -1012,6 +1012,12 @@
         api.registerPlugin({
           name: 'bai-review-pick',
           hooks: {
+            // Driver decision: react-grab's activation hotkey (⌘⌃C) IS the
+            // review-pick shortcut — every activation arms our intercept,
+            // so grab's plain copy mode is repurposed for review comments.
+            onActivate: () => {
+              grabPicking = true;
+            },
             onElementSelect: (element) => {
               if (!grabPicking) return undefined; // plain ⌘C grab — untouched
               grabPicking = false;
@@ -1173,6 +1179,15 @@
       serverState = s;
     })
     .catch(() => {});
+
+  // react-grab loads via a dynamic import in the app — register our plugin
+  // as soon as it lands so its ⌘⌃C hotkey arms review-pick from the start.
+  {
+    let tries = 0;
+    const t = setInterval(() => {
+      if (ensureGrabPlugin() || ++tries > 40) clearInterval(t);
+    }, 500);
+  }
 
   handleFragment();
   fetchPins();
