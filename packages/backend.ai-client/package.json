@@ -56,11 +56,9 @@
     "lint:ci": "eslint ./src",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
-  "dependencies": {
-    "crypto-es": "^2.1.0"
-  },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "crypto-es": "^2.1.0",
     "eslint-config-bai": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",

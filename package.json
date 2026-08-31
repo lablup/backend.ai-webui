@@ -74,7 +74,6 @@
     "cli-color": "^2.0.4",
     "concurrently": "^8.2.2",
     "cors": "^2.8.6",
-    "crypto-es": "^2.1.0",
     "electron": "^39.8.5",
     "eslint": "catalog:",
     "eslint-config-bai": "workspace:*",
