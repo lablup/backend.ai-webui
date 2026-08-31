@@ -4,7 +4,10 @@
  * answer to the same query.
  */
 
-const TOKEN = /[A-Z]+[0-9]*(?![a-z])|[A-Z][a-z0-9]*|[a-z]+[0-9]*|[0-9]+/g;
+// The acronym run is taken one capital at a time: a plain `[A-Z]+` before the
+// lookahead backtracks the whole run (CodeQL js/polynomial-redos).
+const TOKEN =
+  /(?:[A-Z](?![a-z]))+[0-9]*(?![a-z])|[A-Z][a-z0-9]*|[a-z]+[0-9]*|[0-9]+/g;
 
 const VERSION_SUFFIX = /^v[0-9]+$/;
 
