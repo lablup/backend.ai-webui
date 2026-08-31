@@ -18,9 +18,14 @@ export const bytesFromB64url = (s: string): Uint8Array => {
   return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 };
 
-/** A pasted anchor must never navigate off-origin or to a protocol-relative URL. */
+/**
+ * A pasted anchor must never navigate off-origin. `^/` alone is not enough:
+ * the URL parser strips TAB/LF/CR before parsing (so `/<LF>/evil` becomes
+ * `//evil`) and treats `\` as a path separator for special schemes (so
+ * `/\evil.com` becomes `//evil.com`). Both resolve to another origin.
+ */
 export const isSafePath = (p: unknown): p is string =>
-  typeof p === 'string' && /^\/(?!\/)/.test(p);
+  typeof p === 'string' && !/[\t\n\r]/.test(p) && /^\/(?![/\\])/.test(p);
 
 /**
  * Feed `bytes` through a (de)compression stream and collect the result.

@@ -12,6 +12,40 @@ describe('pin id', () => {
     }
   });
 
+  /**
+   * The padding block is where a hand-rolled SHA-256 goes wrong: a message of
+   * 56–63 bytes no longer leaves room for the 8-byte length in its own block,
+   * so the digest needs one extra block. Cover both sides of every boundary in
+   * BYTES (not characters — the digest is over the UTF-8 encoding).
+   */
+  it.each([0, 1, 54, 55, 56, 57, 63, 64, 65, 118, 119, 120, 121, 255])(
+    'matches Node’s sha256 at a %i-byte message',
+    (length) => {
+      const bytes = new Uint8Array(length).map((_, i) => (i * 37 + 11) & 0xff);
+      expect(Buffer.from(sha256Bytes(bytes)).toString('hex')).toBe(
+        createHash('sha256').update(Buffer.from(bytes)).digest('hex'),
+      );
+    },
+  );
+
+  it('matches Node’s sha256 for multi-byte UTF-8 across the boundary', () => {
+    // 한국어 is 3 bytes per character, 📍 is 4 — so these straddle 55/64 bytes in
+    // BYTES while looking far shorter in characters.
+    for (const input of [
+      '한국어',
+      '📍⚛️',
+      '한국어'.repeat(6),
+      '한국어'.repeat(7),
+      '📍'.repeat(16),
+      'Sessions › page-start › button "시작하기"',
+    ]) {
+      const bytes = new TextEncoder().encode(input);
+      expect(Buffer.from(sha256Bytes(bytes)).toString('hex')).toBe(
+        createHash('sha256').update(input, 'utf8').digest('hex'),
+      );
+    }
+  });
+
   it('is c_ + 7 lowercase base32 chars', () => {
     expect(pinId(9330, 'anchor-payload', '2026-08-31T00:00:00Z')).toMatch(
       /^c_[a-z2-7]{7}$/,

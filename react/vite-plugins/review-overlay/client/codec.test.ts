@@ -54,8 +54,31 @@ describe('anchor codec', () => {
 
   it('treats only single-slash absolute paths as safe', () => {
     expect(isSafePath('/data')).toBe(true);
+    expect(isSafePath('/data/folder?tab=1')).toBe(true);
     expect(isSafePath('//evil')).toBe(false);
     expect(isSafePath('https://evil')).toBe(false);
+    expect(isSafePath('')).toBe(false);
+    expect(isSafePath('relative/path')).toBe(false);
     expect(isSafePath(undefined)).toBe(false);
+  });
+
+  // Every string the URL parser resolves to another origin must be rejected —
+  // `^/` alone lets `\` and stripped control characters through.
+  it.each([
+    ['backslash separator', '/\\evil.example.com/x'],
+    ['double backslash', '/\\\\evil.example.com'],
+    ['stripped LF', '/\n/evil.example.com'],
+    ['stripped CR', '/\r/evil.example.com'],
+    ['stripped TAB', '/\t/evil.example.com'],
+  ])('rejects %s, which resolves off-origin', (_name, path) => {
+    expect(new URL(path, 'https://good.test').origin).not.toBe(
+      'https://good.test',
+    );
+    expect(isSafePath(path)).toBe(false);
+  });
+
+  it('rejects an encoded payload whose path uses a backslash separator', async () => {
+    const encoded = await encodeAnchor({ ...anchor, p: '/\\evil.example.com' });
+    await expect(decodeAnchor(encoded)).resolves.toBeNull();
   });
 });
