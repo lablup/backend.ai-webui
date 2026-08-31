@@ -21,7 +21,7 @@ const repoCwd = import.meta.dirname;
  * The real checkout's data behind a root that also carries a config.toml —
  * what a developer machine looks like, and what CI never has.
  */
-function checkoutWithToml(apiEndpoint: string): string {
+function checkoutWithToml(apiEndpoint?: string): string {
   const real = resolveRepoContext(repoCwd).repoRoot;
   const root = mkdtempSync(join(tmpdir(), 'bai-agent-toml-checkout-'));
   writeFileSync(
@@ -31,10 +31,12 @@ function checkoutWithToml(apiEndpoint: string): string {
   for (const dir of ['data', 'resources', 'packages', 'react']) {
     symlinkSync(join(real, dir), join(root, dir), 'dir');
   }
-  writeFileSync(
-    join(root, 'config.toml'),
-    `[general]\napiEndpoint = "${apiEndpoint}"\n`,
-  );
+  if (apiEndpoint) {
+    writeFileSync(
+      join(root, 'config.toml'),
+      `[general]\napiEndpoint = "${apiEndpoint}"\n`,
+    );
+  }
   return root;
 }
 const ENDPOINT = 'http://manager.test.invalid:8090';
@@ -406,8 +408,10 @@ describe('schema show against a mocked manager', () => {
     updateConfig({ endpoint: 'http://recorded.test.invalid:8090' });
     await invoke(['doctor', '--json'], root);
     expect(spy).not.toHaveBeenCalled(); // config.toml still outranks config.json
-    await invoke(['doctor', '--json']);
-    expect(spy).toHaveBeenCalled(); // outside a config.toml checkout it does
+    // In a checkout without one it does — a fake one, never the real
+    // checkout, whose config.toml a developer machine has and CI does not.
+    await invoke(['doctor', '--json'], checkoutWithToml());
+    expect(spy).toHaveBeenCalled();
   });
 });
 
