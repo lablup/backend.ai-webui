@@ -17,7 +17,9 @@ export interface ParsedMarkdown {
 }
 
 const FENCE = /^\s{0,3}(```|~~~)/;
-const HEADING = /^(#{1,6})[ \t]+(.*)$/;
+// Group 2's lead char excludes ` `/`\t` (plus the terminators `.` already excludes), so
+// `[ \t]+` and `.*` can never both consume a tab: identical captures, no backtracking.
+const HEADING = /^(#{1,6})[ \t]+([^ \t\n\r\u2028\u2029].*|)$/;
 
 /** Frontmatter is stripped like the toolkit does, before any other pass. */
 function frontmatterEnd(lines: string[]): number {
@@ -88,13 +90,17 @@ export function pageBody(parsed: ParsedMarkdown): string {
   return parsed.lines.slice(parsed.bodyStart).join('\n').trim();
 }
 
-/** Prose of a section, with markup that never carries meaning removed. */
+/**
+ * Prose of a section, with markup that never carries meaning removed. `[` is
+ * excluded from the link/image classes so a span can't hold a second start
+ * point — without that the strip is quadratic (CodeQL js/polynomial-redos).
+ */
 export function searchableText(body: string): string {
   return body
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/<[^>]*>/g, ' ')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/!\[[^\][]*\]\([^)[]*\)/g, ' ')
+    .replace(/\[([^\][]*)\]\([^)[]*\)/g, '$1')
     .replace(/[*_`>#|]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();

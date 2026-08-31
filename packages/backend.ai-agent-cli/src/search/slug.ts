@@ -1,13 +1,36 @@
 import { basename, extname } from 'node:path';
 
 /**
- * Byte-identical to `slugify` in `packages/backend.ai-docs-toolkit/src/
- * markdown-processor.ts` — the deployed anchors must match exactly.
+ * Exact, linear-time equivalent of `.replace(/<[^>]+>/g, '')`: at every `<`,
+ * the first following `>` must be at least two characters away (`[^>]+` cannot
+ * match empty); that span is dropped, everything else is copied verbatim.
+ */
+function stripTagSpans(input: string): string {
+  let out = '';
+  let i = 0;
+  while (i < input.length) {
+    const lt = input.indexOf('<', i);
+    if (lt === -1) break;
+    const gt = input.indexOf('>', lt + 1);
+    if (gt === -1) break;
+    if (gt === lt + 1) {
+      out += input.slice(i, gt + 1);
+      i = gt + 1;
+      continue;
+    }
+    out += input.slice(i, lt);
+    i = gt + 1;
+  }
+  return out + input.slice(i);
+}
+
+/**
+ * Output-identical to `slugify` in `packages/backend.ai-docs-toolkit/src/
+ * markdown-processor.ts` — the deployed anchors must match exactly. Only the
+ * tag strip differs in shape: see `stripTagSpans`.
  */
 export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/<[^>]+>/g, '')
+  return stripTagSpans(text.toLowerCase())
     .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
@@ -77,10 +100,12 @@ export function decodeHtmlEntities(value: string): string {
  * targets have to go here too.
  */
 export function headingPlainText(raw: string): string {
+  // The `[` inside every negated class is deliberate: a label/destination may
+  // not contain `[`, so a candidate span can never hold a second start point.
   const withoutMarkup = raw
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/\[([^\]]*)\]\[[^\]]*\]/g, '$1')
+    .replace(/!\[[^\][]*\]\([^)[]*\)/g, '')
+    .replace(/\[([^\][]*)\]\([^)[]*\)/g, '$1')
+    .replace(/\[([^\][]*)\]\[[^\][]*\]/g, '$1')
     .replace(/`+/g, '')
     .replace(/\*\*|__|~~|\*/g, '');
   return decodeHtmlEntities(stripHtmlTags(withoutMarkup))
