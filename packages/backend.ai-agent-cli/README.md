@@ -12,9 +12,8 @@ locator. Node ≥ 22, ESM, built with tsup.
 
 `bai-agent` reads the checkout live — it copies nothing and takes no workspace
 dependency on the packages it reads. Every command that reads repository data
-(`doctor`, `search`, `docs`, `schema`, … — not `manifest`, `version` or
-`--help`) resolves its context by
-walking up from the current working directory until it finds a `package.json`
+(`version`, `search`, `docs`, `schema`, … — not `manifest` or `--help`)
+resolves its context by walking up from the current working directory until it finds a `package.json`
 named `backend.ai-webui`, then verifies the three data sources exist:
 
 | Source         | Path                              |
@@ -22,6 +21,10 @@ named `backend.ai-webui`, then verifies the three data sources exist:
 | GraphQL schema | `data/schema.graphql`             |
 | i18n stores    | `resources/i18n/`                 |
 | User manual    | `packages/backend.ai-webui-docs/` |
+
+`doctor` is the exception: it locates the root the same way but reports each
+source's status instead of failing, so it is the command to run when another
+one exits 1.
 
 `resolveRepoContext(cwd)` returns absolute paths (`repoRoot`, `schemaPath`,
 `i18nDir`, `docsDir`) plus the checkout's `package.json` version. Outside a

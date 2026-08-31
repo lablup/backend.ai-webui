@@ -48,7 +48,7 @@
     "test": "vitest run",
     "vitest": "vitest run",
     "vitest:watch": "vitest",
-    "lint": "eslint ./src",
+    "lint": "eslint ./src --max-warnings=0 --no-warn-ignored",
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "devDependencies": {
