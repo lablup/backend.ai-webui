@@ -19,7 +19,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The label/value list used on detail panels, info modals and drawers. It renders Astryx MetadataList and adds one thing: an opt-in `bordered` variant that restores the framed, ruled label/value table antd `Descriptions bordered` used to draw. Without `bordered` it is a pass-through — no class is added and no CSS is reached, so the output is exactly Astryx’s. With it, one class from `BAIMetadataList.css` frames the list, rules it into cells drawn as the grid gap, and puts the label column on a muted fill, entirely in design tokens. Everything else — `columns`, `title`, `orientation`, `maxNumOfItems` — is MetadataList’s own surface and passes straight through.',
+      'The label/value list used on detail panels, info modals and drawers. It renders Astryx MetadataList and adds one thing: an opt-in `bordered` variant that restores the framed, ruled label/value table antd `Descriptions bordered` used to draw. Without `bordered` the list keeps Astryx’s own layout with two always-on adjustments: the label is lightened to read quieter than its value, and side labels are top-aligned with their value’s first line (FR-3667). With it, one class from `BAIMetadataList.css` frames the list, rules it into cells drawn as the grid gap, and puts the label column on a muted fill, entirely in design tokens. Everything else — `columns`, `title`, `orientation`, `maxNumOfItems` — is MetadataList’s own surface and passes straight through.',
     bestPractices: [
       {
         guidance: true,

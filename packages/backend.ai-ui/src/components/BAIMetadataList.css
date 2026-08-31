@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIMetadataList` paint: a lightened item label (always), plus the `bordered`
- variant — outer frame + a 1px rule between items, on the list's own layout
- (no forced side labels, no label-column fill).
+ `BAIMetadataList` paint: a lightened item label and top-aligned side labels
+ (always), plus the `bordered` variant — outer frame + a 1px rule between
+ items, on the list's own layout (no forced side labels, no label-column
+ fill).
 
  ## Why CSS, not a theme variant
 

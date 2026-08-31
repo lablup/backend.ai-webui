@@ -24,7 +24,9 @@ Independently of \`bordered\`, the wrapper lightens the item label so it reads
 quieter than its value — the base class is always applied, so this is the
 default for every list, \`bordered\` or not. The tone is the lightest mix off
 \`--color-text-secondary\` that still clears WCAG AA in both themes; override
-\`--bai-metadata-list-label-color\` to retune it.
+\`--bai-metadata-list-label-color\` to retune it. Side labels are also
+top-aligned with their value's first line, so a multi-line value doesn't
+leave the label floating mid-row (FR-3667).
 
 The paint is two classes, declarations in \`BAIMetadataList.css\`, entirely in
 design tokens.
