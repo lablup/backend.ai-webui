@@ -1,7 +1,15 @@
 // spec: Statistics page tests
 import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, Page } from '@playwright/test';
+
+// `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+// which this app never does. The active tab carries `aria-current="true"`.
+function statisticsTab(page: Page, name: string) {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name });
+}
 
 test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
   test('Admin can see Statistics page with Allocation History tab', async ({
@@ -12,12 +20,15 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
     await navigateTo(page, 'statistics');
 
     // Verify Allocation History tab is selected by default
-    await expect(
-      page.getByRole('tab', { name: 'Allocation History', selected: true }),
-    ).toBeVisible();
+    const allocationHistoryTab = statisticsTab(page, 'Allocation History');
+    await expect(allocationHistoryTab).toBeVisible();
+    await expect(allocationHistoryTab).toHaveAttribute('aria-current', 'true');
 
-    // Verify Period selector exists
-    await expect(page.getByText(/Period/)).toBeVisible();
+    // Verify Period selector exists. The self-hosted form engine
+    // (BAIFormItem) renders the label text twice -- once on a `title`
+    // attribute label and once on the visible field label -- so an
+    // unscoped text locator strict-mode-violates.
+    await expect(page.getByText(/Period/).first()).toBeVisible();
 
     // Verify chart sections exist
     await expect(page.getByText('Sessions').first()).toBeVisible();
@@ -42,18 +53,11 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
       );
 
       // The backend is capable — the tab MUST be present; absence is a failure.
-      const userSessionTab = page.getByRole('tab', {
-        name: 'User Session History',
-      });
+      const userSessionTab = statisticsTab(page, 'User Session History');
       await expect(userSessionTab).toBeVisible();
 
       await userSessionTab.click();
-      await expect(
-        page.getByRole('tab', {
-          name: 'User Session History',
-          selected: true,
-        }),
-      ).toBeVisible();
+      await expect(userSessionTab).toHaveAttribute('aria-current', 'true');
     },
   );
 });

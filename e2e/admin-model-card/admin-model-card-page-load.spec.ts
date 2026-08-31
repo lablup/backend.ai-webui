@@ -149,12 +149,18 @@ test.describe(
       // Verify pagination control is visible with total count
       await expect(adminModelCardPage.getPaginationInfo()).toBeVisible();
 
-      // Verify next/previous page buttons
-      await expect(page.getByRole('button', { name: 'left' })).toBeVisible();
-      await expect(page.getByRole('button', { name: 'right' })).toBeVisible();
+      // Verify next/previous page buttons. Astryx `Pagination` names these
+      // "Go to previous page" / "Go to next page" (not the antd icon names
+      // "left"/"right").
+      await expect(
+        page.getByRole('button', { name: 'Go to previous page' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Go to next page' }),
+      ).toBeVisible();
 
       // If there are multiple pages, navigate to page 2
-      const nextButton = page.getByRole('button', { name: 'right' });
+      const nextButton = page.getByRole('button', { name: 'Go to next page' });
       const isNextEnabled = await nextButton.isEnabled();
       if (isNextEnabled) {
         await nextButton.click();
@@ -175,22 +181,14 @@ test.describe(
       );
       await adminModelCardPage.waitForTableLoad();
 
-      // Change page size from 10 to 20
+      // Change page size from 10 to 20. The selector is Astryx `Select`
+      // (role="combobox" trigger, role="listbox"/"option" popup), not
+      // antd's `.ant-select-dropdown`.
       const pageSizeSelector = page.getByRole('combobox', {
         name: 'Page Size',
       });
       await pageSizeSelector.click();
-      await expect(
-        page
-          .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-          .first(),
-      ).toBeVisible();
-      await page
-        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .first()
-        .locator('.ant-select-item-option')
-        .filter({ hasText: '20 / page' })
-        .click();
+      await page.getByRole('option', { name: '20 / page' }).click();
 
       // Verify pagination reflects 20 items per page via URL parameter
       await expect(page).toHaveURL(/pageSize=20/);

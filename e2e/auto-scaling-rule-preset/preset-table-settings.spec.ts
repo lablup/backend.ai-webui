@@ -31,8 +31,13 @@ async function createPreset(
     .getByRole('textbox', { name: 'Query Template' })
     .fill(queryTemplate);
   await modal.getByRole('button', { name: 'Create' }).click({ force: true });
+  // A toast's text is rendered twice: once in the visible notification
+  // stack (`role="region"`, named "Notifications") and once in a singleton
+  // screen-reader announcer node.
   await expect(
-    page.getByText('Prometheus query preset has been successfully created.'),
+    page
+      .getByRole('region', { name: 'Notifications' })
+      .getByText('Prometheus query preset has been successfully created.'),
   ).toBeVisible({ timeout: 120000 });
   await expect(modal).toBeHidden({ timeout: 30000 });
 }
@@ -223,16 +228,18 @@ test.describe(
       // Verify table is visible
       await expect(page.getByRole('table')).toBeVisible({ timeout: 30000 });
 
-      // Click the refresh (reload) button
-      await page.getByRole('button', { name: 'reload' }).click();
+      // Click the refresh button (renamed from icon-name "reload" to
+      // "Refresh"). `exact: true` avoids matching the adjacent "Auto
+      // Refresh" button.
+      await page.getByRole('button', { name: 'Refresh', exact: true }).click();
 
       // Verify table is still visible after refresh
       await expect(page.getByRole('table')).toBeVisible({ timeout: 15000 });
 
-      // Verify pagination info is still present (refresh completed)
-      await expect(
-        page.getByRole('listitem').filter({ hasText: /items/ }),
-      ).toBeVisible({ timeout: 15000 });
+      // Verify pagination info is still present (refresh completed). The
+      // "X - Y of Z items" caption is now a plain text node, not a
+      // `role="listitem"` (antd Pagination is gone).
+      await expect(page.getByText(/items$/)).toBeVisible({ timeout: 15000 });
     });
   },
 );

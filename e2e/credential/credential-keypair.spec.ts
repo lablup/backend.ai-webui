@@ -1,6 +1,22 @@
 // spec: Credential Keypairs tests
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, Page } from '@playwright/test';
+
+// `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+// which this app never does. The active tab carries `aria-current="true"`.
+function credentialsTab(page: Page) {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: 'Credentials' });
+}
+
+// A BAITable column header's accessible NAME is overridden by its sort
+// button's aria-label ("Sort by accessKey") for sortable columns; match the
+// header's visible TEXT instead (see resource-policy.spec.ts / registry.spec.ts
+// for the identical pattern).
+function credentialColumnHeader(page: Page, label: string) {
+  return page.getByRole('columnheader').filter({ hasText: label });
+}
 
 test.describe(
   'Credential Keypairs',
@@ -14,35 +30,26 @@ test.describe(
       await navigateTo(page, 'credential');
 
       // Switch to Credentials tab
-      await page.getByRole('tab', { name: 'Credentials' }).click();
-      await expect(
-        page.getByRole('tab', { name: 'Credentials', selected: true }),
-      ).toBeVisible();
+      await credentialsTab(page).click();
+      await expect(credentialsTab(page)).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
 
       // Verify table columns
+      await expect(credentialColumnHeader(page, 'Access Key')).toBeVisible();
+      await expect(credentialColumnHeader(page, 'User ID')).toBeVisible();
+      await expect(credentialColumnHeader(page, 'Allocation')).toBeVisible();
+      await expect(credentialColumnHeader(page, 'Permission')).toBeVisible();
       await expect(
-        page.getByRole('columnheader', { name: 'Access Key' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'User ID' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Allocation' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Permission' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Resource Policy' }),
+        credentialColumnHeader(page, 'Resource Policy'),
       ).toBeVisible();
 
       // Verify at least one keypair row exists in the credentials table
       const credentialTable = page.locator('table').filter({
-        has: page.getByRole('columnheader', { name: 'Access Key' }),
+        has: credentialColumnHeader(page, 'Access Key'),
       });
-      const dataRows = credentialTable.locator(
-        'tbody tr:not(.ant-table-measure-row)',
-      );
+      const dataRows = credentialTable.locator('tbody tr');
       await expect(dataRows.first()).toBeVisible({ timeout: 10000 });
     });
 
@@ -51,15 +58,13 @@ test.describe(
       await navigateTo(page, 'credential');
 
       // Switch to Credentials tab
-      await page.getByRole('tab', { name: 'Credentials' }).click();
+      await credentialsTab(page).click();
 
       // Scope row lookup to the credentials table to avoid matching other tables
       const credentialTable = page.locator('table').filter({
-        has: page.getByRole('columnheader', { name: 'Access Key' }),
+        has: credentialColumnHeader(page, 'Access Key'),
       });
-      const dataRows = credentialTable.locator(
-        'tbody tr:not(.ant-table-measure-row)',
-      );
+      const dataRows = credentialTable.locator('tbody tr');
       await expect(dataRows.first()).toBeVisible({ timeout: 10000 });
 
       // Click the info button on the first keypair row.
@@ -90,7 +95,7 @@ test.describe(
       await navigateTo(page, 'credential');
 
       // Switch to Credentials tab
-      await page.getByRole('tab', { name: 'Credentials' }).click();
+      await credentialsTab(page).click();
 
       // Verify Active/Inactive radio group exists
       const radioGroup = page.getByRole('radiogroup');
@@ -102,15 +107,11 @@ test.describe(
 
       // Click Inactive and verify the table still renders
       await radioGroup.getByText('Inactive').click();
-      await expect(
-        page.getByRole('columnheader', { name: 'Access Key' }),
-      ).toBeVisible();
+      await expect(credentialColumnHeader(page, 'Access Key')).toBeVisible();
 
       // Switch back to Active and verify the table still renders
       await radioGroup.getByText('Active', { exact: true }).click();
-      await expect(
-        page.getByRole('columnheader', { name: 'Access Key' }),
-      ).toBeVisible();
+      await expect(credentialColumnHeader(page, 'Access Key')).toBeVisible();
     });
   },
 );
