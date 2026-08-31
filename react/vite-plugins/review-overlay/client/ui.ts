@@ -292,8 +292,12 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     }
   });
 
+  // Only when the overlay owns the interaction — otherwise every Escape in the
+  // app (closing a modal, clearing a select) would cancel a pick that is not
+  // running and churn the dock.
   document.addEventListener('keydown', (evt) => {
     if (evt.key !== 'Escape') return;
+    if (!pickActive && !isComposeOpen()) return;
     callbacks.onEscape();
     closeCompose();
   });

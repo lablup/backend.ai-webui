@@ -4,9 +4,10 @@
  * React component, and its ⌘⌃C hotkey is the review-pick shortcut.
  *
  * The plugin arms on `onActivate`, so EVERY activation (hotkey, dock button,
- * `api.activate()`) opens the review composer; `onElementSelect` returns
- * `false` to cancel react-grab's own clipboard copy. When react-grab is
- * missing, a plain hover/click picker takes over.
+ * `api.activate()`) opens the review composer; `onElementSelect` returns a
+ * TRUTHY value, which is what marks the element intercepted and stops
+ * react-grab copying it itself. When react-grab is missing, a plain
+ * hover/click picker takes over.
  */
 import type { AnchorComponent } from './types.js';
 import type { ReactGrabAPI } from 'react-grab';

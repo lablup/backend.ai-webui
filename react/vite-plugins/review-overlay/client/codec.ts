@@ -1,9 +1,10 @@
 /**
  * `#bai=v3` anchor codec: JSON → deflate-raw → base64url, and back.
  *
- * `CompressionStream` (not `pako`) keeps the client dependency-free; it is
- * available in every browser this dev overlay targets and in Node >= 18, so
- * the round-trip is unit-testable outside a browser.
+ * `CompressionStream` (not `pako`) keeps the client dependency-free. The
+ * `deflate-raw` format needs Chrome 103 / Safari 16.4 and Node >= 21.2 — this
+ * repo pins Node 24 (`.nvmrc`), so the round-trip is unit-testable outside a
+ * browser.
  */
 import type { AnchorV3 } from './types.js';
 

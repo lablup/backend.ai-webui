@@ -181,6 +181,7 @@ export function devReviewOverlayPlugin(): Plugin {
             },
             () => {
               res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json');
               res.end('{"error":"discovery failed"}');
             },
           );
@@ -211,14 +212,11 @@ export function devReviewOverlayPlugin(): Plugin {
               sourcemap: 'inline',
             }),
           )
-          .then(
-            ({ code }) => {
-              res.setHeader('Content-Type', 'application/javascript');
-              res.setHeader('Cache-Control', 'no-store');
-              res.end(code);
-            },
-            notFound,
-          );
+          .then(({ code }) => {
+            res.setHeader('Content-Type', 'application/javascript');
+            res.setHeader('Cache-Control', 'no-store');
+            res.end(code);
+          }, notFound);
       });
     },
     transformIndexHtml: {
