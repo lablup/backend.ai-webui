@@ -3,6 +3,8 @@
  * matched the same way scores the same, and ties break on evidence outside the
  * table (body coverage, then heading depth, then id) so ordering is stable.
  */
+import { normaliseIdentifierQuery } from './identifiers.js';
+
 export const SCORE = {
   exactTitle: 100,
   exactField: 85,
@@ -19,6 +21,15 @@ export const SCORE = {
   bodyPhraseSaturation: 3,
   /** Below this a hit cannot claim a reserved slot. */
   reserved: 40,
+  /** Schema: the query names a type, a field or a qualified member exactly. */
+  nameExact: 100,
+  /** Schema: the query equals a field's UI label. */
+  displayNameExact: 85,
+  /** Schema: the query is a phrase inside the entry's name tokens. */
+  namePhrase: 80,
+  /** Schema: the SDL description carries the query's tokens. */
+  descFloor: 10,
+  descCeiling: 35,
 } as const;
 
 /** Fixed vocabulary; every `reason` is one of these, each ≤ 60 chars. */
@@ -29,6 +40,10 @@ export const REASONS = [
   'heading-phrase',
   'heading-tokens',
   'body-tokens',
+  'name-exact',
+  'name-phrase',
+  'name-tokens',
+  'desc-tokens',
 ] as const;
 
 export type Reason = (typeof REASONS)[number];
@@ -161,6 +176,8 @@ export interface Ranked {
   domain: string;
   score: number;
   reason: Reason;
+  /** The entry is wired to the UI; it wins an otherwise equal schema tie. */
+  linked?: boolean;
   bodyCoverage: number;
   /** Title length; a shorter title spends more of itself on the query. */
   titleLength: number;
@@ -170,6 +187,12 @@ export interface Ranked {
 
 export function compareRanked(a: Ranked, b: Ranked): number {
   if (a.score !== b.score) return b.score - a.score;
+  // Only inside one domain: a UI-linked schema field is not a better answer
+  // than an equally-scored manual section.
+  if (a.domain === b.domain) {
+    const linked = Number(b.linked ?? false) - Number(a.linked ?? false);
+    if (linked !== 0) return linked;
+  }
   if (a.bodyCoverage !== b.bodyCoverage) return b.bodyCoverage - a.bodyCoverage;
   if (a.titleLength !== b.titleLength) return a.titleLength - b.titleLength;
   if (a.depth !== b.depth) return a.depth - b.depth;
@@ -210,4 +233,95 @@ export function selectWithReservedSlots<T extends Ranked>(
     selected.add(hit);
   }
   return [...selected].sort(compareRanked);
+}
+
+/**
+ * A schema entry as the ranker sees it. Names are already spelling-normalised
+ * (`normaliseIdentifier`), so `scaling_group` and `ScalingGroup` are one key.
+ */
+export interface SchemaCandidate {
+  /** Exact-match keys: the bare name and the qualified one. */
+  names: string[];
+  /** UI labels the entry answers to, from the i18n reverse index. */
+  displayNames: string[];
+  /** Tokens of the entry's own name; the phrase band matches these. */
+  ownTokens: string[];
+  /** Own tokens plus the declaring type's; the token band matches these. */
+  nameTokens: string[];
+  /** The WebUI renders this entry under an i18n label. */
+  linked: boolean;
+  description: string;
+}
+
+const containsPhrase = (haystack: string, phrase: string): boolean =>
+  ` ${haystack} `.includes(` ${phrase} `);
+
+function scoreSchemaVariant(
+  candidate: SchemaCandidate,
+  variant: string,
+): Evidence | null {
+  const query = normaliseIdentifierQuery(variant);
+  if (!query) return null;
+  const tokens = query.split(' ');
+  const description = candidate.description.toLowerCase();
+  const bodyCoverage = coverage(tokens, description);
+
+  if (candidate.names.includes(query)) {
+    return { score: SCORE.nameExact, reason: 'name-exact', bodyCoverage };
+  }
+  const folded = fold(variant);
+  if (candidate.displayNames.some((name) => fold(name) === folded)) {
+    return { score: SCORE.displayNameExact, reason: 'alias', bodyCoverage };
+  }
+
+  if (containsPhrase(candidate.ownTokens.join(' '), query)) {
+    return { score: SCORE.namePhrase, reason: 'name-phrase', bodyCoverage };
+  }
+
+  // Every query token has to name part of the identifier; the 40-75 span then
+  // says how much of the identifier the query accounts for. A field the WebUI
+  // renders under a label is the one a query naming it usually means, so it
+  // reaches the phrase band.
+  const nameTokens = new Set(candidate.nameTokens);
+  if (tokens.every((token) => nameTokens.has(token))) {
+    const own = new Set(candidate.ownTokens);
+    const lift = candidate.linked && tokens.some((token) => own.has(token));
+    const share = Math.min(1, tokens.length / candidate.nameTokens.length);
+    const span = SCORE.tokensCeiling - SCORE.tokensFloor;
+    const score = Math.round(SCORE.tokensFloor + span * share);
+    return {
+      score: lift ? Math.max(score, SCORE.namePhrase) : score,
+      reason: 'name-tokens',
+      bodyCoverage,
+    };
+  }
+
+  if (bodyCoverage > 0) {
+    const span = SCORE.descCeiling - SCORE.descFloor;
+    return {
+      score: Math.round(SCORE.descFloor + span * bodyCoverage),
+      reason: 'desc-tokens',
+      bodyCoverage,
+    };
+  }
+  return null;
+}
+
+/** Best schema evidence across the query and every term it expanded to. */
+export function scoreSchemaCandidate(
+  candidate: SchemaCandidate,
+  variants: string[],
+): Evidence | null {
+  let best: Evidence | null = null;
+  for (const variant of variants) {
+    const evidence = scoreSchemaVariant(candidate, variant);
+    if (!evidence) continue;
+    const better =
+      !best ||
+      evidence.score > best.score ||
+      (evidence.score === best.score &&
+        evidence.bodyCoverage > best.bodyCoverage);
+    if (better) best = evidence;
+  }
+  return best;
 }
