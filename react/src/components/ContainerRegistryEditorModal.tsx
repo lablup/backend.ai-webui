@@ -18,8 +18,7 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Selector } from '@astryxdesign/core/Selector';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, BAISkeleton } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -490,20 +489,13 @@ const ContainerRegistryEditorModal: React.FC<
             !(form as FormInstance<RegistryFormInput>).getFieldValue(
               'is_global',
             ) && (
-              // Suspense must sit INSIDE the form: if the project select
-              // suspends above it, the hide/show cycle unregisters every
-              // preserve={false} field and resets it to initial (FR-3705).
+              // Suspense must sit INSIDE the form: hiding the form resets
+              // every preserve={false} field (FR-3705; engine contract 30 in
+              // formEngineAcceptance.test.tsx).
               <Suspense
                 fallback={
                   <BAIFormItem label={t('registry.AllowedProjects')}>
-                    {/* Suspense placeholder only — an inert, loading Selector. */}
-                    <Selector
-                      label={t('registry.AllowedProjects')}
-                      isLabelHidden
-                      isLoading
-                      options={[]}
-                      width="100%"
-                    />
+                    <BAISkeleton variant="input" />
                   </BAIFormItem>
                 }
               >
