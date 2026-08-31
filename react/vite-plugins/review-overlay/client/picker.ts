@@ -5,9 +5,9 @@
  *
  * The plugin arms on `onActivate`, so EVERY activation (hotkey, dock button,
  * `api.activate()`) opens the review composer; `onElementSelect` returns a
- * TRUTHY value, which is what marks the element intercepted and stops
- * react-grab copying it itself. When react-grab is missing, a plain
- * hover/click picker takes over.
+ * TRUTHY value for every element of the selection, which is what marks them
+ * intercepted and stops react-grab copying them itself. When react-grab is
+ * missing or disabled, a plain hover/click picker takes over.
  */
 import type { AnchorComponent } from './types.js';
 import type { ReactGrabAPI } from 'react-grab';
@@ -20,6 +20,8 @@ export interface PickerCallbacks {
   /** True for events originating inside the overlay's own shadow host. */
   isOwnEvent: (evt: Event) => boolean;
   showHint: (message: string) => void;
+  /** react-grab never showed up, or is present but disabled. */
+  onReactGrabUnavailable: () => void;
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
@@ -28,6 +30,8 @@ export function createPicker(callbacks: PickerCallbacks) {
   let grabRegistered = false;
   let grabArmed = false;
   let fallbackPicking = false;
+  /** First element of the current react-grab selection, until the deferred open. */
+  let pendingPick: Element | null = null;
 
   const api = () => window.__REACT_GRAB__ ?? null;
 
@@ -49,19 +53,30 @@ export function createPicker(callbacks: PickerCallbacks) {
           },
           onElementSelect: (element: Element) => {
             if (!grabArmed) return undefined;
-            grabArmed = false;
-            // Deactivate FIRST, on a later tick: react-grab restores focus on
-            // deactivate, and doing it after the composer opens steals focus
-            // straight back out of the textarea.
-            setTimeout(() => {
-              grab.deactivate();
-              const rect = element.getBoundingClientRect();
-              callbacks.onPick(
-                element,
-                rect.left + Math.min(rect.width, 160),
-                rect.bottom + 6,
-              );
-            }, 0);
+            // react-grab calls this once per element and copies every one it
+            // was not told to skip, so a box/shift select must be intercepted
+            // WHOLE — disarming on the first element let the rest reach its
+            // clipboard. The composer opens for the first element only.
+            if (!pendingPick) {
+              pendingPick = element;
+              // Deactivate FIRST, on a later tick: react-grab restores focus
+              // on deactivate, and doing it after the composer opens steals
+              // focus straight back out of the textarea.
+              setTimeout(() => {
+                const target = pendingPick;
+                grabArmed = false;
+                pendingPick = null;
+                if (!target) return undefined;
+                grab.deactivate();
+                const rect = target.getBoundingClientRect();
+                callbacks.onPick(
+                  target,
+                  rect.left + Math.min(rect.width, 160),
+                  rect.bottom + 6,
+                );
+                return undefined;
+              }, 0);
+            }
             // react-grab 0.1.50 marks an element intercepted on a TRUTHY
             // return (`if (a) wasIntercepted = true`), so `false` reads as
             // "not intercepted" and it copies the element anyway.
@@ -69,6 +84,7 @@ export function createPicker(callbacks: PickerCallbacks) {
           },
           onDeactivate: () => {
             grabArmed = false;
+            pendingPick = null;
             setMode(false);
           },
         },
@@ -107,11 +123,18 @@ export function createPicker(callbacks: PickerCallbacks) {
     if (grab) {
       grabArmed = true;
       grab.activate();
-      setMode(true);
-      callbacks.showHint(
-        'Click an element — hover shows its component (Esc to cancel)',
-      );
-      return;
+      // `activate()` is a silent no-op when react-grab is loaded but disabled
+      // (its own toggle, or instrumentation that never attached), which would
+      // leave the reviewer clicking a dead button. Verify, then fall through.
+      if (grab.isActive()) {
+        setMode(true);
+        callbacks.showHint(
+          'Click an element — hover shows its component (Esc to cancel)',
+        );
+        return;
+      }
+      grabArmed = false;
+      callbacks.onReactGrabUnavailable();
     }
     if (fallbackPicking) return;
     fallbackPicking = true;
@@ -127,6 +150,7 @@ export function createPicker(callbacks: PickerCallbacks) {
   function stop() {
     if (grabArmed) {
       grabArmed = false;
+      pendingPick = null;
       api()?.deactivate();
     }
     if (fallbackPicking) {
@@ -147,7 +171,16 @@ export function createPicker(callbacks: PickerCallbacks) {
     if (ensureGrabPlugin()) return;
     let tries = 0;
     const timer = setInterval(() => {
-      if (ensureGrabPlugin() || ++tries > 40) clearInterval(timer);
+      if (ensureGrabPlugin()) {
+        clearInterval(timer);
+        return;
+      }
+      if (++tries > 40) {
+        clearInterval(timer);
+        // No react-grab means no ⌘⌃C, so the dock is the only way in. Show it
+        // rather than leaving the reviewer with an overlay they cannot reach.
+        callbacks.onReactGrabUnavailable();
+      }
     }, 500);
   }
 

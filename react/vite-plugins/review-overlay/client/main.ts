@@ -7,16 +7,16 @@
  * prompt. Reading those blocks back and drawing pins is FR-3813.
  */
 import { captureAnchorSignals } from './anchor.js';
-import { buildBlock, landmarkLabel, resolveRouteLabel } from './block.js';
+import {
+  buildBlockFromCapture,
+  captureForBlock,
+  landmarkLabel,
+  resolveRouteLabel,
+  type AnchorCapture,
+} from './block.js';
 import { createPicker } from './picker.js';
-import type { ReviewServerState } from './types.js';
+import type { AnchorV3, ReviewServerState } from './types.js';
 import { createOverlayUI } from './ui.js';
-
-declare global {
-  interface Window {
-    __baiReviewOverlay?: boolean;
-  }
-}
 
 if (!window.__baiReviewOverlay) {
   window.__baiReviewOverlay = true;
@@ -25,53 +25,65 @@ if (!window.__baiReviewOverlay) {
 
 function boot() {
   let serverState: ReviewServerState | null = null;
+  /**
+   * The pick's async work, done the moment the reviewer picks — NOT when they
+   * press ⌘⏎. `execCommand('copy')` is the only clipboard on the plain-http
+   * gateway origin and it needs the user activation still to be live, so
+   * nothing may be awaited between the gesture and the write.
+   */
+  let capture: { target: Element; value: AnchorCapture } | null = null;
 
   const ui = createOverlayUI({
     onStartPick: () => picker.start(),
-    onCopy: async (text) => {
+    onBuildBlock: (text) => {
       const target = ui.getComposeTarget();
-      if (!target) return;
-      const { block } = await buildBlock({
-        target,
+      if (!target || capture?.target !== target) return null;
+      return buildBlockFromCapture(capture.value, {
         text,
         pr: serverState?.pr ?? 0,
         routeLabel: currentRouteLabel(),
-        stack: await picker.getStack(target),
-        component: await picker.getComponent(target),
-      });
-      const copied = await ui.copyText(block);
-      ui.showToast(
-        copied
-          ? 'Copied — paste it into the PR comment, the Teams thread, or Claude 📋'
-          : 'Could not reach the clipboard — copy the block from the console',
-      );
-      if (!copied) {
-        // eslint-disable-next-line no-console
-        console.log(block);
-      }
+      }).block;
     },
-    onComposeClosed: () => picker.stop(),
+    onComposeClosed: () => {
+      capture = null;
+      picker.stop();
+    },
     onEscape: () => picker.stop(),
   });
 
   const picker = createPicker({
     onPick: (element, x, y) => {
+      capture = null;
       ui.openCompose(element, x, y);
-      ui.setComposeLabel(
-        landmarkLabel(currentRouteLabel(), captureAnchorSignals(element)),
-      );
-      void picker.getStack(element).then((stack) => {
-        if (ui.getComposeTarget() !== element || !stack.length) return;
-        ui.appendComposeLabel(
-          `\n⚛️ ${stack.map((line) => line.trim()).join('\n')}`,
-        );
-      });
+      // One capture per pick: the label, the anchor payload and the rect all
+      // come from this single walk, measured while the page still looks the
+      // way the reviewer saw it.
+      const anchor = captureAnchorSignals(element);
+      ui.setComposeLabel(landmarkLabel(currentRouteLabel(), anchor));
+      void prepare(element, anchor);
     },
     onModeChange: (active) => ui.setPickActive(active),
     onHover: (rect) => ui.setHoverRect(rect),
     isOwnEvent: (evt) => ui.isOwnEvent(evt),
     showHint: (message) => ui.showToast(message),
+    onReactGrabUnavailable: () => ui.pinDock(),
   });
+
+  async function prepare(element: Element, anchor: AnchorV3) {
+    const [stack, component] = await Promise.all([
+      picker.getStack(element),
+      picker.getComponent(element),
+    ]);
+    const prepared = await captureForBlock(anchor, stack, component);
+    if (ui.getComposeTarget() !== element) return;
+    capture = { target: element, value: prepared };
+    ui.setComposeReady(true);
+    if (stack.length) {
+      ui.appendComposeLabel(
+        `\n⚛️ ${stack.map((line) => line.trim()).join('\n')}`,
+      );
+    }
+  }
 
   /** The app publishes this in dev; without it the pathname is the label. */
   const currentRouteLabel = () =>
@@ -83,7 +95,8 @@ function boot() {
       serverState = state;
     })
     .catch(() => {
-      /* the PR number stays 0; the block is still usable */
+      // The PR number stays 0; the block is still usable.
+      return undefined;
     });
 
   picker.watchForReactGrab();

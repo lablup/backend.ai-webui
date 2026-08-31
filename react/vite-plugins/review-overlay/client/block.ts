@@ -68,13 +68,43 @@ export function buildBlockText(input: BlockInput): string {
   return lines.join('\n');
 }
 
-export interface BuildBlockOptions {
-  target: Element;
+/**
+ * Everything about the picked element that does not depend on the note.
+ * Captured at PICK time so the copy gesture stays synchronous — see
+ * `buildBlockFromCapture`.
+ */
+export interface AnchorCapture {
+  anchor: AnchorV3;
+  anchorB64: string;
+  /** `getStackContext()` output, already split into lines. */
+  stack: string[];
+}
+
+/**
+ * The async half of building a block. `encodeAnchor` is a `CompressionStream`
+ * round-trip, and the caller's `stack` / `component` come from react-grab's
+ * fiber walk — none of it may run inside the copy gesture, because
+ * `execCommand('copy')` (the only clipboard on the plain-http gateway origin)
+ * needs the user activation still to be live.
+ */
+export async function captureForBlock(
+  anchor: AnchorV3,
+  stack: string[],
+  component?: AnchorComponent,
+): Promise<AnchorCapture> {
+  const withComponent = component ? { ...anchor, c: component } : anchor;
+  return {
+    anchor: withComponent,
+    anchorB64: await encodeAnchor(withComponent),
+    stack,
+  };
+}
+
+export interface BlockRenderOptions {
+  /** The reviewer's note. May be empty — the block still carries the pin. */
   text: string;
   pr: number;
   routeLabel: string;
-  stack: string[];
-  component?: AnchorComponent;
   /** Injected in tests; defaults to now, truncated to whole seconds. */
   at?: string;
   origin?: string;
@@ -89,11 +119,12 @@ export interface BuiltBlock {
   at: string;
 }
 
-export async function buildBlock(
-  options: BuildBlockOptions,
-): Promise<BuiltBlock> {
-  const anchor = captureAnchorSignals(options.target, options.component);
-  const anchorB64 = await encodeAnchor(anchor);
+/** The sync half: safe to call inside the keydown/click that copies. */
+export function buildBlockFromCapture(
+  capture: AnchorCapture,
+  options: BlockRenderOptions,
+): BuiltBlock {
+  const { anchor, anchorB64 } = capture;
   const at = options.at ?? new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
   const id = pinId(options.pr, anchorB64, at);
   const q = anchor.q ? `?${anchor.q}` : '';
@@ -102,11 +133,38 @@ export async function buildBlock(
   const block = buildBlockText({
     label: landmarkLabel(options.routeLabel, anchor),
     id,
-    stack: options.stack,
+    stack: capture.stack,
     text: options.text,
     url,
     pr: options.pr,
     at,
   });
   return { block, id, url, anchor, anchorB64, at };
+}
+
+export interface BuildBlockOptions extends BlockRenderOptions {
+  /** Skip the capture step — the overlay precomputes this at pick time. */
+  capture?: AnchorCapture;
+  /** Required unless `capture` is given. */
+  target?: Element;
+  stack?: string[];
+  component?: AnchorComponent;
+}
+
+/** Capture + render in one call. Tests and one-shot callers; the overlay splits them. */
+export async function buildBlock(
+  options: BuildBlockOptions,
+): Promise<BuiltBlock> {
+  let capture = options.capture;
+  if (!capture) {
+    if (!options.target) {
+      throw new Error('buildBlock needs either `target` or `capture`');
+    }
+    capture = await captureForBlock(
+      captureAnchorSignals(options.target),
+      options.stack ?? [],
+      options.component,
+    );
+  }
+  return buildBlockFromCapture(capture, options);
 }

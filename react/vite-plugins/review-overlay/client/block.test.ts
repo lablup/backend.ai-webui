@@ -1,6 +1,9 @@
+import { captureAnchorSignals } from './anchor.js';
 import {
   buildBlock,
+  buildBlockFromCapture,
   buildBlockText,
+  captureForBlock,
   landmarkLabel,
   resolveRouteLabel,
 } from './block.js';
@@ -133,5 +136,67 @@ describe('buildBlock', () => {
     expect(built.block).toContain(
       `<!-- bai-review v3 id=${built.id} pr=9330 at=2026-08-31T09:00:00Z -->`,
     );
+  });
+
+  /**
+   * The overlay does the async half at PICK time and only renders inside the
+   * copy gesture, so `execCommand('copy')` still sees the user activation on
+   * the plain-http origin. Both routes must produce the same block.
+   */
+  it('accepts a precomputed capture instead of a target', async () => {
+    document.body.innerHTML =
+      '<div data-testid="login-card"><button id="go">Login</button></div>';
+    const target = document.querySelector('#go') as Element;
+    const options = {
+      text: 'note',
+      pr: 9330,
+      routeLabel: 'Sessions',
+      at: '2026-08-31T09:00:00Z',
+      origin: 'https://fr-3811.localhost:1355',
+    };
+
+    const capture = await captureForBlock(
+      captureAnchorSignals(target),
+      ['in LoginButton'],
+      { name: 'LoginView', src: 'src/components/LoginView.tsx:12:4' },
+    );
+    const fromCapture = await buildBlock({ ...options, capture });
+    const fromTarget = await buildBlock({
+      ...options,
+      target,
+      stack: ['in LoginButton'],
+      component: {
+        name: 'LoginView',
+        src: 'src/components/LoginView.tsx:12:4',
+      },
+    });
+
+    expect(fromCapture.block).toBe(fromTarget.block);
+    expect(fromCapture.anchor.c?.name).toBe('LoginView');
+    expect(fromCapture.block).toContain('> ⚛️ in LoginButton');
+  });
+
+  it('renders synchronously from a capture — no await before the copy', async () => {
+    document.body.innerHTML = '<button id="go">Login</button>';
+    const capture = await captureForBlock(
+      captureAnchorSignals(document.querySelector('#go') as Element),
+      [],
+    );
+    const built = buildBlockFromCapture(capture, {
+      text: '',
+      pr: 9330,
+      routeLabel: 'Sessions',
+      at: '2026-08-31T09:00:00Z',
+      origin: 'https://fr-3811.localhost:1355',
+    });
+    expect(built.url).toBe(
+      `https://fr-3811.localhost:1355/#bai=v3.${built.id}.${built.anchorB64}`,
+    );
+  });
+
+  it('refuses to build without a target or a capture', async () => {
+    await expect(
+      buildBlock({ text: '', pr: 1, routeLabel: 'Sessions' }),
+    ).rejects.toThrow(/target.*capture/);
   });
 });
