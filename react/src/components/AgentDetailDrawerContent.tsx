@@ -8,8 +8,8 @@ import type {
   SessionV2OrderBy,
   SessionV2Status,
 } from '../__generated__/AgentSessionsQuery.graphql';
+import { getSessionV2StatusBuckets } from '../helper/sessionStatusBuckets';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useSessionV2StatusBuckets } from '../hooks/useSessionV2StatusBuckets';
 import { theme, useBAIBreakpoint } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
@@ -53,7 +53,9 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   const { md } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const statusBuckets = useSessionV2StatusBuckets();
+  const statusBuckets = getSessionV2StatusBuckets(
+    baiClient.supports('session-preemption-statuses'),
+  );
 
   const [activeTabKey, setActiveTabKey] = useState<TabKey>('resources');
 

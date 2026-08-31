@@ -8,10 +8,10 @@ import type {
   SessionV2Status,
 } from '../../__generated__/AgentSessionsQuery.graphql';
 import { convertToOrderBy } from '../../helper';
-import { useWebUINavigate } from '../../hooks';
+import { getSessionV2StatusBuckets } from '../../helper/sessionStatusBuckets';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
-import { useSessionV2StatusBuckets } from '../../hooks/useSessionV2StatusBuckets';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../BAIRadioGroup';
 import {
@@ -91,7 +91,10 @@ const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
   const buildProjectPath = useProjectPath();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const statusBuckets = useSessionV2StatusBuckets();
+  const baiClient = useSuspendedBackendaiClient();
+  const statusBuckets = getSessionV2StatusBuckets(
+    baiClient.supports('session-preemption-statuses'),
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AgentSessions',

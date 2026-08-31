@@ -14,13 +14,14 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import TerminateSessionModalForProjectAdmin from '../components/TerminateSessionModalForProjectAdmin';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+import {
+  getSessionV2StatusBuckets,
+  sessionStatusCategoryValues,
+} from '../helper/sessionStatusBuckets';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import {
-  sessionStatusCategoryValues,
-  useSessionV2StatusBuckets,
-} from '../hooks/useSessionV2StatusBuckets';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAISkeleton,
@@ -91,7 +92,10 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const statusBuckets = useSessionV2StatusBuckets();
+  const baiClient = useSuspendedBackendaiClient();
+  const statusBuckets = getSessionV2StatusBuckets(
+    baiClient.supports('session-preemption-statuses'),
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ProjectAdminSessionPage',

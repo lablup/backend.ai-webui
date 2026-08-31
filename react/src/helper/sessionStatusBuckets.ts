@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
 import type { SessionV2Status } from 'backend.ai-ui';
 
 /** Gated behind the client's `session-preemption-statuses` feature flag. */
@@ -37,24 +36,16 @@ export type SessionStatusCategory =
 
 /**
  * The running / finished status buckets, narrowed to what the connected
- * manager's `SessionV2Status` enum actually accepts.
+ * manager's `SessionV2Status` enum actually accepts. Callers read
+ * `supports('session-preemption-statuses')` and pass it in.
  */
-export const useSessionV2StatusBuckets = (): Record<
-  SessionStatusCategory,
-  ReadonlyArray<SessionV2Status>
-> => {
-  'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsPreemptionStatuses = baiClient.supports(
-    'session-preemption-statuses',
-  );
-
-  return {
-    running: supportsPreemptionStatuses
-      ? RUNNING_STATUSES
-      : RUNNING_STATUSES.filter(
-          (status) => !PREEMPTION_STATUSES.includes(status),
-        ),
-    finished: FINISHED_STATUSES,
-  };
-};
+export const getSessionV2StatusBuckets = (
+  supportsPreemptionStatuses: boolean,
+): Record<SessionStatusCategory, ReadonlyArray<SessionV2Status>> => ({
+  running: supportsPreemptionStatuses
+    ? RUNNING_STATUSES
+    : RUNNING_STATUSES.filter(
+        (status) => !PREEMPTION_STATUSES.includes(status),
+      ),
+  finished: FINISHED_STATUSES,
+});
