@@ -23,8 +23,13 @@ The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portle
 
 To find the actual URL for a running instance, check these sources in order:
 
-1. `portless list` — live routes on this box.
-2. The `pnpm run dev` terminal output — Portless prints the full URL on startup.
+1. **The boot records** — `~/.local/state/fw/dev-servers/*.json`, one per Portless app,
+   written by the `dev-server` skill. Each carries `url` (the gateway URL a teammate can
+   open), `localUrl`, `branch`, `pid`, `startedAt`/`stoppedAt` and the PRs it serves. A
+   record with `stoppedAt` set is a server that is gone. This is the only source that says
+   *which branch and PRs* a server is for, so start here.
+2. `portless list` — live routes on this box.
+3. The `pnpm run dev` terminal output — Portless prints the full URL on startup.
 
 If no dev server is running, tell the user to start it with `pnpm run dev` (requires Portless: `npm install -g portless`).
 

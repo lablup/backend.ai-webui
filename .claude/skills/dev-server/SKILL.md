@@ -240,6 +240,9 @@ If step **2d** resolved login credentials, also prefix `VITE_DEFAULT_EMAIL='<ema
 
 Per step **2e**, prefix `VITE_DEV_TYPECHECK=on` **only** when the user explicitly asked for type checking; otherwise omit the variable entirely. Either way, say which mode you started in your reply.
 
+On the webui, also prefix `BAI_REVIEW_BOOT_RECORD` from step **5**'s `boot-env` call — the dev
+server needs it in its environment before it starts. Omit it when `boot-env` printed nothing.
+
 **Shell-escape every interpolated value.** The endpoint, email, and especially the password come from user/conversation text and may contain an apostrophe or shell metacharacters — interpolating them raw inside `'...'` breaks the command and can turn the rest of the value into executable shell. Before building the command line, quote each value shell-safely (e.g. Bash `printf '%q'`), or set them via the user's git-ignored `.env.development.local` instead of the command line. Do not hand-concatenate an untrusted password into a single-quoted string.
 
 ```bash
@@ -252,7 +255,63 @@ For non-webui projects, substitute the discovered command and package manager. U
 
 Use the Bash tool with `run_in_background: true` since dev servers are long-running. State in one short sentence what you're doing — e.g. `"Starting dev server with header color #2563EB (blue)."` — and which color name (if any) the env was derived from. Don't paste the env table.
 
-## 5. Announce both URLs to the user
+## 5. Advertise the server on every PR it serves (webui)
+
+On a box that has joined the dev gateway (`~/.config/fw/dev-gw.json`), every open PR this
+server serves gets one comment carrying a URL a reviewer can open, and the boot is recorded
+on disk for later tooling. `.claude/skills/dev-server/scripts/advertise.sh` does all of it —
+this skill only calls it, and repeats what it prints.
+
+**Before boot** (step 4), resolve the app name and the record path:
+
+```bash
+eval "$(bash .claude/skills/dev-server/scripts/advertise.sh boot-env)"
+```
+
+That exports `BAI_DEV_APP` and `BAI_REVIEW_BOOT_RECORD=~/.local/state/fw/dev-servers/<app>.json`.
+Add `BAI_REVIEW_BOOT_RECORD` to the `pnpm dev` env prefix — **the dev server must have it in
+its environment, but the file is only written after boot**, since the record describes a name
+Portless has actually claimed. `boot-env` resolves that name with `scripts/portless-app-name.mjs`,
+the same module `dev.mjs` uses, so the prediction cannot drift from what `dev.mjs` requests
+(`portless <app> --force` claims exactly it). When `boot-env` prints nothing — Portless will
+auto-derive a name — skip this whole section.
+
+**After boot**, once Portless has printed its URL and `portless-doctor` has run:
+
+```bash
+bash .claude/skills/dev-server/scripts/advertise.sh advertise --app "$BAI_DEV_APP" --pid <dev.mjs pid>
+```
+
+Idempotent: run it again and it edits the same comments. Pass `--teams-thread <url>` (for the
+running PR) or `--teams-thread <pr>=<url>` when Jira has no thread recorded for a PR.
+
+**On teardown**, after killing the dev server by pid:
+
+```bash
+bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
+```
+
+### What the script guarantees
+
+- **A `.localhost` URL never reaches GitHub.** The advertised URL is `share_base` from the
+  gateway config with the claimed app name substituted — plain `http`, no port. A box that
+  has not joined, a gateway joined with a different Portless port, or a URL that does not
+  answer `X-Portless: 1` yields one printed line and no comment. Repeat that line to the
+  user; never route around it.
+- **One comment per box per PR**, found by the hidden marker `<!-- bai-dev-server box=<box> -->`
+  and edited, never duplicated. Another box's `--force` takeover of the same app name carries
+  a different marker, so it cannot touch this box's comment.
+- **The comment carries the URL and, for a stack, `serves stack #a → #b → #c (running: #c)` —
+  nothing else.** The repo is public: no endpoint, e-mail or password ever goes in it (the dev
+  bundle already pre-fills login).
+- **The served set** is the current branch plus every layer below it from `gh stack view --json`,
+  open PRs only; an unstacked branch serves one PR.
+- **The Teams thread** for each served PR comes from that PR's `Resolves … (FR-XXXX)` key and one
+  Jira GET (`customfield_10176`) at boot — never at request time. Missing is recorded as `null`.
+
+Logic that needs no network is unit-tested: `bash .claude/skills/dev-server/scripts/test-advertise.sh`.
+
+## 6. Announce both URLs to the user
 
 Once the server is up, tell the user **both** the Portless (HTTPS) URL and the underlying React (HTTP) URL on separate lines so they can pick whichever they prefer. Do this only after both are actually known — don't fabricate ports.
 
@@ -282,7 +341,7 @@ If after ~15s the React URL still hasn't appeared (very rare with Vite), announc
 
 Many projects don't use Portless. Read the dev server's stdout for whatever URL(s) it prints (Vite typically prints `Local:` and `Network:`; Next.js prints `started server on http://localhost:3000`; etc.) and forward all of them to the user verbatim. If the project does use Portless, follow the webui rules above.
 
-## 6. Edge cases
+## 7. Edge cases
 
 - **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
 - **User overrides via prompt**: if the user says "use a green header" or "no color this time" or "name the dev URL <foo>" or "ignore the PR's IP, use 10.0.0.7 instead", honor their words over the conversation-history and PR-description values.
@@ -290,7 +349,13 @@ Many projects don't use Portless. Read the dev server's stdout for whatever URL(
 - **No `/color` in history but user mentioned a color**: treat the user's mention as the source of truth. If they said "use orange", map `orange` → `#EA580C` and prefix accordingly.
 - **PR description mentions multiple addresses or none**: take the **first** match for the multi-match case; for the no-match case, omit `VITE_DEFAULT_API_ENDPOINT` rather than guessing. The login form will fall back to `localStorage` / `config.toml` like before.
 
-## 7. Out of scope
+## 8. Out of scope
 
-- Don't write any color file (`.claude/.fw-color`, `.env.development.local`, etc.). The only sanctioned side effect is the env var prefix.
-- Don't install deps, run lint, or do any other "while we're here" steps. Just start the server.
+- Don't write any color file (`.claude/.fw-color`, `.env.development.local`, etc.).
+- **The sanctioned side effects are exactly three**: the env var prefix, and — on a
+  gateway-joined box — the dev-server comment on each served PR plus the boot record under
+  `~/.local/state/fw/dev-servers/`, both written only by `advertise.sh` (step 5). Nothing
+  else touches GitHub, Jira or disk: no labels, no PR body edits, no reviewers, no registry
+  entries, and never a comment on a PR this server does not serve.
+- Don't install deps, run lint, or do any other "while we're here" steps. Just start the
+  server and advertise it.
