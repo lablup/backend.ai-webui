@@ -43,7 +43,7 @@ WebUI release train, and `Makefile versiontag` leaves it alone. One workflow,
 
 The tag must equal the version in `package.json`, and a version already on npm
 is skipped rather than failing the run. To release: bump the version in a PR,
-merge, then `git tag agent-cli-v0.1.0 && git push origin agent-cli-v0.1.0`.
+merge, then `git tag agent-cli-v<version> && git push origin agent-cli-v<version>` (the tag must equal `package.json`'s version).
 The WebUI's `v*` tags deliberately do not publish the CLI — they would republish
 the same version on every WebUI release.
 
