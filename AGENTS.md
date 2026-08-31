@@ -168,7 +168,7 @@ The ASTRYX block above is `astryx init --features agents` output (run from `reac
 The block's `pnpm exec astryx <cmd>` assumes you are **inside `react/`**. `@astryxdesign/cli` is a devDependency of that workspace only, so the root `node_modules/.bin` has no `astryx` binary — and `pnpm exec` resolves binaries, not package scripts, so it fails at the root with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL`. **From the repository root, run `pnpm run astryx <cmd>` instead** (root `package.json` proxies it to the same CLI). Both forms take identical arguments.
 
 <!-- BAI-AGENT:start -->
-bai-agent · 12 commands
+bai-agent · 13 commands
 Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.
 CLI: run every command as `pnpm run bai-agent <cmd>` from the repository root (shown below as `bai-agent ...`).
 The proxy runs the bundle, so build it first: `pnpm --filter backend.ai-agent-cli build`. Without the proxy, still from the repository root: `node packages/backend.ai-agent-cli/dist/cli.js <cmd>`.
@@ -198,6 +198,7 @@ COMMANDS:
   manifest  Print the CLI capability manifest (commands and their flags).
   init      Print the CLAUDE.md agent block, generated from the command registry.
   doctor    Diagnose the CLI environment and the detected checkout.
+  sync      Fetch the checkout data (SDL, i18n, manual) for use outside a WebUI checkout.
   search    Rank manual sections, schema entries and terminology for a query.
   docs      Search the user manual, or print one of its sections.
   schema    Search the GraphQL schema, print one type / field / enum value, or sync the SDL from a backend release.

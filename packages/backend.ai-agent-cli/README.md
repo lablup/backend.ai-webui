@@ -33,10 +33,10 @@ The CLI is versioned on its own — `0.x` in this `package.json` — not on the
 WebUI release train, and `Makefile versiontag` leaves it alone. One workflow,
 `.github/workflows/publish-backend.ai-agent-cli.yml`, with two triggers:
 
-| Event                                       | Publishes                                       |
-| ------------------------------------------- | ----------------------------------------------- |
-| push to `main` touching this package        | `<version>-canary-<sha>-<date>` under `canary`  |
-| tag `agent-cli-v<version>`                  | `<version>` under `latest` (`-rc.N` → `rc`)     |
+| Event                                | Publishes                                                                        |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| push to `main` touching this package | `<version>-canary-<sha>-<date>` under `canary`                                   |
+| tag `agent-cli-v<version>`           | `<version>` under `latest`; `-rc.N` → `rc`, `-beta.N` → `beta`, `-alpha` skipped |
 
 The tag must equal the version in `package.json`, and a version already on npm
 is skipped rather than failing the run. To release: bump the version in a PR,
@@ -55,13 +55,21 @@ trusted publisher on the package page. The `backend.ai-docs-toolkit` workflow
 went red on every push to `main` until its package was bootstrapped the same
 way.
 
-## Repo mode
+## Where the data comes from
 
-`bai-agent` reads the checkout live — it copies nothing and takes no workspace
-dependency on the packages it reads. Every command that reads repository data
-(`version`, `search`, `docs`, `schema`, … — not `manifest` or `--help`)
-resolves its context by walking up from the current working directory until it finds a `package.json`
-named `backend.ai-webui`, then verifies the three data sources exist:
+`bai-agent` reads a WebUI checkout live — it copies nothing and takes no
+workspace dependency on the packages it reads. Every command that reads
+repository data (`version`, `search`, `docs`, `schema`, … — not `manifest`,
+`sync` or `--help`) resolves its checkout in this order and stops at the first
+hit:
+
+| Order | Source                                                                                 | `source` |
+| ----- | -------------------------------------------------------------------------------------- | -------- |
+| 1     | an ancestor of `cwd` whose `package.json` is named `backend.ai-webui`                  | `cwd`    |
+| 2     | `$BAI_AGENT_CHECKOUT` (a checkout root; anything else is an error, not a fall-through) | `env`    |
+| 3     | the data checkout `bai-agent sync` maintains (see below)                               | `synced` |
+
+It then verifies the three data sources exist:
 
 | Source         | Path                              |
 | -------------- | --------------------------------- |
@@ -70,12 +78,48 @@ named `backend.ai-webui`, then verifies the three data sources exist:
 | User manual    | `packages/backend.ai-webui-docs/` |
 
 `doctor` is the exception: it locates the root the same way but reports each
-source's status instead of failing, so it is the command to run when another
-one exits 1.
+source's status (and which source it came from) instead of failing, so it is
+the command to run when another one exits 1.
 
 `resolveRepoContext(cwd)` returns absolute paths (`repoRoot`, `schemaPath`,
-`i18nDir`, `docsDir`) plus the checkout's `package.json` version. Outside a
-checkout it fails with exit code 1 and an error naming what was not found.
+`i18nDir`, `docsDir`), the checkout's `package.json` version and the `source`
+above. With no checkout in reach it fails with exit code 1 (`repo_not_found`)
+and hints `bai-agent sync`.
+
+### `sync` — the data without the repository
+
+Outside a checkout — an `npm install -g` on another machine — `sync` fetches
+just the data:
+
+```bash
+bai-agent sync                  # the ref last synced (main the first time)
+bai-agent sync --ref v26.8.1    # a WebUI release tag, or any branch
+bai-agent sync --force          # throw the checkout away and clone again
+```
+
+It is a shallow (`--depth 1`), blob-filtered (`--filter=blob:none`) clone of
+`lablup/backend.ai-webui` under a non-cone sparse checkout of exactly what the
+commands read: `package.json`, `data/`, `resources/i18n/`, the manual without
+its `images/` (~170 MB across four languages, none of it searched), and the
+`react/src/**/*.tsx` files the i18n reverse index scans. About 16 MB on disk,
+a few seconds against GitHub. `git` must be on `PATH`.
+
+The checkout lives at `${XDG_DATA_HOME:-~/.local/share}/backend.ai-agent/checkout`
+(`$BAI_AGENT_DATA_DIR` overrides the parent), and each run records
+`{ ref, commit, syncedAt }` under `sync` in the [config file](#configjson).
+Re-running fetches the ref and resets to it — the sparse patterns are
+re-applied every time, so a CLI upgrade that widens them takes effect on the
+next sync. The reset also discards a locally `schema sync`ed SDL: the ref's
+own snapshot is the contract, so run `schema sync` again afterwards if you
+had aligned it to a backend release. `doctor` warns when the synced data is
+older than 30 days.
+
+### `config.json`
+
+`${XDG_CONFIG_HOME:-~/.config}/backend.ai-agent/config.json` (or under
+`$BAI_AGENT_CONFIG_DIR`, next to `sessions/`) holds machine-wide state that
+is not a session: the `endpoint` the user named, and the `sync` record above.
+It is written by `sync`; sessions never go in it.
 
 ## Commands
 
@@ -84,6 +128,7 @@ bai-agent version              # CLI version, detected checkout root, repo versi
 bai-agent manifest             # every command with its description and flags
 bai-agent init                 # the CLAUDE.md agent block (see The agent block below)
 bai-agent doctor               # environment + checkout + auth diagnostics
+bai-agent sync                 # fetch the checkout data for use outside a checkout
 bai-agent search "<query>"     # one ranked list over docs + schema + terminology
 bai-agent docs search "<q>"    # alias of `search --domain docs`
 bai-agent docs show <id>       # print one manual section (`--full` for the page)
@@ -516,9 +561,10 @@ re-authenticates on its own.
 
 ### Endpoint resolution
 
-`--endpoint` wins; otherwise the single stored session; otherwise
-`[general] apiEndpoint` from the detected checkout's `config.toml`. Two or more
-stored sessions is an error, not a guess.
+`--endpoint` wins; otherwise `[general] apiEndpoint` from the checkout's own
+`config.toml` (a per-place setting beats machine-wide state); otherwise the
+`endpoint` recorded in [`config.json`](#configjson); otherwise the single
+stored session. Two or more stored sessions is an error, not a guess.
 
 ## Query
 
@@ -582,10 +628,10 @@ hint:  /data
 The seed list is deliberately tiny, and destructive fields (`delete*`, `purge*`,
 `terminate*`, `revoke*`) are never on it:
 
-| Mutation                 | Page    |
-| ------------------------ | ------- |
-| `createVfolderV2`        | `/data` |
-| `createVFolderInProject` | `/data` |
+| Mutation                 | Page                 |
+| ------------------------ | -------------------- |
+| `createVfolderV2`        | `/data`              |
+| `createVFolderInProject` | `/data`              |
 | `create_resource_preset` | `/admin/environment` |
 
 **There is no compute-session creation mutation in the schema** — Backend.AI
@@ -623,14 +669,14 @@ an unrecognised type produces no link rather than a guessed one. One container
 level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
 (`items`), or a single-field Strawberry `*Payload`.
 
-| Return type                                   | Resource     | Page                          |
-| --------------------------------------------- | ------------ | ----------------------------- |
-| `ComputeSessionNode`, `ComputeSession`, `SessionV2` | session      | `/session?sessionDetail=<id>` |
-| `VirtualFolderNode`, `VirtualFolder`, `VFolder` | vfolder      | `/data?folder=<id>`           |
-| `Endpoint`, `EndpointNode`                    | deployment   | `/deployments/<id>`           |
-| `ModelCard`, `ModelCardV2`                    | model_card   | `/model-store?modelCard=<id>` |
-| `Role`, `RoleNode`                            | role         | `/admin/rbac?roleDetail=<id>` |
-| `Artifact`, `ArtifactNode`                    | artifact     | `/admin/reservoir/<id>`       |
+| Return type                                         | Resource   | Page                          |
+| --------------------------------------------------- | ---------- | ----------------------------- |
+| `ComputeSessionNode`, `ComputeSession`, `SessionV2` | session    | `/session?sessionDetail=<id>` |
+| `VirtualFolderNode`, `VirtualFolder`, `VFolder`     | vfolder    | `/data?folder=<id>`           |
+| `Endpoint`, `EndpointNode`                          | deployment | `/deployments/<id>`           |
+| `ModelCard`, `ModelCardV2`                          | model_card | `/model-store?modelCard=<id>` |
+| `Role`, `RoleNode`                                  | role       | `/admin/rbac?roleDetail=<id>` |
+| `Artifact`, `ArtifactNode`                          | artifact   | `/admin/reservoir/<id>`       |
 
 The id is the first of `row_id`, `endpoint_id`, `id` that carries a non-empty
 string. **Known limitation:** Strawberry types (`VFolder`, `SessionV2`, …)
@@ -675,13 +721,13 @@ via:      ComputeSessionNode.status=RUNNING
 
 Five pieces, each tagged `derived: auto | heuristic | curated | MISSING`:
 
-| Piece     | `auto`                              | `heuristic`                                          | `curated`                        |
-| --------- | ----------------------------------- | ---------------------------------------------------- | -------------------------------- |
-| `schema`  | the SDL entry, always               | —                                                    | —                                |
-| `label`   | the [i18n reverse index](#the-i18n-reverse-index) | a same-named i18n key (`agent.Schedulable`)          | the mapping's `label`            |
-| `concept` | —                                   | a terminology term spelled like the name             | the mapping's `concept`          |
-| `meaning` | —                                   | —                                                    | the mapping's `meaning`          |
-| `docs`    | —                                   | the top docs hit for the label, at score ≥ 80        | the mapping's `docs`             |
+| Piece     | `auto`                                            | `heuristic`                                   | `curated`               |
+| --------- | ------------------------------------------------- | --------------------------------------------- | ----------------------- |
+| `schema`  | the SDL entry, always                             | —                                             | —                       |
+| `label`   | the [i18n reverse index](#the-i18n-reverse-index) | a same-named i18n key (`agent.Schedulable`)   | the mapping's `label`   |
+| `concept` | —                                                 | a terminology term spelled like the name      | the mapping's `concept` |
+| `meaning` | —                                                 | —                                             | the mapping's `meaning` |
+| `docs`    | —                                                 | the top docs hit for the label, at score ≥ 80 | the mapping's `docs`    |
 
 Nothing is invented: a piece with no source prints `MISSING`, which is the
 nudge to curate it. `--lang <code>` re-reads the label from that language's
@@ -700,7 +746,7 @@ against `mappings/schema.json` (JSON Schema draft-07) by `ajv`:
 
 ```yaml
 type: ComputeSessionNode
-concept: compute-session          # a concept id in terminology.json
+concept: compute-session # a concept id in terminology.json
 docs: sessions_all#session-detail-panel
 fields:
   status:
@@ -796,10 +842,10 @@ Failures print an envelope on stderr and never on stdout:
 ```json
 {
   "apiVersion": "bai-agent/v1",
-  "error": "Not inside a backend.ai-webui checkout: ...",
+  "error": "No backend.ai-webui checkout: ...",
   "code": "repo_not_found",
   "suggestions": ["data/schema.graphql", "..."],
-  "hint": "cd <backend.ai-webui checkout> && bai-agent doctor"
+  "hint": "bai-agent sync"
 }
 ```
 
@@ -810,14 +856,14 @@ verbosity levels), `-h, --help`, `--version`.
 
 ## Exit codes
 
-| Code | Meaning                                                  |
-| ---- | -------------------------------------------------------- |
-| 0    | success                                                  |
-| 1    | error (`version_mismatch`, `schema_mismatch`, "not inside a checkout", …) |
-| 2    | usage — unknown command, unknown flag, bad flag value    |
-| 3    | `auth_required` — no session, or the manager rejected it |
-| 4    | `mutation_refused`                                       |
-| 5    | `not_found`                                              |
+| Code | Meaning                                                                  |
+| ---- | ------------------------------------------------------------------------ |
+| 0    | success                                                                  |
+| 1    | error (`version_mismatch`, `schema_mismatch`, "no checkout in reach", …) |
+| 2    | usage — unknown command, unknown flag, bad flag value                    |
+| 3    | `auth_required` — no session, or the manager rejected it                 |
+| 4    | `mutation_refused`                                                       |
+| 5    | `not_found`                                                              |
 
 Errors are raised as a typed `CliError` carrying `code`, `exitCode`, `hint` and
 `suggestions`; a single top-level handler in `src/run.ts` renders it in text or

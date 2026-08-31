@@ -1,5 +1,6 @@
 import type { RunContext } from '../command.js';
 import { defineCommand } from '../command.js';
+import { readConfig } from '../config.js';
 import { CliError, EXIT } from '../errors.js';
 import { fetchManagerVersion, fetchWhoAmI } from '../manager.js';
 import { MAPPINGS_DIR_NAME } from '../mappings/load.js';
@@ -8,9 +9,10 @@ import { CLI_NAME, MIN_NODE_MAJOR } from '../meta.js';
 import { record, renderBlocks, section } from '../output.js';
 import type { RepoContext } from '../repo-context.js';
 import {
+  CHECKOUT_ENV,
   REPO_PACKAGE_NAME,
   REQUIRED_SOURCES,
-  findRepoRoot,
+  locateRepo,
   sourceStatus,
   tryResolveRepoContext,
 } from '../repo-context.js';
@@ -45,6 +47,9 @@ import { join } from 'node:path';
 
 export type CheckStatus = 'ok' | 'warn' | 'fail';
 
+/** A synced data checkout older than this is reported, not refused. */
+export const SYNC_STALE_DAYS = 30;
+
 export interface DoctorCheck {
   group: string;
   check: string;
@@ -74,34 +79,50 @@ const runtimeGroup: CheckGroup = {
   },
 };
 
+/** What to run when no checkout is in reach — the same hint everywhere. */
+const NO_CHECKOUT_HINT = `${CLI_NAME} sync`;
+
 const checkoutGroup: CheckGroup = {
   name: 'checkout',
   run: ({ cwd }) => {
-    const found = findRepoRoot(cwd);
+    let found: ReturnType<typeof locateRepo>;
+    try {
+      found = locateRepo(cwd);
+    } catch (error) {
+      return [
+        {
+          group: 'checkout',
+          check: 'checkout detection',
+          status: 'fail',
+          detail: error instanceof Error ? error.message : String(error),
+          hint: `unset ${CHECKOUT_ENV}`,
+        },
+      ];
+    }
     if (!found) {
       return [
         {
           group: 'checkout',
           check: 'checkout detection',
           status: 'fail',
-          detail: `Not inside a ${REPO_PACKAGE_NAME} checkout: no ancestor of ${cwd} has a package.json named "${REPO_PACKAGE_NAME}".`,
-          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+          detail: `No ${REPO_PACKAGE_NAME} checkout: no ancestor of ${cwd} has a package.json named "${REPO_PACKAGE_NAME}", and nothing is synced.`,
+          hint: NO_CHECKOUT_HINT,
         },
         ...REQUIRED_SOURCES.map((source): DoctorCheck => ({
           group: 'checkout',
           check: source.path,
           status: 'fail',
           detail: 'not checked: no checkout detected',
-          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+          hint: NO_CHECKOUT_HINT,
         })),
       ];
     }
-    return [
+    const checks: DoctorCheck[] = [
       {
         group: 'checkout',
         check: 'checkout detection',
         status: 'ok',
-        detail: `${found.root} (version ${found.version})`,
+        detail: `${found.root} (version ${found.version}, via ${found.source})`,
       },
       ...REQUIRED_SOURCES.map((source): DoctorCheck => {
         const absolute = join(found.root, source.path);
@@ -117,10 +138,45 @@ const checkoutGroup: CheckGroup = {
           check: source.path,
           status: status === 'ok' ? 'ok' : 'fail',
           detail,
-          hint: status === 'ok' ? undefined : 'git status',
+          hint:
+            status === 'ok'
+              ? undefined
+              : found.source === 'synced'
+                ? `${CLI_NAME} sync --force`
+                : 'git status',
         };
       }),
     ];
+    if (found.source === 'synced') {
+      // config.json is only cast on read; a hand-edited or foreign record
+      // must degrade to a warning, never crash the run.
+      const raw = readConfig().sync;
+      const sync =
+        raw && typeof raw.ref === 'string' && typeof raw.commit === 'string'
+          ? raw
+          : undefined;
+      const syncedAtMs = sync ? Date.parse(sync.syncedAt ?? '') : NaN;
+      const ageDays = Number.isFinite(syncedAtMs)
+        ? Math.floor((Date.now() - syncedAtMs) / 86_400_000)
+        : null;
+      const stale = ageDays === null || ageDays > SYNC_STALE_DAYS;
+      checks.push({
+        group: 'checkout',
+        check: 'synced data',
+        status: sync && !stale ? 'ok' : 'warn',
+        detail: sync
+          ? `${sync.ref} at ${sync.commit.slice(0, 9)}, synced ${
+              ageDays === null
+                ? 'at an unknown time'
+                : `${sync.syncedAt} (${ageDays} day(s) ago)`
+            }${ageDays !== null && stale ? `, older than ${SYNC_STALE_DAYS} days` : ''}`
+          : raw
+            ? 'sync record in config.json is not readable (no ref/commit)'
+            : 'no sync record in config.json; the checkout may be hand-made',
+        hint: sync && !stale ? undefined : `${CLI_NAME} sync`,
+      });
+    }
+    return checks;
   },
 };
 
@@ -135,7 +191,7 @@ const docsGroup: CheckGroup = {
           check: 'manual sources',
           status: 'fail',
           detail: 'not checked: no checkout detected',
-          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+          hint: NO_CHECKOUT_HINT,
         },
       ];
     }
@@ -238,7 +294,7 @@ const schemaGroup: CheckGroup = {
           check: 'sdl parses',
           status: 'fail',
           detail: 'not checked: no checkout detected',
-          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+          hint: NO_CHECKOUT_HINT,
         },
       ];
     }
@@ -387,7 +443,7 @@ const mappingsGroup: CheckGroup = {
           check: 'mapping files',
           status: 'fail',
           detail: 'not checked: no checkout detected',
-          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+          hint: NO_CHECKOUT_HINT,
         },
       ];
     }
@@ -476,7 +532,7 @@ const alignmentGroup: CheckGroup = {
           check: 'schema alignment',
           status: 'warn',
           detail: 'not checked: no checkout detected',
-          hint: `cd <${REPO_PACKAGE_NAME} checkout> && ${CLI_NAME} doctor`,
+          hint: NO_CHECKOUT_HINT,
         },
       ];
     }
@@ -511,10 +567,12 @@ const alignmentGroup: CheckGroup = {
           : metaResult.kind === 'invalid'
             ? `not readable: ${metaResult.path} exists but is ${metaResult.reason}, so the SDL's backend tag is unknown`
             : `tag ${metaResult.meta.tag}, fetched ${metaResult.meta.fetchedAt || 'at an unknown time'}${
-              metaResult.meta.ageDays === null ? '' : ` (${metaResult.meta.ageDays} day(s) ago)`
-            }${stale ? `, older than ${SCHEMA_META_STALE_DAYS} days` : ''}${
-              shaMatches ? '' : ', sha256 does NOT match the SDL on disk'
-            }`,
+                metaResult.meta.ageDays === null
+                  ? ''
+                  : ` (${metaResult.meta.ageDays} day(s) ago)`
+              }${stale ? `, older than ${SCHEMA_META_STALE_DAYS} days` : ''}${
+                shaMatches ? '' : ', sha256 does NOT match the SDL on disk'
+              }`,
       hint:
         meta !== null && !stale && shaMatches
           ? undefined
@@ -624,7 +682,9 @@ export const doctorCommand = defineCommand<DoctorData>({
   run: async (context) => {
     const { cwd } = context;
     const checks = (
-      await Promise.all(selectGroups(context).map((group) => group.run({ cwd })))
+      await Promise.all(
+        selectGroups(context).map((group) => group.run({ cwd })),
+      )
     ).flat();
     return {
       checks,
