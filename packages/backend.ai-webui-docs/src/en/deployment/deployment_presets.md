@@ -213,7 +213,7 @@ The modal contains the following fields, in the order they appear:
    * **Slider** (Integer, Float): **Minimum** and **Maximum** (both required, and the maximum must be greater than the minimum) and **Step**, the increment the slider moves by (defaults to `1`).
 - **Key**: The environment variable name or command-line argument the value is passed as, for example `TENSOR_PARALLEL_SIZE`. Required.
 - **Default Value**: The value the runtime uses when the user leaves the parameter unchanged. It is shown as the field's placeholder in the deployment form rather than pre-filled, so a required parameter still asks for an explicit value.
-- **Required**: Whether users must supply this parameter when they build a revision. Required parameters show a red asterisk (★) in the deployment form.
+- **Requirement**: Select the **Required** checkbox to make users supply this parameter when they build a revision. Required parameters show a red asterisk (★) in the deployment form.
 - **Rank** *(edit only)*: Display ordering among presets of the same runtime variant. Lower values are shown first.
 
 :::note

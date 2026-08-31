@@ -19,6 +19,7 @@ Backend.AI ให้คุณปรับใช้โมเดล AI เป็�
 หน้าการปรับใช้แสดงรายการการปรับใช้ทั้งหมดในโปรเจกต์ปัจจุบัน คุณสามารถเข้าถึงได้โดยคลิก **การปรับใช้** ในเมนูด้านข้าง
 
 ![](../images/serving_list_page.png)
+<!-- TODO(screenshot): /deployment (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Active/Destroyed filter and the property filter bar in the body. Not captured 2026-08-30: the capture webserver was unreachable. -->
 
 ที่ด้านบนของหน้า คุณสามารถกรองการปรับใช้ตามขั้นตอนวงจรชีวิต:
 
@@ -42,7 +43,7 @@ Backend.AI ให้คุณปรับใช้โมเดล AI เป็�
 
 ### หน้าต่างสร้างการปรับใช้
 
-คลิกปุ่ม `สร้างการปรับใช้` ในหน้าการปรับใช้เพื่อเปิดหน้าต่าง **สร้างการปรับใช้** หน้าต่างนี้รับเฉพาะเมตาดาตาระดับการปรับใช้เท่านั้น และจะยังไม่มีการสร้าง Revision ในขั้นตอนนี้
+ในหน้าการปรับใช้ ให้คลิกปุ่ม `สร้างการปรับใช้` เพื่อเปิดหน้าต่าง **สร้างการปรับใช้** หน้าต่างนี้รับเฉพาะเมตาดาตาระดับการปรับใช้เท่านั้น และจะยังไม่มีการสร้าง Revision ในขั้นตอนนี้
 
 ![](../images/model_serving_create_modal.png)
 

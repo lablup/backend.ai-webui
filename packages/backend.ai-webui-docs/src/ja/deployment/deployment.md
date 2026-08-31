@@ -19,6 +19,7 @@ Backend.AI では、**デプロイ（Deployments）** 機能を通じて AI モ�
 デプロイページには、現在のプロジェクト内のすべてのデプロイの一覧が表示されます。サイドバーメニューの **デプロイ** をクリックしてアクセスできます。
 
 ![](../images/serving_list_page.png)
+<!-- TODO(screenshot): /deployment (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Active/Destroyed filter and the property filter bar in the body. Not captured 2026-08-30: the capture webserver was unreachable. -->
 
 ページ上部で、ライフサイクルステージ別にデプロイをフィルタリングできます：
 
