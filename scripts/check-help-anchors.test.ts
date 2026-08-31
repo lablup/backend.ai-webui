@@ -3,10 +3,13 @@
  *
  * Two things are worth pinning. First, PARITY: the checker replicates the
  * docs-toolkit's slug rules rather than importing them (the toolkit is
- * TypeScript with no build output here), so the ports are exercised against
- * real headings from the English manual — including the apostrophe case whose
- * entity-decoding step is the whole reason `admin_menu-manage-user39s-keypairs`
- * was dead. Second, RESOLUTION: a deliberately broken entry must be reported.
+ * TypeScript with no build output here, so the plain-`node` checker cannot
+ * load it). Vitest can, so the "parity with the docs toolkit source" suite
+ * imports the canonical functions from the toolkit's TypeScript and compares
+ * every port against them over every heading and navigation path of the
+ * English manual — drift in either copy fails the suite, which the
+ * hard-coded cases alone (both sides being the same copy) could not catch.
+ * Second, RESOLUTION: a deliberately broken entry must be reported.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -19,8 +22,99 @@ import {
   readNavigationPaths,
   buildManualIndex,
   checkEntries,
+  stripHtmlTags,
+  decodeHtmlEntities,
   // @ts-expect-error -- plain-JS ESM checker, no type declarations
 } from "./check-help-anchors.mjs";
+import {
+  decodeHtmlEntities as toolkitDecodeHtmlEntities,
+  escapeHtml as toolkitEscapeHtml,
+  stripHtmlTags as toolkitStripHtmlTags,
+} from "../packages/backend.ai-docs-toolkit/src/markdown-extensions";
+import {
+  slugFromNavPath as toolkitSlugFromNavPath,
+  slugify as toolkitSlugify,
+} from "../packages/backend.ai-docs-toolkit/src/markdown-processor";
+
+const DOCS_SRC = fileURLToPath(
+  new URL("../packages/backend.ai-webui-docs/src/", import.meta.url),
+);
+
+/**
+ * Every ATX / setext heading line of one markdown file, raw (marker and
+ * inline syntax intact), skipping front matter and fenced code.
+ */
+function rawHeadings(markdown: string): string[] {
+  const headings: string[] = [];
+  let inFence = false;
+  let fenceMarker = "";
+  let inFrontMatter = false;
+  let previousLine = "";
+  markdown.split(/\r?\n/).forEach((line, index) => {
+    if (index === 0 && line.trim() === "---") {
+      inFrontMatter = true;
+      return;
+    }
+    if (inFrontMatter) {
+      if (line.trim() === "---") inFrontMatter = false;
+      return;
+    }
+    const fence = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+    if (fence) {
+      if (!inFence) {
+        inFence = true;
+        fenceMarker = fence[1][0];
+      } else if (fence[1][0] === fenceMarker) {
+        inFence = false;
+      }
+      previousLine = "";
+      return;
+    }
+    if (inFence) {
+      previousLine = "";
+      return;
+    }
+    if (/^#{1,6}\s+\S/.test(line)) {
+      headings.push(line);
+    } else if (
+      /^ {0,3}(=+|-+) *$/.test(line) &&
+      previousLine.trim() !== "" &&
+      !/^ {0,3}(#|>|[-*+] |\d+[.)] |\|)/.test(previousLine)
+    ) {
+      headings.push(previousLine.trim());
+    }
+    previousLine = line;
+  });
+  return headings;
+}
+
+/** The English manual's navigation paths and every heading they contain. */
+function readManualCorpus() {
+  const navPaths: string[] = readNavigationPaths(
+    readFileSync(`${DOCS_SRC}book.config.yaml`, "utf8"),
+    "en",
+  );
+  const headings = navPaths.flatMap((navPath) =>
+    rawHeadings(readFileSync(`${DOCS_SRC}en/${navPath}`, "utf8")),
+  );
+  return { navPaths, headings };
+}
+
+/** Inputs on which the two sides disagree, so a failure names every drift. */
+function disagreements<T>(
+  inputs: readonly T[],
+  ours: (input: T) => unknown,
+  theirs: (input: T) => unknown,
+) {
+  return inputs
+    .map((input) => ({ input, checker: ours(input), toolkit: theirs(input) }))
+    .filter(({ checker, toolkit }) => checker !== toolkit);
+}
+
+type Str = (s: string) => string;
+const headingIdPipeline =
+  (strip: Str, decode: Str, slug: Str) => (raw: string) =>
+    slug(decode(strip(raw)));
 
 describe("slugify parity with the docs toolkit", () => {
   it.each([
@@ -31,6 +125,71 @@ describe("slugify parity with the docs toolkit", () => {
     ["Prometheus query presets", "prometheus-query-presets"],
   ])("slugifies %j to %j", (text, expected) => {
     expect(slugify(text)).toBe(expected);
+  });
+});
+
+describe("parity with the docs toolkit source", () => {
+  const { navPaths, headings } = readManualCorpus();
+  const texts = headings.map((raw) => headingPlainText(raw));
+  // The form marked hands to the renderer (its escaper also turns `'` into
+  // `&#39;`), so the entity-decoding branch is exercised on real input.
+  const escaped = headings.map((raw) =>
+    toolkitEscapeHtml(raw).replace(/'/g, "&#39;"),
+  );
+
+  it("reads a corpus large enough to mean something", () => {
+    expect(navPaths.length).toBeGreaterThan(20);
+    expect(headings.length).toBeGreaterThan(100);
+    expect(escaped.some((raw) => raw.includes("&#39;"))).toBe(true);
+    expect(escaped.some((raw) => raw.includes("&amp;"))).toBe(true);
+  });
+
+  it("slugify matches the toolkit on every manual heading", () => {
+    expect(disagreements(texts, slugify, toolkitSlugify)).toEqual([]);
+    expect(disagreements(headings, slugify, toolkitSlugify)).toEqual([]);
+  });
+
+  it("stripHtmlTags matches the toolkit on every raw heading", () => {
+    expect(
+      disagreements(headings, stripHtmlTags, toolkitStripHtmlTags),
+    ).toEqual([]);
+  });
+
+  it("decodeHtmlEntities matches the toolkit on every escaped heading", () => {
+    expect(
+      disagreements(
+        [...headings, ...escaped],
+        decodeHtmlEntities,
+        toolkitDecodeHtmlEntities,
+      ),
+    ).toEqual([]);
+  });
+
+  it("the whole heading-id pipeline matches the toolkit's composition", () => {
+    expect(
+      disagreements(
+        [...headings, ...escaped],
+        headingIdPipeline(stripHtmlTags, decodeHtmlEntities, slugify),
+        headingIdPipeline(
+          toolkitStripHtmlTags,
+          toolkitDecodeHtmlEntities,
+          toolkitSlugify,
+        ),
+      ),
+    ).toEqual([]);
+  });
+
+  it("slugFromNavPath matches the toolkit on every navigation path", () => {
+    expect(
+      disagreements(navPaths, slugFromNavPath, toolkitSlugFromNavPath),
+    ).toEqual([]);
+  });
+
+  it("slugFromNavPath rejects the same inputs as the toolkit", () => {
+    for (const bad of ["한글.md", "---.md", "___.md"]) {
+      expect(() => slugFromNavPath(bad)).toThrow(/Cannot derive a slug/);
+      expect(() => toolkitSlugFromNavPath(bad)).toThrow(/Cannot derive a slug/);
+    }
   });
 });
 
