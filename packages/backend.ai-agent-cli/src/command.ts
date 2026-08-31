@@ -7,6 +7,8 @@ export interface FlagSpec {
   description: string;
   type: 'boolean' | 'string';
   default?: string;
+  /** May be passed more than once; every value is collected into an array. */
+  repeatable?: boolean;
 }
 
 export interface RunContext {
@@ -15,7 +17,8 @@ export interface RunContext {
   commands: AnyCommand[];
   /** Positional arguments after the command name. */
   args: string[];
-  flags: Record<string, string | boolean>;
+  /** A `repeatable` flag's value is a `string[]`; every other one is scalar. */
+  flags: Record<string, string | boolean | string[]>;
   json: boolean;
   render: RenderOptions;
   /** Progress lines; goes to stderr so `--json` stdout stays one envelope. */

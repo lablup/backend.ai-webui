@@ -66,6 +66,7 @@ export const manifestCommand = defineCommand<ManifestData>({
             record([
               ['flag', flag.flag],
               ['type', flag.type],
+              ['repeatable', flag.repeatable],
               ['default', flag.default],
               ['flagDescription', flag.description],
             ]),

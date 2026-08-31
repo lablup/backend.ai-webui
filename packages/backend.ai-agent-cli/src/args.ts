@@ -34,7 +34,7 @@ export const GLOBAL_FLAGS: FlagSpec[] = [
 export interface ParsedArgv {
   command?: string;
   args: string[];
-  flags: Record<string, string | boolean>;
+  flags: Record<string, string | boolean | string[]>;
   json: boolean;
   help: boolean;
   version: boolean;
@@ -71,7 +71,7 @@ export function parseArgv(
   commandFlags: FlagSpec[],
 ): ParsedArgv {
   const specs = [...GLOBAL_FLAGS, ...commandFlags];
-  const flags: Record<string, string | boolean> = {};
+  const flags: Record<string, string | boolean | string[]> = {};
   const positional: string[] = [];
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -113,7 +113,13 @@ export function parseArgv(
         hint: 'bai-agent --help',
       });
     }
-    flags[canonicalName(spec)] = value;
+    const key = canonicalName(spec);
+    if (spec.repeatable) {
+      const seen = flags[key];
+      flags[key] = Array.isArray(seen) ? [...seen, value] : [value];
+      continue;
+    }
+    flags[key] = value;
   }
 
   if (flags.dense && flags.detail) {
