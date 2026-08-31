@@ -18,7 +18,7 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { BAIFlex, BAIModal, BAIModalProps, BAISkeleton } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -495,7 +495,7 @@ const ContainerRegistryEditorModal: React.FC<
               <Suspense
                 fallback={
                   <BAIFormItem label={t('registry.AllowedProjects')}>
-                    <BAISkeleton variant="input" />
+                    <BAISelect mode="multiple" loading disabled />
                   </BAIFormItem>
                 }
               >
