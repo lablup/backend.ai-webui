@@ -490,7 +490,11 @@ const KeypairResourcePolicySettingModal: React.FC<
                   label={t('resourcePolicy.MaxSessionLifetime')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                  <InputNumber
+                    min={0}
+                    max={SIGNED_32BIT_MAX_INT}
+                    style={{ width: '100%' }}
+                  />
                 </FormItemWithUnlimited>
               </Col>
               {baiClient.supports('max-pending-session-count') ? (
