@@ -30,6 +30,16 @@ The page is composed of several main panels:
     within the selected resource group of your current project.
     You can switch groups using the dropdown menu.
 
+- **Folder Status**:
+    Shows how many storage folders you can reach, split into **My Folders**,
+    **Project Folders**, and **Invited Folders**.
+    When invitations are waiting for you, click the **Invited Folders** count
+    to open the Data page and review them.
+
+- **Quota per storage volume**:
+    Shows the quota available on each storage volume.
+    When no storage host supports quota, the panel shows a notice instead.
+
 - **Total Resources in Resource Group**:
     Summarizes the overall used and free resources in the selected resource group.
     The data is aggregated from all agents that belong to the group.
@@ -50,6 +60,8 @@ system configuration.
 When you are logged in as a superadmin, the Dashboard page also displays
 **Agent Statistics** and **Active Agents** panels alongside the standard user panels.
 These panels show cluster-wide agent health and resource utilization.
+The **My Sessions** panel is titled **Active Sessions** for superadmins; it still
+counts the sessions of the current project.
 
 ## Customizing the Dashboard Layout
 
