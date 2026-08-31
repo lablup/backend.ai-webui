@@ -43,6 +43,30 @@ const dockActive = await page.evaluate(() =>
     .shadowRoot.querySelector('.dock')
     .classList.contains('show'),
 );
+
+// While select mode is on, the dock checkbox must be clickable (not grabbed).
+const chk = await page.evaluate(() => {
+  const r = document
+    .querySelector('[data-bai-review-overlay]')
+    .shadowRoot.querySelector('.fixchk input')
+    .getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+});
+await page.mouse.move(chk.x, chk.y, { steps: 4 });
+await page.waitForTimeout(300);
+await page.mouse.click(chk.x, chk.y);
+await page.waitForTimeout(300);
+const dockClick = await page.evaluate(() => {
+  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
+  const input = sr.querySelector('.fixchk input');
+  const out = {
+    checkboxToggled: input.checked,
+    grabStillActiveAfterDockClick: window.__REACT_GRAB__.isActive(),
+    composeOpenedByDockClick: sr.querySelector('.compose').style.display === 'block',
+  };
+  input.click(); // restore default (unchecked)
+  return out;
+});
 await page.waitForTimeout(500);
 const active = await page.evaluate(() => window.__REACT_GRAB__.isActive());
 
@@ -131,7 +155,7 @@ const dockAtEnd = await page.evaluate(() => {
 
 console.log(
   JSON.stringify(
-    { dockAtBoot, dockActive, active, ...result, ...persist, ...afterClose, ...hl, dockAtEnd },
+    { dockAtBoot, dockActive, ...dockClick, active, ...result, ...persist, ...afterClose, ...hl, dockAtEnd },
     null,
     2,
   ),

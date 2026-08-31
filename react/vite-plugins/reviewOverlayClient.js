@@ -292,6 +292,9 @@
 
   const host = document.createElement('div');
   host.setAttribute('data-bai-review-overlay', '');
+  // react-grab skips pointer/key events whose path carries this attribute,
+  // so our dock/panel/compose stay clickable while its select mode is on.
+  host.setAttribute('data-react-grab-ignore-events', '');
   const root = host.attachShadow({ mode: 'open' });
   document.body.appendChild(host);
 
