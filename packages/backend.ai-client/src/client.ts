@@ -49,13 +49,10 @@ import CryptoES from 'crypto-es';
  * one-time codes, etc.). Request bodies are persisted to localStorage as part
  * of the debug log (`backendaiwebui.logs`); any value stored under one of these
  * keys is masked first so credentials are never written in clear text.
- * Matched case-insensitively against object keys.
+ * Matched case-insensitively against object keys; any key containing
+ * "password" is masked as well (see redactSensitiveValues).
  */
 const SENSITIVE_LOG_KEYS = new Set([
-  'password',
-  'new_password',
-  'old_password',
-  'current_password',
   'secret_key',
   'secret',
   'token',
@@ -86,9 +83,11 @@ function redactSensitiveValues(value: unknown): unknown {
       if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
         continue;
       }
-      redacted[key] = SENSITIVE_LOG_KEYS.has(key.toLowerCase())
-        ? REDACTED_PLACEHOLDER
-        : redactSensitiveValues(val);
+      const lowerKey = key.toLowerCase();
+      redacted[key] =
+        SENSITIVE_LOG_KEYS.has(lowerKey) || lowerKey.includes('password')
+          ? REDACTED_PLACEHOLDER
+          : redactSensitiveValues(val);
     }
     return redacted;
   }
@@ -101,7 +100,7 @@ function redactSensitiveValues(value: unknown): unknown {
  * string bodies (the common case, since signed requests stringify the body).
  * Non-JSON strings and primitives are returned unchanged.
  */
-function redactRequestParameters(params: unknown): unknown {
+export function redactRequestParameters(params: unknown): unknown {
   if (typeof params === 'string') {
     try {
       const parsed = JSON.parse(params);
