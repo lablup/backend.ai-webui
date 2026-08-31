@@ -52,5 +52,36 @@ const result = await page.evaluate(() => {
   };
 });
 await page.screenshot({ path: 'proto-scripts/shots/4-grab-compose.png' });
-console.log(JSON.stringify({ active, ...result }, null, 2));
+
+// Selection outline must persist past react-grab's fade, until compose closes.
+await page.waitForTimeout(4000);
+const persist = await page.evaluate(() => {
+  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
+  return { outlineAfter4s: sr.querySelector('.hoverbox').style.display === 'block' };
+});
+await page.evaluate(() => {
+  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
+  sr.querySelector('[data-act="cancel"]').click();
+});
+const afterClose = await page.evaluate(() => {
+  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
+  return { outlineAfterClose: sr.querySelector('.hoverbox').style.display };
+});
+
+// Pin click → panel item highlighted, surviving a forced re-render.
+const hl = await page.evaluate(async () => {
+  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
+  await window.__baiReviewProto.fetchPins();
+  const pin = sr.querySelector('.pin');
+  if (!pin) return { pin: false };
+  pin.click();
+  await new Promise((r) => setTimeout(r, 1200)); // reposition re-render fires at 800ms
+  return {
+    pin: true,
+    itemHighlighted: !!sr.querySelector('.item.hl'),
+    panelOpen: sr.querySelector('.panel').classList.contains('open'),
+  };
+});
+
+console.log(JSON.stringify({ active, ...result, ...persist, ...afterClose, ...hl }, null, 2));
 await browser.close();

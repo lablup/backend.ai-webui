@@ -705,16 +705,31 @@
     // One flat list in fixed number order — items never move between
     // sections; a late anchor location updates the ⚠️ badge in place
     // instead of reordering the list.
-    for (const st of states) itemsBox.appendChild(buildItem(st));
+    for (const st of states) {
+      const item = buildItem(st);
+      if (st.data.id === panelHlId) item.classList.add('hl');
+      itemsBox.appendChild(item);
+    }
   }
+
+  // Highlight survives the frequent panel re-renders (poll / reposition):
+  // the id is state, renderPanel re-applies the class on rebuild.
+  let panelHlId = null;
+  let panelHlTimer = 0;
 
   function revealItem(id) {
     if (!panel.classList.contains('open')) openPanel();
+    panelHlId = id;
+    clearTimeout(panelHlTimer);
+    panelHlTimer = setTimeout(() => {
+      panelHlId = null;
+      const cur = itemsBox.querySelector('.item.hl');
+      if (cur) cur.classList.remove('hl');
+    }, 2600);
     const item = itemsBox.querySelector(`.item[data-pin-id="${id}"]`);
     if (item) {
       item.scrollIntoView({ block: 'center', behavior: 'smooth' });
       item.classList.add('hl');
-      setTimeout(() => item.classList.remove('hl'), 2400);
     }
   }
 
@@ -1105,6 +1120,7 @@
     const w = 300;
     compose.style.left = `${Math.min(x, window.innerWidth - w - 12)}px`;
     compose.style.top = `${Math.min(y + 10, window.innerHeight - 180)}px`;
+    syncPickHighlight();
     composeText.focus();
     // Win over any late focus restoration (react-grab unfreeze/deactivate).
     setTimeout(() => {
@@ -1114,7 +1130,25 @@
   function closeCompose() {
     compose.style.display = 'none';
     pickTarget = null;
+    hoverbox.style.display = 'none';
   }
+
+  // Keep the picked element outlined until the compose closes — react-grab's
+  // own grabbed-box fades after a few seconds (driver request). Repositions
+  // on scroll/resize while the compose is open.
+  function syncPickHighlight() {
+    if (compose.style.display !== 'block' || !pickTarget) return;
+    const r = pickTarget.getBoundingClientRect();
+    Object.assign(hoverbox.style, {
+      display: 'block',
+      left: `${r.left}px`,
+      top: `${r.top}px`,
+      width: `${r.width}px`,
+      height: `${r.height}px`,
+    });
+  }
+  window.addEventListener('scroll', syncPickHighlight, true);
+  window.addEventListener('resize', syncPickHighlight);
 
   compose.addEventListener('click', async (evt) => {
     const btn = evt.target;
