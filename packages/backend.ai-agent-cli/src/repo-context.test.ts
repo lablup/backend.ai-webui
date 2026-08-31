@@ -92,6 +92,9 @@ describe('resolveRepoContext', () => {
     // cwd's own checkout still wins over both.
     const own = fakeCheckout(tempDir(), '0.0.0-cwd');
     expect(locateRepo(join(own, 'data'), withEnv)?.source).toBe('cwd');
+
+    // Standing inside the managed data checkout is still the synced case.
+    expect(locateRepo(join(synced, 'data'), env)?.source).toBe('synced');
   });
 
   it('refuses a $BAI_AGENT_CHECKOUT that is not a checkout', () => {

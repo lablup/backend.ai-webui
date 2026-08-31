@@ -4,7 +4,9 @@ name: Publish backend.ai-agent-cli to npm registry
 # the WebUI's `v*` release tags: a WebUI release must not republish the same
 # CLI version (npm would refuse it and the run would go red). A push to main
 # that touches the package publishes a canary; a tag `agent-cli-v<version>`
-# publishes that version, which must equal package.json's.
+# publishes that version, which must equal package.json's: `-rc.N` under the
+# `rc` dist-tag, `-beta.N` under `beta`, plain versions under `latest`, and
+# `-alpha` tags are skipped (see scripts/determine-publish-strategy.sh).
 
 on:
   push:

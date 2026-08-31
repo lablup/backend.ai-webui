@@ -4,6 +4,7 @@ import {
   DEFAULT_SYNC_REF,
   SPARSE_PATTERNS,
   syncCheckout,
+  validateRef,
 } from './checkout-sync.js';
 import { readConfig } from './config.js';
 import { CliError } from './errors.js';
@@ -82,6 +83,7 @@ describe('syncCheckout', () => {
       '1',
       '--branch',
       DEFAULT_SYNC_REF,
+      '--',
       DATA_REPO_URL,
       dir,
     ]);
@@ -120,6 +122,7 @@ describe('syncCheckout', () => {
       '--quiet',
       '--depth',
       '1',
+      '--',
       'origin',
       'v26.8.1',
       `@${dir}`,
@@ -149,6 +152,7 @@ describe('syncCheckout', () => {
       '--quiet',
       '--depth',
       '1',
+      '--',
       'origin',
       'v26.8.1',
       `@${dir}`,
@@ -163,6 +167,17 @@ describe('syncCheckout', () => {
     const data = syncCheckout({ env, git, force: true });
     expect(data.outcome).toBe('cloned');
     expect(calls.some((call) => call[0] === 'clone')).toBe(true);
+  });
+
+  it('refuses a ref that could parse as a git option', () => {
+    const env = freshEnv();
+    const { git, calls } = fakeGit({ heads: ['abc123'] });
+    for (const bad of ['--upload-pack=touch /tmp/x', '-x', 'a..b', 'a b']) {
+      expect(() => syncCheckout({ env, git, ref: bad }), bad).toThrow(CliError);
+    }
+    expect(calls.filter((call) => call[0] !== '--version')).toEqual([]);
+    expect(validateRef('v26.8.1')).toBe('v26.8.1');
+    expect(validateRef('feature/x_y-z')).toBe('feature/x_y-z');
   });
 
   it('fails clearly when git is not installed', () => {

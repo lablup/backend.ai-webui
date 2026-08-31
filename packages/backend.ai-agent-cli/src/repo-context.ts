@@ -1,7 +1,7 @@
 import { CliError } from './errors.js';
 import { CLI_NAME } from './meta.js';
 import { syncedCheckoutDir } from './paths.js';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { dirname, join, parse } from 'node:path';
 
 type Env = Record<string, string | undefined>;
@@ -39,6 +39,8 @@ export function sourceStatus(
  * or the data checkout `sync` maintains.
  */
 export type ContextSource = 'cwd' | 'env' | 'synced';
+// `synced` is the managed data checkout whether it was reached by walking up
+// from cwd or as the last fallback; `cwd` / `env` are real WebUI checkouts.
 
 export interface RepoContext {
   repoRoot: string;
@@ -100,12 +102,35 @@ function checkoutAt(dir: string): { root: string; version: string } | null {
  * then the synced data checkout. An env value that is not a checkout is an
  * error rather than a silent fall-through — it was set on purpose.
  */
+/** Is `root` the data checkout `sync` manages — whichever way it was found? */
+export function isSyncedCheckout(
+  root: string,
+  env: Env = process.env,
+): boolean {
+  const managed = syncedCheckoutDir(env);
+  const real = (path: string): string => {
+    try {
+      return realpathSync(path);
+    } catch {
+      return path;
+    }
+  };
+  return real(root) === real(managed);
+}
+
 export function locateRepo(
   cwd: string,
   env: Env = process.env,
 ): LocatedRepo | null {
   const fromCwd = findRepoRoot(cwd);
-  if (fromCwd) return { ...fromCwd, source: 'cwd' };
+  if (fromCwd) {
+    // `source` names the kind of checkout, not the lookup that hit: running
+    // from inside the managed data checkout is still the synced case.
+    return {
+      ...fromCwd,
+      source: isSyncedCheckout(fromCwd.root, env) ? 'synced' : 'cwd',
+    };
+  }
 
   const override = env[CHECKOUT_ENV]?.trim();
   if (override) {

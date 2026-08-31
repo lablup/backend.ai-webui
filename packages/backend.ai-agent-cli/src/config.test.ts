@@ -23,6 +23,28 @@ describe('config.json', () => {
     expect(readConfig(env)).toEqual({});
   });
 
+  it('drops malformed values instead of passing them on', () => {
+    const env = freshEnv();
+    mkdirSync(configDir(env), { recursive: true });
+    writeFileSync(
+      configPath(env),
+      JSON.stringify({
+        endpoint: {},
+        managerVersion: 3,
+        sync: { ref: {}, commit: 'abc' },
+        unknown: true,
+      }),
+    );
+    expect(readConfig(env)).toEqual({});
+    writeFileSync(
+      configPath(env),
+      JSON.stringify({ sync: { ref: 'main', commit: 'abc' } }),
+    );
+    expect(readConfig(env)).toEqual({
+      sync: { ref: 'main', commit: 'abc', syncedAt: '' },
+    });
+  });
+
   it('merges patches and removes keys set to undefined', () => {
     const env = freshEnv();
     updateConfig({ endpoint: 'https://manager.example.com' }, env);

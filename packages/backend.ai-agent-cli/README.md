@@ -33,10 +33,10 @@ The CLI is versioned on its own — `0.x` in this `package.json` — not on the
 WebUI release train, and `Makefile versiontag` leaves it alone. One workflow,
 `.github/workflows/publish-backend.ai-agent-cli.yml`, with two triggers:
 
-| Event                                | Publishes                                      |
-| ------------------------------------ | ---------------------------------------------- |
-| push to `main` touching this package | `<version>-canary-<sha>-<date>` under `canary` |
-| tag `agent-cli-v<version>`           | `<version>` under `latest` (`-rc.N` → `rc`)    |
+| Event                                | Publishes                                                                        |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| push to `main` touching this package | `<version>-canary-<sha>-<date>` under `canary`                                   |
+| tag `agent-cli-v<version>`           | `<version>` under `latest`; `-rc.N` → `rc`, `-beta.N` → `beta`, `-alpha` skipped |
 
 The tag must equal the version in `package.json`, and a version already on npm
 is skipped rather than failing the run. To release: bump the version in a PR,

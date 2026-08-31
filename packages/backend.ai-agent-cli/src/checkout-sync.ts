@@ -5,8 +5,8 @@ import { CLI_NAME } from './meta.js';
 import { syncedCheckoutDir } from './paths.js';
 import { REQUIRED_SOURCES, sourceStatus } from './repo-context.js';
 import { execFileSync } from 'node:child_process';
-import { existsSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 type Env = Record<string, string | undefined>;
 
@@ -28,16 +28,48 @@ export const SPARSE_PATTERNS = [
   '/react/src/**/*.tsx',
 ] as const;
 
+/**
+ * What a ref may look like before it reaches git's argv: a branch or tag
+ * name, never something that could parse as an option (`--upload-pack=…`).
+ */
+const REF_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
+
+export function validateRef(ref: string): string {
+  const value = ref.trim();
+  // The explicit `startsWith('--')` is what CodeQL's second-order-injection
+  // model recognises as a guard; the pattern below already implies it.
+  if (
+    value.startsWith('--') ||
+    !REF_PATTERN.test(value) ||
+    value.includes('..')
+  ) {
+    throw new CliError(
+      'usage',
+      `Not a branch or tag name: ${JSON.stringify(ref)}.`,
+      { hint: `${CLI_NAME} sync --ref ${DEFAULT_SYNC_REF}` },
+    );
+  }
+  return value;
+}
+
 /** Runs `git <args>` in `cwd` and returns stdout; throws on a non-zero exit. */
 export type GitRunner = (args: string[], cwd?: string) => string;
 
-export const defaultGit: GitRunner = (args, cwd) =>
+// Deliberately not exported: every argv this module builds is literal apart
+// from the validated ref, and an exported runner would make its `args` a
+// public input in CodeQL's model (js/second-order-command-line-injection).
+const runGit: GitRunner = (args, cwd) =>
   execFileSync('git', args, {
     cwd,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
     env: { ...process.env, GIT_TERMINAL_PROMPT: '0' },
   }).trim();
+
+/** The process-backed runner, for callers that build their own argv. */
+export function gitRunner(): GitRunner {
+  return runGit;
+}
 
 export type CheckoutSyncOutcome = 'cloned' | 'updated' | 'unchanged';
 
@@ -103,11 +135,11 @@ function headOf(git: GitRunner, dir: string): string | undefined {
  */
 export function syncCheckout(options: SyncOptions = {}): SyncData {
   const env = options.env ?? process.env;
-  const git = options.git ?? defaultGit;
+  const git = options.git ?? runGit;
   // A bare `sync` refreshes what `init` pinned; only a machine with no
   // record at all starts from main.
   const recorded = readConfig(env).sync?.ref;
-  const ref = options.ref?.trim() || recorded || DEFAULT_SYNC_REF;
+  const ref = validateRef(options.ref?.trim() || recorded || DEFAULT_SYNC_REF);
   const refSource: SyncData['refSource'] = options.ref?.trim()
     ? 'flag'
     : recorded
@@ -128,6 +160,7 @@ export function syncCheckout(options: SyncOptions = {}): SyncData {
   try {
     if (fresh) {
       notify(`Cloning ${DATA_REPO_URL} (${ref}, data paths only) into ${dir}…`);
+      mkdirSync(dirname(dir), { recursive: true });
       git([
         'clone',
         '--quiet',
@@ -137,12 +170,13 @@ export function syncCheckout(options: SyncOptions = {}): SyncData {
         '1',
         '--branch',
         ref,
+        '--',
         DATA_REPO_URL,
         dir,
       ]);
     } else {
       notify(`Fetching ${ref} into ${dir}…`);
-      git(['fetch', '--quiet', '--depth', '1', 'origin', ref], dir);
+      git(['fetch', '--quiet', '--depth', '1', '--', 'origin', ref], dir);
     }
     git(['sparse-checkout', 'set', '--no-cone', '--', ...SPARSE_PATTERNS], dir);
     // The ref's own snapshot is the contract: `reset --hard` discards a

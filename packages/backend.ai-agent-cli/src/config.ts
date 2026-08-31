@@ -30,12 +30,38 @@ export function configPath(env: Env = process.env): string {
   return join(configDir(env), CONFIG_FILE);
 }
 
+const str = (value: unknown): string | undefined =>
+  typeof value === 'string' && value.length > 0 ? value : undefined;
+
+/**
+ * Only the known fields, only with their declared types. The file is meant
+ * to be hand-editable, so a malformed value is dropped here rather than
+ * reaching `endpoint.trim()` or git's argv later.
+ */
+export function sanitizeConfig(parsed: unknown): CliConfig {
+  if (!parsed || typeof parsed !== 'object') return {};
+  const raw = parsed as Record<string, unknown>;
+  const config: CliConfig = {};
+  const endpoint = str(raw.endpoint);
+  if (endpoint) config.endpoint = endpoint;
+  const managerVersion = str(raw.managerVersion);
+  if (managerVersion) config.managerVersion = managerVersion;
+  if (raw.sync && typeof raw.sync === 'object') {
+    const sync = raw.sync as Record<string, unknown>;
+    const ref = str(sync.ref);
+    const commit = str(sync.commit);
+    if (ref && commit) {
+      config.sync = { ref, commit, syncedAt: str(sync.syncedAt) ?? '' };
+    }
+  }
+  return config;
+}
+
 export function readConfig(env: Env = process.env): CliConfig {
   const path = configPath(env);
   if (!existsSync(path)) return {};
   try {
-    const parsed = JSON.parse(readFileSync(path, 'utf8')) as unknown;
-    return parsed && typeof parsed === 'object' ? (parsed as CliConfig) : {};
+    return sanitizeConfig(JSON.parse(readFileSync(path, 'utf8')));
   } catch {
     return {};
   }
