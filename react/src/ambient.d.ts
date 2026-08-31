@@ -100,11 +100,6 @@ type NonNullableNodeOnEdges<T extends RelayConnection | null> = NonNullable<
 
 interface Window {
   switchLanguage: (lang: string) => void;
-  /**
-   * Dev-only handoff to the review overlay (FR-3811), which runs outside
-   * React and cannot read the router. Written by `DevReviewRouteLabel`.
-   */
-  __BAI_REVIEW__?: {
-    routeLabel?: string;
-  };
+  // `__BAI_REVIEW__` (FR-3811) is declared with the rest of the overlay
+  // contract, in `react/vite-plugins/review-overlay/client/types.ts`.
 }

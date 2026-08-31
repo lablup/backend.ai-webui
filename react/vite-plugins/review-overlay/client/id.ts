@@ -7,7 +7,12 @@
  * `navigator.clipboard`). The id is a content fingerprint, not a secret.
  */
 
-function sha256Bytes(msgBytes: Uint8Array): Uint8Array {
+/**
+ * FIPS 180-4's constants, derived rather than tabulated: the fractional parts
+ * of the square (H) and cube (K) roots of the first 64 primes. Module scope —
+ * the primality sieve ran on every call before.
+ */
+const { K, H } = (() => {
   const K: number[] = [];
   const H: number[] = [];
   for (let p = 2, n = 0; n < 64; p++) {
@@ -18,7 +23,12 @@ function sha256Bytes(msgBytes: Uint8Array): Uint8Array {
     K[n] = (Math.pow(p, 1 / 3) * 2 ** 32) | 0;
     n++;
   }
-  const rr = (x: number, n: number) => (x >>> n) | (x << (32 - n));
+  return { K, H };
+})();
+
+const rr = (x: number, n: number) => (x >>> n) | (x << (32 - n));
+
+function sha256Bytes(msgBytes: Uint8Array): Uint8Array {
   const len = msgBytes.length;
   const bitLen = len * 8;
   const withPad = new Uint8Array((((len + 8) >> 6) << 6) + 64);

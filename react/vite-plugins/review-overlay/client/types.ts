@@ -45,6 +45,20 @@ export interface AnchorV3 {
   c?: AnchorComponent;
 }
 
+declare global {
+  interface Window {
+    /** Set by `main.ts` so a second `/__review/*.js` entry is a no-op. */
+    __baiReviewOverlay?: boolean;
+    /**
+     * Dev-only handoff from the app, which owns the router the overlay cannot
+     * read. Written by `react/src/components/DevReviewRouteLabel.tsx`.
+     */
+    __BAI_REVIEW__?: {
+      routeLabel?: string;
+    };
+  }
+}
+
 /** `/__review/state` — the write side needs only the PR number. */
 export interface ReviewServerState {
   pr: number | null;
