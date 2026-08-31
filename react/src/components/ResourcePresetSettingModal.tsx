@@ -267,12 +267,16 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
                     }
                     name={['resource_slots', resourceSlotKey]}
                     rules={[
-                      _.includes(['cpu', 'mem'], resourceSlotKey)
-                        ? {
-                            required: true,
-                            message: t('data.explorer.ValueRequired'),
-                          }
-                        : {},
+                      // No `{}` placeholder: the form engine types an empty
+                      // rule as `string`, which rejects NumberInput's number.
+                      ...(_.includes(['cpu', 'mem'], resourceSlotKey)
+                        ? [
+                            {
+                              required: true,
+                              message: t('data.explorer.ValueRequired'),
+                            },
+                          ]
+                        : []),
                       {
                         validator(__, value) {
                           if (
