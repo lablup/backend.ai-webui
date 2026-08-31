@@ -28,7 +28,7 @@ At the top of the page, you can filter deployments by lifecycle stage:
 
 You can also use the property filter bar to search deployments by **Deployment Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
 
-Click the `Create Deployment` button at the top right of the **Deployments** card header to open the **Create Deployment** modal.
+Click the `Create Deployment` button to open the **Create Deployment** modal.
 
 <a id="create-deployment"></a>
 
@@ -43,7 +43,7 @@ Each deployment can hold many revisions. Only one revision is *current* (serving
 
 ### Create deployment modal
 
-On the Deployments page, click the `Create Deployment` button at the top right of the **Deployments** card header to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
+On the Deployments page, click the `Create Deployment` button to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
 
 ![](../images/model_serving_create_modal.png)
 
