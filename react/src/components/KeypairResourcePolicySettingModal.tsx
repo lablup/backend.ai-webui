@@ -488,7 +488,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   <AstryxFormNumberInput
                     label={t('resourcePolicy.MaxSessionLifetime')}
                     min={0}
-                    max={100}
+                    max={SIGNED_32BIT_MAX_INT}
                   />
                 </FormItemWithUnlimited>
               </div>
