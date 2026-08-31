@@ -61,7 +61,10 @@ export function createPicker(callbacks: PickerCallbacks) {
                 rect.bottom + 6,
               );
             }, 0);
-            return false;
+            // react-grab 0.1.50 marks an element intercepted on a TRUTHY
+            // return (`if (a) wasIntercepted = true`), so `false` reads as
+            // "not intercepted" and it copies the element anyway.
+            return true;
           },
           onDeactivate: () => {
             grabArmed = false;
