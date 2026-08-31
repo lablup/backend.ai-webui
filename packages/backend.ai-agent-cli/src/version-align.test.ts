@@ -18,10 +18,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const repoCwd = import.meta.dirname;
 
 /**
- * The real checkout's data behind a root that also carries a config.toml —
- * what a developer machine looks like, and what CI never has.
+ * The real checkout's data behind a fresh root — with a config.toml naming
+ * `apiEndpoint` (what a developer machine has and CI never does), or
+ * without one.
  */
-function checkoutWithToml(apiEndpoint: string): string {
+function fakeCheckout(apiEndpoint?: string): string {
   const real = resolveRepoContext(repoCwd).repoRoot;
   const root = mkdtempSync(join(tmpdir(), 'bai-agent-toml-checkout-'));
   writeFileSync(
@@ -31,10 +32,12 @@ function checkoutWithToml(apiEndpoint: string): string {
   for (const dir of ['data', 'resources', 'packages', 'react']) {
     symlinkSync(join(real, dir), join(root, dir), 'dir');
   }
-  writeFileSync(
-    join(root, 'config.toml'),
-    `[general]\napiEndpoint = "${apiEndpoint}"\n`,
-  );
+  if (apiEndpoint) {
+    writeFileSync(
+      join(root, 'config.toml'),
+      `[general]\napiEndpoint = "${apiEndpoint}"\n`,
+    );
+  }
   return root;
 }
 const ENDPOINT = 'http://manager.test.invalid:8090';
@@ -390,7 +393,7 @@ describe('schema show against a mocked manager', () => {
   it('keeps doctor offline when only a checkout config.toml names an endpoint', async () => {
     const spy = vi.fn(async () => new Response('{}', { status: 200 }));
     vi.stubGlobal('fetch', spy);
-    const root = checkoutWithToml('http://toml.test.invalid:8090');
+    const root = fakeCheckout('http://toml.test.invalid:8090');
 
     const { stdout } = await invoke(['doctor', '--json'], root);
     expect(spy).not.toHaveBeenCalled();
@@ -406,8 +409,10 @@ describe('schema show against a mocked manager', () => {
     updateConfig({ endpoint: 'http://recorded.test.invalid:8090' });
     await invoke(['doctor', '--json'], root);
     expect(spy).not.toHaveBeenCalled(); // config.toml still outranks config.json
-    await invoke(['doctor', '--json']);
-    expect(spy).toHaveBeenCalled(); // outside a config.toml checkout it does
+    // In a checkout without one it does — a fake one, never the real
+    // checkout, whose config.toml a developer machine has and CI does not.
+    await invoke(['doctor', '--json'], fakeCheckout());
+    expect(spy).toHaveBeenCalled();
   });
 });
 
