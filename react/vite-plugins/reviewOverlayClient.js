@@ -1015,10 +1015,15 @@
             onElementSelect: (element) => {
               if (!grabPicking) return undefined; // plain ⌘C grab — untouched
               grabPicking = false;
-              setTimeout(() => api.deactivate(), 0);
-              pickTarget = element;
-              const r = element.getBoundingClientRect();
-              openCompose(r.left + Math.min(r.width, 160), r.bottom + 6);
+              // Deactivate FIRST, then open the compose — the other order
+              // lets deactivate()'s focus restoration steal focus from the
+              // textarea (driver reaction: focus must land in the textarea).
+              setTimeout(() => {
+                api.deactivate();
+                pickTarget = element;
+                const r = element.getBoundingClientRect();
+                openCompose(r.left + Math.min(r.width, 160), r.bottom + 6);
+              }, 0);
               return false;
             },
             onDeactivate: () => {
@@ -1095,6 +1100,10 @@
     compose.style.left = `${Math.min(x, window.innerWidth - w - 12)}px`;
     compose.style.top = `${Math.min(y + 10, window.innerHeight - 180)}px`;
     composeText.focus();
+    // Win over any late focus restoration (react-grab unfreeze/deactivate).
+    setTimeout(() => {
+      if (compose.style.display === 'block') composeText.focus();
+    }, 200);
   }
   function closeCompose() {
     compose.style.display = 'none';

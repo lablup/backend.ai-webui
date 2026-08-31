@@ -43,6 +43,10 @@ const result = await page.evaluate(() => {
   return {
     grabStillActive: window.__REACT_GRAB__.isActive(),
     composeVisible: sr.querySelector('.compose').style.display === 'block',
+    textareaFocused:
+      document.activeElement ===
+        document.querySelector('[data-bai-review-overlay]') &&
+      sr.activeElement === sr.querySelector('textarea'),
     pathlabel: sr.querySelector('.pathlabel').textContent,
   };
 });
