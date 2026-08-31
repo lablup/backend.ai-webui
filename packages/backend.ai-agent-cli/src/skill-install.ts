@@ -7,6 +7,7 @@ import {
   mkdirSync,
   readdirSync,
   readFileSync,
+  rmSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
@@ -28,19 +29,24 @@ export const AGENT_BLOCK_FILE = 'references/agent-block.md';
  * `.claude/skills/bai-agent`. Walks up from this module like the mappings do.
  */
 export function shippedSkillDir(): string {
-  let dir = dirname(fileURLToPath(import.meta.url));
-  for (let depth = 0; depth < 6; depth += 1) {
-    // The checkout's source first: a stale `skill/` from an earlier build
-    // must not win over an edited SKILL.md while developing.
-    for (const candidate of [
-      join(dir, '.claude', 'skills', SKILL_NAME),
-      join(dir, SHIPPED_SKILL_DIR),
-    ]) {
-      if (existsSync(join(candidate, 'SKILL.md'))) return candidate;
-    }
+  const start = dirname(fileURLToPath(import.meta.url));
+  const ancestors: string[] = [];
+  for (let dir = start, depth = 0; depth < 6; depth += 1) {
+    ancestors.push(dir);
     const parent = dirname(dir);
     if (parent === dir) break;
     dir = parent;
+  }
+  // The checkout's source wins over a `skill/` build copy at ANY level: from
+  // src/ or dist/ the package's stale copy is reached before the repo root.
+  for (const name of [
+    join('.claude', 'skills', SKILL_NAME),
+    SHIPPED_SKILL_DIR,
+  ]) {
+    for (const dir of ancestors) {
+      const candidate = join(dir, name);
+      if (existsSync(join(candidate, 'SKILL.md'))) return candidate;
+    }
   }
   throw new CliError(
     'internal',
@@ -82,6 +88,8 @@ export interface SkillInstallData {
   source: string;
   outcome: SkillInstallOutcome;
   files: string[];
+  /** Files from an older install that this CLI no longer ships. */
+  removed?: string[];
 }
 
 export interface SkillInstallOptions {
@@ -137,11 +145,23 @@ export function installSkill(options: SkillInstallOptions): SkillInstallData {
     writeFileSync(path, content, 'utf8');
     changed = true;
   }
+  // The directory is package-owned: a file a newer CLI no longer ships is
+  // stale instruction, not user data, and goes away with the reinstall.
+  const removed: string[] = [];
+  if (existed) {
+    for (const file of walk(target)) {
+      if (writes.has(file)) continue;
+      rmSync(join(target, file), { force: true });
+      removed.push(file);
+      changed = true;
+    }
+  }
 
   return {
     path: target,
     source,
     outcome: !existed ? 'installed' : changed ? 'updated' : 'unchanged',
     files: [...writes.keys()].sort(),
+    ...(removed.length > 0 ? { removed: removed.sort() } : {}),
   };
 }

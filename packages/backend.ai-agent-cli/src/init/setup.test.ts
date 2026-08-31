@@ -155,6 +155,27 @@ describe('init setup', () => {
     expect(readConfig(env).endpoint).toBeUndefined();
   });
 
+  it('rejects --login together with --no-login before doing anything', async () => {
+    const env = freshEnv();
+    const { deps, calls } = fakeDeps(env);
+    await expect(
+      runSetup({
+        context: context({
+          endpoint: 'https://m.example.com',
+          login: true,
+          'no-login': true,
+          'no-skill': true,
+        }),
+        env,
+        deps,
+      }),
+    ).rejects.toMatchObject({
+      code: 'usage',
+      message: expect.stringContaining('contradict'),
+    });
+    expect(calls).toEqual([]);
+  });
+
   it('outside a checkout: records the endpoint, syncs the manager-matched tag, aligns the SDL, installs the skill', async () => {
     const env = freshEnv();
     const { deps, calls } = fakeDeps(env);

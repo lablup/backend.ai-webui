@@ -590,9 +590,17 @@ const alignmentGroup: CheckGroup = {
     });
 
     const session = alignmentSession({ cwd });
-    // `/func/` is public: the endpoint `init` recorded is enough to compare,
-    // even before anyone has logged in.
-    const recorded = session ? undefined : readConfig().endpoint;
+    // `/func/` is public, so the endpoint alone is enough to compare even
+    // before anyone has logged in — the same endpoint `resolveEndpoint`
+    // gives every other command, never a second precedence.
+    let recorded: string | undefined;
+    if (!session) {
+      try {
+        recorded = resolveEndpoint({ cwd }).endpoint;
+      } catch {
+        recorded = undefined;
+      }
+    }
     if (!session && !recorded) {
       checks.push({
         group: 'alignment',

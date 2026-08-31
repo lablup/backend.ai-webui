@@ -1,5 +1,5 @@
 import type { GitRunner, SyncData } from '../checkout-sync.js';
-import { defaultGit, syncCheckout } from '../checkout-sync.js';
+import { gitRunner, syncCheckout } from '../checkout-sync.js';
 import type { AnyCommand, RunContext } from '../command.js';
 import { readConfig, updateConfig } from '../config.js';
 import { CliError } from '../errors.js';
@@ -76,8 +76,17 @@ const flag = (context: RunContext, name: string): string | undefined => {
 
 /** `--x` / `--no-x` resolve a yes/no; neither means "ask". */
 function yesNoFlag(context: RunContext, name: string): boolean | undefined {
-  if (context.flags[name] === true) return true;
-  if (context.flags[`no-${name}`] === true) return false;
+  const yes = context.flags[name] === true;
+  const no = context.flags[`no-${name}`] === true;
+  if (yes && no) {
+    throw new CliError(
+      'usage',
+      `--${name} and --no-${name} contradict each other.`,
+      { hint: `${CLI_NAME} init --no-${name}` },
+    );
+  }
+  if (yes) return true;
+  if (no) return false;
   return undefined;
 }
 
@@ -116,7 +125,7 @@ export async function runSetup(options: SetupOptions): Promise<SetupData> {
   const env = options.env ?? process.env;
   const deps: SetupDeps = {
     prompter: stdioPrompter(),
-    git: defaultGit,
+    git: gitRunner(),
     fetchVersion: fetchPublicManagerVersion,
     sync: syncCheckout,
     syncSchema,

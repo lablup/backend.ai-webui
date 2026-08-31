@@ -55,5 +55,22 @@ describe('skill install', () => {
       'updated',
     );
     expect(readFileSync(join(targetDir, 'SKILL.md'), 'utf8')).not.toBe('stale');
+
+    // A file an older CLI shipped and this one does not is removed.
+    writeFileSync(join(targetDir, 'references', 'obsolete.md'), 'old');
+    const pruned = installSkill({ commands: COMMANDS, targetDir });
+    expect(pruned.outcome).toBe('updated');
+    expect(pruned.removed).toEqual(['references/obsolete.md']);
+    expect(existsSync(join(targetDir, 'references', 'obsolete.md'))).toBe(
+      false,
+    );
+  });
+
+  it('prefers the checkout source over a build copy nearer to the module', () => {
+    // From src/ the package-level skill/ is the nearer candidate; the repo's
+    // .claude/skills/bai-agent must still win.
+    expect(shippedSkillDir()).toMatch(
+      /[\\/]\.claude[\\/]skills[\\/]bai-agent$/,
+    );
   });
 });
