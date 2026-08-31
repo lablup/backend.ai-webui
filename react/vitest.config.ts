@@ -1,5 +1,5 @@
-import react from '@vitejs/plugin-react';
 import stylexVite from '@stylexjs/unplugin/vite';
+import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import svgr from 'vite-plugin-svgr';
@@ -45,7 +45,10 @@ export default defineConfig({
       },
       // Existing `.svg` (plain import, not SVGR `?react`) module mock.
       // SVGR `?react` imports are handled by `vite-plugin-svgr` below.
-      { find: /\.svg$/, replacement: resolve(__dirname, '__test__/svg.mock.js') },
+      {
+        find: /\.svg$/,
+        replacement: resolve(__dirname, '__test__/svg.mock.js'),
+      },
       // CSS imports (both `.css` and `.css?raw`) go through the same mock.
       // Array-form aliases REPLACE the matched portion, so we have to match
       // the entire specifier. The regex below anchors both ends via `^.+`.
@@ -109,10 +112,14 @@ export default defineConfig({
     // that exhausts its budget is cut off by the runner and reports a bare
     // timeout instead of the assertion diff that names the cause. FR-3617.
     testTimeout: 15_000,
-    setupFiles: [
-      resolve(__dirname, 'src/setupTests.ts'),
+    setupFiles: [resolve(__dirname, 'src/setupTests.ts')],
+    // `vite-plugins/**` carries the dev review overlay (FR-3811): plain
+    // TypeScript modules with no app imports, so they run under the same
+    // jsdom setup without any extra wiring.
+    include: [
+      'src/**/*.{test,spec}.{ts,tsx}',
+      'vite-plugins/**/*.{test,spec}.ts',
     ],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['**/node_modules/**', '**/build/**', '**/__generated__/**'],
 
     // CI-only: the transform cache (node_modules/.experimental-vitest-cache)

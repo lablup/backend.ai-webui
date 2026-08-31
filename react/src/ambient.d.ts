@@ -100,4 +100,11 @@ type NonNullableNodeOnEdges<T extends RelayConnection | null> = NonNullable<
 
 interface Window {
   switchLanguage: (lang: string) => void;
+  /**
+   * Dev-only handoff to the review overlay (FR-3811), which runs outside
+   * React and cannot read the router. Written by `DevReviewRouteLabel`.
+   */
+  __BAI_REVIEW__?: {
+    routeLabel?: string;
+  };
 }

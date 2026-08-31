@@ -7,6 +7,7 @@ import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import DevReviewRouteLabel from './components/DevReviewRouteLabel';
 import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
@@ -1660,6 +1661,14 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
+            {/* Dev-only handoff to the review overlay (FR-3811). The
+                `import.meta.env.DEV` literal is `false` in a production
+                build, so the branch is dead code there. */}
+            {import.meta.env.DEV ? (
+              <ErrorBoundaryWithNullFallback>
+                <DevReviewRouteLabel />
+              </ErrorBoundaryWithNullFallback>
+            ) : null}
             <Suspense>
               <ErrorBoundaryWithNullFallback>
                 <AutoDiagnosticsEffect />

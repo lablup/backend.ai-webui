@@ -30,6 +30,7 @@
   "include": [
     "src",
     "astryx.config.ts",
+    "vite-plugins",
     "../packages/backend.ai-ui/src",
     "../packages/backend.ai-client/src"
   ],
