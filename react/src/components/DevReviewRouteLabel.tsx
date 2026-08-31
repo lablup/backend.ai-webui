@@ -4,7 +4,32 @@
  */
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMatches } from 'react-router-dom';
+import { useMatches, type UIMatch } from 'react-router-dom';
+
+/**
+ * The same switch the Vite plugin reads (`1` / `true` / `on`). Paired with
+ * `import.meta.env.DEV` at the call site so a production build folds the
+ * branch — and this module with it — away.
+ */
+export const isDevReviewOverlayEnabled = (): boolean =>
+  ['1', 'true', 'on'].includes(
+    String(import.meta.env.VITE_DEV_REVIEW_OVERLAY ?? '').toLowerCase(),
+  );
+
+/** `handle.title` wins over `handle.labelKey`, as in `WebUIBreadcrumb`. */
+const routeLabelFrom = (
+  matches: Array<UIMatch>,
+  t: (key: string) => string,
+): string | undefined => {
+  const parts = matches
+    .map((match) => {
+      const handle = match.handle as
+        { title?: string; labelKey?: string } | null | undefined;
+      return handle?.title || (handle?.labelKey ? t(handle.labelKey) : '');
+    })
+    .filter(Boolean);
+  return parts.length ? parts.join(' › ') : undefined;
+};
 
 /**
  * Publishes the current route's ENGLISH label on `window.__BAI_REVIEW__` for
@@ -18,23 +43,18 @@ const DevReviewRouteLabel: React.FC = () => {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    const labelKeys = matches
-      .map((match) => (match.handle as { labelKey?: string } | null)?.labelKey)
-      .filter((key): key is string => !!key);
-    let cancelled = false;
-    const publish = async () => {
-      let routeLabel: string | undefined;
-      if (labelKeys.length) {
-        await i18n.loadLanguages('en');
-        if (cancelled) return;
-        const t = i18n.getFixedT('en');
-        routeLabel = labelKeys.map((key) => t(key)).join(' › ');
-      }
-      window.__BAI_REVIEW__ = { ...window.__BAI_REVIEW__, routeLabel };
+    const publish = () => {
+      window.__BAI_REVIEW__ = {
+        ...window.__BAI_REVIEW__,
+        routeLabel: routeLabelFrom(matches, i18n.getFixedT('en')),
+      };
     };
-    void publish();
+    publish();
+    // `en` is `fallbackLng`, so i18next loads it at init — but the first
+    // render can beat that fetch, which would publish raw keys.
+    i18n.on('loaded', publish);
     return () => {
-      cancelled = true;
+      i18n.off('loaded', publish);
     };
   }, [matches, i18n]);
 
