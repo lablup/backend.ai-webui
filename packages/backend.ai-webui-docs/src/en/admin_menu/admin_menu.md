@@ -795,11 +795,7 @@ applied rather than what it limits:
   the resource policy dialog does not expose the field.
 - **Created At**: The timestamp when the policy was created.
 
-You can search and narrow the list with the property filter above the table, which supports **Name**,
-**Created At**, **Max Session Lifetime**, **Concurrent Sessions**, **Cluster Size**, **Idle Timeout**,
-**Max Concurrent SFTP Sessions**, and **Max Pending Session Count**. Sorting and paging are evaluated on
-the server, so the tab stays responsive on clusters with many policies. Click a column header to change
-the sort order, and use the pager below the table to move through the results.
+You can use the table's property filter, sorting, and pagination controls to find the policies you need.
 
 To change a resource policy, click the **Edit** (pencil) action in the Name column of the policy. In the
 **Edit Keypair Resource Policy** dialog, every option is editable except for the policy name, which serves
@@ -958,14 +954,9 @@ resource policy.
 ![](../images/project_resource_policy_list.png)
 <!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
-The project resource policy table lists the following columns: **Name** (with the inline **Edit** and
-**Delete** actions), **Max Folder Count**, **Max Folder Size**, **Max Network Count**, **ID**, and
-**Created At**.
-
-You can search and narrow the list with the property filter above the table, which supports **Name**,
-**Created At**, **Max Folder Count**, and **Max Network Count**. Sorting and paging are evaluated on the
-server, so the tab stays responsive on clusters with many policies. Click a column header to change the
-sort order, and use the pager below the table to move through the results.
+In the project resource policy table, you can review the policy list and use the inline **Edit** and
+**Delete** actions for each item. You can also use the table's property filter, sorting, and pagination
+controls to find policies quickly.
 
 To create a new project resource policy, click the **Create** button at the top right of the table.
 
