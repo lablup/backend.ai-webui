@@ -42,11 +42,33 @@ const DOCS_LANG = "en";
 
 // ── Ports of the docs-toolkit slug rules ──────────────────────────────
 
-/** Port of `markdown-processor.ts` `slugify`. */
+/**
+ * Exact, linear-time equivalent of `.replace(/<[^>]+>/g, "")`: at every `<`,
+ * the first following `>` must be at least two characters away (`[^>]+` cannot
+ * match empty); that span is dropped, everything else is copied verbatim.
+ */
+function stripTagSpans(input) {
+  let out = "";
+  let i = 0;
+  while (i < input.length) {
+    const lt = input.indexOf("<", i);
+    if (lt === -1) break;
+    const gt = input.indexOf(">", lt + 1);
+    if (gt === -1) break;
+    if (gt === lt + 1) {
+      out += input.slice(i, gt + 1);
+      i = gt + 1;
+      continue;
+    }
+    out += input.slice(i, lt);
+    i = gt + 1;
+  }
+  return out + input.slice(i);
+}
+
+/** Port of `markdown-processor.ts` `slugify`; the tag strip is `stripTagSpans`. */
 export function slugify(text) {
-  return text
-    .toLowerCase()
-    .replace(/<[^>]+>/g, "")
+  return stripTagSpans(text.toLowerCase())
     .replace(/[^\p{L}\p{N}\s-]/gu, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
