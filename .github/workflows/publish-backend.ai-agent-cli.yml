@@ -1,0 +1,68 @@
+name: Publish backend.ai-agent-cli to npm registry
+
+# The CLI is versioned on its own (0.x in packages/backend.ai-agent-cli), not on
+# the WebUI's `v*` release tags: a WebUI release must not republish the same
+# CLI version (npm would refuse it and the run would go red). A push to main
+# that touches the package publishes a canary; a tag `agent-cli-v<version>`
+# publishes that version, which must equal package.json's.
+
+on:
+  push:
+    paths:
+      - packages/backend.ai-agent-cli/**
+    branches:
+      - main
+    tags:
+      - agent-cli-v*
+
+jobs:
+  publish:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+        with:
+          registry-url: "https://registry.npmjs.org"
+      - name: Update npm
+        # Pinned. pnpm publish delegates to the npm CLI; OIDC trusted
+        # publishing needs npm >= 11.5.1.
+        run: npm install -g npm@11.16.0
+
+      - name: Update to canary version
+        if: github.ref_type == 'branch'
+        run: |
+          cd packages/backend.ai-agent-cli
+          ./scripts/update-canary-version.sh
+
+      # `prepublishOnly` runs lint, test and build; the tests read the checkout
+      # data (SDL, i18n, manual), which is why this runs from the full checkout.
+      - name: Publish to npm (canary)
+        if: github.ref_type == 'branch'
+        run: |
+          cd packages/backend.ai-agent-cli
+          pnpm publish --tag canary --access public --no-git-checks
+
+      - name: Determine npm tag and publish strategy
+        if: github.ref_type == 'tag'
+        id: determine-tag
+        run: |
+          cd packages/backend.ai-agent-cli
+          # refs/tags/agent-cli-v0.1.0 -> 0.1.0
+          VERSION="${GITHUB_REF#refs/tags/agent-cli-v}"
+          # Captured first so a non-zero exit (tag ≠ package.json) fails the step.
+          SCRIPT_OUTPUT=$(./scripts/determine-publish-strategy.sh "$VERSION")
+          echo "$SCRIPT_OUTPUT" | while IFS='=' read -r key value; do
+            if [ -n "$key" ]; then
+              echo "${key}=${value}" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+      - name: Publish to npm
+        if: github.ref_type == 'tag' && steps.determine-tag.outputs.should_publish == 'true'
+        run: |
+          cd packages/backend.ai-agent-cli
+          pnpm publish --tag ${{ steps.determine-tag.outputs.npm_tag }} --access public --no-git-checks
