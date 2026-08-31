@@ -230,15 +230,25 @@ test.describe(
 
       // Click the refresh button (renamed from icon-name "reload" to
       // "Refresh"). `exact: true` avoids matching the adjacent "Auto
-      // Refresh" button.
+      // Refresh" button. Await the refetch itself -- the table and its
+      // "X - Y of Z items" caption stay mounted across a refetch, so
+      // asserting on them alone would pass without any request going out.
+      const refetch = page.waitForResponse(
+        (response) =>
+          (response.request().postData() ?? '').includes(
+            'AdminPrometheusPresetQuery',
+          ),
+        { timeout: 30000 },
+      );
       await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+      await refetch;
 
-      // Verify table is still visible after refresh
+      // Verify table is still visible after the refetch resolved
       await expect(page.getByRole('table')).toBeVisible({ timeout: 15000 });
 
-      // Verify pagination info is still present (refresh completed). The
-      // "X - Y of Z items" caption is now a plain text node, not a
-      // `role="listitem"` (antd Pagination is gone).
+      // Verify pagination info is still present. The "X - Y of Z items"
+      // caption is now a plain text node, not a `role="listitem"` (antd
+      // Pagination is gone).
       await expect(page.getByText(/items$/)).toBeVisible({ timeout: 15000 });
     });
   },

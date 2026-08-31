@@ -24,11 +24,11 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
     await expect(allocationHistoryTab).toBeVisible();
     await expect(allocationHistoryTab).toHaveAttribute('aria-current', 'true');
 
-    // Verify Period selector exists. The self-hosted form engine
-    // (BAIFormItem) renders the label text twice -- once on a `title`
-    // attribute label and once on the visible field label -- so an
-    // unscoped text locator strict-mode-violates.
-    await expect(page.getByText(/Period/).first()).toBeVisible();
+    // Verify the Period selector itself, not its label: the Astryx
+    // `Selector` carries the (hidden) accessible name "Period", while the
+    // enclosing `Form.Item` renders that same text as a visible label --
+    // asserting on the text would pass even if the control never rendered.
+    await expect(page.getByRole('combobox', { name: 'Period' })).toBeVisible();
 
     // Verify chart sections exist
     await expect(page.getByText('Sessions').first()).toBeVisible();
