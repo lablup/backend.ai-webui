@@ -9,6 +9,7 @@ import {
   BLOCK_START,
   CLAUDE_MD,
   findBlockRegion,
+  INSTALLED_SKILL_PATH,
   renderAgentBlock,
   resolveBlockTarget,
 } from './block.js';
@@ -22,9 +23,16 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 const repoCwd = import.meta.dirname;
+
+// The wizard must not find a synced checkout or a recorded endpoint here.
+beforeAll(() => {
+  const root = mkdtempSync(join(tmpdir(), 'bai-agent-init-env-'));
+  process.env.BAI_AGENT_DATA_DIR = join(root, 'data');
+  process.env.BAI_AGENT_CONFIG_DIR = join(root, 'config');
+});
 
 /** Trailing whitespace is not part of the contract; the text is. */
 const normalise = (value: string): string =>
@@ -80,12 +88,26 @@ describe('init', () => {
     }
   });
 
-  it('prints the same block without --features, plus a note on stderr', async () => {
+  it('is the setup wizard without --features: no TTY and no flags is a usage error', async () => {
+    const bare = await invoke(
+      ['init'],
+      mkdtempSync(join(tmpdir(), 'bai-agent-bare-')),
+    );
+    expect(bare.exitCode).toBe(EXIT.usage);
+    expect(bare.stderr).toContain('--endpoint');
     const withFeature = await invoke(['init', '--features', 'agents']);
-    const bare = await invoke(['init']);
-    expect(normalise(bare.stdout)).toBe(normalise(withFeature.stdout));
-    expect(bare.stderr).toContain('agents');
     expect(withFeature.stderr).toBe('');
+  });
+
+  it('renders the standalone block for an installed skill', () => {
+    const block = renderAgentBlock(COMMANDS, { mode: 'standalone' });
+    expect(block).toContain('npm i -g backend.ai-agent-cli');
+    expect(block).toContain(INSTALLED_SKILL_PATH);
+    expect(block).not.toContain('pnpm run bai-agent');
+    expect(block).not.toContain('.claude/rules/graphql-pagination.md');
+    expect(normalise(renderAgentBlock(COMMANDS))).toBe(
+      normalise(renderAgentBlock(COMMANDS, { mode: 'checkout' })),
+    );
   });
 
   it('rejects an unknown feature as a usage error', async () => {
@@ -134,7 +156,10 @@ describe('init --write', () => {
     const root = fakeCheckout('# Project\n\nProse.\n');
     const path = join(root, CLAUDE_MD);
 
-    const first = await invoke(['init', '--write', '--json'], root);
+    const first = await invoke(
+      ['init', '--features', 'agents', '--write', '--json'],
+      root,
+    );
     expect(first.exitCode).toBe(EXIT.ok);
     expect(
       (JSON.parse(first.stdout) as { data: { write: { outcome: string } } })
@@ -144,7 +169,10 @@ describe('init --write', () => {
     expect(afterFirst).toContain(BLOCK_START);
     expect(afterFirst).toContain('Prose.');
 
-    const second = await invoke(['init', '--write', '--json'], root);
+    const second = await invoke(
+      ['init', '--features', 'agents', '--write', '--json'],
+      root,
+    );
     expect(
       (JSON.parse(second.stdout) as { data: { write: { outcome: string } } })
         .data.write.outcome,
@@ -158,7 +186,7 @@ describe('init --write', () => {
     );
     const path = join(root, CLAUDE_MD);
     const { exitCode, stdout } = await invoke(
-      ['init', '--write', '--json'],
+      ['init', '--features', 'agents', '--write', '--json'],
       root,
     );
     expect(exitCode).toBe(EXIT.ok);
@@ -181,6 +209,40 @@ describe('init --write', () => {
     const twice = applyBlock(once.content, block);
     expect(twice.content).toBe(once.content);
     expect(twice.changed).toBe(false);
+  });
+});
+
+describe('init --features agents --write outside a checkout', () => {
+  it('refuses the synced data checkout, which has no CLAUDE.md', async () => {
+    const synced = join(process.env.BAI_AGENT_DATA_DIR!, 'checkout');
+    mkdirSync(join(synced, 'data'), { recursive: true });
+    writeFileSync(
+      join(synced, 'package.json'),
+      JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-synced' }),
+    );
+    writeFileSync(join(synced, 'data/schema.graphql'), '');
+    mkdirSync(join(synced, 'resources/i18n'), { recursive: true });
+    mkdirSync(join(synced, 'packages/backend.ai-webui-docs'), {
+      recursive: true,
+    });
+    const { exitCode, stderr } = await invoke(
+      ['init', '--features', 'agents', '--write'],
+      mkdtempSync(join(tmpdir(), 'bai-agent-nowhere-')),
+    );
+    expect(exitCode).toBe(EXIT.usage);
+    expect(stderr).toContain('synced data checkout');
+    rmSync(synced, { recursive: true, force: true });
+  });
+
+  it('renders the write record with its markers under --detail', async () => {
+    const root = fakeCheckout('# Project\n');
+    const { stdout } = await invoke(
+      ['init', '--features', 'agents', '--write', '--detail'],
+      root,
+    );
+    expect(stdout).toContain('outcome:');
+    expect(stdout).toContain(BLOCK_START);
+    expect(stdout).toContain(BLOCK_END);
   });
 });
 

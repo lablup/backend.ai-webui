@@ -99,7 +99,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Astryx UI fixes**: `astryx-fix` skill (assignee gate before starting, measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
 - **Astryx UI bug reporting**: `astryx-bug-report` skill (capture-only intake for visual / behavioral defects and `discussion` items — "is this intended?" / "propose X instead" — filed under epic FR-3491 as Bugs and Tasks respectively, duplicate + relates scan). Use it when the ask is "record this", `astryx-fix` when it is "fix this".
-- **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
+- **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). It ships with the CLI (`packages/backend.ai-agent-cli/skill/`), not as a repository skill: install it per user with `pnpm run bai-agent init --skill --no-login`. Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
 
 Component-authoring patterns (Relay tables, selects, modals, forms, layout) have no
 dedicated skills: read `react.instructions.md` for the project deltas, then copy the
@@ -172,13 +172,13 @@ bai-agent · 13 commands
 Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.
 CLI: run every command as `pnpm run bai-agent <cmd>` from the repository root (shown below as `bai-agent ...`).
 The proxy runs the bundle, so build it first: `pnpm --filter backend.ai-agent-cli build`. Without the proxy, still from the repository root: `node packages/backend.ai-agent-cli/dist/cli.js <cmd>`.
-Preflight, answer-or-link rules and a ready-to-run query cookbook: the `bai-agent` skill (`.claude/skills/bai-agent/SKILL.md`).
+Preflight, answer-or-link rules and a ready-to-run query cookbook: the `bai-agent` skill, shipped with the CLI (`packages/backend.ai-agent-cli/skill/SKILL.md`) and installed per user by `pnpm run bai-agent init --skill --no-login`.
 
 WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:
 1. `bai-agent doctor` — checkout and stored session in one pass; exit 0 means the environment is ok. Then `bai-agent whoami` — exit 3 means log in (see RULES).
 2. `bai-agent search "<english UI term>"` — START HERE: one ranked list over manual + schema + terminology. Every hit carries the `command:` that opens it.
 3. `bai-agent docs show <id>` · `schema show <Type>.<field>` · `explain <Type>.<field>=<VALUE>` — the hit in full. `schema show` is what the SDL declares; `explain` is what it means to a user.
-4. `bai-agent query '<document>'` — ask the manager. Validated against this checkout's SDL before any network call. Rows come back carrying `webui_path` / `webui_url` under `data.links` — hand that to the user so they can open it themselves.
+4. `bai-agent query '<document>'` — ask the manager. Validated against the checkout's SDL before any network call. Rows come back carrying `webui_path` / `webui_url` under `data.links` — hand that to the user so they can open it themselves.
 
 OUTPUT: `--json` prints one envelope on stdout — {"apiVersion":"bai-agent/v1","type":…,"data":…}; a failure prints {"apiVersion","error","code","suggestions?","hint?"} on stderr and nothing on stdout. Text is the same data as aligned `key: value` records. `hint` is a concrete next step — a command to run, or for a refused mutation, the WebUI page to do it on — never prose.
 EXIT: 0 ok · 1 error (schema_mismatch, version_mismatch, repo_not_found, repo_incomplete, internal) · 2 usage · 3 auth_required · 4 mutation_refused · 5 not_found.
@@ -196,7 +196,7 @@ RULES:
 COMMANDS:
   version   Print the CLI version and the detected checkout.
   manifest  Print the CLI capability manifest (commands and their flags).
-  init      Print the CLAUDE.md agent block, generated from the command registry.
+  init      Set this machine up (endpoint, data sync, login, skill), or with --features print the CLAUDE.md agent block.
   doctor    Diagnose the CLI environment and the detected checkout.
   sync      Fetch the checkout data (SDL, i18n, manual) for use outside a WebUI checkout.
   search    Rank manual sections, schema entries and terminology for a query.

@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const SKILL_DIR = '.claude/skills/bai-agent';
+const SKILL_DIR = 'packages/backend.ai-agent-cli/skill';
 const SKILL = `${SKILL_DIR}/SKILL.md`;
 const COOKBOOK = `${SKILL_DIR}/references/query-cookbook.md`;
 

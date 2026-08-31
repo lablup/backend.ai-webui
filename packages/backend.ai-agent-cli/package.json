@@ -35,6 +35,7 @@
   "files": [
     "dist",
     "mappings",
+    "skill",
     "README.md"
   ],
   "engines": {
