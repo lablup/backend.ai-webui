@@ -513,6 +513,30 @@
       "Title": "Chatea con tus modelos desplegados"
     }
   },
+  "cliLogin": {
+    "Account": "Cuenta",
+    "Attestation": "He iniciado este acceso desde una terminal de este equipo.",
+    "Cancelled": "Has cancelado la transferencia.",
+    "Confirm": "Transferir la sesión",
+    "ConsentDescription": "La CLI actuará como tú — misma cuenta, mismos permisos, mismo endpoint — hasta que ejecutes bai-agent logout o la sesión caduque. Aprueba solo un acceso que hayas iniciado tú.",
+    "ConsentTitle": "Esta sesión del navegador se compartirá con una CLI de este equipo",
+    "DoneDescription": "Puedes cerrar esta pestaña y volver a la terminal.",
+    "DoneTitle": "La CLI ha iniciado sesión",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "La transferencia no se completó",
+    "HandOffRejected": "La CLI local rechazó la transferencia (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "No hay ninguna CLI escuchando en este equipo. Puede estar ejecutándose en otra máquina o el navegador bloqueó la petición a localhost.",
+    "MatchCodeDescription": "La terminal que inició este acceso muestra el mismo código. Si no coincide, cancela.",
+    "NoListenerPort": "Esta página se abrió sin un puerto de escucha de la CLI.",
+    "PasteFallbackDescription": "Ejecuta esto en la terminal donde está la CLI y pega el ID de sesión cuando te lo pida.",
+    "PasteFallbackTitle": "Pegar el ID de sesión en la CLI",
+    "PasteFallbackWarning": "El ID de sesión es tan poderoso como tu contraseña. Quien lo tenga puede actuar como tú hasta que la sesión caduque. No lo pegues en un chat, una incidencia ni un registro.",
+    "Retry": "Reintentar",
+    "RevealSessionId": "Mostrar el ID de sesión",
+    "SessionIdMasked": "Oculto — {{masked}}",
+    "Title": "Iniciar sesión en la Backend.AI WebUI Agent CLI",
+    "VerificationCode": "Código de verificación"
+  },
   "credential": {
     "2FAEnabled": "2FA habilitado",
     "AccessKey": "Clave de acceso",

@@ -513,6 +513,30 @@
       "Title": "Ngobrol dengan model yang telah Anda deploy"
     }
   },
+  "cliLogin": {
+    "Account": "Akun",
+    "Attestation": "Saya sendiri yang memulai login ini dari terminal di komputer ini.",
+    "Cancelled": "Anda membatalkan serah terima.",
+    "Confirm": "Serahkan sesi",
+    "ConsentDescription": "CLI akan bertindak sebagai Anda — akun yang sama, izin yang sama, endpoint yang sama — hingga Anda menjalankan bai-agent logout atau sesi berakhir. Setujui hanya login yang Anda mulai sendiri.",
+    "ConsentTitle": "Sesi peramban ini akan dibagikan dengan CLI di komputer ini",
+    "DoneDescription": "Anda dapat menutup tab ini dan kembali ke terminal.",
+    "DoneTitle": "CLI sudah masuk",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "Serah terima tidak selesai",
+    "HandOffRejected": "CLI lokal menolak serah terima (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Tidak ada CLI yang mendengarkan di komputer ini. CLI mungkin berjalan di mesin lain, atau peramban memblokir permintaan ke localhost.",
+    "MatchCodeDescription": "Terminal yang memulai login ini menampilkan kode yang sama. Jika tidak cocok, batalkan.",
+    "NoListenerPort": "Halaman ini dibuka tanpa port listener CLI.",
+    "PasteFallbackDescription": "Jalankan ini di terminal tempat CLI berada, lalu tempel ID sesi saat diminta.",
+    "PasteFallbackTitle": "Tempel ID sesi ke CLI",
+    "PasteFallbackWarning": "ID sesi sekuat kata sandi Anda. Siapa pun yang memilikinya dapat bertindak sebagai Anda hingga sesi berakhir. Jangan tempelkan ke obrolan, issue, atau log.",
+    "Retry": "Coba lagi",
+    "RevealSessionId": "Tampilkan ID sesi",
+    "SessionIdMasked": "Tersembunyi — {{masked}}",
+    "Title": "Masuk ke Backend.AI WebUI Agent CLI",
+    "VerificationCode": "Kode verifikasi"
+  },
   "credential": {
     "2FAEnabled": "2FA Diaktifkan",
     "AccessKey": "Kunci Akses",

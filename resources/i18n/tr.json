@@ -513,6 +513,30 @@
       "Title": "Dağıtılan modellerinizle sohbet edin"
     }
   },
+  "cliLogin": {
+    "Account": "Hesap",
+    "Attestation": "Bu oturum açma işlemini bu bilgisayardaki bir terminalden ben başlattım.",
+    "Cancelled": "Devri iptal ettiniz.",
+    "Confirm": "Oturumu devret",
+    "ConsentDescription": "CLI sizin adınıza hareket edecek — aynı hesap, aynı izinler, aynı endpoint — siz bai-agent logout komutunu çalıştırana veya oturum süresi dolana kadar. Yalnızca kendi başlattığınız oturum açma işlemini onaylayın.",
+    "ConsentTitle": "Bu tarayıcı oturumu bu bilgisayardaki bir CLI ile paylaşılacak",
+    "DoneDescription": "Bu sekmeyi kapatıp terminale dönebilirsiniz.",
+    "DoneTitle": "CLI oturum açtı",
+    "Endpoint": "Endpoint",
+    "FailedTitle": "Devir tamamlanmadı",
+    "HandOffRejected": "Yerel CLI devri reddetti (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Bu bilgisayarda dinleyen bir CLI yok. Başka bir makinede çalışıyor olabilir veya tarayıcı localhost isteğini engellemiş olabilir.",
+    "MatchCodeDescription": "Bu oturum açma işlemini başlatan terminal aynı kodu gösterir. Eşleşmiyorsa iptal edin.",
+    "NoListenerPort": "Bu sayfa bir CLI dinleyici bağlantı noktası olmadan açıldı.",
+    "PasteFallbackDescription": "Bunu CLI'nin bulunduğu terminalde çalıştırın, ardından istendiğinde oturum kimliğini yapıştırın.",
+    "PasteFallbackTitle": "Oturum kimliğini bunun yerine CLI'ye yapıştırın",
+    "PasteFallbackWarning": "Oturum kimliği parolanız kadar güçlüdür. Ona sahip olan herkes, oturum süresi dolana kadar sizin adınıza hareket edebilir. Bir sohbete, bir issue'ya veya bir günlüğe yapıştırmayın.",
+    "Retry": "Yeniden dene",
+    "RevealSessionId": "Oturum kimliğini göster",
+    "SessionIdMasked": "Gizli — {{masked}}",
+    "Title": "Backend.AI WebUI Agent CLI'de oturum açın",
+    "VerificationCode": "Doğrulama kodu"
+  },
   "credential": {
     "2FAEnabled": "2FA Etkin",
     "AccessKey": "Erişim Anahtarı",

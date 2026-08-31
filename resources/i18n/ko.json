@@ -513,6 +513,30 @@
       "Title": "배포한 모델과 대화하기"
     }
   },
+  "cliLogin": {
+    "Account": "계정",
+    "Attestation": "이 컴퓨터의 터미널에서 직접 이 로그인을 시작했습니다.",
+    "Cancelled": "세션 전달을 취소했습니다.",
+    "Confirm": "세션 전달",
+    "ConsentDescription": "CLI는 동일한 계정, 동일한 권한, 동일한 엔드포인트로 사용자를 대신해 동작합니다. bai-agent logout 명령을 실행하거나 세션이 만료될 때까지 유지됩니다. 직접 시작한 로그인만 승인하세요.",
+    "ConsentTitle": "이 브라우저 세션이 이 컴퓨터의 Backend.AI WebUI Agent CLI와 공유됩니다",
+    "DoneDescription": "이 탭을 닫고 터미널로 돌아가세요.",
+    "DoneTitle": "CLI 로그인이 완료되었습니다",
+    "Endpoint": "엔드포인트",
+    "FailedTitle": "세션 전달을 완료하지 못했습니다",
+    "HandOffRejected": "로컬 CLI가 세션 전달을 거부했습니다. (HTTP {{status}} {{reason}})",
+    "HandOffUnreachable": "이 컴퓨터에서 대기 중인 CLI를 찾지 못했습니다. CLI가 다른 컴퓨터에서 실행 중이거나, 브라우저가 localhost 요청을 차단했을 수 있습니다.",
+    "MatchCodeDescription": "이 로그인을 시작한 터미널에도 같은 코드가 표시됩니다. 코드가 다르면 취소하세요.",
+    "NoListenerPort": "CLI 리스너 포트 없이 이 페이지가 열렸습니다.",
+    "PasteFallbackDescription": "CLI가 실행 중인 터미널에서 아래 명령을 실행한 뒤, 세션 ID를 붙여넣으세요.",
+    "PasteFallbackTitle": "세션 ID를 CLI에 직접 붙여넣기",
+    "PasteFallbackWarning": "세션 ID는 비밀번호와 같습니다. 이 값을 가진 사람은 세션이 만료될 때까지 사용자를 대신해 동작할 수 있습니다. 채팅, 이슈, 로그에 붙여넣지 마세요.",
+    "Retry": "다시 시도",
+    "RevealSessionId": "세션 ID 표시",
+    "SessionIdMasked": "숨김 — {{masked}}",
+    "Title": "Backend.AI WebUI Agent CLI 로그인",
+    "VerificationCode": "확인 코드"
+  },
   "credential": {
     "2FAEnabled": "이중인중 활성화",
     "AccessKey": "액세스 키",

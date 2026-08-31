@@ -18,6 +18,8 @@ export interface RunContext {
   flags: Record<string, string | boolean>;
   json: boolean;
   render: RenderOptions;
+  /** Progress lines; goes to stderr so `--json` stdout stays one envelope. */
+  notify(message: string): void;
 }
 
 export interface CommandModule<D> {

@@ -513,6 +513,30 @@
       "Title": "Keskustele käyttöönotetuilla malleillasi"
     }
   },
+  "cliLogin": {
+    "Account": "Tili",
+    "Attestation": "Aloitin tämän kirjautumisen itse tämän tietokoneen päätteestä.",
+    "Cancelled": "Peruutit siirron.",
+    "Confirm": "Siirrä istunto",
+    "ConsentDescription": "CLI toimii sinuna — sama tili, samat oikeudet, sama päätepiste — kunnes suoritat komennon bai-agent logout tai istunto vanhenee. Hyväksy vain kirjautuminen, jonka olet itse aloittanut.",
+    "ConsentTitle": "Tämä selainistunto jaetaan tämän tietokoneen CLI:n kanssa",
+    "DoneDescription": "Voit sulkea tämän välilehden ja palata päätteeseen.",
+    "DoneTitle": "CLI on kirjautunut sisään",
+    "Endpoint": "Päätepiste",
+    "FailedTitle": "Siirtoa ei saatu päätökseen",
+    "HandOffRejected": "Paikallinen CLI hylkäsi siirron (HTTP {{status}} {{reason}}).",
+    "HandOffUnreachable": "Tässä tietokoneessa ei kuuntele yhtään CLI:tä. Se voi olla käynnissä toisella koneella, tai selain esti pyynnön localhostiin.",
+    "MatchCodeDescription": "Pääte, josta kirjautuminen aloitettiin, näyttää saman koodin. Jos koodi ei täsmää, peruuta.",
+    "NoListenerPort": "Tämä sivu avattiin ilman CLI:n kuunteluporttia.",
+    "PasteFallbackDescription": "Suorita tämä siinä päätteessä, jossa CLI on, ja liitä istunnon tunnus, kun sitä pyydetään.",
+    "PasteFallbackTitle": "Liitä istunnon tunnus CLI:hin",
+    "PasteFallbackWarning": "Istunnon tunnus on yhtä vahva kuin salasanasi. Sen haltija voi toimia sinuna, kunnes istunto vanhenee. Älä liitä sitä keskusteluun, tikettiin tai lokiin.",
+    "Retry": "Yritä uudelleen",
+    "RevealSessionId": "Näytä istunnon tunnus",
+    "SessionIdMasked": "Piilotettu — {{masked}}",
+    "Title": "Kirjaa Backend.AI WebUI Agent CLI sisään",
+    "VerificationCode": "Vahvistuskoodi"
+  },
   "credential": {
     "2FAEnabled": "2FA Enabled",
     "AccessKey": "Pääsyavain",

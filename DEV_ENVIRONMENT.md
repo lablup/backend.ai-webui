@@ -103,6 +103,19 @@ VITE_THEME_HEADER_COLOR=#7C3AED
 
 Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also export `VITE_THEME_HEADER_COLOR` in the shell — same effect, no file edit needed.
 
+## CLI login (`/cli-login`)
+
+`bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.
+
+From anywhere inside this checkout:
+
+```bash
+pnpm --filter backend.ai-agent-cli build
+node packages/backend.ai-agent-cli/dist/cli.js login --endpoint <manager url>
+```
+
+The CLI derives the WebUI origin from this checkout's branch the same way `scripts/dev.mjs` does (`fr-XXXX.localhost:1355`, honouring `PORTLESS_PORT`); pass `--webui <origin>` to override it. The browser POSTs the session to a loopback listener the CLI opened, so both must run on the same machine — over a tunnel or a shared dev-gw URL, use `bai-agent login --paste` instead. `packages/backend.ai-agent-cli/README.md` has the full flow.
+
 ## Storybook
 
 ```bash
@@ -122,11 +135,11 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 
 ## Commands reference
 
-| Command | Description |
-|---|---|
-| `pnpm run dev` | TypeScript watch + Relay watch + CRA dev server, all under Portless |
-| `PORT=9081 pnpm run dev` | Same, but pin CRA to port 9081 |
-| `pnpm run wsproxy` | WebSocket proxy on fixed port 5050 (not wrapped by Portless) |
-| `pnpm --filter backend.ai-ui run storybook` | Storybook under Portless |
-| `pnpm exec portless list` | Show active Portless routes |
-| `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary) |
+| Command                                                      | Description                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `pnpm run dev`                                               | TypeScript watch + Relay watch + CRA dev server, all under Portless |
+| `PORT=9081 pnpm run dev`                                     | Same, but pin CRA to port 9081                                      |
+| `pnpm run wsproxy`                                           | WebSocket proxy on fixed port 5050 (not wrapped by Portless)        |
+| `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
+| `pnpm exec portless list`                                    | Show active Portless routes                                         |
+| `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
