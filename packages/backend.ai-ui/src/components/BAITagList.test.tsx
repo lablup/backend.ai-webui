@@ -23,25 +23,30 @@ const ITEMS = [
 
 const overflow = () => screen.getByText('+1');
 
+// Astryx `Badge` wraps its label in an inner <span> to ellipsize it (core
+// 0.5.1), so the text node is never the trigger element itself. Resolve up to
+// the element that actually carries the trigger's role and focusability —
+// asserting on the inner span would pass vacuously.
+const trigger = () =>
+  overflow().closest<HTMLElement>('button, [role="button"], [tabindex]') ??
+  overflow();
+
 describe('BAITagList overflow trigger', () => {
   it('defaults to hover in the chip variant', () => {
     render(<BAITagList items={ITEMS} />);
-    const trigger = overflow().closest('button, [role="button"]') ?? overflow();
-    expect(trigger).not.toHaveAttribute('aria-haspopup');
-    expect(trigger).not.toHaveAttribute('aria-expanded');
+    expect(trigger()).not.toHaveAttribute('aria-haspopup');
+    expect(trigger()).not.toHaveAttribute('aria-expanded');
   });
 
   it('defaults to hover in the text variant', () => {
     render(<BAITagList items={ITEMS} variant="text" />);
-    const trigger = overflow().closest('button, [role="button"]') ?? overflow();
-    expect(trigger).not.toHaveAttribute('aria-haspopup');
+    expect(trigger()).not.toHaveAttribute('aria-haspopup');
   });
 
   it('still latches open as a popover when trigger="click" is asked for', () => {
     render(<BAITagList items={ITEMS} trigger="click" />);
-    const trigger = overflow().closest('button, [role="button"]');
-    expect(trigger).toHaveAttribute('aria-haspopup');
-    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(trigger()).toHaveAttribute('aria-haspopup');
+    expect(trigger()).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('keeps the click affordance keyboard-reachable (Link renders a button)', () => {
@@ -58,7 +63,7 @@ describe('BAITagList overflow trigger', () => {
     ['text', 'text'],
   ] as const)('keeps the %s hover trigger focusable', (_name, variant) => {
     render(<BAITagList items={ITEMS} variant={variant} />);
-    const el = overflow().closest('button') ?? overflow();
+    const el = trigger();
     expect(el.tagName === 'BUTTON' || el.tabIndex >= 0).toBe(true);
   });
 
