@@ -217,13 +217,13 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.MoveToTrash'),
           icon: <TrashIcon />,
           type: 'danger' as const,
-          disabled:
-            !hasDeletePermission ||
-            isPipelineFolder ||
-            isProjectFolderManagedElsewhere,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotDeletePipelineFolder')
-            : (projectFolderAdminHint ?? t('data.folders.NoDeletePermission')),
+            : isProjectFolderManagedElsewhere
+              ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
+              : !hasDeletePermission
+                ? t('data.folders.NoDeletePermission')
+                : undefined,
           onClick: onDelete,
         }
       : null,
@@ -233,16 +233,14 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'restore',
           title: t('data.folders.Restore'),
           icon: <RotateCcwIcon />,
-          disabled:
-            vfolder?.status !== 'delete-pending' ||
-            isPipelineFolder ||
-            isProjectFolderManagedElsewhere,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotRestorePipelineFolder')
             : isProjectFolderManagedElsewhere
               ? (projectFolderAdminHint ??
                 t('data.folders.NoRestorePermission'))
-              : undefined,
+              : vfolder?.status !== 'delete-pending'
+                ? t('data.folders.DeletionAlreadyStarted')
+                : undefined,
           popConfirm: {
             title: t('data.folders.Restore'),
             description: vfolder?.name ?? undefined,
@@ -259,12 +257,11 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <Trash2Icon />,
           type: 'danger' as const,
-          disabled:
-            vfolder?.status !== 'delete-pending' ||
-            isProjectFolderManagedElsewhere,
           disabledReason: isProjectFolderManagedElsewhere
             ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
-            : undefined,
+            : vfolder?.status !== 'delete-pending'
+              ? t('data.folders.DeletionAlreadyStarted')
+              : undefined,
           onClick: onDeleteForever,
         }
       : null,

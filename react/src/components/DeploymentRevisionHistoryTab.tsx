@@ -389,13 +389,16 @@ const DeploymentRevisionHistoryTab: React.FC<
         const recordLocalId = toLocalId(record.id);
         const isCurrent = recordLocalId === currentRevisionId;
         const isDeploying = recordLocalId === deployingRevisionId;
+        // The reason carries the disabled state — every branch that blocks
+        // Apply names itself, so none of them can go silent.
         const deployDisabledReason =
-          isCurrent || isDeploying ? t('deployment.ApplyDisabled') : undefined;
-        const isDeployDisabled =
-          isCurrent ||
-          isDeploying ||
-          isDeploymentInStoppedCategory(deploymentStatus) ||
-          rollingBackRevisionId === record.id;
+          isCurrent || isDeploying
+            ? t('deployment.ApplyDisabled')
+            : isDeploymentInStoppedCategory(deploymentStatus)
+              ? t('deployment.ApplyDisabledDeploymentStopped')
+              : rollingBackRevisionId === record.id
+                ? t('deployment.ApplyDisabledWhileRollingBack')
+                : undefined;
         return (
           <BAINameActionCell
             title={
@@ -450,7 +453,6 @@ const DeploymentRevisionHistoryTab: React.FC<
                 key: 'deploy',
                 title: t('deployment.Apply'),
                 icon: <CirclePlay size="1em" />,
-                disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
                 popConfirm: {
                   title: t('deployment.ApplyRevision'),

@@ -36,12 +36,15 @@ export interface BAINameActionCellAction {
    * - 'danger': colorError text on colorErrorBg background
    */
   type?: 'default' | 'danger';
-  /** Whether the action is disabled */
+  /**
+   * Whether the action is disabled. Defaults to `!!disabledReason`, so naming
+   * a reason is enough — pass this only to disable without one.
+   */
   disabled?: boolean;
   /** Loading spinner for progress this cell does not own (e.g. a background
    * delete tracked by the parent). Use `action` when the click itself awaits. */
   loading?: boolean;
-  /** Tooltip text when disabled */
+  /** Why the action is disabled. Becomes the button tooltip. */
   disabledReason?: string;
   /** Custom style override for the action button */
   style?: React.CSSProperties;
@@ -65,6 +68,13 @@ export interface BAINameActionCellAction {
    */
   popConfirm?: BAIPopconfirmConfig;
 }
+
+/**
+ * A named reason implies the disabled state, so call sites cannot land on
+ * "disabled but silent" by letting the two drift apart (FR-3722).
+ */
+const isActionDisabled = (action: BAINameActionCellAction) =>
+  action.disabled ?? !!action.disabledReason;
 
 /**
  * The antd `PopconfirmProps` subset every call site actually passes, restated
@@ -352,11 +362,11 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     // behaviour across with it. The reason is folded into the label text
     // instead: still visible, still read out, no tooltip needed.
     label:
-      action.disabled && action.disabledReason
+      isActionDisabled(action) && action.disabledReason
         ? `${action.title} — ${action.disabledReason}`
         : action.title,
     icon: action.icon,
-    isDisabled: action.disabled,
+    isDisabled: isActionDisabled(action),
     onClick: () => {
       if (action.onClick || action.action) {
         action.onClick?.();
@@ -500,13 +510,14 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           }
         >
           {visibleActions.map((action) => {
-            const buttonClassName = action.disabled
+            const disabled = isActionDisabled(action);
+            const buttonClassName = disabled
               ? 'bai-nac-action-button-disabled'
               : action.type === 'danger'
                 ? 'bai-nac-action-button-danger'
                 : 'bai-nac-action-button-default';
 
-            if (action.popConfirm && !action.disabled) {
+            if (action.popConfirm && !disabled) {
               return (
                 <ConfirmPopoverButton
                   key={action.key}
@@ -526,8 +537,8 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 size="small"
                 icon={action.icon}
                 aria-label={action.title}
-                title={action.disabled ? action.disabledReason : action.title}
-                disabled={action.disabled}
+                title={(disabled && action.disabledReason) || action.title}
+                disabled={disabled}
                 loading={action.loading}
                 className={buttonClassName}
                 style={action.style}

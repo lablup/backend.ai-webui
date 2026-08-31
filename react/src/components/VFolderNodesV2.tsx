@@ -206,17 +206,12 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.MoveToTrash'),
           icon: <TrashIcon />,
           type: 'danger' as const,
-          // TODO(needs-backend): V2 `VFolder` does not expose a per-user
-          // action permission (legacy `VirtualFolderNode.permissions` had
-          // `delete_vfolder`). `accessControl.permission` is a mount-level
-          // enum (RO/RW/RW_DELETE), not an entity-level action permission,
-          // so it cannot gate this button. Enable unconditionally and let
-          // the backend reject unauthorized requests until a proper field
-          // is exposed on `VFolder`.
-          disabled: isPipelineFolder,
+          // TODO(needs-backend): V2 `VFolder` exposes no entity-level action
+          // permission (`accessControl.permission` is mount-level RO/RW/
+          // RW_DELETE), so the backend is what rejects unauthorized deletes.
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotDeletePipelineFolder')
-            : t('data.folders.NoDeletePermission'),
+            : undefined,
           popConfirm: {
             title: t('data.folders.MoveToTrash'),
             description: vfolder?.metadata?.name ?? undefined,
@@ -233,11 +228,11 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'restore',
           title: t('data.folders.Restore'),
           icon: <RotateCcwIcon />,
-          disabled:
-            vfolder?.vfolderStatus !== 'DELETE_PENDING' || isPipelineFolder,
           disabledReason: isPipelineFolder
             ? t('data.folders.CannotRestorePipelineFolder')
-            : undefined,
+            : vfolder?.vfolderStatus !== 'DELETE_PENDING'
+              ? t('data.folders.DeletionAlreadyStarted')
+              : undefined,
           popConfirm: {
             title: t('data.folders.Restore'),
             description: vfolder?.metadata?.name ?? undefined,
@@ -254,7 +249,10 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <Trash2Icon />,
           type: 'danger' as const,
-          disabled: vfolder?.vfolderStatus !== 'DELETE_PENDING',
+          disabledReason:
+            vfolder?.vfolderStatus !== 'DELETE_PENDING'
+              ? t('data.folders.DeletionAlreadyStarted')
+              : undefined,
           onClick: onDeleteForever,
         }
       : null,
