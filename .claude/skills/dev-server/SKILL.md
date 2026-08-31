@@ -240,8 +240,10 @@ If step **2d** resolved login credentials, also prefix `VITE_DEFAULT_EMAIL='<ema
 
 Per step **2e**, prefix `VITE_DEV_TYPECHECK=on` **only** when the user explicitly asked for type checking; otherwise omit the variable entirely. Either way, say which mode you started in your reply.
 
-On the webui, also prefix `BAI_REVIEW_BOOT_RECORD` from step **5**'s `boot-env` call — the dev
-server needs it in its environment before it starts. Omit it when `boot-env` printed nothing.
+On the webui, run step **5**'s `eval "$(… advertise.sh boot-env)"` first and prefix the
+`BAI_REVIEW_BOOT_RECORD` it exports — the dev server needs it in its environment before it
+starts. Omit it when `boot-env` printed nothing (it prints its refusals on stderr, so an
+empty stdout is the whole signal).
 
 **Shell-escape every interpolated value.** The endpoint, email, and especially the password come from user/conversation text and may contain an apostrophe or shell metacharacters — interpolating them raw inside `'...'` breaks the command and can turn the rest of the value into executable shell. Before building the command line, quote each value shell-safely (e.g. Bash `printf '%q'`), or set them via the user's git-ignored `.env.development.local` instead of the command line. Do not hand-concatenate an untrusted password into a single-quoted string.
 
@@ -271,10 +273,10 @@ eval "$(bash .claude/skills/dev-server/scripts/advertise.sh boot-env)"
 That exports `BAI_DEV_APP` and `BAI_REVIEW_BOOT_RECORD=~/.local/state/fw/dev-servers/<app>.json`.
 Add `BAI_REVIEW_BOOT_RECORD` to the `pnpm dev` env prefix — **the dev server must have it in
 its environment, but the file is only written after boot**, since the record describes a name
-Portless has actually claimed. `boot-env` resolves that name with `scripts/portless-app-name.mjs`,
-the same module `dev.mjs` uses, so the prediction cannot drift from what `dev.mjs` requests
-(`portless <app> --force` claims exactly it). When `boot-env` prints nothing — Portless will
-auto-derive a name — skip this whole section.
+Portless has actually claimed. `boot-env` resolves that name through `scripts/portless-app-name.mjs`
+— the same module, fed the same PR lookup and the same cache `dev.mjs` uses — so the prediction
+is the name `dev.mjs` will request (`portless <app> --force` claims exactly it). When `boot-env`
+prints nothing on stdout — Portless will auto-derive a name — skip this whole section.
 
 **After boot**, once Portless has printed its URL and `portless-doctor` has run:
 
@@ -283,7 +285,9 @@ bash .claude/skills/dev-server/scripts/advertise.sh advertise --app "$BAI_DEV_AP
 ```
 
 Idempotent: run it again and it edits the same comments. Pass `--teams-thread <url>` (for the
-running PR) or `--teams-thread <pr>=<url>` when Jira has no thread recorded for a PR.
+running PR) or `--teams-thread <pr>=<url>` when Jira has no thread recorded for a PR. Every
+line the script prints goes to stderr, so its exit status is not what tells you it worked —
+read the lines.
 
 **On teardown**, after killing the dev server by pid:
 
@@ -296,8 +300,9 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
 - **A `.localhost` URL never reaches GitHub.** The advertised URL is `share_base` from the
   gateway config with the claimed app name substituted — plain `http`, no port. A box that
   has not joined, a gateway joined with a different Portless port, or a URL that does not
-  answer `X-Portless: 1` yields one printed line and no comment. Repeat that line to the
-  user; never route around it.
+  answer a Portless **2xx** (`X-Portless: 1` alone is not enough — Portless sends it on the
+  404 it gives an app name it does not serve) yields one printed line and no comment. Repeat
+  that line to the user; never route around it.
 - **One comment per box per PR**, found by the hidden marker `<!-- bai-dev-server box=<box> -->`
   and edited, never duplicated. Another box's `--force` takeover of the same app name carries
   a different marker, so it cannot touch this box's comment.
