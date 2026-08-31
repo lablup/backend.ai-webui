@@ -199,5 +199,61 @@ check 'record path is one file per app under the state dir' \
   '/tmp/fw-dev-servers/fr-3810-pr9330-advertise.json' \
   "$(record_path fr-3810-pr9330-advertise)"
 
+# ── PRs that leave the served set ─────────────────────────────────────────────
+OLD_REC='{"served":[{"pr":9328,"commentId":11},{"pr":9329,"commentId":22},
+                    {"pr":9330,"commentId":33}]}'
+check 'the PR the new served set dropped, with its comment id' \
+  '9330	33' \
+  "$(dropped_served "$OLD_REC" '[{"pr":9328},{"pr":9329}]')"
+check 'nothing dropped when the served set is unchanged' '' \
+  "$(dropped_served "$OLD_REC" '[{"pr":9328},{"pr":9329},{"pr":9330}]')"
+check 'a served set that lost everything drops everything' \
+  '9328	11
+9329	22
+9330	33' \
+  "$(dropped_served "$OLD_REC" '[]')"
+check 'a dropped PR whose comment was never written has no id to patch' \
+  '9330	' \
+  "$(dropped_served '{"served":[{"pr":9330,"commentId":null}]}' '[]')"
+check 'a first run (no previous record) drops nothing' '' \
+  "$(dropped_served '{}' '[{"pr":9330}]')"
+
+# ── cmd_advertise end to end, with every network call stubbed ────────────────
+# A,B,C were served last boot; this boot serves A,B only. C's comment must be
+# edited to the stopped form, and the record must come back holding just A,B.
+TMP=$(mktemp -d)
+STATE_DIR="$TMP/state"
+DEV_GW_CONFIG="$TMP/dev-gw.json"
+printf '%s' '{"box":"testbox","share_base":"http://{app}.testbox.example.invalid"}' >"$DEV_GW_CONFIG"
+mkdir -p "$STATE_DIR"
+cat >"$STATE_DIR/testapp.json" <<'JSON'
+{"schemaVersion":1,"app":"testapp","box":"testbox","url":"http://old","repo":"o/r",
+ "branch":"c","pid":1,"startedAt":"2026-01-01T00:00:00Z","stoppedAt":null,
+ "served":[{"pr":9328,"branch":"a","commentId":11},
+           {"pr":9329,"branch":"b","commentId":22},
+           {"pr":9330,"branch":"c","commentId":33}]}
+JSON
+missing_tools() { printf ''; }
+probe_portless() { PROBE_STATUS=200; return 0; }
+served_set() { printf '%s' '[{"pr":9328,"branch":"a"},{"pr":9329,"branch":"b"}]'; }
+jira_key_for_pr() { printf ''; }
+teams_thread_for_key() { printf ''; }
+upsert_comment() { printf '%s\thttps://example.invalid/c/%s' "$2" "$2"; }
+patch_stopped() { printf '%s\n' "$2" >>"$TMP/patched"; printf '%s' "$3" >"$TMP/patched-body"; }
+( cmd_advertise --app testapp --branch b --repo o/r --pid 7 ) 2>/dev/null
+check 'only the dropped PR had its comment patched' '33' "$(cat "$TMP/patched" 2>/dev/null)"
+check 'the patch put it in the stopped form' \
+  'Dev server on box `testbox`: stopped (was http://testapp.testbox.example.invalid)' \
+  "$(sed -n 2p "$TMP/patched-body" 2>/dev/null)"
+check 'the stopped comment carries this box marker, so `stop` still finds it' \
+  '<!-- bai-dev-server box=testbox -->' "$(sed -n 1p "$TMP/patched-body" 2>/dev/null)"
+check 'the record now holds only the PRs still served' '9328 9329' \
+  "$(jq -r '[.served[].pr] | join(" ")' "$STATE_DIR/testapp.json")"
+check 'the still-served PRs kept their comment ids' '9328 9329' \
+  "$(jq -r '[.served[] | select(.commentId != null) | .pr] | join(" ")' "$STATE_DIR/testapp.json")"
+check 'the boot time survives a re-advertise' '2026-01-01T00:00:00Z' \
+  "$(jq -r '.startedAt' "$STATE_DIR/testapp.json")"
+rm -rf "$TMP"
+
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

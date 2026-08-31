@@ -11,7 +11,11 @@
 #   advertise.sh stop --app <name>
 #
 # Every refusal (box not joined, port mismatch, probe failure) prints one line
-# and exits 0: a dev server must boot whether or not it can be advertised.
+# and exits 0: a dev server must boot whether or not it can be advertised. So do
+# not read the exit status for whether a PR was actually commented on — read the
+# boot record: `served[].commentId` is null for exactly the PRs whose comment
+# could not be written. That is the machine-readable failure signal; the printed
+# lines (all on stderr) are the human one.
 set -euo pipefail
 
 REPO_DEFAULT="lablup/backend.ai-webui"
@@ -91,6 +95,20 @@ served_from_stack() {
     | map(select(.pr != null and .pr.state == "OPEN")
           | {pr: .pr.number, branch: .name})
   ' <<<"$1"
+}
+
+# dropped_served <old-record-json> <new-served-json> — the PRs the old boot
+# record served that the new served set does not, as `<pr><TAB><commentId>`.
+# A PR that merges (or leaves the stack) while the server runs would otherwise
+# keep a "running" comment for ever: `stop` walks only the boot record, and the
+# run that drops the PR is the run that overwrites it.
+dropped_served() {
+  jq -rn --argjson old "$1" --argjson new "$2" '
+    ($new | map(.pr)) as $keep
+    | ($old.served // [])
+    | map(. as $e | select(($keep | index($e.pr)) == null))
+    | .[] | [.pr, (.commentId // "")] | @tsv
+  ' 2>/dev/null || true
 }
 
 # jira_key <pr-body> — the FR key from `Resolves #1234 (FR-1234)`.
@@ -307,6 +325,13 @@ upsert_comment() {
   fi
 }
 
+# patch_stopped <repo> <comment-id> <body> — edit one existing comment to the
+# stopped form. Never creates one: a PR we could not comment on must not get its
+# first comment from us at teardown.
+patch_stopped() {
+  gh api -X PATCH "repos/$1/issues/comments/$2" -f body="$3" --jq '.id' >/dev/null
+}
+
 # ── subcommands ──────────────────────────────────────────────────────────────
 
 cmd_boot_env() {
@@ -356,6 +381,12 @@ cmd_advertise() {
   PROBE_STATUS=""
   probe_portless "$url" || refuse "$url answered ${PROBE_STATUS:-no response}, not a Portless 2xx — not advertised (is the dev server up? is the app name a single label?)"
 
+  # The record this run overwrites, read before anything touches it: its served
+  # set is the only place the comments on PRs we are about to drop are named.
+  local file prev; file=$(record_path "$app")
+  prev='{}'
+  [ -f "$file" ] && prev=$(jq -c . "$file" 2>/dev/null || printf '{}')
+
   # Neither `gh stack view` nor `gh pr list` failing may cost us the boot record:
   # the URL is good, and the record is what `stop` and the board read later.
   local served
@@ -394,7 +425,23 @@ cmd_advertise() {
     i=$((i + 1))
   done
 
-  local file started local_url worktree; file=$(record_path "$app")
+  # PRs this server served last time and does not now — merged, closed, or below
+  # a branch that moved. Their comment still claims a running server for a PR
+  # nobody is serving, and after the write below nothing remembers it exists.
+  local stopped_body dpr did
+  stopped_body=$(comment_body stopped "$box" "$url")
+  while IFS=$'\t' read -r dpr did; do
+    [ -n "$dpr" ] || continue
+    if [ -z "$did" ] || [ "$did" = null ]; then
+      say "PR #$dpr: no longer served, and we have no comment there to mark stopped"
+    elif patch_stopped "$repo" "$did" "$stopped_body"; then
+      say "PR #$dpr: no longer served — comment $did marked stopped"
+    else
+      say "PR #$dpr: no longer served — could not edit comment $did"
+    fi
+  done < <(dropped_served "$prev" "$out")
+
+  local started local_url worktree
   mkdir -p "$STATE_DIR"
   # Re-advertising the same server keeps its original boot time.
   started=$(jq -r '.startedAt // empty' "$file" 2>/dev/null || true)
@@ -432,7 +479,7 @@ cmd_stop() {
   while IFS=$'\t' read -r pr id; do
     [ -n "$pr" ] || continue
     if [ -n "$id" ] && [ "$id" != null ]; then
-      if gh api -X PATCH "repos/$repo/issues/comments/$id" -f body="$body" --jq '.id' >/dev/null; then
+      if patch_stopped "$repo" "$id" "$body"; then
         say "PR #$pr: comment $id marked stopped"
       else
         say "PR #$pr: could not edit comment $id — it may have been deleted"

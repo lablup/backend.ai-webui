@@ -310,7 +310,10 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
   nothing else.** The repo is public: no endpoint, e-mail or password ever goes in it (the dev
   bundle already pre-fills login).
 - **The served set** is the current branch plus every layer below it from `gh stack view --json`,
-  open PRs only; an unstacked branch serves one PR.
+  open PRs only; an unstacked branch serves one PR. A PR that leaves that set between runs —
+  it merged, it closed, the branch moved — has its comment edited to the stopped form on the
+  spot, because the boot record about to be overwritten is the only thing that still knows
+  where that comment is.
 - **The Teams thread** for each served PR comes from that PR's `Resolves … (FR-XXXX)` key and one
   Jira GET (`customfield_10176`) at boot — never at request time. Missing is recorded as `null`.
 
