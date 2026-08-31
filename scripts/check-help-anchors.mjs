@@ -20,8 +20,9 @@
  * plain `node` script. `slugify` / `slugFromNavPath` / `stripHtmlTags` /
  * `decodeHtmlEntities` below are line-for-line ports of
  * `packages/backend.ai-docs-toolkit/src/markdown-processor.ts` and
- * `markdown-extensions.ts`; `check-help-anchors.test.ts` pins the parity
- * against real headings from the manual.
+ * `markdown-extensions.ts`. Vitest can load that TypeScript, so
+ * `check-help-anchors.test.ts` imports the toolkit's own functions and pins
+ * the ports against them over every heading and navigation path of the manual.
  */
 import fs from "node:fs";
 import path from "node:path";
