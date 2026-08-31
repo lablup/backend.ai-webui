@@ -14,9 +14,9 @@
  Astryx's `--color-text-secondary` so it reads quieter than its value, and
  top-aligns side labels with their value's first line (FR-3667).
 
- The paint is one class; declarations live in `BAIMetadataList.css`, entirely
- in design tokens. See that file's header for why it is CSS and how the rules
- are drawn as the grid gap.
+ The paint lives in `BAIMetadataList.css`, entirely in design tokens. See
+ that file's header for why it is CSS and how the rules are drawn as the
+ grid gap.
 */
 import './BAIMetadataList.css';
 import {

@@ -28,8 +28,7 @@ default for every list, \`bordered\` or not. The tone is the lightest mix off
 top-aligned with their value's first line, so a multi-line value doesn't
 leave the label floating mid-row (FR-3667).
 
-The paint is two classes, declarations in \`BAIMetadataList.css\`, entirely in
-design tokens.
+The paint lives in \`BAIMetadataList.css\`, entirely in design tokens.
 
 ## Props
 
