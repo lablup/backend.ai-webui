@@ -49,7 +49,9 @@ Then:
      `init` recorded (`doctor` prints it). Never ask the user for a password,
      and never put one in a command.
    - Browser on this machine: `bai-agent login --endpoint <url>`, then confirm on
-     the `/cli-login` page it opens.
+     the `/cli-login` page it opens. That page is the WebUI's; in a checkout it
+     is the dev server, elsewhere the endpoint's own origin — pass
+     `--webui <origin>` when the UI lives somewhere else.
    - Browser anywhere else, or a tunnelled/HTTPS tab: `bai-agent login --paste
      --endpoint <url>` and paste the session id the page reveals.
    - `bai-agent logout` when you are done with a borrowed session.
@@ -86,10 +88,10 @@ guess at runtime.
   "Resource Group" beats "scaling group" and both beat a paraphrase.
 - **One pagination mode per connection.** `first`+`after` XOR `last`+`before`
   XOR `limit`+`offset`. The local SDL accepts a mix; the `*V2` connections
-  reject it at runtime. `.claude/rules/graphql-pagination.md`.
-- **`--allow-mutation` is not a bypass.** The field must also be on
-  `packages/backend.ai-agent-cli/src/mutation-allowlist.ts`. Widening that list
-  is a reviewed PR, never an in-session decision.
+  reject it at runtime (the checkout's `.claude/rules/graphql-pagination.md`).
+- **`--allow-mutation` is not a bypass.** The field must also be on the CLI's
+  mutation allow-list (`src/mutation-allowlist.ts` in the package). Widening
+  that list is a reviewed PR, never an in-session decision.
 - **Session detail views share one URL.** `/session?sessionDetail=<id>` is a
   drawer, the only addressable surface — there is no per-row session link to
   offer beyond that.
@@ -100,7 +102,7 @@ guess at runtime.
 checkout's SDL, one per resource, plus the allow-listed mutation and the refused
 destructive one. A test re-validates them, so a stale one fails CI, not a user.
 
-## Keeping this in sync
+## Keeping this in sync (maintainers, in a checkout)
 
 Re-run `pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init
 --features agents --write` after any change to the CLI, and re-sync the

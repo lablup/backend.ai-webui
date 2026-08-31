@@ -30,9 +30,11 @@ export const AGENT_BLOCK_FILE = 'references/agent-block.md';
 export function shippedSkillDir(): string {
   let dir = dirname(fileURLToPath(import.meta.url));
   for (let depth = 0; depth < 6; depth += 1) {
+    // The checkout's source first: a stale `skill/` from an earlier build
+    // must not win over an edited SKILL.md while developing.
     for (const candidate of [
-      join(dir, SHIPPED_SKILL_DIR),
       join(dir, '.claude', 'skills', SKILL_NAME),
+      join(dir, SHIPPED_SKILL_DIR),
     ]) {
       if (existsSync(join(candidate, 'SKILL.md'))) return candidate;
     }
@@ -65,6 +67,12 @@ function walk(root: string, dir = root): string[] {
     else files.push(relative(root, path).split(sep).join('/'));
   }
   return files.sort();
+}
+
+/** `~`-relative when under the home directory, as a human would write it. */
+export function displayPath(path: string): string {
+  const home = homedir();
+  return path.startsWith(home + sep) ? `~${path.slice(home.length)}` : path;
 }
 
 export type SkillInstallOutcome = 'installed' | 'updated' | 'unchanged';
@@ -109,7 +117,10 @@ export function installSkill(options: SkillInstallOptions): SkillInstallData {
       `has only the npm package and a synced data checkout. Re-run \`${CLI_NAME} init\``,
       'after upgrading the CLI.',
       '',
-      renderAgentBlock(options.commands, { mode: 'standalone' }),
+      renderAgentBlock(options.commands, {
+        mode: 'standalone',
+        skillPath: displayPath(join(target, 'SKILL.md')),
+      }),
       '',
     ].join('\n'),
   );

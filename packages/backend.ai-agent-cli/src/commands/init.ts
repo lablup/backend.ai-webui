@@ -1,16 +1,14 @@
 import { defineCommand } from '../command.js';
 import { CliError } from '../errors.js';
 import {
-  AGENTS_MD,
-  applyBlock,
   BLOCK_END,
   BLOCK_START,
   CLAUDE_MD,
   FEATURE_AGENTS,
   renderAgentBlock,
-  resolveBlockTarget,
+  writeAgentBlock,
 } from '../init/block.js';
-import type { BlockAnchor } from '../init/block.js';
+import type { BlockWriteOutcome } from '../init/block.js';
 import type { SetupData } from '../init/setup.js';
 import { runSetup } from '../init/setup.js';
 import { CLI_NAME } from '../meta.js';
@@ -18,13 +16,8 @@ import type { Block, RenderOptions } from '../output.js';
 import { list, record, renderBlocks, section, text } from '../output.js';
 import { resolveRepoContext } from '../repo-context.js';
 import { runLogin } from './login.js';
-import { readFileSync, writeFileSync } from 'node:fs';
 
-export interface InitWriteResult {
-  path: string;
-  anchor: BlockAnchor;
-  outcome: 'inserted' | 'updated' | 'unchanged';
-}
+export type InitWriteResult = BlockWriteOutcome;
 
 /** `init --features agents`: the CLAUDE.md block. */
 export interface InitBlockData {
@@ -64,30 +57,17 @@ function runBlock(
   };
   if (flags.write !== true) return data;
 
-  const { path } = resolveBlockTarget(resolveRepoContext(cwd).repoRoot);
-  let source: string;
-  try {
-    source = readFileSync(path, 'utf8');
-  } catch (error) {
-    throw new CliError('repo_incomplete', `Cannot read ${path}.`, {
-      hint: `check that ${CLAUDE_MD}/${AGENTS_MD} exists in the checkout root`,
-      cause: error,
-    });
+  const repo = resolveRepoContext(cwd);
+  // The synced data checkout is sparse and carries no CLAUDE.md; `init`
+  // installs the standalone block with the skill instead.
+  if (repo.source === 'synced') {
+    throw new CliError(
+      'usage',
+      `--write needs a WebUI checkout with a ${CLAUDE_MD}; the synced data checkout at ${repo.repoRoot} has none.`,
+      { hint: `${CLI_NAME} init --skill --no-login` },
+    );
   }
-  const applied = applyBlock(source, block);
-  if (applied.changed) writeFileSync(path, applied.content, 'utf8');
-  return {
-    ...data,
-    write: {
-      path,
-      anchor: applied.anchor,
-      outcome: !applied.changed
-        ? 'unchanged'
-        : applied.anchor === 'markers'
-          ? 'updated'
-          : 'inserted',
-    },
-  };
+  return { ...data, write: writeAgentBlock(repo.repoRoot, commands) };
 }
 
 const step = (value: object): string =>

@@ -467,6 +467,10 @@ const mappingsGroup: CheckGroup = {
     }
     const { counts, issues, set } = report;
     const failures = issues.filter((issue) => issue.level === 'fail');
+    // Synced data is pinned to the manager's release; the curation shipped
+    // with the CLI may be newer than that manual, so a dangling docs anchor
+    // there is staleness to report, not a broken install.
+    const pinned = resolved.context.source === 'synced';
     const warnings = issues.filter((issue) => issue.level === 'warn');
     const line = (issue: (typeof issues)[number]): string =>
       `${issue.file} ${issue.ref}: ${issue.message}`;
@@ -497,15 +501,17 @@ const mappingsGroup: CheckGroup = {
       {
         group: MAPPINGS_GROUP,
         check: 'references resolve',
-        status: failures.length === 0 ? 'ok' : 'fail',
+        status: failures.length === 0 ? 'ok' : pinned ? 'warn' : 'fail',
         detail:
           failures.length === 0
             ? `${counts.concepts} concept(s) and ${counts.docs} docs link(s) resolve`
-            : `${failures.length} dangling reference(s): ${failures.map(line).join(' | ')}`,
+            : `${failures.length} dangling reference(s)${pinned ? ' (the CLI’s curation is newer than the synced data)' : ''}: ${failures.map(line).join(' | ')}`,
         hint:
           failures.length === 0
             ? undefined
-            : `${CLI_NAME} doctor --${MAPPINGS_GROUP}`,
+            : pinned
+              ? `${CLI_NAME} sync --ref main`
+              : `${CLI_NAME} doctor --${MAPPINGS_GROUP}`,
       },
       {
         group: MAPPINGS_GROUP,
@@ -619,7 +625,9 @@ const alignmentGroup: CheckGroup = {
         check: 'manager version',
         status: 'warn',
         detail: error instanceof Error ? error.message : String(error),
-        hint: `${CLI_NAME} login --endpoint ${endpoint}`,
+        hint: session
+          ? `${CLI_NAME} login --endpoint ${endpoint}`
+          : `${CLI_NAME} init --endpoint <manager url>`,
       });
       checks.push({
         group: 'alignment',

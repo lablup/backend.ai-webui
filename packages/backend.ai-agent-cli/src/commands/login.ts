@@ -8,7 +8,7 @@ import { CliError } from '../errors.js';
 import { fetchWhoAmI, type WhoAmI } from '../manager.js';
 import { CLI_NAME } from '../meta.js';
 import { record, renderBlocks, section } from '../output.js';
-import { findRepoRoot, tryResolveRepoContext } from '../repo-context.js';
+import { tryResolveRepoContext } from '../repo-context.js';
 import {
   loadSession,
   maskSessionId,
@@ -182,7 +182,10 @@ export function defaultWebUiOrigin(
   }
   const previous = loadSession(endpoint)?.webui;
   if (previous) return previous;
-  return findRepoRoot(context.cwd) ? devWebUiOrigin(context.cwd) : endpoint;
+  const repo = tryResolveRepoContext(context.cwd);
+  return repo.ok && repo.context.source !== 'synced'
+    ? devWebUiOrigin(context.cwd)
+    : endpoint;
 }
 
 async function runBrowser(

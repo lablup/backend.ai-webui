@@ -39,6 +39,9 @@ describe('skill install', () => {
 
     const block = readFileSync(join(targetDir, AGENT_BLOCK_FILE), 'utf8');
     expect(block).toContain(BLOCK_START);
+    // The block names where the skill actually went, not a fixed ~/.claude.
+    expect(block).toContain(join(targetDir, 'SKILL.md'));
+    expect(block).not.toContain(INSTALLED_SKILL_PATH);
     expect(block).toContain('npm i -g backend.ai-agent-cli');
     expect(block).not.toContain('pnpm run bai-agent');
     for (const command of COMMANDS) expect(block).toContain(command.name);

@@ -83,6 +83,7 @@ function fakeDeps(env: ReturnType<typeof freshEnv>): {
         dir,
         repo: 'r',
         ref: options?.ref ?? 'main',
+        refSource: 'flag',
         commit: 'abc123def',
         outcome: 'cloned',
         syncedAt: 'now',
@@ -138,16 +139,20 @@ describe('init setup', () => {
       message: expect.stringContaining('--endpoint'),
     });
 
+    const { deps: fresh, calls } = fakeDeps(env);
     await expect(
       runSetup({
         context: context({ endpoint: 'https://m.example.com' }),
         env,
-        deps,
+        deps: fresh,
       }),
     ).rejects.toMatchObject({
       code: 'usage',
       message: expect.stringContaining('--login'),
     });
+    // Refused before any side effect: no manager probe, no clone.
+    expect(calls).toEqual([]);
+    expect(readConfig(env).endpoint).toBeUndefined();
   });
 
   it('outside a checkout: records the endpoint, syncs the manager-matched tag, aligns the SDL, installs the skill', async () => {
@@ -291,6 +296,68 @@ describe('init setup', () => {
       asked.filter((q) => q.startsWith('Install the Claude Code skill')),
     ).toHaveLength(2);
     expect(calls.filter((call) => call.startsWith('login'))).toHaveLength(0);
+  });
+
+  it('treats $BAI_AGENT_CHECKOUT like a checkout: no sync, block written there, SDL untouched', async () => {
+    const env = freshEnv();
+    const { deps, calls } = fakeDeps(env);
+    const root = temp('envcheckout');
+    writeFileSync(
+      join(root, 'package.json'),
+      JSON.stringify({ name: REPO_PACKAGE_NAME, version: '0.0.0-env' }),
+    );
+    mkdirSync(join(root, 'data'), { recursive: true });
+    writeFileSync(join(root, 'data/schema.graphql'), 'type Query { ok: Int }');
+    mkdirSync(join(root, 'resources/i18n'), { recursive: true });
+    mkdirSync(join(root, 'packages/backend.ai-webui-docs'), {
+      recursive: true,
+    });
+    writeFileSync(join(root, CLAUDE_MD), '# Project\n');
+
+    const data = await runSetup({
+      context: context({
+        endpoint: 'https://m.example.com',
+        'no-login': true,
+        'no-skill': true,
+      }),
+      env: { ...env, BAI_AGENT_CHECKOUT: root },
+      deps,
+    });
+    expect(data.checkout).toEqual({ root, source: 'env' });
+    expect(data.sync).toMatchObject({ skipped: 'inside a checkout' });
+    expect(data.schemaSync).toMatchObject({ skipped: expect.any(String) });
+    expect(data.block).toMatchObject({ outcome: 'inserted' });
+    expect(calls).toEqual(['version']);
+  });
+
+  it('reports a CLAUDE.md it cannot write as a skipped step, keeping the other outcomes', async () => {
+    const env = freshEnv();
+    const { deps } = fakeDeps(env);
+    const root = temp('noclaude');
+    writeFileSync(
+      join(root, 'package.json'),
+      JSON.stringify({ name: REPO_PACKAGE_NAME, version: '0.0.0-test' }),
+    );
+    mkdirSync(join(root, 'data'), { recursive: true });
+    writeFileSync(join(root, 'data/schema.graphql'), 'type Query { ok: Int }');
+    mkdirSync(join(root, 'resources/i18n'), { recursive: true });
+    mkdirSync(join(root, 'packages/backend.ai-webui-docs'), {
+      recursive: true,
+    });
+
+    const data = await runSetup({
+      context: context(
+        { endpoint: 'https://m.example.com', login: true, skill: true },
+        root,
+      ),
+      env,
+      deps,
+    });
+    expect(data.login).toMatchObject({ email: 'user@example.com' });
+    expect(data.skill).toMatchObject({ outcome: 'installed' });
+    expect(data.block).toMatchObject({
+      skipped: expect.stringContaining(CLAUDE_MD),
+    });
   });
 
   it('reports a failed login as a skipped step instead of aborting', async () => {

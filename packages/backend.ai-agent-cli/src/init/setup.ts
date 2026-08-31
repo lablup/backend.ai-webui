@@ -9,7 +9,7 @@ import { CLI_NAME } from '../meta.js';
 import type { Prompter } from '../prompt.js';
 import { needsFlagError, stdioPrompter } from '../prompt.js';
 import type { ContextSource } from '../repo-context.js';
-import { findRepoRoot, resolveRepoContext } from '../repo-context.js';
+import { locateRepo, resolveRepoContext } from '../repo-context.js';
 import type { SchemaSyncData } from '../schema-sync.js';
 import { syncSchema } from '../schema-sync.js';
 import { normalizeEndpoint } from '../session.js';
@@ -17,9 +17,9 @@ import type { SkillInstallData } from '../skill-install.js';
 import { installSkill, installedSkillDir } from '../skill-install.js';
 import type { RefChoice } from '../webui-refs.js';
 import { listWebUiTags, pickRefForManager } from '../webui-refs.js';
-import { applyBlock, renderAgentBlock, resolveBlockTarget } from './block.js';
-import type { BlockAnchor } from './block.js';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { CLAUDE_MD } from './block.js';
+import { writeAgentBlock } from './block.js';
+import type { BlockWriteOutcome } from './block.js';
 
 type Env = Record<string, string | undefined>;
 
@@ -34,11 +34,7 @@ export interface LoginStep {
   sessionFile: string;
 }
 
-export interface BlockStep {
-  path: string;
-  anchor: BlockAnchor;
-  outcome: 'inserted' | 'updated' | 'unchanged';
-}
+export type BlockStep = BlockWriteOutcome;
 
 export interface SetupData {
   kind: 'setup';
@@ -136,6 +132,25 @@ export async function runSetup(options: SetupOptions): Promise<SetupData> {
   };
   const stored = readConfig(env);
 
+  // Without a TTY every answer must already be in a flag. Check before any
+  // side effect, so a missing --login/--skill never costs a clone first.
+  if (!prompter.interactive) {
+    if (!flag(context, 'endpoint') && !stored.endpoint) {
+      throw needsFlagError('the endpoint', ['--endpoint <url>']);
+    }
+    for (const [name, what] of [
+      ['login', 'log in now'],
+      ['skill', 'install the Claude Code skill'],
+    ] as const) {
+      if (yesNoFlag(context, name) === undefined) {
+        throw needsFlagError(`whether to ${what}`, [
+          `--${name}`,
+          `--no-${name}`,
+        ]);
+      }
+    }
+  }
+
   // 1. Endpoint.
   let endpointSource: SetupData['endpointSource'];
   let rawEndpoint = flag(context, 'endpoint');
@@ -176,15 +191,18 @@ export async function runSetup(options: SetupOptions): Promise<SetupData> {
     notify(`warning: could not read the manager version: ${reason(error)}`);
   }
 
-  // 3. The checkout: cwd's own wins and is left alone; otherwise sync.
-  const own = findRepoRoot(context.cwd);
+  // 3. The checkout. One lookup, the same one every other command makes:
+  //    cwd's own or $BAI_AGENT_CHECKOUT is used as-is and left alone; only
+  //    a machine with neither gets the synced data checkout.
+  const located = locateRepo(context.cwd, env);
+  const own = located && located.source !== 'synced' ? located : null;
   let ref: SetupData['ref'];
   let sync: SetupData['sync'];
   let checkout: SetupData['checkout'];
   if (own) {
-    checkout = { root: own.root, source: 'cwd' };
+    checkout = { root: own.root, source: own.source };
     ref = {
-      skipped: `inside a checkout at ${own.root}; its data is used as-is`,
+      skipped: `inside a checkout at ${own.root} (${own.source}); its data is used as-is`,
     };
     sync = { skipped: 'inside a checkout' };
   } else {
@@ -226,12 +244,11 @@ export async function runSetup(options: SetupOptions): Promise<SetupData> {
     schemaSync = { skipped: 'manager version unknown' };
   } else {
     try {
+      // Resolved from the directory just synced, never from cwd again — an
+      // env override would otherwise redirect the SDL write elsewhere.
       const result = await deps.syncSchema(
-        resolveRepoContext(context.cwd, env),
-        {
-          tag: manager.manager,
-          env,
-        },
+        resolveRepoContext(checkout.root, env),
+        { tag: manager.manager, env },
       );
       schemaSync = { tag: result.tag, outcome: result.outcome };
     } catch (error) {
@@ -278,24 +295,17 @@ export async function runSetup(options: SetupOptions): Promise<SetupData> {
     };
   }
 
-  // 7. The CLAUDE.md block, only where there is a CLAUDE.md to hold it.
+  // 7. The CLAUDE.md block, only where there is a CLAUDE.md to hold it. A
+  //    refusal here is a skipped step like any other — the login and skill
+  //    outcomes above must still reach the envelope.
   let block: SetupData['block'];
-  if (checkout.source === 'cwd') {
-    const { path } = resolveBlockTarget(checkout.root);
-    const applied = applyBlock(
-      readFileSync(path, 'utf8'),
-      renderAgentBlock(context.commands),
-    );
-    if (applied.changed) writeFileSync(path, applied.content, 'utf8');
-    block = {
-      path,
-      anchor: applied.anchor,
-      outcome: !applied.changed
-        ? 'unchanged'
-        : applied.anchor === 'markers'
-          ? 'updated'
-          : 'inserted',
-    };
+  if (checkout.source !== 'synced') {
+    try {
+      block = writeAgentBlock(checkout.root, context.commands);
+    } catch (error) {
+      block = { skipped: reason(error) };
+      notify(`warning: ${CLAUDE_MD} block not written — ${reason(error)}`);
+    }
   } else {
     block = {
       skipped:

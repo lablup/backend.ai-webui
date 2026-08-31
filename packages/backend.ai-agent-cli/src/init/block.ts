@@ -3,7 +3,13 @@ import { CliError, exitLine } from '../errors.js';
 import { CLI_NAME } from '../meta.js';
 import { API_VERSION } from '../output.js';
 import type { Stats } from 'node:fs';
-import { existsSync, lstatSync, realpathSync } from 'node:fs';
+import {
+  existsSync,
+  lstatSync,
+  readFileSync,
+  realpathSync,
+  writeFileSync,
+} from 'node:fs';
 import { join, relative, isAbsolute } from 'node:path';
 
 /**
@@ -38,9 +44,11 @@ export type BlockMode = 'checkout' | 'standalone';
 
 export interface BlockOptions {
   mode?: BlockMode;
+  /** Standalone: where the skill was actually installed (defaults to `~/.claude`). */
+  skillPath?: string;
 }
 
-/** Where the installed skill lives, as the standalone block names it. */
+/** Where the installed skill lives by default, as the standalone block names it. */
 export const INSTALLED_SKILL_PATH = `~/.claude/skills/${CLI_NAME}/SKILL.md`;
 
 const pad = (rows: Array<[string, string]>): string[] => {
@@ -57,6 +65,7 @@ export function renderAgentBlock(
   options: BlockOptions = {},
 ): string {
   const standalone = options.mode === 'standalone';
+  const skillPath = options.skillPath ?? INSTALLED_SKILL_PATH;
   const lines = [
     BLOCK_START,
     `${CLI_NAME} · ${commands.length} commands`,
@@ -64,7 +73,7 @@ export function renderAgentBlock(
       ? [
           'Agent-facing CLI over a synced Backend.AI WebUI data checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.',
           `CLI: \`${CLI_NAME} <cmd>\` (npm: \`npm i -g backend.ai-agent-cli\`). \`${CLI_NAME} init\` records the endpoint, syncs the data for that manager's version and installs this skill; \`${CLI_NAME} sync\` refreshes the data.`,
-          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill (\`${INSTALLED_SKILL_PATH}\`).`,
+          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill (\`${skillPath}\`).`,
         ]
       : [
           'Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.',
@@ -194,6 +203,40 @@ export function applyBlock(source: string, block: string): BlockWriteResult {
   const after = source.slice(offset).replace(/^\n*/, '');
   const content = `${before}\n${block}\n${after === '' ? '' : `\n${after}`}`;
   return { content, anchor, changed: true };
+}
+
+export interface BlockWriteOutcome {
+  path: string;
+  anchor: BlockAnchor;
+  outcome: 'inserted' | 'updated' | 'unchanged';
+}
+
+/** Render the checkout block and apply it to `repoRoot`'s CLAUDE.md, idempotently. */
+export function writeAgentBlock(
+  repoRoot: string,
+  commands: AnyCommand[],
+): BlockWriteOutcome {
+  const { path } = resolveBlockTarget(repoRoot);
+  let source: string;
+  try {
+    source = readFileSync(path, 'utf8');
+  } catch (error) {
+    throw new CliError('repo_incomplete', `Cannot read ${path}.`, {
+      hint: `check that ${CLAUDE_MD}/${AGENTS_MD} exists in the checkout root`,
+      cause: error,
+    });
+  }
+  const applied = applyBlock(source, renderAgentBlock(commands));
+  if (applied.changed) writeFileSync(path, applied.content, 'utf8');
+  return {
+    path,
+    anchor: applied.anchor,
+    outcome: !applied.changed
+      ? 'unchanged'
+      : applied.anchor === 'markers'
+        ? 'updated'
+        : 'inserted',
+  };
 }
 
 /** A pointer file ("see AGENTS.md") is shorter than anything that holds prose. */

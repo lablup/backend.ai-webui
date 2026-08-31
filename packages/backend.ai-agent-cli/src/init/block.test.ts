@@ -212,6 +212,40 @@ describe('init --write', () => {
   });
 });
 
+describe('init --features agents --write outside a checkout', () => {
+  it('refuses the synced data checkout, which has no CLAUDE.md', async () => {
+    const synced = join(process.env.BAI_AGENT_DATA_DIR!, 'checkout');
+    mkdirSync(join(synced, 'data'), { recursive: true });
+    writeFileSync(
+      join(synced, 'package.json'),
+      JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-synced' }),
+    );
+    writeFileSync(join(synced, 'data/schema.graphql'), '');
+    mkdirSync(join(synced, 'resources/i18n'), { recursive: true });
+    mkdirSync(join(synced, 'packages/backend.ai-webui-docs'), {
+      recursive: true,
+    });
+    const { exitCode, stderr } = await invoke(
+      ['init', '--features', 'agents', '--write'],
+      mkdtempSync(join(tmpdir(), 'bai-agent-nowhere-')),
+    );
+    expect(exitCode).toBe(EXIT.usage);
+    expect(stderr).toContain('synced data checkout');
+    rmSync(synced, { recursive: true, force: true });
+  });
+
+  it('renders the write record with its markers under --detail', async () => {
+    const root = fakeCheckout('# Project\n');
+    const { stdout } = await invoke(
+      ['init', '--features', 'agents', '--write', '--detail'],
+      root,
+    );
+    expect(stdout).toContain('outcome:');
+    expect(stdout).toContain(BLOCK_START);
+    expect(stdout).toContain(BLOCK_END);
+  });
+});
+
 describe('findBlockRegion', () => {
   it('ignores a marker quoted inside prose', () => {
     const source = [
