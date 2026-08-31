@@ -1,0 +1,1 @@
+const t={kbCHJM:"x1nrll8i",k3aq6I:"xsqj5wx",$$css:!0},e={mirror:{k3aq6I:"xgtlewx",$$css:!0},centerInline:r=>[t,{"--x-transform":`translate(-50%, ${r})`!=null?`translate(-50%, ${r})`:void 0}]};export{e as r};
