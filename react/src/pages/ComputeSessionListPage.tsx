@@ -86,11 +86,9 @@ const NOT_FINISHED_STATUS_FILTER =
   'status != "TERMINATED" & status != "CANCELLED"';
 
 const styles = stylex.create({
-  // antd `Typography.Text style={{maxWidth:120, wordBreak:'keep-all'}}` — the
-  // title only renders on >=lg, where maxWidth was always 120.
+  // The title only renders on >=lg, where maxWidth was always 120.
   actionCardTitle: {
     maxWidth: 120,
-    wordBreak: 'keep-all',
   },
 });
 

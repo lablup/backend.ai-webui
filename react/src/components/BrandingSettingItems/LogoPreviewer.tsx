@@ -62,9 +62,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   return (
     <BAIFlex gap="sm" align="stretch" direction="column">
       <BAIFlex gap="sm">
-        <Text color="secondary" style={{ wordBreak: 'keep-all' }}>
-          {t('userSettings.logo.ImagePath')}:
-        </Text>
+        <Text color="secondary">{t('userSettings.logo.ImagePath')}:</Text>
         {/* PILOT-DECISION: antd `Space.Compact` fused the text input and the
             upload trigger into one bordered unit (MAPPING §4: Space.Compact
             -> ButtonGroup, but these are two DIFFERENT field types, not a

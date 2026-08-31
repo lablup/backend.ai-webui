@@ -71,9 +71,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
           wrap="nowrap"
           style={{ color: token.colorTextTertiary }}
         >
-          <Text color="secondary" style={{ wordBreak: 'keep-all' }}>
-            {t('userSettings.logo.size.Width')}:
-          </Text>
+          <Text color="secondary">{t('userSettings.logo.size.Width')}:</Text>
           <BAIUncontrolledInput
             type="number"
             defaultValue={logoSizeConfig.width?.toString() ?? ''}
@@ -88,9 +86,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
           wrap="nowrap"
           style={{ color: token.colorTextTertiary }}
         >
-          <Text color="secondary" style={{ wordBreak: 'keep-all' }}>
-            {t('userSettings.logo.size.Height')}:
-          </Text>
+          <Text color="secondary">{t('userSettings.logo.size.Height')}:</Text>
           <BAIUncontrolledInput
             type="number"
             defaultValue={logoSizeConfig.height?.toString() ?? ''}
