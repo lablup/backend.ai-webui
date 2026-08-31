@@ -1543,13 +1543,10 @@ describe.each(IMPLEMENTATIONS)('form engine acceptance [%s]', (_name, Form) => {
   });
 
   // 30. ContainerRegistryEditorModal.tsx (FR-3705) — a trap that cost real
-  //     debugging time: when a child suspends and the nearest boundary sits
-  //     ABOVE the form, React's hide/show cycle runs every Field's cleanup,
-  //     and with `preserve={false}` each unregistration resets that field to
-  //     its initial value. So a Suspense hide counts as an unmount; call
-  //     sites must keep suspending children behind a boundary INSIDE the
-  //     form. If `Field` ever becomes offscreen-aware, revisit this and the
-  //     FR-3705 call-site comment together.
+  //     debugging time: a Suspense hide counts as an unmount, so a boundary
+  //     ABOVE the form resets every `preserve={false}` field to its initial
+  //     value on the hide/show cycle. Keep suspending children behind a
+  //     boundary INSIDE the form.
   it('30. a Suspense hide/show cycle above a `preserve={false}` form resets its fields', async () => {
     let settled = false;
     let resolveChild!: () => void;

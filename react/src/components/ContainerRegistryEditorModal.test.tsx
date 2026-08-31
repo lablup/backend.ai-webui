@@ -52,9 +52,8 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
 const renderModal = () => {
   render(
     <RelayEnvironmentProvider environment={createMockEnvironment()}>
-      {/* The app always has a Suspense boundary above the modal; without
-          one here React would simply delay the commit instead of hiding
-          (and thereby resetting) the form. */}
+      {/* Without an outer boundary (the app always has one) React would delay
+          the commit instead of hiding — and thereby resetting — the form. */}
       <Suspense fallback={null}>
         <ContainerRegistryEditorModal open onOk={vi.fn()} onCancel={vi.fn()} />
       </Suspense>
@@ -88,8 +87,7 @@ describe('ContainerRegistryEditorModal (FR-3705)', () => {
     await user.click(sslCheckbox());
     expect(sslCheckbox()).not.toBeChecked();
 
-    // The boundary must be inside the form — see the FR-3705 comment in
-    // ContainerRegistryEditorModal.tsx and engine contract 30.
+    // The Suspense boundary must sit inside the form — engine contract 30.
     await user.click(globalCheckbox());
     resolveProjects();
     await screen.findByTestId('allowed-projects-select');

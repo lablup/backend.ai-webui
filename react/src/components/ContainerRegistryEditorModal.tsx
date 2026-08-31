@@ -376,10 +376,6 @@ const ContainerRegistryEditorModal: React.FC<
           >
             {(form) => (
               <BAIFormItem noStyle name={'password'}>
-                {/* antd Input.Password -> Astryx TextInput type="password"
-                    (MAPPING.md §3.6). PILOT-DECISION: the visibility-toggle
-                    eye affordance is antd sugar with no TextInput
-                    counterpart; dropped (simplicity policy). */}
                 <AstryxFormTextInput
                   label={t('registry.Password')}
                   type="password"
@@ -489,9 +485,6 @@ const ContainerRegistryEditorModal: React.FC<
             !(form as FormInstance<RegistryFormInput>).getFieldValue(
               'is_global',
             ) && (
-              // Suspense must sit INSIDE the form: hiding the form resets
-              // every preserve={false} field (FR-3705; engine contract 30 in
-              // formEngineAcceptance.test.tsx).
               <Suspense
                 fallback={
                   <BAIFormItem label={t('registry.AllowedProjects')}>
