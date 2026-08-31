@@ -8,8 +8,9 @@ description: >
   conversation history, set VITE_THEME_HEADER_COLOR to the matching hex so the dev
   server's header reflects this Claude session's color. When `/rename <name>`
   is visible, slugify the name and pass it as PORTLESS_APP_NAME so the dev
-  URL reflects the session name (falls back to FR-XXXX from the branch, then
-  to the current PR number). When the current branch's PR description names
+  URL reflects the session name; dev.mjs prepends the branch's FR number and
+  the PR number itself, and derives a word from the PR title when there is no
+  /rename, so pass the word only. When the current branch's PR description names
   a backend test server (bare IP, `host:port`, or full URL), set
   VITE_DEFAULT_API_ENDPOINT so the login screen pre-fills that endpoint; when a
   live session is connected to a different backend a dev-only banner flags the
@@ -77,22 +78,47 @@ Do not invent additional names or alternate hex values. If the user's `/color` a
 
 ## 2b. Decide the Portless app name (webui only)
 
-`scripts/dev.mjs` reads `PORTLESS_APP_NAME` from the env and uses it as the Portless subdomain (`https://<name>.localhost:1355`). Pick a name with this priority:
+`PORTLESS_APP_NAME` supplies **only the descriptive word**. `scripts/dev.mjs` composes the
+full subdomain itself, putting the identifiers first and the word last:
 
-1. **Most recent successful `/rename <name>` in conversation history** — slugify the arg (see rules below) and use that. This makes the dev URL match the human-readable session name (e.g. `iphoto-disk-cleanup` → `https://iphoto-disk-cleanup.localhost:1355`).
-2. **FR-XXXX in the current git branch** — `dev.mjs` already detects this when `PORTLESS_APP_NAME` is unset, so just **omit the env var** and let it derive `fr-XXXX` (e.g. `fr-2794`). Don't recompute and pass it back in.
-3. **Open PR number for the current branch** — only if (1) and (2) both miss and the current branch has an open PR. Use `gh pr view --json number -q '.number'` and pass `PORTLESS_APP_NAME=pr-<NNNN>`.
-4. **None of the above** — omit the env var; `dev.mjs` falls back to Portless's auto-derived name.
+```
+https://fr-3665-pr9049-statusline.localhost:1355
+        \_____/ \____/ \________/
+        branch  looked  PORTLESS_APP_NAME
+        issue   up by   (this is the only part you supply)
+                dev.mjs
+```
 
-**Slug rules** (apply to `/rename` arg before passing as `PORTLESS_APP_NAME`):
+So there is exactly one question for you to answer: **is there a `/rename` to use?**
+
+1. **Most recent successful `/rename <name>`** — slugify the arg (rules below) and pass it.
+   The dev URL then carries the human-readable session name alongside the identifiers.
+2. **No `/rename`** — **omit the env var.** `dev.mjs` falls back to a few words from the PR
+   title, then to the identifiers alone (`fr-3665-pr9049`), then to Portless's auto-derived
+   name. Every fallback is already handled.
+
+**Never pass the FR number or the PR number yourself.** `dev.mjs` derives the issue key from
+the branch and looks the PR up with one cached `gh` call, and it strips either identifier from
+your string if you pass it anyway — so `PORTLESS_APP_NAME=fr-3665` just yields `fr-3665-pr9049`,
+losing the descriptive part for nothing.
+
+**Slug rules** (apply to the `/rename` arg before passing as `PORTLESS_APP_NAME`):
 - Lowercase.
 - Replace any character that isn't `[a-z0-9-]` with `-` (spaces, underscores, dots, slashes, non-ASCII all become `-`).
 - Collapse repeated `-` into a single `-`.
 - Trim leading/trailing `-`.
-- Cap at ~40 chars (Portless cert generation can choke on very long subdomains).
+- Keep it short — a word or three. `dev.mjs` caps the whole hostname at 50 chars and truncates
+  the descriptive tail first, so a long name loses its own end, not the identifiers.
 - If the result is empty after sanitization, treat as unset.
 
-`dev.mjs` re-applies the same sanitization defensively, so it's safe to pass a slightly imperfect string — but compute the clean form yourself so you can announce the right hostname to the user without re-reading Portless output.
+`dev.mjs` re-applies the same sanitization defensively, so it's safe to pass a slightly imperfect
+string. It is **not** safe to predict the hostname from your string alone any more — the issue and
+PR parts are added after you. Read the URL Portless prints, or the statusline's Portless link,
+before announcing it.
+
+`PORTLESS_APP_NAME_EXACT=1` turns the composition off and uses your string verbatim. It exists for
+callers that own the whole hostname (a release preview, say); a dev server for a branch should not
+use it.
 
 **Detecting `/rename` in history**: scan the current conversation for `<command-name>/rename</command-name>` blocks. Take the **most recent** one whose `<local-command-stdout>` does not look like an error (e.g. doesn't start with `Error` / `Invalid`). Use `<command-args>` as the raw input to the slug rules.
 
@@ -206,7 +232,7 @@ Running without it costs no real type safety: `scripts/verify.sh`, the Husky pre
   pnpm dev
   ```
 
-If step **2b** picked a Portless app name from `/rename` or a PR number, also prefix `PORTLESS_APP_NAME='<slug>'`. If 2b selected the FR-XXXX branch fallback (option 2) or "none" (option 4), **omit** `PORTLESS_APP_NAME` — `dev.mjs` handles those itself.
+If step **2b** found a `/rename` to use, also prefix `PORTLESS_APP_NAME='<slug>'` — the descriptive word only. Otherwise **omit** it; `dev.mjs` derives the word from the PR title and adds the identifiers either way.
 
 If step **2c** resolved a default API endpoint, also prefix `VITE_DEFAULT_API_ENDPOINT='<url>'`. If 2c resolved nothing, **omit** the variable entirely — do not pass an empty string.
 
