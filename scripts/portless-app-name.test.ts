@@ -30,6 +30,14 @@ describe('portless app name', () => {
       expect(name.endsWith('-')).toBe(false);
     });
 
+    // The issue normalization inserts a dash, so capping before it ran let a
+    // 50-char input come back out at 51.
+    it('stays within the cap when normalization adds a dash at the boundary', () => {
+      for (const raw of ['a'.repeat(44) + '-fr123', 'b'.repeat(48) + '-fr1']) {
+        expect(sanitizeAppName(raw)!.length).toBeLessThanOrEqual(50);
+      }
+    });
+
     // FR-3665: this path skipped the normalization, so a name that reached it
     // without the dash produced fr1234.localhost instead of fr-1234.localhost.
     it('normalizes an issue key that arrives without its dash', () => {

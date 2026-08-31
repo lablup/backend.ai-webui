@@ -89,15 +89,22 @@ function lookupPr(branchName) {
     { encoding: 'utf8', timeout: 4000, stdio: ['ignore', 'pipe', 'ignore'] },
   );
   if (probe.status === 0 && probe.stdout) {
+    let pr = null;
     try {
-      const pr = JSON.parse(probe.stdout);
-      if (pr?.number) {
+      pr = JSON.parse(probe.stdout);
+    } catch {
+      pr = null; // unparseable output — fall through to the cache
+    }
+    if (pr?.number) {
+      // Persisting is an optimization for the next offline boot, so a read-only
+      // ~/.cache or an over-long filename must not throw away the answer we have.
+      try {
         mkdirSync(dirname(cacheFile), { recursive: true });
         writeFileSync(cacheFile, JSON.stringify(pr));
-        return pr;
+      } catch {
+        // Best-effort; the fresh lookup below is still good.
       }
-    } catch {
-      // fall through to the cache
+      return pr;
     }
   }
   try {
@@ -107,11 +114,14 @@ function lookupPr(branchName) {
   }
 }
 
+// Exact mode discards every identifier, so it must not pay for the lookup that
+// produces one — up to the 4s timeout on a box with no network.
+const exactAppName = !!process.env.PORTLESS_APP_NAME_EXACT?.trim();
 const appName = resolveAppName({
   envName: process.env.PORTLESS_APP_NAME,
   branch,
-  pr: lookupPr(branch),
-  exact: !!process.env.PORTLESS_APP_NAME_EXACT?.trim(),
+  pr: exactAppName ? null : lookupPr(branch),
+  exact: exactAppName,
 });
 if (appName) {
   // Surface the app name to the React bundle for the dev-only tab title.

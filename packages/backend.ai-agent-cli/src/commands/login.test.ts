@@ -23,21 +23,30 @@ function repoOnBranch(branch: string): string {
   return root;
 }
 
-/** A Portless state dir holding `hostnames` as registered routes. */
-function portlessState(hostnames: string[]): string {
+/**
+ * A Portless state dir. `pid` defaults to this test process, whose cwd is the
+ * package directory — i.e. a live route that this checkout does NOT own, which is
+ * what the liveness-but-not-ownership fallback is about.
+ */
+function portlessState(
+  routes: Array<{ hostname: string; pid?: number }>,
+): string {
   const dir = mkdtempSync(join(tmpdir(), 'bai-cli-portless-'));
   writeFileSync(
     join(dir, 'routes.json'),
     JSON.stringify(
-      hostnames.map((hostname, i) => ({
-        hostname,
+      routes.map((route, i) => ({
+        hostname: route.hostname,
         port: 4000 + i,
-        pid: 1000 + i,
+        pid: route.pid ?? process.pid,
       })),
     ),
   );
   return dir;
 }
+
+/** A pid that is certainly not running, for the stale-entry cases. */
+const DEAD_PID = 2 ** 22 - 1;
 
 describe('devWebUiOrigin', () => {
   const env = (stateDir?: string) => ({
@@ -57,19 +66,44 @@ describe('devWebUiOrigin', () => {
   it('resolves to the composed route that is actually running', () => {
     const cwd = repoOnBranch('fix/FR-3665-portless-app-name');
     const state = portlessState([
-      'fr-3654.localhost',
-      'fr-3665-pr9049-statusline.localhost',
+      { hostname: 'fr-3654.localhost' },
+      { hostname: 'fr-3665-pr9049-statusline.localhost' },
     ]);
     expect(devWebUiOrigin(cwd, env(state))).toBe(
       'https://fr-3665-pr9049-statusline.localhost:1357',
     );
   });
 
+  it('ignores a route whose owning process is gone', () => {
+    const cwd = repoOnBranch('FR-3665');
+    const state = portlessState([
+      { hostname: 'fr-3665-pr9049-statusline.localhost', pid: DEAD_PID },
+    ]);
+    expect(devWebUiOrigin(cwd, env(state))).toBe('https://fr-3665.localhost:1357');
+  });
+
+  it('skips a dead route in favour of a live one', () => {
+    const cwd = repoOnBranch('FR-3665');
+    const state = portlessState([
+      { hostname: 'fr-3665-old.localhost', pid: DEAD_PID },
+      { hostname: 'fr-3665-pr9049-statusline.localhost' },
+    ]);
+    expect(devWebUiOrigin(cwd, env(state))).toBe(
+      'https://fr-3665-pr9049-statusline.localhost:1357',
+    );
+  });
+
+  it('ignores an alias route, which has no owning process', () => {
+    const cwd = repoOnBranch('FR-3665');
+    const state = portlessState([{ hostname: 'fr-3665-alias.localhost', pid: 0 }]);
+    expect(devWebUiOrigin(cwd, env(state))).toBe('https://fr-3665.localhost:1357');
+  });
+
   it('prefers an exact match over a composed one', () => {
     const cwd = repoOnBranch('FR-3665');
     const state = portlessState([
-      'fr-3665-pr9049-statusline.localhost',
-      'fr-3665.localhost',
+      { hostname: 'fr-3665-pr9049-statusline.localhost' },
+      { hostname: 'fr-3665.localhost' },
     ]);
     expect(devWebUiOrigin(cwd, env(state))).toBe('https://fr-3665.localhost:1357');
   });
@@ -77,8 +111,8 @@ describe('devWebUiOrigin', () => {
   it('takes the shortest when several extend the issue key', () => {
     const cwd = repoOnBranch('FR-3665');
     const state = portlessState([
-      'fr-3665-pr9049-statusline-and-more.localhost',
-      'fr-3665-alt.localhost',
+      { hostname: 'fr-3665-pr9049-statusline-and-more.localhost' },
+      { hostname: 'fr-3665-alt.localhost' },
     ]);
     expect(devWebUiOrigin(cwd, env(state))).toBe(
       'https://fr-3665-alt.localhost:1357',
@@ -87,7 +121,9 @@ describe('devWebUiOrigin', () => {
 
   it('does not match a different issue that merely shares a prefix', () => {
     const cwd = repoOnBranch('FR-366');
-    const state = portlessState(['fr-3665-pr9049-statusline.localhost']);
+    const state = portlessState([
+      { hostname: 'fr-3665-pr9049-statusline.localhost' },
+    ]);
     expect(devWebUiOrigin(cwd, env(state))).toBe('https://fr-366.localhost:1357');
   });
 
@@ -105,11 +141,20 @@ describe('devWebUiOrigin', () => {
     expect(devWebUiOrigin(cwd, env(wrongShape))).toBe(
       'https://fr-3665.localhost:1357',
     );
+
+    const noPid = mkdtempSync(join(tmpdir(), 'bai-cli-portless-'));
+    writeFileSync(
+      join(noPid, 'routes.json'),
+      JSON.stringify([{ hostname: 'fr-3665-x.localhost', port: 1 }]),
+    );
+    expect(devWebUiOrigin(cwd, env(noPid))).toBe('https://fr-3665.localhost:1357');
   });
 
   it('has no issue key to resolve on a branch without one', () => {
     const cwd = repoOnBranch('main');
-    const state = portlessState(['fr-3665-pr9049-statusline.localhost']);
+    const state = portlessState([
+      { hostname: 'fr-3665-pr9049-statusline.localhost' },
+    ]);
     expect(devWebUiOrigin(cwd, env(state))).toBe('https://localhost:1357');
   });
 });

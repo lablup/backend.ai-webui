@@ -18,7 +18,7 @@ import {
   type StoredSession,
 } from '../session.js';
 import { execFileSync, spawn } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -36,47 +36,88 @@ export interface LoginData {
   user: WhoAmI;
 }
 
+/** The working directory of a live process, or undefined if it is not running. */
+function processCwd(pid: number): string | undefined {
+  try {
+    // Linux: the symlink is also the liveness check — a dead pid throws.
+    return realpathSync(`/proc/${pid}/cwd`);
+  } catch {
+    /* no /proc, or the pid is gone */
+  }
+  try {
+    const out = execFileSync('lsof', ['-p', String(pid), '-a', '-d', 'cwd', '-Fn'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      timeout: 2000,
+    });
+    const line = out.split('\n').find((l) => l.startsWith('n'));
+    return line ? realpathSync(line.slice(1)) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /**
- * The Portless route actually serving this issue, if one is registered.
+ * The Portless route actually serving this checkout, if one is registered.
  *
  * `scripts/dev.mjs` names a dev server after its issue, its PR and what it does
  * (`fr-3665-pr9049-statusline`), so the issue key alone stops being a hostname the
  * moment a PR exists. Rather than duplicate that composition — it needs a `gh`
- * lookup — read what is actually running and take the route whose leading label is
- * the issue key or extends it. An exact match wins, then the shortest, so a session
- * that also started `fr-3665-alt` still resolves to the main one.
+ * lookup, which does not belong in a CLI's default-origin path — read what is
+ * actually running.
+ *
+ * `routes.json` alone is not enough to pick from: it keeps entries whose owner has
+ * died, and a sibling worktree on the same issue registers a hostname with the same
+ * prefix. So a candidate must be a live process whose cwd is this checkout, which is
+ * the same ownership test the statusline uses. Where neither /proc nor lsof can
+ * answer, fall back to any live route, then to the bare issue key.
  */
 function liveAppName(
   issueApp: string,
+  repoRoot: string | undefined,
   env: Record<string, string | undefined>,
 ): string | undefined {
   const stateDir =
     env.PORTLESS_STATE_DIR?.trim() ||
     env.PORTLESS_HOME?.trim() ||
     join(homedir(), '.portless');
+  let routes: unknown;
   try {
-    const routes: unknown = JSON.parse(
-      readFileSync(join(stateDir, 'routes.json'), 'utf8'),
-    );
-    if (!Array.isArray(routes)) return undefined;
-    const names = routes
-      .map((route) =>
-        typeof (route as { hostname?: unknown })?.hostname === 'string'
-          ? (route as { hostname: string }).hostname.split('.')[0]
-          : undefined,
-      )
-      .filter(
-        (name): name is string =>
-          !!name && (name === issueApp || name.startsWith(`${issueApp}-`)),
-      )
-      .sort((a, b) =>
-        a === issueApp ? -1 : b === issueApp ? 1 : a.length - b.length,
-      );
-    return names[0];
+    routes = JSON.parse(readFileSync(join(stateDir, 'routes.json'), 'utf8'));
   } catch {
-    // No Portless state, unreadable, or malformed — fall back to the issue key.
-    return undefined;
+    return undefined; // no Portless state, unreadable, or malformed
   }
+  if (!Array.isArray(routes)) return undefined;
+
+  const candidates = routes
+    .map((route) => route as { hostname?: unknown; pid?: unknown })
+    .filter(
+      (route): route is { hostname: string; pid: number } =>
+        typeof route?.hostname === 'string' &&
+        typeof route?.pid === 'number' &&
+        route.pid > 0,
+    )
+    .map((route) => ({ app: route.hostname.split('.')[0], pid: route.pid }))
+    .filter(
+      ({ app }) => app === issueApp || app.startsWith(`${issueApp}-`),
+    );
+  if (candidates.length === 0) return undefined;
+
+  const owned: string[] = [];
+  const live: string[] = [];
+  for (const { app, pid } of candidates) {
+    const cwd = processCwd(pid);
+    if (cwd === undefined) continue; // dead pid, or unknowable — not a candidate
+    live.push(app);
+    if (repoRoot && cwd === repoRoot) owned.push(app);
+  }
+  // Exact match first, then shortest: a checkout also running `fr-3665-alt` still
+  // resolves to its main server.
+  const pick = (names: string[]) =>
+    [...names].sort((a, b) =>
+      a === issueApp ? -1 : b === issueApp ? 1 : a.length - b.length,
+    )[0];
+  return pick(owned) ?? pick(live);
 }
 
 /**
@@ -88,11 +129,13 @@ export function devWebUiOrigin(
   env: Record<string, string | undefined> = process.env,
 ): string {
   const port = env.PORTLESS_PORT?.trim() || DEFAULT_PORTLESS_PORT;
+  const resolved = tryResolveRepoContext(cwd);
+  const repoRoot = resolved.ok ? realpathSync(resolved.context.repoRoot) : undefined;
   const branch = currentBranch(cwd);
   const issue = branch ? /(?:^|[-_/])(fr-?\d+)/i.exec(branch) : null;
   if (!issue) return `https://localhost:${port}`;
   const app = issue[1].toLowerCase().replace(/^fr-?/, 'fr-');
-  return `https://${liveAppName(app, env) ?? app}.localhost:${port}`;
+  return `https://${liveAppName(app, repoRoot, env) ?? app}.localhost:${port}`;
 }
 
 function currentBranch(cwd: string): string | undefined {

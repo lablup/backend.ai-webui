@@ -52,12 +52,15 @@ export function sanitizeAppName(raw) {
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/-{2,}/g, '-')
     .replace(/^-+|-+$/g, '')
-    .slice(0, MAX_LEN)
-    .replace(/-+$/, '') // the slice can land mid-word and leave a trailing dash
     // `fr1234` and `fr-1234` name the same issue, so they must produce the same
     // hostname whichever source supplied the name. Anchoring on a slug boundary
     // keeps words that merely start with "fr" (frame123) intact.
-    .replace(ISSUE_TOKEN, '$1fr-$2');
+    //
+    // Normalize BEFORE the cap: this inserts a dash, so capping first would let a
+    // 50-char input ending in `-fr123` come back out at 51.
+    .replace(ISSUE_TOKEN, '$1fr-$2')
+    .slice(0, MAX_LEN)
+    .replace(/-+$/, ''); // the slice can land mid-word and leave a trailing dash
   return slug || null;
 }
 
