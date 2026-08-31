@@ -284,10 +284,9 @@ superadmin สามารถลบบัญชีผู้ใช้ที่ถ
 ไม่จำเป็นต้องสร้างและกำหนดคีย์แพร์ด้วยตนเองในกรณีส่วนใหญ่
 
 คีย์แพร์สามารถแสดงในแท็บข้อมูลประจำตัวของหน้าผู้ใช้ คีย์แพร์ที่ใช้งานอยู่จะแสดง
-ทันที และหากต้องการดูคีย์แพร์ที่ไม่ได้ใช้งาน ให้คลิกแผงไม่ทำงานที่ด้านล่าง
+ทันที และหากต้องการดูคีย์แพร์ที่ไม่ได้ใช้งาน ให้คลิก **ไม่ทำงาน** ที่ด้านบนของตาราง
 
 ![](../images/credential_list_tab.png)
-<!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
 เช่นเดียวกับในแท็บผู้ใช้ คุณสามารถใช้ปุ่มอินไลน์ในแถวของคีย์แพร์เพื่อดูหรือ
 แก้ไขรายละเอียดคีย์แพร์ คลิกปุ่มไอคอนข้อมูลเพื่อดูรายละเอียดเฉพาะของคีย์แพร์
@@ -1279,12 +1278,10 @@ Resource preset ที่กำหนดไว้ล่วงหน้าจะ�
 - **หน่วยความจำที่ใช้ร่วมกัน**: ปริมาณหน่วยความจำที่ใช้ร่วมกันที่จัดสรรให้กับค่าที่กำหนดไว้ล่วงหน้า ค่านี้ต้องน้อยกว่าค่า**หน่วยความจำ**
 
 ![](../images/modify_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
 คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม **สร้างค่าที่กำหนดไว้ล่วงหน้า** ที่มุมบนขวาของแท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร ชื่อของ resource preset ยังคงต้องไม่ซ้ำกัน หากคุณป้อนชื่อที่มีอยู่แล้ว เซิร์ฟเวอร์จะปฏิเสธคำขอเมื่อคุณคลิก **สร้าง** และจะแสดงข้อความแสดงข้อผิดพลาด
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 

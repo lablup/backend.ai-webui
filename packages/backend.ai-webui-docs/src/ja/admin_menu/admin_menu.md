@@ -299,11 +299,10 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 作成して割り当てる必要はありません。
 
 キーペアは、ユーザー管理ページの「資格情報」タブで一覧表示できます。アクティブなキーペアは
-すぐに表示され、非アクティブなキーペアを確認するには、下部の「非アクティブ」パネルを
+すぐに表示され、非アクティブなキーペアを確認するには、表の上にある「**非アクティブ**」を
 クリックしてください。
 
 ![](../images/credential_list_tab.png)
-<!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
 ユーザー管理タブと同様に、キーペアの行にあるインラインボタンを使用してキーペアの詳細を表示したり
 編集したりできます。情報アイコンボタンをクリックすると、キーペアの詳細情報を
@@ -1323,12 +1322,10 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 - **共有メモリ**: プリセットに割り当てられた共有メモリの量です。この値は**メモリ**の値より少なくなければなりません。
 
 ![](../images/modify_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
 「リソースプリセット」タブの右上にある **プリセットの作成** ボタンをクリックしてリソースプリセットを作成することもできます。リソースプリセット名は引き続き一意である必要があります。既に存在する名前を入力すると、**作成** をクリックした際にサーバーがリクエストを拒否し、エラーメッセージが表示されます。
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 

@@ -324,11 +324,10 @@ Also, when you create a new user, a keypair is automatically created, so you do
 not need to create and assign a keypair manually in most cases.
 
 Keypairs can be listed on the Credentials tab of in the Users page. Active
-keypairs are shown immediately, and to see the inactive keypairs, click the
-Inactive panel at the bottom.
+keypairs are shown immediately, and to see the inactive keypairs, click
+**Inactive** above the table.
 
 ![](../images/credential_list_tab.png)
-<!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
 Like in Users tab, you can use the inline buttons in the keypair's row to view or
 edit keypair details. Click the info icon button to see specific details of the keypair.
@@ -1404,7 +1403,6 @@ The resource preset dialog includes:
 - **Shared Memory**: The amount of shared memory allocated for the preset. This value must be less than the **Memory** value.
 
 ![](../images/modify_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
 You can also create a resource preset by clicking the **Create Preset** button in the
 right top of the Resource Presets tab. Resource preset names must still be
@@ -1412,7 +1410,6 @@ unique. If you enter a name that already exists, the server rejects the request
 when you click **Create** and an error message is displayed.
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 

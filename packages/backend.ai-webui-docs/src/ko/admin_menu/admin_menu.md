@@ -263,10 +263,9 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 
 사용자는 여러 개의 키페어를 가질 수 있지만, 키페어 관리에 대한 사용자의 부담을 줄이기 위해 현재는 사용자의 키페어 중 하나만 사용하여 요청을 보냅니다. 또한 새 사용자를 생성하면 키페어가 자동으로 생성되므로 대부분의 경우 수동으로 키페어를 생성하고 할당할 필요가 없습니다.
 
-키페어는 사용자 페이지의 자격 증명 탭에서 확인할 수 있습니다. 활성 키페어는 즉시 표시되며, 비활성 키페어를 보려면 하단의 비활성 패널을 클릭합니다.
+키페어는 사용자 페이지의 자격 증명 탭에서 확인할 수 있습니다. 활성 키페어는 즉시 표시되며, 비활성 키페어를 보려면 표 위의 **비활성** 버튼을 클릭합니다.
 
 ![](../images/credential_list_tab.png)
-<!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
 사용자 탭과 마찬가지로 키페어 행에 있는 인라인 버튼을 사용하여 키페어 세부 정보를 보거나 수정할 수 있습니다. 정보 아이콘 버튼을 클릭하면 키페어의 구체적인 세부 정보를 확인할 수 있습니다. 필요한 경우 복사 버튼을 클릭하여 secret key를 복사할 수 있습니다.
 
@@ -1183,12 +1182,10 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 - **공유 메모리**: 프리셋에 할당된 공유 메모리 양입니다. 이 값은 **메모리** 값보다 작아야 합니다.
 
 ![](../images/modify_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
 또한 자원 프리셋 탭 오른쪽 상단의 **프리셋 생성** 버튼을 클릭하여 자원 프리셋을 생성할 수 있습니다. 자원 프리셋 이름은 여전히 고유해야 합니다. 이미 존재하는 이름을 입력하면 **생성**을 클릭할 때 서버에서 요청을 거부하고 오류 메시지가 표시됩니다.
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 
