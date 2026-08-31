@@ -34,6 +34,7 @@
   },
   "files": [
     "dist",
+    "mappings",
     "README.md"
   ],
   "engines": {
@@ -53,11 +54,13 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "ajv": "^8.20.0",
     "eslint-config-bai": "workspace:*",
     "graphql": "catalog:",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "catalog:",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.4",
+    "yaml": "^2.9.0"
   }
 }

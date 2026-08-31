@@ -1,6 +1,7 @@
 import type { AnyCommand } from './command.js';
 import { docsCommand } from './commands/docs.js';
 import { doctorCommand } from './commands/doctor.js';
+import { explainCommand } from './commands/explain.js';
 import { loginCommand } from './commands/login.js';
 import { logoutCommand } from './commands/logout.js';
 import { manifestCommand } from './commands/manifest.js';
@@ -22,6 +23,7 @@ export const COMMANDS: AnyCommand[] = [
   logoutCommand,
   whoamiCommand,
   queryCommand,
+  explainCommand,
 ];
 
 export function findCommand(name: string): AnyCommand | undefined {

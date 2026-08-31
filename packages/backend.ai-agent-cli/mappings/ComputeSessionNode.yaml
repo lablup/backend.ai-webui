@@ -1,0 +1,158 @@
+# yaml-language-server: $schema=./schema.json
+type: ComputeSessionNode
+concept: compute-session
+docs: sessions_all#session-list-view
+meaning: One compute session — the isolated environment a user runs code, notebooks or applications in.
+fields:
+  name:
+    meaning: The name the user gave the session; it is what the session list and the detail panel are titled with.
+    docs: sessions_all#session-list-view
+  status:
+    meaning: Lifecycle state of the session as the manager scheduled and ran it.
+    docs: sessions_all#session-detail-panel
+    values:
+      PENDING:
+        label: Pending
+        meaning: The session is queued and the scheduler has not found resources for it yet.
+        variant: neutral
+      SCHEDULED:
+        label: Scheduled
+        meaning: The scheduler picked an agent for the session and allocation is starting.
+        variant: info
+      RESERVED:
+        label: Reserved
+        meaning: The scheduler reserved the resources for the session on an agent, ahead of allocation.
+        variant: info
+      PREPARING:
+        label: Preparing
+        meaning: The agent is setting the session's containers up before they can start.
+        variant: info
+      PULLING:
+        label: Pulling
+        meaning: The agent is downloading the session's container image.
+        variant: info
+      PREPARED:
+        label: Prepared
+        meaning: The image and the resources are in place and the containers are about to be created.
+        variant: info
+      CREATING:
+        label: Creating
+        meaning: The session's containers are being created on the agent.
+        variant: info
+      RUNNING:
+        label: Running
+        meaning: The containers are up and accepting work; apps and the terminal can be opened.
+        variant: success
+      RUNNING_DEGRADED:
+        label: Running (Degraded)
+        meaning: The session is running but one or more of its kernels has failed, so it works at reduced capacity.
+        variant: warning
+      PREEMPTED:
+        label: Preempted
+        meaning: A higher-priority session took the session's resources; it waits to be rescheduled.
+        variant: warning
+      RESCHEDULING:
+        label: Rescheduling
+        meaning: The scheduler is looking for a new agent for the session after it lost its previous one.
+        variant: info
+      RESTARTING:
+        label: Restarting
+        meaning: The session's containers are being recreated, usually after a restart request.
+        variant: info
+      DEPRIORITIZING:
+        label: Deprioritizing
+        meaning: The session is being pushed down the queue so a higher-priority session can run.
+        variant: warning
+      TERMINATING:
+        label: Terminating
+        meaning: The session is shutting down and its resources are being released.
+        variant: warning
+      TERMINATED:
+        label: Terminated
+        meaning: The session finished or was stopped, and it no longer holds any resources.
+        variant: neutral
+      CANCELLED:
+        label: Cancelled
+        meaning: The session was cancelled before it ever started running.
+        variant: error
+      ERROR:
+        label: Error
+        meaning: The session failed; the reason is in `status_info` and in the scheduling history.
+        variant: error
+  status_info:
+    label: Status Info
+    meaning: A short reason string qualifying the status, shown as a second badge next to it.
+    docs: sessions_all#session-scheduling-history
+    values:
+      scheduled:
+        meaning: The scheduler accepted the session and assigned it an agent.
+        variant: success
+      user-requested:
+        meaning: The user asked for the session to stop.
+        variant: success
+      self-terminated:
+        meaning: The workload inside the session exited on its own.
+        variant: success
+      idle-timeout:
+        meaning: The idleness checker reclaimed the session after it sat unused for too long.
+        variant: success
+      failed-to-start:
+        meaning: The containers could not be brought up on the assigned agent.
+        variant: error
+      creation-failed:
+        meaning: The session could not be created, usually because the image or the mounts were rejected.
+        variant: error
+      no-available-instances:
+        meaning: No agent had enough free resources to take the session.
+        variant: error
+  type:
+    meaning: What the session was created for, which decides how it is started and how long it lives.
+    docs: sessions_all#session-type
+    values:
+      interactive:
+        label: Interactive
+        meaning: A session the user works in directly through apps such as Jupyter, VSCode or the terminal.
+        concept: session-type-interactive
+        variant: blue
+      batch:
+        label: Batch
+        meaning: A session that runs a startup command to completion and then terminates itself.
+        concept: session-type-batch
+        variant: cyan
+      inference:
+        label: Inference
+        meaning: A session serving a model behind a deployment, created and scaled by the model service.
+        concept: session-type-inference
+        variant: purple
+      system:
+        label: System
+        meaning: A session Backend.AI runs for itself, such as an SFTP or FileBrowser helper.
+        variant: neutral
+  priority:
+    meaning: The scheduling priority the session was queued with; a higher number is served first.
+    docs: sessions_all#session-scheduling-history
+  scaling_group:
+    meaning: The resource group whose agents the session was scheduled onto.
+    concept: resource-group
+    docs: admin_menu#resource-group
+  queue_position:
+    label: Queue Position
+    meaning: How far down the pending queue the session currently sits, counted from one in the UI.
+    docs: sessions_all#session-scheduling-history
+  occupied_slots:
+    label: Allocated Resources
+    meaning: The resource slots the session actually holds right now.
+    docs: sessions_all#resource-allocation
+  requested_slots:
+    label: Requested Resources
+    meaning: The resource slots the session asked for when it was launched.
+    docs: sessions_all#resource-allocation
+  vfolder_mounts:
+    label: Mounted Folders
+    meaning: The storage folders mounted into the session's containers.
+    concept: storage-folder
+    docs: sessions_all#data-storage
+  idle_checks:
+    label: Idle Checks
+    meaning: The per-check idleness state the reclamation policy uses to decide whether to stop the session.
+    docs: sessions_all#idleness-checks

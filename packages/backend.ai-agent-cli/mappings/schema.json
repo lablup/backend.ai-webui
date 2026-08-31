@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-agent-cli/mappings/schema.json",
+  "title": "bai-agent explain mapping",
+  "description": "Curated, human-authored meaning for one GraphQL type: what its fields and their values mean to a WebUI user. Everything here is the `curated` tier of `bai-agent explain`; anything absent falls back to auto/heuristic or is reported as MISSING.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type"],
+  "properties": {
+    "type": {
+      "description": "The GraphQL type this file curates. Must equal the file name stem.",
+      "$ref": "#/definitions/identifier"
+    },
+    "label": { "$ref": "#/definitions/label" },
+    "meaning": { "$ref": "#/definitions/meaning" },
+    "concept": { "$ref": "#/definitions/conceptKey" },
+    "docs": { "$ref": "#/definitions/docsRef" },
+    "fields": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/definitions/identifier" },
+      "additionalProperties": { "$ref": "#/definitions/field" }
+    }
+  },
+  "definitions": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "label": {
+      "description": "UI label, used only when the i18n reverse index cannot reach this field.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "meaning": {
+      "description": "One sentence: what this means to the user.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "conceptKey": {
+      "description": "A concept id from packages/backend.ai-webui-docs/terminology.json.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "docsRef": {
+      "description": "`<page-slug>#<english-heading-anchor>` in the English user manual.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*#[a-z0-9][a-z0-9_-]*$"
+    },
+    "variant": {
+      "description": "The Astryx Badge variant the WebUI paints this value with (packages/backend.ai-ui/src/helper/astryxTagVariant.ts).",
+      "enum": [
+        "neutral",
+        "info",
+        "success",
+        "warning",
+        "error",
+        "blue",
+        "cyan",
+        "green",
+        "orange",
+        "pink",
+        "purple",
+        "red",
+        "teal",
+        "yellow"
+      ]
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": { "$ref": "#/definitions/label" },
+        "meaning": { "$ref": "#/definitions/meaning" },
+        "concept": { "$ref": "#/definitions/conceptKey" },
+        "docs": { "$ref": "#/definitions/docsRef" },
+        "values": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$" },
+          "additionalProperties": { "$ref": "#/definitions/value" }
+        }
+      }
+    },
+    "value": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": { "$ref": "#/definitions/label" },
+        "meaning": { "$ref": "#/definitions/meaning" },
+        "concept": { "$ref": "#/definitions/conceptKey" },
+        "docs": { "$ref": "#/definitions/docsRef" },
+        "variant": { "$ref": "#/definitions/variant" }
+      }
+    }
+  }
+}
