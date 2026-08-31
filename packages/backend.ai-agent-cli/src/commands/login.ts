@@ -15,6 +15,7 @@ import {
   normalizeEndpoint,
   resolveEndpoint,
   saveSession,
+  stripTrailingSlashes,
   type StoredSession,
 } from '../session.js';
 import { execFileSync, spawn } from 'node:child_process';
@@ -165,7 +166,7 @@ async function runPaste(
   }
   const webui =
     typeof context.flags.webui === 'string' ? context.flags.webui : '';
-  return finish(endpoint, webui.replace(/\/+$/, ''), sessionId, 'paste');
+  return finish(endpoint, stripTrailingSlashes(webui), sessionId, 'paste');
 }
 
 /**
