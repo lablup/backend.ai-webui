@@ -19,6 +19,7 @@ import {
 } from '../session.js';
 import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
 
@@ -36,8 +37,51 @@ export interface LoginData {
 }
 
 /**
- * Same derivation `scripts/dev.mjs` uses for the Portless app name, so the
- * default WebUI origin matches the dev server started from this checkout.
+ * The Portless route actually serving this issue, if one is registered.
+ *
+ * `scripts/dev.mjs` names a dev server after its issue, its PR and what it does
+ * (`fr-3665-pr9049-statusline`), so the issue key alone stops being a hostname the
+ * moment a PR exists. Rather than duplicate that composition — it needs a `gh`
+ * lookup — read what is actually running and take the route whose leading label is
+ * the issue key or extends it. An exact match wins, then the shortest, so a session
+ * that also started `fr-3665-alt` still resolves to the main one.
+ */
+function liveAppName(
+  issueApp: string,
+  env: Record<string, string | undefined>,
+): string | undefined {
+  const stateDir =
+    env.PORTLESS_STATE_DIR?.trim() ||
+    env.PORTLESS_HOME?.trim() ||
+    join(homedir(), '.portless');
+  try {
+    const routes: unknown = JSON.parse(
+      readFileSync(join(stateDir, 'routes.json'), 'utf8'),
+    );
+    if (!Array.isArray(routes)) return undefined;
+    const names = routes
+      .map((route) =>
+        typeof (route as { hostname?: unknown })?.hostname === 'string'
+          ? (route as { hostname: string }).hostname.split('.')[0]
+          : undefined,
+      )
+      .filter(
+        (name): name is string =>
+          !!name && (name === issueApp || name.startsWith(`${issueApp}-`)),
+      )
+      .sort((a, b) =>
+        a === issueApp ? -1 : b === issueApp ? 1 : a.length - b.length,
+      );
+    return names[0];
+  } catch {
+    // No Portless state, unreadable, or malformed — fall back to the issue key.
+    return undefined;
+  }
+}
+
+/**
+ * The default WebUI origin for a dev server started from this checkout: the issue
+ * key from the branch, resolved against the Portless routes that are actually up.
  */
 export function devWebUiOrigin(
   cwd: string,
@@ -48,7 +92,7 @@ export function devWebUiOrigin(
   const issue = branch ? /(?:^|[-_/])(fr-?\d+)/i.exec(branch) : null;
   if (!issue) return `https://localhost:${port}`;
   const app = issue[1].toLowerCase().replace(/^fr-?/, 'fr-');
-  return `https://${app}.localhost:${port}`;
+  return `https://${liveAppName(app, env) ?? app}.localhost:${port}`;
 }
 
 function currentBranch(cwd: string): string | undefined {
