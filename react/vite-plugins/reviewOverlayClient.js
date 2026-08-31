@@ -299,8 +299,17 @@
   style.textContent = `
     :host { all: initial; }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
-    .toggle {
+    .dock {
       position: fixed; right: 16px; bottom: 16px; z-index: 2147483000;
+      display: none; flex-direction: column; align-items: flex-end; gap: 6px;
+    }
+    .dock.show { display: flex; }
+    .fixchk {
+      font-size: 12px; color: #555; background: rgba(255,255,255,.92);
+      border: 1px solid #ddd; border-radius: 10px; padding: 3px 9px;
+      display: flex; gap: 5px; align-items: center; cursor: pointer;
+    }
+    .toggle {
       border: none; border-radius: 24px; padding: 10px 16px; cursor: pointer;
       background: #ff7a00; color: #fff; font-size: 14px; font-weight: 600;
       box-shadow: 0 2px 10px rgba(0,0,0,.25);
@@ -442,7 +451,42 @@
     </div>
   `;
   const toast = el('div', 'toast');
-  root.append(toggle, panel, hoverbox, pinLayer, compose, toast);
+  // Dock: hidden by default — shown while review mode / compose / panel is
+  // active, or always when the 항상 표시 checkbox is on (driver decision).
+  const dock = el('div', 'dock');
+  const fixchk = el('label', 'fixchk');
+  fixchk.innerHTML = '<input type="checkbox" /> 항상 표시';
+  dock.append(fixchk, toggle);
+  root.append(dock, panel, hoverbox, pinLayer, compose, toast);
+
+  const LS_FIXED = 'bai-review:fixedToggle';
+  let fixedPref = false;
+  try {
+    fixedPref = localStorage.getItem(LS_FIXED) === '1';
+  } catch {
+    /* storage unavailable */
+  }
+  const fixInput = fixchk.querySelector('input');
+  fixInput.checked = fixedPref;
+  fixInput.addEventListener('change', () => {
+    fixedPref = fixInput.checked;
+    try {
+      localStorage.setItem(LS_FIXED, fixedPref ? '1' : '0');
+    } catch {
+      /* storage unavailable */
+    }
+    updateDock();
+  });
+
+  function updateDock() {
+    const show =
+      fixedPref ||
+      grabPicking ||
+      picking ||
+      compose.style.display === 'block' ||
+      panel.classList.contains('open');
+    dock.classList.toggle('show', show);
+  }
 
   const srcLine = panel.querySelector('.srcline');
   const itemsBox = panel.querySelector('.items');
@@ -1032,6 +1076,7 @@
             // so grab's plain copy mode is repurposed for review comments.
             onActivate: () => {
               grabPicking = true;
+              updateDock();
             },
             onElementSelect: (element) => {
               if (!grabPicking) return undefined; // plain ⌘C grab — untouched
@@ -1049,6 +1094,7 @@
             },
             onDeactivate: () => {
               grabPicking = false;
+              updateDock();
             },
           },
         });
@@ -1121,6 +1167,7 @@
     compose.style.left = `${Math.min(x, window.innerWidth - w - 12)}px`;
     compose.style.top = `${Math.min(y + 10, window.innerHeight - 180)}px`;
     syncPickHighlight();
+    updateDock();
     composeText.focus();
     // Win over any late focus restoration (react-grab unfreeze/deactivate).
     setTimeout(() => {
@@ -1131,6 +1178,7 @@
     compose.style.display = 'none';
     pickTarget = null;
     hoverbox.style.display = 'none';
+    updateDock();
   }
 
   // Keep the picked element outlined until the compose closes — react-grab's
@@ -1177,10 +1225,12 @@
   function openPanel() {
     panel.classList.add('open');
     toggle.classList.add('active');
+    updateDock();
   }
   function closePanel() {
     panel.classList.remove('open');
     toggle.classList.remove('active');
+    updateDock();
   }
   toggle.addEventListener('click', () => {
     if (panel.classList.contains('open')) closePanel();
@@ -1226,4 +1276,5 @@
   handleFragment();
   fetchPins();
   schedulePoll();
+  updateDock();
 })();

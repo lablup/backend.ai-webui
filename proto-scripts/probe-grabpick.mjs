@@ -24,12 +24,25 @@ const box = await page
 const cx = box.x + box.width / 2;
 const cy = box.y + box.height / 2;
 
+const dockAtBoot = await page.evaluate(() =>
+  document
+    .querySelector('[data-bai-review-overlay]')
+    .shadowRoot.querySelector('.dock')
+    .classList.contains('show'),
+);
+
 // Activate react-grab directly — the same path its ⌘⌃C hotkey takes; the
 // boot-registered plugin's onActivate must arm review-pick by itself.
 await page.evaluate(() => {
-  document.querySelector('[data-bai-review-overlay]');
   window.__REACT_GRAB__.activate();
 });
+await page.waitForTimeout(200);
+const dockActive = await page.evaluate(() =>
+  document
+    .querySelector('[data-bai-review-overlay]')
+    .shadowRoot.querySelector('.dock')
+    .classList.contains('show'),
+);
 await page.waitForTimeout(500);
 const active = await page.evaluate(() => window.__REACT_GRAB__.isActive());
 
@@ -83,5 +96,18 @@ const hl = await page.evaluate(async () => {
   };
 });
 
-console.log(JSON.stringify({ active, ...result, ...persist, ...afterClose, ...hl }, null, 2));
+// Close the panel — with nothing active and 항상 표시 off, the dock hides.
+const dockAtEnd = await page.evaluate(() => {
+  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
+  sr.querySelector('[data-act="close"]').click();
+  return sr.querySelector('.dock').classList.contains('show');
+});
+
+console.log(
+  JSON.stringify(
+    { dockAtBoot, dockActive, active, ...result, ...persist, ...afterClose, ...hl, dockAtEnd },
+    null,
+    2,
+  ),
+);
 await browser.close();
