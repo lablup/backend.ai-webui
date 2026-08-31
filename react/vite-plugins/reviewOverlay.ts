@@ -274,6 +274,26 @@ async function fetchGithub(repo: string, pr: number): Promise<Occurrence[]> {
 
 // --------------------------------------------------------------- Teams
 
+/** Deep link to one message in the thread (channel id stays %-encoded). */
+function teamsMsgUrl(threadUrl: string, messageId?: string): string | null {
+  try {
+    const u = new URL(threadUrl);
+    const parts = u.pathname.split('/').filter(Boolean); // l/message/<ch>/<root>
+    const channel = parts[2];
+    const root = parts[3];
+    if (!channel || !messageId) return null;
+    const q = new URLSearchParams();
+    for (const k of ['tenantId', 'groupId'] as const) {
+      const v = u.searchParams.get(k);
+      if (v) q.set(k, v);
+    }
+    q.set('parentMessageId', root);
+    return `https://teams.microsoft.com/l/message/${channel}/${messageId}?${q}`;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchTeams(threadUrl: string): Promise<Occurrence[]> {
   // System python lacks httpx/msal; uv supplies them (cached after 1st run).
   const uv = `${process.env.HOME}/.local/bin/uv`;
@@ -307,7 +327,8 @@ async function fetchTeams(threadUrl: string): Promise<Occurrence[]> {
     for (const [id, anchorB64] of seen) {
       occs.push({
         id, anchorB64, source: 'teams', kind: 'reply',
-        url: null, author: m.author ?? null, createdAt: m.createdDateTime,
+        url: teamsMsgUrl(threadUrl, m.id),
+        author: m.author ?? null, createdAt: m.createdDateTime,
         body: stripHtml(content).replace(/#bai=v3\.\S+/g, '').slice(0, 400),
         resolved, resolvedBy: null, outdated: false, resolvedHint: false,
         native: false, replies: [], teamsMessageId: m.id,
@@ -367,7 +388,11 @@ function mergePins(occs: Occurrence[]) {
         ? { url: ghOccs[0].url, author: ghOccs[0].author, kind: ghOccs[0].kind }
         : null,
       teams: tmOccs.length
-        ? { author: tmOccs[0].author, messageId: tmOccs[0].teamsMessageId }
+        ? {
+            author: tmOccs[0].author,
+            messageId: tmOccs[0].teamsMessageId,
+            url: tmOccs[0].url,
+          }
         : null,
       replies,
     });

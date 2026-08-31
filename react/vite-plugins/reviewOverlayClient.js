@@ -434,7 +434,7 @@
   const compose = el('div', 'compose');
   compose.innerHTML = `
     <div class="pathlabel"></div>
-    <textarea placeholder="이 요소에 대한 코멘트…"></textarea>
+    <textarea placeholder="이 요소에 대한 코멘트… (⌘⏎ 블럭 복사, 비워도 됨)"></textarea>
     <div class="err"></div>
     <div class="actions">
       <button class="iconbtn" data-act="cancel">취소</button>
@@ -640,7 +640,16 @@
       a.target = '_blank';
       meta.appendChild(a);
     }
-    if (d.teams) meta.appendChild(el('span', 'badge src', '💬 Teams'));
+    if (d.teams) {
+      if (d.teams.url) {
+        const a = el('a', 'badge src', '💬 Teams');
+        a.href = d.teams.url;
+        a.target = '_blank';
+        meta.appendChild(a);
+      } else {
+        meta.appendChild(el('span', 'badge src', '💬 Teams'));
+      }
+    }
     const sb = stateBadge(d);
     if (sb) meta.insertAdjacentHTML('beforeend', sb);
     const body = el('div', 'body');
@@ -947,7 +956,7 @@
       `> 📍 **${label}** · \`${id}\``,
       // react-grab's stack, verbatim — first line gets the ⚛️ marker.
       ...stack.map((l, i) => (i === 0 ? `> ⚛️ ${l.trim()}` : `> ${l}`)),
-      ...text.split('\n').map((l) => `> ${l}`),
+      ...(text ? text.split('\n').map((l) => `> ${l}`) : []),
       `> [Open on dev server](${url})`,
       `<!-- bai-review v3 id=${id} pr=${prNum} at=${at} -->`,
     ].join('\n');
@@ -1060,6 +1069,14 @@
   const composeErr = compose.querySelector('.err');
   const composeLabel = compose.querySelector('.pathlabel');
 
+  // ⌘⏎ / Ctrl⏎ = 블럭 복사 (driver-requested shortcut).
+  composeText.addEventListener('keydown', (evt) => {
+    if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
+      evt.preventDefault();
+      compose.querySelector('[data-act="copy"]').click();
+    }
+  });
+
   function openCompose(x, y) {
     composeErr.style.display = 'none';
     composeText.value = '';
@@ -1089,8 +1106,9 @@
     const act = btn.dataset && btn.dataset.act;
     if (act === 'cancel') closeCompose();
     if (act === 'copy') {
+      // Empty text is allowed — the block still carries label/stack/link.
       const text = composeText.value.trim();
-      if (!text || !pickTarget) return;
+      if (!pickTarget) return;
       btn.disabled = true;
       try {
         const { block } = await buildBlock(pickTarget, text);
