@@ -67,6 +67,21 @@ Dev server on box `jongeun`: stopped (was http://fr-3810.jongeun.10-82-0-159.ssl
 check 'body leaks no endpoint / e-mail / password' 'clean' \
   "$(grep -qiE '@|password|:8090|localhost' <<<"$RUNNING" && echo leak || echo clean)"
 
+# ── probe gate (recorded gateway responses) ───────────────────────────────────
+PORTLESS_200='HTTP/1.1 200 OK
+Via: 2.0 Caddy
+X-Portless: 1'
+BLANK_200='HTTP/1.1 200 OK
+Server: Caddy
+Content-Length: 0'
+PORTLESS_404='HTTP/1.1 404 Not Found
+Via: 2.0 Caddy
+X-Portless: 1'
+probe_ok 200 "$PORTLESS_200"; check 'a live Portless route is advertised' 0 $?
+probe_ok 200 "$BLANK_200";    check 'a two-label name (blank 200, no header) is refused' 1 $?
+probe_ok 404 "$PORTLESS_404"; check 'an app Portless does not serve (404 + header) is refused' 1 $?
+probe_ok '' '';               check 'no response at all is refused' 1 $?
+
 # ── served set from a recorded `gh stack view --json` payload ─────────────────
 STACK='{
   "trunk": "main",

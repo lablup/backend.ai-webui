@@ -137,13 +137,22 @@ gateway_share_base() {
 
 gateway_box() { jq -r '.box // empty' "$DEV_GW_CONFIG"; }
 
-# A blank 200 from the gateway means the host did not reach a Portless route
-# (a two-label app name does this). Only a real Portless response carries the
-# header, so that header is the whole gate.
+# probe_ok <http_status> <raw_headers> — both halves are needed. A two-label app
+# name never reaches Portless: Caddy answers a blank 200 with no header. An app
+# name Portless does not serve DOES carry the header, on a 404.
+probe_ok() {
+  case "$1" in 2??) ;; *) return 1 ;; esac
+  grep -qiE '^x-portless:[[:space:]]*1[[:space:]]*$' <<<"$2"
+}
+
+# Sets PROBE_STATUS for the refusal message.
 probe_portless() {
-  local url=$1 headers
-  headers=$(curl -sS -o /dev/null -D - -m 10 "$url" 2>/dev/null) || return 1
-  grep -qiE '^x-portless:[[:space:]]*1[[:space:]]*$' <<<"$headers"
+  local url=$1 hdr rc
+  hdr=$(mktemp)
+  PROBE_STATUS=$(curl -sS -o /dev/null -D "$hdr" -m 10 -w '%{http_code}' "$url" 2>/dev/null) || PROBE_STATUS=""
+  probe_ok "$PROBE_STATUS" "$(cat "$hdr")" && rc=0 || rc=1
+  rm -f "$hdr"
+  return "$rc"
 }
 
 # ── app name (pre-boot) ──────────────────────────────────────────────────────
@@ -264,7 +273,8 @@ cmd_advertise() {
   # Belt and braces: a .localhost URL is useless to a reviewer and must never
   # reach a public PR, whatever the config said.
   case "$url" in *.localhost*) refuse "refusing to advertise a .localhost URL ($url)" ;; esac
-  probe_portless "$url" || refuse "$url did not answer with 'X-Portless: 1' — not advertised (is the dev server up? is the app name a single label?)"
+  PROBE_STATUS=""
+  probe_portless "$url" || refuse "$url answered ${PROBE_STATUS:-no response}, not a Portless 2xx — not advertised (is the dev server up? is the app name a single label?)"
 
   local served; served=$(served_set "$branch")
   local -a prs=(); mapfile -t prs < <(jq -r '.[].pr' <<<"$served")
