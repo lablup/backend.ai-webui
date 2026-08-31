@@ -162,7 +162,7 @@ If the resolved value matches the existing default backend the WebUI would other
 **Resolve them conservatively — never guess:**
 
 1. **User explicitly supplied credentials** in the prompt or conversation (e.g. "log in as `admin@lablup.com` / `wJalrXUt`", "use the domain-admin test account") → set both vars from what they said.
-2. **A shared team test server's credentials are already known** to this session — e.g. the `dev-server-registry` skill's `--backend-user` / `--backend-password` for the resolved endpoint, or credentials the user pasted earlier for that box → reuse them.
+2. **A shared team test server's credentials are already known** to this session — credentials the user pasted earlier for that box → reuse them.
 3. **Otherwise omit both.** Do **not** scrape passwords out of the PR body, invent credentials, or reuse `e2e/envs/.env.playwright` values unless the user pointed you at them. Set the email alone (without a password) only if that is all the user gave.
 
 **Security caveats (state them when you use these):**
@@ -256,20 +256,7 @@ If after ~15s the React URL still hasn't appeared (very rare with Vite), announc
 
 Many projects don't use Portless. Read the dev server's stdout for whatever URL(s) it prints (Vite typically prints `Local:` and `Network:`; Next.js prints `started server on http://localhost:3000`; etc.) and forward all of them to the user verbatim. If the project does use Portless, follow the webui rules above.
 
-## 6. Register in the dev-server registry (post-boot)
-
-After a successful boot — i.e. right after step 5, once the **actual** Portless URL is known — register this dev server in the team dev-server registry **if the fw plugin's `dev-server-registry` skill is available** (it ships in the `fw` plugin from lablup/claude-mp; its `scripts/registry.sh` does the write). Teammates then discover the server on the team board instead of asking around.
-
-- Run the skill's **`register`** op from this project's worktree (`--cwd` = the checkout the server serves), passing what you learned during boot:
-  - `--subdomain` — the hostname Portless **actually printed** in step 5 (the part before `.localhost`), not the name you requested in step 2b.
-  - `--backend-endpoint` — the `VITE_DEFAULT_API_ENDPOINT` you resolved in step 2c (omit if you resolved none).
-  - `--backend-user` / `--backend-password` — **only** when the endpoint is a shared team test server (the registry skill's credential policy governs; when unsure, omit and let reviewers ask).
-  - PR number, branch, and Jira key are auto-derived by the script from the worktree — don't recompute them.
-- **Skip silently** (one short sentence, not an error) when the fw plugin / `dev-server-registry` skill isn't installed, or the box isn't initialized (`~/.config/fw/registry-box.json` missing). Do **not** run `init` unprompted — it needs a teammate-reachable host only the user knows.
-- Registration is idempotent per (repo, PR): re-booting the same PR just refreshes the entry. Register on state changes only — never on a timer.
-- **On stop/teardown** — the user says to stop the server, the review session ends, or you kill the background task — run the skill's **`unregister`** op from the same worktree so the board (and the PR's registry comment) doesn't advertise a dead server.
-
-## 7. Edge cases
+## 6. Edge cases
 
 - **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
 - **User overrides via prompt**: if the user says "use a green header" or "no color this time" or "name the dev URL <foo>" or "ignore the PR's IP, use 10.0.0.7 instead", honor their words over the conversation-history and PR-description values.
@@ -277,7 +264,7 @@ After a successful boot — i.e. right after step 5, once the **actual** Portles
 - **No `/color` in history but user mentioned a color**: treat the user's mention as the source of truth. If they said "use orange", map `orange` → `#EA580C` and prefix accordingly.
 - **PR description mentions multiple addresses or none**: take the **first** match for the multi-match case; for the no-match case, omit `VITE_DEFAULT_API_ENDPOINT` rather than guessing. The login form will fall back to `localStorage` / `config.toml` like before.
 
-## 8. Out of scope
+## 7. Out of scope
 
-- Don't write any color file (`.claude/.fw-color`, `.env.development.local`, etc.). The only sanctioned side effects are the env var prefix and the registry entry from step 6.
-- Don't install deps, run lint, or do any other "while we're here" steps. Just start the server (and register it, per step 6).
+- Don't write any color file (`.claude/.fw-color`, `.env.development.local`, etc.). The only sanctioned side effect is the env var prefix.
+- Don't install deps, run lint, or do any other "while we're here" steps. Just start the server.
