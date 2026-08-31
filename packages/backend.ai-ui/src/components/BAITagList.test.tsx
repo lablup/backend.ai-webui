@@ -52,13 +52,14 @@ describe('BAITagList overflow trigger', () => {
   // HoverCard's `focusTrigger="auto"` only attaches to a naturally focusable
   // element, so a trigger that is not one never opens for a keyboard user.
   // `chip` gets that from `Link` (a <button>); `text` renders a bare <span>
-  // and needs the explicit tabindex.
+  // and needs the explicit tabindex. Badge wraps its label in an inner <span>
+  // (0.5.1), so climb from the text to the focusable root.
   it.each([
     ['chip', undefined],
     ['text', 'text'],
   ] as const)('keeps the %s hover trigger focusable', (_name, variant) => {
     render(<BAITagList items={ITEMS} variant={variant} />);
-    const el = overflow().closest('button') ?? overflow();
+    const el = overflow().closest('button, [tabindex]') ?? overflow();
     expect(el.tagName === 'BUTTON' || el.tabIndex >= 0).toBe(true);
   });
 
