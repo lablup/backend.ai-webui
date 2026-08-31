@@ -178,7 +178,7 @@ WORKFLOW — discover, don't guess. Before answering anything about Backend.AI d
 1. `bai-agent doctor` — checkout and stored session in one pass; exit 0 means the environment is ok. Then `bai-agent whoami` — exit 3 means log in (see RULES).
 2. `bai-agent search "<english UI term>"` — START HERE: one ranked list over manual + schema + terminology. Every hit carries the `command:` that opens it.
 3. `bai-agent docs show <id>` · `schema show <Type>.<field>` · `explain <Type>.<field>=<VALUE>` — the hit in full. `schema show` is what the SDL declares; `explain` is what it means to a user.
-4. `bai-agent query '<document>'` — ask the manager. Validated against this checkout's SDL before any network call. Rows come back carrying `webui_path` / `webui_url` under `data.links` — hand that to the user so they can open it themselves.
+4. `bai-agent query '<document>'` — ask the manager. Validated against the checkout's SDL before any network call. Rows come back carrying `webui_path` / `webui_url` under `data.links` — hand that to the user so they can open it themselves.
 
 OUTPUT: `--json` prints one envelope on stdout — {"apiVersion":"bai-agent/v1","type":…,"data":…}; a failure prints {"apiVersion","error","code","suggestions?","hint?"} on stderr and nothing on stdout. Text is the same data as aligned `key: value` records. `hint` is a concrete next step — a command to run, or for a refused mutation, the WebUI page to do it on — never prose.
 EXIT: 0 ok · 1 error (schema_mismatch, version_mismatch, repo_not_found, repo_incomplete, internal) · 2 usage · 3 auth_required · 4 mutation_refused · 5 not_found.
@@ -196,7 +196,7 @@ RULES:
 COMMANDS:
   version   Print the CLI version and the detected checkout.
   manifest  Print the CLI capability manifest (commands and their flags).
-  init      Print the CLAUDE.md agent block, generated from the command registry.
+  init      Set this machine up (endpoint, data sync, login, skill), or with --features print the CLAUDE.md agent block.
   doctor    Diagnose the CLI environment and the detected checkout.
   sync      Fetch the checkout data (SDL, i18n, manual) for use outside a WebUI checkout.
   search    Rank manual sections, schema entries and terminology for a query.

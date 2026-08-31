@@ -30,6 +30,36 @@ const SAMPLE_ARGS: Record<string, string[]> = {
  * so a representative data object stands in for the call.
  */
 const SAMPLE_DATA: Record<string, unknown> = {
+  init: {
+    kind: 'setup',
+    endpoint: 'https://manager.example.com',
+    endpointSource: 'flag',
+    manager: { manager: '26.8.1', apiVersion: 'v8.20240915', source: '/func/' },
+    ref: { ref: 'v26.8.1', source: 'manager', reason: 'highest v26.8.* tag' },
+    checkout: {
+      root: '/home/user/.local/share/backend.ai-agent/checkout',
+      source: 'synced',
+    },
+    sync: {
+      outcome: 'cloned',
+      commit: 'abc123def456',
+      dir: '/home/user/.local/share/backend.ai-agent/checkout',
+    },
+    schemaSync: { tag: '26.8.1', outcome: 'updated' },
+    login: {
+      email: 'user@example.com',
+      role: 'admin',
+      sessionFile: '/tmp/sessions/manager.example.com.json',
+    },
+    skill: {
+      path: '/home/user/.claude/skills/bai-agent',
+      source: '/usr/lib/node_modules/backend.ai-agent-cli/skill',
+      outcome: 'installed',
+      files: ['SKILL.md', 'references/agent-block.md'],
+    },
+    block: { skipped: 'no checkout CLAUDE.md here' },
+    configPath: '/home/user/.config/backend.ai-agent/config.json',
+  },
   sync: {
     kind: 'sync',
     dir: '/home/user/.local/share/backend.ai-agent/checkout',

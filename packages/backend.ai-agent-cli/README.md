@@ -21,11 +21,14 @@ Anywhere else, from npm:
 
 ```bash
 npm install -g backend.ai-agent-cli        # or: npx backend.ai-agent-cli <cmd>
-bai-agent --help
+bai-agent init                             # endpoint → data sync → login? → skill?
 ```
 
-The package bundles its dependencies and ships `mappings/` next to `dist/`, so
-the install has no runtime dependency beyond Node ≥ 22.
+`init` is the whole setup (see [The `init` wizard](#the-init-wizard)); after
+it, `bai-agent search "…"` and friends work from any directory. The package
+bundles its dependencies and ships `mappings/` and the Claude Code skill next
+to `dist/`, so the install has no runtime dependency beyond Node ≥ 22 — and
+`git`, which `sync` shells out to.
 
 ### Versioning and releases
 
@@ -126,7 +129,8 @@ It is written by `sync`; sessions never go in it.
 ```bash
 bai-agent version              # CLI version, detected checkout root, repo version
 bai-agent manifest             # every command with its description and flags
-bai-agent init                 # the CLAUDE.md agent block (see The agent block below)
+bai-agent init                 # set this machine up (see The init wizard below)
+bai-agent init --features agents  # the CLAUDE.md agent block (see The agent block below)
 bai-agent doctor               # environment + checkout + auth diagnostics
 bai-agent sync                 # fetch the checkout data for use outside a checkout
 bai-agent search "<query>"     # one ranked list over docs + schema + terminology
@@ -789,6 +793,51 @@ that nothing curates. The same check runs in `scripts/verify.sh`
 ("Agent mappings"), in `.github/workflows/agent-mappings.yml` on the paths that
 can orphan a reference, and in `src/mappings/mappings.test.ts`.
 
+## The `init` wizard
+
+`bai-agent init` with no `--features` sets a machine up in one pass:
+
+```
+? Backend.AI endpoint URL [https://manager.example.com]:
+Manager 26.8.1 at https://manager.example.com.
+Cloning https://github.com/lablup/backend.ai-webui.git (v26.8.1, data paths only) into ~/.local/share/backend.ai-agent/checkout…
+? Log in now? (Y/n)
+? Install the Claude Code skill into ~/.claude/skills/bai-agent? (Y/n)
+```
+
+1. **Endpoint** — asked for (the recorded one is the default); `--endpoint`
+   skips the question. Saved to `config.json` even when nothing else runs,
+   so `login`, `whoami` and `doctor` find it later.
+2. **Manager version** — `GET <endpoint>/func/`, which needs no session.
+3. **Ref** — the highest WebUI tag sharing the manager's `major.minor`
+   (`26.8.1` → `v26.8.1`, `26.9.0rc1` → `v26.9.0-rc.3`), listed with
+   `git ls-remote`; no such tag, or no manager version, means `main` with a
+   warning. `--ref` overrides.
+4. **Sync** — `sync` at that ref, then `schema sync --tag <manager version>`
+   so the SDL matches the backend release exactly (left at the tag's
+   snapshot, with a warning, when the release carries no asset).
+5. **Login?** — asked (`--login` / `--no-login`); yes runs `login` with the
+   same `--paste` / `--webui` flags. A failed login is reported as a skipped
+   step, not an abort.
+6. **Skill?** — asked (`--skill` / `--no-skill`); yes installs the
+   `bai-agent` skill into `~/.claude/skills/bai-agent/` (or under
+   `$CLAUDE_CONFIG_DIR`) and writes `references/agent-block.md` beside it: the
+   agent block below, worded for a machine with no checkout, generated from
+   the installed CLI's registry. Re-running `init` refreshes both.
+
+Inside a WebUI checkout the wizard uses the checkout's own data — no sync,
+and its committed SDL is left alone — and refreshes the `BAI-AGENT` block in
+its `CLAUDE.md` instead.
+
+Without a TTY, every question must be answered by its flag; an unanswered one
+exits 2 (`usage`) naming the flag, so an agent running `init` never hangs:
+
+```bash
+bai-agent init --endpoint https://manager.example.com --no-login --skill
+```
+
+`--json` prints every step's outcome — or why it was skipped — in one envelope.
+
 ## The agent block
 
 The CLI is only useful to an agent that knows it exists. `init` prints the
@@ -802,8 +851,12 @@ bai-agent init --features agents          # print it
 bai-agent init --features agents --write  # replace it in CLAUDE.md, idempotently
 ```
 
-`--features agents` is the only feature and is what a bare `init` prints (with a
-note on stderr). `--write` replaces everything between
+`--features agents` is the only feature (a bare `init` is the setup wizard
+above). The same generator renders a **standalone** variant — `bai-agent
+<cmd>` instead of the pnpm proxy, the installed skill instead of
+`.claude/skills/`, no checkout-relative file references — which `init`
+writes into the installed skill as `references/agent-block.md`.
+`--write` replaces everything between
 `<!-- BAI-AGENT:start -->` and `<!-- BAI-AGENT:end -->`; prose outside the
 markers survives, and a second run is a no-op (`outcome: unchanged`). With no
 markers in the file it inserts after the ASTRYX block and its notes.
@@ -818,8 +871,10 @@ output, so a CLI change that is not re-synced fails the suite:
 pnpm --filter backend.ai-agent-cli build && pnpm run bai-agent init --features agents --write
 ```
 
-The repo-local `bai-agent` skill (`.claude/skills/bai-agent/`) carries what the
-block deliberately does not: the preflight and login procedure, when to answer
+The repo-local `bai-agent` skill (`.claude/skills/bai-agent/`) — copied into
+the package as `skill/` at build time (`scripts/copy-skill.mjs`), so the npm
+tarball ships it and `init` can install it — carries what the block
+deliberately does not: the preflight and login procedure, when to answer
 directly versus point the user at the WebUI, the neighbouring skills'
 boundaries, and `references/query-cookbook.md` — ready-to-run documents that
 `src/init/skill.test.ts` re-validates against the SDL.

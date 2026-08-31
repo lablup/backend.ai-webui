@@ -2,7 +2,11 @@ import type { RunContext } from '../command.js';
 import { defineCommand } from '../command.js';
 import { readConfig } from '../config.js';
 import { CliError, EXIT } from '../errors.js';
-import { fetchManagerVersion, fetchWhoAmI } from '../manager.js';
+import {
+  fetchManagerVersion,
+  fetchPublicManagerVersion,
+  fetchWhoAmI,
+} from '../manager.js';
 import { MAPPINGS_DIR_NAME } from '../mappings/load.js';
 import { resolveMappings } from '../mappings/resolve.js';
 import { CLI_NAME, MIN_NODE_MAJOR } from '../meta.js';
@@ -580,36 +584,42 @@ const alignmentGroup: CheckGroup = {
     });
 
     const session = alignmentSession({ cwd });
-    if (!session) {
+    // `/func/` is public: the endpoint `init` recorded is enough to compare,
+    // even before anyone has logged in.
+    const recorded = session ? undefined : readConfig().endpoint;
+    if (!session && !recorded) {
       checks.push({
         group: 'alignment',
         check: 'manager version',
         status: 'warn',
-        detail: 'not checked: no session stored',
-        hint: `${CLI_NAME} login --endpoint <manager url>`,
+        detail: 'not checked: no session stored and no endpoint recorded',
+        hint: `${CLI_NAME} init --endpoint <manager url>`,
       });
       checks.push({
         group: 'alignment',
         check: 'verdict',
         status: 'warn',
         detail: meta
-          ? `SDL recorded at ${meta.tag}; log in to compare it with a manager`
+          ? `SDL recorded at ${meta.tag}; run init or log in to compare it with a manager`
           : 'unknown: no recorded tag and no manager to compare against',
         hint: `${CLI_NAME} schema sync --dry-run`,
       });
       return checks;
     }
+    const endpoint = session?.endpoint ?? recorded!;
 
     let version;
     try {
-      version = await fetchManagerVersion(session);
+      version = session
+        ? await fetchManagerVersion(session)
+        : await fetchPublicManagerVersion(endpoint);
     } catch (error) {
       checks.push({
         group: 'alignment',
         check: 'manager version',
         status: 'warn',
         detail: error instanceof Error ? error.message : String(error),
-        hint: `${CLI_NAME} login --endpoint ${session.endpoint}`,
+        hint: `${CLI_NAME} login --endpoint ${endpoint}`,
       });
       checks.push({
         group: 'alignment',
@@ -625,7 +635,7 @@ const alignmentGroup: CheckGroup = {
       group: 'alignment',
       check: 'manager version',
       status: 'ok',
-      detail: `${version.manager} at ${session.endpoint} (via ${version.source})`,
+      detail: `${version.manager} at ${endpoint} (via ${version.source}${session ? '' : ', no session'})`,
     });
 
     const alignment = checkVersionAlignment(

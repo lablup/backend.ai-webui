@@ -10,6 +10,7 @@ export const WHOAMI_QUERY =
 
 export interface ManagerSession {
   endpoint: string;
+  /** Empty for the public calls (`/func/`) that need no session. */
   sessionId: string;
 }
 
@@ -242,7 +243,9 @@ export async function fetchManagerVersion(
           'User-Agent': `Backend.AI ${CLI_NAME}/${cliVersion()}`,
           'X-BackendAI-Version': MANAGER_API_VERSION,
           'X-BackendAI-Date': new Date().toISOString(),
-          'X-BackendAI-SessionID': session.sessionId,
+          ...(session.sessionId
+            ? { 'X-BackendAI-SessionID': session.sessionId }
+            : {}),
         },
       });
       if (!response.ok) continue;
@@ -261,6 +264,17 @@ export async function fetchManagerVersion(
     `Cannot read the manager version from ${session.endpoint} (tried ${VERSION_PATHS.join(', ')}).`,
     { hint: `${CLI_NAME} doctor`, cause: lastError },
   );
+}
+
+/**
+ * The manager version with no session at all — `/func/` is public, which is
+ * what lets `init` pick a data ref before anyone has logged in.
+ */
+export function fetchPublicManagerVersion(
+  endpoint: string,
+  options: ManagerRequestOptions = {},
+): Promise<ManagerVersion> {
+  return fetchManagerVersion({ endpoint, sessionId: '' }, options);
 }
 
 /**

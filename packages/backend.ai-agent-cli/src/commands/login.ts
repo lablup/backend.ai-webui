@@ -8,7 +8,7 @@ import { CliError } from '../errors.js';
 import { fetchWhoAmI, type WhoAmI } from '../manager.js';
 import { CLI_NAME } from '../meta.js';
 import { record, renderBlocks, section } from '../output.js';
-import { tryResolveRepoContext } from '../repo-context.js';
+import { findRepoRoot, tryResolveRepoContext } from '../repo-context.js';
 import {
   loadSession,
   maskSessionId,
@@ -168,15 +168,28 @@ async function runPaste(
   return finish(endpoint, webui.replace(/\/+$/, ''), sessionId, 'paste');
 }
 
+/**
+ * The WebUI origin serving `/cli-login`: the flag, then the origin a previous
+ * login used, then this checkout's dev server — and, with no checkout at all,
+ * the endpoint itself, since the webserver serves the UI on the same origin.
+ */
+export function defaultWebUiOrigin(
+  context: RunContext,
+  endpoint: string,
+): string {
+  if (typeof context.flags.webui === 'string' && context.flags.webui) {
+    return context.flags.webui;
+  }
+  const previous = loadSession(endpoint)?.webui;
+  if (previous) return previous;
+  return findRepoRoot(context.cwd) ? devWebUiOrigin(context.cwd) : endpoint;
+}
+
 async function runBrowser(
   context: RunContext,
   endpoint: string,
 ): Promise<LoginData> {
-  const webui = normalizeEndpoint(
-    typeof context.flags.webui === 'string' && context.flags.webui
-      ? context.flags.webui
-      : loadSession(endpoint)?.webui || devWebUiOrigin(context.cwd),
-  );
+  const webui = normalizeEndpoint(defaultWebUiOrigin(context, endpoint));
   const timeoutSeconds = Number(
     context.flags.timeout ?? DEFAULT_TIMEOUT_SECONDS,
   );
@@ -240,6 +253,16 @@ async function runBrowser(
   return outcome;
 }
 
+/** The command body, shared with `init` so the wizard logs in the same way. */
+export function runLogin(
+  context: RunContext,
+  endpoint: string,
+): Promise<LoginData> {
+  return context.flags.paste === true
+    ? runPaste(context, endpoint)
+    : runBrowser(context, endpoint);
+}
+
 export const loginCommand = defineCommand<LoginData>({
   name: 'login',
   summary:
@@ -255,7 +278,7 @@ export const loginCommand = defineCommand<LoginData>({
     {
       flag: '--webui <origin>',
       description:
-        'WebUI origin hosting /cli-login. Defaults to this checkout’s dev server origin.',
+        'WebUI origin hosting /cli-login. Defaults to the last login’s, then this checkout’s dev server, then the endpoint itself.',
       type: 'string',
     },
     {
@@ -291,9 +314,7 @@ export const loginCommand = defineCommand<LoginData>({
       flag: flagEndpoint,
       cwd: context.cwd,
     });
-    return context.flags.paste === true
-      ? runPaste(context, endpoint)
-      : runBrowser(context, endpoint);
+    return runLogin(context, endpoint);
   },
   render: (data, { verbosity }) =>
     renderBlocks([
