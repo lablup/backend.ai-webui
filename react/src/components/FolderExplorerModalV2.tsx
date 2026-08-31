@@ -193,6 +193,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           unmanagedPath
           host
           id
+          accessControl {
+            permission
+          }
           metadata {
             name
           }
@@ -298,27 +301,24 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
     'download-file',
   );
-  // `upload-file` on the storage host gates the actual upload pipeline:
-  // upload buttons (file/folder), drag-drop, and the in-app text editor save
-  // (which overwrites the file via the upload API). mkdir / create-file /
-  // rename are kept enabled — there is no corresponding host-level
-  // capability for them today, and FR-2619 will revisit the effective
-  // permission set.
-  const hasUploadContentPermission = _.includes(
+  const hasUploadHostPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
     'upload-file',
   );
-  // TODO(needs-backend): write/delete capability should be derived from the
-  // caller's *effective* permission set on this entity (e.g.,
-  // `delete_content`, `write_content`), not from the folder's mount
-  // permission. The V2 schema currently exposes only the mount permission via
-  // `accessControl.permission` (`READ_ONLY` / `READ_WRITE` / `RW_DELETE`),
-  // which is what the folder is mounted *as* into a session — not what the
-  // caller is allowed to do on the folder itself. Until the backend exposes a
-  // proper effective permission set, allow all callers and let the server
-  // enforce authorization. See FR-2619 follow-up.
-  const hasDeleteContentPermission = true;
-  const hasWriteContentPermission = true;
+  // TODO(needs-backend): `accessControl.permission` is the folder's *mount*
+  // permission, the closest thing V2 exposes to an effective permission set
+  // (legacy `vfolder_node.permissions` had `write_content` / `delete_content`).
+  // Swap this for the real set once the backend ships it — FR-2619 follow-up.
+  // Allow-list rather than `!== 'READ_ONLY'` so an unknown future enum value
+  // fails closed instead of granting write.
+  const folderPermission = vfolderNode?.accessControl?.permission;
+  const hasWriteContentPermission =
+    folderPermission === 'READ_WRITE' || folderPermission === 'RW_DELETE';
+  const hasDeleteContentPermission = folderPermission === 'RW_DELETE';
+  // Upload and the in-app editor save both go through the upload API, so they
+  // need the storage host capability *and* write on the folder itself.
+  const hasUploadContentPermission =
+    hasUploadHostPermission && hasWriteContentPermission;
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
