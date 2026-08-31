@@ -72,14 +72,40 @@ const persist = await page.evaluate(() => {
   const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
   return { outlineAfter4s: sr.querySelector('.hoverbox').style.display === 'block' };
 });
-await page.evaluate(() => {
-  const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
-  sr.querySelector('[data-act="cancel"]').click();
-});
+// Esc closes the compose.
+await page.keyboard.press('Escape');
+await page.waitForTimeout(200);
 const afterClose = await page.evaluate(() => {
   const sr = document.querySelector('[data-bai-review-overlay]').shadowRoot;
-  return { outlineAfterClose: sr.querySelector('.hoverbox').style.display };
+  return {
+    composeAfterEsc: sr.querySelector('.compose').style.display,
+    outlineAfterClose: sr.querySelector('.hoverbox').style.display,
+  };
 });
+
+// Reopen, then a click outside the compose closes it.
+await page.evaluate(() => window.__REACT_GRAB__.activate());
+await page.waitForTimeout(300);
+await page.mouse.move(cx, cy, { steps: 4 });
+await page.waitForTimeout(400);
+await page.mouse.click(cx, cy);
+await page.waitForTimeout(600);
+const reopened = await page.evaluate(
+  () =>
+    document
+      .querySelector('[data-bai-review-overlay]')
+      .shadowRoot.querySelector('.compose').style.display,
+);
+await page.mouse.click(700, 120); // empty header area, outside the compose
+await page.waitForTimeout(300);
+const afterOutside = await page.evaluate(
+  () =>
+    document
+      .querySelector('[data-bai-review-overlay]')
+      .shadowRoot.querySelector('.compose').style.display,
+);
+afterClose.composeReopened = reopened;
+afterClose.composeAfterOutsideClick = afterOutside;
 
 // Pin click → panel item highlighted, surviving a forced re-render.
 const hl = await page.evaluate(async () => {

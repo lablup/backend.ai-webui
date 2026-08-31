@@ -1134,8 +1134,21 @@
     hoverbox.style.display = 'none';
   }
   document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape' && picking) stopPicking();
+    if (evt.key !== 'Escape') return;
+    if (picking) stopPicking();
+    if (compose.style.display === 'block') closeCompose();
   });
+
+  // Click anywhere outside the compose dismisses it (driver request).
+  document.addEventListener(
+    'mousedown',
+    (evt) => {
+      if (compose.style.display !== 'block') return;
+      if (evt.composedPath().includes(compose)) return;
+      closeCompose();
+    },
+    true,
+  );
 
   const composeText = compose.querySelector('textarea');
   const composeErr = compose.querySelector('.err');
