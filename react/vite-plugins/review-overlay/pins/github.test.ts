@@ -195,6 +195,79 @@ describe('fetchPrOccurrences', () => {
     ]);
   });
 
+  // The R3.8 reply carries the same 📍 link, so it also parses as an occurrence.
+  it('counts a thread reply carrying the pin link once', async () => {
+    const runGh = vi.fn().mockResolvedValue(
+      response({
+        comments: { totalCount: 0, nodes: [] },
+        reviewThreads: {
+          totalCount: 1,
+          nodes: [
+            {
+              id: 'PRRT_1',
+              isResolved: false,
+              isOutdated: false,
+              resolvedBy: null,
+              comments: {
+                totalCount: 2,
+                nodes: [
+                  comment({
+                    url: 'https://github.com/l/r/pull/1#discussion_r1',
+                  }),
+                  comment({
+                    url: 'https://github.com/l/r/pull/1#discussion_r2',
+                    body: `Fixed in abc1234 — padding. [📍](http://dev/${PIN})`,
+                    author: { login: 'claude' },
+                    createdAt: '2026-09-01T09:00:00Z',
+                  }),
+                ],
+              },
+            },
+          ],
+        },
+      }),
+    );
+    const { occurrences } = await fetchPrOccurrences('l/r', 1, runGh);
+    expect(occurrences).toHaveLength(1);
+    expect(occurrences[0].replies).toHaveLength(1);
+  });
+
+  // A draft review is visible to its author alone; the endpoint is not.
+  it('never reads a review the author has not submitted', async () => {
+    const runGh = vi.fn().mockResolvedValue(
+      response({
+        comments: { totalCount: 0, nodes: [] },
+        reviews: {
+          totalCount: 1,
+          nodes: [comment({ state: 'PENDING' })],
+        },
+      }),
+    );
+    expect((await fetchPrOccurrences('l/r', 1, runGh)).occurrences).toEqual([]);
+  });
+
+  it('never reads a pending inline comment either', async () => {
+    const runGh = vi.fn().mockResolvedValue(
+      response({
+        comments: { totalCount: 0, nodes: [] },
+        reviewThreads: {
+          totalCount: 1,
+          nodes: [
+            {
+              id: 'PRRT_1',
+              isResolved: false,
+              comments: {
+                totalCount: 1,
+                nodes: [comment({ pullRequestReview: { state: 'PENDING' } })],
+              },
+            },
+          ],
+        },
+      }),
+    );
+    expect((await fetchPrOccurrences('l/r', 1, runGh)).occurrences).toEqual([]);
+  });
+
   it('flags truncation instead of paginating', async () => {
     const runGh = vi
       .fn()

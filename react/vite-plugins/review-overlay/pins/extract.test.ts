@@ -3,6 +3,7 @@ import { encodeAnchor } from '../client/codec.js';
 import type { AnchorV3 } from '../client/types.js';
 import {
   extractPinLinks,
+  extractPins,
   isAnchorV3,
   normalizedText,
   pinText,
@@ -45,6 +46,27 @@ describe('extractPinLinks', () => {
     ]);
   });
 
+  it('still matches when the same comment holds a bare percent sign', () => {
+    const body =
+      'CPU at 90%\nsee http://dev/x%23bai%3Dv3.c_abc2345.QUJDREVGR0g';
+    expect(extractPinLinks(body)).toEqual([
+      { id: 'c_abc2345', anchorB64: 'QUJDREVGR0g', quoted: false },
+    ]);
+  });
+
+  it('matches a hex-escaped link a sanitiser produced', () => {
+    const body = '[x](http://dev/p&#x23;bai&#x3D;v3.c_abc2345)';
+    expect(extractPinLinks(body)[0].id).toBe('c_abc2345');
+  });
+
+  // An unbounded anchor is an inflate bomb: 40 MB deflates into one comment.
+  it('refuses an anchor far longer than any real one', () => {
+    const body = `#bai=v3.c_abc2345.${'A'.repeat(4000)}`;
+    expect(extractPinLinks(body)).toEqual([
+      { id: 'c_abc2345', anchorB64: null, quoted: false },
+    ]);
+  });
+
   it('matches after HTML-unescaping', () => {
     const body = '&gt; [x](http://dev/p#bai&#61;v3.c_abc2345&amp;t=1)';
     expect(extractPinLinks(body)[0].id).toBe('c_abc2345');
@@ -72,6 +94,33 @@ describe('extractPinLinks', () => {
     expect(extractPinLinks('#bai-review=eJxxx and #bai=v3.zdv3rhz')).toEqual(
       [],
     );
+  });
+});
+
+describe('extractPins', () => {
+  it('gives each block in one comment its own words (R3.3)', async () => {
+    const body = `${await block('c_aaaaaaa', 'Button A is 8px off.')}\n\n${await block('c_bbbbbbb', 'Label B is truncated.')}`;
+    const [a, b] = extractPins(body);
+    expect(a.text).toContain('Button A is 8px off.');
+    expect(a.text).not.toContain('Label B is truncated.');
+    expect(b.text).toContain('Label B is truncated.');
+    expect(a.normalized).not.toBe(b.normalized);
+  });
+
+  it('reads a quote-reply as the same block plus its own answer', async () => {
+    const quoted = (await block('c_zdv3rhz'))
+      .split('\n')
+      .map((line) => `> ${line}`)
+      .join('\n');
+    const [pin] = extractPins(`${quoted}\n\nFixed in abc1234 — padding.`);
+    expect(pin.remainder).toBe('Fixed in abc1234 — padding.');
+    expect(pin.normalized).toBe(
+      extractPins(await block('c_zdv3rhz'))[0].normalized,
+    );
+  });
+
+  it('leaves a plain block with no answer of its own', async () => {
+    expect(extractPins(await block('c_zdv3rhz'))[0].remainder).toBe('');
   });
 });
 
@@ -132,6 +181,9 @@ describe('isAnchorV3', () => {
       'a component that is not an object',
       { v: 3, s: 'b', p: '/', c: 'Button' },
     ],
+    ['an unbounded selector', { v: 3, s: 'b'.repeat(2000), p: '/' }],
+    ['an unbounded text', { v: 3, s: 'b', p: '/', txt: 'x'.repeat(65) }],
+    ['an unbounded testid', { v: 3, s: 'b', p: '/', tid: 'x'.repeat(300) }],
   ])('rejects %s', (_label, value) => {
     expect(isAnchorV3(value)).toBe(false);
   });

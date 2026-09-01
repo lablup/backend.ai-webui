@@ -120,7 +120,7 @@ Two endpoints back it, both **GET only, with no request parameters**, both dev-o
 | `/__review/state` | the running PR, the served set, the repository and `isPrivate` |
 | `/__review/pins`  | every `#bai=v3` block found on the served PRs, merged by id    |
 
-The served set comes from the dev-server skill's boot record (`BAI_REVIEW_BOOT_RECORD`) when there is one — that is the whole stack below the running branch — and from `gh pr list --head <branch>` otherwise. Reads go through the box's own `gh` credentials, are cached for 15 s with one shared upstream fetch however many people are looking, and are **refused entirely for a private repository**. The token never reaches the browser.
+The served set comes from the dev-server skill's boot record (`BAI_REVIEW_BOOT_RECORD`) when there is one — that is the whole stack below the running branch — and from `gh pr list --head <branch>` otherwise. Reads go through the box's own `gh` credentials, are cached for 15 s with one shared upstream fetch however many people are looking, and are **refused entirely for a private repository**. Only what the PR page already shows is served: a review you have started but not submitted is skipped. The token never reaches the browser.
 
 ## CLI login (`/cli-login`)
 

@@ -35,8 +35,18 @@ const CLIENT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), 'client');
 /** `/__review/overlay.js` is the entry; every other name maps 1:1 to a module. */
 const ENTRY_MODULE = 'main';
 const MODULE_NAME_RE = /^[a-z][a-z0-9-]*$/;
-/** A `pr: null` answer is retried this often — a PR opened after boot recovers. */
+/** An unsettled answer is retried this often — a PR opened after boot recovers. */
 const REDISCOVER_AFTER_MS = 30_000;
+
+/**
+ * The boot record is written only once the server has come up, so the first
+ * discovery of a stacked checkout usually predates it and falls back to
+ * `gh pr list`, which knows the top layer alone. Keep asking until the record
+ * that names the whole stack shows up.
+ */
+const isSettled = (state: ReviewServerState): boolean =>
+  state.source === 'boot-record' ||
+  (state.pr !== null && !process.env.BAI_REVIEW_BOOT_RECORD);
 
 const pexecFile = promisify(execFile);
 
@@ -198,7 +208,7 @@ export function devReviewOverlayPlugin(): Plugin {
     const now = Date.now();
     if (
       cached &&
-      (cached.state.pr !== null || now - cached.at < REDISCOVER_AFTER_MS)
+      (isSettled(cached.state) || now - cached.at < REDISCOVER_AFTER_MS)
     ) {
       return Promise.resolve(cached.state);
     }

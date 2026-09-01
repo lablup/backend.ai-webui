@@ -29,10 +29,14 @@ export interface PinsServiceDeps {
 
 export function createPinsService(deps: PinsServiceDeps) {
   const now = deps.now ?? Date.now;
-  let boot: Promise<{ repo: RepoInfo; served: ServedPr[] }> | null = null;
+  let boot: Promise<RepoInfo> | null = null;
   let served: ServedPr[] | null = null;
   let cached: { payload: ReviewPinsPayload; at: number } | null = null;
   let inFlight: Promise<ReviewPinsPayload> | null = null;
+  /** The last read of a layer that has since merged or closed (R3.7.5). */
+  const frozen = new Map<number, PrOccurrences>();
+  /** Merged or closed once: never polled again, whatever discovery says. */
+  const gone = new Set<number>();
 
   const empty = (error: string): ReviewPinsPayload => ({
     pins: [],
@@ -42,27 +46,31 @@ export function createPinsService(deps: PinsServiceDeps) {
     error,
   });
 
-  async function bootOnce() {
-    boot ??= (async () => {
-      const [repo, initial] = await Promise.all([
-        deps.repoInfo(),
-        deps.servedSet(),
-      ]);
-      served = initial;
-      return { repo, served: initial };
-    })();
+  async function repoOnce(): Promise<RepoInfo> {
+    boot ??= deps.repoInfo();
     return boot;
   }
 
+  /**
+   * Asked again whenever the set is empty: `pnpm dev` before `gh pr create`
+   * must not freeze the endpoint at "no open PR" for the life of the process.
+   * Discovery upstream is what rate-limits the question.
+   */
+  async function currentSet(): Promise<ServedPr[]> {
+    if (served?.length) return served;
+    served = (await deps.servedSet()).filter((entry) => !gone.has(entry.pr));
+    return served;
+  }
+
   async function build(): Promise<ReviewPinsPayload> {
-    const { repo } = await bootOnce();
+    const repo = await repoOnce();
     // Fail closed: an unreadable repository is treated as a private one, so a
     // broken `gh` never turns into an open read surface.
     if (repo.error || repo.isPrivate || !repo.nameWithOwner) {
       return empty(repo.error ?? 'private repository');
     }
-    const set = served ?? [];
-    if (!set.length) {
+    const set = await currentSet();
+    if (!set.length && !frozen.size) {
       return {
         pins: [],
         served: [],
@@ -83,19 +91,33 @@ export function createPinsService(deps: PinsServiceDeps) {
     );
 
     const okResults = results.flatMap((r) => (r.ok ? [r.result] : []));
-    if (!okResults.length) return empty('upstream');
+    if (!okResults.length && !frozen.size) return empty('upstream');
 
-    const occurrences: Occurrence[] = okResults.flatMap((r) => r.occurrences);
-    const pins = await attachAnchors(mergePins(occurrences));
     const states = okResults.map((r) => ({ pr: r.pr, state: r.state }));
-    served = dropClosed(set, states);
+    const stillServed = dropClosed(set, states);
+    for (const result of okResults) {
+      if (stillServed.some((entry) => entry.pr === result.pr)) continue;
+      // Last read of a layer that just merged: kept so its pins freeze there
+      // rather than vanishing from the panel mid-review (R3.7.5).
+      frozen.set(result.pr, result);
+      gone.add(result.pr);
+    }
+    served = stillServed;
+
+    const fresh = new Set(okResults.map((r) => r.pr));
+    const kept = [...frozen.values()].filter((r) => !fresh.has(r.pr));
+    const occurrences: Occurrence[] = [...okResults, ...kept].flatMap(
+      (r) => r.occurrences,
+    );
+    const pins = await attachAnchors(mergePins(occurrences));
 
     const github: PinSourceStatus = { ok: true, count: pins.length };
-    if (okResults.some((r) => r.truncated)) github.truncated = true;
+    if ([...okResults, ...kept].some((r) => r.truncated))
+      github.truncated = true;
     if (okResults.length < set.length) github.error = 'upstream';
     return {
       pins,
-      served: states,
+      served: [...states, ...kept.map((r) => ({ pr: r.pr, state: r.state }))],
       sources: { github },
       fetchedAt: new Date(now()).toISOString(),
     };

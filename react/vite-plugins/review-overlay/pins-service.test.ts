@@ -7,13 +7,14 @@ const PIN_BODY = '📍 **Start › button** · `c_zdv3rhz`';
 const prResult = (
   pr: number,
   over: Partial<PrOccurrences> = {},
+  id = 'c_zdv3rhz',
 ): PrOccurrences => ({
   pr,
   state: 'OPEN',
   truncated: false,
   occurrences: [
     {
-      id: 'c_zdv3rhz',
+      id,
       anchorB64: null,
       quoted: true,
       pr,
@@ -23,7 +24,8 @@ const prResult = (
       author: 'reviewer',
       createdAt: '2026-09-01T08:00:00Z',
       text: PIN_BODY,
-      normalized: 'start button c_zdv3rhz',
+      normalized: `start button ${id}`,
+      remainder: '',
       resolved: false,
       resolvedBy: null,
       outdated: false,
@@ -133,13 +135,11 @@ describe('createPinsService', () => {
 
   it('fails closed when the repository check itself fails', async () => {
     const d = deps({
-      repoInfo: vi
-        .fn()
-        .mockResolvedValue({
-          nameWithOwner: null,
-          isPrivate: true,
-          error: 'gh repo view failed',
-        }),
+      repoInfo: vi.fn().mockResolvedValue({
+        nameWithOwner: null,
+        isPrivate: true,
+        error: 'gh repo view failed',
+      }),
     });
     const payload = await createPinsService(d).getPins();
     expect(payload.pins).toEqual([]);
@@ -154,9 +154,11 @@ describe('createPinsService', () => {
     expect(payload.pins).toEqual([]);
   });
 
-  it('stops polling a layer that merged, on the next poll', async () => {
+  it('stops polling a layer that merged but freezes its pins', async () => {
     const fetchPr = vi.fn(async (_repo: string, pr: number) =>
-      prResult(pr, pr === 9320 ? { state: 'MERGED' } : {}),
+      pr === 9320
+        ? prResult(pr, { state: 'MERGED' }, 'c_frozen1')
+        : prResult(pr),
     );
     const service = createPinsService(
       deps({
@@ -170,10 +172,45 @@ describe('createPinsService', () => {
     await service.getPins();
     clock += 20_000;
     const second = await service.getPins();
-    expect(second.served).toEqual([{ pr: 9354, state: 'OPEN' }]);
     expect(fetchPr.mock.calls.map((call) => call[1])).toEqual([
       9320, 9354, 9354,
     ]);
+    // R3.7.5: the layer stops being polled, its pins stay on the board.
+    expect(second.pins.map((pin) => [pin.id, pin.sourcePr]).sort()).toEqual([
+      ['c_frozen1', 9320],
+      ['c_zdv3rhz', 9354],
+    ]);
+    expect(second.served).toContainEqual({ pr: 9320, state: 'MERGED' });
+  });
+
+  it('asks discovery again while no PR is served yet', async () => {
+    const servedSet = vi
+      .fn()
+      .mockResolvedValueOnce([])
+      .mockResolvedValue([{ pr: 9360, branch: 'top' }]);
+    const service = createPinsService(deps({ servedSet }));
+    expect((await service.getPins()).sources.github).toEqual({
+      ok: false,
+      error: 'no open PR',
+    });
+    clock += 20_000;
+    const second = await service.getPins();
+    expect(servedSet).toHaveBeenCalledTimes(2);
+    expect(second.pins).toHaveLength(1);
+    expect(second.served).toEqual([{ pr: 9360, state: 'OPEN' }]);
+  });
+
+  it('does not re-adopt a layer that already merged', async () => {
+    const servedSet = vi.fn().mockResolvedValue([{ pr: 9320, branch: 'only' }]);
+    const fetchPr = vi.fn(async (_repo: string, pr: number) =>
+      prResult(pr, { state: 'MERGED' }),
+    );
+    const service = createPinsService(deps({ servedSet, fetchPr }));
+    await service.getPins();
+    clock += 20_000;
+    const second = await service.getPins();
+    expect(fetchPr).toHaveBeenCalledTimes(1);
+    expect(second.pins).toHaveLength(1);
   });
 
   it('badges a block pasted on a lower layer with that layer’s PR', async () => {

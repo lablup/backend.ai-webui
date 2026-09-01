@@ -30,18 +30,32 @@ export function mergePins(occurrences: Occurrence[]): ReviewPin[] {
   const pins = [...byId.entries()].map(([id, list]) => {
     const sorted = [...list].sort(primaryFirst);
     const primary = sorted[0];
+    // A later occurrence is either the block again (a source) or an answer to
+    // it (a reply) — and a GitHub "Quote reply" is both: the same words back,
+    // plus whatever the answerer wrote underneath the quote.
+    const isSameBlock = (occurrence: Occurrence) =>
+      occurrence.normalized === primary.normalized;
+    const answer = (occurrence: Occurrence, body: string): PinReply => ({
+      author: occurrence.author,
+      body,
+      createdAt: occurrence.createdAt,
+      url: occurrence.url,
+    });
     const replies: PinReply[] = [
       ...primary.replies,
       ...sorted
         .slice(1)
-        .filter((occurrence) => occurrence.normalized !== primary.normalized)
-        .map((occurrence) => ({
-          author: occurrence.author,
-          body: occurrence.text,
-          createdAt: occurrence.createdAt,
-          url: occurrence.url,
-        })),
+        .flatMap((occurrence) =>
+          isSameBlock(occurrence)
+            ? occurrence.remainder
+              ? [answer(occurrence, occurrence.remainder)]
+              : []
+            : [answer(occurrence, occurrence.text)],
+        ),
     ].sort(byCreatedAt);
+
+    const sources = [primary, ...sorted.slice(1).filter(isSameBlock)];
+    const seenSource = new Set<string>();
     return {
       id,
       number: 0,
@@ -51,13 +65,20 @@ export function mergePins(occurrences: Occurrence[]): ReviewPin[] {
       text: primary.text,
       author: primary.author,
       createdAt: primary.createdAt,
-      sources: sorted.map((occurrence) => ({
-        channel: occurrence.channel,
-        pr: occurrence.pr,
-        kind: occurrence.kind,
-        url: occurrence.url,
-        author: occurrence.author,
-      })),
+      sources: sources
+        .filter((occurrence) => {
+          const key = `${occurrence.channel}:${occurrence.pr}`;
+          if (seenSource.has(key)) return false;
+          seenSource.add(key);
+          return true;
+        })
+        .map((occurrence) => ({
+          channel: occurrence.channel,
+          pr: occurrence.pr,
+          kind: occurrence.kind,
+          url: occurrence.url,
+          author: occurrence.author,
+        })),
       sourcePr: primary.pr,
       quoted: list.some((occurrence) => occurrence.quoted),
       resolved: list.some((occurrence) => occurrence.resolved),
@@ -80,17 +101,23 @@ export function mergePins(occurrences: Occurrence[]): ReviewPin[] {
 
 /**
  * Decode on the server so a browser never inflates a stranger's payload
- * blindly, and drop anything that fails the field check — the client then
- * only ever sees an anchor whose `s`, `p`, `q` and `rect` are the shapes it
- * feeds to `querySelector` and `location`.
+ * blindly, and drop anything that fails the field check. One anchor at a time:
+ * every payload is a comment anyone can write, and `decodeAnchor`'s size cap
+ * bounds one inflate, not fifty of them at once.
  */
 export async function attachAnchors(pins: ReviewPin[]): Promise<ReviewPin[]> {
-  return Promise.all(
-    pins.map(async (pin) => {
-      if (!pin.anchorB64) return pin;
-      const anchor = await decodeAnchor(pin.anchorB64);
-      if (!isAnchorV3(anchor)) return { ...pin, anchor: null, anchorB64: null };
-      return { ...pin, anchor };
-    }),
-  );
+  const out: ReviewPin[] = [];
+  for (const pin of pins) {
+    if (!pin.anchorB64) {
+      out.push(pin);
+      continue;
+    }
+    const anchor = await decodeAnchor(pin.anchorB64);
+    out.push(
+      isAnchorV3(anchor)
+        ? { ...pin, anchor }
+        : { ...pin, anchor: null, anchorB64: null },
+    );
+  }
+  return out;
 }

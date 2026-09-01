@@ -7,7 +7,7 @@
  * REST is not an option here: it carries no reactions and no
  * `reviewThreads.isResolved`.
  */
-import { extractPinLinks, normalizedText, pinText } from './extract.js';
+import { extractPins } from './extract.js';
 
 /** Page sizes are the query's cost driver (R3.4: 2 points at these numbers). */
 export const PR_QUERY = `query($owner:String!,$name:String!,$number:Int!){
@@ -17,8 +17,8 @@ export const PR_QUERY = `query($owner:String!,$name:String!,$number:Int!){
       number
       state
       comments(first:50){totalCount nodes{id url body createdAt isMinimized minimizedReason author{login} reactionGroups{content reactors{totalCount}}}}
-      reviews(first:50){totalCount nodes{id url body createdAt isMinimized minimizedReason author{login} reactionGroups{content reactors{totalCount}}}}
-      reviewThreads(first:50){totalCount nodes{id isResolved isOutdated resolvedBy{login} comments(first:10){totalCount nodes{id url body createdAt isMinimized minimizedReason author{login} reactionGroups{content reactors{totalCount}}}}}}
+      reviews(first:50){totalCount nodes{id url body state createdAt isMinimized minimizedReason author{login} reactionGroups{content reactors{totalCount}}}}
+      reviewThreads(first:50){totalCount nodes{id isResolved isOutdated resolvedBy{login} comments(first:10){totalCount nodes{id url body createdAt isMinimized minimizedReason pullRequestReview{state} author{login} reactionGroups{content reactors{totalCount}}}}}}
     }
   }
 }`;
@@ -49,6 +49,8 @@ export interface Occurrence {
   createdAt: string | null;
   text: string;
   normalized: string;
+  /** Words the author added outside the quoted block, if any (R3.8). */
+  remainder: string;
   resolved: boolean;
   resolvedBy: string | null;
   outdated: boolean;
@@ -73,6 +75,9 @@ interface GhNode {
   createdAt?: string | null;
   isMinimized?: boolean;
   minimizedReason?: string | null;
+  /** Review state, or the parent review's state for a thread comment. */
+  state?: string | null;
+  pullRequestReview?: { state?: string | null } | null;
   author?: { login?: string | null } | null;
   reactionGroups?: Array<{
     content?: string;
@@ -94,6 +99,14 @@ const hiddenAsResolved = (node: GhNode): boolean =>
   !!node.isMinimized &&
   String(node.minimizedReason ?? '').toLowerCase() === 'resolved';
 
+/**
+ * A review the token's owner has started but not submitted is visible to
+ * them alone; the endpoint may only carry what the PR page already shows.
+ */
+const isPending = (node: GhNode): boolean =>
+  String(node.state ?? node.pullRequestReview?.state ?? '').toUpperCase() ===
+  'PENDING';
+
 const hasHintReaction = (node: GhNode): boolean =>
   (node.reactionGroups ?? []).some(
     (group) =>
@@ -114,19 +127,19 @@ function occurrencesIn(
   kind: Occurrence['kind'],
   state: Partial<Occurrence> = {},
 ): Occurrence[] {
-  const body = node.body ?? '';
-  return extractPinLinks(body).map((link) => ({
-    id: link.id,
-    anchorB64: link.anchorB64,
-    quoted: link.quoted,
+  return extractPins(node.body ?? '').map((mention) => ({
+    id: mention.id,
+    anchorB64: mention.anchorB64,
+    quoted: mention.quoted,
     pr,
     channel: 'github' as const,
     kind,
     url: node.url ?? null,
     author: login(node),
     createdAt: node.createdAt ?? null,
-    text: pinText(body),
-    normalized: normalizedText(pinText(body)),
+    text: mention.text,
+    normalized: mention.normalized,
+    remainder: mention.remainder,
     resolved: hiddenAsResolved(node),
     resolvedBy: null,
     outdated: false,
@@ -173,22 +186,31 @@ export async function fetchPrOccurrences(
     occurrences.push(...occurrencesIn(node, pr, 'comment'));
   }
   for (const node of page(pull.reviews) as GhNode[]) {
+    if (isPending(node)) continue;
     occurrences.push(...occurrencesIn(node, pr, 'review'));
   }
   for (const thread of page(pull.reviewThreads) as GhThread[]) {
-    const comments = page(thread.comments) as GhNode[];
+    const comments = (page(thread.comments) as GhNode[]).filter(
+      (node) => !isPending(node),
+    );
+    // An id that already appeared earlier in this thread is that pin's reply,
+    // which `replies` below already carries — never a second occurrence.
+    const pinned = new Set<string>();
     comments.forEach((node, index) => {
-      occurrences.push(
-        ...occurrencesIn(node, pr, 'thread', {
-          resolved: !!thread.isResolved || hiddenAsResolved(node),
-          resolvedBy: thread.resolvedBy?.login ?? null,
-          outdated: !!thread.isOutdated,
-          native: true,
-          // Everything posted after the pinned comment in its own thread is
-          // an answer to it — Claude's `Fixed in <sha>` included (R3.8).
-          replies: comments.slice(index + 1).map(asReply),
-        }),
-      );
+      const found = occurrencesIn(node, pr, 'thread', {
+        resolved: !!thread.isResolved || hiddenAsResolved(node),
+        resolvedBy: thread.resolvedBy?.login ?? null,
+        outdated: !!thread.isOutdated,
+        native: true,
+        // Everything posted after the pinned comment in its own thread is
+        // an answer to it — Claude's `Fixed in <sha>` included (R3.8).
+        replies: comments.slice(index + 1).map(asReply),
+      });
+      for (const occurrence of found) {
+        if (pinned.has(occurrence.id)) continue;
+        pinned.add(occurrence.id);
+        occurrences.push(occurrence);
+      }
     });
   }
 
