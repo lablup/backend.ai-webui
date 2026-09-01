@@ -34,6 +34,15 @@ describe('resolveRouteLabel', () => {
     expect(resolveRouteLabel('/session/start', null)).toBe('/session/start');
     expect(resolveRouteLabel('/')).toBe('/');
   });
+
+  // The label is read by a human on both branches of `anchorRouteLabel` —
+  // the reader's own route as much as the anchor's.
+  it('decodes the pathname it falls back to', () => {
+    expect(
+      resolveRouteLabel('/project/a%ED%95%9C%EA%B5%AD%EC%96%B4/start'),
+    ).toBe('/project/a한국어/start');
+    expect(resolveRouteLabel('/100%off')).toBe('/100%off');
+  });
 });
 
 describe('landmarkLabel', () => {

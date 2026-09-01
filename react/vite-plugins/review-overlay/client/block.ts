@@ -8,21 +8,22 @@
  */
 import { captureAnchorSignals } from './anchor.js';
 import { encodeAnchor } from './codec.js';
+import { readablePath } from './deeplink.js';
 import { pinId } from './id.js';
 import type { AnchorComponent, AnchorV3 } from './types.js';
 
 /**
  * The app publishes the current route's ENGLISH i18n label on
  * `window.__BAI_REVIEW__` (dev only). Without it — a route with no `labelKey`,
- * or a page outside the router root — the raw pathname is the label; segments
- * are NOT title-cased, because a guessed label reads like a real one.
+ * or a page outside the router root — the decoded pathname is the label;
+ * segments are NOT title-cased, because a guessed label reads like a real one.
  */
 export function resolveRouteLabel(
   pathname: string,
   hostLabel?: string | null,
 ): string {
   const label = (hostLabel || '').trim();
-  return label || pathname;
+  return label || readablePath(pathname);
 }
 
 /** `<route label> › <testid landmark> › <tag "text">` */

@@ -22,7 +22,6 @@ import {
   parseFragment,
   pathNeedsChange,
   pinUrl,
-  readablePath,
   retryUntil,
 } from './deeplink.js';
 import { createPicker } from './picker.js';
@@ -129,7 +128,7 @@ function boot() {
   const anchorRouteLabel = (anchor: AnchorV3) =>
     anchor.p === location.pathname
       ? currentRouteLabel()
-      : resolveRouteLabel(readablePath(anchor.p));
+      : resolveRouteLabel(anchor.p);
 
   async function applyFragment(hash: string) {
     const fragment = parseFragment(hash);
