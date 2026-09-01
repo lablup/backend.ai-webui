@@ -30,13 +30,6 @@ test.describe('@review-overlay review overlay deep link', () => {
         (window as unknown as { __baiReviewOverlay?: boolean })
           .__baiReviewOverlay,
     );
-    // Let the SPA settle on its final route before the anchor is captured —
-    // the deep link reproduces that route, so it must be the resolved one.
-    await page
-      .locator('button:visible, a[href]:visible')
-      .first()
-      .waitFor({ timeout: 30_000 });
-    await page.waitForTimeout(2000);
 
     const link = await page.evaluate(
       async ([anchorUrl, codecUrl, idUrl]) => {
@@ -47,15 +40,52 @@ test.describe('@review-overlay review overlay deep link', () => {
           import(/* @vite-ignore */ codecUrl),
           import(/* @vite-ignore */ idUrl),
         ]);
-        const overlay = document.querySelector('[data-bai-review-overlay]');
-        const target = [
-          ...document.querySelectorAll('[data-testid], button, a[href]'),
-        ].find((element) => {
-          if (overlay?.contains(element)) return false;
+        const usable = (element: Element): boolean => {
+          // react-grab's own hit layer is a full-viewport pointer-events:none
+          // div that matches every "big visible element" filter.
+          if (element.closest('[data-bai-review-overlay]')) return false;
+          if (element.closest('[data-testid="react-grab-overlay"]'))
+            return false;
           const box = element.getBoundingClientRect();
-          return box.width > 8 && box.height > 8;
-        });
-        if (!target) throw new Error('no element to anchor to on this page');
+          if (box.width < 8 || box.height < 8) return false;
+          const style = getComputedStyle(element);
+          if (
+            style.visibility === 'hidden' ||
+            style.display === 'none' ||
+            style.pointerEvents === 'none'
+          )
+            return false;
+          return !!(element as HTMLElement).innerText?.trim();
+        };
+        const find = (selector: string) =>
+          [...document.querySelectorAll(selector)].find(usable);
+        // A real interactive element first: it has text for the anchor's
+        // fallback scan and it survives the SPA re-rendering around it.
+        const pick = () =>
+          find('button, a[href]') ?? find('[data-testid]') ?? null;
+
+        // The anchor carries the route it was captured on and the deep link
+        // reproduces it, so it has to be the SETTLED one: a dev server with
+        // credentials injected leaves `/` for `/project/<name>/start` about
+        // 5 s in, and a `/`-anchored pin is "other page" everywhere after.
+        // Polled in-page on purpose: a Playwright locator pierces the
+        // overlay's shadow root and would settle on its own dock button.
+        const deadline = Date.now() + 25_000;
+        let url = location.href;
+        let since = Date.now();
+        let target: Element | null = null;
+        for (;;) {
+          if (location.href !== url) {
+            url = location.href;
+            since = Date.now();
+          }
+          target = pick();
+          if (target && Date.now() - since >= 1500) break;
+          if (Date.now() > deadline) {
+            throw new Error(`no settled element to anchor to on ${url}`);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 250));
+        }
         const anchor = anchorMod.captureAnchorSignals(target);
         const b64: string = await codecMod.encodeAnchor(anchor);
         return {
@@ -75,8 +105,11 @@ test.describe('@review-overlay review overlay deep link', () => {
       },
     );
 
-    const pin = page.locator('[data-bai-review-overlay] .pin').first();
-    await expect(pin).toBeVisible({ timeout: 30_000 });
+    // By id, not by DOM order: the served PR carries its own real pins, and
+    // one anchored elsewhere sorts first as a hidden orphan.
+    await expect(
+      page.locator(`[data-bai-review-overlay] .pin[data-pin-id="${link.id}"]`),
+    ).toBeVisible({ timeout: 30_000 });
     await expect(
       page.locator(`[data-bai-review-overlay] .item[data-pin-id="${link.id}"]`),
     ).toBeVisible();
