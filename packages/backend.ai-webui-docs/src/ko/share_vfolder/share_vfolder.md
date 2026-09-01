@@ -47,9 +47,13 @@ navTitle: 스토리지 폴더 공유
 
 ![](../images/test_vfolder_listed_in_B.png)
 
-목록에서 `tests` 폴더 이름을 클릭하여 폴더 내부로 이동해 봅니다. 사용자 A의 계정에서 확인했던 `hello.txt`와 `myfolder`를 다시 확인할 수 있습니다.
+목록에서 `tests` 폴더 이름을 클릭하여 폴더 내부로 이동해 봅니다. 사용자 A의 계정에서 확인했던 `hello.txt`와 `myfolder`를 다시 확인할 수 있습니다. 사용자 A가 `읽기 전용`으로 공유했기 때문에 폴더 탐색기에서 쓰기 관련 작업은 비활성화됩니다. **업로드**, **폴더 생성**, **삭제** 버튼과 각 항목 옆의 **Rename** 버튼은 사용할 수 없으며, 사용자 B는 폴더 내용을 조회하고 다운로드만 할 수 있습니다.
 
 ![](../images/folder_explorer_in_B.png)
+<!-- TODO(screenshot): /data on the invitee account (User B) -> open the
+     read-only shared `tests` folder and show Upload, Create Folder, Delete
+     and Rename disabled. Not recaptured tonight: the invitee account has no
+     vfolder permission on the capture backend (manager returns 403). -->
 
 이 스토리지 폴더를 사용자 B의 계정으로 마운트하여 연산 세션을 생성해 보겠습니다.
 

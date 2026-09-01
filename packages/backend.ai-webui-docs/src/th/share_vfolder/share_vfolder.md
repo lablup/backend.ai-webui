@@ -46,9 +46,13 @@ navTitle: การแชร์โฟลเดอร์จัดเก็บ
 
 ![](../images/test_vfolder_listed_in_B.png)
 
-คลิกชื่อโฟลเดอร์ `tests` ในรายการ เพื่อไปยังภายในโฟลเดอร์ `tests` คุณจะเห็น `hello.txt` และ `myfolder` ที่ตรวจสอบไว้ในบัญชีผู้ใช้ A อีกครั้ง
+คลิกชื่อโฟลเดอร์ `tests` ในรายการ เพื่อไปยังภายในโฟลเดอร์ `tests` คุณจะเห็น `hello.txt` และ `myfolder` ที่ตรวจสอบไว้ในบัญชีผู้ใช้ A อีกครั้ง เนื่องจากผู้ใช้ A แชร์โฟลเดอร์นี้แบบ `อ่านเท่านั้น` การดำเนินการที่ต้องใช้สิทธิ์เขียนในโฟลเดอร์เอ็กซ์พลอเรอร์จะถูกปิดใช้งาน ได้แก่ ปุ่ม **อัพโหลด** **สร้างโฟลเดอร์** **ลบ** และปุ่ม **Rename** ที่อยู่ข้างแต่ละรายการ ผู้ใช้ B จึงทำได้เพียงเรียกดูและดาวน์โหลดเนื้อหาของโฟลเดอร์เท่านั้น
 
 ![](../images/folder_explorer_in_B.png)
+<!-- TODO(screenshot): /data on the invitee account (User B) -> open the
+     read-only shared `tests` folder and show Upload, Create Folder, Delete
+     and Rename disabled. Not recaptured tonight: the invitee account has no
+     vfolder permission on the capture backend (manager returns 403). -->
 
 มาสร้างเซสชันการคำนวณโดยเมาท์โฟลเดอร์จัดเก็บนี้ด้วยบัญชีผู้ใช้ B
 
