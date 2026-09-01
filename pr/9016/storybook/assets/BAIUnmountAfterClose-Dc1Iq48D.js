@@ -1,0 +1,1 @@
+import{R as l,r as a}from"./iframe-BgaR6W86.js";const u=({children:f})=>{const e=l.Children.only(f),t=e.props.open,[c,n]=a.useState(()=>!t);if(a.useEffect(()=>{t&&n(!1)},[t]),!(t||!c))return null;const o=e.props.afterClose,i=()=>{o&&o(),n(!0)},s=e.props.afterOpenChange,p=r=>{s&&s(r),r||n(!0)};return l.cloneElement(e,{afterClose:i,afterOpenChange:p})};export{u as B};
