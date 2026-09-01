@@ -20,6 +20,8 @@ const FOCUS_GUARD_MS = 1000;
 
 export interface OverlayUICallbacks {
   onStartPick: () => void;
+  /** Open/close the pins panel (FR-3813); absent on a write-only overlay. */
+  onTogglePanel?: () => void;
   /**
    * Render the block for this note, SYNCHRONOUSLY — everything async was done
    * at pick time. `null` means the capture is not ready, which the composer
@@ -102,6 +104,16 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     .toggle.active {
       background: var(--bai-review-inverted); color: var(--bai-review-on-inverted);
     }
+    .toggle .cnt {
+      background: var(--bai-review-on-accent); color: var(--bai-review-accent);
+      border-radius: 10px; padding: 0 6px; font-size: 11px; margin-left: 6px;
+    }
+    .pinsbtn {
+      border: 1px solid var(--bai-review-border); border-radius: 24px;
+      padding: 8px 14px; cursor: pointer; font-size: 13px; font-weight: 600;
+      background: var(--bai-review-surface); color: var(--bai-review-text);
+      box-shadow: 0 2px 10px var(--bai-review-shadow);
+    }
     .btn {
       border: 1px solid var(--bai-review-border);
       background: var(--bai-review-surface); color: var(--bai-review-text);
@@ -153,10 +165,13 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   root.appendChild(style);
 
   const toggle = el('button', 'toggle', '📍 Review');
+  const pinCountBadge = el('span', 'cnt');
+  const pinsButton = el('button', 'pinsbtn', '📌 Pins');
   const alwaysChk = el('label', 'alwayschk');
   alwaysChk.innerHTML = '<input type="checkbox" /> Always show';
   const dock = el('div', 'dock');
-  dock.append(alwaysChk, toggle);
+  dock.append(alwaysChk, pinsButton, toggle);
+  if (!callbacks.onTogglePanel) pinsButton.remove();
 
   const hoverbox = el('div', 'hoverbox');
   const compose = el('div', 'compose');
@@ -192,6 +207,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   let pickTarget: Element | null = null;
   let dockPinned = false;
   let focusGuardUntil = 0;
+  let panelOpen = false;
+  let pinCount = 0;
 
   /**
    * The dock is hidden until something is happening — a dev server should not
@@ -203,9 +220,28 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   function updateDock() {
     dock.classList.toggle(
       'show',
-      alwaysShow || dockPinned || pickActive || isComposeOpen(),
+      alwaysShow ||
+        dockPinned ||
+        pickActive ||
+        isComposeOpen() ||
+        panelOpen ||
+        pinCount > 0,
     );
     toggle.classList.toggle('active', pickActive);
+  }
+
+  /** Pins waiting on THIS page — the reason the dock shows itself unasked. */
+  function setPinCount(count: number) {
+    pinCount = count;
+    pinCountBadge.textContent = String(count);
+    if (count && !pinCountBadge.parentNode) toggle.appendChild(pinCountBadge);
+    if (!count && pinCountBadge.parentNode) pinCountBadge.remove();
+    updateDock();
+  }
+
+  function setPanelOpen(open: boolean) {
+    panelOpen = open;
+    updateDock();
   }
 
   const isComposeOpen = () => compose.style.display === 'block';
@@ -344,6 +380,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   // ---------------------------------------------------------------- events
 
   toggle.addEventListener('click', () => callbacks.onStartPick());
+  pinsButton.addEventListener('click', () => callbacks.onTogglePanel?.());
 
   function runCopy() {
     // Empty text is allowed — the block still carries label, stack and link.
@@ -432,6 +469,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     setComposeReady,
     getComposeTarget,
     setPickActive,
+    setPinCount,
+    setPanelOpen,
     pinDock,
     copyText,
     isOwnEvent,

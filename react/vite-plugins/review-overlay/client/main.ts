@@ -1,10 +1,11 @@
 /**
- * Dev review overlay — write side (FR-3811).
+ * Dev review overlay (FR-3811 write side, FR-3813 read side).
  *
  * Pick an element with react-grab (⌘⌃C or the dock button), type a note, press
- * ⌘⏎: a self-describing `#bai=v3` markdown block lands on the clipboard, ready
- * to paste into a GitHub PR comment, the PR's Teams thread, or a Claude
- * prompt. Reading those blocks back and drawing pins is FR-3813.
+ * ⌘⏎: a self-describing `#bai=v3` markdown block lands on the clipboard. Every
+ * such block already pasted on the served PRs comes back from
+ * `/__review/pins` as a numbered pin on the element it was picked from, and
+ * opening the block's link lands on that element.
  */
 import { captureAnchorSignals } from './anchor.js';
 import {
@@ -14,9 +15,29 @@ import {
   resolveRouteLabel,
   type AnchorCapture,
 } from './block.js';
+import { decodeAnchor } from './codec.js';
+import {
+  parseFragment,
+  pathNeedsChange,
+  pinUrl,
+  retryUntil,
+} from './deeplink.js';
+import { createPinPanel } from './panel.js';
 import { createPicker } from './picker.js';
-import type { AnchorV3, ReviewServerState } from './types.js';
+import { onCurrentPage } from './pins-state.js';
+import { createPoller } from './poll.js';
+import type {
+  AnchorV3,
+  ReviewPinsPayload,
+  ReviewServerState,
+} from './types.js';
 import { createOverlayUI } from './ui.js';
+
+/** The SPA's own `<Navigate replace>` redirects drop the fragment on login. */
+const BOOT_HASH = location.hash;
+/** 10 s of SPA boot at 500 ms — the login form is lazy behind the splash. */
+const ANCHOR_TRIES = 20;
+const ANCHOR_EVERY_MS = 500;
 
 if (!window.__baiReviewOverlay) {
   window.__baiReviewOverlay = true;
@@ -35,6 +56,7 @@ function boot() {
 
   const ui = createOverlayUI({
     onStartPick: () => picker.start(),
+    onTogglePanel: () => panel.toggle(),
     onBuildBlock: (text) => {
       const target = ui.getComposeTarget();
       if (!target || capture?.target !== target) return null;
@@ -100,4 +122,99 @@ function boot() {
     });
 
   picker.watchForReactGrab();
+
+  // ------------------------------------------------------ pins (FR-3813)
+
+  const poller = createPoller<ReviewPinsPayload>({
+    load: async () => {
+      const response = await fetch('/__review/pins');
+      if (!response.ok) throw new Error(String(response.status));
+      return response.json();
+    },
+    onPayload: (payload) => onPins(payload),
+    onError: () => panel.setError('dev server unreachable'),
+  });
+
+  const panel = createPinPanel({
+    root: ui.root,
+    host: ui.host,
+    showToast: ui.showToast,
+    copyText: ui.copyText,
+    onCountChange: ui.setPinCount,
+    onOpenChange: ui.setPanelOpen,
+    onStartPick: () => picker.start(),
+    onRefresh: () => poller.refreshNow(),
+  });
+
+  /** The deep link's id, until the payload that describes it arrives. */
+  let pendingId: string | null = null;
+  let navigatedForHash = false;
+  let cancelAnchorRetry = () => undefined as void;
+
+  const anchorWithRetry = (id: string) => {
+    cancelAnchorRetry();
+    cancelAnchorRetry = retryUntil(
+      () => !!panel.locatePin(id, { full: true, quiet: true }),
+      {
+        tries: ANCHOR_TRIES,
+        everyMs: ANCHOR_EVERY_MS,
+        onGiveUp: () =>
+          ui.showToast('Could not find that element — the pin is in the panel'),
+      },
+    );
+  };
+
+  function onPins(payload: ReviewPinsPayload) {
+    panel.applyPayload(payload);
+    if (!pendingId || !panel.has(pendingId)) return;
+    const id = pendingId;
+    pendingId = null;
+    const entry = panel.get(id);
+    const anchor = entry?.anchor ?? null;
+    // The short form learns its page only now, so the jump happens here.
+    if (anchor && !onCurrentPage(anchor, location) && !navigatedForHash) {
+      navigatedForHash = true;
+      location.assign(pinUrl(anchor, id, entry?.pin.anchorB64 ?? null));
+      return;
+    }
+    panel.revealItem(id);
+    if (anchor) anchorWithRetry(id);
+  }
+
+  async function applyFragment(hash: string) {
+    const fragment = parseFragment(hash);
+    if (!fragment) return;
+    if (fragment.kind === 'legacy') {
+      ui.showToast('That is an old #bai-review link — pick the element again');
+      return;
+    }
+    pendingId = fragment.id;
+    panel.open();
+    if (fragment.anchorB64) {
+      const anchor = await decodeAnchor(fragment.anchorB64);
+      if (!anchor) {
+        ui.showToast('Could not read the anchor in that link');
+      } else if (!navigatedForHash && pathNeedsChange(anchor, location)) {
+        // Path and query first (R3.3): a full reload, because React Router
+        // owns the history and re-running our boot is cheap.
+        navigatedForHash = true;
+        location.assign(pinUrl(anchor, fragment.id, fragment.anchorB64));
+        return;
+      } else {
+        panel.ensureProvisional(fragment.id, anchor, fragment.anchorB64);
+        anchorWithRetry(fragment.id);
+      }
+    } else {
+      ui.showToast('Looking for this pin on the served PRs…');
+    }
+    poller.refreshNow();
+  }
+
+  window.addEventListener('hashchange', () => {
+    navigatedForHash = false;
+    void applyFragment(location.hash);
+  });
+
+  poller.start();
+  void applyFragment(BOOT_HASH);
 }
