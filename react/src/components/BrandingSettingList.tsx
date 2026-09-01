@@ -2,6 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import {
+  APPEARANCE_SCHEMA_VERSION,
+  DOMAIN_APPEARANCE_CONFIG_KEY,
+} from '../helper/customThemeConfig';
+import { useUpdatePublicDomainAppConfig } from '../hooks/useAppConfig';
 import { useDefaultTheme } from '../hooks/useDefaultTheme';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
@@ -14,10 +20,9 @@ import ThemeColorPicker, {
 } from './BrandingSettingItems/ThemeColorPicker';
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
-import { Settings, Fullscreen } from 'lucide-react';
+import { Settings, Fullscreen, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -27,10 +32,37 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { message } = App.useApp();
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
-  const { resetDefaultTheme } = useDefaultTheme();
+  const { defaultTheme, resetDefaultTheme } = useDefaultTheme();
+  // The draft (prefilled from the saved domain theme, else theme.json) is
+  // saved WHOLE — families included — as this domain's slice of the public
+  // document; reads replace wholesale rather than merging (FR-1964).
+  const updatePublicDomainAppConfig = useUpdatePublicDomainAppConfig();
+
+  const applyThemeToDomain = async () => {
+    if (!defaultTheme) {
+      message.error(t('userSettings.FailedToLoadDefaultThemeConfig'));
+      return;
+    }
+    try {
+      await updatePublicDomainAppConfig(DOMAIN_APPEARANCE_CONFIG_KEY, {
+        ...defaultTheme,
+        schemaVersion: APPEARANCE_SCHEMA_VERSION,
+      });
+      // The reloaded page renders the applied document — that IS the
+      // feedback; the anonymous read path has no refresh API (FR-1964).
+      window.location.reload();
+    } catch (error) {
+      message.error(
+        error instanceof Error && error.message
+          ? error.message
+          : t('dialog.ErrorOccurred'),
+      );
+    }
+  };
 
   const resetColorThemeConfig = (seedPath: AppearanceSeedPath) => {
     resetDefaultTheme([seedPath]);
@@ -274,13 +306,6 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      {/* antd `Alert description` (no `message`) -> Banner. Banner's `title`
-          is unconditionally required (ground-truth .d.ts, not just the doc
-          narrative) — the single line of text goes there. */}
-      <Banner
-        title={t('userSettings.theme.CustomThemeSettingAlert')}
-        status="warning"
-      />
       <SettingList
         showSearchBar
         showResetButton
@@ -291,31 +316,38 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         primaryButton={
           <Button
             variant="primary"
-            icon={<Fullscreen size="1em" />}
-            label={t('userSettings.theme.Preview')}
-            clickAction={async () => {
-              const previewWindow = window.open(
-                window.location.origin,
-                '_blank',
-              );
-              previewWindow?.addEventListener('load', () => {
-                previewWindow?.sessionStorage.setItem(
-                  'isThemePreviewMode',
-                  'true',
-                );
-                previewWindow?.location.reload();
-              });
-            }}
+            icon={<Check size="1em" />}
+            label={t('button.Apply')}
+            clickAction={applyThemeToDomain}
           />
         }
         extraButton={
-          <Button
-            icon={<Settings size="1em" />}
-            label={t('theme.button.JsonConfig')}
-            clickAction={async () => {
-              setOpenThemeConfigModal(true);
-            }}
-          />
+          <BAIFlex gap="sm">
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('theme.button.JsonConfig')}
+              clickAction={async () => {
+                setOpenThemeConfigModal(true);
+              }}
+            />
+            <Button
+              icon={<Fullscreen size="1em" />}
+              label={t('userSettings.theme.Preview')}
+              clickAction={async () => {
+                const previewWindow = window.open(
+                  window.location.origin,
+                  '_blank',
+                );
+                previewWindow?.addEventListener('load', () => {
+                  previewWindow?.sessionStorage.setItem(
+                    'isThemePreviewMode',
+                    'true',
+                  );
+                  previewWindow?.location.reload();
+                });
+              }}
+            />
+          </BAIFlex>
         }
       />
       <BAIUnmountAfterClose>
