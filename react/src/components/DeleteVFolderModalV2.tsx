@@ -55,7 +55,13 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         $input: BulkDeleteVFoldersV2Input!
       ) {
         bulkDeleteVfoldersV2(input: $input) {
-          deletedCount
+          items {
+            id
+          }
+          failed {
+            vfolderId
+            message
+          }
         }
       }
     `);
@@ -93,15 +99,34 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
               message.error(firstError?.message ?? getErrorMessage(firstError));
               return;
             }
-            const deletedCount = data?.bulkDeleteVfoldersV2?.deletedCount ?? 0;
-            if (deletedCount === 0) {
+            const deletedCount = data?.bulkDeleteVfoldersV2?.items?.length ?? 0;
+            const failed = data?.bulkDeleteVfoldersV2?.failed ?? [];
+            // The mutation answers per id, so a partial failure arrives as a
+            // success with `failed` populated rather than as a top-level error.
+            if (failed.length > 0) {
+              const nameByLocalId = _.fromPairs(
+                _.map(folders, (v) => [toLocalId(v.id), v.metadata?.name]),
+              );
               message.error(
                 t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(folders, (v) => v?.metadata?.name).join(
-                    ', ',
-                  ),
+                  folderNames: _.map(failed, (f) =>
+                    nameByLocalId[f.vfolderId]
+                      ? `${nameByLocalId[f.vfolderId]} (${f.message})`
+                      : f.message,
+                  ).join(', '),
                 }),
               );
+            }
+            if (deletedCount === 0) {
+              if (failed.length === 0) {
+                message.error(
+                  t('data.folders.FailedToDeleteFolders', {
+                    folderNames: _.map(folders, (v) => v?.metadata?.name).join(
+                      ', ',
+                    ),
+                  }),
+                );
+              }
               return;
             }
             if (folders.length === 1) {

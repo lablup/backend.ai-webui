@@ -69,7 +69,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
     useMutation<PurgeUsersModalBulkMutation>(graphql`
       mutation PurgeUsersModalBulkMutation($input: BulkPurgeUsersV2Input!) {
         adminBulkPurgeUsersV2(input: $input) {
-          purgedCount
+          successes
           failed {
             userId
             message
@@ -108,7 +108,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             reject(new Error(t('error.UnknownError')));
             return;
           }
-          const { purgedCount, failed } = adminBulkPurgeUsersV2;
+          const { successes, failed } = adminBulkPurgeUsersV2;
+          const purgedCount = successes.length;
 
           if (failed.length > 0) {
             const failedMessages = failed.map((f) => f.message).join(', ');

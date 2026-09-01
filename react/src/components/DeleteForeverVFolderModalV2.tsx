@@ -53,7 +53,11 @@ const DeleteForeverVFolderModalV2: React.FC<
         $input: BulkPurgeVFoldersV2Input!
       ) {
         bulkPurgeVfoldersV2(input: $input) {
-          purgedCount
+          successes
+          failed {
+            vfolderId
+            message
+          }
         }
       }
     `);
@@ -110,15 +114,36 @@ const DeleteForeverVFolderModalV2: React.FC<
               message.error(firstError?.message ?? getErrorMessage(firstError));
               return;
             }
-            const purgedCount = data?.bulkPurgeVfoldersV2?.purgedCount ?? 0;
-            if (purgedCount === 0) {
+            const purgedCount =
+              data?.bulkPurgeVfoldersV2?.successes?.length ?? 0;
+            const failed = data?.bulkPurgeVfoldersV2?.failed ?? [];
+            // The mutation answers per id, so a partial failure arrives as a
+            // success with `failed` populated rather than as a top-level error.
+            if (failed.length > 0) {
+              const nameByLocalId = _.fromPairs(
+                _.map(purgeable, (v) => [toLocalId(v.id), v.metadata?.name]),
+              );
               message.error(
                 t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(purgeable, (v) => v?.metadata?.name).join(
-                    ', ',
-                  ),
+                  folderNames: _.map(failed, (f) =>
+                    nameByLocalId[f.vfolderId]
+                      ? `${nameByLocalId[f.vfolderId]} (${f.message})`
+                      : f.message,
+                  ).join(', '),
                 }),
               );
+            }
+            if (purgedCount === 0) {
+              if (failed.length === 0) {
+                message.error(
+                  t('data.folders.FailedToDeleteFolders', {
+                    folderNames: _.map(
+                      purgeable,
+                      (v) => v?.metadata?.name,
+                    ).join(', '),
+                  }),
+                );
+              }
               return;
             }
             if (purgeable.length === 1) {
