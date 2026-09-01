@@ -2,11 +2,11 @@
  * `#bai=v3` deep links (R3.3, R3.6): read the fragment, apply path and query
  * first, then anchor with a retry ladder while the SPA renders.
  */
-import { isSafePath } from './codec.js';
+import { isSafePath, PIN_BODY_SRC } from './codec.js';
 import type { AnchorV3 } from './types.js';
 
 /** `[#&]` because the pin can ride inside a fragment the app already uses. */
-const HASH_RE = /[#&]bai=v3\.(c_[a-z2-7]{7})(?:\.([A-Za-z0-9_-]{8,}))?/;
+const HASH_RE = new RegExp(`[#&]bai=v3\\.${PIN_BODY_SRC}`);
 /** v1/v2 links are not carried forward — recognised only to say so. */
 const LEGACY_RE = /[#&]bai-review=/;
 

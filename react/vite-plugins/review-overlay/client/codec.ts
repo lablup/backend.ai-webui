@@ -8,6 +8,17 @@
  */
 import type { AnchorV3 } from './types.js';
 
+/**
+ * `<id>[.<anchor>]` — the one grammar the comment extractor and the deep-link
+ * parser share. The anchor is bounded: a 40 MB `s` deflates to well under a
+ * GitHub comment's size limit, so an unbounded match is an inflate bomb.
+ */
+export const PIN_BODY_SRC =
+  '(c_[a-z2-7]{7})(?:\\.([A-Za-z0-9_-]{8,2048}))?(?![A-Za-z0-9_-])';
+
+/** Real anchors are 250–300 bytes inflated; this is the refusal threshold. */
+export const MAX_ANCHOR_BYTES = 16_384;
+
 export const b64urlFromBytes = (bytes: Uint8Array): string => {
   let bin = '';
   for (const b of bytes) bin += String.fromCharCode(b);
@@ -38,6 +49,7 @@ export const isSafePath = (p: unknown): p is string =>
 async function pipeStream(
   bytes: Uint8Array,
   stream: CompressionStream | DecompressionStream,
+  limit = Infinity,
 ): Promise<Uint8Array> {
   const source = new ReadableStream<Uint8Array>({
     start(controller) {
@@ -55,6 +67,10 @@ async function pipeStream(
     if (done) break;
     chunks.push(value);
     total += value.length;
+    if (total > limit) {
+      await reader.cancel();
+      throw new Error('anchor too large');
+    }
   }
   const out = new Uint8Array(total);
   let offset = 0;
@@ -77,6 +93,7 @@ export async function decodeAnchor(b64url: string): Promise<AnchorV3 | null> {
     const inflated = await pipeStream(
       bytesFromB64url(b64url),
       new DecompressionStream('deflate-raw'),
+      MAX_ANCHOR_BYTES,
     );
     const obj = JSON.parse(new TextDecoder().decode(inflated));
     if (!obj || typeof obj !== 'object') return null;

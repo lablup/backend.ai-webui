@@ -48,6 +48,14 @@ describe('parseFragment', () => {
     expect(parseFragment('')).toBeNull();
   });
 
+  it('drops an anchor longer than any real one, keeping the id', () => {
+    expect(parseFragment(`#bai=v3.c_zdv3rhz.${'A'.repeat(4000)}`)).toEqual({
+      kind: 'v3',
+      id: 'c_zdv3rhz',
+      anchorB64: null,
+    });
+  });
+
   it('ignores a malformed id', () => {
     expect(parseFragment('#bai=v3.zdv3rhz')).toBeNull();
   });
