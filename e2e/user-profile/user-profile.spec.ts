@@ -12,6 +12,7 @@ import {
   addIpTags,
   removeAllIpTags,
   createDisposableUser,
+  profileModal,
 } from '../utils/user-profile-util';
 import test, { expect } from '@playwright/test';
 
@@ -101,10 +102,15 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
-        // Verify Allowed Client IPs label is visible
-        await expect(modal.getByText('Allowed client IPs')).toBeVisible();
+        // The test's contract is that the field is PRESENT, so assert the
+        // control, not just its label — both the FormItem label and the inner
+        // field label render the same text, so a text-only check passes even
+        // when the combobox is missing.
+        await expect(
+          getAllowedClientIpFormItem(modal).getByRole('combobox'),
+        ).toBeVisible();
 
         // Verify hint text
         await expect(
@@ -124,12 +130,9 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
+        const formItem = getAllowedClientIpFormItem(profileModal(page));
 
-        await addIpTags(page.locator('.ant-modal'), [
-          '192.168.1.1',
-          '10.0.0.1',
-        ]);
+        await addIpTags(profileModal(page), ['192.168.1.1', '10.0.0.1']);
 
         // Verify tags are created
         await expect(
@@ -139,8 +142,7 @@ test.describe(
           formItem.locator('.ant-tag').filter({ hasText: '10.0.0.1' }),
         ).toBeVisible();
 
-        await page
-          .locator('.ant-modal')
+        await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });
@@ -152,9 +154,9 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
+        const formItem = getAllowedClientIpFormItem(profileModal(page));
 
-        await addIpTags(page.locator('.ant-modal'), [
+        await addIpTags(profileModal(page), [
           '10.20.30.0/24',
           '192.168.0.0/16',
         ]);
@@ -166,8 +168,7 @@ test.describe(
           formItem.locator('.ant-tag').filter({ hasText: '192.168.0.0/16' }),
         ).toBeVisible();
 
-        await page
-          .locator('.ant-modal')
+        await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });
@@ -179,9 +180,9 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
+        const formItem = getAllowedClientIpFormItem(profileModal(page));
 
-        await addIpTags(page.locator('.ant-modal'), ['not-an-ip']);
+        await addIpTags(profileModal(page), ['not-an-ip']);
 
         const redTag = formItem
           .locator('.ant-tag')
@@ -189,8 +190,7 @@ test.describe(
         await expect(redTag).toBeVisible();
         await expect(redTag).toHaveClass(/ant-tag-red/);
 
-        await page
-          .locator('.ant-modal')
+        await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });
@@ -202,9 +202,9 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
+        const formItem = getAllowedClientIpFormItem(profileModal(page));
 
-        await addIpTags(page.locator('.ant-modal'), [
+        await addIpTags(profileModal(page), [
           '192.168.1.1',
           'invalid-ip',
           '10.0.0.0/8',
@@ -228,8 +228,7 @@ test.describe(
         await expect(cidrTag).toBeVisible();
         await expect(cidrTag).not.toHaveClass(/ant-tag-red/);
 
-        await page
-          .locator('.ant-modal')
+        await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });
@@ -238,9 +237,9 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
+        const formItem = getAllowedClientIpFormItem(profileModal(page));
 
-        await addIpTags(page.locator('.ant-modal'), ['192.168.1.1']);
+        await addIpTags(profileModal(page), ['192.168.1.1']);
 
         const tag = formItem
           .locator('.ant-tag')
@@ -254,15 +253,13 @@ test.describe(
         // Astryx `Tokenizer`; each token carries a real remove button whose
         // accessible name is `Remove <value>` (measured on the live profile
         // modal), so target that instead of any class.
-        // NOTE: the surrounding `.ant-modal` / `.ant-tag` selectors in this
-        // file are equally stale and belong to the separate `.ant-*` selector
-        // migration — deliberately left alone here.
+        // NOTE: the `.ant-tag` selectors still in this file are equally stale
+        // and belong to the separate `.ant-*` selector migration.
         await tag.getByRole('button', { name: /^Remove / }).click();
 
         await expect(tag).toBeHidden();
 
-        await page
-          .locator('.ant-modal')
+        await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });
@@ -274,11 +271,11 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
         const currentIp = await getCurrentClientIp(page);
 
         const fakeIp = currentIp === '10.0.0.1' ? '10.0.0.2' : '10.0.0.1';
-        await addIpTags(page.locator('.ant-modal'), [fakeIp]);
+        await addIpTags(profileModal(page), [fakeIp]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -296,10 +293,10 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
         const currentIp = await getCurrentClientIp(page);
 
-        await addIpTags(page.locator('.ant-modal'), [currentIp]);
+        await addIpTags(profileModal(page), [currentIp]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -309,9 +306,8 @@ test.describe(
 
         // Cleanup: clear allowed IPs
         await openProfileModal(page);
-        await removeAllIpTags(page.locator('.ant-modal'));
-        await page
-          .locator('.ant-modal')
+        await removeAllIpTags(profileModal(page));
+        await profileModal(page)
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
@@ -326,13 +322,13 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
         const currentIp = await getCurrentClientIp(page);
 
         const ipParts = currentIp.split('.');
         const cidrRange = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.0/24`;
 
-        await addIpTags(page.locator('.ant-modal'), [cidrRange]);
+        await addIpTags(profileModal(page), [cidrRange]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -342,9 +338,8 @@ test.describe(
 
         // Cleanup: clear allowed IPs
         await openProfileModal(page);
-        await removeAllIpTags(page.locator('.ant-modal'));
-        await page
-          .locator('.ant-modal')
+        await removeAllIpTags(profileModal(page));
+        await profileModal(page)
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
@@ -359,11 +354,11 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
         const currentIp = await getCurrentClientIp(page);
 
         // First, set an IP
-        await addIpTags(page.locator('.ant-modal'), [currentIp]);
+        await addIpTags(profileModal(page), [currentIp]);
         await modal.getByRole('button', { name: 'Update' }).click();
         await expect(
           page.getByText('Profile has been successfully updated.'),
@@ -371,9 +366,8 @@ test.describe(
 
         // Reopen and remove all IPs
         await openProfileModal(page);
-        await removeAllIpTags(page.locator('.ant-modal'));
-        await page
-          .locator('.ant-modal')
+        await removeAllIpTags(profileModal(page));
+        await profileModal(page)
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
@@ -382,11 +376,10 @@ test.describe(
 
         // Verify IPs are cleared
         await openProfileModal(page);
-        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
+        const formItem = getAllowedClientIpFormItem(profileModal(page));
         await expect(formItem.locator('.ant-tag')).toHaveCount(0);
 
-        await page
-          .locator('.ant-modal')
+        await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });
@@ -403,7 +396,7 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
         const fullNameInput = modal.locator('input#full_name');
         const originalName = await fullNameInput.inputValue();
@@ -420,20 +413,15 @@ test.describe(
 
         // Reopen and verify the name was saved
         await openProfileModal(page);
-        const updatedName = await page
-          .locator('.ant-modal')
+        const updatedName = await profileModal(page)
           .locator('input#full_name')
           .inputValue();
         expect(updatedName).toBe(testName);
 
         // Cleanup: restore original name
-        await page.locator('.ant-modal').locator('input#full_name').clear();
-        await page
-          .locator('.ant-modal')
-          .locator('input#full_name')
-          .fill(originalName);
-        await page
-          .locator('.ant-modal')
+        await profileModal(page).locator('input#full_name').clear();
+        await profileModal(page).locator('input#full_name').fill(originalName);
+        await profileModal(page)
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
@@ -448,7 +436,7 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
         const currentIp = await getCurrentClientIp(page);
 
         const fullNameInput = modal.locator('input#full_name');
@@ -458,7 +446,7 @@ test.describe(
         await fullNameInput.clear();
         await fullNameInput.fill(testName);
 
-        await addIpTags(page.locator('.ant-modal'), [currentIp]);
+        await addIpTags(profileModal(page), [currentIp]);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -468,28 +456,21 @@ test.describe(
 
         // Reopen and verify both changes were saved
         await openProfileModal(page);
-        const savedName = await page
-          .locator('.ant-modal')
+        const savedName = await profileModal(page)
           .locator('input#full_name')
           .inputValue();
         expect(savedName).toBe(testName);
 
-        const savedFormItem = getAllowedClientIpFormItem(
-          page.locator('.ant-modal'),
-        );
+        const savedFormItem = getAllowedClientIpFormItem(profileModal(page));
         await expect(
           savedFormItem.locator('.ant-tag').filter({ hasText: currentIp }),
         ).toBeVisible();
 
         // Cleanup: restore original name and clear IPs
-        await page.locator('.ant-modal').locator('input#full_name').clear();
-        await page
-          .locator('.ant-modal')
-          .locator('input#full_name')
-          .fill(originalName);
-        await removeAllIpTags(page.locator('.ant-modal'));
-        await page
-          .locator('.ant-modal')
+        await profileModal(page).locator('input#full_name').clear();
+        await profileModal(page).locator('input#full_name').fill(originalName);
+        await removeAllIpTags(profileModal(page));
+        await profileModal(page)
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
@@ -509,7 +490,7 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
         await expect(modal.locator('input#password')).toBeVisible();
         await expect(modal.locator('input#passwordConfirm')).toBeVisible();
@@ -524,7 +505,7 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
         await modal.locator('input#password').fill('123');
 
@@ -539,7 +520,7 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
         await modal.locator('input#password').fill('NewPass1!');
         await modal.locator('input#passwordConfirm').fill('DifferentPass2!');
@@ -560,7 +541,7 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
         await modal.locator('input#password').fill('NewPass1!');
 
@@ -585,7 +566,7 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -598,33 +579,31 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = profileModal(page);
 
         const fullNameInput = modal.locator('input#full_name');
         const originalName = await fullNameInput.inputValue();
 
         await fullNameInput.clear();
         await fullNameInput.fill('Should Not Be Saved');
-        await addIpTags(page.locator('.ant-modal'), ['10.0.0.1']);
+        await addIpTags(profileModal(page), ['10.0.0.1']);
 
         await modal.getByRole('button', { name: 'Cancel' }).click();
-        await page.locator('.ant-modal').waitFor({ state: 'hidden' });
+        await profileModal(page).waitFor({ state: 'hidden' });
 
         // Reopen and verify nothing changed
         await openProfileModal(page);
-        const restoredName = await page
-          .locator('.ant-modal')
+        const restoredName = await profileModal(page)
           .locator('input#full_name')
           .inputValue();
         expect(restoredName).toBe(originalName);
 
-        const formItem = getAllowedClientIpFormItem(page.locator('.ant-modal'));
+        const formItem = getAllowedClientIpFormItem(profileModal(page));
         await expect(
           formItem.locator('.ant-tag').filter({ hasText: '10.0.0.1' }),
         ).toHaveCount(0);
 
-        await page
-          .locator('.ant-modal')
+        await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });

@@ -16,6 +16,14 @@
 import { modifyConfigToml, webuiEndpoint } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
+// Astryx's ToastViewport renders every toast twice: once in the visible
+// stack (`role="region"`, named "Notifications") and once in a singleton
+// screen-reader announcer — an unscoped getByText() strict-mode-violates.
+// See preset-crud.spec.ts / registry.spec.ts for the identical pattern.
+function toastRegion(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
+
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const TEST_EMAIL = 'test@example.com';
@@ -135,7 +143,7 @@ test.describe('Forgot password email modal', () => {
 
       // 4. Verify success notification appears and modal closes
       await expect(
-        page.getByText('A verification email has been sent.'),
+        toastRegion(page).getByText('A verification email has been sent.'),
       ).toBeVisible({ timeout: 10_000 });
       await expect(
         page.getByRole('dialog', { name: 'Send change password email' }),
@@ -169,7 +177,7 @@ test.describe('Forgot password email modal', () => {
 
       // 4. Verify error notification appears and modal stays open
       await expect(
-        page.getByText(
+        toastRegion(page).getByText(
           'This email address is not registered. Please contact your administrator.',
         ),
       ).toBeVisible({ timeout: 10_000 });
