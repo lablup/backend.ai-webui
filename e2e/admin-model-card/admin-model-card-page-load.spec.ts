@@ -210,7 +210,7 @@ test.describe(
         name: 'Page Size',
       });
       await pageSizeSelector.click();
-      await page.getByRole('option', { name: '20 / page' }).click();
+      await page.getByRole('option', { name: '20', exact: true }).click();
 
       // Verify pagination reflects 20 items per page via URL parameter
       await expect(page).toHaveURL(/pageSize=20/);
