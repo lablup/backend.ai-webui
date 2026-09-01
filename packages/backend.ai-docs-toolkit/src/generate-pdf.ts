@@ -6,7 +6,7 @@ import { buildFullDocument } from './html-builder.js';
 import { renderPdf } from './pdf-renderer.js';
 import { loadTheme, resolveTheme } from './theme.js';
 import { getDocVersion } from './version.js';
-import { loadBookConfig } from './book-config.js';
+import { loadBookConfig, resolveBookTitle } from './book-config.js';
 import type { ResolvedDocConfig } from './config.js';
 
 export interface GeneratePdfOptions {
@@ -169,18 +169,30 @@ export async function generatePdf(
       config,
     );
 
+    // Per-language title: a `book.config.yaml` with a plain string `title`
+    // resolves to that same string for every language, so this is a no-op for
+    // single-title projects.
+    const { title: langTitle, titleMultiline: langTitleMultiline } =
+      resolveBookTitle(bookConfig, lang);
+
     // Build single unified HTML document
     console.log(`[${lang}] Building HTML...`);
     const html = buildFullDocument(
       chapters,
-      { title, titleMultiline, version, lang, note: args.note },
+      {
+        title: langTitle,
+        titleMultiline: langTitleMultiline,
+        version,
+        lang,
+        note: args.note,
+      },
       config,
       theme,
     );
 
     // Render PDF
     const pdfFilename = formatPdfFilename(config.pdfFilenameTemplate, {
-      title,
+      title: langTitle,
       version: versionForFilename,
       lang,
     });
@@ -190,7 +202,7 @@ export async function generatePdf(
     await renderPdf({
       html,
       outputPath,
-      title,
+      title: langTitle,
       version,
       lang,
       theme,
