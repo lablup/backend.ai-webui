@@ -98,6 +98,7 @@ import {
   BAIModalProps,
   BAIRuntimeVariantSelect,
   BAIComplexSelect,
+  BAIVFolderPathPicker,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
   convertToUUID,
@@ -2323,6 +2324,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     isDisabled={!deploymentProject}
                     excludeDeleted
                     filter='usage_mode == "model"'
+                    onChange={() => {
+                      // A subpath belongs to the folder it was picked from.
+                      customForm.setFieldValue('modelSubpath', undefined);
+                    }}
                   />
                 </BAIFormItem>
               </Suspense>
@@ -2391,9 +2396,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 tooltip={t('modelService.SubpathTooltip')}
                 style={{ flex: 1 }}
               >
-                <AstryxFormTextInput
+                <BAIVFolderPathPicker
                   label={t('modelService.Subpath')}
-                  hasClear
+                  vfolderUuid={
+                    watchedModelFolderId
+                      ? toLocalId(watchedModelFolderId)
+                      : undefined
+                  }
+                  disabled={!watchedModelFolderId}
                 />
               </BAIFormItem>
             )}
@@ -2678,6 +2688,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 ? presetVFolderSelectRef
                 : customVFolderSelectRef;
             activeForm.setFieldValue('modelFolderId', newFolderGlobalId);
+            // Programmatic setFieldValue skips the select's onChange, so drop
+            // any subpath picked from the previously selected folder here.
+            customForm.setFieldValue('modelSubpath', undefined);
             startTransition(() => {
               activeRef.current?.refetch();
             });
