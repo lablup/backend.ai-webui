@@ -7,9 +7,11 @@ import { expect, test } from '@playwright/test';
  * opt-in: `E2E_REVIEW_OVERLAY_SMOKE=1 pnpm exec playwright test
  * e2e/review-overlay-deeplink.spec.ts --project chromium`.
  *
- * The login page is enough — no backend session is needed, and the anchor is
- * built in the page with the overlay's OWN codec, so the test exercises the
- * real `#bai=v3` round trip rather than a hand-written fixture.
+ * No backend session is needed: whatever the dev server renders — the login
+ * form, or the app shell when a session is already live — the test picks a
+ * real visible element off that page and builds its anchor with the overlay's
+ * OWN codec, so it exercises the real `#bai=v3` round trip rather than a
+ * hand-written fixture that can drift from the encoder.
  */
 test.describe('@review-overlay review overlay deep link', () => {
   test.beforeEach(() => {
@@ -23,43 +25,55 @@ test.describe('@review-overlay review overlay deep link', () => {
     page,
   }) => {
     await page.goto(webuiEndpoint, { waitUntil: 'domcontentloaded' });
-    const loginButton = page
-      .getByRole('button', { name: /login|sign in/i })
-      .first();
-    await loginButton.waitFor({ timeout: 30_000 });
     await page.waitForFunction(
       () =>
         (window as unknown as { __baiReviewOverlay?: boolean })
           .__baiReviewOverlay,
     );
+    // Let the SPA settle on its final route before the anchor is captured —
+    // the deep link reproduces that route, so it must be the resolved one.
+    await page
+      .locator('button:visible, a[href]:visible')
+      .first()
+      .waitFor({ timeout: 30_000 });
+    await page.waitForTimeout(2000);
 
-    const target = await loginButton.elementHandle();
     const link = await page.evaluate(
-      async ([element, anchorUrl, codecUrl, idUrl]) => {
+      async ([anchorUrl, codecUrl, idUrl]) => {
         // Variable specifiers: these modules are served by the dev plugin at
         // request time and have no counterpart in the repo's module graph.
         const [anchorMod, codecMod, idMod] = await Promise.all([
-          import(/* @vite-ignore */ anchorUrl as string),
-          import(/* @vite-ignore */ codecUrl as string),
-          import(/* @vite-ignore */ idUrl as string),
+          import(/* @vite-ignore */ anchorUrl),
+          import(/* @vite-ignore */ codecUrl),
+          import(/* @vite-ignore */ idUrl),
         ]);
-        const anchor = anchorMod.captureAnchorSignals(element as Element);
+        const overlay = document.querySelector('[data-bai-review-overlay]');
+        const target = [
+          ...document.querySelectorAll('[data-testid], button, a[href]'),
+        ].find((element) => {
+          if (overlay?.contains(element)) return false;
+          const box = element.getBoundingClientRect();
+          return box.width > 8 && box.height > 8;
+        });
+        if (!target) throw new Error('no element to anchor to on this page');
+        const anchor = anchorMod.captureAnchorSignals(target);
         const b64: string = await codecMod.encodeAnchor(anchor);
-        const at = '2026-09-01T00:00:00Z';
-        return { id: idMod.pinId(0, b64, at) as string, b64 };
+        return {
+          id: idMod.pinId(0, b64, '2026-09-01T00:00:00Z') as string,
+          b64,
+          path: `${anchor.p}${anchor.q ? `?${anchor.q}` : ''}`,
+        };
       },
-      [
-        target,
-        '/__review/anchor.js',
-        '/__review/codec.js',
-        '/__review/id.js',
-      ] as const,
+      ['/__review/anchor.js', '/__review/codec.js', '/__review/id.js'] as const,
     );
 
     // A FRESH load, the way a reviewer opens the link from a PR comment.
-    await page.goto(`${webuiEndpoint}/#bai=v3.${link.id}.${link.b64}`, {
-      waitUntil: 'domcontentloaded',
-    });
+    await page.goto(
+      `${webuiEndpoint}${link.path}#bai=v3.${link.id}.${link.b64}`,
+      {
+        waitUntil: 'domcontentloaded',
+      },
+    );
 
     const pin = page.locator('[data-bai-review-overlay] .pin').first();
     await expect(pin).toBeVisible({ timeout: 30_000 });
