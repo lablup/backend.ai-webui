@@ -314,8 +314,13 @@ bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
   it merged, it closed, the branch moved — has its comment edited to the stopped form on the
   spot, because the boot record about to be overwritten is the only thing that still knows
   where that comment is.
+- **Teardown never writes a PR's first comment.** `stop` edits only the comments the boot
+  record has ids for. A PR whose comment could not be written at boot (`commentId: null`) is
+  left alone rather than told a server it never heard about has stopped.
 - **The Teams thread** for each served PR comes from that PR's `Resolves … (FR-XXXX)` key and one
   Jira GET (`customfield_10176`) at boot — never at request time. Missing is recorded as `null`.
+  The credential reaches `curl` on stdin via `--config -`, never in argv, because `/proc` is
+  readable by every other process on the box.
 
 Logic that needs no network is unit-tested: `bash .claude/skills/dev-server/scripts/test-advertise.sh`.
 

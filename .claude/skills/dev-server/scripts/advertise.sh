@@ -112,8 +112,10 @@ dropped_served() {
 }
 
 # jira_key <pr-body> — the FR key from `Resolves #1234 (FR-1234)`.
+# A body that names none is empty AND successful: `grep` exits 1, and under
+# `pipefail` that would abort the caller's `key=$(...)` assignment mid-run.
 jira_key() {
-  grep -oiE '\(FR-[0-9]+\)' <<<"$1" | head -1 | tr -d '()' | tr '[:lower:]' '[:upper:]'
+  grep -oiE '\(FR-[0-9]+\)' <<<"$1" | head -1 | tr -d '()' | tr '[:lower:]' '[:upper:]' || true
 }
 
 # teams_override <pr> <running> <override>... — the `--teams-thread` value that
@@ -304,8 +306,11 @@ teams_thread_for_key() {
   fi
   [ -n "$email" ] && [ -n "$token" ] || return 0
   local auth; auth=$(printf '%s:%s' "$email" "$token" | base64 | tr -d '\n')
-  curl -sS -m 10 -H "Authorization: Basic $auth" \
-    "$JIRA_SITE/rest/api/3/issue/$key?fields=$JIRA_TEAMS_FIELD" 2>/dev/null \
+  # The credential arrives on stdin via --config, never in argv: /proc is
+  # readable by every other process on a dev box that runs dozens of agents.
+  printf 'header = "Authorization: Basic %s"\n' "$auth" \
+    | curl -sS -m 10 --config - \
+      "$JIRA_SITE/rest/api/3/issue/$key?fields=$JIRA_TEAMS_FIELD" 2>/dev/null \
     | jq -r --arg f "$JIRA_TEAMS_FIELD" '.fields[$f] | select(type == "string") // empty' 2>/dev/null || true
 }
 
@@ -443,14 +448,24 @@ cmd_advertise() {
 
   local started local_url worktree
   mkdir -p "$STATE_DIR"
-  # Re-advertising the same server keeps its original boot time.
-  started=$(jq -r '.startedAt // empty' "$file" 2>/dev/null || true)
+  # Re-advertising a server that is still running keeps its original boot time.
+  # A record already marked stopped belongs to a previous server on this app
+  # name, so its boot time must not be carried into the new one's record.
+  started=$(jq -r 'select(.stoppedAt == null) | .startedAt // empty' "$file" 2>/dev/null || true)
   [ -n "$started" ] || started=$(now_iso)
   local_url="https://$app.localhost:$(portless_port)"
   worktree=$(repo_root)
-  boot_record "$app" "$url" "$repo" "$branch" "$pid" "$started" "$out" \
-    "$box" "$local_url" "$worktree" >"$file"
-  say "boot record $file"
+  # Write through a sibling temp file: `>"$file"` truncates before jq runs, so a
+  # concurrent reader (overlay, board) could see invalid JSON and a jq failure
+  # would leave the only record corrupted.
+  if boot_record "$app" "$url" "$repo" "$branch" "$pid" "$started" "$out" \
+      "$box" "$local_url" "$worktree" >"$file.tmp"; then
+    mv "$file.tmp" "$file"
+    say "boot record $file"
+  else
+    rm -f "$file.tmp"
+    say "could not write $file — boot record left as is"
+  fi
 }
 
 cmd_stop() {
@@ -484,10 +499,11 @@ cmd_stop() {
       else
         say "PR #$pr: could not edit comment $id — it may have been deleted"
       fi
-    elif upsert_comment "$repo" "$pr" "$box" "$body" >/dev/null; then
-      say "PR #$pr: comment marked stopped"
     else
-      say "PR #$pr: could not write the stopped comment"
+      # No id means advertising never got a comment onto this PR. Creating one
+      # now would make our first word on it a "stopped" notice — the guarantee
+      # `patch_stopped` states, applied to the caller that could route round it.
+      say "PR #$pr: no comment of ours to mark stopped"
     fi
   done < <(jq -r '.served[] | [.pr, (.commentId // "")] | @tsv' "$file")
 

@@ -164,6 +164,10 @@ check 'jira_key from Resolves line' 'FR-3810' \
 check 'jira_key takes the first key only' 'FR-3810' \
   "$(jira_key 'Resolves #9329 (FR-3810), relates to (FR-3811)')"
 check 'jira_key is empty when the body names none' '' "$(jira_key 'no ticket here')"
+# Not just empty — successful. `key=$(jira_key_for_pr ...)` runs under `set -e`,
+# so a grep that exits 1 would abort advertising on the first key-less PR.
+jira_key 'no ticket here' >/dev/null
+check 'jira_key succeeds when the body names none' '0' "$?"
 
 # ── boot record ───────────────────────────────────────────────────────────────
 SERVED='[{"pr":9330,"branch":"feat/FR-3810","jiraKey":"FR-3810",
@@ -253,6 +257,41 @@ check 'the still-served PRs kept their comment ids' '9328 9329' \
   "$(jq -r '[.served[] | select(.commentId != null) | .pr] | join(" ")' "$STATE_DIR/testapp.json")"
 check 'the boot time survives a re-advertise' '2026-01-01T00:00:00Z' \
   "$(jq -r '.startedAt' "$STATE_DIR/testapp.json")"
+
+# A record already marked stopped belongs to a previous server on this app name.
+jq '.stoppedAt = "2026-01-02T00:00:00Z"' "$STATE_DIR/testapp.json" >"$TMP/stopped.json"
+mv "$TMP/stopped.json" "$STATE_DIR/testapp.json"
+( cmd_advertise --app testapp --branch b --repo o/r --pid 7 ) 2>/dev/null
+check 'a stopped record does not donate its boot time to the next server' 'new' \
+  "$(case "$(jq -r '.startedAt' "$STATE_DIR/testapp.json")" in
+       2026-01-01T00:00:00Z) echo stale ;; *) echo new ;; esac)"
+check 'the fresh record is running again, not stopped' 'null' \
+  "$(jq -r '.stoppedAt' "$STATE_DIR/testapp.json")"
+rm -rf "$TMP"
+
+# ── stop: a PR we never commented on gets no first comment at teardown ────────
+TMP=$(mktemp -d)
+STATE_DIR="$TMP/state"
+DEV_GW_CONFIG="$TMP/dev-gw.json"
+printf '%s' '{"box":"testbox","share_base":"http://{app}.testbox.example.invalid"}' >"$DEV_GW_CONFIG"
+mkdir -p "$STATE_DIR"
+cat >"$STATE_DIR/testapp.json" <<'JSON'
+{"schemaVersion":1,"app":"testapp","box":"testbox","url":"http://u","repo":"o/r",
+ "branch":"c","pid":1,"startedAt":"2026-01-01T00:00:00Z","stoppedAt":null,
+ "served":[{"pr":9328,"branch":"a","commentId":11},
+           {"pr":9329,"branch":"b","commentId":null}]}
+JSON
+missing_tools() { printf ''; }
+patch_stopped() { printf '%s\n' "$2" >>"$TMP/patched"; }
+upsert_comment() { printf '%s\n' "$2" >>"$TMP/created"; printf '1\thttps://x'; }
+( cmd_stop --app testapp ) 2>/dev/null
+check 'stop patches only the PR whose comment id we recorded' '11' \
+  "$(cat "$TMP/patched" 2>/dev/null)"
+check 'stop creates no comment on the PR we never reached' '' \
+  "$(cat "$TMP/created" 2>/dev/null)"
+check 'stop marks the record stopped' 'stopped' \
+  "$(case "$(jq -r '.stoppedAt' "$STATE_DIR/testapp.json")" in
+       null) echo running ;; *) echo stopped ;; esac)"
 rm -rf "$TMP"
 
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"
