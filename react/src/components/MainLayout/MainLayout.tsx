@@ -24,6 +24,7 @@ import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import PluginLoader from '../PluginLoader';
 import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
+import ThemeFamilyUserConfigSync from '../ThemeFamilyUserConfigSync';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -146,6 +147,11 @@ function MainLayout() {
   return (
     <>
       <CSSTokenVariables />
+      <ErrorBoundaryWithNullFallback>
+        <Suspense fallback={null}>
+          <ThemeFamilyUserConfigSync />
+        </Suspense>
+      </ErrorBoundaryWithNullFallback>
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <BAIAppShell
