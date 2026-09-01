@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-node-pnpm
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         name: ESLint results cache
         with:
           path: react/.eslintcache
@@ -59,7 +59,7 @@ jobs:
       # react/vitest.config.ts under CI) across runs of the same PR. The
       # `-react-` namespace is load-bearing: the backend.ai-ui workflow can run
       # on the same sha and must not share this entry.
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         name: Vitest fs-module cache
         with:
           path: node_modules/.experimental-vitest-cache
