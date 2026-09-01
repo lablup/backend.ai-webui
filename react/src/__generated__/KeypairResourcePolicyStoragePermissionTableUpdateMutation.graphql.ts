@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0784827bf2bee46ef5778fb7c3355da7>>
+ * @generated SignedSource<<0e56ebe2bd17e7abc012cf2eeef02a54>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type UpdateKeypairResourcePolicyInput = {
   maxContainersPerSession?: number | null | undefined;
   maxPendingSessionCount?: number | null | undefined;
   maxPendingSessionResourceSlots?: ReadonlyArray<ResourceSlotEntryInput> | null | undefined;
+  maxPriority?: number | null | undefined;
   maxSessionLifetime?: number | null | undefined;
   totalResourceSlots?: ReadonlyArray<ResourceSlotEntryInput> | null | undefined;
 };

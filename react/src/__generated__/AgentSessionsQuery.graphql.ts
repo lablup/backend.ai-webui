@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<73b8f97d0c5a1f7c792c4fef6ab2ce0c>>
+ * @generated SignedSource<<dd10418e0660867ceb777ec1ecc00c17>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type AgentStatusEnum = "ALIVE" | "LOST" | "RESTARTING" | "TERMINATED" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type SessionV2OrderField = "CREATED_AT" | "ID" | "NAME" | "STATUS" | "TERMINATED_AT" | "%future added value";
-export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type AgentFilter = {
   AND?: ReadonlyArray<AgentFilter> | null | undefined;
   NOT?: ReadonlyArray<AgentFilter> | null | undefined;
