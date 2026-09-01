@@ -1,6 +1,14 @@
 import { findAnchorTarget, quickFindTarget } from './resolve.js';
 import type { AnchorV3 } from './types.js';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+/** react-grab 0.1.50's synchronous `getDisplayName`, stubbed per test. */
+const stubReactGrab = (names: Record<string, string>) => {
+  (window as unknown as { __REACT_GRAB__?: unknown }).__REACT_GRAB__ = {
+    getDisplayName: (element: Element) =>
+      names[element.getAttribute('data-name') ?? ''] ?? null,
+  };
+};
 
 const mount = (html: string) => {
   document.body.innerHTML = html;
@@ -17,6 +25,10 @@ const anchor = (over: Partial<AnchorV3> = {}): AnchorV3 => ({
 
 beforeEach(() => {
   document.body.innerHTML = '';
+});
+
+afterEach(() => {
+  delete (window as unknown as { __REACT_GRAB__?: unknown }).__REACT_GRAB__;
 });
 
 describe('quickFindTarget', () => {
@@ -97,5 +109,47 @@ describe('findAnchorTarget', () => {
   it('refuses an anchor with no selector at all', () => {
     mount('<button>Login</button>');
     expect(findAnchorTarget({ v: 3, p: '/' } as AnchorV3)).toBeNull();
+  });
+});
+
+// R3.6 put the react-grab component name in the anchor as a resolution signal:
+// `useId` selectors go stale and the testid + rect fallback stacked two pins on
+// the same landmark corner.
+describe('the anchor’s component name', () => {
+  const withComponent = (over: Partial<AnchorV3> = {}) =>
+    anchor({ c: { name: 'RowActions', src: 'src/Row.tsx:12:4' }, ...over });
+
+  it('breaks the tie between two candidates with the same text', () => {
+    mount(`
+      <div data-name="Toolbar"><button data-name="Toolbar">Login</button></div>
+      <div data-name="RowActions"><button data-name="RowActions">Login</button></div>
+    `);
+    stubReactGrab({ Toolbar: 'Toolbar', RowActions: 'RowActions' });
+    const found = findAnchorTarget(withComponent({ s: 'nope' }));
+    expect(found?.closest('[data-name="RowActions"]')).toBeTruthy();
+  });
+
+  it('rejects a testid landmark that is a different component', () => {
+    mount('<div data-testid="panel" data-name="Toolbar"><i>Login</i></div>');
+    stubReactGrab({ Toolbar: 'Toolbar' });
+    expect(
+      quickFindTarget(withComponent({ s: 'nope', tid: 'panel' })),
+    ).toBeNull();
+  });
+
+  it('takes the landmark when react-grab agrees', () => {
+    mount('<div data-testid="panel" data-name="RowActions"><i>Login</i></div>');
+    stubReactGrab({ RowActions: 'RowActions' });
+    expect(quickFindTarget(withComponent({ s: 'nope', tid: 'panel' }))).toBe(
+      document.querySelector('[data-testid="panel"]'),
+    );
+  });
+
+  // Without react-grab the signal must never make the ladder worse.
+  it('is ignored when react-grab is not on the page', () => {
+    mount('<div data-testid="panel"><i>Login</i></div>');
+    expect(quickFindTarget(withComponent({ s: 'nope', tid: 'panel' }))).toBe(
+      document.querySelector('[data-testid="panel"]'),
+    );
   });
 });

@@ -34,6 +34,31 @@ export const textMatches = (element: Element, txt?: string): boolean => {
 
 const safeTag = (tag?: string) => (tag && TAG_RE.test(tag) ? tag : '*');
 
+/** react-grab 0.1.50 answers synchronously, so this costs no await. */
+function displayName(element: Element): string | null {
+  const grab = window.__REACT_GRAB__;
+  if (!grab || typeof grab.getDisplayName !== 'function') return null;
+  try {
+    return grab.getDisplayName(element);
+  } catch {
+    return null;
+  }
+}
+
+/** Ranks a candidate: react-grab positively names the anchor's component. */
+const componentMatches = (element: Element, anchor: AnchorV3): boolean =>
+  !!anchor.c && displayName(element) === anchor.c.name;
+
+/**
+ * True only when react-grab names a DIFFERENT component — silence (no
+ * react-grab, or an element it cannot name) never makes the ladder worse.
+ */
+const componentConflicts = (element: Element, anchor: AnchorV3): boolean => {
+  if (!anchor.c) return false;
+  const name = displayName(element);
+  return name !== null && name !== anchor.c.name;
+};
+
 const isOurs = (element: Element | null, ignore?: Element | null) =>
   !!element &&
   (!!element.closest('[data-bai-review-overlay]') ||
@@ -97,12 +122,24 @@ export function quickFindTarget(
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const bySelector = querySafe(doc, anchor.s, options.ignore);
-  if (bySelector && textMatches(bySelector, anchor.txt)) return bySelector;
+  if (
+    bySelector &&
+    textMatches(bySelector, anchor.txt) &&
+    !componentConflicts(bySelector, anchor)
+  )
+    return bySelector;
   const landmark = uniqueLandmark(anchor, doc, options.ignore);
   if (landmark) {
-    return (
-      rectProjectedTarget(landmark, anchor, doc, options.ignore) ?? landmark
+    const projected = rectProjectedTarget(
+      landmark,
+      anchor,
+      doc,
+      options.ignore,
     );
+    if (projected && !componentConflicts(projected, anchor)) return projected;
+    // A landmark that is a different component is the corner-stacking answer
+    // R3.6's component signal exists to refuse.
+    return componentConflicts(landmark, anchor) ? null : landmark;
   }
   return null;
 }
@@ -115,18 +152,35 @@ export function findAnchorTarget(
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const bySelector = querySafe(doc, anchor.s, options.ignore);
-  if (bySelector && textMatches(bySelector, anchor.txt)) return bySelector;
+  if (
+    bySelector &&
+    textMatches(bySelector, anchor.txt) &&
+    !componentConflicts(bySelector, anchor)
+  )
+    return bySelector;
 
   const scan = (scope: Element | Document): Element | null => {
     if (!anchor.txt) return null;
     const candidates = scope.querySelectorAll(safeTag(anchor.tag));
     let best: Element | null = null;
+    let bestByComponent = false;
     for (let i = 0; i < candidates.length && i < SCAN_LIMIT; i++) {
       const candidate = candidates[i];
       if (isOurs(candidate, options.ignore)) continue;
       if (!elementText(candidate).includes(anchor.txt)) continue;
-      // Deeper wins: the outer wrappers all contain the same words.
-      if (!best || best.contains(candidate)) best = candidate;
+      // The component name breaks the tie two controls with the same words
+      // inside one card would otherwise lose; deeper wins within a tier,
+      // because the outer wrappers all contain the same words.
+      const byComponent = componentMatches(candidate, anchor);
+      if (best && bestByComponent && !byComponent) continue;
+      if (
+        !best ||
+        (byComponent && !bestByComponent) ||
+        best.contains(candidate)
+      ) {
+        best = candidate;
+        bestByComponent = byComponent;
+      }
     }
     return best;
   };
@@ -141,8 +195,12 @@ export function findAnchorTarget(
       doc,
       options.ignore,
     );
-    if (projected) return projected;
-    if (textMatches(landmark, anchor.txt)) return landmark;
+    if (projected && !componentConflicts(projected, anchor)) return projected;
+    if (
+      textMatches(landmark, anchor.txt) &&
+      !componentConflicts(landmark, anchor)
+    )
+      return landmark;
   }
   return scan(doc) ?? bySelector;
 }
