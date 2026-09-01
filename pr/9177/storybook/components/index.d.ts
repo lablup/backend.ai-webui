@@ -96,9 +96,13 @@ export type { BAILoginHistoryTableProps, LoginHistoryNodeInList, } from './BAILo
 export { default as BAILoginSessionTable, availableLoginSessionSorterValues, } from './BAILoginSessionTable';
 export type { BAILoginSessionTableProps, LoginSessionNodeInList, } from './BAILoginSessionTable';
 export { default as BAISessionNodesV2, availableSessionV2SorterValues, } from './BAISessionNodesV2';
-export type { SessionV2InList } from './BAISessionNodesV2';
+export type { SessionV2InList, SessionV2Status } from './BAISessionNodesV2';
 export { default as BAIUserResourcePolicyV2Table, availableUserResourcePolicySorterValues, } from './BAIUserResourcePolicyV2Table';
 export type { BAIUserResourcePolicyV2TableProps, UserResourcePolicyV2InList, } from './BAIUserResourcePolicyV2Table';
+export { default as BAIKeypairResourcePolicyV2Table, availableKeypairResourcePolicySorterValues, } from './BAIKeypairResourcePolicyV2Table';
+export type { BAIKeypairResourcePolicyV2TableProps, KeypairResourcePolicyV2InList, } from './BAIKeypairResourcePolicyV2Table';
+export { default as BAIProjectResourcePolicyV2Table, availableProjectResourcePolicySorterValues, } from './BAIProjectResourcePolicyV2Table';
+export type { BAIProjectResourcePolicyV2TableProps, ProjectResourcePolicyV2InList, } from './BAIProjectResourcePolicyV2Table';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';

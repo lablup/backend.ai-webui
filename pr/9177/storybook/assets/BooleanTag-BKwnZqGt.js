@@ -1,1 +1,0 @@
-import{j as r}from"./iframe-9OD98yqE.js";import{b as s}from"./astryxTagVariant-CPCr7vTB.js";import{B as o}from"./Badge-Cvn02Gy8.js";const p=({value:a,fallback:e="-",trueLabel:t="True",falseLabel:n="False"})=>typeof a!="boolean"?e:a?r.jsx(o,{variant:s("green"),label:t}):r.jsx(o,{variant:"neutral",label:n,style:{opacity:.5}});export{p as B};

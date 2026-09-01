@@ -1,1 +1,0 @@
-import{$ as i,h as t,a0 as f,a1 as n}from"./iframe-9OD98yqE.js";function u(e,a,r){if(!i(r))return!1;var s=typeof a;return(s=="number"?t(r)&&f(a,r.length):s=="string"&&a in r)?n(r[a],e):!1}export{u as i};

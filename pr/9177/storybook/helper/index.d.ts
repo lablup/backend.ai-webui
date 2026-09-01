@@ -1,6 +1,7 @@
 import { default as Big } from 'big.js';
 export * from './astryxTagVariant';
 export * from './runtimeVariantPresetUI';
+export * from './vfolderHostPermission';
 export declare function parseValueWithUnit(str: string): [number, string | undefined];
 export declare const GBToBytes: (value?: number) => number;
 export declare const bytesToGB: (bytes: number, decimalPoint?: number, nullStr?: string) => string | number;
