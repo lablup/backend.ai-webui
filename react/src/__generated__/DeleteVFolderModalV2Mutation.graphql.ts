@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c3d69805b5e0d663e738692347b98141>>
+ * @generated SignedSource<<f702d5f6e38b5c6c2ab1304fd00ffb6a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,14 +14,16 @@ export type BulkDeleteVFoldersV2Input = {
 };
 export type DeleteVFolderModalV2Mutation$variables = {
   input: BulkDeleteVFoldersV2Input;
+  supportsPerIdResults: boolean;
 };
 export type DeleteVFolderModalV2Mutation$data = {
   readonly bulkDeleteVfoldersV2: {
-    readonly failed: ReadonlyArray<{
+    readonly deletedCount?: number;
+    readonly failed?: ReadonlyArray<{
       readonly message: string;
       readonly vfolderId: string;
     }>;
-    readonly items: ReadonlyArray<{
+    readonly items?: ReadonlyArray<{
       readonly id: string;
     }>;
   } | null | undefined;
@@ -37,6 +39,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "input"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "supportsPerIdResults"
   }
 ],
 v1 = [
@@ -55,47 +62,68 @@ v1 = [
     "plural": false,
     "selections": [
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "VFolder",
-        "kind": "LinkedField",
-        "name": "items",
-        "plural": true,
+        "condition": "supportsPerIdResults",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "BulkDeleteVFolderV2Error",
-        "kind": "LinkedField",
-        "name": "failed",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "vfolderId",
+            "concreteType": "VFolder",
+            "kind": "LinkedField",
+            "name": "items",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "message",
+            "concreteType": "BulkDeleteVFolderV2Error",
+            "kind": "LinkedField",
+            "name": "failed",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "vfolderId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "message",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
+      },
+      {
+        "condition": "supportsPerIdResults",
+        "kind": "Condition",
+        "passingValue": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "deletedCount",
+            "storageKey": null
+          }
+        ]
       }
     ],
     "storageKey": null
@@ -119,16 +147,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "06aca2c10e87c5bfa5e01efb4d884431",
+    "cacheID": "39bac138959ad91407870965c83f6b4f",
     "id": null,
     "metadata": {},
     "name": "DeleteVFolderModalV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteVFolderModalV2Mutation(\n  $input: BulkDeleteVFoldersV2Input!\n) {\n  bulkDeleteVfoldersV2(input: $input) {\n    items {\n      id\n    }\n    failed {\n      vfolderId\n      message\n    }\n  }\n}\n"
+    "text": "mutation DeleteVFolderModalV2Mutation(\n  $input: BulkDeleteVFoldersV2Input!\n  $supportsPerIdResults: Boolean!\n) {\n  bulkDeleteVfoldersV2(input: $input) {\n    items @include(if: $supportsPerIdResults) {\n      id\n    }\n    failed @include(if: $supportsPerIdResults) {\n      vfolderId\n      message\n    }\n    deletedCount @skip(if: $supportsPerIdResults)\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0ae09dca6246f8530ce80b7a9bc40d1d";
+(node as any).hash = "e29b7b9e90604a22f2fe4660448deb00";
 
 export default node;

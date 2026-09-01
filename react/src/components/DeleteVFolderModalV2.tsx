@@ -5,6 +5,7 @@
 import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolderModalV2Fragment.graphql';
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIModal,
@@ -36,6 +37,12 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  // Older managers have no `items` / `failed` on the payload and reject the
+  // whole document, so the per-id selections are gated and the deprecated
+  // count is selected instead.
+  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
+    'bulk-mutation-per-id-results',
+  );
 
   const vfolders = useFragment(
     graphql`
@@ -53,15 +60,17 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
     useMutation<DeleteVFolderModalV2Mutation>(graphql`
       mutation DeleteVFolderModalV2Mutation(
         $input: BulkDeleteVFoldersV2Input!
+        $supportsPerIdResults: Boolean!
       ) {
         bulkDeleteVfoldersV2(input: $input) {
-          items {
+          items @include(if: $supportsPerIdResults) {
             id
           }
-          failed {
+          failed @include(if: $supportsPerIdResults) {
             vfolderId
             message
           }
+          deletedCount @skip(if: $supportsPerIdResults)
         }
       }
     `);
@@ -92,14 +101,16 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         }
         const ids = _.map(folders, (vfolder) => toLocalId(vfolder.id));
         commitBulkDeleteMutation({
-          variables: { input: { ids } },
+          variables: { input: { ids }, supportsPerIdResults },
           onCompleted: (data, errors) => {
             if (errors && errors.length > 0) {
               const firstError = errors[0];
               message.error(firstError?.message ?? getErrorMessage(firstError));
               return;
             }
-            const deletedCount = data?.bulkDeleteVfoldersV2?.items?.length ?? 0;
+            const deletedCount = supportsPerIdResults
+              ? (data?.bulkDeleteVfoldersV2?.items?.length ?? 0)
+              : (data?.bulkDeleteVfoldersV2?.deletedCount ?? 0);
             const failed = data?.bulkDeleteVfoldersV2?.failed ?? [];
             // The mutation answers per id, so a partial failure arrives as a
             // success with `failed` populated rather than as a top-level error.
