@@ -146,12 +146,9 @@ function boot() {
       return;
     }
     if (pathNeedsChange(anchor, location)) {
-      const target = pinUrl(
-        anchor,
-        fragment.id,
-        fragment.anchorB64,
-        location.hash,
-      );
+      // The fragment this call was handed, not the live one: the SPA can
+      // rewrite the hash while `decodeAnchor` is still in flight.
+      const target = pinUrl(anchor, fragment.id, fragment.anchorB64, hash);
       if (guard.shouldNavigate(fragment.id, target)) {
         // Path and query first (R3.3): a full reload, because React Router
         // owns the history and re-running our boot is cheap.
