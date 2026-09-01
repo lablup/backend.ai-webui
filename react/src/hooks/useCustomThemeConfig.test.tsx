@@ -2,19 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type {
-  CustomThemeConfig,
-  ThemeFamilyConfig,
-} from '../helper/customThemeConfig';
+import type { BAIAppearanceConfig } from '../helper/customThemeConfig';
 import {
   DEFAULT_THEME_FAMILY,
+  resolveThemeFamilyCatalog,
   useCustomThemeConfig,
 } from './useCustomThemeConfig';
 import { renderHook } from '@testing-library/react';
 
 // Avoid importing the real useBAISetting (which pulls in DefaultProviders and
 // the whole app graph). Mirror its localStorage layout so tests can seed
-// user settings (e.g. custom_primary_color) via setUserSetting below.
+// user settings (e.g. the preview draft) via setUserSetting below.
 vi.mock('./useBAISetting', () => ({
   useBAISettingUserState: (key: string) => {
     const raw = localStorage.getItem(`backendaiwebui.settings.user.${key}`);
@@ -22,7 +20,7 @@ vi.mock('./useBAISetting', () => ({
   },
 }));
 
-// Control what theme.json "loaded" into the module-level cache.
+// Control what the appearance bootstrap "loaded" into the module-level store.
 const mockGetCustomTheme = vi.fn();
 vi.mock('../helper/customThemeConfig', async (importOriginal) => {
   const actual =
@@ -33,24 +31,22 @@ vi.mock('../helper/customThemeConfig', async (importOriginal) => {
   };
 });
 
-// theme.json `families` block (single source of the selectable catalog).
-const families: Record<string, ThemeFamilyConfig> = {
-  stained: {
-    light: { token: { colorPrimary: '#8b5cf6' } },
-    dark: { token: { colorPrimary: '#7c3aed' } },
-    label: 'Stained',
+const baseConfig: BAIAppearanceConfig = {
+  schemaVersion: 2,
+  theme: {
+    families: {
+      default: {
+        seeds: { accent: ['#FF7A00', '#DC6B03'] },
+        headerBg: ['#FF9729', '#E88A28'],
+      },
+      stained: { seeds: { accent: ['#8b5cf6', '#7c3aed'] } },
+      glass: { seeds: { accent: ['#007aff', '#0a84ff'] } },
+    },
   },
-  glass: {
-    light: { token: { colorPrimary: '#007aff' } },
-    dark: { token: { colorPrimary: '#0a84ff' } },
+  branding: {
+    logo: { src: '', srcCollapsed: '' },
+    familyLabels: { stained: 'Stained' },
   },
-};
-
-const baseConfig: CustomThemeConfig = {
-  light: { token: { colorPrimary: '#FF7A00' } },
-  dark: { token: { colorPrimary: '#DC6B03' } },
-  logo: { src: '', srcCollapsed: '' },
-  families,
 };
 
 const setStored = (key: string, value: string) =>
@@ -70,53 +66,27 @@ describe('useCustomThemeConfig', () => {
     mockGetCustomTheme.mockReturnValue(baseConfig);
   });
 
-  it('builds the catalog from theme.json families plus a synthesized default', () => {
+  it('builds the catalog from theme.families with branding labels', () => {
     const { result } = renderHook(() => useCustomThemeConfig());
     expect(Object.keys(result.current.themeFamilies).sort()).toEqual([
       'default',
       'glass',
       'stained',
     ]);
+    expect(result.current.themeFamilies.stained.label).toBe('Stained');
+    expect(result.current.themeFamilies.glass.label).toBeUndefined();
     expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
   });
 
-  it('ignores a families.default entry in favor of the top-level light/dark', () => {
-    mockGetCustomTheme.mockReturnValue({
-      ...baseConfig,
-      families: {
-        ...families,
-        default: {
-          light: { token: { colorPrimary: '#ABC123' } },
-          dark: { token: { colorPrimary: '#321CBA' } },
-        },
-      },
-    });
+  it('exposes the applied appearance document as-is', () => {
     const { result } = renderHook(() => useCustomThemeConfig());
-    expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
-    expect(result.current.themeConfig?.light?.token?.colorPrimary).toBe(
-      '#FF7A00',
-    );
-    expect(result.current.themeConfig?.dark?.token?.colorPrimary).toBe(
-      '#DC6B03',
-    );
+    expect(result.current.appearance).toEqual(baseConfig);
   });
 
-  it('synthesizes the default family from the top-level light/dark', () => {
-    // baseConfig.families defines stained/glass but no `default`.
-    const { result } = renderHook(() => useCustomThemeConfig());
-    expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
-    expect(result.current.themeConfig?.light?.token?.colorPrimary).toBe(
-      '#FF7A00',
-    );
-  });
-
-  it('resolves the user-selected family', () => {
+  it('resolves the user-selected family from the localStorage mirror', () => {
     setStored('themeFamily', 'glass');
     const { result } = renderHook(() => useCustomThemeConfig());
     expect(result.current.activeThemeFamily).toBe('glass');
-    expect(result.current.themeConfig?.light?.token?.colorPrimary).toBe(
-      '#007aff',
-    );
   });
 
   it('falls back to default when the selected family is absent', () => {
@@ -125,12 +95,14 @@ describe('useCustomThemeConfig', () => {
     expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
   });
 
-  it('drops structurally invalid family entries from the catalog', () => {
+  it('drops non-object family entries from the catalog', () => {
     mockGetCustomTheme.mockReturnValue({
       ...baseConfig,
-      families: {
-        ...families,
-        broken: { light: { token: { colorPrimary: '#000000' } } },
+      theme: {
+        families: {
+          ...baseConfig.theme?.families,
+          broken: 'not-an-object',
+        },
       },
     });
     const { result } = renderHook(() => useCustomThemeConfig());
@@ -141,60 +113,21 @@ describe('useCustomThemeConfig', () => {
     ]);
   });
 
-  it('applies the custom primary color without mutating the source config', () => {
-    setStored('themeFamily', 'stained');
-    setUserSetting('custom_primary_color', {
-      light: '#11aa22',
-      dark: '#33bb44',
-    });
-    const { result } = renderHook(() => useCustomThemeConfig());
-    const config = result.current.themeConfig;
-    expect(config?.light?.token?.colorPrimary).toBe('#11aa22');
-    expect(config?.dark?.token?.colorPrimary).toBe('#33bb44');
-    // Only colorPrimary is overridden; colorLink/headerBg stay family-owned.
-    expect(config?.light?.token?.colorLink).toBeUndefined();
-    expect(
-      (config?.light?.components?.Layout as { headerBg?: string } | undefined)
-        ?.headerBg,
-    ).toBeUndefined();
-    // Source family config is untouched (cloneDeep before _.set).
-    expect(families.stained.light.token?.colorPrimary).toBe('#8b5cf6');
-  });
-
-  it('applies a scheme-specific accent only to that scheme', () => {
-    setStored('themeFamily', 'stained');
-    setUserSetting('custom_primary_color', { light: '#11aa22' });
-    const { result } = renderHook(() => useCustomThemeConfig());
-    const config = result.current.themeConfig;
-    expect(config?.light?.token?.colorPrimary).toBe('#11aa22');
-    // The dark scheme keeps the family-owned color.
-    expect(config?.dark?.token?.colorPrimary).toBe('#7c3aed');
-  });
-
-  it('ignores the family selection and custom primary color in preview mode', () => {
+  it('shows the edited draft and ignores the family selection in preview mode', () => {
     sessionStorage.setItem('isThemePreviewMode', 'true');
-    // In preview mode the raw source is the edited default-theme draft. The
-    // draft may carry a stale `families.default` copy (seeded from an older
-    // theme.json); it must not shadow the edited top-level light/dark.
-    setUserSetting('custom_theme_config', {
+    const draft: BAIAppearanceConfig = {
       ...baseConfig,
-      light: { token: { colorPrimary: '#ABCDEF' } },
-      families: {
-        ...families,
-        default: {
-          light: { token: { colorPrimary: '#FF7A00' } },
-          dark: { token: { colorPrimary: '#DC6B03' } },
+      theme: {
+        families: {
+          default: { seeds: { accent: '#ABCDEF' } },
         },
       },
-    });
+    };
+    setUserSetting('custom_theme_config', draft);
     setStored('themeFamily', 'stained');
-    setUserSetting('custom_primary_color', { light: '#11aa22' });
     const { result } = renderHook(() => useCustomThemeConfig());
-    // Preview shows the edited default-theme draft as-is.
     expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
-    expect(result.current.themeConfig?.light?.token?.colorPrimary).toBe(
-      '#ABCDEF',
-    );
+    expect(result.current.appearance).toEqual(draft);
   });
 
   it('writes the data-theme-family attribute on body', () => {
@@ -203,17 +136,18 @@ describe('useCustomThemeConfig', () => {
     expect(document.body.getAttribute('data-theme-family')).toBe('stained');
   });
 
-  it('backward compat: a theme.json without families yields a single-entry catalog', () => {
-    mockGetCustomTheme.mockReturnValue({
-      light: { token: { colorPrimary: '#FF7A00' } },
-      dark: { token: { colorPrimary: '#DC6B03' } },
-      logo: { src: '', srcCollapsed: '' },
-    });
+  it('yields an empty catalog while the document is still loading', () => {
+    mockGetCustomTheme.mockReturnValue(undefined);
     const { result } = renderHook(() => useCustomThemeConfig());
-    expect(Object.keys(result.current.themeFamilies)).toEqual(['default']);
-    expect(result.current.activeThemeFamily).toBe('default');
-    expect(result.current.themeConfig?.light?.token?.colorPrimary).toBe(
-      '#FF7A00',
-    );
+    expect(result.current.themeFamilies).toEqual({});
+    expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
+    expect(result.current.appearance).toBeUndefined();
+  });
+});
+
+describe('resolveThemeFamilyCatalog', () => {
+  it('returns an empty catalog for a document without families', () => {
+    expect(resolveThemeFamilyCatalog(undefined)).toEqual({});
+    expect(resolveThemeFamilyCatalog({ schemaVersion: 2 })).toEqual({});
   });
 });

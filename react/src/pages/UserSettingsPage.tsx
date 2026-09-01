@@ -14,7 +14,6 @@ import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
-import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import {
   useBAISettingGeneralState,
@@ -99,12 +98,9 @@ const UserPreferencesPage = () => {
     setActiveThemeFamily: setThemeFamily,
     themeFamilies: families,
   } = useCustomThemeConfig();
-  const [themeAccent, setThemeAccent] = useBAISettingUserState(
-    'custom_primary_color',
-  );
   // Branding preview mode shows the edited default theme as-is, so the theme
-  // (family) and primary color settings are hidden there (useCustomThemeConfig
-  // ignores them in that mode).
+  // (family) setting is hidden there (useCustomThemeConfig ignores it in that
+  // mode).
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
     defaultValue: false,
   });
@@ -243,19 +239,6 @@ const UserPreferencesPage = () => {
               // Clear the stored selection instead of writing the default key
               // so resolution keeps following the `default` family.
               onReset: () => setThemeFamily(undefined),
-            }
-          : null,
-        baiClient._config.allowThemeMode && !isThemePreviewMode
-          ? {
-              'data-testid': 'items-theme-accent',
-              type: 'custom',
-              title: t('userSettings.ThemeAccentColor'),
-              description: t('userSettings.DescThemeAccentColor'),
-              // No defaultValue: unset means "follow the theme.json colors";
-              // reset clears the per-scheme overrides back to that state.
-              value: themeAccent,
-              onReset: () => setThemeAccent(undefined),
-              children: <ThemeAccentColorPicker />,
             }
           : null,
         {

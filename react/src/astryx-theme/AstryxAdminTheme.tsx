@@ -27,10 +27,10 @@ export interface AstryxAdminThemeProps {
 
 const AstryxAdminTheme: React.FC<AstryxAdminThemeProps> = ({ children }) => {
   'use memo';
-  const { themeConfig, activeThemeFamily } = useCustomThemeConfig();
+  const { appearance, activeThemeFamily } = useCustomThemeConfig();
   // Nearest ancestor Theme's resolved mode — MUST be re-passed explicitly.
   const { mode } = useTheme();
-  const theme = resolveRoleTheme(themeConfig, 'admin', activeThemeFamily);
+  const theme = resolveRoleTheme(appearance?.theme, 'admin', activeThemeFamily);
   return (
     <AstryxTheme theme={theme} mode={mode}>
       {children}
