@@ -1,7 +1,9 @@
 import {
+  createNavigationGuard,
   parseFragment,
   pathNeedsChange,
   pinUrl,
+  readablePath,
   retryUntil,
 } from './deeplink.js';
 import type { AnchorV3 } from './types.js';
@@ -127,5 +129,82 @@ describe('retryUntil', () => {
     cancel();
     await vi.advanceTimersByTimeAsync(3000);
     expect(attempt).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('readablePath', () => {
+  it('shows the path a human typed, not its percent-encoding', () => {
+    expect(readablePath('/project/a%ED%95%9C%EA%B5%AD%EC%96%B4/start')).toBe(
+      '/project/a한국어/start',
+    );
+  });
+
+  it('leaves a path that is not valid percent-encoding alone', () => {
+    expect(readablePath('/100%off')).toBe('/100%off');
+  });
+});
+
+describe('createNavigationGuard', () => {
+  const fakeStorage = (): Storage => {
+    const map = new Map<string, string>();
+    return {
+      getItem: (key) => map.get(key) ?? null,
+      setItem: (key, value) => void map.set(key, value),
+      removeItem: (key) => void map.delete(key),
+      clear: () => map.clear(),
+      key: () => null,
+      get length() {
+        return map.size;
+      },
+    } as Storage;
+  };
+  const target = '/start#bai=v3.c_zdv3rhz.QUJDREVGR0g';
+
+  it('navigates once per document', () => {
+    const guard = createNavigationGuard(fakeStorage());
+    expect(guard.shouldNavigate('c_zdv3rhz', target)).toBe(true);
+    expect(guard.shouldNavigate('c_zdv3rhz', target)).toBe(false);
+  });
+
+  // The assign reloads the page, so the loop guard has to outlive the document.
+  it('does not retry a navigation the previous document already tried', () => {
+    const storage = fakeStorage();
+    expect(
+      createNavigationGuard(storage).shouldNavigate('c_zdv3rhz', target),
+    ).toBe(true);
+    expect(
+      createNavigationGuard(storage).shouldNavigate('c_zdv3rhz', target),
+    ).toBe(false);
+  });
+
+  // The bug: keyed on the id alone, opening the link a second time from
+  // another page skipped path/query application and pinned whatever was there.
+  it('navigates again once the link’s own page has been reached', () => {
+    const storage = fakeStorage();
+    createNavigationGuard(storage).shouldNavigate('c_zdv3rhz', target);
+    const landing = createNavigationGuard(storage);
+    landing.landed();
+    expect(
+      createNavigationGuard(storage).shouldNavigate('c_zdv3rhz', target),
+    ).toBe(true);
+  });
+
+  it('navigates for a different target of the same link', () => {
+    const guard = createNavigationGuard(fakeStorage());
+    guard.shouldNavigate('c_zdv3rhz', target);
+    guard.reset();
+    expect(
+      guard.shouldNavigate(
+        'c_zdv3rhz',
+        '/session?tab=logs#bai=v3.c_zdv3rhz.QQ',
+      ),
+    ).toBe(true);
+  });
+
+  it('still follows the link when storage is unavailable', () => {
+    const guard = createNavigationGuard(null);
+    expect(guard.shouldNavigate('c_zdv3rhz', target)).toBe(true);
+    guard.reset();
+    expect(guard.shouldNavigate('c_zdv3rhz', target)).toBe(true);
   });
 });

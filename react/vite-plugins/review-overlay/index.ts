@@ -10,7 +10,9 @@ import { transformWithEsbuild, type Plugin } from 'vite';
 /**
  * FR-3811 — dev-only review overlay, write side. Serves the Shadow-DOM picker
  * client and the `/__review/state` endpoint that answers "which PR is this
- * dev server?". The read side (pins, panel, polling) is FR-3813.
+ * dev server?". The read side (FR-3813) is the deep link and nothing else:
+ * the fragment carries the whole anchor, so this server serves no pin list and
+ * polls nothing.
  *
  * Dev-only by construction: `apply: 'serve'` keeps the plugin out of
  * `vite build` entirely, and it is opt-in per session with

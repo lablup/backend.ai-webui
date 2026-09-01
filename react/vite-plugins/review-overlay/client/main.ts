@@ -18,9 +18,11 @@ import {
 } from './block.js';
 import { decodeAnchor } from './codec.js';
 import {
+  createNavigationGuard,
   parseFragment,
   pathNeedsChange,
   pinUrl,
+  readablePath,
   retryUntil,
 } from './deeplink.js';
 import { createPicker } from './picker.js';
@@ -33,24 +35,6 @@ const BOOT_HASH = location.hash;
 /** 10 s of SPA boot at 500 ms — the login form is lazy behind the splash. */
 const ANCHOR_TRIES = 20;
 const ANCHOR_EVERY_MS = 500;
-/** Survives the reload `location.assign` causes, so a redirect cannot loop. */
-const APPLIED_KEY = 'bai-review-applied';
-
-const appliedHere = (id: string): boolean => {
-  try {
-    return sessionStorage.getItem(APPLIED_KEY) === id;
-  } catch {
-    return false;
-  }
-};
-
-const rememberApplied = (id: string) => {
-  try {
-    sessionStorage.setItem(APPLIED_KEY, id);
-  } catch {
-    // A tab with storage disabled just follows the link again.
-  }
-};
 
 if (!window.__baiReviewOverlay) {
   window.__baiReviewOverlay = true;
@@ -138,8 +122,14 @@ function boot() {
   // ------------------------------------------------- deep link (FR-3813)
 
   const pin = createDeepLinkPin({ root: ui.root, host: ui.host });
+  const guard = createNavigationGuard();
   let cancelRetry = () => undefined as void;
-  let navigated = false;
+
+  /** The route the pin was made on, not the one the reader happens to be on. */
+  const anchorRouteLabel = (anchor: AnchorV3) =>
+    anchor.p === location.pathname
+      ? currentRouteLabel()
+      : resolveRouteLabel(readablePath(anchor.p));
 
   async function applyFragment(hash: string) {
     const fragment = parseFragment(hash);
@@ -156,21 +146,22 @@ function boot() {
       return;
     }
     if (pathNeedsChange(anchor, location)) {
-      if (!navigated && !appliedHere(fragment.id)) {
+      const target = pinUrl(anchor, fragment.id, fragment.anchorB64);
+      if (guard.shouldNavigate(fragment.id, target)) {
         // Path and query first (R3.3): a full reload, because React Router
         // owns the history and re-running our boot is cheap.
-        navigated = true;
-        location.assign(pinUrl(anchor, fragment.id, fragment.anchorB64));
+        location.assign(target);
         return;
       }
       // The app moved us off that page — pin what is here rather than fight it.
+    } else {
+      guard.landed();
     }
-    rememberApplied(fragment.id);
     cancelRetry();
     pin.show({
       id: fragment.id,
       anchor,
-      label: landmarkLabel(currentRouteLabel(), anchor),
+      label: landmarkLabel(anchorRouteLabel(anchor), anchor),
     });
     cancelRetry = retryUntil(() => pin.locate(), {
       tries: ANCHOR_TRIES,
@@ -180,7 +171,7 @@ function boot() {
   }
 
   window.addEventListener('hashchange', () => {
-    navigated = false;
+    guard.reset();
     void applyFragment(location.hash);
   });
 

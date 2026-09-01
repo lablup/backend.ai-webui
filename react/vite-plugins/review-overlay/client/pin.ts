@@ -188,7 +188,11 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
      */
     locate(): boolean {
       if (!target) return false;
-      const found = findAnchorTarget(target.anchor, { ignore: host });
+      // The debounced observer runs the cheap ladder and can land first; a pin
+      // already drawn must not also report "could not find that element".
+      const found =
+        findAnchorTarget(target.anchor, { ignore: host }) ??
+        (located?.isConnected ? located : null);
       if (!found) return false;
       located = found;
       highlight(found);

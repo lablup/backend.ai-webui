@@ -42,6 +42,79 @@ export function pinUrl(
   return `${anchor.p}${query}#bai=v3.${id}.${anchorB64}`;
 }
 
+/** A path is shown to a human here, so `%ED%95%9C` is not the answer. */
+export const readablePath = (path: string): string => {
+  try {
+    return decodeURIComponent(path);
+  } catch {
+    return path;
+  }
+};
+
+/** Survives the reload `location.assign` causes, so a redirect cannot loop. */
+const APPLIED_KEY = 'bai-review-applied';
+
+const safeStorage = (): Storage | null => {
+  try {
+    return sessionStorage;
+  } catch {
+    // A tab with storage disabled just follows the link again.
+    return null;
+  }
+};
+
+export interface NavigationGuard {
+  /** True while `location.assign(target)` is still worth trying. */
+  shouldNavigate(id: string, target: string): boolean;
+  /** We are on the link's own page: a later open may navigate again. */
+  landed(): void;
+  /** A new hash is a new link, so this document may navigate once more. */
+  reset(): void;
+}
+
+/**
+ * Records the navigation that was attempted, not the link that attempted it:
+ * keyed on the id alone the guard would disable path/query application for
+ * that link for the rest of the tab session, and a second open from another
+ * page would silently pin whatever happens to be under it.
+ */
+export function createNavigationGuard(
+  storage: Storage | null = safeStorage(),
+): NavigationGuard {
+  let navigatedHere = false;
+  const read = () => {
+    try {
+      return storage?.getItem(APPLIED_KEY) ?? null;
+    } catch {
+      return null;
+    }
+  };
+  const write = (value: string | null) => {
+    try {
+      if (value === null) storage?.removeItem(APPLIED_KEY);
+      else storage?.setItem(APPLIED_KEY, value);
+    } catch {
+      // Storage went away mid-session; the in-document flag still holds.
+    }
+  };
+  return {
+    shouldNavigate(id, target) {
+      if (navigatedHere) return false;
+      const record = `${id} ${target}`;
+      if (read() === record) return false;
+      navigatedHere = true;
+      write(record);
+      return true;
+    },
+    landed() {
+      write(null);
+    },
+    reset() {
+      navigatedHere = false;
+    },
+  };
+}
+
 export interface RetryOptions {
   tries: number;
   everyMs: number;

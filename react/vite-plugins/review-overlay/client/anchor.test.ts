@@ -1,3 +1,4 @@
+import { isAnchorV3, SELECTOR_MAX } from './anchor-guard.js';
 import {
   buildSelector,
   captureAnchorSignals,
@@ -65,6 +66,21 @@ describe('buildSelector', () => {
 
   it('returns body for body itself', () => {
     expect(buildSelector(document.body)).toBe('body');
+  });
+
+  // The read side rejects an over-long `s` outright, so the write side must
+  // never emit one: a deep testid-less subtree gets a shorter tail instead.
+  it('keeps a deep path inside the bound the read side enforces', () => {
+    mount('<div>'.repeat(70) + 'x' + '</div>'.repeat(70));
+    let deepest: Element = document.body;
+    while (deepest.firstElementChild) deepest = deepest.firstElementChild;
+
+    const selector = buildSelector(deepest);
+    expect(selector.length).toBeLessThanOrEqual(SELECTOR_MAX);
+    expect(() => document.querySelector(selector)).not.toThrow();
+    expect(
+      isAnchorV3({ ...captureAnchorSignals(deepest), s: selector, p: '/' }),
+    ).toBe(true);
   });
 });
 

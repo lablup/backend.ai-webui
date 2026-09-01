@@ -95,6 +95,24 @@ describe('createDeepLinkPin', () => {
     expect(marker().classList.contains('found')).toBe(true);
   });
 
+  // Two ladders run: the debounced observer's cheap one and `locate()`'s full
+  // one. When only the cheap one lands, the caller must not toast "not found"
+  // over a pin that is already drawn.
+  it('reports found when the observer’s cheaper ladder got there first', async () => {
+    show({ s: '#gone', tid: 'panel', txt: 'Save' });
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div data-testid="panel"><button>Cancel</button></div>',
+    );
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    expect(pin.locatedElement()).toBe(
+      document.querySelector('[data-testid="panel"]'),
+    );
+    expect(marker().classList.contains('found')).toBe(true);
+    expect(pin.locate()).toBe(true);
+  });
+
   it('restores the element’s own outline when the pin is dismissed', () => {
     document.body.insertAdjacentHTML(
       'beforeend',

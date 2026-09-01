@@ -91,16 +91,24 @@ test.describe('@review-overlay review overlay deep link', () => {
         return {
           id: idMod.pinId(0, b64, '2026-09-01T00:00:00Z') as string,
           b64,
-          path: `${anchor.p}${anchor.q ? `?${anchor.q}` : ''}`,
+          pathname: anchor.p as string,
+          search: anchor.q ? `?${anchor.q}` : '',
         };
       },
       ['/__review/anchor.js', '/__review/codec.js', '/__review/id.js'] as const,
     );
 
-    // A FRESH load, the way a reviewer opens the link from a PR comment.
+    // A FRESH load, the way a reviewer opens the link from a PR comment — and
+    // deliberately NOT at the link's own address, so the overlay has to apply
+    // the anchor's path and query first (R3.3) instead of pinning where it
+    // landed. An extra query param is the one difference every route tolerates.
     await page.goto(
-      `${webuiEndpoint}${link.path}#bai=v3.${link.id}.${link.b64}`,
+      `${webuiEndpoint}${link.pathname}?bai-smoke=1#bai=v3.${link.id}.${link.b64}`,
       { waitUntil: 'domcontentloaded' },
+    );
+    await page.waitForURL(
+      (url) => url.pathname === link.pathname && url.search === link.search,
+      { timeout: 30_000 },
     );
 
     await expect(

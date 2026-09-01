@@ -7,7 +7,7 @@ import { isSafePath } from './codec.js';
 import type { AnchorV3 } from './types.js';
 
 /** Every string is bounded: the payload comes off a public PR comment. */
-const SELECTOR_MAX = 1024;
+export const SELECTOR_MAX = 1024;
 const NAME_MAX = 256;
 const TXT_MAX = 64;
 

@@ -5,6 +5,7 @@
  * payload carries redundant signals (testid landmark + fractional rect + tag +
  * text). Resolving them back to an element is the READ side's job (FR-3813).
  */
+import { SELECTOR_MAX } from './anchor-guard.js';
 import type { AnchorComponent, AnchorV3 } from './types.js';
 
 const esc = (v: string) => (window.CSS && CSS.escape ? CSS.escape(v) : v);
@@ -24,11 +25,28 @@ export const isStableId = (id: string): boolean =>
   !/^:r[0-9a-z]*:$/i.test(id) &&
   !/^_[a-zA-Z0-9]*[rR]_[0-9a-zA-Z]*_/.test(id);
 
+/**
+ * The read side refuses an `s` over `SELECTOR_MAX` and would then throw the
+ * whole anchor away, so never build one: drop outer segments until the tail
+ * fits. It is less specific, and such an anchor resolves by testid/text anyway.
+ */
+function boundSelector(parts: string[], target: Element): string {
+  while (parts.length > 1 && parts.join(' > ').length > SELECTOR_MAX) {
+    parts.shift();
+  }
+  const selector = parts.join(' > ');
+  if (!selector) return 'body';
+  return selector.length <= SELECTOR_MAX
+    ? selector
+    : target.tagName.toLowerCase();
+}
+
 /** `[data-testid=…]` / `#id` when available, else an nth-of-type path up to one. */
 export function buildSelector(target: Element): string {
   const testid = target.getAttribute('data-testid');
-  if (testid) return `[data-testid="${esc(testid)}"]`;
-  if (isStableId(target.id)) return `#${esc(target.id)}`;
+  if (testid) return boundSelector([`[data-testid="${esc(testid)}"]`], target);
+  if (isStableId(target.id))
+    return boundSelector([`#${esc(target.id)}`], target);
   const parts: string[] = [];
   let node: Element | null = target;
   while (node && node.nodeType === 1 && node !== document.body) {
@@ -52,7 +70,7 @@ export function buildSelector(target: Element): string {
     parts.unshift(`${tag}:nth-of-type(${nth})`);
     node = parent;
   }
-  return parts.join(' > ') || 'body';
+  return boundSelector(parts, target);
 }
 
 export function captureAnchorSignals(
