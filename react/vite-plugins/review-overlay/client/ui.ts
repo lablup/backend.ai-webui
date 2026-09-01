@@ -85,6 +85,14 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       --bai-review-pick-line: rgba(210, 57, 192, .5);
       --bai-review-pick-fill: rgba(210, 57, 192, .08);
     }
+    /* react-grab picks the wider gamut when the display has it, so follow it —
+       otherwise its hover box and ours are different magentas on the same Mac. */
+    @media (color-gamut: p3) {
+      :host {
+        --bai-review-pick-line: color(display-p3 0.84 0.19 0.78 / .5);
+        --bai-review-pick-fill: color(display-p3 0.84 0.19 0.78 / .08);
+      }
+    }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .dock {
       position: fixed; right: 16px; bottom: 16px; z-index: 2147483000;
