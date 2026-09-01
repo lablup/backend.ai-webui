@@ -11,6 +11,8 @@ import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
 import type { AnchorV3 } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
+/** Four 1 s beats of the prototype's arrival pulse, then back to the outline. */
+const PULSE_MS = 4200;
 
 const STYLE = `
   .pinlayer {
@@ -21,27 +23,36 @@ const STYLE = `
     border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
     background: var(--bai-review-accent); color: var(--bai-review-on-accent);
     display: none; align-items: center; justify-content: center;
-    font-size: 12px; cursor: pointer; pointer-events: auto;
+    font-size: 12px; font-weight: 700; cursor: pointer; pointer-events: auto;
     box-shadow: 0 1px 4px var(--bai-review-shadow);
   }
   .pin.found { display: flex; }
   .pin > span { transform: rotate(45deg); }
+  .pin.pulse { animation: baipulse 1s ease-in-out 4; }
+  @keyframes baipulse {
+    0%,100% { box-shadow: 0 1px 4px var(--bai-review-shadow); }
+    50% { box-shadow: 0 0 0 8px var(--bai-review-accent); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pin.pulse { animation: none; }
+  }
   .card {
     position: absolute; max-width: 320px; display: none;
     background: var(--bai-review-surface); color: var(--bai-review-text);
     border: 1px solid var(--bai-review-border); border-radius: 8px;
-    padding: 8px 10px; font-size: 13px; pointer-events: auto;
+    padding: 8px 10px; font-size: 14px; pointer-events: none;
     box-shadow: 0 4px 18px var(--bai-review-shadow);
   }
   .card.found { display: block; }
   .card .label { font-weight: 600; word-break: break-word; }
   .card .sub {
-    color: var(--bai-review-text-dim); font-size: 11px; margin-top: 3px;
+    color: var(--bai-review-text-dim); font-size: 13px; margin-top: 3px;
     word-break: break-all;
   }
   .card .close {
     position: absolute; top: 2px; right: 4px; cursor: pointer; border: 0;
-    background: none; color: var(--bai-review-text-dim); font-size: 13px;
+    background: none; color: var(--bai-review-text-dim); font-size: 14px;
+    pointer-events: auto;
   }
 `;
 
@@ -87,6 +98,19 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   let located: Element | null = null;
   let outlined: HTMLElement | null = null;
   let saved: { outline: string; offset: string } | null = null;
+  /** One arrival pulse per link — the outline is what stays. */
+  let pulsed = false;
+  let pulseTimer = 0;
+
+  function pulse() {
+    if (pulsed) return;
+    pulsed = true;
+    marker.classList.add('pulse');
+    pulseTimer = window.setTimeout(
+      () => marker.classList.remove('pulse'),
+      PULSE_MS,
+    );
+  }
 
   function clearHighlight() {
     if (outlined && saved) {
@@ -173,6 +197,9 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     /** Adopt a link's anchor. Nothing is drawn until `locate()` finds it. */
     show(next: DeepLinkPinTarget) {
       dismiss();
+      pulsed = false;
+      clearTimeout(pulseTimer);
+      marker.classList.remove('pulse');
       target = next;
       marker.dataset.pinId = next.id;
       card.dataset.pinId = next.id;
@@ -198,6 +225,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       highlight(found);
       place();
       found.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+      pulse();
       return true;
     },
 
@@ -211,6 +239,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       window.removeEventListener('resize', schedule);
       window.removeEventListener('scroll', place, { capture: true });
       clearTimeout(timer);
+      clearTimeout(pulseTimer);
       dismiss();
       layer.remove();
       style.remove();

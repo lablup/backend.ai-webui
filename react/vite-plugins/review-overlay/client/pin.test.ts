@@ -113,6 +113,25 @@ describe('createDeepLinkPin', () => {
     expect(pin.locate()).toBe(true);
   });
 
+  it('pulses once when the link lands, not on every later resolution', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<button data-testid="create">Create</button>',
+    );
+    show();
+    pin.locate();
+    expect(marker().classList.contains('pulse')).toBe(true);
+
+    marker().classList.remove('pulse');
+    pin.locate();
+    expect(marker().classList.contains('pulse')).toBe(false);
+
+    // A new link is a new arrival.
+    show();
+    pin.locate();
+    expect(marker().classList.contains('pulse')).toBe(true);
+  });
+
   it('restores the element’s own outline when the pin is dismissed', () => {
     document.body.insertAdjacentHTML(
       'beforeend',
