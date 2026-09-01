@@ -109,6 +109,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           ok
           msg
           rule {
+            id
             metric_name
             metric_source
             threshold
@@ -132,6 +133,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           ok
           msg
           rule {
+            id
             metric_name
             metric_source
             threshold

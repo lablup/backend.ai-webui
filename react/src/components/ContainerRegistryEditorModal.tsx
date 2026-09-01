@@ -108,6 +108,26 @@ const ContainerRegistryEditorModal: React.FC<
         modify_container_registry_node_v2(id: $id, props: $props) {
           container_registry {
             id
+            row_id
+            name
+            registry_name
+            url
+            type
+            project
+            username
+            password
+            ssl_verify
+            extra @since(version: "24.09.3")
+            is_global @since(version: "24.09.0")
+            allowed_groups @since(version: "25.3.0") {
+              edges {
+                node {
+                  id
+                  row_id
+                  name
+                }
+              }
+            }
           }
         }
       }

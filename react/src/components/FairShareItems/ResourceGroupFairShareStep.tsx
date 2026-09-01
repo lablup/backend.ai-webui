@@ -127,9 +127,6 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
         onClickGroupName={(name) => {
           onClickResourceGroupName?.(name);
         }}
-        afterUpdate={() => {
-          updateFetchKey();
-        }}
         loading={
           loading ||
           queryVariables !== deferredQueryVariables ||

@@ -360,10 +360,10 @@ const DeploymentAutoScalingCardContent: React.FC<
               : null
           }
           onRequestClose={(success) => {
-            setIsOpenEditorModal(false);
-            if (success) {
+            if (success && !editingRuleId) {
               handleRefetch();
             }
+            setIsOpenEditorModal(false);
           }}
           afterClose={() => {
             setEditingRuleId(null);

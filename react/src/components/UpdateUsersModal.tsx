@@ -10,6 +10,7 @@ import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalF
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
@@ -67,6 +68,8 @@ const UpdateUsersModal = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const { isTOTPSupported, isLoading: isTOTPSupportLoading } =
+    useTOTPSupported();
   const formRef = useRef<FormInstance<UpdateUsersFormValues>>(null);
   const [isPending, setIsPending] = useState(false);
   const users = useFragment(
@@ -85,10 +88,54 @@ const UpdateUsersModal = ({
     useMutation<UpdateUsersModalBulkUpdateMutation>(graphql`
       mutation UpdateUsersModalBulkUpdateMutation(
         $input: BulkUpdateUserV2Input!
+        $isNotSupportTotp: Boolean!
       ) {
         adminBulkUpdateUsersV2(input: $input) {
           updatedUsers {
             id
+            basicInfo {
+              email
+              fullName
+              username
+              description
+              integrationName
+            }
+            organization {
+              domainName
+              role
+              resourcePolicy
+              mainAccessKey
+            }
+            security {
+              totpActivated @skipOnClient(if: $isNotSupportTotp)
+              totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
+              sudoSessionEnabled
+              allowedClientIp
+            }
+            status {
+              status
+              statusInfo
+              needPasswordChange
+            }
+            container {
+              containerUid
+              containerMainGid
+              containerGids
+            }
+            timestamps {
+              createdAt
+              modifiedAt
+            }
+            projects {
+              edges {
+                node {
+                  id
+                  basicInfo {
+                    name
+                  }
+                }
+              }
+            }
           }
           failed {
             userId
@@ -102,11 +149,12 @@ const UpdateUsersModal = ({
     <BAIModal
       title={t('credential.UpdateUsers')}
       okText={t('button.Save')}
+      loading={isTOTPSupportLoading}
       confirmLoading={isPending || isInFlightBulkUpdate}
       {...modalProps}
       okButtonProps={{
         ...modalProps.okButtonProps,
-        disabled: users.length === 0,
+        disabled: users.length === 0
       }}
       onOk={(e) => {
         formRef.current
@@ -142,6 +190,7 @@ const UpdateUsersModal = ({
                     input,
                   })),
                 },
+                isNotSupportTotp: !isTOTPSupported,
               },
               onCompleted: (res, errors) => {
                 if (errors && errors.length > 0) {
