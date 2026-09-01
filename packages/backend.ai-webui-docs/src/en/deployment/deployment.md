@@ -25,8 +25,6 @@ At the top of the page, you can filter deployments by lifecycle stage:
 - **Running**: Shows deployments that are currently running or being created. This is the default view.
 - **Terminated**: Shows deployments that have been terminated.
 
-You can also use the property filter bar to search deployments by **Name**, **Tags**, **Endpoint URL**, or **Public**.
-
 Click the `Create Deployment` button to open the **Create Deployment** modal.
 
 <a id="create-deployment"></a>
