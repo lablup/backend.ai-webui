@@ -114,6 +114,10 @@
       "pnpm run --prefix ./react lint --cache",
       "prettier --write"
     ],
+    "react/vite-plugins/**/*.ts": [
+      "pnpm run --prefix ./react lint --cache",
+      "prettier --write"
+    ],
     "packages/backend.ai-ui/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "pnpm run --prefix ./packages/backend.ai-ui lint --cache",
       "prettier --write"

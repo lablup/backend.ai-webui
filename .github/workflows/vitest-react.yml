@@ -10,6 +10,7 @@ on:
   pull_request:
     paths:
       - react/src/**
+      - react/vite-plugins/**
       - react/package.json
       - react/vitest.config.ts
       - .github/workflows/vitest-react.yml

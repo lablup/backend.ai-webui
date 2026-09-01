@@ -1,4 +1,4 @@
-import { devReviewOverlayPlugin } from './vite-plugins/reviewOverlay';
+import { devReviewOverlayPlugin } from './vite-plugins/review-overlay/index';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
@@ -969,11 +969,11 @@ export default defineConfig(({ command, mode }) => {
       projectRootStaticPlugin(devCspHeaders),
       cspBundleNoncePlugin(),
       devAssetsReloadPlugin(),
-      // FR-3309: dev-only (apply: 'serve') review overlay injection. Off by
+      // FR-3811: dev-only (apply: 'serve') review overlay injection. Off by
       // default — opt in with VITE_DEV_REVIEW_OVERLAY=1; otherwise the plugin
       // is inert (no middleware, no script injection). Must come after
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
-      // transforms (see reviewOverlay.ts).
+      // transforms (see review-overlay/index.ts).
       devReviewOverlayPlugin(),
 
       // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),

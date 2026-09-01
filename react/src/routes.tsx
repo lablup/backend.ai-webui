@@ -7,6 +7,9 @@ import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import DevReviewRouteLabel, {
+  isDevReviewOverlayEnabled,
+} from './components/DevReviewRouteLabel';
 import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
@@ -1660,6 +1663,16 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
+            {/* Dev-only handoff to the review overlay (FR-3811), gated on
+                the same VITE_DEV_REVIEW_OVERLAY switch as the Vite plugin.
+                `import.meta.env.DEV` is the literal `false` in a production
+                build, so the whole branch — and the imported module — is dead
+                code there. */}
+            {import.meta.env.DEV && isDevReviewOverlayEnabled() ? (
+              <ErrorBoundaryWithNullFallback>
+                <DevReviewRouteLabel />
+              </ErrorBoundaryWithNullFallback>
+            ) : null}
             <Suspense>
               <ErrorBoundaryWithNullFallback>
                 <AutoDiagnosticsEffect />
