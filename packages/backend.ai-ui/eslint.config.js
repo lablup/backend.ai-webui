@@ -3,6 +3,14 @@ import jsonSchemaValidator from "eslint-plugin-json-schema-validator";
 import storybookPlugin from "eslint-plugin-storybook";
 import jsoncParser from "jsonc-eslint-parser";
 import globals from "globals";
+import fs from "node:fs";
+
+// Embedded inline (not referenced by path) so the schema CONTENT is part of
+// the resolved config: editing i18n.schema.json then invalidates `--cache`d
+// lint results for the locale files, which a `$schema` path alone would not.
+const i18nSchema = JSON.parse(
+  fs.readFileSync(new URL("./i18n.schema.json", import.meta.url), "utf8"),
+);
 
 export default [
   ...base,
@@ -109,6 +117,14 @@ export default [
     },
     rules: {
       ...jsonSchemaValidator.configs.recommended.rules,
+      "json-schema-validator/no-invalid": [
+        "error",
+        {
+          schemas: [
+            { fileMatch: ["**/src/locale/*.json"], schema: i18nSchema },
+          ],
+        },
+      ],
     },
   },
 
