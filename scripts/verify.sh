@@ -208,8 +208,11 @@ check_z_index_ladder() {
 run_check "Relay" check_relay_drift
 # lint:ci = the cached eslint variant CI runs (content-hash cache; modified
 # files are always re-linted). Uncached equivalent: `pnpm -r lint`.
-# backend.ai-client's lint:ci is deliberately uncached: its type-aware
-# no-floating-promises rule can flag a caller whose own content is unchanged.
+# backend.ai-client's and backend.ai-agent-cli's lint:ci are deliberately
+# uncached: their type-aware no-floating-promises rule can flag a caller whose
+# own content is unchanged. The coverage gate fails when a package defines
+# `lint` without `lint:ci`, because `pnpm -r` silently skips such packages.
+run_check "Lint script coverage" node scripts/lint-ci-coverage-gate.mjs
 run_check "Lint" pnpm -r --stream lint:ci
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit --incremental
