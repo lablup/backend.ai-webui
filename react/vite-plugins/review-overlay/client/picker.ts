@@ -3,11 +3,10 @@
  * already loads it in dev (`react/src/index.tsx`), its hover overlay names the
  * React component, and its ⌘⌃C hotkey is the review-pick shortcut.
  *
- * The plugin arms on `onActivate`, so EVERY activation (hotkey, dock button,
- * `api.activate()`) opens the review composer; `onElementSelect` returns a
- * TRUTHY value for every element of the selection, which is what marks them
- * intercepted and stops react-grab copying them itself. When react-grab is
- * missing or disabled, a plain hover/click picker takes over.
+ * EVERY react-grab pick is a review pick — the plugin never checks its own
+ * state before intercepting, because react-grab's keyup deactivate can land
+ * first and any state gate would hand that pick to its clipboard instead.
+ * When react-grab is missing or disabled, a plain hover/click picker takes over.
  */
 import type { AnchorComponent } from './types.js';
 import type { ReactGrabAPI } from 'react-grab';
@@ -28,7 +27,7 @@ const PLUGIN_NAME = 'bai-review-pick';
 
 export function createPicker(callbacks: PickerCallbacks) {
   let grabRegistered = false;
-  let grabArmed = false;
+  let grabActive = false;
   let fallbackPicking = false;
   /** First element of the current react-grab selection, until the deferred open. */
   let pendingPick: Element | null = null;
@@ -48,15 +47,13 @@ export function createPicker(callbacks: PickerCallbacks) {
         name: PLUGIN_NAME,
         hooks: {
           onActivate: () => {
-            grabArmed = true;
+            grabActive = true;
             setMode(true);
           },
           onElementSelect: (element: Element) => {
-            if (!grabArmed) return undefined;
             // react-grab calls this once per element and copies every one it
             // was not told to skip, so a box/shift select must be intercepted
-            // WHOLE — disarming on the first element let the rest reach its
-            // clipboard. The composer opens for the first element only.
+            // WHOLE. The composer opens for the first element only.
             if (!pendingPick) {
               pendingPick = element;
               // Deactivate FIRST, on a later tick: react-grab restores focus
@@ -64,7 +61,6 @@ export function createPicker(callbacks: PickerCallbacks) {
               // focus straight back out of the textarea.
               setTimeout(() => {
                 const target = pendingPick;
-                grabArmed = false;
                 pendingPick = null;
                 if (!target) return undefined;
                 grab.deactivate();
@@ -82,9 +78,11 @@ export function createPicker(callbacks: PickerCallbacks) {
             // "not intercepted" and it copies the element anyway.
             return true;
           },
+          // `copyElement()` is the one clipboard path `onElementSelect` never
+          // sees; an empty body makes react-grab skip the write entirely.
+          transformCopyContent: () => '',
           onDeactivate: () => {
-            grabArmed = false;
-            pendingPick = null;
+            grabActive = false;
             setMode(false);
           },
         },
@@ -121,19 +119,18 @@ export function createPicker(callbacks: PickerCallbacks) {
   function start() {
     const grab = ensureGrabPlugin();
     if (grab) {
-      grabArmed = true;
       grab.activate();
       // `activate()` is a silent no-op when react-grab is loaded but disabled
       // (its own toggle, or instrumentation that never attached), which would
       // leave the reviewer clicking a dead button. Verify, then fall through.
       if (grab.isActive()) {
+        grabActive = true;
         setMode(true);
         callbacks.showHint(
           'Click an element — hover shows its component (Esc to cancel)',
         );
         return;
       }
-      grabArmed = false;
       callbacks.onReactGrabUnavailable();
     }
     if (fallbackPicking) return;
@@ -148,8 +145,8 @@ export function createPicker(callbacks: PickerCallbacks) {
   }
 
   function stop() {
-    if (grabArmed) {
-      grabArmed = false;
+    if (grabActive) {
+      grabActive = false;
       pendingPick = null;
       api()?.deactivate();
     }
@@ -229,7 +226,7 @@ export function createPicker(callbacks: PickerCallbacks) {
   return {
     start,
     stop,
-    isActive: () => grabArmed || fallbackPicking,
+    isActive: () => grabActive || fallbackPicking,
     watchForReactGrab,
     getStack,
     getComponent,
