@@ -5,12 +5,32 @@
 import * as _ from 'lodash-es';
 
 /**
+ * Excel/Sheets evaluate a cell starting with one of these as a formula when
+ * the CSV is opened (CSV formula injection); quoting does not prevent it.
+ */
+const FORMULA_TRIGGER = /^[=@\t\r]/;
+
+const startsFormula = (value: string) => {
+  if (FORMULA_TRIGGER.test(value)) {
+    return true;
+  }
+  // "+"/"-" starts are dangerous too ("-1+2" evaluates), but signed numbers
+  // and the bare "-" placeholder must survive unchanged.
+  return (
+    /^[+-]/.test(value) && value !== '-' && !Number.isFinite(Number(value))
+  );
+};
+
+/**
  * Escapes a value for CSV formatting.
+ *
+ * Cells that a spreadsheet would run as a formula are neutralized with a
+ * leading `'`, which the spreadsheet renders as text.
  *
  * @param value - The value to escape.
  * @returns The escaped value.
  */
-function escapeCsvValue(value: any) {
+export function escapeCsvValue(value: any) {
   if (value === null || value === undefined) {
     return '';
   }
@@ -20,6 +40,10 @@ function escapeCsvValue(value: any) {
 
   // Convert non-string values to string using JSON.stringify
   value = _.isString(value) ? value : JSON.stringify(value);
+
+  if (startsFormula(value)) {
+    value = `'${value}`;
+  }
 
   // Replace double quotes within the value with two double quotes
   return `"${value.replace(/"/g, '""')}"`;

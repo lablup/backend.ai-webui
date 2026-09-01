@@ -13,7 +13,7 @@ import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated_
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { downloadCSV } from '../helper/csv-util';
+import { downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
@@ -90,7 +90,7 @@ const downloadCredentialCSV = (credential: KeypairCredential) => {
     credential.secretKey,
     credential.sshPublicKey,
   ]
-    .map((v) => `"${v.replace(/"/g, '""')}"`)
+    .map(escapeCsvValue)
     .join(',');
 
   const csvContent = `${header}\n${row}\n`;

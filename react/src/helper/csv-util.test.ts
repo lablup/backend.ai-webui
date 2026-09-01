@@ -3,7 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // csv-util.test.ts
-import { downloadCSV, JSONToCSVBody, parseCSV, UTF8_BOM } from './csv-util';
+import {
+  downloadCSV,
+  escapeCsvValue,
+  JSONToCSVBody,
+  parseCSV,
+  UTF8_BOM,
+} from './csv-util';
 
 describe('JSONToCSVBody', () => {
   it('should convert JSON data to CSV format without formatting rules', () => {
@@ -73,6 +79,46 @@ describe('JSONToCSVBody', () => {
     const expected = '"name","age"\n"John ""Doe""",30\n"Jane, the Great",25';
 
     expect(result).toBe(expected);
+  });
+
+  it('should neutralize a cell that a spreadsheet would run as a formula', () => {
+    const data = [{ email: 'user@example.com', name: '=1+2' }];
+
+    const result = JSONToCSVBody(data);
+
+    expect(result).toBe(`"email","name"\n"user@example.com","'=1+2"`);
+  });
+});
+
+describe('escapeCsvValue', () => {
+  it.each([
+    ['=1+2', `"'=1+2"`],
+    ['@SUM(A1)', `"'@SUM(A1)"`],
+    ['+1+2', `"'+1+2"`],
+    ['-1+2', `"'-1+2"`],
+    ['\t=1+2', `"'\t=1+2"`],
+    ['\r=1+2', `"'\r=1+2"`],
+    [
+      '=HYPERLINK("http://evil.example","click")',
+      `"'=HYPERLINK(""http://evil.example"",""click"")"`,
+    ],
+  ])('neutralizes the formula trigger in %j', (input, expected) => {
+    expect(escapeCsvValue(input)).toBe(expected);
+  });
+
+  it.each([
+    ['-', '"-"'],
+    ['-30', '"-30"'],
+    ['+30', '"+30"'],
+    ['-1.5', '"-1.5"'],
+    ['plain text', '"plain text"'],
+    ['a=b', '"a=b"'],
+  ])('leaves the non-formula value %j intact', (input, expected) => {
+    expect(escapeCsvValue(input)).toBe(expected);
+  });
+
+  it('leaves actual number values unquoted and intact', () => {
+    expect(escapeCsvValue(-30)).toBe('-30');
   });
 });
 
