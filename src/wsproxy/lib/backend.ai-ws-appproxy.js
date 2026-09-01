@@ -26,7 +26,7 @@ i18next
 module.exports = proxy = class Proxy extends ai.backend.Client {
   constructor(env) {
     super(env);
-    // TODO: in API mode `env` is a ClientConfig, which carries no ext_proxy_url,
+    // TODO(FR-3836): in API mode `env` is a ClientConfig, which carries no ext_proxy_url,
     // so the external-proxy branch in _start never fires (SESSION mode gets it via cf).
     this._env = env;
     this._running = false;

@@ -160,7 +160,7 @@ compile_localproxy:
 		printf "$(YELLOW)local-proxy $(os)-$(arch) already built, skipping$(NC)\n"; \
 	else \
 		rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix); \
-		pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli; \
+		pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node22-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli; \
 		rm -rf ./app/_lp-stage-$(os)-$(arch); \
 		mkdir -p ./app/_lp-stage-$(os)-$(arch); \
 		cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/_lp-stage-$(os)-$(arch)/backend.ai-local-proxy$(local_proxy_postfix); \

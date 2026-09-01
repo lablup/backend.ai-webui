@@ -38,6 +38,25 @@ describe('redactRequestParameters', () => {
     });
   });
 
+  it('masks camelCase spellings of every sensitive stem, not only password', () => {
+    const body = {
+      refreshToken: 'r',
+      clientSecret: 'c',
+      secretKey: 's',
+      sshPrivateKey: 'k',
+      Authorization: 'a',
+      group: 'default',
+    };
+    expect(redactRequestParameters(body)).toEqual({
+      refreshToken: MASK,
+      clientSecret: MASK,
+      secretKey: MASK,
+      sshPrivateKey: MASK,
+      Authorization: MASK,
+      group: 'default',
+    });
+  });
+
   it('leaves non-sensitive payloads and non-JSON strings unchanged', () => {
     expect(redactRequestParameters({ group: 'default', limit: 3 })).toEqual({
       group: 'default',

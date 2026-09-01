@@ -45,25 +45,23 @@ import type {
 import CryptoES from 'crypto-es';
 
 /**
- * Keys whose values may carry secrets (passwords, API secret keys, tokens,
- * one-time codes, etc.). Request bodies are persisted to localStorage as part
- * of the debug log (`backendaiwebui.logs`); any value stored under one of these
- * keys is masked first so credentials are never written in clear text.
- * Matched case-insensitively against object keys; any key containing
- * "password" is masked as well (see redactSensitiveValues).
+ * Key stems whose values may carry secrets (passwords, API secret keys,
+ * tokens, one-time codes, etc.). Request bodies are persisted to localStorage
+ * as part of the debug log (`backendaiwebui.logs`); any value stored under a
+ * key containing one of these stems (case-insensitive) is masked first so
+ * credentials are never written in clear text — covering snake_case and
+ * camelCase spellings alike (`new_password2`, `refreshToken`, `clientSecret`).
  */
-const SENSITIVE_LOG_KEYS = new Set([
-  'secret_key',
+const SENSITIVE_LOG_KEY_STEMS = [
+  'password',
   'secret',
   'token',
-  'access_token',
-  'refresh_token',
   'otp',
   'authorization',
   'passphrase',
   'private_key',
-  'ssh_private_key',
-]);
+  'privatekey',
+];
 
 const REDACTED_PLACEHOLDER = '********';
 
@@ -84,10 +82,11 @@ function redactSensitiveValues(value: unknown): unknown {
         continue;
       }
       const lowerKey = key.toLowerCase();
-      redacted[key] =
-        SENSITIVE_LOG_KEYS.has(lowerKey) || lowerKey.includes('password')
-          ? REDACTED_PLACEHOLDER
-          : redactSensitiveValues(val);
+      redacted[key] = SENSITIVE_LOG_KEY_STEMS.some((stem) =>
+        lowerKey.includes(stem),
+      )
+        ? REDACTED_PLACEHOLDER
+        : redactSensitiveValues(val);
     }
     return redacted;
   }
