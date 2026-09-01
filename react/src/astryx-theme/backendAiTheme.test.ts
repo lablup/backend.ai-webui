@@ -1,3 +1,4 @@
+import type { BAIThemeConfig } from '../helper/customThemeConfig';
 import {
   ANTD_ALIGN_TOKENS,
   BAI_DEFAULT_SEEDS,
@@ -167,8 +168,9 @@ describe('backendAiTheme', () => {
         resolveRoleTheme(
           {
             fontFamily: BAI_DEFAULT_SEEDS.fontFamily,
-            light: { token: { colorPrimary: '#FF7A00' } },
-            dark: { token: { colorPrimary: '#DC6B03' } },
+            families: {
+              default: { seeds: { accent: ['#FF7A00', '#DC6B03'] } },
+            },
           },
           'brand',
         ),
@@ -178,8 +180,9 @@ describe('backendAiTheme', () => {
     it('resolveRoleTheme falls back to a runtime theme for overridden seeds', () => {
       const runtime = resolveRoleTheme(
         {
-          light: { token: { colorPrimary: '#8B5CF6' } },
-          dark: { token: { colorPrimary: '#A78BFA' } },
+          families: {
+            default: { seeds: { accent: ['#8B5CF6', '#A78BFA'] } },
+          },
         },
         'brand',
       );
@@ -192,21 +195,16 @@ describe('backendAiTheme', () => {
     });
   });
 
-  describe('theme.json runtime override path', () => {
-    it('maps roles to their accent keys (brand/admin/secondary)', () => {
-      const config = {
-        light: {
-          token: {
-            colorPrimary: '#FF7A00',
-            colorInfo: '#028DF2',
-            colorSuccess: '#00BD9B',
-          },
-        },
-        dark: {
-          token: {
-            colorPrimary: '#DC6B03',
-            colorInfo: '#009BDD',
-            colorSuccess: '#03A487',
+  describe('appearance document runtime override path', () => {
+    it('maps roles to their seeds (brand=accent/admin=info/secondary=success)', () => {
+      const config: BAIThemeConfig = {
+        families: {
+          default: {
+            seeds: {
+              accent: ['#FF7A00', '#DC6B03'],
+              info: ['#028DF2', '#009BDD'],
+              success: ['#00BD9B', '#03A487'],
+            },
           },
         },
       };
@@ -224,12 +222,27 @@ describe('backendAiTheme', () => {
       });
     });
 
-    it('reuses the light seed when a config declares no dark seed', () => {
+    it('applies a string seed to both schemes', () => {
       const options = themeOptionsFromConfig(
-        { light: { token: { colorPrimary: '#123456' } } },
+        { families: { default: { seeds: { accent: '#123456' } } } },
         'brand',
       );
       expect(options.accent).toEqual({ light: '#123456', dark: '#123456' });
+    });
+
+    it('reads the requested family and falls back to default when absent', () => {
+      const config: BAIThemeConfig = {
+        families: {
+          default: { seeds: { accent: '#111111' } },
+          stained: { seeds: { accent: '#222222' } },
+        },
+      };
+      expect(themeOptionsFromConfig(config, 'brand', 'stained').accent).toEqual(
+        { light: '#222222', dark: '#222222' },
+      );
+      expect(themeOptionsFromConfig(config, 'brand', 'missing').accent).toEqual(
+        { light: '#111111', dark: '#111111' },
+      );
     });
   });
 

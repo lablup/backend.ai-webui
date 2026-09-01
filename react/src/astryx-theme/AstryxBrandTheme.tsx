@@ -34,9 +34,9 @@ const AstryxBrandTheme: React.FC<AstryxBrandThemeProps> = ({
   children,
 }) => {
   'use memo';
-  const { themeConfig, activeThemeFamily } = useCustomThemeConfig();
+  const { appearance, activeThemeFamily } = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
-  const theme = resolveRoleTheme(themeConfig, 'brand', activeThemeFamily);
+  const theme = resolveRoleTheme(appearance?.theme, 'brand', activeThemeFamily);
   return (
     <AstryxTheme theme={theme} mode={mode ?? (isDarkMode ? 'dark' : 'light')}>
       {children}

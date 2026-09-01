@@ -4,13 +4,12 @@
 
  `theme.getDesignToken({ algorithm })` without antd (to-astryx final-A).
 
- Three settings controls — the Branding `ThemeColorPicker` and
- `FontFamilySettingItem`, and the User Settings `ThemeAccentColorPicker` — are
- theme-ALGORITHM *producers* rather than token consumers: they do not paint
- with a token, they show the value a *cleared* field falls back to. antd
- answered that with `theme.getDesignToken({ algorithm: theme.defaultAlgorithm |
- theme.darkAlgorithm })`, i.e. "run the palette algorithm over antd's own stock
- seeds". Those three call sites were the last thing holding `import { theme }
+ The Branding `FontFamilySettingItem` is a theme-ALGORITHM *producer* rather
+ than a token consumer: it does not paint with a token, it shows the value a
+ *cleared* field falls back to. antd answered that with
+ `theme.getDesignToken({ algorithm: theme.defaultAlgorithm |
+ theme.darkAlgorithm })`, i.e. "run the palette algorithm over antd's own
+ stock seeds". These call sites were the last thing holding `import { theme }
  from 'antd'` in the app.
 
  The theme-shim's `buildTokens(mode, seeds)` is the same function: step 3 sets

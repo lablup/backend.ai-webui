@@ -865,16 +865,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     currentPathKey !== '' && _.includes(blockList, currentMenuKey);
 
   // Get theme config for custom logo href
-  const { themeConfig } = useCustomThemeConfig();
+  const { appearance } = useCustomThemeConfig();
 
   // Default menu path considering theme config's logo href.
-  // Priority: themeConfig.logo.href > firstAvailableMenuItem path > '/start'.
+  // Priority: appearance.branding.logo.href > firstAvailableMenuItem path > '/start'.
   // Project-aware: `getPathFromMenuKey` builds `/project/<name>/<feature>` for
   // the first general menu item using the active project name. When no project
   // is resolvable it falls back to the legacy flat path (e.g. `/start`), which
   // the redirect shims resolve to the canonical project URL at runtime.
   const defaultMenuPath =
-    themeConfig?.logo?.href ||
+    appearance?.branding?.logo?.href ||
     (firstAvailableMenuItem?.key
       ? getPathFromMenuKey(firstAvailableMenuItem.key, activeProjectName)
       : '/start');

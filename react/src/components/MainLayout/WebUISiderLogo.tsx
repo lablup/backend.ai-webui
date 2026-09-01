@@ -22,7 +22,7 @@ interface WebUISiderLogoProps {
  */
 const WebUISiderLogo: React.FC<WebUISiderLogoProps> = ({ collapsed }) => {
   'use memo';
-  const { themeConfig } = useCustomThemeConfig();
+  const { appearance } = useCustomThemeConfig();
   const { mode } = useTheme();
   const { defaultMenuPath } = useWebUIMenuItems();
   const isDark = mode === 'dark';
@@ -32,33 +32,34 @@ const WebUISiderLogo: React.FC<WebUISiderLogoProps> = ({ collapsed }) => {
       {collapsed ? (
         <img
           className="logo-collapsed"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          alt={appearance?.branding?.logo?.alt || 'Backend.AI Logo'}
           src={
             isDark
-              ? themeConfig?.logo?.srcCollapsedDark ||
+              ? appearance?.branding?.logo?.srcCollapsedDark ||
                 '/manifest/backend.ai-brand-simple-black.svg'
-              : themeConfig?.logo?.srcCollapsed ||
+              : appearance?.branding?.logo?.srcCollapsed ||
                 '/manifest/backend.ai-brand-simple-white.svg'
           }
           style={{
-            width: themeConfig?.logo?.sizeCollapsed?.width ?? 24,
-            height: themeConfig?.logo?.sizeCollapsed?.height ?? 24,
+            width: appearance?.branding?.logo?.sizeCollapsed?.width ?? 24,
+            height: appearance?.branding?.logo?.sizeCollapsed?.height ?? 24,
             display: 'block',
           }}
         />
       ) : (
         <img
           className="logo-wide"
-          alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
+          alt={appearance?.branding?.logo?.alt || 'Backend.AI Logo'}
           src={
             isDark
-              ? themeConfig?.logo?.srcDark ||
+              ? appearance?.branding?.logo?.srcDark ||
                 '/manifest/backend.ai-webui-white.svg'
-              : themeConfig?.logo?.src || '/manifest/backend.ai-webui-white.svg'
+              : appearance?.branding?.logo?.src ||
+                '/manifest/backend.ai-webui-white.svg'
           }
           style={{
-            width: themeConfig?.logo?.size?.width || 159,
-            height: themeConfig?.logo?.size?.height || 24,
+            width: appearance?.branding?.logo?.size?.width || 159,
+            height: appearance?.branding?.logo?.size?.height || 24,
             display: 'block',
           }}
         />

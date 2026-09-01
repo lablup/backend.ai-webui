@@ -133,7 +133,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
-  const { themeConfig } = useCustomThemeConfig();
+  const { appearance } = useCustomThemeConfig();
 
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
@@ -208,17 +208,17 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             <img
               src={
                 isDarkMode
-                  ? themeConfig?.logo?.loginLogoSrcDark ||
-                    themeConfig?.logo?.src ||
+                  ? appearance?.branding?.logo?.loginLogoSrcDark ||
+                    appearance?.branding?.logo?.src ||
                     'manifest/backend.ai-text-bgdark.svg'
-                  : themeConfig?.logo?.loginLogoSrc ||
-                    themeConfig?.logo?.srcDark ||
+                  : appearance?.branding?.logo?.loginLogoSrc ||
+                    appearance?.branding?.logo?.srcDark ||
                     'manifest/backend.ai-text.svg'
               }
-              alt={themeConfig?.logo?.alt || 'backend.ai'}
+              alt={appearance?.branding?.logo?.alt || 'backend.ai'}
               style={{
-                width: themeConfig?.logo?.loginLogoSize?.width,
-                height: themeConfig?.logo?.loginLogoSize?.height || 35,
+                width: appearance?.branding?.logo?.loginLogoSize?.width,
+                height: appearance?.branding?.logo?.loginLogoSize?.height || 35,
               }}
             />
           </div>

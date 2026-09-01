@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { APPEARANCE_SCHEMA_VERSION } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useRawCustomThemeConfig } from './useCustomThemeConfig';
 import * as _ from 'lodash-es';
@@ -28,11 +29,17 @@ export const useDefaultTheme = () => {
     'custom_theme_config',
   );
 
-  // Initialize the draft from theme.json on first load.
+  // Initialize the draft from the applied document on first load. A stale
+  // draft from before the v2 format (no schemaVersion) is reseeded rather
+  // than edited — its v1 paths no longer mean anything to the editor.
   // Note: useBAISettingUserState returns null (not undefined) when
   // localStorage has no value.
   const initializeDefaultTheme = useEffectEvent(() => {
-    if (_.isNil(defaultTheme) && !_.isNil(rawThemeConfig)) {
+    if (
+      (_.isNil(defaultTheme) ||
+        defaultTheme.schemaVersion !== APPEARANCE_SCHEMA_VERSION) &&
+      !_.isNil(rawThemeConfig)
+    ) {
       setDefaultTheme(_.cloneDeep(rawThemeConfig));
     }
   });
