@@ -57,12 +57,42 @@ import {
   escapeForRegExp,
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
-  selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
 import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
+
+// `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+// which this app never does. DeploymentRevisionCard's tab bar renders as
+// `nav[aria-label="Tabs"]` containing plain buttons instead.
+function revisionTabBar(page: Page) {
+  return page.getByRole('navigation', { name: 'Tabs' });
+}
+
+// Local fork of deployment-fixtures.ts's `selectRevisionModalOption`: its
+// popup search box's accessible name is actually "Search options" (confirmed
+// live), not "Search" -- kept spec-local rather than editing the shared
+// fixtures file, which has unrelated in-flight changes elsewhere.
+async function selectRevisionModalOptionLocal(
+  page: Page,
+  fieldLabel: string,
+  optionName: string,
+): Promise<void> {
+  await page.getByRole('button', { name: fieldLabel, exact: true }).click();
+  const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
+  await expect(popup).toBeVisible({ timeout: 10000 });
+  await popup
+    .getByRole('combobox', { name: 'Search options', exact: true })
+    .fill(optionName);
+  const option = popup.getByRole('option', { name: optionName }).first();
+  await expect(option).toBeVisible({ timeout: 15000 });
+  await option.click();
+  await expect(popup).toBeHidden({ timeout: 5000 });
+  await expect(
+    page.getByRole('button', { name: fieldLabel, exact: true }),
+  ).toContainText(optionName, { timeout: 5000 });
+}
 
 test.describe(
   'Deployment List Page',
@@ -472,8 +502,7 @@ test.describe(
       createdDeploymentName = deploymentName;
 
       // 1. Click "Add Revision" (from either the banner or the tab bar).
-      await page
-        .getByRole('tablist')
+      await revisionTabBar(page)
         .getByRole('button', { name: 'Add Revision' })
         .click();
       const dialog = page.getByRole('dialog', { name: /Add Revision/ });
@@ -490,8 +519,12 @@ test.describe(
 
       // 3. Inspect the Preset Mode fields.
       await expect(dialog.getByText('Select Preset')).toBeVisible();
+      // The icon-only info button next to "Preset" now carries a purpose-based
+      // aria-label ("Deployment Preset Detail") instead of the old antd
+      // icon-name-derived "info-circle" -- it stays disabled until a preset
+      // is selected.
       await expect(
-        dialog.getByRole('button', { name: 'info-circle' }),
+        dialog.getByRole('button', { name: 'Deployment Preset Detail' }),
       ).toBeDisabled();
       await expect(dialog.getByText('Select Folder')).toBeVisible();
       await expect(
@@ -523,29 +556,34 @@ test.describe(
       createdDeploymentName = deploymentName;
 
       // 1. Open "Add Revision".
-      await page
-        .getByRole('tablist')
+      await revisionTabBar(page)
         .getByRole('button', { name: 'Add Revision' })
         .click();
       const dialog = page.getByRole('dialog', { name: /Add Revision/ });
       await expect(dialog).toBeVisible({ timeout: 20000 });
 
-      // 2. Select the "Advanced Mode" segmented-control option.
-      await page.locator('label').filter({ hasText: 'Advanced Mode' }).click();
+      // 2. Select the "Advanced Mode" segmented-control option. `BAIRadioGroup`
+      // now renders Astryx `SegmentedControl` -- a directly-clickable
+      // `role="radio"` button, not antd's hidden-input-behind-a-label.
+      await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
 
       // 3. Inspect the expanded field set.
       await expect(dialog.getByText('Model & Runtime')).toBeVisible({
         timeout: 10000,
       });
       await expect(dialog.getByText('Select Folder')).toBeVisible();
+      // Runtime is a ComplexSelector trigger button ("Select Runtime
+      // Variant" placeholder), not a native combobox.
       await expect(
-        dialog.getByRole('combobox', { name: /Runtime/ }),
+        dialog.getByRole('button', { name: 'Runtime' }),
       ).toBeVisible();
       await expect(
         dialog.getByRole('checkbox', { name: 'Enable Health Check' }),
       ).toBeVisible();
+      // The section separator's "Environments" text collides with the
+      // Environments/Version field's own label -- scope to the separator.
       await expect(
-        dialog.getByText('Environments', { exact: true }),
+        dialog.getByRole('separator', { name: 'Environments' }),
       ).toBeVisible();
       await expect(dialog.getByText('Environments / Version')).toBeVisible();
       await expect(
@@ -554,16 +592,16 @@ test.describe(
       await expect(dialog.getByText('Cluster & Resources')).toBeVisible({
         timeout: 20000,
       });
+      // Resource Presets is also a ComplexSelector trigger button, not a
+      // native combobox.
       await expect(
-        dialog.getByRole('combobox', { name: 'Resource Presets' }),
+        dialog.getByRole('button', { name: 'Resource Presets' }),
       ).toBeVisible({ timeout: 20000 });
       await expect(
         dialog.getByRole('radio', { name: /Multi Node/ }),
       ).toBeChecked();
-      // Same hidden-input caveat -- assert on the visible wrapper, not the
-      // raw (CSS-hidden) radio input.
       await expect(
-        dialog.locator('.ant-radio-button-wrapper', { hasText: /Single Node/ }),
+        dialog.getByRole('radio', { name: /Single Node/ }),
       ).toBeVisible();
       await expect(
         dialog.getByRole('button', { name: /Advanced Settings/ }),
@@ -626,8 +664,7 @@ test.describe(
           createdDeploymentName = deploymentName;
 
           // 1. Open "Add Revision" on the fresh deployment, staying in "Preset Mode".
-          await page
-            .getByRole('tablist')
+          await revisionTabBar(page)
             .getByRole('button', { name: 'Add Revision' })
             .click();
           const dialog = page.getByRole('dialog', { name: /Add Revision/ });
@@ -638,9 +675,8 @@ test.describe(
 
           // 2. Select the ensured preset from the "Preset" select — the
           // ComplexSelector interaction (trigger button → search → option
-          // click) lives on selectRevisionModalOption in
-          // utils/deployment-fixtures.ts.
-          await selectRevisionModalOption(
+          // click) lives on selectRevisionModalOptionLocal above.
+          await selectRevisionModalOptionLocal(
             page,
             'Preset',
             provisioned.presetName,
@@ -652,8 +688,8 @@ test.describe(
           // Model Folder select only lists Project-owned/user-owned VFolders
           // (not model-store/project-store catalog resources), which is why the
           // provisioned folder is created as the e2e admin account's own owned
-          // VFolder. Same ComplexSelector interaction via the shared helper.
-          await selectRevisionModalOption(
+          // VFolder. Same ComplexSelector interaction via the local helper.
+          await selectRevisionModalOptionLocal(
             page,
             'Model Folder',
             provisioned.folderName,
@@ -670,15 +706,31 @@ test.describe(
           await dialog.getByRole('button', { name: 'Add Revision' }).click();
           await expect(dialog).toBeHidden({ timeout: 20000 });
 
+          // Submitting auto-opens a "Revision Detail" dialog; close it so it
+          // cannot mask later assertions/clicks (same as the Advanced Mode
+          // manual-revision test below).
+          const revisionDetailDialog = page.getByRole('dialog', {
+            name: 'Revision Detail',
+          });
+          await expect(revisionDetailDialog).toBeVisible({ timeout: 10000 });
+          await revisionDetailDialog
+            .getByRole('button', { name: 'Close' })
+            .click();
+          await expect(revisionDetailDialog).toBeHidden({ timeout: 10000 });
+
           // 6. Wait for the deployment's Lifecycle/status to leave "Pending" (allow
           // a generous timeout for scheduling; this is a real model-serving
-          // container pull + start).
-          const lifecycleRow = page.getByRole('row').filter({
-            has: page.getByRole('rowheader', { name: 'Lifecycle' }),
+          // container pull + start). The status badge next to the deployment
+          // name heading mirrors the Basic Information card's Lifecycle
+          // value and is simpler to target reliably than the description
+          // list (Basic Information renders `<dt>`/`<dd>` pairs, not a
+          // table -- there is no `role="row"`/`"rowheader"` there).
+          const statusBadge = page
+            .getByRole('heading', { level: 3, name: deploymentName })
+            .locator('xpath=following-sibling::*[1]');
+          await expect(statusBadge).not.toContainText('Pending', {
+            timeout: 180_000,
           });
-          await expect(
-            lifecycleRow.getByRole('cell').first(),
-          ).not.toContainText('Pending', { timeout: 180_000 });
 
           // 7. Inspect the "Current Revision" tab, confirming the revision is
           // now actually attached (this is the reliable, deterministic
@@ -687,19 +739,14 @@ test.describe(
           // Replicas table's empty state to clear).
           // NOTE: DeploymentRevisionCard uses BAICard's `tabList` API, which
           // renders each tab's content as a conditional child of the Card
-          // body rather than inside antd's own `role="tabpanel"` panes --
-          // those panes are always empty placeholders here (confirmed live:
-          // both `#rc-tabs-0-panel-currentRevision` and
-          // `#rc-tabs-0-panel-revisionHistory` have zero children even while
-          // active). Scope on the `.ant-card` itself instead of the
-          // content-less tabpanel role.
-          const currentRevisionCard = page
-            .locator('.ant-card')
-            .filter({ hasText: 'Current Revision' });
-          await expect(currentRevisionCard).not.toContainText(
-            'No revision is deployed',
-            { timeout: 10000 },
-          );
+          // body, not inside a `role="tabpanel"`. The Current Revision tab's
+          // empty state renders a unique level-3 heading with this text
+          // (distinct from the identically-worded alert banner, which is
+          // plain text, not a heading) -- assert it goes away instead of
+          // scoping on the (now nonexistent) antd `.ant-card` class.
+          await expect(
+            page.getByRole('heading', { name: /No revision is deployed/ }),
+          ).toBeHidden({ timeout: 10000 });
           // Deliberately not asserted: waiting for the Replicas card's
           // "No data" empty state to clear (i.e. a scheduled replica actually
           // appearing). Live investigation directly measured this take
@@ -770,16 +817,15 @@ test.describe(
           createdDeploymentName = deploymentName;
 
           // 1. Open "Add Revision" and switch to Advanced Mode.
-          await page
-            .getByRole('tablist')
+          await revisionTabBar(page)
             .getByRole('button', { name: 'Add Revision' })
             .click();
           const dialog = page.getByRole('dialog', { name: /Add Revision/ });
           await expect(dialog).toBeVisible({ timeout: 20000 });
-          await page
-            .locator('label')
-            .filter({ hasText: 'Advanced Mode' })
-            .click();
+          // `BAIRadioGroup` renders Astryx `SegmentedControl` -- a
+          // directly-clickable `role="radio"` button (see the "view
+          // Advanced Mode fields" test above).
+          await dialog.getByRole('radio', { name: 'Advanced Mode' }).click();
           await expect(dialog.getByText('Model & Runtime')).toBeVisible({
             timeout: 10000,
           });
@@ -787,92 +833,34 @@ test.describe(
           // 2. Select the provisioned model folder -- the Advanced form's
           // folder select shares the "Model Folder" field label and search
           // behavior with Preset Mode (only one form is mounted at a time),
-          // so the shared helper applies unchanged.
-          await selectRevisionModalOption(page, 'Model Folder', folderName);
+          // so the local helper applies unchanged.
+          await selectRevisionModalOptionLocal(
+            page,
+            'Model Folder',
+            folderName,
+          );
 
-          // 3. Select the "custom" runtime variant. This Select exposes no
-          // accessible option roles and its rows are not clickable (same
-          // zero-width virtualized rendering as the other modal Selects,
-          // confirmed live), and it has no "Total N items" footer either --
-          // so the shared helper's settle gate does not apply. Its variant
-          // list loads via its own query, and keyboard selection silently
-          // no-ops while that list is still empty (observed live under
-          // load) -- so first gate on the filtered "custom" entry actually
-          // existing in the dropdown (attached, not visible: the rows
-          // render zero-width). Then ArrowDown + Enter selects the sole
-          // match; the content assertion proves the intended variant (not
-          // some other row) was selected.
-          await page.locator('#runtimeVariantId').click();
-          await page.locator('#runtimeVariantId').fill('custom');
-          const runtimeDropdown = page
-            .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-            .first();
-          await expect(
-            runtimeDropdown.getByText('custom', { exact: true }).first(),
-          ).toBeAttached({ timeout: 15000 });
-          await page.locator('#runtimeVariantId').press('ArrowDown');
-          await page.locator('#runtimeVariantId').press('Enter');
-          await expect(
-            page
-              .locator('.ant-select', {
-                has: page.locator('#runtimeVariantId'),
-              })
-              .locator('.ant-select-content'),
-          ).toContainText('custom', { timeout: 5000 });
+          // 3. Select the "custom" runtime variant -- Runtime is the same
+          // ComplexSelector pattern (trigger button -> popup search -> option
+          // click) as Preset/Model Folder now, not an antd Select.
+          await selectRevisionModalOptionLocal(page, 'Runtime', 'custom');
 
-          // 4. The custom runtime reveals the definition-mode control with
-          // "Enter Command" preselected -- fill the start command that runs
-          // the folder's mock server. The image (Environments / Version) is
-          // left at the form's own auto-selected default; resources are set by
-          // hand below to satisfy that image's minimum footprint (the submit
-          // handler itself rejects a missing image, so a cluster with no
-          // usable image fails loudly here rather than silently).
-          const startCommand = page.locator('#startCommand');
-          await expect(startCommand).toBeVisible({ timeout: 10000 });
-          await startCommand.fill('python3 /models/mock_openai_server.py');
-
-          // The Environments / Version selects' own auto-select-first-default
-          // effect (ImageEnvironmentSelectFormItems) only runs once, on mount,
-          // and is deliberately not re-triggered once the images query
-          // resolves later (its dependency array intentionally omits
-          // `imageGroups` per its own eslint-disable comment) -- confirmed
-          // live: for this Advanced-Mode + custom-runtime + no-preset
-          // combination both selects stay empty indefinitely, so waiting for
-          // a default to appear here always times out. Pick the environment
-          // by hand instead; the select's own onChange handler auto-fills the
-          // paired Version select with that environment's first image, so
-          // only the environment select needs a manual pick. Same zero-width
-          // virtualized option rows as the Runtime variant select above --
-          // search + keyboard Enter.
-          const envSelects = dialog.locator('.ant-select', {
-            has: page.locator(
-              '#environments_environment, #environments_version',
-            ),
-          });
-          await expect(envSelects).toHaveCount(2, { timeout: 20000 });
-          // No search text: with `showNonInstalledImages` enabled above the
-          // dropdown lists all images (a large, unpredictable set on this
-          // shared cluster), so searching for a specific name like "python"
-          // can still come up empty. Open the dropdown as-is and take
-          // whatever option sorts first.
-          await page.locator('#environments_environment').click();
-          const envDropdown = page
-            .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-            .first();
-          await expect(envDropdown.getByRole('option').first()).toBeAttached({
-            timeout: 15000,
-          });
-          await page.locator('#environments_environment').press('ArrowDown');
-          await page.locator('#environments_environment').press('Enter');
-
-          // antd v6 marks a resolved selection with the
-          // `ant-select-content-has-value` class on the content element --
-          // gate on it for both selects before submitting.
-          for (const index of [0, 1]) {
-            await expect(
-              envSelects.nth(index).locator('.ant-select-content'),
-            ).toHaveClass(/ant-select-content-has-value/, { timeout: 15000 });
-          }
+          // 4. The custom runtime reveals a "Start Command" field -- fill it
+          // with the command that runs the folder's mock server. The image
+          // (Environments / Version) is left at the form's own auto-selected
+          // default (confirmed live: both selects now populate a default on
+          // mount); resources are set by hand below to satisfy that image's
+          // minimum footprint (the submit handler itself rejects a missing
+          // image, so a cluster with no usable image fails loudly here
+          // rather than silently).
+          const startCommandControl = getFormItemControlByLabel(
+            page,
+            'Start Command',
+          );
+          await expect(startCommandControl).toBeVisible({ timeout: 10000 });
+          await startCommandControl
+            .getByRole('textbox')
+            .fill('python3 /models/mock_openai_server.py');
 
           // The Cluster & Resources section mounts via its own
           // query/Suspense boundary and takes 10s+ on the shared cluster
@@ -881,9 +869,10 @@ test.describe(
           // fields unregistered on the form, and the submit handler then
           // dies on the missing values with no visible error at all --
           // observed live as a click that produced no form error, no
-          // notification, and no mutation. Gate on the section's landmark.
+          // notification, and no mutation. Gate on the section's landmark --
+          // also a ComplexSelector trigger button now, not a combobox.
           await expect(
-            dialog.getByRole('combobox', { name: 'Resource Presets' }),
+            dialog.getByRole('button', { name: 'Resource Presets' }),
           ).toBeVisible({ timeout: 30000 });
 
           // The form's auto-selected default image carries a minimum resource
@@ -892,21 +881,16 @@ test.describe(
           // defaults fails form validation ("CPU must be minimum 5", "The
           // minimum memory capacity ... is 1088MiB") and silently keeps the
           // modal open. Set CPU/mem above those minimums by hand -- part of
-          // building a revision manually. The CPU locator is scoped to
-          // `.ant-input-number input` so it targets the number field, not the
-          // paired slider's own input (which `.fill()` cannot set).
-          const cpuInput = dialog
-            .locator(
-              '[data-bai-form-item]:has-text("CPU") .ant-input-number input',
-            )
+          // building a revision manually. CPU/Memory render as Astryx
+          // spinbuttons now, not antd `.ant-input-number` inputs.
+          const cpuInput = getFormItemControlByLabel(page, 'CPU')
+            .getByRole('spinbutton')
             .first();
           await cpuInput.click();
           await cpuInput.fill('5');
           await cpuInput.blur();
-          const memInput = dialog
-            .locator(
-              '[data-bai-form-item]:has-text("Memory") .ant-input-number input',
-            )
+          const memInput = getFormItemControlByLabel(page, 'Memory')
+            .getByRole('spinbutton')
             .first();
           await memInput.fill('4'); // GiB (default unit) — comfortably over 1088MiB
 
@@ -927,13 +911,12 @@ test.describe(
             .click();
           await expect(revisionDetailDialog).toBeHidden({ timeout: 10000 });
 
-          const currentRevisionCard = page
-            .locator('.ant-card')
-            .filter({ hasText: 'Current Revision' });
-          await expect(currentRevisionCard).not.toContainText(
-            'No revision is deployed',
-            { timeout: 20000 },
-          );
+          // Same unique level-3 empty-state heading as the Preset Mode test
+          // above (see its comment) instead of the nonexistent antd
+          // `.ant-card` class.
+          await expect(
+            page.getByRole('heading', { name: /No revision is deployed/ }),
+          ).toBeHidden({ timeout: 20000 });
 
           // Cleanup: deployment first (its revision references the folder),
           // then the provisioned folder.
@@ -1200,7 +1183,9 @@ test.describe(
       createdDeploymentName = deploymentName;
 
       // 1. Click the "Revision History" tab.
-      await page.getByRole('tab', { name: 'Revision History' }).click();
+      await revisionTabBar(page)
+        .getByRole('button', { name: 'Revision History' })
+        .click();
 
       // 2. Confirm the URL updates to include ?revisionTab=revisionHistory.
       await expect(page).toHaveURL(/revisionTab=revisionHistory/, {
@@ -1208,40 +1193,52 @@ test.describe(
       });
 
       // 3. Inspect the filter and table.
-      // NOTE: `getByRole('tabpanel', { name: 'Revision History' })` always
-      // times out here -- DeploymentRevisionCard renders each tab's content
-      // as a conditional child of the BAICard body (see `tabList` usage in
-      // DeploymentRevisionCard.tsx), not inside antd's own tabpanel panes.
-      // Verified live: `#rc-tabs-0-panel-revisionHistory` (the actual
-      // `role="tabpanel"` element) has zero children even while active/
-      // visible -- the real filter+table content is a sibling of the tab
-      // bar, inside the `.ant-card`. Scope on the card instead.
-      const revisionCard = page
-        .locator('.ant-card')
-        .filter({ hasText: 'Revision History' });
-      await expect(revisionCard.getByText('Revision Number')).toBeVisible({
-        timeout: 20000,
+      // BAIPropertyFilter (Astryx PowerSearch) only lists its field names in
+      // the dropdown once opened -- "Revision Number" isn't statically
+      // visible the way the old antd-era filter chip text was. The page has
+      // two "Search filters" comboboxes (this section's and the Replicas
+      // section's below it) -- `.first()` is a race (whichever section
+      // finishes mounting first wins, confirmed live to flip between runs),
+      // so scope to the container that also holds the tab bar instead.
+      const revisionHistorySection = revisionTabBar(page).locator('xpath=..');
+      await revisionHistorySection
+        .getByRole('combobox', { name: 'Search filters' })
+        .click();
+      await expect(
+        revisionHistorySection.getByRole('option', { name: 'Revision Number' }),
+      ).toBeVisible({ timeout: 20000 });
+      await page.keyboard.press('Escape');
+
+      // DeploymentRevisionCard renders each tab's content as a conditional
+      // child of the BAICard body, not inside a `role="tabpanel"` -- and
+      // BAICard has no antd `.ant-card` class any more. The revision-history
+      // table is the only one on the page with a "Runtime" column, so scope
+      // on that instead of a card wrapper.
+      const revisionTable = page.getByRole('table').filter({
+        has: page.getByRole('columnheader').filter({ hasText: 'Runtime' }),
       });
       await expect(
-        revisionCard.getByRole('columnheader', { name: /Revision \(ID\)/ }),
+        revisionTable
+          .getByRole('columnheader')
+          .filter({ hasText: /Revision \(ID\)/ }),
       ).toBeVisible();
       await expect(
-        revisionCard.getByRole('columnheader', { name: 'Created At' }),
+        revisionTable
+          .getByRole('columnheader')
+          .filter({ hasText: 'Created At' }),
       ).toBeVisible();
       await expect(
-        revisionCard.getByRole('columnheader', { name: 'Runtime' }),
+        revisionTable.getByRole('columnheader').filter({ hasText: 'Runtime' }),
       ).toBeVisible();
       await expect(
-        revisionCard.getByRole('columnheader', { name: /Cluster Mode/ }),
+        revisionTable
+          .getByRole('columnheader')
+          .filter({ hasText: /Cluster Mode/ }),
       ).toBeVisible();
-      // antd's stock `Empty` component (used for the table's empty state)
-      // renders the "No data" string twice: once as the illustration SVG's
-      // accessibility `<title>` (always hidden -- SVG titles are never
-      // rendered) and once as the visible `.ant-empty-description` caption.
-      // `getByText('No data').first()` non-deterministically resolves to the
-      // hidden title (confirmed live), so target the caption class directly.
+      // Astryx's empty-table state renders a single visible "No data to
+      // display" heading (no antd-`Empty`-style hidden SVG-title duplicate).
       await expect(
-        revisionCard.locator('.ant-empty-description'),
+        revisionTable.getByRole('heading', { name: 'No data to display' }),
       ).toBeVisible();
 
       await deleteDeploymentAndVerify(page, deploymentName);

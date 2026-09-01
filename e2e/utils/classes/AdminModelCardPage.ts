@@ -60,7 +60,7 @@ export class AdminModelCardPage {
   }
 
   getRefreshButton(): Locator {
-    return this.page.getByRole('button', { name: 'reload' });
+    return this.page.getByRole('button', { name: 'Refresh' });
   }
 
   getColumnSettingsButton(): Locator {
