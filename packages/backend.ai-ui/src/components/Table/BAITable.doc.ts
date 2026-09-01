@@ -51,7 +51,7 @@ export const docs = {
       name: 'columns',
       type: 'BAIColumnsType<RecordType>',
       description:
-        'antd-shaped column model — title, dataIndex, key, render, sorter, width, align, fixed. Nested children groups are flattened, with the group title rendered as a muted caption above each child header.',
+        'antd-shaped column model — title, dataIndex, key, render, sorter, width, align, fixed. `sortKey` overrides the order-string field name when the dataIndex path is not the field the server sorts by. Nested children groups are flattened, with the group title rendered as a muted caption above each child header.',
     },
     {
       name: 'dataSource',

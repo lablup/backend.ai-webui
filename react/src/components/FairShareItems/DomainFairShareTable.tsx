@@ -195,6 +195,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined

@@ -44,10 +44,21 @@ describe('convertToOrderBy', () => {
       { field: 'CREATED_AT', direction: 'DESC' },
     ]);
   });
-  it('uses only the last part of a comma-joined array dataIndex', () => {
+  it('uses only the last part of a joined array dataIndex', () => {
+    // '.' is what BAITable emits for array dataIndex; ',' is the antd-era join.
+    expect(convertToOrderBy('-calculationSnapshot.fairShareFactor')).toEqual([
+      { field: 'FAIR_SHARE_FACTOR', direction: 'DESC' },
+    ]);
     expect(convertToOrderBy('-calculationSnapshot,fairShareFactor')).toEqual([
       { field: 'FAIR_SHARE_FACTOR', direction: 'DESC' },
     ]);
+  });
+  it('applies fieldNameMap after extracting the last path segment', () => {
+    expect(
+      convertToOrderBy('-calculationSnapshot.fairShareFactor', {
+        fairShareFactor: 'FAIR_SHARE_FACTOR',
+      }),
+    ).toEqual([{ field: 'FAIR_SHARE_FACTOR', direction: 'DESC' }]);
   });
   it('maps the field through fieldNameMap when the key is present', () => {
     expect(convertToOrderBy('-email', { email: 'USER_EMAIL' })).toEqual([

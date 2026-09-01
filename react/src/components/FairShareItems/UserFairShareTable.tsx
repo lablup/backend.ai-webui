@@ -130,6 +130,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'email',
       fixed: 'left',
       dataIndex: 'userEmail',
+      sortKey: 'email',
       render: (_text, record) => (
         <BAINameActionCell
           title={record?.user?.basicInfo.email}
@@ -153,6 +154,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'username',
       fixed: 'left',
       dataIndex: 'userUsername',
+      sortKey: 'username',
       render: (_text, record) => record?.user?.basicInfo.username,
       sorter: isEnableSorter('username'),
     },
@@ -191,6 +193,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined

@@ -185,6 +185,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined

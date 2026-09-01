@@ -1051,8 +1051,8 @@ export function listenToBackgroundTask<
 
 /**
  * Converts an order string (e.g., 'name' or '-name') to a GraphQL v2 (Strawberry) OrderBy array.
- * If the order string contains commas (from array dataIndex like ['spec', 'weight']),
- * only the last part is used as the field name.
+ * If the order string is a joined array dataIndex path ('.' from BAITable,
+ * ',' from the antd era), only the last segment is used as the field name.
  *
  * @template TOrderBy - The type of the order by object (e.g., ResourceGroupOrderBy)
  * @param order - The order string. Prefix with '-' for descending order.
@@ -1085,8 +1085,9 @@ export const convertToOrderBy = <
   const isDescending = order.startsWith('-');
   const cleanOrder = isDescending ? order.slice(1) : order;
 
-  // If order contains comma-separated values, extract the last one
-  const orderParts = cleanOrder.split(',');
+  // A joined array dataIndex path ('.' from BAITable, ',' from the antd-era
+  // table) names the server field in its last segment.
+  const orderParts = cleanOrder.split(/[.,]/);
   const lastOrder = orderParts[orderParts.length - 1].trim();
 
   return [
