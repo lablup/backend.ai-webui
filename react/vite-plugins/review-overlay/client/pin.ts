@@ -11,6 +11,11 @@ import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
 import type { AnchorV3 } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
+/** Long enough for a `behavior: 'smooth'` scroll and its momentum to stop. */
+const SETTLE_MS = 1200;
+/** Card gap below/above the element, and its margin to the viewport edge. */
+const CARD_GAP = 10;
+const VIEWPORT_PAD = 8;
 /** Four 1 s beats of the prototype's arrival pulse, then back to the outline. */
 const PULSE_MS = 4200;
 
@@ -134,19 +139,68 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     outlined = element;
   }
 
+  function hide() {
+    marker.classList.remove('found');
+    card.classList.remove('found');
+  }
+
   function place() {
-    if (!located) {
-      marker.classList.remove('found');
-      card.classList.remove('found');
-      return;
-    }
+    if (!located) return hide();
     const box = located.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    // A scrolled-away element must not leave a floating card behind. A rect
+    // with no size at all is jsdom (or `display: contents`), not off-screen.
+    const measured = box.width > 0 || box.height > 0;
+    const offscreen =
+      box.bottom <= 0 || box.top >= vh || box.right <= 0 || box.left >= vw;
+    if (measured && offscreen) return hide();
     marker.classList.add('found');
     card.classList.add('found');
     marker.style.left = `${box.left + 6}px`;
     marker.style.top = `${box.top + 6}px`;
-    card.style.left = `${Math.max(8, Math.min(box.left, window.innerWidth - 340))}px`;
-    card.style.top = `${box.bottom + 10}px`;
+    card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
+    // `locate()` centres the element, so anything taller than half the
+    // viewport puts `box.bottom` below the fold — and a fixed layer cannot be
+    // scrolled to. Flip above, then clamp.
+    const height = card.offsetHeight;
+    const below = box.bottom + CARD_GAP;
+    const top =
+      below + height <= vh - VIEWPORT_PAD ? below : box.top - CARD_GAP - height;
+    card.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
+  }
+
+  let frame = 0;
+  /** Called, never aliased: a detached `requestAnimationFrame` throws. */
+  const raf = (callback: FrameRequestCallback): number =>
+    typeof requestAnimationFrame === 'function'
+      ? requestAnimationFrame(callback)
+      : window.setTimeout(() => callback(0), 16);
+
+  /** One layout read per frame, however many scrollers report a scroll. */
+  function placeSoon() {
+    if (frame) return;
+    frame = raf(() => {
+      frame = 0;
+      place();
+    });
+  }
+
+  let settleUntil = 0;
+  /** A smooth scroll ends after `locate()` returns; follow it to its stop. */
+  function placeUntilSettled() {
+    const first = settleUntil === 0;
+    settleUntil = Date.now() + SETTLE_MS;
+    if (!first) return;
+    const step = () => {
+      place();
+      if (Date.now() >= settleUntil) {
+        settleUntil = 0;
+        return;
+      }
+      raf(step);
+    };
+    raf(step);
   }
 
   /**
@@ -178,8 +232,12 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   });
   observer.observe(document.body, { childList: true, subtree: true });
   window.addEventListener('resize', schedule);
-  // Pins are positioned in viewport coordinates, so a scroll moves them.
-  window.addEventListener('scroll', place, { capture: true, passive: true });
+  // Viewport coordinates, so a scroll moves the pin — including a scroll in an
+  // overflow ancestor, which a document-coordinate layer would miss.
+  window.addEventListener('scroll', placeSoon, {
+    capture: true,
+    passive: true,
+  });
 
   marker.addEventListener('click', () =>
     located?.scrollIntoView?.({ block: 'center', behavior: 'smooth' }),
@@ -225,6 +283,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       highlight(found);
       place();
       found.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+      placeUntilSettled();
       pulse();
       return true;
     },
@@ -237,7 +296,8 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     dispose() {
       observer.disconnect();
       window.removeEventListener('resize', schedule);
-      window.removeEventListener('scroll', place, { capture: true });
+      window.removeEventListener('scroll', placeSoon, { capture: true });
+      settleUntil = 0;
       clearTimeout(timer);
       clearTimeout(pulseTimer);
       dismiss();

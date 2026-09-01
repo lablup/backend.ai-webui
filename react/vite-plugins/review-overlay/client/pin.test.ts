@@ -22,6 +22,32 @@ const card = () => host.shadowRoot?.querySelector('.card') as HTMLElement;
 const outlined = () =>
   document.querySelector<HTMLElement>('[data-testid="create"]')?.style.outline;
 
+/** jsdom has no layout: the pin reads the element's box and the card's height. */
+const mountSized = (box: Partial<DOMRect>, cardHeight: number) => {
+  document.body.insertAdjacentHTML(
+    'beforeend',
+    '<button data-testid="create">Create</button>',
+  );
+  const element = document.querySelector(
+    '[data-testid="create"]',
+  ) as HTMLElement;
+  element.getBoundingClientRect = () =>
+    ({
+      left: 20,
+      right: 420,
+      width: 400,
+      top: 0,
+      bottom: 0,
+      height: 0,
+      ...box,
+    }) as DOMRect;
+  Object.defineProperty(card(), 'offsetHeight', {
+    value: cardHeight,
+    configurable: true,
+  });
+  return element;
+};
+
 beforeEach(() => {
   document.body.innerHTML = '';
   host = document.createElement('div');
@@ -130,6 +156,62 @@ describe('createDeepLinkPin', () => {
     show();
     pin.locate();
     expect(marker().classList.contains('pulse')).toBe(true);
+  });
+
+  describe('place', () => {
+    beforeEach(() => {
+      Object.defineProperty(window, 'innerHeight', {
+        value: 800,
+        configurable: true,
+      });
+      Object.defineProperty(window, 'innerWidth', {
+        value: 1024,
+        configurable: true,
+      });
+    });
+
+    it('puts the card under an element that leaves room for it', () => {
+      mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(card().style.top).toBe('310px');
+    });
+
+    // `locate()` centres the element, so a tall one pushes `bottom` past the
+    // fold — and a fixed layer cannot be scrolled to.
+    it('flips the card above an element too tall to fit one below', () => {
+      mountSized({ top: 160, bottom: 760, height: 600 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(card().style.top).toBe('90px');
+    });
+
+    it('clamps into the viewport when the card fits neither way', () => {
+      mountSized({ top: -50, bottom: 900, height: 950 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(card().style.top).toBe('8px');
+    });
+
+    it('drops the marker and the card when the element scrolls away', () => {
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      element.getBoundingClientRect = () =>
+        ({
+          left: 20,
+          right: 420,
+          width: 400,
+          top: -300,
+          bottom: -100,
+          height: 200,
+        }) as DOMRect;
+      window.dispatchEvent(new Event('resize'));
+      return new Promise((resolve) => setTimeout(resolve, 400)).then(() => {
+        expect(marker().classList.contains('found')).toBe(false);
+        expect(card().classList.contains('found')).toBe(false);
+      });
+    });
   });
 
   it('restores the element’s own outline when the pin is dismissed', () => {
