@@ -10,6 +10,28 @@
  as part of the announcement text.
 */
 
+/* Match the WebUI header's height and inline padding (vars set from the same
+   theme tokens in AnnouncementBanner.tsx) so the two stacked bands share one
+   rhythm (FR-3828). On the status-colored header element, not the Banner
+   root, which is transparent layout-only: sizing the root leaves the page
+   background showing through. min-height, so the expanded body can grow. */
+.webui-announcement-banner > .astryx-banner {
+  min-height: var(--webui-header-height);
+  padding-inline: var(--webui-header-padding-inline);
+  align-content: center;
+}
+
+/* Electron/macOS: the banner is the window's topmost band, so it grows by the
+   native title-bar strip the traffic lights sit in (var from BAISider.css).
+   Top padding = strip + the banner's own --spacing-3 block padding, so the
+   text stays centered in the lower 60px band, level with the header text —
+   the strip alone would float it 6px high (the banner, unlike the header,
+   already pads its block axis). */
+body.electron-macos .webui-announcement-banner > .astryx-banner {
+  min-height: calc(var(--webui-header-height) + var(--webui-titlebar-height));
+  padding-block-start: calc(var(--webui-titlebar-height) + var(--spacing-3));
+}
+
 .webui-announcement-title {
   display: flex;
   align-items: center;

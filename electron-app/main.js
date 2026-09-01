@@ -364,7 +364,10 @@ function createWindow() {
     height: windowHeight,
     title: 'Backend.AI',
     frame: true,
-    titleBarStyle: 'customButtonsOnHover',
+    // Always-visible traffic lights at their native title-bar position
+    // (FR-3828); the renderer grows the topmost band by the title-bar height
+    // to clear them (`electron-macos` rules in the web styles).
+    titleBarStyle: 'hidden',
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
