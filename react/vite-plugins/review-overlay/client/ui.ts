@@ -152,7 +152,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   `;
   root.appendChild(style);
 
-  const toggle = el('button', 'toggle', '📍 Review');
+  const toggle = el('button', 'toggle', '📋 Copy a review block');
+  toggle.title = 'Pick an element and copy its review block';
   const alwaysChk = el('label', 'alwayschk');
   alwaysChk.innerHTML = '<input type="checkbox" /> Always show';
   const dock = el('div', 'dock');
