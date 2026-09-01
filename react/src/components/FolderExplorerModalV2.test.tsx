@@ -218,9 +218,11 @@ const VFOLDER_UUID = '11111111-2222-3333-4444-555555555555';
 const renderModal = ({
   ownershipProjectId,
   legacyPermissions,
+  hostPermissions,
 }: {
   ownershipProjectId: string | null;
   legacyPermissions?: string[];
+  hostPermissions?: string[];
 }) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const resolver = (operation: any) =>
@@ -248,9 +250,12 @@ const renderModal = ({
         },
       }),
       KeyPair: () => ({ resource_policy: 'default' }),
+      // The storage-host capability axis. `enableUpload` / `enableEdit` are the
+      // AND of this and the folder-level `write_content`, so both sides need a
+      // knob to be gated independently.
       Domain: () => ({
         allowed_vfolder_hosts: JSON.stringify({
-          'local:volume1': ['download-file', 'upload-file'],
+          'local:volume1': hostPermissions ?? ['download-file', 'upload-file'],
         }),
       }),
       Group: () => ({ allowed_vfolder_hosts: '{}' }),
@@ -413,6 +418,84 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
       expect(props.enableDelete).toBe(true);
       expect(props.enableUpload).toBe(true);
       expect(props.enableEdit).toBe(true);
+      expect(props.enableDownload).toBe(true);
+    });
+  });
+
+  // The two cases above turn write_content and delete_content on together, so
+  // they pass just as well when the two gates are cross-wired. These separate
+  // them.
+  it('write_content without delete_content enables write but not delete', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      legacyPermissions: ['read_content', 'write_content'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableWrite).toBe(true);
+      expect(props.enableDelete).toBe(false);
+      expect(props.enableUpload).toBe(true);
+      expect(props.enableEdit).toBe(true);
+    });
+  });
+
+  it('delete_content without write_content enables delete but not write, upload or edit', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      legacyPermissions: ['read_content', 'delete_content'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableDelete).toBe(true);
+      expect(props.enableWrite).toBe(false);
+      expect(props.enableUpload).toBe(false);
+      expect(props.enableEdit).toBe(false);
+    });
+  });
+
+  it('a host without upload-file disables upload and edit even when write_content is granted', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      legacyPermissions: ['read_content', 'write_content', 'delete_content'],
+      hostPermissions: ['download-file'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    // The other side of the AND: the folder grants write, the host does not
+    // allow the upload pipeline the upload buttons and the editor save write
+    // through.
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableUpload).toBe(false);
+      expect(props.enableEdit).toBe(false);
+      expect(props.enableWrite).toBe(true);
+      expect(props.enableDelete).toBe(true);
+      expect(props.enableDownload).toBe(true);
+    });
+  });
+
+  it('a host without download-file disables download', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      legacyPermissions: ['read_content', 'write_content', 'delete_content'],
+      hostPermissions: ['upload-file'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableDownload).toBe(false);
+      // Download is host-only: the folder-level grants are unaffected.
+      expect(props.enableUpload).toBe(true);
+      expect(props.enableWrite).toBe(true);
     });
   });
 });
