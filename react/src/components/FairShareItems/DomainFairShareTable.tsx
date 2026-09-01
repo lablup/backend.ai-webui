@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DomainFairShareOrderField } from '../../__generated__/DomainFairShareStepQuery.graphql';
 import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
@@ -39,6 +40,14 @@ const availableDomainFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+export const domainFairShareOrderFieldMap: Record<
+  (typeof availableDomainFairShareSorterKeys)[number],
+  DomainFairShareOrderField
+> = {
+  domainName: 'DOMAIN_NAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableDomainFairShareSorterValues = [
   ...availableDomainFairShareSorterKeys,
   ...availableDomainFairShareSorterKeys.map((key) => `-${key}` as const),

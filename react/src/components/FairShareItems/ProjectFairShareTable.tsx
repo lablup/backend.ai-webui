@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ProjectFairShareOrderField } from '../../__generated__/ProjectFairShareStepQuery.graphql';
 import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
@@ -36,6 +37,14 @@ const availableProjectFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+export const projectFairShareOrderFieldMap: Record<
+  (typeof availableProjectFairShareSorterKeys)[number],
+  ProjectFairShareOrderField
+> = {
+  projectName: 'PROJECT_NAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableProjectFairShareSorterValues = [
   ...availableProjectFairShareSorterKeys,
   ...availableProjectFairShareSorterKeys.map((key) => `-${key}` as const),

@@ -14,6 +14,7 @@ import ResourceGroupSchedulerTypeAlert from './ResourceGroupSchedulerTypeAlert';
 import UsageBucketModal from './UsageBucketModal';
 import UserFairShareTable, {
   availableUserFairShareSorterValues,
+  userFairShareOrderFieldMap,
   UserFairShare,
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
@@ -78,9 +79,10 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
     filter: {
       ...(queryParams.filter || {}),
     },
-    order: convertToOrderBy<UserFairShareOrderBy>(queryParams.order) || [
-      { field: 'CREATED_AT', direction: 'DESC' },
-    ],
+    order: convertToOrderBy<UserFairShareOrderBy>(
+      queryParams.order,
+      userFairShareOrderFieldMap,
+    ) || [{ field: 'CREATED_AT', direction: 'DESC' }],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };

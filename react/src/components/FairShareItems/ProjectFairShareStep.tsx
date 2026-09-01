@@ -12,6 +12,7 @@ import FairShareStepToolbar from './FairShareStepToolbar';
 import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import ProjectFairShareTable, {
   availableProjectFairShareSorterValues,
+  projectFairShareOrderFieldMap,
   ProjectFairShare,
 } from './ProjectFairShareTable';
 import ResourceGroupSchedulerTypeAlert from './ResourceGroupSchedulerTypeAlert';
@@ -76,9 +77,10 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
     filter: {
       ...(queryParams.filter || {}),
     },
-    order: convertToOrderBy<ProjectFairShareOrderBy>(queryParams.order) || [
-      { field: 'CREATED_AT', direction: 'DESC' },
-    ],
+    order: convertToOrderBy<ProjectFairShareOrderBy>(
+      queryParams.order,
+      projectFairShareOrderFieldMap,
+    ) || [{ field: 'CREATED_AT', direction: 'DESC' }],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };

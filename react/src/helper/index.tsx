@@ -1068,17 +1068,16 @@ export function listenToBackgroundTask<
  * // => [{ field: 'NAME', direction: 'DESC' }]
  *
  * @example
- * // With field name mapping for server compatibility
- * convertToOrderBy<DomainFairShareOrderBy>(
- *   '-calculationSnapshot,fairShareFactor',
- *   { fairShareFactor: 'FAIR_SHARE_FACTOR' }
- * )
- * // => [{ field: 'FAIR_SHARE_FACTOR', direction: 'DESC' }]
+ * // With field name mapping for server compatibility. Without the mapping,
+ * // 'email' would become 'EMAIL', which UserFairShareOrderField rejects.
+ * convertToOrderBy<UserFairShareOrderBy>('-email', { email: 'USER_EMAIL' })
+ * // => [{ field: 'USER_EMAIL', direction: 'DESC' }]
  */
 export const convertToOrderBy = <
   TOrderBy extends { field?: string; direction?: string },
 >(
   order: string | null | undefined,
+  fieldNameMap?: Record<string, NonNullable<TOrderBy['field']>>,
 ): ReadonlyArray<TOrderBy> | undefined => {
   if (!order) return undefined;
 
@@ -1092,7 +1091,7 @@ export const convertToOrderBy = <
 
   return [
     {
-      field: _.snakeCase(lastOrder).toUpperCase(),
+      field: fieldNameMap?.[lastOrder] ?? _.snakeCase(lastOrder).toUpperCase(),
       direction: isDescending ? 'DESC' : 'ASC',
     } as TOrderBy,
   ];

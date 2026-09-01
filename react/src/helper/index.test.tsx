@@ -26,8 +26,43 @@ import {
   subNumberWithUnits,
   compareImageVersions,
   resolveImageFullName,
+  convertToOrderBy,
   convertFirstOrderByToString,
 } from './index';
+
+describe('convertToOrderBy', () => {
+  it('returns undefined for empty, null, or undefined input', () => {
+    expect(convertToOrderBy(undefined)).toBeUndefined();
+    expect(convertToOrderBy(null)).toBeUndefined();
+    expect(convertToOrderBy('')).toBeUndefined();
+  });
+  it('snake-cases the field and derives the direction from the prefix', () => {
+    expect(convertToOrderBy('name')).toEqual([
+      { field: 'NAME', direction: 'ASC' },
+    ]);
+    expect(convertToOrderBy('-createdAt')).toEqual([
+      { field: 'CREATED_AT', direction: 'DESC' },
+    ]);
+  });
+  it('uses only the last part of a comma-joined array dataIndex', () => {
+    expect(convertToOrderBy('-calculationSnapshot,fairShareFactor')).toEqual([
+      { field: 'FAIR_SHARE_FACTOR', direction: 'DESC' },
+    ]);
+  });
+  it('maps the field through fieldNameMap when the key is present', () => {
+    expect(convertToOrderBy('-email', { email: 'USER_EMAIL' })).toEqual([
+      { field: 'USER_EMAIL', direction: 'DESC' },
+    ]);
+    expect(convertToOrderBy('username', { username: 'USER_USERNAME' })).toEqual(
+      [{ field: 'USER_USERNAME', direction: 'ASC' }],
+    );
+  });
+  it('falls back to snake-casing for keys missing from fieldNameMap', () => {
+    expect(convertToOrderBy('createdAt', { email: 'USER_EMAIL' })).toEqual([
+      { field: 'CREATED_AT', direction: 'ASC' },
+    ]);
+  });
+});
 
 describe('convertFirstOrderByToString', () => {
   it('returns null for empty, null, or undefined input', () => {
@@ -37,14 +72,14 @@ describe('convertFirstOrderByToString', () => {
     expect(convertFirstOrderByToString([{}])).toBeNull();
   });
   it('converts an ASC entry to a camelCase string with no prefix', () => {
-    expect(convertFirstOrderByToString([{ field: 'NAME', direction: 'ASC' }])).toBe(
-      'name',
-    );
+    expect(
+      convertFirstOrderByToString([{ field: 'NAME', direction: 'ASC' }]),
+    ).toBe('name');
   });
   it('prefixes a DESC entry with a minus sign', () => {
-    expect(convertFirstOrderByToString([{ field: 'NAME', direction: 'DESC' }])).toBe(
-      '-name',
-    );
+    expect(
+      convertFirstOrderByToString([{ field: 'NAME', direction: 'DESC' }]),
+    ).toBe('-name');
   });
   it('camelCases SCREAMING_SNAKE_CASE enum fields', () => {
     expect(

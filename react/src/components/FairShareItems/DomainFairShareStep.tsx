@@ -10,6 +10,7 @@ import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
+  domainFairShareOrderFieldMap,
   DomainFairShare,
 } from './DomainFairShareTable';
 import FairShareStepToolbar from './FairShareStepToolbar';
@@ -73,9 +74,10 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
     filter: {
       ...(queryParams.filter || {}),
     },
-    order: convertToOrderBy<DomainFairShareOrderBy>(queryParams.order) || [
-      { field: 'DOMAIN_NAME', direction: 'DESC' },
-    ],
+    order: convertToOrderBy<DomainFairShareOrderBy>(
+      queryParams.order,
+      domainFairShareOrderFieldMap,
+    ) || [{ field: 'DOMAIN_NAME', direction: 'DESC' }],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
