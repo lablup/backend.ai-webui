@@ -15,7 +15,8 @@ export interface BootRecord {
     pr?: number;
     branch?: string;
     teamsThread?: string;
-    commentId?: string;
+    /** `advertise.sh` writes GitHub's numeric comment id; older files stringify it. */
+    commentId?: number | string | null;
   }>;
 }
 

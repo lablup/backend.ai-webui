@@ -1,5 +1,8 @@
 import { readBootRecord, servedEntry } from './boot-record.js';
-import type { ReviewServerState } from './client/types.js';
+import type { ReviewPinsPayload, ReviewServerState } from './client/types.js';
+import { createPinsService, type RepoInfo } from './pins-service.js';
+import { fetchPrOccurrences } from './pins/github.js';
+import { servedPrs } from './served.js';
 import { execFile } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -8,9 +11,15 @@ import { promisify } from 'node:util';
 import { transformWithEsbuild, type Plugin } from 'vite';
 
 /**
- * FR-3811 — dev-only review overlay, write side. Serves the Shadow-DOM picker
- * client and the `/__review/state` endpoint that answers "which PR is this
- * dev server?". The read side (pins, panel, polling) is FR-3813.
+ * FR-3811 / FR-3813 — dev-only review overlay. Serves the Shadow-DOM picker
+ * and pin client, `/__review/state` ("which PRs is this dev server?") and
+ * `/__review/pins` (every `#bai=v3` block found on those PRs, merged).
+ *
+ * Endpoint posture (R3.4), all of it load-bearing because the dev server
+ * binds `0.0.0.0`: GET only, zero request parameters, owner/repo pinned to
+ * the served set, a private repository disables both endpoints, one shared
+ * cached read, and a whitelisted response shape — the `gh` token never leaves
+ * the process and no upstream text is echoed.
  *
  * Dev-only by construction: `apply: 'serve'` keeps the plugin out of
  * `vite build` entirely, and it is opt-in per session with
@@ -49,7 +58,49 @@ const NO_STATE: ReviewServerState = {
   repo: null,
   branch: null,
   source: 'none',
+  served: [],
+  isPrivate: false,
 };
+
+async function gh(args: string[]): Promise<string> {
+  const { stdout } = await pexecFile('gh', args, {
+    maxBuffer: 8 * 1024 * 1024,
+  });
+  return stdout;
+}
+
+let repoInfoPromise: Promise<RepoInfo> | null = null;
+
+/**
+ * Asked once per server. A failure is an unreadable repository, which the
+ * pins service treats exactly like a private one — the endpoints stay shut
+ * rather than opening up because `gh` had a bad day.
+ */
+function repoInfo(): Promise<RepoInfo> {
+  repoInfoPromise ??= gh([
+    'repo',
+    'view',
+    '--json',
+    'nameWithOwner,isPrivate',
+  ]).then(
+    (stdout) => {
+      const parsed = JSON.parse(stdout) as {
+        nameWithOwner?: string;
+        isPrivate?: boolean;
+      };
+      return {
+        nameWithOwner: parsed.nameWithOwner ?? null,
+        isPrivate: !!parsed.isPrivate,
+      };
+    },
+    () => ({
+      nameWithOwner: null,
+      isPrivate: true,
+      error: 'gh repo view failed',
+    }),
+  );
+  return repoInfoPromise;
+}
 
 async function currentBranch(): Promise<string | null> {
   try {
@@ -68,37 +119,53 @@ async function currentBranch(): Promise<string | null> {
 /** Total by construction: every failure resolves to a `source: 'none'` state. */
 async function discoverState(): Promise<ReviewServerState> {
   try {
+    const repo = await repoInfo();
+    // R3.4 disables BOTH endpoints for a private repository: the write side's
+    // block would otherwise name a PR this server refuses to read back.
+    if (repo.error || repo.isPrivate) {
+      return {
+        ...NO_STATE,
+        isPrivate: true,
+        error: repo.error ?? 'private repository',
+      };
+    }
     const branch = await currentBranch();
     const record = await readBootRecord();
     const entry = servedEntry(record, branch);
     if (entry?.pr) {
       return {
         pr: entry.pr,
-        repo: record?.repo ?? null,
+        repo: repo.nameWithOwner ?? record?.repo ?? null,
         branch: entry.branch ?? record?.branch ?? branch,
         source: 'boot-record',
+        served: servedPrs(record, branch),
+        isPrivate: false,
       };
     }
     if (!branch) return NO_STATE;
     try {
-      const { stdout } = await pexecFile('gh', [
-        'pr',
-        'list',
-        '--head',
-        branch,
-        '--state',
-        'open',
-        '--json',
-        'number',
-        '--limit',
-        '1',
-      ]);
-      const list = JSON.parse(stdout) as Array<{ number?: number }>;
+      const list = JSON.parse(
+        await gh([
+          'pr',
+          'list',
+          '--head',
+          branch,
+          '--state',
+          'open',
+          '--json',
+          'number',
+          '--limit',
+          '1',
+        ]),
+      ) as Array<{ number?: number }>;
+      const pr = list[0]?.number ?? null;
       return {
-        pr: list[0]?.number ?? null,
-        repo: record?.repo ?? null,
+        pr,
+        repo: repo.nameWithOwner ?? record?.repo ?? null,
         branch,
-        source: list[0]?.number ? 'gh' : 'none',
+        source: pr ? 'gh' : 'none',
+        served: pr ? [{ pr, branch }] : [],
+        isPrivate: false,
       };
     } catch {
       return {
@@ -143,6 +210,12 @@ export function devReviewOverlayPlugin(): Plugin {
     return inFlight;
   }
 
+  const pins = createPinsService({
+    repoInfo,
+    servedSet: () => reviewState().then((state) => state.served),
+    fetchPr: (repo, pr) => fetchPrOccurrences(repo, pr, gh),
+  });
+
   async function clientModule(file: string): Promise<string> {
     const info = await stat(file);
     const hit = transformed.get(file);
@@ -173,19 +246,27 @@ export function devReviewOverlayPlugin(): Plugin {
           return res.end();
         }
 
+        const json = (body: string, status = 200) => {
+          res.statusCode = status;
+          res.setHeader('Content-Type', 'application/json');
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(body);
+        };
+
         if (path === '/__review/state') {
           reviewState().then(
-            (state) => {
-              res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.setHeader('Cache-Control', 'no-store');
-              res.end(JSON.stringify(state));
-            },
-            () => {
-              res.statusCode = 500;
-              res.setHeader('Content-Type', 'application/json');
-              res.end('{"error":"discovery failed"}');
-            },
+            (state) => json(JSON.stringify(state)),
+            () => json('{"error":"discovery failed"}', 500),
+          );
+          return;
+        }
+
+        // Zero request parameters by construction — `path` is already the
+        // query-stripped url, so `?anything=1` answers the same payload.
+        if (path === '/__review/pins') {
+          pins.getPins().then(
+            (payload: ReviewPinsPayload) => json(JSON.stringify(payload)),
+            () => json('{"error":"upstream"}', 500),
           );
           return;
         }

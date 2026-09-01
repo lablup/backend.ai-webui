@@ -59,11 +59,82 @@ declare global {
   }
 }
 
-/** `/__review/state` — the write side needs only the PR number. */
+/** `/__review/state` — the running layer, plus the whole served set (R3.7). */
 export interface ReviewServerState {
   pr: number | null;
   repo: string | null;
   branch: string | null;
   source: 'boot-record' | 'gh' | 'none';
+  /** Every PR this server serves; the running layer is `pr`. */
+  served: Array<{ pr: number; branch: string | null }>;
+  /** A private repository disables both endpoints (R3.4). */
+  isPrivate: boolean;
   error?: string | null;
+}
+
+// --------------------------------------------------- read side (FR-3813)
+
+/** Teams (FR-3816) folds in as a second channel without reshaping a pin. */
+export type PinChannel = 'github' | 'teams';
+
+/** One place the same block was found. Several = the block was pasted twice. */
+export interface PinSource {
+  channel: PinChannel;
+  /** The PR the occurrence was found on — a stack's layer badge (R3.7). */
+  pr: number;
+  kind: string;
+  url: string | null;
+  author: string | null;
+}
+
+export interface PinReply {
+  author: string | null;
+  body: string;
+  createdAt: string | null;
+  url: string | null;
+}
+
+/** Every occurrence of one `#bai=v3` id, merged (R3.6). */
+export interface ReviewPin {
+  id: string;
+  /** `createdAt` rank, fixed per payload so numbers never shift on a poll. */
+  number: number;
+  anchorB64: string | null;
+  /** Decoded and field-checked on the server; `null` for the short form. */
+  anchor: AnchorV3 | null;
+  text: string;
+  author: string | null;
+  createdAt: string | null;
+  sources: PinSource[];
+  /** The PR the primary occurrence was found on. */
+  sourcePr: number | null;
+  /** A pin pasted outside a quote block is accepted and flagged (R3.4). */
+  quoted: boolean;
+  resolved: boolean;
+  resolvedBy: string | null;
+  outdated: boolean;
+  hint: boolean;
+  replies: PinReply[];
+  latestReply: PinReply | null;
+  replyCount: number;
+}
+
+export type PinState =
+  'open' | 'replied' | 'hint' | 'resolved' | 'outdated' | 'orphan';
+
+export interface PinSourceStatus {
+  ok: boolean;
+  count?: number;
+  error?: string;
+  /** More comments than one page holds — surfaced, never paginated (R3.4). */
+  truncated?: boolean;
+}
+
+/** `/__review/pins` — a whitelisted shape; no upstream output is echoed. */
+export interface ReviewPinsPayload {
+  pins: ReviewPin[];
+  served: Array<{ pr: number; state: string | null }>;
+  sources: Partial<Record<PinChannel, PinSourceStatus>>;
+  fetchedAt: string;
+  error?: string;
 }
