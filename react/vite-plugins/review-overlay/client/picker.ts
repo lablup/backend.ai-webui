@@ -15,7 +15,7 @@ export interface PickerCallbacks {
   /** A pick landed. Coordinates are viewport-relative, for the composer. */
   onPick: (element: Element, x: number, y: number) => void;
   onModeChange: (active: boolean) => void;
-  onHover: (rect: DOMRect | null) => void;
+  onHover: (rect: DOMRect | null, borderRadius?: string) => void;
   /** True for events originating inside the overlay's own shadow host. */
   isOwnEvent: (evt: Event) => boolean;
   showHint: (message: string) => void;
@@ -103,7 +103,10 @@ export function createPicker(callbacks: PickerCallbacks) {
     }
     const target = evt.target;
     if (!(target instanceof Element)) return;
-    callbacks.onHover(target.getBoundingClientRect());
+    callbacks.onHover(
+      target.getBoundingClientRect(),
+      getComputedStyle(target).borderRadius,
+    );
   }
 
   function onClick(evt: MouseEvent) {

@@ -80,6 +80,10 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       --bai-review-on-inverted: var(--color-background-surface, #fff);
       --bai-review-error: var(--color-text-red, #c0392b);
       --bai-review-shadow: var(--color-shadow, rgba(5, 54, 89, .25));
+      /* react-grab 0.1.50's own selection box, so the pick reads as one tool:
+         1px stroke at α.5 over an α.08 fill of rgb(210, 57, 192). */
+      --bai-review-pick-line: rgba(210, 57, 192, .5);
+      --bai-review-pick-fill: rgba(210, 57, 192, .08);
     }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .dock {
@@ -115,8 +119,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     }
     .hoverbox {
       position: fixed; z-index: 2147482998; pointer-events: none; display: none;
-      border: 2px solid var(--bai-review-accent); border-radius: 3px;
-      background: var(--color-background-orange, rgba(242, 121, 2, .2));
+      border: 1px solid var(--bai-review-pick-line);
+      background: var(--bai-review-pick-fill);
     }
     .compose {
       position: fixed; z-index: 2147483001; width: 300px;
@@ -223,7 +227,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     }, ms);
   }
 
-  function setHoverRect(rect: DOMRect | null) {
+  /** react-grab rounds its box to the element's own corners; so do we. */
+  function setHoverRect(rect: DOMRect | null, borderRadius = '0px') {
     if (!rect) {
       hoverbox.style.display = 'none';
       return;
@@ -234,6 +239,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       top: `${rect.top}px`,
       width: `${rect.width}px`,
       height: `${rect.height}px`,
+      borderRadius,
     });
   }
 
@@ -244,7 +250,10 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
    */
   function syncPickHighlight() {
     if (!isComposeOpen() || !pickTarget) return;
-    setHoverRect(pickTarget.getBoundingClientRect());
+    setHoverRect(
+      pickTarget.getBoundingClientRect(),
+      getComputedStyle(pickTarget).borderRadius,
+    );
   }
   window.addEventListener('scroll', syncPickHighlight, true);
   window.addEventListener('resize', syncPickHighlight);

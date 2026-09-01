@@ -80,7 +80,7 @@ function boot() {
       void prepare(element, anchor);
     },
     onModeChange: (active) => ui.setPickActive(active),
-    onHover: (rect) => ui.setHoverRect(rect),
+    onHover: (rect, borderRadius) => ui.setHoverRect(rect, borderRadius),
     isOwnEvent: (evt) => ui.isOwnEvent(evt),
     showHint: (message) => ui.showToast(message),
     onReactGrabUnavailable: () => ui.pinDock(),
