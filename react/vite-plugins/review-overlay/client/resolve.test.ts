@@ -30,6 +30,12 @@ describe('quickFindTarget', () => {
     expect(quickFindTarget(anchor())).toBeNull();
   });
 
+  // `includes('')` would otherwise confirm every icon-only button.
+  it('refuses a selector hit that carries no text at all', () => {
+    mount('<button><svg></svg></button>');
+    expect(quickFindTarget(anchor())).toBeNull();
+  });
+
   it('falls back to a unique testid landmark', () => {
     mount('<section data-testid="page-start"><button>Login</button></section>');
     expect(

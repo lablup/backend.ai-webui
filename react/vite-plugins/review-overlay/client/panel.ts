@@ -1,15 +1,12 @@
 /**
- * The pin layer and the review panel (R3.6).
- *
- * Everything rendered here comes from a comment anyone can write on a public
- * PR, so every piece of it goes in through `textContent` — never `innerHTML`.
- * The panel is ONE flat list in the payload's number order: orphan and
- * other-page pins are badges in place, never their own section, because the
- * prototype's sections made items jump when an anchor resolved late.
+ * The pin layer and the review panel (R3.6). Everything rendered here comes
+ * from a comment anyone can write on a public PR, so every piece of it goes in
+ * through `textContent` — never `innerHTML`. One flat list in payload order:
+ * orphan and other-page pins are badges in place, never their own section.
  */
 import { pinUrl } from './deeplink.js';
 import { deriveState, onCurrentPage } from './pins-state.js';
-import { findAnchorTarget, quickFindTarget } from './resolve.js';
+import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
 import type {
   AnchorV3,
   PinState,
@@ -335,7 +332,14 @@ export function createPinPanel(options: PinPanelOptions) {
 
   function positionPin(entry: PinEntry) {
     if (!entry.element) return;
-    entry.located = quickFindTarget(entry.anchor, { ignore: host });
+    // The full ladder finds elements `quickFindTarget` cannot; a reposition
+    // must not throw that answer away while the element is still on the page.
+    const held =
+      entry.located?.isConnected &&
+      textMatches(entry.located, entry.anchor?.txt)
+        ? entry.located
+        : null;
+    entry.located = held ?? quickFindTarget(entry.anchor, { ignore: host });
     if (!entry.located) {
       entry.element.classList.add('orphan');
       return;
@@ -393,27 +397,34 @@ export function createPinPanel(options: PinPanelOptions) {
   });
   observer.observe(document.body, { childList: true, subtree: true });
   window.addEventListener('resize', scheduleReposition);
+  const onScroll = () => {
+    for (const entry of entries.values()) positionPin(entry);
+  };
   // Pins are positioned in viewport coordinates, so a scroll moves all of them.
-  window.addEventListener(
-    'scroll',
-    () => {
-      for (const entry of entries.values()) positionPin(entry);
-    },
-    { capture: true, passive: true },
-  );
+  window.addEventListener('scroll', onScroll, { capture: true, passive: true });
 
   // -------------------------------------------------------------- public
 
+  /** Flashing twice inside `FLASH_MS` must not save the flash as the style. */
+  const flashing = new WeakMap<
+    HTMLElement,
+    { previous: string; offset: string; timer: number }
+  >();
+
   function flash(target: Element) {
     const node = target as HTMLElement;
-    const previous = node.style.outline;
-    const offset = node.style.outlineOffset;
+    const pending = flashing.get(node);
+    if (pending) clearTimeout(pending.timer);
+    const previous = pending?.previous ?? node.style.outline;
+    const offset = pending?.offset ?? node.style.outlineOffset;
     node.style.outline = '3px solid var(--color-icon-orange, #e9690b)';
     node.style.outlineOffset = '2px';
-    setTimeout(() => {
+    const timer = window.setTimeout(() => {
       node.style.outline = previous;
       node.style.outlineOffset = offset;
+      flashing.delete(node);
     }, FLASH_MS);
+    flashing.set(node, { previous, offset, timer });
   }
 
   function revealItem(id: string) {
@@ -454,18 +465,20 @@ export function createPinPanel(options: PinPanelOptions) {
   }
 
   return {
-    panel,
-    isOpen,
     open: () => setOpen(true),
-    close: () => setOpen(false),
     toggle: () => setOpen(!isOpen()),
     has: (id: string) => entries.has(id),
     get: (id: string) => entries.get(id) ?? null,
     revealItem,
     locatePin,
-    refresh: () => {
-      refreshPinLayer();
-      renderPanel();
+
+    /** One panel lives as long as the page; tests make one per case. */
+    dispose() {
+      observer.disconnect();
+      window.removeEventListener('resize', scheduleReposition);
+      window.removeEventListener('scroll', onScroll, { capture: true });
+      clearTimeout(repositionTimer);
+      clearTimeout(highlightTimer);
     },
 
     /**

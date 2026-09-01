@@ -1,9 +1,6 @@
 /**
- * The pins poll (R3.4): 25 s while visible, 120 s once the conversation has
- * gone quiet, nothing at all while the tab is hidden, and an immediate read
- * when the reviewer comes back. The server's 15 s cache is what keeps
- * concurrent viewers down to one upstream call, so this only has to be
- * polite, not clever.
+ * The pins poll (R3.4). The server's 15 s cache is what keeps concurrent
+ * viewers down to one upstream call, so this only has to be polite.
  */
 
 export interface PollerOptions<T> {
@@ -14,6 +11,12 @@ export interface PollerOptions<T> {
   idleMs?: number;
   /** How long without a change before the slow cadence takes over. */
   quietAfterMs?: number;
+  /**
+   * What counts as "the same answer". The default compares the whole payload,
+   * which never repeats when it carries a server timestamp — pass the parts
+   * that mean something changed instead.
+   */
+  signatureOf?: (payload: T) => string;
 }
 
 export function createPoller<T>({
@@ -23,6 +26,7 @@ export function createPoller<T>({
   visibleMs = 25_000,
   idleMs = 120_000,
   quietAfterMs = 300_000,
+  signatureOf = (payload: T) => JSON.stringify(payload),
 }: PollerOptions<T>) {
   let timer = 0;
   let busy = false;
@@ -35,7 +39,7 @@ export function createPoller<T>({
     busy = true;
     try {
       const payload = await load();
-      const next = JSON.stringify(payload);
+      const next = signatureOf(payload);
       if (next !== signature) {
         signature = next;
         lastChangeAt = Date.now();

@@ -77,6 +77,31 @@ describe('createPoller', () => {
     instance.stop();
   });
 
+  // The pins payload carries a server timestamp, which is not a change.
+  it('still backs off when every answer carries a fresh timestamp', async () => {
+    let at = 0;
+    const load = vi
+      .fn()
+      .mockImplementation(async () => ({ pins: [], fetchedAt: ++at }));
+    const onPayload = vi.fn();
+    const onError = vi.fn();
+    const instance = createPoller<{ pins: unknown[]; fetchedAt: number }>({
+      load,
+      onPayload,
+      onError,
+      visibleMs: 25_000,
+      idleMs: 120_000,
+      quietAfterMs: 300_000,
+      signatureOf: (payload) => JSON.stringify(payload.pins),
+    });
+    instance.start();
+    await vi.advanceTimersByTimeAsync(325_001);
+    const before = load.mock.calls.length;
+    await vi.advanceTimersByTimeAsync(25_000);
+    expect(load).toHaveBeenCalledTimes(before);
+    instance.stop();
+  });
+
   it('stops while the tab is hidden and catches up when it comes back', async () => {
     const { instance, load } = poller();
     instance.start();

@@ -1,6 +1,6 @@
 import { createPinPanel, type PinPanel } from './panel.js';
 import type { ReviewPin, ReviewPinsPayload } from './types.js';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const pin = (over: Partial<ReviewPin> = {}): ReviewPin => ({
   id: 'c_zdv3rhz',
@@ -59,6 +59,10 @@ beforeEach(() => {
     onStartPick: vi.fn(),
     onRefresh: vi.fn(),
   });
+});
+
+afterEach(() => {
+  panel.dispose();
 });
 
 const items = () => [...root.querySelectorAll('.item')];
@@ -190,6 +194,46 @@ describe('pin panel', () => {
     panel.applyPayload(payload([pin()]));
     expect(items()).toHaveLength(1);
     expect(items()[0].textContent).toContain('off by 8px');
+  });
+
+  // The full ladder finds what `quickFindTarget` cannot; a reposition ran
+  // straight over that answer and the pin went orphan a moment later.
+  it('keeps a pin the full ladder located when the layer repositions', () => {
+    document.body.insertAdjacentHTML(
+      'afterbegin',
+      '<div><button>Cancel</button><button>Login</button></div>',
+    );
+    panel.applyPayload(
+      payload([
+        pin({
+          anchor: {
+            v: 3,
+            s: 'button:nth-of-type(1)',
+            p: '/',
+            tag: 'button',
+            txt: 'Login',
+          },
+        }),
+      ]),
+    );
+    expect(panel.locatePin('c_zdv3rhz', { full: true })?.textContent).toBe(
+      'Login',
+    );
+    expect(root.querySelector('.pin')?.classList.contains('orphan')).toBe(
+      false,
+    );
+  });
+
+  it('restores the element style after two flashes in a row', () => {
+    vi.useFakeTimers();
+    panel.applyPayload(payload([pin()]));
+    const button = document.querySelector('button') as HTMLElement;
+    panel.locatePin('c_zdv3rhz', { full: true });
+    vi.advanceTimersByTime(1000);
+    panel.locatePin('c_zdv3rhz', { full: true });
+    vi.advanceTimersByTime(10_000);
+    expect(button.style.outline).toBe('');
+    vi.useRealTimers();
   });
 
   it('drops a pin that is gone from the payload', () => {

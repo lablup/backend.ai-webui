@@ -1,12 +1,9 @@
 /**
- * Resolving a `#bai=v3` anchor back to an element (FR-3813).
- *
- * The selector alone is not enough — a React `useId` never survives a reload
- * and an nth-of-type path does not survive a refactor — so the signals are
- * tried in order of how much they promise: selector (confirmed by text),
- * testid landmark, text scan, rect projection, and the bare selector hit as a
- * last resort.
+ * Resolving a `#bai=v3` anchor back to an element: the selector alone cannot
+ * do it — a React `useId` never survives a reload and an nth-of-type path
+ * never survives a refactor — so every other signal is tried in turn.
  */
+import { TAG_RE } from './anchor-guard.js';
 import { normText } from './anchor.js';
 import type { AnchorV3 } from './types.js';
 
@@ -29,11 +26,13 @@ const elementText = (element: Element) =>
 export const textMatches = (element: Element, txt?: string): boolean => {
   if (!txt) return true;
   const text = elementText(element).slice(0, 160);
+  // An element with no text at all matches nothing: `includes('')` would
+  // otherwise confirm every recycled selector that now hits an icon button.
+  if (!text) return false;
   return text.includes(txt) || txt.includes(text.slice(0, 64));
 };
 
-const safeTag = (tag?: string) =>
-  tag && /^[a-z][a-z0-9-]*$/.test(tag) ? tag : '*';
+const safeTag = (tag?: string) => (tag && TAG_RE.test(tag) ? tag : '*');
 
 const isOurs = (element: Element | null, ignore?: Element | null) =>
   !!element &&
