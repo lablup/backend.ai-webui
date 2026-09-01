@@ -1009,6 +1009,12 @@ export class Client {
       // read-only on the RuntimeVariantPreset type). FR-3476.
       this._features['runtime-variant-preset-ui-metadata'] = true;
     }
+    // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
+    // requested id (`items` / `successes` plus `failed`) instead of a bare
+    // count, and the counts became `@deprecated`. FR-3820.
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      this._features['bulk-mutation-per-id-results'] = true;
+    }
   }
 
   /**

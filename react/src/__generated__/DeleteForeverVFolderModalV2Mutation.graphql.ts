@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<968052caac758d86a0edcdf925791ffb>>
+ * @generated SignedSource<<8adaab42c58a58409ab93d8944e89086>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,14 +19,16 @@ export type PurgeVFolderOptionsInput = {
 };
 export type DeleteForeverVFolderModalV2Mutation$variables = {
   input: BulkPurgeVFoldersV2Input;
+  supportsPerIdResults: boolean;
 };
 export type DeleteForeverVFolderModalV2Mutation$data = {
   readonly bulkPurgeVfoldersV2: {
-    readonly failed: ReadonlyArray<{
+    readonly failed?: ReadonlyArray<{
       readonly message: string;
       readonly vfolderId: string;
     }>;
-    readonly successes: ReadonlyArray<string>;
+    readonly purgedCount?: number;
+    readonly successes?: ReadonlyArray<string>;
   } | null | undefined;
 };
 export type DeleteForeverVFolderModalV2Mutation = {
@@ -40,6 +42,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "input"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "supportsPerIdResults"
   }
 ],
 v1 = [
@@ -58,36 +65,57 @@ v1 = [
     "plural": false,
     "selections": [
       {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "successes",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "BulkPurgeVFolderV2Error",
-        "kind": "LinkedField",
-        "name": "failed",
-        "plural": true,
+        "condition": "supportsPerIdResults",
+        "kind": "Condition",
+        "passingValue": true,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "vfolderId",
+            "name": "successes",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "message",
+            "concreteType": "BulkPurgeVFolderV2Error",
+            "kind": "LinkedField",
+            "name": "failed",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "vfolderId",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "message",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
+      },
+      {
+        "condition": "supportsPerIdResults",
+        "kind": "Condition",
+        "passingValue": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "purgedCount",
+            "storageKey": null
+          }
+        ]
       }
     ],
     "storageKey": null
@@ -111,16 +139,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "08f62ce93b257312e680011ac516ce05",
+    "cacheID": "f4dfba95b9ba3ce7290b05184e91e17b",
     "id": null,
     "metadata": {},
     "name": "DeleteForeverVFolderModalV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteForeverVFolderModalV2Mutation(\n  $input: BulkPurgeVFoldersV2Input!\n) {\n  bulkPurgeVfoldersV2(input: $input) {\n    successes\n    failed {\n      vfolderId\n      message\n    }\n  }\n}\n"
+    "text": "mutation DeleteForeverVFolderModalV2Mutation(\n  $input: BulkPurgeVFoldersV2Input!\n  $supportsPerIdResults: Boolean!\n) {\n  bulkPurgeVfoldersV2(input: $input) {\n    successes @include(if: $supportsPerIdResults)\n    failed @include(if: $supportsPerIdResults) {\n      vfolderId\n      message\n    }\n    purgedCount @skip(if: $supportsPerIdResults)\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "473054b15aa5bd925d740ed06bbaf73c";
+(node as any).hash = "ff0dca42b38126ab4869668cb6e2f61a";
 
 export default node;

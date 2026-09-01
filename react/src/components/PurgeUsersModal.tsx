@@ -5,6 +5,7 @@
 import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBulkMutation.graphql';
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App } from '../app-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { VStack } from '@astryxdesign/core/Stack';
 import {
@@ -65,11 +66,21 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   const [purgeSharedVfolders, setPurgeSharedVfolders] = useState(false);
   const [deleteModelServices, setDeleteModelServices] = useState(false);
 
+  // `successes` only exists on 26.9.0+ managers; older ones reject the whole
+  // document, so it is gated and the deprecated count is selected instead.
+  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
+    'bulk-mutation-per-id-results',
+  );
+
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`
-      mutation PurgeUsersModalBulkMutation($input: BulkPurgeUsersV2Input!) {
+      mutation PurgeUsersModalBulkMutation(
+        $input: BulkPurgeUsersV2Input!
+        $supportsPerIdResults: Boolean!
+      ) {
         adminBulkPurgeUsersV2(input: $input) {
-          successes
+          successes @include(if: $supportsPerIdResults)
+          purgedCount @skip(if: $supportsPerIdResults)
           failed {
             userId
             message
@@ -87,6 +98,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       const userIds = userList.map((user) => toLocalId(user.id));
       commitBulkPurge({
         variables: {
+          supportsPerIdResults,
           input: {
             userIds,
             options: {
@@ -108,8 +120,14 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             reject(new Error(t('error.UnknownError')));
             return;
           }
-          const { successes, failed } = adminBulkPurgeUsersV2;
-          const purgedCount = successes.length;
+          const {
+            successes,
+            purgedCount: deprecatedCount,
+            failed,
+          } = adminBulkPurgeUsersV2;
+          const purgedCount = supportsPerIdResults
+            ? (successes?.length ?? 0)
+            : (deprecatedCount ?? 0);
 
           if (failed.length > 0) {
             const failedMessages = failed.map((f) => f.message).join(', ');
