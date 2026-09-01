@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ecaa4617adf02ae47a598cc533cd4a46>>
+ * @generated SignedSource<<968052caac758d86a0edcdf925791ffb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,7 +22,11 @@ export type DeleteForeverVFolderModalV2Mutation$variables = {
 };
 export type DeleteForeverVFolderModalV2Mutation$data = {
   readonly bulkPurgeVfoldersV2: {
-    readonly purgedCount: number;
+    readonly failed: ReadonlyArray<{
+      readonly message: string;
+      readonly vfolderId: string;
+    }>;
+    readonly successes: ReadonlyArray<string>;
   } | null | undefined;
 };
 export type DeleteForeverVFolderModalV2Mutation = {
@@ -57,7 +61,32 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "purgedCount",
+        "name": "successes",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "BulkPurgeVFolderV2Error",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "vfolderId",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "message",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -82,16 +111,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ec0678be01bd641d826e9bc9a2693eb0",
+    "cacheID": "08f62ce93b257312e680011ac516ce05",
     "id": null,
     "metadata": {},
     "name": "DeleteForeverVFolderModalV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteForeverVFolderModalV2Mutation(\n  $input: BulkPurgeVFoldersV2Input!\n) {\n  bulkPurgeVfoldersV2(input: $input) {\n    purgedCount\n  }\n}\n"
+    "text": "mutation DeleteForeverVFolderModalV2Mutation(\n  $input: BulkPurgeVFoldersV2Input!\n) {\n  bulkPurgeVfoldersV2(input: $input) {\n    successes\n    failed {\n      vfolderId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ed8f37af9563c755ccfc33151d5d168f";
+(node as any).hash = "473054b15aa5bd925d740ed06bbaf73c";
 
 export default node;
