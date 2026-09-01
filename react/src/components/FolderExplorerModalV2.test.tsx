@@ -7,7 +7,7 @@ import '../../__test__/resizeObserver.mock.js';
 import FolderExplorerModalV2 from './FolderExplorerModalV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -42,6 +42,12 @@ vi.mock('react-i18next', async () => {
     },
   };
 });
+
+// Captured per render so the gating tests can assert what the (stubbed)
+// file explorer was told to enable.
+const { fileExplorerProps } = vi.hoisted(() => ({
+  fileExplorerProps: [] as any[],
+}));
 
 const { mockBaiClient, mockListHosts } = vi.hoisted(() => {
   const mockListHosts = vi.fn(() =>
@@ -187,7 +193,10 @@ vi.mock('./FileUploadManager', async (importOriginal) => {
 vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
-  const MockFileExplorer = React.forwardRef(function MockFileExplorer() {
+  const MockFileExplorer = React.forwardRef(function MockFileExplorer(
+    props: any,
+  ) {
+    fileExplorerProps.push(props);
     return React.createElement('div', { 'data-testid': 'mock-file-explorer' });
   });
   return {
@@ -208,12 +217,22 @@ const VFOLDER_UUID = '11111111-2222-3333-4444-555555555555';
 
 const renderModal = ({
   ownershipProjectId,
+  legacyPermissions,
 }: {
   ownershipProjectId: string | null;
+  legacyPermissions?: string[];
 }) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const resolver = (operation: any) =>
     MockPayloadGenerator.generate(operation, {
+      // The legacy per-user RBAC list the FR-3800 gating reads.
+      VirtualFolderNode: () => ({
+        permissions: legacyPermissions ?? [
+          'read_content',
+          'write_content',
+          'delete_content',
+        ],
+      }),
       VFolder: () => ({
         id: btoa(`VFolder:${VFOLDER_UUID}`),
         host: 'local:volume1',
@@ -350,5 +369,50 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     // acceptance criterion) instead of the header selection.
     const permissionOperation = findPermissionOperation(seenOperations);
     expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
+  });
+});
+
+describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = false;
+    mockListHosts.mockClear();
+    fileExplorerProps.length = 0;
+  });
+
+  it('a read-only share (no write_content / delete_content) disables write, delete, upload and edit', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      legacyPermissions: ['read_content'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableWrite).toBe(false);
+      expect(props.enableDelete).toBe(false);
+      // The host `upload-file` capability IS present in the fixture, so these
+      // prove the folder-level write gate participates in the AND.
+      expect(props.enableUpload).toBe(false);
+      expect(props.enableEdit).toBe(false);
+    });
+  });
+
+  it('write_content / delete_content in the legacy permission set enable the corresponding actions', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      legacyPermissions: ['read_content', 'write_content', 'delete_content'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    // Positive control: guards against the gating collapsing to always-false.
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableWrite).toBe(true);
+      expect(props.enableDelete).toBe(true);
+      expect(props.enableUpload).toBe(true);
+      expect(props.enableEdit).toBe(true);
+    });
   });
 });
