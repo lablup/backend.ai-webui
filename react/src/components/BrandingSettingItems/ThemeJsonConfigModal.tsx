@@ -225,10 +225,9 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                 });
             };
 
-            const [themeSchema, antdSchema] = await Promise.all([
-              loadSchema('/resources/theme.schema.json'),
-              loadSchema('/resources/antdThemeConfig.schema.json'),
-            ]);
+            const themeSchema = await loadSchema(
+              '/resources/theme.schema.json',
+            );
             monacoRef.current = monaco;
             monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
               validate: true,
@@ -239,11 +238,6 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   uri: 'inmemory://model/theme.schema.json',
                   fileMatch: ['*'],
                   schema: themeSchema,
-                },
-                {
-                  uri: 'inmemory://model/antdThemeConfig.schema.json',
-                  fileMatch: ['*'],
-                  schema: antdSchema,
                 },
               ],
             });

@@ -11,6 +11,7 @@ import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import { FormConfigProvider } from '../form-engine';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
+import { pickSeed } from '../helper/customThemeConfig';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import {
   backendaiClientPromise,
@@ -320,7 +321,23 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
-  const { themeConfig } = useCustomThemeConfig();
+  const { appearance, activeThemeFamily } = useCustomThemeConfig();
+  // Shim seeds for the active family, per scheme. The shim still speaks
+  // antd seed names; the v2 document's tuple seeds are resolved here.
+  const activeFamilyConfig = appearance?.theme?.families?.[activeThemeFamily];
+  const shimMode = isDarkMode ? 'dark' : ('light' as const);
+  const shimSeeds = {
+    colorPrimary: pickSeed(activeFamilyConfig?.seeds?.accent, shimMode),
+    colorLink: pickSeed(activeFamilyConfig?.seeds?.link, shimMode),
+    colorInfo: pickSeed(activeFamilyConfig?.seeds?.info, shimMode),
+    colorError: pickSeed(activeFamilyConfig?.seeds?.error, shimMode),
+    colorSuccess: pickSeed(activeFamilyConfig?.seeds?.success, shimMode),
+    colorWarning: pickSeed(activeFamilyConfig?.seeds?.warning, shimMode),
+    fontFamily: appearance?.theme?.fontFamily,
+    components: {
+      Layout: { headerBg: pickSeed(activeFamilyConfig?.headerBg, shimMode) },
+    } as never,
+  };
 
   const currentLocale =
     buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
@@ -346,15 +363,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
             <AstryxBrandTheme>
               <ThemeShimProvider
                 mode={isDarkMode ? 'dark' : 'light'}
-                seeds={{
-                  ...(isDarkMode
-                    ? themeConfig?.dark?.token
-                    : themeConfig?.light?.token),
-                  fontFamily: themeConfig?.fontFamily,
-                  components: (isDarkMode
-                    ? themeConfig?.dark?.components
-                    : themeConfig?.light?.components) as never,
-                }}
+                seeds={shimSeeds}
               >
                 {/* Now a pure locale + client provider: Astryx's
                     `InternationalizationProvider`, BUI's i18next instance,
