@@ -101,10 +101,16 @@ test.describe(
         await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
         await openProfileModal(page);
 
-        const modal = page.locator('.ant-modal');
+        const modal = page.getByRole('dialog', {
+          name: 'My Account Information',
+        });
 
-        // Verify Allowed Client IPs label is visible
-        await expect(modal.getByText('Allowed client IPs')).toBeVisible();
+        // Verify Allowed Client IPs label is visible.
+        // The FormItem label ("...(optional)") and the inner field's own
+        // label both render "Allowed client IPs" text — scope to the first.
+        await expect(
+          modal.getByText('Allowed client IPs').first(),
+        ).toBeVisible();
 
         // Verify hint text
         await expect(

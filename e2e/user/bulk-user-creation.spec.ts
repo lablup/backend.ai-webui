@@ -93,16 +93,27 @@ test.describe(
         // 2. Navigate to credential page
         await navigateTo(page, 'credential');
 
-        // 3. Verify the "Users" tab is visible and selected
-        await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+        // 3. Verify the "Users" tab is visible and selected.
+        // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+        // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab`
+        // elements — `role="tab"` is never emitted unless `TabList` is given
+        // `role="tablist"`, which this app never does (see
+        // registry.spec.ts's identical pattern).
+        await expect(
+          page
+            .getByRole('navigation', { name: 'Tabs' })
+            .getByRole('button', { name: 'Users' }),
+        ).toBeVisible();
 
         // 4. Verify the "Create User" button is visible
         await expect(
           page.getByRole('button', { name: 'Create User' }),
         ).toBeVisible();
 
-        // 5. Click the "ellipsis" dropdown button adjacent to "Create User"
-        await page.getByRole('button', { name: 'ellipsis' }).click();
+        // 5. Click the "More" dropdown button adjacent to "Create User".
+        // AdminUserManagement.tsx's DropdownMenu trigger carries
+        // t('button.More') as its accessible name (icon-only button).
+        await page.getByRole('button', { name: 'More' }).click();
 
         // 6. Verify the dropdown menu appears containing the item "Bulk Create Users"
         // exact: true avoids a strict-mode collision with the sibling

@@ -54,7 +54,9 @@ export async function clickRowAction(
 export async function openProfileModal(page: Page) {
   await page.getByTestId('user-dropdown-button').click();
   await page.getByText('My Account').click();
-  await page.locator('.ant-modal').waitFor({ state: 'visible' });
+  await expect(
+    page.getByRole('dialog', { name: 'My Account Information' }),
+  ).toBeVisible();
 }
 
 /**
@@ -140,7 +142,15 @@ export async function createDisposableUser(
   password: string,
 ): Promise<void> {
   await navigateTo(adminPage, 'credential');
-  await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible();
+  // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+  // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
+  // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+  // which this app never does (see registry.spec.ts's identical pattern).
+  await expect(
+    adminPage
+      .getByRole('navigation', { name: 'Tabs' })
+      .getByRole('button', { name: 'Users' }),
+  ).toBeVisible();
 
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   const userSettingModal = UserSettingModal.forCreate(adminPage);

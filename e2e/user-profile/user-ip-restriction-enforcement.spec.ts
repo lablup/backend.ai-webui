@@ -39,7 +39,15 @@ test.describe.serial(
 
       // 2. Navigate to credential page
       await navigateTo(page, 'credential');
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+      // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
+      // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+      // which this app never does (see registry.spec.ts's identical pattern).
+      await expect(
+        page
+          .getByRole('navigation', { name: 'Tabs' })
+          .getByRole('button', { name: 'Users' }),
+      ).toBeVisible();
 
       // 3. Create the test user
       await page.getByRole('button', { name: 'Create User' }).click();
