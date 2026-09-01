@@ -8,6 +8,10 @@ on:
       - packages/backend.ai-ui/package.json
       - packages/backend.ai-ui/vitest.config.ts
       - .github/workflows/vitest-backend-ai-ui.yml
+      # Config-only edits must run the i18n schema cache-tripwire test, and a
+      # schema-only PR must revalidate the locale files (PR #9016 review).
+      - packages/backend.ai-ui/eslint.config.js
+      - packages/backend.ai-ui/i18n.schema.json
 
 permissions:
   contents: read
