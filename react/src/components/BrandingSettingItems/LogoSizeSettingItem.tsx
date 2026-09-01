@@ -17,17 +17,17 @@ const LOGO_SIZE_CONFIG: Record<
   NonNullable<LogoSizeSettingItemProps['logoType']>,
   { key: string; defaultSize: { width?: number; height?: number } }
 > = {
-  wide: { key: 'logo.size', defaultSize: { width: 159, height: 24 } },
+  wide: { key: 'branding.logo.size', defaultSize: { width: 159, height: 24 } },
   collapsed: {
-    key: 'logo.sizeCollapsed',
+    key: 'branding.logo.sizeCollapsed',
     defaultSize: { width: 24, height: 24 },
   },
   login: {
-    key: 'logo.loginLogoSize',
+    key: 'branding.logo.loginLogoSize',
     defaultSize: { height: 35 },
   },
   about: {
-    key: 'logo.aboutLogoSize',
+    key: 'branding.logo.aboutLogoSize',
     defaultSize: { width: 159, height: 24 },
   },
 };
@@ -50,7 +50,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
   const deprecatedAboutSize =
     logoType === 'about'
       ? getDefaultThemeValue<{ width?: number; height?: number }>(
-          'logo.aboutModalSize',
+          'branding.logo.aboutModalSize',
         )
       : undefined;
 

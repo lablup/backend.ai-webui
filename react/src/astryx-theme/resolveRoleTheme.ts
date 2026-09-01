@@ -13,8 +13,8 @@
  `defineTheme()`, so no competing registration is ever created for the
  identical CSS.
  */
+import type { BAIThemeConfig } from '../helper/customThemeConfig';
 import {
-  type AntdishCustomThemeConfig,
   type BrandThemeRole,
   buildBackendAiTheme,
   computeThemeName,
@@ -40,16 +40,16 @@ if (
 }
 
 /**
- * Resolve the theme for a role against the live theme.json document.
- * `config` may be undefined while theme.json is still loading — the shipped
- * defaults apply, which for `brand` is exactly the prebuilt theme.
+ * Resolve the theme for a role against the live appearance document's `theme`
+ * half. `config` may be undefined while the document is still loading — the
+ * shipped defaults apply, which for `brand` is exactly the prebuilt theme.
  */
 export function resolveRoleTheme(
-  config: AntdishCustomThemeConfig | undefined,
+  config: BAIThemeConfig | undefined,
   role: BrandThemeRole,
   family = 'default',
 ): DefinedTheme {
-  const options = themeOptionsFromConfig(config ?? {}, role, family);
+  const options = themeOptionsFromConfig(config, role, family);
   if (computeThemeName(options) === builtBackendAiBrandTheme.name) {
     return builtBackendAiBrandTheme;
   }
