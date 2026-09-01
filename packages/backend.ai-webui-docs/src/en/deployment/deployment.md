@@ -19,7 +19,6 @@ A deployment extends a regular compute session with automated maintenance, repli
 The Deployments page displays a list of all deployments in the current project. You can access it by clicking **Deployments** in the sidebar menu.
 
 ![](../images/serving_list_page.png)
-<!-- TODO(screenshot): /deployments (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Running/Terminated filter and the property filter bar in the body. Not captured 2026-08-31: the capture backend answered "No healthy Manager endpoint is available". -->
 
 At the top of the page, you can filter deployments by lifecycle stage:
 

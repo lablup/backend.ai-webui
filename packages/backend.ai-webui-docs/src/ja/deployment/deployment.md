@@ -19,7 +19,6 @@ Backend.AI では、**デプロイ（Deployments）** 機能を通じて AI モ�
 デプロイページには、現在のプロジェクト内のすべてのデプロイの一覧が表示されます。サイドバーメニューの **デプロイ** をクリックしてアクセスできます。
 
 ![](../images/serving_list_page.png)
-<!-- TODO(screenshot): /deployments (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Running/Terminated filter and the property filter bar in the body. Not captured 2026-08-31: the capture backend answered "No healthy Manager endpoint is available". -->
 
 ページ上部で、ライフサイクルステージ別にデプロイをフィルタリングできます：
 

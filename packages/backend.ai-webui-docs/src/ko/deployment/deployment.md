@@ -19,7 +19,6 @@ Backend.AI는 **배포(Deployments)** 기능을 통해 AI 모델을 추론 서�
 배포 페이지는 현재 프로젝트의 모든 배포 목록을 표시합니다. 사이드바 메뉴에서 **배포**를 클릭하여 접근할 수 있습니다.
 
 ![](../images/serving_list_page.png)
-<!-- TODO(screenshot): /deployments (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Running/Terminated filter and the property filter bar in the body. Not captured 2026-08-31: the capture backend answered "No healthy Manager endpoint is available". -->
 
 페이지 상단에서 라이프사이클 단계별로 배포를 필터링할 수 있습니다:
 

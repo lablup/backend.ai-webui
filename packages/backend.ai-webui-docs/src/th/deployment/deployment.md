@@ -19,7 +19,6 @@ Backend.AI ให้คุณปรับใช้โมเดล AI เป็�
 หน้าการปรับใช้แสดงรายการการปรับใช้ทั้งหมดในโปรเจกต์ปัจจุบัน คุณสามารถเข้าถึงได้โดยคลิก **การปรับใช้** ในเมนูด้านข้าง
 
 ![](../images/serving_list_page.png)
-<!-- TODO(screenshot): /deployments (Deployments list) — show the Create Deployment button in the Deployments card header, plus the Running/Terminated filter and the property filter bar in the body. Not captured 2026-08-31: the capture backend answered "No healthy Manager endpoint is available". -->
 
 ที่ด้านบนของหน้า คุณสามารถกรองการปรับใช้ตามขั้นตอนวงจรชีวิต:
 
