@@ -1405,22 +1405,23 @@ const ResourceAllocationFormItems: React.FC<
                               (supportedAcceleratorTypesInRGByImage?.length ??
                                 0) > 0 ? (
                                 <Form.Item
+                                  noStyle
                                   name={['resource', 'acceleratorType']}
                                   initialValue={_.first(
                                     _.keys(acceleratorSlotsInRG),
                                   )}
-                                  style={{
-                                    marginBottom: 0,
-                                    maxWidth: 100,
-                                  }}
                                 >
                                   <BAISelect
+                                    // In an InputGroup the trigger resolves to
+                                    // width:100%; size it to content, bounded,
+                                    // so the number field keeps the row.
                                     style={{
-                                      width: '100%',
+                                      flex: '0 0 auto',
+                                      width: 'auto',
+                                      maxWidth: 100,
                                     }}
                                     autoSelectOption
                                     tabIndex={-1}
-                                    // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
                                     suffixIcon={
                                       _.size(acceleratorSlotsInRG) > 1
                                         ? undefined
